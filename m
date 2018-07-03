@@ -1,39 +1,88 @@
-Date: Sat, 28 Jul 2018 16:23:23 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jethro Beekman <jethro@fortanix.com>
+Date: Tue, 3 Jul 2018 21:04:01 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>, "Andy
- Shevchenko" <andy@infradead.org>, "open list:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 11/13] platform/x86: Intel SGX driver
-Message-ID: <20180728132323.GC7697@linux.intel.com>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-12-jarkko.sakkinen@linux.intel.com>
- <2cd5def0-61f0-3d57-efa4-7d835d7bdb86@fortanix.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <2cd5def0-61f0-3d57-efa4-7d835d7bdb86@fortanix.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 05/13] x86/sgx: architectural structures
+In-Reply-To: <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1807032056460.1816@nanos.tec.linutronix.de>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="US-ASCII"
+Return-Path: tglx@linutronix.de
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 08:52:27AM -0700, Jethro Beekman wrote:
-> On 2018-07-03 11:19, Jarkko Sakkinen wrote:
-> > +/* IOCTL return values */
-> > +#define SGX_POWER_LOST_ENCLAVE		0x40000000
-> > +#define SGX_LE_ROLLBACK			0x40000001
+On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+
+> This commit adds arch/x86/include/asm/sgx_arch.h that contains definitions
+
+This is not a commit. Simply: Add .....
+
+> for data structures used by the SGX.
 > 
-> I don't think SGX_LE_ROLLBACK is used anymore.
-> 
-> Jethro Beekman | Fortanix
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
 
-Correct. Thaks for spotting that out.
+Documentaiton:
 
-I've on a leave for soon past three weeks and one week is remaining but
-have been slowly preparing v13 like one day a week so after next week it
-shouldn't take much time to get it out.
+  A Co-Developed-by: states that the patch was also created by another developer
+  along with the original author.  This is useful at times when multiple people
+  work on a single patch.  Note, this person also needs to have a Signed-off-by:
+  line in the patch as well.
 
-/Jarkko
+Please fix all over the place.
+
+> +
+> +#define SGX_MISC_RESERVED_MASK 0xFFFFFFFFFFFFFFFEL
+
+L ? ULL I'd say...
+
+> +#define SGX_ATTR_RESERVED_MASK 0xFFFFFFFFFFFFFFC9L
+
+Ditto
+
+> +#define SGX_SECS_RESERVED1_SIZE 24
+> +#define SGX_SECS_RESERVED2_SIZE 32
+> +#define SGX_SECS_RESERVED3_SIZE 96
+> +#define SGX_SECS_RESERVED4_SIZE 3836
+> +
+> +struct sgx_secs {
+> +	uint64_t size;
+> +	uint64_t base;
+> +	uint32_t ssaframesize;
+> +	uint32_t miscselect;
+> +	uint8_t reserved1[SGX_SECS_RESERVED1_SIZE];
+> +	uint64_t attributes;
+
+Please make these tabular aligned for readility sake
+
+> +	uint32_t	miscselect;
+> +	uint8_t		reserved1[SGX_SECS_RESERVED1_SIZE];
+> +	uint64_t	attributes;
+
+Hmm? All over the place...
+
+> +enum sgx_tcs_flags {
+> +	SGX_TCS_DBGOPTIN	= 0x01, /* cleared on EADD */
+
+Please do not use tail comments. Either put the comment above the define or
+use kernel doc.
+
+> +};
+> +
+> +#define SGX_TCS_RESERVED_MASK 0xFFFFFFFFFFFFFFFEL
+
+See above.
+
+> +#define SGX_SECINFO_PERMISSION_MASK	0x0000000000000007L
+> +#define SGX_SECINFO_PAGE_TYPE_MASK	0x000000000000FF00L
+> +#define SGX_SECINFO_RESERVED_MASK	0xFFFFFFFFFFFF00F8L
+
+Ditto
+
+Thanks,
+
+	tglx
