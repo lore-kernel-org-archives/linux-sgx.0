@@ -1,52 +1,171 @@
-Received: from mga01.intel.com ([192.55.52.88]:20993 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1752165AbeGDSJU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Wed, 4
- Jul 2018 14:09:20 -0400
-Date: Wed, 4 Jul 2018 21:09:13 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Darren Hart
+	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, open list
 	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 05/13] x86/sgx: architectural structures
-Message-ID: <20180704180913.GN6724@linux.intel.com>
+Subject: [PATCH v12 12/13] platform/x86: ptrace() support for the SGX driver
+Date: Tue, 3 Jul 2018 21:19:57 +0300
+Message-ID: <20180703182118.15024-13-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
 References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com>
- <5790d6a4-7d30-1ed8-0214-f68f1cb72294@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <5790d6a4-7d30-1ed8-0214-f68f1cb72294@intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 02:22:52PM -0700, Dave Hansen wrote:
-> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
-> > +enum sgx_cpuid {
-> > +	SGX_CPUID_CAPABILITIES	= 0,
-> > +	SGX_CPUID_ATTRIBUTES	= 1,
-> > +	SGX_CPUID_EPC_BANKS	= 2,
-> > +};
-> 
-> I made a review comment about these last time.  I don't remember
-> receiving any kind of response from you on it, or seeing it addressed in
-> these patches in any kind of way.
-> 
-> I've also seen comments from Thomas that sound really familiar such as
-> the lack of comments on the paging code or the use of a semaphore to
-> protect things that don't sleep.  I made very, very similar comments on
-> the last posting.
-> 
-> Is there a reason that those comments were not addressed?
+Implemented VMA callbacks in order to ptrace() debug enclaves. With
+debug enclaves data can be read and write the memory word at a time by
+using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
 
-My sloppiness is the reason.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/platform/x86/intel_sgx/sgx_encl.c |   2 +-
+ drivers/platform/x86/intel_sgx/sgx_vma.c  | 116 ++++++++++++++++++++++
+ 2 files changed, 117 insertions(+), 1 deletion(-)
 
-The feedback has been awesome from you and Thomas for this version,
-which will help me to get these things right for the next version.
-
-Thank you.
-
-/Jarkko
+diff --git a/drivers/platform/x86/intel_sgx/sgx_encl.c b/drivers/platform/x86/intel_sgx/sgx_encl.c
+index e3d7fa885489..20cd9ff7dd75 100644
+--- a/drivers/platform/x86/intel_sgx/sgx_encl.c
++++ b/drivers/platform/x86/intel_sgx/sgx_encl.c
+@@ -954,7 +954,7 @@ int sgx_encl_load_page(struct sgx_encl_page *encl_page,
+ 	ret = __eldu(&pginfo, epc_ptr, va_ptr + va_offset);
+ 	if (ret) {
+ 		sgx_err(encl, "ELDU returned %d\n", ret);
+-		ret = -EFAULT;
++		ret = ENCLS_TO_ERR(ret);
+ 	}
+ 
+ 	kunmap_atomic((void *)(unsigned long)(pginfo.pcmd - pcmd_offset));
+diff --git a/drivers/platform/x86/intel_sgx/sgx_vma.c b/drivers/platform/x86/intel_sgx/sgx_vma.c
+index cc0993b4fd40..3a856e40c82c 100644
+--- a/drivers/platform/x86/intel_sgx/sgx_vma.c
++++ b/drivers/platform/x86/intel_sgx/sgx_vma.c
+@@ -51,8 +51,124 @@ static int sgx_vma_fault(struct vm_fault *vmf)
+ 		return VM_FAULT_SIGBUS;
+ }
+ 
++static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
++		      unsigned long addr, void *data)
++{
++	unsigned long offset;
++	void *ptr;
++	int ret;
++
++	offset = addr & ~PAGE_MASK;
++
++	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
++            offset > offsetof(struct sgx_tcs, gslimit))
++		return -ECANCELED;
++
++	ptr = sgx_get_page(page->epc_page);
++	ret = __edbgrd((unsigned long)ptr + offset, data);
++	sgx_put_page(ptr);
++	if (ret) {
++		sgx_dbg(encl, "EDBGRD returned %d\n", ret);
++		return ENCLS_TO_ERR(ret);
++	}
++
++	return 0;
++}
++
++static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
++		      unsigned long addr, void *data)
++{
++	unsigned long offset;
++	void *ptr;
++	int ret;
++
++	offset = addr & ~PAGE_MASK;
++
++	/* Writing anything else than flags will cause #GP */
++	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
++	    offset != offsetof(struct sgx_tcs, flags))
++		return -ECANCELED;
++
++	ptr = sgx_get_page(page->epc_page);
++	ret = __edbgwr((unsigned long)ptr + offset, data);
++	sgx_put_page(ptr);
++	if (ret) {
++		sgx_dbg(encl, "EDBGWR returned %d\n", ret);
++		return ENCLS_TO_ERR(ret);
++	}
++
++	return 0;
++}
++
++static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
++			  void *buf, int len, int write)
++{
++	struct sgx_encl *encl = vma->vm_private_data;
++	struct sgx_encl_page *entry = NULL;
++	unsigned long align;
++	char data[sizeof(unsigned long)];
++	int offset;
++	int cnt;
++	int ret = 0;
++	int i;
++
++	/* If process was forked, VMA is still there but vm_private_data is set
++	 * to NULL.
++	 */
++	if (!encl)
++		return -EFAULT;
++
++	if (!(encl->flags & SGX_ENCL_DEBUG) ||
++	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
++	    (encl->flags & SGX_ENCL_DEAD))
++		return -EFAULT;
++
++	for (i = 0; i < len; i += cnt) {
++		if (!entry || !((addr + i) & (PAGE_SIZE - 1))) {
++			if (entry)
++				entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
++
++			entry = sgx_fault_page(vma, (addr + i) & PAGE_MASK,
++					       true);
++			if (IS_ERR(entry)) {
++				ret = PTR_ERR(entry);
++				entry = NULL;
++				break;
++			}
++		}
++
++		/* Locking is not needed because only immutable fields of the
++		 * page are accessed and page itself is reserved so that it
++		 * cannot be swapped out in the middle.
++		 */
++
++		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
++		offset = (addr + i) & (sizeof(unsigned long) - 1);
++		cnt = sizeof(unsigned long) - offset;
++		cnt = min(cnt, len - i);
++
++		ret = sgx_edbgrd(encl, entry, align, data);
++		if (ret)
++			break;
++		if (write) {
++			memcpy(data + offset, buf + i, cnt);
++			ret = sgx_edbgwr(encl, entry, align, data);
++			if (ret)
++				break;
++		}
++		else
++			memcpy(buf + i,data + offset, cnt);
++	}
++
++	if (entry)
++		entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
++
++	return (ret < 0 && ret != -ECANCELED) ? ret : i;
++}
++
+ const struct vm_operations_struct sgx_vm_ops = {
+ 	.close = sgx_vma_close,
+ 	.open = sgx_vma_open,
+ 	.fault = sgx_vma_fault,
++	.access = sgx_vma_access,
+ };
+-- 
+2.17.1
