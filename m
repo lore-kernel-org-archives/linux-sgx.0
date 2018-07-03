@@ -1,8 +1,4 @@
-Received: from Galois.linutronix.de ([146.0.238.70]:45383 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbeGCUQX (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 3 Jul 2018 16:16:23 -0400
-Date: Tue, 3 Jul 2018 22:16:12 +0200
+Date: Tue, 3 Jul 2018 21:46:43 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
@@ -10,119 +6,261 @@ CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
 	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "open
  list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 08/13] x86/sgx: wrappers for ENCLS opcode leaf
- functions
-In-Reply-To: <20180703182118.15024-9-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032149300.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-9-jarkko.sakkinen@linux.intel.com>
+Subject: Re: [PATCH v12 07/13] x86/sgx: data structures for tracking available
+ EPC pages
+In-Reply-To: <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1807032110460.1816@nanos.tec.linutronix.de>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset="US-ASCII"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+Return-Path: tglx@linutronix.de
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
 On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
 
-> This commit adds wrappers for Intel(R) SGX ENCLS opcode leaf functions
+> SGX has a set of data structures to maintain information about the enclaves
+> and their security properties. BIOS reserves a fixed size region of
+> physical memory for these structures by setting Processor Reserved Memory
+> Range Registers (PRMRR). This memory area is called Enclave Page Cache
+> (EPC).
+> 
+> This commit adds a database of EPC banks for kernel to easily access the
 
-Add...
+Add a ....
 
-> except for ENCLS(EINIT). The ENCLS instruction invokes the privileged
-> functions for managing (creation, initialization and swapping) and
-> debugging enclaves.
+> available EPC pages. On UMA architectures there is a singe bank of EPC
+
+singe? Spell checkers exist for a reason.
+
+> pages. On NUMA architectures there is an EPC bank for each node.
+
+> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> index 2130e639ab49..77b2294fcfb0 100644
+> --- a/arch/x86/include/asm/sgx.h
+> +++ b/arch/x86/include/asm/sgx.h
+> @@ -4,9 +4,39 @@
+>  #ifndef _ASM_X86_SGX_H
+>  #define _ASM_X86_SGX_H
 >  
-> +#define IS_ENCLS_FAULT(r) ((r) & 0xffff0000)
-> +#define ENCLS_FAULT_VECTOR(r) ((r) >> 16)
+> +#include <asm/sgx_arch.h>
+> +#include <asm/asm.h>
+
+asm includes go below.
+
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/rwsem.h>
+>  #include <linux/types.h>
+>  
+> +#define SGX_MAX_EPC_BANKS 8
 > +
-> +#define ENCLS_TO_ERR(r) (IS_ENCLS_FAULT(r) ? -EFAULT :		\
-> +			(r) == SGX_UNMASKED_EVENT ? -EINTR :	\
-> +			(r) == SGX_MAC_COMPARE_FAIL ? -EIO :	\
-> +			(r) == SGX_ENTRYEPOCH_LOCKED ? -EBUSY : -EPERM)
+> +#define SGX_EPC_BANK(epc_page) \
+> +	(&sgx_epc_banks[(unsigned long)(epc_page->desc) & ~PAGE_MASK])
+> +#define SGX_EPC_PFN(epc_page) PFN_DOWN((unsigned long)(epc_page->desc))
+> +#define SGX_EPC_ADDR(epc_page) ((unsigned long)(epc_page->desc) & PAGE_MASK)
 
-Inlines please along with proper comments.
+And these need to be macros because MACROS_ARE_SO_PROMINENT, while inline
+functions are so boring and type safe.
 
-> +#define __encls_ret_N(rax, inputs...)			\
-> +	({						\
-> +	int ret;					\
-> +	asm volatile(					\
-> +	"1: .byte 0x0f, 0x01, 0xcf;\n\t"		\
-> +	"2:\n"						\
-> +	".section .fixup,\"ax\"\n"			\
-> +	"3: shll $16,%%eax\n"				\
+> +static atomic_t sgx_nr_free_pages = ATOMIC_INIT(0);
+> +static struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
+> +static int sgx_nr_epc_banks;
+> +
+> +/**
+> + * sgx_get_page - pin an EPC page
 
-SHLL ??? _All_ the macro maze needs proper comments.
+Description starts with an uppercase letter.
 
-> +	"   jmp 2b\n"					\
-> +	".previous\n"					\
-> +	_ASM_EXTABLE_FAULT(1b, 3b)			\
-> +	: "=a"(ret)					\
-> +	: "a"(rax), inputs				\
-> +	: "memory");					\
-> +	ret;						\
-> +	})
+> + * @page:	an EPC page
 
-....
+That's not an EPC page. It's a pointer to an EPC page. Please make these
+comments useful and do not add them just that they exist.
 
-> +static inline int __emodt(struct sgx_secinfo *secinfo, void *epc)
+> + *
+> + * Return: a pointer to the pinned EPC page
+> + */
+> +void *sgx_get_page(struct sgx_epc_page *page)
 > +{
-> +	return __encls_ret_2(EMODT, secinfo, epc);
+> +	struct sgx_epc_bank *bank = SGX_EPC_BANK(page);
+> +
+> +	if (IS_ENABLED(CONFIG_X86_64))
+
+And this is needed because the SGX config switch has:
+
+       depends on X86_64 && CPU_SUP_INTEL
+
+So what is this for and why do you need the 32bit implementation at all?
+
+> +		return (void *)(bank->va + SGX_EPC_ADDR(page) - bank->pa);
+> +
+> +	return kmap_atomic_pfn(SGX_EPC_PFN(page));
 > +}
+> +EXPORT_SYMBOL(sgx_get_page);
 > +
->  #define SGX_MAX_EPC_BANKS 8
->  
->  #define SGX_EPC_BANK(epc_page) \
-> @@ -39,4 +190,29 @@ extern bool sgx_lc_enabled;
->  void *sgx_get_page(struct sgx_epc_page *ptr);
->  void sgx_put_page(void *epc_page_ptr);
+> +/**
+> + * sgx_put_page - unpin an EPC page
+> + * @ptr:	a pointer to the pinned EPC page
+> + */
+> +void sgx_put_page(void *ptr)
+> +{
+> +	if (IS_ENABLED(CONFIG_X86_64))
+> +		return;
 
-> +#define SGX_FN(name, params...)		\
-> +{					\
-> +	void *epc;			\
-> +	int ret;			\
-> +	epc = sgx_get_page(epc_page);	\
-> +	ret = __##name(params);		\
-> +	sgx_put_page(epc);		\
+Ditto
 
-This whole get/put magic is totally pointless. The stuff is 64bit only, so
-all it needs is the address, because 'put' is a noop on 64bit.
-
-> +	return ret;			\
+>
+> +	kunmap_atomic(ptr);
 > +}
+> +EXPORT_SYMBOL(sgx_put_page);
 > +
-> +#define BUILD_SGX_FN(fn, name)				\
-> +static inline int fn(struct sgx_epc_page *epc_page)	\
-> +	SGX_FN(name, epc)
-> +BUILD_SGX_FN(sgx_eremove, eremove)
-> +BUILD_SGX_FN(sgx_eblock, eblock)
-> +BUILD_SGX_FN(sgx_etrack, etrack)
-> +BUILD_SGX_FN(sgx_epa, epa)
+> +static __init int sgx_init_epc_bank(unsigned long addr, unsigned long size,
+> +				    unsigned long index,
+> +				    struct sgx_epc_bank *bank)
+> +{
+> +	unsigned long nr_pages = size >> PAGE_SHIFT;
+> +	unsigned long i;
+> +	void *va;
 > +
-> +static inline int sgx_emodpr(struct sgx_secinfo *secinfo,
-> +			     struct sgx_epc_page *epc_page)
-> +	SGX_FN(emodpr, secinfo, epc)
-> +static inline int sgx_emodt(struct sgx_secinfo *secinfo,
-> +			    struct sgx_epc_page *epc_page)
-> +	SGX_FN(emodt, secinfo, epc)
+> +	if (IS_ENABLED(CONFIG_X86_64)) {
 
-Bah this is really unreadable crap. What's so horribly wrong with writing
-this simply as:
+And more.
 
-static inline int sgx_eremove(struct sgx_epc_page *epc_page)
+> +		va = ioremap_cache(addr, size);
+> +		if (!va)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	bank->pages_data = kzalloc(nr_pages * sizeof(struct sgx_epc_page),
+> +				   GFP_KERNEL);
+> +	if (!bank->pages_data) {
+> +		if (IS_ENABLED(CONFIG_X86_64))
+> +			iounmap(va);
+> +
+> +		return -ENOMEM;
+> +	}
+
+  	if (!bank->pages_data)
+		goto out_iomap;
+
+> +
+> +	bank->pages = kzalloc(nr_pages * sizeof(struct sgx_epc_page *),
+> +			      GFP_KERNEL);
+> +	if (!bank->pages) {
+> +		if (IS_ENABLED(CONFIG_X86_64))
+> +			iounmap(va);
+> +		kfree(bank->pages_data);
+> +		bank->pages_data = NULL;
+> +		return -ENOMEM;
+> +	}
+
+  	if (!bank->pages)
+		goto out_pdata;
+
+> +	for (i = 0; i < nr_pages; i++) {
+> +		bank->pages[i] = &bank->pages_data[i];
+> +		bank->pages[i]->desc = (addr + (i << PAGE_SHIFT)) | index;
+> +	}
+> +
+> +	bank->pa = addr;
+> +	bank->size = size;
+> +	if (IS_ENABLED(CONFIG_X86_64))
+> +		bank->va = (unsigned long)va;
+
+Why is bank->va unsigned long and not a void *? That's spare the type casts.
+
+> +
+> +	atomic_set(&bank->free_cnt, nr_pages);
+> +	init_rwsem(&bank->lock);
+> +	atomic_add(nr_pages, &sgx_nr_free_pages);
+> +	return 0;
+
+out_iomap:
+	iounmap(va);
+out_pdata:
+	kfree(bank->pages_data);
+	bank->pages_data = NULL;
+	return -ENOMEM;
+
+
+> +static __init int sgx_page_cache_init(void)
+> +{
+> +	unsigned long size;
+> +	unsigned int eax;
+> +	unsigned int ebx;
+> +	unsigned int ecx;
+> +	unsigned int edx;
+> +	unsigned long pa;
+> +	int i;
+> +	int ret;
+
+Please aggregate the declarations of the same type. No point in wasting all
+the screen space. And please use 'u32' for ea-dx
+
+> +
+> +	for (i = 0; i < SGX_MAX_EPC_BANKS; i++) {
+> +		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC_BANKS, &eax, &ebx,
+> +			    &ecx, &edx);
+> +		if (!(eax & 0xf))
+> +			break;
+> +
+> +		pa = ((u64)(ebx & 0xfffff) << 32) + (u64)(eax & 0xfffff000);
+> +		size = ((u64)(edx & 0xfffff) << 32) + (u64)(ecx & 0xfffff000);
+
+These magic constants should be 'U', using uppercase 'F' and defines. Plus
+this wants a comment how pa and size are cobbled together from the cpuid
+regs.
+
+> +
+> +		pr_info("EPC bank 0x%lx-0x%lx\n", pa, pa + size);
+
+	size - 1 because the bank does not reach into the next page.
+
+> +		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
+> +		if (ret) {
+> +			sgx_page_cache_teardown();
+> +			return ret;
+> +		}
+> +
+> +		sgx_nr_epc_banks++;
+> +	}
+> +
+> +	return 0;
+
+This returns success even when the number of detected banks is zero.
+
+> + }
+
+This whole thing can be written readable.
+
 {
-	return __encls_ret_1(EREMOVE, epc_page_addr(epc_page));
+	int i, cnt = SGX_CPUID_EPC_BANKS;
+
+	for (i = 0; i < SGX_MAX_EPC_BANKS; i++, cnt++) {
+	     	u32 eax, ebx, ecx, edx;
+		unsigned long pa, size;
+		int ret;
+
+		cpuid_count(SGX_CPUID, cnt, &eax, &ebx, &ecx, &edx);
+		if (!(eax & 0xF))
+			break;
+
+		pa = combine_regs(ebx, eax);
+		size = combine_regs(edx, ecx);
+
+		pr_info("EPC bank 0x%lx-0x%lx\n", pa, pa + size);
+
+		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
+		if (ret) {
+			sgx_page_cache_teardown();
+			return ret;
+		}
+		sgx_nr_epc_banks++;
+	}
+
+	return sgx_nr_epc_banks ? : -ENODEV;
 }
 
-static inline int sgx_emodt(struct sgx_secinfo *secinfo,
-			    struct sgx_epc_page *epc_page)
-{
-	return __encls_ret_2(EREMOVE, secinfo, epc_page_addr(epc_page));
-}
-
-instead of all these completely pointless meta functions and build macro
-maze around it.
-
-Why? Because then every function which is actually used in code has a
-proper prototype instead of nongrepable magic and a gazillion of wrappers.
+You get the idea...
 
 Thanks,
 
