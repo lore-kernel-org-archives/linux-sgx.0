@@ -1,42 +1,67 @@
-Date: Thu, 5 Jul 2018 19:05:49 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov
-	<bp@suse.de>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Janakarajan Natarajan
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+	Borislav Petkov <bp@suse.de>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Janakarajan Natarajan
 	<Janakarajan.Natarajan@amd.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
  list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
-Message-ID: <20180705160549.GA12818@linux.intel.com>
+Subject: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
+Date: Tue, 3 Jul 2018 21:19:48 +0300
+Message-ID: <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
 References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
- <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
-Return-Path: jarkko.sakkinen@linux.intel.com
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 11:31:59AM -0700, Dave Hansen wrote:
-> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
-> > --- a/arch/x86/include/asm/msr-index.h
-> > +++ b/arch/x86/include/asm/msr-index.h
-> > @@ -479,6 +479,8 @@
-> >  #define FEATURE_CONTROL_LOCKED				(1<<0)
-> >  #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
-> >  #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
-> > +#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
-> > +#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
-> >  #define FEATURE_CONTROL_LMCE				(1<<20)
-> 
-> Have you run checkpatch.pl on these?  There's a tabs-vs-spaces issue here.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-High portion of lines in this file are over 80 characters and have this
-same incosistent spacing. I'm not sure if this should be fixed bacause
-it would be consistent with the formatting that this file uses...
+ENCLS and ENCLU are usable if and only if SGX_ENABLE is set and After
+SGX is activated the IA32_SGXLEPUBKEYHASHn MSRs are writable if
+SGX_LC_WR is set and the feature control is locked.
 
-/Jarkko
+SGX related bits in IA32_FEATURE_CONTROL cannot be set before SGX is
+activated by the pre-boot firmware. SGX activation is triggered by
+setting bit 0 in the MSR 0x7a. Until SGX is activated, the LE hash MSRs
+are writable to allow pre-boot firmware to lock down the LE root key
+with a non-Intel value.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Haim Cohen <haim.cohen@intel.com>
+---
+ arch/x86/include/asm/msr-index.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index fda2114197b3..a7355fb7344f 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -479,6 +479,8 @@
+ #define FEATURE_CONTROL_LOCKED				(1<<0)
+ #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
+ #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
++#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
++#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
+ #define FEATURE_CONTROL_LMCE				(1<<20)
+ 
+ #define MSR_IA32_APICBASE		0x0000001b
+@@ -545,6 +547,12 @@
+ #define PACKAGE_THERM_INT_LOW_ENABLE		(1 << 1)
+ #define PACKAGE_THERM_INT_PLN_ENABLE		(1 << 24)
+ 
++/* Intel SGX MSRs */
++#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
++#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
++#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
++#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++
+ /* Thermal Thresholds Support */
+ #define THERM_INT_THRESHOLD0_ENABLE    (1 << 15)
+ #define THERM_SHIFT_THRESHOLD0        8
+-- 
+2.17.1
