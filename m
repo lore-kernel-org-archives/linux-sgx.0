@@ -1,41 +1,47 @@
-Date: Wed, 4 Jul 2018 20:25:58 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov
-	<bp@suse.de>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Janakarajan Natarajan
-	<Janakarajan.Natarajan@amd.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
-Message-ID: <20180704172558.GE6724@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, "David S. Miller"
+	<davem@davemloft.net>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>,
+	"Randy Dunlap" <rdunlap@infradead.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v12 01/13] x86/sgx: updated MAINTAINERS
+Date: Tue, 3 Jul 2018 21:19:46 +0300
+Message-ID: <20180703182118.15024-2-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
 References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
- <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
-Return-Path: jarkko.sakkinen@linux.intel.com
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 11:31:59AM -0700, Dave Hansen wrote:
-> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
-> > --- a/arch/x86/include/asm/msr-index.h
-> > +++ b/arch/x86/include/asm/msr-index.h
-> > @@ -479,6 +479,8 @@
-> >  #define FEATURE_CONTROL_LOCKED				(1<<0)
-> >  #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
-> >  #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
-> > +#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
-> > +#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
-> >  #define FEATURE_CONTROL_LMCE				(1<<20)
-> 
-> Have you run checkpatch.pl on these?  There's a tabs-vs-spaces issue here.
+Updated the MAINTAINERS file to point to the Intel SGX subsystem tree.
 
-Thought I did. Do not know how that has slipped there but I will fix
-it. Thanks.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-/Jarkko
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ca4afd68530c..12f7c68378e8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7329,6 +7329,13 @@ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-intel-mid.c
+ 
++INTEL SGX
++M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++L:	linux-sgx@vger.kernel.org
++Q:	https://patchwork.kernel.org/project/intel-sgx/list/
++F:	drivers/platform/x86/intel_sgx/
++K:	\bSGX_
++
+ INVENSENSE MPU-3050 GYROSCOPE DRIVER
+ M:	Linus Walleij <linus.walleij@linaro.org>
+ L:	linux-iio@vger.kernel.org
+-- 
+2.17.1
