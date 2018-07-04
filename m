@@ -1,46 +1,70 @@
-Date: Wed, 4 Jul 2018 06:25:53 +0200
-From: Borislav Petkov <bp@alien8.de>
+Date: Wed, 4 Jul 2018 20:26:29 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>
-CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
-	<platform-driver-x86@vger.kernel.org>, <dave.hansen@intel.com>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "open list:X86
- ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 09/13] x86/sgx: EPC page allocation routines
-Message-ID: <20180704042516.GA20409@zn.tnic>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Tom
+ Lendacky" <thomas.lendacky@amd.com>, Borislav Petkov <bp@suse.de>, "Konrad
+ Rzeszutek Wilk" <konrad.wilk@oracle.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Janakarajan Natarajan
+	<Janakarajan.Natarajan@amd.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
+Message-ID: <20180704172629.GF6724@linux.intel.com>
 References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-10-jarkko.sakkinen@linux.intel.com>
- <alpine.DEB.2.21.1807032216390.1816@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <alpine.DEB.2.21.1807032216390.1816@nanos.tec.linutronix.de>
-Return-Path: bp@alien8.de
+ <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032049270.1816@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <alpine.DEB.2.21.1807032049270.1816@nanos.tec.linutronix.de>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 10:41:14PM +0200, Thomas Gleixner wrote:
+On Tue, Jul 03, 2018 at 08:51:23PM +0200, Thomas Gleixner wrote:
 > On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
-> >  
-> > +#define SGX_NR_TO_SCAN	16
-> > +#define SGX_NR_LOW_PAGES 32
-> > +#define SGX_NR_HIGH_PAGES 64
-> > +
-> >  bool sgx_enabled __ro_after_init;
-> >  EXPORT_SYMBOL(sgx_enabled);
-> >  bool sgx_lc_enabled __ro_after_init;
-> >  EXPORT_SYMBOL(sgx_lc_enabled);
-> > +LIST_HEAD(sgx_active_page_list);
-> > +EXPORT_SYMBOL(sgx_active_page_list);
-> > +DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > +EXPORT_SYMBOL(sgx_active_page_list_lock);
 > 
-> Why is all of this exported. If done right then no call site has to fiddle
-> with the list and the lock at all.
+> x86/msr: Add ....
+> 
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > ENCLS and ENCLU are usable if and only if SGX_ENABLE is set and After
+> > SGX is activated the IA32_SGXLEPUBKEYHASHn MSRs are writable if
+> > SGX_LC_WR is set and the feature control is locked.
+> > 
+> > SGX related bits in IA32_FEATURE_CONTROL cannot be set before SGX is
+> > activated by the pre-boot firmware. SGX activation is triggered by
+> > setting bit 0 in the MSR 0x7a. Until SGX is activated, the LE hash MSRs
+> > are writable to allow pre-boot firmware to lock down the LE root key
+> > with a non-Intel value.
+> > 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Haim Cohen <haim.cohen@intel.com>
+> 
+> Lacks SOB
+> 
+> > ---
+> >  arch/x86/include/asm/msr-index.h | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> > index fda2114197b3..a7355fb7344f 100644
+> > --- a/arch/x86/include/asm/msr-index.h
+> > +++ b/arch/x86/include/asm/msr-index.h
+> > @@ -479,6 +479,8 @@
+> >  #define FEATURE_CONTROL_LOCKED				(1<<0)
+> >  #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
+> >  #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
+> > +#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
+> 
+> Tabs not spaces please. checkpatch.pl would have told you
+> 
+> > +#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
+> 
+> Thanks,
+> 
+> 	tglx
 
-... and also, why are the other exports not EXPORT_SYMBOL_GPL?
+Thanks, will refine!
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
