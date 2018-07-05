@@ -1,88 +1,62 @@
-Date: Tue, 3 Jul 2018 21:04:01 +0200
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Date: Thu, 5 Jul 2018 14:50:05 -0700
+In-Reply-To: <20180705200912.GA10701@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com> <f9fe78ca-0ff4-814c-3681-a2366be01337@intel.com> <20180705200912.GA10701@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 Subject: Re: [PATCH v12 05/13] x86/sgx: architectural structures
-In-Reply-To: <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032056460.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="US-ASCII"
-Return-Path: tglx@linutronix.de
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Dave Hansen
+	<dave.hansen@intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "open list:X86
+ ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+From: <hpa@zytor.com>
+Message-ID: <E666884A-3EED-426E-BAB1-FA23C57BA5B9@zytor.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+On July 5, 2018 1:09:12 PM PDT, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+>On Thu, Jul 05, 2018 at 08:31:42AM -0700, Dave Hansen wrote:
+>> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
+>> > +struct sgx_secs {
+>> > +	uint64_t size;
+>> > +	uint64_t base;
+>> > +	uint32_t ssaframesize;
+>> > +	uint32_t miscselect;
+>> > +	uint8_t reserved1[SGX_SECS_RESERVED1_SIZE];
+>> > +	uint64_t attributes;
+>> > +	uint64_t xfrm;
+>> > +	uint32_t mrenclave[8];
+>> > +	uint8_t reserved2[SGX_SECS_RESERVED2_SIZE];
+>> > +	uint32_t mrsigner[8];
+>> > +	uint8_t	reserved3[SGX_SECS_RESERVED3_SIZE];
+>> > +	uint16_t isvvprodid;
+>> > +	uint16_t isvsvn;
+>> > +	uint8_t reserved4[SGX_SECS_RESERVED4_SIZE];
+>> > +} __packed __aligned(4096);
+>> 
+>> Why are the uint* versions in use here?  Those are for userspace ABI,
+>> but this is entirely for in-kernel-use, right?
+>> 
+>> We've used u8/16/32/64 in arch code in a bunch of places.  They're at
+>> least a bit more compact and easier to read.  It's this:
+>> 
+>> 	u8	foo;
+>> 	u64	bar;
+>> 
+>> vs. this:
+>> 
+>> 	uint8_t	 foo;
+>> 	uint64_t bar;
+>
+>The reason was that with in-kernel LE these were in fact used by
+>user space code. Now they can be changed to those that you
+>suggested.
+>
+>/Jarkko
 
-> This commit adds arch/x86/include/asm/sgx_arch.h that contains definitions
-
-This is not a commit. Simply: Add .....
-
-> for data structures used by the SGX.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-
-Documentaiton:
-
-  A Co-Developed-by: states that the patch was also created by another developer
-  along with the original author.  This is useful at times when multiple people
-  work on a single patch.  Note, this person also needs to have a Signed-off-by:
-  line in the patch as well.
-
-Please fix all over the place.
-
-> +
-> +#define SGX_MISC_RESERVED_MASK 0xFFFFFFFFFFFFFFFEL
-
-L ? ULL I'd say...
-
-> +#define SGX_ATTR_RESERVED_MASK 0xFFFFFFFFFFFFFFC9L
-
-Ditto
-
-> +#define SGX_SECS_RESERVED1_SIZE 24
-> +#define SGX_SECS_RESERVED2_SIZE 32
-> +#define SGX_SECS_RESERVED3_SIZE 96
-> +#define SGX_SECS_RESERVED4_SIZE 3836
-> +
-> +struct sgx_secs {
-> +	uint64_t size;
-> +	uint64_t base;
-> +	uint32_t ssaframesize;
-> +	uint32_t miscselect;
-> +	uint8_t reserved1[SGX_SECS_RESERVED1_SIZE];
-> +	uint64_t attributes;
-
-Please make these tabular aligned for readility sake
-
-> +	uint32_t	miscselect;
-> +	uint8_t		reserved1[SGX_SECS_RESERVED1_SIZE];
-> +	uint64_t	attributes;
-
-Hmm? All over the place...
-
-> +enum sgx_tcs_flags {
-> +	SGX_TCS_DBGOPTIN	= 0x01, /* cleared on EADD */
-
-Please do not use tail comments. Either put the comment above the define or
-use kernel doc.
-
-> +};
-> +
-> +#define SGX_TCS_RESERVED_MASK 0xFFFFFFFFFFFFFFFEL
-
-See above.
-
-> +#define SGX_SECINFO_PERMISSION_MASK	0x0000000000000007L
-> +#define SGX_SECINFO_PAGE_TYPE_MASK	0x000000000000FF00L
-> +#define SGX_SECINFO_RESERVED_MASK	0xFFFFFFFFFFFF00F8L
-
-Ditto
-
-Thanks,
-
-	tglx
+For things exported to user space use __u* and __s* types... the _t types would actually violate the C standard with respect to namespace pollution.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
