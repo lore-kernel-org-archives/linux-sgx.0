@@ -1,50 +1,39 @@
-Date: Wed, 4 Jul 2018 20:27:23 +0300
+Date: Sat, 28 Jul 2018 16:23:23 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
+To: Jethro Beekman <jethro@fortanix.com>
 CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?=
-	<rkrcmar@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Borislav Petkov
-	<bp@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Alexei
- Starovoitov" <ast@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, "Andi
- Kleen" <ak@linux.intel.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>, Janakarajan Natarajan
-	<Janakarajan.Natarajan@amd.com>, Andy Lutomirski <luto@kernel.org>, "Ricardo
- Neri" <ricardo.neri-calderon@linux.intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <linux-kernel@vger.kernel.org>, "open list:KERNEL VIRTUAL MACHINE
- FOR X86 (KVM/x86)" <kvm@vger.kernel.org>
-Subject: Re: [PATCH v12 04/13] x86/cpufeatures: add Intel-defined SGX leaf
- CPUID_12_EAX
-Message-ID: <20180704172723.GG6724@linux.intel.com>
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>, "Andy
+ Shevchenko" <andy@infradead.org>, "open list:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 11/13] platform/x86: Intel SGX driver
+Message-ID: <20180728132323.GC7697@linux.intel.com>
 References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-5-jarkko.sakkinen@linux.intel.com>
- <alpine.DEB.2.21.1807032051510.1816@nanos.tec.linutronix.de>
+ <20180703182118.15024-12-jarkko.sakkinen@linux.intel.com>
+ <2cd5def0-61f0-3d57-efa4-7d835d7bdb86@fortanix.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <alpine.DEB.2.21.1807032051510.1816@nanos.tec.linutronix.de>
-Return-Path: jarkko.sakkinen@linux.intel.com
+In-Reply-To: <2cd5def0-61f0-3d57-efa4-7d835d7bdb86@fortanix.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 08:54:56PM +0200, Thomas Gleixner wrote:
-> On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+On Wed, Jul 25, 2018 at 08:52:27AM -0700, Jethro Beekman wrote:
+> On 2018-07-03 11:19, Jarkko Sakkinen wrote:
+> > +/* IOCTL return values */
+> > +#define SGX_POWER_LOST_ENCLAVE		0x40000000
+> > +#define SGX_LE_ROLLBACK			0x40000001
 > 
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX.
-> > There are currently four documented feature bits, with more expected in
-> > the not-too-distant future.
-> > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> I don't think SGX_LE_ROLLBACK is used anymore.
 > 
-> Lacks SOB
-> 
-> Thanks,
-> 
-> 	tglx
+> Jethro Beekman | Fortanix
 
-Thanks, will refine!
+Correct. Thaks for spotting that out.
+
+I've on a leave for soon past three weeks and one week is remaining but
+have been slowly preparing v13 like one day a week so after next week it
+shouldn't take much time to get it out.
 
 /Jarkko
