@@ -1,42 +1,122 @@
-Date: Fri, 31 Aug 2018 16:34:45 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Sean Christopherson <sean.j.christopherson@intel.com>
-CC: "Huang, Kai" <kai.huang@intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-Message-ID: <20180831213445.GA4098@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com> <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com> <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com> <20180829203351.GB7142@linux.intel.com> <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com> <20180829210901.GA7176@linux.intel.com> <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com> <20180831174330.GA21555@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180831174330.GA21555@linux.intel.com>
-Return-Path: greg@wind.enjellic.com
+Subject: Re: [PATCH v13 06/13] x86/sgx: Detect Intel SGX
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
+	<platform-driver-x86@vger.kernel.org>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
+CC: <sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Suresh Siddha
+	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Serge Ayoun
+	<serge.ayoun@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Borislav Petkov <bp@suse.de>, Reinette Chatre <reinette.chatre@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <50c199b6-e8eb-9120-0d2a-5e60ac0139b4@intel.com>
+Date: Mon, 27 Aug 2018 12:53:59 -0700
+In-Reply-To: <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Aug 31, 2018 at 10:43:30AM -0700, Sean Christopherson wrote:
+> +config INTEL_SGX_CORE
+> +	prompt "Intel SGX core functionality"
+> +	def_bool n
+> +	depends on X86_64 && CPU_SUP_INTEL
+> +	help
+> +	Intel Software Guard eXtensions (SGX) is a set of CPU instructions
+> +	that allows ring 3 applications to create enclaves, private regions
+> +	of memory that are protected, by hardware, from unauthorized access
+> +	and/or modification.
 
-Good afternoon to everyone.
+This is a bit comma-crazy.  Also, considering some of our recent CVE
+fun, I'd probably not claim hardware protection. :)
 
-> > Sorry I missed this one. To be honest I don't know. I checked the
-> > SDM and all I can find is:
-> >
-> > "On reset, the default value is the digest of Intel's signing key."
+Maybe:
 
-> I confirmed the MSRs are reset any time the EPC is lost.  Not sure
-> what happens if the MSRs contained a non-Intel value but feature
-> control is locked with SGX launch control disabled.  I'll post an
-> update when I have an answer.
+	Intel Software Guard eXtensions (SGX) CPU feature that allows
+	ring 3 applications to create enclaves: private regions
+	of memory that are architecturally protected from unauthorized
+	access and/or modification.
 
-It was our interpretation from the SDM that the identity modulus
-signature MSR's are 'trap-door' registers.  If flexible launch control
-(FLC) is enabled the platform has one opportunity to write a new
-signature value, after which the registers are locked from
-modification until the next platform reset.
+> +	This option enables kernel recognition of SGX, high-level management
+> +	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
+> +	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
+> +	iteslf, this option does not provide SGX support to userspace.
+
+itself
+
+
+> diff --git a/arch/x86/include/asm/sgx_pr.h b/arch/x86/include/asm/sgx_pr.h
+> new file mode 100644
+> index 000000000000..c68578127620
+> --- /dev/null
+> +++ b/arch/x86/include/asm/sgx_pr.h
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-17 Intel Corporation.
+> +
+> +#ifndef _ASM_X86_SGX_PR_H
+> +#define _ASM_X86_SGX_PR_H
+> +
+> +#include <linux/printk.h>
+> +#include <linux/ratelimit.h>
+> +
+> +#undef pr_fmt
+> +#define pr_fmt(fmt) "sgx: " fmt
+> +
+> +#endif /* _ASM_X86_SGX_PR_H */
+
+I don't think this belongs in a generic header.  Generally, we do the
+pr_fmt stuff in .c files, not in headers.  If someone includes this
+header directly or indirectly, they'll get a big surprise.
+
+If you *must* have this in a .h file, put it in
+arch/x86/kernel/cpu/intel_sgx.h or something and #include "intel_sgx.h"
+in all the .c files where you want this.
+
+
+> +static __init int sgx_init(void)
+> +{
+> +	unsigned long fc;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_SGX))
+> +		return false;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_SGX1))
+> +		return false;
+> +
+> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +		pr_info("IA32_FEATURE_CONTROL MSR is not locked\n");
+> +		return false;
+> +	}
+
+This is a rather crummy error message.  Doesn't this keep sgx from
+initializing?  Would something like this be more informative?
+
+	pr_info("failed init: IA32_FEATURE_CONTROL MSR not locked\n");
+
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		pr_info("disabled by the firmware\n");
+> +		return false;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR))
+> +		pr_info("IA32_SGXLEPUBKEYHASHn MSRs are not writable\n");
+
+How about something that might help an end user?  Perhaps:
+
+	pr_warn("launch configuration not available\n");
+
+> +	sgx_enabled = true;
+> +	sgx_lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
+> +	return 0;
+> +}
+> +
+> +arch_initcall(sgx_init);
+>
