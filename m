@@ -1,103 +1,235 @@
-Date: Fri, 31 Aug 2018 11:15:09 -0700
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: "Huang, Kai" <kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180831181509.GB21555@linux.intel.com>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jonathan Corbet
+	<corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v13 13/13] x86/sgx: Driver documentation
+Date: Mon, 27 Aug 2018 21:53:34 +0300
+Message-ID: <20180827185507.17087-14-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180831121645.GA18075@linux.intel.com>
-Sender: <linux-kernel-owner@vger.kernel.org>
-Return-Path: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="y"
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
-> > [snip..]
-> > 
-> > > > >
-> > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
-> > > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > +sgx_pm_cnt;
-> > > > > +
-> > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > > > +MSRs
-> > > > > for each
-> > > > > + * CPU. The entries are initialized when they are first used by
-> > > > > sgx_einit().
-> > > > > + */
-> > > > > +struct sgx_lepubkeyhash {
-> > > > > +	u64 msrs[4];
-> > > > > +	u64 pm_cnt;
-> > > >
-> > > > May I ask why do we need pm_cnt here? In fact why do we need suspend
-> > > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
-> > > > in this patch? From the patch commit message I don't see why we need
-> > > > PM staff here. Please give comment why you need PM staff, or you may
-> > > > consider to split the PM staff to another patch.
-> > > 
-> > > Refining the commit message probably makes more sense because without PM
-> > > code sgx_einit() would be broken. The MSRs have been reset after waking up.
-> > > 
-> > > Some kind of counter is required to keep track of the power cycle. When going
-> > > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
-> > > the global count to the value in the cache entry to see whether we are in a new
-> > > power cycle.
-> > 
-> > You mean reset to Intel default? I think we can also just reset the
-> > cached MSR values on each power cycle, which would be simpler, IMHO?
-> 
-> I don't really see that much difference in the complexity.
+Documentation of the features of the Software Guard eXtensions used
+by the Linux kernel and basic design choices for the core and driver
+and functionality.
 
-Tracking the validity of the cache means we're hosed if we miss any
-condition that causes the MSRs to be reset.  I think we're better off
-assuming the cache can be stale at any time, i.e. don't track power
-cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
-the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
-interruptible and its latency is extremely variable in any case, e.g.
-tens of thousands of cycles, so this rarely-hit "slow path" probably
-wouldn't affect the worst case latency of EINIT.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ Documentation/index.rst         |   1 +
+ Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
+ 2 files changed, 186 insertions(+)
+ create mode 100644 Documentation/x86/intel_sgx.rst
+
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 5db7e87c7cb1..1cdc139adb40 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -104,6 +104,7 @@ implementation.
+    :maxdepth: 2
  
-> > I think we definitely need some code to handle S3-S5, but should be in
-> > separate patches, since I think the major impact of S3-S5 is entire
-> > EPC being destroyed. I think keeping pm_cnt is not sufficient enough
-> > to handle such case?
-> 
-> The driver has SGX_POWER_LOST_ENCLAVE for ioctls and it deletes the TCS
-> entries.
-> 
-> > > This brings up one question though: how do we deal with VM host going to sleep?
-> > > VM guest would not be aware of this.
-> > 
-> > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
-> > SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
-> > co-working together to re-establish the missing enclaves.
-> 
-> This is not about EPC. It is already dealt by the driver. I'm concerned
-> about the MSR cache as it would mess up.
-> 
-> But I guess this logic is part of the KVM code anyway now that I think
-> more of it.
-
-Ya, I expect that VMMs will preserve VM's virtual pubkey MSRs, though
-there might be scenarios where a VM has direct access to the hardware
-MSRs.  This is probably a moot point since I don't think we want to
-assume the kernel's cache is 100% accurate, regardless of environment.
+    sh/index
++   x86/index
+ 
+ Filesystem Documentation
+ ------------------------
+diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
+new file mode 100644
+index 000000000000..f6b7979c41f2
+--- /dev/null
++++ b/Documentation/x86/intel_sgx.rst
+@@ -0,0 +1,185 @@
++===================
++Intel(R) SGX driver
++===================
++
++Introduction
++============
++
++Intel(R) SGX is a set of CPU instructions that can be used by applications to
++set aside private regions of code and data. The code outside the enclave is
++disallowed to access the memory inside the enclave by the CPU access control.
++In a way you can think that SGX provides inverted sandbox. It protects the
++application from a malicious host.
++
++You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
++
++	``cat /proc/cpuinfo  | grep sgx``
++
++Overview of SGX
++===============
++
++SGX has a set of data structures to maintain information about the enclaves and
++their security properties. BIOS reserves a fixed size region of physical memory
++for these structures by setting Processor Reserved Memory Range Registers
++(PRMRR).
++
++This memory range is protected from outside access by the CPU and all the data
++coming in and out of the CPU package is encrypted by a key that is generated for
++each boot cycle.
++
++Enclaves execute in ring-3 in a special enclave submode using pages from the
++reserved memory range. A fixed logical address range for the enclave is reserved
++by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
++the documentation commonly as the ELRANGE.
++
++Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
++executing in the enclave mode inside the enclave, #GP is raised. On the other
++hand enclave code can make memory accesses both inside and outside of the
++ELRANGE.
++
++Enclave can only execute code inside the ELRANGE. Instructions that may cause
++VMEXIT, IO instructions and instructions that require a privilege change are
++prohibited inside the enclave. Interrupts and exceptions always cause enclave
++to exit and jump to an address outside the enclave given when the enclave is
++entered by using the leaf instruction ENCLS(EENTER).
++
++Data types
++----------
++
++The protected memory range contains the following data:
++
++* **Enclave Page Cache (EPC):** protected pages
++* **Enclave Page Cache Map (EPCM):** a database that describes the state of the
++  pages and link them to an enclave.
++
++EPC has a number of different types of pages:
++
++* **SGX Enclave Control Structure (SECS)**: describes the global
++  properties of an enclave.
++* **Regular (REG):** code and data pages in the ELRANGE.
++* **Thread Control Structure (TCS):** pages that define entry points inside an
++  enclave. The enclave can only be entered through these entry points and each
++  can host a single hardware thread at a time.
++* **Version Array (VA)**: 64-bit version numbers for pages that have been
++  swapped outside the enclave. Each page contains 512 version numbers.
++
++Launch control
++--------------
++
++To launch an enclave, two structures must be provided for ENCLS(EINIT):
++
++1. **SIGSTRUCT:** signed measurement of the enclave binary.
++2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
++   *launch key*, which is re-generated for each boot cycle.
++
++The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
++IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
++key do not require a valid EINITTOKEN and can be authorized with special
++privileges. One of those privileges is ability to acquire the launch key with
++ENCLS(EGETKEY).
++
++**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
++IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
++feature control register and handing over control to the operating system.
++
++Enclave construction
++--------------------
++
++The construction is started by filling out the SECS that contains enclave
++address range, privileged attributes and measurement of TCS and REG pages (pages
++that will be mapped to the address range) among the other things. This structure
++is passed out to the ENCLS(ECREATE) together with a physical address of a page
++in EPC that will hold the SECS.
++
++The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
++SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
++
++After all of the pages have been added, the enclave is initialized with
++ENCLS(EINIT). ENCLS(INIT) checks that the SIGSTRUCT is signed with the contained
++public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
++the token is valid (CMAC'd with the launch key). If the token is not valid,
++the CPU will check whether the enclave is signed with a key matching to the
++IA32_SGXLEPUBKEYHASHn MSRs.
++
++Swapping pages
++--------------
++
++Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
++addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
++structure (Page Crypto MetaData) as input. The VA page will seal a version
++number for the page. PCMD is 128 byte structure that contains tracking
++information for the page, most importantly its MAC. With these structures the
++enclave is sealed and rollback protected while it resides in the unprotected
++memory.
++
++Before the page can be swapped out it must not have any active TLB references.
++ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
++that no new TLB entries can be created to it by the hardware threads.
++
++After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
++increased counter value to the entering hardware threads. ENCLS(EWB) will
++return SGX_NOT_TRACKED error while there are still threads with the earlier
++couner value because that means that there might be hardware thread inside
++the enclave with TLB entries to pages that are to be swapped.
++
++Kernel internals
++================
++
++Requirements
++------------
++
++Because SGX has an ever evolving and expanding feature set, it's possible for
++a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
++e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
++*not* support such a heterogeneous system configuration, nor does it even
++attempt to play nice in the face of a misconfigured system.  With the exception
++of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
++CPUs have a configuration that is identical to the boot CPU.
++
++
++Roles and responsibilities
++--------------------------
++
++SGX introduces system resources, e.g. EPC memory, that must be accessible to
++multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
++and KVM (to expose SGX to VMs), ideally without introducing any dependencies
++between each SGX entity.  To that end, the kernel owns and manages the shared
++system resources, i.e. the EPC and Launch Control MSRs, and defines functions
++that provide appropriate access to the shared resources.  SGX support for
++user space and VMs is left to the SGX platform driver and KVM respectively.
++
++Launching enclaves
++------------------
++
++The current kernel implementation supports only unlocked MSRs i.e.
++FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
++MSRs to the hash of the public key modulus of the enclave signer, which is one
++f the fields in the SIGSTRUCT.
++
++EPC management
++--------------
++
++Due to the unique requirements for swapping EPC pages, and because EPC pages
++(currently) do not have associated page structures, management of the EPC is
++not handled by the standard Linux swapper.  SGX directly handles swapping
++of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
++mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
++implement function callbacks that can be invoked by the kernel to age,
++swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
++controls what happens and when, while the consumers (driver, KVM, etc..) do
++the actual work.
++
++SGX uapi
++========
++
++.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
++   :functions: sgx_ioc_enclave_create
++               sgx_ioc_enclave_add_page
++               sgx_ioc_enclave_init
++
++.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
++
++References
++==========
++
++* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
+-- 
+2.17.1
