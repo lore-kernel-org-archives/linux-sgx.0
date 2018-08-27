@@ -1,139 +1,167 @@
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-CC: "nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Date: Mon, 27 Aug 2018 14:41:22 -0700
-Message-ID: <1535406078.3416.9.camel@intel.com>
+Received: from mga04.intel.com ([192.55.52.120]:64585 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1726826AbeH0WoF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Mon, 27
+ Aug 2018 18:44:05 -0400
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+	<hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, Borislav Petkov <bp@suse.de>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, David Woodhouse
+	<dwmw@amazon.co.uk>, Alexei Starovoitov <ast@kernel.org>, Andi Kleen
+	<ak@linux.intel.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Ricardo
+ Neri <ricardo.neri-calderon@linux.intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "open
+ list:X86 ARCHITECTURE (32-BIT AND        64-BIT)"
+	<linux-kernel@vger.kernel.org>, "open list:KERNEL VIRTUAL MACHINE FOR X86
+ (KVM/x86)" <kvm@vger.kernel.org>
+Subject: [PATCH v13 03/13] x86/cpufeatures: Add Intel-defined SGX leaf CPUID_12_EAX
+Date: Mon, 27 Aug 2018 21:53:24 +0300
+Message-ID: <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
-	 <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Content-Type: text/plain
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-T24gTW9uLCAyMDE4LTA4LTI3IGF0IDIxOjUzICswMzAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
-DQo+IEZyb206IFNlYW4gQ2hyaXN0b3BoZXJzb24gPHNlYW4uai5jaHJpc3RvcGhlcnNvbkBpbnRl
-bC5jb20+DQo+IA0KPiBBZGQgYSBmdW5jdGlvbiB0byBwZXJmb3JtIEVOQ0xTKEVJTklUKSwgd2hp
-Y2ggaW5pdGlhbGl6ZXMgYW4gZW5jbGF2ZSwNCj4gd2hpY2ggY2FuIGJlIHVzZWQgYnkgYSBkcml2
-ZXIgZm9yIHJ1bm5pbmcgZW5jbGF2ZXMgYW5kIFZNTXMuDQo+IA0KPiBXcml0aW5nIHRoZSBMRSBo
-YXNoIE1TUnMgaXMgZXh0cmFvcmRpbmFyaWx5IGV4cGVuc2l2ZSwgZS5nLiAzLTR4DQo+IHNsb3dl
-cg0KPiB0aGFuIG5vcm1hbCBNU1JzLCBzbyB3ZSB1c2UgYSBwZXItY3B1IGNhY2hlIHRvIHRyYWNr
-IHRoZSBsYXN0IGtub3duDQo+IHZhbHVlDQo+IG9mIHRoZSBNU1JzIHRvIGF2b2lkIHVubmVjZXNz
-YXJpbHkgd3JpdGluZyB0aGUgTVNScyB3aXRoIHRoZSBjdXJyZW50DQo+IHZhbHVlLg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogU2VhbiBDaHJpc3RvcGhlcnNvbiA8c2Vhbi5qLmNocmlzdG9waGVyc29u
-QGludGVsLmNvbT4NCj4gQ28tZGV2ZWxvcGVkLWJ5OiBKYXJra28gU2Fra2luZW4gPGphcmtrby5z
-YWtraW5lbkBsaW51eC5pbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEphcmtrbyBTYWtraW5l
-biA8amFya2tvLnNha2tpbmVuQGxpbnV4LmludGVsLmNvbT4NCj4gLS0tDQo+ICBhcmNoL3g4Ni9p
-bmNsdWRlL2FzbS9zZ3guaCAgICAgIHwgIDIgKw0KPiAgYXJjaC94ODYva2VybmVsL2NwdS9pbnRl
-bF9zZ3guYyB8IDg2DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQ0KPiAgMiBm
-aWxlcyBjaGFuZ2VkLCA4NSBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oIGIvYXJjaC94ODYvaW5jbHVkZS9h
-c20vc2d4LmgNCj4gaW5kZXggYmFmMzBkNDliNzFmLi5jMTVjMTU2NDM2YmUgMTAwNjQ0DQo+IC0t
-LSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oDQo+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUv
-YXNtL3NneC5oDQo+IEBAIC0xMDgsNiArMTA4LDggQEAgdm9pZCBzZ3hfZnJlZV9wYWdlKHN0cnVj
-dCBzZ3hfZXBjX3BhZ2UgKnBhZ2UpOw0KPiAgdm9pZCBzZ3hfcGFnZV9yZWNsYWltYWJsZShzdHJ1
-Y3Qgc2d4X2VwY19wYWdlICpwYWdlKTsNCj4gIHN0cnVjdCBwYWdlICpzZ3hfZ2V0X2JhY2tpbmco
-c3RydWN0IGZpbGUgKmZpbGUsIHBnb2ZmX3QgaW5kZXgpOw0KPiAgdm9pZCBzZ3hfcHV0X2JhY2tp
-bmcoc3RydWN0IHBhZ2UgKmJhY2tpbmdfcGFnZSwgYm9vbCB3cml0ZSk7DQo+ICtpbnQgc2d4X2Vp
-bml0KHN0cnVjdCBzZ3hfc2lnc3RydWN0ICpzaWdzdHJ1Y3QsIHN0cnVjdCBzZ3hfZWluaXR0b2tl
-bg0KPiAqdG9rZW4sDQo+ICsJICAgICAgc3RydWN0IHNneF9lcGNfcGFnZSAqc2Vjc19wYWdlLCB1
-NjQgbGVwdWJrZXloYXNoWzRdKTsNCj4gIA0KPiAgI2RlZmluZSBFTkNMU19GQVVMVF9GTEFHIDB4
-NDAwMDAwMDBVTA0KPiAgI2RlZmluZSBFTkNMU19GQVVMVF9GTEFHX0FTTSAiJDB4NDAwMDAwMDAi
-DQo+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2ludGVsX3NneC5jDQo+IGIvYXJj
-aC94ODYva2VybmVsL2NwdS9pbnRlbF9zZ3guYw0KPiBpbmRleCAxMDQ2NDc4YTNhYjkuLmZlMjVl
-NjgwNTY4MCAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9pbnRlbF9zZ3guYw0K
-PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L2ludGVsX3NneC5jDQo+IEBAIC05LDYgKzksNyBA
-QA0KPiAgI2luY2x1ZGUgPGxpbnV4L3NjaGVkL3NpZ25hbC5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4
-L3NobWVtX2ZzLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiArI2luY2x1ZGUgPGxp
-bnV4L3N1c3BlbmQuaD4NCj4gICNpbmNsdWRlIDxhc20vc2d4Lmg+DQo+ICAjaW5jbHVkZSA8YXNt
-L3NneF9wci5oPg0KPiAgDQo+IEBAIC0zOCw2ICszOSwxOCBAQCBzdGF0aWMgTElTVF9IRUFEKHNn
-eF9hY3RpdmVfcGFnZV9saXN0KTsNCj4gIHN0YXRpYyBERUZJTkVfU1BJTkxPQ0soc2d4X2FjdGl2
-ZV9wYWdlX2xpc3RfbG9jayk7DQo+ICBzdGF0aWMgc3RydWN0IHRhc2tfc3RydWN0ICprc2d4c3dh
-cGRfdHNrOw0KPiAgc3RhdGljIERFQ0xBUkVfV0FJVF9RVUVVRV9IRUFEKGtzZ3hzd2FwZF93YWl0
-cSk7DQo+ICtzdGF0aWMgc3RydWN0IG5vdGlmaWVyX2Jsb2NrIHNneF9wbV9ub3RpZmllcjsNCj4g
-K3N0YXRpYyB1NjQgc2d4X3BtX2NudDsNCj4gKw0KPiArLyogVGhlIGNhY2hlIGZvciB0aGUgbGFz
-dCBrbm93biB2YWx1ZXMgb2YgSUEzMl9TR1hMRVBVQktFWUhBU0h4IE1TUnMNCj4gZm9yIGVhY2gN
-Cj4gKyAqIENQVS4gVGhlIGVudHJpZXMgYXJlIGluaXRpYWxpemVkIHdoZW4gdGhleSBhcmUgZmly
-c3QgdXNlZCBieQ0KPiBzZ3hfZWluaXQoKS4NCj4gKyAqLw0KPiArc3RydWN0IHNneF9sZXB1Ymtl
-eWhhc2ggew0KPiArCXU2NCBtc3JzWzRdOw0KPiArCXU2NCBwbV9jbnQ7DQoNCk1heSBJIGFzayB3
-aHkgZG8gd2UgbmVlZCBwbV9jbnQgaGVyZT8gSW4gZmFjdCB3aHkgZG8gd2UgbmVlZCBzdXNwZW5k
-DQpzdGFmZiAobmFtZWx5LCBzZ3hfcG1fY250IGFib3ZlLCBhbmQgcmVsYXRlZCBjb2RlIGluIHRo
-aXMgcGF0Y2gpIGhlcmUNCmluIHRoaXMgcGF0Y2g/IEZyb20gdGhlIHBhdGNoIGNvbW1pdCBtZXNz
-YWdlIEkgZG9uJ3Qgc2VlIHdoeSB3ZSBuZWVkIFBNDQpzdGFmZiBoZXJlLiBQbGVhc2UgZ2l2ZSBj
-b21tZW50IHdoeSB5b3UgbmVlZCBQTSBzdGFmZiwgb3IgeW91IG1heQ0KY29uc2lkZXIgdG8gc3Bs
-aXQgdGhlIFBNIHN0YWZmIHRvIGFub3RoZXIgcGF0Y2guDQoNCj4gK307DQo+ICsNCj4gK3N0YXRp
-YyBERUZJTkVfUEVSX0NQVShzdHJ1Y3Qgc2d4X2xlcHVia2V5aGFzaCAqLA0KPiBzZ3hfbGVwdWJr
-ZXloYXNoX2NhY2hlKTsNCj4gIA0KPiAgLyoqDQo+ICAgKiBzZ3hfcmVjbGFpbV9wYWdlcyAtIHJl
-Y2xhaW0gRVBDIHBhZ2VzIGZyb20gdGhlIGNvbnN1bWVycw0KPiBAQCAtMzI4LDYgKzM0MSw1NCBA
-QCB2b2lkIHNneF9wdXRfYmFja2luZyhzdHJ1Y3QgcGFnZSAqYmFja2luZ19wYWdlLA0KPiBib29s
-IHdyaXRlKQ0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTF9HUEwoc2d4X3B1dF9iYWNraW5nKTsNCj4g
-IA0KPiArLyoqDQo+ICsgKiBzZ3hfZWluaXQgLSBpbml0aWFsaXplIGFuIGVuY2xhdmUNCj4gKyAq
-IEBzaWdzdHJ1Y3Q6CQlhIHBvaW50ZXIgdG8gdGhlIFNJR1NUUlVDVA0KPiArICogQHRva2VuOgkJ
-YSBwb2ludGVyIHRvIHRoZSBFSU5JVFRPS0VODQo+ICsgKiBAc2Vjc19wYWdlOgkJYSBwb2ludGVy
-IHRvIHRoZSBTRUNTIEVQQyBwYWdlDQo+ICsgKiBAbGVwdWJrZXloYXNoOgl0aGUgZGVzaXJlZCB2
-YWx1ZSBmb3IgSUEzMl9TR1hMRVBVQktFWUhBU0h4DQo+IE1TUnMNCj4gKyAqDQo+ICsgKiBUcnkg
-dG8gcGVyZm9ybSBFSU5JVCBvcGVyYXRpb24uIElmIHRoZSBNU1JzIGFyZSB3cml0YWJsZSwgdGhl
-eQ0KPiBhcmUgdXBkYXRlZA0KPiArICogYWNjb3JkaW5nIHRvIEBsZXB1YmtleWhhc2guDQo+ICsg
-Kg0KPiArICogUmV0dXJuOg0KPiArICogICAwIG9uIHN1Y2Nlc3MsDQo+ICsgKiAgIC1lcnJubyBv
-biBmYWlsdXJlDQo+ICsgKiAgIFNHWCBlcnJvciBjb2RlIGlmIEVJTklUIGZhaWxzDQo+ICsgKi8N
-Cj4gK2ludCBzZ3hfZWluaXQoc3RydWN0IHNneF9zaWdzdHJ1Y3QgKnNpZ3N0cnVjdCwgc3RydWN0
-IHNneF9laW5pdHRva2VuDQo+ICp0b2tlbiwNCj4gKwkgICAgICBzdHJ1Y3Qgc2d4X2VwY19wYWdl
-ICpzZWNzX3BhZ2UsIHU2NCBsZXB1YmtleWhhc2hbNF0pDQo+ICt7DQo+ICsJc3RydWN0IHNneF9s
-ZXB1YmtleWhhc2ggX19wZXJjcHUgKmNhY2hlOw0KPiArCWJvb2wgY2FjaGVfdmFsaWQ7DQo+ICsJ
-aW50IGksIHJldDsNCj4gKw0KPiArCWlmICghc2d4X2xjX2VuYWJsZWQpDQo+ICsJCXJldHVybiBf
-X2Vpbml0KHNpZ3N0cnVjdCwgdG9rZW4sDQo+IHNneF9lcGNfYWRkcihzZWNzX3BhZ2UpKTsNCj4g
-Kw0KPiArCWNhY2hlID0gcGVyX2NwdShzZ3hfbGVwdWJrZXloYXNoX2NhY2hlLCBzbXBfcHJvY2Vz
-c29yX2lkKCkpOw0KPiArCWlmICghY2FjaGUpIHsNCj4gKwkJY2FjaGUgPSBremFsbG9jKHNpemVv
-ZihzdHJ1Y3Qgc2d4X2xlcHVia2V5aGFzaCksDQo+IEdGUF9LRVJORUwpOw0KPiArCQlpZiAoIWNh
-Y2hlKQ0KPiArCQkJcmV0dXJuIC1FTk9NRU07DQo+ICsJfQ0KDQpJdCBzZWVtcyBwZXItY3B1IHZh
-cmlhYmxlIGlzIGEgcG9pbnRlciB0byBzdHJ1Y3Qgc2d4X2xlcHVia2V5aGFzaCwgYW5kDQp0aGUg
-YWN0dWFsIHN0cnVjdHVyZSBpcyBhbGxvY2F0ZWQgYXQgdGhlIGZpcnN0IHRpbWUgdGhlIGZ1bmN0
-aW9uIGlzDQpjYWxsZWQuIE1heSBJIGFzayB3aGVuIHdpbGwgaXQgYmUgZnJlZWQ/IEl0IHNlZW1z
-IHRoZSBmcmVlIGlzIG5vdCBpbg0KdGhpcyBwYXRjaC4gT3IgSSBhbSBtaXN1bmRlcnN0YW5kaW5n
-IHNvbWV0aGluZz8NCg0KPiArDQo+ICsJY2FjaGVfdmFsaWQgPSBjYWNoZS0+cG1fY250ID09IHNn
-eF9wbV9jbnQ7DQo+ICsJY2FjaGUtPnBtX2NudCA9IHNneF9wbV9jbnQ7DQo+ICsJcHJlZW1wdF9k
-aXNhYmxlKCk7DQo+ICsJZm9yIChpID0gMDsgaSA8IDQ7IGkrKykgew0KPiArCQlpZiAoY2FjaGVf
-dmFsaWQgJiYgbGVwdWJrZXloYXNoW2ldID09IGNhY2hlLQ0KPiA+bXNyc1tpXSkNCj4gKwkJCWNv
-bnRpbnVlOw0KPiArDQo+ICsJCXdybXNybChNU1JfSUEzMl9TR1hMRVBVQktFWUhBU0gwICsgaSwN
-Cj4gbGVwdWJrZXloYXNoW2ldKTsNCj4gKwkJY2FjaGUtPm1zcnNbaV0gPSBsZXB1YmtleWhhc2hb
-aV07DQo+ICsJfQ0KPiArCXJldCA9IF9fZWluaXQoc2lnc3RydWN0LCB0b2tlbiwgc2d4X2VwY19h
-ZGRyKHNlY3NfcGFnZSkpOw0KPiArCXByZWVtcHRfZW5hYmxlKCk7DQo+ICsJcmV0dXJuIHJldDsN
-Cj4gK30NCj4gK0VYUE9SVF9TWU1CT0woc2d4X2Vpbml0KTsNCj4gKw0KPiAgc3RhdGljIF9faW5p
-dCBpbnQgc2d4X2luaXRfZXBjX2JhbmsodTY0IGFkZHIsIHU2NCBzaXplLCB1bnNpZ25lZA0KPiBs
-b25nIGluZGV4LA0KPiAgCQkJCSAgICBzdHJ1Y3Qgc2d4X2VwY19iYW5rICpiYW5rKQ0KPiAgew0K
-PiBAQCAtNDI2LDYgKzQ4NywxNSBAQCBzdGF0aWMgX19pbml0IGludCBzZ3hfcGFnZV9jYWNoZV9p
-bml0KHZvaWQpDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+ICANCj4gK3N0YXRpYyBpbnQgc2d4X3Bt
-X25vdGlmaWVyX2NiKHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIsIHVuc2lnbmVkDQo+IGxvbmcg
-YWN0aW9uLA0KPiArCQkJICAgICAgdm9pZCAqZGF0YSkNCj4gK3sNCj4gKwlpZiAoYWN0aW9uID09
-IFBNX1NVU1BFTkRfUFJFUEFSRSB8fCBhY3Rpb24gPT0NCj4gUE1fSElCRVJOQVRJT05fUFJFUEFS
-RSkNCj4gKwkJc2d4X3BtX2NudCsrOw0KPiArDQo+ICsJcmV0dXJuIE5PVElGWV9ET05FOw0KPiAr
-fQ0KPiArDQo+ICBzdGF0aWMgX19pbml0IGludCBzZ3hfaW5pdCh2b2lkKQ0KPiAgew0KPiAgCXN0
-cnVjdCB0YXNrX3N0cnVjdCAqdHNrOw0KPiBAQCAtNDUyLDIwICs1MjIsMzAgQEAgc3RhdGljIF9f
-aW5pdCBpbnQgc2d4X2luaXQodm9pZCkNCj4gIAlpZiAoIShmYyAmIEZFQVRVUkVfQ09OVFJPTF9T
-R1hfTEVfV1IpKQ0KPiAgCQlwcl9pbmZvKCJJQTMyX1NHWExFUFVCS0VZSEFTSG4gTVNScyBhcmUg
-bm90DQo+IHdyaXRhYmxlXG4iKTsNCj4gIA0KPiAtCXJldCA9IHNneF9wYWdlX2NhY2hlX2luaXQo
-KTsNCj4gKwlzZ3hfcG1fbm90aWZpZXIubm90aWZpZXJfY2FsbCA9IHNneF9wbV9ub3RpZmllcl9j
-YjsNCj4gKwlyZXQgPSByZWdpc3Rlcl9wbV9ub3RpZmllcigmc2d4X3BtX25vdGlmaWVyKTsNCj4g
-IAlpZiAocmV0KQ0KPiAgCQlyZXR1cm4gcmV0Ow0KPiAgDQo+ICsJcmV0ID0gc2d4X3BhZ2VfY2Fj
-aGVfaW5pdCgpOw0KPiArCWlmIChyZXQpDQo+ICsJCWdvdG8gb3V0X3BtOw0KPiArDQo+ICAJdHNr
-ID0ga3RocmVhZF9ydW4oa3NneHN3YXBkLCBOVUxMLCAia3NneHN3YXBkIik7DQo+ICAJaWYgKElT
-X0VSUih0c2spKSB7DQo+IC0JCXNneF9wYWdlX2NhY2hlX3RlYXJkb3duKCk7DQo+IC0JCXJldHVy
-biBQVFJfRVJSKHRzayk7DQo+ICsJCXJldCA9IFBUUl9FUlIodHNrKTsNCj4gKwkJZ290byBvdXRf
-cGNhY2hlOw0KPiAgCX0NCj4gIAlrc2d4c3dhcGRfdHNrID0gdHNrOw0KPiAgDQo+ICAJc2d4X2Vu
-YWJsZWQgPSB0cnVlOw0KPiAgCXNneF9sY19lbmFibGVkID0gISEoZmMgJiBGRUFUVVJFX0NPTlRS
-T0xfU0dYX0xFX1dSKTsNCj4gIAlyZXR1cm4gMDsNCj4gK291dF9wY2FjaGU6DQo+ICsJc2d4X3Bh
-Z2VfY2FjaGVfdGVhcmRvd24oKTsNCg0KSSBkb24ndCB0aGluayB0aGlzIHBhcnRpY3VsYXIgMiBs
-aW5lcyBvZiBjb2RlIG9mICdvdXRfcGNhY2hlJyBjYXNlDQpzaG91bGQgYmUgaW4gdGhpcyBwYXRj
-aD8NCg0KVGhhbmtzLA0KLUthaQ0KDQo+ICtvdXRfcG06DQo+ICsJdW5yZWdpc3Rlcl9wbV9ub3Rp
-Zmllcigmc2d4X3BtX25vdGlmaWVyKTsNCj4gKwlyZXR1cm4gcmV0Ow0KPiAgfQ0KPiAgDQo+ICBh
-cmNoX2luaXRjYWxsKHNneF9pbml0KTs=
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+
+CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX.
+There are currently four documented feature bits, with more expected in
+the not-too-distant future.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/cpufeature.h        | 7 +++++--
+ arch/x86/include/asm/cpufeatures.h       | 8 +++++++-
+ arch/x86/include/asm/disabled-features.h | 3 ++-
+ arch/x86/include/asm/required-features.h | 3 ++-
+ arch/x86/kernel/cpu/common.c             | 7 +++++++
+ arch/x86/kvm/cpuid.h                     | 1 +
+ 6 files changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index aced6c9290d6..940f0c01d5f8 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -30,6 +30,7 @@ enum cpuid_leafs
+ 	CPUID_7_ECX,
+ 	CPUID_8000_0007_EBX,
+ 	CPUID_7_EDX,
++	CPUID_12_EAX,
+ };
+ 
+ #ifdef CONFIG_X86_FEATURE_NAMES
+@@ -81,8 +82,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
++	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
+ 	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
+ 
+ #define DISABLED_MASK_BIT_SET(feature_bit)				\
+ 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+@@ -104,8 +106,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
++	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
+ 	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
+ 
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 7bb647f57d42..4af60a0fdb20 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -13,7 +13,7 @@
+ /*
+  * Defines x86 CPU feature bits
+  */
+-#define NCAPINTS			19	   /* N 32-bit words worth of info */
++#define NCAPINTS			20	   /* N 32-bit words worth of info */
+ #define NBUGINTS			1	   /* N 32-bit bug flags */
+ 
+ /*
+@@ -349,6 +349,12 @@
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+ #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+ 
++/* Intel SGX CPU features, CPUID level 0x000000012:0 (EAX), word 19 */
++#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
++#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
++#define X86_FEATURE_SGX_ENCLV		(19*32+ 5) /* SGX ENCLV instruction, leafs E[INC|DEC]VIRTCHILD, ESETCONTEXT */
++#define X86_FEATURE_SGX_ENCLS_C		(19*32+ 6) /* SGX ENCLS leafs ERDINFO, ETRACK, ELDBC and ELDUC */
++
+ /*
+  * BUG word(s)
+  */
+diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+index 33833d1909af..c81b5d446a3e 100644
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -78,6 +78,7 @@
+ #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
+ #define DISABLED_MASK17	0
+ #define DISABLED_MASK18	0
+-#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
++#define DISABLED_MASK19	0
++#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
+ 
+ #endif /* _ASM_X86_DISABLED_FEATURES_H */
+diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
+index 6847d85400a8..fa5700097f64 100644
+--- a/arch/x86/include/asm/required-features.h
++++ b/arch/x86/include/asm/required-features.h
+@@ -101,6 +101,7 @@
+ #define REQUIRED_MASK16	0
+ #define REQUIRED_MASK17	0
+ #define REQUIRED_MASK18	0
+-#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
++#define REQUIRED_MASK19	0
++#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
+ 
+ #endif /* _ASM_X86_REQUIRED_FEATURES_H */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 84dee5ab745a..211c76322ddf 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -866,6 +866,13 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		}
+ 	}
+ 
++	/* Intel SGX features: level 0x00000012 */
++	if (c->cpuid_level >= 0x00000012) {
++		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
++
++		c->x86_capability[CPUID_12_EAX] = eax;
++	}
++
+ 	/* AMD-defined flags: level 0x80000001 */
+ 	eax = cpuid_eax(0x80000000);
+ 	c->extended_cpuid_level = eax;
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 9a327d5b6d1f..669c1774afdb 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -55,6 +55,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
+ 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
+ 	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
++	[CPUID_12_EAX]        = {        12, 0, CPUID_EAX},
+ };
+ 
+ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+-- 
+2.17.1
