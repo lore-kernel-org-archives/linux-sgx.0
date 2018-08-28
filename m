@@ -1,69 +1,115 @@
-Received: from mx2.suse.de ([195.135.220.15]:40344 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP        id
- S1727124AbeH1OMQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 28
- Aug 2018 10:12:16 -0400
-Date: Tue, 28 Aug 2018 12:21:40 +0200
-From: Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
+ EPC pages
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim
- =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	David Woodhouse <dwmw@amazon.co.uk>, Alexei Starovoitov <ast@kernel.org>,
-	Andi Kleen <ak@linux.intel.com>, Konrad Rzeszutek Wilk
-	<konrad.wilk@oracle.com>, Ricardo Neri
-	<ricardo.neri-calderon@linux.intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" <kvm@vger.kernel.org>
-Subject: Re: [PATCH v13 03/13] x86/cpufeatures: Add Intel-defined SGX leaf
- CPUID_12_EAX
-Message-ID: <20180828102140.GA31102@nazgul.tnic>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+ <4666cae8-c711-8dd5-cbce-3d97cc19a9e5@intel.com>
+ <20180828103040.GA21326@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Serge Ayoun
+	<serge.ayoun@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Suresh Siddha
+	<suresh.b.siddha@intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <68d730bc-898c-973f-9506-648fd8a7c610@intel.com>
+Date: Tue, 28 Aug 2018 09:53:11 -0700
+In-Reply-To: <20180828103040.GA21326@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, Aug 27, 2018 at 09:53:24PM +0300, Jarkko Sakkinen wrote:
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 7bb647f57d42..4af60a0fdb20 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -13,7 +13,7 @@
->  /*
->   * Defines x86 CPU feature bits
->   */
-> -#define NCAPINTS			19	   /* N 32-bit words worth of info */
-> +#define NCAPINTS			20	   /* N 32-bit words worth of info */
->  #define NBUGINTS			1	   /* N 32-bit bug flags */
->  
->  /*
-> @@ -349,6 +349,12 @@
->  #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
->  #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
->  
-> +/* Intel SGX CPU features, CPUID level 0x000000012:0 (EAX), word 19 */
-> +#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
-> +#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
-> +#define X86_FEATURE_SGX_ENCLV		(19*32+ 5) /* SGX ENCLV instruction, leafs E[INC|DEC]VIRTCHILD, ESETCONTEXT */
-> +#define X86_FEATURE_SGX_ENCLS_C		(19*32+ 6) /* SGX ENCLS leafs ERDINFO, ETRACK, ELDBC and ELDUC */
+>>>  extern bool sgx_enabled;
+>>>  extern bool sgx_lc_enabled;
+>>> +extern struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
+>>> +
+>>> +/*
+>>> + * enum sgx_epc_page_desc - defines bits and masks for an EPC page's desc
+>>
+>> Why are you bothering packing these bits?  This seems a rather
+>> convoluted way to store two integers.
+> 
+> To keep struct sgx_epc_page 64 bytes.
 
-No need to add a whole new ->x86_capability member for 4 bits - just add
-those bits to leaf 8 where the artificial virtualization flags are -
-there's some room there.
+It's a list_head and a ulong now.  That doesn't add up to 64.
 
-Thx.
+If you properly describe the bounds and limits of banks we can possibly
+help you find a nice solution.  As it stands, they are totally opaque
+and we have no idea what is going on.
 
--- 
-Regards/Gruss,
-    Boris.
+>>> +static __init int sgx_init_epc_bank(u64 addr, u64 size, unsigned long index,
+>>> +				    struct sgx_epc_bank *bank)
+>>> +{
+>>> +	unsigned long nr_pages = size >> PAGE_SHIFT;
+>>> +	struct sgx_epc_page *pages_data;
+>>> +	unsigned long i;
+>>> +	void *va;
+>>> +
+>>> +	va = ioremap_cache(addr, size);
+>>> +	if (!va)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	pages_data = kcalloc(nr_pages, sizeof(struct sgx_epc_page), GFP_KERNEL);
+>>> +	if (!pages_data)
+>>> +		goto out_iomap;
+>>
+>> This looks like you're roughly limited by the page allocator to a bank
+>> size of ~1.4GB which seems kinda small.  Is this really OK?
+> 
+> Where does this limitation come from?
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
---
+The page allocator can only do 4MB at a time.  Using your 64 byte
+numbers: 4MB/64 = 64k sgx_epc_pages.  64k*PAGE_SIZE = 256MB.  So you can
+only handle 256MB banks with this code.
+
+BTW, if you only have 64k worth of pages, you can use a u16 for the index.
+
+>>> +	u32 eax, ebx, ecx, edx;
+>>> +	u64 pa, size;
+>>> +	int ret;
+>>> +	int i;
+>>> +
+>>> +	for (i = 0; i < SGX_MAX_EPC_BANKS; i++) {
+>>> +		cpuid_count(SGX_CPUID, 2 + i, &eax, &ebx, &ecx, &edx);
+>>> +		if (!(eax & 0xF))
+>>> +			break;
+>>
+>> So, we have random data coming out of a random CPUID leaf being called
+>> 'eax' and then being tested against a random hard-coded mask.  This
+>> seems rather unfortunate for someone trying to understand the code.  Can
+>> we do better?
+> 
+> Should probably do something along the lines:
+> 
+> #define SGX_CPUID_SECTION(i) (2 + (i))
+> 
+> enum sgx_section {
+> 	SGX_CPUID_SECTION_INVALID	= 0x00,
+> 	SGX_CPUID_SECTION_VALID		= 0x1B,
+> 	SGX_CPUID_SECTION_MASK		= 0xFF,
+> };
+
+Plus comments, that would be nice.
+
+>>> +		sgx_nr_epc_banks++;
+>>> +	}
+>>> +
+>>> +	if (!sgx_nr_epc_banks) {
+>>> +		pr_err("There are zero EPC banks.\n");
+>>> +		return -ENODEV;
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>
+>> Does this support hot-addition of a bank?  If not, why not?
+...
+> I'm not aware that we would have an ACPI specification for SGX so this
+> is all I have at the moment (does not show any ACPI event for
+> hotplugging).
+
+So you're saying the one platform you looked at don't support hotplug.
+I was looking for a more broad statement about SGX.
