@@ -1,41 +1,38 @@
-Subject: Re: [PATCH v13 03/13] x86/cpufeatures: Add Intel-defined SGX leaf
- CPUID_12_EAX
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
+From: "Huang, Kai" <kai.huang@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "platform-driver-x86@vger.kernel.org"
 	<platform-driver-x86@vger.kernel.org>
+CC: "Hansen, Dave" <dave.hansen@intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, "nhorman@redhat.com" <nhorman@redhat.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "linux-sgx@vger.kernel.org"
+	<linux-sgx@vger.kernel.org>, Kai Huang <kai.huang@linux.intel.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>, Konrad Rzeszutek Wilk
+	<konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
+ list:X86 ARCHITECTURE (32-BIT AND        64-BIT)"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
+ features
+Date: Mon, 27 Aug 2018 17:07:41 -0700
+Message-ID: 
+ <105F7BF4D0229846AF094488D65A09893540B623@PGSMSX112.gar.corp.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
-CC: <sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Borislav Petkov <bp@suse.de>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, David Woodhouse <dwmw@amazon.co.uk>, "Alexei
- Starovoitov" <ast@kernel.org>, Andi Kleen <ak@linux.intel.com>, "Konrad
- Rzeszutek Wilk" <konrad.wilk@oracle.com>, Ricardo Neri
-	<ricardo.neri-calderon@linux.intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" <kvm@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <70dec13f-2182-e4d6-da71-a568d6e9354b@intel.com>
-Date: Mon, 27 Aug 2018 12:39:36 -0700
-In-Reply-To: <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+ <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> +	/* Intel SGX features: level 0x00000012 */
-> +	if (c->cpuid_level >= 0x00000012) {
-> +		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
-> +
-> +		c->x86_capability[CPUID_12_EAX] = eax;
-> +	}
+> +#define X86_FEATURE_SGX_LC		(16*32+30) /* supports SGX launch
+> configuration */
 
-I've given this specific bit of feedback at least once in the past.
-These patches are not ordered properly.  You introduce this in the next
-patch:
+Sorry if it was me who wrote the comment "SGX launch configuration". I think we should just use "SGX launch control". :)
 
-+#define SGX_CPUID 0x12
+Thanks,
+-Kai
+> 
+>  /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+>  #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow
+> recovery support */
+> --
+> 2.17.1
