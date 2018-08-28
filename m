@@ -1,158 +1,75 @@
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, "nhorman@redhat.com" <nhorman@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "suresh.b.siddha@intel.com"
-	<suresh.b.siddha@intel.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Date: Wed, 29 Aug 2018 13:58:09 -0700
-Message-ID: 
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
+Received: from mga14.intel.com ([192.55.52.115]:6038 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1727216AbeH2Bqb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 28
+ Aug 2018 21:46:31 -0400
+Date: Tue, 28 Aug 2018 14:52:40 -0700
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
+	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+	<hpa@zytor.com>, Suresh Siddha <suresh.b.siddha@intel.com>, Serge Ayoun
+	<serge.ayoun@intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
+ manager
+Message-ID: <20180828215240.GA29684@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
-In-Reply-To: <20180829203351.GB7142@linux.intel.com>
+ <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
+ <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
+ <20180828083540.GH15508@linux.intel.com>
+ <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
+ <20180828212244.GA29488@linux.intel.com>
+ <81adf7e1-b9c2-e906-95a3-c6e08cbcc52a@intel.com>
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+In-Reply-To: <81adf7e1-b9c2-e906-95a3-c6e08cbcc52a@intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-> -----Original Message-----
-> From: Christopherson, Sean J
-> Sent: Thursday, August 30, 2018 8:34 AM
-> To: Huang, Kai <kai.huang@intel.com>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; platform-driver-
-> x86@vger.kernel.org; x86@kernel.org; nhorman@redhat.com; linux-
-> kernel@vger.kernel.org; tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun,
-> Serge <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
-> mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
-> <dave.hansen@intel.com>
-> Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
+On Tue, Aug 28, 2018 at 02:26:36PM -0700, Dave Hansen wrote:
+> On 08/28/2018 02:22 PM, Sean Christopherson wrote:
+> > On Tue, Aug 28, 2018 at 07:07:33AM -0700, Dave Hansen wrote:
+> >> On 08/28/2018 01:35 AM, Jarkko Sakkinen wrote:
+> >>> On Mon, Aug 27, 2018 at 02:15:34PM -0700, Dave Hansen wrote:
+> >>>> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
+> >>>>> +struct sgx_epc_page_ops {
+> >>>>> +	bool (*get)(struct sgx_epc_page *epc_page);
+> >>>>> +	void (*put)(struct sgx_epc_page *epc_page);
+> >>>>> +	bool (*reclaim)(struct sgx_epc_page *epc_page);
+> >>>>> +	void (*block)(struct sgx_epc_page *epc_page);
+> >>>>> +	void (*write)(struct sgx_epc_page *epc_page);
+> >>>>> +};
+> >>>> Why do we need a fancy, slow (retpoline'd) set of function pointers when
+> >>>> we only have one user of these (the SGX driver)?
+> >>> KVM has its own implementation for these operations.
+> >>
+> >> That belongs in the changelog.
+> >>
+> >> Also, where is the implementation?  How can we assess this code that was
+> >> built to create an abstraction without both of the users?
+> > 
+> > I can provide an early preview of the KVM reclaim code, but honestly
+> > I think that would do more harm than good.  The VMX architecture for
+> > EPC reclaim is complex, even for SGX standards.  Opening that can of
+> > worms would likely derail this discussion.  That being said, this
+> > abstraction isn't exactly what KVM will need, but it's pretty close
+> > and gives us something to build on.
 > 
-> On Wed, Aug 29, 2018 at 12:33:54AM -0700, Huang, Kai wrote:
-> > [snip..]
-> >
-> > > > >
-> > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
-> > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > +sgx_pm_cnt;
-> > > > > +
-> > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > > > +MSRs
-> > > > > for each
-> > > > > + * CPU. The entries are initialized when they are first used by
-> > > > > sgx_einit().
-> > > > > + */
-> > > > > +struct sgx_lepubkeyhash {
-> > > > > +	u64 msrs[4];
-> > > > > +	u64 pm_cnt;
-> > > >
-> > > > May I ask why do we need pm_cnt here? In fact why do we need
-> > > > suspend staff (namely, sgx_pm_cnt above, and related code in this
-> > > > patch) here in this patch? From the patch commit message I don't
-> > > > see why we need PM staff here. Please give comment why you need PM
-> > > > staff, or you may consider to split the PM staff to another patch.
-> > >
-> > > Refining the commit message probably makes more sense because
-> > > without PM code sgx_einit() would be broken. The MSRs have been reset
-> after waking up.
-> > >
-> > > Some kind of counter is required to keep track of the power cycle.
-> > > When going to sleep the sgx_pm_cnt is increased. sgx_einit()
-> > > compares the current value of the global count to the value in the
-> > > cache entry to see whether we are in a new power cycle.
-> >
-> > You mean reset to Intel default? I think we can also just reset the
-> > cached MSR values on each power cycle, which would be simpler, IMHO?
-> 
-> Refresh my brain, does hardware reset the MSRs on a transition to S3 or lower?
-> 
-> > I think we definitely need some code to handle S3-S5, but should be in
-> > separate patches, since I think the major impact of S3-S5 is entire
-> > EPC being destroyed. I think keeping pm_cnt is not sufficient enough
-> > to handle such case?
-> > >
-> > > This brings up one question though: how do we deal with VM host going to
-> sleep?
-> > > VM guest would not be aware of this.
-> >
-> > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
-> > SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
-> > co-working together to re-establish the missing enclaves.
-> >
-> > Actually supporting "sudden loss of EPC" is a requirement to support
-> > live migration of VM w/ SGX. Internally long time ago we had a
-> > discussion and the decision was we should support SGX live migration given
-> two facts:
-> >
-> > 1) losing platform-dependent is not important. For example, losing
-> > sealing key is not a problem, as we could get secrets provisioned
-> > again from remote. 2) Both windows & linux driver commit to support "sudden
-> loss of EPC".
-> >
-> > I don't think we have to support in very first upstream driver, but I
-> > think we need to support someday.
-> 
-> Actually, we can easily support this in the driver, at least for SGX1 hardware.
+> Please remove the abstraction code.  We don't introduce infrastructure
+> which no one will use.
 
-That's my guess too. Just want to check whether we are still on the same page :)
+The infrastructure is used in the sense that it allows us to split the
+userspace-facing code, i.e. the driver, into a separate module.  This
+in turn allows virtualization of SGX without having to load the driver
+or building it in the first place, e.g. to virtualize SGX on a system
+that doesn't meet the driver's requirements.
 
-> SGX2 isn't difficult to handle, but we've intentionally postponed those patches
-> until SGX1 support is in mainline[1].
-> Accesses to the EPC after it is lost will cause faults.  Userspace EPC accesses, e.g.
-> ERESUME, will get a SIGSEGV that the process should interpret as an "I should
-> restart my enclave" event.  The SDK already does this.  In the driver, we just need
-> to be aware of this potential behavior and not freak out.  Specifically, SGX_INVD
-> needs to not WARN on faults that may have been due to a the EPC being nuked.
-> I think we can even remove the sgx_encl_pm_notifier() code altogether.
-
-Possibly we still need to do some cleanup, ie, all structures of enclaves, upon resume? 
-
-Anyway I am just guessing.
-
-Thanks,
--Kai
-
-> 
-> [1] SGX1 hardware signals a #GP on an access to an invalid EPC page.
->     SGX2 signals a #PF with the PF_SGX error code bit set.  This is
->     problematic because the kernel looks at the PTEs for CR2 and sees
->     nothing wrong, so it thinks it should just restart the
->     instruction, leading to an infinite fault loop.  Resolving this
->     is fairly straightforward, but a complete fix requires propagating
->     PF_SGX down to the ENCLS fixup handler, which means plumbing the
->     error code through the fixup handlers or smushing PF_SGX into
->     trapnr.  Since there is a parallel effort to plumb the error code
->     through the handlers, https://lkml.org/lkml/2018/8/6/924, we opted
->     to do this in a separate series.
-> 
-> > Sean,
-> >
-> > Would you be able to comment here?
-> >
-> > >
-> > > I think the best measure would be to add a new parameter to
-> > > sgx_einit() that enforces update of the MSRs. The driver can then
-> > > set this parameter in the case when sgx_einit() returns
-> > > SGX_INVALID_LICENSE. This is coherent because the driver requires
-> > > writable MSRs. It would not be coherent to do it directly in the core because
-> KVM does not require writable MSRs.
-> >
-> > IMHO this is not required, as I mentioned above.
-> >
-> > And
-> > [snip...]
-> >
-> > Thanks,
-> > -Kai
+We could eliminate the abstraction by moving the EPC management code
+into the driver, but that would directly conflict with past feedback
+and would need to be completely undone to enable KVM.  The abstraction
+could be dumbed down to a single function, but as mentioned earlier,
+that comes with its own costs.  I can dive into exactly what we lose
+with a single function approach if this is a sticking point.
