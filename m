@@ -1,151 +1,71 @@
+Date: Tue, 28 Aug 2018 13:38:29 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+To: Borislav Petkov <bp@suse.de>, <'@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Darren Hart
-	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Serge Ayoun
-	<serge.ayoun@intel.com>, Shay Katz-zamir <shay.katz-zamir@intel.com>, Suresh
- Siddha <suresh.b.siddha@intel.com>, open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v13 12/13] platform/x86: ptrace() support for the SGX driver
-Date: Mon, 27 Aug 2018 21:53:33 +0300
-Message-ID: <20180827185507.17087-13-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim
+ =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Peter Zijlstra
+	<peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	David Woodhouse <dwmw@amazon.co.uk>, Alexei Starovoitov <ast@kernel.org>,
+	Andi Kleen <ak@linux.intel.com>, Konrad Rzeszutek Wilk
+	<konrad.wilk@oracle.com>, Ricardo Neri
+	<ricardo.neri-calderon@linux.intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v13 03/13] x86/cpufeatures: Add Intel-defined SGX leaf
+ CPUID_12_EAX
+Message-ID: <20180828103829.GB26494@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
+ <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
+ <20180828102140.GA31102@nazgul.tnic>
+Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20180828102140.GA31102@nazgul.tnic>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-Add VMA callbacks for ptrace() that can be used with debug enclaves.
-With debug enclaves data can be read and write the memory word at a time
-by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
+On Tue, Aug 28, 2018 at 12:21:40PM +0200, Borislav Petkov wrote:
+> On Mon, Aug 27, 2018 at 09:53:24PM +0300, Jarkko Sakkinen wrote:
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > index 7bb647f57d42..4af60a0fdb20 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -13,7 +13,7 @@
+> >  /*
+> >   * Defines x86 CPU feature bits
+> >   */
+> > -#define NCAPINTS			19	   /* N 32-bit words worth of info */
+> > +#define NCAPINTS			20	   /* N 32-bit words worth of info */
+> >  #define NBUGINTS			1	   /* N 32-bit bug flags */
+> >  
+> >  /*
+> > @@ -349,6 +349,12 @@
+> >  #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+> >  #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+> >  
+> > +/* Intel SGX CPU features, CPUID level 0x000000012:0 (EAX), word 19 */
+> > +#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
+> > +#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
+> > +#define X86_FEATURE_SGX_ENCLV		(19*32+ 5) /* SGX ENCLV instruction, leafs E[INC|DEC]VIRTCHILD, ESETCONTEXT */
+> > +#define X86_FEATURE_SGX_ENCLS_C		(19*32+ 6) /* SGX ENCLS leafs ERDINFO, ETRACK, ELDBC and ELDUC */
+> 
+> No need to add a whole new ->x86_capability member for 4 bits - just add
+> those bits to leaf 8 where the artificial virtualization flags are -
+> there's some room there.
+> 
+> Thx.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/platform/x86/intel_sgx/sgx_vma.c | 109 +++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+Roger.
 
-diff --git a/drivers/platform/x86/intel_sgx/sgx_vma.c b/drivers/platform/x86/intel_sgx/sgx_vma.c
-index cc0993b4fd40..df604e4d0d0a 100644
---- a/drivers/platform/x86/intel_sgx/sgx_vma.c
-+++ b/drivers/platform/x86/intel_sgx/sgx_vma.c
-@@ -51,8 +51,117 @@ static int sgx_vma_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- }
- 
-+static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset > offsetof(struct sgx_tcs, gs_limit))
-+		return -ECANCELED;
-+
-+	ret = __edbgrd(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGRD returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	/* Writing anything else than flags will cause #GP */
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset != offsetof(struct sgx_tcs, flags))
-+		return -ECANCELED;
-+
-+	ret = __edbgwr(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGWR returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-+			  void *buf, int len, int write)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry = NULL;
-+	unsigned long align;
-+	char data[sizeof(unsigned long)];
-+	int offset;
-+	int cnt;
-+	int ret = 0;
-+	int i;
-+
-+	/* If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return -EFAULT;
-+
-+	if (!(encl->flags & SGX_ENCL_DEBUG) ||
-+	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
-+	    (encl->flags & SGX_ENCL_DEAD))
-+		return -EFAULT;
-+
-+	for (i = 0; i < len; i += cnt) {
-+		if (!entry || !((addr + i) & (PAGE_SIZE - 1))) {
-+			if (entry)
-+				entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+			entry = sgx_fault_page(vma, (addr + i) & PAGE_MASK,
-+					       true);
-+			if (IS_ERR(entry)) {
-+				ret = PTR_ERR(entry);
-+				entry = NULL;
-+				break;
-+			}
-+		}
-+
-+		/* Locking is not needed because only immutable fields of the
-+		 * page are accessed and page itself is reserved so that it
-+		 * cannot be swapped out in the middle.
-+		 */
-+
-+		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-+		offset = (addr + i) & (sizeof(unsigned long) - 1);
-+		cnt = sizeof(unsigned long) - offset;
-+		cnt = min(cnt, len - i);
-+
-+		ret = sgx_edbgrd(encl, entry, align, data);
-+		if (ret)
-+			break;
-+		if (write) {
-+			memcpy(data + offset, buf + i, cnt);
-+			ret = sgx_edbgwr(encl, entry, align, data);
-+			if (ret)
-+				break;
-+		} else
-+			memcpy(buf + i, data + offset, cnt);
-+	}
-+
-+	if (entry)
-+		entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+	return ret < 0 ? ret : i;
-+}
-+
- const struct vm_operations_struct sgx_vm_ops = {
- 	.close = sgx_vma_close,
- 	.open = sgx_vma_open,
- 	.fault = sgx_vma_fault,
-+	.access = sgx_vma_access,
- };
--- 
-2.17.1
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+> -- 
+
+/Jarkko
