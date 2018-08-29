@@ -1,66 +1,60 @@
-Received: from mga05.intel.com ([192.55.52.43]:18597 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726990AbeHaPUj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 31
- Aug 2018 11:20:39 -0400
-Date: Fri, 31 Aug 2018 14:13:34 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Sean Christopherson <sean.j.christopherson@intel.com>
-CC: Dave Hansen <dave.hansen@intel.com>, <x86@kernel.org>,
-	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Serge Ayoun
-	<serge.ayoun@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Suresh Siddha
-	<suresh.b.siddha@intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+From: "Huang, Kai" <kai.huang@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: "x86@kernel.org" <x86@kernel.org>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "Hansen, Dave"
+	<dave.hansen@intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, "nhorman@redhat.com" <nhorman@redhat.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "linux-sgx@vger.kernel.org"
+	<linux-sgx@vger.kernel.org>, Kai Huang <kai.huang@linux.intel.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>, Konrad Rzeszutek Wilk
+	<konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
+ list:X86 ARCHITECTURE (32-BIT AND        64-BIT)"
 	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
- EPC pages
-Message-ID: <20180831111334.GB16827@linux.intel.com>
+Subject: RE: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
+ features
+Date: Wed, 29 Aug 2018 00:36:13 -0700
+Message-ID: 
+ <105F7BF4D0229846AF094488D65A0989354103A9@PGSMSX112.gar.corp.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
- <4666cae8-c711-8dd5-cbce-3d97cc19a9e5@intel.com>
- <20180828103040.GA21326@linux.intel.com>
- <68d730bc-898c-973f-9506-648fd8a7c610@intel.com>
- <20180828213432.GB29488@linux.intel.com>
+ <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893540B623@PGSMSX112.gar.corp.intel.com>
+ <20180828071723.GA15508@linux.intel.com>
+In-Reply-To: <20180828071723.GA15508@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180828213432.GB29488@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Aug 28, 2018 at 02:34:32PM -0700, Sean Christopherson wrote:
-> On Tue, Aug 28, 2018 at 09:53:11AM -0700, Dave Hansen wrote:
-> > >>> +		sgx_nr_epc_banks++;
-> > >>> +	}
-> > >>> +
-> > >>> +	if (!sgx_nr_epc_banks) {
-> > >>> +		pr_err("There are zero EPC banks.\n");
-> > >>> +		return -ENODEV;
-> > >>> +	}
-> > >>> +
-> > >>> +	return 0;
-> > >>> +}
-> > >>
-> > >> Does this support hot-addition of a bank?  If not, why not?
-> > ...
-> > > I'm not aware that we would have an ACPI specification for SGX so this
-> > > is all I have at the moment (does not show any ACPI event for
-> > > hotplugging).
-> > 
-> > So you're saying the one platform you looked at don't support hotplug.
-> > I was looking for a more broad statement about SGX.
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Tuesday, August 28, 2018 7:17 PM
+> To: Huang, Kai <kai.huang@intel.com>
+> Cc: x86@kernel.org; platform-driver-x86@vger.kernel.org; Hansen, Dave
+> <dave.hansen@intel.com>; Christopherson, Sean J
+> <sean.j.christopherson@intel.com>; nhorman@redhat.com;
+> npmccallum@redhat.com; linux-sgx@vger.kernel.org; Kai Huang
+> <kai.huang@linux.intel.com>; Thomas Gleixner <tglx@linutronix.de>; Ingo
+> Molnar <mingo@redhat.com>; H. Peter Anvin <hpa@zytor.com>; Borislav
+> Petkov <bp@suse.de>; Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>;
+> David Woodhouse <dwmw@amazon.co.uk>; open list:X86 ARCHITECTURE (32-
+> BIT AND 64-BIT) <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
+> features
 > 
-> Hardware doesn't support hotplug of EPC as the EPC size and location
-> is locked during activation of SGX.  And IIRC, activation of SGX must
-> be synchronized across all CPUs in a multi-socket platform, e.g. you
-> can't late-enable SGX on a socket and due hotplugging that way.
+> On Tue, Aug 28, 2018 at 12:07:41AM +0000, Huang, Kai wrote:
+> > > +#define X86_FEATURE_SGX_LC		(16*32+30) /* supports SGX
+> launch
+> > > configuration */
+> >
+> > Sorry if it was me who wrote the comment "SGX launch configuration". I
+> > think we should just use "SGX launch control". :)
+> 
+> Not sure if we should change though. The former is more self-explaining, the
+> latter is "more official".
 
-Makes me wonder how on a multisocket platform would this work anyway
-given that they have different fused keys?
+I'll let you decide.  To me the comment should explain what does "LC" mean, and to me it means "launch control". :)
 
-> In a virtualized environment there are no such restrictions.  I am not
-> aware of any explicit requirements or use cases for supporting hotplug
-> of EPC, but that's probably only because virtualization of SGX is
-> fairly nascent.
-
-/Jarkko
+Thanks,
+-Kai
+> 
+> /Jarkko
