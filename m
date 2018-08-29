@@ -1,267 +1,158 @@
-Date: Tue, 3 Jul 2018 21:46:43 +0200
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 07/13] x86/sgx: data structures for tracking available
- EPC pages
-In-Reply-To: <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032110460.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="US-ASCII"
-Return-Path: tglx@linutronix.de
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "nhorman@redhat.com" <nhorman@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "suresh.b.siddha@intel.com"
+	<suresh.b.siddha@intel.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	"hpa@zytor.com" <hpa@zytor.com>, "npmccallum@redhat.com"
+	<npmccallum@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "Hansen, Dave"
+	<dave.hansen@intel.com>
+Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Date: Wed, 29 Aug 2018 13:58:09 -0700
+Message-ID: 
+ <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180829203351.GB7142@linux.intel.com>
+In-Reply-To: <20180829203351.GB7142@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
-
-> SGX has a set of data structures to maintain information about the enclaves
-> and their security properties. BIOS reserves a fixed size region of
-> physical memory for these structures by setting Processor Reserved Memory
-> Range Registers (PRMRR). This memory area is called Enclave Page Cache
-> (EPC).
+> -----Original Message-----
+> From: Christopherson, Sean J
+> Sent: Thursday, August 30, 2018 8:34 AM
+> To: Huang, Kai <kai.huang@intel.com>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; platform-driver-
+> x86@vger.kernel.org; x86@kernel.org; nhorman@redhat.com; linux-
+> kernel@vger.kernel.org; tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun,
+> Serge <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
+> mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
+> <dave.hansen@intel.com>
+> Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
 > 
-> This commit adds a database of EPC banks for kernel to easily access the
+> On Wed, Aug 29, 2018 at 12:33:54AM -0700, Huang, Kai wrote:
+> > [snip..]
+> >
+> > > > >
+> > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
+> > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > > +sgx_pm_cnt;
+> > > > > +
+> > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
+> > > > > +MSRs
+> > > > > for each
+> > > > > + * CPU. The entries are initialized when they are first used by
+> > > > > sgx_einit().
+> > > > > + */
+> > > > > +struct sgx_lepubkeyhash {
+> > > > > +	u64 msrs[4];
+> > > > > +	u64 pm_cnt;
+> > > >
+> > > > May I ask why do we need pm_cnt here? In fact why do we need
+> > > > suspend staff (namely, sgx_pm_cnt above, and related code in this
+> > > > patch) here in this patch? From the patch commit message I don't
+> > > > see why we need PM staff here. Please give comment why you need PM
+> > > > staff, or you may consider to split the PM staff to another patch.
+> > >
+> > > Refining the commit message probably makes more sense because
+> > > without PM code sgx_einit() would be broken. The MSRs have been reset
+> after waking up.
+> > >
+> > > Some kind of counter is required to keep track of the power cycle.
+> > > When going to sleep the sgx_pm_cnt is increased. sgx_einit()
+> > > compares the current value of the global count to the value in the
+> > > cache entry to see whether we are in a new power cycle.
+> >
+> > You mean reset to Intel default? I think we can also just reset the
+> > cached MSR values on each power cycle, which would be simpler, IMHO?
+> 
+> Refresh my brain, does hardware reset the MSRs on a transition to S3 or lower?
+> 
+> > I think we definitely need some code to handle S3-S5, but should be in
+> > separate patches, since I think the major impact of S3-S5 is entire
+> > EPC being destroyed. I think keeping pm_cnt is not sufficient enough
+> > to handle such case?
+> > >
+> > > This brings up one question though: how do we deal with VM host going to
+> sleep?
+> > > VM guest would not be aware of this.
+> >
+> > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
+> > SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
+> > co-working together to re-establish the missing enclaves.
+> >
+> > Actually supporting "sudden loss of EPC" is a requirement to support
+> > live migration of VM w/ SGX. Internally long time ago we had a
+> > discussion and the decision was we should support SGX live migration given
+> two facts:
+> >
+> > 1) losing platform-dependent is not important. For example, losing
+> > sealing key is not a problem, as we could get secrets provisioned
+> > again from remote. 2) Both windows & linux driver commit to support "sudden
+> loss of EPC".
+> >
+> > I don't think we have to support in very first upstream driver, but I
+> > think we need to support someday.
+> 
+> Actually, we can easily support this in the driver, at least for SGX1 hardware.
 
-Add a ....
+That's my guess too. Just want to check whether we are still on the same page :)
 
-> available EPC pages. On UMA architectures there is a singe bank of EPC
+> SGX2 isn't difficult to handle, but we've intentionally postponed those patches
+> until SGX1 support is in mainline[1].
+> Accesses to the EPC after it is lost will cause faults.  Userspace EPC accesses, e.g.
+> ERESUME, will get a SIGSEGV that the process should interpret as an "I should
+> restart my enclave" event.  The SDK already does this.  In the driver, we just need
+> to be aware of this potential behavior and not freak out.  Specifically, SGX_INVD
+> needs to not WARN on faults that may have been due to a the EPC being nuked.
+> I think we can even remove the sgx_encl_pm_notifier() code altogether.
 
-singe? Spell checkers exist for a reason.
+Possibly we still need to do some cleanup, ie, all structures of enclaves, upon resume? 
 
-> pages. On NUMA architectures there is an EPC bank for each node.
-
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 2130e639ab49..77b2294fcfb0 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -4,9 +4,39 @@
->  #ifndef _ASM_X86_SGX_H
->  #define _ASM_X86_SGX_H
->  
-> +#include <asm/sgx_arch.h>
-> +#include <asm/asm.h>
-
-asm includes go below.
-
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/rwsem.h>
->  #include <linux/types.h>
->  
-> +#define SGX_MAX_EPC_BANKS 8
-> +
-> +#define SGX_EPC_BANK(epc_page) \
-> +	(&sgx_epc_banks[(unsigned long)(epc_page->desc) & ~PAGE_MASK])
-> +#define SGX_EPC_PFN(epc_page) PFN_DOWN((unsigned long)(epc_page->desc))
-> +#define SGX_EPC_ADDR(epc_page) ((unsigned long)(epc_page->desc) & PAGE_MASK)
-
-And these need to be macros because MACROS_ARE_SO_PROMINENT, while inline
-functions are so boring and type safe.
-
-> +static atomic_t sgx_nr_free_pages = ATOMIC_INIT(0);
-> +static struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
-> +static int sgx_nr_epc_banks;
-> +
-> +/**
-> + * sgx_get_page - pin an EPC page
-
-Description starts with an uppercase letter.
-
-> + * @page:	an EPC page
-
-That's not an EPC page. It's a pointer to an EPC page. Please make these
-comments useful and do not add them just that they exist.
-
-> + *
-> + * Return: a pointer to the pinned EPC page
-> + */
-> +void *sgx_get_page(struct sgx_epc_page *page)
-> +{
-> +	struct sgx_epc_bank *bank = SGX_EPC_BANK(page);
-> +
-> +	if (IS_ENABLED(CONFIG_X86_64))
-
-And this is needed because the SGX config switch has:
-
-       depends on X86_64 && CPU_SUP_INTEL
-
-So what is this for and why do you need the 32bit implementation at all?
-
-> +		return (void *)(bank->va + SGX_EPC_ADDR(page) - bank->pa);
-> +
-> +	return kmap_atomic_pfn(SGX_EPC_PFN(page));
-> +}
-> +EXPORT_SYMBOL(sgx_get_page);
-> +
-> +/**
-> + * sgx_put_page - unpin an EPC page
-> + * @ptr:	a pointer to the pinned EPC page
-> + */
-> +void sgx_put_page(void *ptr)
-> +{
-> +	if (IS_ENABLED(CONFIG_X86_64))
-> +		return;
-
-Ditto
-
->
-> +	kunmap_atomic(ptr);
-> +}
-> +EXPORT_SYMBOL(sgx_put_page);
-> +
-> +static __init int sgx_init_epc_bank(unsigned long addr, unsigned long size,
-> +				    unsigned long index,
-> +				    struct sgx_epc_bank *bank)
-> +{
-> +	unsigned long nr_pages = size >> PAGE_SHIFT;
-> +	unsigned long i;
-> +	void *va;
-> +
-> +	if (IS_ENABLED(CONFIG_X86_64)) {
-
-And more.
-
-> +		va = ioremap_cache(addr, size);
-> +		if (!va)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	bank->pages_data = kzalloc(nr_pages * sizeof(struct sgx_epc_page),
-> +				   GFP_KERNEL);
-> +	if (!bank->pages_data) {
-> +		if (IS_ENABLED(CONFIG_X86_64))
-> +			iounmap(va);
-> +
-> +		return -ENOMEM;
-> +	}
-
-  	if (!bank->pages_data)
-		goto out_iomap;
-
-> +
-> +	bank->pages = kzalloc(nr_pages * sizeof(struct sgx_epc_page *),
-> +			      GFP_KERNEL);
-> +	if (!bank->pages) {
-> +		if (IS_ENABLED(CONFIG_X86_64))
-> +			iounmap(va);
-> +		kfree(bank->pages_data);
-> +		bank->pages_data = NULL;
-> +		return -ENOMEM;
-> +	}
-
-  	if (!bank->pages)
-		goto out_pdata;
-
-> +	for (i = 0; i < nr_pages; i++) {
-> +		bank->pages[i] = &bank->pages_data[i];
-> +		bank->pages[i]->desc = (addr + (i << PAGE_SHIFT)) | index;
-> +	}
-> +
-> +	bank->pa = addr;
-> +	bank->size = size;
-> +	if (IS_ENABLED(CONFIG_X86_64))
-> +		bank->va = (unsigned long)va;
-
-Why is bank->va unsigned long and not a void *? That's spare the type casts.
-
-> +
-> +	atomic_set(&bank->free_cnt, nr_pages);
-> +	init_rwsem(&bank->lock);
-> +	atomic_add(nr_pages, &sgx_nr_free_pages);
-> +	return 0;
-
-out_iomap:
-	iounmap(va);
-out_pdata:
-	kfree(bank->pages_data);
-	bank->pages_data = NULL;
-	return -ENOMEM;
-
-
-> +static __init int sgx_page_cache_init(void)
-> +{
-> +	unsigned long size;
-> +	unsigned int eax;
-> +	unsigned int ebx;
-> +	unsigned int ecx;
-> +	unsigned int edx;
-> +	unsigned long pa;
-> +	int i;
-> +	int ret;
-
-Please aggregate the declarations of the same type. No point in wasting all
-the screen space. And please use 'u32' for ea-dx
-
-> +
-> +	for (i = 0; i < SGX_MAX_EPC_BANKS; i++) {
-> +		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC_BANKS, &eax, &ebx,
-> +			    &ecx, &edx);
-> +		if (!(eax & 0xf))
-> +			break;
-> +
-> +		pa = ((u64)(ebx & 0xfffff) << 32) + (u64)(eax & 0xfffff000);
-> +		size = ((u64)(edx & 0xfffff) << 32) + (u64)(ecx & 0xfffff000);
-
-These magic constants should be 'U', using uppercase 'F' and defines. Plus
-this wants a comment how pa and size are cobbled together from the cpuid
-regs.
-
-> +
-> +		pr_info("EPC bank 0x%lx-0x%lx\n", pa, pa + size);
-
-	size - 1 because the bank does not reach into the next page.
-
-> +		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
-> +		if (ret) {
-> +			sgx_page_cache_teardown();
-> +			return ret;
-> +		}
-> +
-> +		sgx_nr_epc_banks++;
-> +	}
-> +
-> +	return 0;
-
-This returns success even when the number of detected banks is zero.
-
-> + }
-
-This whole thing can be written readable.
-
-{
-	int i, cnt = SGX_CPUID_EPC_BANKS;
-
-	for (i = 0; i < SGX_MAX_EPC_BANKS; i++, cnt++) {
-	     	u32 eax, ebx, ecx, edx;
-		unsigned long pa, size;
-		int ret;
-
-		cpuid_count(SGX_CPUID, cnt, &eax, &ebx, &ecx, &edx);
-		if (!(eax & 0xF))
-			break;
-
-		pa = combine_regs(ebx, eax);
-		size = combine_regs(edx, ecx);
-
-		pr_info("EPC bank 0x%lx-0x%lx\n", pa, pa + size);
-
-		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
-		if (ret) {
-			sgx_page_cache_teardown();
-			return ret;
-		}
-		sgx_nr_epc_banks++;
-	}
-
-	return sgx_nr_epc_banks ? : -ENODEV;
-}
-
-You get the idea...
+Anyway I am just guessing.
 
 Thanks,
+-Kai
 
-	tglx
+> 
+> [1] SGX1 hardware signals a #GP on an access to an invalid EPC page.
+>     SGX2 signals a #PF with the PF_SGX error code bit set.  This is
+>     problematic because the kernel looks at the PTEs for CR2 and sees
+>     nothing wrong, so it thinks it should just restart the
+>     instruction, leading to an infinite fault loop.  Resolving this
+>     is fairly straightforward, but a complete fix requires propagating
+>     PF_SGX down to the ENCLS fixup handler, which means plumbing the
+>     error code through the fixup handlers or smushing PF_SGX into
+>     trapnr.  Since there is a parallel effort to plumb the error code
+>     through the handlers, https://lkml.org/lkml/2018/8/6/924, we opted
+>     to do this in a separate series.
+> 
+> > Sean,
+> >
+> > Would you be able to comment here?
+> >
+> > >
+> > > I think the best measure would be to add a new parameter to
+> > > sgx_einit() that enforces update of the MSRs. The driver can then
+> > > set this parameter in the case when sgx_einit() returns
+> > > SGX_INVALID_LICENSE. This is coherent because the driver requires
+> > > writable MSRs. It would not be coherent to do it directly in the core because
+> KVM does not require writable MSRs.
+> >
+> > IMHO this is not required, as I mentioned above.
+> >
+> > And
+> > [snip...]
+> >
+> > Thanks,
+> > -Kai
