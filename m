@@ -1,99 +1,94 @@
+Received: from mga12.intel.com ([192.55.52.136]:21175 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1727942AbeHaQYV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 31
+ Aug 2018 12:24:21 -0400
+Date: Fri, 31 Aug 2018 15:17:03 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Haim Cohen <haim.cohen@intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	"Ingo Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Borislav
- Petkov <bp@suse.de>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tom
- Lendacky <thomas.lendacky@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	"David Woodhouse" <dwmw@amazon.co.uk>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Janakarajan Natarajan
-	<Janakarajan.Natarajan@amd.com>, Matt Turner <mattst88@gmail.com>, "Andy
- Lutomirski" <luto@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v13 05/13] x86/msr: Add SGX definitions to msr-index.h
-Date: Mon, 27 Aug 2018 21:53:26 +0300
-Message-ID: <20180827185507.17087-6-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+To: "Huang, Kai" <kai.huang@intel.com>
+CC: "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180831121645.GA18075@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
-MIME-Version: 1.0
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
+> [snip..]
+> 
+> > > >
+> > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
+> > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > +sgx_pm_cnt;
+> > > > +
+> > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
+> > > > +MSRs
+> > > > for each
+> > > > + * CPU. The entries are initialized when they are first used by
+> > > > sgx_einit().
+> > > > + */
+> > > > +struct sgx_lepubkeyhash {
+> > > > +	u64 msrs[4];
+> > > > +	u64 pm_cnt;
+> > >
+> > > May I ask why do we need pm_cnt here? In fact why do we need suspend
+> > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
+> > > in this patch? From the patch commit message I don't see why we need
+> > > PM staff here. Please give comment why you need PM staff, or you may
+> > > consider to split the PM staff to another patch.
+> > 
+> > Refining the commit message probably makes more sense because without PM
+> > code sgx_einit() would be broken. The MSRs have been reset after waking up.
+> > 
+> > Some kind of counter is required to keep track of the power cycle. When going
+> > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
+> > the global count to the value in the cache entry to see whether we are in a new
+> > power cycle.
+> 
+> You mean reset to Intel default? I think we can also just reset the
+> cached MSR values on each power cycle, which would be simpler, IMHO?
 
-ENCLS and ENCLU are usable if and only if SGX_ENABLE is set and After
-SGX is activated the IA32_SGXLEPUBKEYHASHn MSRs are writable if
-SGX_LC_WR is set and the feature control is locked.
+I don't really see that much difference in the complexity.
 
-SGX related bits in IA32_FEATURE_CONTROL cannot be set before SGX is
-activated by the pre-boot firmware. SGX activation is triggered by
-setting bit 0 in the MSR 0x7a. Until SGX is activated, the LE hash MSRs
-are writable to allow pre-boot firmware to lock down the LE root key
-with a non-Intel value.
+> I think we definitely need some code to handle S3-S5, but should be in
+> separate patches, since I think the major impact of S3-S5 is entire
+> EPC being destroyed. I think keeping pm_cnt is not sufficient enough
+> to handle such case?
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Haim Cohen <haim.cohen@intel.com>
-Signed-off-by: Haim Cohen <haim.cohen@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/msr-index.h | 8 ++++++++
- arch/x86/kernel/cpu/common.c     | 8 ++++----
- 2 files changed, 12 insertions(+), 4 deletions(-)
+The driver has SGX_POWER_LOST_ENCLAVE for ioctls and it deletes the TCS
+entries.
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 4731f0cf97c5..44d7b68e7f52 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -486,6 +486,8 @@
- #define FEATURE_CONTROL_LOCKED				(1<<0)
- #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
- #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
-+#define FEATURE_CONTROL_SGX_ENABLE			(1<<18)
-+#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
- #define FEATURE_CONTROL_LMCE				(1<<20)
- 
- #define MSR_IA32_APICBASE		0x0000001b
-@@ -552,6 +554,12 @@
- #define PACKAGE_THERM_INT_LOW_ENABLE		(1 << 1)
- #define PACKAGE_THERM_INT_PLN_ENABLE		(1 << 24)
- 
-+/* Intel SGX MSRs */
-+#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
-+#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-+#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
-+#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
-+
- /* Thermal Thresholds Support */
- #define THERM_INT_THRESHOLD0_ENABLE    (1 << 15)
- #define THERM_SHIFT_THRESHOLD0        8
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 211c76322ddf..282ceef992b0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -52,6 +52,7 @@
- #include <asm/microcode_intel.h>
- #include <asm/intel-family.h>
- #include <asm/cpu_device_id.h>
-+#include <asm/sgx_arch.h>
- 
- #ifdef CONFIG_X86_LOCAL_APIC
- #include <asm/uv/uv.h>
-@@ -866,10 +867,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		}
- 	}
- 
--	/* Intel SGX features: level 0x00000012 */
--	if (c->cpuid_level >= 0x00000012) {
--		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
--
-+	/* Intel SGX features */
-+	if (c->cpuid_level >= SGX_CPUID) {
-+		cpuid(SGX_CPUID,  &eax, &ebx, &ecx, &edx);
- 		c->x86_capability[CPUID_12_EAX] = eax;
- 	}
- 
--- 
-2.17.1
+> > This brings up one question though: how do we deal with VM host going to sleep?
+> > VM guest would not be aware of this.
+> 
+> IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
+> SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
+> co-working together to re-establish the missing enclaves.
+
+This is not about EPC. It is already dealt by the driver. I'm concerned
+about the MSR cache as it would mess up.
+
+But I guess this logic is part of the KVM code anyway now that I think
+more of it.
+
+/Jarkko
