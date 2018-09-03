@@ -1,80 +1,108 @@
-Date: Wed, 26 Sep 2018 13:44:00 -0700
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Andy Lutomirski <luto@amacapital.net>, Andy Lutomirski <luto@kernel.org>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
- w/ PF_SGX
-Message-ID: <20180926204400.GA11446@linux.intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
-Return-Path: sean.j.christopherson@intel.com
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 3 Sep 2018 15:53:24 +0200
+Message-ID: <CAG48ez2_EgP_-FcLV0g=EU2KuKEwFAmZufjGevMX4j--fJ_0+w@mail.gmail.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
+To: <jarkko.sakkinen@linux.intel.com>
+CC: the arch/x86 maintainers <x86@kernel.org>,
+	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin"
+	<hpa@zytor.com>, <suresh.b.siddha@intel.com>, <serge.ayoun@intel.com>,
+	"kernel list" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: jannh@google.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
-> On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
-> >> e omniscient.
-> >>
-> >> How about this?  With formatting changes since it's long-winded...
-> >>
-> >>        /*
-> >>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
-> >>         * access is allowed by the PTE but not the EPCM.  This usually happens
-> >>         * when the EPCM is yanked out from under us, e.g. by hardware after a
-> >>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
-> >>         * fix the source of the fault as the EPCM can't be directly modified
-> >>         * by software.  Handle the fault as an access error in order to signal
-> >>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
-> >>         * though userspace may not have actually violated access permissions.
-> >>         */
-> >>
-> > Looks good to me.
-> 
-> Including the actual architectural definition of the bit might add some
-> clarity.  The SDM explicitly says (Vol 3a section 4.7):
-> 
-> 	The fault resulted from violation of SGX-specific access-control
-> 	requirements.
-> 
-> Which totally squares with returning true from access_error().
-> 
-> There's also a tidbit that says:
-> 
-> 	This flag is 1 if the exception is unrelated to paging and
-> 	resulted from violation of SGX-specific access-control
-> 	requirements. ... such a violation can occur only if there
-> 	is no ordinary page fault...
-> 
-> This is pretty important.  It means that *none* of the other
-> paging-related stuff that we're doing applies.
+On Mon, Sep 3, 2018 at 3:33 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
-> We also need to clarify how this can happen.  Is it through something
-> than an app does, or is it solely when the hardware does something under
-> the covers, like suspend/resume.
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> Add a function to perform ENCLS(EINIT), which initializes an enclave,
+> which can be used by a driver for running enclaves and VMMs.
+>
+> Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
+> than normal MSRs, so we use a per-cpu cache to track the last known value
+> of the MSRs to avoid unnecessarily writing the MSRs with the current value.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+[...]
+> +/**
+> + * sgx_einit - initialize an enclave
+> + * @sigstruct:         a pointer to the SIGSTRUCT
+> + * @token:             a pointer to the EINITTOKEN
+> + * @secs_page:         a pointer to the SECS EPC page
+> + * @lepubkeyhash:      the desired value for IA32_SGXLEPUBKEYHASHx MSRs
+> + *
+> + * Try to perform EINIT operation. If the MSRs are writable, they are updated
+> + * according to @lepubkeyhash.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -errno on failure
+> + *   SGX error code if EINIT fails
+> + */
+> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
+> +{
+> +       struct sgx_lepubkeyhash __percpu *cache;
+> +       bool cache_valid;
+> +       int i, ret;
+> +
+> +       if (!sgx_lc_enabled)
+> +               return __einit(sigstruct, token, sgx_epc_addr(secs_page));
+> +
+> +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
 
-Are you looking for something in the changelog, the comment, or just
-a response?  If it's the latter...
+At this point, preemption must be off, because smp_processor_id() is
+called; I don't think it is off here? If you have hardware/emulation
+on which you can test this, you may want to test your patches with
+DEBUG_PREEMPT enabled.
 
-On bare metal with a bug-free kernel, the only scenario I'm aware of
-where we'll encounter these faults is when hardware pulls the rug out
-from under us.  In a virtualized environment all bets are off because
-the architecture allows VMMs to silently "destroy" the EPC at will,
-e.g. KVM, and I believe Hyper-V, will take advantage of this behavior
-to support live migration.  Post migration, the destination system
-will generate PF_SGX because the EPC{M} can't be migrated between
-system, i.e. the destination EPCM sees all EPC pages as invalid.
+> +       if (!cache) {
+> +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
+
+But then here you do a GFP_KERNEL allocation, which can sleep.
+
+Also: After "cache" has been allocated in this branch, when do you
+store the reference to it? As far as I can tell, you never write to
+sgx_lepubkeyhash_cache, and the allocation just leaks.
+
+> +               if (!cache)
+> +                       return -ENOMEM;
+> +       }
+> +
+> +       cache_valid = cache->pm_cnt == sgx_pm_cnt;
+
+The cache should probably not be treated as valid if it has just been
+created and only contains zeroes, right?
+
+> +       cache->pm_cnt = sgx_pm_cnt;
+
+Can sgx_pm_cnt be modified concurrently? If so, please use at least
+READ_ONCE() to document that and prevent the compiler from doing weird
+stuff.
+
+> +       preempt_disable();
+
+And here you turn off preemption, but it should already have been off?
+
+> +       for (i = 0; i < 4; i++) {
+> +               if (cache_valid && lepubkeyhash[i] == cache->msrs[i])
+> +                       continue;
+> +
+> +               wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
+> +               cache->msrs[i] = lepubkeyhash[i];
+> +       }
+> +       ret = __einit(sigstruct, token, sgx_epc_addr(secs_page));
+> +       preempt_enable();
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL(sgx_einit);
+> +
