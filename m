@@ -1,50 +1,90 @@
-Received: from mga11.intel.com ([192.55.52.93]:62820 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726657AbeIJXdS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Mon, 10
- Sep 2018 19:33:18 -0400
-Date: Mon, 10 Sep 2018 21:37:44 +0300
+Date: Mon, 3 Sep 2018 22:27:54 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Joe Perches <joe@perches.com>
-CC: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Andy Shevchenko
-	<andy.shevchenko@gmail.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <x86@kernel.org>, Platform Driver
-	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>, "Siddha, Suresh B"
-	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart
-	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
-Message-ID: <20180910183744.GB20225@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
- <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
- <20180905173355.GE11368@linux.intel.com>
- <CAHp75Vc2SZUfRnBPZ9xJ_B=KJL7yK9hqRZiFOTswn0AzjnLD1A@mail.gmail.com>
- <20180906092100.GA27302@linux.intel.com>
- <CANiq72kpY1y2aPH+GMi8mWZdttfdYJ3wk0cvE_qVD97vdvTJbQ@mail.gmail.com>
- <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
+To: "Dr. Greg" <greg@enjellic.com>
+CC: Sean Christopherson <sean.j.christopherson@intel.com>, "Huang, Kai"
+	<kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180903192754.GD13497@linux.intel.com>
+References: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180829203351.GB7142@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
+ <20180829210901.GA7176@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
+ <20180831174330.GA21555@linux.intel.com>
+ <20180831213445.GA4098@wind.enjellic.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+In-Reply-To: <20180831213445.GA4098@wind.enjellic.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Sep 06, 2018 at 05:50:01PM -0700, Joe Perches wrote:
-> On Thu, 2018-09-06 at 19:35 +0200, Miguel Ojeda wrote:
-> > > Which one is right and why the kernel tree is polluted with C99-headers
-> > > when they do not pass checkpatch.pl?
+On Fri, Aug 31, 2018 at 04:34:45PM -0500, Dr. Greg wrote:
+> On Fri, Aug 31, 2018 at 10:43:30AM -0700, Sean Christopherson wrote:
 > 
-> checkpatch ignores c99 headers since 2016.
+> Good afternoon to everyone.
+> 
+> > > Sorry I missed this one. To be honest I don't know. I checked the
+> > > SDM and all I can find is:
+> > >
+> > > "On reset, the default value is the digest of Intel's signing key."
+> 
+> > I confirmed the MSRs are reset any time the EPC is lost.  Not sure
+> > what happens if the MSRs contained a non-Intel value but feature
+> > control is locked with SGX launch control disabled.  I'll post an
+> > update when I have an answer.
+> 
+> It was our interpretation from the SDM that the identity modulus
+> signature MSR's are 'trap-door' registers.  If flexible launch control
+> (FLC) is enabled the platform has one opportunity to write a new
+> signature value, after which the registers are locked from
+> modification until the next platform reset.
 
-For headers I get these warnings:
+In the driver we support only MSRs that are left writable by the BIOS
+before locking the feature control.
 
-WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-#243: FILE: drivers/platform/x86/intel_sgx/sgx.h:1:
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> From a security architecture perspective it seemed that an FLC based
+> SGX implementation would use a modified version of TBOOT to securely
+> write that register once per platform boot/reset.  The architecture
+> that is being discussed where there is a need to continually check
+> whether or not the correct root signing key is loaded sounds a bit
+> clunky at best.
+> 
+> At worst it has potential security implications since it is the
+> reponsibility of the enclave launch control infrastructure to control
+> which enclaves are allowed to have the PROVISION_KEY attribute bit
+> set.
+
+Based on the previous feedback supporting read-only MSRs in the driver
+is an unwanted feature i.e. the kernel must be able to decide what gets
+lauched (i.e. no launch enclave).
+
+> Have a good weekend.
+> 
+> Dr. Greg
+> 
+> As always,
+> Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+> 4206 N. 19th Ave.           Specializing in information infra-structure
+> Fargo, ND  58102            development.
+> PH: 701-281-1686
+> FAX: 701-281-3949           EMAIL: greg@enjellic.com
+> ------------------------------------------------------------------------------
+> "Extensive interviews show that not one alcoholic has ever actually seen
+>  a pink elephant."
+>                                 -- Yale University
+>                                    Center of Alcohol Studies
 
 /Jarkko
