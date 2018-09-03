@@ -1,76 +1,108 @@
-Date: Thu, 27 Sep 2018 17:21:58 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andy Lutomirski <luto@amacapital.net>
-CC: Dave Hansen <dave.hansen@intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Andrew Lutomirski <luto@kernel.org>, "X86
- ML" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
- w/ PF_SGX
-Message-ID: <20180927142158.GG8242@linux.intel.com>
-References: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
- <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
- <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
+From: "Huang, Kai" <kai.huang@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, "Christopherson, Sean
+ J" <sean.j.christopherson@intel.com>
+CC: "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>
+Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Date: Mon, 3 Sep 2018 16:45:14 -0700
+Message-ID: 
+ <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+ <20180831181509.GB21555@linux.intel.com>
+ <20180903191926.GC13497@linux.intel.com>
+In-Reply-To: <20180903191926.GC13497@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
-Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Wed, Sep 26, 2018 at 03:37:45PM -0700, Andy Lutomirski wrote:
-> Yeah.  Maybe like this: > > xorl %eax,%eax > eenter_insn:
-> ENCLU[whatever]
-> eenter_landing_pad:
-> ret
+> -----Original Message-----
+> From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
+> owner@vger.kernel.org] On Behalf Of Jarkko Sakkinen
+> Sent: Tuesday, September 4, 2018 7:19 AM
+> To: Christopherson, Sean J <sean.j.christopherson@intel.com>
+> Cc: Huang, Kai <kai.huang@intel.com>; platform-driver-x86@vger.kernel.org;
+> x86@kernel.org; nhorman@redhat.com; linux-kernel@vger.kernel.org;
+> tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun, Serge
+> <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
+> mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
+> <dave.hansen@intel.com>
+> Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
 > 
-> And the kernel would use the existing vdso2c vdso-symbol-finding
-> mechanism to do the fixup.
-> 
+> On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
+> > On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
+> > > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
+> > > > [snip..]
+> > > >
+> > > > > > >
+> > > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
+> > > > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > > > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > > > > +sgx_pm_cnt;
+> > > > > > > +
+> > > > > > > +/* The cache for the last known values of
+> > > > > > > +IA32_SGXLEPUBKEYHASHx MSRs
+> > > > > > > for each
+> > > > > > > + * CPU. The entries are initialized when they are first
+> > > > > > > + used by
+> > > > > > > sgx_einit().
+> > > > > > > + */
+> > > > > > > +struct sgx_lepubkeyhash {
+> > > > > > > +	u64 msrs[4];
+> > > > > > > +	u64 pm_cnt;
+> > > > > >
+> > > > > > May I ask why do we need pm_cnt here? In fact why do we need
+> > > > > > suspend staff (namely, sgx_pm_cnt above, and related code in
+> > > > > > this patch) here in this patch? From the patch commit message
+> > > > > > I don't see why we need PM staff here. Please give comment why
+> > > > > > you need PM staff, or you may consider to split the PM staff to another
+> patch.
+> > > > >
+> > > > > Refining the commit message probably makes more sense because
+> > > > > without PM code sgx_einit() would be broken. The MSRs have been reset
+> after waking up.
+> > > > >
+> > > > > Some kind of counter is required to keep track of the power
+> > > > > cycle. When going to sleep the sgx_pm_cnt is increased.
+> > > > > sgx_einit() compares the current value of the global count to
+> > > > > the value in the cache entry to see whether we are in a new power cycle.
+> > > >
+> > > > You mean reset to Intel default? I think we can also just reset
+> > > > the cached MSR values on each power cycle, which would be simpler,
+> IMHO?
+> > >
+> > > I don't really see that much difference in the complexity.
 > >
-> > How would a syscall work, though?  I assume we can't just enter the
-> > enclave from ring0.
+> > Tracking the validity of the cache means we're hosed if we miss any
+> > condition that causes the MSRs to be reset.  I think we're better off
+> > assuming the cache can be stale at any time, i.e. don't track power
+> > cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
+> > the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
+> > interruptible and its latency is extremely variable in any case, e.g.
+> > tens of thousands of cycles, so this rarely-hit "slow path" probably
+> > wouldn't affect the worst case latency of EINIT.
 > 
-> My understanding of how AEX works is a bit vague, but maybe a syscall
-> could reuse the mechanism?  The vDSO approach seems considerably
-> simpler.
+> Sounds a good refiniment. Pretty good solution to heal from host sleep on the
+> guest VM and then there is no need for driver changes.
+
+To me either way should be OK, keeping MSR cache or retrying EINIT, since EINIT should not be in performance critical path I think.
+
+But INVALID_TOKEN is not only returned when MSRs are mismatched, so do you plan to check to rule out other cases that cause INVALID_TOKEN before retrying EINIT, or unconditionally  retry EINIT? And we should only retry once?
+
+Thanks,
+-Kai
 > 
-> We do need to make sure that a fault that happens on or after return
-> from an AEX event does the right thing.  But I'm still vague on how
-> that works, sigh.
-> 
-> --Andy
-
-Returning from AEX does not differ from any other memory access event so
-AFAIK it should be handled right with the proposed solution already.
-For convenience I think we could have a fixed trampoline for AEX e.g.
-this how it is implemented in the open source LE that I did:
-
-sgx_get_token:
-	push	%rbx
-	mov	$0x02, %rax
-	mov	%rsi, %rbx
-	mov	%rdx, %rsi
-	mov	$sgx_async_exit, %rcx
-sgx_async_exit:
-	ENCLU
-	pop	%rbx
-	ret
-
-BTW, if I converted the in-kernel LE as a standalone test program, would
-that be useful for basic testing of the series?
-
-/Jarkko
+> /Jarkko
