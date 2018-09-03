@@ -1,118 +1,128 @@
-Message-ID: <1536678279.5992.9.camel@intel.com>
-Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
- manager
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
-	<platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
-	<linux-sgx@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Suresh Siddha
-	<suresh.b.siddha@intel.com>, Serge Ayoun <serge.ayoun@intel.com>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Date: Tue, 11 Sep 2018 08:04:39 -0700
-In-Reply-To: <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
+Date: Mon, 3 Sep 2018 22:17:56 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>, Dave Hansen
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
+Message-ID: <20180903191756.GB13497@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
-	 <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: sean.j.christopherson@intel.com
+ <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, 2018-08-27 at 21:53 +0300, Jarkko Sakkinen wrote:
-> Add a Enclave Page Cache (EPC) memory manager that can be used to
-> allocate and free EPC pages. The swapper thread ksgxswapd reclaims pages
-> on the event when the number of free EPC pages goes below
-> %SGX_NR_LOW_PAGES up until it reaches %SGX_NR_HIGH_PAGES.
+On Mon, Sep 03, 2018 at 04:16:42PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 27, 2018 at 9:57 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Add arch/x86/include/asm/sgx_arch.h, which contains definitions for the
+> > architectural data structures used by the CPU to implement the SGX.
 > 
-> Pages are reclaimed in LRU fashion from a global list. The consumers
-> take care of calling EBLOCK (block page from new accesses), ETRACK
-> (restart counting the entering hardware threads) and EWB (write page to
-> the regular memory) because executing these operations usually (if not
-> always) requires to do some subsystem-internal locking operations.
+> > +/**
+> > + * enum sgx_encls_leaves - ENCLS leaf functions
+> > + * %ECREATE:   Create an enclave.
+> > + * %EADD:      Add a page to an enclave.
+> > + * %EINIT:     Launch an enclave.
+> > + * %EREMOVE:   Remove a page from an enclave.
+> > + * %EDBGRD:    Read a word from an enclve (peek).
+> > + * %EDBGWR:    Write a word to an enclave (poke).
+> > + * %EEXTEND:   Measure 256 bytes of an added enclave page.
+> > + * %ELDB:      Load a swapped page in blocked state.
+> > + * %ELDU:      Load a swapped page in unblocked state.
+> > + * %EBLOCK:    Change page state to blocked i.e. entering hardware threads
+> > + *             cannot access it and create new TLB entries.
+> > + * %EPA:       Create a Version Array (VA) page used to store isvsvn number
+> > + *             for a swapped EPC page.
+> > + * %EWB:       Swap an enclave page to the regular memory. Checks that all
+> > + *             threads have exited that were in the previous shoot-down
+> > + *             sequence.
+> > + * %ETRACK:    Start a new shoot down sequence. Used to together with EBLOCK
+> > + *             to make sure that a page is safe to swap.
+> > + */
+> > +enum sgx_encls_leaves {
+> > +       ECREATE = 0x0,
+> > +       EADD    = 0x1,
+> > +       EINIT   = 0x2,
+> > +       EREMOVE = 0x3,
+> > +       EDGBRD  = 0x4,
+> > +       EDGBWR  = 0x5,
+> > +       EEXTEND = 0x6,
+> > +       ELDB    = 0x7,
+> > +       ELDU    = 0x8,
+> > +       EBLOCK  = 0x9,
+> > +       EPA     = 0xA,
+> > +       EWB     = 0xB,
+> > +       ETRACK  = 0xC,
+> > +       EAUG    = 0xD,
+> > +       EMODPR  = 0xE,
+> > +       EMODT   = 0xF,
+> > +};
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/include/asm/sgx.h      |  56 ++++--
->  arch/x86/kernel/cpu/intel_sgx.c | 322 ++++++++++++++++++++++++++++++++
->  2 files changed, 362 insertions(+), 16 deletions(-)
+> Hmm... This E prefix confuses me with (system wide) error codes. Has
+> it been discussed before? If so, can you point on the conclusion why
+> the current format is good?
 
-...
+That is how they are prefixed in the SDM.
 
-> +/**
-> + * sgx_reclaim_pages - reclaim EPC pages from the consumers
-> + *
-> + * Takes a fixed chunk of pages from the global list of consumed EPC pages and
-> + * tries to swap them. Only the pages that are either being freed by the
-> + * consumer or actively used are skipped.
-> + */
-> +static void sgx_reclaim_pages(void)
-> +{
-> +	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN + 1];
+> > +enum sgx_miscselect {
+> > +       SGX_MISC_EXINFO         = 0x01,
+> > +};
+> > +
+> > +#define SGX_MISC_RESERVED_MASK 0xFFFFFFFFFFFFFFFEULL
+> 
+> Any idea why we are not using BIT_ULL() / BIT() and GENMASK_ULL() /
+> GENMASK() in the code?
 
-The array size should simply be SGX_NR_TO_SCAN.  The +1 is a remnant
-from the previous version that bounded the for-loops with "!chunk[i]"
-check instead of "i < j".  No functional issue, essentially just an
-unused variable.
+No good reason. I'll change it.
 
-> +	struct sgx_epc_page *epc_page;
-> +	struct sgx_epc_bank *bank;
-> +	int i, j;
-> +
-> +	spin_lock(&sgx_active_page_list_lock);
-> +	for (i = 0, j = 0; i < SGX_NR_TO_SCAN; i++) {
-> +		if (list_empty(&sgx_active_page_list))
-> +			break;
-> +
-> +		epc_page = list_first_entry(&sgx_active_page_list,
-> +					    struct sgx_epc_page, list);
-> +		list_del_init(&epc_page->list);
-> +
-> +		if (epc_page->impl->ops->get(epc_page))
-> +			chunk[j++] = epc_page;
-> +		else
-> +			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
-> +	}
-> +	spin_unlock(&sgx_active_page_list_lock);
-> +
-> +	for (i = 0; i < j; i++) {
-> +		epc_page = chunk[i];
-> +		if (epc_page->impl->ops->reclaim(epc_page))
-> +			continue;
-> +
-> +		spin_lock(&sgx_active_page_list_lock);
-> +		list_add_tail(&epc_page->list, &sgx_active_page_list);
-> +		spin_unlock(&sgx_active_page_list_lock);
-> +
-> +		epc_page->impl->ops->put(epc_page);
-> +		chunk[i] = NULL;
-> +	}
-> +
-> +	for (i = 0; i < j; i++) {
-> +		epc_page = chunk[i];
-> +		if (epc_page)
-> +			epc_page->impl->ops->block(epc_page);
-> +	}
-> +
-> +	for (i = 0; i < j; i++) {
-> +		epc_page = chunk[i];
-> +		if (epc_page) {
-> +			epc_page->impl->ops->write(epc_page);
-> +			epc_page->impl->ops->put(epc_page);
-> +
-> +			/*
-> +			 * Put the page back on the free list only after we
-> +			 * have put() our reference to the owner of the EPC
-> +			 * page, otherwise the page could be re-allocated and
-> +			 * we'd call put() on the wrong impl.
-> +			 */
-> +			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
-> +
-> +			bank = sgx_epc_bank(epc_page);
-> +			spin_lock(&bank->lock);
-> +			bank->pages[bank->free_cnt++] = epc_page;
-> +			spin_unlock(&bank->lock);
-> +		}
-> +	}
-> +}
+> > +enum sgx_attribute {
+> > +       SGX_ATTR_DEBUG          = 0x02,
+> > +       SGX_ATTR_MODE64BIT      = 0x04,
+> > +       SGX_ATTR_PROVISIONKEY   = 0x10,
+> > +       SGX_ATTR_EINITTOKENKEY  = 0x20,
+> > +};
+> > +
+> > +#define SGX_ATTR_RESERVED_MASK 0xFFFFFFFFFFFFFFC9ULL
+> 
+> Some times listing explicitly not-reserved bits might be better and
+> figuring out reserved mask is a simple ~ operation.
+
+Yea, agreed.
+
+> > +enum sgx_tcs_flags {
+> > +       SGX_TCS_DBGOPTIN        = 0x01,
+> > +};
+> > +
+> > +#define SGX_TCS_RESERVED_MASK 0xFFFFFFFFFFFFFFFEULL
+> 
+> > +#define SGX_SECINFO_PERMISSION_MASK    0x0000000000000007ULL
+> > +#define SGX_SECINFO_PAGE_TYPE_MASK     0x000000000000FF00ULL
+> > +#define SGX_SECINFO_RESERVED_MASK      0xFFFFFFFFFFFF00F8ULL
+> 
+> So, something like
+> 
+> MASK1 GENMASK_ULL
+> MASK2 GENMASK_ULL
+> MASK3 ~(MASK1  | MASK2)
+> 
+> ?
+
+Definitely. I think it is just a matter of legacy why they are like they
+are :-) These constants have gone over long time and they are not
+usually places where you have to look for regressions. Thanks for
+spotting these.
+
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+
+/Jarkko
