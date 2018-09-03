@@ -1,81 +1,63 @@
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:47082 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeICSrU (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 3 Sep 2018 14:47:20 -0400
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 4 Sep 2018 19:05:09 +0300
-Message-ID: <CAHp75VfKdb6fj6EqghEuQazVqGUNJ=FLk+ka+5PyX795-1T-MA@mail.gmail.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
+Date: Mon, 3 Sep 2018 17:26:43 +0300
+Message-ID: <CAHp75VeN7QoftgkqP-L6JRZi=MRpQkVioBLP7VDLwH=rpnEp_w@mail.gmail.com>
+Subject: Re: [PATCH v13 06/13] x86/sgx: Detect Intel SGX
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
 	Platform Driver <platform-driver-x86@vger.kernel.org>, Dave Hansen
 	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
- Peter Anvin" <hpa@zytor.com>, <suresh.b.siddha@intel.com>,
-	<serge.ayoun@intel.com>, Linux Kernel Mailing List
+	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	<serge.ayoun@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Borislav Petkov <bp@suse.de>, Reinette Chatre <reinette.chatre@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, Linux Kernel Mailing List
 	<linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Return-Path: andy.shevchenko@gmail.com
-MIME-Version: 1.0
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
+On Mon, Aug 27, 2018 at 9:57 PM Jarkko Sakkinen
 <jarkko.sakkinen@linux.intel.com> wrote:
 >
 > From: Sean Christopherson <sean.j.christopherson@intel.com>
 >
-> Add a function to perform ENCLS(EINIT), which initializes an enclave,
-> which can be used by a driver for running enclaves and VMMs.
+> Intel(R) SGX is a set of CPU instructions that can be used by applications
+> to set aside private regions of code and data. The code outside the enclave
+> is disallowed to access the memory inside the enclave by the CPU access
+> control.
 >
-> Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
-> than normal MSRs, so we use a per-cpu cache to track the last known value
-> of the MSRs to avoid unnecessarily writing the MSRs with the current value.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Add a check for SGX to arch/x86 and a new config option, INTEL_SGX_CORE.
+> Expose a boolean variable 'sgx_enabled' to query whether or not the SGX
+> support is available.
 
-> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4]);
+> +       prompt "Intel SGX core functionality"
+> +       def_bool n
 
-This [4] doesn't make any sense in a C when used in function call
-parameter list.
+Default 'default' is 'n'. Perhaps changing prompt to bool will make it
+one line less.
 
-> +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs for each
-> + * CPU. The entries are initialized when they are first used by sgx_einit().
-> + */
-> +struct sgx_lepubkeyhash {
-> +       u64 msrs[4];
+> +#include <asm/sgx.h>
+> +#include <asm/sgx_pr.h>
 
-4 is MAGIC.
+Don't we put linux/* followed by asm/* ?
 
-> +       u64 pm_cnt;
-> +};
-
-> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
-
-Same two comments about [4].
-
-> +{
-
-> +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
-
-> +       if (!cache) {
-
-How often it's being expected to happen?
-
-> +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
-> +               if (!cache)
-> +                       return -ENOMEM;
-> +       }
-
-> +       for (i = 0; i < 4; i++) {
-
-Same MAGIC?
-
-> +       }
-
-> +}
+> +#include <linux/freezer.h>
+> +#include <linux/highmem.h>
+> +#include <linux/kthread.h>
+> +#include <linux/ratelimit.h>
+> +#include <linux/sched/signal.h>
+> +#include <linux/slab.h>
 
 -- 
 With Best Regards,
