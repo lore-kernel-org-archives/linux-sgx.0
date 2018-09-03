@@ -1,87 +1,88 @@
-Received: from out02.mta.xmission.com ([166.70.13.232]:50820 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbeI1CDp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Sep 2018 22:03:45 -0400
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-	"Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, "open list:X86 MM" <linux-kernel@vger.kernel.org>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-        <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
-Date: Thu, 27 Sep 2018 21:43:15 +0200
-In-Reply-To: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> (Jarkko
-        Sakkinen's message of "Tue, 25 Sep 2018 16:06:46 +0300")
-Message-ID: <87zhw2ohf0.fsf@xmission.com>
-Content-Type: text/plain
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+Received: from mga17.intel.com ([192.55.52.151]:15605 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1727955AbeICXlI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Mon, 3
+ Sep 2018 19:41:08 -0400
+Date: Mon, 3 Sep 2018 22:19:26 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Sean Christopherson <sean.j.christopherson@intel.com>
+CC: "Huang, Kai" <kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180903191926.GC13497@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+ <20180831181509.GB21555@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180831181509.GB21555@linux.intel.com>
 Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
 Return-Path: linux-sgx-owner@vger.kernel.org
 MIME-Version: 1.0
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
+On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
+> On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
+> > > [snip..]
+> > > 
+> > > > > >
+> > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
+> > > > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > > > +sgx_pm_cnt;
+> > > > > > +
+> > > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
+> > > > > > +MSRs
+> > > > > > for each
+> > > > > > + * CPU. The entries are initialized when they are first used by
+> > > > > > sgx_einit().
+> > > > > > + */
+> > > > > > +struct sgx_lepubkeyhash {
+> > > > > > +	u64 msrs[4];
+> > > > > > +	u64 pm_cnt;
+> > > > >
+> > > > > May I ask why do we need pm_cnt here? In fact why do we need suspend
+> > > > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
+> > > > > in this patch? From the patch commit message I don't see why we need
+> > > > > PM staff here. Please give comment why you need PM staff, or you may
+> > > > > consider to split the PM staff to another patch.
+> > > > 
+> > > > Refining the commit message probably makes more sense because without PM
+> > > > code sgx_einit() would be broken. The MSRs have been reset after waking up.
+> > > > 
+> > > > Some kind of counter is required to keep track of the power cycle. When going
+> > > > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
+> > > > the global count to the value in the cache entry to see whether we are in a new
+> > > > power cycle.
+> > > 
+> > > You mean reset to Intel default? I think we can also just reset the
+> > > cached MSR values on each power cycle, which would be simpler, IMHO?
+> > 
+> > I don't really see that much difference in the complexity.
+> 
+> Tracking the validity of the cache means we're hosed if we miss any
+> condition that causes the MSRs to be reset.  I think we're better off
+> assuming the cache can be stale at any time, i.e. don't track power
+> cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
+> the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
+> interruptible and its latency is extremely variable in any case, e.g.
+> tens of thousands of cycles, so this rarely-hit "slow path" probably
+> wouldn't affect the worst case latency of EINIT.
 
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Signal SIGSEGV(SEGV_SGXERR) for all faults with PF_SGX set in the
-> error code.  The PF_SGX bit is set if and only if the #PF is detected
-> by the Enclave Page Cache Map (EPCM), which is consulted only after
-> an access walks the kernel's page tables, i.e.:
->
->   a. the access was allowed by the kernel
->   b. the kernel's tables have become less restrictive than the EPCM
->   c. the kernel cannot fixup the cause of the fault
->
-> Noteably, (b) implies that either the kernel has botched the EPC
-> mappings or the EPCM has been invalidated due to a power event.  In
-> either case, userspace needs to be alerted so that it can take
-> appropriate action, e.g. restart the enclave.  This is reinforced
-> by (c) as the kernel doesn't really have any other reasonable option,
-> e.g. we could kill the task or panic, but neither is warranted.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/mm/fault.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 85d20516b2f3..3fb2b2838d6c 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -960,10 +960,13 @@ static noinline void
->  bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
->  		      unsigned long address, struct vm_area_struct *vma)
->  {
-> +	int si_code = SEGV_ACCERR;
-> +
->  	if (bad_area_access_from_pkeys(error_code, vma))
-> -		__bad_area(regs, error_code, address, vma, SEGV_PKUERR);
-> -	else
-> -		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
-> +		si_code = SEGV_PKUERR;
-> +	else if (unlikely(error_code & X86_PF_SGX))
-> +		si_code = SEGV_SGXERR;
-> +	__bad_area(regs, error_code, address, vma, si_code);
->  }
+Sounds a good refiniment. Pretty good solution to heal from host sleep
+on the guest VM and then there is no need for driver changes.
 
-This conflicts with a cleanup in this area I have sitting in linux-next.
-It isn't in the x86 tree but you can find my siginfo tree at:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-next
-
-In my tree bad area no longer takes a vma parameter.
-
-If you are going to make changes to the fault handling code this cycle
-please let's figure out how to build it on top of my clean ups.
-
-Thank you,
-Eric Biederman
+/Jarkko
