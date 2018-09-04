@@ -1,67 +1,57 @@
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
-	<sean.j.christopherson@intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
-CC: Andy Lutomirski <luto@kernel.org>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
-	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+Date: Tue, 4 Sep 2018 18:38:03 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>, Dave Hansen
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, <suresh.b.siddha@intel.com>,
+	<serge.ayoun@intel.com>, Linux Kernel Mailing List
 	<linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
-Date: Wed, 26 Sep 2018 13:16:59 -0700
-In-Reply-To: <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
+ manager
+Message-ID: <20180904153803.GC8344@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
+ <CAHp75Vf39J8U3VnmxP+BBYi7rqzidxdD58Yx_fdnLXRro_QBgg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAHp75Vf39J8U3VnmxP+BBYi7rqzidxdD58Yx_fdnLXRro_QBgg@mail.gmail.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
->> e omniscient.
->>
->> How about this?  With formatting changes since it's long-winded...
->>
->>        /*
->>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
->>         * access is allowed by the PTE but not the EPCM.  This usually happens
->>         * when the EPCM is yanked out from under us, e.g. by hardware after a
->>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
->>         * fix the source of the fault as the EPCM can't be directly modified
->>         * by software.  Handle the fault as an access error in order to signal
->>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
->>         * though userspace may not have actually violated access permissions.
->>         */
->>
-> Looks good to me.
+On Mon, Sep 03, 2018 at 10:02:16PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Add a Enclave Page Cache (EPC) memory manager that can be used to
+> > allocate and free EPC pages. The swapper thread ksgxswapd reclaims pages
+> > on the event when the number of free EPC pages goes below
+> > %SGX_NR_LOW_PAGES up until it reaches %SGX_NR_HIGH_PAGES.
+> >
+> > Pages are reclaimed in LRU fashion from a global list. The consumers
+> > take care of calling EBLOCK (block page from new accesses), ETRACK
+> > (restart counting the entering hardware threads) and EWB (write page to
+> > the regular memory) because executing these operations usually (if not
+> > always) requires to do some subsystem-internal locking operations.
+> 
+> > +                       list_del(&page->list);
+> 
+> Is this page will be completely gone? Otherwise it might be needed to
+> reinit list head here as well.
 
-Including the actual architectural definition of the bit might add some
-clarity.  The SDM explicitly says (Vol 3a section 4.7):
+The swapper cannot access the page once it has been removed from the
+list of active pages so it does not matter whether this is list_del()
+or list_del_init().
 
-	The fault resulted from violation of SGX-specific access-control
-	requirements.
+> > +       WARN(ret < 0, "sgx: cannot free page, reclaim in-progress");
+> > +       WARN(ret > 0, "sgx: EREMOVE returned %d (0x%x)", ret, ret);
+> 
+> I'm not sure (though it's easy to check) that you need sgx: prefix
+> here. WARN() might take pr_fmt() if defined.
 
-Which totally squares with returning true from access_error().
+Sean, you took care of this one. Was it so that WARN() does not respect
+pr_fmt?
 
-There's also a tidbit that says:
-
-	This flag is 1 if the exception is unrelated to paging and
-	resulted from violation of SGX-specific access-control
-	requirements. ... such a violation can occur only if there
-	is no ordinary page fault...
-
-This is pretty important.  It means that *none* of the other
-paging-related stuff that we're doing applies.
-
-We also need to clarify how this can happen.  Is it through something
-than an app does, or is it solely when the hardware does something under
-the covers, like suspend/resume.
+/Jarkko
