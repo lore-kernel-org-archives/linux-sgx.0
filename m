@@ -1,74 +1,74 @@
-Return-Path: <luto@amacapital.net>
-Content-Type: text/plain; charset="us-ascii"
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
-From: Andy Lutomirski <luto@amacapital.net>
-In-Reply-To: <20180927142158.GG8242@linux.intel.com>
-Date: Thu, 27 Sep 2018 07:41:00 -0700
-CC: Dave Hansen <dave.hansen@intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Andrew Lutomirski <luto@kernel.org>, "X86
- ML" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+Received: from mga12.intel.com ([192.55.52.136]:9551 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1726087AbeIDOXw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 4
+ Sep 2018 10:23:52 -0400
+Date: Tue, 4 Sep 2018 12:59:23 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>, Dave Hansen
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	<serge.ayoun@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	<suresh.b.siddha@intel.com>, Linux Kernel Mailing List
 	<linux-kernel@vger.kernel.org>
-Message-ID: <CDE2F14E-97B8-4648-B1F3-4B21703BDDB3@amacapital.net>
-References: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com> <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net> <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com> <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com> <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com> <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com> <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com> <20180927142158.GG8242@linux.intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
+Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
+ EPC pages
+Message-ID: <20180904095923.GC5423@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
+On Mon, Sep 03, 2018 at 05:41:53PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Add data structures to track Enclave Page Cache (EPC) pages.  EPC is
+> > divided into multiple banks (1-N) of which addresses and sizes can be
+> > enumerated with CPUID by the OS.
+> >
+> > On NUMA systems a node can have at most bank. A bank can be at most part of
+> > two nodes. SGX supports both nodes with a single memory controller and also
+> > sub-cluster nodes with severals memory controllers on a single die.
+> 
+> > -#include <asm/sgx.h>
+> > -#include <asm/sgx_pr.h>
+> >  #include <linux/freezer.h>
+> >  #include <linux/highmem.h>
+> >  #include <linux/kthread.h>
+> > +#include <linux/pagemap.h>
+> >  #include <linux/ratelimit.h>
+> >  #include <linux/sched/signal.h>
+> > +#include <linux/shmem_fs.h>
+> >  #include <linux/slab.h>
+> > +#include <asm/sgx.h>
+> > +#include <asm/sgx_pr.h>
+> 
+> Squash issues?
 
+Yes :-/
 
-> On Sep 27, 2018, at 7:21 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel=
-.com> wrote:
->=20
->> On Wed, Sep 26, 2018 at 03:37:45PM -0700, Andy Lutomirski wrote:
->> Yeah.  Maybe like this: > > xorl %eax,%eax > eenter_insn:
->> ENCLU[whatever]
->> eenter_landing_pad:
->> ret
->>=20
->> And the kernel would use the existing vdso2c vdso-symbol-finding
->> mechanism to do the fixup.
->>=20
->>>=20
->>> How would a syscall work, though?  I assume we can't just enter the
->>> enclave from ring0.
->>=20
->> My understanding of how AEX works is a bit vague, but maybe a syscall
->> could reuse the mechanism?  The vDSO approach seems considerably
->> simpler.
->>=20
->> We do need to make sure that a fault that happens on or after return
->> from an AEX event does the right thing.  But I'm still vague on how
->> that works, sigh.
->>=20
->> --Andy
->=20
-> Returning from AEX does not differ from any other memory access event so
-> AFAIK it should be handled right with the proposed solution already.
-> For convenience I think we could have a fixed trampoline for AEX e.g.
-> this how it is implemented in the open source LE that I did:
->=20
-> sgx_get_token:
->    push    %rbx
->    mov    $0x02, %rax
->    mov    %rsi, %rbx
->    mov    %rdx, %rsi
->    mov    $sgx_async_exit, %rcx
-> sgx_async_exit:
->    ENCLU
->    pop    %rbx
->    ret
->=20
-> BTW, if I converted the in-kernel LE as a standalone test program, would
-> that be useful for basic testing of the series?
->=20
->=20
+> > +       va = ioremap_cache(addr, size);
+> > +       if (!va)
+> > +               return -ENOMEM;
+> 
+> I'm not sure this is a right API. Do we operate with memory? Does it
+> have I/O side effects?
+> If no, memremap() would be better to use.
 
-Definitely. Especially if you stick it in selftests/x86 and make it exit cl=
-eanly (error code 0) on unsupported hardware.=
+Had this idea a long time ago but had forgotten it. EPC is from caching
+perspective like regular memory.
+
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+
+/Jarkko
