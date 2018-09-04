@@ -1,96 +1,123 @@
-Received: from mga09.intel.com ([134.134.136.24]:63449 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726971AbeI1SrI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 28
- Sep 2018 14:47:08 -0400
-Message-ID: <a70563ea8a4bfbf9d531d1bc0ca5f5577e6b83be.camel@linux.intel.com>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
- w/ PF_SGX
+Date: Tue, 4 Sep 2018 12:55:31 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-	"Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, "open list:X86 MM" <linux-kernel@vger.kernel.org>
-Date: Fri, 28 Sep 2018 15:17:50 +0300
-In-Reply-To: <87zhw2ohf0.fsf@xmission.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-         <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
-         <87zhw2ohf0.fsf@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+To: Jann Horn <jannh@google.com>
+CC: the arch/x86 maintainers <x86@kernel.org>,
+	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin"
+	<hpa@zytor.com>, <suresh.b.siddha@intel.com>, <serge.ayoun@intel.com>,
+	"kernel list" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180904095531.GA5423@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <CAG48ez2_EgP_-FcLV0g=EU2KuKEwFAmZufjGevMX4j--fJ_0+w@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAG48ez2_EgP_-FcLV0g=EU2KuKEwFAmZufjGevMX4j--fJ_0+w@mail.gmail.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, 2018-09-27 at 21:43 +0200, Eric W. Biederman wrote:
-> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
-> 
+On Mon, Sep 03, 2018 at 03:53:24PM +0200, Jann Horn wrote:
+> On Mon, Sep 3, 2018 at 3:33 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
 > > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > Signal SIGSEGV(SEGV_SGXERR) for all faults with PF_SGX set in the
-> > error code.  The PF_SGX bit is set if and only if the #PF is detected
-> > by the Enclave Page Cache Map (EPCM), which is consulted only after
-> > an access walks the kernel's page tables, i.e.:
-> > 
-> >   a. the access was allowed by the kernel
-> >   b. the kernel's tables have become less restrictive than the EPCM
-> >   c. the kernel cannot fixup the cause of the fault
-> > 
-> > Noteably, (b) implies that either the kernel has botched the EPC
-> > mappings or the EPCM has been invalidated due to a power event.  In
-> > either case, userspace needs to be alerted so that it can take
-> > appropriate action, e.g. restart the enclave.  This is reinforced
-> > by (c) as the kernel doesn't really have any other reasonable option,
-> > e.g. we could kill the task or panic, but neither is warranted.
-> > 
+> >
+> > Add a function to perform ENCLS(EINIT), which initializes an enclave,
+> > which can be used by a driver for running enclaves and VMMs.
+> >
+> > Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
+> > than normal MSRs, so we use a per-cpu cache to track the last known value
+> > of the MSRs to avoid unnecessarily writing the MSRs with the current value.
+> >
 > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  arch/x86/mm/fault.c | 20 +++++++++++++++++---
-> >  1 file changed, 17 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > index 85d20516b2f3..3fb2b2838d6c 100644
-> > --- a/arch/x86/mm/fault.c
-> > +++ b/arch/x86/mm/fault.c
-> > @@ -960,10 +960,13 @@ static noinline void
-> >  bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
-> >  		      unsigned long address, struct vm_area_struct *vma)
-> >  {
-> > +	int si_code = SEGV_ACCERR;
+> [...]
+> > +/**
+> > + * sgx_einit - initialize an enclave
+> > + * @sigstruct:         a pointer to the SIGSTRUCT
+> > + * @token:             a pointer to the EINITTOKEN
+> > + * @secs_page:         a pointer to the SECS EPC page
+> > + * @lepubkeyhash:      the desired value for IA32_SGXLEPUBKEYHASHx MSRs
+> > + *
+> > + * Try to perform EINIT operation. If the MSRs are writable, they are updated
+> > + * according to @lepubkeyhash.
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   -errno on failure
+> > + *   SGX error code if EINIT fails
+> > + */
+> > +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+> > +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
+> > +{
+> > +       struct sgx_lepubkeyhash __percpu *cache;
+> > +       bool cache_valid;
+> > +       int i, ret;
 > > +
-> >  	if (bad_area_access_from_pkeys(error_code, vma))
-> > -		__bad_area(regs, error_code, address, vma, SEGV_PKUERR);
-> > -	else
-> > -		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
-> > +		si_code = SEGV_PKUERR;
-> > +	else if (unlikely(error_code & X86_PF_SGX))
-> > +		si_code = SEGV_SGXERR;
-> > +	__bad_area(regs, error_code, address, vma, si_code);
-> >  }
+> > +       if (!sgx_lc_enabled)
+> > +               return __einit(sigstruct, token, sgx_epc_addr(secs_page));
+> > +
+> > +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
 > 
-> This conflicts with a cleanup in this area I have sitting in linux-next.
-> It isn't in the x86 tree but you can find my siginfo tree at:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git
-> siginfo-next
-> 
-> In my tree bad area no longer takes a vma parameter.
-> 
-> If you are going to make changes to the fault handling code this cycle
-> please let's figure out how to build it on top of my clean ups.
+> At this point, preemption must be off, because smp_processor_id() is
+> called; I don't think it is off here? If you have hardware/emulation
+> on which you can test this, you may want to test your patches with
+> DEBUG_PREEMPT enabled.
 
-We are now going with the proposed vdso solution for v15. Thank you for
-your feedback. I'll sync with you if that route would show non-feasible
-(still prototyping the vdso solution). 
+Yeah, it really should. Thanks for spotting.
 
-> Thank you,
-> Eric Biederman
+> 
+> > +       if (!cache) {
+> > +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
+> 
+> But then here you do a GFP_KERNEL allocation, which can sleep.
+
+Yes, of course this would need to be moved outside of the region where
+pre-emption is disabled.
+
+> Also: After "cache" has been allocated in this branch, when do you
+> store the reference to it? As far as I can tell, you never write to
+> sgx_lepubkeyhash_cache, and the allocation just leaks.
+
+I have assignment in my local tree but for some reason it was not
+squashed to this commit :-/
+
+> 
+> > +               if (!cache)
+> > +                       return -ENOMEM;
+> > +       }
+> > +
+> > +       cache_valid = cache->pm_cnt == sgx_pm_cnt;
+> 
+> The cache should probably not be treated as valid if it has just been
+> created and only contains zeroes, right?
+
+The name of the local variable is probably a bit misleading but also
+cached values are compared in the loop.
+
+> 
+> > +       cache->pm_cnt = sgx_pm_cnt;
+> 
+> Can sgx_pm_cnt be modified concurrently? If so, please use at least
+> READ_ONCE() to document that and prevent the compiler from doing weird
+> stuff.
+
+No it cannot.
+
+> 
+> > +       preempt_disable();
+> 
+> And here you turn off preemption, but it should already have been off?
+
+Yes.
+
+I think Sean's suggestion to update cache on SGX_INVALID_TOKEN is way to
+go in this and instead of fixing this I'll change the code to use that
+as a measure to update the cache.
 
 /Jarkko
