@@ -1,166 +1,71 @@
-Received: from mga11.intel.com ([192.55.52.93]:22699 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1727165AbeIYTVA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 25
- Sep 2018 15:21:00 -0400
+Date: Wed, 5 Sep 2018 20:39:40 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	"Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, Suresh Siddha <suresh.b.siddha@intel.com>, "open
- list:X86 ARCHITECTURE (32-BIT AND        64-BIT)"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 13/19] x86/sgx: Enclave Page Cache (EPC) memory manager
-Date: Tue, 25 Sep 2018 16:06:50 +0300
-Message-ID: <20180925130845.9962-14-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Content-Type: text/plain
-Return-Path: linux-sgx-owner@vger.kernel.org
+To: Sean Christopherson <sean.j.christopherson@intel.com>
+CC: "Huang, Kai" <kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180905173940.GG11368@linux.intel.com>
+References: <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+ <20180831181509.GB21555@linux.intel.com>
+ <20180903191926.GC13497@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
+ <20180904145451.GA5233@linux.intel.com>
+ <20180904153021.GB8344@linux.intel.com>
+ <20180904163546.GA5421@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180904163546.GA5421@linux.intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-Add a Enclave Page Cache (EPC) memory manager that can be used to
-allocate and free EPC pages.
+On Tue, Sep 04, 2018 at 09:35:46AM -0700, Sean Christopherson wrote:
+> On Tue, Sep 04, 2018 at 06:30:21PM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Sep 04, 2018 at 07:54:51AM -0700, Sean Christopherson wrote:
+> > > I don't see any value in trying to rule out specific causes of
+> > > INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
+> > > and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs to
+> > > be checked for validity as they're a package deal, i.e. they'll all be
+> > > valid or all be reset.  There shouldn't be a limit on retry attempts,
+> > > e.g. the MSRs could theoretically be reset between WRMSR and EINIT.
+> > 
+> > Why is doing rdmsrs necessary? With the INVALID_TOKEN error we know we
+> > are out-of-sync i.e. have been sleeping and then one just needs to do
+> > wrmsrs.
+> 
+> As Kai mentioned, INVALID_TOKEN is returned for other reasons, e.g. a
+> production enclave trying to use a debug token or reserved bits set in
+> the token.  And in the KVM case, the hash and token are provided by
+> the guest, so it's entirely possible the enclave/token is not signed
+> with the key specified in the hash.  RDMSR is relatively inexpensive
+> compared to the overall cost of EINIT.  Though of course EINIT failure
+> isn't exactly a fast path, so I'm ok if you want to opt for simplicity
+> and retry on INVALID_TOKEN without checking the MSRs, just make sure
+> to add a comment indicating we're intentionally not checking the MSRs.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/sgx.h      |  7 ++-
- arch/x86/kernel/cpu/intel_sgx.c | 86 +++++++++++++++++++++++++++++++++
- 2 files changed, 92 insertions(+), 1 deletion(-)
+Great!
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 468e609147cd..6ea5a6dbd36d 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -14,6 +14,7 @@
- 
- struct sgx_epc_page {
- 	unsigned long desc;
-+	void *owner;
- 	struct list_head list;
- };
- 
-@@ -65,7 +66,7 @@ static inline void __iomem *sgx_epc_addr(struct sgx_epc_page *page)
- 	return section->va + (page->desc & PAGE_MASK) - section->pa;
- }
- 
--/**
-+/*
-  * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
-  *
-  * ENCLS has its own (positive value) error codes and also generates
-@@ -309,4 +310,8 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
- 	return __encls_ret_2(SGX_EMODT, secinfo, addr);
- }
- 
-+struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim);
-+int __sgx_free_page(struct sgx_epc_page *page);
-+void sgx_free_page(struct sgx_epc_page *page);
-+
- #endif /* _ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
-index b24d6287442d..ef30d6730859 100644
---- a/arch/x86/kernel/cpu/intel_sgx.c
-+++ b/arch/x86/kernel/cpu/intel_sgx.c
-@@ -19,6 +19,92 @@ EXPORT_SYMBOL_GPL(sgx_epc_sections);
- 
- static int sgx_nr_epc_sections;
- 
-+/**
-+ * sgx_alloc_page - Allocate an EPC page
-+ * @owner:	the owner of the EPC page
-+ * @reclaim:	wait and reclaim pages up until we get one
-+ *
-+ * Try to grab a page from the free EPC page list. If there is a free page
-+ * available, it is returned to the caller. The @reclaim parameter hints
-+ * the EPC memory manager to swap pages when required.
-+ *
-+ * Return:
-+ *   a pointer to a &struct sgx_epc_page instace,
-+ *   -errno on error
-+ */
-+struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
-+{
-+	struct sgx_epc_section *section;
-+	struct sgx_epc_page *page;
-+	int i;
-+
-+	for (i = 0; i < sgx_nr_epc_sections; i++) {
-+		section = &sgx_epc_sections[i];
-+		spin_lock(&section->lock);
-+		if (section->free_cnt) {
-+			page = section->pages[section->free_cnt - 1];
-+			section->free_cnt--;
-+		}
-+		spin_unlock(&section->lock);
-+
-+		if (page) {
-+			page->owner = owner;
-+			return page;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(sgx_alloc_page);
-+
-+/**
-+ * __sgx_free_page - Free an EPC page
-+ * @page:	pointer a previously allocated EPC page
-+ *
-+ * Invaldate an EPC page and insert it back to the list of free pages.
-+ *
-+ * Return:
-+ *   0 on success
-+ *   -EBUSY if the page cannot be removed from the active list
-+ *   SGX error code if EREMOVE fails
-+ */
-+int __sgx_free_page(struct sgx_epc_page *page)
-+{
-+	struct sgx_epc_section *section = sgx_epc_section(page);
-+	int ret;
-+
-+	ret = __eremove(sgx_epc_addr(page));
-+	if (ret)
-+		return ret;
-+
-+	spin_lock(&section->lock);
-+	section->pages[section->free_cnt++] = page;
-+	spin_unlock(&section->lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(__sgx_free_page);
-+
-+/**
-+ * sgx_free_page - Free an EPC page and WARN on failure
-+ * @page:	pointer to a previously allocated EPC page
-+ *
-+ * EREMOVE an EPC page and insert it back to the list of free pages.
-+ * If the page is reclaimable, deletes it from the active page list.
-+ * WARN on any failure.  For use when the call site cannot (or chooses
-+ * not to) handle failure, i.e. the page is leaked on failure.
-+ */
-+void sgx_free_page(struct sgx_epc_page *page)
-+{
-+	int ret;
-+
-+	ret = __sgx_free_page(page);
-+	WARN(ret < 0, "sgx: cannot free page, reclaim in-progress");
-+	WARN(ret > 0, "sgx: EREMOVE returned %d (0x%x)", ret, ret);
-+}
-+EXPORT_SYMBOL_GPL(sgx_free_page);
-+
-+
- static __init void sgx_free_epc_section(struct sgx_epc_section *section)
- {
- 	int i;
--- 
-2.17.1
+> > I think one retry should be enough given that VMM traps EINIT. One retry
+> > is needed to take care of the guest itself (or host if we are running on
+> > bare metal) having been in a sleep state.
+> 
+> Assuming we do RDMSR(hash0), that should be sufficient to prevent
+> infinite retry and it protects against the MSRs being lost between
+> WRMSR and EINIT during retry.  That being said, I'm ok retrying only
+> once, especially if you want to omit the RDMSR.  Disabling preemption
+> should prevent the kernel from suspending between WRMSR and EINIT,
+> I'm just being paranoid.
+
+But they are in the same preempt-disabled-region already?
+
+/Jarkko
