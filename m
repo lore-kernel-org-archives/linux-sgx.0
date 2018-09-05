@@ -1,100 +1,41 @@
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, "open
- list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>, "open
- list" <linux-kernel@vger.kernel.org>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-	<20180925130845.9962-9-jarkko.sakkinen@linux.intel.com>
-Date: Thu, 27 Sep 2018 20:41:48 +0200
-In-Reply-To: <20180925130845.9962-9-jarkko.sakkinen@linux.intel.com> (Jarkko
-	Sakkinen's message of "Tue, 25 Sep 2018 16:06:45 +0300")
-Message-ID: <87in2qpytv.fsf@xmission.com>
-Content-Type: text/plain
-Subject: Re: [PATCH v14 08/19] signal: x86/sgx: Add SIGSEGV siginfo code for SGX EPCM fault
-Return-Path: ebiederm@xmission.com
+Date: Wed, 5 Sep 2018 20:32:48 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>, "maintainer:X86 ARCHITECTURE
+ (32-BIT AND 64-BIT)" <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
+Message-ID: <20180905173248.GD11368@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+ <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
+On Tue, Sep 04, 2018 at 09:04:44AM -0700, Dave Hansen wrote:
+> On 09/03/2018 06:16 AM, Andy Shevchenko wrote:
+> >> +       EBLOCK  = 0x9,
+> >> +       EPA     = 0xA,
+> >> +       EWB     = 0xB,
+> >> +       ETRACK  = 0xC,
+> >> +       EAUG    = 0xD,
+> >> +       EMODPR  = 0xE,
+> >> +       EMODT   = 0xF,
+> >> +};
+> > Hmm... This E prefix confuses me with (system wide) error codes. Has
+> > it been discussed before? If so, can you point on the conclusion why
+> > the current format is good?
+> 
+> Making them SGX_EWHATEVER isn't a horrible idea.
 
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> The SGX Enclave Page Cache Map (EPCM) is a hardware-managed table
-> that enforces accesses to an enclave's EPC page in addition to the
-> software-managed kernel page tables, i.e. the effective permissions
-> for an EPC page are a logical AND of the kernel's page tables and
-> the corresponding EPCM entry.  The primary purpose of the EPCM is
-> to prevent a malcious or compromised kernel from attacking an enclave
-> by modifying the enclave's page tables.  The EPCM entires for an
-> enclave are populated when the enclave is built and verified, using
-> metadata provided by the enclave that is included in the measurement
-> used to verify the enclave.
->
-> In normal operation of a properly functioning, non-malicious kernel
-> (and enclave), the EPCM permissions will never trigger a fault, i.e.
-> the kernel may make the permissions for an EPC page more restrictive,
-> e.g. mark it not-present to swap out the EPC page, but the kernel will
-> never make its permissions less restrictive.
->
-> But, there is a legitimate scenario in which the kernel's page tables
-> can become less restrictive than the EPCM: on current hardware all
-> enclaves are destroyed (by hardware) on a transition to S3 or lower
-> sleep states, i.e. all EPCM entries are invalid (not-present) after
-> the system resumes from its sleep state.
->
-> Unfortunately, on CPUs that support only SGX1, EPCM violations result
-> in a #GP.  The upside of the #GP is that no kernel changes are needed
-> to deal with the EPCM being blasted away by hardware, e.g. userspace
-> gets a SIGSEGV, assumes the EPCM was lost and restarts its enclave
-> and everyone is happy.  The downside is that userspace has to assume
-> the SIGSEGV was because the EPC was lost (or possibly do some leg work
-> to rule out other causes).
->
-> In SGX2, the oddity of delivering a #GP due to what are inherently
-> paging related violations is remedied.  CPUs that support SGX2 deliver
-> EPCM violations as #PFs with a new SGX error code bit set.  So, now
-> that hardware provides us with a way to unequivocally determine that
-> a fault was due to a EPCM violation, define a signfo code for SIGSEGV
-> so that the information can be passed onto userspace.
->
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  include/uapi/asm-generic/siginfo.h | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-> index 80e2a7227205..fdd898e2325b 100644
-> --- a/include/uapi/asm-generic/siginfo.h
-> +++ b/include/uapi/asm-generic/siginfo.h
-> @@ -225,7 +225,11 @@ typedef struct siginfo {
->  #else
->  # define SEGV_PKUERR	4	/* failed protection key checks */
->  #endif
-> +#ifdef __x86_64__
-> +#define SEGV_SGXERR	5	/* SGX Enclave Page Cache Map fault */
-> +#else
->  #define SEGV_ACCADI	5	/* ADI not enabled for mapped object */
-> +#endif
+OK, going with that.
 
-Don't do this crazy ifdef thing.  si_codes are not supposed to be per
-architecture.  There are a few historical bugs but with a 32bit space
-it is just stupid to add #ifdefs.
-
-Just set.
-#define SEGV_SGXERR 8 and increase NSIGSEGV
-
-Anything else is just asking for trouble.  Especially when you want to
-get SGX working on itaninum.
-
->  #define SEGV_ADIDERR	6	/* Disrupting MCD error */
->  #define SEGV_ADIPERR	7	/* Precise MCD exception */
->  #define NSIGSEGV	7
-
-Eric
+/Jarkko
