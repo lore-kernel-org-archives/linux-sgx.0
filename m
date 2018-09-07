@@ -1,85 +1,125 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, "open
- list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>, "open
- list" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 08/19] signal: x86/sgx: Add SIGSEGV siginfo code for SGX EPCM fault
-Date: Tue, 25 Sep 2018 16:06:45 +0300
-Message-ID: <20180925130845.9962-9-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
+Date: Fri, 7 Sep 2018 10:02:40 -0700
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Joe Perches <joe@perches.com>
+CC: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Andy Shevchenko
+	<andy.shevchenko@gmail.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>, "Siddha, Suresh B"
+	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart
+	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Herbert Xu
+	<herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, "Linux
+ Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
+Message-ID: <20180907170240.GA21376@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
+ <20180905173355.GE11368@linux.intel.com>
+ <CAHp75Vc2SZUfRnBPZ9xJ_B=KJL7yK9hqRZiFOTswn0AzjnLD1A@mail.gmail.com>
+ <20180906092100.GA27302@linux.intel.com>
+ <CANiq72kpY1y2aPH+GMi8mWZdttfdYJ3wk0cvE_qVD97vdvTJbQ@mail.gmail.com>
+ <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Thu, Sep 06, 2018 at 05:50:01PM -0700, Joe Perches wrote:
+> On Thu, 2018-09-06 at 19:35 +0200, Miguel Ojeda wrote:
+> > > Which one is right and why the kernel tree is polluted with C99-headers
+> > > when they do not pass checkpatch.pl?
+> 
+> checkpatch ignores c99 headers since 2016.
 
-The SGX Enclave Page Cache Map (EPCM) is a hardware-managed table
-that enforces accesses to an enclave's EPC page in addition to the
-software-managed kernel page tables, i.e. the effective permissions
-for an EPC page are a logical AND of the kernel's page tables and
-the corresponding EPCM entry.  The primary purpose of the EPCM is
-to prevent a malcious or compromised kernel from attacking an enclave
-by modifying the enclave's page tables.  The EPCM entires for an
-enclave are populated when the enclave is built and verified, using
-metadata provided by the enclave that is included in the measurement
-used to verify the enclave.
+Jarkko was referring to c99 comments for the SPDX license.  checkpatch
+explicitly requires c-style comments for headers and assembly files as
+dictated by Documentation/process/license-rules.rst.  
 
-In normal operation of a properly functioning, non-malicious kernel
-(and enclave), the EPCM permissions will never trigger a fault, i.e.
-the kernel may make the permissions for an EPC page more restrictive,
-e.g. mark it not-present to swap out the EPC page, but the kernel will
-never make its permissions less restrictive.
+$ grep -r SPDX **/*.h | grep \/\/ | wc -l
+665
 
-But, there is a legitimate scenario in which the kernel's page tables
-can become less restrictive than the EPCM: on current hardware all
-enclaves are destroyed (by hardware) on a transition to S3 or lower
-sleep states, i.e. all EPCM entries are invalid (not-present) after
-the system resumes from its sleep state.
+$ grep -r SPDX **/*.S | grep \/\/ | wc -l
+22
 
-Unfortunately, on CPUs that support only SGX1, EPCM violations result
-in a #GP.  The upside of the #GP is that no kernel changes are needed
-to deal with the EPCM being blasted away by hardware, e.g. userspace
-gets a SIGSEGV, assumes the EPCM was lost and restarts its enclave
-and everyone is happy.  The downside is that userspace has to assume
-the SIGSEGV was because the EPC was lost (or possibly do some leg work
-to rule out other causes).
+$ git show 9f3a89926d6df
+commit 9f3a89926d6dfc30a4fd1bbcb92cc7b218d3786d
+Author: Rob Herring <robh@kernel.org>
+Date:   Tue Apr 10 16:33:13 2018 -0700
 
-In SGX2, the oddity of delivering a #GP due to what are inherently
-paging related violations is remedied.  CPUs that support SGX2 deliver
-EPCM violations as #PFs with a new SGX error code bit set.  So, now
-that hardware provides us with a way to unequivocally determine that
-a fault was due to a EPCM violation, define a signfo code for SIGSEGV
-so that the information can be passed onto userspace.
+    checkpatch.pl: add SPDX license tag check
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- include/uapi/asm-generic/siginfo.h | 4 ++++
- 1 file changed, 4 insertions(+)
+    Add SPDX license tag check based on the rules defined in
+    Documentation/process/license-rules.rst.  To summarize, SPDX license
+    tags should be on the 1st line (or 2nd line in scripts) using the
+    appropriate comment style for the file type.
 
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index 80e2a7227205..fdd898e2325b 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -225,7 +225,11 @@ typedef struct siginfo {
- #else
- # define SEGV_PKUERR	4	/* failed protection key checks */
- #endif
-+#ifdef __x86_64__
-+#define SEGV_SGXERR	5	/* SGX Enclave Page Cache Map fault */
-+#else
- #define SEGV_ACCADI	5	/* ADI not enabled for mapped object */
-+#endif
- #define SEGV_ADIDERR	6	/* Disrupting MCD error */
- #define SEGV_ADIPERR	7	/* Precise MCD exception */
- #define NSIGSEGV	7
--- 
-2.17.1
+    Link: http://lkml.kernel.org/r/20180202154026.15298-1-robh@kernel.org
+    Signed-off-by: Rob Herring <robh@kernel.org>
+    Signed-off-by: Joe Perches <joe@perches.com>
+    Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+    Cc: Andy Whitcroft <apw@canonical.com>
+    Cc: Joe Perches <joe@perches.com>
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Cc: Igor Stoppa <igor.stoppa@huawei.com>
+    Cc: Jonathan Corbet <corbet@lwn.net>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index b464a4c3f863..0f022b56f117 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2257,6 +2257,8 @@ sub process {
+
+        my $camelcase_file_seeded = 0;
+
++       my $checklicenseline = 1;
++
+        sanitise_line_reset();
+        my $line;
+        foreach my $rawline (@rawlines) {
+@@ -2448,6 +2450,7 @@ sub process {
+                        } else {
+                                $check = $check_orig;
+                        }
++                       $checklicenseline = 1;
+                        next;
+                }
+
+@@ -2911,6 +2914,30 @@ sub process {
+                        }
+                }
+
++# check for using SPDX license tag at beginning of files
++               if ($realline == $checklicenseline) {
++                       if ($rawline =~ /^[ \+]\s*\#\!\s*\//) {
++                               $checklicenseline = 2;
++                       } elsif ($rawline =~ /^\+/) {
++                               my $comment = "";
++                               if ($realfile =~ /\.(h|s|S)$/) {
++                                       $comment = '/*';
++                               } elsif ($realfile =~ /\.(c|dts|dtsi)$/) {
++                                       $comment = '//';
++                               } elsif (($checklicenseline == 2) || $realfile =~ /\.(sh|pl|py|awk|tc)$/) {
++                                       $comment = '#';
++                               } elsif ($realfile =~ /\.rst$/) {
++                                       $comment = '..';
++                               }
++
++                               if ($comment !~ /^$/ &&
++                                   $rawline !~ /^\+\Q$comment\E SPDX-License-Identifier: /) {
++                                       WARN("SPDX_LICENSE_TAG",
++                                            "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
++                               }
++                       }
++               }
++
+ # check we are in a valid source file if not then ignore this hunk
+                next if ($realfile !~ /\.(h|c|s|S|sh|dtsi|dts)$/);
