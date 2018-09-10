@@ -1,65 +1,52 @@
-Date: Tue, 4 Sep 2018 09:35:46 -0700
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Received: from smtprelay0072.hostedemail.com ([216.40.44.72]:44345 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)        by
+ vger.kernel.org with ESMTP id S1726121AbeIKCTC (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 10 Sep 2018 22:19:02 -0400
+Message-ID: <5582ed9b297db98ddb713b240e6059acf26bb8a7.camel@perches.com>
+Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
+From: Joe Perches <joe@perches.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: "Huang, Kai" <kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180904163546.GA5421@linux.intel.com>
-References: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
- <20180904145451.GA5233@linux.intel.com>
- <20180904153021.GB8344@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180904153021.GB8344@linux.intel.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
-MIME-Version: 1.0
+CC: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Andy Shevchenko
+	<andy.shevchenko@gmail.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>, "Siddha, Suresh B"
+	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart
+	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Herbert Xu
+	<herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, "Linux
+ Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Date: Mon, 10 Sep 2018 14:22:58 -0700
+In-Reply-To: <20180910183744.GB20225@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+         <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
+         <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
+         <20180905173355.GE11368@linux.intel.com>
+         <CAHp75Vc2SZUfRnBPZ9xJ_B=KJL7yK9hqRZiFOTswn0AzjnLD1A@mail.gmail.com>
+         <20180906092100.GA27302@linux.intel.com>
+         <CANiq72kpY1y2aPH+GMi8mWZdttfdYJ3wk0cvE_qVD97vdvTJbQ@mail.gmail.com>
+         <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
+         <20180910183744.GB20225@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Tue, Sep 04, 2018 at 06:30:21PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Sep 04, 2018 at 07:54:51AM -0700, Sean Christopherson wrote:
-> > I don't see any value in trying to rule out specific causes of
-> > INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
-> > and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs to
-> > be checked for validity as they're a package deal, i.e. they'll all be
-> > valid or all be reset.  There shouldn't be a limit on retry attempts,
-> > e.g. the MSRs could theoretically be reset between WRMSR and EINIT.
+On Mon, 2018-09-10 at 21:37 +0300, Jarkko Sakkinen wrote:
+> On Thu, Sep 06, 2018 at 05:50:01PM -0700, Joe Perches wrote:
+> > On Thu, 2018-09-06 at 19:35 +0200, Miguel Ojeda wrote:
+> > > > Which one is right and why the kernel tree is polluted with C99-headers
+> > > > when they do not pass checkpatch.pl?
+> > 
+> > checkpatch ignores c99 headers since 2016.
 > 
-> Why is doing rdmsrs necessary? With the INVALID_TOKEN error we know we
-> are out-of-sync i.e. have been sleeping and then one just needs to do
-> wrmsrs.
+> For headers I get these warnings:
+> 
+> WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+> #243: FILE: drivers/platform/x86/intel_sgx/sgx.h:1:
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 
-As Kai mentioned, INVALID_TOKEN is returned for other reasons, e.g. a
-production enclave trying to use a debug token or reserved bits set in
-the token.  And in the KVM case, the hash and token are provided by
-the guest, so it's entirely possible the enclave/token is not signed
-with the key specified in the hash.  RDMSR is relatively inexpensive
-compared to the overall cost of EINIT.  Though of course EINIT failure
-isn't exactly a fast path, so I'm ok if you want to opt for simplicity
-and retry on INVALID_TOKEN without checking the MSRs, just make sure
-to add a comment indicating we're intentionally not checking the MSRs.
- 
-> I think one retry should be enough given that VMM traps EINIT. One retry
-> is needed to take care of the guest itself (or host if we are running on
-> bare metal) having been in a sleep state.
-
-Assuming we do RDMSR(hash0), that should be sufficient to prevent
-infinite retry and it protects against the MSRs being lost between
-WRMSR and EINIT during retry.  That being said, I'm ok retrying only
-once, especially if you want to omit the RDMSR.  Disabling preemption
-should prevent the kernel from suspending between WRMSR and EINIT,
-I'm just being paranoid.
+Because .h files are supposed to use /* */
