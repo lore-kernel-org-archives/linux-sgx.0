@@ -1,52 +1,118 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
-	<hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Ricardo Neri
-	<ricardo.neri-calderon@linux.intel.com>, Juergen Gross <jgross@suse.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 06/19] x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
-Date: Tue, 25 Sep 2018 16:06:43 +0300
-Message-ID: <20180925130845.9962-7-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
+Message-ID: <1536678279.5992.9.camel@intel.com>
+Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
+ manager
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
+	<platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
+	<linux-sgx@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Suresh Siddha
+	<suresh.b.siddha@intel.com>, Serge Ayoun <serge.ayoun@intel.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Date: Tue, 11 Sep 2018 08:04:39 -0700
+In-Reply-To: <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+	 <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Mon, 2018-08-27 at 21:53 +0300, Jarkko Sakkinen wrote:
+> Add a Enclave Page Cache (EPC) memory manager that can be used to
+> allocate and free EPC pages. The swapper thread ksgxswapd reclaims pages
+> on the event when the number of free EPC pages goes below
+> %SGX_NR_LOW_PAGES up until it reaches %SGX_NR_HIGH_PAGES.
+> 
+> Pages are reclaimed in LRU fashion from a global list. The consumers
+> take care of calling EBLOCK (block page from new accesses), ETRACK
+> (restart counting the entering hardware threads) and EWB (write page to
+> the regular memory) because executing these operations usually (if not
+> always) requires to do some subsystem-internal locking operations.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/asm/sgx.h      |  56 ++++--
+>  arch/x86/kernel/cpu/intel_sgx.c | 322 ++++++++++++++++++++++++++++++++
+>  2 files changed, 362 insertions(+), 16 deletions(-)
 
-The SGX bit is set in the #PF error code if and only if the fault is
-detected by the Enclave Page Cache Map (EPCM), a hardware-managed
-table that enforces the paging permissions defined by the enclave,
-e.g. to prevent the kernel from changing the permissions of an
-enclave's page(s).
+...
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/traps.h | 1 +
- 1 file changed, 1 insertion(+)
+> +/**
+> + * sgx_reclaim_pages - reclaim EPC pages from the consumers
+> + *
+> + * Takes a fixed chunk of pages from the global list of consumed EPC pages and
+> + * tries to swap them. Only the pages that are either being freed by the
+> + * consumer or actively used are skipped.
+> + */
+> +static void sgx_reclaim_pages(void)
+> +{
+> +	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN + 1];
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 3de69330e6c5..165c93dd700e 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -162,5 +162,6 @@ enum x86_pf_error_code {
- 	X86_PF_RSVD	=		1 << 3,
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
-+	X86_PF_SGX	=		1 << 15,
- };
- #endif /* _ASM_X86_TRAPS_H */
--- 
-2.17.1
+The array size should simply be SGX_NR_TO_SCAN.  The +1 is a remnant
+from the previous version that bounded the for-loops with "!chunk[i]"
+check instead of "i < j".  No functional issue, essentially just an
+unused variable.
+
+> +	struct sgx_epc_page *epc_page;
+> +	struct sgx_epc_bank *bank;
+> +	int i, j;
+> +
+> +	spin_lock(&sgx_active_page_list_lock);
+> +	for (i = 0, j = 0; i < SGX_NR_TO_SCAN; i++) {
+> +		if (list_empty(&sgx_active_page_list))
+> +			break;
+> +
+> +		epc_page = list_first_entry(&sgx_active_page_list,
+> +					    struct sgx_epc_page, list);
+> +		list_del_init(&epc_page->list);
+> +
+> +		if (epc_page->impl->ops->get(epc_page))
+> +			chunk[j++] = epc_page;
+> +		else
+> +			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
+> +	}
+> +	spin_unlock(&sgx_active_page_list_lock);
+> +
+> +	for (i = 0; i < j; i++) {
+> +		epc_page = chunk[i];
+> +		if (epc_page->impl->ops->reclaim(epc_page))
+> +			continue;
+> +
+> +		spin_lock(&sgx_active_page_list_lock);
+> +		list_add_tail(&epc_page->list, &sgx_active_page_list);
+> +		spin_unlock(&sgx_active_page_list_lock);
+> +
+> +		epc_page->impl->ops->put(epc_page);
+> +		chunk[i] = NULL;
+> +	}
+> +
+> +	for (i = 0; i < j; i++) {
+> +		epc_page = chunk[i];
+> +		if (epc_page)
+> +			epc_page->impl->ops->block(epc_page);
+> +	}
+> +
+> +	for (i = 0; i < j; i++) {
+> +		epc_page = chunk[i];
+> +		if (epc_page) {
+> +			epc_page->impl->ops->write(epc_page);
+> +			epc_page->impl->ops->put(epc_page);
+> +
+> +			/*
+> +			 * Put the page back on the free list only after we
+> +			 * have put() our reference to the owner of the EPC
+> +			 * page, otherwise the page could be re-allocated and
+> +			 * we'd call put() on the wrong impl.
+> +			 */
+> +			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
+> +
+> +			bank = sgx_epc_bank(epc_page);
+> +			spin_lock(&bank->lock);
+> +			bank->pages[bank->free_cnt++] = epc_page;
+> +			spin_unlock(&bank->lock);
+> +		}
+> +	}
+> +}
