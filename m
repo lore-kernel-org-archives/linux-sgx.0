@@ -1,78 +1,57 @@
-Content-Type: text/plain; charset="us-ascii"
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
-From: Andy Lutomirski <luto@amacapital.net>
-In-Reply-To: <20180926173516.GA10920@linux.intel.com>
-Date: Wed, 26 Sep 2018 11:12:27 -0700
-CC: Andy Lutomirski <luto@kernel.org>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
-	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
-	<linux-kernel@vger.kernel.org>
-Message-ID: <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com> <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com> <20180926173516.GA10920@linux.intel.com>
-To: Sean Christopherson <sean.j.christopherson@intel.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
+Date: Tue, 25 Sep 2018 07:27:17 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, "open list:DOCUMENTATION"
+	<linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
+Message-ID: <20180925072717.3a41af75@lwn.net>
+In-Reply-To: <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+	<20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="US-ASCII"
+Return-Path: corbet@lwn.net
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
+On Tue, 25 Sep 2018 16:06:56 +0300
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
 
-> On Sep 26, 2018, at 10:35 AM, Sean Christopherson <sean.j.christopherson@=
-intel.com> wrote:
->=20
->> On Tue, Sep 25, 2018 at 03:53:48PM -0700, Andy Lutomirski wrote:
->> Minor nit:
->>=20
->> On Tue, Sep 25, 2018 at 6:12 AM Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->>>=20
->>> From: Sean Christopherson <sean.j.christopherson@intel.com>
->>>=20
->>=20
->>> by (c) as the kernel doesn't really have any other reasonable option,
->>> e.g. we could kill the task or panic, but neither is warranted.
->>=20
->> Not killing the task is quite nice, but...
->>=20
->>> +       /*
->>> +        * Access is blocked by the Enclave Page Cache Map (EPCM),
->>> +        * i.e. the access is allowed by the PTE but not the EPCM.
->>> +        * This usually happens when the EPCM is yanked out from
->>> +        * under us, e.g. by hardware after a suspend/resume cycle.
->>> +        * In any case, there is nothing that can be done by the
->>> +        * kernel to resolve the fault (short of killing the task).
->>=20
->> Maybe s/killing the task/sending a signal/?
->=20
-> My intent was to document that, unlike all other page faults, the
-> kernel can't fix the source of the fault even if it were omniscient.
->=20
-> How about this?  With formatting changes since it's long-winded...
->=20
->        /*
->         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. th=
-e
->         * access is allowed by the PTE but not the EPCM.  This usually ha=
-ppens
->         * when the EPCM is yanked out from under us, e.g. by hardware aft=
-er a
->         * suspend/resume cycle.  In any case, software, i.e. the kernel, =
-can't
->         * fix the source of the fault as the EPCM can't be directly modif=
-ied
->         * by software.  Handle the fault as an access error in order to s=
-ignal
->         * userspace, e.g. so that userspace can rebuild their enclave(s),=
- even
->         * though userspace may not have actually violated access permissi=
-ons.
->         */
->=20
+> Documentation of the features of the Software Guard eXtensions used
+> by the Linux kernel and basic design choices for the core and driver
+> and functionality.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  Documentation/index.rst         |   1 +
+>  Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
+>  2 files changed, 186 insertions(+)
+>  create mode 100644 Documentation/x86/intel_sgx.rst
+> 
+> diff --git a/Documentation/index.rst b/Documentation/index.rst
+> index 5db7e87c7cb1..1cdc139adb40 100644
+> --- a/Documentation/index.rst
+> +++ b/Documentation/index.rst
+> @@ -104,6 +104,7 @@ implementation.
+>     :maxdepth: 2
+>  
+>     sh/index
+> +   x86/index
 
-Looks good to me.=
+So you're adding this reference to x86/index, but the actual file
+(Documentation/x86/index.rst) doesn't exist; that will break the docs
+build.  I do appreciate your doing your document in RST, though!
+
+Who is the intended audience for this document?  I see a bit of UAPI
+stuff that might be better placed in the userspace-api manual, mixed with
+stuff that user-space developers are unlikely to take much interest in.
+Might it be worth splitting this into two pieces?
+
+Thanks,
+
+jon
