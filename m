@@ -1,53 +1,88 @@
-Received: from mga01.intel.com ([192.55.52.88]:16423 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1727223AbeIDT4F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 4
- Sep 2018 15:56:05 -0400
-Date: Tue, 4 Sep 2018 18:30:21 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Sean Christopherson <sean.j.christopherson@intel.com>
-CC: "Huang, Kai" <kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180904153021.GB8344@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
- <20180904145451.GA5233@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180904145451.GA5233@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
+	<andriy.shevchenko@linux.intel.com>, Haim Cohen <haim.cohen@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Konrad Rzeszutek Wilk
+	<konrad.wilk@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>, "Paolo
+ Bonzini" <pbonzini@redhat.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Matt Turner <mattst88@gmail.com>, "Janakarajan
+ Natarajan" <Janakarajan.Natarajan@amd.com>, David Woodhouse
+	<dwmw@amazon.co.uk>, Andy Lutomirski <luto@kernel.org>, Pavel Tatashin
+	<pasha.tatashin@oracle.com>, "open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v14 05/19] x86/msr: Add SGX definitions to msr-index.h
+Date: Tue, 25 Sep 2018 16:06:42 +0300
+Message-ID: <20180925130845.9962-6-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Content-Type: text/plain
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Sep 04, 2018 at 07:54:51AM -0700, Sean Christopherson wrote:
-> I don't see any value in trying to rule out specific causes of
-> INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
-> and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs to
-> be checked for validity as they're a package deal, i.e. they'll all be
-> valid or all be reset.  There shouldn't be a limit on retry attempts,
-> e.g. the MSRs could theoretically be reset between WRMSR and EINIT.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Why is doing rdmsrs necessary? With the INVALID_TOKEN error we know we
-are out-of-sync i.e. have been sleeping and then one just needs to do
-wrmsrs.
+ENCLS and ENCLU are usable if and only if SGX_ENABLE is set and After
+SGX is activated the IA32_SGXLEPUBKEYHASHn MSRs are writable if
+SGX_LC_WR is set and the feature control is locked.
 
-I think one retry should be enough given that VMM traps EINIT. One retry
-is needed to take care of the guest itself (or host if we are running on
-bare metal) having been in a sleep state.
+SGX related bits in IA32_FEATURE_CONTROL cannot be set before SGX is
+activated by the pre-boot firmware. SGX activation is triggered by
+setting bit 0 in the MSR 0x7a. Until SGX is activated, the LE hash MSRs
+are writable to allow pre-boot firmware to lock down the LE root key
+with a non-Intel value.
 
-/Jarkko
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Haim Cohen <haim.cohen@intel.com>
+Signed-off-by: Haim Cohen <haim.cohen@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/msr-index.h | 8 ++++++++
+ arch/x86/kernel/cpu/common.c     | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 4731f0cf97c5..44d7b68e7f52 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -486,6 +486,8 @@
+ #define FEATURE_CONTROL_LOCKED				(1<<0)
+ #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
+ #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
++#define FEATURE_CONTROL_SGX_ENABLE			(1<<18)
++#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
+ #define FEATURE_CONTROL_LMCE				(1<<20)
+ 
+ #define MSR_IA32_APICBASE		0x0000001b
+@@ -552,6 +554,12 @@
+ #define PACKAGE_THERM_INT_LOW_ENABLE		(1 << 1)
+ #define PACKAGE_THERM_INT_PLN_ENABLE		(1 << 24)
+ 
++/* Intel SGX MSRs */
++#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
++#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
++#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
++#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++
+ /* Thermal Thresholds Support */
+ #define THERM_INT_THRESHOLD0_ENABLE    (1 << 15)
+ #define THERM_SHIFT_THRESHOLD0        8
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 44c4ef3d989b..aedfd9657a6c 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -52,6 +52,7 @@
+ #include <asm/microcode_intel.h>
+ #include <asm/intel-family.h>
+ #include <asm/cpu_device_id.h>
++#include <asm/sgx_arch.h>
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ #include <asm/uv/uv.h>
+-- 
+2.17.1
