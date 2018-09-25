@@ -1,157 +1,52 @@
-Received: from mga09.intel.com ([134.134.136.24]:26431 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1729111AbeIYTV1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 25
- Sep 2018 15:21:27 -0400
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
 CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Darren Hart <dvhart@infradead.org>, "Andy
- Shevchenko" <andy@infradead.org>, Suresh Siddha <suresh.b.siddha@intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 18/19] platform/x86: ptrace() support for the SGX driver
-Date: Tue, 25 Sep 2018 16:06:55 +0300
-Message-ID: <20180925130845.9962-19-jarkko.sakkinen@linux.intel.com>
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Ricardo Neri
+	<ricardo.neri-calderon@linux.intel.com>, Juergen Gross <jgross@suse.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v14 06/19] x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
+Date: Tue, 25 Sep 2018 16:06:43 +0300
+Message-ID: <20180925130845.9962-7-jarkko.sakkinen@linux.intel.com>
 In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
 References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
 Content-Type: text/plain
-Return-Path: linux-sgx-owner@vger.kernel.org
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-Add VMA callbacks for ptrace() that can be used with debug enclaves.
-With debug enclaves data can be read and write the memory word at a time
-by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
+The SGX bit is set in the #PF error code if and only if the fault is
+detected by the Enclave Page Cache Map (EPCM), a hardware-managed
+table that enforces the paging permissions defined by the enclave,
+e.g. to prevent the kernel from changing the permissions of an
+enclave's page(s).
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/platform/x86/intel_sgx/sgx_vma.c | 109 +++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+ arch/x86/include/asm/traps.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/intel_sgx/sgx_vma.c b/drivers/platform/x86/intel_sgx/sgx_vma.c
-index cc0993b4fd40..df604e4d0d0a 100644
---- a/drivers/platform/x86/intel_sgx/sgx_vma.c
-+++ b/drivers/platform/x86/intel_sgx/sgx_vma.c
-@@ -51,8 +51,117 @@ static int sgx_vma_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- }
- 
-+static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset > offsetof(struct sgx_tcs, gs_limit))
-+		return -ECANCELED;
-+
-+	ret = __edbgrd(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGRD returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	/* Writing anything else than flags will cause #GP */
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset != offsetof(struct sgx_tcs, flags))
-+		return -ECANCELED;
-+
-+	ret = __edbgwr(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGWR returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-+			  void *buf, int len, int write)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry = NULL;
-+	unsigned long align;
-+	char data[sizeof(unsigned long)];
-+	int offset;
-+	int cnt;
-+	int ret = 0;
-+	int i;
-+
-+	/* If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return -EFAULT;
-+
-+	if (!(encl->flags & SGX_ENCL_DEBUG) ||
-+	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
-+	    (encl->flags & SGX_ENCL_DEAD))
-+		return -EFAULT;
-+
-+	for (i = 0; i < len; i += cnt) {
-+		if (!entry || !((addr + i) & (PAGE_SIZE - 1))) {
-+			if (entry)
-+				entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+			entry = sgx_fault_page(vma, (addr + i) & PAGE_MASK,
-+					       true);
-+			if (IS_ERR(entry)) {
-+				ret = PTR_ERR(entry);
-+				entry = NULL;
-+				break;
-+			}
-+		}
-+
-+		/* Locking is not needed because only immutable fields of the
-+		 * page are accessed and page itself is reserved so that it
-+		 * cannot be swapped out in the middle.
-+		 */
-+
-+		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-+		offset = (addr + i) & (sizeof(unsigned long) - 1);
-+		cnt = sizeof(unsigned long) - offset;
-+		cnt = min(cnt, len - i);
-+
-+		ret = sgx_edbgrd(encl, entry, align, data);
-+		if (ret)
-+			break;
-+		if (write) {
-+			memcpy(data + offset, buf + i, cnt);
-+			ret = sgx_edbgwr(encl, entry, align, data);
-+			if (ret)
-+				break;
-+		} else
-+			memcpy(buf + i, data + offset, cnt);
-+	}
-+
-+	if (entry)
-+		entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+	return ret < 0 ? ret : i;
-+}
-+
- const struct vm_operations_struct sgx_vm_ops = {
- 	.close = sgx_vma_close,
- 	.open = sgx_vma_open,
- 	.fault = sgx_vma_fault,
-+	.access = sgx_vma_access,
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 3de69330e6c5..165c93dd700e 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -162,5 +162,6 @@ enum x86_pf_error_code {
+ 	X86_PF_RSVD	=		1 << 3,
+ 	X86_PF_INSTR	=		1 << 4,
+ 	X86_PF_PK	=		1 << 5,
++	X86_PF_SGX	=		1 << 15,
  };
+ #endif /* _ASM_X86_TRAPS_H */
 -- 
 2.17.1
