@@ -1,90 +1,80 @@
-Date: Mon, 3 Sep 2018 22:27:54 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Dr. Greg" <greg@enjellic.com>
-CC: Sean Christopherson <sean.j.christopherson@intel.com>, "Huang, Kai"
-	<kai.huang@intel.com>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"npmccallum@redhat.com" <npmccallum@redhat.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180903192754.GD13497@linux.intel.com>
-References: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
- <20180829210901.GA7176@linux.intel.com>
- <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
- <20180831174330.GA21555@linux.intel.com>
- <20180831213445.GA4098@wind.enjellic.com>
+Date: Wed, 26 Sep 2018 13:44:00 -0700
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: Andy Lutomirski <luto@amacapital.net>, Andy Lutomirski <luto@kernel.org>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Message-ID: <20180926204400.GA11446@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180831213445.GA4098@wind.enjellic.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
+In-Reply-To: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Aug 31, 2018 at 04:34:45PM -0500, Dr. Greg wrote:
-> On Fri, Aug 31, 2018 at 10:43:30AM -0700, Sean Christopherson wrote:
+On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
+> On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
+> >> e omniscient.
+> >>
+> >> How about this?  With formatting changes since it's long-winded...
+> >>
+> >>        /*
+> >>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
+> >>         * access is allowed by the PTE but not the EPCM.  This usually happens
+> >>         * when the EPCM is yanked out from under us, e.g. by hardware after a
+> >>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
+> >>         * fix the source of the fault as the EPCM can't be directly modified
+> >>         * by software.  Handle the fault as an access error in order to signal
+> >>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
+> >>         * though userspace may not have actually violated access permissions.
+> >>         */
+> >>
+> > Looks good to me.
 > 
-> Good afternoon to everyone.
+> Including the actual architectural definition of the bit might add some
+> clarity.  The SDM explicitly says (Vol 3a section 4.7):
 > 
-> > > Sorry I missed this one. To be honest I don't know. I checked the
-> > > SDM and all I can find is:
-> > >
-> > > "On reset, the default value is the digest of Intel's signing key."
+> 	The fault resulted from violation of SGX-specific access-control
+> 	requirements.
 > 
-> > I confirmed the MSRs are reset any time the EPC is lost.  Not sure
-> > what happens if the MSRs contained a non-Intel value but feature
-> > control is locked with SGX launch control disabled.  I'll post an
-> > update when I have an answer.
+> Which totally squares with returning true from access_error().
 > 
-> It was our interpretation from the SDM that the identity modulus
-> signature MSR's are 'trap-door' registers.  If flexible launch control
-> (FLC) is enabled the platform has one opportunity to write a new
-> signature value, after which the registers are locked from
-> modification until the next platform reset.
+> There's also a tidbit that says:
+> 
+> 	This flag is 1 if the exception is unrelated to paging and
+> 	resulted from violation of SGX-specific access-control
+> 	requirements. ... such a violation can occur only if there
+> 	is no ordinary page fault...
+> 
+> This is pretty important.  It means that *none* of the other
+> paging-related stuff that we're doing applies.
+>
+> We also need to clarify how this can happen.  Is it through something
+> than an app does, or is it solely when the hardware does something under
+> the covers, like suspend/resume.
 
-In the driver we support only MSRs that are left writable by the BIOS
-before locking the feature control.
+Are you looking for something in the changelog, the comment, or just
+a response?  If it's the latter...
 
-> From a security architecture perspective it seemed that an FLC based
-> SGX implementation would use a modified version of TBOOT to securely
-> write that register once per platform boot/reset.  The architecture
-> that is being discussed where there is a need to continually check
-> whether or not the correct root signing key is loaded sounds a bit
-> clunky at best.
-> 
-> At worst it has potential security implications since it is the
-> reponsibility of the enclave launch control infrastructure to control
-> which enclaves are allowed to have the PROVISION_KEY attribute bit
-> set.
-
-Based on the previous feedback supporting read-only MSRs in the driver
-is an unwanted feature i.e. the kernel must be able to decide what gets
-lauched (i.e. no launch enclave).
-
-> Have a good weekend.
-> 
-> Dr. Greg
-> 
-> As always,
-> Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-> 4206 N. 19th Ave.           Specializing in information infra-structure
-> Fargo, ND  58102            development.
-> PH: 701-281-1686
-> FAX: 701-281-3949           EMAIL: greg@enjellic.com
-> ------------------------------------------------------------------------------
-> "Extensive interviews show that not one alcoholic has ever actually seen
->  a pink elephant."
->                                 -- Yale University
->                                    Center of Alcohol Studies
-
-/Jarkko
+On bare metal with a bug-free kernel, the only scenario I'm aware of
+where we'll encounter these faults is when hardware pulls the rug out
+from under us.  In a virtualized environment all bets are off because
+the architecture allows VMMs to silently "destroy" the EPC at will,
+e.g. KVM, and I believe Hyper-V, will take advantage of this behavior
+to support live migration.  Post migration, the destination system
+will generate PF_SGX because the EPC{M} can't be migrated between
+system, i.e. the destination EPCM sees all EPC pages as invalid.
