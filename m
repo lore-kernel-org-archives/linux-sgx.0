@@ -1,70 +1,67 @@
-Date: Tue, 4 Sep 2018 12:56:05 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>, Dave Hansen
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	<serge.ayoun@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Borislav Petkov <bp@suse.de>, Reinette Chatre <reinette.chatre@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, Linux Kernel Mailing List
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
+	<sean.j.christopherson@intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+CC: Andy Lutomirski <luto@kernel.org>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
 	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 06/13] x86/sgx: Detect Intel SGX
-Message-ID: <20180904095605.GB5423@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
- <CAHp75VeN7QoftgkqP-L6JRZi=MRpQkVioBLP7VDLwH=rpnEp_w@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CAHp75VeN7QoftgkqP-L6JRZi=MRpQkVioBLP7VDLwH=rpnEp_w@mail.gmail.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+Date: Wed, 26 Sep 2018 13:16:59 -0700
+In-Reply-To: <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: dave.hansen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, Sep 03, 2018 at 05:26:43PM +0300, Andy Shevchenko wrote:
-> On Mon, Aug 27, 2018 at 9:57 PM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> >
-> > Intel(R) SGX is a set of CPU instructions that can be used by applications
-> > to set aside private regions of code and data. The code outside the enclave
-> > is disallowed to access the memory inside the enclave by the CPU access
-> > control.
-> >
-> > Add a check for SGX to arch/x86 and a new config option, INTEL_SGX_CORE.
-> > Expose a boolean variable 'sgx_enabled' to query whether or not the SGX
-> > support is available.
-> 
-> > +       prompt "Intel SGX core functionality"
-> > +       def_bool n
-> 
-> Default 'default' is 'n'. Perhaps changing prompt to bool will make it
-> one line less.
+On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
+>> e omniscient.
+>>
+>> How about this?  With formatting changes since it's long-winded...
+>>
+>>        /*
+>>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
+>>         * access is allowed by the PTE but not the EPCM.  This usually happens
+>>         * when the EPCM is yanked out from under us, e.g. by hardware after a
+>>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
+>>         * fix the source of the fault as the EPCM can't be directly modified
+>>         * by software.  Handle the fault as an access error in order to signal
+>>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
+>>         * though userspace may not have actually violated access permissions.
+>>         */
+>>
+> Looks good to me.
 
-Sure!
+Including the actual architectural definition of the bit might add some
+clarity.  The SDM explicitly says (Vol 3a section 4.7):
 
-> > +#include <asm/sgx.h>
-> > +#include <asm/sgx_pr.h>
-> 
-> Don't we put linux/* followed by asm/* ?
+	The fault resulted from violation of SGX-specific access-control
+	requirements.
 
-Yes.
+Which totally squares with returning true from access_error().
 
-> 
-> > +#include <linux/freezer.h>
-> > +#include <linux/highmem.h>
-> > +#include <linux/kthread.h>
-> > +#include <linux/ratelimit.h>
-> > +#include <linux/sched/signal.h>
-> > +#include <linux/slab.h>
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+There's also a tidbit that says:
 
-/Jarkko
+	This flag is 1 if the exception is unrelated to paging and
+	resulted from violation of SGX-specific access-control
+	requirements. ... such a violation can occur only if there
+	is no ordinary page fault...
+
+This is pretty important.  It means that *none* of the other
+paging-related stuff that we're doing applies.
+
+We also need to clarify how this can happen.  Is it through something
+than an app does, or is it solely when the hardware does something under
+the covers, like suspend/resume.
