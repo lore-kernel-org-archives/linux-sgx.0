@@ -1,48 +1,78 @@
-Date: Tue, 4 Sep 2018 18:26:05 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, "nhorman@redhat.com" <nhorman@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "suresh.b.siddha@intel.com"
-	<suresh.b.siddha@intel.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180904152605.GA8344@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+From: Andy Lutomirski <luto@amacapital.net>
+In-Reply-To: <20180926173516.GA10920@linux.intel.com>
+Date: Wed, 26 Sep 2018 11:12:27 -0700
+CC: Andy Lutomirski <luto@kernel.org>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+Message-ID: <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com> <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com> <20180926173516.GA10920@linux.intel.com>
+To: Sean Christopherson <sean.j.christopherson@intel.com>
 Sender: <platform-driver-x86-owner@vger.kernel.org>
 Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, Sep 03, 2018 at 11:45:14PM +0000, Huang, Kai wrote:
-> But INVALID_TOKEN is not only returned when MSRs are mismatched, so do
-> you plan to check to rule out other cases that cause INVALID_TOKEN
-> before retrying EINIT, or unconditionally  retry EINIT? And we should
-> only retry once?
 
-In the case of this error we will do wrmsrs and retry einit once.
-This is how I understood it at least.
+> On Sep 26, 2018, at 10:35 AM, Sean Christopherson <sean.j.christopherson@=
+intel.com> wrote:
+>=20
+>> On Tue, Sep 25, 2018 at 03:53:48PM -0700, Andy Lutomirski wrote:
+>> Minor nit:
+>>=20
+>> On Tue, Sep 25, 2018 at 6:12 AM Jarkko Sakkinen
+>> <jarkko.sakkinen@linux.intel.com> wrote:
+>>>=20
+>>> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>>>=20
+>>=20
+>>> by (c) as the kernel doesn't really have any other reasonable option,
+>>> e.g. we could kill the task or panic, but neither is warranted.
+>>=20
+>> Not killing the task is quite nice, but...
+>>=20
+>>> +       /*
+>>> +        * Access is blocked by the Enclave Page Cache Map (EPCM),
+>>> +        * i.e. the access is allowed by the PTE but not the EPCM.
+>>> +        * This usually happens when the EPCM is yanked out from
+>>> +        * under us, e.g. by hardware after a suspend/resume cycle.
+>>> +        * In any case, there is nothing that can be done by the
+>>> +        * kernel to resolve the fault (short of killing the task).
+>>=20
+>> Maybe s/killing the task/sending a signal/?
+>=20
+> My intent was to document that, unlike all other page faults, the
+> kernel can't fix the source of the fault even if it were omniscient.
+>=20
+> How about this?  With formatting changes since it's long-winded...
+>=20
+>        /*
+>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. th=
+e
+>         * access is allowed by the PTE but not the EPCM.  This usually ha=
+ppens
+>         * when the EPCM is yanked out from under us, e.g. by hardware aft=
+er a
+>         * suspend/resume cycle.  In any case, software, i.e. the kernel, =
+can't
+>         * fix the source of the fault as the EPCM can't be directly modif=
+ied
+>         * by software.  Handle the fault as an access error in order to s=
+ignal
+>         * userspace, e.g. so that userspace can rebuild their enclave(s),=
+ even
+>         * though userspace may not have actually violated access permissi=
+ons.
+>         */
+>=20
 
-Q: Do we have to care about VMM sleep anyway? I mean if VMM always traps
-EINIT it can write the MSRs with guest values if it has been sleeping.
-
-If the answer is no, then retrying once should be a complete solution
-and we don't need pm_cnt.
-
-/Jarkko
+Looks good to me.=
