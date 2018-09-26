@@ -1,124 +1,91 @@
-Received: from mga18.intel.com ([134.134.136.126]:17925 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726004AbeIDTUT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 4
- Sep 2018 15:20:19 -0400
-Date: Tue, 4 Sep 2018 07:54:51 -0700
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, "nhorman@redhat.com" <nhorman@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "suresh.b.siddha@intel.com"
-	<suresh.b.siddha@intel.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180904145451.GA5233@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+In-Reply-To: <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Wed, 26 Sep 2018 14:15:31 -0700
+Message-ID: <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+To: Dave Hansen <dave.hansen@intel.com>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
+ Lutomirski" <luto@kernel.org>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: luto@amacapital.net
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, Sep 03, 2018 at 04:45:14PM -0700, Huang, Kai wrote:
-> > -----Original Message-----
-> > From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
-> > owner@vger.kernel.org] On Behalf Of Jarkko Sakkinen
-> > Sent: Tuesday, September 4, 2018 7:19 AM
-> > To: Christopherson, Sean J <sean.j.christopherson@intel.com>
-> > Cc: Huang, Kai <kai.huang@intel.com>; platform-driver-x86@vger.kernel.org;
-> > x86@kernel.org; nhorman@redhat.com; linux-kernel@vger.kernel.org;
-> > tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun, Serge
-> > <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
-> > mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
-> > <dave.hansen@intel.com>
-> > Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-> > 
-> > On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
-> > > On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
-> > > > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
-> > > > > [snip..]
-> > > > >
-> > > > > > > >
-> > > > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
-> > > > > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > > > > +sgx_pm_cnt;
-> > > > > > > > +
-> > > > > > > > +/* The cache for the last known values of
-> > > > > > > > +IA32_SGXLEPUBKEYHASHx MSRs
-> > > > > > > > for each
-> > > > > > > > + * CPU. The entries are initialized when they are first
-> > > > > > > > + used by
-> > > > > > > > sgx_einit().
-> > > > > > > > + */
-> > > > > > > > +struct sgx_lepubkeyhash {
-> > > > > > > > +	u64 msrs[4];
-> > > > > > > > +	u64 pm_cnt;
-> > > > > > >
-> > > > > > > May I ask why do we need pm_cnt here? In fact why do we need
-> > > > > > > suspend staff (namely, sgx_pm_cnt above, and related code in
-> > > > > > > this patch) here in this patch? From the patch commit message
-> > > > > > > I don't see why we need PM staff here. Please give comment why
-> > > > > > > you need PM staff, or you may consider to split the PM staff to another
-> > patch.
-> > > > > >
-> > > > > > Refining the commit message probably makes more sense because
-> > > > > > without PM code sgx_einit() would be broken. The MSRs have been reset
-> > after waking up.
-> > > > > >
-> > > > > > Some kind of counter is required to keep track of the power
-> > > > > > cycle. When going to sleep the sgx_pm_cnt is increased.
-> > > > > > sgx_einit() compares the current value of the global count to
-> > > > > > the value in the cache entry to see whether we are in a new power cycle.
-> > > > >
-> > > > > You mean reset to Intel default? I think we can also just reset
-> > > > > the cached MSR values on each power cycle, which would be simpler,
-> > IMHO?
-> > > >
-> > > > I don't really see that much difference in the complexity.
-> > >
-> > > Tracking the validity of the cache means we're hosed if we miss any
-> > > condition that causes the MSRs to be reset.  I think we're better off
-> > > assuming the cache can be stale at any time, i.e. don't track power
-> > > cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
-> > > the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
-> > > interruptible and its latency is extremely variable in any case, e.g.
-> > > tens of thousands of cycles, so this rarely-hit "slow path" probably
-> > > wouldn't affect the worst case latency of EINIT.
-> > 
-> > Sounds a good refiniment. Pretty good solution to heal from host sleep on the
-> > guest VM and then there is no need for driver changes.
-> 
-> To me either way should be OK, keeping MSR cache or retrying EINIT, since EINIT should not be in performance critical path I think.
-> 
-> But INVALID_TOKEN is not only returned when MSRs are mismatched, so do you plan to check to rule out other cases that cause INVALID_TOKEN before retrying EINIT, or unconditionally  retry EINIT? And we should only retry once?
+On Wed, Sep 26, 2018 at 1:55 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 09/26/2018 01:44 PM, Sean Christopherson wrote:
+> > On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
+> >> We also need to clarify how this can happen.  Is it through something
+> >> than an app does, or is it solely when the hardware does something under
+> >> the covers, like suspend/resume.
+> >
+> > Are you looking for something in the changelog, the comment, or just
+> > a response?  If it's the latter...
+>
+> Comments, please.
+>
+> > On bare metal with a bug-free kernel, the only scenario I'm aware of
+> > where we'll encounter these faults is when hardware pulls the rug out
+> > from under us.  In a virtualized environment all bets are off because
+> > the architecture allows VMMs to silently "destroy" the EPC at will,
+> > e.g. KVM, and I believe Hyper-V, will take advantage of this behavior
+> > to support live migration.  Post migration, the destination system
+> > will generate PF_SGX because the EPC{M} can't be migrated between
+> > system, i.e. the destination EPCM sees all EPC pages as invalid.
+>
+> OK, cool.
+>
+> That's good background fodder for the changelog.
+>
+> But, for the comment, I'm happy with something like this:
+>
+>         /*
+>          * The fault resulted from violation of SGX-specific access-
+>          * controls.  This is expected to be the result of some lower
+>          * layer action (CPU suspend/resume, VM migration) and is
+>          * not related to anything the OS did.  Treat it as an access
+>          * error to ensure it is passed up to the app via a signal where
+>          * it can be handled.
+>          */
+>
+> I really don't think we need to delve too deeply into the relationship
+> between EPCM and PTEs or anything.  Let's just say, "it's not the
+> kernel's fault, it's not the app's fault, so throw up our hands".
 
-I don't see any value in trying to rule out specific causes of
-INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
-and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs to
-be checked for validity as they're a package deal, i.e. they'll all be
-valid or all be reset.  There shouldn't be a limit on retry attempts,
-e.g. the MSRs could theoretically be reset between WRMSR and EINIT.
+There is a non-nitpicky consideration here.  Logically, user code is
+going to do this (totally made-up pseudocode):
 
-> 
-> Thanks,
-> -Kai
-> > 
-> > /Jarkko
+enclave_t enclave = load_and_init_enclave(...);
+int ret = sgx_run(enclave, some pointers to non-enclave-memory buffers, ...);
+
+and, with the code in this patch, a correct implementation of
+sgx_run() requires installing a signal handler.  This is nasty, since
+signal handlers, expecially for something like SIGSEGV or SIGBUS, are
+not fantastic to say the least in libraries.
+
+Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+runs an enclave an returns an error code, and rig up the #PF handler
+to check if the error happened in the vDSO entry and fix it up rather
+than sending a signal?
+
+On Windows, this is much less of a concern, because Windows has real
+scoped fault handling. But Linux doesn't, at least not yet.
+
+
+--
+Andy Lutomirski
+AMA Capital Management, LLC
