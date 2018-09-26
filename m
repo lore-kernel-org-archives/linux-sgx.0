@@ -1,108 +1,51 @@
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 3 Sep 2018 15:53:24 +0200
-Message-ID: <CAG48ez2_EgP_-FcLV0g=EU2KuKEwFAmZufjGevMX4j--fJ_0+w@mail.gmail.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-To: <jarkko.sakkinen@linux.intel.com>
-CC: the arch/x86 maintainers <x86@kernel.org>,
-	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin"
-	<hpa@zytor.com>, <suresh.b.siddha@intel.com>, <serge.ayoun@intel.com>,
-	"kernel list" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: jannh@google.com
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To: Andy Lutomirski <luto@amacapital.net>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+ <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
+ Lutomirski" <luto@kernel.org>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+Date: Wed, 26 Sep 2018 14:45:17 -0700
+In-Reply-To: <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, Sep 3, 2018 at 3:33 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Add a function to perform ENCLS(EINIT), which initializes an enclave,
-> which can be used by a driver for running enclaves and VMMs.
->
-> Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
-> than normal MSRs, so we use a per-cpu cache to track the last known value
-> of the MSRs to avoid unnecessarily writing the MSRs with the current value.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-[...]
-> +/**
-> + * sgx_einit - initialize an enclave
-> + * @sigstruct:         a pointer to the SIGSTRUCT
-> + * @token:             a pointer to the EINITTOKEN
-> + * @secs_page:         a pointer to the SECS EPC page
-> + * @lepubkeyhash:      the desired value for IA32_SGXLEPUBKEYHASHx MSRs
-> + *
-> + * Try to perform EINIT operation. If the MSRs are writable, they are updated
-> + * according to @lepubkeyhash.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -errno on failure
-> + *   SGX error code if EINIT fails
-> + */
-> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
-> +{
-> +       struct sgx_lepubkeyhash __percpu *cache;
-> +       bool cache_valid;
-> +       int i, ret;
-> +
-> +       if (!sgx_lc_enabled)
-> +               return __einit(sigstruct, token, sgx_epc_addr(secs_page));
-> +
-> +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
+On 09/26/2018 02:15 PM, Andy Lutomirski wrote:
+> Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+> runs an enclave an returns an error code, and rig up the #PF handler
+> to check if the error happened in the vDSO entry and fix it up rather
+> than sending a signal?
 
-At this point, preemption must be off, because smp_processor_id() is
-called; I don't think it is off here? If you have hardware/emulation
-on which you can test this, you may want to test your patches with
-DEBUG_PREEMPT enabled.
+Yeah, signals suck.
 
-> +       if (!cache) {
-> +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
+So, instead of doing the enclave entry instruction (EENTER is it?), the
+app would do the vDSO call.  It would have some calling convention, like
+"set %rax to 0 before entering".  Then, we just teach the page fault
+handler about the %RIP in the vDSO that can fault and how to move one
+instruction later, munge %RIP to a value that tells about the error,
+then return from the fault.  It would basically be like the kernel
+exception tables, but for userspace.  Right?
 
-But then here you do a GFP_KERNEL allocation, which can sleep.
-
-Also: After "cache" has been allocated in this branch, when do you
-store the reference to it? As far as I can tell, you never write to
-sgx_lepubkeyhash_cache, and the allocation just leaks.
-
-> +               if (!cache)
-> +                       return -ENOMEM;
-> +       }
-> +
-> +       cache_valid = cache->pm_cnt == sgx_pm_cnt;
-
-The cache should probably not be treated as valid if it has just been
-created and only contains zeroes, right?
-
-> +       cache->pm_cnt = sgx_pm_cnt;
-
-Can sgx_pm_cnt be modified concurrently? If so, please use at least
-READ_ONCE() to document that and prevent the compiler from doing weird
-stuff.
-
-> +       preempt_disable();
-
-And here you turn off preemption, but it should already have been off?
-
-> +       for (i = 0; i < 4; i++) {
-> +               if (cache_valid && lepubkeyhash[i] == cache->msrs[i])
-> +                       continue;
-> +
-> +               wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-> +               cache->msrs[i] = lepubkeyhash[i];
-> +       }
-> +       ret = __einit(sigstruct, token, sgx_epc_addr(secs_page));
-> +       preempt_enable();
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(sgx_einit);
-> +
+How would a syscall work, though?  I assume we can't just enter the
+enclave from ring0.
