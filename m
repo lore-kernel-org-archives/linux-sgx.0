@@ -1,75 +1,77 @@
-Date: Thu, 27 Sep 2018 16:42:23 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
-	<sean.j.christopherson@intel.com>, Andy Lutomirski <luto@kernel.org>, X86 ML
-	<x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
- w/ PF_SGX
-Message-ID: <20180927134223.GA8242@linux.intel.com>
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36024 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbeI0ExI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Sep 2018 00:53:08 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l10-v6so527582wrp.3
+        for <linux-sgx@vger.kernel.org>; Wed, 26 Sep 2018 15:37:57 -0700 (PDT)
 References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
-Return-Path: jarkko.sakkinen@linux.intel.com
-MIME-Version: 1.0
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com> <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+ <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+In-Reply-To: <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Wed, 26 Sep 2018 15:37:45 -0700
+Message-ID: <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+To: Dave Hansen <dave.hansen@intel.com>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
+ Lutomirski" <luto@kernel.org>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
-> On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
-> >> e omniscient.
-> >>
-> >> How about this?  With formatting changes since it's long-winded...
-> >>
-> >>        /*
-> >>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
-> >>         * access is allowed by the PTE but not the EPCM.  This usually happens
-> >>         * when the EPCM is yanked out from under us, e.g. by hardware after a
-> >>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
-> >>         * fix the source of the fault as the EPCM can't be directly modified
-> >>         * by software.  Handle the fault as an access error in order to signal
-> >>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
-> >>         * though userspace may not have actually violated access permissions.
-> >>         */
-> >>
-> > Looks good to me.
-> 
-> Including the actual architectural definition of the bit might add some
-> clarity.  The SDM explicitly says (Vol 3a section 4.7):
-> 
-> 	The fault resulted from violation of SGX-specific access-control
-> 	requirements.
-> 
-> Which totally squares with returning true from access_error().
-> 
-> There's also a tidbit that says:
-> 
-> 	This flag is 1 if the exception is unrelated to paging and
-> 	resulted from violation of SGX-specific access-control
-> 	requirements. ... such a violation can occur only if there
-> 	is no ordinary page fault...
-> 
-> This is pretty important.  It means that *none* of the other
-> paging-related stuff that we're doing applies.
-> 
-> We also need to clarify how this can happen.  Is it through something
-> than an app does, or is it solely when the hardware does something under
-> the covers, like suspend/resume.
+On Wed, Sep 26, 2018 at 2:45 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 09/26/2018 02:15 PM, Andy Lutomirski wrote:
+> > Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+> > runs an enclave an returns an error code, and rig up the #PF handler
+> > to check if the error happened in the vDSO entry and fix it up rather
+> > than sending a signal?
+>
+> Yeah, signals suck.
+>
+> So, instead of doing the enclave entry instruction (EENTER is it?), the
+> app would do the vDSO call.  It would have some calling convention, like
+> "set %rax to 0 before entering".  Then, we just teach the page fault
+> handler about the %RIP in the vDSO that can fault and how to move one
+> instruction later, munge %RIP to a value that tells about the error,
+> then return from the fault.  It would basically be like the kernel
+> exception tables, but for userspace.  Right?
 
-When you change page permissions lets say with mprotect after the and
-try to do an invalid access according to the EPCM permissions this can
-happen.
+Yeah.  Maybe like this:
 
-/Jarkko
+xorl %eax,%eax
+eenter_insn:
+ENCLU[whatever]
+eenter_landing_pad:
+ret
+
+And the kernel would use the existing vdso2c vdso-symbol-finding
+mechanism to do the fixup.
+
+>
+> How would a syscall work, though?  I assume we can't just enter the
+> enclave from ring0.
+
+My understanding of how AEX works is a bit vague, but maybe a syscall
+could reuse the mechanism?  The vDSO approach seems considerably
+simpler.
+
+We do need to make sure that a fault that happens on or after return
+from an AEX event does the right thing.  But I'm still vague on how
+that works, sigh.
+
+--Andy
