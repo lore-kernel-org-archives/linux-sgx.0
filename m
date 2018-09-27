@@ -1,74 +1,47 @@
-Received: from mga12.intel.com ([192.55.52.136]:9551 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726087AbeIDOXw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 4
- Sep 2018 10:23:52 -0400
-Date: Tue, 4 Sep 2018 12:59:23 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>, Dave Hansen
+Date: Thu, 27 Sep 2018 15:51:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	<serge.ayoun@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	<suresh.b.siddha@intel.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
- EPC pages
-Message-ID: <20180904095923.GC5423@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
- <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad
+ Rzeszutek Wilk" <konrad.wilk@oracle.com>, David Woodhouse
+	<dwmw@amazon.co.uk>, David Wang <davidwang@zhaoxin.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, "Levin, Alexander (Sasha Levin)"
+	<alexander.levin@verizon.com>, Jia Zhang <qianyue.zj@alibaba-inc.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, He
+ Chen <he.chen@linux.intel.com>, Luwei Kang <luwei.kang@intel.com>,
+	<kvm@vger.kernel.org>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+	Piotr Luc <Piotr.Luc@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v14 04/19] x86/cpufeatures: Add SGX feature bits
+Message-ID: <20180927135139.GB19687@zn.tnic>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-5-jarkko.sakkinen@linux.intel.com>
+ <20180925164854.GF23986@zn.tnic>
+ <20180926111139.GA12037@linux.intel.com>
+ <20180926113617.GD5584@zn.tnic>
+ <20180927131642.GE5436@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180927131642.GE5436@linux.intel.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Mon, Sep 03, 2018 at 05:41:53PM +0300, Andy Shevchenko wrote:
-> On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > Add data structures to track Enclave Page Cache (EPC) pages.  EPC is
-> > divided into multiple banks (1-N) of which addresses and sizes can be
-> > enumerated with CPUID by the OS.
-> >
-> > On NUMA systems a node can have at most bank. A bank can be at most part of
-> > two nodes. SGX supports both nodes with a single memory controller and also
-> > sub-cluster nodes with severals memory controllers on a single die.
-> 
-> > -#include <asm/sgx.h>
-> > -#include <asm/sgx_pr.h>
-> >  #include <linux/freezer.h>
-> >  #include <linux/highmem.h>
-> >  #include <linux/kthread.h>
-> > +#include <linux/pagemap.h>
-> >  #include <linux/ratelimit.h>
-> >  #include <linux/sched/signal.h>
-> > +#include <linux/shmem_fs.h>
-> >  #include <linux/slab.h>
-> > +#include <asm/sgx.h>
-> > +#include <asm/sgx_pr.h>
-> 
-> Squash issues?
+On Thu, Sep 27, 2018 at 04:16:42PM +0300, Jarkko Sakkinen wrote:
+> Still kind of leaves me puzzled about the situation :-) Why this wasn't
+> used for example to replace detect_vmx_virtcap()?
 
-Yes :-/
+I don't understand - detect_vmx_virtcap() is setting X86_FEATURE bits
+based on MSR settings. get_scattered_cpuid_leaf() is regenerating a
+CPUID leaf from the scattered bits.
 
-> > +       va = ioremap_cache(addr, size);
-> > +       if (!va)
-> > +               return -ENOMEM;
-> 
-> I'm not sure this is a right API. Do we operate with memory? Does it
-> have I/O side effects?
-> If no, memremap() would be better to use.
+Looks like apples and oranges to me...
 
-Had this idea a long time ago but had forgotten it. EPC is from caching
-perspective like regular memory.
+-- 
+Regards/Gruss,
+    Boris.
 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-
-/Jarkko
+Good mailing practices for 400: avoid top-posting and trim the reply.
