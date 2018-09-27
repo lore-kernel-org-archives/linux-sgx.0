@@ -1,64 +1,100 @@
-In-Reply-To: <20180906092100.GA27302@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com> <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
- <20180905173355.GE11368@linux.intel.com> <CAHp75Vc2SZUfRnBPZ9xJ_B=KJL7yK9hqRZiFOTswn0AzjnLD1A@mail.gmail.com>
- <20180906092100.GA27302@linux.intel.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Sep 2018 19:35:46 +0200
-Message-ID: <CANiq72kpY1y2aPH+GMi8mWZdttfdYJ3wk0cvE_qVD97vdvTJbQ@mail.gmail.com>
-Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Andy Shevchenko <andy.shevchenko@gmail.com>, "maintainer:X86 ARCHITECTURE
- (32-BIT AND 64-BIT)" <x86@kernel.org>, Platform Driver
-	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>, "Siddha, Suresh B"
-	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart
-	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: miguel.ojeda.sandonis@gmail.com
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, "open
+ list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>, "open
+ list" <linux-kernel@vger.kernel.org>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+	<20180925130845.9962-9-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 27 Sep 2018 20:41:48 +0200
+In-Reply-To: <20180925130845.9962-9-jarkko.sakkinen@linux.intel.com> (Jarkko
+	Sakkinen's message of "Tue, 25 Sep 2018 16:06:45 +0300")
+Message-ID: <87in2qpytv.fsf@xmission.com>
+Content-Type: text/plain
+Subject: Re: [PATCH v14 08/19] signal: x86/sgx: Add SIGSEGV siginfo code for SGX EPCM fault
+Return-Path: ebiederm@xmission.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-Hi Jarkko,
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
 
-On Thu, Sep 6, 2018 at 11:21 AM, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> There is another open. If I grep through the kernel tree I see SPDX
-> headers that are decorated both with C99- and C89-style comments. I
-> guess I ended up using C99-style because when I was instructed to add
-> SPDX headers in the first place that was the example I was given. Still
-> checkpatch.pl complains about C99-style comments.
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 >
-> Which one is right and why the kernel tree is polluted with C99-headers
-> when they do not pass checkpatch.pl? How those commits were ever
-> accepted?
+> The SGX Enclave Page Cache Map (EPCM) is a hardware-managed table
+> that enforces accesses to an enclave's EPC page in addition to the
+> software-managed kernel page tables, i.e. the effective permissions
+> for an EPC page are a logical AND of the kernel's page tables and
+> the corresponding EPCM entry.  The primary purpose of the EPCM is
+> to prevent a malcious or compromised kernel from attacking an enclave
+> by modifying the enclave's page tables.  The EPCM entires for an
+> enclave are populated when the enclave is built and verified, using
+> metadata provided by the enclave that is included in the measurement
+> used to verify the enclave.
+>
+> In normal operation of a properly functioning, non-malicious kernel
+> (and enclave), the EPCM permissions will never trigger a fault, i.e.
+> the kernel may make the permissions for an EPC page more restrictive,
+> e.g. mark it not-present to swap out the EPC page, but the kernel will
+> never make its permissions less restrictive.
+>
+> But, there is a legitimate scenario in which the kernel's page tables
+> can become less restrictive than the EPCM: on current hardware all
+> enclaves are destroyed (by hardware) on a transition to S3 or lower
+> sleep states, i.e. all EPCM entries are invalid (not-present) after
+> the system resumes from its sleep state.
+>
+> Unfortunately, on CPUs that support only SGX1, EPCM violations result
+> in a #GP.  The upside of the #GP is that no kernel changes are needed
+> to deal with the EPCM being blasted away by hardware, e.g. userspace
+> gets a SIGSEGV, assumes the EPCM was lost and restarts its enclave
+> and everyone is happy.  The downside is that userspace has to assume
+> the SIGSEGV was because the EPC was lost (or possibly do some leg work
+> to rule out other causes).
+>
+> In SGX2, the oddity of delivering a #GP due to what are inherently
+> paging related violations is remedied.  CPUs that support SGX2 deliver
+> EPCM violations as #PFs with a new SGX error code bit set.  So, now
+> that hardware provides us with a way to unequivocally determine that
+> a fault was due to a EPCM violation, define a signfo code for SIGSEGV
+> so that the information can be passed onto userspace.
+>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  include/uapi/asm-generic/siginfo.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
+> index 80e2a7227205..fdd898e2325b 100644
+> --- a/include/uapi/asm-generic/siginfo.h
+> +++ b/include/uapi/asm-generic/siginfo.h
+> @@ -225,7 +225,11 @@ typedef struct siginfo {
+>  #else
+>  # define SEGV_PKUERR	4	/* failed protection key checks */
+>  #endif
+> +#ifdef __x86_64__
+> +#define SEGV_SGXERR	5	/* SGX Enclave Page Cache Map fault */
+> +#else
+>  #define SEGV_ACCADI	5	/* ADI not enabled for mapped object */
+> +#endif
 
-See Documentation/process/license-rules.rst. Headers should go with
-C-style comments:
+Don't do this crazy ifdef thing.  si_codes are not supposed to be per
+architecture.  There are a few historical bugs but with a 32bit space
+it is just stupid to add #ifdefs.
 
-   The SPDX license identifier is added in form of a comment.  The comment
-   style depends on the file type::
+Just set.
+#define SEGV_SGXERR 8 and increase NSIGSEGV
 
-      C source: // SPDX-License-Identifier: <SPDX License Expression>
-      C header: /* SPDX-License-Identifier: <SPDX License Expression> */
+Anything else is just asking for trouble.  Especially when you want to
+get SGX working on itaninum.
 
-And:
+>  #define SEGV_ADIDERR	6	/* Disrupting MCD error */
+>  #define SEGV_ADIPERR	7	/* Precise MCD exception */
+>  #define NSIGSEGV	7
 
-   If a specific tool cannot handle the standard comment style, then the
-   appropriate comment mechanism which the tool accepts shall be used. This
-   is the reason for having the "/\* \*/" style comment in C header
-   files. There was build breakage observed with generated .lds files where
-   'ld' failed to parse the C++ comment. This has been fixed by now, but
-   there are still older assembler tools which cannot handle C++ style
-   comments.
-
-The ones that got in are probably either old or they slipped through
-(and they do not break the build).
-
-Cheers,
-Miguel
+Eric
