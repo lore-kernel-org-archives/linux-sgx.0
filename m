@@ -1,46 +1,57 @@
-Date: Mon, 3 Sep 2018 21:15:09 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, "nhorman@redhat.com" <nhorman@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "suresh.b.siddha@intel.com"
-	<suresh.b.siddha@intel.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180903181509.GA9265@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
- <20180829210901.GA7176@linux.intel.com>
- <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
-Return-Path: jarkko.sakkinen@linux.intel.com
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180927134223.GA8242@linux.intel.com>
+CC: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
+	<sean.j.christopherson@intel.com>, Andy Lutomirski <luto@kernel.org>, X86 ML
+	<x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <d0e47333-18b9-51c3-7d79-f27d6005f24f@intel.com>
+Date: Thu, 27 Sep 2018 07:58:41 -0700
+In-Reply-To: <20180927134223.GA8242@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Aug 30, 2018 at 01:45:29AM +0000, Huang, Kai wrote:
-> > > > Refresh my brain, does hardware reset the MSRs on a transition to S3 or
-> > lower?
-> 
-> Sorry I missed this one. To be honest I don't know. I checked the SDM and all I can find is:
-> 
-> "On reset, the default value is the digest of Intel's signing key."
-> 
-> Jarkko may know.
+On 09/27/2018 06:42 AM, Jarkko Sakkinen wrote:
+>> 	This flag is 1 if the exception is unrelated to paging and
+>> 	resulted from violation of SGX-specific access-control
+>> 	requirements. ... such a violation can occur only if there
+>> 	is no ordinary page fault...
+>>
+>> This is pretty important.  It means that *none* of the other
+>> paging-related stuff that we're doing applies.
+>>
+>> We also need to clarify how this can happen.  Is it through something
+>> than an app does, or is it solely when the hardware does something under
+>> the covers, like suspend/resume.
+> When you change page permissions lets say with mprotect after the and
+> try to do an invalid access according to the EPCM permissions this can
+> happen.
 
-I found this out by testing. The cached MSR values stop working after
-waking up from S3. Have not found anything better from the SDM but it
-is the behavior that I've observed on my GLK NUC at least.
+So, there are pages that are non-executable, non-readable, or
+non-writable both via the page tables and via underlying SGX
+permissions.  Then, we allow an mprotect() and a later access will
+result in one of these SGX faults?
 
-/Jarkko
+What permissions are these, exactly?  Is it even a good idea to let that
+mprotect() go through in the first place?
+
+Either way, it sounds like we have some new conditions to spell out in
+that comment.
