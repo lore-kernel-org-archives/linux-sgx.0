@@ -1,36 +1,70 @@
-Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
- <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
-CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
-Date: Tue, 4 Sep 2018 09:04:44 -0700
-In-Reply-To: <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: <linux-kernel-owner@vger.kernel.org>
-Return-Path: linux-kernel-owner@vger.kernel.org
+Date: Thu, 27 Sep 2018 18:39:52 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
+	<sean.j.christopherson@intel.com>, Andy Lutomirski <luto@kernel.org>, X86 ML
+	<x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Message-ID: <20180927153952.GA13225@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180927134223.GA8242@linux.intel.com>
+ <d0e47333-18b9-51c3-7d79-f27d6005f24f@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <d0e47333-18b9-51c3-7d79-f27d6005f24f@intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 09/03/2018 06:16 AM, Andy Shevchenko wrote:
->> +       EBLOCK  = 0x9,
->> +       EPA     = 0xA,
->> +       EWB     = 0xB,
->> +       ETRACK  = 0xC,
->> +       EAUG    = 0xD,
->> +       EMODPR  = 0xE,
->> +       EMODT   = 0xF,
->> +};
-> Hmm... This E prefix confuses me with (system wide) error codes. Has
-> it been discussed before? If so, can you point on the conclusion why
-> the current format is good?
+On Thu, Sep 27, 2018 at 07:58:41AM -0700, Dave Hansen wrote:
+> On 09/27/2018 06:42 AM, Jarkko Sakkinen wrote:
+> >> 	This flag is 1 if the exception is unrelated to paging and
+> >> 	resulted from violation of SGX-specific access-control
+> >> 	requirements. ... such a violation can occur only if there
+> >> 	is no ordinary page fault...
+> >>
+> >> This is pretty important.  It means that *none* of the other
+> >> paging-related stuff that we're doing applies.
+> >>
+> >> We also need to clarify how this can happen.  Is it through something
+> >> than an app does, or is it solely when the hardware does something under
+> >> the covers, like suspend/resume.
+> > When you change page permissions lets say with mprotect after the and
+> > try to do an invalid access according to the EPCM permissions this can
+> > happen.
+> 
+> So, there are pages that are non-executable, non-readable, or
+> non-writable both via the page tables and via underlying SGX
+> permissions.  Then, we allow an mprotect() and a later access will
+> result in one of these SGX faults?
 
-Making them SGX_EWHATEVER isn't a horrible idea.
+The permissions are intersection of PTE and EPCM permissions.
+
+EPCM permissions are part of the enclave measurement. For SGX1 they are
+static. For SGX2 they can be changed with EMODPR/EACCEPT protocol (i.e.
+measurement can be updated after enclave initialization).
+
+> What permissions are these, exactly?  Is it even a good idea to let that
+> mprotect() go through in the first place?
+
+You define RWX for each page when you do EADD.
+
+> Either way, it sounds like we have some new conditions to spell out in
+> that comment.
+
+Agreed.
+
+/Jarkko
