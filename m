@@ -1,125 +1,76 @@
-Date: Fri, 7 Sep 2018 10:02:40 -0700
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Joe Perches <joe@perches.com>
-CC: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Andy Shevchenko
-	<andy.shevchenko@gmail.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <x86@kernel.org>, Platform Driver
-	<platform-driver-x86@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <linux-sgx@vger.kernel.org>,
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>, "Siddha, Suresh B"
-	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart
-	<dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
-Message-ID: <20180907170240.GA21376@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
- <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
- <20180905173355.GE11368@linux.intel.com>
- <CAHp75Vc2SZUfRnBPZ9xJ_B=KJL7yK9hqRZiFOTswn0AzjnLD1A@mail.gmail.com>
- <20180906092100.GA27302@linux.intel.com>
- <CANiq72kpY1y2aPH+GMi8mWZdttfdYJ3wk0cvE_qVD97vdvTJbQ@mail.gmail.com>
- <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
-MIME-Version: 1.0
+Received: from mga14.intel.com ([192.55.52.115]:3605 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1727320AbeI0WMW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Thu, 27
+ Sep 2018 18:12:22 -0400
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180927134223.GA8242@linux.intel.com>
+ <d0e47333-18b9-51c3-7d79-f27d6005f24f@intel.com>
+ <20180927153952.GA13225@linux.intel.com>
+CC: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
+	<sean.j.christopherson@intel.com>, Andy Lutomirski <luto@kernel.org>, X86 ML
+	<x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+	<linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <df12aea6-8b78-6336-e158-68c7bf416af9@intel.com>
+Date: Thu, 27 Sep 2018 08:53:27 -0700
+In-Reply-To: <20180927153952.GA13225@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Thu, Sep 06, 2018 at 05:50:01PM -0700, Joe Perches wrote:
-> On Thu, 2018-09-06 at 19:35 +0200, Miguel Ojeda wrote:
-> > > Which one is right and why the kernel tree is polluted with C99-headers
-> > > when they do not pass checkpatch.pl?
+On 09/27/2018 08:39 AM, Jarkko Sakkinen wrote:
+> On Thu, Sep 27, 2018 at 07:58:41AM -0700, Dave Hansen wrote:
+>> On 09/27/2018 06:42 AM, Jarkko Sakkinen wrote:
+>>>> 	This flag is 1 if the exception is unrelated to paging and
+>>>> 	resulted from violation of SGX-specific access-control
+>>>> 	requirements. ... such a violation can occur only if there
+>>>> 	is no ordinary page fault...
+>>>>
+>>>> This is pretty important.  It means that *none* of the other
+>>>> paging-related stuff that we're doing applies.
+>>>>
+>>>> We also need to clarify how this can happen.  Is it through something
+>>>> than an app does, or is it solely when the hardware does something under
+>>>> the covers, like suspend/resume.
+>>> When you change page permissions lets say with mprotect after the and
+>>> try to do an invalid access according to the EPCM permissions this can
+>>> happen.
+>>
+>> So, there are pages that are non-executable, non-readable, or
+>> non-writable both via the page tables and via underlying SGX
+>> permissions.  Then, we allow an mprotect() and a later access will
+>> result in one of these SGX faults?
 > 
-> checkpatch ignores c99 headers since 2016.
+> The permissions are intersection of PTE and EPCM permissions.
 
-Jarkko was referring to c99 comments for the SPDX license.  checkpatch
-explicitly requires c-style comments for headers and assembly files as
-dictated by Documentation/process/license-rules.rst.  
+Right, but this *fault* bit is not.
 
-$ grep -r SPDX **/*.h | grep \/\/ | wc -l
-665
+> EPCM permissions are part of the enclave measurement. For SGX1 they are
+> static. For SGX2 they can be changed with EMODPR/EACCEPT protocol (i.e.
+> measurement can be updated after enclave initialization).
 
-$ grep -r SPDX **/*.S | grep \/\/ | wc -l
-22
+What does this all have to do with enclave measurement?
 
-$ git show 9f3a89926d6df
-commit 9f3a89926d6dfc30a4fd1bbcb92cc7b218d3786d
-Author: Rob Herring <robh@kernel.org>
-Date:   Tue Apr 10 16:33:13 2018 -0700
+>> What permissions are these, exactly?  Is it even a good idea to let that
+>> mprotect() go through in the first place?
+> 
+> You define RWX for each page when you do EADD.
 
-    checkpatch.pl: add SPDX license tag check
-
-    Add SPDX license tag check based on the rules defined in
-    Documentation/process/license-rules.rst.  To summarize, SPDX license
-    tags should be on the 1st line (or 2nd line in scripts) using the
-    appropriate comment style for the file type.
-
-    Link: http://lkml.kernel.org/r/20180202154026.15298-1-robh@kernel.org
-    Signed-off-by: Rob Herring <robh@kernel.org>
-    Signed-off-by: Joe Perches <joe@perches.com>
-    Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
-    Cc: Andy Whitcroft <apw@canonical.com>
-    Cc: Joe Perches <joe@perches.com>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-    Cc: Igor Stoppa <igor.stoppa@huawei.com>
-    Cc: Jonathan Corbet <corbet@lwn.net>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index b464a4c3f863..0f022b56f117 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2257,6 +2257,8 @@ sub process {
-
-        my $camelcase_file_seeded = 0;
-
-+       my $checklicenseline = 1;
-+
-        sanitise_line_reset();
-        my $line;
-        foreach my $rawline (@rawlines) {
-@@ -2448,6 +2450,7 @@ sub process {
-                        } else {
-                                $check = $check_orig;
-                        }
-+                       $checklicenseline = 1;
-                        next;
-                }
-
-@@ -2911,6 +2914,30 @@ sub process {
-                        }
-                }
-
-+# check for using SPDX license tag at beginning of files
-+               if ($realline == $checklicenseline) {
-+                       if ($rawline =~ /^[ \+]\s*\#\!\s*\//) {
-+                               $checklicenseline = 2;
-+                       } elsif ($rawline =~ /^\+/) {
-+                               my $comment = "";
-+                               if ($realfile =~ /\.(h|s|S)$/) {
-+                                       $comment = '/*';
-+                               } elsif ($realfile =~ /\.(c|dts|dtsi)$/) {
-+                                       $comment = '//';
-+                               } elsif (($checklicenseline == 2) || $realfile =~ /\.(sh|pl|py|awk|tc)$/) {
-+                                       $comment = '#';
-+                               } elsif ($realfile =~ /\.rst$/) {
-+                                       $comment = '..';
-+                               }
-+
-+                               if ($comment !~ /^$/ &&
-+                                   $rawline !~ /^\+\Q$comment\E SPDX-License-Identifier: /) {
-+                                       WARN("SPDX_LICENSE_TAG",
-+                                            "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
-+                               }
-+                       }
-+               }
-+
- # check we are in a valid source file if not then ignore this hunk
-                next if ($realfile !~ /\.(h|c|s|S|sh|dtsi|dts)$/);
+Are those permissions reflected into the VMAs mapping the enclave memory?
