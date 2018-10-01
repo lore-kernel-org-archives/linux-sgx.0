@@ -1,57 +1,55 @@
-Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
-To: Pavel Machek <pavel@ucw.cz>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
+	<luto@amacapital.net>
 References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
- <20181015205436.GA28500@amd>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+ <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+ <1538404143.30715.27.camel@intel.com>
+CC: Andrew Lutomirski <luto@kernel.org>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, X86 ML <x86@kernel.org>, Platform Driver
+	<platform-driver-x86@vger.kernel.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
 	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "open
- list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
 	<linux-kernel@vger.kernel.org>
 From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <fe28962d-367b-b8bb-8280-fe48c7d08813@intel.com>
-Date: Wed, 17 Oct 2018 16:56:51 -0700
-In-Reply-To: <20181015205436.GA28500@amd>
-Content-Type: text/plain; charset="windows-1252"
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
+Message-ID: <cbb46b99-2b1b-0adb-0201-65d1613f4107@intel.com>
+Date: Mon, 1 Oct 2018 07:41:23 -0700
+In-Reply-To: <1538404143.30715.27.camel@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: dave.hansen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 10/15/2018 01:54 PM, Pavel Machek wrote:
->> +Intel(R) SGX is a set of CPU instructions that can be used by applications to
->> +set aside private regions of code and data. The code outside the enclave is
->> +disallowed to access the memory inside the enclave by the CPU access control.
->> +In a way you can think that SGX provides inverted sandbox. It protects the
->> +application from a malicious host.
-> Well, recently hardware had some problems keeping its
-> promises. So... what about rowhammer, meltdown and spectre?
+On 10/01/2018 07:29 AM, Sean Christopherson wrote:
+>> Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+>> runs an enclave an returns an error code, and rig up the #PF handler
+>> to check if the error happened in the vDSO entry and fix it up rather
+>> than sending a signal?
+> 
+> If we want to avoid having to install a signal handler then I'm pretty
+> sure we'd need to fixup all #GPs and "bad access" #PFs that occur on
+> EENTER or in the enclave, not just PF_SGX faults.  SGX1 hardware takes
+> a #GP instead of a #PF on EPCM faults, and SGX2 hardware allows enclaves
+> to allocate/free/adjust EPC pages at runtime, e.g. an enclave runtime
+> might want to intercept #PFs from within the enclave so that the enclave
+> can dynamically grow its stack.
 
-There's a ton of documentation out there about what kinds of protections
-SGX provides.  I don't think this is an appropriate place to have an
-exhaustive discussion about it.  But, there's extensive discussion of it
-on Intel's security site:
+I think the technique Andy describes can be used for that as well.  It
+basically works for any case where we know which instructions will take
+an exception (any exception), call the instruction from a fixed
+location, and know the fault(s) it can throw.
 
-https://software.intel.com/security-software-guidance/
-
-There's documentation on how L1TF affects SGX here:
-
-https://software.intel.com/security-software-guidance/software-guidance/l1-terminal-fault
-
-Or Spectre v2 here:
-
-https://software.intel.com/security-software-guidance/software-guidance/bounds-check-bypass
-
-> Which ones apply, which ones do not, and on what cpu generations?
-
-The CVEs list this in pretty exhaustive detail.  The L1TF/SGX one, for
-example:
-
-https://nvd.nist.gov/vuln/detail/CVE-2018-3615
-
-Lists a bunch of processor models.
+To me, it's almost like turning these faulting instructions into mini
+syscall instructions.  They enter the kernel only when they need help,
+though, instead of always.
