@@ -1,44 +1,83 @@
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To: Jethro Beekman <jethro@fortanix.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
- <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
- <20180927135603.GF8242@linux.intel.com>
- <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
-CC: Andy Lutomirski <luto@amacapital.net>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Andrew Lutomirski <luto@kernel.org>, "X86
- ML" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
+Date: Fri, 5 Oct 2018 14:32:44 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Sean Christopherson <sean.j.christopherson@intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<dave.hansen@intel.com>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, <andriy.shevchenko@linux.intel.com>, "Suresh
+ Siddha" <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko
+	<andy@infradead.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
 	<linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
-Date: Mon, 1 Oct 2018 15:03:30 -0700
-In-Reply-To: <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+Subject: Re: [PATCH v14 15/19] platform/x86: Intel SGX driver
+Message-ID: <20181005113244.GB25985@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-16-jarkko.sakkinen@linux.intel.com>
+ <1538676077.2562.6.camel@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <1538676077.2562.6.camel@intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 10/01/2018 02:42 PM, Jethro Beekman wrote:
+On Thu, Oct 04, 2018 at 11:01:17AM -0700, Sean Christopherson wrote:
+> On Tue, 2018-09-25 at 16:06 +0300, Jarkko Sakkinen wrote:
+> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > can be used by applications to set aside private regions of code and
+> > data. The code outside the enclave is disallowed to access the memory
+> > inside the enclave by the CPU access control.
+> > 
+> > SGX driver provides a ioctl API for loading and initializing enclaves.
+> > Address range for enclaves is reserved with mmap() and they are
+> > destroyed with munmap(). Enclave construction, measurement and
+> > initialization is done with the provided the ioctl API.
 > 
-> 1) Even though the vDSO function exists, userspace may still call 
-> `ENCLU[EENTER]` manually, so the fault handling as described in the 
-> current patch should also be maintained.
+> ...
+> 
+> > +/**
+> > + * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
+> > + *
+> > + * @filep:	open file to /dev/sgx
+> > + * @cmd:	the command value
+> > + * @arg:	pointer to an &sgx_enclave_init instance
+> > + *
+> > + * Flushes the remaining enqueued EADD operations and performs EINIT. Does not
+> > + * allow the EINITTOKENKEY attribute for an enclave.
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   SGX error code on EINIT failure,
+> > + *   -errno otherwise
+> > + */
+> > +static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+> > +				 unsigned long arg)
+> > +{
+> > +	struct sgx_enclave_init *initp = (struct sgx_enclave_init *)arg;
+> > +	struct sgx_sigstruct *sigstruct;
+> > +	struct sgx_einittoken *einittoken;
+> > +	struct sgx_encl *encl;
+> > +	struct page *initp_page;
+> > +	int ret;
+> > +
+> > +	initp_page = alloc_page(GFP_HIGHUSER);
+> > +	if (!initp_page)
+> > +		return -ENOMEM;
+> > +
+> > +	sigstruct = kmap(initp_page);
+> > +	einittoken = (struct sgx_einittoken *)
+> > +		((unsigned long)sigstruct + PAGE_SIZE / 2);
+> > +	memset(einittoken, 0, sizeof(*einittoken));
+> > +
+> > +	ret = copy_from_user(sigstruct, (void __user *)initp->sigstruct,
+> > +			     sizeof(*sigstruct));
+> > +	if (ret)
+> > +		goto out;
+> > +	if (sigstruct->attributes & SGX_ATTR_EINITTOKENKEY) {
+> > +		ret = EINVAL;
+> 
+> This should be "ret = -EINVAL".
 
-Why?
+Ouch :-( Thank you for spotting this out.
+
+/Jarkko
