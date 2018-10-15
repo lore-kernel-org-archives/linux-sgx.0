@@ -1,95 +1,136 @@
-Date: Fri, 2 Nov 2018 13:32:05 -0400
-From: Rich Felker <dalias@libc.org>
-To: Andy Lutomirski <luto@kernel.org>
-CC: Jethro Beekman <jethro@fortanix.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Jann Horn <jannh@google.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>, Linux
- API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
-	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102173205.GM5150@brightrain.aerifal.cx>
-References: <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
- <20181102165204.GC7393@linux.intel.com>
- <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
- <CALCETrUo8uwnu3dBVSHVtB_z4uQgW=40grVdZWmTt64Tei6WiQ@mail.gmail.com>
- <1b87048e-7ed8-14a1-572f-3cd825319f8c@fortanix.com>
- <CALCETrVW23Hmwj9DeYJ95mGd-_6ZG4obZG+evc2NdXEGud6DBA@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrVW23Hmwj9DeYJ95mGd-_6ZG4obZG+evc2NdXEGud6DBA@mail.gmail.com>
-Sender: Rich Felker <dalias@aerifal.cx>
-Return-Path: dalias@aerifal.cx
+Return-Path: <SRS0=1WHz=M3=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC45CC04AA5
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Oct 2018 20:54:40 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 677F7208B3
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Oct 2018 20:54:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677F7208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726141AbeJPEle (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Oct 2018 00:41:34 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54116 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbeJPEle (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Oct 2018 00:41:34 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A906B80889; Mon, 15 Oct 2018 22:54:37 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 22:54:36 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
+Message-ID: <20181015205436.GA28500@amd>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Disposition: inline
+In-Reply-To: <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+Message-ID: <20181015205436.0rcsbw_nUys-nHkhdUj9FCqLd057gx5LAtvCVwMOWAc@z>
 
-On Fri, Nov 02, 2018 at 10:16:02AM -0700, Andy Lutomirski wrote:
-> On Fri, Nov 2, 2018 at 10:05 AM Jethro Beekman <jethro@fortanix.com> wrote:
-> >
-> > On 2018-11-02 10:01, Andy Lutomirski wrote:
-> > > On Fri, Nov 2, 2018 at 9:56 AM Jethro Beekman <jethro@fortanix.com> wrote:
-> > >>
-> > >> On 2018-11-02 09:52, Sean Christopherson wrote:
-> > >>> On Fri, Nov 02, 2018 at 04:37:10PM +0000, Jethro Beekman wrote:
-> > >>>> On 2018-11-02 09:30, Sean Christopherson wrote:
-> > >>>>> ... The intended convention for EENTER is to have an ENCLU at the AEX target ...
-> > >>>>>
-> > >>>>> ... to further enforce that the AEX target needs to be ENCLU.
-> > >>>>
-> > >>>> Some SGX runtimes may want to use a different AEX target.
-> > >>>
-> > >>> To what end?  Userspace gets no indication as to why the AEX occurred.
-> > >>> And if exceptions are getting transfered to userspace the trampoline
-> > >>> would effectively be handling only INTR, NMI, #MC and EPC #PF.
-> > >>>
-> > >>
-> > >> Various reasons...
-> > >>
-> > >> Userspace may have established an exception handling convention with the
-> > >> enclave (by setting TCS.NSSA > 1) and may want to call EENTER instead of
-> > >> ERESUME.
-> > >>
-> > >
-> > > Ugh,
-> > >
-> > > I sincerely hope that a future ISA extension lets the kernel return
-> > > directly back to enclave mode so that AEX events become entirely
-> > > invisible to user code.
-> >
-> > Can you explain how this would work for things like #BR/#DE/#UD that
-> > need to be fixed up by code running in the enclave before it can be resumed?
-> >
-> 
-> Sure.  A better enclave entry function would complete in one of two ways:
-> 
-> 1. The enclave exited normally.  Some register output would indicate this.
-> 
-> 2. The enclave existed due to an exception or interrupt.  The kernel
-> would be entered directly and notified of what happened.  The kernel
-> would fix it up if needed (#PF), handle an interrupt (for en enclave
-> exit due to an interrupt) and reenter the enclave.  If, of the error
-> is not kernel-fixable-up, it would return back to userspace with some
-> explanation of what happened.  Kind of like normal user code.
-> 
-> Alternatively, the CPU could directly distinguish between exceptions
-> that need the enclave's attention (#BR) and those that don't.
-> 
-> The fact that user code is involved in resuming an enclave when a
-> hardware interrupt occurs is silly IMO.
 
-Agreed absolutely. If this is necessary, it seems like there should be
-an agreed-upon protocol such that the kernel can make it happen via
-returning to code in the vdso that performs the actual resume, so that
-the application never sees it.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rich
+On Tue 2018-09-25 16:06:56, Jarkko Sakkinen wrote:
+> Documentation of the features of the Software Guard eXtensions used
+> by the Linux kernel and basic design choices for the core and driver
+> and functionality.
+>=20
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+> --- /dev/null
+> +++ b/Documentation/x86/intel_sgx.rst
+> @@ -0,0 +1,185 @@
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Intel(R) SGX driver
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Intel(R) SGX is a set of CPU instructions that can be used by applicatio=
+ns to
+> +set aside private regions of code and data. The code outside the enclave=
+ is
+> +disallowed to access the memory inside the enclave by the CPU access con=
+trol.
+> +In a way you can think that SGX provides inverted sandbox. It protects t=
+he
+> +application from a malicious host.
+
+Well, recently hardware had some problems keeping its
+promises. So... what about rowhammer, meltdown and spectre?
+
+Which ones apply, which ones do not, and on what cpu generations?
+
+> +Overview of SGX
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +SGX has a set of data structures to maintain information about the encla=
+ves and
+> +their security properties. BIOS reserves a fixed size region of physical=
+ memory
+> +for these structures by setting Processor Reserved Memory Range Registers
+> +(PRMRR).
+> +
+> +This memory range is protected from outside access by the CPU and all th=
+e data
+> +coming in and out of the CPU package is encrypted by a key that is gener=
+ated for
+> +each boot cycle.
+
+Encryption, that sounds nice, but it is hard to do right. If SGX
+protected code changes single bit in its memory, how many bits will be
+changed in physical RAM?
+
+Can we get security people to look at this and perhaps tells us what
+properties it has?
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvE/owACgkQMOfwapXb+vI5JACeIS4TIY4nGCXYOUBBdtMzSfEh
+JH4AoKFfu10QTC4CbpAC/REiWoJy7pLi
+=Zkv5
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
