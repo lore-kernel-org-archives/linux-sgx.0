@@ -1,88 +1,108 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54116 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbeJPEle (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Oct 2018 00:41:34 -0400
+Date: Mon, 15 Oct 2018 22:54:36 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Haim Cohen <haim.cohen@intel.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Konrad Rzeszutek Wilk
-	<konrad.wilk@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Matt Turner <mattst88@gmail.com>, "Janakarajan
- Natarajan" <Janakarajan.Natarajan@amd.com>, David Woodhouse
-	<dwmw@amazon.co.uk>, Andy Lutomirski <luto@kernel.org>, Pavel Tatashin
-	<pasha.tatashin@oracle.com>, "open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 05/19] x86/msr: Add SGX definitions to msr-index.h
-Date: Tue, 25 Sep 2018 16:06:42 +0300
-Message-ID: <20180925130845.9962-6-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+	<andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
+Message-ID: <20181015205436.GA28500@amd>
 References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Content-Type: text/plain
-Return-Path: platform-driver-x86-owner@vger.kernel.org
-MIME-Version: 1.0
+ <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+In-Reply-To: <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ENCLS and ENCLU are usable if and only if SGX_ENABLE is set and After
-SGX is activated the IA32_SGXLEPUBKEYHASHn MSRs are writable if
-SGX_LC_WR is set and the feature control is locked.
+On Tue 2018-09-25 16:06:56, Jarkko Sakkinen wrote:
+> Documentation of the features of the Software Guard eXtensions used
+> by the Linux kernel and basic design choices for the core and driver
+> and functionality.
+>=20
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-SGX related bits in IA32_FEATURE_CONTROL cannot be set before SGX is
-activated by the pre-boot firmware. SGX activation is triggered by
-setting bit 0 in the MSR 0x7a. Until SGX is activated, the LE hash MSRs
-are writable to allow pre-boot firmware to lock down the LE root key
-with a non-Intel value.
+> --- /dev/null
+> +++ b/Documentation/x86/intel_sgx.rst
+> @@ -0,0 +1,185 @@
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Intel(R) SGX driver
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Intel(R) SGX is a set of CPU instructions that can be used by applicatio=
+ns to
+> +set aside private regions of code and data. The code outside the enclave=
+ is
+> +disallowed to access the memory inside the enclave by the CPU access con=
+trol.
+> +In a way you can think that SGX provides inverted sandbox. It protects t=
+he
+> +application from a malicious host.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Haim Cohen <haim.cohen@intel.com>
-Signed-off-by: Haim Cohen <haim.cohen@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/msr-index.h | 8 ++++++++
- arch/x86/kernel/cpu/common.c     | 1 +
- 2 files changed, 9 insertions(+)
+Well, recently hardware had some problems keeping its
+promises. So... what about rowhammer, meltdown and spectre?
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 4731f0cf97c5..44d7b68e7f52 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -486,6 +486,8 @@
- #define FEATURE_CONTROL_LOCKED				(1<<0)
- #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
- #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
-+#define FEATURE_CONTROL_SGX_ENABLE			(1<<18)
-+#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
- #define FEATURE_CONTROL_LMCE				(1<<20)
- 
- #define MSR_IA32_APICBASE		0x0000001b
-@@ -552,6 +554,12 @@
- #define PACKAGE_THERM_INT_LOW_ENABLE		(1 << 1)
- #define PACKAGE_THERM_INT_PLN_ENABLE		(1 << 24)
- 
-+/* Intel SGX MSRs */
-+#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
-+#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-+#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
-+#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
-+
- /* Thermal Thresholds Support */
- #define THERM_INT_THRESHOLD0_ENABLE    (1 << 15)
- #define THERM_SHIFT_THRESHOLD0        8
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 44c4ef3d989b..aedfd9657a6c 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -52,6 +52,7 @@
- #include <asm/microcode_intel.h>
- #include <asm/intel-family.h>
- #include <asm/cpu_device_id.h>
-+#include <asm/sgx_arch.h>
- 
- #ifdef CONFIG_X86_LOCAL_APIC
- #include <asm/uv/uv.h>
--- 
-2.17.1
+Which ones apply, which ones do not, and on what cpu generations?
+
+> +Overview of SGX
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +SGX has a set of data structures to maintain information about the encla=
+ves and
+> +their security properties. BIOS reserves a fixed size region of physical=
+ memory
+> +for these structures by setting Processor Reserved Memory Range Registers
+> +(PRMRR).
+> +
+> +This memory range is protected from outside access by the CPU and all th=
+e data
+> +coming in and out of the CPU package is encrypted by a key that is gener=
+ated for
+> +each boot cycle.
+
+Encryption, that sounds nice, but it is hard to do right. If SGX
+protected code changes single bit in its memory, how many bits will be
+changed in physical RAM?
+
+Can we get security people to look at this and perhaps tells us what
+properties it has?
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvE/owACgkQMOfwapXb+vI5JACeIS4TIY4nGCXYOUBBdtMzSfEh
+JH4AoKFfu10QTC4CbpAC/REiWoJy7pLi
+=Zkv5
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
