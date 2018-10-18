@@ -1,44 +1,34 @@
-Return-Path: <SRS0=78qm=M5=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=HDAj=M6=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE56ECDE3D
-	for <linux-sgx@archiver.kernel.org>; Wed, 17 Oct 2018 23:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC9AC5ACCC
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Oct 2018 09:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C74213A2
-	for <linux-sgx@archiver.kernel.org>; Wed, 17 Oct 2018 23:56:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C74213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D239B21550
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Oct 2018 09:57:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D239B21550
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeJRHzD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 18 Oct 2018 03:55:03 -0400
-Received: from mga18.intel.com ([134.134.136.126]:18839 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbeJRHzD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 18 Oct 2018 03:55:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:56:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="89168711"
-Received: from ray.sc.intel.com (HELO [10.232.0.41]) ([10.232.0.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Oct 2018 16:56:51 -0700
-Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
-To:     Pavel Machek <pavel@ucw.cz>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
- <20181015205436.GA28500@amd>
+        id S1728093AbeJRR5p (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 18 Oct 2018 13:57:45 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37043 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbeJRR5o (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 18 Oct 2018 13:57:44 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B2C0B808CC; Thu, 18 Oct 2018 11:57:26 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 11:57:27 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
         andriy.shevchenko@linux.intel.com,
         Jonathan Corbet <corbet@lwn.net>,
@@ -47,96 +37,80 @@ Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <fe28962d-367b-b8bb-8280-fe48c7d08813@intel.com>
-Date:   Wed, 17 Oct 2018 16:56:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
+Message-ID: <20181018095727.GC10861@amd>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
+ <20181015205436.GA28500@amd>
+ <alpine.DEB.2.21.1810180205490.5022@jsakkine-mobl1>
 MIME-Version: 1.0
-In-Reply-To: <20181015205436.GA28500@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6zdv2QT/q3FMhpsV"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810180205490.5022@jsakkine-mobl1>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181017235651.Qnm25ZlPUoYaUdHe4ChAaHiSXtp0xIalij9R-Gx6YZc@z>
+Message-ID: <20181018095727.Do5hWf5Olt8in2J53woelkPRKiumhTz-ncvxlx9pUA4@z>
 
-On 10/15/2018 01:54 PM, Pavel Machek wrote:
->> +Intel(R) SGX is a set of CPU instructions that can be used by applications to
->> +set aside private regions of code and data. The code outside the enclave is
->> +disallowed to access the memory inside the enclave by the CPU access control.
->> +In a way you can think that SGX provides inverted sandbox. It protects the
->> +application from a malicious host.
-> Well, recently hardware had some problems keeping its
-> promises. So... what about rowhammer, meltdown and spectre?
 
-There's a ton of documentation out there about what kinds of protections
-SGX provides.  I don't think this is an appropriate place to have an
-exhaustive discussion about it.  But, there's extensive discussion of it
-on Intel's security site:
+--6zdv2QT/q3FMhpsV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://software.intel.com/security-software-guidance/
+On Thu 2018-10-18 02:45:27, Jarkko Sakkinen wrote:
+> On Mon, 15 Oct 2018, Pavel Machek wrote:
+> >On Tue 2018-09-25 16:06:56, Jarkko Sakkinen wrote:
+> >>+Intel(R) SGX is a set of CPU instructions that can be used by applicat=
+ions to
+> >>+set aside private regions of code and data. The code outside the encla=
+ve is
+> >>+disallowed to access the memory inside the enclave by the CPU access c=
+ontrol.
+> >>+In a way you can think that SGX provides inverted sandbox. It protects=
+ the
+> >>+application from a malicious host.
+> >
+> >Well, recently hardware had some problems keeping its
+> >promises. So... what about rowhammer, meltdown and spectre?
+>=20
+> Doesn't hardware always have this problem over time?
 
-There's documentation on how L1TF affects SGX here:
+No, not really.
 
-https://software.intel.com/security-software-guidance/software-guidance/l1-terminal-fault
+In this case, tries to protect from hardware "attacks" done by machine
+owner. That job is theoretically impossible, so you have harder
+situation than most..
 
-Or Spectre v2 here:
+> >Which ones apply, which ones do not, and on what cpu generations?
+>=20
+> Definitely should be refined.
+>=20
+> Meltdowns approach AFAIK does not work because reads outside the enclave
+> will always have a predefined value (-1) but only if the page is present,
+> which was later exploited in the Foreshadow attack.
 
-https://software.intel.com/security-software-guidance/software-guidance/bounds-check-bypass
+What about L1tf and https://github.com/lsds/spectre-attack-sgx ?
 
-> Which ones apply, which ones do not, and on what cpu generations?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-The CVEs list this in pretty exhaustive detail.  The L1TF/SGX one, for
-example:
+--6zdv2QT/q3FMhpsV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-https://nvd.nist.gov/vuln/detail/CVE-2018-3615
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Lists a bunch of processor models.
+iEYEARECAAYFAlvIWQcACgkQMOfwapXb+vIbCwCgw3wWxvBiMbEy5TVWTbYyQmif
+TjkAniEwkld7XGcUBTl90sv+3trigWg1
+=YAi6
+-----END PGP SIGNATURE-----
 
+--6zdv2QT/q3FMhpsV--
