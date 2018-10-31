@@ -2,39 +2,45 @@ Return-Path: <SRS0=NXiG=NL=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A050ECDE44
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Oct 2018 21:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D53C0044C
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Oct 2018 21:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2E020664
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Oct 2018 21:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2E020664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2852B2080A
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Oct 2018 21:53:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="xGm+jW3H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2852B2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbeKAGf0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:35:26 -0400
-Received: from mga17.intel.com ([192.55.52.151]:44187 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725736AbeKAGf0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:35:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 14:35:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,449,1534834800"; 
-   d="scan'208";a="104388698"
-Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga001.jf.intel.com with ESMTP; 31 Oct 2018 14:35:34 -0700
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        id S1726104AbeKAGxa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Nov 2018 02:53:30 -0400
+Received: from mail-eopbgr680124.outbound.protection.outlook.com ([40.107.68.124]:4909
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725919AbeKAGxa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:53:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=avLLjx1IhK5fxVbS07uuNkaAUYv/Bw67dPh2M4kjGF8=;
+ b=xGm+jW3HA5JJ9g3i1AGujyaBqjSPJosiy+6B4sW6pWschxHF48O2oCUZMwQ0UyhjrDryrChwIZFV0mtJ+MV9pRiRYydTruXv+eZethNxxGAPA9oQtHpe/HxvxFiikBbd2jWi4kRV9NXZ7E/16T9SgZT6Z6NpzJNFPNDAaGh0Lgc=
+Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
+ SN6PR11MB2685.namprd11.prod.outlook.com (52.135.91.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.21; Wed, 31 Oct 2018 21:53:30 +0000
+Received: from SN6PR11MB3167.namprd11.prod.outlook.com
+ ([fe80::e100:5c05:f62d:b2c5]) by SN6PR11MB3167.namprd11.prod.outlook.com
+ ([fe80::e100:5c05:f62d:b2c5%5]) with mapi id 15.20.1273.028; Wed, 31 Oct 2018
+ 21:53:30 +0000
+From:   Jethro Beekman <jethro@fortanix.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Andy Lutomirski <luto@amacapital.net>,
         Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
@@ -48,8 +54,14 @@ Cc:     Jethro Beekman <jethro@fortanix.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+Thread-Topic: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Thread-Index: AQHUWc+y8zusVL/kHkSM4W4SDz7ps6UK8Y0AgC8cvwCAAAFkAIAABP0A
+Date:   Wed, 31 Oct 2018 21:53:30 +0000
+Message-ID: <dc0f8bc8-4d69-517e-68af-abda2d51423f@fortanix.com>
 References: <20180926173516.GA10920@linux.intel.com>
  <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
  <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
@@ -61,93 +73,153 @@ References: <20180926173516.GA10920@linux.intel.com>
  <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
  <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
  <20181031213036.GA23089@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
-Date:   Wed, 31 Oct 2018 14:35:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181031213036.GA23089@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+ <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
+In-Reply-To: <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR07CA0065.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::42) To SN6PR11MB3167.namprd11.prod.outlook.com
+ (2603:10b6:805:c4::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jethro@fortanix.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.107.146]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR11MB2685;6:vehTQupnEEhFfyRmLobLhTZU9xMBac3qcjnMnddEm6tnPGGoW8j+2WIdg02xOvH/kN19zTLrntg+hMjlzQDEskg/f8m//gQFDUNQHuMkF1NfMtxb75niEFttFY3qjYT+Y+jvxbSYd5S91gyJ7TOtxXHRjW6XOBMCT5I9RSm55CPtYYlHT5AAXr/sqYj7s4YCVfwxKo2q9HIl5faZ/aNMkMT1v09egHQhqxK/x3xsXRZCgfoaqPGdYoiqJlllHAn6mIj5IssBtbzSQ8xJ2ct75Ajzr3QhsDh4hK7iA4x9DgjMkVOI+b3Rt+zE9ACMNkLJatAaOgE93sLX3xLSXvpoQcO3RaXCr43Tm3OE/AQn91K1Cjhv9oUo6MDnd45o69O5Y+GII33Na0ZfHIStQErz7sMxDqsZX+lYV++T5DQbEdeUsF7/Uy7AtkiJqiY/iJ9a9WuQ1QnN4X4BrT6VJrGDzA==;5:zY1MuBO3luoZTCNSEGzBSQjWoJPMkWhfDAF2jRMqA5/NwO1R/5IXT2fq3vTdqzD7qWYy/xi9gaI6fmaouPBggVo1CCKdv6MAziV9N6+6uGDVNRKETMN1dFcx53TB6NAPsC2tdU4Zto/gJhUmDnRDo8pfDBHhK1+yaX2UIABA5Fc=;7:8XL/XXwxZtWvfG1aYyWJNohUIUr2445rcQPdhvM+QMhSaWTxb4hV45BAeh9TUKSuShg8v1raqrkSMlZbzjPXitowrOIHfubKLjFKtbifkQIjKs+gZeU4yQme5FrxbMdMtSftGAdJyZcKg7MhSgkxOA==
+x-ms-office365-filtering-correlation-id: 1cb1e9ed-5c51-49f8-316f-08d63f7b4b21
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB2685;
+x-ms-traffictypediagnostic: SN6PR11MB2685:
+x-microsoft-antispam-prvs: <SN6PR11MB2685E082D867160D9FDCF3F3AACD0@SN6PR11MB2685.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(4983020)(52105095)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB2685;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB2685;
+x-forefront-prvs: 084285FC5C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39840400004)(376002)(136003)(366004)(396003)(199004)(189003)(25786009)(99286004)(106356001)(81166006)(2906002)(81156014)(105586002)(305945005)(8676002)(7736002)(8936002)(71200400001)(71190400001)(99936001)(31686004)(6486002)(53936002)(6246003)(6512007)(6436002)(6116002)(3846002)(508600001)(14454004)(4326008)(36756003)(2900100001)(229853002)(68736007)(5660300001)(97736004)(4001150100001)(256004)(316002)(110136005)(5250100002)(31696002)(54906003)(86362001)(52116002)(53546011)(476003)(2616005)(386003)(6506007)(446003)(102836004)(11346002)(93886005)(186003)(66066001)(486006)(26005)(7416002)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2685;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fortanix.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0xhB2GJlH54jYhUuldxB+RTmLglqKY99UgBrcrymfxSdSLvO9sigi6ou3tQBxBZSBNMqMViPxN2+/s+JZNjrBgrSv568CS5tJ6YumbeM9AvgbjtC2FWV3mXBLX39dMhqWmp06rEtMfAN+m1RSgYGNXRa6gAYc17W8z0af7jdpzLVdSu6edvH+35EXXx32KORxoGneVcdlcQ7z/9DiEO5Jcjysw2BuCXYpQF67W24T4VfuhzY0LpyxosNdBXRy1m54hf46XyGXd/+iw0DoVNmYqC7/+Jrjuv590Ekrv7uZfMOLPz2tiNyCnP3rPg0fx1aCnpjiEZT7ik7VwidrdfrZx802OPqBghQKQf59/EJnX8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020705010203090401010008"
+MIME-Version: 1.0
+X-OriginatorOrg: fortanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cb1e9ed-5c51-49f8-316f-08d63f7b4b21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2018 21:53:30.8028
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2685
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181031213534.Avw_urFstdgjcMSe9biJh9-Rni7yOIc49n1uS-EQ2kI@z>
+Message-ID: <20181031215330.Q7E5TDQD03zusF98XMG8x2PDNC7WCnSRPU4sNaSYZX0@z>
 
-On 10/31/18 2:30 PM, Sean Christopherson wrote:
-> On Mon, Oct 01, 2018 at 03:03:30PM -0700, Dave Hansen wrote:
->> On 10/01/2018 02:42 PM, Jethro Beekman wrote:
->>>
->>> 1) Even though the vDSO function exists, userspace may still call 
->>> `ENCLU[EENTER]` manually, so the fault handling as described in the 
->>> current patch should also be maintained.
->>
->> Why?
-> 
-> Circling back to this question, what if we take the easy way out and
-> simply signal SIGSEGV without an SGX-specific code?  I.e. treat #PF
-> with X86_PF_SGX as an access error, no more no less.  That should be
-> sufficient for userspace to function, albeit with a little more effort,
-> but presumably no more than would be needed to run on SGX1 hardware.
+--------------ms020705010203090401010008
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-There are two sides to this ABI: what the kernel does to support SGX and
-what userspace does.  If we do what you suggest, we remove any (most?)
-needed kernel changes and foist the burden entirely into userspace.
-But, we end up with two ABIs: the old one and the new vDSO one.
+On 2018-10-31 14:35, Dave Hansen wrote:
+> On 10/31/18 2:30 PM, Sean Christopherson wrote:
+>> AFAIK there isn't a way to prevent userspace from manually invoking
+>> EENTER, short of doing some really nasty text poking or PTE swizzling.=
 
-IOW, once we start doing SIGSEGV, we have to do it forever, despite if
-we have a newer mechanism.
+>> We could declare using EENTER as unsupported,
+>=20
+> Yep, userspace can call it all it wants, and we can also say that
+> calling it outside the vdso is "undefined".
 
-> AFAIK there isn't a way to prevent userspace from manually invoking
-> EENTER, short of doing some really nasty text poking or PTE swizzling.
-> We could declare using EENTER as unsupported,
+Is there a precedent for this? Are there any other ring 3 x86=20
+instructions that Linux is claiming to be "undefined" when executed by a =
 
-Yep, userspace can call it all it wants, and we can also say that
-calling it outside the vdso is "undefined".
+user process?
+
+--
+Jethro Beekman | Fortanix
+
+
+--------------ms020705010203090401010008
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
+CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
+bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
+MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
+b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
+Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
+LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
+lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
+O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
+ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
+BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
+MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
+AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
+hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
+bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
+dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
+bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
+v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
+shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
+rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
+eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
+qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
+apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
+BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
+T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
+b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
+GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
+ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
+bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
+NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
+NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
+qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
+jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
+ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
+jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
+Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
+BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
+VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
+hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
+QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
+7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
++2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
+E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
+gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
+SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
+/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
+m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
+UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
+rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
+TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
+x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTAzMTIxNTMyNlowLwYJKoZIhvcNAQkEMSIEIOyKqUtg
+G0eaneYraWTep3rN/Gd4ZyWjw0UTaosDffwEMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
+Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
+Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
+XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
+R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
+Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
+YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
+AQApyoTq8NORHB9HU8q3AxOwIKtMRqdDlHcWwtpD5Z0Al3Wn+V5e+tnqcreD/yzyaWCVK5dd
+0FdLGmjojU3o8mdvgBiaI+R2ffiPK3qw56AqxOSA5IyToOBRyxW19+Cz/G8DSQo8n/ij0dJi
+M5t9KjIOblntoLOSTDgVLqMgufiXCUOSXFv/RirTD1iKYMQyChM1lrfeP06vQYPloDhltkus
+1FZNauG7KyFHYROKPAZWE/+j/9G+/htpO4qjfxpeX2T770lWT0pHKsNimUM4lC2zQYVqQJ3N
+BwYLzJNK2YpeMmLeVGc1z2Sx3VeK8tILP8Mm8WXbcaSwiOjSsK91kXxkAAAAAAAA
+
+--------------ms020705010203090401010008--
