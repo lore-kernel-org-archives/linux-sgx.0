@@ -1,108 +1,48 @@
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54116 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbeJPEle (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Oct 2018 00:41:34 -0400
-Date: Mon, 15 Oct 2018 22:54:36 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "open
- list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 19/19] x86/sgx: Driver documentation
-Message-ID: <20181015205436.GA28500@amd>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-In-Reply-To: <20180925130845.9962-20-jarkko.sakkinen@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+Return-Path: <luto@amacapital.net>
+Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+From: Andy Lutomirski <luto@amacapital.net>
+In-Reply-To: <a6deac4e-ce8f-aa43-2d75-a04c05bac104@intel.com>
+Date: Wed, 31 Oct 2018 15:52:51 -0700
+CC: Jethro Beekman <jethro@fortanix.com>, Sean Christopherson
+	<sean.j.christopherson@intel.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Andrew Lutomirski <luto@kernel.org>, "X86
+ ML" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "npmccallum@redhat.com"
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	"shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <2833FD27-42A0-435C-AEA5-2DC73315867A@amacapital.net>
+References: <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net> <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com> <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com> <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com> <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com> <20180927135603.GF8242@linux.intel.com> <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com> <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com> <20181031213036.GA23089@linux.intel.com> <a9c23203-476d-875d-9fbb-263716833e17@intel.com> <dc0f8bc8-4d69-517e-68af-abda2d51423f@fortanix.com> <a6deac4e-ce8f-aa43-2d75-a04c05bac104@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue 2018-09-25 16:06:56, Jarkko Sakkinen wrote:
-> Documentation of the features of the Software Guard eXtensions used
-> by the Linux kernel and basic design choices for the core and driver
-> and functionality.
+> On Oct 31, 2018, at 2:58 PM, Dave Hansen <dave.hansen@intel.com> wrote:
 >=20
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> On 10/31/18 2:53 PM, Jethro Beekman wrote:
+>>> On 2018-10-31 14:35, Dave Hansen wrote:
+>>>> On 10/31/18 2:30 PM, Sean Christopherson wrote:
+>>>> AFAIK there isn't a way to prevent userspace from manually invoking
+>>>> EENTER, short of doing some really nasty text poking or PTE swizzling.
+>>>> We could declare using EENTER as unsupported,
+>>>=20
+>>> Yep, userspace can call it all it wants, and we can also say that
+>>> calling it outside the vdso is "undefined".
+>>=20
+>> Is there a precedent for this? Are there any other ring 3 x86
+>> instructions that Linux is claiming to be "undefined" when executed by a
+>> user process?
+>=20
+> We did it for MPX.  "Don't use MPX unless you first tell the kernel, or
+> we'll eat your puppy."
 
-> --- /dev/null
-> +++ b/Documentation/x86/intel_sgx.rst
-> @@ -0,0 +1,185 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Intel(R) SGX driver
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Introduction
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Intel(R) SGX is a set of CPU instructions that can be used by applicatio=
-ns to
-> +set aside private regions of code and data. The code outside the enclave=
- is
-> +disallowed to access the memory inside the enclave by the CPU access con=
-trol.
-> +In a way you can think that SGX provides inverted sandbox. It protects t=
-he
-> +application from a malicious host.
-
-Well, recently hardware had some problems keeping its
-promises. So... what about rowhammer, meltdown and spectre?
-
-Which ones apply, which ones do not, and on what cpu generations?
-
-> +Overview of SGX
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +SGX has a set of data structures to maintain information about the encla=
-ves and
-> +their security properties. BIOS reserves a fixed size region of physical=
- memory
-> +for these structures by setting Processor Reserved Memory Range Registers
-> +(PRMRR).
-> +
-> +This memory range is protected from outside access by the CPU and all th=
-e data
-> +coming in and out of the CPU package is encrypted by a key that is gener=
-ated for
-> +each boot cycle.
-
-Encryption, that sounds nice, but it is hard to do right. If SGX
-protected code changes single bit in its memory, how many bits will be
-changed in physical RAM?
-
-Can we get security people to look at this and perhaps tells us what
-properties it has?
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvE/owACgkQMOfwapXb+vI5JACeIS4TIY4nGCXYOUBBdtMzSfEh
-JH4AoKFfu10QTC4CbpAC/REiWoJy7pLi
-=Zkv5
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+I think EENTER in plain user code should have well defined semantics, and i=
+t should get regular signals with the appropriate bits set in the error cod=
+e field in the ucontext.  But we should probably simultaneously offer a nic=
+er API, and the libraries will use it because it=E2=80=99s nicer.=
