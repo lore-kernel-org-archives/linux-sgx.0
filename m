@@ -1,55 +1,51 @@
-Subject: Re: RFC: userspace exception fixups
-To: Sean Christopherson <sean.j.christopherson@intel.com>
-CC: Andy Lutomirski <luto@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Jann Horn
-	<jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Return-Path: <torvalds@linuxfoundation.org>
 References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
-Date: Fri, 2 Nov 2018 10:13:23 -0700
-In-Reply-To: <20181102170627.GD7393@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com> <20181101185225.GC5150@brightrain.aerifal.cx>
+In-Reply-To: <20181101185225.GC5150@brightrain.aerifal.cx>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 1 Nov 2018 12:10:35 -0700
+Message-ID: <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To: <dalias@libc.org>
+CC: Jann Horn <jannh@google.com>, <luto@kernel.org>,
+	<dave.hansen@linux.intel.com>, <sean.j.christopherson@intel.com>,
+	<jethro@fortanix.com>, <jarkko.sakkinen@linux.intel.com>,
+	<fweimer@redhat.com>, <linux-api@vger.kernel.org>, <x86@kernel.org>,
+	<linux-arch@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, <bp@alien8.de>, <carlos@redhat.com>,
+	<adhemerval.zanella@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 11/2/18 10:06 AM, Sean Christopherson wrote:
-> On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
->> On 11/2/18 9:30 AM, Sean Christopherson wrote:
->>> What if rather than having userspace register an address for fixup, the
->>> kernel instead unconditionally does fixup on the ENCLU opcode?
->>
->> The problem is knowing what to do for the fixup.  If we have a simple
->> action to take that's universal, like backing up %RIP, or setting some
->> other register state, it's not bad.
-> 
-> Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
+On Thu, Nov 1, 2018 at 11:52 AM Rich Felker <dalias@libc.org> wrote:
+>
+> There's no need to chain if the handler is specific to the context
+> where the fault happens. You just replace the handler with the one
+> relevant to the code you're about to run before you run it.
 
-Could someone write down all the ways we get in and out of the enclave?
+That's much too expensive to do as a system call.
 
-I think we always get in from userspace calling EENTER or ERESUME.  We
-can't ever enter directly from the kernel, like via an IRET from what I
-understand.
+Maybe an rseq-like "register an area where exception information will
+be found" and then you can just swap in a pointer there (and nest with
+previous pointers).
 
-We get *out* from exceptions, hardware interrupts, or enclave-explicit
-EEXITs.  Did I miss any?  Remind me where the hardware lands the control
-flow in each of those exit cases.
+But even that doesn't work. Maybe some library wants to capture page
+faults because they write-protected some area and want to log writes
+and then emulate them (or just enable them after logging - statistical
+logging is a thing).
+
+And then another library (or just nested code) wants to handle the
+eenter fault, so it overwrites the page handler fault. What do you do
+if you now get a page fault before you even do the eenter?
+
+The whole "one global error handler" model is broken. It's broken even
+if the "global" one is just per-thread. Don't do it.
+
+Even signals didn't make *that* bad a mistake, and signals are horrible.
+
+                        Linus
