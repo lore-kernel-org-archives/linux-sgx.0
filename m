@@ -2,108 +2,112 @@ Return-Path: <SRS0=LYKh=NM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F76AC6786F
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Nov 2018 21:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48920C0044C
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Nov 2018 23:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6307620820
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Nov 2018 21:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C0420820
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Nov 2018 23:23:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I8sNO71V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6307620820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVKXYLV/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C0420820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeKBG32 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:29:28 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43558 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727317AbeKBG31 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 2 Nov 2018 02:29:27 -0400
-Received: by mail-lj1-f195.google.com with SMTP id g26-v6so18113844lja.10
-        for <linux-sgx@vger.kernel.org>; Thu, 01 Nov 2018 14:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6l0oXKTWmF6192MGpX+vILDY+h+riejuNP24DHkSMWM=;
-        b=I8sNO71VG7+Std248CcLp382Pq6vk7t03j5Y8qjTm5RhyHYruHMZNnaak081W3c180
-         NqOO57k44MhEq1DIrVf/Db6Otw1p3LYTskn+xJCzc3fpKqsnoG9urVzDtDpCiftuXqfD
-         7G/pPHstYrW9uUpSAG2ZvNZHa6/wH/SDVX0IE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6l0oXKTWmF6192MGpX+vILDY+h+riejuNP24DHkSMWM=;
-        b=JrhqMBE1n4x3bieW1cYsnOIhDAzMVN2u8dCgtpYXhO3/MFDeH5SmK/5wkflMTFP1iy
-         /VJnqzxCG66U0uyB5GDWIViO+ifq65LbWfSQibFQlN8XuvV0a+Wxfk2JGXrriICcaJAu
-         E2y2FB2KFRGyXcIdW/p2RkkxhAPZTI0K91AxQ9DwgeMkB6ic7AulG5a407CMN+M1TVBC
-         FmBSMKMcFvB7WiDYaF8n0ScAOmMAeP/ryeFCoIFgzGTmkWI/4UV1VrFwvf+Ffa3mA2pq
-         7fneHLwz0BXfeFesLot22B6e/g5CR+bjpGgOfecO159uGVF4U2nSn9Fihaq8k4ba5Cf3
-         LupA==
-X-Gm-Message-State: AGRZ1gJ14ZwNCGY9g5G68/aCeF2Mr3tCfg1C0dawdgMLDlwUWzTRpIC3
-        mFE7qzeoDFOnq/7NE2kS5QFgcxt4I1/uTQ==
-X-Google-Smtp-Source: AJdET5f3ReGo8qaUwnedeYq+DyMJnX4NG1NlMeHWqqvUDj3SX4M0LJ1vALQzeaaugfBGx1P9n+9txw==
-X-Received: by 2002:a2e:b1d0:: with SMTP id e16-v6mr1651284lja.16.1541107484405;
-        Thu, 01 Nov 2018 14:24:44 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id a9sm2331794lfi.57.2018.11.01.14.24.43
-        for <linux-sgx@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 14:24:43 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id a28-v6so16369121ljd.6
-        for <linux-sgx@vger.kernel.org>; Thu, 01 Nov 2018 14:24:43 -0700 (PDT)
-X-Received: by 2002:a2e:9584:: with SMTP id w4-v6mr6043318ljh.118.1541107482506;
- Thu, 01 Nov 2018 14:24:42 -0700 (PDT)
+        id S1727749AbeKBI2L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 2 Nov 2018 04:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727802AbeKBI2L (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 2 Nov 2018 04:28:11 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DF602087A
+        for <linux-sgx@vger.kernel.org>; Thu,  1 Nov 2018 23:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541114588;
+        bh=415MFWHDIZtY1qe6caCyVVn8I98XBm9BvsFAfLS0CTU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JVKXYLV/sYI1NWV6HXUo6hcHdtWht5lJelqnZ359Fahb6uzf7V/ZYFoyB2O0xMa7r
+         0AQvyLchCLsOvB4QhR3jjXJw8muiqLi1+Qiu0qCbOvTxkOq/UhadOOsolehV8Txk15
+         vga7mxRRpQqNpP2KaXo90bVL9CE1Ni0KWVT6dLDA=
+Received: by mail-wr1-f43.google.com with SMTP id 74-v6so121403wrb.13
+        for <linux-sgx@vger.kernel.org>; Thu, 01 Nov 2018 16:23:08 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLnS1ULYFJLOulQ5AKE8euH8e/IFgGLoWn/B0Ikmjq7vIv/pcQV
+        5TQLoYfxDiSiQpaYCr8uXcn0kz7jVOxm3HAvpSnTLw==
+X-Google-Smtp-Source: AJdET5dhuzroPAEW5lPVQoXX0VyqDMbXzwT6rfzx0IjgqP5lijbGEa9KnlxloP0J7tTYHatP7JIn6BVCRwejrzQzveg=
+X-Received: by 2002:adf:97d3:: with SMTP id t19-v6mr8620050wrb.283.1541114586807;
+ Thu, 01 Nov 2018 16:23:06 -0700 (PDT)
 MIME-Version: 1.0
 References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
  <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
  <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
-In-Reply-To: <20181101193107.GE5150@brightrain.aerifal.cx>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Nov 2018 14:24:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+In-Reply-To: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 1 Nov 2018 16:22:55 -0700
+X-Gmail-Original-Message-ID: <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
 Message-ID:
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
 Subject: Re: RFC: userspace exception fixups
-To:     dalias@libc.org
-Cc:     Jann Horn <jannh@google.com>, luto@kernel.org,
-        dave.hansen@linux.intel.com, sean.j.christopherson@intel.com,
-        jethro@fortanix.com, jarkko.sakkinen@linux.intel.com,
-        fweimer@redhat.com, linux-api@vger.kernel.org, x86@kernel.org,
-        linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
         shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        carlos@redhat.com, adhemerval.zanella@linaro.org
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181101212426.nhg_7A1se87zxY29KAxa1ZZF49Nu7vy4RWG5__-VAHY@z>
+Message-ID: <20181101232255.S5_XmmTFTk29r4FUwOp4pFOPA18ko246gETGcs8TLt0@z>
 
-On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
+On Thu, Nov 1, 2018 at 2:24 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> See my other emails in this thread. You would register the *address*
-> (in TLS) of a function pointer object pointing to the handler, rather
-> than the function address of the handler. Then switching handler is
-> just a single store in userspace, no syscalls involved.
+> On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
+> >
+> > See my other emails in this thread. You would register the *address*
+> > (in TLS) of a function pointer object pointing to the handler, rather
+> > than the function address of the handler. Then switching handler is
+> > just a single store in userspace, no syscalls involved.
+>
+> Yes.
+>
+> And for just EENTER, maybe that's the right model.
+>
+> If we want to generalize it to other thread-synchronous faults, it
+> needs way more information and a list of handlers, but if we limit the
+> thing to _only_ EENTER getting an SGX fault, then a single "this is
+> the fault handler" address is probably the right thing to do.
 
-Yes.
+It sounds like you're saying that the kernel should know, *before*
+running any user fixup code, whether the fault in question is one that
+wants a fixup.  Sounds reasonable.
 
-And for just EENTER, maybe that's the right model.
-
-If we want to generalize it to other thread-synchronous faults, it
-needs way more information and a list of handlers, but if we limit the
-thing to _only_ EENTER getting an SGX fault, then a single "this is
-the fault handler" address is probably the right thing to do.
-
-                     Linus
+I think it would be nice, but not absolutely necessary, if user code
+didn't need to poke some value into TLS each time it ran a function
+that had a fixup.  With the poke-into-TLS approach, it looks a lot
+like rseq, and rseq doesn't nest very nicely.  I think we really want
+this mechanism to Just Work.  So we could maybe have a syscall that
+associates a list of fixups with a given range of text addresses.  We
+might want the kernel to automatically zap the fixups when the text in
+question is unmapped.
