@@ -1,66 +1,130 @@
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To: Sean Christopherson <sean.j.christopherson@intel.com>
-CC: Jethro Beekman <jethro@fortanix.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Andy Lutomirski <luto@amacapital.net>,
-	Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>, Platform Driver
-	<platform-driver-x86@vger.kernel.org>, "nhorman@redhat.com"
-	<nhorman@redhat.com>, "npmccallum@redhat.com" <npmccallum@redhat.com>,
-	"Ayoun, Serge" <serge.ayoun@intel.com>, "shay.katz-zamir@intel.com"
-	<shay.katz-zamir@intel.com>, "linux-sgx@vger.kernel.org"
+Date: Thu, 1 Nov 2018 14:27:44 -0400
+From: Rich Felker <dalias@libc.org>
+To: Andy Lutomirski <luto@kernel.org>
+CC: Dave Hansen <dave.hansen@linux.intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, Jann Horn
+	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, X86 ML
+	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
 	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, LKML
-	<linux-kernel@vger.kernel.org>
-References: <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
- <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
- <20180927135603.GF8242@linux.intel.com>
- <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
- <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
- <20181031213036.GA23089@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
-Date: Wed, 31 Oct 2018 14:35:34 -0700
-In-Reply-To: <20181031213036.GA23089@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181101182744.GA5150@brightrain.aerifal.cx>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+Sender: Rich Felker <dalias@aerifal.cx>
+Return-Path: dalias@aerifal.cx
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 10/31/18 2:30 PM, Sean Christopherson wrote:
-> On Mon, Oct 01, 2018 at 03:03:30PM -0700, Dave Hansen wrote:
->> On 10/01/2018 02:42 PM, Jethro Beekman wrote:
->>>
->>> 1) Even though the vDSO function exists, userspace may still call 
->>> `ENCLU[EENTER]` manually, so the fault handling as described in the 
->>> current patch should also be maintained.
->>
->> Why?
+On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
+> Hi all-
 > 
-> Circling back to this question, what if we take the easy way out and
-> simply signal SIGSEGV without an SGX-specific code?  I.e. treat #PF
-> with X86_PF_SGX as an access error, no more no less.  That should be
-> sufficient for userspace to function, albeit with a little more effort,
-> but presumably no more than would be needed to run on SGX1 hardware.
+> The people working on SGX enablement are grappling with a somewhat
+> annoying issue: the x86 EENTER instruction is used from user code and
+> can, as part of its normal-ish operation, raise an exception.  It is
+> also highly likely to be used from a library, and signal handling in
+> libraries is unpleasant at best.
+> 
+> There's been some discussion of adding a vDSO entry point to wrap
+> EENTER and do something sensible with the exceptions, but I'm
+> wondering if a more general mechanism would be helpful.
+> 
+> The basic idea would be to allow libc, or maybe even any library, to
+> register a handler that gets a chance to act on an exception caused by
+> a user instruction before a signal is delivered.  As a straw-man
+> example for how this could work, there could be a new syscall:
+> 
+> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+> 
+> If a handler is registered, then, if a synchronous exception happens
+> (page fault, etc), the kernel would set up an exception frame as usual
+> but, rather than checking for signal handlers, it would just call the
+> registered handler.  That handler is expected to either handle the
+> exception entirely on its own or to call one of two new syscalls to
+> ask for normal signal delivery or to ask to retry the faulting
+> instruction.
+> 
+> Alternatively, we could do something a lot more like the kernel's
+> internal fixups where there's a table in user memory that maps
+> potentially faulting instructions to landing pads that handle
+> exceptions.
 
-There are two sides to this ABI: what the kernel does to support SGX and
-what userspace does.  If we do what you suggest, we remove any (most?)
-needed kernel changes and foist the burden entirely into userspace.
-But, we end up with two ABIs: the old one and the new vDSO one.
+This strikes me as just an "extra layer of signal handlers"; rather
+than replacing global state with something that's library-safe, it's
+just making new global state that has to have a singleton owner
+managing it. If these handlers were thread-local (vs process-global
+signal disposition) then you could just register/unregister them on
+entry/exit to the library code that needs them, but that has
+nontrivial execution time cost.
 
-IOW, once we start doing SIGSEGV, we have to do it forever, despite if
-we have a newer mechanism.
+Moreover, thread-local signal handlers can already be done really
+nicely if you don't care about having a global handler (which doesn't
+really make sense for synchronous signals). I have fairly canonical
+draft code I wrote to demonstrate this a while back which I can share
+if there's interest.
 
-> AFAIK there isn't a way to prevent userspace from manually invoking
-> EENTER, short of doing some really nasty text poking or PTE swizzling.
-> We could declare using EENTER as unsupported,
+One possible advantage of your approach is that it could distinguish
+actual synchronous signals from ones sent by kill/sigqueue/etc. This
+matters in contexts where the application wants the signal blocked or
+ignored. For example if you temporarily set a handler for SIGILL or
+SIGSEGV, then unblock it and try to do something that might generate
+the signal, you risk consuming an unrelated pending signal sent by
+kill/sigqueue/etc. As far as I know there is no way to do this
+"transparently". It came up as an issue for why libc init code cannot
+do this kind of probing for instruction availability at startup (or
+any time).
 
-Yep, userspace can call it all it wants, and we can also say that
-calling it outside the vdso is "undefined".
+> Do you think this would be useful?  Here are some use cases that I
+> think are valid:
+> 
+> (a) Enter an SGX enclave and handle errors.  There would be two
+> instructions that would need special handling: EENTER and ERESUME.
+
+I'm not familiar with SGX but the vdso approach sounds like a better
+abstraction.
+
+> (b) Do some math and catch division by zero.  I think it would be a
+> bad idea to have user code call a function and say that it wants to
+> handle *any* division by zero, but having certain specified division
+> instructions have special handling seems entirely reasonable.
+
+I don't think this is useful. If you really need a division that needs
+to survive invalid operands, a simple check before the div
+(100%-predictable branch in non-erroneous usage) is dirt cheap.
+
+> (c) Ditto for floating point errors.
+
+Signaling floating point exceptions (rather than sticky flags) are
+something of an oddity that's never enabled by default, not supported
+on all platforms, and largely (IMO) useless. Generating code that can
+support them can be moderately costly too.
+
+> (d) Try an instruction and see if it gets #UD.
+
+In general this seems fairly useful.
+
+> (e) Run a bunch of code and handle page faults to a given address
+> range by faulting something in.  This is not like the others, in that
+> a handler wants to handle a range of target addresses, not
+> instructions.  And userfaultfd is plausibly a better solution anyway.
+
+Agree re: userfaultfd.
+
+> (f) Run NaCl-like sandboxed code where the code can cause page faults
+> to certain mapped-but-intentionally-not-present ranges and those need
+> to be handled.
+> 
+> On Windows, you can use SEH to do crazy things like running
+> known-buggy code and eating the page faults.  I don't think we want to
+> go there.
+
+Agree, this is a huge rabbit hole of filth. Don't go there.
+
+Rich
