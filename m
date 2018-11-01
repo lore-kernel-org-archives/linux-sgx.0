@@ -1,69 +1,51 @@
-Date: Fri, 2 Nov 2018 10:33:50 -0700
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Andy Lutomirski <luto@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Jann Horn
-	<jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+Date: Thu, 1 Nov 2018 21:00:38 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Florian Weimer <fweimer@redhat.com>
+CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Linux API
+	<linux-api@vger.kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, X86 ML <x86@kernel.org>, linux-arch
+	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, Rich Felker <dalias@libc.org>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
 	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
 	<linux-sgx@vger.kernel.org>, Andy Shevchenko
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Adhemerval
+ Zanella" <adhemerval.zanella@linaro.org>, <carlos@redhat.com>
 Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102173350.GF7393@linux.intel.com>
-References: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com>
- <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
-Return-Path: sean.j.christopherson@intel.com
+In-Reply-To: <877ehwisaa.fsf@oldenburg.str.redhat.com>
+Message-ID: <alpine.DEB.2.21.1811012058480.7972@jsakkine-mobl1>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com> <877ehwisaa.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset="US-ASCII"; format=flowed
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Nov 02, 2018 at 10:13:23AM -0700, Dave Hansen wrote:
-> On 11/2/18 10:06 AM, Sean Christopherson wrote:
-> > On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
-> >> On 11/2/18 9:30 AM, Sean Christopherson wrote:
-> >>> What if rather than having userspace register an address for fixup, the
-> >>> kernel instead unconditionally does fixup on the ENCLU opcode?
-> >>
-> >> The problem is knowing what to do for the fixup.  If we have a simple
-> >> action to take that's universal, like backing up %RIP, or setting some
-> >> other register state, it's not bad.
-> > 
-> > Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
-> 
-> Could someone write down all the ways we get in and out of the enclave?
-> 
-> I think we always get in from userspace calling EENTER or ERESUME.  We
-> can't ever enter directly from the kernel, like via an IRET from what I
-> understand.
+On Thu, 1 Nov 2018, Florian Weimer wrote:
+> * Andy Lutomirski:
+>
+>> The basic idea would be to allow libc, or maybe even any library, to
+>> register a handler that gets a chance to act on an exception caused by
+>> a user instruction before a signal is delivered.  As a straw-man
+>> example for how this could work, there could be a new syscall:
+>>
+>> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+>>
+>> If a handler is registered, then, if a synchronous exception happens
+>> (page fault, etc), the kernel would set up an exception frame as usual
+>> but, rather than checking for signal handlers, it would just call the
+>> registered handler.  That handler is expected to either handle the
+>> exception entirely on its own or to call one of two new syscalls to
+>> ask for normal signal delivery or to ask to retry the faulting
+>> instruction.
+>
+> Would the exception handler be a per-thread resource?
 
-Correct, the only way to get into the enclave is EENTER or ERESUME.
-My understanding is that even SMIs bounce through the AEX target
-before transitioning to SMM.
- 
-> We get *out* from exceptions, hardware interrupts, or enclave-explicit
-> EEXITs.  Did I miss any?  Remind me where the hardware lands the control
-> flow in each of those exit cases.
+For SGX purposes it would *need* to be per-thread resource so that the
+run-time (not just Intel but any user space support code for SGX) is
+able to act on thread that caused this exception inside the enclave.
 
-And VMExits.  There are basically two cases: EEXIT and everything else.
-EEXIT is a glorified indirect jump, e.g. %RBX holds the target %RIP.
-Everything else is an Asynchronous Enclave Exit (AEX).  On an AEX, %RIP
-is set to a value specified by EENTER/ERESUME, %RBP and %RSP are
-restored to pre-enclave values and all other registers are loaded with
-synthetic state.  The actual interrupt/exception/VMExit then triggers,
-e.g. the %RIP on the stack for an exception is always the AEX target,
-not the %RIP inside the enclave that actually faulted.
+/Jarkko
