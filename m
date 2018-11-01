@@ -1,40 +1,62 @@
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
-	<platform-driver-x86@vger.kernel.org>, <linux-sgx@vger.kernel.org>
-CC: <sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
- Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
-	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list" <linux-kernel@vger.kernel.org>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
-Date: Mon, 5 Nov 2018 12:27:11 -0800
-In-Reply-To: <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+Date: Thu, 1 Nov 2018 14:30:37 -0400
+From: Rich Felker <dalias@libc.org>
+To: Florian Weimer <fweimer@redhat.com>
+CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Linux API
+	<linux-api@vger.kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, X86 ML <x86@kernel.org>, linux-arch
+	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Adhemerval
+ Zanella" <adhemerval.zanella@linaro.org>, <carlos@redhat.com>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181101183037.GB5150@brightrain.aerifal.cx>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <877ehwisaa.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <877ehwisaa.fsf@oldenburg.str.redhat.com>
+Sender: Rich Felker <dalias@aerifal.cx>
+Return-Path: dalias@aerifal.cx
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 11/2/18 4:11 PM, Jarkko Sakkinen wrote:
->  Documentation/index.rst         |   1 +
->  Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
->  2 files changed, 186 insertions(+)
->  create mode 100644 Documentation/x86/intel_sgx.rst
+On Thu, Nov 01, 2018 at 07:09:17PM +0100, Florian Weimer wrote:
+> * Andy Lutomirski:
+> 
+> > The basic idea would be to allow libc, or maybe even any library, to
+> > register a handler that gets a chance to act on an exception caused by
+> > a user instruction before a signal is delivered.  As a straw-man
+> > example for how this could work, there could be a new syscall:
+> >
+> > long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+> >
+> > If a handler is registered, then, if a synchronous exception happens
+> > (page fault, etc), the kernel would set up an exception frame as usual
+> > but, rather than checking for signal handlers, it would just call the
+> > registered handler.  That handler is expected to either handle the
+> > exception entirely on its own or to call one of two new syscalls to
+> > ask for normal signal delivery or to ask to retry the faulting
+> > instruction.
+> 
+> Would the exception handler be a per-thread resource?
+> 
+> If it is: Would the setup and teardown overhead be prohibitive for many
+> use cases (at least those do not expect a fault)?
+> 
+> Something peripherally related to this interface: Wrappers for signal
+> handlers (and not just CPU exceptions).  Ideally, we want to maintain a
+> flag that indicates whether we are in a signal handler, and save and
+> restore errno around the installed handler.
 
-This patch set establishes an ABI.  It basically sets in stone a bunch
-of behaviors that the enclave, the kernel, and the out-of-enclave code
-must follow.
+I think the right way to make it per-thread AND low-cost would be to
+register not the handler, but the (per-thread) address of a
+function-pointer object pointing to the handler. Then switching the
+handler just requires a single volatile store to thread-local memory,
+no syscall.
 
-There are a bunch of things that the enclave can do to %rsp or %rip, for
-instance, that it is capable and/or permitted to do.
-
-The ABI seems entirely undocumented and rather lightly designed, which
-seems like something we should fix before this is merged.
-
-Also, for a feature as massive and complicated as this one, it seems
-irresponsible to not have a selftest.  Is that not feasible for some reason?
+Rich
