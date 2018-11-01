@@ -1,55 +1,98 @@
-Received: from mga07.intel.com ([134.134.136.100]:35184 "EHLO mga07.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S2388191AbeKFXPu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 6
- Nov 2018 18:15:50 -0500
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
-	<kai.svahn@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Andy
- Lutomirski" <luto@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 07/22] x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
-Date: Tue, 6 Nov 2018 15:45:46 +0200
-Message-ID: <20181106134758.10572-8-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ S1725908AbeKBC5x (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Thu, 1
+ Nov 2018 22:57:53 -0400
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
+ [209.85.221.45])        (using TLSv1.2 with cipher
+ ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))        (No client certificate
+ requested)        by mail.kernel.org (Postfix) with ESMTPSA id 4455C2084D
+        for <linux-sgx@vger.kernel.org>; Thu,  1 Nov 2018 17:53:53 +0000 (UTC)
+Received: by mail-wr1-f45.google.com with SMTP id d10-v6so20932938wrs.5
+        for <linux-sgx@vger.kernel.org>; Thu, 01 Nov 2018 10:53:53 -0700 (PDT)
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 1 Nov 2018 10:53:40 -0700
+Message-ID: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+Subject: RFC: userspace exception fixups
+To: Dave Hansen <dave.hansen@linux.intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, Jann Horn
+	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, X86 ML
+	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Rich
+ Felker" <dalias@libc.org>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
+	"Ayoun, Serge" <serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
-Content-Type: text/plain
 Return-Path: linux-sgx-owner@vger.kernel.org
 MIME-Version: 1.0
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Hi all-
 
-The SGX bit is set in the #PF error code if and only if the fault is
-detected by the Enclave Page Cache Map (EPCM), a hardware-managed
-table that enforces the paging permissions defined by the enclave,
-e.g. to prevent the kernel from changing the permissions of an
-enclave's page(s).
+The people working on SGX enablement are grappling with a somewhat
+annoying issue: the x86 EENTER instruction is used from user code and
+can, as part of its normal-ish operation, raise an exception.  It is
+also highly likely to be used from a library, and signal handling in
+libraries is unpleasant at best.
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/traps.h | 1 +
- 1 file changed, 1 insertion(+)
+There's been some discussion of adding a vDSO entry point to wrap
+EENTER and do something sensible with the exceptions, but I'm
+wondering if a more general mechanism would be helpful.
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 3de69330e6c5..165c93dd700e 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -162,5 +162,6 @@ enum x86_pf_error_code {
- 	X86_PF_RSVD	=		1 << 3,
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
-+	X86_PF_SGX	=		1 << 15,
- };
- #endif /* _ASM_X86_TRAPS_H */
--- 
-2.19.1
+The basic idea would be to allow libc, or maybe even any library, to
+register a handler that gets a chance to act on an exception caused by
+a user instruction before a signal is delivered.  As a straw-man
+example for how this could work, there could be a new syscall:
+
+long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+
+If a handler is registered, then, if a synchronous exception happens
+(page fault, etc), the kernel would set up an exception frame as usual
+but, rather than checking for signal handlers, it would just call the
+registered handler.  That handler is expected to either handle the
+exception entirely on its own or to call one of two new syscalls to
+ask for normal signal delivery or to ask to retry the faulting
+instruction.
+
+Alternatively, we could do something a lot more like the kernel's
+internal fixups where there's a table in user memory that maps
+potentially faulting instructions to landing pads that handle
+exceptions.
+
+Do you think this would be useful?  Here are some use cases that I
+think are valid:
+
+(a) Enter an SGX enclave and handle errors.  There would be two
+instructions that would need special handling: EENTER and ERESUME.
+
+(b) Do some math and catch division by zero.  I think it would be a
+bad idea to have user code call a function and say that it wants to
+handle *any* division by zero, but having certain specified division
+instructions have special handling seems entirely reasonable.
+
+(c) Ditto for floating point errors.
+
+(d) Try an instruction and see if it gets #UD.
+
+(e) Run a bunch of code and handle page faults to a given address
+range by faulting something in.  This is not like the others, in that
+a handler wants to handle a range of target addresses, not
+instructions.  And userfaultfd is plausibly a better solution anyway.
+
+(f) Run NaCl-like sandboxed code where the code can cause page faults
+to certain mapped-but-intentionally-not-present ranges and those need
+to be handled.
+
+On Windows, you can use SEH to do crazy things like running
+known-buggy code and eating the page faults.  I don't think we want to
+go there.
+
+All of this makes me think that the right solution is to have a way to
+register fault handlers for instructions to cover (a) - (d) and to
+treat (e) and (f) as something else entirely if there's enough demand.
+
+--Andy
