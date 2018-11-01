@@ -1,50 +1,66 @@
-Subject: Re: RFC: userspace exception fixups
-To: Andy Lutomirski <luto@amacapital.net>, Sean Christopherson
-	<sean.j.christopherson@intel.com>
-CC: Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+Date: Thu, 1 Nov 2018 14:52:25 -0400
+From: Rich Felker <dalias@libc.org>
+To: Jann Horn <jannh@google.com>
+CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <sean.j.christopherson@intel.com>,
+	<jethro@fortanix.com>, <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, the arch/x86 maintainers <x86@kernel.org>,
+	linux-arch <linux-arch@vger.kernel.org>, kernel list
 	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com>
- <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com>
- <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com>
- <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com>
- <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
-Date: Tue, 6 Nov 2018 10:41:04 -0800
-In-Reply-To: <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	<carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181101185225.GC5150@brightrain.aerifal.cx>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+Sender: Rich Felker <dalias@aerifal.cx>
+Return-Path: dalias@aerifal.cx
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> I almost feel like the right solution is to call into SGX on its own
-> private stack or maybe even its own private address space.
+On Thu, Nov 01, 2018 at 07:33:33PM +0100, Jann Horn wrote:
+> > but I'm
+> > wondering if a more general mechanism would be helpful.
+> >
+> > The basic idea would be to allow libc, or maybe even any library, to
+> > register a handler that gets a chance to act on an exception caused by
+> > a user instruction before a signal is delivered.  As a straw-man
+> > example for how this could work, there could be a new syscall:
+> >
+> > long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+> >
+> > If a handler is registered, then, if a synchronous exception happens
+> > (page fault, etc), the kernel would set up an exception frame as usual
+> > but, rather than checking for signal handlers, it would just call the
+> > registered handler.
+> 
+> > That handler is expected to either handle the
+> > exception entirely on its own or to call one of two new syscalls to
+> > ask for normal signal delivery
+> 
+> If you do it this way, these exception handlers would have to chain,
 
-Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-enclave like its own "thread" with its own stack and its own set of
-registers and context?  That seems like a much more workable model than
-trying to weave it together with the EENTER context.
+There's no need to chain if the handler is specific to the context
+where the fault happens. You just replace the handler with the one
+relevant to the code you're about to run before you run it.
+
+> > or to ask to retry the faulting instruction.
+> 
+> Why would that have to be a syscall? For signal handlers registered
+> with SA_NODEFER, you can basically leave the signal handler with a
+> longjmp, right?
+
+longjmp needs a jmp_buf; it can't return to the faulting instruction.
+Normally (though this is not defined) signal handlers return to the
+faulting instruction if they return, but if returning from the
+exception handler meant passing through to the signal disposition,
+a different mechanism would be needed to signal that you want to retry
+the faulting instruction.
+
+Rich
