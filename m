@@ -1,68 +1,76 @@
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:32914 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeKCWeH (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 3 Nov 2018 18:34:07 -0400
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 3 Nov 2018 15:22:34 +0200
-Message-ID: <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
-Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, <suresh.b.siddha@intel.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Reinette Chatre
-	<reinette.chatre@intel.com>, "Rafael J. Wysocki"
-	<rafael.j.wysocki@intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+From: Florian Weimer <fweimer@redhat.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: Dave Hansen <dave.hansen@linux.intel.com>, "Christopherson, Sean J"
+	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Linux API
+	<linux-api@vger.kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, X86 ML <x86@kernel.org>, linux-arch
+	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, Rich Felker <dalias@libc.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Adhemerval
+ Zanella" <adhemerval.zanella@linaro.org>, <carlos@redhat.com>
+Subject: Re: RFC: userspace exception fixups
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+Date: Thu, 1 Nov 2018 19:09:17 +0100
+In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+	(Andy Lutomirski's message of "Thu, 1 Nov 2018 10:53:40 -0700")
+Message-ID: <877ehwisaa.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain
+Return-Path: fweimer@redhat.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Sat, Nov 3, 2018 at 1:17 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+* Andy Lutomirski:
+
+> The basic idea would be to allow libc, or maybe even any library, to
+> register a handler that gets a chance to act on an exception caused by
+> a user instruction before a signal is delivered.  As a straw-man
+> example for how this could work, there could be a new syscall:
 >
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
 >
-> Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-> structures necessary to track EPC pages so that they can be allocated,
-> freed and managed.  As a system may have multiple EPC sections, invoke
-> CPUID on SGX sub-leafs until an invalid leaf is encountered.
->
-> On NUMA systems, a node can have at most one bank. A bank can be at
-> most part of two nodes.  SGX supports both nodes with a single memory
-> controller and also sub-cluster nodes with severals memory controllers
-> on a single die.
->
-> For simplicity, support a maximum of eight EPC sections.  Current
-> client hardware supports only a single section, while upcoming server
-> hardware will support at most eight sections.  Bounding the number of
-> sections also allows the section ID to be embedded along with a page's
-> offset in a single unsigned long, enabling easy retrieval of both the
-> VA and PA for a given page.
+> If a handler is registered, then, if a synchronous exception happens
+> (page fault, etc), the kernel would set up an exception frame as usual
+> but, rather than checking for signal handlers, it would just call the
+> registered handler.  That handler is expected to either handle the
+> exception entirely on its own or to call one of two new syscalls to
+> ask for normal signal delivery or to ask to retry the faulting
+> instruction.
 
-> +       iounmap(section->va);
+Would the exception handler be a per-thread resource?
 
-> +       section->va = ioremap_cache(addr, size);
-> +       if (!section->va)
-> +               return -ENOMEM;
+If it is: Would the setup and teardown overhead be prohibitive for many
+use cases (at least those do not expect a fault)?
 
-I forgot if it's a place in code on which we discussed ioremap() vs.
-memremap() call.
-And I forgot why the conclusion is to leave ioremap().
+Something peripherally related to this interface: Wrappers for signal
+handlers (and not just CPU exceptions).  Ideally, we want to maintain a
+flag that indicates whether we are in a signal handler, and save and
+restore errno around the installed handler.
 
-Sorry, if I'm mistaken.
+> Alternatively, we could do something a lot more like the kernel's
+> internal fixups where there's a table in user memory that maps
+> potentially faulting instructions to landing pads that handle
+> exceptions.
 
--- 
-With Best Regards,
-Andy Shevchenko
+GCC already supports that on most Linux targets.  You can unwind from
+synchronously invoked signal handlers if you compile with
+-fnon-call-exceptions.
+
+However, it's tough to set up a temporary signal handler to trigger such
+unwinding because those aren't per-thread.
+
+> On Windows, you can use SEH to do crazy things like running
+> known-buggy code and eating the page faults.  I don't think we want to
+> go there.
+
+The original SEH was also a rich target for exploiting vulnerabilities.
+That's something we really should avoid as well.
+
+I wonder if it would be possible to tack this function onto rseq.
+
+Thanks,
+Florian
