@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE47C65C22
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3633C65C22
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B9B20657
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B9B20657
+	by mail.kernel.org (Postfix) with ESMTP id 72C3320657
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C3320657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbeKCI0k (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:26:40 -0400
-Received: from mga14.intel.com ([192.55.52.115]:32567 "EHLO mga14.intel.com"
+        id S1728719AbeKCI0n (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Nov 2018 04:26:43 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11781 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726705AbeKCI0k (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:26:40 -0400
+        id S1726705AbeKCI0n (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 3 Nov 2018 04:26:43 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 16:17:01 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 16:17:35 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="270988078"
+   d="scan'208";a="270988132"
 Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.138])
-  by orsmga005.jf.intel.com with ESMTP; 02 Nov 2018 16:16:52 -0700
+  by orsmga005.jf.intel.com with ESMTP; 02 Nov 2018 16:17:26 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         linux-sgx@vger.kernel.org
@@ -44,9 +44,9 @@ Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
         Suresh Siddha <suresh.b.siddha@intel.com>,
         linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
         64-BIT))
-Subject: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
-Date:   Sat,  3 Nov 2018 01:11:14 +0200
-Message-Id: <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v15 17/23] x86/sgx: Add functions to allocate and free EPC pages
+Date:   Sat,  3 Nov 2018 01:11:16 +0200
+Message-Id: <20181102231320.29164-18-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
 References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
@@ -56,298 +56,124 @@ Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181102231114.KhzuhGQvWeN11iEl8P4APo9kX7epuVb_QE01I-WhBHk@z>
+Message-ID: <20181102231116.zEMUyYoTwE-aEfXDkQX0ieQckwEk9M5yKQXbk26dkW4@z>
 
-ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
-The ENCLS function that is executed is specified in EAX, with each
-function potentially having more leaf-specific operands beyond EAX.
-ENCLS introduces its own (positive value) error codes that (some)
-leafs use to return failure information in EAX.  Leafs that return
-an error code also modify RFLAGS.  And finally, ENCLS generates
-ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
-encounter faults on ENCLS that must be handled gracefully.
-
-Because of the complexity involved in encoding ENCLS and handling its
-assortment of failure paths, executing any given leaf is not a simple
-matter of emitting ENCLS.
-
-To enable adding support for ENCLS leafs with minimal fuss, add a
-two-layer macro system along with an encoding scheme to allow wrappers
-to return trap numbers along ENCLS-specific error codes.  The bottom
-layer of the macro system splits between the leafs that return an
-error code and those that do not.  The second layer generates the
-correct input/output annotations based on the number of operands for
-each leaf function.
+At this time there is no support for reclaiming pages prior to the
+owner explicitly freeing the page.  As for freeing pages, because
+freeing a page is expected to succeed in the vast majority of cases
+and because most call sites will not be equipped to handle failure,
+provide a variant for freeing a page that warns on failure, e.g. due
+to ENCLS[EREMOVE] failing.
 
 Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/sgx.h | 255 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 255 insertions(+)
- create mode 100644 arch/x86/include/asm/sgx.h
+ arch/x86/include/asm/sgx.h      |  4 ++
+ arch/x86/kernel/cpu/intel_sgx.c | 77 +++++++++++++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
 diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-new file mode 100644
-index 000000000000..23361d508348
---- /dev/null
+index aa51165eb3a8..4e39bcfad018 100644
+--- a/arch/x86/include/asm/sgx.h
 +++ b/arch/x86/include/asm/sgx.h
-@@ -0,0 +1,255 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+/**
-+ * Copyright(c) 2016-18 Intel Corporation.
-+ */
-+#ifndef _ASM_X86_SGX_H
-+#define _ASM_X86_SGX_H
+@@ -309,4 +309,8 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
+ 	return __encls_ret_2(SGX_EMODT, secinfo, addr);
+ }
+ 
++struct sgx_epc_page *sgx_alloc_page(void);
++int __sgx_free_page(struct sgx_epc_page *page);
++void sgx_free_page(struct sgx_epc_page *page);
 +
-+#include <asm/asm.h>
-+#include <asm/sgx_arch.h>
-+
+ #endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+index b86aa4111592..b06709a9ea65 100644
+--- a/arch/x86/kernel/cpu/intel_sgx.c
++++ b/arch/x86/kernel/cpu/intel_sgx.c
+@@ -15,6 +15,83 @@ EXPORT_SYMBOL_GPL(sgx_epc_sections);
+ 
+ static int sgx_nr_epc_sections;
+ 
 +/**
-+ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
++ * sgx_alloc_page - Allocate an EPC page
 + *
-+ * ENCLS has its own (positive value) error codes and also generates
-+ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
-+ * with system error codes as everything percolates back up the stack.
-+ * Unfortunately (for us), we need to precisely identify each unique
-+ * error code, e.g. the action taken if EWB fails varies based on the
-+ * type of fault and on the exact SGX error code, i.e. we can't simply
-+ * convert all faults to -EFAULT.
-+ *
-+ * To make all three error types coexist, we set bit 30 to identify an
-+ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
-+ * between positive (faults and SGX error codes) and negative (system
-+ * error codes) values.
-+ */
-+#define ENCLS_FAULT_FLAG 0x40000000
-+
-+/**
-+ * Check for a fault by looking for a postive value with the fault
-+ * flag set.  The postive value check is needed to filter out system
-+ * error codes since negative values will have all higher order bits
-+ * set, including ENCLS_FAULT_FLAG.
-+ */
-+#define IS_ENCLS_FAULT(r) ((int)(r) > 0 && ((r) & ENCLS_FAULT_FLAG))
-+
-+/**
-+ * Retrieve the encoded trapnr from the specified return code.
-+ */
-+#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
-+
-+/**
-+ * encls_to_err - translate an ENCLS fault or SGX code into a system error code
-+ * @ret:	positive value return code
-+ *
-+ * Translate a postive return code, e.g. from ENCLS, into a system error
-+ * code.  Primarily used by functions that cannot return a non-negative
-+ * error code, e.g. kernel callbacks.
++ * Try to grab a page from the free EPC page list.
 + *
 + * Return:
-+ *	0 on success,
-+ *	-errno on failure
++ *   a pointer to a &struct sgx_epc_page instance,
++ *   -errno on error
 + */
-+static inline int encls_to_err(int ret)
++struct sgx_epc_page *sgx_alloc_page(void)
 +{
-+	if (IS_ENCLS_FAULT(ret))
-+		return -EFAULT;
++	struct sgx_epc_section *section;
++	struct sgx_epc_page *page;
++	int i;
 +
-+	switch (ret) {
-+	case SGX_UNMASKED_EVENT:
-+		return -EINTR;
-+	case SGX_INVALID_SIG_STRUCT:
-+	case SGX_INVALID_ATTRIBUTE:
-+	case SGX_INVALID_MEASUREMENT:
-+	case SGX_INVALID_EINITTOKEN:
-+	case SGX_INVALID_CPUSVN:
-+	case SGX_INVALID_ISVSVN:
-+	case SGX_INVALID_KEYNAME:
-+		return -EINVAL;
-+	case SGX_ENCLAVE_ACT:
-+	case SGX_CHILD_PRESENT:
-+	case SGX_ENTRYEPOCH_LOCKED:
-+	case SGX_PREV_TRK_INCMPL:
-+	case SGX_PAGE_NOT_MODIFIABLE:
-+	case SGX_PAGE_NOT_DEBUGGABLE:
-+		return -EBUSY;
-+	default:
-+		return -EIO;
-+	};
++	for (i = 0; i < sgx_nr_epc_sections; i++) {
++		section = &sgx_epc_sections[i];
++		spin_lock(&section->lock);
++		if (section->free_cnt) {
++			page = section->pages[section->free_cnt - 1];
++			section->free_cnt--;
++		}
++		spin_unlock(&section->lock);
++
++		if (page)
++			return page;
++	}
++
++	return ERR_PTR(-ENOMEM);
 +}
++EXPORT_SYMBOL_GPL(sgx_alloc_page);
 +
 +/**
-+ * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
-+ * @rax:	leaf number
-+ * @inputs:	asm inputs for the leaf
++ * __sgx_free_page - Free an EPC page
++ * @page:	pointer a previously allocated EPC page
 + *
-+ * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
-+ * And because SGX isn't complex enough as it is, leafs that return an error
-+ * code also modify flags.
++ * EREMOVE an EPC page and insert it back to the list of free pages.
 + *
 + * Return:
-+ *	0 on success,
-+ *	SGX error code on failure
++ *   0 on success
++ *   SGX error code if EREMOVE fails
 + */
-+#define __encls_ret_N(rax, inputs...)				\
-+	({							\
-+	int ret;						\
-+	asm volatile(						\
-+	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"2:\n"							\
-+	".section .fixup,\"ax\"\n"				\
-+	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-+	"   jmp 2b\n"						\
-+	".previous\n"						\
-+	_ASM_EXTABLE_FAULT(1b, 3b)				\
-+	: "=a"(ret)						\
-+	: "a"(rax), inputs					\
-+	: "memory", "cc");					\
-+	ret;							\
-+	})
++int __sgx_free_page(struct sgx_epc_page *page)
++{
++	struct sgx_epc_section *section = sgx_epc_section(page);
++	int ret;
 +
-+#define __encls_ret_1(rax, rcx)		\
-+	({				\
-+	__encls_ret_N(rax, "c"(rcx));	\
-+	})
++	ret = __eremove(sgx_epc_addr(page));
++	if (ret)
++		return ret;
 +
-+#define __encls_ret_2(rax, rbx, rcx)		\
-+	({					\
-+	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
-+	})
++	spin_lock(&section->lock);
++	section->pages[section->free_cnt++] = page;
++	spin_unlock(&section->lock);
 +
-+#define __encls_ret_3(rax, rbx, rcx, rdx)			\
-+	({							\
-+	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
-+	})
++	return 0;
++}
++EXPORT_SYMBOL_GPL(__sgx_free_page);
 +
 +/**
-+ * __encls_N - encode an ENCLS leaf that doesn't return an error code
-+ * @rax:	leaf number
-+ * @rbx_out:	optional output variable
-+ * @inputs:	asm inputs for the leaf
++ * sgx_free_page - Free an EPC page and WARN on failure
++ * @page:	pointer to a previously allocated EPC page
 + *
-+ * Emit assembly for an ENCLS leaf that does not return an error code,
-+ * e.g. ECREATE.  Leaves without error codes either succeed or fault.
-+ * @rbx_out is an optional parameter for use by EDGBRD, which returns
-+ * the the requested value in RBX.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   trapnr with ENCLS_FAULT_FLAG set on fault
++ * EREMOVE an EPC page and insert it back to the list of free pages, and WARN
++ * if EREMOVE fails.  For use when the call site cannot (or chooses not to)
++ * handle failure, i.e. the page is leaked on failure.
 + */
-+#define __encls_N(rax, rbx_out, inputs...)			\
-+	({							\
-+	int ret;						\
-+	asm volatile(						\
-+	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"   xor %%eax,%%eax;\n"					\
-+	"2:\n"							\
-+	".section .fixup,\"ax\"\n"				\
-+	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-+	"   jmp 2b\n"						\
-+	".previous\n"						\
-+	_ASM_EXTABLE_FAULT(1b, 3b)				\
-+	: "=a"(ret), "=b"(rbx_out)				\
-+	: "a"(rax), inputs					\
-+	: "memory");						\
-+	ret;							\
-+	})
-+
-+#define __encls_2(rax, rbx, rcx)				\
-+	({							\
-+	unsigned long ign_rbx_out;				\
-+	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
-+	})
-+
-+#define __encls_1_1(rax, data, rcx)			\
-+	({						\
-+	unsigned long rbx_out;				\
-+	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
-+	if (!ret)					\
-+		data = rbx_out;				\
-+	ret;						\
-+	})
-+
-+static inline int __ecreate(struct sgx_pageinfo *pginfo, void __iomem *secs)
++void sgx_free_page(struct sgx_epc_page *page)
 +{
-+	return __encls_2(SGX_ECREATE, pginfo, secs);
++	int ret;
++
++	ret = __sgx_free_page(page);
++	WARN(ret > 0, "sgx: EREMOVE returned %d (0x%x)", ret, ret);
 +}
++EXPORT_SYMBOL_GPL(sgx_free_page);
 +
-+static inline int __eextend(void __iomem *secs, void __iomem *addr)
-+{
-+	return __encls_2(SGX_EEXTEND, secs, addr);
-+}
 +
-+static inline int __eadd(struct sgx_pageinfo *pginfo, void __iomem *addr)
-+{
-+	return __encls_2(SGX_EADD, pginfo, addr);
-+}
-+
-+static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
-+			  void __iomem *secs)
-+{
-+	return __encls_ret_3(SGX_EINIT, sigstruct, secs, einittoken);
-+}
-+
-+static inline int __eremove(void __iomem *addr)
-+{
-+	return __encls_ret_1(SGX_EREMOVE, addr);
-+}
-+
-+static inline int __edbgwr(void __iomem *addr, unsigned long *data)
-+{
-+	return __encls_2(SGX_EDGBWR, *data, addr);
-+}
-+
-+static inline int __edbgrd(void __iomem *addr, unsigned long *data)
-+{
-+	return __encls_1_1(SGX_EDGBRD, *data, addr);
-+}
-+
-+static inline int __etrack(void __iomem *addr)
-+{
-+	return __encls_ret_1(SGX_ETRACK, addr);
-+}
-+
-+static inline int __eldu(struct sgx_pageinfo *pginfo, void __iomem *addr,
-+			 void *va)
-+{
-+	return __encls_ret_3(SGX_ELDU, pginfo, addr, va);
-+}
-+
-+static inline int __eblock(void __iomem *addr)
-+{
-+	return __encls_ret_1(SGX_EBLOCK, addr);
-+}
-+
-+static inline int __epa(void __iomem *addr)
-+{
-+	unsigned long rbx = SGX_PAGE_TYPE_VA;
-+
-+	return __encls_2(SGX_EPA, rbx, addr);
-+}
-+
-+static inline int __ewb(struct sgx_pageinfo *pginfo, void __iomem *addr,
-+			void __iomem *va)
-+{
-+	return __encls_ret_3(SGX_EWB, pginfo, addr, va);
-+}
-+
-+static inline int __eaug(struct sgx_pageinfo *pginfo, void __iomem *addr)
-+{
-+	return __encls_2(SGX_EAUG, pginfo, addr);
-+}
-+
-+static inline int __emodpr(struct sgx_secinfo *secinfo, void __iomem *addr)
-+{
-+	return __encls_ret_2(SGX_EMODPR, secinfo, addr);
-+}
-+
-+static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
-+{
-+	return __encls_ret_2(SGX_EMODT, secinfo, addr);
-+}
-+
-+#endif /* _ASM_X86_SGX_H */
+ static __init void sgx_free_epc_section(struct sgx_epc_section *section)
+ {
+ 	int i;
 -- 
 2.19.1
 
