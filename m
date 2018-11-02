@@ -1,50 +1,74 @@
+Received: from mail.kernel.org ([198.145.29.99]:58528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1726085AbeKCCJK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 2
+ Nov 2018 22:09:10 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46])        (using TLSv1.2 with cipher
+ ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))        (No client certificate
+ requested)        by mail.kernel.org (Postfix) with ESMTPSA id 63F7A20831
+        for <linux-sgx@vger.kernel.org>; Fri,  2 Nov 2018 17:01:21 +0000 (UTC)
+Received: by mail-wm1-f46.google.com with SMTP id u13-v6so2468355wmc.4
+        for <linux-sgx@vger.kernel.org>; Fri, 02 Nov 2018 10:01:21 -0700 (PDT)
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
+ <20181102165204.GC7393@linux.intel.com> <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
+In-Reply-To: <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 2 Nov 2018 10:01:08 -0700
+Message-ID: <CALCETrUo8uwnu3dBVSHVtB_z4uQgW=40grVdZWmTt64Tei6WiQ@mail.gmail.com>
 Subject: Re: RFC: userspace exception fixups
-To: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
-	<luto@kernel.org>
-CC: Jann Horn <jannh@google.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
+To: Jethro Beekman <jethro@fortanix.com>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
+ Lutomirski" <luto@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Jann Horn
+	<jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Jarkko
+ Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, "Linux API" <linux-api@vger.kernel.org>, X86 ML
 	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<linux-kernel@vger.kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
 	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
 	<linux-sgx@vger.kernel.org>, Andy Shevchenko
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
  O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-References: <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
- <20181107153452.GB22972@linux.intel.com>
- <20181107190114.GA26603@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
-Date: Wed, 7 Nov 2018 12:56:58 -0800
-In-Reply-To: <20181107190114.GA26603@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On 11/7/18 11:01 AM, Sean Christopherson wrote:
-> Going off comments in similar code related to UMIP, we'd need to figure
-> out how to handle protection keys.
+On Fri, Nov 2, 2018 at 9:56 AM Jethro Beekman <jethro@fortanix.com> wrote:
+>
+> On 2018-11-02 09:52, Sean Christopherson wrote:
+> > On Fri, Nov 02, 2018 at 04:37:10PM +0000, Jethro Beekman wrote:
+> >> On 2018-11-02 09:30, Sean Christopherson wrote:
+> >>> ... The intended convention for EENTER is to have an ENCLU at the AEX target ...
+> >>>
+> >>> ... to further enforce that the AEX target needs to be ENCLU.
+> >>
+> >> Some SGX runtimes may want to use a different AEX target.
+> >
+> > To what end?  Userspace gets no indication as to why the AEX occurred.
+> > And if exceptions are getting transfered to userspace the trampoline
+> > would effectively be handling only INTR, NMI, #MC and EPC #PF.
+> >
+>
+> Various reasons...
+>
+> Userspace may have established an exception handling convention with the
+> enclave (by setting TCS.NSSA > 1) and may want to call EENTER instead of
+> ERESUME.
+>
 
-There are two options:
-1. Don't depend on the userspace mapping.  Do get_user_pages() to find
-   the instruction in the kernel direct map, and use that.
-2. Do a WRPKRU that allows read access, do the read, then put PKRU back.
-   This is a pain because of preemption and all that jazz.
+Ugh,
 
-Right now, we just let the prefetch instruction detection fail if you
-mark it unreadable with pkeys.  Tough cookies, basically.  But, that's
-just the kernel being nice, but you need it for functionality, so it's
-tougher.
+I sincerely hope that a future ISA extension lets the kernel return
+directly back to enclave mode so that AEX events become entirely
+invisible to user code.  It would be nice if user developers didn't
+start depending on the rather odd AEX semantics right now.  But I
+don't think the kernel can sanely do much about it.
