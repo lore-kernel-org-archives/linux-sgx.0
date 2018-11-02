@@ -1,126 +1,80 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
-	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, David
- Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>, Fenghua
- Yu <fenghua.yu@intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, Arnaldo
- Carvalho de Melo <acme@redhat.com>, "open list:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 03/22] x86/cpufeatures: Add SGX sub-features (as Linux-defined bits)
-Date: Tue, 6 Nov 2018 15:45:42 +0200
-Message-ID: <20181106134758.10572-4-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+In-Reply-To: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 2 Nov 2018 16:32:32 -0700
+Message-ID: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To: Jann Horn <jannh@google.com>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
+ Lutomirski" <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
+	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: luto@kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> > On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
+> > > On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
+> > > <sean.j.christopherson@intel.com> wrote:
+> > > > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
+> > > > > This whole mechanism seems very complicated, and it's not clear
+> > > > > exactly what behavior user code wants.
+> > > >
+> > > > No argument there.  That's why I like the approach of dumping the
+> > > > exception to userspace without trying to do anything intelligent in
+> > > > the kernel.  Userspace can then do whatever it wants AND we don't
+> > > > have to worry about mucking with stacks.
+> > > >
+> > > > One of the hiccups with the VDSO approach is that the enclave may
+> > > > want to use the untrusted stack, i.e. the stack that has the VDSO's
+> > > > stack frame.  For example, Intel's SDK uses the untrusted stack to
+> > > > pass parameters for EEXIT, which means an AEX might occur with what
+> > > > is effectively a bad stack from the VDSO's perspective.
+> > >
+> > > What exactly does "uses the untrusted stack to pass parameters for
+> > > EEXIT" mean? I guess you're saying that the enclave is writing to
+> > > RSP+[0...some_positive_offset], and the written data needs to be
+> > > visible to the code outside the enclave afterwards?
+> >
+> > As is, they actually do it the other way around, i.e. negative offsets
+> > relative to the untrusted %RSP.  Going into the enclave there is no
+> > reserved space on the stack.  The SDK uses EEXIT like a function call,
+> > i.e. pushing parameters on the stack and making an call outside of the
+> > enclave, hence the name out-call.  This allows the SDK to handle any
+> > reasonable out-call without a priori knowledge of the application's
+> > maximum out-call "size".
+>
+> But presumably this is bounded to be at most 128 bytes (the red zone
+> size), right? Otherwise this would be incompatible with
+> non-sigaltstack signal delivery.
 
-CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX
-that enumerates the SGX instruction sets that are supported by the
-CPU, e.g. SGX1, SGX2, etc...  Because Linux currently only cares about
-two bits (SGX1 and SGX2) and there are currently only four documented
-bits in total, relocate the bits to Linux-defined word 8 to conserve
-space.
 
-But, keep the bit positions identical between the Intel-defined value
-and the Linux-defined value, e.g. keep SGX1 at bit 0.  This allows KVM
-to use its existing code for probing guest CPUID bits using Linux's
-X86_FEATURE_* definitions.  To do so, shift around some existing bits
-to effectively reserve bits 0-7 of word 8 for SGX sub-features.
+I think Sean is saying that the enclave also updates RSP.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/cpufeatures.h       | 21 +++++++++++++++------
- arch/x86/kernel/cpu/scattered.c          |  2 ++
- tools/arch/x86/include/asm/cpufeatures.h | 21 +++++++++++++++------
- 3 files changed, 32 insertions(+), 12 deletions(-)
+One might reasonably wonder how the SDX knows the offset from RSP to
+the function ID.  Presumably using RBP?
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 22271752fd1e..1b8dea9a06cb 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -222,12 +222,21 @@
- #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
- #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
- 
--/* Virtualization flags: Linux defined, word 8 */
--#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
--#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
--#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
--#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
--#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-+/*
-+ * Scattered Intel features: Linux defined, word 8.
-+ *
-+ * Note that the bit location of the SGX features is meaningful as KVM expects
-+ * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
-+ * must remain at bit 0, SGX2 at bit 1, etc...
-+ */
-+#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-+#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
-+
-+#define X86_FEATURE_TPR_SHADOW		( 8*32+ 8) /* Intel TPR Shadow */
-+#define X86_FEATURE_VNMI		( 8*32+ 9) /* Intel Virtual NMI */
-+#define X86_FEATURE_FLEXPRIORITY	( 8*32+10) /* Intel FlexPriority */
-+#define X86_FEATURE_EPT			( 8*32+11) /* Intel Extended Page Table */
-+#define X86_FEATURE_VPID		( 8*32+12) /* Intel Virtual Processor ID */
- 
- #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
- #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
-diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-index 772c219b6889..f7f0970b8f89 100644
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -26,6 +26,8 @@ static const struct cpuid_bit cpuid_bits[] = {
- 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
- 	{ X86_FEATURE_CDP_L2,		CPUID_ECX,  2, 0x00000010, 2 },
- 	{ X86_FEATURE_MBA,		CPUID_EBX,  3, 0x00000010, 0 },
-+	{ X86_FEATURE_SGX1,             CPUID_EAX,  0, 0x00000012, 0 },
-+	{ X86_FEATURE_SGX2,             CPUID_EAX,  1, 0x00000012, 0 },
- 	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
- 	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
- 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 89a048c2faec..9cc7628b9845 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -222,12 +222,21 @@
- #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
- #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
- 
--/* Virtualization flags: Linux defined, word 8 */
--#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
--#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
--#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
--#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
--#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-+/*
-+ * Scattered Intel features: Linux defined, word 8.
-+ *
-+ * Note that the bit numbers of the SGX features are meaningful as KVM expects
-+ * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
-+ * must remain at bit 0, SGX2 at bit 1, etc...
-+ */
-+#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-+#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
-+
-+#define X86_FEATURE_TPR_SHADOW		( 8*32+ 8) /* Intel TPR Shadow */
-+#define X86_FEATURE_VNMI		( 8*32+ 9) /* Intel Virtual NMI */
-+#define X86_FEATURE_FLEXPRIORITY	( 8*32+10) /* Intel FlexPriority */
-+#define X86_FEATURE_EPT			( 8*32+11) /* Intel Extended Page Table */
-+#define X86_FEATURE_VPID		( 8*32+12) /* Intel Virtual Processor ID */
- 
- #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
- #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
--- 
-2.19.1
+Anyway, it seems like this is a mess and it's going to be quite hard
+to do this in the vDSO due to a lack of any sane way to store the
+return address.
