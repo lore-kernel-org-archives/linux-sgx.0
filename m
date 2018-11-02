@@ -1,72 +1,68 @@
-Return-Path: <torvalds@linuxfoundation.org>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 1 Nov 2018 12:06:21 -0700
-Message-ID: <CAHk-=wjJhdr3JCnGrMKqL-prxYd__kkAspKVYBO3BYYmq2hu4A@mail.gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:3919 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1726318AbeKCCOR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 2
+ Nov 2018 22:14:17 -0400
+Date: Fri, 2 Nov 2018 10:06:28 -0700
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: Andy Lutomirski <luto@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Jann Horn
+	<jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
+	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
 Subject: Re: RFC: userspace exception fixups
-To: <luto@kernel.org>
-CC: <dave.hansen@linux.intel.com>, <sean.j.christopherson@intel.com>,
-	<jethro@fortanix.com>, <jarkko.sakkinen@linux.intel.com>,
-	<fweimer@redhat.com>, <linux-api@vger.kernel.org>, Jann Horn
-	<jannh@google.com>, <x86@kernel.org>, <linux-arch@vger.kernel.org>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, <dalias@libc.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
+Message-ID: <20181102170627.GD7393@linux.intel.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx>
+ <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx>
+ <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com>
+ <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Thu, Nov 1, 2018 at 10:53 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> There's been some discussion of adding a vDSO entry point to wrap
-> EENTER and do something sensible with the exceptions,
+On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
+> On 11/2/18 9:30 AM, Sean Christopherson wrote:
+> > What if rather than having userspace register an address for fixup, the
+> > kernel instead unconditionally does fixup on the ENCLU opcode?
+> 
+> The problem is knowing what to do for the fixup.  If we have a simple
+> action to take that's universal, like backing up %RIP, or setting some
+> other register state, it's not bad.
 
-I think that's likely the right thing to do, and would be similar to sysenter.
+Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
+ 
+> Think of our prefetch fixups in the page fault code.  We do some
+> instruction decoding to look for them, and then largely return from the
+> fault and let the CPU retry.  We know *exactly* what to do for these.
+> 
+> But, if we need to call arbitrary code, or switch stacks, we need an
+> explicit ABI around it *anyway*, because the action to take isn't clear.
+> 
+> For an enclave exit that's because of a hardware interrupt or page
+> fault, life is good.  We really *could* just set %RIP to let ERESUME run
+> again, kinda like we do for (some) syscall situations.  But the
+> situations for which we can't just call ERESUME, like the out-calls make
+> this more challenging.  I think we'd need some explicit new interfaces
+> for those.
 
-> The basic idea would be to allow libc, or maybe even any library, to
-> register a handler that gets a chance to act on an exception caused by
-> a user instruction before a signal is delivered.  As a straw-man
-> example for how this could work, there could be a new syscall:
->
-> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-
-I'm not a huge fan of signals, but the above is an abomination.
-
-It has all the problems of signals _and_ then some.
-
-And it in absolutely no way fixes the problem with libraires. In fact,
-it arguably makes it much much worse, since now there's only one
-single library that can register it.
-
-Yes yes, maybe a library would then expose _another_ interface to
-other libraries and act as some kind of dispatch point, but on the
-whole the above is just crazy and fundamentally broken.
-
-If you want to register an exception, you need to make it clear
-
- (a) which _thread_ the exception registration is valid for
-
- (b) which _range_ the exception registration is valid for
-
- (c) which _fault_ the exception registration is valid for (page
-fault, div-by-zero, whatever)
-
- (d) which save area (aka stack) and exception handler point.
-
-Note that (b) might be more than just an exception IP range. It might
-well be interesting to register the exception by page fault address
-(in addition to code range).
-
-If you do something that does all of (a)-(d), and you allow some
-limited number of exception registrations, then maybe. Because at that
-point, you have something that is actually actively more powerful than
-signal handling is.
-
-But your suggested "just register a broken form of signal handling for
-a special case" is just wrong. Don't do it.
-
-              Linus
+I don't see how out-calls are a problem.  Once EEXIT completes we're
+no longer in the enclave and EPCM faults are no longer a concern, i.e.
+we don't need to do fixup.  Every other enclave exit is either an
+exception or an interrupt.  And the only way to get back into the
+enclave is via ENCLU (EENTER or ERESUME).
