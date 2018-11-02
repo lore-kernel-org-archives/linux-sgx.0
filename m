@@ -1,80 +1,67 @@
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
-In-Reply-To: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 2 Nov 2018 16:32:32 -0700
-Message-ID: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To: Jann Horn <jannh@google.com>
-CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
- Lutomirski" <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: luto@kernel.org
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jarkko
+ Sakkinen" <jarkko.sakkinen@linux.intel.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "open list:X86
+ ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v15 11/23] x86/sgx: Add definitions for SGX's CPUID leaf and variable sub-leafs
+Date: Sat, 3 Nov 2018 01:11:10 +0200
+Message-ID: <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
->
-> On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> > On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
-> > > On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
-> > > <sean.j.christopherson@intel.com> wrote:
-> > > > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
-> > > > > This whole mechanism seems very complicated, and it's not clear
-> > > > > exactly what behavior user code wants.
-> > > >
-> > > > No argument there.  That's why I like the approach of dumping the
-> > > > exception to userspace without trying to do anything intelligent in
-> > > > the kernel.  Userspace can then do whatever it wants AND we don't
-> > > > have to worry about mucking with stacks.
-> > > >
-> > > > One of the hiccups with the VDSO approach is that the enclave may
-> > > > want to use the untrusted stack, i.e. the stack that has the VDSO's
-> > > > stack frame.  For example, Intel's SDK uses the untrusted stack to
-> > > > pass parameters for EEXIT, which means an AEX might occur with what
-> > > > is effectively a bad stack from the VDSO's perspective.
-> > >
-> > > What exactly does "uses the untrusted stack to pass parameters for
-> > > EEXIT" mean? I guess you're saying that the enclave is writing to
-> > > RSP+[0...some_positive_offset], and the written data needs to be
-> > > visible to the code outside the enclave afterwards?
-> >
-> > As is, they actually do it the other way around, i.e. negative offsets
-> > relative to the untrusted %RSP.  Going into the enclave there is no
-> > reserved space on the stack.  The SDK uses EEXIT like a function call,
-> > i.e. pushing parameters on the stack and making an call outside of the
-> > enclave, hence the name out-call.  This allows the SDK to handle any
-> > reasonable out-call without a priori knowledge of the application's
-> > maximum out-call "size".
->
-> But presumably this is bounded to be at most 128 bytes (the red zone
-> size), right? Otherwise this would be incompatible with
-> non-sigaltstack signal delivery.
+SGX defines its own CPUID leaf, 0x12, along with a variable number of
+sub-leafs.  Sub-leafs 0 and 1 are always available if SGX is supported
+and enumerate various SGX features, e.g. instruction sets and enclave
+capabilities.  Sub-leafs 2+ are variable, both in their existence and
+in what they enumerate.  Bits 3:0 of EAX report the sub-leaf type,
+with the remaining bits in EAX, EBX, ECX and EDX being type-specific.
+Currently, the only known sub-leaf type enumerates an EPC section.  An
+EPC section is simply a range of EPC memory available to software.
+The "list" of varaible SGX sub-leafs is NULL-terminated, i.e. software
+is expected to query CPUID until an invalid sub-leaf is encountered.
 
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/sgx_arch.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-I think Sean is saying that the enclave also updates RSP.
-
-One might reasonably wonder how the SDX knows the offset from RSP to
-the function ID.  Presumably using RBP?
-
-Anyway, it seems like this is a mess and it's going to be quite hard
-to do this in the vDSO due to a lack of any sane way to store the
-return address.
+diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
+index d4c57154e6e6..29c37971e8b3 100644
+--- a/arch/x86/include/asm/sgx_arch.h
++++ b/arch/x86/include/asm/sgx_arch.h
+@@ -11,6 +11,21 @@
+ #include <linux/types.h>
+ #include <uapi/asm/sgx_errno.h>
+ 
++#define SGX_CPUID				0x12
++#define SGX_CPUID_FIRST_VARIABLE_SUB_LEAF	2
++
++/**
++ * enum sgx_sub_leaf_types - SGX CPUID variable sub-leaf types
++ * %SGX_CPUID_SUB_LEAF_INVALID:		Indicates this sub-leaf is invalid.
++ * %SGX_CPUID_SUB_LEAF_EPC_SECTION:	Sub-leaf enumerates an EPC section.
++ * %SGX_CPUID_SUB_LEAF_TYPE_MASK:	Mask for bits containing the type.
++ */
++enum sgx_sub_leaf_types {
++	SGX_CPUID_SUB_LEAF_INVALID	= 0x0,
++	SGX_CPUID_SUB_LEAF_EPC_SECTION	= 0x1,
++	SGX_CPUID_SUB_LEAF_TYPE_MASK	= 0xF,
++};
++
+ /**
+  * enum sgx_encls_leaves - ENCLS leaf functions
+  * %SGX_ECREATE:	Create an enclave.
+-- 
+2.19.1
