@@ -1,59 +1,102 @@
+Date: Fri, 2 Nov 2018 09:30:34 -0700
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Andy Lutomirski <luto@amacapital.net>
-CC: Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>, "Hansen,
- Dave" <dave.hansen@intel.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, Jarkko
- Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+To: Andy Lutomirski <luto@kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, Rich Felker
+	<dalias@libc.org>, Jann Horn <jannh@google.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
+ Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
 	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
 	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
 	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"Katz-zamir, Shay" <shay.katz-zamir@intel.com>, "linux-sgx@vger.kernel.org"
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
 	<linux-sgx@vger.kernel.org>, Andy Shevchenko
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Carlos
- O'Donell <carlos@redhat.com>, "adhemerval.zanella@linaro.org"
-	<adhemerval.zanella@linaro.org>
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
 Subject: Re: RFC: userspace exception fixups
-Sender: "linux-kernel-owner@vger.kernel.org"
-	<linux-kernel-owner@vger.kernel.org>
-Date: Tue, 6 Nov 2018 09:19:10 -0800
-Message-ID: <1541524750.7839.51.camel@intel.com>
-References: 
+Message-ID: <20181102163034.GB7393@linux.intel.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx>
+ <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx>
  <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
-         <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
-         <20181102163034.GB7393@linux.intel.com>
-         <7050972d-a874-dc08-3214-93e81181da60@intel.com>
-         <20181102170627.GD7393@linux.intel.com>
-         <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
-         <20181102173350.GF7393@linux.intel.com>
-         <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
-         <20181102182712.GG7393@linux.intel.com>
-         <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
-         <20181102220437.GI7393@linux.intel.com>
-         <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
-         <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
-         <1541518670.7839.31.camel@intel.com>
-         <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
-In-Reply-To: <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
-Content-Type: text/plain; charset="utf-8"
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-T24gVHVlLCAyMDE4LTExLTA2IGF0IDA4OjU3IC0wODAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
-DQo+DQo+IFNvIEkgZ3Vlc3MgdGhlIG5vbi1lbmNsYXZlIGNvZGUgYmFzaWNhbGx5IGNhbuKAmXQg
-dHJ1c3QgaXRzIHN0YWNrIHBvaW50ZXINCj4gYmVjYXVzZSBvZiB0aGVzZSBzaGVuYW5pZ2Fucy4g
-QW5kIHRoZSBBRVAgY29kZSBoYXMgdG8gbGl2ZSB3aXRoIHRoZSBmYWN0DQo+IHRoYXQgaXRzIFJT
-UCBpcyBiYXNpY2FsbHkgYXJiaXRyYXJ5IGFuZCBwcm9iYWJseSBjYW7igJl0IGV2ZW4gYmUgdW53
-b3VuZA0KPiBieSBhIGRlYnVnZ2VyPw0KDQpUaGUgU0RLIHByb3ZpZGVzIGEgUHl0aG9uIEdEQiBw
-bHVnaW4gdG8gaG9vayBpbnRvIHRoZSBvdXQtY2FsbCBmbG93IGFuZA0KZG8gbW9yZSBzdGFjayBz
-aGVuYW5pZ2Fucy7CoMKgRnJvbSB3aGF0IEkgY2FuIHRlbGwgaXQncyBmdWRnaW5nIHRoZSBzdGFj
-aw0KdG8gbWFrZSBpdCBsb29rIGxpa2UgYSBub3JtYWwgc3RhY2sgZnJhbWUgc28gdGhlIGRlYnVn
-Z2VyIGNhbiBkbyBpdCdzDQp0aGluZy4NCg0KPiBBbmQgdGhlIEVFTlRFUiBjb2RlIGhhcyB0byBk
-ZWFsIHdpdGggdGhlIGZhY3QgdGhhdCBpdHMgcmVkIHpvbmUgY2FuIGJlDQo+IGJsYXRhbnRseSB2
-aW9sYXRlZCBieSB0aGUgZW5jbGF2ZT8NCg0KVGhhdCdzIG15IHVuZGVyc3RhbmRpbmcgb2YgdGhp
-bmdzLsKgwqBTbyB5ZWFoLCBpZiBpdCB3YXNuJ3Qgb2J2aW91cyBiZWZvcmUsDQp0aGUgdHJ1c3Rl
-ZCBhbmQgdW50cnVzdGVkIHBhcnRzIG9mIHRoZSBTREsgYXJlIHZlcnkgdGlnaHRseSBjb3VwbGVk
-Lg0K
+On Thu, Nov 01, 2018 at 04:22:55PM -0700, Andy Lutomirski wrote:
+> On Thu, Nov 1, 2018 at 2:24 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
+> > >
+> > > See my other emails in this thread. You would register the *address*
+> > > (in TLS) of a function pointer object pointing to the handler, rather
+> > > than the function address of the handler. Then switching handler is
+> > > just a single store in userspace, no syscalls involved.
+> >
+> > Yes.
+> >
+> > And for just EENTER, maybe that's the right model.
+> >
+> > If we want to generalize it to other thread-synchronous faults, it
+> > needs way more information and a list of handlers, but if we limit the
+> > thing to _only_ EENTER getting an SGX fault, then a single "this is
+> > the fault handler" address is probably the right thing to do.
+> 
+> It sounds like you're saying that the kernel should know, *before*
+> running any user fixup code, whether the fault in question is one that
+> wants a fixup.  Sounds reasonable.
+> 
+> I think it would be nice, but not absolutely necessary, if user code
+> didn't need to poke some value into TLS each time it ran a function
+> that had a fixup.  With the poke-into-TLS approach, it looks a lot
+> like rseq, and rseq doesn't nest very nicely.  I think we really want
+> this mechanism to Just Work.  So we could maybe have a syscall that
+> associates a list of fixups with a given range of text addresses.  We
+> might want the kernel to automatically zap the fixups when the text in
+> question is unmapped.
+
+If this is EENTER specific then nesting isn't an issue.  But I don't
+see a simple way to restrict the mechanism to EENTER.
+
+What if rather than having userspace register an address for fixup the
+kernel instead unconditionally does fixup on the ENCLU opcode?  For
+example, skip the instruction and put fault info into some combination
+of RDX/RSI/RDI (they're cleared on asynchronous enclave exits).
+
+The decode logic is straightforward since ENCLU doesn't have operands,
+we'd just have to eat any ignored prefixes.  The intended convention
+for EENTER is to have an ENCLU at the AEX target (to automatically do
+ERESUME after INTR, etc...), so this would work regardless of whether
+the fault happened on EENTER or in the enclave.  EENTER/ERESUME are
+the only ENCLU functions that are allowed outside of an enclave so
+there's no danger of accidentally crushing something else.
+
+This way we wouldn't need a VDSO blob and we'd enforce the kernel's
+ABI, e.g. a library that tried to use signal handling would go off the
+rails when the kernel mucked with the registers.  We could even have
+the SGX EPC fault handler return VM_FAULT_SIGBUS if the faulting
+instruction isn't ENCLU, e.g. to further enforce that the AEX target
+needs to be ENCLU.
+
+
+Userspace would look something like this:
+
+    mov tcs, %xbx               /* Thread Control Structure address */
+    leaq async_exit(%rip), %rcx /* AEX target for EENTER/RESUME */
+    mov $SGX_EENTER, %rax       /* EENTER leaf */
+
+async_exit:
+    ENCLU
+
+fault_handler:
+    <handle fault>
+
+enclave_exit:                   /* EEXIT target */
+    <handle enclave request>
