@@ -4,151 +4,59 @@ To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
-	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>,
-	Suresh Siddha <suresh.b.siddha@intel.com>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 21/22] platform/x86: ptrace() support for the SGX driver
-Date: Tue, 6 Nov 2018 15:46:00 +0200
-Message-ID: <20181106134758.10572-22-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Konrad Rzeszutek Wilk
+	<konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "Kirill A.
+ Shutemov" <kirill.shutemov@linux.intel.com>, David Wang
+	<davidwang@zhaoxin.com>, "Levin, Alexander (Sasha Levin)"
+	<alexander.levin@verizon.com>, Jia Zhang <qianyue.zj@alibaba-inc.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v15 14/23] x86/cpu/intel: Clear SGX_LC capability if not enabled in FEATURE_CONTROL
+Date: Sat, 3 Nov 2018 01:11:13 +0200
+Message-ID: <20181102231320.29164-15-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain
 Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-Add VMA callbacks for ptrace() that can be used with debug enclaves.
-With debug enclaves data can be read and write the memory word at a time
-by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Like SGX itself, SGX Launch Control must be explicitly enabled via a
+flag in IA32_FEATURE_CONTROL.  Clear the SGX_LC capability if Launch
+Control is not fully enabled (or obviously if SGX itself is disabled).
+
+Note that clearing X86_FEATURE_SGX_LC creates a bit of a conundrum
+regarding the SGXLEPUBKEYHASH MSRs, as it may be desirable to read the
+MSRs even if they are not writable, e.g. to query the configured key,
+but clearing the capability leaves no breadcrum for discerning whether
+or not the MSRs exist.  But, such usage will be rare (KVM is the only
+known case at this time) and not performance critical, so it's not
+unreasonable to require the use of rdmsr_safe().  Clearing the cap bit
+eliminates the need for an additional flag to track whether or not
+Launch Control is truly enabled, which is what we care about the vast
+majority of the time.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- drivers/platform/x86/intel_sgx/sgx_vma.c | 109 +++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+ arch/x86/kernel/cpu/intel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/platform/x86/intel_sgx/sgx_vma.c b/drivers/platform/x86/intel_sgx/sgx_vma.c
-index cc0993b4fd40..df604e4d0d0a 100644
---- a/drivers/platform/x86/intel_sgx/sgx_vma.c
-+++ b/drivers/platform/x86/intel_sgx/sgx_vma.c
-@@ -51,8 +51,117 @@ static int sgx_vma_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 9bf8fe2c04ac..bc52c52f7025 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -618,6 +618,8 @@ static void detect_sgx(struct cpuinfo_x86 *c)
+ 		setup_clear_cpu_cap(X86_FEATURE_SGX1);
+ 		setup_clear_cpu_cap(X86_FEATURE_SGX2);
+ 	}
++	if (unsupported || !(fc & FEATURE_CONTROL_SGX_LE_WR))
++		setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
  }
  
-+static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset > offsetof(struct sgx_tcs, gs_limit))
-+		return -ECANCELED;
-+
-+	ret = __edbgrd(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGRD returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	offset = addr & ~PAGE_MASK;
-+
-+	/* Writing anything else than flags will cause #GP */
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset != offsetof(struct sgx_tcs, flags))
-+		return -ECANCELED;
-+
-+	ret = __edbgwr(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGWR returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-+			  void *buf, int len, int write)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry = NULL;
-+	unsigned long align;
-+	char data[sizeof(unsigned long)];
-+	int offset;
-+	int cnt;
-+	int ret = 0;
-+	int i;
-+
-+	/* If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return -EFAULT;
-+
-+	if (!(encl->flags & SGX_ENCL_DEBUG) ||
-+	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
-+	    (encl->flags & SGX_ENCL_DEAD))
-+		return -EFAULT;
-+
-+	for (i = 0; i < len; i += cnt) {
-+		if (!entry || !((addr + i) & (PAGE_SIZE - 1))) {
-+			if (entry)
-+				entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+			entry = sgx_fault_page(vma, (addr + i) & PAGE_MASK,
-+					       true);
-+			if (IS_ERR(entry)) {
-+				ret = PTR_ERR(entry);
-+				entry = NULL;
-+				break;
-+			}
-+		}
-+
-+		/* Locking is not needed because only immutable fields of the
-+		 * page are accessed and page itself is reserved so that it
-+		 * cannot be swapped out in the middle.
-+		 */
-+
-+		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-+		offset = (addr + i) & (sizeof(unsigned long) - 1);
-+		cnt = sizeof(unsigned long) - offset;
-+		cnt = min(cnt, len - i);
-+
-+		ret = sgx_edbgrd(encl, entry, align, data);
-+		if (ret)
-+			break;
-+		if (write) {
-+			memcpy(data + offset, buf + i, cnt);
-+			ret = sgx_edbgwr(encl, entry, align, data);
-+			if (ret)
-+				break;
-+		} else
-+			memcpy(buf + i, data + offset, cnt);
-+	}
-+
-+	if (entry)
-+		entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
-+
-+	return ret < 0 ? ret : i;
-+}
-+
- const struct vm_operations_struct sgx_vm_ops = {
- 	.close = sgx_vma_close,
- 	.open = sgx_vma_open,
- 	.fault = sgx_vma_fault,
-+	.access = sgx_vma_access,
- };
+ static void init_intel_energy_perf(struct cpuinfo_x86 *c)
 -- 
 2.19.1
