@@ -3,226 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB17FC65C22
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 22:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AF3C32789
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 22:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD782081F
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 22:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD782081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 514E82082D
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 22:08:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514E82082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeKCHNb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:13:31 -0400
-Received: from mga14.intel.com ([192.55.52.115]:26744 "EHLO mga14.intel.com"
+        id S1728230AbeKCHQ6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Nov 2018 03:16:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:58967 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726141AbeKCHNb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:13:31 -0400
+        id S1726141AbeKCHQ6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 3 Nov 2018 03:16:58 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 15:04:37 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 15:08:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="97246158"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
-  by orsmga003.jf.intel.com with ESMTP; 02 Nov 2018 15:04:37 -0700
-Date:   Fri, 2 Nov 2018 15:04:37 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        dalias@libc.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        jethro@fortanix.com, jarkko.sakkinen@linux.intel.com,
+   d="scan'208";a="276703322"
+Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.138])
+  by fmsmga005.fm.intel.com with ESMTP; 02 Nov 2018 15:07:52 -0700
+Date:   Sat, 3 Nov 2018 00:07:52 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
         Florian Weimer <fweimer@redhat.com>,
         Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rich Felker <dalias@libc.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
         shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        carlos@redhat.com, adhemerval.zanella@linaro.org
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
 Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102220437.GI7393@linux.intel.com>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com>
- <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com>
- <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com>
- <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+Message-ID: <20181102220752.GA24373@linux.intel.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181102220437.cMk3cjkxlidycIjLOkgDSnqL9rhgWFJj64pXTyn8gAE@z>
+Message-ID: <20181102220752.Kf7IFYF5bn1MIfg0rL0poT7Q65KKQKLTJjUY92Qcv-c@z>
 
-On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
-> On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
-> > > This whole mechanism seems very complicated, and it's not clear
-> > > exactly what behavior user code wants.
-> >
-> > No argument there.  That's why I like the approach of dumping the
-> > exception to userspace without trying to do anything intelligent in
-> > the kernel.  Userspace can then do whatever it wants AND we don't
-> > have to worry about mucking with stacks.
-> >
-> > One of the hiccups with the VDSO approach is that the enclave may
-> > want to use the untrusted stack, i.e. the stack that has the VDSO's
-> > stack frame.  For example, Intel's SDK uses the untrusted stack to
-> > pass parameters for EEXIT, which means an AEX might occur with what
-> > is effectively a bad stack from the VDSO's perspective.
-> 
-> What exactly does "uses the untrusted stack to pass parameters for
-> EEXIT" mean? I guess you're saying that the enclave is writing to
-> RSP+[0...some_positive_offset], and the written data needs to be
-> visible to the code outside the enclave afterwards?
+On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
+> If a handler is registered, then, if a synchronous exception happens
+> (page fault, etc), the kernel would set up an exception frame as usual
+> but, rather than checking for signal handlers, it would just call the
+> registered handler.  That handler is expected to either handle the
+> exception entirely on its own or to call one of two new syscalls to
+> ask for normal signal delivery or to ask to retry the faulting
+> instruction.
 
-As is, they actually do it the other way around, i.e. negative offsets
-relative to the untrusted %RSP.  Going into the enclave there is no
-reserved space on the stack.  The SDK uses EEXIT like a function call,
-i.e. pushing parameters on the stack and making an call outside of the
-enclave, hence the name out-call.  This allows the SDK to handle any
-reasonable out-call without a priori knowledge of the application's
-maximum out-call "size".
+Why the syscalls are required? Couldn't the handler have just a return
+value to indicate the appropriate action?
 
+Another thing that I'm wondering is that what if a signal occurs inside
+the exception handler?
 
-Rough outline of what happens in a non-faulting case.
-
-1: Userspace executes EENTER
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at EENTER
-
-
-2: Enclave does EEXIT to invoke out-call function
-
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              |
-        | paramN           |
-        -------------------- <-- %RSP at EEXIT
-
-
-3: Userspace re-EENTERs enclave after handling EEXIT request
-
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at original EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              |
-        | paramN           |
-        -------------------- <-- %RSP at post-EEXIT EENTER
-
-
-4: Enclave cleans up the stack
-
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP back at original EENTER
-
-
-
-In the faulting case, an AEX can occur while the enclave is pushing
-parameters onto the stack for EEXIT.
-
-
-1: Userspace executes EENTER
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at EENTER
-
-
-2: AEX occurs during enclave prep for EEXIT
-
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              | 
-        -------------------- <-- %RSP at AEX
-
-
-3: Userspace re-EENTERs enclave to invoke enclave fault handler
-
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at original EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              | 
-        -------------------- <-- %RSP at AEX
-        | userspace stack  |
-        -------------------- <-- %RSP at EENTER to fault handler
-
-
-4: Enclave handles the fault, EEXITs back to userspace
-
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at original EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              | 
-        -------------------- <-- %RSP at AEX
-        | userspace stack  |
-        -------------------- <-- %RSP at EEXIT from fault handler
-
-
-5: Userspace pops its stack and ERESUMEs back to the enclave
-        --------------------
-        | userspace stack  | 
-        -------------------- <-- %RSP at original EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              | 
-        -------------------- <-- %RSP at ERESUME
-
-
-6: Enclave finishes its EEXIT to invoke out-call function
-
-        --------------------
-        | userspace stuff  | 
-        -------------------- <-- %RSP at original EENTER
-        | out-call func ID |
-        | param1           |
-        | ...              |
-        | paramN           |
-        -------------------- <-- %RSP at EEXIT 
- 
-> In other words, the vDSO helper would have to not touch the stack
-> pointer (only using the 128-byte redzone to store spilled data, at
-> least across the enclave entry), and return by decrementing the stack
-> pointer by 8 immediately before returning (storing the return pointer
-> in the redzone)?
-> 
-> So you'd call the vDSO helper with a normal "call
-> vdso_helper_address", then the vDSO helper does "add rsp, 8", then the
-> vDSO helper does its magic, and then it returns with "sub rsp, 8" and
-> "ret"? That way you don't touch anything on the high-address side of
-> RSP while still avoiding running into CET problems. (I'm assuming that
-> you can use CET in a process that is hosting SGX enclaves?)
+/Jarkko
