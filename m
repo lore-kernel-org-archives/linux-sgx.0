@@ -1,17 +1,17 @@
-Received: from mail-dm3nam03on0107.outbound.protection.outlook.com
- ([104.47.41.107]:11920        "EHLO
- NAM03-DM3-obe.outbound.protection.outlook.com"
+Received: from mail-cys01nam02on0115.outbound.protection.outlook.com
+ ([104.47.37.115]:17536        "EHLO
+ NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP        id
- S1726194AbeKGQQK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Wed, 7
- Nov 2018 11:16:10 -0500
+ S1726799AbeKCBo6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 2
+ Nov 2018 21:44:58 -0400
 From: Jethro Beekman <jethro@fortanix.com>
-To: Andy Lutomirski <luto@kernel.org>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>
-CC: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>,
-	"Linux API" <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
+To: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
+	<luto@kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, Rich Felker
+	<dalias@libc.org>, Jann Horn <jannh@google.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>, Linux
+ API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
 	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
  Zijlstra" <peterz@infradead.org>, "nhorman@redhat.com" <nhorman@redhat.com>,
 	"npmccallum@redhat.com" <npmccallum@redhat.com>, "Ayoun, Serge"
@@ -23,59 +23,42 @@ CC: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>, "Linus
  O'Donell" <carlos@redhat.com>, "adhemerval.zanella@linaro.org"
 	<adhemerval.zanella@linaro.org>
 Subject: Re: RFC: userspace exception fixups
-Date: Wed, 7 Nov 2018 06:47:08 +0000
-Message-ID: <4171a890-12d9-8a1c-22da-e53434c1f840@fortanix.com>
-References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
-In-Reply-To: <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+Date: Fri, 2 Nov 2018 16:37:10 +0000
+Message-ID: <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx>
+ <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx>
+ <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com>
+In-Reply-To: <20181102163034.GB7393@linux.intel.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
-	micalg=sha-256; boundary="------------ms060801080805010704030402"
+	micalg=sha-256; boundary="------------ms030102010107010006020008"
 Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
 Return-Path: linux-sgx-owner@vger.kernel.org
 MIME-Version: 1.0
 
---------------ms060801080805010704030402
+--------------ms030102010107010006020008
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2018-11-07 02:17, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
->>
->> /*
->>   * EEXIT or EENTER faulted.  In the latter case, %RAX already holds s=
-ome
->>   * fault indicator, e.g. -EFAULT.
->>   */
->> eexit_or_eenter_fault:
->>      ret
+On 2018-11-02 09:30, Sean Christopherson wrote:
+> ... The intended convention for EENTER is to have an ENCLU at the AEX t=
+arget ...
 >=20
-> But userspace wants to know whether it was a fault or not.  So I think
-> we either need two landing pads or we need to hijack a flag bit (are
-> there any known-zeroed flag bits after EEXIT?) to say whether it was a
-> fault.  And, if it was a fault, we should give the vector, the
-> sanitized error code, and possibly CR2.
+> ... to further enforce that the AEX target needs to be ENCLU.
 
-On AEX, %rax will contain ENCLU_LEAF_ERESUME (0x3). On EEXIT, %rax will=20
-contain ENCLU_LEAF_EEXIT (0x4).
+Some SGX runtimes may want to use a different AEX target.
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms060801080805010704030402
+--------------ms030102010107010006020008
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -139,8 +122,8 @@ rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
 TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
 x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTEwNzA2NDY1OVowLwYJKoZIhvcNAQkEMSIEIP122b9l
-q3m9HHIB3AfCKCe3x1b9nFWDdv8ZCzr5Sf7YMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTEwMjE2MzcwNFowLwYJKoZIhvcNAQkEMSIEIJ+3M7MZ
+3iXuTomelX5fmOD7WdJiHoM4iPsiVxLkuyI7MGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
@@ -150,10 +133,10 @@ XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
 R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
 Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
 YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQDHPD7e/B7Xmi08Q9sbN82xMMONgP/ly/XL8qt1rGp1TMixFAFe5/G1Tj1Cuz05oapu9a8/
-5j2GLq8fe/1mgEHmuNpHMYU+yNDkT2UoNYMrAb8Kmzh/RSIYFKCB8jybW5U0HIhj5Vj4E3UP
-oGmvAIdqdCXjyLAoP8+GKmAL2O9p4jKdFSpyBKFptAWx5P2rc/6dA0FKrmePX9sayrtRbtWI
-BK6hXogkHNNcpgyKAiOPAD/mlj+RrtmopOvX3nIjnzjWzvE9OtKS6q7CIjx08gOd5cHY9Onw
-pocroH2k2N0HYsJ0mQF2JRybh2uUQRejTLwWf55eD1ta0Y9sMUs0KODcAAAAAAAA
+AQCf39njBcbYmYk40hAlArMmBJC2IOq7+dXFVxMnA4/1Cwg4a4FyTiwaQ9MlylYAowPcybuP
+QO8SYoz82G9jhnvzq3ykpvQV8jSRc3R+ne8FbnTOjJZQqMRH0YJvGJKvmyPyb0B52Plp71gx
+axxPQTyPZfcbkorVu5ioILHc0S5EVMSOZXKRuVbXCTumjhoYARrORZSikCk13nd4Z52jHOX3
+07e3wYGW1FW7VkehPbQ6dG3y6LXN9rupjTBwF5jw5jmEjFLCEaqRERmXKei8ft5XPpUBlnqi
+9iKizHSn9CXfrqCn9dkOk2hRVVw1wOmjdP2sscOxRx+PhKwznhUezK/OAAAAAAAA
 
---------------ms060801080805010704030402--
+--------------ms030102010107010006020008--
