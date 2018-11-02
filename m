@@ -1,109 +1,90 @@
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 1 Nov 2018 19:33:33 +0100
-Message-ID: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To: Andy Lutomirski <luto@kernel.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>,
-	<sean.j.christopherson@intel.com>, <jethro@fortanix.com>,
-	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>,
-	"Linux API" <linux-api@vger.kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, the arch/x86 maintainers <x86@kernel.org>,
-	linux-arch <linux-arch@vger.kernel.org>, kernel list
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<dalias@libc.org>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, <andriy.shevchenko@linux.intel.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: jannh@google.com
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, Haim Cohen
+	<haim.cohen@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, "Tom
+ Lendacky" <thomas.lendacky@amd.com>, Konrad Rzeszutek Wilk
+	<konrad.wilk@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, "David
+ Woodhouse" <dwmw@amazon.co.uk>, Janakarajan Natarajan
+	<Janakarajan.Natarajan@amd.com>, Matt Turner <mattst88@gmail.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v15 13/23] x86/msr: Add SGX Launch Control MSR definitions
+Date: Sat, 3 Nov 2018 01:11:12 +0200
+Message-ID: <20181102231320.29164-14-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 1, 2018 at 6:53 PM Andy Lutomirski <luto@kernel.org> wrote:
-> The people working on SGX enablement are grappling with a somewhat
-> annoying issue: the x86 EENTER instruction is used from user code and
-> can, as part of its normal-ish operation, raise an exception.  It is
-> also highly likely to be used from a library, and signal handling in
-> libraries is unpleasant at best.
->
-> There's been some discussion of adding a vDSO entry point to wrap
-> EENTER and do something sensible with the exceptions,
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-This sounds reasonable to me.
+Add a new IA32_FEATURE_CONTROL bit, SGX_LE_WR.  When set, SGX_LE_WR
+allows software to write the SGXLEPUBKEYHASH MSRs (see below).  The
+The existence of the bit is enumerated by CPUID as X86_FEATURE_SGX_LC.
+Like all other flags in IA32_FEATURE_CONTROL, the MSR must be locked
+for SGX_LE_WR to take effect.
 
-> but I'm
-> wondering if a more general mechanism would be helpful.
->
-> The basic idea would be to allow libc, or maybe even any library, to
-> register a handler that gets a chance to act on an exception caused by
-> a user instruction before a signal is delivered.  As a straw-man
-> example for how this could work, there could be a new syscall:
->
-> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
->
-> If a handler is registered, then, if a synchronous exception happens
-> (page fault, etc), the kernel would set up an exception frame as usual
-> but, rather than checking for signal handlers, it would just call the
-> registered handler.
+Add four MSRs, SGXLEPUBKEYHASH{0,1,2,3}, or in human readable form,
+the SGX Launch Enclave Public Key Hash MSRs.  These MSRs correspond to
+the key that is used by the CPU to determine whether or not to allow
+software to enter an enclave.  When ENCLS[EINIT] is executed, which is
+a prerequisite to entering the enclave, the CPU compares the key
+(technically its hash) used to sign the enclave with the key hash
+stored in the MSRs, and will reject EINIT if the keys do not match.
 
-> That handler is expected to either handle the
-> exception entirely on its own or to call one of two new syscalls to
-> ask for normal signal delivery
+Enclaves can also be blessed by proxy, in which case a Launch Enclave
+generates and signs an EINIT TOKEN.  If a valid token is provided,
+ENCLS[EINIT] compares the signer of the token against the MSRs instead
+of the signer of the enclave.  The SGXLEPUBKEYHASH MSRs only exist on
+CPUs that support SGX Launch Control, enumerated by X86_FEATURE_SGX_LC.
+CPUs without Launch Control use a hardcoded key for the ENCLS[EINIT]
+checks.  An internal hardcoded key is also used as the reset value for
+the hash MSRs when they exist.
 
-If you do it this way, these exception handlers would have to chain,
-with an API convention that you're obligated to always ask for
-resumption of signal delivery if you don't recognize the address,
-right? Kind of like a notifier chain. (Except that, unless this is
-implemented in the vDSO, each notifier invocation would cross the
-kernel-user boundary twice.)
+As a final note, the SGX_LEPUBKEYHASH MSRs can also be written by
+pre-boot firmware prior to activating SGX (SGX activation is done by
+setting bit 0 in MSR 0x7A).  Thus, firmware can lock the MSRs to a
+non-Intel value by writing the MSRs and locking IA32_FEATURE_CONTROL
+without setting SGX_LE_WR.
 
-> or to ask to retry the faulting instruction.
+Co-developed-by: Haim Cohen <haim.cohen@intel.com>
+Signed-off-by: Haim Cohen <haim.cohen@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/include/asm/msr-index.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Why would that have to be a syscall? For signal handlers registered
-with SA_NODEFER, you can basically leave the signal handler with a
-longjmp, right?
-
-> Alternatively, we could do something a lot more like the kernel's
-> internal fixups where there's a table in user memory that maps
-> potentially faulting instructions to landing pads that handle
-> exceptions.
-
-I like this direction more, although I'm not sure whether the table
-the kernel sees should be at instruction-level granularity. Perhaps
-you could associate an exception handler with a VMA? Any instruction
-that faults in the VMA triggers the fault handler?
-
-> Do you think this would be useful?  Here are some use cases that I
-> think are valid:
->
-> (a) Enter an SGX enclave and handle errors.  There would be two
-> instructions that would need special handling: EENTER and ERESUME.
->
-> (b) Do some math and catch division by zero.  I think it would be a
-> bad idea to have user code call a function and say that it wants to
-> handle *any* division by zero, but having certain specified division
-> instructions have special handling seems entirely reasonable.
->
-> (c) Ditto for floating point errors.
->
-> (d) Try an instruction and see if it gets #UD.
->
-> (e) Run a bunch of code and handle page faults to a given address
-> range by faulting something in.  This is not like the others, in that
-> a handler wants to handle a range of target addresses, not
-> instructions.  And userfaultfd is plausibly a better solution anyway.
->
-> (f) Run NaCl-like sandboxed code where the code can cause page faults
-> to certain mapped-but-intentionally-not-present ranges and those need
-> to be handled.
->
-> On Windows, you can use SEH to do crazy things like running
-> known-buggy code and eating the page faults.  I don't think we want to
-> go there.
->
-> All of this makes me think that the right solution is to have a way to
-> register fault handlers for instructions to cover (a) - (d) and to
-> treat (e) and (f) as something else entirely if there's enough demand.
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 2837f65ac817..ffae9df1c0ab 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -486,6 +486,7 @@
+ #define FEATURE_CONTROL_LOCKED				(1<<0)
+ #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
+ #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
++#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
+ #define FEATURE_CONTROL_SGX_ENABLE			(1<<18)
+ #define FEATURE_CONTROL_LMCE				(1<<20)
+ 
+@@ -499,6 +500,12 @@
+ #define MSR_IA32_UCODE_WRITE		0x00000079
+ #define MSR_IA32_UCODE_REV		0x0000008b
+ 
++/* Intel SGX Launch Enclave Public Key Hash MSRs */
++#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
++#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
++#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
++#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++
+ #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
+ #define MSR_IA32_SMBASE			0x0000009e
+ 
+-- 
+2.19.1
