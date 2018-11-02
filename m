@@ -1,85 +1,125 @@
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com> <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
- <20181102165204.GC7393@linux.intel.com> <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
- <CALCETrUo8uwnu3dBVSHVtB_z4uQgW=40grVdZWmTt64Tei6WiQ@mail.gmail.com> <1b87048e-7ed8-14a1-572f-3cd825319f8c@fortanix.com>
-In-Reply-To: <1b87048e-7ed8-14a1-572f-3cd825319f8c@fortanix.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 2 Nov 2018 10:16:02 -0700
-Message-ID: <CALCETrVW23Hmwj9DeYJ95mGd-_6ZG4obZG+evc2NdXEGud6DBA@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To: Jethro Beekman <jethro@fortanix.com>
-CC: Andrew Lutomirski <luto@kernel.org>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Jann Horn
-	<jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
-	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: luto@kernel.org
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad Rzeszutek
+ Wilk" <konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "Tom
+ Lendacky" <thomas.lendacky@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	Fenghua Yu <fenghua.yu@intel.com>, Arnaldo Carvalho de Melo
+	<acme@redhat.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v15 03/23] x86/cpufeatures: Add SGX sub-features (as Linux-defined bits)
+Date: Sat, 3 Nov 2018 01:11:02 +0200
+Message-ID: <20181102231320.29164-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Nov 2, 2018 at 10:05 AM Jethro Beekman <jethro@fortanix.com> wrote:
->
-> On 2018-11-02 10:01, Andy Lutomirski wrote:
-> > On Fri, Nov 2, 2018 at 9:56 AM Jethro Beekman <jethro@fortanix.com> wrote:
-> >>
-> >> On 2018-11-02 09:52, Sean Christopherson wrote:
-> >>> On Fri, Nov 02, 2018 at 04:37:10PM +0000, Jethro Beekman wrote:
-> >>>> On 2018-11-02 09:30, Sean Christopherson wrote:
-> >>>>> ... The intended convention for EENTER is to have an ENCLU at the AEX target ...
-> >>>>>
-> >>>>> ... to further enforce that the AEX target needs to be ENCLU.
-> >>>>
-> >>>> Some SGX runtimes may want to use a different AEX target.
-> >>>
-> >>> To what end?  Userspace gets no indication as to why the AEX occurred.
-> >>> And if exceptions are getting transfered to userspace the trampoline
-> >>> would effectively be handling only INTR, NMI, #MC and EPC #PF.
-> >>>
-> >>
-> >> Various reasons...
-> >>
-> >> Userspace may have established an exception handling convention with the
-> >> enclave (by setting TCS.NSSA > 1) and may want to call EENTER instead of
-> >> ERESUME.
-> >>
-> >
-> > Ugh,
-> >
-> > I sincerely hope that a future ISA extension lets the kernel return
-> > directly back to enclave mode so that AEX events become entirely
-> > invisible to user code.
->
-> Can you explain how this would work for things like #BR/#DE/#UD that
-> need to be fixed up by code running in the enclave before it can be resumed?
->
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Sure.  A better enclave entry function would complete in one of two ways:
+CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX
+that enumerates the SGX instruction sets that are supported by the
+CPU, e.g. SGX1, SGX2, etc...  Because Linux currently only cares about
+two bits (SGX1 and SGX2) and there are currently only four documented
+bits in total, relocate the bits to Linux-defined word 8 to conserve
+space.
 
-1. The enclave exited normally.  Some register output would indicate this.
+But, keep the bit positions identical between the Intel-defined value
+and the Linux-defined value, e.g. keep SGX1 at bit 0.  This allows KVM
+to use its existing code for probing guest CPUID bits using Linux's
+X86_FEATURE_* definitions.  To do so, shift around some existing bits
+to effectively reserve bits 0-7 of word 8 for SGX sub-features.
 
-2. The enclave existed due to an exception or interrupt.  The kernel
-would be entered directly and notified of what happened.  The kernel
-would fix it up if needed (#PF), handle an interrupt (for en enclave
-exit due to an interrupt) and reenter the enclave.  If, of the error
-is not kernel-fixable-up, it would return back to userspace with some
-explanation of what happened.  Kind of like normal user code.
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/include/asm/cpufeatures.h       | 21 +++++++++++++++------
+ arch/x86/kernel/cpu/scattered.c          |  2 ++
+ tools/arch/x86/include/asm/cpufeatures.h | 21 +++++++++++++++------
+ 3 files changed, 32 insertions(+), 12 deletions(-)
 
-Alternatively, the CPU could directly distinguish between exceptions
-that need the enclave's attention (#BR) and those that don't.
-
-The fact that user code is involved in resuming an enclave when a
-hardware interrupt occurs is silly IMO.
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 22271752fd1e..1b8dea9a06cb 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -222,12 +222,21 @@
+ #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+ #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+ 
+-/* Virtualization flags: Linux defined, word 8 */
+-#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+-#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
+-#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
+-#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
+-#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
++/*
++ * Scattered Intel features: Linux defined, word 8.
++ *
++ * Note that the bit location of the SGX features is meaningful as KVM expects
++ * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
++ * must remain at bit 0, SGX2 at bit 1, etc...
++ */
++#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
++#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
++
++#define X86_FEATURE_TPR_SHADOW		( 8*32+ 8) /* Intel TPR Shadow */
++#define X86_FEATURE_VNMI		( 8*32+ 9) /* Intel Virtual NMI */
++#define X86_FEATURE_FLEXPRIORITY	( 8*32+10) /* Intel FlexPriority */
++#define X86_FEATURE_EPT			( 8*32+11) /* Intel Extended Page Table */
++#define X86_FEATURE_VPID		( 8*32+12) /* Intel Virtual Processor ID */
+ 
+ #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
+ #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index 772c219b6889..f7f0970b8f89 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -26,6 +26,8 @@ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
+ 	{ X86_FEATURE_CDP_L2,		CPUID_ECX,  2, 0x00000010, 2 },
+ 	{ X86_FEATURE_MBA,		CPUID_EBX,  3, 0x00000010, 0 },
++	{ X86_FEATURE_SGX1,             CPUID_EAX,  0, 0x00000012, 0 },
++	{ X86_FEATURE_SGX2,             CPUID_EAX,  1, 0x00000012, 0 },
+ 	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
+ 	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
+ 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index 89a048c2faec..9cc7628b9845 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -222,12 +222,21 @@
+ #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+ #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+ 
+-/* Virtualization flags: Linux defined, word 8 */
+-#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+-#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
+-#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
+-#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
+-#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
++/*
++ * Scattered Intel features: Linux defined, word 8.
++ *
++ * Note that the bit numbers of the SGX features are meaningful as KVM expects
++ * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
++ * must remain at bit 0, SGX2 at bit 1, etc...
++ */
++#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
++#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
++
++#define X86_FEATURE_TPR_SHADOW		( 8*32+ 8) /* Intel TPR Shadow */
++#define X86_FEATURE_VNMI		( 8*32+ 9) /* Intel Virtual NMI */
++#define X86_FEATURE_FLEXPRIORITY	( 8*32+10) /* Intel FlexPriority */
++#define X86_FEATURE_EPT			( 8*32+11) /* Intel Extended Page Table */
++#define X86_FEATURE_VPID		( 8*32+12) /* Intel Virtual Processor ID */
+ 
+ #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
+ #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
+-- 
+2.19.1
