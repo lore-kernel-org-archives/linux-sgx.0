@@ -1,69 +1,54 @@
-Subject: Re: RFC: userspace exception fixups
-To: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
-	<luto@kernel.org>, Jann Horn <jannh@google.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>, Rich Felker
-	<dalias@libc.org>, Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com>
- <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com>
- <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com>
- <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com>
- <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <6c1b7424-84f6-5fd4-ed7f-6c326d0e4090@intel.com>
-Date: Tue, 6 Nov 2018 09:00:38 -0800
-In-Reply-To: <1541518670.7839.31.camel@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
-MIME-Version: 1.0
+Received: from mga01.intel.com ([192.55.52.88]:64265 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1726705AbeKCIXL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Sat, 3
+ Nov 2018 04:23:11 -0400
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jarkko
+ Sakkinen" <jarkko.sakkinen@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Mauro Carvalho Chehab
+	<mchehab+samsung@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	"Andrew Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v15 01/23] x86/sgx: Update MAINTAINERS
+Date: Sat, 3 Nov 2018 01:11:00 +0200
+Message-ID: <20181102231320.29164-2-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Content-Type: text/plain
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On 11/6/18 7:37 AM, Sean Christopherson wrote:
-> 
-> void *sgx_alloc_untrusted_stack(size_t size)
-> {
-> 	struct sgx_encl_tls *tls = get_encl_tls();
-> 	struct sgx_out_call_context *context;
-> 	void *tmp;
-> 
-> 	/* create a frame on the trusted stack to hold the out-call context */
-> 	tls->trusted_stack -= sizeof(struct sgx_out_call_context);
-> 
-> 	/* save the untrusted %RSP into the out-call context */
-> 	context = (struct sgx_out_call_context *)tls->trusted_stack;
-> 	context->untrusted_stack = tls->save_state_area[SSA_RSP];
-> 
-> 	/* allocate space on the untrusted stack */
-> 	tmp = (void *)(tls->save_state_area[SSA_RSP] - size);
-> 	tls->save_state_area[SSA_RSP] = tmp;
-> 
-> 	return tmp;
-> }
+Add the maintainer information for the SGX subsystem.
 
-Why does it bother to go to all the trouble of mucking with the
-untrusted stack?  It could *easily* just leave it alone and do out-calls
-if it needs to allocate memory for parameter storage.  Heck, that could
-theoretically even be _on_ the stack if the untrusted runtime was being
-clever.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-The only downside would be that the untrusted runtime would have to keep
-track of the space a bit more explicitly so it could be cleaned up if
-the enclave didn't do it.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 02a39617ec82..a5597a89c7a9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7595,6 +7595,13 @@ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-intel-mid.c
+ 
++INTEL SGX
++M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++L:	linux-sgx@vger.kernel.org
++Q:	https://patchwork.kernel.org/project/intel-sgx/list/
++F:	drivers/platform/x86/intel_sgx/
++K:	\bSGX_
++
+ INVENSENSE MPU-3050 GYROSCOPE DRIVER
+ M:	Linus Walleij <linus.walleij@linaro.org>
+ L:	linux-iio@vger.kernel.org
+-- 
+2.19.1
