@@ -1,9 +1,19 @@
-Date: Tue, 6 Nov 2018 18:17:30 -0500
-From: Rich Felker <dalias@libc.org>
-To: Andy Lutomirski <luto@kernel.org>
-CC: Dave Hansen <dave.hansen@intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jann Horn <jannh@google.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>, Dave Hansen
+References: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com>
+In-Reply-To: <20181102173350.GF7393@linux.intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 2 Nov 2018 10:48:38 -0700
+Message-ID: <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To: "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC: Dave Hansen <dave.hansen@intel.com>, Andrew Lutomirski <luto@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Rich Felker
+	<dalias@libc.org>, Jann Horn <jannh@google.com>, Dave Hansen
 	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
  Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
 	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
@@ -15,68 +25,61 @@ CC: Dave Hansen <dave.hansen@intel.com>, "Christopherson, Sean J"
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
  O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181106231730.GR5150@brightrain.aerifal.cx>
-References: <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com>
- <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
-Sender: Rich Felker <dalias@aerifal.cx>
-Return-Path: dalias@aerifal.cx
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: luto@kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+On Fri, Nov 2, 2018 at 10:33 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Fri, Nov 02, 2018 at 10:13:23AM -0700, Dave Hansen wrote:
+> > On 11/2/18 10:06 AM, Sean Christopherson wrote:
+> > > On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
+> > >> On 11/2/18 9:30 AM, Sean Christopherson wrote:
+> > >>> What if rather than having userspace register an address for fixup, the
+> > >>> kernel instead unconditionally does fixup on the ENCLU opcode?
+> > >>
+> > >> The problem is knowing what to do for the fixup.  If we have a simple
+> > >> action to take that's universal, like backing up %RIP, or setting some
+> > >> other register state, it's not bad.
+> > >
+> > > Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
 > >
-> > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > > I almost feel like the right solution is to call into SGX on its own
-> > > private stack or maybe even its own private address space.
+> > Could someone write down all the ways we get in and out of the enclave?
 > >
-> > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> > enclave like its own "thread" with its own stack and its own set of
-> > registers and context?  That seems like a much more workable model than
-> > trying to weave it together with the EENTER context.
-> 
-> So maybe the API should be, roughly
-> 
-> sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-> host_state *state);
-> sgx_exit_reason_t sgx_resume_enclave(same args);
-> 
-> where host_state is something like:
-> 
-> struct host_state {
->   unsigned long bp, sp, ax, bx, cx, dx, si, di;
-> };
-> 
-> and the values in host_state explicitly have nothing to do with the
-> actual host registers.  So, if you want to use the outcall mechanism,
-> you'd allocate some memory, point sp to that memory, call
-> sgx_enter_enclave(), and then read that memory to do the outcall.
-> 
-> Actually implementing this would be distinctly nontrivial, and would
-> almost certainly need some degree of kernel help to avoid an explosion
-> when a signal gets delivered while we have host_state.sp loaded into
-> the actual SP register.  Maybe rseq could help with this?
-> 
-> The ISA here is IMO not well thought through.
+> > I think we always get in from userspace calling EENTER or ERESUME.  We
+> > can't ever enter directly from the kernel, like via an IRET from what I
+> > understand.
+>
+> Correct, the only way to get into the enclave is EENTER or ERESUME.
+> My understanding is that even SMIs bounce through the AEX target
+> before transitioning to SMM.
+>
+> > We get *out* from exceptions, hardware interrupts, or enclave-explicit
+> > EEXITs.  Did I miss any?  Remind me where the hardware lands the control
+> > flow in each of those exit cases.
+>
+> And VMExits.  There are basically two cases: EEXIT and everything else.
+> EEXIT is a glorified indirect jump, e.g. %RBX holds the target %RIP.
+> Everything else is an Asynchronous Enclave Exit (AEX).  On an AEX, %RIP
+> is set to a value specified by EENTER/ERESUME, %RBP and %RSP are
+> restored to pre-enclave values and all other registers are loaded with
+> synthetic state.  The actual interrupt/exception/VMExit then triggers,
+> e.g. the %RIP on the stack for an exception is always the AEX target,
+> not the %RIP inside the enclave that actually faulted.
 
-Maybe I'm mistaken about some fundamentals here, but my understanding
-of SGX is that the whole point is that the host application and the
-code running in the enclave are mutually adversarial towards one
-another. Do any or all of the proposed protocols here account for this
-and fully protect the host application from malicious code in the
-enclave? It seems that having control over the register file on exit
-from the enclave is fundamentally problematic but I assume there must
-be some way I'm missing that this is fixed up.
+So what exactly happens when an enclave accesses non-enclave memory
+and takes a page fault, for example?  The SDM says that the #PF vector
+and error code are stored in the SSA frame where the kernel can't see
+them.  Is a real #PF then delivered?
 
-Rich
+I guess that, if the memory in question gets faulted in, then the
+kernel resumes exection at the AEP address, which does ERESUME, and
+the enclave resumes.  But if the access is bad, then the kernel
+delivers a signal (or uses some other new mechanism), and then what
+happens?  Is the enclave just considered dead?  Is user code supposed
+to EENTER back into the enclave to tell it that it got an error?
+
+This whole mechanism seems very complicated, and it's not clear
+exactly what behavior user code wants.
