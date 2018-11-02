@@ -1,62 +1,43 @@
-Date: Thu, 1 Nov 2018 14:30:37 -0400
-From: Rich Felker <dalias@libc.org>
-To: Florian Weimer <fweimer@redhat.com>
-CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Linux API
-	<linux-api@vger.kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, X86 ML <x86@kernel.org>, linux-arch
-	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Adhemerval
- Zanella" <adhemerval.zanella@linaro.org>, <carlos@redhat.com>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181101183037.GB5150@brightrain.aerifal.cx>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <877ehwisaa.fsf@oldenburg.str.redhat.com>
+Date: Sat, 3 Nov 2018 01:55:14 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, Kai Huang
+	<kai.huang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad
+ Rzeszutek Wilk" <konrad.wilk@oracle.com>, David Woodhouse
+	<dwmw@amazon.co.uk>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 02/23] x86/cpufeatures: Add Intel-defined SGX feature
+ bit
+Message-ID: <20181102235514.GA383@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-3-jarkko.sakkinen@linux.intel.com>
+ <20181102233301.GD26770@zn.tnic>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <877ehwisaa.fsf@oldenburg.str.redhat.com>
-Sender: Rich Felker <dalias@aerifal.cx>
-Return-Path: dalias@aerifal.cx
+In-Reply-To: <20181102233301.GD26770@zn.tnic>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 01, 2018 at 07:09:17PM +0100, Florian Weimer wrote:
-> * Andy Lutomirski:
+On Sat, Nov 03, 2018 at 12:33:01AM +0100, Borislav Petkov wrote:
+> On Sat, Nov 03, 2018 at 01:11:01AM +0200, Jarkko Sakkinen wrote:
+> > From: Kai Huang <kai.huang@linux.intel.com>
+> > 
+> > X86_FEATURE_SGX reflects whether or not the CPU supports Intel's
+> > Software Guard eXtensions (SGX).
+> > 
+> > Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
 > 
-> > The basic idea would be to allow libc, or maybe even any library, to
-> > register a handler that gets a chance to act on an exception caused by
-> > a user instruction before a signal is delivered.  As a straw-man
-> > example for how this could work, there could be a new syscall:
-> >
-> > long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-> >
-> > If a handler is registered, then, if a synchronous exception happens
-> > (page fault, etc), the kernel would set up an exception frame as usual
-> > but, rather than checking for signal handlers, it would just call the
-> > registered handler.  That handler is expected to either handle the
-> > exception entirely on its own or to call one of two new syscalls to
-> > ask for normal signal delivery or to ask to retry the faulting
-> > instruction.
+> This and all the other patches of which you're not the author, need to
+> have your SOB after the author's SOB.
 > 
-> Would the exception handler be a per-thread resource?
-> 
-> If it is: Would the setup and teardown overhead be prohibitive for many
-> use cases (at least those do not expect a fault)?
-> 
-> Something peripherally related to this interface: Wrappers for signal
-> handlers (and not just CPU exceptions).  Ideally, we want to maintain a
-> flag that indicates whether we are in a signal handler, and save and
-> restore errno around the installed handler.
+> See Documentation/process/submitting-patches.rst
 
-I think the right way to make it per-thread AND low-cost would be to
-register not the handler, but the (per-thread) address of a
-function-pointer object pointing to the handler. Then switching the
-handler just requires a single volatile store to thread-local memory,
-no syscall.
+Right. I know this but forgot to go through this step.
 
-Rich
+/Jarkko
