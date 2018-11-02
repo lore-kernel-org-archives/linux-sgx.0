@@ -2,35 +2,68 @@ Return-Path: <SRS0=bY9v=NN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710CBC65C22
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 17:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C62C65C22
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 17:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F1A2082D
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 17:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F1A2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 463DB2082E
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 17:49:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1feXU/x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463DB2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbeKCCm3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:42:29 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58004 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeKCCm3 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 2 Nov 2018 22:42:29 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gIdIj-0000Fq-00; Fri, 02 Nov 2018 17:32:05 +0000
-Date:   Fri, 2 Nov 2018 13:32:05 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        id S1728110AbeKCC44 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 2 Nov 2018 22:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727769AbeKCC44 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:56:56 -0400
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC97920837
+        for <linux-sgx@vger.kernel.org>; Fri,  2 Nov 2018 17:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541180936;
+        bh=Y8GIf69pP+m9DmfderzUT/vxmSKPqCH2CKDT3DPFHI4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=G1feXU/x8bYG3sPyl7o3s0fGdQD/+jtb2/WVbZFJOxYaIvJp92HE4C2XiFlkYE+jm
+         XxMby6W9p7hYnkMBuYoIIlDM4vpGDFNmoffDylrzXA+jWu6G03ngRUFUvvmFRI3S8w
+         h7EanP/o/A9HhZBrRYGSGpnsSQW8EKBZKoOskaUU=
+Received: by mail-wm1-f53.google.com with SMTP id b203-v6so2579196wme.5
+        for <linux-sgx@vger.kernel.org>; Fri, 02 Nov 2018 10:48:55 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gIN456/YhLi2wlK+gGNsZOVFvEV6D7nNgfwve5UTmfvrTtrWTaC
+        1MvMI1z+RILTzMThU+9/JEs3dYD8UAicwOBFBzBxVQ==
+X-Google-Smtp-Source: AJdET5ffUcZqAJb9vBc3zWV3Mc+URA6oKsdH0OYNxrH9qhxk+pLL5aUIRFoG4p0Efyha5GR3JrAsSbCb892rUFl7hOk=
+X-Received: by 2002:a1c:4b1a:: with SMTP id y26-v6mr5393wma.82.1541180934370;
+ Fri, 02 Nov 2018 10:48:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com>
+In-Reply-To: <20181102173350.GF7393@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 2 Nov 2018 10:48:38 -0700
+X-Gmail-Original-Message-ID: <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+Message-ID:
+ <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
+        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Florian Weimer <fweimer@redhat.com>,
         Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
@@ -42,88 +75,65 @@ Cc:     Jethro Beekman <jethro@fortanix.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
+        "Carlos O'Donell" <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102173205.GM5150@brightrain.aerifal.cx>
-References: <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
- <20181102165204.GC7393@linux.intel.com>
- <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
- <CALCETrUo8uwnu3dBVSHVtB_z4uQgW=40grVdZWmTt64Tei6WiQ@mail.gmail.com>
- <1b87048e-7ed8-14a1-572f-3cd825319f8c@fortanix.com>
- <CALCETrVW23Hmwj9DeYJ95mGd-_6ZG4obZG+evc2NdXEGud6DBA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVW23Hmwj9DeYJ95mGd-_6ZG4obZG+evc2NdXEGud6DBA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181102173205.c5hPxAm7wbOkqGjZP96TmGrALotqRf-K5kgE-Q283HA@z>
+Message-ID: <20181102174838.xMuHSfTipWjlgIMN7NLM4wKPSlaEy3ukQCNbdfLhdFo@z>
 
-On Fri, Nov 02, 2018 at 10:16:02AM -0700, Andy Lutomirski wrote:
-> On Fri, Nov 2, 2018 at 10:05 AM Jethro Beekman <jethro@fortanix.com> wrote:
-> >
-> > On 2018-11-02 10:01, Andy Lutomirski wrote:
-> > > On Fri, Nov 2, 2018 at 9:56 AM Jethro Beekman <jethro@fortanix.com> wrote:
+On Fri, Nov 2, 2018 at 10:33 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Fri, Nov 02, 2018 at 10:13:23AM -0700, Dave Hansen wrote:
+> > On 11/2/18 10:06 AM, Sean Christopherson wrote:
+> > > On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
+> > >> On 11/2/18 9:30 AM, Sean Christopherson wrote:
+> > >>> What if rather than having userspace register an address for fixup, the
+> > >>> kernel instead unconditionally does fixup on the ENCLU opcode?
 > > >>
-> > >> On 2018-11-02 09:52, Sean Christopherson wrote:
-> > >>> On Fri, Nov 02, 2018 at 04:37:10PM +0000, Jethro Beekman wrote:
-> > >>>> On 2018-11-02 09:30, Sean Christopherson wrote:
-> > >>>>> ... The intended convention for EENTER is to have an ENCLU at the AEX target ...
-> > >>>>>
-> > >>>>> ... to further enforce that the AEX target needs to be ENCLU.
-> > >>>>
-> > >>>> Some SGX runtimes may want to use a different AEX target.
-> > >>>
-> > >>> To what end?  Userspace gets no indication as to why the AEX occurred.
-> > >>> And if exceptions are getting transfered to userspace the trampoline
-> > >>> would effectively be handling only INTR, NMI, #MC and EPC #PF.
-> > >>>
-> > >>
-> > >> Various reasons...
-> > >>
-> > >> Userspace may have established an exception handling convention with the
-> > >> enclave (by setting TCS.NSSA > 1) and may want to call EENTER instead of
-> > >> ERESUME.
-> > >>
+> > >> The problem is knowing what to do for the fixup.  If we have a simple
+> > >> action to take that's universal, like backing up %RIP, or setting some
+> > >> other register state, it's not bad.
 > > >
-> > > Ugh,
-> > >
-> > > I sincerely hope that a future ISA extension lets the kernel return
-> > > directly back to enclave mode so that AEX events become entirely
-> > > invisible to user code.
+> > > Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
 > >
-> > Can you explain how this would work for things like #BR/#DE/#UD that
-> > need to be fixed up by code running in the enclave before it can be resumed?
+> > Could someone write down all the ways we get in and out of the enclave?
 > >
-> 
-> Sure.  A better enclave entry function would complete in one of two ways:
-> 
-> 1. The enclave exited normally.  Some register output would indicate this.
-> 
-> 2. The enclave existed due to an exception or interrupt.  The kernel
-> would be entered directly and notified of what happened.  The kernel
-> would fix it up if needed (#PF), handle an interrupt (for en enclave
-> exit due to an interrupt) and reenter the enclave.  If, of the error
-> is not kernel-fixable-up, it would return back to userspace with some
-> explanation of what happened.  Kind of like normal user code.
-> 
-> Alternatively, the CPU could directly distinguish between exceptions
-> that need the enclave's attention (#BR) and those that don't.
-> 
-> The fact that user code is involved in resuming an enclave when a
-> hardware interrupt occurs is silly IMO.
+> > I think we always get in from userspace calling EENTER or ERESUME.  We
+> > can't ever enter directly from the kernel, like via an IRET from what I
+> > understand.
+>
+> Correct, the only way to get into the enclave is EENTER or ERESUME.
+> My understanding is that even SMIs bounce through the AEX target
+> before transitioning to SMM.
+>
+> > We get *out* from exceptions, hardware interrupts, or enclave-explicit
+> > EEXITs.  Did I miss any?  Remind me where the hardware lands the control
+> > flow in each of those exit cases.
+>
+> And VMExits.  There are basically two cases: EEXIT and everything else.
+> EEXIT is a glorified indirect jump, e.g. %RBX holds the target %RIP.
+> Everything else is an Asynchronous Enclave Exit (AEX).  On an AEX, %RIP
+> is set to a value specified by EENTER/ERESUME, %RBP and %RSP are
+> restored to pre-enclave values and all other registers are loaded with
+> synthetic state.  The actual interrupt/exception/VMExit then triggers,
+> e.g. the %RIP on the stack for an exception is always the AEX target,
+> not the %RIP inside the enclave that actually faulted.
 
-Agreed absolutely. If this is necessary, it seems like there should be
-an agreed-upon protocol such that the kernel can make it happen via
-returning to code in the vdso that performs the actual resume, so that
-the application never sees it.
+So what exactly happens when an enclave accesses non-enclave memory
+and takes a page fault, for example?  The SDM says that the #PF vector
+and error code are stored in the SSA frame where the kernel can't see
+them.  Is a real #PF then delivered?
 
-Rich
+I guess that, if the memory in question gets faulted in, then the
+kernel resumes exection at the AEP address, which does ERESUME, and
+the enclave resumes.  But if the access is bad, then the kernel
+delivers a signal (or uses some other new mechanism), and then what
+happens?  Is the enclave just considered dead?  Is user code supposed
+to EENTER back into the enclave to tell it that it got an error?
+
+This whole mechanism seems very complicated, and it's not clear
+exactly what behavior user code wants.
