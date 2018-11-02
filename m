@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCEDC65C22
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0404C32789
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC7E20657
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC7E20657
+	by mail.kernel.org (Postfix) with ESMTP id 7E9EA20657
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Nov 2018 23:20:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9EA20657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbeKCI3B (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:29:01 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32066 "EHLO mga06.intel.com"
+        id S1726705AbeKCI3h (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Nov 2018 04:29:37 -0400
+Received: from mga12.intel.com ([192.55.52.136]:46285 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726705AbeKCI3B (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:29:01 -0400
+        id S1728366AbeKCI3h (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 3 Nov 2018 04:29:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 16:19:51 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 16:19:26 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="270988522"
+   d="scan'208";a="270988468"
 Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.138])
-  by orsmga005.jf.intel.com with ESMTP; 02 Nov 2018 16:19:42 -0700
+  by orsmga005.jf.intel.com with ESMTP; 02 Nov 2018 16:19:16 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         linux-sgx@vger.kernel.org
@@ -38,241 +38,517 @@ Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
         shay.katz-zamir@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v15 23/23] x86/sgx: Driver documentation
-Date:   Sat,  3 Nov 2018 01:11:22 +0200
-Message-Id: <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v15 21/23] x86/sgx: Add a simple swapper for the EPC memory manager
+Date:   Sat,  3 Nov 2018 01:11:20 +0200
+Message-Id: <20181102231320.29164-22-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
 References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181102231122.fLVm02ozfhkSj1UQ6GrB4URaI6WAjCARp16FsuI9Wq8@z>
+Message-ID: <20181102231120.aNgAwNtNH7tEZ4itd9zO7aVT5ZKgCG9Wm1D0Z7wJwXg@z>
 
-Documentation of the features of the Software Guard eXtensions used
-by the Linux kernel and basic design choices for the core and driver
-and functionality.
+Wire up the EPC manager's reclaim flow to the SGX driver's swapping
+functionality.  In the long term there will be multiple users of the
+EPC manager, e.g. SGX driver and KVM, thus the interface between the
+EPC manager and the driver is fairly genericized and decoupled.  But
+to avoid adding unusued infrastructure, do not add any indirection
+between the EPC manager and the SGX driver.  This has the unfortunate
+and odd side effect of preventing the SGX driver from being compiled
+as a loadable module.  However, this should be a temporary situation
+that is remedied when a second user of EPC is added, i.e. KVM.
+
+The swapper thread ksgxswapd reclaims pages on the event when the number
+of free EPC pages goes below %SGX_NR_LOW_PAGES up until it reaches
+%SGX_NR_HIGH_PAGES.
+
+Pages are reclaimed in LRU fashion from a global list. The consumers
+take care of calling EBLOCK (block page from new accesses), ETRACK
+(restart counting the entering hardware threads) and EWB (write page to
+the regular memory) because executing these operations usually (if not
+always) requires to do some subsystem-internal locking operations.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
+Co-developed-by: Shay Katz-zamir <shay.katz-zamir@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
+Signed-off-by: Shay Katz-zamir <shay.katz-zamir@intel.com>
 ---
- Documentation/index.rst         |   1 +
- Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
- 2 files changed, 186 insertions(+)
- create mode 100644 Documentation/x86/intel_sgx.rst
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/include/asm/sgx.h                    |  10 +-
+ arch/x86/kernel/cpu/intel_sgx.c               | 241 +++++++++++++++++-
+ drivers/platform/x86/intel_sgx/sgx_encl.c     |   5 +-
+ .../platform/x86/intel_sgx/sgx_encl_page.c    |   3 +-
+ drivers/platform/x86/intel_sgx/sgx_fault.c    |   3 +-
+ drivers/platform/x86/intel_sgx/sgx_util.c     |   2 +-
+ 7 files changed, 245 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index 5db7e87c7cb1..1cdc139adb40 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -104,6 +104,7 @@ implementation.
-    :maxdepth: 2
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index b47e1a144409..5c329dfd0fd9 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1916,6 +1916,7 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
+ config INTEL_SGX_CORE
+ 	bool "Intel SGX core functionality"
+ 	depends on X86_64 && CPU_SUP_INTEL
++	select INTEL_SGX
+ 	help
+ 	Intel Software Guard eXtensions (SGX) CPU feature that allows ring 3
+ 	applications to create enclaves: private regions of memory that are
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index b6f014d0d88d..865e753e7745 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -14,6 +14,7 @@
  
-    sh/index
-+   x86/index
+ struct sgx_epc_page {
+ 	unsigned long desc;
++	void *owner;
+ 	struct list_head list;
+ };
  
- Filesystem Documentation
- ------------------------
-diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
-new file mode 100644
-index 000000000000..f6b7979c41f2
---- /dev/null
-+++ b/Documentation/x86/intel_sgx.rst
-@@ -0,0 +1,185 @@
-+===================
-+Intel(R) SGX driver
-+===================
+@@ -309,10 +310,17 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
+ 	return __encls_ret_2(SGX_EMODT, secinfo, addr);
+ }
+ 
+-struct sgx_epc_page *sgx_alloc_page(void);
++struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim);
+ int __sgx_free_page(struct sgx_epc_page *page);
+ void sgx_free_page(struct sgx_epc_page *page);
+ int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+ 	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
++void sgx_page_reclaimable(struct sgx_epc_page *page);
 +
-+Introduction
-+============
++bool sgx_encl_page_get(struct sgx_epc_page *epc_page);
++void sgx_encl_page_put(struct sgx_epc_page *epc_page);
++bool sgx_encl_page_reclaim(struct sgx_epc_page *epc_page);
++void sgx_encl_page_block(struct sgx_epc_page *epc_page);
++void sgx_encl_page_write(struct sgx_epc_page *epc_page);
+ 
+ #endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+index 19041e96d1da..cc8c4a1e6650 100644
+--- a/arch/x86/kernel/cpu/intel_sgx.c
++++ b/arch/x86/kernel/cpu/intel_sgx.c
+@@ -10,24 +10,141 @@
+ #include <linux/slab.h>
+ #include <asm/sgx.h>
+ 
++/**
++ * enum sgx_swap_constants - the constants used by the swapping code
++ * %SGX_NR_TO_SCAN:	the number of pages to scan in a single round
++ * %SGX_NR_LOW_PAGES:	the low watermark for ksgxswapd when it starts to swap
++ *			pages.
++ * %SGX_NR_HIGH_PAGES:	the high watermark for ksgxswapd what it stops swapping
++ *			pages.
++ */
++enum sgx_swap_constants {
++	SGX_NR_TO_SCAN		= 16,
++	SGX_NR_LOW_PAGES	= 32,
++	SGX_NR_HIGH_PAGES	= 64,
++};
 +
-+Intel(R) SGX is a set of CPU instructions that can be used by applications to
-+set aside private regions of code and data. The code outside the enclave is
-+disallowed to access the memory inside the enclave by the CPU access control.
-+In a way you can think that SGX provides inverted sandbox. It protects the
-+application from a malicious host.
+ struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ EXPORT_SYMBOL_GPL(sgx_epc_sections);
+ 
+ static int sgx_nr_epc_sections;
++static LIST_HEAD(sgx_active_page_list);
++static DEFINE_SPINLOCK(sgx_active_page_list_lock);
++static struct task_struct *ksgxswapd_tsk;
++static DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+ 
+ /* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
+ static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
+ 
+ /**
+- * sgx_alloc_page - Allocate an EPC page
+- *
+- * Try to grab a page from the free EPC page list.
++ * sgx_reclaim_pages - reclaim EPC pages from the consumers
+  *
+- * Return:
+- *   a pointer to a &struct sgx_epc_page instance,
+- *   -errno on error
++ * Takes a fixed chunk of pages from the global list of consumed EPC pages and
++ * tries to swap them. Only the pages that are either being freed by the
++ * consumer or actively used are skipped.
+  */
+-struct sgx_epc_page *sgx_alloc_page(void)
++static void sgx_reclaim_pages(void)
++{
++	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN + 1];
++	struct sgx_epc_page *epc_page;
++	struct sgx_epc_section *section;
++	int i, j;
 +
-+You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
++	spin_lock(&sgx_active_page_list_lock);
++	for (i = 0, j = 0; i < SGX_NR_TO_SCAN; i++) {
++		if (list_empty(&sgx_active_page_list))
++			break;
 +
-+	``cat /proc/cpuinfo  | grep sgx``
++		epc_page = list_first_entry(&sgx_active_page_list,
++					    struct sgx_epc_page, list);
++		list_del_init(&epc_page->list);
 +
-+Overview of SGX
-+===============
++		if (sgx_encl_page_get(epc_page))
++			chunk[j++] = epc_page;
++		else
++			/* The owner is freeing the page. No need to add the
++			 * page back to the list of reclaimable pages.
++			 */
++			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++	}
++	spin_unlock(&sgx_active_page_list_lock);
 +
-+SGX has a set of data structures to maintain information about the enclaves and
-+their security properties. BIOS reserves a fixed size region of physical memory
-+for these structures by setting Processor Reserved Memory Range Registers
-+(PRMRR).
++	for (i = 0; i < j; i++) {
++		epc_page = chunk[i];
++		if (sgx_encl_page_reclaim(epc_page))
++			continue;
 +
-+This memory range is protected from outside access by the CPU and all the data
-+coming in and out of the CPU package is encrypted by a key that is generated for
-+each boot cycle.
++		sgx_encl_page_put(epc_page);
 +
-+Enclaves execute in ring-3 in a special enclave submode using pages from the
-+reserved memory range. A fixed logical address range for the enclave is reserved
-+by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
-+the documentation commonly as the ELRANGE.
++		spin_lock(&sgx_active_page_list_lock);
++		list_add_tail(&epc_page->list, &sgx_active_page_list);
++		spin_unlock(&sgx_active_page_list_lock);
 +
-+Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
-+executing in the enclave mode inside the enclave, #GP is raised. On the other
-+hand enclave code can make memory accesses both inside and outside of the
-+ELRANGE.
++		chunk[i] = NULL;
++	}
 +
-+Enclave can only execute code inside the ELRANGE. Instructions that may cause
-+VMEXIT, IO instructions and instructions that require a privilege change are
-+prohibited inside the enclave. Interrupts and exceptions always cause enclave
-+to exit and jump to an address outside the enclave given when the enclave is
-+entered by using the leaf instruction ENCLS(EENTER).
++	for (i = 0; i < j; i++) {
++		epc_page = chunk[i];
++		if (epc_page)
++			sgx_encl_page_block(epc_page);
++	}
 +
-+Data types
-+----------
++	for (i = 0; i < j; i++) {
++		epc_page = chunk[i];
++		if (epc_page) {
++			sgx_encl_page_write(epc_page);
++			sgx_encl_page_put(epc_page);
++			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
 +
-+The protected memory range contains the following data:
++			section = sgx_epc_section(epc_page);
++			spin_lock(&section->lock);
++			section->pages[section->free_cnt++] = epc_page;
++			spin_unlock(&section->lock);
++		}
++	}
++}
 +
-+* **Enclave Page Cache (EPC):** protected pages
-+* **Enclave Page Cache Map (EPCM):** a database that describes the state of the
-+  pages and link them to an enclave.
++static unsigned long sgx_calc_free_cnt(void)
++{
++	struct sgx_epc_section *section;
++	unsigned long free_cnt = 0;
++	int i;
 +
-+EPC has a number of different types of pages:
++	for (i = 0; i < sgx_nr_epc_sections; i++) {
++		section = &sgx_epc_sections[i];
++		free_cnt += section->free_cnt;
++	}
 +
-+* **SGX Enclave Control Structure (SECS)**: describes the global
-+  properties of an enclave.
-+* **Regular (REG):** code and data pages in the ELRANGE.
-+* **Thread Control Structure (TCS):** pages that define entry points inside an
-+  enclave. The enclave can only be entered through these entry points and each
-+  can host a single hardware thread at a time.
-+* **Version Array (VA)**: 64-bit version numbers for pages that have been
-+  swapped outside the enclave. Each page contains 512 version numbers.
++	return free_cnt;
++}
 +
-+Launch control
-+--------------
++static inline bool sgx_should_reclaim(void)
++{
++	return sgx_calc_free_cnt() < SGX_NR_HIGH_PAGES &&
++	       !list_empty(&sgx_active_page_list);
++}
 +
-+To launch an enclave, two structures must be provided for ENCLS(EINIT):
++static int ksgxswapd(void *p)
++{
++	set_freezable();
 +
-+1. **SIGSTRUCT:** signed measurement of the enclave binary.
-+2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
-+   *launch key*, which is re-generated for each boot cycle.
++	while (!kthread_should_stop()) {
++		if (try_to_freeze())
++			continue;
 +
-+The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
-+IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
-+key do not require a valid EINITTOKEN and can be authorized with special
-+privileges. One of those privileges is ability to acquire the launch key with
-+ENCLS(EGETKEY).
++		wait_event_freezable(ksgxswapd_waitq, kthread_should_stop() ||
++						      sgx_should_reclaim());
 +
-+**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
-+IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
-+feature control register and handing over control to the operating system.
++		if (sgx_should_reclaim())
++			sgx_reclaim_pages();
 +
-+Enclave construction
-+--------------------
++		cond_resched();
++	}
 +
-+The construction is started by filling out the SECS that contains enclave
-+address range, privileged attributes and measurement of TCS and REG pages (pages
-+that will be mapped to the address range) among the other things. This structure
-+is passed out to the ENCLS(ECREATE) together with a physical address of a page
-+in EPC that will hold the SECS.
++	return 0;
++}
 +
-+The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
-+SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
++static struct sgx_epc_page *sgx_try_alloc_page(void *owner)
+ {
+ 	struct sgx_epc_section *section;
+ 	struct sgx_epc_page *page;
+@@ -42,11 +159,58 @@ struct sgx_epc_page *sgx_alloc_page(void)
+ 		}
+ 		spin_unlock(&section->lock);
+ 
+-		if (page)
++		if (page) {
++			page->owner = owner;
+ 			return page;
++		}
+ 	}
+ 
+-	return ERR_PTR(-ENOMEM);
++	return NULL;
++}
 +
-+After all of the pages have been added, the enclave is initialized with
-+ENCLS(EINIT). ENCLS(INIT) checks that the SIGSTRUCT is signed with the contained
-+public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
-+the token is valid (CMAC'd with the launch key). If the token is not valid,
-+the CPU will check whether the enclave is signed with a key matching to the
-+IA32_SGXLEPUBKEYHASHn MSRs.
++/**
++ * sgx_alloc_page - Allocate an EPC page
++ * @owner:	the owner of the EPC page
++ * @reclaim:	reclaim pages if necessary
++ *
++ * Try to grab a page from the free EPC page list. If there is a free page
++ * available, it is returned to the caller. The @reclaim parameter hints
++ * the EPC memory manager to swap pages when required.
++ *
++ * Return:
++ *   a pointer to a &struct sgx_epc_page instance,
++ *   -errno on error
++ */
++struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
++{
++	struct sgx_epc_page *entry;
 +
-+Swapping pages
-+--------------
++	for ( ; ; ) {
++		entry = sgx_try_alloc_page(owner);
++		if (entry)
++			break;
 +
-+Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
-+addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
-+structure (Page Crypto MetaData) as input. The VA page will seal a version
-+number for the page. PCMD is 128 byte structure that contains tracking
-+information for the page, most importantly its MAC. With these structures the
-+enclave is sealed and rollback protected while it resides in the unprotected
-+memory.
++		if (list_empty(&sgx_active_page_list))
++			return ERR_PTR(-ENOMEM);
 +
-+Before the page can be swapped out it must not have any active TLB references.
-+ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
-+that no new TLB entries can be created to it by the hardware threads.
++		if (!reclaim) {
++			entry = ERR_PTR(-EBUSY);
++			break;
++		}
 +
-+After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
-+increased counter value to the entering hardware threads. ENCLS(EWB) will
-+return SGX_NOT_TRACKED error while there are still threads with the earlier
-+couner value because that means that there might be hardware thread inside
-+the enclave with TLB entries to pages that are to be swapped.
++		if (signal_pending(current)) {
++			entry = ERR_PTR(-ERESTARTSYS);
++			break;
++		}
 +
-+Kernel internals
-+================
++		sgx_reclaim_pages();
++		schedule();
++	}
 +
-+Requirements
-+------------
++	if (sgx_calc_free_cnt() < SGX_NR_LOW_PAGES)
++		wake_up(&ksgxswapd_waitq);
 +
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
++	return entry;
+ }
+ EXPORT_SYMBOL_GPL(sgx_alloc_page);
+ 
+@@ -54,10 +218,12 @@ EXPORT_SYMBOL_GPL(sgx_alloc_page);
+  * __sgx_free_page - Free an EPC page
+  * @page:	pointer a previously allocated EPC page
+  *
+- * EREMOVE an EPC page and insert it back to the list of free pages.
++ * EREMOVE an EPC page and insert it back to the list of free pages.  If the
++ * page is reclaimable, delete it from the active page list.
+  *
+  * Return:
+  *   0 on success
++ *   -EBUSY if the page cannot be removed from the active list
+  *   SGX error code if EREMOVE fails
+  */
+ int __sgx_free_page(struct sgx_epc_page *page)
+@@ -65,6 +231,23 @@ int __sgx_free_page(struct sgx_epc_page *page)
+ 	struct sgx_epc_section *section = sgx_epc_section(page);
+ 	int ret;
+ 
++	/*
++	 * Remove the page from the active list if necessary.  If the page
++	 * is actively being reclaimed, i.e. RECLAIMABLE is set but the
++	 * page isn't on the active list, return -EBUSY as we can't free
++	 * the page at this time since it is "owned" by the reclaimer.
++	 */
++	spin_lock(&sgx_active_page_list_lock);
++	if (page->desc & SGX_EPC_PAGE_RECLAIMABLE) {
++		if (list_empty(&page->list)) {
++			spin_unlock(&sgx_active_page_list_lock);
++			return -EBUSY;
++		}
++		list_del(&page->list);
++		page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++	}
++	spin_unlock(&sgx_active_page_list_lock);
 +
+ 	ret = __eremove(sgx_epc_addr(page));
+ 	if (ret)
+ 		return ret;
+@@ -81,15 +264,17 @@ EXPORT_SYMBOL_GPL(__sgx_free_page);
+  * sgx_free_page - Free an EPC page and WARN on failure
+  * @page:	pointer to a previously allocated EPC page
+  *
+- * EREMOVE an EPC page and insert it back to the list of free pages, and WARN
+- * if EREMOVE fails.  For use when the call site cannot (or chooses not to)
+- * handle failure, i.e. the page is leaked on failure.
++ * EREMOVE an EPC page and insert it back to the list of free pages.  If the
++ * page is reclaimable, delete it from the active page list.  WARN on any
++ * failure.  For use when the call site cannot (or chooses not to) handle
++ * failure, i.e. the page is leaked on failure.
+  */
+ void sgx_free_page(struct sgx_epc_page *page)
+ {
+ 	int ret;
+ 
+ 	ret = __sgx_free_page(page);
++	WARN(ret < 0, "sgx: cannot free page, reclaim in-progress");
+ 	WARN(ret > 0, "sgx: EREMOVE returned %d (0x%x)", ret, ret);
+ }
+ EXPORT_SYMBOL_GPL(sgx_free_page);
+@@ -142,6 +327,23 @@ int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+ }
+ EXPORT_SYMBOL(sgx_einit);
+ 
++/**
++ * sgx_page_reclaimable - mark a page as reclaimable
++ *
++ * @page:	EPC page
++ *
++ * Mark a page as reclaimable and add it to the active page list.  Pages
++ * are automatically removed from the active list when freed.
++ */
++void sgx_page_reclaimable(struct sgx_epc_page *page)
++{
++	spin_lock(&sgx_active_page_list_lock);
++	page->desc |= SGX_EPC_PAGE_RECLAIMABLE;
++	list_add_tail(&page->list, &sgx_active_page_list);
++	spin_unlock(&sgx_active_page_list_lock);
++}
++EXPORT_SYMBOL_GPL(sgx_page_reclaimable);
 +
-+Roles and responsibilities
-+--------------------------
+ static __init void sgx_free_epc_section(struct sgx_epc_section *section)
+ {
+ 	int i;
+@@ -190,6 +392,11 @@ static __init void sgx_page_cache_teardown(void)
+ {
+ 	int i;
+ 
++	if (ksgxswapd_tsk) {
++		kthread_stop(ksgxswapd_tsk);
++		ksgxswapd_tsk = NULL;
++	}
 +
-+SGX introduces system resources, e.g. EPC memory, that must be accessible to
-+multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
-+and KVM (to expose SGX to VMs), ideally without introducing any dependencies
-+between each SGX entity.  To that end, the kernel owns and manages the shared
-+system resources, i.e. the EPC and Launch Control MSRs, and defines functions
-+that provide appropriate access to the shared resources.  SGX support for
-+user space and VMs is left to the SGX platform driver and KVM respectively.
+ 	for (i = 0; i < sgx_nr_epc_sections; i++)
+ 		sgx_free_epc_section(&sgx_epc_sections[i]);
+ }
+@@ -249,6 +456,7 @@ static __init int sgx_page_cache_init(void)
+ 
+ static __init int sgx_init(void)
+ {
++	struct task_struct *tsk;
+ 	int ret;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_SGX))
+@@ -258,6 +466,13 @@ static __init int sgx_init(void)
+ 	if (ret)
+ 		return ret;
+ 
++	tsk = kthread_run(ksgxswapd, NULL, "ksgxswapd");
++	if (IS_ERR(tsk)) {
++		sgx_page_cache_teardown();
++		return PTR_ERR(tsk);
++	}
++	ksgxswapd_tsk = tsk;
 +
-+Launching enclaves
-+------------------
-+
-+The current kernel implementation supports only unlocked MSRs i.e.
-+FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
-+MSRs to the hash of the public key modulus of the enclave signer, which is one
-+f the fields in the SIGSTRUCT.
-+
-+EPC management
-+--------------
-+
-+Due to the unique requirements for swapping EPC pages, and because EPC pages
-+(currently) do not have associated page structures, management of the EPC is
-+not handled by the standard Linux swapper.  SGX directly handles swapping
-+of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
-+mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
-+implement function callbacks that can be invoked by the kernel to age,
-+swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
-+controls what happens and when, while the consumers (driver, KVM, etc..) do
-+the actual work.
-+
-+SGX uapi
-+========
-+
-+.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
-+   :functions: sgx_ioc_enclave_create
-+               sgx_ioc_enclave_add_page
-+               sgx_ioc_enclave_init
-+
-+.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
-+
-+References
-+==========
-+
-+* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
+ 	return 0;
+ }
+ 
+diff --git a/drivers/platform/x86/intel_sgx/sgx_encl.c b/drivers/platform/x86/intel_sgx/sgx_encl.c
+index 1d0a51120e3d..5ef2fa7e92c3 100644
+--- a/drivers/platform/x86/intel_sgx/sgx_encl.c
++++ b/drivers/platform/x86/intel_sgx/sgx_encl.c
+@@ -191,6 +191,7 @@ static bool sgx_process_add_page_req(struct sgx_add_page_req *req,
+ 	encl->secs_child_cnt++;
+ 	sgx_set_page_loaded(encl_page, epc_page);
+ 	sgx_test_and_clear_young(encl_page);
++	sgx_page_reclaimable(encl_page->epc_page);
+ 	return true;
+ }
+ 
+@@ -220,7 +221,7 @@ static void sgx_add_page_worker(struct work_struct *work)
+ 		if (skip_rest)
+ 			goto next;
+ 
+-		epc_page = sgx_alloc_page();
++		epc_page = sgx_alloc_page(req->encl_page, true);
+ 		down_read(&encl->mm->mmap_sem);
+ 		mutex_lock(&encl->lock);
+ 
+@@ -467,7 +468,7 @@ int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	struct sgx_epc_page *secs_epc;
+ 	long ret;
+ 
+-	secs_epc = sgx_alloc_page();
++	secs_epc = sgx_alloc_page(&encl->secs, true);
+ 	if (IS_ERR(secs_epc)) {
+ 		ret = PTR_ERR(secs_epc);
+ 		return ret;
+diff --git a/drivers/platform/x86/intel_sgx/sgx_encl_page.c b/drivers/platform/x86/intel_sgx/sgx_encl_page.c
+index fc9bea9f4aea..885eea019c86 100644
+--- a/drivers/platform/x86/intel_sgx/sgx_encl_page.c
++++ b/drivers/platform/x86/intel_sgx/sgx_encl_page.c
+@@ -12,8 +12,7 @@
+ 
+ static inline struct sgx_encl_page *to_encl_page(struct sgx_epc_page *epc_page)
+ {
+-	WARN_ON_ONCE(1);
+-	return NULL;
++	return (struct sgx_encl_page *)epc_page->owner;
+ }
+ 
+ bool sgx_encl_page_get(struct sgx_epc_page *epc_page)
+diff --git a/drivers/platform/x86/intel_sgx/sgx_fault.c b/drivers/platform/x86/intel_sgx/sgx_fault.c
+index 61d77e9f8fec..71acb2d3f65c 100644
+--- a/drivers/platform/x86/intel_sgx/sgx_fault.c
++++ b/drivers/platform/x86/intel_sgx/sgx_fault.c
+@@ -13,7 +13,7 @@ static struct sgx_epc_page *__sgx_load_faulted_page(
+ 	struct sgx_epc_page *epc_page;
+ 	int ret;
+ 
+-	epc_page = sgx_alloc_page();
++	epc_page = sgx_alloc_page(encl_page, false);
+ 	if (IS_ERR(epc_page))
+ 		return epc_page;
+ 	ret = sgx_encl_load_page(encl_page, epc_page);
+@@ -73,6 +73,7 @@ static struct sgx_encl_page *__sgx_fault_page(struct vm_area_struct *vma,
+ 
+ 	encl->secs_child_cnt++;
+ 	sgx_test_and_clear_young(entry);
++	sgx_page_reclaimable(entry->epc_page);
+ 	if (do_reserve)
+ 		entry->desc |= SGX_ENCL_PAGE_RESERVED;
+ 
+diff --git a/drivers/platform/x86/intel_sgx/sgx_util.c b/drivers/platform/x86/intel_sgx/sgx_util.c
+index eb8072b36a47..1480c4ad0d33 100644
+--- a/drivers/platform/x86/intel_sgx/sgx_util.c
++++ b/drivers/platform/x86/intel_sgx/sgx_util.c
+@@ -81,7 +81,7 @@ struct sgx_epc_page *sgx_alloc_va_page(void)
+ 	struct sgx_epc_page *epc_page;
+ 	int ret;
+ 
+-	epc_page = sgx_alloc_page();
++	epc_page = sgx_alloc_page(NULL, true);
+ 	if (IS_ERR(epc_page))
+ 		return ERR_CAST(epc_page);
+ 
 -- 
 2.19.1
 
