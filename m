@@ -1,42 +1,49 @@
-Date: Thu, 1 Nov 2018 15:31:07 -0400
-From: Rich Felker <dalias@libc.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Jann Horn <jannh@google.com>, <luto@kernel.org>,
-	<dave.hansen@linux.intel.com>, <sean.j.christopherson@intel.com>,
-	<jethro@fortanix.com>, <jarkko.sakkinen@linux.intel.com>,
-	<fweimer@redhat.com>, <linux-api@vger.kernel.org>, <x86@kernel.org>,
-	<linux-arch@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, <bp@alien8.de>, <carlos@redhat.com>,
-	<adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181101193107.GE5150@brightrain.aerifal.cx>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
-Sender: Rich Felker <dalias@aerifal.cx>
-Return-Path: dalias@aerifal.cx
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 3 Nov 2018 15:11:39 +0200
+Message-ID: <CAHp75VcgFstv5EjY2DzsLGAimxf3Z2g-Mych1zW40txS9b7Bmg@mail.gmail.com>
+Subject: Re: [PATCH v15 11/23] x86/sgx: Add definitions for SGX's CPUID leaf
+ and variable sub-leafs
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: andy.shevchenko@gmail.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 01, 2018 at 12:10:35PM -0700, Linus Torvalds wrote:
-> On Thu, Nov 1, 2018 at 11:52 AM Rich Felker <dalias@libc.org> wrote:
-> >
-> > There's no need to chain if the handler is specific to the context
-> > where the fault happens. You just replace the handler with the one
-> > relevant to the code you're about to run before you run it.
-> 
-> That's much too expensive to do as a system call.
+On Sat, Nov 3, 2018 at 1:16 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> SGX defines its own CPUID leaf, 0x12, along with a variable number of
+> sub-leafs.  Sub-leafs 0 and 1 are always available if SGX is supported
+> and enumerate various SGX features, e.g. instruction sets and enclave
+> capabilities.  Sub-leafs 2+ are variable, both in their existence and
+> in what they enumerate.  Bits 3:0 of EAX report the sub-leaf type,
+> with the remaining bits in EAX, EBX, ECX and EDX being type-specific.
+> Currently, the only known sub-leaf type enumerates an EPC section.  An
+> EPC section is simply a range of EPC memory available to software.
+> The "list" of varaible SGX sub-leafs is NULL-terminated, i.e. software
+> is expected to query CPUID until an invalid sub-leaf is encountered.
 
-See my other emails in this thread. You would register the *address*
-(in TLS) of a function pointer object pointing to the handler, rather
-than the function address of the handler. Then switching handler is
-just a single store in userspace, no syscalls involved.
+> +       SGX_CPUID_SUB_LEAF_TYPE_MASK    = 0xF,
 
-Rich
+GENMASK() if it suits here?
+
+P.S. Btw, BIT() and GENMASK() macros are now in a separate header,
+i.e. linux/bits.h, perhaps you might need to revisit code to include
+it explicitly
+
+--
+With Best Regards,
+Andy Shevchenko
