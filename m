@@ -2,66 +2,66 @@ Return-Path: <SRS0=zuU4=NO=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBD9C0044C
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Nov 2018 13:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 229F8C0044C
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Nov 2018 13:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 732142081D
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Nov 2018 13:05:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9BA42082E
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Nov 2018 13:11:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhR9GdnF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 732142081D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYItpg61"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9BA42082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbeKCWRI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Nov 2018 18:17:08 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43366 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbeKCWRI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 3 Nov 2018 18:17:08 -0400
-Received: by mail-qk1-f196.google.com with SMTP id r71so7468122qkr.10;
-        Sat, 03 Nov 2018 06:05:50 -0700 (PDT)
+        id S1728025AbeKCWXK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Nov 2018 18:23:10 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37167 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbeKCWXJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 3 Nov 2018 18:23:09 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 131so7537454qkd.4;
+        Sat, 03 Nov 2018 06:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aB4G3w4rpmdu6ojkMiW7GyduUFi8xbFWz6k4BN3jvjQ=;
-        b=nhR9GdnF/UdVgznjZyCToBxldtIL8n7A9Y6o0KZ9KKiS6eVqbfSnTUUGpVE3wHar94
-         u/fwrxNPl6nTk/0FpADSp8LcYtvfD/hrp2jra85Uh19hiYsJNZk7A7emhT6OHb93IV9I
-         vpDf7iuFwPUUFj2aWjcLQsTAidZfvi34StCkIpzQ+QqR2LlLG2KBM0ZWcya4MRIjXR0t
-         CfovdKj9isD3FYYxzc9F3AsY4x1Z1VdpYToiuUCA/BTCP6WwYPixvNfpGYEiMkstGTq2
-         oCUsKyrTP/FggPDlsAh1Hj9S57TkQ2yr4lFgioQY/SE7QizMvNPyGDakxXYEHHU7VYHr
-         GJfA==
+        bh=3dzFCWaGvY5KFjWHvqsJVWBcDuapQeVNu86FFOkK8IA=;
+        b=BYItpg61k3VralrqBQ59UKQlUW2o8WxXX1UGYyAF4huIgePXs6JGu+DmYI5NkrM35e
+         Z9Bk873KIQiTqJEzZ1UmlscHlgkUTgzlnJFVS9I+z6FfalUA9Ocg7/CVlgzjx4jC/zYv
+         Xc7IH5Gj73FHH+SmMerLsRG7bcUEofhfOdI+oZGCrHl/AzFJKM0NnRFMO+p2fJEKpAYK
+         13OLo6prRIRI9ld5SZd2cznEjUy+HCGpkA4DQdz+RzIal3wOFSGkmsJSNblcQGCOwDBh
+         pfWARxIKfewoTsFJU+i2naJb8946DFe/OT+pfHis3SgMRJz/41UNANpaa5qYAkkWIP/u
+         ZWvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aB4G3w4rpmdu6ojkMiW7GyduUFi8xbFWz6k4BN3jvjQ=;
-        b=rfSmnsi9eQ7It4DikKGR756vf6PjZ1/Qjdre4ZFHRVE6VvJX/INo2btnLgVSEVNQB4
-         d5eEKuv+o6jltXG13BW+9HonMycEr85+4ZukDCKFfXZQfviU9rIZnh1R6aeoDMEM9WVq
-         Du3MPK07Cj/Pa763DHMf4L2I+oW1N9+OBWGP0HJY1OtmYbqYuQqo74JERPnIM0/lYMFr
-         6x52eglhuHJT+OCHYJN121UWsfVQUkglKHfgt9ZEAlVrHADU+MYge+uZCelh3kT18+q0
-         vJhSjkeg72vPDrnFYz252RXr1O4zaA5gOaO0HmzblDTrdV1dZuHvJiiJQIKiLSLGBPgO
-         yqTw==
-X-Gm-Message-State: AGRZ1gKwfXBP8ASFgs/iPwWSX4SKluhvH6CiSJBX1ePthkmkqcRO8lwq
-        vBtXOVQPH5nRG+uHqh0OZNE8HVTu0tt/kb6Tp08=
-X-Google-Smtp-Source: AJdET5dOYpTNYGNSVJwS6wRs2D30dtOolmSmPXwn7W2amfMSv2dodxm6VjGm/CyZ5LvsM8Paj8kx7F+ZUFI/lI+0H2k=
-X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr13236258qkc.219.1541250350399;
- Sat, 03 Nov 2018 06:05:50 -0700 (PDT)
+        bh=3dzFCWaGvY5KFjWHvqsJVWBcDuapQeVNu86FFOkK8IA=;
+        b=QHHf1o4Yhq7tLRd3PAdqvzJSEFeE6/+Lo+cYVeCwpcG0/N6SNfmUlFNesrzsAod9Aw
+         7QgfmnxufUm0p8SGZKLRogt6GD4rMo5bAGQz7T7t3kCBZ1MYYSnBYZDika4yuIbTPvLL
+         rBDIp2j+y8LLiG4I6InrtT+kgGWNmzMWD3x/ZMgufOJU5QUGkNeichx0tQt1Wr7rWQaT
+         caThF3pfeTyv1ltCKWHUhkOsWi8rFFhXll1s5c18fBj7jJtTVPczpAQcEBYazY49y364
+         IyVnlo5fleIWZWI5QmZPreU4/xZYwe3ZIONPyvsmU5bZKTcdBwhxg7Yk0MmSaGDuCJxe
+         +AyQ==
+X-Gm-Message-State: AGRZ1gIJY1EXMjvlxFY+HFdz9ji9Wg713xTNgRv1LveXH2jG6jsxzaSR
+        TN2XJp/4jxCKS8qXEvqAhgs4BDy7+orp3UkjvZI=
+X-Google-Smtp-Source: AJdET5eW3vLJ92lXgsYdwWqsk5atGgyN3Go1JBW2Wt4PWXa997DplyiTvpfQrccRAeZ4dX3HuKz5dhWFtTwKvqYtF6s=
+X-Received: by 2002:aed:2d24:: with SMTP id h33mr7316208qtd.373.1541250710755;
+ Sat, 03 Nov 2018 06:11:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 3 Nov 2018 15:05:39 +0200
+Date:   Sat, 3 Nov 2018 15:11:39 +0200
 Message-ID:
- <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
-Subject: Re: [PATCH v15 05/23] x86/cpu/intel: Detect SGX support and update
- caps appropriately
+ <CAHp75VcgFstv5EjY2DzsLGAimxf3Z2g-Mych1zW40txS9b7Bmg@mail.gmail.com>
+Subject: Re: [PATCH v15 11/23] x86/sgx: Add definitions for SGX's CPUID leaf
+ and variable sub-leafs
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
@@ -74,98 +74,36 @@ Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, davidwang@zhaoxin.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        qianyue.zj@alibaba-inc.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181103130539.K_SDeVCR3Q_aSr-sPThSP_3KcTHRCpF-FSOefF8tGbk@z>
+Message-ID: <20181103131139.HVNV5tfGSjlLdHH9HZIGFz4DZHdlf7dK5wmQfdGV8DM@z>
 
 On Sat, Nov 3, 2018 at 1:16 AM Jarkko Sakkinen
 <jarkko.sakkinen@linux.intel.com> wrote:
 >
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Similar to other large Intel features such as VMX and TXT, SGX must be
-> explicitly enabled in IA32_FEATURE_CONTROL MSR to be truly usable.
-> Clear all SGX related capabilities if SGX is not fully enabled in
-> IA32_FEATURE_CONTROL or if the SGX1 instruction set isn't supported
-> (impossible on bare metal, theoretically possible in a VM if the VMM
-> is doing something weird).
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kernel/cpu/intel.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index fc3c07fe7df5..9bf8fe2c04ac 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -596,6 +596,30 @@ static void detect_tme(struct cpuinfo_x86 *c)
->         c->x86_phys_bits -= keyid_bits;
->  }
->
-> +static void detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +       bool unsupported = false;
-> +       unsigned long long fc;
-> +
-> +       rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +       if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +               pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-> +               unsupported = true;
-> +       } else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> +               pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
-> +               unsupported = true;
-> +       } else if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> +               pr_err_once("sgx: SGX1 instruction set not supported\n");
-> +               unsupported = true;
-> +       }
+> SGX defines its own CPUID leaf, 0x12, along with a variable number of
+> sub-leafs.  Sub-leafs 0 and 1 are always available if SGX is supported
+> and enumerate various SGX features, e.g. instruction sets and enclave
+> capabilities.  Sub-leafs 2+ are variable, both in their existence and
+> in what they enumerate.  Bits 3:0 of EAX report the sub-leaf type,
+> with the remaining bits in EAX, EBX, ECX and EDX being type-specific.
+> Currently, the only known sub-leaf type enumerates an EPC section.  An
+> EPC section is simply a range of EPC memory available to software.
+> The "list" of varaible SGX sub-leafs is NULL-terminated, i.e. software
+> is expected to query CPUID until an invalid sub-leaf is encountered.
 
-If you do
+> +       SGX_CPUID_SUB_LEAF_TYPE_MASK    = 0xF,
 
-} else {
- /* Supported */
- return;
-}
+GENMASK() if it suits here?
 
-here, you may get rid of temporary variable.
+P.S. Btw, BIT() and GENMASK() macros are now in a separate header,
+i.e. linux/bits.h, perhaps you might need to revisit code to include
+it explicitly
 
-(Up to you)
-
-> +
-> +       if (unsupported) {
-> +               setup_clear_cpu_cap(X86_FEATURE_SGX);
-> +               setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> +               setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> +       }
-> +}
-> +
->  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
->  {
->         u64 epb;
-> @@ -763,6 +787,9 @@ static void init_intel(struct cpuinfo_x86 *c)
->         if (cpu_has(c, X86_FEATURE_TME))
->                 detect_tme(c);
->
-> +       if (cpu_has(c, X86_FEATURE_SGX))
-> +               detect_sgx(c);
-> +
->         init_intel_energy_perf(c);
->
->         init_intel_misc_features(c);
-> --
-> 2.19.1
->
-
-
--- 
+--
 With Best Regards,
 Andy Shevchenko
