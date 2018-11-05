@@ -1,4 +1,8 @@
-Date: Tue, 6 Nov 2018 14:03:41 +0200
+Received: from mga14.intel.com ([192.55.52.115]:46489 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S2387515AbeKFC4w (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Mon, 5
+ Nov 2018 21:56:52 -0500
+Date: Mon, 5 Nov 2018 19:35:57 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
 CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
@@ -8,72 +12,66 @@ CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
 	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
 	<mark.shanahan@intel.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, <suresh.b.siddha@intel.com>, "Linux Kernel Mailing
- List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
-Message-ID: <20181106120341.GA11465@linux.intel.com>
+	<andriy.shevchenko@linux.intel.com>, <suresh.b.siddha@intel.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Reinette Chatre
+	<reinette.chatre@intel.com>, "Rafael J. Wysocki"
+	<rafael.j.wysocki@intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
+Message-ID: <20181105173557.GF4502@linux.intel.com>
 References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
- <CAHp75VdhSwy8zzf64PZnHhZVikJEzasu-=a+UOz4cLAxEJW-YA@mail.gmail.com>
- <20181105173038.GD4502@linux.intel.com>
- <CAHp75Vfa2jvjOtvERB_Td1zCrfKyJp24Prd+foYz02kUCjNr-g@mail.gmail.com>
+ <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
+ <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CAHp75Vfa2jvjOtvERB_Td1zCrfKyJp24Prd+foYz02kUCjNr-g@mail.gmail.com>
-Sender: <platform-driver-x86-owner@vger.kernel.org>
-Return-Path: platform-driver-x86-owner@vger.kernel.org
-MIME-Version: 1.0
+In-Reply-To: <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Mon, Nov 05, 2018 at 10:39:46PM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 5, 2018 at 7:30 PM Jarkko Sakkinen
+On Sat, Nov 03, 2018 at 03:22:34PM +0200, Andy Shevchenko wrote:
+> On Sat, Nov 3, 2018 at 1:17 AM Jarkko Sakkinen
 > <jarkko.sakkinen@linux.intel.com> wrote:
 > >
-> > On Sat, Nov 03, 2018 at 03:17:35PM +0200, Andy Shevchenko wrote:
-> > > On Sat, Nov 3, 2018 at 1:18 AM Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > >
-> > > > ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
-> > > > The ENCLS function that is executed is specified in EAX, with each
-> > > > function potentially having more leaf-specific operands beyond EAX.
-> > > > ENCLS introduces its own (positive value) error codes that (some)
-> > > > leafs use to return failure information in EAX.  Leafs that return
-> > > > an error code also modify RFLAGS.  And finally, ENCLS generates
-> > > > ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
-> > > > encounter faults on ENCLS that must be handled gracefully.
-> > > >
-> > > > Because of the complexity involved in encoding ENCLS and handling its
-> > > > assortment of failure paths, executing any given leaf is not a simple
-> > > > matter of emitting ENCLS.
-> > > >
-> > > > To enable adding support for ENCLS leafs with minimal fuss, add a
-> > > > two-layer macro system along with an encoding scheme to allow wrappers
-> > > > to return trap numbers along ENCLS-specific error codes.  The bottom
-> > > > layer of the macro system splits between the leafs that return an
-> > > > error code and those that do not.  The second layer generates the
-> > > > correct input/output annotations based on the number of operands for
-> > > > each leaf function.
-> > >
-> > > > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> > >
-> > > > +/**
-> > >
-> > > I dunno if kernel-doc script still complains about this.
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > >
-> > Is there a way to ask for make htmldocs to do only a subset of docs?
-> > Still kind of trying to figure out what would be  a good flow for
-> > working with Sphinx.
+> > Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
+> > structures necessary to track EPC pages so that they can be allocated,
+> > freed and managed.  As a system may have multiple EPC sections, invoke
+> > CPUID on SGX sub-leafs until an invalid leaf is encountered.
+> >
+> > On NUMA systems, a node can have at most one bank. A bank can be at
+> > most part of two nodes.  SGX supports both nodes with a single memory
+> > controller and also sub-cluster nodes with severals memory controllers
+> > on a single die.
+> >
+> > For simplicity, support a maximum of eight EPC sections.  Current
+> > client hardware supports only a single section, while upcoming server
+> > hardware will support at most eight sections.  Bounding the number of
+> > sections also allows the section ID to be embedded along with a page's
+> > offset in a single unsigned long, enabling easy retrieval of both the
+> > VA and PA for a given page.
 > 
-> What I'm telling here is about Copyright notice, which in my
-> understanding is not a part of kernel-doc formatting. Though I might
-> be mistaken.
-> I remember some USB code has that and I saw a warning.
+> > +       iounmap(section->va);
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+> > +       section->va = ioremap_cache(addr, size);
+> > +       if (!section->va)
+> > +               return -ENOMEM;
+> 
+> I forgot if it's a place in code on which we discussed ioremap() vs.
+> memremap() call.
+> And I forgot why the conclusion is to leave ioremap().
+> 
+> Sorry, if I'm mistaken.
 
-I'll remove it because I don't find it in other headers under arch/x86.
+Thanks for pointing this out. It very well might I have either
+
+1. forgotten to do the switch.
+2. had some open about it that I forgot to ask.
+
+Anyway, I'll check this and at minimum document the reason to the
+change log if there is one to keep the ioremap().
 
 /Jarkko
