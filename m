@@ -1,92 +1,44 @@
-Received: from mga04.intel.com ([192.55.52.120]:48290 "EHLO mga04.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:17322 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1730409AbeKGJC6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Wed, 7
- Nov 2018 04:02:58 -0500
-Date: Tue, 6 Nov 2018 15:35:15 -0800
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Andy Lutomirski <luto@amacapital.net>
-CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Rich Felker <dalias@libc.org>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Jethro Beekman <jethro@fortanix.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>, Linux
- API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
-	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181106233515.GB11101@linux.intel.com>
-References: <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ S1729800AbeKFCwi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Mon, 5
+ Nov 2018 21:52:38 -0500
+Date: Mon, 5 Nov 2018 19:31:44 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Jethro Beekman <jethro@fortanix.com>
+CC: "x86@kernel.org" <x86@kernel.org>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "linux-sgx@vger.kernel.org"
+	<linux-sgx@vger.kernel.org>, "dave.hansen@intel.com" <dave.hansen@intel.com>,
+	"sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+	"nhorman@redhat.com" <nhorman@redhat.com>, "npmccallum@redhat.com"
+	<npmccallum@redhat.com>, "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+	"shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+	"haitao.huang@intel.com" <haitao.huang@intel.com>, "mark.shanahan@intel.com"
+	<mark.shanahan@intel.com>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, Suresh Siddha
+	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, Reinette Chatre <reinette.chatre@intel.com>, "Rafael J.
+ Wysocki" <rafael.j.wysocki@intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
+Message-ID: <20181105173144.GE4502@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
+ <79867568-c21f-8a09-d06e-360b1b925dd5@fortanix.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <79867568-c21f-8a09-d06e-360b1b925dd5@fortanix.com>
 Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
 Return-Path: linux-sgx-owner@vger.kernel.org
 MIME-Version: 1.0
 
-On Tue, Nov 06, 2018 at 03:00:56PM -0800, Andy Lutomirski wrote:
+On Sat, Nov 03, 2018 at 01:07:27AM +0000, Jethro Beekman wrote:
+> > +	for (i = 0; i < SGX_MAX_EPC_SECTIONS; i++) {
 > 
-> 
-> >> On Nov 6, 2018, at 1:59 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> >> 
-> >>> On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
-> >> Sean, how does the current SDK AEX handler decide whether to do
-> >> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
-> >> like the *CPU* could give a big hint, but I don't see where there is
-> >> any architectural indication of why the AEX code got called or any
-> >> obvious way for the user code to know whether the exit was fixed up by
-> >> the kernel?
-> > 
-> > The SDK "unconditionally" does ERESUME at the AEP location, but that's
-> > bit misleading because its signal handler may muck with the context's
-> > RIP, e.g. to abort the enclave on a fatal fault.
-> > 
-> > On an event/exception from within an enclave, the event is immediately
-> > delivered after loading synthetic state and changing RIP to the AEP.
-> > In other words, jamming CPU state is essentially a bunch of vectoring
-> > ucode preamble, but from software's perspective it's a normal event
-> > that happens to point at the AEP instead of somewhere in the enclave.
-> > And because the signals the SDK cares about are all synchronous, the
-> > SDK can simply hardcode ERESUME at the AEP since all of the fault logic
-> > resides in its signal handler.  IRQs and whatnot simply trampoline back
-> > into the enclave.
-> > 
-> > Userspace can do something funky instead of ERESUME, but only *after*
-> > IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
-> > case, after the trap handler has run.
-> > 
-> > Jumping back a bit, how much do we care about preventing userspace
-> > from doing stupid things? 
-> 
-> My general feeling is that userspace should be allowed to do apparently
-> stupid things. For example, as far as the kernel is concerned, Wine and
-> DOSEMU are just user programs that do stupid things. Linux generally tries
-> to provide a reasonably complete view of architectural behavior. This is
-> in contrast to, say, Windows, where IIUC doing an unapproved WRFSBASE May
-> cause very odd behavior indeed. So magic fixups that do non-architectural
-> things are not so great.
+> Perhaps print a warning if there are more than SGX_MAX_EPC_SECTIONS sections
+> reported by CPUID.
 
-Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
-with a specific (ignored) prefix pattern?  I.e. effectively make the magic
-fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
-that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
-that the enclave can EEXIT to immediately after the EENTER location.
+Makes sense. I'll add it.
 
-> (How does the Windows case work?  If there’s an exception after the untrusted
-> stack allocation and before EEXIT and SEH tries to handle it, how does the
-> unwinder figure out where to start?)
-
-No clue, I'll ask and report back.
+/Jarkko
