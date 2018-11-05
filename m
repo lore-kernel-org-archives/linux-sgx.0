@@ -1,70 +1,107 @@
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
-In-Reply-To: <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 6 Nov 2018 11:02:11 -0800
-Message-ID: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To: Dave Hansen <dave.hansen@intel.com>
-CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
- Lutomirski" <luto@kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
-	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: luto@kernel.org
+Date: Mon, 5 Nov 2018 16:31:40 +0200
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "David
+ Woodhouse" <dwmw@amazon.co.uk>, <davidwang@zhaoxin.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, "Levin, Alexander (Sasha Levin)"
+	<alexander.levin@verizon.com>, <qianyue.zj@alibaba-inc.com>, "Linux Kernel
+ Mailing List" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 05/23] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
+Message-ID: <20181105143140.GJ10650@smile.fi.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
+ <20181105140933.GA24038@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20181105140933.GA24038@linux.intel.com>
+Return-Path: andy.shevchenko@gmail.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > I almost feel like the right solution is to call into SGX on its own
-> > private stack or maybe even its own private address space.
->
-> Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> enclave like its own "thread" with its own stack and its own set of
-> registers and context?  That seems like a much more workable model than
-> trying to weave it together with the EENTER context.
+On Mon, Nov 05, 2018 at 04:09:33PM +0200, Jarkko Sakkinen wrote:
+> On Sat, Nov 03, 2018 at 03:05:39PM +0200, Andy Shevchenko wrote:
 
-So maybe the API should be, roughly
+> Agree. Would this be a more clean flow in the attached patch?
 
-sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-host_state *state);
-sgx_exit_reason_t sgx_resume_enclave(same args);
+LGTM.
 
-where host_state is something like:
+> From 3b863a7db00cefffc15df918a5132c35ea313c27 Mon Sep 17 00:00:00 2001
+> From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Date: Mon, 5 Nov 2018 16:06:06 +0200
+> Subject: [PATCH] x86/cpu/intel: clean up detect_sgx() flow
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/intel.c | 32 ++++++++++++++++++++------------
+>  1 file changed, 20 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index bc52c52f7025..8a20a193d399 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -598,28 +598,36 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  
+>  static void detect_sgx(struct cpuinfo_x86 *c)
+>  {
+> -	bool unsupported = false;
+>  	unsigned long long fc;
+>  
+>  	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+>  	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+>  		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> -		unsupported = true;
+> -	} else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+>  		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+> -		unsupported = true;
+> -	} else if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
+>  		pr_err_once("sgx: SGX1 instruction set not supported\n");
+> -		unsupported = true;
+> +		goto out_unsupported;
+>  	}
+>  
+> -	if (unsupported) {
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX);
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+> +		pr_info_once("sgx: launch control MSRs are not writable\n");
+> +		goto out_msrs_rdonly;
+>  	}
+> -	if (unsupported || !(fc & FEATURE_CONTROL_SGX_LE_WR))
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+> +
+> +	return;
+> +out_unsupported:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +out_msrs_rdonly:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+>  }
+>  
+>  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+> -- 
+> 2.19.1
+> 
 
-struct host_state {
-  unsigned long bp, sp, ax, bx, cx, dx, si, di;
-};
 
-and the values in host_state explicitly have nothing to do with the
-actual host registers.  So, if you want to use the outcall mechanism,
-you'd allocate some memory, point sp to that memory, call
-sgx_enter_enclave(), and then read that memory to do the outcall.
-
-Actually implementing this would be distinctly nontrivial, and would
-almost certainly need some degree of kernel help to avoid an explosion
-when a signal gets delivered while we have host_state.sp loaded into
-the actual SP register.  Maybe rseq could help with this?
-
-The ISA here is IMO not well thought through.
+-- 
+With Best Regards,
+Andy Shevchenko
