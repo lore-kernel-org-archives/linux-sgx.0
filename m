@@ -1,98 +1,53 @@
-Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1725908AbeKBC5x (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Thu, 1
- Nov 2018 22:57:53 -0400
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45])        (using TLSv1.2 with cipher
- ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))        (No client certificate
- requested)        by mail.kernel.org (Postfix) with ESMTPSA id 4455C2084D
-        for <linux-sgx@vger.kernel.org>; Thu,  1 Nov 2018 17:53:53 +0000 (UTC)
-Received: by mail-wr1-f45.google.com with SMTP id d10-v6so20932938wrs.5
-        for <linux-sgx@vger.kernel.org>; Thu, 01 Nov 2018 10:53:53 -0700 (PDT)
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 1 Nov 2018 10:53:40 -0700
-Message-ID: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Subject: RFC: userspace exception fixups
-To: Dave Hansen <dave.hansen@linux.intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, Jann Horn
-	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, X86 ML
-	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Rich
- Felker" <dalias@libc.org>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
-	"Ayoun, Serge" <serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+Date: Mon, 5 Nov 2018 16:35:46 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, Andy Shevchenko
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 11/23] x86/sgx: Add definitions for SGX's CPUID leaf
+ and variable sub-leafs
+Message-ID: <20181105143415.GA2798@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VcgFstv5EjY2DzsLGAimxf3Z2g-Mych1zW40txS9b7Bmg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAHp75VcgFstv5EjY2DzsLGAimxf3Z2g-Mych1zW40txS9b7Bmg@mail.gmail.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-Hi all-
+On Sat, Nov 03, 2018 at 03:11:39PM +0200, Andy Shevchenko wrote:
+> On Sat, Nov 3, 2018 at 1:16 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > SGX defines its own CPUID leaf, 0x12, along with a variable number of
+> > sub-leafs.  Sub-leafs 0 and 1 are always available if SGX is supported
+> > and enumerate various SGX features, e.g. instruction sets and enclave
+> > capabilities.  Sub-leafs 2+ are variable, both in their existence and
+> > in what they enumerate.  Bits 3:0 of EAX report the sub-leaf type,
+> > with the remaining bits in EAX, EBX, ECX and EDX being type-specific.
+> > Currently, the only known sub-leaf type enumerates an EPC section.  An
+> > EPC section is simply a range of EPC memory available to software.
+> > The "list" of varaible SGX sub-leafs is NULL-terminated, i.e. software
+> > is expected to query CPUID until an invalid sub-leaf is encountered.
+> 
+> > +       SGX_CPUID_SUB_LEAF_TYPE_MASK    = 0xF,
+> 
+> GENMASK() if it suits here?
+> 
+> P.S. Btw, BIT() and GENMASK() macros are now in a separate header,
+> i.e. linux/bits.h, perhaps you might need to revisit code to include
+> it explicitly
 
-The people working on SGX enablement are grappling with a somewhat
-annoying issue: the x86 EENTER instruction is used from user code and
-can, as part of its normal-ish operation, raise an exception.  It is
-also highly likely to be used from a library, and signal handling in
-libraries is unpleasant at best.
+Agreed. I would also think that is should be renamed simply as
+SGX_CPUID_SUBLEAF_MASK.
 
-There's been some discussion of adding a vDSO entry point to wrap
-EENTER and do something sensible with the exceptions, but I'm
-wondering if a more general mechanism would be helpful.
-
-The basic idea would be to allow libc, or maybe even any library, to
-register a handler that gets a chance to act on an exception caused by
-a user instruction before a signal is delivered.  As a straw-man
-example for how this could work, there could be a new syscall:
-
-long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-
-If a handler is registered, then, if a synchronous exception happens
-(page fault, etc), the kernel would set up an exception frame as usual
-but, rather than checking for signal handlers, it would just call the
-registered handler.  That handler is expected to either handle the
-exception entirely on its own or to call one of two new syscalls to
-ask for normal signal delivery or to ask to retry the faulting
-instruction.
-
-Alternatively, we could do something a lot more like the kernel's
-internal fixups where there's a table in user memory that maps
-potentially faulting instructions to landing pads that handle
-exceptions.
-
-Do you think this would be useful?  Here are some use cases that I
-think are valid:
-
-(a) Enter an SGX enclave and handle errors.  There would be two
-instructions that would need special handling: EENTER and ERESUME.
-
-(b) Do some math and catch division by zero.  I think it would be a
-bad idea to have user code call a function and say that it wants to
-handle *any* division by zero, but having certain specified division
-instructions have special handling seems entirely reasonable.
-
-(c) Ditto for floating point errors.
-
-(d) Try an instruction and see if it gets #UD.
-
-(e) Run a bunch of code and handle page faults to a given address
-range by faulting something in.  This is not like the others, in that
-a handler wants to handle a range of target addresses, not
-instructions.  And userfaultfd is plausibly a better solution anyway.
-
-(f) Run NaCl-like sandboxed code where the code can cause page faults
-to certain mapped-but-intentionally-not-present ranges and those need
-to be handled.
-
-On Windows, you can use SEH to do crazy things like running
-known-buggy code and eating the page faults.  I don't think we want to
-go there.
-
-All of this makes me think that the right solution is to have a way to
-register fault handlers for instructions to cover (a) - (d) and to
-treat (e) and (f) as something else entirely if there's enough demand.
-
---Andy
+/Jarkko
