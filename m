@@ -2,36 +2,35 @@ Return-Path: <SRS0=4Rt9=NQ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D109C46475
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Nov 2018 14:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846F7C46475
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Nov 2018 14:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5722081C
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Nov 2018 14:09:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F5722081C
+	by mail.kernel.org (Postfix) with ESMTP id 55DD12081D
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Nov 2018 14:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55DD12081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729965AbeKEX3e (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:29:34 -0500
-Received: from mga01.intel.com ([192.55.52.88]:53845 "EHLO mga01.intel.com"
+        id S1729004AbeKEXba (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Nov 2018 18:31:30 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14242 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbeKEX3d (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:29:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727481AbeKEXba (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:31:30 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:09:39 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:11:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208,223";a="93781803"
+   d="scan'208";a="84095054"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.180])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Nov 2018 06:09:33 -0800
-Date:   Mon, 5 Nov 2018 16:09:33 +0200
+  by fmsmga008.fm.intel.com with ESMTP; 05 Nov 2018 06:11:28 -0800
+Date:   Mon, 5 Nov 2018 16:11:28 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
@@ -53,125 +52,86 @@ Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v15 05/23] x86/cpu/intel: Detect SGX support and update
  caps appropriately
-Message-ID: <20181105140933.GA24038@linux.intel.com>
+Message-ID: <20181105141128.GB24038@linux.intel.com>
 References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
  <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
  <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
+ <20181105140933.GA24038@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="qMm9M+Fa2AknHoGS"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
+In-Reply-To: <20181105140933.GA24038@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181105140933.mBgh2vbj_qX9kmDaJym8KYJ0kC4LSIR6S7Hr6Ndyy9I@z>
+Message-ID: <20181105141128.nDsSnFqt_oODGvHBDAmGV--Kf9qfjaZoLpqj7av99ys@z>
 
-
---qMm9M+Fa2AknHoGS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Nov 03, 2018 at 03:05:39PM +0200, Andy Shevchenko wrote:
-> > +static void detect_sgx(struct cpuinfo_x86 *c)
-> > +{
-> > +       bool unsupported = false;
-> > +       unsigned long long fc;
-> > +
-> > +       rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> > +       if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> > +               pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-> > +               unsupported = true;
-> > +       } else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> > +               pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
-> > +               unsupported = true;
-> > +       } else if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> > +               pr_err_once("sgx: SGX1 instruction set not supported\n");
-> > +               unsupported = true;
-> > +       }
+On Mon, Nov 05, 2018 at 04:09:33PM +0200, Jarkko Sakkinen wrote:
+> On Sat, Nov 03, 2018 at 03:05:39PM +0200, Andy Shevchenko wrote:
+> > > +static void detect_sgx(struct cpuinfo_x86 *c)
+> > > +{
+> > > +       bool unsupported = false;
+> > > +       unsigned long long fc;
+> > > +
+> > > +       rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> > > +       if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> > > +               pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> > > +               unsupported = true;
+> > > +       } else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> > > +               pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+> > > +               unsupported = true;
+> > > +       } else if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> > > +               pr_err_once("sgx: SGX1 instruction set not supported\n");
+> > > +               unsupported = true;
+> > > +       }
+> > 
+> > If you do
+> > 
+> > } else {
+> >  /* Supported */
+> >  return;
+> > }
 > 
-> If you do
-> 
-> } else {
->  /* Supported */
->  return;
-> }
+> Agree. Would this be a more clean flow in the attached patch?
 
-Agree. Would this be a more clean flow in the attached patch?
+Actually I'll paste the whole function for clarity because it is not too
+long:
+
+static void detect_sgx(struct cpuinfo_x86 *c)
+{
+	unsigned long long fc;
+
+	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+		goto out_unsupported;
+	}
+
+	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+		goto out_unsupported;
+	}
+
+	if (!cpu_has(c, X86_FEATURE_SGX1)) {
+		pr_err_once("sgx: SGX1 instruction set not supported\n");
+		goto out_unsupported;
+	}
+
+	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+		pr_info_once("sgx: launch control MSRs are not writable\n");
+		goto out_msrs_rdonly;
+	}
+
+	return;
+out_unsupported:
+	setup_clear_cpu_cap(X86_FEATURE_SGX);
+	setup_clear_cpu_cap(X86_FEATURE_SGX1);
+	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+out_msrs_rdonly:
+	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+}
 
 /Jarkko
-
---qMm9M+Fa2AknHoGS
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-x86-cpu-intel-clean-up-detect_sgx-flow.patch"
-
-From 3b863a7db00cefffc15df918a5132c35ea313c27 Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 5 Nov 2018 16:06:06 +0200
-Subject: [PATCH] x86/cpu/intel: clean up detect_sgx() flow
-
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/kernel/cpu/intel.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index bc52c52f7025..8a20a193d399 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -598,28 +598,36 @@ static void detect_tme(struct cpuinfo_x86 *c)
- 
- static void detect_sgx(struct cpuinfo_x86 *c)
- {
--	bool unsupported = false;
- 	unsigned long long fc;
- 
- 	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
- 	if (!(fc & FEATURE_CONTROL_LOCKED)) {
- 		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
--		unsupported = true;
--	} else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-+		goto out_unsupported;
-+	}
-+
-+	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
- 		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
--		unsupported = true;
--	} else if (!cpu_has(c, X86_FEATURE_SGX1)) {
-+		goto out_unsupported;
-+	}
-+
-+	if (!cpu_has(c, X86_FEATURE_SGX1)) {
- 		pr_err_once("sgx: SGX1 instruction set not supported\n");
--		unsupported = true;
-+		goto out_unsupported;
- 	}
- 
--	if (unsupported) {
--		setup_clear_cpu_cap(X86_FEATURE_SGX);
--		setup_clear_cpu_cap(X86_FEATURE_SGX1);
--		setup_clear_cpu_cap(X86_FEATURE_SGX2);
-+	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
-+		pr_info_once("sgx: launch control MSRs are not writable\n");
-+		goto out_msrs_rdonly;
- 	}
--	if (unsupported || !(fc & FEATURE_CONTROL_SGX_LE_WR))
--		setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-+
-+	return;
-+out_unsupported:
-+	setup_clear_cpu_cap(X86_FEATURE_SGX);
-+	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-+	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-+out_msrs_rdonly:
-+	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
- }
- 
- static void init_intel_energy_perf(struct cpuinfo_x86 *c)
--- 
-2.19.1
-
-
---qMm9M+Fa2AknHoGS--
