@@ -1,3 +1,7 @@
+Received: from mga01.intel.com ([192.55.52.88]:27715 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S2388191AbeKFXQM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 6
+ Nov 2018 18:16:12 -0500
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<linux-sgx@vger.kernel.org>
@@ -7,61 +11,105 @@ CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
 	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 12/22] x86/sgx: Add definitions for SGX's CPUID leaf and variable sub-leafs
-Date: Tue, 6 Nov 2018 15:45:51 +0200
-Message-ID: <20181106134758.10572-13-jarkko.sakkinen@linux.intel.com>
+ Anvin" <hpa@zytor.com>, "open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v16 09/22] x86/sgx: Define SGX1 and SGX2 ENCLS leafs
+Date: Tue, 6 Nov 2018 15:45:48 +0200
+Message-ID: <20181106134758.10572-10-jarkko.sakkinen@linux.intel.com>
 In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
 References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
-MIME-Version: 1.0
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Content-Type: text/plain
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-SGX defines its own CPUID leaf, 0x12, along with a variable number of
-sub-leafs.  Sub-leafs 0 and 1 are always available if SGX is supported
-and enumerate various SGX features, e.g. instruction sets and enclave
-capabilities.  Sub-leafs 2+ are variable, both in their existence and
-in what they enumerate.  Bits 3:0 of EAX report the sub-leaf type,
-with the remaining bits in EAX, EBX, ECX and EDX being type-specific.
-Currently, the only known sub-leaf type enumerates an EPC section.  An
-EPC section is simply a range of EPC memory available to software.
-The "list" of varaible SGX sub-leafs is NULL-terminated, i.e. software
-is expected to query CPUID until an invalid sub-leaf is encountered.
+ENCLS, a.k.a. Enclave System instruction, is an umbrella instruction
+for a variety of privileged SGX functions.  The ENCLS function to be
+executed is specified in EAX, a la GETSEC of SMX/TXT fame.  Leafs may
+use additional registers for function-specific operands.  ENCLS also
+introduces its own set of error codes that (some) leafs use to return
+pass/fail information to software.  Leafs that return an error code
+also modify RFLAGS.  And finally, ENCLS generates ENCLS-specific #GPs
+and #PFs.
+
+ENCLS leafs functions are organized under SGX sub-features, e.g. SGX1
+defines the base ENCLS function set and SGX2 adds ENCLS functions to
+enable dynamic EPC management.  At this time, only the SGX1 and SGX2
+function sets are supported by Linux; the other published sets relate
+to VMM EPC oversubscription, which is far out on the horizon.
+
+Define the ENCLS leafs in a dedicated file as more architecturally
+defined SGX constants and data structures will be introduced in short
+order.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/include/asm/sgx_arch.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/x86/include/asm/sgx_arch.h | 54 +++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 arch/x86/include/asm/sgx_arch.h
 
 diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
-index d4c57154e6e6..188243e3eee1 100644
---- a/arch/x86/include/asm/sgx_arch.h
+new file mode 100644
+index 000000000000..e068db46835e
+--- /dev/null
 +++ b/arch/x86/include/asm/sgx_arch.h
-@@ -11,6 +11,21 @@
- #include <linux/types.h>
- #include <uapi/asm/sgx_errno.h>
- 
-+#define SGX_CPUID				0x12
-+#define SGX_CPUID_FIRST_VARIABLE_SUB_LEAF	2
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
++/**
++ * Copyright(c) 2016-18 Intel Corporation.
++ *
++ * Contains data structures defined by the SGX architecture.  Data structures
++ * defined by the Linux software stack should not be placed here.
++ */
++#ifndef _ASM_X86_SGX_ARCH_H
++#define _ASM_X86_SGX_ARCH_H
 +
 +/**
-+ * enum sgx_sub_leaf_types - SGX CPUID variable sub-leaf types
-+ * %SGX_CPUID_SUB_LEAF_INVALID:		Indicates this sub-leaf is invalid.
-+ * %SGX_CPUID_SUB_LEAF_EPC_SECTION:	Sub-leaf enumerates an EPC section.
-+ * %SGX_CPUID_SUB_LEAF_TYPE_MASK:	Mask for bits containing the type.
++ * enum sgx_encls_leaves - ENCLS leaf functions
++ * %SGX_ECREATE:	Create an enclave.
++ * %SGX_EADD:		Add a page to an uninitialized enclave.
++ * %SGX_EINIT:		Initialize an enclave, i.e. launch an enclave.
++ * %SGX_EREMOVE:	Remove a page from an enclave.
++ * %SGX_EDBGRD:		Read a word from an enclve (peek).
++ * %SGX_EDBGWR:		Write a word to an enclave (poke).
++ * %SGX_EEXTEND:	Measure 256 bytes of an added enclave page.
++ * %SGX_ELDB:		Load a swapped page in blocked state.
++ * %SGX_ELDU:		Load a swapped page in unblocked state.
++ * %SGX_EBLOCK:		Change page state to blocked i.e. entering hardware
++ *			threads cannot access it and create new TLB entries.
++ * %SGX_EPA:		Create a Version Array (VA) page used to store isvsvn
++ *			number for a swapped EPC page.
++ * %SGX_EWB:		Swap an enclave page to the regular memory. Checks that
++ *			all threads have exited that were in the previous
++ *			shoot-down sequence.
++ * %SGX_ETRACK:		Start a new shoot down sequence. Used to together with
++ *			EBLOCK to make sure that a page is safe to swap.
++ * %SGX_EAUG:		Add a page to an initialized enclave.
++ * %SGX_EMODPR:		Restrict an EPC page's permissions.
++ * %SGX_EMODT:		Modify the page type of an EPC page.
 + */
-+enum sgx_sub_leaf_types {
-+	SGX_CPUID_SUB_LEAF_INVALID	= 0x0,
-+	SGX_CPUID_SUB_LEAF_EPC_SECTION	= 0x1,
-+	SGX_CPUID_SUB_LEAF_TYPE_MASK	= GENMASK(3, 0),
++enum sgx_encls_leaves {
++	SGX_ECREATE	= 0x00,
++	SGX_EADD	= 0x01,
++	SGX_EINIT	= 0x02,
++	SGX_EREMOVE	= 0x03,
++	SGX_EDGBRD	= 0x04,
++	SGX_EDGBWR	= 0x05,
++	SGX_EEXTEND	= 0x06,
++	SGX_ELDB	= 0x07,
++	SGX_ELDU	= 0x08,
++	SGX_EBLOCK	= 0x09,
++	SGX_EPA		= 0x0A,
++	SGX_EWB		= 0x0B,
++	SGX_ETRACK	= 0x0C,
++	SGX_EAUG	= 0x0D,
++	SGX_EMODPR	= 0x0E,
++	SGX_EMODT	= 0x0F,
 +};
 +
- /**
-  * enum sgx_encls_leaves - ENCLS leaf functions
-  * %SGX_ECREATE:	Create an enclave.
++#endif /* _ASM_X86_SGX_ARCH_H */
 -- 
 2.19.1
