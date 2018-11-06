@@ -1,74 +1,37 @@
-Received: from mail.kernel.org ([198.145.29.99]:58528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726085AbeKCCJK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 2
- Nov 2018 22:09:10 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
- [209.85.128.46])        (using TLSv1.2 with cipher
- ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))        (No client certificate
- requested)        by mail.kernel.org (Postfix) with ESMTPSA id 63F7A20831
-        for <linux-sgx@vger.kernel.org>; Fri,  2 Nov 2018 17:01:21 +0000 (UTC)
-Received: by mail-wm1-f46.google.com with SMTP id u13-v6so2468355wmc.4
-        for <linux-sgx@vger.kernel.org>; Fri, 02 Nov 2018 10:01:21 -0700 (PDT)
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com> <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
- <20181102165204.GC7393@linux.intel.com> <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
-In-Reply-To: <dd455b30-b586-bf5b-2195-cf20c1af9890@fortanix.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 2 Nov 2018 10:01:08 -0700
-Message-ID: <CALCETrUo8uwnu3dBVSHVtB_z4uQgW=40grVdZWmTt64Tei6WiQ@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To: Jethro Beekman <jethro@fortanix.com>
-CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
- Lutomirski" <luto@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Jann Horn
-	<jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Jarkko
- Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, "Linux API" <linux-api@vger.kernel.org>, X86 ML
-	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+Date: Tue, 6 Nov 2018 08:26:55 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open
+ list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181106062655.GA18671@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Fri, Nov 2, 2018 at 9:56 AM Jethro Beekman <jethro@fortanix.com> wrote:
->
-> On 2018-11-02 09:52, Sean Christopherson wrote:
-> > On Fri, Nov 02, 2018 at 04:37:10PM +0000, Jethro Beekman wrote:
-> >> On 2018-11-02 09:30, Sean Christopherson wrote:
-> >>> ... The intended convention for EENTER is to have an ENCLU at the AEX target ...
-> >>>
-> >>> ... to further enforce that the AEX target needs to be ENCLU.
-> >>
-> >> Some SGX runtimes may want to use a different AEX target.
-> >
-> > To what end?  Userspace gets no indication as to why the AEX occurred.
-> > And if exceptions are getting transfered to userspace the trampoline
-> > would effectively be handling only INTR, NMI, #MC and EPC #PF.
-> >
->
-> Various reasons...
->
-> Userspace may have established an exception handling convention with the
-> enclave (by setting TCS.NSSA > 1) and may want to call EENTER instead of
-> ERESUME.
->
+On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
+> This patch set establishes an ABI.  It basically sets in stone a bunch
+> of behaviors that the enclave, the kernel, and the out-of-enclave code
+> must follow.
+> 
+> There are a bunch of things that the enclave can do to %rsp or %rip, for
+> instance, that it is capable and/or permitted to do.
 
-Ugh,
+Just want to ask a follow-up from this so that I understand you better.
+Now we are talking abou ioctl API, right? I'm not exactly sure how
+EENTER/EEXIT/ERESUME behavior connects to that. I understand the tail
+of your message but this paragraph left me a bit puzzled...
 
-I sincerely hope that a future ISA extension lets the kernel return
-directly back to enclave mode so that AEX events become entirely
-invisible to user code.  It would be nice if user developers didn't
-start depending on the rather odd AEX semantics right now.  But I
-don't think the kernel can sanely do much about it.
+/Jarkko
