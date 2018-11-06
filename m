@@ -6,28 +6,35 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A517C32789
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3906C32789
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 681E0204FD
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 681E0204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id A57E62081D
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:26:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57E62081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbeKGIp2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Nov 2018 03:45:28 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58144 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbeKGIp2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 7 Nov 2018 03:45:28 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gKAbC-0005m3-00; Tue, 06 Nov 2018 23:17:30 +0000
-Date:   Tue, 6 Nov 2018 18:17:30 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        id S1730409AbeKGIx5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Nov 2018 03:53:57 -0500
+Received: from mga02.intel.com ([134.134.136.20]:36687 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbeKGIx5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Nov 2018 03:53:57 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 15:26:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
+   d="scan'208";a="277680927"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Nov 2018 15:26:16 -0800
+Date:   Tue, 6 Nov 2018 15:26:16 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
         Jann Horn <jannh@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -46,9 +53,8 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Carlos O'Donell <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
 Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181106231730.GR5150@brightrain.aerifal.cx>
-References: <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com>
+Message-ID: <20181106232616.GA11101@linux.intel.com>
+References: <20181102220437.GI7393@linux.intel.com>
  <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
  <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
  <1541518670.7839.31.camel@intel.com>
@@ -57,60 +63,68 @@ References: <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
  <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
  <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
  <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181106231730.GR5150@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181106231730.yOTPUK0Oauk4DA9hsYWDacuBYsq6A3OTrM2n2RZS1NQ@z>
+Message-ID: <20181106232616.9Iy4rRynEmTr2GVICKHsuCA-kjOETdwK-EgzLN6EOY8@z>
 
-On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
-> >
-> > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > > I almost feel like the right solution is to call into SGX on its own
-> > > private stack or maybe even its own private address space.
-> >
-> > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> > enclave like its own "thread" with its own stack and its own set of
-> > registers and context?  That seems like a much more workable model than
-> > trying to weave it together with the EENTER context.
+On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
+> On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
+> > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+> > >
+> > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
+> > > > I almost feel like the right solution is to call into SGX on its own
+> > > > private stack or maybe even its own private address space.
+> > >
+> > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
+> > > enclave like its own "thread" with its own stack and its own set of
+> > > registers and context?  That seems like a much more workable model than
+> > > trying to weave it together with the EENTER context.
+> > 
+> > So maybe the API should be, roughly
+> > 
+> > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
+> > host_state *state);
+> > sgx_exit_reason_t sgx_resume_enclave(same args);
+> > 
+> > where host_state is something like:
+> > 
+> > struct host_state {
+> >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
+> > };
+> > 
+> > and the values in host_state explicitly have nothing to do with the
+> > actual host registers.  So, if you want to use the outcall mechanism,
+> > you'd allocate some memory, point sp to that memory, call
+> > sgx_enter_enclave(), and then read that memory to do the outcall.
+> > 
+> > Actually implementing this would be distinctly nontrivial, and would
+> > almost certainly need some degree of kernel help to avoid an explosion
+> > when a signal gets delivered while we have host_state.sp loaded into
+> > the actual SP register.  Maybe rseq could help with this?
+> > 
+> > The ISA here is IMO not well thought through.
 > 
-> So maybe the API should be, roughly
-> 
-> sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-> host_state *state);
-> sgx_exit_reason_t sgx_resume_enclave(same args);
-> 
-> where host_state is something like:
-> 
-> struct host_state {
->   unsigned long bp, sp, ax, bx, cx, dx, si, di;
-> };
-> 
-> and the values in host_state explicitly have nothing to do with the
-> actual host registers.  So, if you want to use the outcall mechanism,
-> you'd allocate some memory, point sp to that memory, call
-> sgx_enter_enclave(), and then read that memory to do the outcall.
-> 
-> Actually implementing this would be distinctly nontrivial, and would
-> almost certainly need some degree of kernel help to avoid an explosion
-> when a signal gets delivered while we have host_state.sp loaded into
-> the actual SP register.  Maybe rseq could help with this?
-> 
-> The ISA here is IMO not well thought through.
+> Maybe I'm mistaken about some fundamentals here, but my understanding
+> of SGX is that the whole point is that the host application and the
+> code running in the enclave are mutually adversarial towards one
+> another. Do any or all of the proposed protocols here account for this
+> and fully protect the host application from malicious code in the
+> enclave? It seems that having control over the register file on exit
+> from the enclave is fundamentally problematic but I assume there must
+> be some way I'm missing that this is fixed up.
 
-Maybe I'm mistaken about some fundamentals here, but my understanding
-of SGX is that the whole point is that the host application and the
-code running in the enclave are mutually adversarial towards one
-another. Do any or all of the proposed protocols here account for this
-and fully protect the host application from malicious code in the
-enclave? It seems that having control over the register file on exit
-from the enclave is fundamentally problematic but I assume there must
-be some way I'm missing that this is fixed up.
-
-Rich
+SGX provides protections for the enclave but not the other way around.
+The kernel has all of its normal non-SGX protections in place, but the
+enclave can certainly wreak havoc on its userspace process.  The basic
+design idea is that the enclave is a specialized .so that gets extra
+security protections but is still effectively part of the overall
+application, e.g. it has full access to its host userspace process'
+virtual memory.
