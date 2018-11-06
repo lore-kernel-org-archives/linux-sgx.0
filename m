@@ -1,314 +1,155 @@
+Received: from mga05.intel.com ([192.55.52.43]:44664 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S2388065AbeKFXQ1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 6
+ Nov 2018 18:16:27 -0500
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<linux-sgx@vger.kernel.org>
 CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Suresh Siddha
-	<suresh.b.siddha@intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
-Date: Sat, 3 Nov 2018 01:11:14 +0200
-Message-ID: <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
-MIME-Version: 1.0
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
+	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, "open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v16 10/22] x86/sgx: Add ENCLS architectural error codes
+Date: Tue, 6 Nov 2018 15:45:49 +0200
+Message-ID: <20181106134758.10572-11-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Content-Type: text/plain
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
-The ENCLS function that is executed is specified in EAX, with each
-function potentially having more leaf-specific operands beyond EAX.
-ENCLS introduces its own (positive value) error codes that (some)
-leafs use to return failure information in EAX.  Leafs that return
-an error code also modify RFLAGS.  And finally, ENCLS generates
-ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
-encounter faults on ENCLS that must be handled gracefully.
+The SGX architecture defines an extensive set of error codes that are
+used by ENCL{S,U,V} instructions to provide software with (somewhat)
+precise error information.  Though they are architectural, define the
+known error codes in a separate file from sgx_arch.h so that they can
+be exposed to userspace.  For some ENCLS leafs, e.g. EINIT, returning
+the exact error code on failure can enable userspace to make informed
+decisions when an operation fails.
 
-Because of the complexity involved in encoding ENCLS and handling its
-assortment of failure paths, executing any given leaf is not a simple
-matter of emitting ENCLS.
-
-To enable adding support for ENCLS leafs with minimal fuss, add a
-two-layer macro system along with an encoding scheme to allow wrappers
-to return trap numbers along ENCLS-specific error codes.  The bottom
-layer of the macro system splits between the leafs that return an
-error code and those that do not.  The second layer generates the
-correct input/output annotations based on the number of operands for
-each leaf function.
-
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/sgx.h | 255 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 255 insertions(+)
- create mode 100644 arch/x86/include/asm/sgx.h
+ arch/x86/include/asm/sgx_arch.h       |  2 +
+ arch/x86/include/uapi/asm/sgx_errno.h | 91 +++++++++++++++++++++++++++
+ 2 files changed, 93 insertions(+)
+ create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
+index e068db46835e..6cd572fa95fa 100644
+--- a/arch/x86/include/asm/sgx_arch.h
++++ b/arch/x86/include/asm/sgx_arch.h
+@@ -8,6 +8,8 @@
+ #ifndef _ASM_X86_SGX_ARCH_H
+ #define _ASM_X86_SGX_ARCH_H
+ 
++#include <uapi/asm/sgx_errno.h>
++
+ /**
+  * enum sgx_encls_leaves - ENCLS leaf functions
+  * %SGX_ECREATE:	Create an enclave.
+diff --git a/arch/x86/include/uapi/asm/sgx_errno.h b/arch/x86/include/uapi/asm/sgx_errno.h
 new file mode 100644
-index 000000000000..23361d508348
+index 000000000000..48b87aed58d7
 --- /dev/null
-+++ b/arch/x86/include/asm/sgx.h
-@@ -0,0 +1,255 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+/**
-+ * Copyright(c) 2016-18 Intel Corporation.
-+ */
-+#ifndef _ASM_X86_SGX_H
-+#define _ASM_X86_SGX_H
-+
-+#include <asm/asm.h>
-+#include <asm/sgx_arch.h>
-+
-+/**
-+ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
++++ b/arch/x86/include/uapi/asm/sgx_errno.h
+@@ -0,0 +1,91 @@
++/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
++/*
++ * Copyright(c) 2018 Intel Corporation.
 + *
-+ * ENCLS has its own (positive value) error codes and also generates
-+ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
-+ * with system error codes as everything percolates back up the stack.
-+ * Unfortunately (for us), we need to precisely identify each unique
-+ * error code, e.g. the action taken if EWB fails varies based on the
-+ * type of fault and on the exact SGX error code, i.e. we can't simply
-+ * convert all faults to -EFAULT.
-+ *
-+ * To make all three error types coexist, we set bit 30 to identify an
-+ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
-+ * between positive (faults and SGX error codes) and negative (system
-+ * error codes) values.
++ * Contains the architecturally defined error codes that are returned by SGX
++ * instructions, e.g. ENCLS, and may be propagated to userspace via errno.
 + */
-+#define ENCLS_FAULT_FLAG 0x40000000
++
++#ifndef _UAPI_ASM_X86_SGX_ERRNO_H
++#define _UAPI_ASM_X86_SGX_ERRNO_H
 +
 +/**
-+ * Check for a fault by looking for a postive value with the fault
-+ * flag set.  The postive value check is needed to filter out system
-+ * error codes since negative values will have all higher order bits
-+ * set, including ENCLS_FAULT_FLAG.
++ * enum sgx_encls_leaves - return codes for ENCLS, ENCLU and ENCLV
++ * %SGX_SUCCESS:		No error.
++ * %SGX_INVALID_SIG_STRUCT:	SIGSTRUCT contains an invalid value.
++ * %SGX_INVALID_ATTRIBUTE:	Enclave is not attempting to access a resource
++ *				for which it is not authorized.
++ * %SGX_BLKSTATE:		EPC page is already blocked.
++ * %SGX_INVALID_MEASUREMENT:	SIGSTRUCT or EINITTOKEN contains an incorrect
++ *				measurement.
++ * %SGX_NOTBLOCKABLE:		EPC page type is not one which can be blocked.
++ * %SGX_PG_INVLD:		EPC page is invalid (and cannot be blocked).
++ * %SGX_EPC_PAGE_CONFLICT:	EPC page in use by another SGX instruction.
++ * %SGX_INVALID_SIGNATURE:	Enclave's signature does not validate with
++ *				public key enclosed in SIGSTRUCT.
++ * %SGX_MAC_COMPARE_FAIL:	MAC check failed when reloading EPC page.
++ * %SGX_PAGE_NOT_BLOCKED:	EPC page is not marked as blocked.
++ * %SGX_NOT_TRACKED:		ETRACK has not been completed on the EPC page.
++ * %SGX_VA_SLOT_OCCUPIED:	Version array slot contains a valid entry.
++ * %SGX_CHILD_PRESENT:		Enclave has child pages present in the EPC.
++ * %SGX_ENCLAVE_ACT:		Logical processors are currently executing
++ *				inside the enclave.
++ * %SGX_ENTRYEPOCH_LOCKED:	SECS locked for EPOCH update, i.e. an ETRACK is
++ *				currently executing on the SECS.
++ * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
++ *				public key does not match IA32_SGXLEPUBKEYHASH.
++ * %SGX_PREV_TRK_INCMPL:	All processors did not complete the previous
++ *				tracking sequence.
++ * %SGX_PG_IS_SECS:		Target EPC page is an SECS and cannot be
++ *				blocked.
++ * %SGX_PAGE_ATTRIBUTES_MISMATCH:	Attributes of the EPC page do not match
++ *					the expected values.
++ * %SGX_PAGE_NOT_MODIFIABLE:	EPC page cannot be modified because it is in
++ *				the PENDING or MODIFIED state.
++ * %SGX_PAGE_NOT_DEBUGGABLE:	EPC page cannot be modified because it is in
++ *				the PENDING or MODIFIED state.
++ * %SGX_INVALID_COUNTER:	{In,De}crementing a counter would cause it to
++ *				{over,under}flow.
++ * %SGX_PG_NONEPC:		Target page is not an EPC page.
++ * %SGX_TRACK_NOT_REQUIRED:	Target page type does not require tracking.
++ * %SGX_INVALID_CPUSVN:		Security version number reported by CPU is less
++ *				than what is required by the enclave.
++ * %SGX_INVALID_ISVSVN:		Security version number of enclave is less than
++ *				what is required by the KEYREQUEST struct.
++ * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
++ *				while the instruction was executing.
++ * %SGX_INVALID_KEYNAME:	Requested key is not supported by hardware.
 + */
-+#define IS_ENCLS_FAULT(r) ((int)(r) > 0 && ((r) & ENCLS_FAULT_FLAG))
++enum sgx_return_codes {
++	SGX_SUCCESS			= 0,
++	SGX_INVALID_SIG_STRUCT		= 1,
++	SGX_INVALID_ATTRIBUTE		= 2,
++	SGX_BLKSTATE			= 3,
++	SGX_INVALID_MEASUREMENT		= 4,
++	SGX_NOTBLOCKABLE		= 5,
++	SGX_PG_INVLD			= 6,
++	SGX_EPC_PAGE_CONFLICT		= 7,
++	SGX_INVALID_SIGNATURE		= 8,
++	SGX_MAC_COMPARE_FAIL		= 9,
++	SGX_PAGE_NOT_BLOCKED		= 10,
++	SGX_NOT_TRACKED			= 11,
++	SGX_VA_SLOT_OCCUPIED		= 12,
++	SGX_CHILD_PRESENT		= 13,
++	SGX_ENCLAVE_ACT			= 14,
++	SGX_ENTRYEPOCH_LOCKED		= 15,
++	SGX_INVALID_EINITTOKEN		= 16,
++	SGX_PREV_TRK_INCMPL		= 17,
++	SGX_PG_IS_SECS			= 18,
++	SGX_PAGE_ATTRIBUTES_MISMATCH	= 19,
++	SGX_PAGE_NOT_MODIFIABLE		= 20,
++	SGX_PAGE_NOT_DEBUGGABLE		= 21,
++	SGX_INVALID_COUNTER		= 25,
++	SGX_PG_NONEPC			= 26,
++	SGX_TRACK_NOT_REQUIRED		= 27,
++	SGX_INVALID_CPUSVN		= 32,
++	SGX_INVALID_ISVSVN		= 64,
++	SGX_UNMASKED_EVENT		= 128,
++	SGX_INVALID_KEYNAME		= 256,
++};
 +
-+/**
-+ * Retrieve the encoded trapnr from the specified return code.
-+ */
-+#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
-+
-+/**
-+ * encls_to_err - translate an ENCLS fault or SGX code into a system error code
-+ * @ret:	positive value return code
-+ *
-+ * Translate a postive return code, e.g. from ENCLS, into a system error
-+ * code.  Primarily used by functions that cannot return a non-negative
-+ * error code, e.g. kernel callbacks.
-+ *
-+ * Return:
-+ *	0 on success,
-+ *	-errno on failure
-+ */
-+static inline int encls_to_err(int ret)
-+{
-+	if (IS_ENCLS_FAULT(ret))
-+		return -EFAULT;
-+
-+	switch (ret) {
-+	case SGX_UNMASKED_EVENT:
-+		return -EINTR;
-+	case SGX_INVALID_SIG_STRUCT:
-+	case SGX_INVALID_ATTRIBUTE:
-+	case SGX_INVALID_MEASUREMENT:
-+	case SGX_INVALID_EINITTOKEN:
-+	case SGX_INVALID_CPUSVN:
-+	case SGX_INVALID_ISVSVN:
-+	case SGX_INVALID_KEYNAME:
-+		return -EINVAL;
-+	case SGX_ENCLAVE_ACT:
-+	case SGX_CHILD_PRESENT:
-+	case SGX_ENTRYEPOCH_LOCKED:
-+	case SGX_PREV_TRK_INCMPL:
-+	case SGX_PAGE_NOT_MODIFIABLE:
-+	case SGX_PAGE_NOT_DEBUGGABLE:
-+		return -EBUSY;
-+	default:
-+		return -EIO;
-+	};
-+}
-+
-+/**
-+ * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
-+ * @rax:	leaf number
-+ * @inputs:	asm inputs for the leaf
-+ *
-+ * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
-+ * And because SGX isn't complex enough as it is, leafs that return an error
-+ * code also modify flags.
-+ *
-+ * Return:
-+ *	0 on success,
-+ *	SGX error code on failure
-+ */
-+#define __encls_ret_N(rax, inputs...)				\
-+	({							\
-+	int ret;						\
-+	asm volatile(						\
-+	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"2:\n"							\
-+	".section .fixup,\"ax\"\n"				\
-+	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-+	"   jmp 2b\n"						\
-+	".previous\n"						\
-+	_ASM_EXTABLE_FAULT(1b, 3b)				\
-+	: "=a"(ret)						\
-+	: "a"(rax), inputs					\
-+	: "memory", "cc");					\
-+	ret;							\
-+	})
-+
-+#define __encls_ret_1(rax, rcx)		\
-+	({				\
-+	__encls_ret_N(rax, "c"(rcx));	\
-+	})
-+
-+#define __encls_ret_2(rax, rbx, rcx)		\
-+	({					\
-+	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
-+	})
-+
-+#define __encls_ret_3(rax, rbx, rcx, rdx)			\
-+	({							\
-+	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
-+	})
-+
-+/**
-+ * __encls_N - encode an ENCLS leaf that doesn't return an error code
-+ * @rax:	leaf number
-+ * @rbx_out:	optional output variable
-+ * @inputs:	asm inputs for the leaf
-+ *
-+ * Emit assembly for an ENCLS leaf that does not return an error code,
-+ * e.g. ECREATE.  Leaves without error codes either succeed or fault.
-+ * @rbx_out is an optional parameter for use by EDGBRD, which returns
-+ * the the requested value in RBX.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   trapnr with ENCLS_FAULT_FLAG set on fault
-+ */
-+#define __encls_N(rax, rbx_out, inputs...)			\
-+	({							\
-+	int ret;						\
-+	asm volatile(						\
-+	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"   xor %%eax,%%eax;\n"					\
-+	"2:\n"							\
-+	".section .fixup,\"ax\"\n"				\
-+	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-+	"   jmp 2b\n"						\
-+	".previous\n"						\
-+	_ASM_EXTABLE_FAULT(1b, 3b)				\
-+	: "=a"(ret), "=b"(rbx_out)				\
-+	: "a"(rax), inputs					\
-+	: "memory");						\
-+	ret;							\
-+	})
-+
-+#define __encls_2(rax, rbx, rcx)				\
-+	({							\
-+	unsigned long ign_rbx_out;				\
-+	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
-+	})
-+
-+#define __encls_1_1(rax, data, rcx)			\
-+	({						\
-+	unsigned long rbx_out;				\
-+	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
-+	if (!ret)					\
-+		data = rbx_out;				\
-+	ret;						\
-+	})
-+
-+static inline int __ecreate(struct sgx_pageinfo *pginfo, void __iomem *secs)
-+{
-+	return __encls_2(SGX_ECREATE, pginfo, secs);
-+}
-+
-+static inline int __eextend(void __iomem *secs, void __iomem *addr)
-+{
-+	return __encls_2(SGX_EEXTEND, secs, addr);
-+}
-+
-+static inline int __eadd(struct sgx_pageinfo *pginfo, void __iomem *addr)
-+{
-+	return __encls_2(SGX_EADD, pginfo, addr);
-+}
-+
-+static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
-+			  void __iomem *secs)
-+{
-+	return __encls_ret_3(SGX_EINIT, sigstruct, secs, einittoken);
-+}
-+
-+static inline int __eremove(void __iomem *addr)
-+{
-+	return __encls_ret_1(SGX_EREMOVE, addr);
-+}
-+
-+static inline int __edbgwr(void __iomem *addr, unsigned long *data)
-+{
-+	return __encls_2(SGX_EDGBWR, *data, addr);
-+}
-+
-+static inline int __edbgrd(void __iomem *addr, unsigned long *data)
-+{
-+	return __encls_1_1(SGX_EDGBRD, *data, addr);
-+}
-+
-+static inline int __etrack(void __iomem *addr)
-+{
-+	return __encls_ret_1(SGX_ETRACK, addr);
-+}
-+
-+static inline int __eldu(struct sgx_pageinfo *pginfo, void __iomem *addr,
-+			 void *va)
-+{
-+	return __encls_ret_3(SGX_ELDU, pginfo, addr, va);
-+}
-+
-+static inline int __eblock(void __iomem *addr)
-+{
-+	return __encls_ret_1(SGX_EBLOCK, addr);
-+}
-+
-+static inline int __epa(void __iomem *addr)
-+{
-+	unsigned long rbx = SGX_PAGE_TYPE_VA;
-+
-+	return __encls_2(SGX_EPA, rbx, addr);
-+}
-+
-+static inline int __ewb(struct sgx_pageinfo *pginfo, void __iomem *addr,
-+			void __iomem *va)
-+{
-+	return __encls_ret_3(SGX_EWB, pginfo, addr, va);
-+}
-+
-+static inline int __eaug(struct sgx_pageinfo *pginfo, void __iomem *addr)
-+{
-+	return __encls_2(SGX_EAUG, pginfo, addr);
-+}
-+
-+static inline int __emodpr(struct sgx_secinfo *secinfo, void __iomem *addr)
-+{
-+	return __encls_ret_2(SGX_EMODPR, secinfo, addr);
-+}
-+
-+static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
-+{
-+	return __encls_ret_2(SGX_EMODT, secinfo, addr);
-+}
-+
-+#endif /* _ASM_X86_SGX_H */
++#endif /* _UAPI_ASM_X86_SGX_ERRNO_H */
 -- 
 2.19.1
