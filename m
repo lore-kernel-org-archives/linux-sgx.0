@@ -1,130 +1,110 @@
-Date: Thu, 1 Nov 2018 14:27:44 -0400
-From: Rich Felker <dalias@libc.org>
-To: Andy Lutomirski <luto@kernel.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, Jann Horn
-	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, X86 ML
+Message-ID: <1541541565.8854.13.camel@intel.com>
+Subject: Re: RFC: userspace exception fixups
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>
+CC: Jann Horn <jannh@google.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
+ Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
 	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
 	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
 	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
 	<linux-sgx@vger.kernel.org>, Andy Shevchenko
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181101182744.GA5150@brightrain.aerifal.cx>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Sender: Rich Felker <dalias@aerifal.cx>
-Return-Path: dalias@aerifal.cx
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Date: Tue, 6 Nov 2018 13:59:25 -0800
+In-Reply-To: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+	 <20181102170627.GD7393@linux.intel.com>
+	 <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+	 <20181102173350.GF7393@linux.intel.com>
+	 <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+	 <20181102182712.GG7393@linux.intel.com>
+	 <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+	 <20181102220437.GI7393@linux.intel.com>
+	 <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+	 <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+	 <1541518670.7839.31.camel@intel.com>
+	 <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+	 <1541524750.7839.51.camel@intel.com>
+	 <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+	 <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+	 <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+	 <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+	 <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+	 <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+	 <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+	 <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
-> Hi all-
-> 
-> The people working on SGX enablement are grappling with a somewhat
-> annoying issue: the x86 EENTER instruction is used from user code and
-> can, as part of its normal-ish operation, raise an exception.  It is
-> also highly likely to be used from a library, and signal handling in
-> libraries is unpleasant at best.
-> 
-> There's been some discussion of adding a vDSO entry point to wrap
-> EENTER and do something sensible with the exceptions, but I'm
-> wondering if a more general mechanism would be helpful.
-> 
-> The basic idea would be to allow libc, or maybe even any library, to
-> register a handler that gets a chance to act on an exception caused by
-> a user instruction before a signal is delivered.  As a straw-man
-> example for how this could work, there could be a new syscall:
-> 
-> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-> 
-> If a handler is registered, then, if a synchronous exception happens
-> (page fault, etc), the kernel would set up an exception frame as usual
-> but, rather than checking for signal handlers, it would just call the
-> registered handler.  That handler is expected to either handle the
-> exception entirely on its own or to call one of two new syscalls to
-> ask for normal signal delivery or to ask to retry the faulting
-> instruction.
-> 
-> Alternatively, we could do something a lot more like the kernel's
-> internal fixups where there's a table in user memory that maps
-> potentially faulting instructions to landing pads that handle
-> exceptions.
+On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
+> On Tue, Nov 6, 2018 at 1:07 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> > 
+> > > 
+> > > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> > > 
+> > > > 
+> > > > On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> > > > True, but what if we have a nasty enclave that writes to memory just
+> > > > below SP *before* decrementing SP?
+> > > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> > > 
+> > >    1. EENTER
+> > >    2. Hardware sets eenter_hwframe->sp = %sp
+> > >    3. Enclave runs... wants to do out-call
+> > >    4. Enclave sets up parameters:
+> > >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> > >        ...
+> > >    5. Enclave sets eenter_hwframe->sp -= offset
+> > > 
+> > > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
+> > > was on the stack.  The enclave could easily fix this by moving ->sp first.
+> > > 
+> > > But, this is one of those "fun" parts of the ABI that I think we need to
+> > > talk about.  If we do this, we also basically require that the code
+> > > which handles asynchronous exits must *not* write to the stack.  That's
+> > > not hard because it's typically just a single ERESUME instruction, but
+> > > it *is* a requirement.
+> > > 
+> > I was assuming that the async exit stuff was completely hidden by the API. The AEP code would decide whether the exit got fixed up by the kernel (which may or may not be easy to tell — can the
+> > code even tell without kernel help whether it was, say, an IRQ vs #UD?) and then either do ERESUME or cause sgx_enter_enclave() to return with an appropriate return value.
+> > 
+> > 
+> Sean, how does the current SDK AEX handler decide whether to do
+> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
+> like the *CPU* could give a big hint, but I don't see where there is
+> any architectural indication of why the AEX code got called or any
+> obvious way for the user code to know whether the exit was fixed up by
+> the kernel?
 
-This strikes me as just an "extra layer of signal handlers"; rather
-than replacing global state with something that's library-safe, it's
-just making new global state that has to have a singleton owner
-managing it. If these handlers were thread-local (vs process-global
-signal disposition) then you could just register/unregister them on
-entry/exit to the library code that needs them, but that has
-nontrivial execution time cost.
+The SDK "unconditionally" does ERESUME at the AEP location, but that's
+bit misleading because its signal handler may muck with the context's
+RIP, e.g. to abort the enclave on a fatal fault.
 
-Moreover, thread-local signal handlers can already be done really
-nicely if you don't care about having a global handler (which doesn't
-really make sense for synchronous signals). I have fairly canonical
-draft code I wrote to demonstrate this a while back which I can share
-if there's interest.
+On an event/exception from within an enclave, the event is immediately
+delivered after loading synthetic state and changing RIP to the AEP.
+In other words, jamming CPU state is essentially a bunch of vectoring
+ucode preamble, but from software's perspective it's a normal event
+that happens to point at the AEP instead of somewhere in the enclave.
+And because the signals the SDK cares about are all synchronous, the
+SDK can simply hardcode ERESUME at the AEP since all of the fault logic
+resides in its signal handler.  IRQs and whatnot simply trampoline back
+into the enclave.
 
-One possible advantage of your approach is that it could distinguish
-actual synchronous signals from ones sent by kill/sigqueue/etc. This
-matters in contexts where the application wants the signal blocked or
-ignored. For example if you temporarily set a handler for SIGILL or
-SIGSEGV, then unblock it and try to do something that might generate
-the signal, you risk consuming an unrelated pending signal sent by
-kill/sigqueue/etc. As far as I know there is no way to do this
-"transparently". It came up as an issue for why libc init code cannot
-do this kind of probing for instruction availability at startup (or
-any time).
+Userspace can do something funky instead of ERESUME, but only *after*
+IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
+case, after the trap handler has run.
 
-> Do you think this would be useful?  Here are some use cases that I
-> think are valid:
-> 
-> (a) Enter an SGX enclave and handle errors.  There would be two
-> instructions that would need special handling: EENTER and ERESUME.
-
-I'm not familiar with SGX but the vdso approach sounds like a better
-abstraction.
-
-> (b) Do some math and catch division by zero.  I think it would be a
-> bad idea to have user code call a function and say that it wants to
-> handle *any* division by zero, but having certain specified division
-> instructions have special handling seems entirely reasonable.
-
-I don't think this is useful. If you really need a division that needs
-to survive invalid operands, a simple check before the div
-(100%-predictable branch in non-erroneous usage) is dirt cheap.
-
-> (c) Ditto for floating point errors.
-
-Signaling floating point exceptions (rather than sticky flags) are
-something of an oddity that's never enabled by default, not supported
-on all platforms, and largely (IMO) useless. Generating code that can
-support them can be moderately costly too.
-
-> (d) Try an instruction and see if it gets #UD.
-
-In general this seems fairly useful.
-
-> (e) Run a bunch of code and handle page faults to a given address
-> range by faulting something in.  This is not like the others, in that
-> a handler wants to handle a range of target addresses, not
-> instructions.  And userfaultfd is plausibly a better solution anyway.
-
-Agree re: userfaultfd.
-
-> (f) Run NaCl-like sandboxed code where the code can cause page faults
-> to certain mapped-but-intentionally-not-present ranges and those need
-> to be handled.
-> 
-> On Windows, you can use SEH to do crazy things like running
-> known-buggy code and eating the page faults.  I don't think we want to
-> go there.
-
-Agree, this is a huge rabbit hole of filth. Don't go there.
-
-Rich
+Jumping back a bit, how much do we care about preventing userspace
+from doing stupid things?  I did a quick POC on the idea of hardcoding
+fixup for the ENCLU opcode, and the basic idea checks out.  The code
+is fairly minimal and doesn't impact the core functionality of the SDK.
+They'd need to redo their trap handling to move it from the signal
+handler to inline, but their stack shenanigans won't be any more broken
+than they already are.
