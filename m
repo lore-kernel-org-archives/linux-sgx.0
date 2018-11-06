@@ -1,62 +1,65 @@
-Received: from mga12.intel.com ([192.55.52.136]:58538 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1725882AbeKIFrd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 9
- Nov 2018 00:47:33 -0500
-Subject: Re: RFC: userspace exception fixups
-To: Andy Lutomirski <luto@amacapital.net>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>
-CC: Andrew Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-References: <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
- <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open
+ list <linux-kernel@vger.kernel.org>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
 From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
-Date: Thu, 8 Nov 2018 12:10:30 -0800
-In-Reply-To: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+Message-ID: <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+Date: Tue, 6 Nov 2018 08:45:37 -0800
+In-Reply-To: <20181106054911.GA15575@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+Return-Path: dave.hansen@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On 11/8/18 12:05 PM, Andy Lutomirski wrote:
-> Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
-> not the most terrible thing in the world.  But could the SDK live with
-> something more like my suggestion where the vDSO supplies a normal
-> function that takes a struct containing registers that are visible to
-> the enclave?  This would make it extremely awkward for the enclave to
-> use the untrusted stack per se, but it would make it quite easy (I
-> think) for the untrusted part of the SDK to allocate some extra memory
-> and just tell the enclave that *that* memory is the stack.
+On 11/5/18 9:49 PM, Jarkko Sakkinen wrote:
+> On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
+>> The ABI seems entirely undocumented and rather lightly designed, which
+>> seems like something we should fix before this is merged.
+> 
+> ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
+> documentation is included to intel_sgx.rst. I'm not saying that there is
+> no space refine it but it is neither undocumented.
 
-I really think the enclave should keep its grubby mitts off the
-untrusted stack.  There are lots of ways to get memory, even with
-stack-like semantics, that don't involve mucking with the stack itself.
+I specifically mean the instruction flow around asynchronous exits or
+explicit enclave exit calls via EEXIT.  Signals are part of the ABI but
+go unmentioned in the documentation.
 
-I have not heard a good, hard argument for why there is an absolute
-*need* to store things on the actual untrusted stack.
+It's also worth noting that EENTER *can* act (from the kernel's
+perspective) like an instruction that both jumps and sets a bunch of
+registers (including %rsp).  It's certainly abnormal in that regard.
 
-We could quite easily have the untrusted code just promise to allocate a
-stack-sized virtual area (even derived from the stack rlimit size) and
-pass that into the enclave for parameter use.
+In fact, in the docs:
+
+> +Enclave can only execute code inside the ELRANGE. Instructions that may cause
+> +VMEXIT, IO instructions and instructions that require a privilege change are
+> +prohibited inside the enclave. Interrupts and exceptions always cause enclave
+> +to exit and jump to an address outside the enclave given when the enclave is
+> +entered by using the leaf instruction ENCLS(EENTER).
+
+it's probably a really good idea to explain that the address outside of
+the enclave is enclave-provided, and is not, for instance, just the next
+instruction after EENTER.
+
+>> Also, for a feature as massive and complicated as this one, it seems
+>> irresponsible to not have a selftest.  Is that not feasible for some reason?
+> 
+> I do have the in-kernel launch enclave stuff backed up here:
+> 
+> https://github.com/jsakkine-intel/sgx-le-host
+> https://github.com/jsakkine-intel/sgx-le
+> 
+> This is about as simple as it gets without any type of run-time.
+
+Does this code run when I type "make kselftest"?  If not, I think we
+should rectify that.
