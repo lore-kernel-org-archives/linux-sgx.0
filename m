@@ -1,60 +1,136 @@
-Received: from mga17.intel.com ([192.55.52.151]:28806 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1725843AbeKBCzt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Thu, 1
- Nov 2018 22:55:49 -0400
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To: Andy Lutomirski <luto@amacapital.net>
-CC: Jethro Beekman <jethro@fortanix.com>, Sean Christopherson
-	<sean.j.christopherson@intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Andrew Lutomirski <luto@kernel.org>, "X86
- ML" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	"shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-References: <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
- <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
- <20180927135603.GF8242@linux.intel.com>
- <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
- <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
- <20181031213036.GA23089@linux.intel.com>
- <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
- <dc0f8bc8-4d69-517e-68af-abda2d51423f@fortanix.com>
- <a6deac4e-ce8f-aa43-2d75-a04c05bac104@intel.com>
- <2833FD27-42A0-435C-AEA5-2DC73315867A@amacapital.net>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <99b6de19-5620-7f3b-5c37-dbf8a6baef17@intel.com>
-Date: Thu, 1 Nov 2018 10:51:50 -0700
-In-Reply-To: <2833FD27-42A0-435C-AEA5-2DC73315867A@amacapital.net>
-Content-Type: text/plain; charset="utf-8"
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
+	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, Suresh Siddha <suresh.b.siddha@intel.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v16 17/22] x86/sgx: Add sgx_einit() for initializing enclaves
+Date: Tue, 6 Nov 2018 15:45:56 +0200
+Message-ID: <20181106134758.10572-18-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On 10/31/18 3:52 PM, Andy Lutomirski wrote:
-> I think EENTER in plain user code should have well defined semantics,
-> and it should get regular signals with the appropriate bits set in
-> the error code field in the ucontext.  But we should probably
-> simultaneously offer a nicer API, and the libraries will use it
-> because it’s nicer.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-FWIW, if we have a signal-based version and a VDSO-based version, nobody
-will use the VDSO one.
+Add a helper function to perform ENCLS(EINIT) with the correct LE
+hash MSR values.  ENCLS[EINIT] initializes an enclave, verifying the
+enclave's measurement and preparing it for execution, i.e. the enclave
+cannot be run until it has been initialized.  The measurement aspect
+of EINIT references the MSR_IA32_SGXLEPUBKEYHASH* MSRs, with the CPU
+comparing CPU compares the key (technically its hash) used to sign the
+enclave[1] with the key hash stored in the MSRs, and will reject EINIT
+if the keys do not match.
 
-The Intel libraries are surely going to keep using the approach they've
-been using for years and I doubt their owners will be tempted even by a
-simpler interface to change one line of code.
+A per-cpu cache is used to avoid writing the MSRs as writing the MSRs
+is extraordinarily expensive, e.g. 300-400 cycles per MSR.  Because
+the cache may become stale, force update the MSRs and retry EINIT if
+the first EINIT fails due to an "invalid token".  An invalid token
+error does not necessarily mean the MSRs need to be updated, but the
+cost of an unnecessary write is minimal relative to the cost of EINIT
+itself.
 
-If we want to do the VDSO route, I think we probably need to go
-whole-hog and toss the signal-based one.
+[1] For EINIT's purposes, the effective signer of the enclave may be
+    the enclave's owner, or a separate Launch Enclave that has created
+    an EINIT token for the target enclave.  When using an EINIT token,
+    the key used to sign the token must match the MSRs in order for
+    EINIT to succeed.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/sgx.h      |  2 ++
+ arch/x86/kernel/cpu/intel_sgx.c | 50 +++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
+
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 372fc378018b..4cdfa1d22c6e 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -310,5 +310,7 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
+ struct sgx_epc_page *sgx_alloc_page(void);
+ int __sgx_free_page(struct sgx_epc_page *page);
+ void sgx_free_page(struct sgx_epc_page *page);
++int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
++	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
+ 
+ #endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+index e9a225fa14b7..ec3d5de6b037 100644
+--- a/arch/x86/kernel/cpu/intel_sgx.c
++++ b/arch/x86/kernel/cpu/intel_sgx.c
+@@ -15,6 +15,9 @@ EXPORT_SYMBOL_GPL(sgx_epc_sections);
+ 
+ static int sgx_nr_epc_sections;
+ 
++/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
++static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
++
+ /**
+  * sgx_alloc_page - Allocate an EPC page
+  *
+@@ -91,6 +94,53 @@ void sgx_free_page(struct sgx_epc_page *page)
+ }
+ EXPORT_SYMBOL_GPL(sgx_free_page);
+ 
++static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
++{
++	u64 __percpu *cache;
++	int i;
++
++	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
++	for (i = 0; i < 4; i++) {
++		if (enforce || (lepubkeyhash[i] != cache[i])) {
++			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
++			cache[i] = lepubkeyhash[i];
++		}
++	}
++}
++
++/**
++ * sgx_einit - initialize an enclave
++ * @sigstruct:		a pointer a SIGSTRUCT
++ * @token:		a pointer an EINITTOKEN (optional)
++ * @secs:		a pointer a SECS
++ * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
++ *
++ * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
++ * to @lepubkeyhash (if possible and necessary).
++ *
++ * Return:
++ *   0 on success,
++ *   -errno or SGX error on failure
++ */
++int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
++	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
++		return __einit(sigstruct, token, sgx_epc_addr(secs));
++
++	preempt_disable();
++	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
++	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	if (ret == SGX_INVALID_EINITTOKEN) {
++		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
++		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	}
++	preempt_enable();
++	return ret;
++}
++EXPORT_SYMBOL(sgx_einit);
+ 
+ static __init void sgx_free_epc_section(struct sgx_epc_section *section)
+ {
+-- 
+2.19.1
