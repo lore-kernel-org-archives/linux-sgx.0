@@ -1,137 +1,96 @@
+Received: from mga03.intel.com ([134.134.136.65]:62509 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S2388191AbeKFXQA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 6
+ Nov 2018 18:16:00 -0500
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
 	<linux-sgx@vger.kernel.org>
 CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Suresh Siddha
-	<suresh.b.siddha@intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
+	<kai.svahn@intel.com>, Andy Lutomirski <luto@amacapital.net>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "open list:X86 MM"
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v15 18/23] x86/sgx: Add sgx_einit() for initializing enclaves
-Date: Sat, 3 Nov 2018 01:11:17 +0200
-Message-ID: <20181102231320.29164-19-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
-MIME-Version: 1.0
+Subject: [PATCH v16 08/22] x86/mm: x86/sgx: Signal SIGSEGV for userspace #PFs w/ PF_SGX
+Date: Tue, 6 Nov 2018 15:45:47 +0200
+Message-ID: <20181106134758.10572-9-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Content-Type: text/plain
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add a helper function to perform ENCLS(EINIT) with the correct LE
-hash MSR values.  ENCLS[EINIT] initializes an enclave, verifying the
-enclave's measurement and preparing it for execution, i.e. the enclave
-cannot be run until it has been initialized.  The measurement aspect
-of EINIT references the MSR_IA32_SGXLEPUBKEYHASH* MSRs, with the CPU
-comparing CPU compares the key (technically its hash) used to sign the
-enclave[1] with the key hash stored in the MSRs, and will reject EINIT
-if the keys do not match.
+The PF_SGX bit is set if and only if the #PF is detected by the SGX
+Enclave Page Cache Map (EPCM).  The EPCM is a hardware-managed table
+that enforces accesses to an enclave's EPC pages in addition to the
+software-managed kernel page tables, i.e. the effective permissions
+for an EPC page are a logical AND of the kernel's page tables and
+the corresponding EPCM entry.
 
-A per-cpu cache is used to avoid writing the MSRs as writing the MSRs
-is extraordinarily expensive, e.g. 300-400 cycles per MSR.  Because
-the cache may become stale, force update the MSRs and retry EINIT if
-the first EINIT fails due to an "invalid token".  An invalid token
-error does not necessarily mean the MSRs need to be updated, but the
-cost of an unnecessary write is minimal relative to the cost of EINIT
-itself.
+The EPCM is consulted only after an access walks the kernel's page
+tables, i.e.:
 
-[1] For EINIT's purposes, the effective signer of the enclave may be
-    the enclave's owner, or a separate Launch Enclave that has created
-    an EINIT token for the target enclave.  When using an EINIT token,
-    the key used to sign the token must match the MSRs in order for
-    EINIT to succeed.
+  a. the access was allowed by the kernel
+  b. the kernel's tables have become less restrictive than the EPCM
+  c. the kernel cannot fixup the cause of the fault
 
+Noteably, (b) implies that either the kernel has botched the EPC
+mappings or the EPCM has been invalidated (see below).  Regardless of
+why the fault occurred, userspace needs to be alerted so that it can
+take appropriate action, e.g. restart the enclave.  This is reinforced
+by (c) as the kernel doesn't really have any other reasonable option,
+i.e. signalling SIGSEGV is actually the least severe action possible.
+
+Although the primary purpose of the EPCM is to prevent a malicious or
+compromised kernel from attacking an enclave, e.g. by modifying the
+enclave's page tables, do not WARN on a #PF w/ PF_SGX set.  The SGX
+architecture effectively allows the CPU to invalidate all EPCM entries
+at will and requires that software be prepared to handle an EPCM fault
+at any time.  The architecture defines this behavior because the EPCM
+is encrypted with an ephemeral key that isn't exposed to software.  As
+such, the EPCM entries cannot be preserved across transitions that
+result in a new key being used, e.g. CPU power down as part of an S3
+transition or when a VM is live migrated to a new physical system.
+
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/sgx.h      |  2 ++
- arch/x86/kernel/cpu/intel_sgx.c | 50 +++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+ arch/x86/mm/fault.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 4e39bcfad018..b6f014d0d88d 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -312,5 +312,7 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
- struct sgx_epc_page *sgx_alloc_page(void);
- int __sgx_free_page(struct sgx_epc_page *page);
- void sgx_free_page(struct sgx_epc_page *page);
-+int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-+	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 47bebfe6efa7..11d16bcf6e64 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1153,6 +1153,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
+ 	if (error_code & X86_PF_PK)
+ 		return 1;
  
- #endif /* _ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
-index b06709a9ea65..19041e96d1da 100644
---- a/arch/x86/kernel/cpu/intel_sgx.c
-+++ b/arch/x86/kernel/cpu/intel_sgx.c
-@@ -15,6 +15,9 @@ EXPORT_SYMBOL_GPL(sgx_epc_sections);
- 
- static int sgx_nr_epc_sections;
- 
-+/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
-+static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
++	/*
++	 * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
++	 * access is allowed by the PTE but not the EPCM.  This usually happens
++	 * when the EPCM is yanked out from under us, e.g. by hardware after a
++	 * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
++	 * fix the source of the fault as the EPCM can't be directly modified
++	 * by software.  Handle the fault as an access error in order to signal
++	 * userspace, e.g. so that userspace can rebuild their enclave(s), even
++	 * though userspace may not have actually violated access permissions.
++	 */
++	if (unlikely(error_code & X86_PF_SGX))
++		return 1;
 +
- /**
-  * sgx_alloc_page - Allocate an EPC page
-  *
-@@ -91,6 +94,53 @@ void sgx_free_page(struct sgx_epc_page *page)
- }
- EXPORT_SYMBOL_GPL(sgx_free_page);
- 
-+static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
-+{
-+	u64 __percpu *cache;
-+	int i;
-+
-+	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
-+	for (i = 0; i < 4; i++) {
-+		if (enforce || (lepubkeyhash[i] != cache[i])) {
-+			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-+			cache[i] = lepubkeyhash[i];
-+		}
-+	}
-+}
-+
-+/**
-+ * sgx_einit - initialize an enclave
-+ * @sigstruct:		a pointer a SIGSTRUCT
-+ * @token:		a pointer an EINITTOKEN (optional)
-+ * @secs:		a pointer a SECS
-+ * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
-+ *
-+ * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
-+ * to @lepubkeyhash (if possible and necessary).
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -errno or SGX error on failure
-+ */
-+int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-+	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
-+{
-+	int ret;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
-+		return __einit(sigstruct, token, sgx_epc_addr(secs));
-+
-+	preempt_disable();
-+	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
-+	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
-+	if (ret == SGX_INVALID_EINITTOKEN) {
-+		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
-+		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
-+	}
-+	preempt_enable();
-+	return ret;
-+}
-+EXPORT_SYMBOL(sgx_einit);
- 
- static __init void sgx_free_epc_section(struct sgx_epc_section *section)
- {
+ 	/*
+ 	 * Make sure to check the VMA so that we do not perform
+ 	 * faults just to hit a X86_PF_PK as soon as we fill in a
 -- 
 2.19.1
