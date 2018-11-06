@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3906C32789
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D17C32789
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57E62081D
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:26:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57E62081D
+	by mail.kernel.org (Postfix) with ESMTP id 110C82086C
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 23:35:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110C82086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730409AbeKGIx5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Nov 2018 03:53:57 -0500
-Received: from mga02.intel.com ([134.134.136.20]:36687 "EHLO mga02.intel.com"
+        id S1730924AbeKGJC6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Nov 2018 04:02:58 -0500
+Received: from mga04.intel.com ([192.55.52.120]:48290 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbeKGIx5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Nov 2018 03:53:57 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1730409AbeKGJC6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Nov 2018 04:02:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 15:26:17 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 15:35:17 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
-   d="scan'208";a="277680927"
+   d="scan'208";a="84504054"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Nov 2018 15:26:16 -0800
-Date:   Tue, 6 Nov 2018 15:26:16 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 06 Nov 2018 15:35:15 -0800
+Date:   Tue, 6 Nov 2018 15:35:15 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Rich Felker <dalias@libc.org>
+To:     Andy Lutomirski <luto@amacapital.net>
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Jann Horn <jannh@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -53,78 +55,79 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Carlos O'Donell <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
 Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181106232616.GA11101@linux.intel.com>
-References: <20181102220437.GI7393@linux.intel.com>
- <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+Message-ID: <20181106233515.GB11101@linux.intel.com>
+References: <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
  <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
  <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <20181106231730.GR5150@brightrain.aerifal.cx>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com>
+ <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181106231730.GR5150@brightrain.aerifal.cx>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181106232616.9Iy4rRynEmTr2GVICKHsuCA-kjOETdwK-EgzLN6EOY8@z>
+Message-ID: <20181106233515.9Ydoqwqkuyf4ZWei1k5GZQIlTqn6k76hqwwT_6gKYiA@z>
 
-On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
-> On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
-> > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
-> > >
-> > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > > > I almost feel like the right solution is to call into SGX on its own
-> > > > private stack or maybe even its own private address space.
-> > >
-> > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> > > enclave like its own "thread" with its own stack and its own set of
-> > > registers and context?  That seems like a much more workable model than
-> > > trying to weave it together with the EENTER context.
-> > 
-> > So maybe the API should be, roughly
-> > 
-> > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-> > host_state *state);
-> > sgx_exit_reason_t sgx_resume_enclave(same args);
-> > 
-> > where host_state is something like:
-> > 
-> > struct host_state {
-> >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
-> > };
-> > 
-> > and the values in host_state explicitly have nothing to do with the
-> > actual host registers.  So, if you want to use the outcall mechanism,
-> > you'd allocate some memory, point sp to that memory, call
-> > sgx_enter_enclave(), and then read that memory to do the outcall.
-> > 
-> > Actually implementing this would be distinctly nontrivial, and would
-> > almost certainly need some degree of kernel help to avoid an explosion
-> > when a signal gets delivered while we have host_state.sp loaded into
-> > the actual SP register.  Maybe rseq could help with this?
-> > 
-> > The ISA here is IMO not well thought through.
+On Tue, Nov 06, 2018 at 03:00:56PM -0800, Andy Lutomirski wrote:
 > 
-> Maybe I'm mistaken about some fundamentals here, but my understanding
-> of SGX is that the whole point is that the host application and the
-> code running in the enclave are mutually adversarial towards one
-> another. Do any or all of the proposed protocols here account for this
-> and fully protect the host application from malicious code in the
-> enclave? It seems that having control over the register file on exit
-> from the enclave is fundamentally problematic but I assume there must
-> be some way I'm missing that this is fixed up.
+> 
+> >> On Nov 6, 2018, at 1:59 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> >> 
+> >>> On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
+> >> Sean, how does the current SDK AEX handler decide whether to do
+> >> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
+> >> like the *CPU* could give a big hint, but I don't see where there is
+> >> any architectural indication of why the AEX code got called or any
+> >> obvious way for the user code to know whether the exit was fixed up by
+> >> the kernel?
+> > 
+> > The SDK "unconditionally" does ERESUME at the AEP location, but that's
+> > bit misleading because its signal handler may muck with the context's
+> > RIP, e.g. to abort the enclave on a fatal fault.
+> > 
+> > On an event/exception from within an enclave, the event is immediately
+> > delivered after loading synthetic state and changing RIP to the AEP.
+> > In other words, jamming CPU state is essentially a bunch of vectoring
+> > ucode preamble, but from software's perspective it's a normal event
+> > that happens to point at the AEP instead of somewhere in the enclave.
+> > And because the signals the SDK cares about are all synchronous, the
+> > SDK can simply hardcode ERESUME at the AEP since all of the fault logic
+> > resides in its signal handler.  IRQs and whatnot simply trampoline back
+> > into the enclave.
+> > 
+> > Userspace can do something funky instead of ERESUME, but only *after*
+> > IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
+> > case, after the trap handler has run.
+> > 
+> > Jumping back a bit, how much do we care about preventing userspace
+> > from doing stupid things? 
+> 
+> My general feeling is that userspace should be allowed to do apparently
+> stupid things. For example, as far as the kernel is concerned, Wine and
+> DOSEMU are just user programs that do stupid things. Linux generally tries
+> to provide a reasonably complete view of architectural behavior. This is
+> in contrast to, say, Windows, where IIUC doing an unapproved WRFSBASE May
+> cause very odd behavior indeed. So magic fixups that do non-architectural
+> things are not so great.
 
-SGX provides protections for the enclave but not the other way around.
-The kernel has all of its normal non-SGX protections in place, but the
-enclave can certainly wreak havoc on its userspace process.  The basic
-design idea is that the enclave is a specialized .so that gets extra
-security protections but is still effectively part of the overall
-application, e.g. it has full access to its host userspace process'
-virtual memory.
+Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
+with a specific (ignored) prefix pattern?  I.e. effectively make the magic
+fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
+that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
+that the enclave can EEXIT to immediately after the EENTER location.
+
+> (How does the Windows case work?  If there’s an exception after the untrusted
+> stack allocation and before EEXIT and SEH tries to handle it, how does the
+> unwinder figure out where to start?)
+
+No clue, I'll ask and report back.
