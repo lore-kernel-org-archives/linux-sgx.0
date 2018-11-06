@@ -2,69 +2,67 @@ Return-Path: <SRS0=XAjE=NR=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B96C32789
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 21:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9844C32789
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 21:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4845320862
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 21:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB952086B
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 21:42:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="04IKQHjy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4845320862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2jw2xbR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB952086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388387AbeKGGfF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:35:05 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41217 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388596AbeKGGfF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 7 Nov 2018 01:35:05 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p16-v6so6786240plr.8
-        for <linux-sgx@vger.kernel.org>; Tue, 06 Nov 2018 13:07:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=j/p4Rkoi1f8osFSfUldINn+hQAee4qZ2uYwdF+ITjj4=;
-        b=04IKQHjye1aJ6ChMu0ak3em2+V9j5vjNQHj3zO+hBaQHNFVCWrBKOocwI6WeAqW4/Z
-         daGsDMCnPyebmeMXiRWbN59xEDjI0fuGBcC+793l9jBeOvXAJTmi0od4SpQESmSH71or
-         c/aYANAkWrsxUt9SCPfesKFb0fy50CSuPQOetH5iw4QLXLn22U7fhXzhpf407Az6NFV+
-         0TKqTib/aff76vlt8iKwVaFYNsETXcJVR++GtavggEO+a85wulAwGJ7hS186IoRViED9
-         WjDwR21nYqsJpGnoMJhGLjjMDb+EEKceKFmhoywYQ934un6tWOfI1xtnyKe4vAXeTuaS
-         VMAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=j/p4Rkoi1f8osFSfUldINn+hQAee4qZ2uYwdF+ITjj4=;
-        b=aEGrnKyw05b4eYCMWhS/4W7PTTIviKyz2XfpnYucZ4abfXxxuX7LewPpdVXcQmM1Sr
-         ZBb+gfdLZWBgadhXZuKO7OQJPCr13Z3YWLMJxnhfiDxGjJmi7Gydu1yH9bBCohSwJtLh
-         n6BfK46eg0uTHLEvuNIoKgZA6dn+LR3/VtRkWPrFMOmRGWtP42rMu1x8MgJtBdloIeAf
-         fYl549JNSLBMVGGTDlqEDeJcOF0B1yRsR4LBHbHAT2KI1k69BfmLpG2u2/EsJPomKB2c
-         HXGFhBtTUIOtrN51GVuhNmI4emMNZMtYbJAE/1583zHxCiJhjYxcmzsznuF0BssCBKqr
-         W2lA==
-X-Gm-Message-State: AGRZ1gKX0F34Fbk5zJeGHMlBp435FzXbveYsyrIU6AFRML2FYgyjyqom
-        YqsPLUZv7VuF1wLwBbRbE3imsw==
-X-Google-Smtp-Source: AJdET5fmIbggkMcOEeXnvRRDjr0zRYUzW12145z1rJdUDXP3urYr1L7XvE9G7d6tMrpTBBaPgEoN7w==
-X-Received: by 2002:a17:902:4523:: with SMTP id m32-v6mr4461946pld.276.1541538476331;
-        Tue, 06 Nov 2018 13:07:56 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:8c77:2d31:8ab8:32d8? ([2601:646:c200:7429:8c77:2d31:8ab8:32d8])
-        by smtp.gmail.com with ESMTPSA id b11-v6sm36889995pgi.10.2018.11.06.13.07.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 13:07:55 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
+        id S1726671AbeKGHJY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Nov 2018 02:09:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726462AbeKGHJX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:09:23 -0500
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E44AC20892
+        for <linux-sgx@vger.kernel.org>; Tue,  6 Nov 2018 21:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541540527;
+        bh=ZLGkX2/fHbuTlmD8ZeECMFUn49KO4EBC58hjYDf9KcA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=b2jw2xbRZRGQCjAwxzxyeX8sn4EodFrMDjIm5BinxRgOrWkFgz9RHiEVqScoFpnhQ
+         jRxqmmk1hcOouqMSQxMiSor7rjp9I0/O+vSgm+iD8OZ7XHZyFjzwf2ajxwgBvpw7le
+         mZIrMbOZHbIfWPI3fCxLwGK2pOmfsN98rGCLUmY8=
+Received: by mail-wr1-f54.google.com with SMTP id z13-v6so12836800wrs.3
+        for <linux-sgx@vger.kernel.org>; Tue, 06 Nov 2018 13:42:06 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLoFQxm1Yr3+O4bk3I9AVGBZHFS3+azmDzwhBlKg/rOCbGfKsxH
+        9yV5S0EYzBdI+3zNk0Pgaw7SHgcohhmTJpEN4qCepQ==
+X-Google-Smtp-Source: AJdET5fh4kf8macwnRGOooVWINWbfhYcFzYwCKEd4bVAsTQ7vbWB+ZrUDsY7Swh2aDpR4eXNyl0tL2lWPt0YAyljYx8=
+X-Received: by 2002:adf:b1db:: with SMTP id r27-v6mr25013353wra.95.1541540525308;
+ Tue, 06 Nov 2018 13:42:05 -0800 (PST)
+MIME-Version: 1.0
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com> <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com> <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+In-Reply-To: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 6 Nov 2018 13:41:53 -0800
+X-Gmail-Original-Message-ID: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+Message-ID:
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
 Subject: Re: RFC: userspace exception fixups
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
-Date:   Tue, 6 Nov 2018 13:07:54 -0800
-Cc:     Andy Lutomirski <luto@kernel.org>,
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         Jann Horn <jannh@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -82,61 +80,60 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
+        "Carlos O'Donell" <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
- <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com> <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181106210754.k6VAJijJs52lW9DyvmBLEEA0JsqYanlMKQQ7NAa3ILM@z>
+Message-ID: <20181106214153.GlFDfRUDml7-X_R3eWlMPCl6YO2P4csFMXpZgxwfwPQ@z>
 
+On Tue, Nov 6, 2018 at 1:07 PM Andy Lutomirski <luto@amacapital.net> wrote:
+>
+>
+>
+> > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> >
+> >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> >> True, but what if we have a nasty enclave that writes to memory just
+> >> below SP *before* decrementing SP?
+> >
+> > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> >
+> >    1. EENTER
+> >    2. Hardware sets eenter_hwframe->sp =3D %sp
+> >    3. Enclave runs... wants to do out-call
+> >    4. Enclave sets up parameters:
+> >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> >        ...
+> >    5. Enclave sets eenter_hwframe->sp -=3D offset
+> >
+> > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' tha=
+t
+> > was on the stack.  The enclave could easily fix this by moving ->sp fir=
+st.
+> >
+> > But, this is one of those "fun" parts of the ABI that I think we need t=
+o
+> > talk about.  If we do this, we also basically require that the code
+> > which handles asynchronous exits must *not* write to the stack.  That's
+> > not hard because it's typically just a single ERESUME instruction, but
+> > it *is* a requirement.
+> >
+>
+> I was assuming that the async exit stuff was completely hidden by the API=
+. The AEP code would decide whether the exit got fixed up by the kernel (wh=
+ich may or may not be easy to tell =E2=80=94 can the code even tell without=
+ kernel help whether it was, say, an IRQ vs #UD?) and then either do ERESUM=
+E or cause sgx_enter_enclave() to return with an appropriate return value.
+>
+>
 
-
-> On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
->=20
->> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
->> True, but what if we have a nasty enclave that writes to memory just
->> below SP *before* decrementing SP?
->=20
-> Yeah, that would be unfortunate.  If an enclave did this (roughly):
->=20
->    1. EENTER
->    2. Hardware sets eenter_hwframe->sp =3D %sp
->    3. Enclave runs... wants to do out-call
->    4. Enclave sets up parameters:
->        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
->        ...
->    5. Enclave sets eenter_hwframe->sp -=3D offset
->=20
-> If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
-> was on the stack.  The enclave could easily fix this by moving ->sp first.=
-
->=20
-> But, this is one of those "fun" parts of the ABI that I think we need to
-> talk about.  If we do this, we also basically require that the code
-> which handles asynchronous exits must *not* write to the stack.  That's
-> not hard because it's typically just a single ERESUME instruction, but
-> it *is* a requirement.
->=20
-
-I was assuming that the async exit stuff was completely hidden by the API. T=
-he AEP code would decide whether the exit got fixed up by the kernel (which m=
-ay or may not be easy to tell =E2=80=94 can the code even tell without kerne=
-l help whether it was, say, an IRQ vs #UD?) and then either do ERESUME or ca=
-use sgx_enter_enclave() to return with an appropriate return value.
-
-
+Sean, how does the current SDK AEX handler decide whether to do
+EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
+like the *CPU* could give a big hint, but I don't see where there is
+any architectural indication of why the AEX code got called or any
+obvious way for the user code to know whether the exit was fixed up by
+the kernel?
