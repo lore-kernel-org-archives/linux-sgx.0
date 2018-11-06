@@ -1,115 +1,119 @@
-Received: from mga01.intel.com ([192.55.52.88]:27715 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S2388191AbeKFXQM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 6
- Nov 2018 18:16:12 -0500
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
-	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, "open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 09/22] x86/sgx: Define SGX1 and SGX2 ENCLS leafs
-Date: Tue, 6 Nov 2018 15:45:48 +0200
-Message-ID: <20181106134758.10572-10-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+Message-ID: <1541512681.7839.14.camel@intel.com>
+Subject: Re: [PATCH v16 06/22] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <x86@kernel.org>,
+	<platform-driver-x86@vger.kernel.org>, <linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<haitao.huang@intel.com>, <andriy.shevchenko@linux.intel.com>,
+	<tglx@linutronix.de>, <kai.svahn@intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad
+ Rzeszutek Wilk" <konrad.wilk@oracle.com>, David Woodhouse
+	<dwmw@amazon.co.uk>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	David Wang <davidwang@zhaoxin.com>, "Levin, Alexander (Sasha Levin)"
+	<alexander.levin@verizon.com>, Jia Zhang <qianyue.zj@alibaba-inc.com>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Date: Tue, 6 Nov 2018 05:58:01 -0800
+In-Reply-To: <20181106134758.10572-7-jarkko.sakkinen@linux.intel.com>
 References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Content-Type: text/plain
-Return-Path: linux-sgx-owner@vger.kernel.org
+	 <20181106134758.10572-7-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-ENCLS, a.k.a. Enclave System instruction, is an umbrella instruction
-for a variety of privileged SGX functions.  The ENCLS function to be
-executed is specified in EAX, a la GETSEC of SMX/TXT fame.  Leafs may
-use additional registers for function-specific operands.  ENCLS also
-introduces its own set of error codes that (some) leafs use to return
-pass/fail information to software.  Leafs that return an error code
-also modify RFLAGS.  And finally, ENCLS generates ENCLS-specific #GPs
-and #PFs.
+On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> Similar to other large Intel features such as VMX and TXT, SGX must be
+> explicitly enabled in IA32_FEATURE_CONTROL MSR to be truly usable.
+> Clear all SGX related capabilities if SGX is not fully enabled in
+> IA32_FEATURE_CONTROL or if the SGX1 instruction set isn't supported
+> (impossible on bare metal, theoretically possible in a VM if the VMM is
+> doing something weird).
+> 
+> Like SGX itself, SGX Launch Control must be explicitly enabled via a
+> flag in IA32_FEATURE_CONTROL. Clear the SGX_LC capability if Launch
+> Control is not fully enabled (or obviously if SGX itself is disabled).
+> 
+> Note that clearing X86_FEATURE_SGX_LC creates a bit of a conundrum
+> regarding the SGXLEPUBKEYHASH MSRs, as it may be desirable to read the
+> MSRs even if they are not writable, e.g. to query the configured key,
+> but clearing the capability leaves no breadcrum for discerning whether
+> or not the MSRs exist.  But, such usage will be rare (KVM is the only
+> known case at this time) and not performance critical, so it's not
+> unreasonable to require the use of rdmsr_safe().  Clearing the cap bit
+> eliminates the need for an additional flag to track whether or not
+> Launch Control is truly enabled, which is what we care about the vast
+> majority of the time.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/intel.c | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index fc3c07fe7df5..8a20a193d399 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -596,6 +596,40 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  	c->x86_phys_bits -= keyid_bits;
+>  }
+>  
+> +static void detect_sgx(struct cpuinfo_x86 *c)
+> +{
+> +	unsigned long long fc;
+> +
+> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> +		pr_err_once("sgx: SGX1 instruction set not supported\n");
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
 
-ENCLS leafs functions are organized under SGX sub-features, e.g. SGX1
-defines the base ENCLS function set and SGX2 adds ENCLS functions to
-enable dynamic EPC management.  At this time, only the SGX1 and SGX2
-function sets are supported by Linux; the other published sets relate
-to VMM EPC oversubscription, which is far out on the horizon.
+FEATURE_CONTROL_SGX_LE_WR isn't added until patch 13/22.  The patch
+can simply be moved earlier in the series if you want to introduce
+the full detect_sgx() in a single patch.  The only reason SGX_LE_WR
+was added later in the series was to bundle the Launch Control stuff
+together.
 
-Define the ENCLS leafs in a dedicated file as more architecturally
-defined SGX constants and data structures will be introduced in short
-order.
-
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/sgx_arch.h | 54 +++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
- create mode 100644 arch/x86/include/asm/sgx_arch.h
-
-diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
-new file mode 100644
-index 000000000000..e068db46835e
---- /dev/null
-+++ b/arch/x86/include/asm/sgx_arch.h
-@@ -0,0 +1,54 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+/**
-+ * Copyright(c) 2016-18 Intel Corporation.
-+ *
-+ * Contains data structures defined by the SGX architecture.  Data structures
-+ * defined by the Linux software stack should not be placed here.
-+ */
-+#ifndef _ASM_X86_SGX_ARCH_H
-+#define _ASM_X86_SGX_ARCH_H
-+
-+/**
-+ * enum sgx_encls_leaves - ENCLS leaf functions
-+ * %SGX_ECREATE:	Create an enclave.
-+ * %SGX_EADD:		Add a page to an uninitialized enclave.
-+ * %SGX_EINIT:		Initialize an enclave, i.e. launch an enclave.
-+ * %SGX_EREMOVE:	Remove a page from an enclave.
-+ * %SGX_EDBGRD:		Read a word from an enclve (peek).
-+ * %SGX_EDBGWR:		Write a word to an enclave (poke).
-+ * %SGX_EEXTEND:	Measure 256 bytes of an added enclave page.
-+ * %SGX_ELDB:		Load a swapped page in blocked state.
-+ * %SGX_ELDU:		Load a swapped page in unblocked state.
-+ * %SGX_EBLOCK:		Change page state to blocked i.e. entering hardware
-+ *			threads cannot access it and create new TLB entries.
-+ * %SGX_EPA:		Create a Version Array (VA) page used to store isvsvn
-+ *			number for a swapped EPC page.
-+ * %SGX_EWB:		Swap an enclave page to the regular memory. Checks that
-+ *			all threads have exited that were in the previous
-+ *			shoot-down sequence.
-+ * %SGX_ETRACK:		Start a new shoot down sequence. Used to together with
-+ *			EBLOCK to make sure that a page is safe to swap.
-+ * %SGX_EAUG:		Add a page to an initialized enclave.
-+ * %SGX_EMODPR:		Restrict an EPC page's permissions.
-+ * %SGX_EMODT:		Modify the page type of an EPC page.
-+ */
-+enum sgx_encls_leaves {
-+	SGX_ECREATE	= 0x00,
-+	SGX_EADD	= 0x01,
-+	SGX_EINIT	= 0x02,
-+	SGX_EREMOVE	= 0x03,
-+	SGX_EDGBRD	= 0x04,
-+	SGX_EDGBWR	= 0x05,
-+	SGX_EEXTEND	= 0x06,
-+	SGX_ELDB	= 0x07,
-+	SGX_ELDU	= 0x08,
-+	SGX_EBLOCK	= 0x09,
-+	SGX_EPA		= 0x0A,
-+	SGX_EWB		= 0x0B,
-+	SGX_ETRACK	= 0x0C,
-+	SGX_EAUG	= 0x0D,
-+	SGX_EMODPR	= 0x0E,
-+	SGX_EMODT	= 0x0F,
-+};
-+
-+#endif /* _ASM_X86_SGX_ARCH_H */
--- 
-2.19.1
+> +		pr_info_once("sgx: launch control MSRs are not writable\n");
+> +		goto out_msrs_rdonly;
+> +	}
+> +
+> +	return;
+> +out_unsupported:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +out_msrs_rdonly:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+> +}
+> +
+>  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+>  {
+>  	u64 epb;
+> @@ -763,6 +797,9 @@ static void init_intel(struct cpuinfo_x86 *c)
+>  	if (cpu_has(c, X86_FEATURE_TME))
+>  		detect_tme(c);
+>  
+> +	if (cpu_has(c, X86_FEATURE_SGX))
+> +		detect_sgx(c);
+> +
+>  	init_intel_energy_perf(c);
+>  
+>  	init_intel_misc_features(c);
