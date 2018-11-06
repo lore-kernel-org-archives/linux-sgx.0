@@ -1,78 +1,55 @@
-Received: from mga01.intel.com ([192.55.52.88]:61363 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726778AbeKCHrK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Sat, 3
- Nov 2018 03:47:10 -0400
-Date: Sat, 3 Nov 2018 00:37:57 +0200
+Date: Tue, 6 Nov 2018 08:20:02 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>, Rich Felker
-	<dalias@libc.org>, Jann Horn <jannh@google.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102223757.GB24373@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open
+ list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181106062002.GA18360@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+In-Reply-To: <20181106054911.GA15575@linux.intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 01, 2018 at 04:22:55PM -0700, Andy Lutomirski wrote:
-> On Thu, Nov 1, 2018 at 2:24 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
-> > >
-> > > See my other emails in this thread. You would register the *address*
-> > > (in TLS) of a function pointer object pointing to the handler, rather
-> > > than the function address of the handler. Then switching handler is
-> > > just a single store in userspace, no syscalls involved.
-> >
-> > Yes.
-> >
-> > And for just EENTER, maybe that's the right model.
-> >
-> > If we want to generalize it to other thread-synchronous faults, it
-> > needs way more information and a list of handlers, but if we limit the
-> > thing to _only_ EENTER getting an SGX fault, then a single "this is
-> > the fault handler" address is probably the right thing to do.
+On Tue, Nov 06, 2018 at 07:49:11AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
+> > The ABI seems entirely undocumented and rather lightly designed, which
+> > seems like something we should fix before this is merged.
 > 
-> It sounds like you're saying that the kernel should know, *before*
-> running any user fixup code, whether the fault in question is one that
-> wants a fixup.  Sounds reasonable.
+> ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
+> documentation is included to intel_sgx.rst. I'm not saying that there is
+> no space refine it but it is neither undocumented.
 > 
-> I think it would be nice, but not absolutely necessary, if user code
-> didn't need to poke some value into TLS each time it ran a function
-> that had a fixup.  With the poke-into-TLS approach, it looks a lot
-> like rseq, and rseq doesn't nest very nicely.  I think we really want
-> this mechanism to Just Work.  So we could maybe have a syscall that
-> associates a list of fixups with a given range of text addresses.  We
-> might want the kernel to automatically zap the fixups when the text in
-> question is unmapped.
+> > Also, for a feature as massive and complicated as this one, it seems
+> > irresponsible to not have a selftest.  Is that not feasible for some reason?
+> 
+> I do have the in-kernel launch enclave stuff backed up here:
+> 
+> https://github.com/jsakkine-intel/sgx-le-host
+> https://github.com/jsakkine-intel/sgx-le
+> 
+> This is about as simple as it gets without any type of run-time.
 
-If we would have a syscall to specify a list fixups that would do the
-job. Now essentially the only reason we require a vDSO is to implement
-a single fixup for EENTER.
+Of course the enclave could be simplified considerably since now it has
+full code for EINITTOKEN generation, which is probably an overkill for a
+selftest.
 
-If this fixup stuff makes sense for other parts of the kernel,
-introducing a vDSO for EENTER means essentially adding ABI to the kernel
-that might possibly become legacy fast.
+It could be simple as just enter and return to and from enclave or
+something in-between in terms of complexity.
+
+Even for the simplest enclave you need a signing tool (see sgxsign.c in
+my sgx-le repository), a custom linker script and a sophisticated
+makefile.
 
 /Jarkko
