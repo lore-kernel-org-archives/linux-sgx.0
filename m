@@ -2,233 +2,132 @@ Return-Path: <SRS0=XAjE=NR=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A446C32789
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137B5C32789
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C7A2081D
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="a1liUfpu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C7A2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id D157E2081D
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D157E2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389449AbeKGCXp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:23:45 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33382 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389214AbeKGCXp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 6 Nov 2018 21:23:45 -0500
-Received: by mail-pg1-f194.google.com with SMTP id q5-v6so6080755pgv.0
-        for <linux-sgx@vger.kernel.org>; Tue, 06 Nov 2018 08:57:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=fuTYZ0EUURoM2npeeIQL7Ud5k/6P95lXaguV2MbS8Ks=;
-        b=a1liUfpuFJJmS06nU/EjBdoWCE3hJsy7OELbBpdzO9qBINWaExkerGXPukA2B6Vckm
-         uQjTGSavGI9BxMFjKgA0zSLUCe+QgFIvr7btS831iBlLMi12pYZhxdS+1hKLflPNqshm
-         ZB9GOHMVrE6QLsWgkdEb6scSl1nmFe9WDpsL/Hp3As5A2KVrC7PVoWcT3QPMVcs8ZkhS
-         b2Ni2DR9+lg3U07J6DlElfqLGyFhNFn3qvMJnOhnsg1OZE9FwnzzE70kY5s4LohszlDs
-         dnI6jaaGFyBSicX8AoIvApjRObCMLmht+ZCXjVNxJZh7p4HkwvXCAdsxmMQamdR4ypgn
-         aXtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=fuTYZ0EUURoM2npeeIQL7Ud5k/6P95lXaguV2MbS8Ks=;
-        b=boYAswQtpjf8LRmUiGUOHO8dYM+2AxumnOOiQozYsltrQ7tKfZpBOseDmbt1CRT1lA
-         yV+xyMvQDrBzpTjjnQshAYd7KK5Ba/VSfbtJkrh/uM6XafDQAo2jUAmkeqKQGaVHyVx8
-         AqamsiZOZJUpQOk1mDP9BTWp8qnbnDr6P/xIgasyh+jsdPIt6Jaosi2qvhHgtUl4d+Ys
-         VgeKyaFYn7JUwK5dFNPHYFfYdqs7FrBJw0lEMr5dNURbO6798K8H++F1sJiluXwhIcML
-         DEUD3bdsor+XrVmPY2RzfBsHqbN2CGGpI1bcrA9w+vgpM5WH+Hadtf/Jx9NFSGZoOoro
-         u3Uw==
-X-Gm-Message-State: AGRZ1gJnqAQxZEl3BDTKaePT2PpZ0kqMqqwDRJtt/a7zRJObQoBUKMSw
-        w/uvmPJaVsLWzwsQEBvvpIlK0g==
-X-Google-Smtp-Source: AJdET5ewp8P0a3cow3VwO66aaPT5T67qfqdfTA0/4oDjmvqaX2Rx4QQgXdh/BvW4ZtHvcB99jiYIAA==
-X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr26698555pfe.11.1541523457476;
-        Tue, 06 Nov 2018 08:57:37 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:41cb:cc75:c7b0:b9a? ([2601:646:c200:7429:41cb:cc75:c7b0:b9a])
-        by smtp.gmail.com with ESMTPSA id 7-v6sm48620961pgk.31.2018.11.06.08.57.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 08:57:36 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: RFC: userspace exception fixups
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <1541518670.7839.31.camel@intel.com>
-Date:   Tue, 6 Nov 2018 08:57:35 -0800
-Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
+        id S2389481AbeKGCXr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 6 Nov 2018 21:23:47 -0500
+Received: from mga06.intel.com ([134.134.136.31]:1807 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389386AbeKGCXr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 6 Nov 2018 21:23:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 08:57:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="106365954"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 08:57:39 -0800
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com> <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com> <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com> <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com> <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com> <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com> <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com> <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com> <1541518670.7839.31.camel@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <a4895bc5-3234-8555-2709-1407dd1bf8e7@intel.com>
+Date:   Tue, 6 Nov 2018 08:57:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1541522400.7839.48.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181106165735.Y36A-qoND7-y9Se-2kZGX7YtTpm1QGKP9RjHgGlz_RU@z>
 
+On 11/6/18 8:40 AM, Sean Christopherson wrote:
+>> +struct sgx_encl {
+>> +	unsigned int flags;
+>> +	uint64_t attributes;
+>> +	uint64_t xfrm;
+>> +	unsigned int page_cnt;
+>> +	unsigned int secs_child_cnt;
+>> +	struct mutex lock;
+>> +	struct mm_struct *mm;
+>> +	struct file *backing;
+> Is there any particular reason why the kernel manages the backing for
+> the enclave and the PCMDs?  Could we have userspace provide the backing
+> either through the ECREATE ioctl() or maybe a completely new ioctl(),
+> e.g. to give userspace the option to back the enclave with a NVDIMM
+> instead of RAM?  A separate ioctl() with control flags might give us
+> some flexibility in the future, e.g. maybe there are use cases where
+> userspace would prefer to kill enclaves rather than swap EPC.
 
+I'll take the blame for this little nugget.  I think it was my idea.  We
+have a few of these kernel-internal shmfs files.  But, as you note, it
+would be really nice if they were subject to the normal memory APIs and
+we could set NUMA policies on them and so forth.
 
-> On Nov 6, 2018, at 7:37 AM, Sean Christopherson <sean.j.christopherson@int=
-el.com> wrote:
->=20
->> On Fri, 2018-11-02 at 16:32 -0700, Andy Lutomirski wrote:
->>> On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
->>>=20
->>>=20
->>> On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
->>> <sean.j.christopherson@intel.com> wrote:
->>>>=20
->>>>> On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
->>>>>=20
->>>>> On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
->>>>> <sean.j.christopherson@intel.com> wrote:
->>>>>>=20
->>>>>>> On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
->>>>>>>=20
->>>>>>> This whole mechanism seems very complicated, and it's not clear
->>>>>>> exactly what behavior user code wants.
->>>>>> No argument there.  That's why I like the approach of dumping the
->>>>>> exception to userspace without trying to do anything intelligent in
->>>>>> the kernel.  Userspace can then do whatever it wants AND we don't
->>>>>> have to worry about mucking with stacks.
->>>>>>=20
->>>>>> One of the hiccups with the VDSO approach is that the enclave may
->>>>>> want to use the untrusted stack, i.e. the stack that has the VDSO's
->>>>>> stack frame.  For example, Intel's SDK uses the untrusted stack to
->>>>>> pass parameters for EEXIT, which means an AEX might occur with what
->>>>>> is effectively a bad stack from the VDSO's perspective.
->>>>> What exactly does "uses the untrusted stack to pass parameters for
->>>>> EEXIT" mean? I guess you're saying that the enclave is writing to
->>>>> RSP+[0...some_positive_offset], and the written data needs to be
->>>>> visible to the code outside the enclave afterwards?
->>>> As is, they actually do it the other way around, i.e. negative offsets
->>>> relative to the untrusted %RSP.  Going into the enclave there is no
->>>> reserved space on the stack.  The SDK uses EEXIT like a function call,
->>>> i.e. pushing parameters on the stack and making an call outside of the
->>>> enclave, hence the name out-call.  This allows the SDK to handle any
->>>> reasonable out-call without a priori knowledge of the application's
->>>> maximum out-call "size".
->>> But presumably this is bounded to be at most 128 bytes (the red zone
->>> size), right? Otherwise this would be incompatible with
->>> non-sigaltstack signal delivery.
->>=20
->> I think Sean is saying that the enclave also updates RSP.
->=20
-> Yeah, the enclave saves/restores RSP from/to the current save state area.
->=20
->> One might reasonably wonder how the SDX knows the offset from RSP to
->> the function ID.  Presumably using RBP?
->=20
-> Here's pseudocode for how the SDK uses the untrusted stack, minus a
-> bunch of error checking and gory details.
->=20
-> The function ID and a pointer to a marshalling struct are passed to
-> the untrusted runtime via normal register params, e.g. RDI and RSI.
-> The marshalling struct is what's actually allocated on the untrusted
-> stack, like alloca() but more complex and explicit.  The marshalling
-> struct size is not artificially restricted by the SDK, e.g. AFAIK it
-> could span multiple 4k pages.
->=20
->=20
-> int sgx_out_call(const unsigned int func_index, void *marshalling_struct)
-> {
->    struct sgx_encl_tls *tls =3D get_encl_tls();
->=20
->    %RBP =3D tls->save_state_area[SSA_RBP];
->    %RSP =3D tls->save_state_area[SSA_RSP];
->    %RDI =3D func_index;
->    %RSI =3D marshalling_struct;
->=20
->    EEXIT
->=20
->    /* magic elsewhere to get back here on an EENTER(OUT_CALL_RETURN) */
->    return %RAX
-> }
->=20
-> void *sgx_alloc_untrusted_stack(size_t size)
-> {
->    struct sgx_encl_tls *tls =3D get_encl_tls();
->    struct sgx_out_call_context *context;
->    void *tmp;
->=20
->    /* create a frame on the trusted stack to hold the out-call context */
->    tls->trusted_stack -=3D sizeof(struct sgx_out_call_context);
->=20
->    /* save the untrusted %RSP into the out-call context */
->    context =3D (struct sgx_out_call_context *)tls->trusted_stack;
->    context->untrusted_stack =3D tls->save_state_area[SSA_RSP];
->=20
->    /* allocate space on the untrusted stack */
->    tmp =3D (void *)(tls->save_state_area[SSA_RSP] - size);
->    tls->save_state_area[SSA_RSP] =3D tmp;
->=20
->    return tmp;
-> }
->=20
-> void sgx_pop_untrusted_stack(void)
-> {
->    struct sgx_encl_tls *tls =3D get_encl_tls();
->    struct sgx_out_call_context *context;
->=20
->    /* retrieve the current out-call context from the trusted stack */
->    context =3D (struct sgx_out_call_context *)tls->trusted_stack;
->=20
->    /* restore untrusted %RSP */
->    tls->save_state_area[SSA_RSP] =3D context->untrusted_stack;
->=20
->    /* pop the out-call context frame */
->    tls->trusted_stack +=3D sizeof(struct sgx_out_call_context);
-> }
->=20
-> int sgx_main(void)
-> {
->    struct my_out_call_struct *params;
->=20
->    params =3D sgx_alloc_untrusted_stack(sizeof(*params));
->=20
->    params->0..N =3D XYZ;
->=20
->    ret =3D sgx_out_call(DO_WORK, params);
->=20
->    sgx_pop_untrusted_stack();
->=20
->    return ret;
-> }
-
-So I guess the non-enclave code basically can=E2=80=99t trust its stack poin=
-ter because of these shenanigans. And the AEP code has to live with the fact=
- that its RSP is basically arbitrary and probably can=E2=80=99t even be unwo=
-und by a debugger?  And the EENTER code has to deal with the fact that its r=
-ed zone can be blatantly violated by the enclave?
-
-I=E2=80=99m assuming it=E2=80=99s way too late for the SGX SDK to be changed=
- to use a normal RPC mechanism? I=E2=80=99m a bit disappointed that enclaves=
- can even manipulate outside state like this. I assume Intel had some reason=
- for making it possible, but still.=
+We could just wire the NUMA (and other) APIs up to the SGX VMA.
