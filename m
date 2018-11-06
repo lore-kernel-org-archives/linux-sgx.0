@@ -1,44 +1,48 @@
-Received: from mga01.intel.com ([192.55.52.88]:58967 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1726141AbeKCHQ6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Sat, 3
- Nov 2018 03:16:58 -0400
-Date: Sat, 3 Nov 2018 00:07:52 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jethro Beekman <jethro@fortanix.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Rich
- Felker" <dalias@libc.org>, <nhorman@redhat.com>, <npmccallum@redhat.com>,
-	"Ayoun, Serge" <serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102220752.GA24373@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
+	<kai.svahn@intel.com>, Kai Huang <kai.huang@linux.intel.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad Rzeszutek
+ Wilk" <konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v16 05/22] x86/cpufeatures: Add Intel-defined SGX_LC feature bit
+Date: Tue, 6 Nov 2018 15:45:44 +0200
+Message-ID: <20181106134758.10572-6-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain
+Return-Path: jarkko.sakkinen@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
-> If a handler is registered, then, if a synchronous exception happens
-> (page fault, etc), the kernel would set up an exception frame as usual
-> but, rather than checking for signal handlers, it would just call the
-> registered handler.  That handler is expected to either handle the
-> exception entirely on its own or to call one of two new syscalls to
-> ask for normal signal delivery or to ask to retry the faulting
-> instruction.
+From: Kai Huang <kai.huang@linux.intel.com>
 
-Why the syscalls are required? Couldn't the handler have just a return
-value to indicate the appropriate action?
+X86_FEATURE_SGX_LC reflects whether or not the CPU supports SGX Launch
+Control, i.e. enumerates the existence of IA32_FEATURE_CONTROL's
+SGX_LE_WR bit and the IA32_SGXLEPUBKEYHASH MSRs.
 
-Another thing that I'm wondering is that what if a signal occurs inside
-the exception handler?
+Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-/Jarkko
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 1b8dea9a06cb..1213e68f87e7 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -341,6 +341,7 @@
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+ #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
++#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
+ 
+ /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
+-- 
+2.19.1
