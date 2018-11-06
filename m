@@ -1,48 +1,325 @@
-Received: from bombadil.infradead.org ([198.137.202.133]:40018 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbeKIQwV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 9 Nov 2018 11:52:21 -0500
-Date: Thu, 8 Nov 2018 23:12:59 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Andy Lutomirski <luto@amacapital.net>
-CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, Dave Hansen
-	<dave.hansen@intel.com>, Andrew Lutomirski <luto@kernel.org>, Jann Horn
-	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, "Rich
- Felker" <dalias@libc.org>, Dave Hansen <dave.hansen@linux.intel.com>, Jethro
- Beekman <jethro@fortanix.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>, Linux
- API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
-	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181109071259.GA14784@infradead.org>
-References: <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
- <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:41128 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S2388065AbeKFXSD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Tue, 6
+ Nov 2018 18:18:03 -0500
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>
+CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
+	<kai.svahn@intel.com>, Suresh Siddha <suresh.b.siddha@intel.com>, "Jarkko
+ Sakkinen" <jarkko.sakkinen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Reinette
+ Chatre" <reinette.chatre@intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, "Rafael J. Wysocki"
+	<rafael.j.wysocki@intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v16 15/22] x86/sgx: Enumerate and track EPC sections
+Date: Tue, 6 Nov 2018 15:45:54 +0200
+Message-ID: <20181106134758.10572-16-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
 Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Content-Type: text/plain
 Return-Path: linux-sgx-owner@vger.kernel.org
 MIME-Version: 1.0
 
-On Thu, Nov 08, 2018 at 12:05:42PM -0800, Andy Lutomirski wrote:
-> This whole thing is a mess.  I'm starting to think that the cleanest
-> solution would be to provide a way to just tell the kernel that
-> certain RIP values have exception fixups.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-The bay far cleanest solution would be to say that SGX is sich a mess
-that we are not going to support it at all.  It's not like it is a must
-have a feature to start with.
+Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
+structures necessary to track EPC pages so that they can be allocated,
+freed and managed.  As a system may have multiple EPC sections, invoke
+CPUID on SGX sub-leafs until an invalid leaf is encountered.
+
+On NUMA systems, a node can have at most one bank. A bank can be at
+most part of two nodes.  SGX supports both nodes with a single memory
+controller and also sub-cluster nodes with severals memory controllers
+on a single die.
+
+For simplicity, support a maximum of eight EPC sections.  Current
+client hardware supports only a single section, while upcoming server
+hardware will support at most eight sections.  Bounding the number of
+sections also allows the section ID to be embedded along with a page's
+offset in a single unsigned long, enabling easy retrieval of both the
+VA and PA for a given page.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
+Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/Kconfig                |  17 ++++
+ arch/x86/include/asm/sgx.h      |  58 +++++++++++++
+ arch/x86/kernel/cpu/Makefile    |   1 +
+ arch/x86/kernel/cpu/intel_sgx.c | 142 ++++++++++++++++++++++++++++++++
+ 4 files changed, 218 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/intel_sgx.c
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..b47e1a144409 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1913,6 +1913,23 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
+ 
+ 	  If unsure, say y.
+ 
++config INTEL_SGX_CORE
++	bool "Intel SGX core functionality"
++	depends on X86_64 && CPU_SUP_INTEL
++	help
++	Intel Software Guard eXtensions (SGX) CPU feature that allows ring 3
++	applications to create enclaves: private regions of memory that are
++	architecturally protected from unauthorized access and/or modification.
++
++	This option enables kernel recognition of SGX, high-level management
++	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
++	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
++	itself, this option does not provide SGX support to userspace.
++
++	For details, see Documentation/x86/intel_sgx.rst
++
++	If unsure, say N.
++
+ config EFI
+ 	bool "EFI runtime service support"
+ 	depends on ACPI
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 3d5ba1d23dfb..efe3e213e582 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -2,9 +2,67 @@
+ #ifndef _ASM_X86_SGX_H
+ #define _ASM_X86_SGX_H
+ 
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/rwsem.h>
++#include <linux/types.h>
+ #include <asm/asm.h>
+ #include <asm/sgx_arch.h>
+ 
++struct sgx_epc_page {
++	unsigned long desc;
++	struct list_head list;
++};
++
++/**
++ * struct sgx_epc_section
++ *
++ * The firmware can define multiple chunks of EPC to the different areas of the
++ * physical memory e.g. for memory areas of the each node. This structure is
++ * used to store EPC pages for one EPC section and virtual memory area where
++ * the pages have been mapped.
++ */
++struct sgx_epc_section {
++	unsigned long pa;
++	void *va;
++	struct sgx_epc_page **pages;
++	unsigned long free_cnt;
++	spinlock_t lock;
++};
++
++#define SGX_MAX_EPC_SECTIONS	8
++
++extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
++
++/**
++ * enum sgx_epc_page_desc - bits and masks for an EPC page's descriptor
++ * %SGX_EPC_SECTION_MASK:	SGX allows to have multiple EPC sections in the
++ *				physical memory. The existing and near-future
++ *				hardware defines at most eight sections, hence
++ *				three bits to hold a section.
++ * %SGX_EPC_PAGE_RECLAIMABLE:	The page page is reclaimable. Used when freeing
++ *				a page to know that we also need to remove the
++ *				page from the list of reclaimable pages.
++ */
++enum sgx_epc_page_desc {
++	SGX_EPC_SECTION_MASK			= GENMASK_ULL(3, 0),
++	SGX_EPC_PAGE_RECLAIMABLE		= BIT(4),
++	/* bits 12-63 are reserved for the physical page address of the page */
++};
++
++static inline struct sgx_epc_section *sgx_epc_section(struct sgx_epc_page *page)
++{
++	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
++}
++
++static inline void *sgx_epc_addr(struct sgx_epc_page *page)
++{
++	struct sgx_epc_section *section = sgx_epc_section(page);
++
++	return section->va + (page->desc & PAGE_MASK) - section->pa;
++}
++
+ /**
+  * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
+  *
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 347137e80bf5..71876f2b35fc 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
+ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt.o intel_rdt_rdtgroup.o intel_rdt_monitor.o
+ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt_ctrlmondata.o intel_rdt_pseudo_lock.o
+ CFLAGS_intel_rdt_pseudo_lock.o = -I$(src)
++obj-$(CONFIG_INTEL_SGX_CORE)		+= intel_sgx.o
+ 
+ obj-$(CONFIG_X86_MCE)			+= mcheck/
+ obj-$(CONFIG_MTRR)			+= mtrr/
+diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+new file mode 100644
+index 000000000000..7587fc7ef9ef
+--- /dev/null
++++ b/arch/x86/kernel/cpu/intel_sgx.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-17 Intel Corporation.
++
++#include <linux/freezer.h>
++#include <linux/highmem.h>
++#include <linux/kthread.h>
++#include <linux/pagemap.h>
++#include <linux/ratelimit.h>
++#include <linux/sched/signal.h>
++#include <linux/slab.h>
++#include <asm/sgx.h>
++
++struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
++EXPORT_SYMBOL_GPL(sgx_epc_sections);
++
++static int sgx_nr_epc_sections;
++
++static __init void sgx_free_epc_section(struct sgx_epc_section *section)
++{
++	int i;
++
++	for (i = 0; i < section->free_cnt && section->pages[i]; i++)
++		kfree(section->pages[i]);
++	kfree(section->pages);
++	memunmap(section->va);
++}
++
++static __init int sgx_init_epc_section(u64 addr, u64 size, unsigned long index,
++				       struct sgx_epc_section *section)
++{
++	unsigned long nr_pages = size >> PAGE_SHIFT;
++	unsigned long i;
++
++	section->va = memremap(addr, size, MEMREMAP_WB);
++	if (!section->va)
++		return -ENOMEM;
++
++	section->pa = addr;
++	section->free_cnt = nr_pages;
++	spin_lock_init(&section->lock);
++
++	section->pages = kcalloc(nr_pages, sizeof(struct sgx_epc_page *),
++				 GFP_KERNEL);
++	if (!section->pages)
++		goto out;
++
++	for (i = 0; i < nr_pages; i++) {
++		section->pages[i] = kzalloc(sizeof(struct sgx_epc_page),
++					    GFP_KERNEL);
++		if (!section->pages[i])
++			goto out;
++
++		section->pages[i]->desc = (addr + (i << PAGE_SHIFT)) | index;
++	}
++
++	return 0;
++out:
++	sgx_free_epc_section(section);
++	return -ENOMEM;
++}
++
++static __init void sgx_page_cache_teardown(void)
++{
++	int i;
++
++	for (i = 0; i < sgx_nr_epc_sections; i++)
++		sgx_free_epc_section(&sgx_epc_sections[i]);
++}
++
++/**
++ * A section metric is concatenated in a way that @low bits 12-31 define the
++ * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
++ * metric.
++ */
++static inline u64 sgx_calc_section_metric(u64 low, u64 high)
++{
++	return (low & GENMASK_ULL(31, 12)) +
++	       ((high & GENMASK_ULL(19, 0)) << 32);
++}
++
++static __init int sgx_page_cache_init(void)
++{
++	u32 eax, ebx, ecx, edx, type;
++	u64 pa, size;
++	int ret;
++	int i;
++
++	BUILD_BUG_ON(SGX_MAX_EPC_SECTIONS > (SGX_EPC_SECTION_MASK + 1));
++
++	for (i = 0; i < (SGX_MAX_EPC_SECTIONS + 1); i++) {
++		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
++			    &eax, &ebx, &ecx, &edx);
++
++		type = eax & SGX_CPUID_SUB_LEAF_TYPE_MASK;
++		if (type == SGX_CPUID_SUB_LEAF_INVALID)
++			break;
++		if (type != SGX_CPUID_SUB_LEAF_EPC_SECTION) {
++			pr_err_once("sgx: Unknown sub-leaf type: %u\n", type);
++			return -ENODEV;
++		}
++		if (i == SGX_MAX_EPC_SECTIONS) {
++			pr_warn("sgx: More than " __stringify(SGX_MAX_EPC_SECTIONS)
++				" EPC sections\n");
++			break;
++		}
++
++		pa = sgx_calc_section_metric(eax, ebx);
++		size = sgx_calc_section_metric(ecx, edx);
++		pr_info("sgx: EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
++
++		ret = sgx_init_epc_section(pa, size, i, &sgx_epc_sections[i]);
++		if (ret) {
++			sgx_page_cache_teardown();
++			return ret;
++		}
++
++		sgx_nr_epc_sections++;
++	}
++
++	if (!sgx_nr_epc_sections) {
++		pr_err("sgx: There are zero EPC sections.\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
++static __init int sgx_init(void)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX))
++		return false;
++
++	ret = sgx_page_cache_init();
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++arch_initcall(sgx_init);
+-- 
+2.19.1
