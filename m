@@ -3,70 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20840C32789
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 15:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD99C32789
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 16:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C827720685
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 15:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C827720685
+	by mail.kernel.org (Postfix) with ESMTP id 16CC22086A
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 16:40:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CC22086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388129AbeKGBDh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:03:37 -0500
-Received: from mga01.intel.com ([192.55.52.88]:36060 "EHLO mga01.intel.com"
+        id S2388907AbeKGCGC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 6 Nov 2018 21:06:02 -0500
+Received: from mga06.intel.com ([134.134.136.31]:65089 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387480AbeKGBDg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:03:36 -0500
+        id S2387685AbeKGCGC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 6 Nov 2018 21:06:02 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 07:37:50 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 08:40:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="101981597"
+   d="scan'208";a="102000368"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Nov 2018 07:37:49 -0800
-Message-ID: <1541518670.7839.31.camel@intel.com>
-Subject: Re: RFC: userspace exception fixups
+  by fmsmga002.fm.intel.com with ESMTP; 06 Nov 2018 08:40:00 -0800
+Message-ID: <1541522400.7839.48.camel@intel.com>
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
+Cc:     dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Date:   Tue, 06 Nov 2018 07:37:50 -0800
-In-Reply-To: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
-         <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
-         <20181102163034.GB7393@linux.intel.com>
-         <7050972d-a874-dc08-3214-93e81181da60@intel.com>
-         <20181102170627.GD7393@linux.intel.com>
-         <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
-         <20181102173350.GF7393@linux.intel.com>
-         <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
-         <20181102182712.GG7393@linux.intel.com>
-         <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
-         <20181102220437.GI7393@linux.intel.com>
-         <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
-         <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Date:   Tue, 06 Nov 2018 08:40:00 -0800
+In-Reply-To: <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+         <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 Mime-Version: 1.0
@@ -75,128 +58,47 @@ Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181106153750.UyJzCgehjudj--cgZIo621eHAppOcS2r3ApWv54hTts@z>
 
-On Fri, 2018-11-02 at 16:32 -0700, Andy Lutomirski wrote:
-> On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
-> > 
-> > 
-> > On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > > 
-> > > On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
-> > > > 
-> > > > On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
-> > > > <sean.j.christopherson@intel.com> wrote:
-> > > > > 
-> > > > > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
-> > > > > > 
-> > > > > > This whole mechanism seems very complicated, and it's not clear
-> > > > > > exactly what behavior user code wants.
-> > > > > No argument there.  That's why I like the approach of dumping the
-> > > > > exception to userspace without trying to do anything intelligent in
-> > > > > the kernel.  Userspace can then do whatever it wants AND we don't
-> > > > > have to worry about mucking with stacks.
-> > > > > 
-> > > > > One of the hiccups with the VDSO approach is that the enclave may
-> > > > > want to use the untrusted stack, i.e. the stack that has the VDSO's
-> > > > > stack frame.  For example, Intel's SDK uses the untrusted stack to
-> > > > > pass parameters for EEXIT, which means an AEX might occur with what
-> > > > > is effectively a bad stack from the VDSO's perspective.
-> > > > What exactly does "uses the untrusted stack to pass parameters for
-> > > > EEXIT" mean? I guess you're saying that the enclave is writing to
-> > > > RSP+[0...some_positive_offset], and the written data needs to be
-> > > > visible to the code outside the enclave afterwards?
-> > > As is, they actually do it the other way around, i.e. negative offsets
-> > > relative to the untrusted %RSP.  Going into the enclave there is no
-> > > reserved space on the stack.  The SDK uses EEXIT like a function call,
-> > > i.e. pushing parameters on the stack and making an call outside of the
-> > > enclave, hence the name out-call.  This allows the SDK to handle any
-> > > reasonable out-call without a priori knowledge of the application's
-> > > maximum out-call "size".
-> > But presumably this is bounded to be at most 128 bytes (the red zone
-> > size), right? Otherwise this would be incompatible with
-> > non-sigaltstack signal delivery.
-> 
-> I think Sean is saying that the enclave also updates RSP.
+On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the enclave is disallowed to access the memory
+> inside the enclave by the CPU access control.
+> 
+> SGX driver provides a ioctl API for loading and initializing enclaves.
+> Address range for enclaves is reserved with mmap() and they are
+> destroyed with munmap(). Enclave construction, measurement and
+> initialization is done with the provided the ioctl API.
 
-Yeah, the enclave saves/restores RSP from/to the current save state area.
+...
 
-> One might reasonably wonder how the SDX knows the offset from RSP to
-> the function ID.  Presumably using RBP?
+> +struct sgx_encl {
+> +	unsigned int flags;
+> +	uint64_t attributes;
+> +	uint64_t xfrm;
+> +	unsigned int page_cnt;
+> +	unsigned int secs_child_cnt;
+> +	struct mutex lock;
+> +	struct mm_struct *mm;
+> +	struct file *backing;
 
-Here's pseudocode for how the SDK uses the untrusted stack, minus a
-bunch of error checking and gory details.
+Is there any particular reason why the kernel manages the backing for
+the enclave and the PCMDs?  Could we have userspace provide the backing
+either through the ECREATE ioctl() or maybe a completely new ioctl(),
+e.g. to give userspace the option to back the enclave with a NVDIMM
+instead of RAM?  A separate ioctl() with control flags might give us
+some flexibility in the future, e.g. maybe there are use cases where
+userspace would prefer to kill enclaves rather than swap EPC.
 
-The function ID and a pointer to a marshalling struct are passed to
-the untrusted runtime via normal register params, e.g. RDI and RSI.
-The marshalling struct is what's actually allocated on the untrusted
-stack, like alloca() but more complex and explicit.  The marshalling
-struct size is not artificially restricted by the SDK, e.g. AFAIK it
-could span multiple 4k pages.
-
-
-int sgx_out_call(const unsigned int func_index, void *marshalling_struct)
-{
-	struct sgx_encl_tls *tls = get_encl_tls();
-
-	%RBP = tls->save_state_area[SSA_RBP];
-	%RSP = tls->save_state_area[SSA_RSP];
-	%RDI = func_index;
-	%RSI = marshalling_struct;
-
-	EEXIT
-
-	/* magic elsewhere to get back here on an EENTER(OUT_CALL_RETURN) */
-	return %RAX
-}
-
-void *sgx_alloc_untrusted_stack(size_t size)
-{
-	struct sgx_encl_tls *tls = get_encl_tls();
-	struct sgx_out_call_context *context;
-	void *tmp;
-
-	/* create a frame on the trusted stack to hold the out-call context */
-	tls->trusted_stack -= sizeof(struct sgx_out_call_context);
-
-	/* save the untrusted %RSP into the out-call context */
-	context = (struct sgx_out_call_context *)tls->trusted_stack;
-	context->untrusted_stack = tls->save_state_area[SSA_RSP];
-
-	/* allocate space on the untrusted stack */
-	tmp = (void *)(tls->save_state_area[SSA_RSP] - size);
-	tls->save_state_area[SSA_RSP] = tmp;
-
-	return tmp;
-}
-
-void sgx_pop_untrusted_stack(void)
-{
-	struct sgx_encl_tls *tls = get_encl_tls();
-	struct sgx_out_call_context *context;
-
-	/* retrieve the current out-call context from the trusted stack */
-	context = (struct sgx_out_call_context *)tls->trusted_stack;
-
-	/* restore untrusted %RSP */
-	tls->save_state_area[SSA_RSP] = context->untrusted_stack;
-
-	/* pop the out-call context frame */
-	tls->trusted_stack += sizeof(struct sgx_out_call_context);
-}
-
-int sgx_main(void)
-{
-	struct my_out_call_struct *params;
-
-	params = sgx_alloc_untrusted_stack(sizeof(*params));
-
-	params->0..N = XYZ;
-
-	ret = sgx_out_call(DO_WORK, params);
-
-	sgx_pop_untrusted_stack();
-
-	return ret;
-}
+> +	struct kref refcount;
+> +	unsigned long base;
+> +	unsigned long size;
+> +	unsigned long ssaframesize;
+> +	struct radix_tree_root page_tree;
+> +	struct list_head add_page_reqs;
+> +	struct work_struct add_page_work;
+> +	struct sgx_encl_page secs;
+> +	struct pid *tgid;
+> +	struct mmu_notifier mmu_notifier;
+> +	struct notifier_block pm_notifier;
+> +};
