@@ -1,12 +1,13 @@
-Date: Thu, 8 Nov 2018 17:04:05 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
-	<luto@kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
+Message-ID: <1541518670.7839.31.camel@intel.com>
+Subject: Re: RFC: userspace exception fixups
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>
+CC: Dave Hansen <dave.hansen@intel.com>, Linus Torvalds
 	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>,
-	"Florian Weimer" <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
+ Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
+	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
 	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
 	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
 	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
@@ -14,41 +15,146 @@ CC: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
  O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181108150405.GB14072@linux.intel.com>
-References: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
- <20181107153452.GB22972@linux.intel.com>
- <20181107190114.GA26603@linux.intel.com>
- <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
-Return-Path: jarkko.sakkinen@linux.intel.com
+Date: Tue, 6 Nov 2018 07:37:50 -0800
+In-Reply-To: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+	 <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+	 <20181102163034.GB7393@linux.intel.com>
+	 <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+	 <20181102170627.GD7393@linux.intel.com>
+	 <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+	 <20181102173350.GF7393@linux.intel.com>
+	 <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+	 <20181102182712.GG7393@linux.intel.com>
+	 <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+	 <20181102220437.GI7393@linux.intel.com>
+	 <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+	 <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Wed, Nov 07, 2018 at 12:56:58PM -0800, Dave Hansen wrote:
-> On 11/7/18 11:01 AM, Sean Christopherson wrote:
-> > Going off comments in similar code related to UMIP, we'd need to figure
-> > out how to handle protection keys.
+On Fri, 2018-11-02 at 16:32 -0700, Andy Lutomirski wrote:
+> On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
+> > 
+> > 
+> > On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > > 
+> > > On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
+> > > > 
+> > > > On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
+> > > > <sean.j.christopherson@intel.com> wrote:
+> > > > > 
+> > > > > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
+> > > > > > 
+> > > > > > This whole mechanism seems very complicated, and it's not clear
+> > > > > > exactly what behavior user code wants.
+> > > > > No argument there.  That's why I like the approach of dumping the
+> > > > > exception to userspace without trying to do anything intelligent in
+> > > > > the kernel.  Userspace can then do whatever it wants AND we don't
+> > > > > have to worry about mucking with stacks.
+> > > > > 
+> > > > > One of the hiccups with the VDSO approach is that the enclave may
+> > > > > want to use the untrusted stack, i.e. the stack that has the VDSO's
+> > > > > stack frame.  For example, Intel's SDK uses the untrusted stack to
+> > > > > pass parameters for EEXIT, which means an AEX might occur with what
+> > > > > is effectively a bad stack from the VDSO's perspective.
+> > > > What exactly does "uses the untrusted stack to pass parameters for
+> > > > EEXIT" mean? I guess you're saying that the enclave is writing to
+> > > > RSP+[0...some_positive_offset], and the written data needs to be
+> > > > visible to the code outside the enclave afterwards?
+> > > As is, they actually do it the other way around, i.e. negative offsets
+> > > relative to the untrusted %RSP.  Going into the enclave there is no
+> > > reserved space on the stack.  The SDK uses EEXIT like a function call,
+> > > i.e. pushing parameters on the stack and making an call outside of the
+> > > enclave, hence the name out-call.  This allows the SDK to handle any
+> > > reasonable out-call without a priori knowledge of the application's
+> > > maximum out-call "size".
+> > But presumably this is bounded to be at most 128 bytes (the red zone
+> > size), right? Otherwise this would be incompatible with
+> > non-sigaltstack signal delivery.
 > 
-> There are two options:
-> 1. Don't depend on the userspace mapping.  Do get_user_pages() to find
->    the instruction in the kernel direct map, and use that.
-> 2. Do a WRPKRU that allows read access, do the read, then put PKRU back.
->    This is a pain because of preemption and all that jazz.
-> 
-> Right now, we just let the prefetch instruction detection fail if you
-> mark it unreadable with pkeys.  Tough cookies, basically.  But, that's
-> just the kernel being nice, but you need it for functionality, so it's
-> tougher.
+> I think Sean is saying that the enclave also updates RSP.
 
-I would go with one because it is the stable way to do it and we are
-100% sure to not conflict with pk's.
+Yeah, the enclave saves/restores RSP from/to the current save state area.
 
-/Jarkko
+> One might reasonably wonder how the SDX knows the offset from RSP to
+> the function ID.  Presumably using RBP?
+
+Here's pseudocode for how the SDK uses the untrusted stack, minus a
+bunch of error checking and gory details.
+
+The function ID and a pointer to a marshalling struct are passed to
+the untrusted runtime via normal register params, e.g. RDI and RSI.
+The marshalling struct is what's actually allocated on the untrusted
+stack, like alloca() but more complex and explicit.  The marshalling
+struct size is not artificially restricted by the SDK, e.g. AFAIK it
+could span multiple 4k pages.
+
+
+int sgx_out_call(const unsigned int func_index, void *marshalling_struct)
+{
+	struct sgx_encl_tls *tls = get_encl_tls();
+
+	%RBP = tls->save_state_area[SSA_RBP];
+	%RSP = tls->save_state_area[SSA_RSP];
+	%RDI = func_index;
+	%RSI = marshalling_struct;
+
+	EEXIT
+
+	/* magic elsewhere to get back here on an EENTER(OUT_CALL_RETURN) */
+	return %RAX
+}
+
+void *sgx_alloc_untrusted_stack(size_t size)
+{
+	struct sgx_encl_tls *tls = get_encl_tls();
+	struct sgx_out_call_context *context;
+	void *tmp;
+
+	/* create a frame on the trusted stack to hold the out-call context */
+	tls->trusted_stack -= sizeof(struct sgx_out_call_context);
+
+	/* save the untrusted %RSP into the out-call context */
+	context = (struct sgx_out_call_context *)tls->trusted_stack;
+	context->untrusted_stack = tls->save_state_area[SSA_RSP];
+
+	/* allocate space on the untrusted stack */
+	tmp = (void *)(tls->save_state_area[SSA_RSP] - size);
+	tls->save_state_area[SSA_RSP] = tmp;
+
+	return tmp;
+}
+
+void sgx_pop_untrusted_stack(void)
+{
+	struct sgx_encl_tls *tls = get_encl_tls();
+	struct sgx_out_call_context *context;
+
+	/* retrieve the current out-call context from the trusted stack */
+	context = (struct sgx_out_call_context *)tls->trusted_stack;
+
+	/* restore untrusted %RSP */
+	tls->save_state_area[SSA_RSP] = context->untrusted_stack;
+
+	/* pop the out-call context frame */
+	tls->trusted_stack += sizeof(struct sgx_out_call_context);
+}
+
+int sgx_main(void)
+{
+	struct my_out_call_struct *params;
+
+	params = sgx_alloc_untrusted_stack(sizeof(*params));
+
+	params->0..N = XYZ;
+
+	ret = sgx_out_call(DO_WORK, params);
+
+	sgx_pop_untrusted_stack();
+
+	return ret;
+}
