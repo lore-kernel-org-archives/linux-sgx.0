@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8575EC32789
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 17:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45BEC32789
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 17:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DBB32081D
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 17:00:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBB32081D
+	by mail.kernel.org (Postfix) with ESMTP id 76DCC2081D
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Nov 2018 17:03:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DCC2081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389449AbeKGC0q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:26:46 -0500
-Received: from mga05.intel.com ([192.55.52.43]:59686 "EHLO mga05.intel.com"
+        id S2389427AbeKGC3R (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 6 Nov 2018 21:29:17 -0500
+Received: from mga03.intel.com ([134.134.136.65]:13102 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389285AbeKGC0q (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:26:46 -0500
+        id S2389245AbeKGC3Q (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 6 Nov 2018 21:29:16 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:00:38 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:03:08 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="106367061"
+   d="scan'208";a="106367873"
 Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 09:00:38 -0800
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 09:03:07 -0800
 Subject: Re: RFC: userspace exception fixups
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Rich Felker <dalias@libc.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
@@ -64,6 +65,7 @@ References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
  <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
  <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
  <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -109,12 +111,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <6c1b7424-84f6-5fd4-ed7f-6c326d0e4090@intel.com>
-Date:   Tue, 6 Nov 2018 09:00:38 -0800
+Message-ID: <3d31d0b9-95bf-953e-1e28-d45c57b9c599@intel.com>
+Date:   Tue, 6 Nov 2018 09:03:07 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1541518670.7839.31.camel@intel.com>
+In-Reply-To: <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -122,36 +124,16 @@ Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181106170038.0r5i5joo_2vpgdDepp2yg7PfnT9smuBw5XA0NJ93JnM@z>
+Message-ID: <20181106170307.lOCKgYWgIJtJZTMKHew9z0zR9OZBBbji_oiln7GRcq0@z>
 
-On 11/6/18 7:37 AM, Sean Christopherson wrote:
-> 
-> void *sgx_alloc_untrusted_stack(size_t size)
-> {
-> 	struct sgx_encl_tls *tls = get_encl_tls();
-> 	struct sgx_out_call_context *context;
-> 	void *tmp;
-> 
-> 	/* create a frame on the trusted stack to hold the out-call context */
-> 	tls->trusted_stack -= sizeof(struct sgx_out_call_context);
-> 
-> 	/* save the untrusted %RSP into the out-call context */
-> 	context = (struct sgx_out_call_context *)tls->trusted_stack;
-> 	context->untrusted_stack = tls->save_state_area[SSA_RSP];
-> 
-> 	/* allocate space on the untrusted stack */
-> 	tmp = (void *)(tls->save_state_area[SSA_RSP] - size);
-> 	tls->save_state_area[SSA_RSP] = tmp;
-> 
-> 	return tmp;
-> }
+On 11/6/18 8:57 AM, Andy Lutomirski wrote:
+> I’m assuming it’s way too late for the SGX SDK to be changed to use a
+> normal RPC mechanism? I’m a bit disappointed that enclaves can even
+> manipulate outside state like this. I assume Intel had some reason
+> for making it possible, but still.
 
-Why does it bother to go to all the trouble of mucking with the
-untrusted stack?  It could *easily* just leave it alone and do out-calls
-if it needs to allocate memory for parameter storage.  Heck, that could
-theoretically even be _on_ the stack if the untrusted runtime was being
-clever.
+Just because it's architecturally possible doesn't mean it has to be a
+part of the ABI for running enclaves under Linux.
 
-The only downside would be that the untrusted runtime would have to keep
-track of the space a bit more explicitly so it could be cleaned up if
-the enclave didn't do it.
+It's not too late to change the SDK.  Intel does not and can not depend
+on any behavior of Linux until code gets merged.
