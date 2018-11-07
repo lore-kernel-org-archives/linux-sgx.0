@@ -1,65 +1,124 @@
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
- Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
-	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open
- list <linux-kernel@vger.kernel.org>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
- <20181106054911.GA15575@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
-Date: Tue, 6 Nov 2018 08:45:37 -0800
-In-Reply-To: <20181106054911.GA15575@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: dave.hansen@intel.com
+Date: Tue, 6 Nov 2018 16:02:35 -0800
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
+	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181107000235.GC11101@linux.intel.com>
+References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com>
+ <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ <20181106233515.GB11101@linux.intel.com>
+ <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On 11/5/18 9:49 PM, Jarkko Sakkinen wrote:
-> On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
->> The ABI seems entirely undocumented and rather lightly designed, which
->> seems like something we should fix before this is merged.
+On Tue, Nov 06, 2018 at 03:39:48PM -0800, Andy Lutomirski wrote:
+> On Tue, Nov 6, 2018 at 3:35 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Tue, Nov 06, 2018 at 03:00:56PM -0800, Andy Lutomirski wrote:
+> > >
+> > >
+> > > >> On Nov 6, 2018, at 1:59 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > > >>
+> > > >>> On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
+> > > >> Sean, how does the current SDK AEX handler decide whether to do
+> > > >> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
+> > > >> like the *CPU* could give a big hint, but I don't see where there is
+> > > >> any architectural indication of why the AEX code got called or any
+> > > >> obvious way for the user code to know whether the exit was fixed up by
+> > > >> the kernel?
+> > > >
+> > > > The SDK "unconditionally" does ERESUME at the AEP location, but that's
+> > > > bit misleading because its signal handler may muck with the context's
+> > > > RIP, e.g. to abort the enclave on a fatal fault.
+> > > >
+> > > > On an event/exception from within an enclave, the event is immediately
+> > > > delivered after loading synthetic state and changing RIP to the AEP.
+> > > > In other words, jamming CPU state is essentially a bunch of vectoring
+> > > > ucode preamble, but from software's perspective it's a normal event
+> > > > that happens to point at the AEP instead of somewhere in the enclave.
+> > > > And because the signals the SDK cares about are all synchronous, the
+> > > > SDK can simply hardcode ERESUME at the AEP since all of the fault logic
+> > > > resides in its signal handler.  IRQs and whatnot simply trampoline back
+> > > > into the enclave.
+> > > >
+> > > > Userspace can do something funky instead of ERESUME, but only *after*
+> > > > IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
+> > > > case, after the trap handler has run.
+> > > >
+> > > > Jumping back a bit, how much do we care about preventing userspace
+> > > > from doing stupid things?
+> > >
+> > > My general feeling is that userspace should be allowed to do apparently
+> > > stupid things. For example, as far as the kernel is concerned, Wine and
+> > > DOSEMU are just user programs that do stupid things. Linux generally tries
+> > > to provide a reasonably complete view of architectural behavior. This is
+> > > in contrast to, say, Windows, where IIUC doing an unapproved WRFSBASE May
+> > > cause very odd behavior indeed. So magic fixups that do non-architectural
+> > > things are not so great.
+> >
+> > Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
+> > with a specific (ignored) prefix pattern?  I.e. effectively make the magic
+> > fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
+> > that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
+> > that the enclave can EEXIT to immediately after the EENTER location.
+> >
 > 
-> ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
-> documentation is included to intel_sgx.rst. I'm not saying that there is
-> no space refine it but it is neither undocumented.
+> How does that even work, though?  On an AEX, RIP points to the ERESUME
+> instruction, not the EENTER instruction, so if we skip it we just end
+> up in lala land.
 
-I specifically mean the instruction flow around asynchronous exits or
-explicit enclave exit calls via EEXIT.  Signals are part of the ABI but
-go unmentioned in the documentation.
+Userspace would obviously need to be aware of the fixup behavior, but
+it actually works out fairly nicely to have a separate path for ERESUME
+fixup since a fault on EENTER is generally fatal, whereas as a fault on
+ERESUME might be recoverable.
 
-It's also worth noting that EENTER *can* act (from the kernel's
-perspective) like an instruction that both jumps and sets a bunch of
-registers (including %rsp).  It's certainly abnormal in that regard.
 
-In fact, in the docs:
+do_eenter:
+    mov     tcs, %rbx
+    lea     async_exit, %rcx 
+    mov     $EENTER, %rax
+    ENCLU
 
-> +Enclave can only execute code inside the ELRANGE. Instructions that may cause
-> +VMEXIT, IO instructions and instructions that require a privilege change are
-> +prohibited inside the enclave. Interrupts and exceptions always cause enclave
-> +to exit and jump to an address outside the enclave given when the enclave is
-> +entered by using the leaf instruction ENCLS(EENTER).
+/*
+ * EEXIT or EENTER faulted.  In the latter case, %RAX already holds some
+ * fault indicator, e.g. -EFAULT.
+ */
+eexit_or_eenter_fault:
+    ret
 
-it's probably a really good idea to explain that the address outside of
-the enclave is enclave-provided, and is not, for instance, just the next
-instruction after EENTER.
+async_exit:
+    ENCLU
 
->> Also, for a feature as massive and complicated as this one, it seems
->> irresponsible to not have a selftest.  Is that not feasible for some reason?
-> 
-> I do have the in-kernel launch enclave stuff backed up here:
-> 
-> https://github.com/jsakkine-intel/sgx-le-host
-> https://github.com/jsakkine-intel/sgx-le
-> 
-> This is about as simple as it gets without any type of run-time.
+fixup_handler:
+    <do fault stuff>
+ 
+> How averse would everyone be to making enclave entry be a syscall?
+> The user code would do sys_sgx_enter_enclave(), and the kernel would
+> stash away the register state (vm86()-style), point RIP to the vDSO's
+> ENCLU instruction, point RCX to another vDSO ENCLU instruction, and
+> SYSRET.  The trap handlers would understand what's going on and
+> restore register state accordingly.
 
-Does this code run when I type "make kselftest"?  If not, I think we
-should rectify that.
+Wouldn't that blast away any stack changes made by the enclave?
