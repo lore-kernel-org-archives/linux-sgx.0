@@ -3,121 +3,200 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FEFC0044C
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 18:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8DBC0044C
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6C92081D
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 18:00:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6C92081D
+	by mail.kernel.org (Postfix) with ESMTP id 5574E2086C
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5574E2086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeKHDc2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:32:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:1596 "EHLO mga02.intel.com"
+        id S1728244AbeKHEc4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Nov 2018 23:32:56 -0500
+Received: from mga12.intel.com ([192.55.52.136]:2418 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727168AbeKHDc1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:32:27 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1725727AbeKHEc4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:32:56 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 10:00:58 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 11:01:15 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
-   d="scan'208";a="106282112"
+   d="scan'208";a="106298502"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga001.jf.intel.com with ESMTP; 07 Nov 2018 10:00:57 -0800
-Date:   Wed, 7 Nov 2018 10:00:57 -0800
+  by orsmga001.jf.intel.com with ESMTP; 07 Nov 2018 11:01:15 -0800
+Date:   Wed, 7 Nov 2018 11:01:15 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
-Message-ID: <20181107180057.GB24807@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
- <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
- <1541522400.7839.48.camel@intel.com>
- <20181107163757.GB11509@linux.intel.com>
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181107190114.GA26603@linux.intel.com>
+References: <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com>
+ <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ <20181106233515.GB11101@linux.intel.com>
+ <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+ <20181107000235.GC11101@linux.intel.com>
+ <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+ <20181107153452.GB22972@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181107163757.GB11509@linux.intel.com>
+In-Reply-To: <20181107153452.GB22972@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181107180057.y84KyL8GbX4aRtDHzzCVQrv3_g8QqDdkXfeUiE9-GGA@z>
+Message-ID: <20181107190115.QzekKaPyCllPXOMm5F_MPWoCY4iSk09TkAAy-JgUITI@z>
 
-On Wed, Nov 07, 2018 at 06:37:57PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 06, 2018 at 08:40:00AM -0800, Sean Christopherson wrote:
-> > On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
-> > > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> > > can be used by applications to set aside private regions of code and
-> > > data. The code outside the enclave is disallowed to access the memory
-> > > inside the enclave by the CPU access control.
-> > > 
-> > > SGX driver provides a ioctl API for loading and initializing enclaves.
-> > > Address range for enclaves is reserved with mmap() and they are
-> > > destroyed with munmap(). Enclave construction, measurement and
-> > > initialization is done with the provided the ioctl API.
+On Wed, Nov 07, 2018 at 07:34:52AM -0800, Sean Christopherson wrote:
+> On Tue, Nov 06, 2018 at 05:17:14PM -0800, Andy Lutomirski wrote:
+> > On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > On Tue, Nov 06, 2018 at 03:39:48PM -0800, Andy Lutomirski wrote:
+> > > > On Tue, Nov 6, 2018 at 3:35 PM Sean Christopherson
+> > > > <sean.j.christopherson@intel.com> wrote:
+> > > > >
+> > > > > Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
+> > > > > with a specific (ignored) prefix pattern?  I.e. effectively make the magic
+> > > > > fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
+> > > > > that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
+> > > > > that the enclave can EEXIT to immediately after the EENTER location.
+> > > > >
+> > > >
+> > > > How does that even work, though?  On an AEX, RIP points to the ERESUME
+> > > > instruction, not the EENTER instruction, so if we skip it we just end
+> > > > up in lala land.
+> > >
+> > > Userspace would obviously need to be aware of the fixup behavior, but
+> > > it actually works out fairly nicely to have a separate path for ERESUME
+> > > fixup since a fault on EENTER is generally fatal, whereas as a fault on
+> > > ERESUME might be recoverable.
+> > >
 > > 
-> > ...
+> > Hmm.
 > > 
-> > > +struct sgx_encl {
-> > > +	unsigned int flags;
-> > > +	uint64_t attributes;
-> > > +	uint64_t xfrm;
-> > > +	unsigned int page_cnt;
-> > > +	unsigned int secs_child_cnt;
-> > > +	struct mutex lock;
-> > > +	struct mm_struct *mm;
-> > > +	struct file *backing;
+> > >
+> > > do_eenter:
+> > >     mov     tcs, %rbx
+> > >     lea     async_exit, %rcx
+> > >     mov     $EENTER, %rax
+> > >     ENCLU
 > > 
-> > Is there any particular reason why the kernel manages the backing for
-> > the enclave and the PCMDs?  Could we have userspace provide the backing
-> > either through the ECREATE ioctl() or maybe a completely new ioctl(),
-> > e.g. to give userspace the option to back the enclave with a NVDIMM
-> > instead of RAM?  A separate ioctl() with control flags might give us
-> > some flexibility in the future, e.g. maybe there are use cases where
-> > userspace would prefer to kill enclaves rather than swap EPC.
+> > Or SOME_SILLY_PREFIX ENCLU?
 > 
-> Not really except that no one has complained. The very first swapping
-> code that I implemented used a VMA as backing storage. I could take
-> pieces of that code to replace shmem specifics. The difference was that
-> the driver did vm_mmap(). Now that you suggested the above I wonder how
-> it did not came to mind back then to provide the VMA as parameter.
+> Yeah, forgot to include that.
 > 
-> A single buffer that can hold both PCMD entries and swapped pages in its
-> address space would probably be the  best way to do it. I would add that
-> as a field to struct sgx_enclave_create. If we want the kill-behavior,
-> you could signal that with a NULL value.
+> > >
+> > > /*
+> > >  * EEXIT or EENTER faulted.  In the latter case, %RAX already holds some
+> > >  * fault indicator, e.g. -EFAULT.
+> > >  */
+> > > eexit_or_eenter_fault:
+> > >     ret
+> > 
+> > But userspace wants to know whether it was a fault or not.  So I think
+> > we either need two landing pads or we need to hijack a flag bit (are
+> > there any known-zeroed flag bits after EEXIT?) to say whether it was a
+> > fault.  And, if it was a fault, we should give the vector, the
+> > sanitized error code, and possibly CR2.
+> 
+> As Jethro mentioned, RAX will always be 4 on a successful EEXIT, so we
+> can use RAX to indicate a fault.  That's what I was trying to imply with
+> EFAULT.  Here's the reg stuffing I use for the POC:
+> 
+> 	regs->ax = EFAULT;
+> 	regs->di = trapnr;
+> 	regs->si = error_code;
+> 	regs->dx = address;
+> 
+> 
+> Well-known RAX values also means the kernel fault handlers only need to
+> look for SOME_SILLY_PREFIX ENCLU if RAX==2 || RAX==3, i.e. the fault
+> occurred on EENTER or in an enclave (RAX is set to ERESUME's leaf as
+> part of the asynchronous enlcave exit flow).
 
-What do we gain by a single buffer vs. separate buffers?  The ioctl()
-would be slightly smaller but it seems like the actual code would be
-more complex.
+POC kernel code, 64-bit only.
 
-The enclave build process also utilizes the backing as temp storage
-to avoid having to alloc kernel memory when queueing pages to be added
-by the worker thread (which reminds me that I wanted to document why a
-worker thread is used).  Keeping this behavior would effectively make
-providing backing mandatory.
+Limiting this to 64-bit isn't necessary, but it makes the code prettier
+and allows using REX as the magic prefix.  I like the idea of using REX
+because it seems least likely to be repurposed for yet another new
+feature.  I have no idea if 64-bit only will fly with the SDK folks.
 
-Are there any potential complications with ENCLS consuming userspace
-pointers?  We'd have to wrap them with user_access_{begin,end}() and
-probably tweak the fixup, but I assume having the fixup handler means
-we're generally ok?
+Going off comments in similar code related to UMIP, we'd need to figure
+out how to handle protection keys.
+
+
+/* REX with all bits set, ignored by ENCLU. */
+#define SGX_DO_ENCLU_FIXUP	0x4F
+
+#define SGX_ENCLU_OPCODE0	0x0F
+#define SGX_ENCLU_OPCODE1	0x01
+#define SGX_ENCLU_OPCODE2	0xD7
+
+/* ENCLU is a three-byte opcode, plus one byte for the magic prefix. */
+#define SGX_ENCLU_FIXUP_INSN_LEN	4
+
+static int sgx_detect_enclu(struct pt_regs *regs)
+{
+	unsigned char buf[SGX_ENCLU_FIXUP_INSN_LEN];
+
+	/* Look for EENTER or ERESUME in RAX, 64-bit mode only. */
+	if (!regs || (regs->ax != 2 && regs->ax != 3) || !user_64bit_mode(regs))
+		return 0;
+
+	if (copy_from_user(buf, (void __user *)(regs->ip), sizeof(buf)))
+		return 0;
+
+	if (buf[0] == SGX_DO_ENCLU_FIXUP &&
+	    buf[1] == SGX_ENCLU_OPCODE0 &&
+	    buf[2] == SGX_ENCLU_OPCODE1 &&
+	    buf[3] == SGX_ENCLU_OPCODE2)
+		return SGX_ENCLU_FIXUP_INSN_LEN;
+
+	return 0;
+}
+
+bool sgx_fixup_enclu_fault(struct pt_regs *regs, int trapnr,
+			   unsigned long error_code, unsigned long address)
+{
+	int insn_len;
+
+	insn_len = sgx_detect_enclu(regs);
+	if (!insn_len)
+		return false;
+
+	regs->ip += insn_len;
+	regs->ax = EFAULT;
+	regs->di = trapnr;
+	regs->si = error_code;
+	regs->dx = address;
+	return true;
+}
