@@ -2,64 +2,38 @@ Return-Path: <SRS0=ssez=NS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C939C0044C
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 21:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104CEC0044C
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 21:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBBCF21486
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 21:33:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy3JG1yB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBCF21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C9BAA2089F
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 21:41:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BAA2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbeKHHFy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:05:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50218 "EHLO mail.kernel.org"
+        id S1727495AbeKHHNR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Nov 2018 02:13:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:33699 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727162AbeKHHFy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:05:54 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6011A214E0
-        for <linux-sgx@vger.kernel.org>; Wed,  7 Nov 2018 21:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541626418;
-        bh=hvLBQpJ2OwXKnAmpdMVYLj6GfhGWq9W9fxjGiXCAvJE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hy3JG1yBbo4AP9kEOWHEhb74PNmsQN6/3y6ONHnDu9iTujazePlXCP5Rt+6x1unyw
-         1WSN9zFwut2woXHeOKAe/SG8Bk7N3trT+BpunucHHe8ASaCOBmvrUK8FSuerL1xpJz
-         THcv5Q7koP6zvGQAIg0Ahzx/vMPijFiC6iqdDPII=
-Received: by mail-wm1-f50.google.com with SMTP id f10-v6so3355480wme.3
-        for <linux-sgx@vger.kernel.org>; Wed, 07 Nov 2018 13:33:38 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJPGAEjZjLyT9CduqxohCmfT6BP9vMjSrmTmDs1uwTaEJDBkfde
-        rjDCA4IYW+4yTPm0KK8Eqy0l83EVbkN7bujiKkjlyg==
-X-Google-Smtp-Source: AJdET5cNhoBuXZl0Bt9qfaABBFsghLShww0atZ1WUB54WhnqPg1bHR7yR70zshinqwRdaGhe2jlb2CoHvK1LfsNG0wI=
-X-Received: by 2002:a1c:2b45:: with SMTP id r66-v6mr1535101wmr.128.1541626416636;
- Wed, 07 Nov 2018 13:33:36 -0800 (PST)
-MIME-Version: 1.0
-References: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <20181106231730.GR5150@brightrain.aerifal.cx> <20181106232616.GA11101@linux.intel.com>
- <20181107212758.GU5150@brightrain.aerifal.cx>
-In-Reply-To: <20181107212758.GU5150@brightrain.aerifal.cx>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 7 Nov 2018 13:33:24 -0800
-X-Gmail-Original-Message-ID: <CALCETrUh4TkgTPjoaLaT-TjD9JuPhPrLbpGdB8C95R0a+rexww@mail.gmail.com>
-Message-ID:
- <CALCETrUh4TkgTPjoaLaT-TjD9JuPhPrLbpGdB8C95R0a+rexww@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
+        id S1727443AbeKHHNR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 8 Nov 2018 02:13:17 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 13:41:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,477,1534834800"; 
+   d="scan'208";a="84770293"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Nov 2018 13:40:59 -0800
+Date:   Wed, 7 Nov 2018 13:40:59 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Rich Felker <dalias@libc.org>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Jann Horn <jannh@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -76,17 +50,32 @@ Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "Carlos O'Donell" <carlos@redhat.com>,
+        Carlos O'Donell <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181107214058.GG27170@linux.intel.com>
+References: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
+ <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107212758.GU5150@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181107213324.MXx1x1ot__ADd_9OVXtK6ndSWuIxhdIwU6Lu_kmqjXI@z>
+Message-ID: <20181107214059.6sseSGZpC1mxxymgY8Jjg_Wps7C6tuIu67sHHGOlgCk@z>
 
-On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
->
+On Wed, Nov 07, 2018 at 04:27:58PM -0500, Rich Felker wrote:
 > On Tue, Nov 06, 2018 at 03:26:16PM -0800, Sean Christopherson wrote:
 > > On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
 > > > On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
@@ -100,31 +89,31 @@ On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
 > > > > > enclave like its own "thread" with its own stack and its own set of
 > > > > > registers and context?  That seems like a much more workable model than
 > > > > > trying to weave it together with the EENTER context.
-> > > >
+> > > > 
 > > > > So maybe the API should be, roughly
-> > > >
+> > > > 
 > > > > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
 > > > > host_state *state);
 > > > > sgx_exit_reason_t sgx_resume_enclave(same args);
-> > > >
+> > > > 
 > > > > where host_state is something like:
-> > > >
+> > > > 
 > > > > struct host_state {
 > > > >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
 > > > > };
-> > > >
+> > > > 
 > > > > and the values in host_state explicitly have nothing to do with the
 > > > > actual host registers.  So, if you want to use the outcall mechanism,
 > > > > you'd allocate some memory, point sp to that memory, call
 > > > > sgx_enter_enclave(), and then read that memory to do the outcall.
-> > > >
+> > > > 
 > > > > Actually implementing this would be distinctly nontrivial, and would
 > > > > almost certainly need some degree of kernel help to avoid an explosion
 > > > > when a signal gets delivered while we have host_state.sp loaded into
 > > > > the actual SP register.  Maybe rseq could help with this?
-> > > >
+> > > > 
 > > > > The ISA here is IMO not well thought through.
-> > >
+> > > 
 > > > Maybe I'm mistaken about some fundamentals here, but my understanding
 > > > of SGX is that the whole point is that the host application and the
 > > > code running in the enclave are mutually adversarial towards one
@@ -133,7 +122,7 @@ On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
 > > > enclave? It seems that having control over the register file on exit
 > > > from the enclave is fundamentally problematic but I assume there must
 > > > be some way I'm missing that this is fixed up.
-> >
+> > 
 > > SGX provides protections for the enclave but not the other way around.
 > > The kernel has all of its normal non-SGX protections in place, but the
 > > enclave can certainly wreak havoc on its userspace process.  The basic
@@ -141,7 +130,7 @@ On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
 > > security protections but is still effectively part of the overall
 > > application, e.g. it has full access to its host userspace process'
 > > virtual memory.
->
+> 
 > In that case it seems like the only way to use SGX that's not a gaping
 > security hole is to run the SGX enclave in its own fully-seccomp (or
 > equivalent) process, with no host application in the same address
@@ -150,10 +139,16 @@ On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
 > it in the same address space only makes sense if the cpu provides
 > protection against unwanted accesses to the host's memory from the
 > enclave -- and according to you, it doesn't.
->
 
-I think the theory is that the enclave is shipped with the host application.
+The enclave's code (and any initial data) isn't encrypted until the
+pages are loaded into the Enclave Page Cache (EPC), which can only
+be done by the kernel (via ENCLS[EADD]).  In other words, both the
+kernel and userspace can vet the code/data before running an enclave.
 
-That being said, a way to run the enclave in an address space that has
-basically nothing else (except an ENCLU instruction as a trampoline)
-would be quite nice.
+Practically speaking, an enclave will be coupled with an untrusted
+userspace runtime, i.e. it's loader.  Enclaves are also measured
+as part of their build process, and so the enclave loader needs to
+know which pages to add to the measurement, and in what order.  I
+guess technically speaking an enclave could have zero pages added
+to its measurement, but that'd probably be a big red flag that said
+enclave is up to something fishy.
