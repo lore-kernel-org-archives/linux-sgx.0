@@ -1,8 +1,7 @@
-Date: Thu, 8 Nov 2018 13:16:00 -0800
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Andy Lutomirski <luto@amacapital.net>, Andrew Lutomirski
-	<luto@kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
+Subject: Re: RFC: userspace exception fixups
+To: Sean Christopherson <sean.j.christopherson@intel.com>, Andy Lutomirski
+	<luto@kernel.org>
+CC: Jann Horn <jannh@google.com>, Linus Torvalds
 	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
 	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
  Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
@@ -15,50 +14,37 @@ CC: Andy Lutomirski <luto@amacapital.net>, Andrew Lutomirski
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
  O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181108211600.GA17167@linux.intel.com>
-References: <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+References: <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
  <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
- <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
- <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
-Return-Path: sean.j.christopherson@intel.com
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com>
+ <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ <20181106233515.GB11101@linux.intel.com>
+ <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+ <20181107000235.GC11101@linux.intel.com>
+ <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+ <20181107153452.GB22972@linux.intel.com>
+ <20181107190114.GA26603@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
+Date: Wed, 7 Nov 2018 12:56:58 -0800
+In-Reply-To: <20181107190114.GA26603@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: dave.hansen@intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 08, 2018 at 12:10:30PM -0800, Dave Hansen wrote:
-> On 11/8/18 12:05 PM, Andy Lutomirski wrote:
-> > Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
-> > not the most terrible thing in the world.  But could the SDK live with
-> > something more like my suggestion where the vDSO supplies a normal
-> > function that takes a struct containing registers that are visible to
-> > the enclave?  This would make it extremely awkward for the enclave to
-> > use the untrusted stack per se, but it would make it quite easy (I
-> > think) for the untrusted part of the SDK to allocate some extra memory
-> > and just tell the enclave that *that* memory is the stack.
-> 
-> I really think the enclave should keep its grubby mitts off the
-> untrusted stack.  There are lots of ways to get memory, even with
-> stack-like semantics, that don't involve mucking with the stack itself.
-> 
-> I have not heard a good, hard argument for why there is an absolute
-> *need* to store things on the actual untrusted stack.
+On 11/7/18 11:01 AM, Sean Christopherson wrote:
+> Going off comments in similar code related to UMIP, we'd need to figure
+> out how to handle protection keys.
 
-Convenience and performance are the only arguments I've heard, e.g. so
-that allocating memory doesn't require an extra EEXIT->EENTER round trip.
+There are two options:
+1. Don't depend on the userspace mapping.  Do get_user_pages() to find
+   the instruction in the kernel direct map, and use that.
+2. Do a WRPKRU that allows read access, do the read, then put PKRU back.
+   This is a pain because of preemption and all that jazz.
 
-> We could quite easily have the untrusted code just promise to allocate a
-> stack-sized virtual area (even derived from the stack rlimit size) and
-> pass that into the enclave for parameter use.
-
-I agree more and more the further I dig.  AFAIK there is no need to for
-the enclave to actually load %rsp.  The initial EENTER can pass in the
-base/top of the pseudo-stack and from there the enclave can manage it
-purely in software.
+Right now, we just let the prefetch instruction detection fail if you
+mark it unreadable with pkeys.  Tough cookies, basically.  But, that's
+just the kernel being nice, but you need it for functionality, so it's
+tougher.
