@@ -1,125 +1,84 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+Date: Wed, 7 Nov 2018 10:00:57 -0800
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <dave.hansen@intel.com>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
 	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad Rzeszutek
- Wilk" <konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "Tom
- Lendacky" <thomas.lendacky@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	Fenghua Yu <fenghua.yu@intel.com>, Arnaldo Carvalho de Melo
-	<acme@redhat.com>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
+	<kai.svahn@intel.com>, Suresh Siddha <suresh.b.siddha@intel.com>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko
+	<andy@infradead.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v15 03/23] x86/cpufeatures: Add SGX sub-features (as Linux-defined bits)
-Date: Sat, 3 Nov 2018 01:11:02 +0200
-Message-ID: <20181102231320.29164-4-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Message-ID: <20181107180057.GB24807@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
+ <20181107163757.GB11509@linux.intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20181107163757.GB11509@linux.intel.com>
+Sender: <platform-driver-x86-owner@vger.kernel.org>
+Return-Path: platform-driver-x86-owner@vger.kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Wed, Nov 07, 2018 at 06:37:57PM +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 06, 2018 at 08:40:00AM -0800, Sean Christopherson wrote:
+> > On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
+> > > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > > can be used by applications to set aside private regions of code and
+> > > data. The code outside the enclave is disallowed to access the memory
+> > > inside the enclave by the CPU access control.
+> > > 
+> > > SGX driver provides a ioctl API for loading and initializing enclaves.
+> > > Address range for enclaves is reserved with mmap() and they are
+> > > destroyed with munmap(). Enclave construction, measurement and
+> > > initialization is done with the provided the ioctl API.
+> > 
+> > ...
+> > 
+> > > +struct sgx_encl {
+> > > +	unsigned int flags;
+> > > +	uint64_t attributes;
+> > > +	uint64_t xfrm;
+> > > +	unsigned int page_cnt;
+> > > +	unsigned int secs_child_cnt;
+> > > +	struct mutex lock;
+> > > +	struct mm_struct *mm;
+> > > +	struct file *backing;
+> > 
+> > Is there any particular reason why the kernel manages the backing for
+> > the enclave and the PCMDs?  Could we have userspace provide the backing
+> > either through the ECREATE ioctl() or maybe a completely new ioctl(),
+> > e.g. to give userspace the option to back the enclave with a NVDIMM
+> > instead of RAM?  A separate ioctl() with control flags might give us
+> > some flexibility in the future, e.g. maybe there are use cases where
+> > userspace would prefer to kill enclaves rather than swap EPC.
+> 
+> Not really except that no one has complained. The very first swapping
+> code that I implemented used a VMA as backing storage. I could take
+> pieces of that code to replace shmem specifics. The difference was that
+> the driver did vm_mmap(). Now that you suggested the above I wonder how
+> it did not came to mind back then to provide the VMA as parameter.
+> 
+> A single buffer that can hold both PCMD entries and swapped pages in its
+> address space would probably be the  best way to do it. I would add that
+> as a field to struct sgx_enclave_create. If we want the kill-behavior,
+> you could signal that with a NULL value.
 
-CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX
-that enumerates the SGX instruction sets that are supported by the
-CPU, e.g. SGX1, SGX2, etc...  Because Linux currently only cares about
-two bits (SGX1 and SGX2) and there are currently only four documented
-bits in total, relocate the bits to Linux-defined word 8 to conserve
-space.
+What do we gain by a single buffer vs. separate buffers?  The ioctl()
+would be slightly smaller but it seems like the actual code would be
+more complex.
 
-But, keep the bit positions identical between the Intel-defined value
-and the Linux-defined value, e.g. keep SGX1 at bit 0.  This allows KVM
-to use its existing code for probing guest CPUID bits using Linux's
-X86_FEATURE_* definitions.  To do so, shift around some existing bits
-to effectively reserve bits 0-7 of word 8 for SGX sub-features.
+The enclave build process also utilizes the backing as temp storage
+to avoid having to alloc kernel memory when queueing pages to be added
+by the worker thread (which reminds me that I wanted to document why a
+worker thread is used).  Keeping this behavior would effectively make
+providing backing mandatory.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/cpufeatures.h       | 21 +++++++++++++++------
- arch/x86/kernel/cpu/scattered.c          |  2 ++
- tools/arch/x86/include/asm/cpufeatures.h | 21 +++++++++++++++------
- 3 files changed, 32 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 22271752fd1e..1b8dea9a06cb 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -222,12 +222,21 @@
- #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
- #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
- 
--/* Virtualization flags: Linux defined, word 8 */
--#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
--#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
--#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
--#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
--#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-+/*
-+ * Scattered Intel features: Linux defined, word 8.
-+ *
-+ * Note that the bit location of the SGX features is meaningful as KVM expects
-+ * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
-+ * must remain at bit 0, SGX2 at bit 1, etc...
-+ */
-+#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-+#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
-+
-+#define X86_FEATURE_TPR_SHADOW		( 8*32+ 8) /* Intel TPR Shadow */
-+#define X86_FEATURE_VNMI		( 8*32+ 9) /* Intel Virtual NMI */
-+#define X86_FEATURE_FLEXPRIORITY	( 8*32+10) /* Intel FlexPriority */
-+#define X86_FEATURE_EPT			( 8*32+11) /* Intel Extended Page Table */
-+#define X86_FEATURE_VPID		( 8*32+12) /* Intel Virtual Processor ID */
- 
- #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
- #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
-diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-index 772c219b6889..f7f0970b8f89 100644
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -26,6 +26,8 @@ static const struct cpuid_bit cpuid_bits[] = {
- 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
- 	{ X86_FEATURE_CDP_L2,		CPUID_ECX,  2, 0x00000010, 2 },
- 	{ X86_FEATURE_MBA,		CPUID_EBX,  3, 0x00000010, 0 },
-+	{ X86_FEATURE_SGX1,             CPUID_EAX,  0, 0x00000012, 0 },
-+	{ X86_FEATURE_SGX2,             CPUID_EAX,  1, 0x00000012, 0 },
- 	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
- 	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
- 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 89a048c2faec..9cc7628b9845 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -222,12 +222,21 @@
- #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
- #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
- 
--/* Virtualization flags: Linux defined, word 8 */
--#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
--#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
--#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
--#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
--#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-+/*
-+ * Scattered Intel features: Linux defined, word 8.
-+ *
-+ * Note that the bit numbers of the SGX features are meaningful as KVM expects
-+ * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
-+ * must remain at bit 0, SGX2 at bit 1, etc...
-+ */
-+#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-+#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
-+
-+#define X86_FEATURE_TPR_SHADOW		( 8*32+ 8) /* Intel TPR Shadow */
-+#define X86_FEATURE_VNMI		( 8*32+ 9) /* Intel Virtual NMI */
-+#define X86_FEATURE_FLEXPRIORITY	( 8*32+10) /* Intel FlexPriority */
-+#define X86_FEATURE_EPT			( 8*32+11) /* Intel Extended Page Table */
-+#define X86_FEATURE_VPID		( 8*32+12) /* Intel Virtual Processor ID */
- 
- #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
- #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
--- 
-2.19.1
+Are there any potential complications with ENCLS consuming userspace
+pointers?  We'd have to wrap them with user_access_{begin,end}() and
+probably tweak the fixup, but I assume having the fixup handler means
+we're generally ok?
