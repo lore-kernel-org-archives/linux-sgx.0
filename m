@@ -1,44 +1,111 @@
-Received: from mga02.intel.com ([134.134.136.20]:17322 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
- S1729800AbeKFCwi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Mon, 5
- Nov 2018 21:52:38 -0500
-Date: Mon, 5 Nov 2018 19:31:44 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jethro Beekman <jethro@fortanix.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "dave.hansen@intel.com" <dave.hansen@intel.com>,
-	"sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-	"nhorman@redhat.com" <nhorman@redhat.com>, "npmccallum@redhat.com"
-	<npmccallum@redhat.com>, "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-	"shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-	"haitao.huang@intel.com" <haitao.huang@intel.com>, "mark.shanahan@intel.com"
-	<mark.shanahan@intel.com>, "andriy.shevchenko@linux.intel.com"
-	<andriy.shevchenko@linux.intel.com>, Suresh Siddha
-	<suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
-	<hpa@zytor.com>, Reinette Chatre <reinette.chatre@intel.com>, "Rafael J.
- Wysocki" <rafael.j.wysocki@intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, "open list:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
-Message-ID: <20181105173144.GE4502@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
- <79867568-c21f-8a09-d06e-360b1b925dd5@fortanix.com>
+Date: Wed, 7 Nov 2018 13:40:59 -0800
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Rich Felker <dalias@libc.org>
+CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
+	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181107214058.GG27170@linux.intel.com>
+References: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
+ <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <79867568-c21f-8a09-d06e-360b1b925dd5@fortanix.com>
-Sender: <linux-sgx-owner@vger.kernel.org>
-List-ID: <linux-sgx.vger.kernel.org>
-Return-Path: linux-sgx-owner@vger.kernel.org
+In-Reply-To: <20181107212758.GU5150@brightrain.aerifal.cx>
+Return-Path: sean.j.christopherson@intel.com
 MIME-Version: 1.0
+List-ID: <linux-sgx.vger.kernel.org>
 
-On Sat, Nov 03, 2018 at 01:07:27AM +0000, Jethro Beekman wrote:
-> > +	for (i = 0; i < SGX_MAX_EPC_SECTIONS; i++) {
+On Wed, Nov 07, 2018 at 04:27:58PM -0500, Rich Felker wrote:
+> On Tue, Nov 06, 2018 at 03:26:16PM -0800, Sean Christopherson wrote:
+> > On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
+> > > On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
+> > > > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+> > > > >
+> > > > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
+> > > > > > I almost feel like the right solution is to call into SGX on its own
+> > > > > > private stack or maybe even its own private address space.
+> > > > >
+> > > > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
+> > > > > enclave like its own "thread" with its own stack and its own set of
+> > > > > registers and context?  That seems like a much more workable model than
+> > > > > trying to weave it together with the EENTER context.
+> > > > 
+> > > > So maybe the API should be, roughly
+> > > > 
+> > > > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
+> > > > host_state *state);
+> > > > sgx_exit_reason_t sgx_resume_enclave(same args);
+> > > > 
+> > > > where host_state is something like:
+> > > > 
+> > > > struct host_state {
+> > > >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
+> > > > };
+> > > > 
+> > > > and the values in host_state explicitly have nothing to do with the
+> > > > actual host registers.  So, if you want to use the outcall mechanism,
+> > > > you'd allocate some memory, point sp to that memory, call
+> > > > sgx_enter_enclave(), and then read that memory to do the outcall.
+> > > > 
+> > > > Actually implementing this would be distinctly nontrivial, and would
+> > > > almost certainly need some degree of kernel help to avoid an explosion
+> > > > when a signal gets delivered while we have host_state.sp loaded into
+> > > > the actual SP register.  Maybe rseq could help with this?
+> > > > 
+> > > > The ISA here is IMO not well thought through.
+> > > 
+> > > Maybe I'm mistaken about some fundamentals here, but my understanding
+> > > of SGX is that the whole point is that the host application and the
+> > > code running in the enclave are mutually adversarial towards one
+> > > another. Do any or all of the proposed protocols here account for this
+> > > and fully protect the host application from malicious code in the
+> > > enclave? It seems that having control over the register file on exit
+> > > from the enclave is fundamentally problematic but I assume there must
+> > > be some way I'm missing that this is fixed up.
+> > 
+> > SGX provides protections for the enclave but not the other way around.
+> > The kernel has all of its normal non-SGX protections in place, but the
+> > enclave can certainly wreak havoc on its userspace process.  The basic
+> > design idea is that the enclave is a specialized .so that gets extra
+> > security protections but is still effectively part of the overall
+> > application, e.g. it has full access to its host userspace process'
+> > virtual memory.
 > 
-> Perhaps print a warning if there are more than SGX_MAX_EPC_SECTIONS sections
-> reported by CPUID.
+> In that case it seems like the only way to use SGX that's not a gaping
+> security hole is to run the SGX enclave in its own fully-seccomp (or
+> equivalent) process, with no host application in the same address
+> space. Since the host application can't see the contents of the
+> enclave to make any determination of whether it's safe to run, running
+> it in the same address space only makes sense if the cpu provides
+> protection against unwanted accesses to the host's memory from the
+> enclave -- and according to you, it doesn't.
 
-Makes sense. I'll add it.
+The enclave's code (and any initial data) isn't encrypted until the
+pages are loaded into the Enclave Page Cache (EPC), which can only
+be done by the kernel (via ENCLS[EADD]).  In other words, both the
+kernel and userspace can vet the code/data before running an enclave.
 
-/Jarkko
+Practically speaking, an enclave will be coupled with an untrusted
+userspace runtime, i.e. it's loader.  Enclaves are also measured
+as part of their build process, and so the enclave loader needs to
+know which pages to add to the measurement, and in what order.  I
+guess technically speaking an enclave could have zero pages added
+to its measurement, but that'd probably be a big red flag that said
+enclave is up to something fishy.
