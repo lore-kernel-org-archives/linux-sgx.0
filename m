@@ -1,48 +1,104 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
-	<kai.svahn@intel.com>, Kai Huang <kai.huang@linux.intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "Konrad Rzeszutek
- Wilk" <konrad.wilk@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 05/22] x86/cpufeatures: Add Intel-defined SGX_LC feature bit
-Date: Tue, 6 Nov 2018 15:45:44 +0200
-Message-ID: <20181106134758.10572-6-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain
-Return-Path: jarkko.sakkinen@intel.com
+References: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx> <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
+In-Reply-To: <20181107212758.GU5150@brightrain.aerifal.cx>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 7 Nov 2018 13:33:24 -0800
+Message-ID: <CALCETrUh4TkgTPjoaLaT-TjD9JuPhPrLbpGdB8C95R0a+rexww@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To: Rich Felker <dalias@libc.org>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, "Andrew
+ Lutomirski" <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>, Jann Horn
+	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, "Dave
+ Hansen" <dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Florian Weimer
+	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
+	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
+	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
+	<linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: luto@kernel.org
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-From: Kai Huang <kai.huang@linux.intel.com>
+On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
+>
+> On Tue, Nov 06, 2018 at 03:26:16PM -0800, Sean Christopherson wrote:
+> > On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
+> > > On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
+> > > > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+> > > > >
+> > > > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
+> > > > > > I almost feel like the right solution is to call into SGX on its own
+> > > > > > private stack or maybe even its own private address space.
+> > > > >
+> > > > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
+> > > > > enclave like its own "thread" with its own stack and its own set of
+> > > > > registers and context?  That seems like a much more workable model than
+> > > > > trying to weave it together with the EENTER context.
+> > > >
+> > > > So maybe the API should be, roughly
+> > > >
+> > > > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
+> > > > host_state *state);
+> > > > sgx_exit_reason_t sgx_resume_enclave(same args);
+> > > >
+> > > > where host_state is something like:
+> > > >
+> > > > struct host_state {
+> > > >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
+> > > > };
+> > > >
+> > > > and the values in host_state explicitly have nothing to do with the
+> > > > actual host registers.  So, if you want to use the outcall mechanism,
+> > > > you'd allocate some memory, point sp to that memory, call
+> > > > sgx_enter_enclave(), and then read that memory to do the outcall.
+> > > >
+> > > > Actually implementing this would be distinctly nontrivial, and would
+> > > > almost certainly need some degree of kernel help to avoid an explosion
+> > > > when a signal gets delivered while we have host_state.sp loaded into
+> > > > the actual SP register.  Maybe rseq could help with this?
+> > > >
+> > > > The ISA here is IMO not well thought through.
+> > >
+> > > Maybe I'm mistaken about some fundamentals here, but my understanding
+> > > of SGX is that the whole point is that the host application and the
+> > > code running in the enclave are mutually adversarial towards one
+> > > another. Do any or all of the proposed protocols here account for this
+> > > and fully protect the host application from malicious code in the
+> > > enclave? It seems that having control over the register file on exit
+> > > from the enclave is fundamentally problematic but I assume there must
+> > > be some way I'm missing that this is fixed up.
+> >
+> > SGX provides protections for the enclave but not the other way around.
+> > The kernel has all of its normal non-SGX protections in place, but the
+> > enclave can certainly wreak havoc on its userspace process.  The basic
+> > design idea is that the enclave is a specialized .so that gets extra
+> > security protections but is still effectively part of the overall
+> > application, e.g. it has full access to its host userspace process'
+> > virtual memory.
+>
+> In that case it seems like the only way to use SGX that's not a gaping
+> security hole is to run the SGX enclave in its own fully-seccomp (or
+> equivalent) process, with no host application in the same address
+> space. Since the host application can't see the contents of the
+> enclave to make any determination of whether it's safe to run, running
+> it in the same address space only makes sense if the cpu provides
+> protection against unwanted accesses to the host's memory from the
+> enclave -- and according to you, it doesn't.
+>
 
-X86_FEATURE_SGX_LC reflects whether or not the CPU supports SGX Launch
-Control, i.e. enumerates the existence of IA32_FEATURE_CONTROL's
-SGX_LE_WR bit and the IA32_SGXLEPUBKEYHASH MSRs.
+I think the theory is that the enclave is shipped with the host application.
 
-Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/cpufeatures.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 1b8dea9a06cb..1213e68f87e7 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -341,6 +341,7 @@
- #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
- #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
- #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
-+#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
- 
- /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
- #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
--- 
-2.19.1
+That being said, a way to run the enclave in an address space that has
+basically nothing else (except an ENCLU instruction as a trampoline)
+would be quite nice.
