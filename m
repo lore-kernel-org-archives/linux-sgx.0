@@ -2,233 +2,122 @@ Return-Path: <SRS0=ssez=NS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A307BC0044C
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 06:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94840C0044C
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 10:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20AC420862
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 06:47:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="Gl3ykUXl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AC420862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
+	by mail.kernel.org (Postfix) with ESMTP id 516D82085B
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 10:29:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516D82085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeKGQQL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Nov 2018 11:16:11 -0500
-Received: from mail-dm3nam03on0107.outbound.protection.outlook.com ([104.47.41.107]:11920
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726194AbeKGQQK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Nov 2018 11:16:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QnaTSEy0SDXjtCVE2BuU8Nrp17kxEDoGw95ew5uTVPI=;
- b=Gl3ykUXl3RG8QRukts3o9I9iNW6X7xbfEr3XmmvpQ2qRAk8tVJJ32AaBPFxgwq9cTsInZy1Bz4I5rYpeIZ3QM9DFbO/HGlDX0tT4D3HMg4JsvjD0UeM1zNbUhu6DmMhzaEZWq81Uym/Jh8XYunR6d15K7bXKDRzg5AoWtw8/U14=
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB3309.namprd11.prod.outlook.com (52.135.110.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.29; Wed, 7 Nov 2018 06:47:08 +0000
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4cee:6f2d:f3c2:cac7]) by SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4cee:6f2d:f3c2:cac7%3]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 06:47:08 +0000
-From:   Jethro Beekman <jethro@fortanix.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1726266AbeKGT7C convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Nov 2018 14:59:02 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:46106 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726218AbeKGT7C (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 7 Nov 2018 14:59:02 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by dkim.mimecast.com with ESMTP id
+ uk-mta-179-ZS9EnN-mOoKzVXqdZBIkCg-1; Wed, 07 Nov 2018 10:29:15 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
+ 7 Nov 2018 10:29:20 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 7 Nov 2018 10:29:20 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+CC:     "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
         "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
         "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        "haitao.huang@intel.com" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Thread-Topic: RFC: userspace exception fixups
-Thread-Index: AQHUcgvc1wPHkMTl1kOh3Odo0nI54qU7PrGAgAAFRoCAAAUTgIAABb2AgAAfqQCAACEagIABHyAAgAAHTwCAAAK4AIAAAe+AgAAFtwCAAAQiAIAACscAgAAJ1ICAADLrgIAAFy0AgAABYwCABcSyAIAAFkiAgAAGCACAABEfgIAABcMAgAAF5oCAAAWQgIAADgaAgAANkICAAAH6AIAACX+AgAAE5oCAABEwAIAACZeAgAABRQCAAAZegIAAFNsAgABcIoA=
-Date:   Wed, 7 Nov 2018 06:47:08 +0000
-Message-ID: <4171a890-12d9-8a1c-22da-e53434c1f840@fortanix.com>
-References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
-In-Reply-To: <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
-Accept-Language: en-US
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Thread-Topic: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Thread-Index: AQHUddgrysSRxlXgvUSYD+ItRQz08aVEHTFw
+Date:   Wed, 7 Nov 2018 10:29:20 +0000
+Message-ID: <ed7b04087e59403f986bab27a668933f@AcuMS.aculab.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-MS-Has-Attach: yes
+X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P192CA0026.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:209:83::39) To SN6PR11MB3167.namprd11.prod.outlook.com
- (2603:10b6:805:c4::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [83.171.135.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR11MB3309;6:y62pkJDtNFqs8F10BNi/OOSvJfuYXqHiaKBuJCvVrK0sruAWAR/Hwmm83iCUmZd33maShnqZYmwyPXohuoMF2inkE4jeYB3jegoW+5l20A4a3/dbqVDduGSQjt8gkjsmPVgj7LLHZCBPvQi05ducIFIPam39KqTXnjBp10xwkNQH6GwWhalS73lni2SKs63eo4ufUb/cFrjmw9e7ZEdTiFkNOiy2egoBVzjLHLHqz/AF6BycGLwAcno31z2wpjJqrsNkKLptvJpcrxEUs4YtJypGyI7CRO1WAxlNAWe2OToZ1RdQBYLibyHW/Jt62tha9GwCaFw6A7JhjB4kMg6pWT7sLQ/PgQJWsYVfOaGeEWLpl9+YmPkFrHljIHXBmrriz+EnzFKWAVNyqkuHthmk1IKGfgiuh44BPbg0gWDSR4ttqxoFWTDzs8Ac6RT2Xk+2fR6VYZREQdxG4ldeBII0kg==;5:ZUjeyFPdH3FmsiHpTEAPgOXpaKqS+4RndKN61eQUhF5zm/QVZ+aPIw/EgfZJISpUE880WXQ1pGGHqdVmgQLbKr+E5fiEPFw5EgYtdc0/lZv79qZd57DdQaJr+YA/ZVtt2rwrNOaLwbv9S6cjCBX58mQ9OYs7gzDl+WjAIqLg5l8=;7:ORUCwY2LNsoIS9UMy7F8pH+zmxDAXu2dickpAmQfJx7bkfgryvG7DcJ+05z5loDHcrlkpWjtaGV+Bo4kq5I2LLz7Ih7D2E2Dk5qGsZo1JOT6KbV75YI9IOvDMuEJsiCQ2CQRdQCp2P260lkgc5FjAg==
-x-ms-office365-filtering-correlation-id: d00b4bce-c4ab-42b0-5e23-08d6447cd617
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB3309;
-x-ms-traffictypediagnostic: SN6PR11MB3309:
-x-microsoft-antispam-prvs: <SN6PR11MB330929A01B32B4439177BD66AAC40@SN6PR11MB3309.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231382)(944501410)(4983020)(52105095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB3309;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB3309;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(396003)(39840400004)(136003)(189003)(199004)(26005)(71190400001)(71200400001)(66066001)(6512007)(486006)(305945005)(5660300001)(7736002)(93886005)(6486002)(102836004)(4326008)(53936002)(54906003)(110136005)(25786009)(316002)(52116002)(7416002)(446003)(99286004)(97736004)(2906002)(186003)(3846002)(476003)(6116002)(31686004)(2616005)(6506007)(8936002)(386003)(81156014)(81166006)(11346002)(8676002)(76176011)(36756003)(53546011)(6436002)(106356001)(2900100001)(31696002)(86362001)(105586002)(68736007)(256004)(229853002)(508600001)(99936001)(6246003)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3309;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ufegrBdaG4GNthpP5cm3pqBGVSzv1HKLTcGPNmjdEOEX4rtNieTcK5EnmMPC1s6qd0jKDocwPCLrN7oJCD/qopLumsuQOsc+K1p6HhzFmrcspNQfuO9CQb8BWyoDnpPku8LABUIkd3FFsN3MIQb5xwh3LgJ6d+Qp1FwMyMkqSTBFaFBZdbSVNs7DQZOR5WahKGAKHxzei7oeDt8wwwJQ115C8o2TQsjHFFJByuMHSPPvXJI6vA0eyk1WFt4b8lHeizJbTRPwjuynhl6TfOYS30HKfriKAT1tzjUdtY+k/sNVk2t9cNglnvoO2Rur3HuVmS9hECKW3LDNn46RB6kqcGlVqcK3Do3RE5BEF3wCzyo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060801080805010704030402"
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d00b4bce-c4ab-42b0-5e23-08d6447cd617
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 06:47:08.1586
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3309
+X-MC-Unique: ZS9EnN-mOoKzVXqdZBIkCg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181107064708.-VVOFWnCLnShX-QntQBgt7cWajGpYHtv5pN6W9ik6jY@z>
 
---------------ms060801080805010704030402
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+From: Jarkko Sakkinen
+> Sent: 06 November 2018 13:46
+> 
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the enclave is disallowed to access the memory
+> inside the enclave by the CPU access control.
+> 
+> SGX driver provides a ioctl API for loading and initializing enclaves.
+> Address range for enclaves is reserved with mmap() and they are
+> destroyed with munmap(). Enclave construction, measurement and
+> initialization is done with the provided the ioctl API.
+..
+> +struct sgx_encl {
+> +	unsigned int flags;
+> +	uint64_t attributes;
+> +	uint64_t xfrm;
+> +	unsigned int page_cnt;
+> +	unsigned int secs_child_cnt;
+> +	struct mutex lock;
+> +	struct mm_struct *mm;
+> +	struct file *backing;
+> +	struct kref refcount;
+> +	unsigned long base;
+> +	unsigned long size;
+> +	unsigned long ssaframesize;
+> +	struct radix_tree_root page_tree;
+> +	struct list_head add_page_reqs;
+> +	struct work_struct add_page_work;
+> +	struct sgx_encl_page secs;
+> +	struct pid *tgid;
+> +	struct mmu_notifier mmu_notifier;
+> +	struct notifier_block pm_notifier;
+> +};
 
-On 2018-11-07 02:17, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
->>
->> /*
->>   * EEXIT or EENTER faulted.  In the latter case, %RAX already holds s=
-ome
->>   * fault indicator, e.g. -EFAULT.
->>   */
->> eexit_or_eenter_fault:
->>      ret
->=20
-> But userspace wants to know whether it was a fault or not.  So I think
-> we either need two landing pads or we need to hijack a flag bit (are
-> there any known-zeroed flag bits after EEXIT?) to say whether it was a
-> fault.  And, if it was a fault, we should give the vector, the
-> sanitized error code, and possibly CR2.
+It may not really matter (yet) but there is at least one hole in that strcture.
 
-On AEX, %rax will contain ENCLU_LEAF_ERESUME (0x3). On EEXIT, %rax will=20
-contain ENCLU_LEAF_EEXIT (0x4).
+	David
 
---
-Jethro Beekman | Fortanix
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-
---------------ms060801080805010704030402
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
-CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
-bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
-MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
-Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
-LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
-lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
-O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
-ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
-lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
-BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
-MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
-AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
-hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
-bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
-dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
-bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
-v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
-shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
-rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
-eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
-qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
-apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
-BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
-T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
-b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
-GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
-ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
-bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
-NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
-NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
-qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
-jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
-ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
-jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
-Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
-BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
-VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
-hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
-QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
-7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
-+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
-E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
-gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
-SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
-/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
-m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
-UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
-rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
-TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
-x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTEwNzA2NDY1OVowLwYJKoZIhvcNAQkEMSIEIP122b9l
-q3m9HHIB3AfCKCe3x1b9nFWDdv8ZCzr5Sf7YMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
-Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
-Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
-XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
-R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
-Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
-YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQDHPD7e/B7Xmi08Q9sbN82xMMONgP/ly/XL8qt1rGp1TMixFAFe5/G1Tj1Cuz05oapu9a8/
-5j2GLq8fe/1mgEHmuNpHMYU+yNDkT2UoNYMrAb8Kmzh/RSIYFKCB8jybW5U0HIhj5Vj4E3UP
-oGmvAIdqdCXjyLAoP8+GKmAL2O9p4jKdFSpyBKFptAWx5P2rc/6dA0FKrmePX9sayrtRbtWI
-BK6hXogkHNNcpgyKAiOPAD/mlj+RrtmopOvX3nIjnzjWzvE9OtKS6q7CIjx08gOd5cHY9Onw
-pocroH2k2N0HYsJ0mQF2JRybh2uUQRejTLwWf55eD1ta0Y9sMUs0KODcAAAAAAAA
-
---------------ms060801080805010704030402--
