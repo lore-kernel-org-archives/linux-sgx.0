@@ -2,39 +2,65 @@ Return-Path: <SRS0=ssez=NS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BC7C32789
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 00:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA62BC32789
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 01:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8934720844
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 00:02:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8934720844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 97A5A2086C
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Nov 2018 01:17:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6dgmvJl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A5A2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730785AbeKGJaY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Nov 2018 04:30:24 -0500
-Received: from mga04.intel.com ([192.55.52.120]:50125 "EHLO mga04.intel.com"
+        id S2388746AbeKGKpc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Nov 2018 05:45:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727292AbeKGJaX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Nov 2018 04:30:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 16:02:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
-   d="scan'208";a="87219283"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 16:02:35 -0800
-Date:   Tue, 6 Nov 2018 16:02:35 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
+        id S2388667AbeKGKpc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Nov 2018 05:45:32 -0500
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD55B20892
+        for <linux-sgx@vger.kernel.org>; Wed,  7 Nov 2018 01:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541553448;
+        bh=bJwZb1O4zAE9dHWjIOrppDX7jvBW1SOTO4SvVHJRQZw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=W6dgmvJlAdGMPWdH/NSCibfKDhUb98lqWbm3C3ibnVJx/hVXKwNfhonR8pM+Pc0og
+         8PfXFXb/TDnBiJdySqIUEawR67UMPKNcmSPdsg59wSEdZErKVdcpnz9arugS9N6qjP
+         PNrviTqeWufeIut87G+xlW5KKlLMtkc3jX8CEk3I=
+Received: by mail-wm1-f43.google.com with SMTP id t15-v6so6348435wmt.0
+        for <linux-sgx@vger.kernel.org>; Tue, 06 Nov 2018 17:17:27 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJcY7dfWetODi40kD/vJL/As7/FgRGgK6LSujh4AG+UYko+FVX7
+        jdjednUFBqe1sQ5AL9YVmj9dtt93qFG+oJ0HYtR5Lw==
+X-Google-Smtp-Source: AJdET5dSXiPSOntURoFOF05ZwytIulTOa03hk13JD5dAWvxeNEM9ao/nx9SPcnliaA87H/hkje0CNhbKVCHi7qlb7GA=
+X-Received: by 2002:a1c:410a:: with SMTP id o10-v6mr174833wma.19.1541553446217;
+ Tue, 06 Nov 2018 17:17:26 -0800 (PST)
+MIME-Version: 1.0
+References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com> <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com> <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com> <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ <20181106233515.GB11101@linux.intel.com> <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+ <20181107000235.GC11101@linux.intel.com>
+In-Reply-To: <20181107000235.GC11101@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 6 Nov 2018 17:17:14 -0800
+X-Gmail-Original-Message-ID: <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+Message-ID:
+ <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jann Horn <jannh@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Rich Felker <dalias@libc.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -50,118 +76,127 @@ Cc:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
+        "Carlos O'Donell" <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181107000235.GC11101@linux.intel.com>
-References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181107000235.yLAufcFmQhwhj4x6SaV5MK3ZqeyOCptLZkAKw6qn5to@z>
+Message-ID: <20181107011714.yhJoGZ477c5K33y0ar68SMXLhD9i8X2Kr83bRln0sbk@z>
 
-On Tue, Nov 06, 2018 at 03:39:48PM -0800, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 3:35 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Tue, Nov 06, 2018 at 03:00:56PM -0800, Andy Lutomirski wrote:
+On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Tue, Nov 06, 2018 at 03:39:48PM -0800, Andy Lutomirski wrote:
+> > On Tue, Nov 6, 2018 at 3:35 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
 > > >
+> > > On Tue, Nov 06, 2018 at 03:00:56PM -0800, Andy Lutomirski wrote:
+> > > >
+> > > >
+> > > > >> On Nov 6, 2018, at 1:59 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > > > >>
+> > > > >>> On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
+> > > > >> Sean, how does the current SDK AEX handler decide whether to do
+> > > > >> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
+> > > > >> like the *CPU* could give a big hint, but I don't see where there is
+> > > > >> any architectural indication of why the AEX code got called or any
+> > > > >> obvious way for the user code to know whether the exit was fixed up by
+> > > > >> the kernel?
+> > > > >
+> > > > > The SDK "unconditionally" does ERESUME at the AEP location, but that's
+> > > > > bit misleading because its signal handler may muck with the context's
+> > > > > RIP, e.g. to abort the enclave on a fatal fault.
+> > > > >
+> > > > > On an event/exception from within an enclave, the event is immediately
+> > > > > delivered after loading synthetic state and changing RIP to the AEP.
+> > > > > In other words, jamming CPU state is essentially a bunch of vectoring
+> > > > > ucode preamble, but from software's perspective it's a normal event
+> > > > > that happens to point at the AEP instead of somewhere in the enclave.
+> > > > > And because the signals the SDK cares about are all synchronous, the
+> > > > > SDK can simply hardcode ERESUME at the AEP since all of the fault logic
+> > > > > resides in its signal handler.  IRQs and whatnot simply trampoline back
+> > > > > into the enclave.
+> > > > >
+> > > > > Userspace can do something funky instead of ERESUME, but only *after*
+> > > > > IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
+> > > > > case, after the trap handler has run.
+> > > > >
+> > > > > Jumping back a bit, how much do we care about preventing userspace
+> > > > > from doing stupid things?
+> > > >
+> > > > My general feeling is that userspace should be allowed to do apparently
+> > > > stupid things. For example, as far as the kernel is concerned, Wine and
+> > > > DOSEMU are just user programs that do stupid things. Linux generally tries
+> > > > to provide a reasonably complete view of architectural behavior. This is
+> > > > in contrast to, say, Windows, where IIUC doing an unapproved WRFSBASE May
+> > > > cause very odd behavior indeed. So magic fixups that do non-architectural
+> > > > things are not so great.
 > > >
-> > > >> On Nov 6, 2018, at 1:59 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > > >>
-> > > >>> On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
-> > > >> Sean, how does the current SDK AEX handler decide whether to do
-> > > >> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
-> > > >> like the *CPU* could give a big hint, but I don't see where there is
-> > > >> any architectural indication of why the AEX code got called or any
-> > > >> obvious way for the user code to know whether the exit was fixed up by
-> > > >> the kernel?
-> > > >
-> > > > The SDK "unconditionally" does ERESUME at the AEP location, but that's
-> > > > bit misleading because its signal handler may muck with the context's
-> > > > RIP, e.g. to abort the enclave on a fatal fault.
-> > > >
-> > > > On an event/exception from within an enclave, the event is immediately
-> > > > delivered after loading synthetic state and changing RIP to the AEP.
-> > > > In other words, jamming CPU state is essentially a bunch of vectoring
-> > > > ucode preamble, but from software's perspective it's a normal event
-> > > > that happens to point at the AEP instead of somewhere in the enclave.
-> > > > And because the signals the SDK cares about are all synchronous, the
-> > > > SDK can simply hardcode ERESUME at the AEP since all of the fault logic
-> > > > resides in its signal handler.  IRQs and whatnot simply trampoline back
-> > > > into the enclave.
-> > > >
-> > > > Userspace can do something funky instead of ERESUME, but only *after*
-> > > > IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
-> > > > case, after the trap handler has run.
-> > > >
-> > > > Jumping back a bit, how much do we care about preventing userspace
-> > > > from doing stupid things?
+> > > Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
+> > > with a specific (ignored) prefix pattern?  I.e. effectively make the magic
+> > > fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
+> > > that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
+> > > that the enclave can EEXIT to immediately after the EENTER location.
 > > >
-> > > My general feeling is that userspace should be allowed to do apparently
-> > > stupid things. For example, as far as the kernel is concerned, Wine and
-> > > DOSEMU are just user programs that do stupid things. Linux generally tries
-> > > to provide a reasonably complete view of architectural behavior. This is
-> > > in contrast to, say, Windows, where IIUC doing an unapproved WRFSBASE May
-> > > cause very odd behavior indeed. So magic fixups that do non-architectural
-> > > things are not so great.
 > >
-> > Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
-> > with a specific (ignored) prefix pattern?  I.e. effectively make the magic
-> > fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
-> > that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
-> > that the enclave can EEXIT to immediately after the EENTER location.
-> >
-> 
-> How does that even work, though?  On an AEX, RIP points to the ERESUME
-> instruction, not the EENTER instruction, so if we skip it we just end
-> up in lala land.
+> > How does that even work, though?  On an AEX, RIP points to the ERESUME
+> > instruction, not the EENTER instruction, so if we skip it we just end
+> > up in lala land.
+>
+> Userspace would obviously need to be aware of the fixup behavior, but
+> it actually works out fairly nicely to have a separate path for ERESUME
+> fixup since a fault on EENTER is generally fatal, whereas as a fault on
+> ERESUME might be recoverable.
+>
 
-Userspace would obviously need to be aware of the fixup behavior, but
-it actually works out fairly nicely to have a separate path for ERESUME
-fixup since a fault on EENTER is generally fatal, whereas as a fault on
-ERESUME might be recoverable.
+Hmm.
 
+>
+> do_eenter:
+>     mov     tcs, %rbx
+>     lea     async_exit, %rcx
+>     mov     $EENTER, %rax
+>     ENCLU
 
-do_eenter:
-    mov     tcs, %rbx
-    lea     async_exit, %rcx 
-    mov     $EENTER, %rax
-    ENCLU
+Or SOME_SILLY_PREFIX ENCLU?
 
-/*
- * EEXIT or EENTER faulted.  In the latter case, %RAX already holds some
- * fault indicator, e.g. -EFAULT.
- */
-eexit_or_eenter_fault:
-    ret
+>
+> /*
+>  * EEXIT or EENTER faulted.  In the latter case, %RAX already holds some
+>  * fault indicator, e.g. -EFAULT.
+>  */
+> eexit_or_eenter_fault:
+>     ret
 
-async_exit:
-    ENCLU
+But userspace wants to know whether it was a fault or not.  So I think
+we either need two landing pads or we need to hijack a flag bit (are
+there any known-zeroed flag bits after EEXIT?) to say whether it was a
+fault.  And, if it was a fault, we should give the vector, the
+sanitized error code, and possibly CR2.
 
-fixup_handler:
-    <do fault stuff>
- 
-> How averse would everyone be to making enclave entry be a syscall?
-> The user code would do sys_sgx_enter_enclave(), and the kernel would
-> stash away the register state (vm86()-style), point RIP to the vDSO's
-> ENCLU instruction, point RCX to another vDSO ENCLU instruction, and
-> SYSRET.  The trap handlers would understand what's going on and
-> restore register state accordingly.
+>
+> async_exit:
+>     ENCLU
 
-Wouldn't that blast away any stack changes made by the enclave?
+Same prefix here, right?
+
+>
+> fixup_handler:
+>     <do fault stuff>
+
+This whole thing is a bit odd, but not necessarily a terrible idea.
+
+>
+> > How averse would everyone be to making enclave entry be a syscall?
+> > The user code would do sys_sgx_enter_enclave(), and the kernel would
+> > stash away the register state (vm86()-style), point RIP to the vDSO's
+> > ENCLU instruction, point RCX to another vDSO ENCLU instruction, and
+> > SYSRET.  The trap handlers would understand what's going on and
+> > restore register state accordingly.
+>
+> Wouldn't that blast away any stack changes made by the enclave?
+
+Yes, but I was imagining that it would stash the registers into the
+struct host_state thing I made up :)
