@@ -1,69 +1,47 @@
-Date: Thu, 8 Nov 2018 14:04:16 -0800
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Date: Thu, 8 Nov 2018 16:39:42 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Dave Hansen <dave.hansen@intel.com>
-CC: Andy Lutomirski <luto@amacapital.net>, Andrew Lutomirski
-	<luto@kernel.org>, Jann Horn <jannh@google.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Rich Felker <dalias@libc.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Jethro Beekman <jethro@fortanix.com>, "Jarkko
- Sakkinen" <jarkko.sakkinen@linux.intel.com>, Florian Weimer
-	<fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>, X86 ML
-	<x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181108220416.GA18263@linux.intel.com>
-References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
- <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
- <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
- <20181108211600.GA17167@linux.intel.com>
- <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open
+ list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181108143942.GA13792@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
+ <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+ <20181107163019.GA11509@linux.intel.com>
+ <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
-Return-Path: sean.j.christopherson@intel.com
+In-Reply-To: <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Thu, Nov 08, 2018 at 01:50:31PM -0800, Dave Hansen wrote:
-> On 11/8/18 1:16 PM, Sean Christopherson wrote:
-> > On Thu, Nov 08, 2018 at 12:10:30PM -0800, Dave Hansen wrote:
-> >> On 11/8/18 12:05 PM, Andy Lutomirski wrote:
-> >>> Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
-> >>> not the most terrible thing in the world.  But could the SDK live with
-> >>> something more like my suggestion where the vDSO supplies a normal
-> >>> function that takes a struct containing registers that are visible to
-> >>> the enclave?  This would make it extremely awkward for the enclave to
-> >>> use the untrusted stack per se, but it would make it quite easy (I
-> >>> think) for the untrusted part of the SDK to allocate some extra memory
-> >>> and just tell the enclave that *that* memory is the stack.
-> >>
-> >> I really think the enclave should keep its grubby mitts off the
-> >> untrusted stack.  There are lots of ways to get memory, even with
-> >> stack-like semantics, that don't involve mucking with the stack itself.
-> >>
-> >> I have not heard a good, hard argument for why there is an absolute
-> >> *need* to store things on the actual untrusted stack.
+On Wed, Nov 07, 2018 at 09:09:37AM -0800, Dave Hansen wrote:
+> On 11/7/18 8:30 AM, Jarkko Sakkinen wrote:
+> >> Does this code run when I type "make kselftest"?  If not, I think we
+> >> should rectify that.
+> > No, it doesn't. It is just my backup for the non-SDK user space code
+> > that I've made that I will use to fork my user space SGX projects in
+> > the future.
 > > 
-> > Convenience and performance are the only arguments I've heard, e.g. so
-> > that allocating memory doesn't require an extra EEXIT->EENTER round trip.
+> > I can work-out a selftest (and provide a new patch in the series) but
+> > I'm still wondering what the enclave should do. I would suggest that
+> > we start with an enclave that does just EEXIT and nothing else.
 > 
-> Well, for the first access, it's going to cost a bunch asynchronous
-> exits to fault in all the stack pages.  Instead of that, if you had a
-> single area, or an explicit out-call to allocate and populate the area,
-> you could do it in a single EEXIT and zero asynchronous exits for demand
-> page faults.
-> 
-> So, it might be convenient, but I'm rather suspicious of any performance
-> arguments.
+> Yeah, that's a start.  But, a good selftest would include things like
+> faults and error conditions.
 
-Ya, I meant versus doing an EEXIT on every allocation, i.e. a very
-naive allocation scheme.
+Great. We can add more entry points to the enclave for different tests
+but I'll start with a bare minimum. And yeah but ever goes into next
+version I'll document the fault handling.
+
+/Jarkko
