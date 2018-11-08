@@ -6,91 +6,222 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565F7ECDE47
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 19:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CABC2ECDE4B
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C58D204FD
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 19:20:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C58D204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 83DA42081C
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DA42081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeKIE5n (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:57:43 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18972 "EHLO mga18.intel.com"
+        id S1727084AbeKIFbU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 9 Nov 2018 00:31:20 -0500
+Received: from mga04.intel.com ([192.55.52.120]:38603 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbeKIE5m (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:57:42 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726140AbeKIFbU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:31:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:20:50 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:54:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="98724815"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2018 11:20:41 -0800
-Date:   Thu, 8 Nov 2018 21:20:40 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
+   d="scan'208";a="90566834"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2018 11:54:20 -0800
+Date:   Thu, 8 Nov 2018 11:54:20 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-Message-ID: <20181108192040.GA21685@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
- <20181106054911.GA15575@linux.intel.com>
- <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
- <20181107163019.GA11509@linux.intel.com>
- <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
- <20181108143942.GA13792@linux.intel.com>
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108195420.GA14715@linux.intel.com>
+References: <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181108143942.GA13792@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181108192040.KMfVm2Hm-9snYCCzOK5119EYwTtkoib7FQcxIXjcE5Q@z>
+Message-ID: <20181108195420.1EKXYpYQXU2DQA6iybV7JF2c2oG59h0xoa6_YRpbBns@z>
 
-On Thu, Nov 08, 2018 at 04:39:42PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 07, 2018 at 09:09:37AM -0800, Dave Hansen wrote:
-> > On 11/7/18 8:30 AM, Jarkko Sakkinen wrote:
-> > >> Does this code run when I type "make kselftest"?  If not, I think we
-> > >> should rectify that.
-> > > No, it doesn't. It is just my backup for the non-SDK user space code
-> > > that I've made that I will use to fork my user space SGX projects in
-> > > the future.
-> > > 
-> > > I can work-out a selftest (and provide a new patch in the series) but
-> > > I'm still wondering what the enclave should do. I would suggest that
-> > > we start with an enclave that does just EEXIT and nothing else.
-> > 
-> > Yeah, that's a start.  But, a good selftest would include things like
-> > faults and error conditions.
+On Tue, Nov 06, 2018 at 01:07:54PM -0800, Andy Lutomirski wrote:
 > 
-> Great. We can add more entry points to the enclave for different tests
-> but I'll start with a bare minimum. And yeah but ever goes into next
-> version I'll document the fault handling.
+> 
+> > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> > 
+> >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> >> True, but what if we have a nasty enclave that writes to memory just
+> >> below SP *before* decrementing SP?
+> > 
+> > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> > 
+> >    1. EENTER
+> >    2. Hardware sets eenter_hwframe->sp = %sp
+> >    3. Enclave runs... wants to do out-call
+> >    4. Enclave sets up parameters:
+> >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> >        ...
+> >    5. Enclave sets eenter_hwframe->sp -= offset
+> > 
+> > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
+> > was on the stack.  The enclave could easily fix this by moving ->sp first.
+> > 
+> > But, this is one of those "fun" parts of the ABI that I think we need to
+> > talk about.  If we do this, we also basically require that the code
+> > which handles asynchronous exits must *not* write to the stack.  That's
+> > not hard because it's typically just a single ERESUME instruction, but
+> > it *is* a requirement.
+> > 
+> 
+> I was assuming that the async exit stuff was completely hidden by the
+> API.  The AEP code would decide whether the exit got fixed up by the
+> kernel (which may or may not be easy to tell — can the code even tell
+> without kernel help whether it was, say, an IRQ vs #UD?) and then either
+> do ERESUME or cause sgx_enter_enclave() to return with an appropriate
+> return value.
 
-For the v17 I'll add exactly two test cases:
+Ok, SDK folks came up with an idea that would allow them to use vDSO,
+albeit with a bit of ugliness and potentially a ROP-attack issue.
+Definitely some weirdness, but the weirdness is well contained, unlike
+the magic prefix approach.
 
-1. EENTER/EEXIT
-2. EENTER/exception
+Provide two enter_enclave() vDSO "functions".  The first is a normal
+function with a normal C interface.  The second is a blob of code that
+is "called" and "returns" via indirect jmp, and can be used by SGX
+runtimes that want to use the untrusted stack for out-calls from the
+enclave.
 
-So that it will easier to evaluate and demonstrate exception handling.
+For the indirect jmp "function", use %rbp to stash the return address
+of the caller (either in %rbp itself or in memory pointed to by %rbp).
+It works because hardware also saves/restores %rbp along with %rsp when
+doing enclave transitions, and the SDK can live with %rbp being
+off-limits.  Fault info is passed via registers.
 
-/Jarkko
+Basic idea for the "functions" below.  The fixup stuff is obviously not
+wired up correctly, just trying to convey the concept.
+
+
+
+struct enclu_fault_info {
+	unsigned int	leaf;
+	unsigned int	trapnr;
+	unsigned int	error_code;
+	unsigned long	address;
+};
+
+int __vdso_enter_enclave(void *tcs, struct enclu_fault_info *fault_info)
+{
+	unsigned int leaf, trapnr;
+
+	asm volatile (
+		"lea	2f(%%rip), %%rcx\n\t"
+		"1:	enclu\n\t"
+		"jmp	3f\n\t"
+
+		/* ERESUME trampoline */
+		"2:	enclu\n\t"
+		"ud2\n\t"
+
+		/* out: */
+		"3:\n"
+
+		/* EENTER fixup */
+		".pushsection .fixup,\"ax\"\n\t"
+		"4:\n\t"
+		"mov	%%eax, %%edi\n\t"
+		"movl	$"__stringify(SGX_EENTER)", %%eax\n\t"
+		"jmp	3b\n\t"
+		".popsection\n\t"
+		_ASM_EXTABLE_FAULT(1b, 4b)
+
+		/* ERESUME FIXUP */
+		".pushsection .fixup,\"ax\"\n\t"
+		"5:\n\t"
+		"mov	%%eax, %%edi\n\t"
+		"movl	$"__stringify(SGX_ERESUME)", %%eax\n\t"
+		"jmp	3b\n\t"
+		".popsection\n\t"
+		_ASM_EXTABLE_FAULT(2b, 5b)
+
+		: "=a"(leaf), "=D" (trapnr)
+		: "a" (SGX_EENTER), "b" (tcs)
+		: "cc", "memory", "rcx", "rdx", "rsi", "r8", "r9", "r10",
+		  "r11", "r12", "r13", "r14", "r15"
+	);
+
+	if (leaf == SGX_EEXIT)
+		return 0;
+
+	if (fault_info) {
+		fault_info->leaf = leaf;
+		fault_info->trapnr = trapnr;
+		fault_info->error_code = 0;
+		fault_info->address = 0;
+	}
+
+	return -EFAULT;
+}
+
+
+GLOBAL(__vdso_enter_enclave_no_stack)
+        endbr64
+
+        /* %rbp = return target, %rbx = tcs */
+        leaq    3f(%rip), %rcx
+        movl    $2, %eax
+1:      enclu
+
+        /* "return" to "caller" */
+2:      jmp     *%rbp
+
+        /* ERESUME trampoline */
+3:      enclu
+        ud2
+
+        /* EENTER fixup handler */
+4:      movq    %rax, %rdi
+        movl    $2, %eax
+        /* %rsi = error code, %rdx = address */
+        jmp     2b
+
+        /* ERESUME fixup handler */
+5:      movq    %rax, %rdi
+        movl    $3, %eax
+        /* %rsi = error code, %rdx = address */
+        jmp     2b
+
+
