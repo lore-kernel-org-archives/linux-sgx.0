@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDD2ECDE4B
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 15:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CBEECDE47
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 15:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEE52081D
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 15:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEE52081D
+	by mail.kernel.org (Postfix) with ESMTP id 9255020825
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Nov 2018 15:12:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9255020825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbeKIAkN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:40:13 -0500
-Received: from mga14.intel.com ([192.55.52.115]:13569 "EHLO mga14.intel.com"
+        id S1726684AbeKIAsG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Nov 2018 19:48:06 -0500
+Received: from mga04.intel.com ([192.55.52.120]:13191 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbeKIAkN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:40:13 -0500
+        id S1726421AbeKIAsG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:48:06 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:04:18 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:12:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="106544802"
+   d="scan'208";a="278183129"
 Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
-  by orsmga001.jf.intel.com with ESMTP; 08 Nov 2018 07:04:06 -0800
-Date:   Thu, 8 Nov 2018 17:04:05 +0200
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 07:11:58 -0800
+Date:   Thu, 8 Nov 2018 17:11:56 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Rich Felker <dalias@libc.org>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
         Jann Horn <jannh@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Florian Weimer <fweimer@redhat.com>,
@@ -54,46 +53,57 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Carlos O'Donell <carlos@redhat.com>,
         adhemerval.zanella@linaro.org
 Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181108150405.GB14072@linux.intel.com>
-References: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
- <20181107153452.GB22972@linux.intel.com>
- <20181107190114.GA26603@linux.intel.com>
- <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
+Message-ID: <20181108151156.GC14072@linux.intel.com>
+References: <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
+ <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
+ <20181107214058.GG27170@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
+In-Reply-To: <20181107214058.GG27170@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181108150405.etnBteszKftQRXNGQFpgR67VbwLrkShqu0nuQaRmDTo@z>
+Message-ID: <20181108151156.Yg8E60UcoRbO7QjnxpCq6NqeTZ415Ong7UU60yApcXU@z>
 
-On Wed, Nov 07, 2018 at 12:56:58PM -0800, Dave Hansen wrote:
-> On 11/7/18 11:01 AM, Sean Christopherson wrote:
-> > Going off comments in similar code related to UMIP, we'd need to figure
-> > out how to handle protection keys.
+On Wed, Nov 07, 2018 at 01:40:59PM -0800, Sean Christopherson wrote:
+> > In that case it seems like the only way to use SGX that's not a gaping
+> > security hole is to run the SGX enclave in its own fully-seccomp (or
+> > equivalent) process, with no host application in the same address
+> > space. Since the host application can't see the contents of the
+> > enclave to make any determination of whether it's safe to run, running
+> > it in the same address space only makes sense if the cpu provides
+> > protection against unwanted accesses to the host's memory from the
+> > enclave -- and according to you, it doesn't.
 > 
-> There are two options:
-> 1. Don't depend on the userspace mapping.  Do get_user_pages() to find
->    the instruction in the kernel direct map, and use that.
-> 2. Do a WRPKRU that allows read access, do the read, then put PKRU back.
->    This is a pain because of preemption and all that jazz.
+> The enclave's code (and any initial data) isn't encrypted until the
+> pages are loaded into the Enclave Page Cache (EPC), which can only
+> be done by the kernel (via ENCLS[EADD]).  In other words, both the
+> kernel and userspace can vet the code/data before running an enclave.
 > 
-> Right now, we just let the prefetch instruction detection fail if you
-> mark it unreadable with pkeys.  Tough cookies, basically.  But, that's
-> just the kernel being nice, but you need it for functionality, so it's
-> tougher.
+> Practically speaking, an enclave will be coupled with an untrusted
+> userspace runtime, i.e. it's loader.  Enclaves are also measured
+> as part of their build process, and so the enclave loader needs to
+> know which pages to add to the measurement, and in what order.  I
+> guess technically speaking an enclave could have zero pages added
+> to its measurement, but that'd probably be a big red flag that said
+> enclave is up to something fishy.
 
-I would go with one because it is the stable way to do it and we are
-100% sure to not conflict with pk's.
+IMHO the whole idea adds too much policy into kernel even if it would
+be doable. You can easily spawn untrusted run-time and enclave to its
+own process.
+
+Seccomp limits the syscall space and enclaves cannot do syscalls in the
+first place. It is the URT that will do them behalf of the enclave.
 
 /Jarkko
