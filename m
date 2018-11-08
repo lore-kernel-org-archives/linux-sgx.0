@@ -1,270 +1,184 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>
-CC: <dave.hansen@intel.com>, <sean.j.christopherson@intel.com>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<andriy.shevchenko@linux.intel.com>, <tglx@linutronix.de>,
-	<kai.svahn@intel.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "open
- list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v16 22/22] x86/sgx: SGX documentation
-Date: Tue, 6 Nov 2018 15:46:01 +0200
-Message-ID: <20181106134758.10572-23-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="y"
-Return-Path: jarkko.sakkinen@intel.com
-MIME-Version: 1.0
+Received: from mga04.intel.com ([192.55.52.120]:38603 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP        id
+ S1726140AbeKIFbU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);        Fri, 9
+ Nov 2018 00:31:20 -0500
+Date: Thu, 8 Nov 2018 11:54:20 -0800
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Andy Lutomirski <luto@amacapital.net>
+CC: Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>,
+	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Rich Felker <dalias@libc.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Jethro Beekman <jethro@fortanix.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>, Linux
+ API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
+	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108195420.GA14715@linux.intel.com>
+References: <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-Documentation of the features of the Software Guard eXtensions used
-by the Linux kernel and basic design choices for the core and driver
-and functionality.
+On Tue, Nov 06, 2018 at 01:07:54PM -0800, Andy Lutomirski wrote:
+> 
+> 
+> > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> > 
+> >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> >> True, but what if we have a nasty enclave that writes to memory just
+> >> below SP *before* decrementing SP?
+> > 
+> > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> > 
+> >    1. EENTER
+> >    2. Hardware sets eenter_hwframe->sp = %sp
+> >    3. Enclave runs... wants to do out-call
+> >    4. Enclave sets up parameters:
+> >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> >        ...
+> >    5. Enclave sets eenter_hwframe->sp -= offset
+> > 
+> > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
+> > was on the stack.  The enclave could easily fix this by moving ->sp first.
+> > 
+> > But, this is one of those "fun" parts of the ABI that I think we need to
+> > talk about.  If we do this, we also basically require that the code
+> > which handles asynchronous exits must *not* write to the stack.  That's
+> > not hard because it's typically just a single ERESUME instruction, but
+> > it *is* a requirement.
+> > 
+> 
+> I was assuming that the async exit stuff was completely hidden by the
+> API.  The AEP code would decide whether the exit got fixed up by the
+> kernel (which may or may not be easy to tell — can the code even tell
+> without kernel help whether it was, say, an IRQ vs #UD?) and then either
+> do ERESUME or cause sgx_enter_enclave() to return with an appropriate
+> return value.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- Documentation/index.rst         |   1 +
- Documentation/x86/index.rst     |   8 ++
- Documentation/x86/intel_sgx.rst | 201 ++++++++++++++++++++++++++++++++
- 3 files changed, 210 insertions(+)
- create mode 100644 Documentation/x86/index.rst
- create mode 100644 Documentation/x86/intel_sgx.rst
+Ok, SDK folks came up with an idea that would allow them to use vDSO,
+albeit with a bit of ugliness and potentially a ROP-attack issue.
+Definitely some weirdness, but the weirdness is well contained, unlike
+the magic prefix approach.
 
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index 5db7e87c7cb1..1cdc139adb40 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -104,6 +104,7 @@ implementation.
-    :maxdepth: 2
- 
-    sh/index
-+   x86/index
- 
- Filesystem Documentation
- ------------------------
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-new file mode 100644
-index 000000000000..11d5b18d9537
---- /dev/null
-+++ b/Documentation/x86/index.rst
-@@ -0,0 +1,8 @@
-+======================
-+x86 Architecture Guide
-+======================
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   intel_sgx
-diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
-new file mode 100644
-index 000000000000..096756c56070
---- /dev/null
-+++ b/Documentation/x86/intel_sgx.rst
-@@ -0,0 +1,201 @@
-+===================
-+Intel(R) SGX driver
-+===================
-+
-+Introduction
-+============
-+
-+Intel(R) SGX is a set of CPU instructions that can be used by applications to
-+set aside private regions of code and data. The code outside the enclave is
-+disallowed to access the memory inside the enclave by the CPU access control.
-+In a way you can think that SGX provides inverted sandbox. It protects the
-+application from a malicious host.
-+
-+You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
-+
-+	``cat /proc/cpuinfo  | grep sgx``
-+
-+Overview of SGX
-+===============
-+
-+SGX has a set of data structures to maintain information about the enclaves and
-+their security properties. BIOS reserves a fixed size region of physical memory
-+for these structures by setting Processor Reserved Memory Range Registers
-+(PRMRR).
-+
-+This memory range is protected from outside access by the CPU and all the data
-+coming in and out of the CPU package is encrypted by a key that is generated for
-+each boot cycle.
-+
-+Enclaves execute in ring-3 in a special enclave submode using pages from the
-+reserved memory range. A fixed logical address range for the enclave is reserved
-+by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
-+the documentation commonly as the ELRANGE.
-+
-+Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
-+executing in the enclave mode inside the enclave, #GP is raised. On the other
-+hand, enclave code can make memory accesses both inside and outside of the
-+ELRANGE.
-+
-+Enclave can only execute code inside the ELRANGE. Instructions that may cause
-+VMEXIT, IO instructions and instructions that require a privilege change are
-+prohibited inside the enclave. Interrupts and exceptions always cause enclave
-+to exit and jump to an address outside the enclave given when the enclave is
-+entered by using the leaf instruction ENCLS(EENTER).
-+
-+Protected memory
-+----------------
-+
-+Enclave Page Cache (EPC)
-+    Physical pages used with enclaves that are protected by the CPU from
-+    unauthorized access.
-+
-+Enclave Page Cache Map (EPCM)
-+    A database that describes the properties and state of the pages e.g. their
-+    permissions or to which enclave they belong to.
-+
-+Memory Encryption Engine (MEE) integrity tree
-+    Autonomously updated integrity tree. The root of the tree located in on-die
-+    SRAM.
-+
-+EPC data types
-+--------------
-+
-+SGX Enclave Control Structure (SECS)
-+    Describes the global properties of an enclave. Will not be mapped to the
-+    ELRANGE.
-+
-+Regular (REG)
-+    These pages contain code and data.
-+
-+Thread Control Structure (TCS)
-+    The pages that define the entry points inside an enclave. An enclave can
-+    only be entered through these entry points and each can host a single
-+    hardware thread at a time.
-+
-+Version Array (VA)
-+   The pages contain 64-bit version numbers for pages that have been swapped
-+   outside the enclave. Each page has the capacity of 512 version numbers.
-+
-+Launch control
-+--------------
-+
-+To launch an enclave, two structures must be provided for ENCLS(EINIT):
-+
-+1. **SIGSTRUCT:** signed measurement of the enclave binary.
-+2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
-+   *launch key*, which is re-generated for each boot cycle.
-+
-+The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
-+IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
-+key do not require a valid EINITTOKEN and can be authorized with special
-+privileges. One of those privileges is ability to acquire the launch key with
-+ENCLS(EGETKEY).
-+
-+**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
-+IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
-+feature control register and handing over control to the operating system.
-+
-+Enclave construction
-+--------------------
-+
-+The construction is started by filling out the SECS that contains enclave
-+address range, privileged attributes and measurement of TCS and REG pages (pages
-+that will be mapped to the address range) among the other things. This structure
-+is passed out to the ENCLS(ECREATE) together with a physical address of a page
-+in EPC that will hold the SECS.
-+
-+The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
-+SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
-+
-+After all of the pages have been added, the enclave is initialized with
-+ENCLS(EINIT). It will check that the SIGSTRUCT is signed with the contained
-+public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
-+the token is valid (CMAC'd with the launch key). If the token is not valid,
-+the CPU will check whether the enclave is signed with a key matching to the
-+IA32_SGXLEPUBKEYHASHn MSRs.
-+
-+Swapping pages
-+--------------
-+
-+Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
-+addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
-+structure (Page Crypto MetaData) as input. The VA page will seal a version
-+number for the page. PCMD is 128 byte structure that contains tracking
-+information for the page, most importantly its MAC. With these structures the
-+enclave is sealed and rollback protected while it resides in the unprotected
-+memory.
-+
-+Before the page can be swapped out it must not have any active TLB references.
-+ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
-+that no new TLB entries can be created to it by the hardware threads.
-+
-+After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
-+increased counter value to the entering hardware threads. ENCLS(EWB) will
-+return SGX_NOT_TRACKED error while there are still threads with the earlier
-+couner value because that means that there might be hardware thread inside
-+the enclave with TLB entries to pages that are to be swapped.
-+
-+Kernel internals
-+================
-+
-+Requirements
-+------------
-+
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
-+
-+
-+Roles and responsibilities
-+--------------------------
-+
-+SGX introduces system resources, e.g. EPC memory, that must be accessible to
-+multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
-+and KVM (to expose SGX to VMs), ideally without introducing any dependencies
-+between each SGX entity.  To that end, the kernel owns and manages the shared
-+system resources, i.e. the EPC and Launch Control MSRs, and defines functions
-+that provide appropriate access to the shared resources.  SGX support for
-+user space and VMs is left to the SGX platform driver and KVM respectively.
-+
-+Launching enclaves
-+------------------
-+
-+The current kernel implementation supports only unlocked MSRs i.e.
-+FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
-+MSRs to the hash of the public key modulus of the enclave signer, which is one
-+of the fields in the SIGSTRUCT.
-+
-+EPC management
-+--------------
-+
-+Due to the unique requirements for swapping EPC pages, and because EPC pages
-+(currently) do not have associated page structures, management of the EPC is
-+not handled by the standard Linux swapper.  SGX directly handles swapping
-+of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
-+mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
-+implement function callbacks that can be invoked by the kernel to age,
-+swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
-+controls what happens and when, while the consumers (driver, KVM, etc..) do
-+the actual work.
-+
-+SGX uapi
-+========
-+
-+.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
-+   :functions: sgx_ioc_enclave_create
-+               sgx_ioc_enclave_add_page
-+               sgx_ioc_enclave_init
-+
-+.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
-+
-+References
-+==========
-+
-+* A Memory Encryption Engine Suitable for General Purpose Processors
-+  <https://eprint.iacr.org/2016/204.pdf>
-+* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
--- 
-2.19.1
+Provide two enter_enclave() vDSO "functions".  The first is a normal
+function with a normal C interface.  The second is a blob of code that
+is "called" and "returns" via indirect jmp, and can be used by SGX
+runtimes that want to use the untrusted stack for out-calls from the
+enclave.
+
+For the indirect jmp "function", use %rbp to stash the return address
+of the caller (either in %rbp itself or in memory pointed to by %rbp).
+It works because hardware also saves/restores %rbp along with %rsp when
+doing enclave transitions, and the SDK can live with %rbp being
+off-limits.  Fault info is passed via registers.
+
+Basic idea for the "functions" below.  The fixup stuff is obviously not
+wired up correctly, just trying to convey the concept.
+
+
+
+struct enclu_fault_info {
+	unsigned int	leaf;
+	unsigned int	trapnr;
+	unsigned int	error_code;
+	unsigned long	address;
+};
+
+int __vdso_enter_enclave(void *tcs, struct enclu_fault_info *fault_info)
+{
+	unsigned int leaf, trapnr;
+
+	asm volatile (
+		"lea	2f(%%rip), %%rcx\n\t"
+		"1:	enclu\n\t"
+		"jmp	3f\n\t"
+
+		/* ERESUME trampoline */
+		"2:	enclu\n\t"
+		"ud2\n\t"
+
+		/* out: */
+		"3:\n"
+
+		/* EENTER fixup */
+		".pushsection .fixup,\"ax\"\n\t"
+		"4:\n\t"
+		"mov	%%eax, %%edi\n\t"
+		"movl	$"__stringify(SGX_EENTER)", %%eax\n\t"
+		"jmp	3b\n\t"
+		".popsection\n\t"
+		_ASM_EXTABLE_FAULT(1b, 4b)
+
+		/* ERESUME FIXUP */
+		".pushsection .fixup,\"ax\"\n\t"
+		"5:\n\t"
+		"mov	%%eax, %%edi\n\t"
+		"movl	$"__stringify(SGX_ERESUME)", %%eax\n\t"
+		"jmp	3b\n\t"
+		".popsection\n\t"
+		_ASM_EXTABLE_FAULT(2b, 5b)
+
+		: "=a"(leaf), "=D" (trapnr)
+		: "a" (SGX_EENTER), "b" (tcs)
+		: "cc", "memory", "rcx", "rdx", "rsi", "r8", "r9", "r10",
+		  "r11", "r12", "r13", "r14", "r15"
+	);
+
+	if (leaf == SGX_EEXIT)
+		return 0;
+
+	if (fault_info) {
+		fault_info->leaf = leaf;
+		fault_info->trapnr = trapnr;
+		fault_info->error_code = 0;
+		fault_info->address = 0;
+	}
+
+	return -EFAULT;
+}
+
+
+GLOBAL(__vdso_enter_enclave_no_stack)
+        endbr64
+
+        /* %rbp = return target, %rbx = tcs */
+        leaq    3f(%rip), %rcx
+        movl    $2, %eax
+1:      enclu
+
+        /* "return" to "caller" */
+2:      jmp     *%rbp
+
+        /* ERESUME trampoline */
+3:      enclu
+        ud2
+
+        /* EENTER fixup handler */
+4:      movq    %rax, %rdi
+        movl    $2, %eax
+        /* %rsi = error code, %rdx = address */
+        jmp     2b
+
+        /* ERESUME fixup handler */
+5:      movq    %rax, %rdi
+        movl    $3, %eax
+        /* %rsi = error code, %rdx = address */
+        jmp     2b
