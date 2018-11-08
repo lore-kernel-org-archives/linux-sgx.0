@@ -1,87 +1,56 @@
-Date: Tue, 6 Nov 2018 15:26:16 -0800
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-To: Rich Felker <dalias@libc.org>
-CC: Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Jethro Beekman
-	<jethro@fortanix.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Florian Weimer <fweimer@redhat.com>, Linux API <linux-api@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, linux-arch <linux-arch@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
- O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181106232616.GA11101@linux.intel.com>
-References: <20181102220437.GI7393@linux.intel.com>
- <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <20181106231730.GR5150@brightrain.aerifal.cx>
+Date: Thu, 8 Nov 2018 21:20:40 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: <x86@kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-sgx@vger.kernel.org>, <sean.j.christopherson@intel.com>,
+	<nhorman@redhat.com>, <npmccallum@redhat.com>, <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
+	<mark.shanahan@intel.com>, <andriy.shevchenko@linux.intel.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+	<hpa@zytor.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open
+ list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181108192040.GA21685@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
+ <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+ <20181107163019.GA11509@linux.intel.com>
+ <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
+ <20181108143942.GA13792@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20181106231730.GR5150@brightrain.aerifal.cx>
-Return-Path: sean.j.christopherson@intel.com
+In-Reply-To: <20181108143942.GA13792@linux.intel.com>
+Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
-> On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
-> > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
-> > >
-> > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > > > I almost feel like the right solution is to call into SGX on its own
-> > > > private stack or maybe even its own private address space.
-> > >
-> > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> > > enclave like its own "thread" with its own stack and its own set of
-> > > registers and context?  That seems like a much more workable model than
-> > > trying to weave it together with the EENTER context.
+On Thu, Nov 08, 2018 at 04:39:42PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 07, 2018 at 09:09:37AM -0800, Dave Hansen wrote:
+> > On 11/7/18 8:30 AM, Jarkko Sakkinen wrote:
+> > >> Does this code run when I type "make kselftest"?  If not, I think we
+> > >> should rectify that.
+> > > No, it doesn't. It is just my backup for the non-SDK user space code
+> > > that I've made that I will use to fork my user space SGX projects in
+> > > the future.
+> > > 
+> > > I can work-out a selftest (and provide a new patch in the series) but
+> > > I'm still wondering what the enclave should do. I would suggest that
+> > > we start with an enclave that does just EEXIT and nothing else.
 > > 
-> > So maybe the API should be, roughly
-> > 
-> > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-> > host_state *state);
-> > sgx_exit_reason_t sgx_resume_enclave(same args);
-> > 
-> > where host_state is something like:
-> > 
-> > struct host_state {
-> >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
-> > };
-> > 
-> > and the values in host_state explicitly have nothing to do with the
-> > actual host registers.  So, if you want to use the outcall mechanism,
-> > you'd allocate some memory, point sp to that memory, call
-> > sgx_enter_enclave(), and then read that memory to do the outcall.
-> > 
-> > Actually implementing this would be distinctly nontrivial, and would
-> > almost certainly need some degree of kernel help to avoid an explosion
-> > when a signal gets delivered while we have host_state.sp loaded into
-> > the actual SP register.  Maybe rseq could help with this?
-> > 
-> > The ISA here is IMO not well thought through.
+> > Yeah, that's a start.  But, a good selftest would include things like
+> > faults and error conditions.
 > 
-> Maybe I'm mistaken about some fundamentals here, but my understanding
-> of SGX is that the whole point is that the host application and the
-> code running in the enclave are mutually adversarial towards one
-> another. Do any or all of the proposed protocols here account for this
-> and fully protect the host application from malicious code in the
-> enclave? It seems that having control over the register file on exit
-> from the enclave is fundamentally problematic but I assume there must
-> be some way I'm missing that this is fixed up.
+> Great. We can add more entry points to the enclave for different tests
+> but I'll start with a bare minimum. And yeah but ever goes into next
+> version I'll document the fault handling.
 
-SGX provides protections for the enclave but not the other way around.
-The kernel has all of its normal non-SGX protections in place, but the
-enclave can certainly wreak havoc on its userspace process.  The basic
-design idea is that the enclave is a specialized .so that gets extra
-security protections but is still effectively part of the overall
-application, e.g. it has full access to its host userspace process'
-virtual memory.
+For the v17 I'll add exactly two test cases:
+
+1. EENTER/EEXIT
+2. EENTER/exception
+
+So that it will easier to evaluate and demonstrate exception handling.
+
+/Jarkko
