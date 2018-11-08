@@ -1,61 +1,64 @@
-Date: Mon, 5 Nov 2018 19:30:38 +0200
+Date: Thu, 8 Nov 2018 17:11:56 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<linux-sgx@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	<sean.j.christopherson@intel.com>, <nhorman@redhat.com>,
-	<npmccallum@redhat.com>, <serge.ayoun@intel.com>,
-	<shay.katz-zamir@intel.com>, <haitao.huang@intel.com>,
-	<mark.shanahan@intel.com>, Andy Shevchenko
+To: Sean Christopherson <sean.j.christopherson@intel.com>
+CC: Rich Felker <dalias@libc.org>, Andy Lutomirski <luto@kernel.org>, "Dave
+ Hansen" <dave.hansen@intel.com>, Jann Horn <jannh@google.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Jethro Beekman <jethro@fortanix.com>, Florian Weimer <fweimer@redhat.com>,
+	Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
+	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
 	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, <suresh.b.siddha@intel.com>, "Linux Kernel Mailing
- List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
-Message-ID: <20181105173038.GD4502@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
- <CAHp75VdhSwy8zzf64PZnHhZVikJEzasu-=a+UOz4cLAxEJW-YA@mail.gmail.com>
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108151156.GC14072@linux.intel.com>
+References: <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
+ <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
+ <20181107214058.GG27170@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CAHp75VdhSwy8zzf64PZnHhZVikJEzasu-=a+UOz4cLAxEJW-YA@mail.gmail.com>
+In-Reply-To: <20181107214058.GG27170@linux.intel.com>
 Return-Path: jarkko.sakkinen@linux.intel.com
 MIME-Version: 1.0
 List-ID: <linux-sgx.vger.kernel.org>
 
-On Sat, Nov 03, 2018 at 03:17:35PM +0200, Andy Shevchenko wrote:
-> On Sat, Nov 3, 2018 at 1:18 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
-> > The ENCLS function that is executed is specified in EAX, with each
-> > function potentially having more leaf-specific operands beyond EAX.
-> > ENCLS introduces its own (positive value) error codes that (some)
-> > leafs use to return failure information in EAX.  Leafs that return
-> > an error code also modify RFLAGS.  And finally, ENCLS generates
-> > ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
-> > encounter faults on ENCLS that must be handled gracefully.
-> >
-> > Because of the complexity involved in encoding ENCLS and handling its
-> > assortment of failure paths, executing any given leaf is not a simple
-> > matter of emitting ENCLS.
-> >
-> > To enable adding support for ENCLS leafs with minimal fuss, add a
-> > two-layer macro system along with an encoding scheme to allow wrappers
-> > to return trap numbers along ENCLS-specific error codes.  The bottom
-> > layer of the macro system splits between the leafs that return an
-> > error code and those that do not.  The second layer generates the
-> > correct input/output annotations based on the number of operands for
-> > each leaf function.
+On Wed, Nov 07, 2018 at 01:40:59PM -0800, Sean Christopherson wrote:
+> > In that case it seems like the only way to use SGX that's not a gaping
+> > security hole is to run the SGX enclave in its own fully-seccomp (or
+> > equivalent) process, with no host application in the same address
+> > space. Since the host application can't see the contents of the
+> > enclave to make any determination of whether it's safe to run, running
+> > it in the same address space only makes sense if the cpu provides
+> > protection against unwanted accesses to the host's memory from the
+> > enclave -- and according to you, it doesn't.
 > 
-> > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> The enclave's code (and any initial data) isn't encrypted until the
+> pages are loaded into the Enclave Page Cache (EPC), which can only
+> be done by the kernel (via ENCLS[EADD]).  In other words, both the
+> kernel and userspace can vet the code/data before running an enclave.
 > 
-> > +/**
-> 
-> I dunno if kernel-doc script still complains about this.
+> Practically speaking, an enclave will be coupled with an untrusted
+> userspace runtime, i.e. it's loader.  Enclaves are also measured
+> as part of their build process, and so the enclave loader needs to
+> know which pages to add to the measurement, and in what order.  I
+> guess technically speaking an enclave could have zero pages added
+> to its measurement, but that'd probably be a big red flag that said
+> enclave is up to something fishy.
 
-Is there a way to ask for make htmldocs to do only a subset of docs?
-Still kind of trying to figure out what would be  a good flow for
-working with Sphinx.
+IMHO the whole idea adds too much policy into kernel even if it would
+be doable. You can easily spawn untrusted run-time and enclave to its
+own process.
+
+Seccomp limits the syscall space and enclaves cannot do syscalls in the
+first place. It is the URT that will do them behalf of the enclave.
 
 /Jarkko
