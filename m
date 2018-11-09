@@ -1,51 +1,48 @@
-References: <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com> <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com> <20180927135603.GF8242@linux.intel.com>
- <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com> <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
- <20181031213036.GA23089@linux.intel.com> <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
- <dc0f8bc8-4d69-517e-68af-abda2d51423f@fortanix.com> <a6deac4e-ce8f-aa43-2d75-a04c05bac104@intel.com>
- <2833FD27-42A0-435C-AEA5-2DC73315867A@amacapital.net> <99b6de19-5620-7f3b-5c37-dbf8a6baef17@intel.com>
-In-Reply-To: <99b6de19-5620-7f3b-5c37-dbf8a6baef17@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 1 Nov 2018 10:52:48 -0700
-Message-ID: <CALCETrWzi=eV2YHgxr9uoxtscJGgrhBJjFkNX2qHZ3z-XxkeBg@mail.gmail.com>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Jethro Beekman <jethro@fortanix.com>, "Christopherson, Sean J"
-	<sean.j.christopherson@intel.com>, Jarkko Sakkinen
-	<jarkko.sakkinen@linux.intel.com>, Andrew Lutomirski <luto@kernel.org>, "X86
- ML" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
-	<nhorman@redhat.com>, <npmccallum@redhat.com>, "Ayoun, Serge"
-	<serge.ayoun@intel.com>, <shay.katz-zamir@intel.com>,
-	<linux-sgx@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: luto@kernel.org
-MIME-Version: 1.0
+Received: from bombadil.infradead.org ([198.137.202.133]:40018 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeKIQwV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 9 Nov 2018 11:52:21 -0500
+Date: Thu, 8 Nov 2018 23:12:59 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Andy Lutomirski <luto@amacapital.net>
+CC: "Christopherson, Sean J" <sean.j.christopherson@intel.com>, Dave Hansen
+	<dave.hansen@intel.com>, Andrew Lutomirski <luto@kernel.org>, Jann Horn
+	<jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, "Rich
+ Felker" <dalias@libc.org>, Dave Hansen <dave.hansen@linux.intel.com>, Jethro
+ Beekman <jethro@fortanix.com>, Jarkko Sakkinen
+	<jarkko.sakkinen@linux.intel.com>, Florian Weimer <fweimer@redhat.com>, Linux
+ API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>, linux-arch
+	<linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, <nhorman@redhat.com>,
+	<npmccallum@redhat.com>, "Ayoun, Serge" <serge.ayoun@intel.com>,
+	<shay.katz-zamir@intel.com>, <linux-sgx@vger.kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "Carlos
+ O'Donell" <carlos@redhat.com>, <adhemerval.zanella@linaro.org>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181109071259.GA14784@infradead.org>
+References: <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <20181108195420.GA14715@linux.intel.com>
+ <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+Sender: <linux-sgx-owner@vger.kernel.org>
 List-ID: <linux-sgx.vger.kernel.org>
+Return-Path: linux-sgx-owner@vger.kernel.org
+MIME-Version: 1.0
 
-On Thu, Nov 1, 2018 at 10:51 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 10/31/18 3:52 PM, Andy Lutomirski wrote:
-> > I think EENTER in plain user code should have well defined semantics,
-> > and it should get regular signals with the appropriate bits set in
-> > the error code field in the ucontext.  But we should probably
-> > simultaneously offer a nicer API, and the libraries will use it
-> > because it=E2=80=99s nicer.
->
-> FWIW, if we have a signal-based version and a VDSO-based version, nobody
-> will use the VDSO one.
->
-> The Intel libraries are surely going to keep using the approach they've
-> been using for years and I doubt their owners will be tempted even by a
-> simpler interface to change one line of code.
->
-> If we want to do the VDSO route, I think we probably need to go
-> whole-hog and toss the signal-based one.
+On Thu, Nov 08, 2018 at 12:05:42PM -0800, Andy Lutomirski wrote:
+> This whole thing is a mess.  I'm starting to think that the cleanest
+> solution would be to provide a way to just tell the kernel that
+> certain RIP values have exception fixups.
 
-That's a fair point.  We don't want a situation where a widely-used
-SGX library registers a SIGSEGV handler.
+The bay far cleanest solution would be to say that SGX is sich a mess
+that we are not going to support it at all.  It's not like it is a must
+have a feature to start with.
