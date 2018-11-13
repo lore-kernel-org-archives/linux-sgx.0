@@ -1,95 +1,107 @@
-Return-Path: <SRS0=eliZ=NU=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=Df3j=NY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642A5C43441
-	for <linux-sgx@archiver.kernel.org>; Fri,  9 Nov 2018 07:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C17C43441
+	for <linux-sgx@archiver.kernel.org>; Tue, 13 Nov 2018 15:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2894D20840
-	for <linux-sgx@archiver.kernel.org>; Fri,  9 Nov 2018 07:13:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W5/yu3nF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2894D20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5490222510
+	for <linux-sgx@archiver.kernel.org>; Tue, 13 Nov 2018 15:13:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5490222510
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeKIQwW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:52:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40018 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbeKIQwV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 9 Nov 2018 11:52:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IrgHHScUgWiQ+RbIbd2HbhtIi//KRrdsNGy7S15z2dc=; b=W5/yu3nFZikOEofUR/GtmZxIv
-        cT/aY4DO+LS2Diy1ebZVnAxEI6Ftzofd2PsUW9Q4iOooZa36wtU4MW+ZH7mpxr6WSnEmCuIhY6yt0
-        SlTLazUYUTWffh5j+o0pFcebkwORwQurVTNNswO5/U/H/HYV8tj6pok1l5uKf1jRbXAxSpgkBB/zR
-        yrpq5OPLBoZY4XaMWyXwSxtPqrQGhk6MiiR60kfbL/EZXu2jAaIJn/A1ALTAJjwsWVAtHD6MmBBAm
-        +LpuZpNE+6XNdV4GhaI6IbMfnxdM865PFPHQZjb1ip2D6TB2wM/XpJdWktPVyEY3jaLxT50dJxhNs
-        dqY/Go4JA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gL0yR-0004Qz-Mc; Fri, 09 Nov 2018 07:12:59 +0000
-Date:   Thu, 8 Nov 2018 23:12:59 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S1731687AbeKNBMB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 13 Nov 2018 20:12:01 -0500
+Received: from mga18.intel.com ([134.134.136.126]:53210 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731287AbeKNBMA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:12:00 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 07:13:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
+   d="scan'208";a="280732220"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Nov 2018 07:13:18 -0800
+Date:   Tue, 13 Nov 2018 17:13:16 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181109071259.GA14784@infradead.org>
-References: <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
- <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181113151316.GA3796@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
+ <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+ <20181107163019.GA11509@linux.intel.com>
+ <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
+ <20181108143942.GA13792@linux.intel.com>
+ <20181108192040.GA21685@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181108192040.GA21685@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
-Message-ID: <20181109071259.IcwU-noO6nniPwCrnZQEiugiuaFWWzCcdWoUJhuuuzQ@z>
 
-On Thu, Nov 08, 2018 at 12:05:42PM -0800, Andy Lutomirski wrote:
-> This whole thing is a mess.  I'm starting to think that the cleanest
-> solution would be to provide a way to just tell the kernel that
-> certain RIP values have exception fixups.
+On Thu, Nov 08, 2018 at 09:20:40PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Nov 08, 2018 at 04:39:42PM +0200, Jarkko Sakkinen wrote:
+> > On Wed, Nov 07, 2018 at 09:09:37AM -0800, Dave Hansen wrote:
+> > > On 11/7/18 8:30 AM, Jarkko Sakkinen wrote:
+> > > >> Does this code run when I type "make kselftest"?  If not, I think we
+> > > >> should rectify that.
+> > > > No, it doesn't. It is just my backup for the non-SDK user space code
+> > > > that I've made that I will use to fork my user space SGX projects in
+> > > > the future.
+> > > > 
+> > > > I can work-out a selftest (and provide a new patch in the series) but
+> > > > I'm still wondering what the enclave should do. I would suggest that
+> > > > we start with an enclave that does just EEXIT and nothing else.
+> > > 
+> > > Yeah, that's a start.  But, a good selftest would include things like
+> > > faults and error conditions.
+> > 
+> > Great. We can add more entry points to the enclave for different tests
+> > but I'll start with a bare minimum. And yeah but ever goes into next
+> > version I'll document the fault handling.
+> 
+> For the v17 I'll add exactly two test cases:
+> 
+> 1. EENTER/EEXIT
+> 2. EENTER/exception
+> 
+> So that it will easier to evaluate and demonstrate exception handling.
+> 
+> /Jarkko
 
-The bay far cleanest solution would be to say that SGX is sich a mess
-that we are not going to support it at all.  It's not like it is a must
-have a feature to start with.
+Here is my test program now:
+
+https://github.com/jsakkine-intel/sgx-selftest
+
+It is ~1100 lines ATM. Next I'll deploy it to the kernel tree. It has
+only (1) now but I'll add (2) too when I convert this to a kernel patch
+(probably by doing sgx_call() with a NULL pointer).
+
+/Jarkko
