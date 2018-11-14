@@ -1,40 +1,42 @@
-Return-Path: <SRS0=Df3j=NY=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=MATl=NZ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963E9C43441
-	for <linux-sgx@archiver.kernel.org>; Tue, 13 Nov 2018 21:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB1BC07E85
+	for <linux-sgx@archiver.kernel.org>; Wed, 14 Nov 2018 16:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63339223D0
-	for <linux-sgx@archiver.kernel.org>; Tue, 13 Nov 2018 21:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63339223D0
+	by mail.kernel.org (Postfix) with ESMTP id BA45922360
+	for <linux-sgx@archiver.kernel.org>; Wed, 14 Nov 2018 16:09:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA45922360
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbeKNHvO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 14 Nov 2018 02:51:14 -0500
-Received: from mga17.intel.com ([192.55.52.151]:15797 "EHLO mga17.intel.com"
+        id S1728347AbeKOCNe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 14 Nov 2018 21:13:34 -0500
+Received: from mga11.intel.com ([192.55.52.93]:23225 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbeKNHvO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 14 Nov 2018 02:51:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727822AbeKOCNd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 14 Nov 2018 21:13:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 13:51:06 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 08:09:43 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
-   d="scan'208";a="99999535"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga003.jf.intel.com with ESMTP; 13 Nov 2018 13:51:06 -0800
-Subject: Re: [PATCH RFC] selftests/x86: Add a selftest for SGX
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
-Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
+X-IronPort-AV: E=Sophos;i="5.56,233,1539673200"; 
+   d="scan'208";a="281047338"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Nov 2018 08:09:42 -0800
+Date:   Wed, 14 Nov 2018 08:09:42 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, Shuah Khan <shuah@kernel.org>,
@@ -48,94 +50,143 @@ Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
         open list <linux-kernel@vger.kernel.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH RFC] selftests/x86: Add a selftest for SGX
+Message-ID: <20181114160941.GA1387@linux.intel.com>
 References: <20181113214038.16136-1-jarkko.sakkinen@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ace87d75-2ba0-38f6-0a77-25d45b692d7d@intel.com>
-Date:   Tue, 13 Nov 2018 13:51:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20181113214038.16136-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/13/18 1:40 PM, Jarkko Sakkinen wrote:
-> +int main(int argc, char **argv)
-> +{
-> +	unsigned long bin_size = (unsigned long)&encl_bin_end -
-> +				 (unsigned long)&encl_bin;
-> +	struct sgx_secs secs;
-> +	uint64_t result = 0;
+On Tue, Nov 13, 2018 at 11:40:09PM +0200, Jarkko Sakkinen wrote:
+> Add a selftest for SGX. It is a trivial test where a simple enclave
+> copies one 64-bit word of memory between two memory locations given to
+> the enclave as arguments.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> +SUBDIRS_64 := sgx
+> +ASSERT(!DEFINED(.altinstructions), "ALTERNATIVES are not supported in the SGX LE")
+> +ASSERT(!DEFINED(.altinstr_replacement), "ALTERNATIVES are not supported in the SGX LE")
+> +ASSERT(!DEFINED(.discard.retpoline_safe), "RETPOLINE ALTERNATIVES are not supported in the SGX LE")
+> +ASSERT(!DEFINED(.discard.nospec), "RETPOLINE ALTERNATIVES are not supported in the SGX LE")
+
+Maybe this?
+
+s/LE/Test Enclave
+
+> diff --git a/tools/testing/selftests/x86/sgx/encl_bootstrap.S b/tools/testing/selftests/x86/sgx/encl_bootstrap.S
+> new file mode 100644
+> index 000000000000..62251c7d9927
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/encl_bootstrap.S
+> @@ -0,0 +1,94 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +/*
+> + * Copyright(c) 2016-18 Intel Corporation.
+> + */
 > +
-> +	if (!encl_load(&secs, bin_size))
-> +		exit(1);
+> +	.macro ENCLU
+> +	.byte 0x0f, 0x01, 0xd7
+> +	.endm
 > +
-> +	sgx_call((void *)&MAGIC, &result, (void *)secs.base);
-> +	if (result != MAGIC) {
-> +		fprintf(stderr, "0x%lx != 0x%lx\n", result, MAGIC);
-> +		exit(1);
-> +	}
+> +	.section ".tcs", "a"
+> +	.balign	4096
 > +
-> +	exit(0);
-> +}
+> +	.fill	1, 8, 0			# STATE (set by CPU)
+> +	.fill	1, 8, 0			# FLAGS
+> +	.long	encl_ssa		# OSSA
 
-Well, I guess 100 lines of code for something a wee bit shy of hello
-world isn't bad. :)
+Any reason not to do .quad for OSSA and OENTRY?
 
-In general, this looks fine, but probably needs some better commenting
-and probably some messages that make it a bit more clear what is going on.
+> +	.fill	1, 4, 0
+> +	.fill	1, 4, 0			# CSSA (set by CPU)
+> +	.fill	1, 4, 1			# NSSA
+> +	.long	encl_entry		# OENTRY
+> +	.fill	1, 4, 0
+> +	.fill	1, 8, 0			# AEP (set by EENTER and ERESUME)
+> +	.fill	1, 8, 0			# OFSBASE
+> +	.fill	1, 8, 0			# OGSBASE
+> +	.fill	1, 4, 0xFFFFFFFF 	# FSLIMIT
+> +	.fill	1, 4, 0xFFFFFFFF	# GSLIMIT
+> +	.fill	503, 8, 0		# Reserved
 
-It would be _nice_, for instance to try to do some CPUID detection of
-SGX so that the error (or success?) message can tell you whether you're
-missing hardware support or kernel support.
+I'd prefer to do 1-byte fill with a size of 4024 to match the SDM.
 
-Thanks for doing this, though.  It's sorely needed.
+> +
+> +	.text
+> +
+> +encl_entry:
+> +	# %rbx contains the base address for TCS, which is also the first
+> +	# address inside the enclave. By adding $le_stack_end to it, we get the
+> +	# absolute address for the stack.
+> +	lea	(encl_stack)(%rbx), %rax
+> +	xchg	%rsp, %rax
+> +	push	%rax
+> +
+> +	push	%rcx # push the address after EENTER
+> +	push	%rbx # push the enclave base address
+> +
+> +	call	encl_body
+> +
+> +	pop	%rbx # pop the enclave base address
+> +
+> +	# Restore XSAVE registers to a synthetic state.
+> +	mov     $0xFFFFFFFF, %rax
+> +	mov     $0xFFFFFFFF, %rdx
+> +	lea	(xsave_area)(%rbx), %rdi
+> +	fxrstor	(%rdi)
+> +
+> +	# Clear GPRs
+> +	xor     %rcx, %rcx
+> +	xor     %rdx, %rdx
+> +	xor     %rdi, %rdi
+> +	xor     %rsi, %rsi
+> +	xor     %r8, %r8
+> +	xor     %r9, %r9
+> +	xor     %r10, %r10
+> +	xor     %r11, %r11
+> +	xor     %r12, %r12
+> +	xor     %r13, %r13
+> +	xor     %r14, %r14
+> +	xor     %r15, %r15
+> +
+> +	# Reset status flags
+> +	add     %rdx, %rdx # OF = SF = AF = CF = 0; ZF = PF = 1
+> +
+> +	pop	%rbx # pop the address after EENTER
+
+Probably worth expanding the comment to explain that ENCLU[EEXIT] takes the
+target address via %rbx, i.e. we're "returning" from the EENTER "call".
+
+> +
+> +	# Restore the caller stack.
+> +	pop	%rax
+> +	mov	%rax, %rsp
+> +
+> +	# EEXIT
+> +	mov	$4, %rax
+> +	enclu
+> +
+> +	.section ".data", "aw"
+> +
+> +encl_ssa:
+> +	.space 4096
+> +
+> +xsave_area:
+> +	.fill	1, 4, 0x037F		# FCW
+> +	.fill	5, 4, 0
+> +	.fill	1, 4, 0x1F80		# MXCSR
+> +	.fill	1, 4, 0xFFFF		# MXCSR_MASK
+> +	.fill	123, 4, 0
+> +	.fill	1, 4, 0x80000000	# XCOMP_BV[63] = 1, compaction mode
+> +	.fill	12, 4, 0
+> +
+> +	.balign 4096
+> +	.space 8192
+> +encl_stack:
