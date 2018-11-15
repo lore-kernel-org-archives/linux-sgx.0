@@ -1,192 +1,99 @@
-Return-Path: <SRS0=MATl=NZ=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=gtji=N2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB1BC07E85
-	for <linux-sgx@archiver.kernel.org>; Wed, 14 Nov 2018 16:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFE1C43441
+	for <linux-sgx@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA45922360
-	for <linux-sgx@archiver.kernel.org>; Wed, 14 Nov 2018 16:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA45922360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EEB3520858
+	for <linux-sgx@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB3520858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbeKOCNe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 14 Nov 2018 21:13:34 -0500
-Received: from mga11.intel.com ([192.55.52.93]:23225 "EHLO mga11.intel.com"
+        id S1725809AbeKPGJ1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 16 Nov 2018 01:09:27 -0500
+Received: from mga06.intel.com ([134.134.136.31]:38179 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727822AbeKOCNd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 14 Nov 2018 21:13:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725781AbeKPGJ0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 16 Nov 2018 01:09:26 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 08:09:43 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 12:00:12 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,233,1539673200"; 
-   d="scan'208";a="281047338"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Nov 2018 08:09:42 -0800
-Date:   Wed, 14 Nov 2018 08:09:42 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
+   d="scan'208";a="104920081"
+Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.140])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 12:00:02 -0800
+Date:   Thu, 15 Nov 2018 22:00:02 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         linux-sgx@vger.kernel.org, dave.hansen@intel.com,
         nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, Shuah Khan <shuah@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dmitry Safonov <dima@arista.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH RFC] selftests/x86: Add a selftest for SGX
-Message-ID: <20181114160941.GA1387@linux.intel.com>
-References: <20181113214038.16136-1-jarkko.sakkinen@linux.intel.com>
+        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Message-ID: <20181115200002.GA24006@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
+ <20181107163757.GB11509@linux.intel.com>
+ <20181107180057.GB24807@linux.intel.com>
+ <20181108144603.GA14072@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113214038.16136-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181108144603.GA14072@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 11:40:09PM +0200, Jarkko Sakkinen wrote:
-> Add a selftest for SGX. It is a trivial test where a simple enclave
-> copies one 64-bit word of memory between two memory locations given to
-> the enclave as arguments.
+On Thu, Nov 08, 2018 at 04:46:03PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 07, 2018 at 10:00:57AM -0800, Sean Christopherson wrote:
+> > What do we gain by a single buffer vs. separate buffers?  The ioctl()
+> > would be slightly smaller but it seems like the actual code would be
+> > more complex.
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> +SUBDIRS_64 := sgx
-> +ASSERT(!DEFINED(.altinstructions), "ALTERNATIVES are not supported in the SGX LE")
-> +ASSERT(!DEFINED(.altinstr_replacement), "ALTERNATIVES are not supported in the SGX LE")
-> +ASSERT(!DEFINED(.discard.retpoline_safe), "RETPOLINE ALTERNATIVES are not supported in the SGX LE")
-> +ASSERT(!DEFINED(.discard.nospec), "RETPOLINE ALTERNATIVES are not supported in the SGX LE")
+> I'm fine with either. It was just a suggestion.
+> 
+> > The enclave build process also utilizes the backing as temp storage
+> > to avoid having to alloc kernel memory when queueing pages to be added
+> > by the worker thread (which reminds me that I wanted to document why a
+> > worker thread is used).  Keeping this behavior would effectively make
+> > providing backing mandatory.
+> 
+> Would it be a problem just allocate those pages with alloc_page() and
+> free them in the worker thread?
+> 
+> > Are there any potential complications with ENCLS consuming userspace
+> > pointers?  We'd have to wrap them with user_access_{begin,end}() and
+> > probably tweak the fixup, but I assume having the fixup handler means
+> > we're generally ok?
+> 
+> Last time I did it I used get_user_pages() for pinning. I'm not sure
+> why I should do anything but just re-use that.
 
-Maybe this?
+What about VA page swapping? Not saying that it'd have to be done right
+now but we need to answer whether it is enclave local or a global asset.
+If it is local it would also require an argument.
 
-s/LE/Test Enclave
+I will most likely won't fix this for v17 because this detail needs
+careful consideration.
 
-> diff --git a/tools/testing/selftests/x86/sgx/encl_bootstrap.S b/tools/testing/selftests/x86/sgx/encl_bootstrap.S
-> new file mode 100644
-> index 000000000000..62251c7d9927
-> --- /dev/null
-> +++ b/tools/testing/selftests/x86/sgx/encl_bootstrap.S
-> @@ -0,0 +1,94 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +/*
-> + * Copyright(c) 2016-18 Intel Corporation.
-> + */
-> +
-> +	.macro ENCLU
-> +	.byte 0x0f, 0x01, 0xd7
-> +	.endm
-> +
-> +	.section ".tcs", "a"
-> +	.balign	4096
-> +
-> +	.fill	1, 8, 0			# STATE (set by CPU)
-> +	.fill	1, 8, 0			# FLAGS
-> +	.long	encl_ssa		# OSSA
-
-Any reason not to do .quad for OSSA and OENTRY?
-
-> +	.fill	1, 4, 0
-> +	.fill	1, 4, 0			# CSSA (set by CPU)
-> +	.fill	1, 4, 1			# NSSA
-> +	.long	encl_entry		# OENTRY
-> +	.fill	1, 4, 0
-> +	.fill	1, 8, 0			# AEP (set by EENTER and ERESUME)
-> +	.fill	1, 8, 0			# OFSBASE
-> +	.fill	1, 8, 0			# OGSBASE
-> +	.fill	1, 4, 0xFFFFFFFF 	# FSLIMIT
-> +	.fill	1, 4, 0xFFFFFFFF	# GSLIMIT
-> +	.fill	503, 8, 0		# Reserved
-
-I'd prefer to do 1-byte fill with a size of 4024 to match the SDM.
-
-> +
-> +	.text
-> +
-> +encl_entry:
-> +	# %rbx contains the base address for TCS, which is also the first
-> +	# address inside the enclave. By adding $le_stack_end to it, we get the
-> +	# absolute address for the stack.
-> +	lea	(encl_stack)(%rbx), %rax
-> +	xchg	%rsp, %rax
-> +	push	%rax
-> +
-> +	push	%rcx # push the address after EENTER
-> +	push	%rbx # push the enclave base address
-> +
-> +	call	encl_body
-> +
-> +	pop	%rbx # pop the enclave base address
-> +
-> +	# Restore XSAVE registers to a synthetic state.
-> +	mov     $0xFFFFFFFF, %rax
-> +	mov     $0xFFFFFFFF, %rdx
-> +	lea	(xsave_area)(%rbx), %rdi
-> +	fxrstor	(%rdi)
-> +
-> +	# Clear GPRs
-> +	xor     %rcx, %rcx
-> +	xor     %rdx, %rdx
-> +	xor     %rdi, %rdi
-> +	xor     %rsi, %rsi
-> +	xor     %r8, %r8
-> +	xor     %r9, %r9
-> +	xor     %r10, %r10
-> +	xor     %r11, %r11
-> +	xor     %r12, %r12
-> +	xor     %r13, %r13
-> +	xor     %r14, %r14
-> +	xor     %r15, %r15
-> +
-> +	# Reset status flags
-> +	add     %rdx, %rdx # OF = SF = AF = CF = 0; ZF = PF = 1
-> +
-> +	pop	%rbx # pop the address after EENTER
-
-Probably worth expanding the comment to explain that ENCLU[EEXIT] takes the
-target address via %rbx, i.e. we're "returning" from the EENTER "call".
-
-> +
-> +	# Restore the caller stack.
-> +	pop	%rax
-> +	mov	%rax, %rsp
-> +
-> +	# EEXIT
-> +	mov	$4, %rax
-> +	enclu
-> +
-> +	.section ".data", "aw"
-> +
-> +encl_ssa:
-> +	.space 4096
-> +
-> +xsave_area:
-> +	.fill	1, 4, 0x037F		# FCW
-> +	.fill	5, 4, 0
-> +	.fill	1, 4, 0x1F80		# MXCSR
-> +	.fill	1, 4, 0xFFFF		# MXCSR_MASK
-> +	.fill	123, 4, 0
-> +	.fill	1, 4, 0x80000000	# XCOMP_BV[63] = 1, compaction mode
-> +	.fill	12, 4, 0
-> +
-> +	.balign 4096
-> +	.space 8192
-> +encl_stack:
+/Jarkko
