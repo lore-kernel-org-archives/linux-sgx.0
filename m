@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E255CC04EBC
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AC3C43441
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 14:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E59208E3
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6711208A3
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 14:28:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DlPkagec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E59208E3
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="T8zhy3J5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6711208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728622AbeKQAfc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:35:32 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42714 "EHLO mail.skyhub.de"
+        id S1728124AbeKQAlU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 16 Nov 2018 19:41:20 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43390 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727999AbeKQAfc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:35:32 -0500
+        id S1727999AbeKQAlU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:41:20 -0500
 X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542378175; h=from:from:sender:reply-to:subject:subject:date:date:
+        t=1542378521; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VSZltSZO1vLhFBI68E8EzhZKIw88eqIpQ6DKSMmPb0U=;
-        b=DlPkagecS8Kufgnn6/v0t/dM4pUd8qFbwcA1LkZ/PNtgRAO7PeInHGurf1evguy8ILFf9E
-        qwkCWyuKdIrzuOU6jfo4Id3L6WfrqmXfYBkAj7plxEKoOI8CFu8DyWGMUfDhJCbei7JAT+
-        TNF8UC7T2dceAS05ny3fS4jJGen0h4I=
+        bh=Y/ZsTYYgTR7z+rjDTIL5fbnfBtww9nFT2+I8OKnWWMs=;
+        b=T8zhy3J5TJI8dd889hiyc9SIzChk4/szfCweWFOcYh2IUk7qYzZxnsgZpnNeBVcsBQ9ndj
+        X4eQGU0x7vc0epfqO3ghQ1GlHmnL2EAXAc/7DmA9L2lBVAnNKP9cHaIvsBaEXP/8oAm7Jc
+        JLIpbK65kphVkMJS7pZh0xJ/paAPJi8=
 Received: from mail.skyhub.de ([127.0.0.1])
         by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id y7Gd51o6UDD7; Fri, 16 Nov 2018 15:22:55 +0100 (CET)
+        with ESMTP id qT7-gvoAl1-u; Fri, 16 Nov 2018 15:28:41 +0100 (CET)
 Received: from zn.tnic (p200300EC2BD0FE004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:fe00:4d13:ad2:f34e:6de4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A2DC61EC072C;
-        Fri, 16 Nov 2018 15:22:54 +0100 (CET)
-Date:   Fri, 16 Nov 2018 15:22:48 +0100
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01CFE1EC072C;
+        Fri, 16 Nov 2018 15:28:41 +0100 (CET)
+Date:   Fri, 16 Nov 2018 15:28:40 +0100
 From:   Borislav Petkov <bp@alien8.de>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
@@ -52,55 +52,56 @@ Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 01/23] x86/sgx: Update MAINTAINERS
-Message-ID: <20181116142248.GH20313@zn.tnic>
+        Kai Huang <kai.huang@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 02/23] x86/cpufeatures: Add Intel-defined SGX feature
+ bit
+Message-ID: <20181116142840.GI20313@zn.tnic>
 References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-2-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181116010412.23967-2-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:01:08AM +0200, Jarkko Sakkinen wrote:
-> Add the maintainer information for the SGX subsystem.
+On Fri, Nov 16, 2018 at 03:01:09AM +0200, Jarkko Sakkinen wrote:
+> From: Kai Huang <kai.huang@linux.intel.com>
 > 
+> X86_FEATURE_SGX reflects whether or not the CPU supports Intel's
+> Software Guard eXtensions (SGX).
+> 
+> Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0abecc528dac..aaf56b544858 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7676,6 +7676,13 @@ L:	linux-gpio@vger.kernel.org
->  S:	Maintained
->  F:	drivers/gpio/gpio-intel-mid.c
->  
-> +INTEL SGX
-> +M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> +L:	linux-sgx@vger.kernel.org
-> +Q:	https://patchwork.kernel.org/project/intel-sgx/list/
-> +F:	drivers/platform/x86/intel_sgx/
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 28c4a502b419..da7fed4939a3 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -236,6 +236,7 @@
+>  /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+>  #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+>  #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
+> +#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
+>  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
+>  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
+>  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
+> -- 
 
-Looking at your diffstat, this doesn't cover it all.
-
-One example: arch/x86/kernel/cpu/intel_sgx.c
-
-Also, was there any particular reasoning for calling the file
-intel_sgx.c instead of simply sgx.c ?
+Reviewed-by: Borislav Petkov <bp@suse.de>
 
 -- 
 Regards/Gruss,
