@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B6AC43441
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5E9C43441
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 040EE20858
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:32:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040EE20858
+	by mail.kernel.org (Postfix) with ESMTP id 5DBA220858
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:33:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DBA220858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbeKQJrC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:47:02 -0500
-Received: from mga05.intel.com ([192.55.52.43]:22132 "EHLO mga05.intel.com"
+        id S1727116AbeKQJsA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 17 Nov 2018 04:48:00 -0500
+Received: from mga07.intel.com ([134.134.136.100]:30084 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbeKQJrC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:47:02 -0500
+        id S1726222AbeKQJr7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:47:59 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:32:37 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:33:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="108968549"
+   d="scan'208";a="108968744"
 Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:32:36 -0800
-Subject: Re: [PATCH v17 06/23] x86/cpu/intel: Detect SGX support and update
- caps appropriately
+  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:33:35 -0800
+Subject: Re: [PATCH v17 07/23] x86/mm: x86/sgx: Add new 'PF_SGX' page fault
+ error code bit
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
 Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
@@ -38,18 +38,14 @@ Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
         shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Wang <davidwang@zhaoxin.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Andy Lutomirski <luto@kernel.org>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
 References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-8-jarkko.sakkinen@linux.intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -95,12 +91,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <71af0361-3296-42a2-d76f-4f1e26e676b8@intel.com>
-Date:   Fri, 16 Nov 2018 15:32:36 -0800
+Message-ID: <38993cf5-039a-d582-1759-876cb948c582@intel.com>
+Date:   Fri, 16 Nov 2018 15:33:35 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181116010412.23967-8-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -110,15 +106,11 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 11/15/18 5:01 PM, Jarkko Sakkinen wrote:
-> +static void detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +	unsigned long long fc;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-> +		goto out_unsupported;
-> +	}
+> The SGX bit is set in the #PF error code if and only if the fault is
+> detected by the Enclave Page Cache Map (EPCM), a hardware-managed
+> table that enforces the paging permissions defined by the enclave,
+> e.g. to prevent the kernel from changing the permissions of an
+> enclave's page(s).
 
-This needs a check against the config option somewhere so the compiler
-can toss it in its entirety if SGX is config'd out.
+This should probably also mention that, despite being a page fault,
+X86_PF_SGX has nothing to do with paging itself.
