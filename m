@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF762C43441
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 15:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7D3C43441
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 15:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77779208E7
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 15:14:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77779208E7
+	by mail.kernel.org (Postfix) with ESMTP id E00C02087C
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 15:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E00C02087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbeKQB0t (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 16 Nov 2018 20:26:49 -0500
-Received: from mga06.intel.com ([134.134.136.31]:48029 "EHLO mga06.intel.com"
+        id S1728695AbeKQBbo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 16 Nov 2018 20:31:44 -0500
+Received: from mga07.intel.com ([134.134.136.100]:60541 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbeKQB0t (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:26:49 -0500
+        id S1728169AbeKQBbo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 16 Nov 2018 20:31:44 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 07:14:02 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 07:18:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="250282462"
+   d="scan'208";a="250283526"
 Received: from sfhansen-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.82])
-  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 07:13:52 -0800
-Date:   Fri, 16 Nov 2018 17:13:51 +0200
+  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 07:18:46 -0800
+Date:   Fri, 16 Nov 2018 17:18:45 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
@@ -50,14 +50,15 @@ Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v17 02/23] x86/cpufeatures: Add Intel-defined SGX feature
  bit
-Message-ID: <20181116151351.GB4244@linux.intel.com>
+Message-ID: <20181116151845.GC4244@linux.intel.com>
 References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
  <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
  <20181116142840.GI20313@zn.tnic>
+ <20181116151351.GB4244@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116142840.GI20313@zn.tnic>
+In-Reply-To: <20181116151351.GB4244@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -65,9 +66,14 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:28:40PM +0100, Borislav Petkov wrote:
-> Reviewed-by: Borislav Petkov <bp@suse.de>
+On Fri, Nov 16, 2018 at 05:13:51PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Nov 16, 2018 at 03:28:40PM +0100, Borislav Petkov wrote:
+> > Reviewed-by: Borislav Petkov <bp@suse.de>
+> 
+> Thank you, the very first reviewed-by 8-)
 
-Thank you, the very first reviewed-by 8-)
+I will also add Sean as co-maintainer as he has the KVM angle and is
+needed to ack patches in the future. This functionality really needs
+two eyes. Has shown to have value in many occasions.
 
 /Jarkko
