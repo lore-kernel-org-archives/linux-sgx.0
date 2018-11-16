@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D480C43441
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B6AC43441
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E787420858
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:31:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E787420858
+	by mail.kernel.org (Postfix) with ESMTP id 040EE20858
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 23:32:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040EE20858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbeKQJpx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:45:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:18947 "EHLO mga01.intel.com"
+        id S1727116AbeKQJrC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 17 Nov 2018 04:47:02 -0500
+Received: from mga05.intel.com ([192.55.52.43]:22132 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeKQJpw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:45:52 -0500
+        id S1726222AbeKQJrC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:47:02 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:31:29 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:32:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="108968228"
+   d="scan'208";a="108968549"
 Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:31:29 -0800
-Subject: Re: [PATCH v17 03/23] x86/cpufeatures: Add SGX sub-features (as
- Linux-defined bits)
+  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:32:36 -0800
+Subject: Re: [PATCH v17 06/23] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
 Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
@@ -42,15 +42,14 @@ Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
         "H. Peter Anvin" <hpa@zytor.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        David Wang <davidwang@zhaoxin.com>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
 References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -96,12 +95,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <1b326c2a-eec9-3a8b-1dff-81c596b2ac44@intel.com>
-Date:   Fri, 16 Nov 2018 15:31:28 -0800
+Message-ID: <71af0361-3296-42a2-d76f-4f1e26e676b8@intel.com>
+Date:   Fri, 16 Nov 2018 15:32:36 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -111,11 +110,15 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 11/15/18 5:01 PM, Jarkko Sakkinen wrote:
-> +#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-> +#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
+> +static void detect_sgx(struct cpuinfo_x86 *c)
+> +{
+> +	unsigned long long fc;
+> +
+> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> +		goto out_unsupported;
+> +	}
 
-Is there a reason these are not (all) tied to CONFIG_INTEL_SGX via:
-
-arch/x86/include/asm/disabled-features.h
-
-?
+This needs a check against the config option somewhere so the compiler
+can toss it in its entirety if SGX is config'd out.
