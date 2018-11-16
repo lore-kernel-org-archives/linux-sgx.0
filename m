@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D9BC43441
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 01:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F07C43441
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 01:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A8020671
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 01:09:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A8020671
+	by mail.kernel.org (Postfix) with ESMTP id 64F7F20671
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Nov 2018 01:09:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F7F20671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389195AbeKPLTj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 16 Nov 2018 06:19:39 -0500
-Received: from mga01.intel.com ([192.55.52.88]:57147 "EHLO mga01.intel.com"
+        id S1727104AbeKPLT4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 16 Nov 2018 06:19:56 -0500
+Received: from mga05.intel.com ([192.55.52.43]:62780 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbeKPLTj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 16 Nov 2018 06:19:39 -0500
+        id S1726518AbeKPLT4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 16 Nov 2018 06:19:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 17:09:23 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 17:09:33 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,238,1539673200"; 
-   d="scan'208";a="280386503"
+   d="scan'208";a="280386529"
 Received: from sfhansen-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.82])
-  by fmsmga005.fm.intel.com with ESMTP; 15 Nov 2018 17:09:17 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 15 Nov 2018 17:09:26 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         linux-sgx@vger.kernel.org
@@ -39,154 +39,305 @@ Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v17 21/23] platform/x86: ptrace() support for the SGX driver
-Date:   Fri, 16 Nov 2018 03:01:28 +0200
-Message-Id: <20181116010412.23967-22-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v17 22/23] x86/sgx: SGX documentation
+Date:   Fri, 16 Nov 2018 03:01:29 +0200
+Message-Id: <20181116010412.23967-23-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
 References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=a
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add VMA callbacks for ptrace() that can be used with debug enclaves.
-With debug enclaves data can be read and write the memory word at a time
-by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
+Documentation of the features of the Software Guard eXtensions used
+by the Linux kernel and basic design choices for the core and driver
+and functionality.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- drivers/platform/x86/intel_sgx/sgx_vma.c | 109 +++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+ Documentation/index.rst         |   1 +
+ Documentation/x86/index.rst     |   8 ++
+ Documentation/x86/intel_sgx.rst | 233 ++++++++++++++++++++++++++++++++
+ 3 files changed, 242 insertions(+)
+ create mode 100644 Documentation/x86/index.rst
+ create mode 100644 Documentation/x86/intel_sgx.rst
 
-diff --git a/drivers/platform/x86/intel_sgx/sgx_vma.c b/drivers/platform/x86/intel_sgx/sgx_vma.c
-index cc0993b4fd40..df604e4d0d0a 100644
---- a/drivers/platform/x86/intel_sgx/sgx_vma.c
-+++ b/drivers/platform/x86/intel_sgx/sgx_vma.c
-@@ -51,8 +51,117 @@ static int sgx_vma_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- }
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index c858c2e66e36..63864826dcd6 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -101,6 +101,7 @@ implementation.
+    :maxdepth: 2
  
-+static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
+    sh/index
++   x86/index
+ 
+ Filesystem Documentation
+ ------------------------
+diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
+new file mode 100644
+index 000000000000..11d5b18d9537
+--- /dev/null
++++ b/Documentation/x86/index.rst
+@@ -0,0 +1,8 @@
++======================
++x86 Architecture Guide
++======================
 +
-+	offset = addr & ~PAGE_MASK;
++.. toctree::
++   :maxdepth: 2
 +
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset > offsetof(struct sgx_tcs, gs_limit))
-+		return -ECANCELED;
++   intel_sgx
+diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
+new file mode 100644
+index 000000000000..f51b43f9e125
+--- /dev/null
++++ b/Documentation/x86/intel_sgx.rst
+@@ -0,0 +1,233 @@
++===================
++Intel(R) SGX driver
++===================
 +
-+	ret = __edbgrd(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGRD returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
++Introduction
++============
 +
-+	return 0;
-+}
++Intel(R) SGX is a set of CPU instructions that can be used by applications to
++set aside private regions of code and data. The code outside the enclave is
++disallowed to access the memory inside the enclave by the CPU access control.
++In a way you can think that SGX provides inverted sandbox. It protects the
++application from a malicious host.
 +
-+static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
-+		      unsigned long addr, void *data)
-+{
-+	unsigned long offset;
-+	int ret;
++You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
 +
-+	offset = addr & ~PAGE_MASK;
++	``cat /proc/cpuinfo  | grep sgx``
 +
-+	/* Writing anything else than flags will cause #GP */
-+	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
-+	    offset != offsetof(struct sgx_tcs, flags))
-+		return -ECANCELED;
++Overview of SGX
++===============
 +
-+	ret = __edbgwr(sgx_epc_addr(page->epc_page) + offset, data);
-+	if (ret) {
-+		sgx_dbg(encl, "EDBGWR returned %d\n", ret);
-+		return encls_to_err(ret);
-+	}
++SGX has a set of data structures to maintain information about the enclaves and
++their security properties. BIOS reserves a fixed size region of physical memory
++for these structures by setting Processor Reserved Memory Range Registers
++(PRMRR).
 +
-+	return 0;
-+}
++This memory range is protected from outside access by the CPU and all the data
++coming in and out of the CPU package is encrypted by a key that is generated for
++each boot cycle.
 +
-+static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-+			  void *buf, int len, int write)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry = NULL;
-+	unsigned long align;
-+	char data[sizeof(unsigned long)];
-+	int offset;
-+	int cnt;
-+	int ret = 0;
-+	int i;
++Enclaves execute in ring-3 in a special enclave submode using pages from the
++reserved memory range. A fixed logical address range for the enclave is reserved
++by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
++the documentation commonly as the ELRANGE.
 +
-+	/* If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return -EFAULT;
++Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
++executing in the enclave mode inside the enclave, #GP is raised. On the other
++hand, enclave code can make memory accesses both inside and outside of the
++ELRANGE.
 +
-+	if (!(encl->flags & SGX_ENCL_DEBUG) ||
-+	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
-+	    (encl->flags & SGX_ENCL_DEAD))
-+		return -EFAULT;
++Enclave can only execute code inside the ELRANGE. Instructions that may cause
++VMEXIT, IO instructions and instructions that require a privilege change are
++prohibited inside the enclave. Interrupts and exceptions always cause enclave
++to exit and jump to an address outside the enclave given when the enclave is
++entered by using the leaf instruction ENCLS(EENTER).
 +
-+	for (i = 0; i < len; i += cnt) {
-+		if (!entry || !((addr + i) & (PAGE_SIZE - 1))) {
-+			if (entry)
-+				entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
++Protected memory
++----------------
 +
-+			entry = sgx_fault_page(vma, (addr + i) & PAGE_MASK,
-+					       true);
-+			if (IS_ERR(entry)) {
-+				ret = PTR_ERR(entry);
-+				entry = NULL;
-+				break;
-+			}
-+		}
++Enclave Page Cache (EPC)
++    Physical pages used with enclaves that are protected by the CPU from
++    unauthorized access.
 +
-+		/* Locking is not needed because only immutable fields of the
-+		 * page are accessed and page itself is reserved so that it
-+		 * cannot be swapped out in the middle.
-+		 */
++Enclave Page Cache Map (EPCM)
++    A database that describes the properties and state of the pages e.g. their
++    permissions or to which enclave they belong to.
 +
-+		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-+		offset = (addr + i) & (sizeof(unsigned long) - 1);
-+		cnt = sizeof(unsigned long) - offset;
-+		cnt = min(cnt, len - i);
++Memory Encryption Engine (MEE) integrity tree
++    Autonomously updated integrity tree. The root of the tree located in on-die
++    SRAM.
 +
-+		ret = sgx_edbgrd(encl, entry, align, data);
-+		if (ret)
-+			break;
-+		if (write) {
-+			memcpy(data + offset, buf + i, cnt);
-+			ret = sgx_edbgwr(encl, entry, align, data);
-+			if (ret)
-+				break;
-+		} else
-+			memcpy(buf + i, data + offset, cnt);
-+	}
++EPC data types
++--------------
 +
-+	if (entry)
-+		entry->desc &= ~SGX_ENCL_PAGE_RESERVED;
++SGX Enclave Control Structure (SECS)
++    Describes the global properties of an enclave. Will not be mapped to the
++    ELRANGE.
 +
-+	return ret < 0 ? ret : i;
-+}
++Regular (REG)
++    These pages contain code and data.
 +
- const struct vm_operations_struct sgx_vm_ops = {
- 	.close = sgx_vma_close,
- 	.open = sgx_vma_open,
- 	.fault = sgx_vma_fault,
-+	.access = sgx_vma_access,
- };
++Thread Control Structure (TCS)
++    The pages that define the entry points inside an enclave. An enclave can
++    only be entered through these entry points and each can host a single
++    hardware thread at a time.
++
++Version Array (VA)
++   The pages contain 64-bit version numbers for pages that have been swapped
++   outside the enclave. Each page has the capacity of 512 version numbers.
++
++Launch control
++--------------
++
++To launch an enclave, two structures must be provided for ENCLS(EINIT):
++
++1. **SIGSTRUCT:** signed measurement of the enclave binary.
++2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
++   *launch key*, which is re-generated for each boot cycle.
++
++The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
++IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
++key do not require a valid EINITTOKEN and can be authorized with special
++privileges. One of those privileges is ability to acquire the launch key with
++ENCLS(EGETKEY).
++
++**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
++IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
++feature control register and handing over control to the operating system.
++
++Enclave construction
++--------------------
++
++The construction is started by filling out the SECS that contains enclave
++address range, privileged attributes and measurement of TCS and REG pages (pages
++that will be mapped to the address range) among the other things. This structure
++is passed out to the ENCLS(ECREATE) together with a physical address of a page
++in EPC that will hold the SECS.
++
++The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
++SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
++
++After all of the pages have been added, the enclave is initialized with
++ENCLS(EINIT). It will check that the SIGSTRUCT is signed with the contained
++public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
++the token is valid (CMAC'd with the launch key). If the token is not valid,
++the CPU will check whether the enclave is signed with a key matching to the
++IA32_SGXLEPUBKEYHASHn MSRs.
++
++Swapping pages
++--------------
++
++Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
++addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
++structure (Page Crypto MetaData) as input. The VA page will seal a version
++number for the page. PCMD is 128 byte structure that contains tracking
++information for the page, most importantly its MAC. With these structures the
++enclave is sealed and rollback protected while it resides in the unprotected
++memory.
++
++Before the page can be swapped out it must not have any active TLB references.
++ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
++that no new TLB entries can be created to it by the hardware threads.
++
++After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
++increased counter value to the entering hardware threads. ENCLS(EWB) will
++return SGX_NOT_TRACKED error while there are still threads with the earlier
++couner value because that means that there might be hardware thread inside
++the enclave with TLB entries to pages that are to be swapped.
++
++Kernel internals
++================
++
++Requirements
++------------
++
++Because SGX has an ever evolving and expanding feature set, it's possible for
++a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
++e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
++*not* support such a heterogeneous system configuration, nor does it even
++attempt to play nice in the face of a misconfigured system.  With the exception
++of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
++CPUs have a configuration that is identical to the boot CPU.
++
++
++Roles and responsibilities
++--------------------------
++
++SGX introduces system resources, e.g. EPC memory, that must be accessible to
++multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
++and KVM (to expose SGX to VMs), ideally without introducing any dependencies
++between each SGX entity.  To that end, the kernel owns and manages the shared
++system resources, i.e. the EPC and Launch Control MSRs, and defines functions
++that provide appropriate access to the shared resources.  SGX support for
++user space and VMs is left to the SGX platform driver and KVM respectively.
++
++Launching enclaves
++------------------
++
++The current kernel implementation supports only unlocked MSRs i.e.
++FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
++MSRs to the hash of the public key modulus of the enclave signer, which is one
++of the fields in the SIGSTRUCT.
++
++EPC management
++--------------
++
++Due to the unique requirements for swapping EPC pages, and because EPC pages
++(currently) do not have associated page structures, management of the EPC is
++not handled by the standard Linux swapper.  SGX directly handles swapping
++of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
++mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
++implement function callbacks that can be invoked by the kernel to age,
++swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
++controls what happens and when, while the consumers (driver, KVM, etc..) do
++the actual work.
++
++Exception handling
++------------------
++
++The PF_SGX bit is set if and only if the #PF is detected by the SGX Enclave Page
++Cache Map (EPCM). The EPCM is a hardware-managed table that enforces accesses to
++an enclave's EPC pages in addition to the software-managed kernel page tables,
++i.e. the effective permissions for an EPC page are a logical AND of the kernel's
++page tables and the corresponding EPCM entry.
++
++The EPCM is consulted only after an access walks the kernel's page tables, i.e.:
++
++1. the access was allowed by the kernel
++2. the kernel's tables have become less restrictive than the EPCM
++3. the kernel cannot fixup the cause of the fault
++
++Noteably, (2) implies that either the kernel has botched the EPC mappings or the
++EPCM has been invalidated (see below).  Regardless of why the fault occurred,
++userspace needs to be alerted so that it can take appropriate action, e.g.
++restart the enclave. This is reinforced by (3) as the kernel doesn't really
++have any other reasonable option, i.e. signalling SIGSEGV is actually the least
++severe action possible.
++
++Although the primary purpose of the EPCM is to prevent a malicious or
++compromised kernel from attacking an enclave, e.g. by modifying the enclave's
++page tables, do not WARN on a #PF w/ PF_SGX set.  The SGX architecture
++effectively allows the CPU to invalidate all EPCM entries at will and requires
++that software be prepared to handle an EPCM fault at any time.  The architecture
++defines this behavior because the EPCM is encrypted with an ephemeral key that
++isn't exposed to software.  As such, the EPCM entries cannot be preserved across
++transitions that result in a new key being used, e.g. CPU power down as part of
++an S3 transition or when a VM is live migrated to a new physical system.
++
++SGX uapi
++========
++
++.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
++   :functions: sgx_ioc_enclave_create
++               sgx_ioc_enclave_add_page
++               sgx_ioc_enclave_init
++
++.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
++
++References
++==========
++
++* A Memory Encryption Engine Suitable for General Purpose Processors
++  <https://eprint.iacr.org/2016/204.pdf>
++* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
 -- 
 2.19.1
 
