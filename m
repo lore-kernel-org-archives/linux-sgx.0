@@ -3,64 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB110C43441
-	for <linux-sgx@archiver.kernel.org>; Tue, 20 Nov 2018 10:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E2EC43441
+	for <linux-sgx@archiver.kernel.org>; Tue, 20 Nov 2018 10:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4B6020671
-	for <linux-sgx@archiver.kernel.org>; Tue, 20 Nov 2018 10:11:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B6020671
+	by mail.kernel.org (Postfix) with ESMTP id 867E620685
+	for <linux-sgx@archiver.kernel.org>; Tue, 20 Nov 2018 10:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867E620685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725983AbeKTUkD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:40:03 -0500
-Received: from mga18.intel.com ([134.134.136.126]:29967 "EHLO mga18.intel.com"
+        id S1728672AbeKTV0y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 20 Nov 2018 16:26:54 -0500
+Received: from mga03.intel.com ([134.134.136.65]:2200 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbeKTUkD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:40:03 -0500
+        id S1728437AbeKTV0y (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:26:54 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 02:11:40 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 02:58:21 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="92560497"
+   d="scan'208";a="281477467"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.177])
-  by orsmga006.jf.intel.com with ESMTP; 20 Nov 2018 02:11:33 -0800
-Date:   Tue, 20 Nov 2018 12:11:33 +0200
+  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2018 02:58:17 -0800
+Date:   Tue, 20 Nov 2018 12:58:17 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181120101133.GA7319@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <20181118071548.GA4795@linux.intel.com>
- <CALCETrXSpn7QGzPgO1BjMRQ75r2i0kmACrbUM+8PyT+xi3f3Hw@mail.gmail.com>
- <20181119160204.GD13298@linux.intel.com>
- <CALCETrWRVgPjnDd-CknskrXfNbke=rSnr_jezszNNWJUM_YJKQ@mail.gmail.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     "x86@kernel.org" <x86@kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        "mark.shanahan@intel.com" <mark.shanahan@intel.com>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181120105817.GA14594@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <20181119150655.GA11843@linux.intel.com>
+ <e8e640be-6f9f-0835-0578-48f140ac68f9@fortanix.com>
+ <20181119171934.GA16252@linux.intel.com>
+ <63b97d22-9d28-e0f8-492d-27e5cc456fce@fortanix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWRVgPjnDd-CknskrXfNbke=rSnr_jezszNNWJUM_YJKQ@mail.gmail.com>
+In-Reply-To: <63b97d22-9d28-e0f8-492d-27e5cc456fce@fortanix.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -68,36 +68,17 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:00:08AM -0800, Andy Lutomirski wrote:
-> On Mon, Nov 19, 2018 at 8:02 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Mon, Nov 19, 2018 at 07:29:36AM -0800, Andy Lutomirski wrote:
-> > > 1. The kernel needs some way to know *when* to apply this fixup.
-> > > Decoding the instruction stream and doing it to all exceptions that
-> > > hit an ENCLU instruction seems like a poor design.
-> >
-> > I'm not sure why you would ever need to do any type of fixup as the idea
-> > is to just return to AEP i.e. from chosen exceptions (EPCM, #UD) the AEP
-> > would work the same way as for exceptions that the kernel can deal with
-> > except filling the exception information to registers.
-> 
-> Sure, but how does the kernel know when to do that and when to send a
-> signal?  I don't really like decoding the instruction stream to figure
-> it out.
+On Mon, Nov 19, 2018 at 05:39:04PM +0000, Jethro Beekman wrote:
+> Let's keep it as separated as possible for now until KVM lands and we get
+> the module capability back, instead of integrating everything so tightly
+> Jethro Beekman | Fortanix
 
-Hmm... why you have to decode instruction stream to find that out? Would
-just depend on exception type (#GP with EPCM, #UD). Or are you saying
-that kernel should need to SIGSEGV if there is in fact ENCLU so that
-there is no infinite trap loop? Sorry, I'm a bit lost here that where
-does this decoding requirement comes from in the first place. I
-understand how it is used in Sean's proposal...
+We can keep the driver structure and still move it under
+arch/x86/kernel/cpu. When landing the KVM code we can then allow
+the driver part to be compiled as module. It is not the only LKM
+under arch/x86.
 
-Anyway, this option can be probably discarded without further
-consideration because apparently single stepping can cause #DB SS fault
-if AEP handler is anything else than a single instruction.
-
-For me it seems that by ruling out options, vDSO option is what is
-left. I don't like it but at least it works...
+Would also simplify both way we develop SGX code alot, not least
+because there would be clear consumer of the pull requests.
 
 /Jarkko
