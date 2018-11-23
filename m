@@ -1,59 +1,35 @@
-Return-Path: <SRS0=zo89=OB=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=rlww=OC=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7804C43441
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Nov 2018 20:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB812C43441
+	for <linux-sgx@archiver.kernel.org>; Fri, 23 Nov 2018 10:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7709E20824
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Nov 2018 20:56:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKaTnrYH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7709E20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 899EB20659
+	for <linux-sgx@archiver.kernel.org>; Fri, 23 Nov 2018 10:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899EB20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbeKWHhm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 23 Nov 2018 02:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44220 "EHLO mail.kernel.org"
+        id S2394192AbeKWVXk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 23 Nov 2018 16:23:40 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:34591 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731175AbeKWHhm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 23 Nov 2018 02:37:42 -0500
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 053E12087E
-        for <linux-sgx@vger.kernel.org>; Thu, 22 Nov 2018 20:56:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542920196;
-        bh=YJIfsIfdZWhokmc5AmAxS36jA+j3oNAeEQKE2BShSiI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kKaTnrYHXR4RNqmxwA4xxDx1Thw4nbVvPo8UK9Zt2T6BjMrsOhHz4K/t0/T8EhxVa
-         JvZvToWW61SqIckM2t38ERyTfWgehHeVgXMbsVUsmcJMjgnBt5V4xXTUxW+NERSzOQ
-         ftoc6Tvba/H69STJ7M+WQmwAjX51dbkX/U7YqWZE=
-Received: by mail-wr1-f41.google.com with SMTP id j10so10424783wru.4
-        for <linux-sgx@vger.kernel.org>; Thu, 22 Nov 2018 12:56:35 -0800 (PST)
-X-Gm-Message-State: AA+aEWYfDt+KmzUquWWkveYi38ghjtKncalMCTiDlgaxxBGHiyZkAwou
-        4ilctMqHiNjfGETukrinTrUrMsCsQGVWYoO3tFu30w==
-X-Google-Smtp-Source: AFSGD/X4xwRHkaGCQhRnDTT8WFNa+XnFAtVwbkAziAz3OIBhcx3jEOHX0HVrvo882N+U03PwwJVADPYF8Skc92F2bVk=
-X-Received: by 2002:adf:90af:: with SMTP id i44-v6mr10609605wri.77.1542920194516;
- Thu, 22 Nov 2018 12:56:34 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com>
-In-Reply-To: <20181122111253.GA31150@wind.enjellic.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 22 Nov 2018 12:56:23 -0800
-X-Gmail-Original-Message-ID: <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
-Message-ID: <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     "Dr. Greg Wettstein" <greg@enjellic.com>
+        id S2394186AbeKWVXk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:23:40 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.14.3/8.14.3) with ESMTP id wANAdNSt014028;
+        Fri, 23 Nov 2018 04:39:24 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.14.3/8.14.3/Submit) id wANAdNqg014027;
+        Fri, 23 Nov 2018 04:39:23 -0600
+Date:   Fri, 23 Nov 2018 04:39:23 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Andy Lutomirski <luto@kernel.org>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         X86 ML <x86@kernel.org>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
@@ -71,24 +47,81 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181123103923.GA13851@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [0.0.0.0]); Fri, 23 Nov 2018 04:39:24 -0600 (CST)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 3:12 AM Dr. Greg <greg@enjellic.com> wrote:
-> In addition, we are not confident
-> the driver will be useful to anything other then server class hardware
-> and will be incapable of supporting virtually all of the existing SGX
-> hardware in the field.
+On Thu, Nov 22, 2018 at 12:56:23PM -0800, Andy Lutomirski wrote:
 
-I forgot to mention: I have a plain old retail Intel Celeron (I think
--- it's not in front of me right now) that has Flex LC.  I suspect
-that, going forward, all new Intel CPUs will support Flex LC.  I
-really wish that Intel would document all of the detailed capabilities
-of all their CPUs somewhere.
+Good morning to everyone.
 
-There has been some talk of how the driver could support old CPUs.  It
-would involve a rather different LE being signed by Intel, but it
-should be more or less transparent to user code if it happens.
+> On Thu, Nov 22, 2018 at 3:12 AM Dr. Greg <greg@enjellic.com> wrote:
+> > In addition, we are not confident
+> > the driver will be useful to anything other then server class hardware
+> > and will be incapable of supporting virtually all of the existing SGX
+> > hardware in the field.
+
+> I forgot to mention: I have a plain old retail Intel Celeron (I
+> think -- it's not in front of me right now) that has Flex LC.  I
+> suspect that, going forward, all new Intel CPUs will support Flex
+> LC.  I really wish that Intel would document all of the detailed
+> capabilities of all their CPUs somewhere.
+
+Interesting, that contradicts the read we had gotten on FLC.
+
+The only specific CPU's that we know of that are acknowledged to have
+FLC are the XEON E series in support of the PCE/ECDSA attestation for
+data-center use of SGX.
+
+I'm assuming this is a really new system?  If so that matches our
+experience with respect to the fact that SGX2/EDMM capable systems
+slipped out quietly in early generation NUC SOC's.
+
+Your sentinments are correct with respect to getting solid guidance on
+hardware, it is a significant issue, particularly with respect to
+SGX.
+
+> There has been some talk of how the driver could support old CPUs.
+> It would involve a rather different LE being signed by Intel, but it
+> should be more or less transparent to user code if it happens.
+
+I will reply to the LE and driver capability issues in my response to
+your earlier e-mail so the thread does not diverge.
+
+Jarkko, when this driver lands it will set the SGX ABI in stone for
+Linux.  It would be very, very helpful to the development community if
+there was some official guidance from Intel on whether or not FLC will
+be a universal feature on all hardware and the date that is going to
+happen or has happened.
+
+If this turns out to be an OEM selectable issue via firmware
+customizations, things will be even more problematic.
+
+As things stand now, the proposed mainline SGX driver is going to be
+useless for a lot of hardware that is out in the field.  Linux has
+always had the reputation for supporting legacy hardware so this
+directly contravenes that principal and needlessly so.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC
+4206 N. 19th Ave.           Implementing measured information privacy
+Fargo, ND  58102            and integrity architectures.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: gw@idfusion.org
+------------------------------------------------------------------------------
+"Simplicity is prerequisite for reliability."
+                                -- Edsger W. Dijkstra
