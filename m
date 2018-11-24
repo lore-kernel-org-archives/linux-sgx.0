@@ -3,37 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B81FC43441
-	for <linux-sgx@archiver.kernel.org>; Sat, 24 Nov 2018 17:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC70C43610
+	for <linux-sgx@archiver.kernel.org>; Sat, 24 Nov 2018 19:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDB120865
-	for <linux-sgx@archiver.kernel.org>; Sat, 24 Nov 2018 17:21:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BDB120865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B1ED20868
+	for <linux-sgx@archiver.kernel.org>; Sat, 24 Nov 2018 19:25:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1ED20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbeKYEKm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 24 Nov 2018 23:10:42 -0500
-Received: from mga07.intel.com ([134.134.136.100]:11609 "EHLO mga07.intel.com"
+        id S1726164AbeKYGOq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 25 Nov 2018 01:14:46 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:55086 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeKYEKm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 24 Nov 2018 23:10:42 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2018 09:21:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,273,1539673200"; 
-   d="scan'208";a="276509344"
-Received: from moellerb-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.169])
-  by orsmga005.jf.intel.com with ESMTP; 24 Nov 2018 09:21:21 -0800
-Date:   Sat, 24 Nov 2018 09:21:14 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Dr. Greg Wettstein" <greg@enjellic.com>, X86 ML <x86@kernel.org>,
+        id S1725981AbeKYGOq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 25 Nov 2018 01:14:46 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wAOJOuRT012273;
+        Sat, 24 Nov 2018 13:24:56 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wAOJOsKe012272;
+        Sat, 24 Nov 2018 13:24:54 -0600
+Date:   Sat, 24 Nov 2018 13:24:54 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
         linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
@@ -46,52 +43,66 @@ Cc:     "Dr. Greg Wettstein" <greg@enjellic.com>, X86 ML <x86@kernel.org>,
         Suresh Siddha <suresh.b.siddha@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181124172114.GB32210@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com>
- <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com>
- <20181122111253.GA31150@wind.enjellic.com>
- <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
-MIME-Version: 1.0
+Message-ID: <20181124192454.GA12149@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181120111508.GA26127@wind.enjellic.com> <20181124161521.GB30310@linux.intel.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181124161521.GB30310@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 24 Nov 2018 13:24:56 -0600 (CST)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 07:21:08AM -0800, Andy Lutomirski wrote:
-> > At a high level, addressing these issues is straight forward.  First,
-> > the driver needs to support authorization equivalent to that which is
-> > implemented in the current Intel Launch Enclave, ie. control over the
-> > SGX_FLAGS_PROVISION_KEY attribute.
-> 
-> I agree, hence my email :)
+On Sat, Nov 24, 2018 at 08:15:21AM -0800, Jarkko Sakkinen wrote:
 
-Started to scratch my head that is it really an issue that any enclave
-can provision in the end?
+> On Tue, Nov 20, 2018 at 05:15:08AM -0600, Dr. Greg wrote:
+> > Malware would not necessarily need the Intel attestation service.
+> > Once access to the PROVISION bit is available, malware teams could
+> > simply build their own attestation service.
 
-Direct quote from your first response:
+> AFAIK not possible as they wouldn't have access to the root
+> provisioning key. Can be confirmed from the SDM's key derivation
+> table (41-56).
 
-"In particular, the ability to run enclaves with the provisioning bit set
-is somewhat sensitive, since it effectively allows access to a stable
-fingerprint of the system."
+What provisioning and attestation is all about is establishing an
+identity binding for a platform in question.  The standard Intel
+service binds the identity of a platform to an EPID private key.
 
-As can be seen from the key derivation table this does not exactly hold
-so you should refine your original argument before we can consider any
-type of change.
+With access to the SGX_FLAGS_PROVISION_BIT an enclave can generate a
+perpetual identity for a platform based on the identity modulus
+signature (MRSIGNER) of the key that signs the signature structure of
+the enclave.  Without access to the root provisioning key a security
+quorum or group has to be implemented via a subscription or enrollment
+model but that is arguably not much of an obstacle.
 
-I just don't see what it is so wrong for any enclave to be able to tell
-that it really is an enclave.
+That is pretty much the way standard botware works now.
 
-/Jarkko
+Without provisions for cryptographically secure authorization and
+policy enforcement in the driver, we will be creating infrastructure
+for a new generation of botware/malware whose mothership will know
+that a participating platform is running with full confidentiality and
+integrity protections.
+
+> /Jarkko
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Remember that when you take down the fishhouse you can't put
+ the minnows back into the lake, so throw them out on the ice.
+ Make sure you stomp on any of the live ones so they don't suffer."
+                                -- Fritz Wettstein
+                                   At the lake
