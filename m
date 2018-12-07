@@ -2,172 +2,145 @@ Return-Path: <SRS0=sJTe=OQ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,T_DKIMWL_WL_MED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A69C07E85
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9418C07E85
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27212083D
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE932083D
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="pTAOOyTK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A27212083D
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="Cznl4FW9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE932083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbeLGSPN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:15:13 -0500
-Received: from mail-eopbgr740095.outbound.protection.outlook.com ([40.107.74.95]:6473
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1726281AbeLGSTJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 7 Dec 2018 13:19:09 -0500
+Received: from mail-eopbgr800108.outbound.protection.outlook.com ([40.107.80.108]:35280
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726208AbeLGSPN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:15:13 -0500
+        id S1726177AbeLGSTI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:19:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vc4G5bL0cy5gsJO7vF6+XHBKufoDCH406r80pPgeEWM=;
- b=pTAOOyTKg6GwD7eDlPX2YO9kgOwkM6Y/idqaMbQVlKrm0w7GrNpuCrfbKbrv/uuLzqKRDmoPOJvDleQLJrnseVbC87dn0OYro+QjbS5Qur6+9OezdRIOUv75LyCMyKhsUXzzNxpCGge2v+KhmFYGWmMBPdZaSWpUjMXSX8RnWzY=
+ bh=j+4SyXJ2veD7ilRkQxjDHJJjYnPN1a5N2Zvh7aQw9P4=;
+ b=Cznl4FW9hHoRN8nNI4JqQRYFzlu86wtoqdiUi+/sCNzBn0dQ0P5b+iHvJNpaqVgnZmsbRtuKnNzv2rqhY+dIqQ8seH01pmsFpqQgUUyHEkURPE3MLDaKuq7skR2dR81/ZEFqTK20nCeTqTIsoxsYnSGFscKAtvgJZz9weDTdCMA=
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB3021.namprd11.prod.outlook.com (52.135.125.157) with Microsoft SMTP
+ SN6PR11MB3279.namprd11.prod.outlook.com (52.135.109.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.21; Fri, 7 Dec 2018 18:15:04 +0000
+ 15.20.1404.17; Fri, 7 Dec 2018 18:19:03 +0000
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::916c:7b87:64a8:d58c]) by SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::916c:7b87:64a8:d58c%3]) with mapi id 15.20.1382.024; Fri, 7 Dec 2018
- 18:15:04 +0000
+ 18:19:03 +0000
 From:   Jethro Beekman <jethro@fortanix.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+To:     "Dr. Greg" <greg@enjellic.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+CC:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "x86@kernel.org" <x86@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Andy Lutomirski <luto@amacapital.net>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         Haitao Huang <haitao.huang@linux.intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Dr. Greg" <greg@enjellic.com>
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
 Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
  wrap SGX enclave transitions
 Thread-Topic: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
  wrap SGX enclave transitions
-Thread-Index: AQHUjljGdIrv8QEhmk6icaec8mjmDQ==
-Date:   Fri, 7 Dec 2018 18:15:04 +0000
-Message-ID: <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com>
+Thread-Index: AQHUjllVdIrv8QEhmk6icaec8mjmDQ==
+Date:   Fri, 7 Dec 2018 18:19:03 +0000
+Message-ID: <f036e41f-8b93-cab3-07fd-641354e60b35@fortanix.com>
 References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
  <20181206221922.31012-5-sean.j.christopherson@intel.com>
-In-Reply-To: <20181206221922.31012-5-sean.j.christopherson@intel.com>
+ <20181207163127.GA23494@wind.enjellic.com>
+In-Reply-To: <20181207163127.GA23494@wind.enjellic.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MA1PR0101CA0063.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:20::25) To SN6PR11MB3167.namprd11.prod.outlook.com
+x-clientproxiedby: MA1PR0101CA0051.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:20::13) To SN6PR11MB3167.namprd11.prod.outlook.com
  (2603:10b6:805:c4::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [171.48.9.28]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR11MB3021;6:oIK6EJ0BKkVrxCM7QxTOKWXYrGNLVbh84aVv8nMPVNM7/ntxbX0XYTO4Dl5XVkfINclxmYaDbdJDP8mz42v50079IKek1TcfKrniwSEES1KYhEfRGl5aKS2qDk2mDZvorVl48eptBYI6qkoYJdpA98h7UvMQ+9r0qJxAMoTRZO0835JC6Nt0GRKgpnbob1CsMYRrpjtOHWQVanto8VXn3IL6nwm5UO1rYKTn7mquOck1gDvV5QgLzIDKwPNVknFcntAnvAzeHeY7rLaYSYQuUYxm72zGwbmZ0Yzkg2jMmq7xm8XnoYkyqbe4+fguIW3zTUd+ZWWZY2SQs3/4KYL8eb8fM496U3EdppCNAZ97EueJkjV0I25Aum8515AszTo7iSWK3qJCZUKm5I/9ANViWq4UX5zAlGSSD9OEbMCyFYmdhHAGjT1ADs3LqzGgqaJKokH0kYgGv+tMaFse3lLxuA==;5:om59kw9z7HRayuL4HkbOY63ewbKzfYXLvExPay0XqMV2KUCz+sJPUe2rcYpkdo7zyEbqZN26Ms0iMC55ZPhUIrgp7/XYGd5VSTtvs1Hn8yVLFRkP2dMeAk8hIXKEqFqXQ6kf3ls4G1X4IzMGCKUvVp9YJn/g0KU/YjBmtJvYq9I=;7:7bEEbBlOm9rP/8KqafFOCmU9N0puKM9ualO3iB9X3vX3mZYkPaGKV0vd7tu0JSZYrJcoJ9h058ogrRU05Es1dTtP0lmmmyavkzWkJ3QSD5c/Ba5tVqyVCYmlmhF8lrmLM/v3xqrlSZQq7vkYqVftbQ==
-x-ms-office365-filtering-correlation-id: 7658aa17-e4ca-4445-edb2-08d65c6fe8dd
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB3021;
-x-ms-traffictypediagnostic: SN6PR11MB3021:
-x-microsoft-antispam-prvs: <SN6PR11MB3021593B26064837D206DA30AAAA0@SN6PR11MB3021.namprd11.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;SN6PR11MB3279;6:Abn43FvuXOVNpGZKWnvzD6dyLAtrODW07IgpElOvVV0ia1229UCeD6SLhy1rF75ZEgQy2VJdMbmKMM87X80gwqVpcQS+DV+T3cKtPs3aF8mji/m/gxMOqwIZujLhS24NytViOP9cn8DRV6X6/Zj9ABZwPT9j+USYA64dP10J8Jo5FBa3uSAI4pPQ8Irc2A7jxCynoq2Bo4NvXMf/oJQ0Qj1dWngq436h2i5Va+UOEiHy5j4BBv22PmYN0lNc/0Ilwkw2w0Eaz/3aL1jdrQLrmsAn/kaRyPZTihCQ1sv9ANVfLYjO2oEq1OhudpcUmLSowXK1lgH4YcPICY0+zqGrNCXsfJc3VkP48nB6s1P96VlklQA2NLyLhDPkWP80Lfn2hGaL686+LpnJadLWodubnS0W800UoXfe5pwPlaMErOPnsYaW5PWp5+p2Oj63AOfiEukiTWI3j4L2CIOQglqlQw==;5:GZsI9QTs+cO5eRbJBkwd6ddePMjs0R90ELbAn2oA+oRPoa7RlocMkIHKCYeJDaCugk1CclOx/T0jrofuhtRhXSRRrVFp5LlPr5MKL7hH4lJTcFi7XnPO7NqynT0FHyLVVEpkbFGjFD4GB/0a/LRnobEoSpsUpFvI5jnjZVKTkDA=;7:f+/bk98tMVw4mBa1o1n++BOpznN6tMcv1vy8pPsAN+p7hxyYF0X7r9WZ7CBCZJxqoTG32PHLDK/G5RHiDNGD5iFMpZ530p62aNgm4dxFEOMqG7RL9Z/iE9wwuxTjqrT49PrzCUm+XXz6NLl53UUC9A==
+x-ms-office365-filtering-correlation-id: 017e6b92-fd4d-47a8-efa5-08d65c707760
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB3279;
+x-ms-traffictypediagnostic: SN6PR11MB3279:
+x-microsoft-antispam-prvs: <SN6PR11MB3279F66FB3D3DC856CF7D7E7AAAA0@SN6PR11MB3279.namprd11.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231455)(999002)(944501520)(4983020)(52105112)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB3021;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB3021;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(5005006)(8121501046)(3231455)(999002)(944501520)(4983020)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB3279;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB3279;
 x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39830400003)(376002)(346002)(366004)(396003)(199004)(189003)(14454004)(5660300001)(229853002)(31696002)(6306002)(66066001)(6512007)(71200400001)(316002)(71190400001)(256004)(217873002)(508600001)(3846002)(86362001)(8676002)(99286004)(2906002)(26005)(6436002)(7416002)(25786009)(102836004)(76176011)(6486002)(54906003)(186003)(36756003)(386003)(6506007)(6246003)(99936001)(81156014)(53546011)(31686004)(486006)(78486014)(105586002)(52116002)(4326008)(2501003)(7736002)(97736004)(8936002)(106356001)(110136005)(446003)(68736007)(53936002)(305945005)(6116002)(11346002)(476003)(81166006)(2616005)(966005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3021;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39830400003)(396003)(136003)(376002)(189003)(199004)(99286004)(76176011)(78486014)(26005)(31686004)(2616005)(2906002)(11346002)(508600001)(486006)(476003)(71200400001)(229853002)(71190400001)(186003)(316002)(217873002)(102836004)(386003)(110136005)(6506007)(53546011)(52116002)(14454004)(81156014)(81166006)(54906003)(8676002)(8936002)(5660300001)(36756003)(31696002)(4326008)(97736004)(86362001)(7736002)(305945005)(6512007)(256004)(6246003)(106356001)(7416002)(53936002)(6486002)(25786009)(99936001)(6436002)(68736007)(446003)(66066001)(6116002)(3846002)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3279;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: yxCNNqp1KUvqvtq1Sw4NTFo+aylucYglw8ne42dcd0+qwlV81XIIT+HTclDLiLm4ADSQvlbMNRXLc/K6hrf7cKAi+q/uF+Jv5v/zSyejJSSxrMr59tbgBMCo8ZqzWqOHhy79qPdxfKdhvwyGx9NUlz1DtrM0q6MtFtsJ40M3bl5/DuM+8Nx7iEBCTPVtHCKnrTUx0Ad2ty6MvR0MwTWuSKxiy1tT/qKle4R0en2dGHsZCRFfuk8gaA2VsUJCuPaIOQAOfmZr+HK33uZwiKqzglfsnJ8WvX/phmoAJlLedmyoWyh0OEH1eFf/vQytTa1YIgmxaib03QLYcrxLU1d3mY+egqfsROW9BgoOt0MgtqI=
+x-microsoft-antispam-message-info: YgtxTOqrfqxjOPhYCJgxa+rDSZnvM9JaZ77vw/RUHNustBseSu8mkbGzUvr6c6s9ZCIdro4H5nkbzRkP93G9QNf+NV79hVY4zf/Qo8slKMYmNVcLrn00DT1sm8zMMt8/Y2udC/pszEQPbTEXvHCkMXehfo6nJn2UfoVsnjRlt5XYW+/V0qWHi1w70Ke1RpNuoyFDaMMlSQCPZtYdEw0gus+nySiLUp3JVZ1TdDl1NmlaaKey4njyW1Y/RVGprMtKRBQKleAwwycojdQGZAOTwtAyFJKEknLMfx+XOo55QqB/O8x9PfvnwgQN6VDR1JiyhXhM/QICxCyq9JfTqdeaEM6tg5iJ3FZx4jTQYQckRRE=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms040004060006080700010609"
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050001030904030700010801"
 MIME-Version: 1.0
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7658aa17-e4ca-4445-edb2-08d65c6fe8dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 18:15:04.3081
+X-MS-Exchange-CrossTenant-Network-Message-Id: 017e6b92-fd4d-47a8-efa5-08d65c707760
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 18:19:03.1620
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3021
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3279
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms040004060006080700010609
+--------------ms050001030904030700010801
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2018-12-07 03:49, Sean Christopherson wrote:
+On 2018-12-07 22:01, Dr. Greg wrote:
+> Baidu and Fortanix are working on Trusted RunTime Systems (TRTS) based
+> on RUST, I believe, so this will affect them to the extent that they
+> are implementing their own low level enclave runtime support or they
+> may be simply building on top of the low level Intel TRTS.  Perhaps
+> Jethro would comment on these issues if he could.
 
-=2E..
+As far as I know, Baidu merely provides Rust bindings to the Intel SDK.=20
+As far as our requirements, I've sent those in my previous email.
 
-> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.c b/arch/x86/entry/=
-vdso/vsgx_enter_enclave.c
-> new file mode 100644
-> index 000000000000..896c2eb079bb
-> --- /dev/null
-> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.c
+> I'm assuming that in the proposed model the URTS would interrogate the
+> VDSO to determine the availability of entry and exception handling
+> support and then setup the appropriate infrastructure and exit
+> handler?  VDSO's are typically the domain of the system library.
+> Given the nature of SGX I couldn't even conceive of Glibc offering
+> support and, if it was acceptable to provide support, the potential
+> timeframe that would be involved in seeing deployment in the field.
+>=20
+> As a result, do you anticipate the need for a 'flag day' with respect
+> to URTS/PSW/SDK support for all of this?
 
-=2E..
+It is my understanding that the use of the vDSO enclave entry will be=20
+optional. i.e., if your application/library/enclave combination installs =
 
-> +enter_enclave:
-> +	asm volatile(
-> +		/*
-> +		 * When an event occurs in an enclave, hardware first exits the
-> +		 * enclave to the AEP, switching CPU context along the way, and
-> +		 * *then* delivers the event as usual.  As part of the context
-> +		 * switching, registers are loaded with synthetic state (except
-> +		 * BP and SP, which are saved/restored).  The defined synthetic
-> +		 * state loads registers so that simply executing ENCLU will do
-> +		 * ERESUME, e.g. RAX=3D4, RBX=3DTCS and RCX=3DAEP after an AEE.  So,=
-
-> +		 * we only need to load RAX, RBX and RCX for the initial entry.
-> +		 * The AEP can point at that same ENCLU, fixup will jump us out
-> +		 * if an exception was unhandled.
-> +		 */
-> +		"	lea	1f(%%rip), %%rcx\n"
-> +		"1:	enclu\n"
-> +		"2:\n"
-> +
-> +		".pushsection .fixup, \"ax\" \n"
-> +		"3:	jmp 2b\n"
-> +		".popsection\n"
-> +		_ASM_VDSO_EXTABLE_HANDLE(1b, 3b)
-> +
-> +		: "=3Da"(leaf), "=3DD" (rdi), "=3DS" (rsi), "=3Dd" (rdx)
-> +		: "a" (leaf), "b" (tcs), "D" (priv)
-> +		: "cc", "memory",
-> +		  "rcx", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"
-> +	);
-
-This is not sufficient to support the Fortanix SGX ABI calling=20
-convention, which was designed to be mostly compatible with the SysV=20
-64-bit calling convention. The following registers need to be passed in=20
-to an enclave from userspace: RDI, RSI, RDX, R8, R9, R10. The following=20
-registers need to be passed out from an enclave to userspace: RDI, RSI,=20
-RDX, R8, R9.
-
-You can find the ABI specification at=20
-https://github.com/fortanix/rust-sgx/blob/master/doc/FORTANIX-SGX-ABI.md#=
-enclave-calling-convention
+a signal handler and calls ENCLU directly, that would still work. Of=20
+course, using the vDSO will be very strongly recommended.
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms040004060006080700010609
+--------------ms050001030904030700010801
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -231,8 +204,8 @@ rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
 TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
 x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTIwNzE4MTQzOVowLwYJKoZIhvcNAQkEMSIEIEjfB8ol
-IDlZbKuZ6N0ABy4yh6i3nYwwgBn+IvaaQpqMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTIwNzE4MTg0OVowLwYJKoZIhvcNAQkEMSIEIGqmSq8L
+kzAHpywIRdgFG7oJkKHJF1n6YTVK2TT8kfijMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
@@ -242,10 +215,10 @@ XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
 R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
 Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
 YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQCcqRhBWXYm6CiX73eEE5SGZjYBWBOoF+nDgo2EN2xUaHZmDH6qMnnUewkA6Y/unQ6DtgsR
-WuQ7kZcoROyIxgDJIZvJ07Vk0Al9yOCbfWKClISaejbIDknyQsfo8aX3Bb4m4aHgwrm863Tj
-3GvdcKpB9K+JIMVEZtS9rOCRts70548ravgXCT07h12sDDBYTzWDmeUNqxkZQQZm/1HScpFz
-LtvJ4HKOq9hkR21WY6h6Ahks83jTJRGhDmMnisYPQdvQR1ZOHWsa1PtGiJM8tTg+Xyial61A
-bqwLZC7hWlkTkX1nhiu224BVoT3uWO14KJ5BDbDTWe+GFpOCm0NdWjkOAAAAAAAA
+AQAjVfpi5AlmZpy5csAEvxy9WaqfDsBeMPqdAMf5pCHm9A0D9++OFAKdh7XJLwyNSAQKyRFx
+UdLzO6tFShDQ3BqZ9l0kGrP5zj4edv9uXh/+W//J+mKW69mbcJPSau6tLauZ/8aQBL7W1sbq
+oHUWEpH7F52mMWdzYRhcBPina5gflRbJ+V+jg3WMTByhwGHB3WOzMl75fqdK7R7/YRBH5wJM
+Hb03UKHFoOIqBSzSbDjQMrPgM1SwWJQBPQUHsHXXQKGBu5KE3tKLJqNzxDTEc/A5qXoQ6UEh
+enIIBOPXaOL4xehzu17sWA7b0a2Zr9jq2iXZRvtqc8dgAeEqt/X+GqyKAAAAAAAA
 
---------------ms040004060006080700010609--
+--------------ms050001030904030700010801--
