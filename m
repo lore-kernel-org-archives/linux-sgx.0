@@ -2,121 +2,107 @@ Return-Path: <SRS0=sJTe=OQ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B42C07E85
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210C5C07E85
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C112082D
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C112082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D42E02082D
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Dec 2018 18:50:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="YwRORVwq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42E02082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726041AbeLGSoN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:44:13 -0500
-Received: from mga06.intel.com ([134.134.136.31]:37895 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbeLGSoM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:44:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 10:44:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
-   d="scan'208";a="257695758"
-Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
-  by orsmga004.jf.intel.com with ESMTP; 07 Dec 2018 10:44:11 -0800
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-To:     Jethro Beekman <jethro@fortanix.com>,
+        id S1726053AbeLGSuM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 7 Dec 2018 13:50:12 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44029 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbeLGSuM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 7 Dec 2018 13:50:12 -0500
+Received: by mail-pg1-f193.google.com with SMTP id v28so2086461pgk.10
+        for <linux-sgx@vger.kernel.org>; Fri, 07 Dec 2018 10:50:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Nnht3jCBryS9HUgUX34dDS3skyULy3W1Q28HHDlxc9U=;
+        b=YwRORVwqg21IflGLnDmUsqeyjek2uDpYvvFaC0BXK7DnX3L5aAzZ32Q1ruynaSEVRb
+         /9BKIVNGl59ZN/Sx8137RpijJM8uI9WX+OlUMW0KFTCmsjE7VcA0eLsSFcN0WAcweJ70
+         rCLYyfCa6Qo5uDrxRoMN1CtqaF3iEIHlErubjDIRYJRQQjgg+P4lNR9gAGlP7EWXNGFn
+         Is7a/+6zDKV/dfeLzh6a2rxOHvXNaz1jdC8j/cob1/oRyJu0J9r/s/1y9iXaJtKl2wkL
+         mjS8qjwL2N+9CtsDFJsnPzX8DB5AelpD76K08eIq+krW6FxkWiBumHsZpXlWR8m7FCgh
+         5uqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Nnht3jCBryS9HUgUX34dDS3skyULy3W1Q28HHDlxc9U=;
+        b=faDhbElS6eeg0j4sae/TpBuSbOSvO2qLMAioLbjNjxbkyuxEQ7I8fO6KJr+whUqh6m
+         Ipvxm27ibOuQ0l6vFyEVkHQTnv7l2SEoE17NcYQVvhMHj2n8/faWBdzgERRlJR+PNdUA
+         AknArtY9ZIFXnqJR5quAge/wVprWSdcI0fB5qn6494M6udJJ4vC/CqivCRVkE4Su5wDR
+         cjp3QDyrUDsuAZfPJniK5Fcb/EO/ukTXJqLoqC1F8YOy8TD801dl51RRP6XfxXIitIay
+         6lB2zixjF2Du6fa43hIepQEHrqMtHtHZwOdfSZ8KEk6o/7mmDKS+oQYtTy/CEJ6sp5Eh
+         3fgQ==
+X-Gm-Message-State: AA+aEWZzj4pfGwtqzKLQeGzTTWLzxH2Z9ziS43dnHPKhSy+SrQmK0zNE
+        5D5qiufDDM2fLQcuIxrRtNmbeQ==
+X-Google-Smtp-Source: AFSGD/X0krLt2ZrsMojk9HTEGTIE9UI961YmlMXczbjDw2yiHonHskLVftOu3PWdf7AU4GdmYPYolw==
+X-Received: by 2002:a62:5182:: with SMTP id f124mr3377934pfb.238.1544208611377;
+        Fri, 07 Dec 2018 10:50:11 -0800 (PST)
+Received: from ?IPv6:2600:1010:b02e:9276:b497:ca3d:93db:f61e? ([2600:1010:b02e:9276:b497:ca3d:93db:f61e])
+        by smtp.gmail.com with ESMTPSA id z127sm5835307pfb.80.2018.12.07.10.50.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 10:50:10 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
+Date:   Fri, 7 Dec 2018 10:50:08 -0800
+Cc:     Jethro Beekman <jethro@fortanix.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "x86@kernel.org" <x86@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "Dr. Greg" <greg@enjellic.com>
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
- <20181206221922.31012-5-sean.j.christopherson@intel.com>
- <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
-Date:   Fri, 7 Dec 2018 10:44:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <85EE19AF-C085-4E17-A673-44242996AF75@amacapital.net>
+References: <20181206221922.31012-1-sean.j.christopherson@intel.com> <20181206221922.31012-5-sean.j.christopherson@intel.com> <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com> <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/7/18 10:15 AM, Jethro Beekman wrote:
-> This is not sufficient to support the Fortanix SGX ABI calling
-> convention, which was designed to be mostly compatible with the SysV
-> 64-bit calling convention. The following registers need to be passed in
-> to an enclave from userspace: RDI, RSI, RDX, R8, R9, R10. The following
-> registers need to be passed out from an enclave to userspace: RDI, RSI,
-> RDX, R8, R9.
 
-Are you asking nicely to change the new Linux ABI to be consistent with
-your existing ABI?  Or, are you saying that the new ABI *must* be
-compatible with this previous out-of-tree implementation?
+
+> On Dec 7, 2018, at 10:44 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+>=20
+>> On 12/7/18 10:15 AM, Jethro Beekman wrote:
+>> This is not sufficient to support the Fortanix SGX ABI calling
+>> convention, which was designed to be mostly compatible with the SysV
+>> 64-bit calling convention. The following registers need to be passed in
+>> to an enclave from userspace: RDI, RSI, RDX, R8, R9, R10. The following
+>> registers need to be passed out from an enclave to userspace: RDI, RSI,
+>> RDX, R8, R9.
+>=20
+> Are you asking nicely to change the new Linux ABI to be consistent with
+> your existing ABI?  Or, are you saying that the new ABI *must* be
+> compatible with this previous out-of-tree implementation?
+
+I think that allowing the enclave to return at least a few registers is quit=
+e reasonable, but I don=E2=80=99t have a strong opinion.=
