@@ -2,32 +2,32 @@ Return-Path: <SRS0=QEGF=OT=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FAFC04EB8
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Dec 2018 23:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AE3C67839
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Dec 2018 23:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B132081F
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Dec 2018 23:21:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B132081F
+	by mail.kernel.org (Postfix) with ESMTP id 6F8622081F
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Dec 2018 23:22:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F8622081F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbeLJXV6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:21:58 -0500
+        id S1729965AbeLJXWA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 Dec 2018 18:22:00 -0500
 Received: from mga04.intel.com ([192.55.52.120]:11277 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727852AbeLJXV6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:21:58 -0500
+        id S1727919AbeLJXV7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 10 Dec 2018 18:21:59 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 15:21:57 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,340,1539673200"; 
-   d="scan'208";a="117684766"
+   d="scan'208";a="117684769"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
   by orsmga001.jf.intel.com with ESMTP; 10 Dec 2018 15:21:57 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -44,10 +44,12 @@ Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-Date:   Mon, 10 Dec 2018 15:21:37 -0800
-Message-Id: <20181210232141.5425-1-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v3 1/4] x86/sgx: Add a per-mm ENCLU exception fixup handler
+Date:   Mon, 10 Dec 2018 15:21:38 -0800
+Message-Id: <20181210232141.5425-2-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181210232141.5425-1-sean.j.christopherson@intel.com>
+References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -55,80 +57,125 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This is effectively v3 of the "x86: Add vDSO exception fixup for SGX"
-series, but as you might of noticed, there are no vDSO changes here.
+Intel Software Guard Extensions (SGX) introduces a new CPL3-only
+"enclave" mode that runs as a sort of black box shared object that is
+hosted by an untrusted "normal" CPl3 process.
 
-Andy's comment on Spectre/retpoline[1] and Jethro's comment on making
-the vDSO as barebones as possible[2] got me wondering if we could let
-userspace dynamically set the "return" target of the SGX vDSO function,
-taking advantage of the fact that most (all?) SGX processes will have a
-single entry point for all enclaves.
+Entering an enclave can only be done through SGX-specific instructions,
+EENTER and ERESUME, and is a non-trivial process.  Because of the
+complexity of transitioning to/from an enclave, the vast majority of
+enclaves are expected to utilize a library to handle the actual
+transitions.  This is roughly analogous to how e.g. a libc and dynamic
+linker are used by most applications.
 
-The initial idea was to make __vdso_sgx_enter_enclave() a barebones
-"function" consisting of ENCLU and UD2.  SGX would provide an IOCTL via
-/dev/sgx that could be used to patch the UD2 in the current vDSO image
-to a JMP rel32, with rel32 pointing at an address provided by the
-user.  Aside from the issues of rel32 in a 64-bit memory space,
-patching the vDSO image added a lot of overhead just so that the kernel
-could know the address of ENCLU.
+Another crucial characteristic of SGX enclaves is that they can generate
+exceptions as part of their normal (at least as "normal" as SGX can be)
+operation that need to be handled *in* the enclave and/or are unique
+to SGX.
 
-At that point I realized it's a hell of a lot easier to simply provide
-an IOCTL via /dev/sgx that allows userspace to register a per-process
-ENCLU exception handler.  At a high level, the basic idea is the same
-as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
-attempt to fixup select unhandled exceptions that occurred in user code.
+And because they are essentially fancy shared objects, a process can
+host any number of enclaves, each of which can execute multiple threads
+simultaneously.
 
-Pros:
-  - No vDSO function.
-  - Minimal userspace changes.
-  - Smaller ABI, i.e. less bikeshedding (fingers crossed).
-  - Kernel doesn't prevent userspace from doing stupid things, e.g.
-    modifying the process' stack from within the enclave.
-  - Kernel can proactively enforce the ENCLU handler as the only
-    officialy supported ABI for enclave exception handling.
+Putting everything together, userspace enclaves will utilize a library
+that must be prepared to handle any and (almost) all exceptions any time
+at least one thread may be executing in an enclave.  Leveraging signals
+to handle the enclave exceptions is unpleasant, to put it mildly, e.g.
+the SGX library must constantly (un)register its signal handler based
+on whether or not at least one thread is executing in an enclave, and
+filter and forward exceptions that aren't related to its enclaves.  This
+becomes particularly nasty when using multiple levels of libraries that
+register signal handlers, e.g. running an enclave via cgo inside of the
+Go runtime.
 
-Cons:
-  - Userspace can only register a single ENCLU handler per process.
-  - ABI is more esoteric than a standard function call.
+Add per-mm, i.e. per-process, exception fixup on ENCLU to so that the
+kernel can redirect unhandled exceptions, i.e. exceptions would otherwise
+generate a signal, to a user-provided exception handler.  The exception
+handler ABI roughly follows the System V 64-bit ABI for function calls:
 
+  - %rdi: trap number
+  - %rsi: error code
+  - %rdx: address
 
-This series is based on Jarkko's current master branch, which moves all
-of the SGX code into arch/x86.  The full code can be found here:
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/include/asm/mmu.h     |  4 ++++
+ arch/x86/include/asm/sgx.h     | 13 +++++++++++++
+ arch/x86/kernel/cpu/sgx/main.c | 18 ++++++++++++++++++
+ 3 files changed, 35 insertions(+)
 
-https://github.com/sean-jc/linux/tree/2538adcece15447b988d93bf677af48073c7d219
-
-I have not actually tested this *exact* commit beyond compiling as I do
-not know the health status of Jarkko's code.  To test, I cherry-picked
-the patches into an older stable version of the code.  Git was able to
-handle the file renaming.
-
-v1: https://lkml.kernel.org/r/20181205232012.28920-1-sean.j.christopherson@intel.com
-v2: https://lkml.kernel.org/r/20181206221922.31012-1-sean.j.christopherson@intel.com
-v3:
-  - Replace the vDSO fixup with SGX specific fixup.
-  - Patches 2/4 and 3/4 are essentially identical, the only difference
-    being the name of the function that is called.  The changelogs for
-    these patches still need a lot of attention.
-
-[1] https://lkml.kernel.org/r/CALCETrVBR+2HjTqX=W4r9GOq69Xg36v4gmCKqK0wUjzAqBJnrw@mail.gmail.com
-[2] https://lkml.kernel.org/r/f595c046-682c-0d4a-ce68-44d4634cedf2@fortanix.com
-
-Sean Christopherson (4):
-  x86/sgx: Add a per-mm ENCLU exception fixup handler
-  x86/fault: Attempt to fixup unhandled #PF on ENCLU before signaling
-  x86/traps: Attempt to fixup exceptions in vDSO before signaling
-  x86/sgx: Add an SGX IOCTL to register a per-mm ENCLU exception handler
-
- arch/x86/include/asm/mmu.h             |  4 ++++
- arch/x86/include/asm/sgx.h             | 13 +++++++++++++
- arch/x86/include/uapi/asm/sgx.h        | 23 ++++++++++++++++++-----
- arch/x86/kernel/cpu/sgx/driver/encl.c  |  6 ++++++
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 20 ++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/main.c         | 18 ++++++++++++++++++
- arch/x86/kernel/traps.c                | 15 +++++++++++++++
- arch/x86/mm/fault.c                    |  7 +++++++
- 8 files changed, 101 insertions(+), 5 deletions(-)
-
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index 5ff3e8af2c20..1665c84e5844 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -54,6 +54,10 @@ typedef struct {
+ 	/* address of the bounds directory */
+ 	void __user *bd_addr;
+ #endif
++#ifdef CONFIG_INTEL_SGX_CORE
++	unsigned long enclu_address;
++	unsigned long enclu_exception_handler;
++#endif
+ } mm_context_t;
+ 
+ #define INIT_MM_CONTEXT(mm)						\
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index d4f61d1c5c2a..bbf808a0ca91 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -309,6 +309,19 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
+ 	return __encls_ret_2(SGX_EMODT, secinfo, addr);
+ }
+ 
++#ifdef CONFIG_INTEL_SGX_CORE
++extern bool fixup_sgx_enclu_exception(struct pt_regs *regs, int trapnr,
++				      unsigned long error_code,
++				      unsigned long fault_addr);
++#else
++static inline bool fixup_sgx_enclu_exception(struct pt_regs *regs, int trapnr,
++					     unsigned long error_code,
++					     unsigned long fault_addr)
++{
++	return false;
++}
++#endif
++
+ struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim);
+ int __sgx_free_page(struct sgx_epc_page *page);
+ void sgx_free_page(struct sgx_epc_page *page);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 30fd69f1fc07..1994e003581d 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -363,6 +363,24 @@ void sgx_page_reclaimable(struct sgx_epc_page *page)
+ }
+ EXPORT_SYMBOL_GPL(sgx_page_reclaimable);
+ 
++bool fixup_sgx_enclu_exception(struct pt_regs *regs, int trapnr,
++			       unsigned long error_code,
++			       unsigned long fault_addr)
++{
++	if (current->mm->context.enclu_address != regs->ip)
++		return false;
++
++	if (!current->mm->context.enclu_address &&
++	    !current->mm->context.enclu_exception_handler)
++		return false;
++
++	regs->ip = current->mm->context.enclu_exception_handler;
++	regs->di = trapnr;
++	regs->si = error_code;
++	regs->dx = fault_addr;
++	return true;
++}
++
+ static __init void sgx_free_epc_section(struct sgx_epc_section *section)
+ {
+ 	struct sgx_epc_page *page;
 -- 
 2.19.2
 
