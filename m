@@ -2,275 +2,111 @@ Return-Path: <SRS0=odJq=OX=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 246B4C67839
-	for <linux-sgx@archiver.kernel.org>; Fri, 14 Dec 2018 09:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0548C43387
+	for <linux-sgx@archiver.kernel.org>; Fri, 14 Dec 2018 15:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B730C20879
-	for <linux-sgx@archiver.kernel.org>; Fri, 14 Dec 2018 09:55:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="PvMVKLY4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B730C20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-sgx-owner@vger.kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 74A182070B
+	for <linux-sgx@archiver.kernel.org>; Fri, 14 Dec 2018 15:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbeLNJzy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:55:54 -0500
-Received: from mail-eopbgr820125.outbound.protection.outlook.com ([40.107.82.125]:28640
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728612AbeLNJzy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:55:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J7OScccAHzxVtJJeX/OOJScq953Y7fcsOoPlaZRE7xw=;
- b=PvMVKLY4cp7yLxIkeVsn2qrNAWwDw8vAwmIgpye7cA8lzbq7X3xv6NqqmyHaWHinXJxPFjfdRWZ9AO90s6tEeRY0NMV93/EvhtfBEZvJbLMDD4Vf2mkRn96B63XgtyE8x5WU6RRwvOfqK6XIF2lcfivmXKZgMH+wTN3Mys51lYo=
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB2607.namprd11.prod.outlook.com (52.135.91.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Fri, 14 Dec 2018 09:55:49 +0000
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::916c:7b87:64a8:d58c]) by SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::916c:7b87:64a8:d58c%3]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
- 09:55:49 +0000
-From:   Jethro Beekman <jethro@fortanix.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        id S1730252AbeLNPEi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 14 Dec 2018 10:04:38 -0500
+Received: from mga05.intel.com ([192.55.52.43]:10341 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729691AbeLNPEh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:04:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 07:04:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,353,1539673200"; 
+   d="scan'208";a="110400187"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga003.jf.intel.com with ESMTP; 14 Dec 2018 07:04:37 -0800
+Date:   Fri, 14 Dec 2018 07:04:37 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "x86@kernel.org" <x86@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "H. Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         Andy Lutomirski <luto@amacapital.net>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v4 5/5] x86/vdso: Add __vdso_sgx_enter_enclave() to
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Dr. Greg" <greg@enjellic.com>
+Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
  wrap SGX enclave transitions
-Thread-Topic: [RFC PATCH v4 5/5] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-Thread-Index: AQHUkys/5WIKNGRxZ0KkTLwlMz9v7KV9//sA
-Date:   Fri, 14 Dec 2018 09:55:49 +0000
-Message-ID: <cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com>
-References: <20181213213135.12913-1-sean.j.christopherson@intel.com>
- <20181213213135.12913-6-sean.j.christopherson@intel.com>
-In-Reply-To: <20181213213135.12913-6-sean.j.christopherson@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR03CA0121.apcprd03.prod.outlook.com
- (2603:1096:4:91::25) To SN6PR11MB3167.namprd11.prod.outlook.com
- (2603:10b6:805:c4::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [14.143.179.162]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR11MB2607;6:RUQaxizz5uO3GkaZ855S+OJ4y2K70aE/ubqYCQ6B2ssvwkiigwNCRZW2rDldc7geE2Z9CsfH1+TM0zI0LO8GwcvO2YSlMzI82tzlfUk50uYifXV+x5yQ+i5VV36H4R4KYPnvNG82yrmsf/HVdehCLHEuOQPl10hlkJV/XUJ7UHxS1jIu8+T2Z7oenPor1O+NdN/D+rPvY61wAesA1F+hp2T0C8eLR9z3nTm/8eejPdzEvWRANrPJxBqHLlWvHcWXJc/Tsmfwp0GvcBunLBES7Ap4N7RFGus/rnwrj7kTaitxC6+/o2JWrvxidaFzfMmH/8+hkQGl8dRYVJ/toCMxhBsbV44D7/fDwoC3b3ZZFVWzGhVFmUSMjNnrFcrvdfLro03nSuLKjc7w6Z+q+yMMZeMCZ9SIznHJ25b92V9eEmWMnamz9qKuMY7Xxa5th0KppCRqk7g4G4Qk+eeHXTp0+w==;5:lg3pZ/EuZIIF2Muim/GHmwutL2WSHV/tBYdOn0rCAfWkVHLBiTmEuzZLWgPmuNrW4qcFo1VlaXO4+6j2Dt8FmpDwcDSc/DexcqAVcJXcIksEUX7SIA781VXMn4dxXrQgzZieXyQPK8VS9ZS9iDaQdCP7L9GrhR9t21TCggNlSbo=;7:hdV+BCMxhrhuMdf2aQrbBEmMHGr6SqT80qJR9q3vSxupzLY4XgnIBnhPtVdHLBgnoeRT1KE54+G2k6dfTepq3hqBIUCPuF4VvK4gGEOq/6/jcwv4kSZ4FM/pd119DVug5hS9lx05sVt9hsUoylKvEg==
-x-ms-office365-filtering-correlation-id: 01da89de-3a8a-48a9-1007-08d661aa5381
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(7168020)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB2607;
-x-ms-traffictypediagnostic: SN6PR11MB2607:
-x-microsoft-antispam-prvs: <SN6PR11MB2607F7EEBC256BECF5DB6231AAA10@SN6PR11MB2607.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(102415395)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(4983020)(52105112)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB2607;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB2607;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39830400003)(366004)(346002)(136003)(189003)(199004)(97736004)(2501003)(14454004)(486006)(508600001)(7736002)(2616005)(6506007)(446003)(102836004)(53546011)(476003)(4001150100001)(2906002)(78486014)(26005)(71200400001)(186003)(71190400001)(55236004)(52116002)(386003)(11346002)(217873002)(76176011)(6116002)(99286004)(3846002)(305945005)(8676002)(8936002)(81166006)(81156014)(86362001)(25786009)(110136005)(54906003)(316002)(105586002)(99936001)(36756003)(31696002)(66066001)(31686004)(6246003)(229853002)(106356001)(5660300001)(7416002)(6512007)(256004)(6436002)(6486002)(53936002)(4326008)(68736007)(357404004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2607;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tMclCtOKJUZXJyGyWVmEIjaM6N7rZJ5XiRcAfRWvsOWA4ptFy/YBjtsJdjlUfz+Yvd18sZhdBI65bhVNp9iqTWBkOQYhZDN1sK4KtLdBbQn4Bl7z93GA8rGSJ1PKmQ04MpMCIpPSlybn1PuMGIt2NTa2bkvUeYXfeNF5vjV0qtXBh91zBGiyz/6IlGHgko5AptU5ieBtB19xfYuQb2cfC+cuzW+/Kc9O0Za+nF8MJfcz9xFSWwld73Y8vsAWJbqMJf3FGlYEtKQCoGJzNgeEETndE6gMJDms+rdmb56ZBwHTfBSRUzxW78heWLDM7anp
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060400010902070606040008"
+Message-ID: <20181214150436.GA23255@linux.intel.com>
+References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
+ <20181206221922.31012-5-sean.j.christopherson@intel.com>
+ <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com>
+ <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
+ <f595c046-682c-0d4a-ce68-44d4634cedf2@fortanix.com>
 MIME-Version: 1.0
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01da89de-3a8a-48a9-1007-08d661aa5381
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 09:55:49.5767
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2607
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f595c046-682c-0d4a-ce68-44d4634cedf2@fortanix.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms060400010902070606040008
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On Sat, Dec 08, 2018 at 08:15:38AM +0000, Jethro Beekman wrote:
+> On 2018-12-08 00:14, Dave Hansen wrote:
+> >On 12/7/18 10:15 AM, Jethro Beekman wrote:
+> >>This is not sufficient to support the Fortanix SGX ABI calling
+> >>convention, which was designed to be mostly compatible with the SysV
+> >>64-bit calling convention. The following registers need to be passed in
+> >>to an enclave from userspace: RDI, RSI, RDX, R8, R9, R10. The following
+> >>registers need to be passed out from an enclave to userspace: RDI, RSI,
+> >>RDX, R8, R9.
+> >
+> >Are you asking nicely to change the new Linux ABI to be consistent with
+> >your existing ABI?  Or, are you saying that the new ABI *must* be
+> >compatible with this previous out-of-tree implementation?
+> 
+> What's being discussed here is one of the alternatives for SGX fault
+> handling, meant to improve the current status quo of having to use a signal
+> handler.
+> 
+> I'm merely providing a data point that the currently proposed solution is
+> not sufficient to support current use of the (ring 3) ENCLU instruction. You
+> might find this useful in determining whether proposed kernel features will
+> actually be used by users, and in further developing this solution or other
+> solutions to the fault handling issue.
+> 
+> If going with the vDSO solution, I think something with semantics closer to
+> the actual instruction would be preferred, like the following:
+> 
+> notrace __attribute__((naked)) long __vdso_sgx_enclu_with_aep()
+> {
+> 	asm volatile(
+> 		"	lea	2f(%%rip), %%rcx\n"
+> 		"1:	enclu\n"
+> 		"2:     ret\n"
+> 		".pushsection .fixup, \"ax\" \n"
+> 		"3:	jmp 2b\n"
+> 		".popsection\n"
+> 		_ASM_VDSO_EXTABLE_HANDLE(1b, 3b)
+> 		:::
+> 	);
+> }
 
-On 2018-12-14 03:01, Sean Christopherson wrote:
-> +struct sgx_enclave_regs {
-> +	__u64 rdi;
-> +	__u64 rsi;
-> +	__u64 rdx;
-> +	__u64 r8;
-> +	__u64 r9;
-> +	__u64 r10;
-> +};
-
-This is fine, but why not just cover all 13 normal registers that are=20
-not used by SGX?
-
-Minor comments below.
-
-> +/**
-> + * struct sgx_enclave_exception - structure to pass register in/out of=
- enclave
-
-Typo in struct name.
-
-> + *				  by way of __vdso_sgx_enter_enclave
-> + *
-> + * @rdi:	value of %rdi, loaded/saved on enter/exit
-> + * @rsi:	value of %rsi, loaded/saved on enter/exit
-> + * @rdx:	value of %rdx, loaded/saved on enter/exit
-> + * @r8:		value of %r8, loaded/saved on enter/exit
-> + * @r9:		value of %r9, loaded/saved on enter/exit
-> + * @r10:	value of %r10, loaded/saved on enter/exit
-> + */
-
-> +	/* load leaf, TCS and AEP for ENCLU */
-> +	mov	%edi,      %eax
-> +	mov	%rsi,      %rbx
-> +	lea	1f(%rip),  %rcx
-
-If you move this below the jump, you can use %rcx for @regs
-
-> +
-> +	/* optionally copy @regs to registers */
-> +	test	%rdx, %rdx
-> +	je	1f
-> +
-> +	mov	%rdx, %r11
-> +	mov	RDI(%r11), %rdi
-> +	mov	RSI(%r11), %rsi
-> +	mov	RDX(%r11), %rdx
-> +	mov	R8(%r11),  %r8
-> +	mov	R9(%r11),  %r9
-> +	mov	R10(%r11), %r10
-> +
-> +1:      enclu
-> +
-> +	/* ret =3D 0 */
-> +	xor	%eax, %eax
-> +
-> +	/* optionally copy registers to @regs */
-> +	mov	-0x8(%rsp), %r11
-> +	test	%r11, %r11
-> +	je	2f
-> +
-> +	mov	%rdi, RDI(%r11)
-> +	mov	%rsi, RSI(%r11)
-> +	mov	%rdx, RDX(%r11)
-> +	mov	%r8,  R8(%r11)
-> +	mov	%r9,  R9(%r11)
-> +	mov	%r10, R10(%r11)
-
-Here you can use %rax for @regs and clear it at the end.
-
-> +2:	pop	%rbx
-> +	pop	%r12
-> +	pop	%r13
-> +	pop	%r14
-> +	pop	%r15
-> +	pop	%rbp
-> +	ret
-
-x86-64 ABI requires that you call CLD here (enclave may set it).
-
---
-Jethro Beekman | Fortanix
-
-
---------------ms060400010902070606040008
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
-CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
-bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
-MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
-Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
-LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
-lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
-O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
-ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
-lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
-BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
-MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
-AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
-hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
-bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
-dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
-bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
-v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
-shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
-rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
-eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
-qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
-apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
-BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
-T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
-b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
-GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
-ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
-bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
-NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
-NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
-qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
-jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
-ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
-jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
-Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
-BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
-VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
-hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
-QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
-7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
-+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
-E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
-gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
-SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
-/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
-m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
-UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
-rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
-TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
-x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTIxNDA5NTUzNlowLwYJKoZIhvcNAQkEMSIEIDq5NEnH
-1zD06XiODRa/OVRSm3BV8vfKYwEFj0k2EAaDMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
-Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
-Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
-XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
-R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
-Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
-YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQA9/4SP27y4qIb1XoEGxWd2FsK2mifdqYySZhRgRLMYpU5UuculGdlSpn2b1lvZj26z6otO
-ZYAfCEeBFTojvVzbwdCrxh+0OeB1sRN364SJREKkteUC8R9s76ltq3LLXAE90jMs5TU/VRtY
-dRTDlE0Z5Pcb1EvRKt5wLHjpcTi8XIR1KExAUW5Cr49DGlnvyrB5ZPVhv50QNg6IF1EtnyeB
-ziMHxjajKyrlX1Btw+vkFcOTM7CSiILLG+b8cKboZf4+DC3J2CC+5vebkdtggvFR8Yu6Mk/v
-XKp5pLRrgN10gvPCxmfR/iegQyY/71qpAXLP1/mktyt7CG9q6wWOY3N6AAAAAAAA
-
---------------ms060400010902070606040008--
+Part of me likes this idea, but it's a documentation nightmare since
+it's a completely customer register ABI.  And the caller's exception
+handling gets a bit weird since RAX implicitly defines whether or not
+an exception occurred.  I also think there's value in making the vDSO
+function callable from standard C.
