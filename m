@@ -2,66 +2,33 @@ Return-Path: <SRS0=zBz/=O2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A0BC43387
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 20:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF3EC43387
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8410F21841
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 20:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545077432;
-	bh=ryMIVu4Zmu6P2F/2xwOzzWnMPWMEZsy0oZCxTdFnGgo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=YAYh9d2NTCwMpoRtbT+IzSOUatxntjD41PpQBDg1Nqi4ezVAeBIhiWyksOi4PZ8mh
-	 dnOyO43MqcXCO7UyzizoqVBYS5AZT4y3iV28hZeqXfDGxgMAFZdpeeNRnf0dsNtTgP
-	 R1nR+/WMsxlk+4E2YQTM6onHe7LJ9uqVSfRDgOdU=
+	by mail.kernel.org (Postfix) with ESMTP id AFA57206A2
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbeLQUKc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:10:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38654 "EHLO mail.kernel.org"
+        id S2388672AbeLQUPu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Dec 2018 15:15:50 -0500
+Received: from mga03.intel.com ([134.134.136.65]:43880 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727038AbeLQUKc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:10:32 -0500
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E3D5217D9
-        for <linux-sgx@vger.kernel.org>; Mon, 17 Dec 2018 20:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545077430;
-        bh=ryMIVu4Zmu6P2F/2xwOzzWnMPWMEZsy0oZCxTdFnGgo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Pul9NxsfSYWCzUMrJPWlDqkcu0iBR7zB/TIgLv1+syRoFZ6mgKwivHerywkSilv4L
-         607wdVEikd9ZSWcxZtwKIw8B3YjUkleQy9458hcshgZ6ZliLQ1els8dgiJLq8Ssom1
-         bz5QWcE1d6rNlVywyyY/ae9KL+fn9WCJcN/evzf8=
-Received: by mail-wr1-f41.google.com with SMTP id 96so13631197wrb.2
-        for <linux-sgx@vger.kernel.org>; Mon, 17 Dec 2018 12:10:30 -0800 (PST)
-X-Gm-Message-State: AA+aEWaIrCye4WSLdxDnhMgHGPqsIOeVfMqLJFmHN6pNGiwpqaXYLGig
-        zR6W/Lrt8xpdV+ATOmCZt086FmESc2TXuSLoeMBABA==
-X-Google-Smtp-Source: AFSGD/VM3edS6O8zz+RsOBb4JTUkevr2P5McfhitYh1Xo92EGS8IuoMZPSy3Ik31ENeUguBXU5lOAviZXYHYa7n6Az8=
-X-Received: by 2002:adf:e08c:: with SMTP id c12mr11214927wri.199.1545077428920;
- Mon, 17 Dec 2018 12:10:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com> <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com> <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com> <20181217194913.GD29785@linux.intel.com>
- <16fdd37a-b9cc-1045-1497-2cfff6af176a@intel.com> <CALCETrUhVDxMAtpyn5ahsTFwhJkzWxKa5Ur8q4FuVaKLmSyYHQ@mail.gmail.com>
- <826f6a5a-fdf6-e7e5-d2d8-bcdc57c016fe@intel.com>
-In-Reply-To: <826f6a5a-fdf6-e7e5-d2d8-bcdc57c016fe@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 17 Dec 2018 12:10:17 -0800
-X-Gmail-Original-Message-ID: <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
-Message-ID: <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
+        id S2388083AbeLQUPu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:15:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 12:15:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="304576636"
+Received: from dmandrea-mobl.amr.corp.intel.com (HELO [10.254.107.151]) ([10.254.107.151])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 12:15:47 -0800
 Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         X86 ML <x86@kernel.org>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
@@ -78,31 +45,104 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Andy Shevchenko <andy@infradead.org>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
+ <20181217194913.GD29785@linux.intel.com>
+ <16fdd37a-b9cc-1045-1497-2cfff6af176a@intel.com>
+ <CALCETrUhVDxMAtpyn5ahsTFwhJkzWxKa5Ur8q4FuVaKLmSyYHQ@mail.gmail.com>
+ <826f6a5a-fdf6-e7e5-d2d8-bcdc57c016fe@intel.com>
+ <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+Message-ID: <18800fdc-a2e1-39a3-9ee5-0065865ea052@intel.com>
+Date:   Mon, 17 Dec 2018 12:15:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 12:03 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 12/17/18 11:55 AM, Andy Lutomirski wrote:
-> >> You're effectively rebuilding reverse-mapping infrastructure here.  It's
-> >> a frequent thing for the core VM to need to go from 'struct page' back
-> >> to the page tables mapping it.  For that we go (logically)
-> >> page->{anon_vma,mapping}->vma->vm_mm->pagetable.
-> > This is a bit outside my expertise here, but doesn't
-> > unmap_mapping_range() do exactly what SGX wants?
->
-> There's no 'struct page' for enclave memory as it stands.  That means no
-> page cache, and that means there's no 'struct address_space *mapping' in
-> the first place.
->
-> Basically, the choice was made a long time ago to have SGX's memory
-> management live outside the core VM.  I've waffled back and forth on it,
-> but I do still think this is the right way to do it.
+On 12/17/18 12:10 PM, Andy Lutomirski wrote:
+>> There's no 'struct page' for enclave memory as it stands.  That means no
+>> page cache, and that means there's no 'struct address_space *mapping' in
+>> the first place.
+>>
+>> Basically, the choice was made a long time ago to have SGX's memory
+>> management live outside the core VM.  I've waffled back and forth on it,
+>> but I do still think this is the right way to do it.
+> AFAICS a lack of struct page isn't a problem.  The core code seems to
+> understand that address_space objects might cover non-struct-page
+> memory.  Morally, enclave memory is a lot like hot-unpluggable PCI
+> space.
 
-AFAICS a lack of struct page isn't a problem.  The core code seems to
-understand that address_space objects might cover non-struct-page
-memory.  Morally, enclave memory is a lot like hot-unpluggable PCI
-space.
+Yeah, this is true.  The existing code seems to make it all the way from
+unmap_mapping_range() down to zap_page_range() without 'struct page'.
+
+Overall, I think what Andy is saying here is that an open(/dev/sgx)
+should give you a "unique" enclave fd.  That fd can end up mapped into
+one or more processes either via fork() or the other ways fds end up
+getting handed around.  mmap() of this fd would be *required* to be
+MAP_SHARED.  That means you don't need to support COW, and the semantics
+are the same as any other MAP_SHARED mapping: children and parents and
+anybody mmap()'ing it must all coordinate.
+
+This sounds interesting at least.  It might lead to an unholy mess in
+the driver, or it might be a great cleanup.  But, it does sound like
+something that would both potentially simplify the semantics and the
+implementation.
