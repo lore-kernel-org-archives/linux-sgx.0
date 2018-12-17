@@ -3,34 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5B1C43387
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 18:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2369C43387
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 18:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC24E20874
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 18:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8036420675
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 18:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbeLQSJ6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:09:58 -0500
-Received: from mga12.intel.com ([192.55.52.136]:39979 "EHLO mga12.intel.com"
+        id S2388800AbeLQSX2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Dec 2018 13:23:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18278 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbeLQSJ6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:09:58 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726887AbeLQSX2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:23:28 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:09:57 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:23:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="102212968"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga008.jf.intel.com with ESMTP; 17 Dec 2018 10:09:57 -0800
-Date:   Mon, 17 Dec 2018 10:09:57 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+   d="scan'208";a="110156293"
+Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Dec 2018 10:23:20 -0800
+Date:   Mon, 17 Dec 2018 20:23:19 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     "Dr. Greg" <greg@enjellic.com>,
         Andy Lutomirski <luto@amacapital.net>,
         Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
@@ -49,9 +48,8 @@ Cc:     "Dr. Greg" <greg@enjellic.com>,
         Andy Shevchenko <andy@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
 Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181217180957.GC12491@linux.intel.com>
-References: <20181128192228.GC9023@linux.intel.com>
- <20181210104908.GA23132@wind.enjellic.com>
+Message-ID: <20181217182319.GA13288@linux.intel.com>
+References: <20181210104908.GA23132@wind.enjellic.com>
  <20181212180036.GC6333@linux.intel.com>
  <20181214235917.GA14049@wind.enjellic.com>
  <20181215000627.GA5799@linux.intel.com>
@@ -60,53 +58,32 @@ References: <20181128192228.GC9023@linux.intel.com>
  <20181217140811.GA4601@linux.intel.com>
  <20181217173106.GB12491@linux.intel.com>
  <20181217174935.GA12617@linux.intel.com>
+ <20181217180957.GC12491@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217174935.GA12617@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181217180957.GC12491@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 07:49:35PM +0200, Jarkko Sakkinen wrote:
-> On Mon, Dec 17, 2018 at 09:31:06AM -0800, Sean Christopherson wrote:
-> > This doesn't work as-is.  sgx_encl_release() needs to use sgx_free_page()
-> > and not __sgx_free_page() so that we get a WARN() if the page can't be
-> > freed.  sgx_invalidate() needs to use __sgx_free_page() as freeing a page
-> > can fail due to running concurrently with reclaim.  I'll play around with
-> > the code a bit, there's probably a fairly clean way to share code between
-> > the two flows.
-> 
-> Hmm... but why issue a warning in that case? It should be legit
-> behaviour.
+On Mon, Dec 17, 2018 at 10:09:57AM -0800, Sean Christopherson wrote:
+> No, EREMOVE should never fail if the enclave is being released, i.e. all
+> references to the enclave are gone.  And failure during sgx_encl_release()
+> means we leaked an EPC page, which warrants a WARN.
 
-No, EREMOVE should never fail if the enclave is being released, i.e. all
-references to the enclave are gone.  And failure during sgx_encl_release()
-means we leaked an EPC page, which warrants a WARN.
+Right that what I was suspecting as swapper should hold a ref to the
+enclave while it is working on it. It is a programming error when this
+happens.
 
-The only legitimate reason __sgx_free_page() can fail in sgx_invalidate()
-is because a page might be in the process of being reclaimed.  We could
-theoretically WARN on EREMOVE failure in that case, but it'd make the code
-a little fragile and it's not "fatal" in the sense that we get a second
-chance to free the page during sgx_encl_release().
+Maybe change the boolean parameter to flags parameter have a flag to
+use sgx_free_page()?
 
-And unless I missed something, using sgx_invalidate() means were' leaking
-all sgx_encl_page structs as well as the radix tree entries.
- 
-> > sgx_encl_release_worker() calls do_unmap() without checking the validity
-> > of the page tables[1].  As is, the code doesn't even guarantee mm_struct
-> > itself is valid.
-> > 
-> > The easiest fix I can think of is to add a SGX_ENCL_MM_RELEASED flag
-> > that is set along with SGX_ENCL_DEAD in sgx_mmu_notifier_release(), and
-> > only call do_unmap() if SGX_ENCL_MM_RELEASED is false.  Note that this
-> > means we cant unregister the mmu_notifier until after do_unmap(), but
-> > that's true no matter what since we're relying on the mmu_notifier to
-> > hold a reference to mm_struct.  Patch attached.
-> 
-> OK, the fix change makes sense but I'm thinking that would it be a
-> better idea just to set mm NULL and check that instead?
+> That makes sense.
 
-That makes sense.
+What do you think of Dave's proposal?
+
+/Jarkko
