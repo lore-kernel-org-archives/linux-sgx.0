@@ -2,109 +2,90 @@ Return-Path: <SRS0=zBz/=O2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A54FC43387
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF6AC43387
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570B1217D9
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545074763;
-	bh=P1xUfZc9TtT1RfxBrBvA9rx94XTVxDT3E4hXNRMQ+Ww=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=YYJleyVBMYbcqvFLC1P48fDkZQ6lGY2WbOnQPt3ZY8fOfkIckFFjG0WBdBIpGr+Jn
-	 JnCWudqD230NTMmwWiEl0wuanXdAr1SyvnjFMBYoIFbzFk+aWA5Kveue8lRjYxLU5N
-	 vao7CimMPTrxpqea5XHNxT3lTieW90IwOQXIDfbk=
+	by mail.kernel.org (Postfix) with ESMTP id 991652084A
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbeLQT0D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:26:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40358 "EHLO mail.kernel.org"
+        id S1732923AbeLQTda (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Dec 2018 14:33:30 -0500
+Received: from mga17.intel.com ([192.55.52.151]:64316 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727950AbeLQT0C (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:26:02 -0500
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 897F021872
-        for <linux-sgx@vger.kernel.org>; Mon, 17 Dec 2018 19:26:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545074761;
-        bh=P1xUfZc9TtT1RfxBrBvA9rx94XTVxDT3E4hXNRMQ+Ww=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=R3vKen47e49zNvNIE6LIV/Em0Jg73gejw354bnv1q5v49gksqbjGmvHmKnhk/p6YT
-         vluaQUe0OdXbvSBNJjs5LIiCjZJYO5XZBJxfC7QtKInbjQMcmAToPtasP5zI3aT2lQ
-         TNBVnxTCLrT7p8I3i8h8Flsk9kEoEuiR5enzF3yc=
-Received: by mail-wr1-f52.google.com with SMTP id q18so13477018wrx.9
-        for <linux-sgx@vger.kernel.org>; Mon, 17 Dec 2018 11:26:01 -0800 (PST)
-X-Gm-Message-State: AA+aEWY6CChLeyHD+GjeF3g5xGFMo9Zaqg6cIsKvIiHpmEUHUZyiJ7Ub
-        aFUMiRXuwTKSDNa/j1tI7StVq3hXQ3j/4D8fbeDo4A==
-X-Google-Smtp-Source: AFSGD/Wnewd85cwyB96or4l73Ml+ao/C1SexCT5MgeKbKffx6x7+p6JCbFQtSaBoXNFwrrFbpW7A6OlebokEX/cidCM=
-X-Received: by 2002:a5d:550f:: with SMTP id b15mr12470572wrv.330.1545074759934;
- Mon, 17 Dec 2018 11:25:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com> <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com> <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com> <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
-In-Reply-To: <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 17 Dec 2018 11:25:47 -0800
-X-Gmail-Original-Message-ID: <CALCETrUCAvsaO71422gbaJtuZTbx8Y7pUm7yF3zQkktOvRedzw@mail.gmail.com>
-Message-ID: <CALCETrUCAvsaO71422gbaJtuZTbx8Y7pUm7yF3zQkktOvRedzw@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        id S1727116AbeLQTda (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:33:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:33:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="119570326"
+Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
+  by orsmga001.jf.intel.com with ESMTP; 17 Dec 2018 11:33:23 -0800
+Date:   Mon, 17 Dec 2018 21:33:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217193322.GA29785@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <20181217184858.GF12491@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217184858.GF12491@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:17 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 12/17/18 11:12 AM, Andy Lutomirski wrote:
-> > So I'm not saying that you shouldn't do it the way you are now, but I
-> > do think that the changelog or at least some emails should explain
-> > *why* the enclave needs to keep a pointer to the creating process's
-> > mm.  And, if you do keep the current model, it would be nice to
-> > understand what happens if you do something awful like mremap()ing an
-> > enclave, or calling madvise on it, or otherwise abusing the vma.  Or
-> > doing fork(), for that matter.
->
-> Yeah, the code is built to have one VMA and only one VMA per enclave.
-> You need to go over the origin of this restriction and what enforces this.
+On Mon, Dec 17, 2018 at 10:48:58AM -0800, Sean Christopherson wrote:
+> On Mon, Dec 17, 2018 at 08:43:33PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Dec 17, 2018 at 10:36:13AM -0800, Sean Christopherson wrote:
+> > > I'm pretty sure doing mmget() would result in circular dependencies and
+> > > a zombie enclave.  In the do_exit() case where a task is abruptly killed:
+> > >  
+> > >   - __mmput() is never called because the enclave holds a ref
+> > >   - sgx_encl_release() is never be called because its VMAs hold refs
+> > >   - sgx_vma_close() is never called because __mmput()->exit_mmap() is
+> > >     blocked and the process itself is dead, i.e. won't unmap anything.
+> > 
+> > Right, it does, you are absolutely right. Tried it and removed the
+> > commit already.
+> > 
+> > Well, what we came up from your suggestion i.e. setting mm to NULL
+> > and checking that is very subtle change and does not have any such
+> > circular dependencies. We'll go with that.
+> 
+> We can't set mm to NULL as we need it to unregister the notifier, and
+> I'm fairly certain attempting to unregister in the release callback
+> will deadlock.
 
-There is a sad historical reason that you may regret keeping this
-restriction.  There are plenty of pieces of code out there that think
-it's reasonable to spawn a subprocess by calling fork() and then
-execve().  (This is *not* a sensible thing to do.  One should use
-posix_spawn() or some CLONE_VM variant.  But even fairly recent
-posix_spawn() implementations will fork().  So the driver has to do
-*something* sensible on fork() or a bunch of things that use SGX
-unsuspectingly via, for example, PKCS #11, are going to be very sad.
-I suppose you could make enclaves just not show up in the fork()ed
-children, but then you have a different problem: creating an enclave
-and then doing daemon() won't work.
+Noticed that too. mmu_notifier_unregister() requires a valid mm.
 
-Yes, POSIX traditions are rather silly.
+/Jarkko
