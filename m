@@ -2,40 +2,71 @@ Return-Path: <SRS0=zBz/=O2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4734C43387
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BD5C43387
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA1921473
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D62D221783
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Dec 2018 19:12:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545073957;
+	bh=G9zX9KVe7E5PaZcyj8gw8Uifhsyto9qYhWoeYUwDfiM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=OAg4grvyHw35jF3xTl+xVqAWHOSwUSDSLc6g47Jl8Fi+YqHANooOB9Omo46nNWt6c
+	 bXx39ZjM1lHoVNAxBRLPopsgqMRlS5mIhBCS2DP0AUsHWFlMV7tKtQ25T2It3fVhc5
+	 JTkwx1F5EjwTGvJEXt21GVu2EWHW19yzhpSdhsOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeLQTJf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:09:35 -0500
-Received: from mga17.intel.com ([192.55.52.151]:62100 "EHLO mga17.intel.com"
+        id S2387567AbeLQTMh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Dec 2018 14:12:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727747AbeLQTJf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:09:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:09:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="304560498"
-Received: from dmandrea-mobl.amr.corp.intel.com (HELO [10.254.107.151]) ([10.254.107.151])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 11:09:32 -0800
+        id S2387451AbeLQTMh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:12:37 -0500
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E2812133F
+        for <linux-sgx@vger.kernel.org>; Mon, 17 Dec 2018 19:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545073955;
+        bh=G9zX9KVe7E5PaZcyj8gw8Uifhsyto9qYhWoeYUwDfiM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dAhL8Mr4gHkbig22LpMkQxUNn0jDzdA6yLtLjl0rkuIeFGj8N4OUGYgAfQKUecsGB
+         6a3Kiv1i6jhes8QEKcod71SgJY9BEfKVO9iiksFi37yNPy6wU3mdbII0nIY7cGwXbd
+         NH05CjshaTjm2BPgcgHVpGkSkl8369tTpC3ZvQ1E=
+Received: by mail-wm1-f46.google.com with SMTP id f81so332552wmd.4
+        for <linux-sgx@vger.kernel.org>; Mon, 17 Dec 2018 11:12:35 -0800 (PST)
+X-Gm-Message-State: AA+aEWZK7yEJC4XXg8sRdB4k4MndtWn0TTwbfs00KoLJTwB5JQQzyWs0
+        gPsoBDGS72hBPLygvkCWLv1GwTpRCLPLCLuYTIdFUQ==
+X-Google-Smtp-Source: AFSGD/U5g9xnLjCya9cpU+KP5hL75xgfRFi66+5/uUZ4zJBgrcdDJZBJzu/nDcgMO2uNQbS6HLS3EgvhhneFToADDPI=
+X-Received: by 2002:a1c:f112:: with SMTP id p18mr289692wmh.83.1545073954108;
+ Mon, 17 Dec 2018 11:12:34 -0800 (PST)
+MIME-Version: 1.0
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com> <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com> <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+In-Reply-To: <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 17 Dec 2018 11:12:21 -0800
+X-Gmail-Original-Message-ID: <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+Message-ID: <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
 Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
         linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
         Suresh Siddha <suresh.b.siddha@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -43,89 +74,74 @@ Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         Andy Shevchenko <andy@infradead.org>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <20181217184858.GF12491@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <cf377db5-c702-0a1d-42b3-4caeb14eb6fa@intel.com>
-Date:   Mon, 17 Dec 2018 11:09:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181217184858.GF12491@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/17/18 10:48 AM, Sean Christopherson wrote:
-> We can't set mm to NULL as we need it to unregister the notifier, and
-> I'm fairly certain attempting to unregister in the release callback
-> will deadlock.
+On Mon, Dec 17, 2018 at 10:47 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 12/17/18 10:43 AM, Jarkko Sakkinen wrote:
+> > On Mon, Dec 17, 2018 at 10:36:13AM -0800, Sean Christopherson wrote:
+> >> I'm pretty sure doing mmget() would result in circular dependencies and
+> >> a zombie enclave.  In the do_exit() case where a task is abruptly killed:
+> >>
+> >>   - __mmput() is never called because the enclave holds a ref
+> >>   - sgx_encl_release() is never be called because its VMAs hold refs
+> >>   - sgx_vma_close() is never called because __mmput()->exit_mmap() is
+> >>     blocked and the process itself is dead, i.e. won't unmap anything.
+> > Right, it does, you are absolutely right. Tried it and removed the
+> > commit already.
+> >
+> > Well, what we came up from your suggestion i.e. setting mm to NULL
+> > and checking that is very subtle change and does not have any such
+> > circular dependencies. We'll go with that.
+>
+> This all screams that you need to break out this code from the massive
+> "18" patch and get the mm interactions reviewed more thoroughly.
+>
+> Also, no matter what method you go with, you have a bunch of commenting
+> and changelogging to do here.
 
-Suggestion:
+I'm going to ask an obnoxious high-level question: why does an enclave
+even refer to a specific mm?
 
-It looks like you only expect one VMA per enclave.  Things go bonkers if
-this is not true.  So, instead of storing encl->mm, don't.  You can get
-the mm from vma->vm_mm and you could just store encl->vma instead.
+If I were designing this thing, and if I hadn't started trying to
+implement it, my first thought would be that an enclave tracks its
+linear address range, which is just a pair of numbers, and also keeps
+track of a whole bunch of physical EPC pages, data structures, etc.
+And that mmap() gets rejected unless the requested virtual address
+matches the linear address range that the enclave wants and, aside
+from that, just creates a VMA that keeps a reference to the enclave.
+(And, for convenience, I suppose that the first mmap() call done
+before any actual enclave setup happens could choose any address and
+then cause the enclave to lock itself to that address, although a
+regular anonymous PROT_NONE MAP_NORESERVE mapping would do just fine,
+too.)  And the driver would explicitly allow multiple different mms to
+have the same enclave mapped.  More importantly, a daemon could set up
+an enclave without necessarily mapping it at all and then SCM_RIGHTS
+the enclave over to the process that plans to run it.
 
-Doing that, you could even axe encl->base and encl->size, I think
-because you just get those from the VMA itself.
+Now I'm sure this has all kinds of problems, such as the ISA possibly
+making it rather obnoxious to add pages to the enclave without having
+it mapped.  But these operations could, in principle, be done by
+having the enclave own a private mm that's used just for setup.  While
+this would be vaguely annoying, Nadav's still-pending-but-nearly-done
+text_poke series adds all the infrastructure that's needed for the
+kernel to manage little private mms.  But some things get simpler --
+invalidating the enclave can presumably use the regular rmap APIs to
+zap all the PTEs in all VMAs pointing into the enclave.
 
-That makes the relationship clearer: 1 VMA per enclave.  We also
-implicitly understand that if you have a VMA, you implicitly have a ref
-to the mm *and* the VMA is immutable.
+So I'm not saying that you shouldn't do it the way you are now, but I
+do think that the changelog or at least some emails should explain
+*why* the enclave needs to keep a pointer to the creating process's
+mm.  And, if you do keep the current model, it would be nice to
+understand what happens if you do something awful like mremap()ing an
+enclave, or calling madvise on it, or otherwise abusing the vma.  Or
+doing fork(), for that matter.
 
-If there were ever a path where encl->vma wasn't immutable, we'd have a
-bug (or load of bugs) somewhere, right?
+I also find it suspicious that the various ioctl handlers
+systematically ignore their "filep" parameters and instead use
+find_vma() to find the relevant mm data structures.  That seems
+backwards.
