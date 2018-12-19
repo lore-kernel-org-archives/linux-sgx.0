@@ -6,51 +6,64 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC8DC43387
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Dec 2018 04:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B00C43387
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Dec 2018 04:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25DBC217D6
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Dec 2018 04:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F33621873
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Dec 2018 04:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbeLSEnw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Dec 2018 23:43:52 -0500
-Received: from mga12.intel.com ([192.55.52.136]:31200 "EHLO mga12.intel.com"
+        id S1727445AbeLSErj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Dec 2018 23:47:39 -0500
+Received: from mga12.intel.com ([192.55.52.136]:31446 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726993AbeLSEnw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 18 Dec 2018 23:43:52 -0500
+        id S1727356AbeLSErj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 18 Dec 2018 23:47:39 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 20:43:52 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 20:47:39 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,371,1539673200"; 
-   d="scan'208";a="108479202"
+   d="scan'208";a="127208466"
 Received: from cqinghon-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.218])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Dec 2018 20:43:47 -0800
-Date:   Wed, 19 Dec 2018 06:43:46 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 18 Dec 2018 20:47:33 -0800
+Date:   Wed, 19 Dec 2018 06:47:32 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
+        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
         Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v5 0/5] x86: Add vDSO exception fixup for SGX
-Message-ID: <20181219044346.GA14295@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <20181218041815.GA5097@linux.intel.com>
- <20181218150815.GB28326@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181219044732.GB14295@linux.intel.com>
+References: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <20181217222047.GG12491@linux.intel.com>
+ <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
+ <20181218154417.GC28326@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218150815.GB28326@linux.intel.com>
+In-Reply-To: <20181218154417.GC28326@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -58,29 +71,12 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 07:08:15AM -0800, Sean Christopherson wrote:
-> On Tue, Dec 18, 2018 at 06:18:15AM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Dec 14, 2018 at 01:57:24PM -0800, Sean Christopherson wrote:
-> > > __vdso_sgx_enter_enclave() gets another rewrite, this time to strip
-> > > it down to the bare minimum and explicitly break compliance with the
-> > > x86-64 ABI.  Feedback from v4 revealed that __vdso_sgx_enter_enclave()
-> > > would need to save (a lot) more than just the non-volatile GPRs to be
-> > > compliant with the x86-64 ABI, at which point breaking from the ABI
-> > > completely became much more palatable.
-> > > 
-> > > The non-standard ABI also solves the question of "which GPRs should be
-> > > marshalled to/from the enclave" by getting out of the way entirely and
-> > > letting userspace have free reign (except for RSP, which has a big ol'
-> > > DO NOT TOUCH sign on it).
-> > 
-> > Can you share a reference, or is this better documented in the
-> > accompanied patches?
-> 
-> Patch 5/5 has more details, and v4 of the series has a lot of background
-> info by way of discussion:
-> 
-> https://lkml.kernel.org/r/20181213213135.12913-1-sean.j.christopherson@intel.com
+On Tue, Dec 18, 2018 at 07:44:18AM -0800, Sean Christopherson wrote:
+> My fd/inode knowledge is lacking, to say the least.  Whatever works, so
+> long as we have a way to uniquely identify enclaves.
 
-Thanks Sean, I will. Have not had yet much time to look at this.
+I will simply trial and error :-) I think it should work since it does
+own an address space, but yeah, testing will tell. We can go also with
+anon inode if required.
 
 /Jarkko
