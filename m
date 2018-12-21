@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BBDC43387
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C340EC43387
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F6A32190A
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94DAE21927
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:12:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390848AbeLUXMb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 21 Dec 2018 18:12:31 -0500
-Received: from mga07.intel.com ([134.134.136.100]:34204 "EHLO mga07.intel.com"
+        id S2390880AbeLUXMm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 21 Dec 2018 18:12:42 -0500
+Received: from mga11.intel.com ([192.55.52.93]:21074 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731990AbeLUXMb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 21 Dec 2018 18:12:31 -0500
+        id S1731990AbeLUXMm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 21 Dec 2018 18:12:42 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 15:12:30 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 15:12:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="120338220"
+   d="scan'208";a="120338242"
 Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Dec 2018 15:12:23 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Dec 2018 15:12:32 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
@@ -35,10 +35,11 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         shay.katz-zamir@intel.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v18 03/25] x86/msr: Add IA32_FEATURE_CONTROL.SGX_ENABLE definition
-Date:   Sat, 22 Dec 2018 01:11:32 +0200
-Message-Id: <20181221231154.6120-4-jarkko.sakkinen@linux.intel.com>
+        luto@kernel.org, Kai Huang <kai.huang@linux.intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v18 04/25] x86/cpufeatures: Add Intel-defined SGX_LC feature bit
+Date:   Sat, 22 Dec 2018 01:11:33 +0200
+Message-Id: <20181221231154.6120-5-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221231154.6120-1-jarkko.sakkinen@linux.intel.com>
 References: <20181221231154.6120-1-jarkko.sakkinen@linux.intel.com>
@@ -49,32 +50,30 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Kai Huang <kai.huang@linux.intel.com>
 
-Add a new IA32_FEATURE_CONTROL bit, SGX_ENABLE, which must be set in
-order to execute SGX instructions, i.e. ENCL{S,U,V}.  The existence of
-the bit is enumerated by CPUID as X86_FEATURE_SGX.  Like all other
-flags in IA32_FEATURE_CONTROL, the MSR must be locked for SGX_ENABLE
-to take effect.
+X86_FEATURE_SGX_LC reflects whether or not the CPU supports SGX Launch
+Control, i.e. enumerates the existence of IA32_FEATURE_CONTROL's
+SGX_LE_WR bit and the IA32_SGXLEPUBKEYHASH MSRs.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/msr-index.h | 1 +
+ arch/x86/include/asm/cpufeatures.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 80f4a4f38c79..082890bff490 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -487,6 +487,7 @@
- #define FEATURE_CONTROL_LOCKED				(1<<0)
- #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
- #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
-+#define FEATURE_CONTROL_SGX_ENABLE			(1<<18)
- #define FEATURE_CONTROL_LMCE				(1<<20)
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 94d2b1cf8ee0..f55c7b596bd2 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -344,6 +344,7 @@
+ #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
+ #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
+ #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
++#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
  
- #define MSR_IA32_APICBASE		0x0000001b
+ /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
 -- 
 2.19.1
 
