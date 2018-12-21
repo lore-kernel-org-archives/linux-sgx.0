@@ -5,117 +5,104 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2CBC43387
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 13:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EFCC43387
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 16:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3166921917
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 13:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712672087F
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 16:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725848AbeLUNsh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 21 Dec 2018 08:48:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:31678 "EHLO mga17.intel.com"
+        id S1731562AbeLUQ20 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 21 Dec 2018 11:28:26 -0500
+Received: from mga06.intel.com ([134.134.136.31]:46234 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbeLUNsh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:48:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1731121AbeLUQ2Z (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 21 Dec 2018 11:28:25 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 05:48:37 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 08:28:25 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
-   d="scan'208";a="129753180"
-Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.231])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Dec 2018 05:48:31 -0800
-Date:   Fri, 21 Dec 2018 15:48:30 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>
+X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
+   d="scan'208";a="112425052"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga003.jf.intel.com with ESMTP; 21 Dec 2018 08:28:25 -0800
+Date:   Fri, 21 Dec 2018 08:28:25 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
 Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "x86@kernel.org" <x86@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
         Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
 Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181221134830.GA5799@linux.intel.com>
+Message-ID: <20181221162825.GB26865@linux.intel.com>
 References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
  <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
  <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219144343.GA31189@wind.enjellic.com>
- <20181220103400.GC26410@linux.intel.com>
- <20181220220638.GA25110@wind.enjellic.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181220220638.GA25110@wind.enjellic.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 04:06:38PM -0600, Dr. Greg wrote:
-> On Thu, Dec 20, 2018 at 12:34:00PM +0200, Jarkko Sakkinen wrote:
+On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
+> > On Dec 19, 2018, at 6:45 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> >
+> >> On Wed, Dec 19, 2018 at 09:36:16AM +0000, Jethro Beekman wrote:
 > 
-> Good afternoon to everyone.
+> > I agree with Jethro, passing the enclave_fd as a param is obnoxious.
+> > And it means the user needs to open /dev/sgx to do anything with an
+> > enclave fd, e.g. the enclave fd might be passed to a builder thread,
+> > it shouldn't also need the device fd.
+> >
+> > E.g.:
+> >
+> >    sgx_fd = open("/dev/sgx", O_RDWR);
+> >    BUG_ON(sgx_fd < 0);
+> >
+> >    enclave_fd = ioctl(sgx_fd, SGX_ENCLAVE_CREATE, &ecreate);
+> >    BUG_ON(enclave_fd < 0);
+> >
+> >    ret = ioctl(enclave_fd, SGX_ENCLAVE_ADD_PAGE, &eadd);
+> >    BUG_ON(ret);
+> >
+> >    ...
+> >
+> >    ret = ioctl(enclave_fd, SGX_ENCLAVE_INIT, &einit);
+> >    BUG_ON(ret);
+> >
+> >    ...
+> >
+> >    close(enclave_fd);
+> >    close(sgx_fd);
+> >
+> >
+> > Take a look at virt/kvm/kvm_main.c to see how KVM manages anon inodes
+> > and ioctls for VMs and vCPUs.
 > 
-> > On Wed, Dec 19, 2018 at 08:43:43AM -0600, Dr. Greg wrote:
-> > > I believe it is a silent response to the issues we were
-> > > prosecuting 4-5 weeks ago, regarding the requirement for an SGX
-> > > driver on an FLC hardware platform to have some semblance of
-> > > policy management to be relevant from a security/privacy
-> > > perspective.  It would have certainly been collegial to include a
-> > > reference to our discussions and concerns in the changelog.
-> > >
-> > > See 364f68f5a3c in Jarkko's next/master.
-> > >
-> > > The changeset addresses enclave access to the PROVISION key but is
-> > > still insufficient to deliver guarantees that are consistent with
-> > > the SGX security model.  In order to achieve that, policy
-> > > management needs to embrace the use of MRSIGNER values, which is
-> > > what our SFLC patchset uses.
-> > >
-> > > The noted changeset actually implements most of the 'kernel bloat'
-> > > that our SFLC patchset needs to bolt onto.
-> > >
-> > > As of yesterday afternoon next/master still won't initialize a
-> > > non-trivial enclave.  Since there now appears to be a wholesale
-> > > change in the driver architecture and UAPI we are sitting on the
-> > > sidelines waiting for an indication all of that has some hope of
-> > > working before we introduce our approach.
-> > >
-> > > Part of SFLC won't be popular but it is driven by clients who are
-> > > actually paying for SGX security engineering and architectures.
-> 
-> > How many of these people are actually posting here?
-> 
-> None that I know of.
-> 
-> The individuals I was referring to are CISO's and security risk
-> managers of multi-billion dollar corporations and/or 3-letter
-> entities.  It has been my own personal observation that they don't
-> have time to post to the Linux Kernel Mailing List.
-> 
-> The time they do spend on this technology seems to involve sitting in
-> meetings and making decisions on whether or not to authorize capital
-> expenditure budgets for Intel processors and chipsets, based on
-> whether or not an SGX security stack can definably implement the
-> security controls that are being imposed on their organizations by the
-> government and/or their liability carriers.
-> 
-> Such issues may be out of mainstream kernel concerns but hopefully not
-> conceptually elusive with respect to their implications.
+> Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> opening a new instance of /dev/sgx for each encalve?
 
-Well, the process is anyway what it is. I'm sending v18 and you are free
-to comment the code change associated with the provision.
+Directly associating /dev/sgx with an enclave means /dev/sgx can't be
+used to provide ioctl()'s for other SGX-related needs, e.g. to mmap()
+raw EPC and expose it a VM.  Proposed layout in the link below.  I'll
+also respond to Jarkko's question about exposing EPC through /dev/sgx
+instead of having KVM allocate it on behalf of the VM.
 
-/Jarkko
+https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
