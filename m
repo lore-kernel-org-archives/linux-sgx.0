@@ -2,31 +2,30 @@ Return-Path: <SRS0=Vmdy=O6=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF98C43387
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3095C43387
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6828D21927
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B538621927
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Dec 2018 23:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730898AbeLUXQp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 21 Dec 2018 18:16:45 -0500
-Received: from mga11.intel.com ([192.55.52.93]:21291 "EHLO mga11.intel.com"
+        id S1730803AbeLUXQq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 21 Dec 2018 18:16:46 -0500
+Received: from mga11.intel.com ([192.55.52.93]:20982 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730803AbeLUXQp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 21 Dec 2018 18:16:45 -0500
+        id S1725372AbeLUXQq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 21 Dec 2018 18:16:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 15:15:42 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 15:11:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="120338744"
+   d="scan'208";a="120338012"
 Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Dec 2018 15:15:35 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Dec 2018 15:11:35 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
@@ -36,12 +35,10 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v18 23/25] x86/sgx: SGX documentation
-Date:   Sat, 22 Dec 2018 01:11:52 +0200
-Message-Id: <20181221231154.6120-24-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v18 00/25] Intel SGX1 support
+Date:   Sat, 22 Dec 2018 01:11:09 +0200
+Message-Id: <20181221231134.6011-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181221231154.6120-1-jarkko.sakkinen@linux.intel.com>
-References: <20181221231154.6120-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
@@ -50,289 +47,389 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Documentation of the features of the Software Guard eXtensions (SGX),
-the basic design choices for the core and driver functionality and
-the UAPI.
+Intel(R) SGX is a set of CPU instructions that can be used by applications
+to set aside private regions of code and data. The code outside the enclave
+is disallowed to access the memory inside the enclave by the CPU access
+control.  In a way you can think that SGX provides inverted sandbox. It
+protects the application from a malicious host.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- Documentation/index.rst     |   1 +
- Documentation/x86/index.rst |  10 ++
- Documentation/x86/sgx.rst   | 234 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 245 insertions(+)
+There is a new hardware unit in the processor called Memory Encryption
+Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
+one or many MEE regions that can hold enclave data by configuring them with
+PRMRR registers.
+
+The MEE automatically encrypts the data leaving the processor package to
+the MEE regions. The data is encrypted using a random key whose life-time
+is exactly one power cycle.
+
+The current implementation requires that the firmware sets
+IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
+decide what enclaves it wants run. The implementation does not create
+any bottlenecks to support read-only MSRs later on.
+
+You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
+
+	cat /proc/cpuinfo  | grep sgx
+
+Backlog:
+* Revamp the driver to use file descriptor based API rather than VMA
+  based API. VMAs will only have a weak dependency to the enclaves.
+* vDSO wrapper for EENTER (not if this will land with this patch set
+  or as a separate item).
+
+v18:
+* Update the ioctl-number.txt.
+* Move the driver under arch/x86.
+* Add SGX features (SGX, SGX1, SGX2) to the disabled-features.h.
+* Rename the selftest as test_sgx (previously sgx-selftest).
+* In order to enable process accounting, swap EPC pages and PCMD's to a VMA
+  instead of shmem.
+* Allow only to initialize and run enclaves with a subset of
+  {DEBUG, MODE64BIT} set.
+* Add SGX_IOC_ENCLAVE_SET_ATTRIBUTE to allow an enclave to have privileged
+  attributes e.g. PROVISIONKEY.
+
+v17:
+* Add a simple selftest.
+* Fix a null pointer dereference to section->pages when its
+  allocation fails.
+* Add Sean's description of the exception handling to the documentation.
+
+v16:
+* Fixed SOB's in the commits that were a bit corrupted in v15.
+* Implemented exceptio handling properly to detect_sgx().
+* Use GENMASK() to define SGX_CPUID_SUB_LEAF_TYPE_MASK.
+* Updated the documentation to use rst definition lists.
+* Added the missing Documentation/x86/index.rst, which has a link to
+  intel_sgx.rst. Now the SGX and uapi documentation is properly generated
+  with 'make htmldocs'.
+* While enumerating EPC sections, if an undefined section is found, fail
+  the driver initialization instead of continuing the initialization.
+* Issue a warning if there are more than %SGX_MAX_EPC_SECTIONS.
+* Remove copyright notice from arch/x86/include/asm/sgx.h.
+* Migrated from ioremap_cache() to memremap().
+
+v15:
+* Split into more digestable size patches.
+* Lots of small fixes and clean ups.
+* Signal a "plain" SIGSEGV on an EPCM violation.
+
+v14:
+* Change the comment about X86_FEATURE_SGX_LC from “SGX launch
+  configuration” to “SGX launch control”.
+* Move the SGX-related CPU feature flags as part of the Linux defined
+  virtual leaf 8.
+* Add SGX_ prefix to the constants defining the ENCLS leaf functions.
+* Use GENMASK*() and BIT*() in sgx_arch.h instead of raw hex numbers.
+* Refine the long description for CONFIG_INTEL_SGX_CORE.
+* Do not use pr_*_ratelimited()  in the driver. The use of the rate limited
+  versions is legacy cruft from the prototyping phase.
+* Detect sleep with SGX_INVALID_EINIT_TOKEN instead of counting power
+  cycles.
+* Manually prefix with “sgx:” in the core SGX code instead of redefining
+  pr_fmt.
+* Report if IA32_SGXLEPUBKEYHASHx MSRs are not writable in the driver
+  instead of core because it is a driver requirement.
+* Change prompt to bool in the entry for CONFIG_INTEL_SGX_CORE because the
+  default is ‘n’.
+* Rename struct sgx_epc_bank as struct sgx_epc_section in order to match
+  the SDM.
+* Allocate struct sgx_epc_page instances one at a time.
+* Use “__iomem void *” pointers for the mapped EPC memory consistently.
+* Retry once on SGX_INVALID_TOKEN in sgx_einit() instead of counting power
+  cycles.
+* Call enclave swapping operations directly from the driver instead of
+  calling them .indirectly through struct sgx_epc_page_ops because indirect
+  calls are not required yet as the patch set does not contain the KVM
+  support.
+* Added special signal SEGV_SGXERR to notify about SGX EPCM violation
+  errors.
+
+v13:
+* Always use SGX_CPUID constant instead of a hardcoded value.
+* Simplified and documented the macros and functions for ENCLS leaves.
+* Enable sgx_free_page() to free active enclave pages on demand
+  in order to allow sgx_invalidate() to delete enclave pages.
+  It no longer performs EREMOVE if a page is in the process of
+  being reclaimed.
+* Use PM notifier per enclave so that we don't have to traverse
+  the global list of active EPC pages to find enclaves.
+* Removed unused SGX_LE_ROLLBACK constant from uapi/asm/sgx.h
+* Always use ioremap() to map EPC banks as we only support 64-bit kernel.
+* Invalidate IA32_SGXLEPUBKEYHASH cache used by sgx_einit() when going
+  to sleep.
+
+v12:
+* Split to more narrow scoped commits in order to ease the review process and
+  use co-developed-by tag for co-authors of commits instead of listing them in
+  the source files.
+* Removed cruft EXPORT_SYMBOL() declarations and converted to static variables.
+* Removed in-kernel LE i.e. this version of the SGX software stack only
+  supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
+* Refined documentation on launching enclaves, swapping and enclave
+  construction.
+* Refined sgx_arch.h to include alignment information for every struct that
+  requires it and removed structs that are not needed without an LE.
+* Got rid of SGX_CPUID.
+* SGX detection now prints log messages about firmware configuration issues.
+
+v11:
+* Polished ENCLS wrappers with refined exception handling.
+* ksgxswapd was not stopped (regression in v5) in
+  sgx_page_cache_teardown(), which causes a leaked kthread after driver
+  deinitialization.
+* Shutdown sgx_le_proxy when going to suspend because its EPC pages will be
+  invalidated when resuming, which will cause it not function properly
+  anymore.
+* Set EINITTOKEN.VALID to zero for a token that is passed when
+  SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
+  page.
+* Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
+  around the flags field, which causes a #GP. Only flags read is readable.
+* On read access memcpy() call inside sgx_vma_access() had src and dest
+  parameters in wrong order.
+* The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
+  to LE even if “KASAN_SANITIZE := false” was set in the makefile. 
+* Fixed a regression in the #PF handler. If a page has
+  SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail.
+  It did not, which caused weird races when trying to change other parts of
+  swapping code.
+* EPC management has been refactored to a flat LRU cache and moved to
+  arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
+  of them. It can now swap from multiple enclaves in the same round.
+* For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINVAL
+  when an enclave is already initialized or dead instead of zero.
+
+v10:
+* Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
+  of the driver.
+* Unset the reserved flag from an enclave page if EDBGRD/WR fails
+  (regression in v6).
+* Close the anon inode when LE is stopped (regression in v9).
+* Update the documentation with a more detailed description of SGX.
+
+v9:
+* Replaced kernel-LE IPC based on pipes with an anonymous inode.
+  The driver does not require anymore new exports.
+
+v8:
+* Check that public key MSRs match the LE public key hash in the
+  driver initialization when the MSRs are read-only.
+* Fix the race in VA slot allocation by checking the fullness
+  immediately after succeesful allocation.
+* Fix the race in hash mrsigner calculation between the launch
+  enclave and user enclaves by having a separate lock for hash
+  calculation.
+
+v7:
+* Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAGE_MASK
+  when it should have been masked with ~PAGE_MASK.
+* Fixed a memory leak in sgx_ioc_enclave_create().
+* Simplified swapping code by using a pointer array for a cluster
+  instead of a linked list.
+* Squeezed struct sgx_encl_page to 32 bytes.
+* Fixed deferencing of an RSA key on OpenSSL 1.1.0.
+* Modified TC's CMAC to use kernel AES-NI. Restructured the code
+  a bit in order to better align with kernel conventions.
+
+v6:
+* Fixed semaphore underrun when accessing /dev/sgx from the launch enclave.
+* In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
+* Removed virtualization chapter from the documentation.
+* Changed the default filename for the signing key as signing_key.pem.
+* Reworked EPC management in a way that instead of a linked list of
+  struct sgx_epc_page instances there is an array of integers that
+  encodes address and bank of an EPC page (the same data as 'pa' field
+  earlier). The locking has been moved to the EPC bank level instead
+  of a global lock.
+* Relaxed locking requirements for EPC management. EPC pages can be
+  released back to the EPC bank concurrently.
+* Cleaned up ptrace() code.
+* Refined commit messages for new architectural constants.
+* Sorted includes in every source file.
+* Sorted local variable declarations according to the line length in
+  every function.
+* Style fixes based on Darren's comments to sgx_le.c.
+
+v5:
+* Described IPC between the Launch Enclave and kernel in the commit messages.
+* Fixed all relevant checkpatch.pl issues that I have forgot fix in earlier
+  versions except those that exist in the imported TinyCrypt code.
+* Fixed spelling mistakes in the documentation.
+* Forgot to check the return value of sgx_drv_subsys_init().
+* Encapsulated properly page cache init and teardown.
+* Collect epc pages to a temp list in sgx_add_epc_bank
+* Removed SGX_ENCLAVE_INIT_ARCH constant.
+
+v4:
+* Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
+* Removed __exit annotation from sgx_drv_subsys_exit().
+* Fixed a leak of a backing page in sgx_process_add_page_req() in the
+  case when vm_insert_pfn() fails.
+* Removed unused symbol exports for sgx_page_cache.c.
+* Updated sgx_alloc_page() to require encl parameter and documented the
+  behavior (Sean Christopherson).
+* Refactored a more lean API for sgx_encl_find() and documented the behavior.
+* Moved #PF handler to sgx_fault.c.
+* Replaced subsys_system_register() with plain bus_register().
+* Retry EINIT 2nd time only if MSRs are not locked.
+
+v3:
+* Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are set.
+* Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fails.
+* Use unused bits in epc_page->pa to store the bank number.
+* Removed #ifdef for WQ_NONREENTRANT.
+* If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
+* Added --remove-section=.got.plt to objcopy flags in order to prevent a
+  dummy .got.plt, which will cause an inconsistent size for the LE.
+* Documented sgx_encl_* functions.
+* Added remark about AES implementation used inside the LE.
+* Removed redundant sgx_sys_exit() from le/main.c.
+* Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
+* Validate miscselect in sgx_encl_create().
+* Fixed SSA frame size calculation to take the misc region into account.
+* Implemented consistent exception handling to __encls() and __encls_ret().
+* Implemented a proper device model in order to allow sysfs attributes
+  and in-kernel API.
+* Cleaned up various "find enclave" implementations to the unified
+  sgx_encl_find().
+* Validate that vm_pgoff is zero.
+* Discard backing pages with shmem_truncate_range() after EADD.
+* Added missing EEXTEND operations to LE signing and launch.
+* Fixed SSA size for GPRS region from 168 to 184 bytes.
+* Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
+* Check that TCS addresses are in ELRANGE and not just page aligned.
+* Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
+* Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
+
+v2:
+* get_rand_uint32() changed the value of the pointer instead of value
+  where it is pointing at.
+* Launch enclave incorrectly used sigstruct attributes-field instead of
+  enclave attributes-field.
+* Removed unused struct sgx_add_page_req from sgx_ioctl.c
+* Removed unused sgx_has_sgx2.
+* Updated arch/x86/include/asm/sgx.h so that it provides stub
+  implementations when sgx in not enabled.
+* Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
+* return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
+* removed unused global sgx_nr_pids
+* moved sgx_encl_release to sgx_encl.c
+* return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
+
+Jarkko Sakkinen (15):
+  x86/sgx: Define SGX1 and SGX2 ENCLS leafs
+  x86/sgx: Add ENCLS architectural error codes
+  x86/sgx: Add SGX1 and SGX2 architectural data structures
+  x86/sgx: Add definitions for SGX's CPUID leaf and variable sub-leafs
+  x86/sgx: Add wrappers for ENCLS leaf functions
+  x86/sgx: Add functions to allocate and free EPC pages
+  x86/mpx: pass @mm to kernel_managing_mpx_tables() in
+    mpx_notify_unmap()
+  x86/sgx: Add the Linux SGX Enclave Driver
+  x86/sgx: Add provisioning
+  x86/sgx: Add swapping code to the SGX driver
+  x86/sgx: Add a simple swapper for the EPC memory manager
+  x86/sgx: ptrace() support for the SGX driver
+  x86/sgx: SGX documentation
+  selftests/x86: Add a selftest for SGX
+  x86/sgx: Update MAINTAINERS
+
+Kai Huang (2):
+  x86/cpufeatures: Add Intel-defined SGX feature bit
+  x86/cpufeatures: Add Intel-defined SGX_LC feature bit
+
+Sean Christopherson (8):
+  x86/cpufeatures: Add SGX sub-features (as Linux-defined bits)
+  x86/msr: Add IA32_FEATURE_CONTROL.SGX_ENABLE definition
+  x86/msr: Add SGX Launch Control MSR definitions
+  x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
+  x86/mm: x86/sgx: Signal SIGSEGV for userspace #PFs w/ PF_SGX
+  x86/cpu/intel: Detect SGX support and update caps appropriately
+  x86/sgx: Enumerate and track EPC sections
+  x86/sgx: Add sgx_einit() for initializing enclaves
+
+ Documentation/index.rst                       |   1 +
+ Documentation/ioctl/ioctl-number.txt          |   1 +
+ Documentation/x86/index.rst                   |  10 +
+ Documentation/x86/sgx.rst                     | 234 +++++
+ MAINTAINERS                                   |  12 +
+ arch/x86/Kconfig                              |  39 +
+ arch/x86/include/asm/cpufeatures.h            |  24 +-
+ arch/x86/include/asm/disabled-features.h      |  14 +-
+ arch/x86/include/asm/msr-index.h              |   8 +
+ arch/x86/include/asm/sgx.h                    | 325 ++++++
+ arch/x86/include/asm/sgx_arch.h               | 400 ++++++++
+ arch/x86/include/asm/traps.h                  |   1 +
+ arch/x86/include/uapi/asm/sgx.h               |  72 ++
+ arch/x86/include/uapi/asm/sgx_errno.h         |  91 ++
+ arch/x86/kernel/cpu/Makefile                  |   1 +
+ arch/x86/kernel/cpu/intel.c                   |  39 +
+ arch/x86/kernel/cpu/scattered.c               |   2 +
+ arch/x86/kernel/cpu/sgx/Makefile              |   2 +
+ arch/x86/kernel/cpu/sgx/driver/Kconfig        |  20 +
+ arch/x86/kernel/cpu/sgx/driver/Makefile       |   3 +
+ arch/x86/kernel/cpu/sgx/driver/driver.h       | 198 ++++
+ arch/x86/kernel/cpu/sgx/driver/encl.c         | 932 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/driver/encl_page.c    | 190 ++++
+ arch/x86/kernel/cpu/sgx/driver/fault.c        | 171 ++++
+ arch/x86/kernel/cpu/sgx/driver/fs.c           |  49 +
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c        | 273 +++++
+ arch/x86/kernel/cpu/sgx/driver/main.c         | 277 ++++++
+ arch/x86/kernel/cpu/sgx/driver/pte.c          |  56 ++
+ arch/x86/kernel/cpu/sgx/driver/va.c           |  75 ++
+ arch/x86/kernel/cpu/sgx/driver/vma.c          | 167 ++++
+ arch/x86/kernel/cpu/sgx/main.c                | 502 ++++++++++
+ arch/x86/mm/fault.c                           |  13 +
+ arch/x86/mm/mpx.c                             |   4 +-
+ tools/arch/x86/include/asm/cpufeatures.h      |  21 +-
+ tools/testing/selftests/x86/Makefile          |  10 +
+ tools/testing/selftests/x86/sgx/Makefile      |  47 +
+ tools/testing/selftests/x86/sgx/encl.c        |  20 +
+ tools/testing/selftests/x86/sgx/encl.lds      |  33 +
+ .../selftests/x86/sgx/encl_bootstrap.S        |  94 ++
+ tools/testing/selftests/x86/sgx/encl_piggy.S  |  18 +
+ tools/testing/selftests/x86/sgx/encl_piggy.h  |  14 +
+ tools/testing/selftests/x86/sgx/main.c        | 155 +++
+ tools/testing/selftests/x86/sgx/sgx_arch.h    | 109 ++
+ tools/testing/selftests/x86/sgx/sgx_call.S    |  20 +
+ tools/testing/selftests/x86/sgx/sgx_uapi.h    | 100 ++
+ tools/testing/selftests/x86/sgx/sgxsign.c     | 503 ++++++++++
+ .../testing/selftests/x86/sgx/signing_key.pem |  39 +
+ 47 files changed, 5373 insertions(+), 16 deletions(-)
  create mode 100644 Documentation/x86/index.rst
  create mode 100644 Documentation/x86/sgx.rst
+ create mode 100644 arch/x86/include/asm/sgx.h
+ create mode 100644 arch/x86/include/asm/sgx_arch.h
+ create mode 100644 arch/x86/include/uapi/asm/sgx.h
+ create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
+ create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/Kconfig
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/Makefile
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/driver.h
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/encl.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/encl_page.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/fault.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/fs.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/ioctl.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/main.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/pte.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/va.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/driver/vma.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/main.c
+ create mode 100644 tools/testing/selftests/x86/sgx/Makefile
+ create mode 100644 tools/testing/selftests/x86/sgx/encl.c
+ create mode 100644 tools/testing/selftests/x86/sgx/encl.lds
+ create mode 100644 tools/testing/selftests/x86/sgx/encl_bootstrap.S
+ create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.S
+ create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.h
+ create mode 100644 tools/testing/selftests/x86/sgx/main.c
+ create mode 100644 tools/testing/selftests/x86/sgx/sgx_arch.h
+ create mode 100644 tools/testing/selftests/x86/sgx/sgx_call.S
+ create mode 100644 tools/testing/selftests/x86/sgx/sgx_uapi.h
+ create mode 100644 tools/testing/selftests/x86/sgx/sgxsign.c
+ create mode 100644 tools/testing/selftests/x86/sgx/signing_key.pem
 
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index c858c2e66e36..63864826dcd6 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -101,6 +101,7 @@ implementation.
-    :maxdepth: 2
- 
-    sh/index
-+   x86/index
- 
- Filesystem Documentation
- ------------------------
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-new file mode 100644
-index 000000000000..f137d7109052
---- /dev/null
-+++ b/Documentation/x86/index.rst
-@@ -0,0 +1,10 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+======================
-+x86 Architecture Guide
-+======================
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   sgx
-diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
-new file mode 100644
-index 000000000000..72c3ea2e8889
---- /dev/null
-+++ b/Documentation/x86/sgx.rst
-@@ -0,0 +1,234 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==================================
-+Intel(R) Software Guard eXtensions
-+==================================
-+
-+Introduction
-+============
-+
-+Intel(R) SGX is a set of CPU instructions that can be used by applications to
-+set aside private regions of code and data. The code outside the enclave is
-+disallowed to access the memory inside the enclave by the CPU access control.
-+In a way you can think that SGX provides an inverted sandbox. It protects the
-+application from a malicious host.
-+
-+You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
-+
-+	``cat /proc/cpuinfo  | grep sgx``
-+
-+Overview of SGX
-+===============
-+
-+SGX has a set of data structures to maintain information about the enclaves and
-+their security properties. BIOS reserves a fixed size region of physical memory
-+for these structures by setting Processor Reserved Memory Range Registers
-+(PRMRR).
-+
-+This memory range is protected from outside access by the CPU and all the data
-+coming in and out of the CPU package is encrypted by a key that is generated for
-+each boot cycle.
-+
-+Enclaves execute in ring 3 in a special enclave submode using pages from the
-+reserved memory range. A fixed logical address range for the enclave is reserved
-+by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred to
-+in the documentation commonly as the *ELRANGE*.
-+
-+Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
-+executing in the enclave mode inside the enclave, #GP is raised. On the other
-+hand, enclave code can make memory accesses both inside and outside of the
-+ELRANGE.
-+
-+An enclave can only execute code inside the ELRANGE. Instructions that may cause
-+VMEXIT, IO instructions and instructions that require a privilege change are
-+prohibited inside the enclave. Interrupts and exceptions always cause an enclave
-+to exit and jump to an address outside the enclave given when the enclave is
-+entered by using the leaf instruction ENCLS(EENTER).
-+
-+Protected memory
-+----------------
-+
-+Enclave Page Cache (EPC)
-+    Physical pages used with enclaves that are protected by the CPU from
-+    unauthorized access.
-+
-+Enclave Page Cache Map (EPCM)
-+    A database that describes the properties and state of the pages e.g. their
-+    permissions or which enclave they belong to.
-+
-+Memory Encryption Engine (MEE) integrity tree
-+    Autonomously updated integrity tree. The root of the tree located in on-die
-+    SRAM.
-+
-+EPC data types
-+--------------
-+
-+SGX Enclave Control Structure (SECS)
-+    Describes the global properties of an enclave. Will not be mapped to the
-+    ELRANGE.
-+
-+Regular (REG)
-+    These pages contain code and data.
-+
-+Thread Control Structure (TCS)
-+    The pages that define the entry points inside an enclave. An enclave can
-+    only be entered through these entry points and each can host a single
-+    hardware thread at a time.
-+
-+Version Array (VA)
-+   The pages contain 64-bit version numbers for pages that have been swapped
-+   outside the enclave. Each page has the capacity of 512 version numbers.
-+
-+Launch control
-+--------------
-+
-+To launch an enclave, two structures must be provided for ENCLS(EINIT):
-+
-+1. **SIGSTRUCT:** signed measurement of the enclave binary.
-+2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
-+   *launch key*, which is regenerated for each boot cycle.
-+
-+The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
-+IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
-+key do not require a valid EINITTOKEN and can be authorized with special
-+privileges. One of those privileges is ability to acquire the launch key with
-+ENCLS(EGETKEY).
-+
-+**IA32_FEATURE_CONTROL[SGX_LE_WR]** is used by the BIOS configure whether
-+IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the feature
-+control register and handing over control to the operating system.
-+
-+Enclave construction
-+--------------------
-+
-+The construction is started by filling out the SECS that contains enclave
-+address range, privileged attributes and measurement of TCS and REG pages (pages
-+that will be mapped to the address range) among the other things. This structure
-+is passed to the ENCLS(ECREATE) together with a physical address of a page in
-+EPC that will hold the SECS.
-+
-+The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND), i.e.
-+SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
-+
-+After all of the pages have been added, the enclave is initialized with
-+ENCLS(EINIT). It will check that the SIGSTRUCT is signed with the contained
-+public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
-+the token is valid (CMAC'd with the launch key). If the token is not valid,
-+the CPU will check whether the enclave is signed with a key matching to the
-+IA32_SGXLEPUBKEYHASHn MSRs.
-+
-+Swapping pages
-+--------------
-+
-+Enclave pages can be swapped out with the *ENCLS(EWB)* instruction to the
-+unprotected memory. In addition to the EPC page, ENCLS(EWB) takes in a VA page
-+and address for PCMD structure (Page Crypto MetaData) as input. The VA page will
-+seal a version number for the page. PCMD is 128-byte structure that contains
-+tracking information for the page, most importantly its MAC. With these
-+structures the enclave is sealed and rollback protected while it resides in the
-+unprotected memory.
-+
-+Before the page can be swapped out it must not have any active TLB references.
-+The *ENCLS(EBLOCK)* instruction moves a page to the *blocked* state, which means
-+that no new TLB entries can be created to it by the hardware threads.
-+
-+After this a shootdown sequence is started with the *ENCLS(ETRACK)* instruction,
-+which sets an increased counter value to the entering hardware threads.
-+ENCLS(EWB) will return *SGX_NOT_TRACKED* error while there are still threads
-+with the earlier counter value because that means that there might be hardware
-+threads inside the enclave with TLB entries to pages that are to be swapped.
-+
-+Kernel internals
-+================
-+
-+Requirements
-+------------
-+
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
-+
-+
-+Roles and responsibilities
-+--------------------------
-+
-+SGX introduces system resources, e.g. EPC memory, that must be accessible to
-+multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
-+and KVM (to expose SGX to VMs), ideally without introducing any dependencies
-+between each SGX entity.  To that end, the kernel owns and manages the shared
-+system resources, i.e. the EPC and Launch Control MSRs, and defines functions
-+that provide appropriate access to the shared resources.  SGX support for
-+user space and VMs is left to the SGX platform driver and KVM respectively.
-+
-+Launching enclaves
-+------------------
-+
-+The current kernel implementation supports only writable MSRs. The launch is
-+performed by setting the MSRs to the hash of the public key modulus of the
-+enclave signer and a token with the valid bit set to zero.
-+
-+EPC management
-+--------------
-+
-+Due to the unique requirements for swapping EPC pages, and because EPC pages
-+(currently) do not have associated page structures, management of the EPC is
-+not handled by the standard Linux swapper.  SGX directly handles swapping
-+of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
-+mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
-+implement function callbacks that can be invoked by the kernel to age,
-+swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
-+controls what happens and when, while the consumers (driver, KVM, etc..) do
-+the actual work.
-+
-+Exception handling
-+------------------
-+
-+The PF_SGX bit is set if and only if the #PF is detected by the SGX Enclave Page
-+Cache Map (EPCM). The EPCM is a hardware-managed table that enforces accesses to
-+an enclave's EPC pages in addition to the software-managed kernel page tables,
-+i.e. the effective permissions for an EPC page are a logical AND of the kernel's
-+page tables and the corresponding EPCM entry.
-+
-+The EPCM is consulted only after an access walks the kernel's page tables, i.e.:
-+
-+1. the access was allowed by the kernel
-+2. the kernel's tables have become less restrictive than the EPCM
-+3. the kernel cannot fixup the cause of the fault
-+
-+Notably, (2) implies that either the kernel has botched the EPC mappings or the
-+EPCM has been invalidated (see below).  Regardless of why the fault occurred,
-+userspace needs to be alerted so that it can take appropriate action, e.g.
-+restart the enclave. This is reinforced by (3) as the kernel doesn't really
-+have any other reasonable option, i.e. signalling SIGSEGV is actually the least
-+severe action possible.
-+
-+Although the primary purpose of the EPCM is to prevent a malicious or
-+compromised kernel from attacking an enclave, e.g. by modifying the enclave's
-+page tables, do not WARN on a #PF with PF_SGX set. The SGX architecture
-+effectively allows the CPU to invalidate all EPCM entries at will and requires
-+that software be prepared to handle an EPCM fault at any time.  The architecture
-+defines this behavior because the EPCM is encrypted with an ephemeral key that
-+isn't exposed to software.  As such, the EPCM entries cannot be preserved across
-+transitions that result in a new key being used, e.g. CPU power down as part of
-+an S3 transition or when a VM is live migrated to a new physical system.
-+
-+SGX UAPI
-+========
-+
-+.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
-+   :functions: sgx_ioc_enclave_create
-+               sgx_ioc_enclave_add_page
-+               sgx_ioc_enclave_init
-+
-+.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
-+
-+References
-+==========
-+
-+* A Memory Encryption Engine Suitable for General Purpose Processors
-+  <https://eprint.iacr.org/2016/204.pdf>
-+* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
 -- 
 2.19.1
 
