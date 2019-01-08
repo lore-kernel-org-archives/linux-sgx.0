@@ -2,42 +2,40 @@ Return-Path: <SRS0=ngON=PQ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CA9C43387
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDD1C43387
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Jan 2019 22:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE07720660
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DD72146F
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Jan 2019 22:09:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbfAHUJI convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:09:08 -0500
-Received: from mga18.intel.com ([134.134.136.126]:51772 "EHLO mga18.intel.com"
+        id S1730077AbfAHWJs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Jan 2019 17:09:48 -0500
+Received: from mga04.intel.com ([192.55.52.120]:47409 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729548AbfAHT1Q (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728041AbfAHWJs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:09:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 11:27:16 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 14:09:47 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,455,1539673200"; 
-   d="scan'208";a="113153477"
-Received: from kmsmsx153.gar.corp.intel.com ([172.21.73.88])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Jan 2019 11:27:12 -0800
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.246]) by
- KMSMSX153.gar.corp.intel.com ([169.254.5.199]) with mapi id 14.03.0415.000;
- Wed, 9 Jan 2019 03:27:11 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>
-CC:     Jethro Beekman <jethro@fortanix.com>,
+   d="scan'208";a="308699544"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Jan 2019 14:09:47 -0800
+Date:   Tue, 8 Jan 2019 14:09:47 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "x86@kernel.org" <x86@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -47,11 +45,8 @@ CC:     Jethro Beekman <jethro@fortanix.com>,
         Josh Triplett <josh@joshtriplett.org>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: RE: x86/sgx: uapi change proposal
-Thread-Topic: x86/sgx: uapi change proposal
-Thread-Index: AQHUl3CouNmOMJQZHU2YX8Dh54+gQaWFODMAgAAIjACAAAbWAIAAVlWAgADM8wCAAnSJgIAc/6rw
-Date:   Tue, 8 Jan 2019 19:27:11 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20190108220946.GA30462@linux.intel.com>
 References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
  <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
  <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
@@ -60,44 +55,74 @@ References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
  <20181219144515.GA30909@linux.intel.com>
  <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
  <20181221162825.GB26865@linux.intel.com>
-In-Reply-To: <20181221162825.GB26865@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzEzZDI1NGYtMmQxZC00OTRmLThiOGQtZjRhZWQ5ZmQ2MDM4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiekhcL01jWDNMM0drSkxwdW1xYVBTQXpWN3dFaldPd01EcVViSTFZSmIwOE9XNk5KN1hQejk5RWs2NGNFMHJNUnIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> >
-> > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > opening a new instance of /dev/sgx for each encalve?
+On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
+> > >
+> > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > > opening a new instance of /dev/sgx for each encalve?
+> > 
+> > Directly associating /dev/sgx with an enclave means /dev/sgx can't be used
+> > to provide ioctl()'s for other SGX-related needs, e.g. to mmap() raw EPC and
+> > expose it a VM.  Proposed layout in the link below.  I'll also respond to
+> > Jarkko's question about exposing EPC through /dev/sgx instead of having
+> > KVM allocate it on behalf of the VM.
+> > 
+> > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
 > 
-> Directly associating /dev/sgx with an enclave means /dev/sgx can't be used
-> to provide ioctl()'s for other SGX-related needs, e.g. to mmap() raw EPC and
-> expose it a VM.  Proposed layout in the link below.  I'll also respond to
-> Jarkko's question about exposing EPC through /dev/sgx instead of having
-> KVM allocate it on behalf of the VM.
+> Hi Sean,
 > 
-> https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
+> Sorry for replying to old email. But IMHO it is not a must that Qemu
+> needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
+> EPC slot, instead, KVM could create private slot, which is not visible
+> to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
+> API directly.
 
-Hi Sean,
+That's possible, but it has several downsides.
 
-Sorry for replying to old email. But IMHO it is not a must that Qemu needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual EPC slot, instead, KVM could create private slot, which is not visible to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation API directly.
+  - Duplicates a lot of code in KVM for managing memory regions.
+  - Artificially restricts userspace to a single EPC region, unless
+    even more code is duplicated to handle multiple private regions.
+  - Requires additional ioctls() or capabilities to probe EPC support
+  - Does not fit with Qemu/KVM's memory model, e.g. all other types of
+    memory are exposed to a guest through KVM_SET_USER_MEMORY_REGION. 
+  - Prevents userspace from debugging a guest's enclave.  I'm not saying
+    this is a likely scenario, but I also don't think we should preclude
+    it without good reason.
+  - KVM is now responsible for managing the lifecycle of EPC, e.g. what
+    happens if an EPC cgroup limit is lowered on a running VM and
+    KVM can't gracefully reclaim EPC?  The userspace hypervisor should
+    ultimately decide how to handle such an event.
+  - SGX logic is split between SGX and KVM, e.g. VA page management for
+    oversubscription will likely be common to SGX and KVM.  From a long
+    term maintenance perspective, this means that changes to the EPC
+    management could potentially need to be Acked by KVM, and vice versa.
 
-I am not sure what's the good of allowing userspace to alloc/mmap a raw EPC region? Userspace is not allowed to touch EPC anyway, expect enclave code.
+> I am not sure what's the good of allowing userspace to alloc/mmap a
+> raw EPC region? Userspace is not allowed to touch EPC anyway, expect
+> enclave code.
+>
+> To me KVM creates private EPC slot is cleaner than exposing /dev/sgx/epc
+> and allowing userspace to map some raw EPC region.
 
-To me KVM creates private EPC slot is cleaner than exposing /dev/sgx/epc and allowing userspace to map some raw EPC region. 
+Cleaner in the sense that it's faster to get basic support up and running
+since there are fewer touchpoints, but there are long term ramifications
+to cramming EPC management in KVM.
 
-Thanks,
--Kai
+And at this point I'm not stating any absolutes, e.g. how EPC will be
+handled by KVM.  What I'm pushing for is to not eliminate the possibility
+of having the SGX subsystem own all EPC management, e.g. don't tie
+/dev/sgx to a single enclave.
+
+> 
+> Thanks,
+> -Kai
