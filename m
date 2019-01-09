@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58638C43387
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Jan 2019 16:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E70CC43387
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Jan 2019 17:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 265E52054F
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Jan 2019 16:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A87A20660
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Jan 2019 17:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfAIQbi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:31:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:21981 "EHLO mga04.intel.com"
+        id S1726531AbfAIRQ2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 9 Jan 2019 12:16:28 -0500
+Received: from mga17.intel.com ([192.55.52.151]:20277 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbfAIQbi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:31:38 -0500
+        id S1726292AbfAIRQ2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:16:28 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 08:31:37 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:16:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
-   d="scan'208";a="108570223"
+   d="scan'208";a="108583432"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2019 08:31:37 -0800
-Date:   Wed, 9 Jan 2019 08:31:37 -0800
+  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2019 09:16:25 -0800
+Date:   Wed, 9 Jan 2019 09:16:25 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Huang, Kai" <kai.huang@intel.com>,
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -46,7 +46,7 @@ Cc:     "Huang, Kai" <kai.huang@intel.com>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
 Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20190109163135.GA1821@linux.intel.com>
+Message-ID: <20190109171625.GB1821@linux.intel.com>
 References: <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
  <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
  <20181219091148.GA5121@linux.intel.com>
@@ -56,88 +56,206 @@ References: <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
  <20181221162825.GB26865@linux.intel.com>
  <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
  <20190108220946.GA30462@linux.intel.com>
- <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
+ <105F7BF4D0229846AF094488D65A0989355A58F1@PGSMSX112.gar.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
+In-Reply-To: <105F7BF4D0229846AF094488D65A0989355A58F1@PGSMSX112.gar.corp.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 02:54:11PM -0800, Andy Lutomirski wrote:
-> On Tue, Jan 8, 2019 at 2:09 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > Cleaner in the sense that it's faster to get basic support up and running
-> > since there are fewer touchpoints, but there are long term ramifications
-> > to cramming EPC management in KVM.
-> >
-> > And at this point I'm not stating any absolutes, e.g. how EPC will be
-> > handled by KVM.  What I'm pushing for is to not eliminate the possibility
-> > of having the SGX subsystem own all EPC management, e.g. don't tie
-> > /dev/sgx to a single enclave.
+On Tue, Jan 08, 2019 at 09:24:38PM -0800, Huang, Kai wrote:
+> > On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
+> > > > >
+> > > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > > > > opening a new instance of /dev/sgx for each encalve?
+> > > >
+> > > > Directly associating /dev/sgx with an enclave means /dev/sgx can't
+> > > > be used to provide ioctl()'s for other SGX-related needs, e.g. to
+> > > > mmap() raw EPC and expose it a VM.  Proposed layout in the link
+> > > > below.  I'll also respond to Jarkko's question about exposing EPC
+> > > > through /dev/sgx instead of having KVM allocate it on behalf of the VM.
+> > > >
+> > > > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
+> > >
+> > > Hi Sean,
+> > >
+> > > Sorry for replying to old email. But IMHO it is not a must that Qemu
+> > > needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
+> > > EPC slot, instead, KVM could create private slot, which is not visible
+> > > to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
+> > > API directly.
+> > 
+> > That's possible, but it has several downsides.
+> > 
+> >   - Duplicates a lot of code in KVM for managing memory regions.
 > 
-> I haven't gone and re-read all the relevant SDM bits, so I'll just
-> ask: what, if anything, are the actual semantics of mapping "raw EPC"
-> like this?  You can't actually do anything with the mapping from user
-> mode unless you actually get an enclave created and initialized in it
-> and have it mapped at the correct linear address, right?  I still
-> think you have the right idea, but it is a bit unusual.
+> I don't see why there will be duplicated code. you can simply call
+> __x86_set_memory_region to create private slot. It is KVM x86 equivalent
+> to KVM_SET_USER_MEMORY_REGION from userspace. The only difference is Qemu
+> is not aware of the private slot.
 
-Correct, the EPC is inaccessible until a range is "mapped" with ECREATE.
-But I'd argue that it's not unusual, just different.  And really it's not
-all that different than userspace mmap'ing /dev/sgx/enclave prior to
-ioctl(ENCLAVE_CREATE).  In that case, userspace can still (attempt to)
-access the "raw" EPC, i.e. generate a #PF, the kernel/driver just happens
-to consider any faulting EPC address without an associated enclave as
-illegal, e.g. signals SIGBUS.
+What about when we allow removing an EPC region?  At that point you'd be
+fully duplicating KVM_SET_USER_MEMORY_REGION.  And that's not a purely
+theoretical idea, it's something I'd like to support in the future, e.g.
+via the WIP virtio-mem interface.
 
-The /dev/sgx/epc case simply has different semantics for moving pages in
-and out of the EPC, i.e. different fault and eviction semantics.  Yes,
-this allows the guest kernel to directly access the "raw" EPC, but that's
-conceptually in line with hardware where priveleged software can directly
-"access" the EPC (or rather, the abort page for all intents and purposes).
-I.e. it's an argument for requiring certain privileges to open /dev/sgx/epc,
-but IMO it's not unusual.
+https://events.linuxfoundation.org/wp-content/uploads/2017/12/virtio-mem-Paravirtualized-Memory-David-Hildenbrand-Red-Hat-1.pdf
 
-Maybe /dev/sgx/epc is a poor name and is causing confusion, e.g.
-/dev/sgx/virtualmachine might be more appropriate.
+> 
+> >   - Artificially restricts userspace to a single EPC region, unless
+> >     even more code is duplicated to handle multiple private regions.
+> 
+> You can have multiple private slots, by calling __x86_set_memory_region
+> for each EPC section. KVM receives EPC section/sections info from Qemu,
+> via CPUID, or dedicated IOCTL (is this you are going to add?), and simply
+> creates private EPC slot/slots.
 
-> I do think it makes sense to have QEMU delegate the various ENCLS
-> operations (especially EINIT) to the regular SGX interface, which will
-> mean that VM guests will have exactly the same access controls applied
-> as regular user programs, which is probably what we want.
+This would require a dynamic number of private memslots, which breaks (or
+at least changes) the semantics of KVM_CAP_NR_MEMSLOTS.
 
-To what end?  Except for EINIT, none of the ENCLS leafs are interesting
-from a permissions perspective.  Trapping and re-executing ENCLS leafs
-is painful, e.g. most leafs have multiple virtual addresses that need to
-be translated.  And routing everything through the regular interface
-would make SGX even slower than it already is, e.g. every ENCLS would
-take an additional ~900 cycles just to handle the VM-Exit, and that's
-not accounting for any additional overhead in the SGX code, e.g. using
-the regular interface would mean superfluous locks, etc...
+> 
+> >   - Requires additional ioctls() or capabilities to probe EPC support
+> 
+> No. EPC info is from Qemu at the beginning (size is given by parameter,
+> base is calculated by Qemu), and actually it is Qemu notifies KVM EPC info,
+> so I don't think we require additional ioctls or capabilities here.
 
-The only benefit is that it would theoretically allow oversubscribing
-guest EPC without hardware support, but that would require a lot of code
-to do the necessary SECS tracking and refcounting.
+How does Qemu know KVM supports virtual EPC?  Probing /dev/sgx doesn't
+convey any information about KVM support.  Maybe you could report it via
+KVM_GET_SUPPORTED_CPUID, but that would be problematic for Qemu since it
+would have to create vCPUs before initializing the machine.
 
-> If so,
-> there will need to be a way to get INITTOKEN privilege for the purpose
-> of running non-Linux OSes in the VM, which isn't the end of the world.
+> 
+> >   - Does not fit with Qemu/KVM's memory model, e.g. all other types of
+> >     memory are exposed to a guest through
+> > KVM_SET_USER_MEMORY_REGION.
+> 
+> EPC is different. I am not sure whether EPC needs to fit such model. There
+> are already examples in KVM which uses private slot w/o using
+> KVM_SET_USER_MEMORY_REGION, for example, APIC access page.
 
-Couldn't we require the same privilege/capability for VMs and and EINIT
-tokens?  I.e. /dev/sgx/virtualmachine can only be opened by a user that
-can also generate tokens.
+EPC has unique access and lifecycle semantics, but that doesnt make it a
+special snowflake, e.g. NVDIMM has special properties, as does memory that
+is encrypted via SME or MKTME, and so on and so forth.
 
-> We might still want the actual ioctl to do EINIT using an actual
-> explicit token to be somehow restricted in a way that strongly
-> discourages its use by anything other than a hypervisor.  Or I suppose
-> we could just straight-up ignore the guest-provided init token.
->
-> P.S. Is Intel ever going to consider a way to make guests get their
-> own set of keys that are different from the host's keys and other
-> guests' keys?
+The private memslots are private for a reason, e.g. the guest is completely
+unaware that they exist and Qemu is only aware of their existence because
+KVM needs userspace to tell it what GPA range won't conflict with its memory
+model.  And in the APIC access page case, Qemu isn't aware at all since KVM
+doesn't allow relocating the guest's APIC.
 
+The other aspect of private memslots is that they are not exposed to L2,
+because again, from the guest's perspective, they do not exist.  We can
+obviously hackaround that restriction, but it's yet another hint that
+shoving EPC into a private memslot is the wrong approach.
+
+> 
+> >   - Prevents userspace from debugging a guest's enclave.  I'm not saying
+> >     this is a likely scenario, but I also don't think we should preclude
+> >     it without good reason.
+> 
+> I am not sure how important it is, so don't know whether this can be a
+> justification. To me we don't need to consider this. Qemu normally doesn't
+> access guest memory unless it has to (ie, for device model). 
+
+In terms of debug, "Qemu" accesses guest memory all the time, e.g. reading
+guest memory via Qemu's monitor interface is something I do on a regular
+basis.  KVM even provides an ABI (KVM_SET_GUEST_DEBUG) to allow userspace
+to set breakpoints on guest memory.  We'd be saying "you can break on
+accesses in a debug enclave, but you can't actually access its memory".
+
+> 
+> >   - KVM is now responsible for managing the lifecycle of EPC, e.g. what
+> >     happens if an EPC cgroup limit is lowered on a running VM and
+> >     KVM can't gracefully reclaim EPC?  The userspace hypervisor should
+> >     ultimately decide how to handle such an event.
+> 
+> Even using KVM_SET_USER_MEMORY_REGION, KVM is also responsible for managing the lifecycle of EPC, no? And "managing the lifecycle of EPC" you mean doesn't need to be "managing EPC itself" I suppose, since EPC should always be managed by core SGX code.
+> 
+> I don't see the difference between private slot and KVM_SET_USER_MEMORY_REGION,
+> in terms of how does KVM reclaim EPC, or how does KVM do when it fails to
+> reclaim EPC. 
+
+Userspace can delete the EPC region via KVM_SET_USER_MEMORY_REGION.  As
+mentioned above, on-demand deletion of a private memslot means duplicating
+basically all of the KVM_SET_USER_MEMORY_REGION flow.
+
+For example, consider a paravirtualized guest that allows EPC regions to
+be "unplugged" if the host runs out of EPC.
+
+> 
+> >   - SGX logic is split between SGX and KVM, e.g. VA page management for
+> >     oversubscription will likely be common to SGX and KVM.  From a long
+> >     term maintenance perspective, this means that changes to the EPC
+> >     management could potentially need to be Acked by KVM, and vice versa.
+> 
+> I think most of the code should be in core SGX code under x86. KVM should
+> only have the code that is specifically related to virtualization, ie, ENCLV.
+> 
+> VA page allocation should be under code SGX code. KVM might need to call
+> function such as alloc_va_page, etc, but this is not a problem. There are
+> many other cases now.
+> 
+> And this is not related to private slot vs KVM_SET_USER_MEMORY_REGION.
+
+Yes it is.  Allocating EPC via KVM means exporting additional functions
+from SGX core, and using a private memslot effectively forces KVM to
+allocate guest EPC.  E.g. using KVM_SET_USER_MEMORY_REGION and having
+SGX own EPC allocation means KVM can be blissfully unaware of VA pages,
+EPC swap backing, etc...
+
+> 
+> > 
+> > > I am not sure what's the good of allowing userspace to alloc/mmap a
+> > > raw EPC region? Userspace is not allowed to touch EPC anyway, expect
+> > > enclave code.
+> > >
+> > > To me KVM creates private EPC slot is cleaner than exposing
+> > > /dev/sgx/epc and allowing userspace to map some raw EPC region.
+> > 
+> > Cleaner in the sense that it's faster to get basic support up and running since
+> > there are fewer touchpoints, but there are long term ramifications to
+> > cramming EPC management in KVM.
+> > 
+> > And at this point I'm not stating any absolutes, e.g. how EPC will be handled
+> > by KVM.  What I'm pushing for is to not eliminate the possibility of having
+> > the SGX subsystem own all EPC management, e.g. don't tie /dev/sgx to a
+> > single enclave.
+> 
+> I suppose "SGX subsystem" you mean here is core SGX code under x86. IMHO
+> EPC should always be managed by such SGX subsystem, and KVM and SGX driver
+> are just consumers (ie, calling EPC allocation function, etc).
+> 
+> IMHO I think /dev/sgx (or whatever /dev/sgx/xxx) should be in SGX driver,
+> but not SGX core code. For example, if we don't consider KVM EPC
+> oversubscription here, theoretically we only need below code in core SGX
+> code to make KVM SGX work:
+> 
+> 1) SGX feature detection. There should be some core structure (such as
+> boot_cpu_data, etc) where KVM can query SGX capabilities, ie, whether FLC
+> is available.
+> 2) EPC management. KVM simply calls EPC management APIs when it needs. For
+> example, when EPC slot is created, we should populate all EPC pages, and
+> fail to create VM if running out of EPC.
+> 3) Other code to deal with ENCLS, SGX data structure, etc, since we have
+> agreed even with EPC static allocation, we should trap EINIT. 
+> 
+> We probably even don't need code to deal with enclave, if only for KVM. Of
+> course, in order to support KVM EPC oversubscription, we should also include
+> enclave management code in core SGX code, but this doesn't necessary mean we
+> should include /dev/sgx/xxx in core SGX code.
+> 
+> It seems there still are lots of design issues we haven't got consensus in
+> terms of how SGX driver should be (or how SGX stack is supposed to work),
+> but if we can focus on what core SGX code should really have (w/o involving
+> SGX driver logic), we can at least get KVM SGX code working. After all, we
+> also have window SGX support. 
+
+I'm all for getting KVM support in ASAP, i.e. I'd love to avoid having to
+wait for "full" SGX support, but that doesn't obviate the need to hammer
+out the uapi.  Taking a shortcut and shoving everything into KVM could bite
+us in the long run.
