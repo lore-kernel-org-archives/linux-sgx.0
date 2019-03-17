@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F507C43381
-	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6612C43381
+	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A0A2082F
-	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A57E2082F
+	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfCQVSR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 17 Mar 2019 17:18:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:8746 "EHLO mga02.intel.com"
+        id S1727173AbfCQVSf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 17 Mar 2019 17:18:35 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4142 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbfCQVSR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 17 Mar 2019 17:18:17 -0400
+        id S1727054AbfCQVSe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 17 Mar 2019 17:18:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Mar 2019 14:18:12 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Mar 2019 14:18:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,491,1544515200"; 
-   d="scan'208";a="142817207"
+   d="scan'208";a="142817250"
 Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.193])
-  by orsmga002.jf.intel.com with ESMTP; 17 Mar 2019 14:18:03 -0700
+  by orsmga002.jf.intel.com with ESMTP; 17 Mar 2019 14:18:25 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
@@ -36,13 +36,10 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v19 17/27] x86/sgx: Add provisioning
-Date:   Sun, 17 Mar 2019 23:14:46 +0200
-Message-Id: <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v19 19/27] x86/sgx: ptrace() support for the SGX driver
+Date:   Sun, 17 Mar 2019 23:14:48 +0200
+Message-Id: <20190317211456.13927-20-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
 References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
@@ -53,217 +50,126 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-In order to provide a mechanism for devilering provisoning rights:
+Add VMA callbacks for ptrace() that can be used with debug enclaves.
+With debug enclaves data can be read and write the memory word at a time
+by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
 
-1. Add a new file to the securityfs file called sgx/provision that works
-   as a token for allowing an enclave to have the provisioning privileges.
-2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-   following data structure:
-
-   struct sgx_enclave_set_attribute {
-           __u64 addr;
-           __u64 token_fd;
-   };
-
-A daemon could sit on top of sgx/provision and send a file descriptor of
-this file to a process that needs to be able to provision enclaves.
-
-The way this API is used is more or less straight-forward. Lets assume that
-dev_fd is a handle to /dev/sgx and prov_fd is a handle to sgx/provision.
-You would allow SGX_IOC_ENCLAVE_CREATE to initialize an enclave with the
-PROVISIONKEY attribute by
-
-params.addr = <enclave address>;
-params.token_fd = prov_fd;
-
-ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
-
-Cc: James Morris <jmorris@namei.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/uapi/asm/sgx.h        | 13 +++++++
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 43 +++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/driver/main.c  | 47 ++++++++++++++++++++++++++
- 3 files changed, 103 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c | 97 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index aadf9c76e360..150a784db395 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -16,6 +16,8 @@
- 	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
- 
- /* IOCTL return values */
- #define SGX_POWER_LOST_ENCLAVE		0x40000000
-@@ -56,4 +58,15 @@ struct sgx_enclave_init {
- 	__u64	sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_set_attribute - parameter structure for the
-+ *				      %SGX_IOC_ENCLAVE_INIT ioctl
-+ * @addr:		address within the ELRANGE
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_set_attribute {
-+	__u64	addr;
-+	__u64	attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index 4b9a91b53b50..5d85bd3f7876 100644
---- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -759,6 +759,46 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 1b8874699dd3..5b5fc933ee19 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -256,10 +256,107 @@ static unsigned int sgx_vma_fault(struct vm_fault *vmf)
  	return ret;
  }
  
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-+ * @filep:	open file to /dev/sgx
-+ * @cmd:	the command value
-+ * @arg:	pointer to a struct sgx_enclave_set_attribute instance
-+ *
-+ * Sets an attribute matching the attribute file that is pointed by the
-+ * parameter structure field attribute_fd.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
-+					  unsigned long arg)
++static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
++		      unsigned long addr, void *data)
 +{
-+	struct sgx_enclave_set_attribute *params = (void *)arg;
-+	struct file *attribute_file;
-+	struct sgx_encl *encl;
++	unsigned long offset;
 +	int ret;
 +
-+	attribute_file = fget(params->attribute_fd);
-+	if (!attribute_file->f_op)
-+		return -EINVAL;
++	offset = addr & ~PAGE_MASK;
 +
-+	if (attribute_file->f_op != &sgx_fs_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
++	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
++	    offset > offsetof(struct sgx_tcs, gs_limit))
++		return -ECANCELED;
 +
-+	ret = sgx_encl_get(params->addr, &encl);
++	ret = __edbgrd(sgx_epc_addr(page->epc_page) + offset, data);
 +	if (ret)
-+		goto out;
-+
-+	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-+	kref_put(&encl->refcount, sgx_encl_release);
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
-+
- typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
- 			  unsigned long arg);
- 
-@@ -778,6 +818,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		handler = sgx_ioc_enclave_init;
- 		break;
-+	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-+		handler = sgx_ioc_enclave_set_attribute;
-+		break;
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
-index 16f36cd0af04..9a5360dcad98 100644
---- a/arch/x86/kernel/cpu/sgx/driver/main.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/main.c
-@@ -22,6 +22,11 @@ u64 sgx_attributes_reserved_mask;
- u64 sgx_xfrm_reserved_mask = ~0x3;
- u32 sgx_xsave_size_tbl[64];
- 
-+const struct file_operations sgx_fs_provision_fops;
-+
-+static struct dentry *sgx_fs;
-+static struct dentry *sgx_fs_provision;
-+
- #ifdef CONFIG_COMPAT
- static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
- 			      unsigned long arg)
-@@ -147,6 +152,40 @@ static struct sgx_dev_ctx *sgxm_dev_ctx_alloc(struct device *parent)
- 	return ctx;
- }
- 
-+static int sgx_fs_init(struct device *dev)
-+{
-+	int ret;
-+
-+	sgx_fs = securityfs_create_dir(dev_name(dev), NULL);
-+	if (IS_ERR(sgx_fs)) {
-+		ret = PTR_ERR(sgx_fs);
-+		goto err_sgx_fs;
-+	}
-+
-+	sgx_fs_provision = securityfs_create_file("provision", 0600, sgx_fs,
-+						  NULL, &sgx_fs_provision_fops);
-+	if (IS_ERR(sgx_fs)) {
-+		ret = PTR_ERR(sgx_fs_provision);
-+		goto err_sgx_fs_provision;
-+	}
++		return -EIO;
 +
 +	return 0;
-+
-+err_sgx_fs_provision:
-+	securityfs_remove(sgx_fs);
-+	sgx_fs_provision = NULL;
-+
-+err_sgx_fs:
-+	sgx_fs = NULL;
-+	return ret;
 +}
 +
-+static void sgx_fs_remove(void)
++static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
++		      unsigned long addr, void *data)
 +{
-+	securityfs_remove(sgx_fs_provision);
-+	securityfs_remove(sgx_fs);
++	unsigned long offset;
++	int ret;
++
++	offset = addr & ~PAGE_MASK;
++
++	/* Writing anything else than flags will cause #GP */
++	if ((page->desc & SGX_ENCL_PAGE_TCS) &&
++	    offset != offsetof(struct sgx_tcs, flags))
++		return -ECANCELED;
++
++	ret = __edbgwr(sgx_epc_addr(page->epc_page) + offset, data);
++	if (ret)
++		return -EIO;
++
++	return 0;
 +}
 +
- static int sgx_dev_init(struct device *parent)
- {
- 	struct sgx_dev_ctx *sgx_dev;
-@@ -190,6 +229,10 @@ static int sgx_dev_init(struct device *parent)
- 	if (!sgx_encl_wq)
- 		return -ENOMEM;
- 
-+	ret = sgx_fs_init(&sgx_dev->ctrl_dev);
-+	if (ret)
-+		goto err_fs_init;
++static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
++			  void *buf, int len, int write)
++{
++	struct sgx_encl *encl = vma->vm_private_data;
++	struct sgx_encl_page *entry = NULL;
++	unsigned long align;
++	char data[sizeof(unsigned long)];
++	int offset;
++	int cnt;
++	int ret = 0;
++	int i;
 +
- 	ret = cdev_device_add(&sgx_dev->ctrl_cdev, &sgx_dev->ctrl_dev);
- 	if (ret)
- 		goto err_device_add;
-@@ -197,6 +240,9 @@ static int sgx_dev_init(struct device *parent)
- 	return 0;
- 
- err_device_add:
-+	sgx_fs_remove();
++	/* If process was forked, VMA is still there but vm_private_data is set
++	 * to NULL.
++	 */
++	if (!encl)
++		return -EFAULT;
 +
-+err_fs_init:
- 	destroy_workqueue(sgx_encl_wq);
- 	return ret;
- }
-@@ -220,6 +266,7 @@ static int sgx_drv_remove(struct platform_device *pdev)
- {
- 	struct sgx_dev_ctx *ctx = dev_get_drvdata(&pdev->dev);
- 
-+	sgx_fs_remove();
- 	cdev_device_del(&ctx->ctrl_cdev, &ctx->ctrl_dev);
- 	destroy_workqueue(sgx_encl_wq);
++	if (!(encl->flags & SGX_ENCL_DEBUG) ||
++	    !(encl->flags & SGX_ENCL_INITIALIZED) ||
++	    (encl->flags & SGX_ENCL_DEAD))
++		return -EFAULT;
++
++	for (i = 0; i < len; i += cnt) {
++		entry = sgx_encl_reserve_page(encl, (addr + i) & PAGE_MASK);
++		if (IS_ERR(entry)) {
++			ret = PTR_ERR(entry);
++			break;
++		}
++
++		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
++		offset = (addr + i) & (sizeof(unsigned long) - 1);
++		cnt = sizeof(unsigned long) - offset;
++		cnt = min(cnt, len - i);
++
++		ret = sgx_edbgrd(encl, entry, align, data);
++		if (ret)
++			goto out;
++
++		if (write) {
++			memcpy(data + offset, buf + i, cnt);
++			ret = sgx_edbgwr(encl, entry, align, data);
++			if (ret)
++				goto out;
++		} else
++			memcpy(buf + i, data + offset, cnt);
++
++out:
++		mutex_unlock(&encl->lock);
++
++		if (ret)
++			break;
++	}
++
++	return ret < 0 ? ret : i;
++}
++
+ const struct vm_operations_struct sgx_vm_ops = {
+ 	.close = sgx_vma_close,
+ 	.open = sgx_vma_open,
+ 	.fault = sgx_vma_fault,
++	.access = sgx_vma_access,
+ };
+ EXPORT_SYMBOL_GPL(sgx_vm_ops);
  
 -- 
 2.19.1
