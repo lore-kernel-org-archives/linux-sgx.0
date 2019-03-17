@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839B1C43381
-	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB69C43381
+	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593772082F
-	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D98E22082F
+	for <linux-sgx@archiver.kernel.org>; Sun, 17 Mar 2019 21:19:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfCQVTJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 17 Mar 2019 17:19:09 -0400
-Received: from mga18.intel.com ([134.134.136.126]:64835 "EHLO mga18.intel.com"
+        id S1727469AbfCQVTU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 17 Mar 2019 17:19:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4194 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfCQVTI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 17 Mar 2019 17:19:08 -0400
+        id S1727054AbfCQVTU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 17 Mar 2019 17:19:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Mar 2019 14:19:08 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Mar 2019 14:19:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,491,1544515200"; 
-   d="scan'208";a="142817297"
+   d="scan'208";a="142817320"
 Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.193])
-  by orsmga002.jf.intel.com with ESMTP; 17 Mar 2019 14:18:59 -0700
+  by orsmga002.jf.intel.com with ESMTP; 17 Mar 2019 14:19:10 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
@@ -39,9 +39,9 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         Andy Lutomirski <luto@amacapital.net>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v19 22/27] x86/fault: Attempt to fixup unhandled #PF in vDSO before signaling
-Date:   Sun, 17 Mar 2019 23:14:51 +0200
-Message-Id: <20190317211456.13927-23-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v19 23/27] x86/traps: Attempt to fixup exceptions in vDSO before signaling
+Date:   Sun, 17 Mar 2019 23:14:52 +0200
+Message-Id: <20190317211456.13927-24-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
 References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
@@ -69,6 +69,12 @@ exception in a vDSO function should be treated like any other exception
 in userspace, e.g. any fault that is successfully handled by the kernel
 should not be directly visible to userspace.
 
+Although it's debatable whether or not all exceptions are of interest to
+enclaves, defer to the vDSO fixup to decide whether to do fixup or
+generate a signal.  Future users of vDSO fixup, if there ever are any,
+will undoubtedly have different requirements than SGX enclaves, e.g. the
+fixup vs. signal logic can be made function specific if/when necessary.
+
 Suggested-by: Andy Lutomirski <luto@amacapital.net>
 Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -76,41 +82,62 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Josh Triplett <josh@joshtriplett.org>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/mm/fault.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/traps.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 5babd515f616..13be0c67379e 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -28,6 +28,7 @@
- #include <asm/mmu_context.h>		/* vma_pkey()			*/
- #include <asm/efi.h>			/* efi_recover_from_page_fault()*/
- #include <asm/desc.h>			/* store_idt(), ...		*/
-+#include <asm/vdso.h>			/* fixup_vdso_exception()	*/
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index d26f9e9c3d83..02eda456c119 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -61,6 +61,7 @@
+ #include <asm/mpx.h>
+ #include <asm/vm86.h>
+ #include <asm/umip.h>
++#include <asm/vdso.h>
  
- #define CREATE_TRACE_POINTS
- #include <asm/trace/exceptions.h>
-@@ -936,6 +937,9 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ #ifdef CONFIG_X86_64
+ #include <asm/x86_init.h>
+@@ -210,6 +211,9 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+ 		tsk->thread.error_code = error_code;
+ 		tsk->thread.trap_nr = trapnr;
+ 		die(str, regs, error_code);
++	} else {
++		if (fixup_vdso_exception(regs, trapnr, error_code, 0))
++			return 0;
+ 	}
  
- 		sanitize_error_code(address, &error_code);
+ 	/*
+@@ -561,6 +565,9 @@ do_general_protection(struct pt_regs *regs, long error_code)
+ 		return;
+ 	}
  
-+		if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-+			return;
-+
- 		if (likely(show_unhandled_signals))
- 			show_signal_msg(regs, error_code, address, tsk);
- 
-@@ -1055,6 +1059,9 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
- 
- 	sanitize_error_code(address, &error_code);
- 
-+	if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
++	if (fixup_vdso_exception(regs, X86_TRAP_GP, error_code, 0))
 +		return;
 +
- 	set_signal_archinfo(address, error_code);
+ 	tsk->thread.error_code = error_code;
+ 	tsk->thread.trap_nr = X86_TRAP_GP;
  
- #ifdef CONFIG_MEMORY_FAILURE
+@@ -775,6 +782,10 @@ dotraplinkage void do_debug(struct pt_regs *regs, long error_code)
+ 							SIGTRAP) == NOTIFY_STOP)
+ 		goto exit;
+ 
++	if (user_mode(regs) &&
++	    fixup_vdso_exception(regs, X86_TRAP_DB, error_code, 0))
++		goto exit;
++
+ 	/*
+ 	 * Let others (NMI) know that the debug stack is in use
+ 	 * as we may switch to the interrupt stack.
+@@ -855,6 +866,9 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
+ 	if (!si_code)
+ 		return;
+ 
++	if (fixup_vdso_exception(regs, trapnr, error_code, 0))
++		return;
++
+ 	force_sig_fault(SIGFPE, si_code,
+ 			(void __user *)uprobe_get_trap_addr(regs), task);
+ }
 -- 
 2.19.1
 
