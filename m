@@ -3,32 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F81FC43381
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Mar 2019 19:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD1EC43381
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Mar 2019 20:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C5B2075C
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Mar 2019 19:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C43C213F2
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Mar 2019 20:09:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfCST7J (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 19 Mar 2019 15:59:09 -0400
-Received: from mga12.intel.com ([192.55.52.136]:23557 "EHLO mga12.intel.com"
+        id S1726824AbfCSUJN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 19 Mar 2019 16:09:13 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25978 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfCST7J (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 19 Mar 2019 15:59:09 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726768AbfCSUJN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 19 Mar 2019 16:09:13 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Mar 2019 12:59:08 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Mar 2019 13:09:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,245,1549958400"; 
-   d="scan'208";a="135663882"
+   d="scan'208";a="215614612"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Mar 2019 12:59:07 -0700
-Date:   Tue, 19 Mar 2019 12:59:07 -0700
+  by orsmga001.jf.intel.com with ESMTP; 19 Mar 2019 13:09:12 -0700
+Date:   Tue, 19 Mar 2019 13:09:12 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
@@ -37,421 +36,275 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         shay.katz-zamir@intel.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com
-Subject: Re: [PATCH v19 13/27] x86/sgx: Add wrappers for ENCLS leaf functions
-Message-ID: <20190319195907.GG25575@linux.intel.com>
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
+Message-ID: <20190319200912.GH25575@linux.intel.com>
 References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
- <20190317211456.13927-14-jarkko.sakkinen@linux.intel.com>
+ <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190317211456.13927-14-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Mar 17, 2019 at 11:14:42PM +0200, Jarkko Sakkinen wrote:
-> ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
-> The ENCLS function that is executed is specified in EAX, with each
-> function potentially having more leaf-specific operands beyond EAX.
-> ENCLS introduces its own (positive value) error codes that (some)
-> leafs use to return failure information in EAX.  Leafs that return
-> an error code also modify RFLAGS.  And finally, ENCLS generates
-> ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
-> encounter faults on ENCLS that must be handled gracefully.
+On Sun, Mar 17, 2019 at 11:14:46PM +0200, Jarkko Sakkinen wrote:
+> In order to provide a mechanism for devilering provisoning rights:
 > 
-> Because of the complexity involved in encoding ENCLS and handling its
-> assortment of failure paths, executing any given leaf is not a simple
-> matter of emitting ENCLS.
+> 1. Add a new file to the securityfs file called sgx/provision that works
+>    as a token for allowing an enclave to have the provisioning privileges.
+> 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+>    following data structure:
 > 
-> To enable adding support for ENCLS leafs with minimal fuss, add a
-> two-layer macro system along with an encoding scheme to allow wrappers
-> to return trap numbers along ENCLS-specific error codes.  The bottom
-> layer of the macro system splits between the leafs that return an
-> error code and those that do not.  The second layer generates the
-> correct input/output annotations based on the number of operands for
-> each leaf function.
+>    struct sgx_enclave_set_attribute {
+>            __u64 addr;
+>            __u64 token_fd;
+>    };
 > 
+> A daemon could sit on top of sgx/provision and send a file descriptor of
+> this file to a process that needs to be able to provision enclaves.
+> 
+> The way this API is used is more or less straight-forward. Lets assume that
+> dev_fd is a handle to /dev/sgx and prov_fd is a handle to sgx/provision.
+> You would allow SGX_IOC_ENCLAVE_CREATE to initialize an enclave with the
+> PROVISIONKEY attribute by
+> 
+> params.addr = <enclave address>;
+> params.token_fd = prov_fd;
+> 
+> ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/Makefile |   2 +-
->  arch/x86/kernel/cpu/sgx/encls.c  |  21 +++
->  arch/x86/kernel/cpu/sgx/encls.h  | 244 +++++++++++++++++++++++++++++++
->  3 files changed, 266 insertions(+), 1 deletion(-)
->  create mode 100644 arch/x86/kernel/cpu/sgx/encls.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
+>  arch/x86/include/uapi/asm/sgx.h        | 13 +++++++
+>  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 43 +++++++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/driver/main.c  | 47 ++++++++++++++++++++++++++
+>  3 files changed, 103 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-> index b666967fd570..20ce33655ff4 100644
-> --- a/arch/x86/kernel/cpu/sgx/Makefile
-> +++ b/arch/x86/kernel/cpu/sgx/Makefile
-> @@ -1 +1 @@
-> -obj-y += main.o
-> +obj-y += main.o encls.o
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.c b/arch/x86/kernel/cpu/sgx/encls.c
-> new file mode 100644
-> index 000000000000..5045f1365e07
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/sgx/encls.c
-> @@ -0,0 +1,21 @@
-> +#include <asm/cpufeature.h>
-> +#include <asm/traps.h>
-> +#include "encls.h"
-> +#include "sgx.h"
-> +
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> index aadf9c76e360..150a784db395 100644
+> --- a/arch/x86/include/uapi/asm/sgx.h
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -16,6 +16,8 @@
+>  	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+>  #define SGX_IOC_ENCLAVE_INIT \
+>  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+>  
+>  /* IOCTL return values */
+>  #define SGX_POWER_LOST_ENCLAVE		0x40000000
+> @@ -56,4 +58,15 @@ struct sgx_enclave_init {
+>  	__u64	sigstruct;
+>  };
+>  
 > +/**
-> + * encls_failed() - Check if an ENCLS leaf function failed
-> + * @ret:	the return value of an ENCLS leaf function call
-> + *
-> + * Check if an ENCLS leaf function failed. This is a condition where the leaf
-> + * function causes a fault that is not caused by an EPCM conflict.
-
-"conflict" is a poor word choice.  The SDM's refers to EPC conflicts as
-trying to concurrently access an EPC page from multiple logical CPUs.
-
-Maybe "EPCM violation" or simply "EPCM fault"?
-
-> + *
-> + * Return: true if there was a fault other than an EPCM conflict
+> + * struct sgx_enclave_set_attribute - parameter structure for the
+> + *				      %SGX_IOC_ENCLAVE_INIT ioctl
+> + * @addr:		address within the ELRANGE
+> + * @attribute_fd:	file handle of the attribute file in the securityfs
 > + */
-> +bool encls_failed(int ret)
+> +struct sgx_enclave_set_attribute {
+> +	__u64	addr;
+> +	__u64	attribute_fd;
+> +};
+> +
+>  #endif /* _UAPI_ASM_X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> index 4b9a91b53b50..5d85bd3f7876 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> @@ -759,6 +759,46 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+>  	return ret;
+>  }
+>  
+> +/**
+> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
+> + * @filep:	open file to /dev/sgx
+> + * @cmd:	the command value
+> + * @arg:	pointer to a struct sgx_enclave_set_attribute instance
+> + *
+> + * Sets an attribute matching the attribute file that is pointed by the
+> + * parameter structure field attribute_fd.
 
-I really dislike this name.  IMO, "encls_failed" is inaccurate and to some
-extent an unnecessary abstraction.  Regardless of why it faulted, the
-ENCLS instruction "failed".  Just because the fault originated in the EPCM
-doesn't mean the instruction magically succeeded.
+With the @data change (see below), this becomes something like:
 
-What if we inverted the logic, i.e. to identify EPCM violations?  And
-rename encls_fault() to is_encls_fault(), and encls_returned_code()
-to is_sgx_error_code().  E.g.:
+ * Allow the enclave to request the attribute managed by the SGX security file
+ * pointed at by the parameter structure field attribute_fd.
 
-bool is_epcm_violation(int ret)
-{
-	return is_encls_fault(ret) && ENCLS_TRAPNR(ret) == epcm_trapnr;
-}
-
-Then the usage becomes:
-
-	if (is_sgx_error_code(ret) ||
-	    (is_encls_fault(ret) && !is_epcm_violation(ret))
-		blah blah blah
-
-The usage is more verbose, but explicitly clear.
-
+> + *
+> + * Return: 0 on success, -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
+> +					  unsigned long arg)
 > +{
-> +	int epcm_trapnr = boot_cpu_has(X86_FEATURE_SGX2) ?
-> +			  X86_TRAP_PF : X86_TRAP_GP;
-
-epcm_trapnr should be calculated once during init.
-
+> +	struct sgx_enclave_set_attribute *params = (void *)arg;
+> +	struct file *attribute_file;
+> +	struct sgx_encl *encl;
+> +	int ret;
 > +
-> +	return encls_faulted(ret) && ENCLS_TRAPNR(ret) != epcm_trapnr;
-> +}
+> +	attribute_file = fget(params->attribute_fd);
+> +	if (!attribute_file->f_op)
 
-Why isn't this function inlined in sgx.h?
+This should be:
 
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> new file mode 100644
-> index 000000000000..aea3b9d09936
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -0,0 +1,244 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +#ifndef _X86_ENCLS_H
-> +#define _X86_ENCLS_H
+	if (!attribute_file)
+		return -EINVAL;
+
+> +		return -EINVAL;
 > +
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/rwsem.h>
-> +#include <linux/types.h>
-> +#include <asm/asm.h>
-> +#include "arch.h"
+> +	if (attribute_file->f_op != &sgx_fs_provision_fops) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
 > +
-> +/**
-> + * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
-> + *
-> + * ENCLS has its own (positive value) error codes and also generates
-> + * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
-> + * with system error codes as everything percolates back up the stack.
-> + * Unfortunately (for us), we need to precisely identify each unique
-> + * error code, e.g. the action taken if EWB fails varies based on the
-> + * type of fault and on the exact SGX error code, i.e. we can't simply
-> + * convert all faults to -EFAULT.
-> + *
-> + * To make all three error types coexist, we set bit 30 to identify an
-> + * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
-> + * between positive (faults and SGX error codes) and negative (system
-> + * error codes) values.
-> + */
-> +#define ENCLS_FAULT_FLAG 0x40000000
+> +	ret = sgx_encl_get(params->addr, &encl);
+> +	if (ret)
+> +		goto out;
 > +
-> +/**
-> + * Retrieve the encoded trapnr from the specified return code.
-> + */
-> +#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
+> +	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
 
-I honestly can't remember, is there a reason ENCLS_TRAPNR is still a macro
-and not an inline function?
+A cleanr approach would be to pass SGX_ATTR_PROVISIONKEY via @data to
+securityfs_create_file().  Then you don't need to define dummy file_ops
+for each file, i.e. a generic sgx_sec_fs_ops would suffice for the above
+check.  And you don't have this weird hardcoding of the provision bit.
 
-> +
-> +/* Issue a WARN() about an ENCLS leaf. */
+E.g.:
 
-If you're going to bother with a comment, might as well document the
-interesting part, i.e. why we print both the decimal and hexidecimal
-formats, which is the reason this macro exists at all.
-
-> +#define ENCLS_WARN(r, name) {						\
-
-Taking the warn condition and the raw error code in a single parameter
-makes the call sites ugly, e.g.
-
-	if (ret) {
-		if (encls_failed(ret))
-			ENCLS_WARN(ret, "EADD");
-		return false;
+	if (attribute_file->f_op != &sgx_sec_fs_fops) {
+		ret = -EINVAL;
+		goto out;
 	}
 
-If the macro is instead something like:
+	ret = sgx_encl_get(params->addr, &encl);
+	if (ret)
+		goto out;
 
-#define ENCLS_WARN(do_warn, r, name) \
-	WARN(w, "sgx: %s returned %d (0x%x)\n", (name), (r), (r); \
+	encl->allowed_attributes |= (u64)attribute_file->private_data;
 
-then we can drop the do-while wrapping and the callers are a little less
-ugly, e.g.:
-
-	if (ret) {
-		ENCLS_WARN(encls_failed(ret), ret, "EADD");
-		return ret;
-	}
+Since SGX doesn't support 32-bit builds we don't even need to worry about
+the (very distant) future where SGX defines bits in the 63:32 range.
 
 
-Or with the is_epcm_violation() variant:
+> +	kref_put(&encl->refcount, sgx_encl_release);
+> +
+> +out:
+> +	fput(attribute_file);
+> +	return ret;
+> +}
+> +
+>  typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
+>  			  unsigned long arg);
+>  
+> @@ -778,6 +818,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  	case SGX_IOC_ENCLAVE_INIT:
+>  		handler = sgx_ioc_enclave_init;
+>  		break;
+> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
+> +		handler = sgx_ioc_enclave_set_attribute;
+> +		break;
+>  	default:
+>  		return -ENOIOCTLCMD;
+>  	}
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+> index 16f36cd0af04..9a5360dcad98 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+> @@ -22,6 +22,11 @@ u64 sgx_attributes_reserved_mask;
+>  u64 sgx_xfrm_reserved_mask = ~0x3;
+>  u32 sgx_xsave_size_tbl[64];
+>  
+> +const struct file_operations sgx_fs_provision_fops;
+> +
+> +static struct dentry *sgx_fs;
+> +static struct dentry *sgx_fs_provision;
+> +
+>  #ifdef CONFIG_COMPAT
+>  static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+>  			      unsigned long arg)
+> @@ -147,6 +152,40 @@ static struct sgx_dev_ctx *sgxm_dev_ctx_alloc(struct device *parent)
+>  	return ctx;
+>  }
+>  
+> +static int sgx_fs_init(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	sgx_fs = securityfs_create_dir(dev_name(dev), NULL);
+> +	if (IS_ERR(sgx_fs)) {
+> +		ret = PTR_ERR(sgx_fs);
+> +		goto err_sgx_fs;
+> +	}
+> +
+> +	sgx_fs_provision = securityfs_create_file("provision", 0600, sgx_fs,
+> +						  NULL, &sgx_fs_provision_fops);
 
-	if (ret) {
-		ENCLS_WARN(is_encls_fault(ret) && !is_epcm_violation(ret),
-			   ret, "EADD");
-		return ret;
-	}
+Per above, pass SGX_ATTR_PROVISIONKEY instead of NULL.
 
-> +	do {								\
-> +		int _r = (r);						\
-> +		WARN(_r, "sgx: %s returned %d (0x%x)\n", (name), _r,	\
-> +		     _r);						\
-
-There's no need to wrap this, just add spaces before the '\'.
-
-> +	} while (0);							\
+> +	if (IS_ERR(sgx_fs)) {
+> +		ret = PTR_ERR(sgx_fs_provision);
+> +		goto err_sgx_fs_provision;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_sgx_fs_provision:
+> +	securityfs_remove(sgx_fs);
+> +	sgx_fs_provision = NULL;
+> +
+> +err_sgx_fs:
+> +	sgx_fs = NULL;
+> +	return ret;
 > +}
 > +
-> +/**
-> + * encls_faulted() - Check if ENCLS leaf function faulted
-> + * @ret:	the return value of an ENCLS leaf function call
-> + *
-> + * Return: true if the fault flag is set
-> + */
-> +static inline bool encls_faulted(int ret)
+> +static void sgx_fs_remove(void)
 > +{
-> +	return (ret & ENCLS_FAULT_FLAG) != 0;
+> +	securityfs_remove(sgx_fs_provision);
+> +	securityfs_remove(sgx_fs);
 > +}
 > +
-> +/**
-> + * encls_returned_code() - Check if an ENCLS leaf function returned a code
-> + * @ret:	the return value of an ENCLS leaf function call
-> + *
-> + * Check if an ENCLS leaf function returned an error or information code.
-> + *
-> + * Return: true if there was a fault other than an EPCM conflict
-> + */
-> +static inline bool encls_returned_code(int ret)
-> +{
-> +	return !encls_faulted(ret) && ret;
-
-Nit: IMO checking for non-zero ret should be first, both from a readability
-     perspective and from a code generation perspective.
-
-> +}
+>  static int sgx_dev_init(struct device *parent)
+>  {
+>  	struct sgx_dev_ctx *sgx_dev;
+> @@ -190,6 +229,10 @@ static int sgx_dev_init(struct device *parent)
+>  	if (!sgx_encl_wq)
+>  		return -ENOMEM;
+>  
+> +	ret = sgx_fs_init(&sgx_dev->ctrl_dev);
+> +	if (ret)
+> +		goto err_fs_init;
 > +
-> +bool encls_failed(int ret);
+>  	ret = cdev_device_add(&sgx_dev->ctrl_cdev, &sgx_dev->ctrl_dev);
+>  	if (ret)
+>  		goto err_device_add;
+> @@ -197,6 +240,9 @@ static int sgx_dev_init(struct device *parent)
+>  	return 0;
+>  
+>  err_device_add:
+> +	sgx_fs_remove();
 > +
-> +/**
-> + * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
-> + * @rax:	leaf number
-> + * @inputs:	asm inputs for the leaf
-> + *
-> + * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
-> + * And because SGX isn't complex enough as it is, leafs that return an error
-> + * code also modify flags.
-> + *
-> + * Return:
-> + *	0 on success,
-> + *	SGX error code on failure
-> + */
-> +#define __encls_ret_N(rax, inputs...)				\
-> +	({							\
-> +	int ret;						\
-> +	asm volatile(						\
-> +	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-> +	"2:\n"							\
-> +	".section .fixup,\"ax\"\n"				\
-> +	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-> +	"   jmp 2b\n"						\
-> +	".previous\n"						\
-> +	_ASM_EXTABLE_FAULT(1b, 3b)				\
-> +	: "=a"(ret)						\
-> +	: "a"(rax), inputs					\
-> +	: "memory", "cc");					\
-> +	ret;							\
-> +	})
-> +
-> +#define __encls_ret_1(rax, rcx)		\
-> +	({				\
-> +	__encls_ret_N(rax, "c"(rcx));	\
-> +	})
-> +
-> +#define __encls_ret_2(rax, rbx, rcx)		\
-> +	({					\
-> +	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
-> +	})
-> +
-> +#define __encls_ret_3(rax, rbx, rcx, rdx)			\
-> +	({							\
-> +	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
-> +	})
-> +
-> +/**
-> + * __encls_N - encode an ENCLS leaf that doesn't return an error code
-> + * @rax:	leaf number
-> + * @rbx_out:	optional output variable
-> + * @inputs:	asm inputs for the leaf
-> + *
-> + * Emit assembly for an ENCLS leaf that does not return an error code,
-> + * e.g. ECREATE.  Leaves without error codes either succeed or fault.
-> + * @rbx_out is an optional parameter for use by EDGBRD, which returns
-> + * the the requested value in RBX.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   trapnr with ENCLS_FAULT_FLAG set on fault
-> + */
-> +#define __encls_N(rax, rbx_out, inputs...)			\
-> +	({							\
-> +	int ret;						\
-> +	asm volatile(						\
-> +	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-> +	"   xor %%eax,%%eax;\n"					\
-> +	"2:\n"							\
-> +	".section .fixup,\"ax\"\n"				\
-> +	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-> +	"   jmp 2b\n"						\
-> +	".previous\n"						\
-> +	_ASM_EXTABLE_FAULT(1b, 3b)				\
-> +	: "=a"(ret), "=b"(rbx_out)				\
-> +	: "a"(rax), inputs					\
-> +	: "memory");						\
-> +	ret;							\
-> +	})
-> +
-> +#define __encls_2(rax, rbx, rcx)				\
-> +	({							\
-> +	unsigned long ign_rbx_out;				\
-> +	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
-> +	})
-> +
-> +#define __encls_1_1(rax, data, rcx)			\
-> +	({						\
-> +	unsigned long rbx_out;				\
-> +	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
-> +	if (!ret)					\
-> +		data = rbx_out;				\
-> +	ret;						\
-> +	})
-> +
-> +static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
-> +{
-> +	return __encls_2(SGX_ECREATE, pginfo, secs);
-> +}
-> +
-> +static inline int __eextend(void *secs, void *addr)
-> +{
-> +	return __encls_2(SGX_EEXTEND, secs, addr);
-> +}
-> +
-> +static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
-> +{
-> +	return __encls_2(SGX_EADD, pginfo, addr);
-> +}
-> +
-> +static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
-> +			  void *secs)
-> +{
-> +	return __encls_ret_3(SGX_EINIT, sigstruct, secs, einittoken);
-> +}
-> +
-> +static inline int __eremove(void *addr)
-> +{
-> +	return __encls_ret_1(SGX_EREMOVE, addr);
-> +}
-> +
-> +static inline int __edbgwr(void *addr, unsigned long *data)
-> +{
-> +	return __encls_2(SGX_EDGBWR, *data, addr);
-> +}
-> +
-> +static inline int __edbgrd(void *addr, unsigned long *data)
-> +{
-> +	return __encls_1_1(SGX_EDGBRD, *data, addr);
-> +}
-> +
-> +static inline int __etrack(void *addr)
-> +{
-> +	return __encls_ret_1(SGX_ETRACK, addr);
-> +}
-> +
-> +static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
-> +			 void *va)
-> +{
-> +	return __encls_ret_3(SGX_ELDU, pginfo, addr, va);
-> +}
-> +
-> +static inline int __eblock(void *addr)
-> +{
-> +	return __encls_ret_1(SGX_EBLOCK, addr);
-> +}
-> +
-> +static inline int __epa(void *addr)
-> +{
-> +	unsigned long rbx = SGX_PAGE_TYPE_VA;
-> +
-> +	return __encls_2(SGX_EPA, rbx, addr);
-> +}
-> +
-> +static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
-> +			void *va)
-> +{
-> +	return __encls_ret_3(SGX_EWB, pginfo, addr, va);
-> +}
-> +
-> +static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
-> +{
-> +	return __encls_2(SGX_EAUG, pginfo, addr);
-> +}
-> +
-> +static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
-> +{
-> +	return __encls_ret_2(SGX_EMODPR, secinfo, addr);
-> +}
-> +
-> +static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
-> +{
-> +	return __encls_ret_2(SGX_EMODT, secinfo, addr);
-> +}
-> +
-> +#endif /* _X86_ENCLS_H */
+> +err_fs_init:
+>  	destroy_workqueue(sgx_encl_wq);
+>  	return ret;
+>  }
+> @@ -220,6 +266,7 @@ static int sgx_drv_remove(struct platform_device *pdev)
+>  {
+>  	struct sgx_dev_ctx *ctx = dev_get_drvdata(&pdev->dev);
+>  
+> +	sgx_fs_remove();
+>  	cdev_device_del(&ctx->ctrl_cdev, &ctx->ctrl_dev);
+>  	destroy_workqueue(sgx_encl_wq);
+>  
 > -- 
 > 2.19.1
 > 
