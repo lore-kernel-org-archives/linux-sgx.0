@@ -2,43 +2,45 @@ Return-Path: <SRS0=REdw=RX=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADBBC43381
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Mar 2019 20:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1005C43381
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Mar 2019 20:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27D8C21874
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Mar 2019 20:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A2921873
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Mar 2019 20:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbfCTUK5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Mar 2019 16:10:57 -0400
-Received: from mga05.intel.com ([192.55.52.43]:54475 "EHLO mga05.intel.com"
+        id S1726366AbfCTUiI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Mar 2019 16:38:08 -0400
+Received: from mga09.intel.com ([134.134.136.24]:49092 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbfCTUK4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Mar 2019 16:10:56 -0400
+        id S1726303AbfCTUiI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Mar 2019 16:38:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Mar 2019 13:10:56 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Mar 2019 13:38:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,249,1549958400"; 
-   d="scan'208";a="330431675"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Mar 2019 13:10:54 -0700
+   d="scan'208";a="329104835"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Mar 2019 13:38:06 -0700
+Received: from orsmsx123.amr.corp.intel.com (10.22.240.116) by
+ ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 20 Mar 2019 13:38:05 -0700
 Received: from orsmsx116.amr.corp.intel.com ([169.254.7.78]) by
- ORSMSX109.amr.corp.intel.com ([169.254.11.11]) with mapi id 14.03.0415.000;
- Wed, 20 Mar 2019 13:10:54 -0700
+ ORSMSX123.amr.corp.intel.com ([169.254.1.81]) with mapi id 14.03.0415.000;
+ Wed, 20 Mar 2019 13:38:05 -0700
 From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         "Hansen, Dave" <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
         "npmccallum@redhat.com" <npmccallum@redhat.com>,
         "Ayoun, Serge" <serge.ayoun@intel.com>,
@@ -55,19 +57,20 @@ CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         Andy Lutomirski <luto@amacapital.net>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         "Haitao Huang" <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
 Subject: RE: [PATCH v19,RESEND 24/27] x86/vdso: Add
  __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
 Thread-Topic: [PATCH v19,RESEND 24/27] x86/vdso: Add
  __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
-Thread-Index: AQHU3zmquZHDGSY4XUWmggeyxtSmi6YU12fwgAB+UAD//5xBQA==
-Date:   Wed, 20 Mar 2019 20:10:53 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E85C567@ORSMSX116.amr.corp.intel.com>
+Thread-Index: AQHU3zmquZHDGSY4XUWmggeyxtSmi6YU12fwgACBcQD//5sEUA==
+Date:   Wed, 20 Mar 2019 20:38:04 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E85C5AB@ORSMSX116.amr.corp.intel.com>
 References: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
  <20190320162119.4469-25-jarkko.sakkinen@linux.intel.com>
  <960B34DE67B9E140824F1DCDEC400C0F4E85C484@ORSMSX116.amr.corp.intel.com>
- <c7da5f00-f266-48a7-2149-49d7c8ba44a5@fortanix.com>
-In-Reply-To: <c7da5f00-f266-48a7-2149-49d7c8ba44a5@fortanix.com>
+ <20190320191318.GF30469@linux.intel.com>
+In-Reply-To: <20190320191318.GF30469@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -78,35 +81,87 @@ dlp-product: dlpe-windows
 dlp-version: 11.0.400.15
 dlp-reaction: no-action
 x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiA+IEJ5IHJlcXVpcmluZyBwcmVzZXJ2YXRpb24gb2YgUlNQIGF0IGJvdGggQUVYIGFuZCBFRVhJ
-VCwgdGhpcyBwcmVjbHVkZXMNCj4gdGhlIHBvc3NpYmlsaXR5IG9mIHVzaW5nIHRoZSB1bnRydXN0
-ZWQgc3RhY2sgYXMgdGVtcG9yYXJ5IHN0b3JhZ2UgYnkNCj4gZW5jbGF2ZXMuIFdoaWxlIHRoYXQg
-bG9va3MgcmVhc29uYWJsZSBhdCBmaXJzdCBnbGFuY2UsIEknbSBhZnJhaWQgaXQNCj4gaXNuJ3Qg
-dGhlIGNhc2UgaW4gcmVhbGl0eS4gVGhlIHVudHJ1c3RlZCBzdGFjayBpcyBpbmFyZ3VhYmx5IHRo
-ZSBtb3N0DQo+IGNvbnZlbmllbnQgd2F5IGZvciBkYXRhIGV4Y2hhbmdlIGJldHdlZW4gYW4gZW5j
-bGF2ZSBhbmQgaXRzIGVuY2xvc2luZw0KPiBwcm9jZXNzLCBhbmQgaXMgaW4gZmFjdCBiZWluZyB1
-c2VkIGZvciB0aGF0IHB1cnBvc2UgYnkgYWxtb3N0IGFsbA0KPiBleGlzdGluZyBlbmNsYXZlcyB0
-byBkYXRlLiBHaXZlbiB0aGUgZXhwZWN0YXRpb24gdGhhdCB0aGlzIEFQSSB3aWxsIGJlDQo+IHVz
-ZWQgYnkgYWxsIGZ1dHVyZSBTR1ggYXBwbGljYXRpb24sIGl0IGxvb2tzIHVud2lzZSB0byBiYW4g
-dGhlIG1vc3QNCj4gY29udmVuaWVudCBhbmQgY29tbW9ubHkgdXNlZCBhcHByb2FjaCBmb3IgZGF0
-YSBleGNoYW5nZS4NCj4gDQo+IEZvciByZWZlcmVuY2UsIGhlcmUncyB0aGUgY29kZSBpbiB0aGUg
-SW50ZWwgdG9vbGNoYWluIHJlc3BvbnNpYmxlIGZvcg0KPiB0aGlzOg0KPiBodHRwczovL2dpdGh1
-Yi5jb20vaW50ZWwvbGludXgtDQo+IHNneC9ibG9iLzZhMGI1YWM3MWY4ZDE2ZjA0ZTAzNzZmM2Iy
-MTY4ZTgwYzc3M2RkMjMvc2RrL3RydHMvdHJ0cy5jcHAjTDEyNQ0KPiAtTDE0MA0KPiANCj4gUmVn
-YXJkaW5nICJhbG1vc3QgYWxsIGV4aXN0aW5nIGVuY2xhdmVzIHRvIGRhdGUiLCBlbmNsYXZlcyBi
-dWlsdCB3aXRoDQo+IHRoZSBGb3J0YW5peCB0b29sY2hhaW4gZG9uJ3QgdG91Y2ggdGhlIHVudHJ1
-c3RlZCBzdGFjay4NCj4gDQo+IC0tDQo+IEpldGhybyBCZWVrbWFuIHwgRm9ydGFuaXgNCg0KVGhh
-bmtzIGZvciBwcm92aWRpbmcgdGhlIHJlZmVyZW5jZXMuIFllcywgbm90IGV2ZXJ5IGVuY2xhdmUg
-dG91Y2hlcyB0aGUgdW50cnVzdGVkIHN0YWNrIHNvIEkgdXNlZCB0aGUgd29yZCAiYWxtb3N0Ii4N
-Cg0KRXZlcnl0aGluZyBleGlzdHMgZm9yIGEgcmVhc29uLiBCeSBicmluZ2luZyB1cCB3aGF0IGlz
-IGRvbmUgdG9kYXksIEkgd2FzIHRyeWluZyB0byBpbnNwaXJlIHRoaW5raW5nIG9uIHRoZSBtb3Jl
-IGltcG9ydGFudCBxdWVzdGlvbiBvZiAid2h5IGlzIGl0IGRvbmUgdGhpcyB3YXkgdG9kYXk/Ii4N
-Cg==
+> > By requiring preservation of RSP at both AEX and EEXIT, this precludes
+> > the possibility of using the untrusted stack as temporary storage by
+> > enclaves. While that looks reasonable at first glance, I'm afraid it
+> > isn't the case in reality. The untrusted stack is inarguably the most
+> > convenient way for data exchange between an enclave and its enclosing
+> > process,
+> 
+> I vehemently disagree with "inarguably".  IMO, passing data via
+> registers is much more convenient.
+
+Which is the most convenient approach is always dependent on data size and/or even how the data is produced/consumed. It's kind of a spectrum and we're just talking in the sense of probability. You are right that "inarguably" is arguable if the buffer is small enough to fit in registers, and the producer/consumer also has access to registers.
+
+> 
+> Even if you qualify your assertion with "data of arbitrary size unknown
+> at build time", I still disagree.  Using the untrusted stack allows for
+> trickery when a debugger is involved, other than that I see no
+> advantages over allocating virtual memory and handing the pointer to the
+> enclave at launch time.  Sure, it requires a few more lines of code to
+> setup, but it's literally ~20 LoC out of thousands required to sign,
+> build and launch an enclave, but it doesn't require playing games with
+> the stack.
+
+I'm NOT ruling out your approach.
+
+And like you said, the untrusted stack enables certain trickery that helps debugging and also simplifies enclaves (even just a little). Then why are you trying to rule that out? Because of 9 LOC in vDSO?
+
+> 
+> Not to mention that the entire concept of using the untrusted stack is
+> based on the assumption that the enclave is making ocalls, e.g.
+> stateless enclaves or libraries that use a message queue have zero
+> need/benefit for using the untrusted stack.
+
+Don't get me wrong. I never said enclaves would require untrusted stack to make ocalls, or ocalls would require untrusted stack to make. It's just a generic approach for sharing/exchanging data. Some enclaves my need it, others may not.
+
+My question still remains: why do you want to rule it out?
+
+> > and is in fact being used for that purpose by almost all existing
+> > enclaves to date.
+> 
+> That's a bit misleading, since almost all existing enclaves are built
+> against Intel's SDK, which just so happens to unconditionally use the
+> untrusted stack.  It's not like all enclave developers made a concious
+> decision to use the untrusted stack.  If Intel rewrote the SDK to use a
+> different method then one could argue that the new approach is the most
+> common method of passing data.
+
+Everything exists for a reason. It's unimportant what has been done. What matters is why that was done in that particular way. I was trying to inspire thinking.
+
+> 
+> > Given the expectation that this API will be used by all future SGX
+> > application, it looks unwise to ban the most convenient and commonly
+> > used approach for data exchange.
+> >
+> > Given an enclave can touch everything (registers and memory) of the
+> > enclosing process, it's reasonable to restrict the enclave by means of
+> > "calling convention" to allow the enclosing process to retain its
+> > context. And for that purpose, SGX ISA does offer 2 registers (i.e.
+> > RSP and RBP) for applications to choose. Instead of preserving RSP,
+> > I'd prefer RBP, which will end up with more flexibility in all SGX
+> > applications in future.
+> 
+> I disagree that the SGX ISA intends for applications to choose between
+> preserving RSP and RBP, e.g. the SDM description of SSA.UR{B,S}P states:
+> 
+>   Non-Enclave (outside) {RBP,stack} pointer. Saved by EENTER, restored
+> on AEX.
+> 
+> To me, the "Saved/restored" wording implies that URBP and URSP should
+> *never* be touched by the enclave.  Sure, the proposed vDSO interface
+> doesn't require RBP to be preserved, but only because the goal was to
+> deviate from hardware as little as possible, not because anyone wants to
+> encourage enclaves to muck with RBP.
+
+I'm so sorry to tell you that you have misunderstood the SDM. If this is a common misunderstanding, I guess I could talk to the architect responsible for this SDM chapter to see if we could amend the language.
+
+The purpose of restoring RSP is because software needs a stack to handle exception. Well, that's not 100% accurate because it's a user mode stack. Anyway, it tells the used part from the unused space in the stack. RBP on the other hand is NEVER required from interrupt/exception handling perspective, but we decided to add it because we'd like to offer a choice, just like I said earlier. The calling thread could then anchor its frame on either RSP or RBP.  
