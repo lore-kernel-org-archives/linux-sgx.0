@@ -2,181 +2,174 @@ Return-Path: <SRS0=6pva=RY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9E7C43381
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Mar 2019 00:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8227EC43381
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Mar 2019 02:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE851218C3
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Mar 2019 00:17:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 500AE218A2
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Mar 2019 02:08:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfCUAR4 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Mar 2019 20:17:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:30624 "EHLO mga02.intel.com"
+        id S1727586AbfCUCIn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Mar 2019 22:08:43 -0400
+Received: from mga09.intel.com ([134.134.136.24]:3774 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbfCUAR4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Mar 2019 20:17:56 -0400
+        id S1726487AbfCUCIm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Mar 2019 22:08:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Mar 2019 17:17:55 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Mar 2019 19:08:42 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,250,1549958400"; 
-   d="scan'208";a="143791178"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by orsmga002.jf.intel.com with ESMTP; 20 Mar 2019 17:17:55 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.78]) by
- ORSMSX108.amr.corp.intel.com ([169.254.2.134]) with mapi id 14.03.0415.000;
- Wed, 20 Mar 2019 17:17:54 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
+X-IronPort-AV: E=Sophos;i="5.60,251,1549958400"; 
+   d="scan'208";a="124464639"
+Received: from pgsmsx108.gar.corp.intel.com ([10.221.44.103])
+  by orsmga007.jf.intel.com with ESMTP; 20 Mar 2019 19:08:37 -0700
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.114]) by
+ PGSMSX108.gar.corp.intel.com ([169.254.8.195]) with mapi id 14.03.0415.000;
+ Thu, 21 Mar 2019 10:08:37 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC:     "Svahn, Kai" <kai.svahn@intel.com>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
         "rientjes@google.com" <rientjes@google.com>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: RE: [PATCH v19,RESEND 24/27] x86/vdso: Add
- __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
-Thread-Topic: [PATCH v19,RESEND 24/27] x86/vdso: Add
- __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
-Thread-Index: AQHU3zmquZHDGSY4XUWmggeyxtSmi6YU12fwgAB7nID//4szkIAAmViA//+j/nA=
-Date:   Thu, 21 Mar 2019 00:17:53 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E85C6B5@ORSMSX116.amr.corp.intel.com>
-References: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
- <20190320162119.4469-25-jarkko.sakkinen@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E85C484@ORSMSX116.amr.corp.intel.com>
- <CALCETrVKAUK-jZ7Knp7RetTL055p3iK1D8Wyr6=hPq5HkePkFg@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E85C53D@ORSMSX116.amr.corp.intel.com>
- <20190320210313.GJ30469@linux.intel.com>
-In-Reply-To: <20190320210313.GJ30469@linux.intel.com>
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
+Thread-Topic: [PATCH v19 17/27] x86/sgx: Add provisioning
+Thread-Index: AQHU3QbvP5BGVbOPA0+DLUjy9mJ6e6YS3xIAgAH2tgA=
+Date:   Thu, 21 Mar 2019 02:08:36 +0000
+Message-ID: <1553134108.1952.4.camel@intel.com>
+References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
+         <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
+         <20190319200912.GH25575@linux.intel.com>
+In-Reply-To: <20190319200912.GH25575@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODFjOGU2M2EtMjZlYy00YmQyLWI1ZWYtZjdiZDZhMGM3Y2Q1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibnd4UGYzbmVQaVBsT0JkbHRFMWd6UG05cGhmbko4R3NZRE5jUUxaMnpQektqRmNGSEN6QSt2cGVXTHRRTkppUSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-originating-ip: [10.254.55.184]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <26DF35DA0DCF9747B5F104333618914A@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> On Wed, Mar 20, 2019 at 12:57:52PM -0700, Xing, Cedric wrote:
-> > > Using the untrusted stack as a way to exchange data is very
-> > > convenient, but that doesn't mean it's a good idea.  Here are some
-> > > problems it
-> > > causes:
-> > >
-> > >  - It prevents using a normal function to wrap enclave entry (as
-> > > we're seeing with this patch set).
-> >
-> > It doesn't prevent.
-> 
-> Yes it does, keyword being "normal".  Though I guess we could do a bit
-> of bikeshedding on the definition of normal...
-
-I don't understand what you mean by "normal". As I said, I tend to have a x86_64 ABI compliant version and by saying that I mean it'd be a 100% "normal" function callable from C. And the version I provided in this thread is a trimmed down version that doesn't preserve any registers except RSP/RBP so a C wrapper will be necessary. Other than that I'm not aware of any anomalies. Could you elaborate on what "abnormal" operations necessary to invoke this vDSO under what circumstances? And it'll be very helpful if you could present a "normal" function to demonstrate how your code could work with it while mine couldn't.
-
-> Actually, this series doesn't force anything on Intel's SDK, as there is
-> nothing in the documentation that states the vDSO *must* be used to
-> enter enclaves.  In other words, unless it's expressly forbidden,
-> applications are free to enter enclaves directly and do as they wish
-> with the untrusted stack.  The catch being that any such usage will need
-> to deal with enclave exceptions being delivered as signals, i.e. the
-> vDSO implementation is a carrot, not a stick.
-
-If you want to bike-shedding on *must*, well, no one *must* use *anything* from the *anyone*! But is that the expectation? Or if you don't expect your API to be used then what are you doing here?
-
-Intel SDK doesn't have to use this API. But we (the SDK team) are truly willing to use this API because we share the same concern with you over signals and would like to move to something better.
-
-> 
-> AIUI, excepting libraries that want to manipulate the untrusted stack,
-> there is a general consensus that the proposed vDSO implementation is
-> the right approach, e.g. full x86_64 ABI compatibility was explored in
-> the past and was deemed to add unnecessary complexity and overhead.
-> 
-> The vDSO *could* be written in such a way that it supports preserving
-> RBP or RSP, but for all intents and purposes such an implementation
-> would yield two distinct ABIs that just happen to be implemented in a
-> single function.
-> And *if* we want to deal with maintaining two ABIs, supporting the
-> kernel's existing signal ABI is a lot cleaner (from a kernel perspective)
-> than polluting the vDSO.
-
-Disagreed! What I'm proposing is one ABI - enclave preserves RBP! No requirements on RSP. Of course RSP is still interpreted as the line between vacant and used parts of the stack, or nothing will work regardless the proposal.
-
-The hosting process may have an agreement with the enclave to preserve RSP. But that would be completely between them, and would be just a coincidence instead of a consequence of the ABI from the perspective of this vDSO API.
-
-> 
-> In other words, if there is a desire to support enclaves which modify
-> the untrusted stack, and it sounds like there is, then IMO our time is
-> better spent discussing whether or not to officially support the signal
-> ABI for enclaves.
-
-Disagreed! We share the same concern over signals so let's work this out! 
-
-> 
-> > > It assumes that the untrusted stack isn't further constrained by
-> > > various CFI mechanisms (e.g. CET), and, as of last time I checked,
-> > > the interaction between CET and SGX was still not specified.
-> >
-> > I was one of the architects participating in the CET ISA definition.
-> > The assembly provided was crafted with CET in mind and will be fully
-> > compatible with CET.
-> >
-> > > It also
-> > > assumes that the untrusted stack doesn't have ABI-imposed layout
-> > > restrictions related to unwinding, and, as far as I know, this means
-> > > that current enclaves with current enclave runtimes can interact
-> > > quite poorly with debuggers, exception handling, and various crash
-> > > dumping technologies.
-> >
-> > Per comments from the patch set, I guess it's been agreed that this
-> > vDSO function will NOT be x86_64 ABI compatible. So I'm not sure why
-> > stacking unwinding is relevant here.
-> 
-> I think Andy's point is that a single PUSH (to save %rcx) won't break
-> unwinding, etc..., but unwinders and whantot will have a rough go of it
-> if %rsp points at complete garbage.
-
-The unwanders use CFI directives to determine frame pointers. RSP is the frame point by default but could be easily changed - e.g. by ".cfi_def_cfa_register %rbp". I could add proper CFI directives if so desired. I omitted them because you omitted them too in your code (in case you don't know, CFI directives are needed around push/pop %rcx in your code to stay compliant with ELF/DWARF spec), and I didn't want to confuse those who didn't understand CFI.
-
-> 
-> > However, I'm with you that we
-> > should take debugging/exception handling/reporting/crash dumping into
-> > consideration by making this vDSO API x86_64 ABI compatible. IMO it's
-> > trivial and the performance overhead in negligible (dwarfed by ENCLU
-> > anyway. I'd be more than happy to provide a x86_64 ABI compatible
-> > version if that's also your preference.
-> 
-> It's not just the performance cost, making __vdso_sgx_enter_enclave()
-> compatible with the x86_64 ABI adds complexity to both its code and its
-> documentation, e.g. to describe how data is marshalled to/from enclaves.
-
-Well, technically speaking an ABI compliant API should *reduce* documentation. But given how easy it is to write a C compliant wrapper, I think a custom ABI is perfectly fine.
+T24gVHVlLCAyMDE5LTAzLTE5IGF0IDEzOjA5IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBPbiBTdW4sIE1hciAxNywgMjAxOSBhdCAxMToxNDo0NlBNICswMjAwLCBKYXJra28g
+U2Fra2luZW4gd3JvdGU6DQo+ID4gSW4gb3JkZXIgdG8gcHJvdmlkZSBhIG1lY2hhbmlzbSBmb3Ig
+ZGV2aWxlcmluZyBwcm92aXNvbmluZyByaWdodHM6DQo+ID4gDQo+ID4gMS4gQWRkIGEgbmV3IGZp
+bGUgdG8gdGhlIHNlY3VyaXR5ZnMgZmlsZSBjYWxsZWQgc2d4L3Byb3Zpc2lvbiB0aGF0IHdvcmtz
+DQo+ID4gICAgYXMgYSB0b2tlbiBmb3IgYWxsb3dpbmcgYW4gZW5jbGF2ZSB0byBoYXZlIHRoZSBw
+cm92aXNpb25pbmcgcHJpdmlsZWdlcy4NCj4gPiAyLiBBZGQgYSBuZXcgaW9jdGwgY2FsbGVkIFNH
+WF9JT0NfRU5DTEFWRV9TRVRfQVRUUklCVVRFIHRoYXQgYWNjZXB0cyB0aGUNCj4gPiAgICBmb2xs
+b3dpbmcgZGF0YSBzdHJ1Y3R1cmU6DQo+ID4gDQo+ID4gICAgc3RydWN0IHNneF9lbmNsYXZlX3Nl
+dF9hdHRyaWJ1dGUgew0KPiA+ICAgICAgICAgICAgX191NjQgYWRkcjsNCj4gPiAgICAgICAgICAg
+IF9fdTY0IHRva2VuX2ZkOw0KPiA+ICAgIH07DQoNCldvdWxkIHlvdSBlbGFib3JhdGUgd2h5IHRo
+ZSBuYW1lIGlzICJ0b2tlbl9mZCI/IEkgdGhpbmsgKnRva2VuKiBpbiBTR1ggaGFzIG1vcmUgc3Bl
+Y2lmaWMgbWVhbmluZz8NCg0KPiA+IA0KPiA+IEEgZGFlbW9uIGNvdWxkIHNpdCBvbiB0b3Agb2Yg
+c2d4L3Byb3Zpc2lvbiBhbmQgc2VuZCBhIGZpbGUgZGVzY3JpcHRvciBvZg0KPiA+IHRoaXMgZmls
+ZSB0byBhIHByb2Nlc3MgdGhhdCBuZWVkcyB0byBiZSBhYmxlIHRvIHByb3Zpc2lvbiBlbmNsYXZl
+cy4NCj4gPiANCj4gPiBUaGUgd2F5IHRoaXMgQVBJIGlzIHVzZWQgaXMgbW9yZSBvciBsZXNzIHN0
+cmFpZ2h0LWZvcndhcmQuIExldHMgYXNzdW1lIHRoYXQNCj4gPiBkZXZfZmQgaXMgYSBoYW5kbGUg
+dG8gL2Rldi9zZ3ggYW5kIHByb3ZfZmQgaXMgYSBoYW5kbGUgdG8gc2d4L3Byb3Zpc2lvbi4NCj4g
+PiBZb3Ugd291bGQgYWxsb3cgU0dYX0lPQ19FTkNMQVZFX0NSRUFURSB0byBpbml0aWFsaXplIGFu
+IGVuY2xhdmUgd2l0aCB0aGUNCj4gPiBQUk9WSVNJT05LRVkgYXR0cmlidXRlIGJ5DQo+ID4gDQo+
+ID4gcGFyYW1zLmFkZHIgPSA8ZW5jbGF2ZSBhZGRyZXNzPjsNCj4gPiBwYXJhbXMudG9rZW5fZmQg
+PSBwcm92X2ZkOw0KPiA+IA0KPiA+IGlvY3RsKGRldl9mZCwgU0dYX0lPQ19FTkNMQVZFX1NFVF9B
+VFRSSUJVVEUsICZwYXJhbXMpOw0KPiA+IA0KPiA+IENjOiBKYW1lcyBNb3JyaXMgPGptb3JyaXNA
+bmFtZWkub3JnPg0KPiA+IENjOiBTZXJnZSBFLiBIYWxseW4gPHNlcmdlQGhhbGx5bi5jb20+DQo+
+ID4gQ2M6IGxpbnV4LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBTdWdnZXN0
+ZWQtYnk6IEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJuZWwub3JnPg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IEphcmtrbyBTYWtraW5lbiA8amFya2tvLnNha2tpbmVuQGxpbnV4LmludGVsLmNvbT4NCj4g
+PiAtLS0NCj4gPiAgYXJjaC94ODYvaW5jbHVkZS91YXBpL2FzbS9zZ3guaCAgICAgICAgfCAxMyAr
+KysrKysrDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2RyaXZlci9pb2N0bC5jIHwgNDMg
+KysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvZHJp
+dmVyL21haW4uYyAgfCA0NyArKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAzIGZpbGVz
+IGNoYW5nZWQsIDEwMyBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gv
+eDg2L2luY2x1ZGUvdWFwaS9hc20vc2d4LmggYi9hcmNoL3g4Ni9pbmNsdWRlL3VhcGkvYXNtL3Nn
+eC5oDQo+ID4gaW5kZXggYWFkZjljNzZlMzYwLi4xNTBhNzg0ZGIzOTUgMTAwNjQ0DQo+ID4gLS0t
+IGEvYXJjaC94ODYvaW5jbHVkZS91YXBpL2FzbS9zZ3guaA0KPiA+ICsrKyBiL2FyY2gveDg2L2lu
+Y2x1ZGUvdWFwaS9hc20vc2d4LmgNCj4gPiBAQCAtMTYsNiArMTYsOCBAQA0KPiA+ICAJX0lPVyhT
+R1hfTUFHSUMsIDB4MDEsIHN0cnVjdCBzZ3hfZW5jbGF2ZV9hZGRfcGFnZSkNCj4gPiAgI2RlZmlu
+ZSBTR1hfSU9DX0VOQ0xBVkVfSU5JVCBcDQo+ID4gIAlfSU9XKFNHWF9NQUdJQywgMHgwMiwgc3Ry
+dWN0IHNneF9lbmNsYXZlX2luaXQpDQo+ID4gKyNkZWZpbmUgU0dYX0lPQ19FTkNMQVZFX1NFVF9B
+VFRSSUJVVEUgXA0KPiA+ICsJX0lPVyhTR1hfTUFHSUMsIDB4MDMsIHN0cnVjdCBzZ3hfZW5jbGF2
+ZV9zZXRfYXR0cmlidXRlKQ0KPiA+ICANCj4gPiAgLyogSU9DVEwgcmV0dXJuIHZhbHVlcyAqLw0K
+PiA+ICAjZGVmaW5lIFNHWF9QT1dFUl9MT1NUX0VOQ0xBVkUJCTB4NDAwMDAwMDANCj4gPiBAQCAt
+NTYsNCArNTgsMTUgQEAgc3RydWN0IHNneF9lbmNsYXZlX2luaXQgew0KPiA+ICAJX191NjQJc2ln
+c3RydWN0Ow0KPiA+ICB9Ow0KPiA+ICANCj4gPiArLyoqDQo+ID4gKyAqIHN0cnVjdCBzZ3hfZW5j
+bGF2ZV9zZXRfYXR0cmlidXRlIC0gcGFyYW1ldGVyIHN0cnVjdHVyZSBmb3IgdGhlDQo+ID4gKyAq
+CQkJCSAgICAgICVTR1hfSU9DX0VOQ0xBVkVfSU5JVCBpb2N0bA0KPiA+ICsgKiBAYWRkcjoJCWFk
+ZHJlc3Mgd2l0aGluIHRoZSBFTFJBTkdFDQo+ID4gKyAqIEBhdHRyaWJ1dGVfZmQ6CWZpbGUgaGFu
+ZGxlIG9mIHRoZSBhdHRyaWJ1dGUgZmlsZSBpbiB0aGUgc2VjdXJpdHlmcw0KPiA+ICsgKi8NCj4g
+PiArc3RydWN0IHNneF9lbmNsYXZlX3NldF9hdHRyaWJ1dGUgew0KPiA+ICsJX191NjQJYWRkcjsN
+Cj4gPiArCV9fdTY0CWF0dHJpYnV0ZV9mZDsNCj4gPiArfTsNCj4gPiArDQo+ID4gICNlbmRpZiAv
+KiBfVUFQSV9BU01fWDg2X1NHWF9IICovDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5l
+bC9jcHUvc2d4L2RyaXZlci9pb2N0bC5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvZHJpdmVy
+L2lvY3RsLmMNCj4gPiBpbmRleCA0YjlhOTFiNTNiNTAuLjVkODViZDNmNzg3NiAxMDA2NDQNCj4g
+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9kcml2ZXIvaW9jdGwuYw0KPiA+ICsrKyBi
+L2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2RyaXZlci9pb2N0bC5jDQo+ID4gQEAgLTc1OSw2ICs3
+NTksNDYgQEAgc3RhdGljIGxvbmcgc2d4X2lvY19lbmNsYXZlX2luaXQoc3RydWN0IGZpbGUgKmZp
+bGVwLCB1bnNpZ25lZCBpbnQgY21kLA0KPiA+ICAJcmV0dXJuIHJldDsNCj4gPiAgfQ0KPiA+ICAN
+Cj4gPiArLyoqDQo+ID4gKyAqIHNneF9pb2NfZW5jbGF2ZV9zZXRfYXR0cmlidXRlIC0gaGFuZGxl
+ciBmb3IgJVNHWF9JT0NfRU5DTEFWRV9TRVRfQVRUUklCVVRFDQo+ID4gKyAqIEBmaWxlcDoJb3Bl
+biBmaWxlIHRvIC9kZXYvc2d4DQo+ID4gKyAqIEBjbWQ6CXRoZSBjb21tYW5kIHZhbHVlDQo+ID4g
+KyAqIEBhcmc6CXBvaW50ZXIgdG8gYSBzdHJ1Y3Qgc2d4X2VuY2xhdmVfc2V0X2F0dHJpYnV0ZSBp
+bnN0YW5jZQ0KPiA+ICsgKg0KPiA+ICsgKiBTZXRzIGFuIGF0dHJpYnV0ZSBtYXRjaGluZyB0aGUg
+YXR0cmlidXRlIGZpbGUgdGhhdCBpcyBwb2ludGVkIGJ5IHRoZQ0KPiA+ICsgKiBwYXJhbWV0ZXIg
+c3RydWN0dXJlIGZpZWxkIGF0dHJpYnV0ZV9mZC4NCj4gDQo+IFdpdGggdGhlIEBkYXRhIGNoYW5n
+ZSAoc2VlIGJlbG93KSwgdGhpcyBiZWNvbWVzIHNvbWV0aGluZyBsaWtlOg0KPiANCj4gICogQWxs
+b3cgdGhlIGVuY2xhdmUgdG8gcmVxdWVzdCB0aGUgYXR0cmlidXRlIG1hbmFnZWQgYnkgdGhlIFNH
+WCBzZWN1cml0eSBmaWxlDQo+ICAqIHBvaW50ZWQgYXQgYnkgdGhlIHBhcmFtZXRlciBzdHJ1Y3R1
+cmUgZmllbGQgYXR0cmlidXRlX2ZkLg0KPiANCj4gPiArICoNCj4gPiArICogUmV0dXJuOiAwIG9u
+IHN1Y2Nlc3MsIC1lcnJubyBvdGhlcndpc2UNCj4gPiArICovDQo+ID4gK3N0YXRpYyBsb25nIHNn
+eF9pb2NfZW5jbGF2ZV9zZXRfYXR0cmlidXRlKHN0cnVjdCBmaWxlICpmaWxlcCwgdW5zaWduZWQg
+aW50IGNtZCwNCj4gPiArCQkJCQkgIHVuc2lnbmVkIGxvbmcgYXJnKQ0KPiA+ICt7DQo+ID4gKwlz
+dHJ1Y3Qgc2d4X2VuY2xhdmVfc2V0X2F0dHJpYnV0ZSAqcGFyYW1zID0gKHZvaWQgKilhcmc7DQo+
+ID4gKwlzdHJ1Y3QgZmlsZSAqYXR0cmlidXRlX2ZpbGU7DQo+ID4gKwlzdHJ1Y3Qgc2d4X2VuY2wg
+KmVuY2w7DQo+ID4gKwlpbnQgcmV0Ow0KPiA+ICsNCj4gPiArCWF0dHJpYnV0ZV9maWxlID0gZmdl
+dChwYXJhbXMtPmF0dHJpYnV0ZV9mZCk7DQo+ID4gKwlpZiAoIWF0dHJpYnV0ZV9maWxlLT5mX29w
+KQ0KPiANCj4gVGhpcyBzaG91bGQgYmU6DQo+IA0KPiAJaWYgKCFhdHRyaWJ1dGVfZmlsZSkNCj4g
+CQlyZXR1cm4gLUVJTlZBTDsNCj4gDQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ID4gKw0KPiA+
+ICsJaWYgKGF0dHJpYnV0ZV9maWxlLT5mX29wICE9ICZzZ3hfZnNfcHJvdmlzaW9uX2ZvcHMpIHsN
+Cj4gPiArCQlyZXQgPSAtRUlOVkFMOw0KPiA+ICsJCWdvdG8gb3V0Ow0KPiA+ICsJfQ0KPiA+ICsN
+Cj4gPiArCXJldCA9IHNneF9lbmNsX2dldChwYXJhbXMtPmFkZHIsICZlbmNsKTsNCj4gPiArCWlm
+IChyZXQpDQo+ID4gKwkJZ290byBvdXQ7DQo+ID4gKw0KPiA+ICsJZW5jbC0+YWxsb3dlZF9hdHRy
+aWJ1dGVzIHw9IFNHWF9BVFRSX1BST1ZJU0lPTktFWTsNCj4gDQo+IEEgY2xlYW5yIGFwcHJvYWNo
+IHdvdWxkIGJlIHRvIHBhc3MgU0dYX0FUVFJfUFJPVklTSU9OS0VZIHZpYSBAZGF0YSB0bw0KPiBz
+ZWN1cml0eWZzX2NyZWF0ZV9maWxlKCkuICBUaGVuIHlvdSBkb24ndCBuZWVkIHRvIGRlZmluZSBk
+dW1teSBmaWxlX29wcw0KPiBmb3IgZWFjaCBmaWxlLCBpLmUuIGEgZ2VuZXJpYyBzZ3hfc2VjX2Zz
+X29wcyB3b3VsZCBzdWZmaWNlIGZvciB0aGUgYWJvdmUNCj4gY2hlY2suICBBbmQgeW91IGRvbid0
+IGhhdmUgdGhpcyB3ZWlyZCBoYXJkY29kaW5nIG9mIHRoZSBwcm92aXNpb24gYml0Lg0KPiANCj4g
+RS5nLjoNCj4gDQo+IAlpZiAoYXR0cmlidXRlX2ZpbGUtPmZfb3AgIT0gJnNneF9zZWNfZnNfZm9w
+cykgew0KPiAJCXJldCA9IC1FSU5WQUw7DQo+IAkJZ290byBvdXQ7DQo+IAl9DQo+IA0KPiAJcmV0
+ID0gc2d4X2VuY2xfZ2V0KHBhcmFtcy0+YWRkciwgJmVuY2wpOw0KPiAJaWYgKHJldCkNCj4gCQln
+b3RvIG91dDsNCj4gDQo+IAllbmNsLT5hbGxvd2VkX2F0dHJpYnV0ZXMgfD0gKHU2NClhdHRyaWJ1
+dGVfZmlsZS0+cHJpdmF0ZV9kYXRhOw0KPiANCj4gU2luY2UgU0dYIGRvZXNuJ3Qgc3VwcG9ydCAz
+Mi1iaXQgYnVpbGRzIHdlIGRvbid0IGV2ZW4gbmVlZCB0byB3b3JyeSBhYm91dA0KPiB0aGUgKHZl
+cnkgZGlzdGFudCkgZnV0dXJlIHdoZXJlIFNHWCBkZWZpbmVzIGJpdHMgaW4gdGhlIDYzOjMyIHJh
+bmdlLg0KPiANCg0KQWdyZWUgd2l0aCBTZWFuIHRoYXQgcGFzc2luZyBTR1hfQVRUUl9QUk9WSVNJ
+T05LRVkgdmlhIEBkYXRhIGlzIG1vcmUgY2xlYW5lci4NCg0KVGhhbmtzLA0KLUthaQ==
