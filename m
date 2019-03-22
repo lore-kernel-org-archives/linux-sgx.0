@@ -2,125 +2,136 @@ Return-Path: <SRS0=8iz8=RZ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9539C43381
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Mar 2019 18:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EA4C43381
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Mar 2019 20:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987392192C
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Mar 2019 18:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553278845;
-	bh=1kWctT+kE5evAeNibbLsh26YhCyp/R9wPRN6xPGJ6RQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=PHDK35/MwVaLSGTqt2m4v28GwphLlL9JPkOlCWMthRKCsHha7RKruyLIw6fDW5CeV
-	 rMvKIlMAZ1EAnfr10RhY9o+oEa6XONECfRDR475HPaNPdX7J1BuDP/Rv31jsqRTI9Z
-	 meM7iiDki76kYtNiIxe+TxGnkYE0w3KsDSZQ9iyE=
+	by mail.kernel.org (Postfix) with ESMTP id A169F21900
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Mar 2019 20:31:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbfCVSUp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 22 Mar 2019 14:20:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55594 "EHLO mail.kernel.org"
+        id S1726611AbfCVUbU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 22 Mar 2019 16:31:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:55851 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbfCVSUp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 22 Mar 2019 14:20:45 -0400
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DC792195D
-        for <linux-sgx@vger.kernel.org>; Fri, 22 Mar 2019 18:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553278843;
-        bh=1kWctT+kE5evAeNibbLsh26YhCyp/R9wPRN6xPGJ6RQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0yqXIugVnq1peMz8GRbz5OTwbgKFr/s/0O4w0jeHkX4qnmus0svKwUMoMnEdhkLyP
-         SOwDdI0yCUEMX7BNgMjS1u3Xrt8jNFhxMZle2pbvo/LhpmRqJRtzMl19DqqUgtHSdj
-         JA0KYWLZS31elmhZtVH6bbGVrF4CdZL7K6w2UCNw=
-Received: by mail-wm1-f44.google.com with SMTP id v14so3099153wmf.2
-        for <linux-sgx@vger.kernel.org>; Fri, 22 Mar 2019 11:20:43 -0700 (PDT)
-X-Gm-Message-State: APjAAAWA6K1TiX8j2oIXw/tK4/MHGs1AFYqZZbTIST0+5QYzsgJkxAHt
-        uKJGVs4XCwDfLP6FtUDgumHXvSvG9Vf/FJ7h9YJVbw==
-X-Google-Smtp-Source: APXvYqy2I1uslvP3FiFGfyDUKj1iCdva2ck5rAWUz5OQB/IcpxoXuOmb1NCFUiPP6ho3FC3uGpp9/Zjux5Wvmv22uow=
-X-Received: by 2002:a7b:c257:: with SMTP id b23mr3828467wmj.83.1553278841796;
- Fri, 22 Mar 2019 11:20:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
- <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com> <CALCETrXQ0x2TD5GnaHhmF6SExk0C8+L0AwfnH-Krqwttfvwz2A@mail.gmail.com>
- <20190322112938.GJ3122@linux.intel.com> <20190322114325.GA10165@linux.intel.com>
-In-Reply-To: <20190322114325.GA10165@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 22 Mar 2019 11:20:30 -0700
-X-Gmail-Original-Message-ID: <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
-Message-ID: <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
-Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
+        id S1726603AbfCVUbU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 22 Mar 2019 16:31:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Mar 2019 13:31:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,256,1549958400"; 
+   d="scan'208";a="331141865"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Mar 2019 13:31:19 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.78]) by
+ ORSMSX103.amr.corp.intel.com ([169.254.5.129]) with mapi id 14.03.0415.000;
+ Fri, 22 Mar 2019 13:31:18 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
         "Ayoun, Serge" <serge.ayoun@intel.com>,
         "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "rientjes@google.com" <rientjes@google.com>,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: RE: [PATCH v19,RESEND 24/27] x86/vdso: Add
+ __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
+Thread-Topic: [PATCH v19,RESEND 24/27] x86/vdso: Add
+ __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
+Thread-Index: AQHU3zmquZHDGSY4XUWmggeyxtSmi6YU12fwgAB7nID//4szkIAB7KQAgAEyn5A=
+Date:   Fri, 22 Mar 2019 20:31:17 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E85DA80@ORSMSX116.amr.corp.intel.com>
+References: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
+ <20190320162119.4469-25-jarkko.sakkinen@linux.intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E85C484@ORSMSX116.amr.corp.intel.com>
+ <CALCETrVKAUK-jZ7Knp7RetTL055p3iK1D8Wyr6=hPq5HkePkFg@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E85C53D@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUmWJRg120Evk4ctAUXOiA5HcfrW2uGWq_Z0OT5K70zGw@mail.gmail.com>
+In-Reply-To: <CALCETrUmWJRg120Evk4ctAUXOiA5HcfrW2uGWq_Z0OT5K70zGw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTY3MDdhMjQtNmM3Ni00MmQ0LTlkMjUtMjRkZmVlZTFlNjAwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSzJSOHVPTThZRXBQaWNOdW9FTW1yb09KK1hIVHEyQ09JUjdkb2VOMERncVhackFlT2pLQzdydkdXUzRJRzVSRyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 4:43 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Fri, Mar 22, 2019 at 01:29:38PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Mar 21, 2019 at 09:50:41AM -0700, Andy Lutomirski wrote:
-> > > On Sun, Mar 17, 2019 at 2:18 PM Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > >
-> > > > In order to provide a mechanism for devilering provisoning rights:
-> > > >
-> > > > 1. Add a new file to the securityfs file called sgx/provision that works
-> > > >    as a token for allowing an enclave to have the provisioning privileges.
-> > > > 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-> > > >    following data structure:
-> > > >
-> > > >    struct sgx_enclave_set_attribute {
-> > > >            __u64 addr;
-> > > >            __u64 token_fd;
-> > > >    };
-> > >
-> > > Here's a potential issue:
-> > >
-> > > For container use, is it reasonable for a container manager to
-> > > bind-mount a file into securityfs?  Or would something in /dev make
-> > > this easier?
-> >
-> > I guess that is a valid point given that the securityfs contains the LSM
-> > (e.g. SELinux or AppArmor) policy. So yeah, I think your are right what
-> > you say.
-> >
-> > I propose that we create /dev/sgx/enclave to act as the enclave manager
-> > and /dev/sgx/provision for provisioning. Is this sustainable for you?
->
-> Hmm.. on 2nd thought the LSM policy or even DAC policy  would restrict
-> that the container manager can only access specific files inside
-> securityfs. With this conclusion I still think it is probably the best
-> place for seurity policy like things even for SGX. It is meant for that
-> anyway.
->
-
-LSM or DAC policy can certainly *restrict* it, but I suspect that most
-container runtimes don't mount securityfs at all.  OTOH, the runtime
-definitely needs to have a way to pass /dev/sgx/enclave (or whatever
-it's called) through, so using another device node will definitely
-work.
+SGkgQW5keSwNCg0KPiA+ID4gIC0gSXQgd2lsbCBtYWtlIGl0IHF1aXRlIHVucGxlYXNhbnQgdG8g
+Y2FsbCBpbnRvIGFuIGVuY2xhdmUgaW4gYQ0KPiA+ID4gY29yb3V0aW5lIGRlcGVuZGluZyBvbiBo
+b3cgdGhlIGhvc3QgdW50cnVzdGVkIHJ1bnRpbWUgaW1wbGVtZW50cw0KPiA+ID4gY29yb3V0aW5l
+cy4NCj4gPg0KPiA+IEknbSBub3Qgc3VyZSB3aGF0IHlvdSBhcmUgcmVmZXJyaW5nIHRvIGJ5ICJj
+b3JvdXRpbmUiLiBCdXQgdGhpcyB2RFNPDQo+IEFQSSB3aWxsIGJlIChleHBlY3RlZCB0byBiZSkg
+dGhlIG9ubHkgcm91dGluZSB0aGF0IGFjdHVhbGx5IGNhbGxzIGludG8NCj4gYW4gZW5jbGF2ZS4g
+SXNuJ3QgdGhhdCBjb3JyZWN0Pw0KPiANCj4gSSBtZWFuIHVzZSBpbiBsYW5ndWFnZXMgYW5kIHJ1
+bnRpbWVzIHRoYXQgYWxsb3cgYSBmdW5jdGlvbiBhbmQgaXRzDQo+IGNhbGxlZXMgdG8gcGF1c2Ug
+YW5kIHRoZW4gcmVzdW1lIGxhdGVyLiAgU29tZXRoaW5nIGxpa2UgKHBzZXVkb2NvZGUsDQo+IG9i
+dmlvdXNseSk6DQo+IA0KPiB2b2lkIGludm9rZV90aGVfZW5jbGF2ZSgpDQo+IHsNCj4gICBkb19l
+ZW50ZXJfdGhyb3VnaF92ZHNvKCk7DQo+IH0NCj4gDQo+IHZvaWQgc29tZV9vY2FsbF9oYW5kbGVy
+KHZvaWQgKnB0cikNCj4gew0KPiAgIHlpZWxkOw0KPiB9DQoNClRoYW5rIHlvdSB2ZXJ5IG11Y2gg
+Zm9yIHlvdXIgZGV0YWlsZWQgZXhwbGFuYXRpb24uIFRoaXMgbG9va3MgbW9yZSBhYm91dCB3aGV0
+aGVyIG9yIG5vdCB0aGUgdW50cnVzdGVkIHN0YWNrIHdpbGwgcmVtYWluIHZhbGlkIGFmdGVyIEVF
+WElULCB0aGFuIHdoZXRoZXIgdGhlIG9jYWxsIHdpbGwgYmUgcGF1c2VkIG9yIG5vdC4gQXMgaW4g
+eW91ciBleGFtcGxlIGNvZGUgYWJvdmUsIGEgcHJvYmxlbSBtYXkgb2NjdXIgaWYgInlpZWxkIiBk
+ZXN0cm95cyB0aGUgc3RhY2sgb2YgaXRzIGNhbGxlci4gQnV0IGlzIHRoYXQgYSBjb21tb24gYmVo
+YXZpb3Igb2YgInlpZWxkIiAob3IgYW55IHNjaGVkdWxlciBhdCBhbGwpPyANCg0KWW91ciBwb2lu
+dCBpcyB3ZWxsIHJlY2VpdmVkIHRob3VnaCAtIE5vdCBldmVyeSBlbmNsYXZlIGNhbi9zaGFsbCBh
+c3N1bWUgZXhpc3RlbmNlIG9yIHNpemUgb2YgYW4gdW50cnVzdGVkIHN0YWNrLiBUaGVyZWZvcmUg
+SSd2ZSBtYWRlIHN1cmUgbXkgcHJvcG9zYWwgd2lsbCB3b3JrIG5vIG1hdHRlciB0aGUgZW5jbGF2
+ZSB0b3VjaGVzIHRoZSB1bnRydXN0ZWQgc3RhY2sgb3Igbm90Lg0KDQo+IA0KPiBJZiB0aGUgZW5j
+bGF2ZSBoYXMgcHRyIHBvaW50aW5nIHRvIHRoZSB1bnRydXN0ZWQgc3RhY2ssIHRoZW4gdGhpcyBn
+ZXRzDQo+IHF1aXRlIGF3a3dhcmQgZm9yIHRoZSBydW50aW1lIHRvIGhhbmRsZSBlZmZpY2llbnRs
+eS4gIElNTyBhIG11Y2ggbmljZXINCj4gYXBwcm9hY2ggd291bGQgYmU6DQo+IA0KPiB2b2lkIGlu
+dm9rZV90aGVfZW5jbGF2ZSgpDQo+IHsNCj4gICBjaGFyIGJ1ZmZlclsxMDI0XTsNCj4gICB3aGls
+ZSAodHJ1ZSkNCj4gICB7DQo+ICAgICBlZW50ZXIgKHRocm91Z2ggdmRzbyk7DQo+ICAgICBpZiAo
+ZXhpdCB3YXMgYW4gb2NhbGwgcmVxdWVzdCkgew0KPiAgICAgICBzb21lX29jYWxsX2hhbmRsZXIo
+YnVmZmVyKTsNCj4gICAgIH0NCj4gICB9DQo+IH0NCj4gDQo+IEFuZCBub3cgdGhlcmUgaXMgbm90
+aGluZyBmdW5ueSBoYXBwZW5pbmcgYmVoaW5kIHRoZSBydW50aW1lJ3MgYmFjayB3aGVuDQo+IHNv
+bWVfb2NhbGxfaGFuZGxlciB0cmllcyB0byB5aWVsZC4NCg0KQWdyZWVkLiANCg0KSW4gZmFjdCwg
+TXIuIENocmlzdG9waGVyc29uJ3MgQVBJIGNvdWxkIGJlIGltcGxlbWVudGVkIHVzaW5nIG1pbmUg
+YXMgYSBzdWJyb3V0aW5lIChwbGVhc2Ugc2VlIGJlbG93KS4gU28geW91ciAibmljZXIgYXBwcm9h
+Y2giIHdpbGwgY29udGludWUgdG8gd29yayBhcyBsb25nIGFzIGl0IHdvcmtzIHdpdGggY3VycmVu
+dCBwYXRjaC4gSG93ZXZlciwgcGxlYXNlIGtlZXAgaW4gbWluZCB0aGF0IHlvdXIgIm5pY2VyIiBh
+cHByb2FjaCBkb2Vzbid0IGhhdmUgdG8gYmUgdGhlICJvbmx5IiBhcHByb2FjaC4NCg0KVGhlIGNv
+ZGUgc25pcHBldCBiZWxvdyBzaG93cyBhbiBlcXVpdmFsZW50IGltcGxlbWVudGF0aW9uIG9mIE1y
+LiBDaHJpc3RvcGhlcnNvbidzIEFQSSB1c2luZyBtaW5lIGFzIGEgc3Vicm91dGluZSwgZXhjZXB0
+IHRoYXQgUkJQIGNhbm5vdCBiZSB1c2VkIGFzIGEgcGFyYW1ldGVyIHRvIHRoZSBlbmNsYXZlIGJl
+Y2F1c2UgaXQgd2lsbCBiZSBvdmVyd3JpdHRlbiBiZWZvcmUgRUVOVEVSLiBUbyBkaXN0aW5ndWlz
+aCBoaXMgQVBJIGFuZCBtaW5lLCB0aGV5IGFyZSByZW5hbWVkIHRvIF9fdmRzb19zZ3hfZW50ZXJf
+ZW5jbGF2ZV9DaHJpc3RvcGhlcnNvbiBhbmQgX192ZHNvX3NneF9lbnRlcl9lbmNsYXZlX1hpbmcs
+IHJlc3BlY3RpdmVseS4gDQoNCl9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZV9DaHJpc3RvcGhlcnNv
+bjoNCiAgICAgICAgcHVzaCAgICAkMCAgICAgIC8qIE5vICJleGl0IGNhbGxiYWNrIiBwcm92aWRl
+ZCAqLw0KICAgICAgICBwdXNoICAgICVyY3ggICAgLyogT3B0aW9uYWwgcG9pbnRlciB0byAnc3Ry
+dWN0IHNneF9lbmNsYXZlX2V4Y2VwdGlvbicgKi8NCiAgICAgICAgcHVzaCAgICAlcmJ4ICAgIC8q
+IFRDUyAqLw0KICAgICAgICBjYWxsICAgIF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZV9YaW5nDQog
+ICAgICAgIGFkZCAgICAgJDI0LCAlcnNwDQogICAgICAgIHJldA0KDQpUaGFua3MhDQoNCi1DZWRy
+aWMNCg==
