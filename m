@@ -2,35 +2,64 @@ Return-Path: <SRS0=Tkjg=R4=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D56EC10F03
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Mar 2019 18:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D133BC43381
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Mar 2019 23:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40ABD2087C
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Mar 2019 18:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9349C206DF
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Mar 2019 23:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553558082;
+	bh=7IXy9PmaCQVWs3dr2OsZDsoJ+4vRKTCXqWnIvRBz76k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=OX8unh0mhriHkzLPb8mgRHFXBg11XKnrUiy2o4o1iLjMbNuK/Y9KXvDEcfBCz3M4s
+	 DM9djqIcwCIkvU5wg+F0AteC3qZjLOvAQoo/7txMeFfrhDyMvW9vnH3Cgnc+mffEKJ
+	 ag35BenthhDmC0Zc7IlswEOXceclG3bE8t8UD0Ac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbfCYSDw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 25 Mar 2019 14:03:52 -0400
-Received: from mga18.intel.com ([134.134.136.126]:57186 "EHLO mga18.intel.com"
+        id S1726301AbfCYXym (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 25 Mar 2019 19:54:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729095AbfCYSDw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 25 Mar 2019 14:03:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Mar 2019 11:03:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,269,1549958400"; 
-   d="scan'208";a="137308080"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by fmsmga007.fm.intel.com with ESMTP; 25 Mar 2019 11:03:49 -0700
-Date:   Mon, 25 Mar 2019 11:03:49 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
+        id S1726276AbfCYXyh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 25 Mar 2019 19:54:37 -0400
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAC4820863
+        for <linux-sgx@vger.kernel.org>; Mon, 25 Mar 2019 23:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553558076;
+        bh=7IXy9PmaCQVWs3dr2OsZDsoJ+4vRKTCXqWnIvRBz76k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XzC69H/tN4lPBbDrQRBTbjkRY6pxU0kBw05NZkNo+WwxSSCEW+YwwBkPfcL+qKXc7
+         DJ0EU73PLPfGHUC2u0kMPObp5DuSB1wL4y1Cvg6PeFGwRd0jd25QMTAt3j45p/DmMS
+         2ofeIPxMjX+kFyYDBDh/oQrIshVWbKj7oRQpLq10=
+Received: by mail-wr1-f49.google.com with SMTP id t5so12166940wri.7
+        for <linux-sgx@vger.kernel.org>; Mon, 25 Mar 2019 16:54:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAWHJ5Ji0uY8w+Qt0lUbDGvJDZ9F6pkr+xcEHyGZ/sPR2eqkrMx7
+        SO2zuDWqxXQqF9kh1S5J3oESURizKDFDf3bXmVMhyw==
+X-Google-Smtp-Source: APXvYqyAwesAdogoyPBQ9Lxod/+wH/aY0JfqLt7v1iZAm0KdKDvtbjsSoVTIYoTo1koKcclzFlN3HyDGjBZx1lh/tOE=
+X-Received: by 2002:adf:f011:: with SMTP id j17mr15065852wro.330.1553558074255;
+ Mon, 25 Mar 2019 16:54:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
+ <20190320162119.4469-25-jarkko.sakkinen@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F4E85C484@ORSMSX116.amr.corp.intel.com>
+ <20190320191318.GF30469@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F4E85C5AB@ORSMSX116.amr.corp.intel.com>
+ <20190322215903.GE12666@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F4E85E481@ORSMSX116.amr.corp.intel.com>
+ <CALCETrV589POrG3RaPHBWOFuytkWjeJgJgLHk4OKbizOgJVKZQ@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F4E85E989@ORSMSX116.amr.corp.intel.com>
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F4E85E989@ORSMSX116.amr.corp.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 25 Mar 2019 16:54:23 -0700
+X-Gmail-Original-Message-ID: <CALCETrWdc2d2HJ-aoE7-889sHN-YJiKXrEkssyWJ6QQTykb+EQ@mail.gmail.com>
+Message-ID: <CALCETrWdc2d2HJ-aoE7-889sHN-YJiKXrEkssyWJ6QQTykb+EQ@mail.gmail.com>
+Subject: Re: [PATCH v19,RESEND 24/27] x86/vdso: Add __vdso_sgx_enter_enclave()
+ to wrap SGX enclave transitions
 To:     "Xing, Cedric" <cedric.xing@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
@@ -53,96 +82,77 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [PATCH v19,RESEND 24/27] x86/vdso: Add
- __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
-Message-ID: <20190325180349.GF31069@linux.intel.com>
-References: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
- <20190320162119.4469-25-jarkko.sakkinen@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E85C484@ORSMSX116.amr.corp.intel.com>
- <20190320191318.GF30469@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E85C5AB@ORSMSX116.amr.corp.intel.com>
- <20190322215903.GE12666@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E85E481@ORSMSX116.amr.corp.intel.com>
- <CALCETrV589POrG3RaPHBWOFuytkWjeJgJgLHk4OKbizOgJVKZQ@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E85E989@ORSMSX116.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F4E85E989@ORSMSX116.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Mar 24, 2019 at 01:59:48AM -0700, Xing, Cedric wrote:
-> As said in my previous email, this vDSO API isn't even compliant to
-> x86_64 ABI and is absolutely NOT for average developers. Instead,
-> host/enclave communications are expected to be handled by SDKs and
-> those developers will be very aware of the limitations of their targeted
-> environments, and will need the freedom to deploy optimal solutions. 
+On Sun, Mar 24, 2019 at 1:59 AM Xing, Cedric <cedric.xing@intel.com> wrote:
+>
+> Hi Andy,
+>
+> Thank you for your valuable feedbacks!
+>
+> Per what you have been saying, your feedbacks come from different angles =
+- i.e. functionality vs. security, but they are mixed up somehow.
 
-This statement epitomizes the difference in philosophies between Intel's
-SGX SDK and much of the Linux community.  The SDK, from edger8r to its
-stack stitching, believes that it should dumb things down for the so
-called "average" developer, even if doing so significantly increases the
-complexity of the implementation.  Linux generally favors the opposite
-approach, preferring simplicitly in its implementations even if it means
-setting a higher bar for the "average" developer/user.
+I think you're misunderstanding me.  I'm not talking about security at
+all here.  SGX isn't a sandbox, full stop.  I'm talking about the
+degree to which an SGX enclave acts like a well-behaved black box.
 
-That's not to say that that Linux doesn't have its fair share of complex
-code or dumbed down interfaces, far from it.  But generally speaking,
-there is an emphasis on making the code itself approachable that I don't
-see in Intel's SDK.
+>
+> > I=E2=80=99m going to put my vDSO maintainer hat on for a minute.  Cedri=
+c, your
+> > proposal has the following issues related specifically to the vDSO:
+> >
+> > It inherently contains indirect branches.  This means that, on retpolin=
+e
+> > configurations, it probably needs to use retpolines.  This is doable,
+> > but it=E2=80=99s nasty, and you need to worry about register clobbers.
+>
+> Only the weakest link matters in security. With dynamic linking in use, t=
+his additional indirect CALL can't make things worse. But I'm open to, and =
+in fact also willing to, apply whatever mitigation that you think is satisf=
+actory (or that has been applied to other indirect branches, such as in PLT=
+), such as retpoline. Btw, don't worry about register clobbers because we h=
+ave at least %rax at our disposal.
 
-> I understand your intention to advocate the programming model that you
-> believe is "right". But there are 7 billion people on this planet and
-> the "right" thing for you could be "wrong" for others, especially in
-> future usages/situations that can't be foreseen today.
+There is no actual fundamental reason that dynamic linking has to work
+this way, and in principle, one could even use retpolines to the call
+the vDSO.  In any event, the vDSO is currently compiled with
+retpolines enabled, and if we decide to turn that off, it would be
+decision to be made independently of SGX.
 
-IMO modifying SSA.U_R{B,SP} from within the enclave is akin to modifying
-VMCS fields from the guest, which is technically possible on processors
-that don't support VMCS caching, but I digress...
+>
+> >
+> > It uses effectively unbounded stack space. The vDSO timing functions ar=
+e
+> > already a problem for Go, and this is worse.
+>
+> If targeting the same functionality (i.e. no exit callback), my API uses =
+exactly 24 bytes more than Sean's. Is it really the case that those 24 byte=
+s will break Go?
 
-The above statements aren't intended to fan the flames or send us down
-a rat hole of philosophical arguments.  My intent is to point out that
-I think we're at an impasse due to philosophical differences, i.e. no
-amount of arguing will convince me that mucking with the untrusted stack
-is anything short of insanity, and vice versa I doubt that Andy, I or
-anyone else will convince you and the SDK team that forcing the SDK to
-use an alternative form of enclave communication is a good thing.
+You're counting wrong.  Your version uses 24 bytes + the stack size of
+the exit handler + the amount of stack consumed by the enclave, which
+is effectively unbounded.  So this whole scheme becomes unusable on
+anything other than a stack that is "large" for a totally undefined
+value of large and that has guard pages.
 
-> Software is stacked, with the lower layers being more generic and higher
-> layers being more specific. This vDSO API is sitting at the bottom of
-> the stack, therefore shall be as generic as possible. A better approach
-> to advocate your idea is to wrap it (i.e. to implement it using the more
-> generic vDSO API as a
+>
+> >
+> > Cedric, your proposal allows an enclave to muck with RSP, but not in a
+> > way that=E2=80=99s particularly pleasant.
+>
+> From security perspective, it is SGX ISA, but NOT any particular ABI, tha=
+t allows enclaves "to muck with RSP".
 
-It's not more generic, just different, e.g. uses %rbp instead of %rsp as
-the anchor.  Or am I missing something?  
-
-> subroutine) in a library for the public to choose (and you can imagine
-> others bearing different ideas will do the same). Then good ideas will
-> stand out!
-
-I'd rather support two disparate vDSO implementations than implement the
-barebones ABI as a wrapper to something heavier.  E.g. I really don't want
-to have to wade through a bunch of conditionals and stack accesses, (or
-save/restore code if you're talking about making it compliant with the
-x86_64 ABI) when I inevitably break something during kernel development.
-
-Given all above, and that everyone involved wants to see SGX get accepted
-into mainline sooner rather than later, I propose the following:
-
-  - Keep the barebones __vdso_sgx_enter_enclave() as is
-  - Explicitly state in the SGX documentation that userspace does *not*
-    have to use the vDSO, e.g. can enter enclaves directly and use signals
-  - Submit a patch to add second vDSO function to support the Intel SDK
-    use case (from Cedric or anyone from the SDK team)
-
-I fully realize that the above approach saddles Cedric and the SDK team
-with the extra task of justifying the need for two vDSO interfaces, and
-likely reduces the probability of their proposal being accepted.  But, we
-don't *force* the SDK to be rewritten, and we gain a vDSO interface that
-many people want and is acceptable to the maintainers (unless I've
-horribly misread Andy's position).
+Again, this has nothing to do with security.  With your proposal, it's
+not possible for the caller of an enclave to decide, in an ocall
+handler, to pause and do something else.  This isn't just theoretical.
+Suppose someone wants to send a network request in an ocall handler.
+With the current RSP approach, it's difficult to do this in a program
+that uses poll / select / epoll -- you can't return out from the ocall
+until you have an answer.
