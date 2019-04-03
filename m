@@ -1,127 +1,89 @@
-Return-Path: <SRS0=Wg/f=SD=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=l7eQ=SF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49680C43381
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Apr 2019 22:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E567C4360F
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Apr 2019 23:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1279D2082C
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Apr 2019 22:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DAF520882
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Apr 2019 23:03:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725897AbfDAW5a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Apr 2019 18:57:30 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25788 "EHLO mga12.intel.com"
+        id S1726167AbfDCXDT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Apr 2019 19:03:19 -0400
+Received: from mga18.intel.com ([134.134.136.126]:50167 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfDAW5a (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Apr 2019 18:57:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726099AbfDCXDT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Apr 2019 19:03:19 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Apr 2019 15:57:29 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Apr 2019 16:03:18 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,298,1549958400"; 
-   d="scan'208";a="157286292"
-Received: from unknown (HELO localhost) ([10.249.254.142])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Apr 2019 15:57:18 -0700
-Date:   Tue, 2 Apr 2019 01:57:17 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+X-IronPort-AV: E=Sophos;i="5.60,306,1549958400"; 
+   d="scan'208";a="137394331"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by fmsmga008.fm.intel.com with ESMTP; 03 Apr 2019 16:03:17 -0700
+Date:   Wed, 3 Apr 2019 16:03:17 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
         "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@intel.com" <haitao.huang@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
         "andriy.shevchenko@linux.intel.com" 
         <andriy.shevchenko@linux.intel.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
         "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "kai.huang@intel.com" <kai.huang@intel.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
         "rientjes@google.com" <rientjes@google.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v19 16/27] x86/sgx: Add the Linux SGX Enclave Driver
-Message-ID: <20190401225717.GA13450@linux.intel.com>
-References: <20190326132650.GA31662@linux.intel.com>
- <20190326235852.GL3757@linux.intel.com>
- <20190327052830.GF15397@linux.intel.com>
- <825f5477-c90a-b54b-efeb-a1dc43ccc9d2@fortanix.com>
- <20190327200610.GF9310@linux.intel.com>
- <20190328131939.GI7094@linux.intel.com>
- <CALCETrXWMtm9WcPjbYB+ubRkb++WBYzYJAkiU-LJT_SK+m+SmQ@mail.gmail.com>
- <20190329162001.GC19448@linux.intel.com>
- <20190401100142.GB8483@linux.intel.com>
- <a09d23ef-e1f3-906a-d58f-e39b02311d1b@fortanix.com>
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [PATCH v19,RESEND 24/27] x86/vdso: Add
+ __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
+Message-ID: <20190403230317.GD4682@linux.intel.com>
+References: <20190322215903.GE12666@linux.intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E85E481@ORSMSX116.amr.corp.intel.com>
+ <CALCETrV589POrG3RaPHBWOFuytkWjeJgJgLHk4OKbizOgJVKZQ@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E85E989@ORSMSX116.amr.corp.intel.com>
+ <20190325180349.GF31069@linux.intel.com>
+ <CALCETrXqb3CHefN-RLudC61jwdbLFS8cXuS4V5OJ6HTuf_arYw@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E85FABF@ORSMSX116.amr.corp.intel.com>
+ <CALCETrVcR_etAHSVZxvCz7CcPnF4ajpcWiRCtFrOckVWVJByHA@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E860C69@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUUv3WSX7uL22DnWg8FOJqVyB=tknxbGDWb9wpx7zY2CQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a09d23ef-e1f3-906a-d58f-e39b02311d1b@fortanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrUUv3WSX7uL22DnWg8FOJqVyB=tknxbGDWb9wpx7zY2CQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Apr 01, 2019 at 05:25:11PM +0000, Jethro Beekman wrote:
-> On 2019-04-01 03:01, Jarkko Sakkinen wrote:
-> > On Fri, Mar 29, 2019 at 09:20:05AM -0700, Sean Christopherson wrote:
-> > > On Thu, Mar 28, 2019 at 12:05:39PM -0700, Andy Lutomirski wrote:
-> > > > On Thu, Mar 28, 2019 at 6:19 AM Jarkko Sakkinen
-> > > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > > 
-> > > > > On Wed, Mar 27, 2019 at 01:06:11PM -0700, Sean Christopherson wrote:
-> > > > > > I agree with all of the above, but unfortunately blacklisting is really
-> > > > > > the only benefit that would be realized by modularizing the driver.  The
-> > > > > > "driver" at this point is just the device and its ioctls, the meat of
-> > > > > > the functionality has been moved into the subsystem proper.  And the few
-> > > > > > remaining tidbits of functionality, e.g. sgx_encl_page_alloc() and
-> > > > > > sgx_encl_alloc(), probably should be moved out of ioctl.c as well.
-> > > > > 
-> > > > > That is kind of core reason of having an LKM here, to wrap the uapi. It
-> > > > > is not about reducing size of the kernel. It is about ability to tailor
-> > > > > the uapi on stock kernels.
-> > > > > 
-> > > > 
-> > > > As I see it, there is really only one significant benefit of modules:
-> > > > reducing the size of the kernel in the case that the module isn't
-> > > > loaded.
-> > > 
-> > > This is a much more succinct explanation of what I was attempting to say.
-> > > 
-> > > >   (And organizing module parameters, I suppose, but you don't,
-> > > > strictly speaking, need to be able to build as a module to do that.)
-> > > > SGX can be blacklisted by booting with nosgx (or, if if can't, then
-> > > > that should be added).
-> > > 
-> > > The split lock detection series also proposed extending clearcpuid to
-> > > take flags by name, a dedicated 'nosgx' may not even be necessary in the
-> > > long run.
-> > > 
-> > > https://lkml.kernel.org/r/1549084491-57808-6-git-send-email-fenghua.yu@intel.com
-> > > https://lkml.kernel.org/r/1549084491-57808-7-git-send-email-fenghua.yu@intel.com
-> > > https://lkml.kernel.org/r/1549084491-57808-8-git-send-email-fenghua.yu@intel.com
-> > 
-> > OK, that's great. Then I just rework the LKM out...
-> 
-> Wait, why? I don't agree with Andy's "only" reason for LKMs, and it sounded
-> like you agree.
+On Thu, Mar 28, 2019 at 12:18:40PM -0700, Andy Lutomirski wrote:
+> Finally, why does the vDSO code bother checking whether the leaf is valid?
 
-For me the rationale for having LKM was that you can enable/disable the
-functionality. For that the kernel command line would be sufficient.
+To sanity check the input to ensure the caller is attempting to enter an
+enclave, i.e. the function is named __vdso_sgx_enter_enclave(), not
+__vsgx_enclu().  And if the caller does pass the wrong leaf, EINVAL will
+be easier to debug than EFAULT, especially on SGX1 hardware where the #GP
+could be misconstrued as a loss of EPC.
 
-I will roll v20 w/o taking it away since this is still clearly something
-not concluded (won't affect other changes).
-
-/Jarkko
+I'm not dead set on the checks by any means, but it does seem appropriate.
+And the cost is all of 3 uops and a few bytes of a code.
