@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA25C10F12
-	for <linux-sgx@archiver.kernel.org>; Wed, 17 Apr 2019 10:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6210CC10F12
+	for <linux-sgx@archiver.kernel.org>; Wed, 17 Apr 2019 10:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6C562177B
-	for <linux-sgx@archiver.kernel.org>; Wed, 17 Apr 2019 10:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39AE02177B
+	for <linux-sgx@archiver.kernel.org>; Wed, 17 Apr 2019 10:40:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbfDQKke (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 17 Apr 2019 06:40:34 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54616 "EHLO mga04.intel.com"
+        id S1731382AbfDQKkm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 17 Apr 2019 06:40:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43025 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729584AbfDQKke (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 17 Apr 2019 06:40:34 -0400
+        id S1730926AbfDQKkm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 17 Apr 2019 06:40:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Apr 2019 03:40:33 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Apr 2019 03:40:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,361,1549958400"; 
-   d="scan'208";a="132119892"
+   d="scan'208";a="132119925"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by orsmga007.jf.intel.com with ESMTP; 17 Apr 2019 03:40:27 -0700
+  by orsmga007.jf.intel.com with ESMTP; 17 Apr 2019 03:40:34 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -37,11 +37,12 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        Andy Lutomirski <luto@amacapital.net>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v20 06/28] x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
-Date:   Wed, 17 Apr 2019 13:39:16 +0300
-Message-Id: <20190417103938.7762-7-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v20 07/28] x86/mm: x86/sgx: Signal SIGSEGV for userspace #PFs w/ PF_SGX
+Date:   Wed, 17 Apr 2019 13:39:17 +0300
+Message-Id: <20190417103938.7762-8-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
 References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
@@ -54,33 +55,70 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-The SGX bit is set in the #PF error code if and only if the fault is
-detected by the Enclave Page Cache Map (EPCM), a hardware-managed
-table that enforces the paging permissions defined by the enclave,
-e.g. to prevent the kernel from changing the permissions of an
-enclave's page(s).
+The PF_SGX bit is set if and only if the #PF is detected by the SGX
+Enclave Page Cache Map (EPCM).  The EPCM is a hardware-managed table
+that enforces accesses to an enclave's EPC pages in addition to the
+software-managed kernel page tables, i.e. the effective permissions
+for an EPC page are a logical AND of the kernel's page tables and
+the corresponding EPCM entry.
 
-Despite triggering a #PF, a #PF with PF_SGX has nothing to do with
-paging.
+The EPCM is consulted only after an access walks the kernel's page
+tables, i.e.:
 
+  a. the access was allowed by the kernel
+  b. the kernel's tables have become less restrictive than the EPCM
+  c. the kernel cannot fixup the cause of the fault
+
+Noteably, (b) implies that either the kernel has botched the EPC
+mappings or the EPCM has been invalidated (see below).  Regardless of
+why the fault occurred, userspace needs to be alerted so that it can
+take appropriate action, e.g. restart the enclave.  This is reinforced
+by (c) as the kernel doesn't really have any other reasonable option,
+i.e. signalling SIGSEGV is actually the least severe action possible.
+
+Although the primary purpose of the EPCM is to prevent a malicious or
+compromised kernel from attacking an enclave, e.g. by modifying the
+enclave's page tables, do not WARN on a #PF w/ PF_SGX set.  The SGX
+architecture effectively allows the CPU to invalidate all EPCM entries
+at will and requires that software be prepared to handle an EPCM fault
+at any time.  The architecture defines this behavior because the EPCM
+is encrypted with an ephemeral key that isn't exposed to software.  As
+such, the EPCM entries cannot be preserved across transitions that
+result in a new key being used, e.g. CPU power down as part of an S3
+transition or when a VM is live migrated to a new physical system.
+
+Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/traps.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/mm/fault.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 7d6f3f3fad78..c3e02912e9c7 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -171,5 +171,6 @@ enum x86_pf_error_code {
- 	X86_PF_RSVD	=		1 << 3,
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
-+	X86_PF_SGX	=		1 << 15,
- };
- #endif /* _ASM_X86_TRAPS_H */
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 667f1da36208..78e2807fbede 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1214,6 +1214,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
+ 	if (error_code & X86_PF_PK)
+ 		return 1;
+ 
++	/*
++	 * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
++	 * access is allowed by the PTE but not the EPCM.  This usually happens
++	 * when the EPCM is yanked out from under us, e.g. by hardware after a
++	 * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
++	 * fix the source of the fault as the EPCM can't be directly modified
++	 * by software.  Handle the fault as an access error in order to signal
++	 * userspace, e.g. so that userspace can rebuild their enclave(s), even
++	 * though userspace may not have actually violated access permissions.
++	 */
++	if (unlikely(error_code & X86_PF_SGX))
++		return 1;
++
+ 	/*
+ 	 * Make sure to check the VMA so that we do not perform
+ 	 * faults just to hit a X86_PF_PK as soon as we fill in a
 -- 
 2.19.1
 
