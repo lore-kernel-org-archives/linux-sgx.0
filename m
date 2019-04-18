@@ -2,115 +2,180 @@ Return-Path: <SRS0=EsRn=SU=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895E6C10F0E
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Apr 2019 17:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D644BC10F0E
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Apr 2019 18:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AA320693
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Apr 2019 17:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3F2214DA
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Apr 2019 18:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555611710;
+	bh=IpRhbSjXtgRtUXeY/pxMzOVKIZHWLd27A1JF0KHnLqg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=0g3wGngF0VNLv9yEpaRPKqvRQP2pF+aSpfRxvlS4bQA6I09E/6bMDIGG+8gYugApJ
+	 lVAkPHTYdtJpfKDmBZmesaXQfBZi0/1YIdETmgyT3JQJAITPP8Ma02O71JM7nuiqTR
+	 HOD047QYku34aofKczti77TE+nIJeCL7hmQtEs8c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733192AbfDRRYn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 18 Apr 2019 13:24:43 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31244 "EHLO mga03.intel.com"
+        id S2391376AbfDRSVu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 18 Apr 2019 14:21:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733067AbfDRRYn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 18 Apr 2019 13:24:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Apr 2019 10:24:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,366,1549958400"; 
-   d="scan'208";a="136945933"
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga006.jf.intel.com with ESMTP; 18 Apr 2019 10:24:42 -0700
-Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-To:     "Dr. Greg" <greg@enjellic.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190418171059.GA20819@wind.enjellic.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <d79261c0-f2ae-0ed8-96b6-fb4d1677e3dc@intel.com>
-Date:   Thu, 18 Apr 2019 10:24:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2391326AbfDRSHc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 18 Apr 2019 14:07:32 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1678421920
+        for <linux-sgx@vger.kernel.org>; Thu, 18 Apr 2019 18:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1555610851;
+        bh=IpRhbSjXtgRtUXeY/pxMzOVKIZHWLd27A1JF0KHnLqg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jj8ygHs04wG9j5d4K0G7J5sMz+T6/wAqE1jCXlg29NytzVFK613HF9uk5x+gyXqas
+         0XhPiTjbZrmVLbaufp4TCpk2F1cW9LBQ6mrfaxyAMJofUznuajPLHoGDmkD7PygwoP
+         3+PiMh5L72DrgaPukpMjJ6Rit2WeJzhEkqb3DhN8=
+Received: by mail-wr1-f41.google.com with SMTP id w16so4076981wrl.1
+        for <linux-sgx@vger.kernel.org>; Thu, 18 Apr 2019 11:07:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAVeSBE2zbK6i2u2N+Ya1gv3cf/FtjKjZNJP1MloBJwMpW/z2qDj
+        9wqnPstbN0L1X7haPN7mv7hmm54WcLU+SOQqsJ7tZQ==
+X-Google-Smtp-Source: APXvYqwNilIIJls/LaAxD1SFXJmD/wO12eJizVP9CrQzNbWzW9bYR3/7nK0huK0vOCEsxKkHQWV3R6mQ6UbX+vhHTjQ=
+X-Received: by 2002:adf:f344:: with SMTP id e4mr995076wrp.77.1555610849447;
+ Thu, 18 Apr 2019 11:07:29 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com> <20190418171059.GA20819@wind.enjellic.com>
 In-Reply-To: <20190418171059.GA20819@wind.enjellic.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 18 Apr 2019 11:07:17 -0700
+X-Gmail-Original-Message-ID: <CALCETrXSFh2v9WZe9c1sT3w6di7uvk4j2fk6bGdb6YT4=rrHdQ@mail.gmail.com>
+Message-ID: <CALCETrXSFh2v9WZe9c1sT3w6di7uvk4j2fk6bGdb6YT4=rrHdQ@mail.gmail.com>
+Subject: Re: [PATCH v20 00/28] Intel SGX1 support
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 4/18/19 10:10 AM, Dr. Greg wrote:
+On Thu, Apr 18, 2019 at 10:11 AM Dr. Greg <greg@enjellic.com> wrote:
+>
+> On Wed, Apr 17, 2019 at 01:39:10PM +0300, Jarkko Sakkinen wrote:
+>
+> Good morning, I hope this note finds the impending end of the work
+> week going well for everyone.
+>
+> First of all, a thank you to Jarkko for his efforts in advancing this
+> driver, a process that can be decidedly thankless.  Our apologies in
+> advance for contributing to this phenomenon.
+>
+> > Intel(R) SGX is a set of CPU instructions that can be used by
+> > applications to set aside private regions of code and data. The code
+> > outside the enclave is disallowed to access the memory inside the
+> > enclave by the CPU access control.  In a way you can think that SGX
+> > provides inverted sandbox. It protects the application from a
+> > malicious host.
+>
+> Unfortunately, in its current implementation, the driver will not
+> protect a host from malicious enclaves.  If it advances in its current
+> form, the mainline Linux kernel will be implementing a driver with
+> known and documented security issues.
+
+"I can use this kernel or CPU feature to do something unpleasant that
+I could do anyway, if less nicely" is a far cry from "known and
+documented security issues".
+
+We've hashed this out to death.  Once SGX is upstream, feel free to
+submit patches.
+
+>
 > In addition, the driver breaks all existing SGX software by breaking
 > compatibility with what is a 3+ year ABI provided by the existing
 > driver.  This seems to contravene the well understood philosophy that
 > Linux doesn't, if at all possible, break existing applications,
+> something that we believe can be easily prevented if those interested
+> in these issues choose to read on.
 
-Sorry, that doesn't apply to out-of-tree modules.  While we don't go out
-of our way to intentionally break apps who are relying on out-of-tree
-modules, we also don't go our of or way to keep them working.
+As I understand it, Cedric is going to submit a patch for this
+shortly, assuming I have correctly guessed what supposed ABI break
+you're talking about.
 
-Please stop asking about this.  I don't see any route where it's going
-to change.
+In the mean time, I need to correct you on a critical point.  Linux
+has *never* had a policy that it will retain compatibility with an API
+that wasn't upstream in the first place.
 
-Companies ideally shouldn't be getting their customers hooked on
-out-of-tree ABIs and customers should consume out-of-tree ABIs
-*expecting* them to break in the future.
+[removed extensive verbiage.  Dr. Greg, if you want your emails to be
+read, please try to be more concise, and please try to repeat yourself
+less.]
+
+> The attached patch, against the jarkko-sgx/master branch of Jarkko's
+> driver repository, provides a framework that implements
+> cryptographically secure enclave initialization policies.  The patch
+> and it's signature are also available from the following URL's:
+>
+> ftp://ftp.idfusion.net/pub/idfusion/jarkko-master-SFLC.patch
+
+I just spend several minutes trying to read your code.  It would
+benefit dramatically from some attempt at documentation, and, at the
+very least, you can't have a function foo(type *ptr) that does
+something almost completely different when ptr == NULL and when ptr !=
+NULL.  For a concrete example, consider sgx_launch_control().  If you
+pass NULL, then there's a vaguely credible argument that the function
+does what the name suggests.  If you pass non-NULL, it doesn't.  The
+result is bug-prone and unreadable.
+
+If I'm understanding it right, it causes the SGX ABI to be almost
+completely incompatible between the case where the list of launch
+signers is empty and the case where the list is non-empty.  This is a
+non-starter.  We're also extensively discussed how launch enclaves
+would be supported if we were to support them, and the generally
+agreed-upon solution was that the *kernel* would handle running a
+launch enclave.  Jarkko even has code for this, but it's tabled until
+someone comes up with a credible argument that we *want* to support
+launch enclaves.
+
+> The policy architecture allows just about any conceivable
+> initialization policy to be implemented and in any combination.
+
+No it doesn't, because it requires the application (or its runtime or
+SDK or whatever) to bundle the launch enclave that implements the
+fancy policy, which means that the platform owner actually can't swap
+out the policy without breaking all the applications.  This is the
+primary reason that, if Linux were to support LE-based launch control,
+it would do so in the kernel.
+
+> If the platform owner chooses to do nothing, the driver will
+> initialize any enclave that is presented to it.  FWIW, we have close
+> to a century of enterprise system's administration experience on our
+> team and we could not envision any competent system's administrator,
+> concerned about security, who would allow such a configuration.
+
+A sufficiently careful administrator who wants to protect against
+enclave malware might want the ability to revoke permission to run a
+specific enclave, which your approach can't do.  Again, this has all
+been covered extensively.
+
+To be crystal clear, i fully agree that we are likely to eventually
+want some kind of in-kernel launch policy.  But I don't think that
+defining such a policy should block the upstreaming of the driver, and
+I don't think that your proposal for how the policy should work is an
+acceptable proposal.
