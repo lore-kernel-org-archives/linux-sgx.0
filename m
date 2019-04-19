@@ -1,4 +1,4 @@
-Return-Path: <SRS0=EsRn=SU=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=cz4p=SV=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,111 +6,96 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9E7C10F14
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Apr 2019 18:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B222C10F14
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 03:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0EB2064A
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Apr 2019 18:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6556E21736
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 03:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390301AbfDRSbU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 18 Apr 2019 14:31:20 -0400
-Received: from mga09.intel.com ([134.134.136.24]:53995 "EHLO mga09.intel.com"
+        id S1727124AbfDSDGz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 18 Apr 2019 23:06:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25756 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390469AbfDRSBB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 18 Apr 2019 14:01:01 -0400
+        id S1726822AbfDSDGz (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 18 Apr 2019 23:06:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Apr 2019 11:01:00 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Apr 2019 20:06:54 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,366,1549958400"; 
-   d="scan'208";a="224696728"
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga001.jf.intel.com with ESMTP; 18 Apr 2019 11:01:00 -0700
-Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-To:     "Dr. Greg" <greg@enjellic.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com
+X-IronPort-AV: E=Sophos;i="5.60,368,1549958400"; 
+   d="scan'208";a="163188867"
+Received: from pgsmsx103.gar.corp.intel.com ([10.221.44.82])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Apr 2019 20:06:51 -0700
+Received: from pgsmsx109.gar.corp.intel.com (10.221.44.109) by
+ PGSMSX103.gar.corp.intel.com (10.221.44.82) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 19 Apr 2019 11:06:49 +0800
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.40]) by
+ PGSMSX109.gar.corp.intel.com ([169.254.14.210]) with mapi id 14.03.0415.000;
+ Fri, 19 Apr 2019 11:06:49 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "Svahn, Kai" <kai.svahn@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v20 16/28] x86/sgx: Add provisioning
+Thread-Topic: [PATCH v20 16/28] x86/sgx: Add provisioning
+Thread-Index: AQHU9QorPuxiqm5t3UWkqdBgsZ38LKZCSaAA
+Date:   Fri, 19 Apr 2019 03:06:48 +0000
+Message-ID: <1555643200.2776.1.camel@intel.com>
 References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190418171059.GA20819@wind.enjellic.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <09ebfa1d-c03d-c1fe-ff0f-d99287b6ec3c@intel.com>
-Date:   Thu, 18 Apr 2019 11:01:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190418171059.GA20819@wind.enjellic.com>
-Content-Type: text/plain; charset=windows-1252
+         <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.60.18]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <18CCDFF5DE53F24CB10B113661895E29@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 4/18/19 10:10 AM, Dr. Greg wrote:
-> Both the current controls for enclave access to the PROVISION
-> attribute and the security controls that are being proposed to emerge
-> for the driver, sometime in the future, suffer from being dependent on
-> discretionary access controls, ie. file privileges, that can be
-> defeated by a privilege escalation attack.  Those of us building
-> architectures on top of this technology have a need to certify that an
-> application will provide security contracts robust in the face of a
-> privilege escalation event or platform compromise.
-
-I'm not following.
-
-Are you saying that the implementation here is too permissive with the
-enclaves that are allowed to run?  Because it's too permissive, this
-leaves us vulnerable to SGX being used to conceal a cache attack?
+T24gV2VkLCAyMDE5LTA0LTE3IGF0IDEzOjM5ICswMzAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
+DQo+IEluIG9yZGVyIHRvIHByb3ZpZGUgYSBtZWNoYW5pc20gZm9yIGRldmlsZXJpbmcgcHJvdmlz
+b25pbmcgcmlnaHRzOg0KPiANCj4gMS4gQWRkIGEgbmV3IGRldmljZSBmaWxlIC9kZXYvc2d4L3By
+b3Zpc2lvbiB0aGF0IHdvcmtzIGFzIGEgdG9rZW4gZm9yDQo+ICAgIGFsbG93aW5nIGFuIGVuY2xh
+dmUgdG8gaGF2ZSB0aGUgcHJvdmlzaW9uaW5nIHByaXZpbGVnZXMuDQo+IDIuIEFkZCBhIG5ldyBp
+b2N0bCBjYWxsZWQgU0dYX0lPQ19FTkNMQVZFX1NFVF9BVFRSSUJVVEUgdGhhdCBhY2NlcHRzIHRo
+ZQ0KPiAgICBmb2xsb3dpbmcgZGF0YSBzdHJ1Y3R1cmU6DQo+IA0KPiAgICBzdHJ1Y3Qgc2d4X2Vu
+Y2xhdmVfc2V0X2F0dHJpYnV0ZSB7DQo+ICAgICAgICAgICAgX191NjQgYWRkcjsNCj4gICAgICAg
+ICAgICBfX3U2NCBhdHRyaWJ1dGVfZmQ7DQo+ICAgIH07DQo+IA0KPiBBIGRhZW1vbiBjb3VsZCBz
+aXQgb24gdG9wIG9mIC9kZXYvc2d4L3Byb3Zpc2lvbiBhbmQgc2VuZCBhIGZpbGUNCj4gZGVzY3Jp
+cHRvciBvZiB0aGlzIGZpbGUgdG8gYSBwcm9jZXNzIHRoYXQgbmVlZHMgdG8gYmUgYWJsZSB0byBw
+cm92aXNpb24NCj4gZW5jbGF2ZXMuDQo+IA0KPiBUaGUgd2F5IHRoaXMgQVBJIGlzIHVzZWQgaXMg
+c3RyYWlnaHQtZm9yd2FyZC4gTGV0cyBhc3N1bWUgdGhhdCBkZXZfZmQgaXMNCj4gYSBoYW5kbGUg
+dG8gL2Rldi9zZ3gvZW5jbGF2ZSBhbmQgcHJvdl9mZCBpcyBhIGhhbmRsZSB0bw0KPiAvZGV2L3Nn
+eC9wcm92aXNpb24uICBZb3Ugd291bGQgYWxsb3cgU0dYX0lPQ19FTkNMQVZFX0NSRUFURSB0bw0K
+PiBpbml0aWFsaXplIGFuIGVuY2xhdmUgd2l0aCB0aGUgUFJPVklTSU9OS0VZIGF0dHJpYnV0ZSBi
+eQ0KPiANCj4gcGFyYW1zLmFkZHIgPSA8ZW5jbGF2ZSBhZGRyZXNzPjsNCj4gcGFyYW1zLnRva2Vu
+X2ZkID0gcHJvdl9mZDsNCj4gDQpTaG91bGQgYmUgcGFyYW1zLmF0dHJpYnV0ZV9mZCA9IHByb3Zf
+ZmQ7DQoNClRoYW5rcywNCi1LYWk=
