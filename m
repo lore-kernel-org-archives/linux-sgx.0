@@ -2,122 +2,113 @@ Return-Path: <SRS0=cz4p=SV=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609ACC282DA
-	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D47C282DA
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C7D22064A
-	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:12:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A790821736
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:38:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="OOCRbmOM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfDSTMZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 19 Apr 2019 15:12:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:62827 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbfDSTMY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 19 Apr 2019 15:12:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Apr 2019 09:39:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,370,1549958400"; 
-   d="scan'208";a="224980089"
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga001.jf.intel.com with ESMTP; 19 Apr 2019 09:39:03 -0700
+        id S1727501AbfDSTiX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 19 Apr 2019 15:38:23 -0400
+Received: from mail-eopbgr820109.outbound.protection.outlook.com ([40.107.82.109]:11680
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726134AbfDSTiX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 19 Apr 2019 15:38:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FfKMSuMXrT0v9/6P9JDL4Kj0PEoUyjrpIwB9oqUMZI8=;
+ b=OOCRbmOM3l2dCv0dWv6WD8VAhy/RdzJf2MQ0f4x0hvVSUetuyzNzbzQ99flCv1M/vqFO9+59rqxZxG2wryWCtB0MUyaM1GGsqEDp5FS30DjvMUUeztxR6CfUS6q57iArI3l9JtQuNNWDtgLug0h7HEbvN+C4GF+KE7JQ+/K9nRk=
+Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
+ SN6PR11MB3488.namprd11.prod.outlook.com (52.135.112.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1813.12; Fri, 19 Apr 2019 19:38:19 +0000
+Received: from SN6PR11MB3167.namprd11.prod.outlook.com
+ ([fe80::11b:a687:cd42:570d]) by SN6PR11MB3167.namprd11.prod.outlook.com
+ ([fe80::11b:a687:cd42:570d%3]) with mapi id 15.20.1813.013; Fri, 19 Apr 2019
+ 19:38:19 +0000
+From:   Jethro Beekman <jethro@fortanix.com>
+To:     Andy Lutomirski <luto@kernel.org>, "Dr. Greg" <greg@enjellic.com>
+CC:     Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
 Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com
+Thread-Topic: [PATCH v20 00/28] Intel SGX1 support
+Thread-Index: AQHU9QnkBhtGQ+66Y0uqVL4+2rp75qZCKU6AgAAN+gCAAVPlAIAAE4gAgABGE4A=
+Date:   Fri, 19 Apr 2019 19:38:19 +0000
+Message-ID: <43aa8fdd-e777-74cb-e3f0-d36805ffa18b@fortanix.com>
 References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
  <20190418171059.GA20819@wind.enjellic.com>
- <d79261c0-f2ae-0ed8-96b6-fb4d1677e3dc@intel.com>
- <20190419162450.GA2615@wind.enjellic.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <088e39dc-025a-1dea-4f26-239d5c059d6a@intel.com>
-Date:   Fri, 19 Apr 2019 09:39:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190419162450.GA2615@wind.enjellic.com>
-Content-Type: text/plain; charset=utf-8
+ <09ebfa1d-c03d-c1fe-ff0f-d99287b6ec3c@intel.com>
+ <20190419141732.GA2269@wind.enjellic.com>
+ <CALCETrV=wAsyWxtxQJ7y0xNrzkE863hTfU6Ysej48Gk9yPFJZw@mail.gmail.com>
+In-Reply-To: <CALCETrV=wAsyWxtxQJ7y0xNrzkE863hTfU6Ysej48Gk9yPFJZw@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR02CA0045.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::22) To SN6PR11MB3167.namprd11.prod.outlook.com
+ (2603:10b6:805:c4::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jethro@fortanix.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.107.146]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fb3e587e-9c1d-4e8d-f5de-08d6c4fe9328
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(5600141)(711020)(4605104)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7193020);SRVR:SN6PR11MB3488;
+x-ms-traffictypediagnostic: SN6PR11MB3488:
+x-microsoft-antispam-prvs: <SN6PR11MB3488034DBCB73436DD1D6445AA270@SN6PR11MB3488.namprd11.prod.outlook.com>
+x-forefront-prvs: 0012E6D357
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39840400004)(376002)(136003)(366004)(199004)(189003)(97736004)(66946007)(53546011)(8676002)(305945005)(229853002)(76176011)(73956011)(26005)(6436002)(7736002)(2906002)(25786009)(3846002)(6486002)(102836004)(68736007)(6506007)(64756008)(6116002)(2616005)(53936002)(5660300002)(66446008)(36756003)(66066001)(7416002)(4326008)(54906003)(386003)(110136005)(86362001)(6246003)(256004)(31686004)(71200400001)(11346002)(476003)(93886005)(52116002)(81166006)(4744005)(186003)(71190400001)(508600001)(316002)(31696002)(99286004)(14454004)(446003)(486006)(81156014)(8936002)(66556008)(66476007)(6512007);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3488;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fortanix.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 3KQiAj2MCgpF6ujPgDsQPo570x1R5NyeC4dnYxE1d4L2n90OmZ2hrgNk+AsP1T8mRT9MBSE4BSOnLmK4Q1wEuTzIzeo5qOA4/U88zpDdcyr9gAejG6E6GZ/8DMMfytUcxOx6ybjp2kigMlqKpfXpGnb73l76LAxRbwsnj8dJoBdAaSe/HN6OuM+bFLx6FFCunEy/+Ytn35qo45mLFDOk08kWedX9DlZb1Z+5ozu+2gEPSjKJ8u6p/0Jah3ZsjRMn2dVOvQD7q+DcSyyOM6uf4XpeE7qSP3+Y92+PH2+1Feq41PSUfkOrJBb+qPLkL2G2423MuamJNsS0wHGyfopZ4yD8rP4Qqa/bMwwR1lHKgJDbUIAhSnc/NDU45M6iL08SS5os8yETW/thcLDtNzvA223gdITpjrLUTpNW/v/Bcn8=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <61C5B6756D5C814B8042DA1BE99DFF7B@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: fortanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb3e587e-9c1d-4e8d-f5de-08d6c4fe9328
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Apr 2019 19:38:19.4380
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3488
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 4/19/19 9:24 AM, Dr. Greg wrote:
->> Companies ideally shouldn't be getting their customers hooked on
->> out-of-tree ABIs and customers should consume out-of-tree ABIs
->> *expecting* them to break in the future.
-> At the risk of being indelicate, it was your company that hooked the
-> SGX development community on out-of-tree driver ABI's and software.
-
-I would encourage anyone who has been impacted by this to communicate
-that back to the folks at Intel from whom they received the out-of-tree
-code about the impact.
-
-> Is there going to be an OEM mandated requirement, enforced by Intel
-> licensing, that all SGX capable platforms will implement Flexible
-> Launch Control?
-Heck if I know.  I don't think LKML is a great place to discuss Intel
-licensing requirements.
-
-What I *do* know is that when builds a platform without Flexible Launch
-Control, Linux does not support SGX on that platform.  I guess that
-could be spelled out in some documentation explicitly, if it isn't already.
+T24gMjAxOS0wNC0xOSAwODoyNywgQW5keSBMdXRvbWlyc2tpIHdyb3RlOg0KPiBUaGVyZSBhcmUg
+bWFueSwNCj4gbWFueSBMaW51eCBzeXN0ZW1zIHRoYXQgZW5mb3JjZSBhIHBvbGljeSB0aGF0ICph
+bGwqIGV4ZWN1dGFibGUgdGV4dA0KPiBuZWVkcyB0byBjb21lIGZyb20gYSB2ZXJpZmllZCBzb3Vy
+Y2UuICBPbiB0aGVzZSBzeXN0ZW1zLCB5b3UgY2FuJ3QNCj4gbW1hcCBzb21lIHdyaXRhYmxlIG1l
+bW9yeSwgd3JpdGUgdG8gaXQsIGFuZCB0aGVuIGNoYW5nZSBpdCB0bw0KPiBleGVjdXRhYmxlLg0K
+DQpIb3cgaXMgdGhpcyBpbXBsZW1lbnRlZCBvbiB0aG9zZSBzeXN0ZW1zPyBBRkFJSyB0aGVyZSdz
+IG5vIGtlcm5lbCBjb25maWcNCm9wdGlvbiB0aGF0IGNoYW5nZXMgdGhlIHNlbWFudGljcyBvZiBt
+bWFwIGFzIHlvdSBkZXNjcmliZS4NCg0KLS0NCkpldGhybyBCZWVrbWFuIHwgRm9ydGFuaXgNCg==
