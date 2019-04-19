@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9DFC282E1
-	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609ACC282DA
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641E720693
-	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C7D22064A
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Apr 2019 19:12:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbfDSTCm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 19 Apr 2019 15:02:42 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51012 "EHLO mga07.intel.com"
+        id S1728661AbfDSTMZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 19 Apr 2019 15:12:25 -0400
+Received: from mga12.intel.com ([192.55.52.136]:62827 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728482AbfDSTC2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 19 Apr 2019 15:02:28 -0400
+        id S1727385AbfDSTMY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 19 Apr 2019 15:12:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Apr 2019 07:25:50 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Apr 2019 09:39:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,370,1549958400"; 
-   d="scan'208";a="152227182"
-Received: from acmoga-mobl3.amr.corp.intel.com (HELO [10.254.89.246]) ([10.254.89.246])
-  by orsmga002.jf.intel.com with ESMTP; 19 Apr 2019 07:25:49 -0700
+   d="scan'208";a="224980089"
+Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
+  by orsmga001.jf.intel.com with ESMTP; 19 Apr 2019 09:39:03 -0700
 Subject: Re: [PATCH v20 00/28] Intel SGX1 support
 To:     "Dr. Greg" <greg@enjellic.com>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -40,8 +40,8 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com
 References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
  <20190418171059.GA20819@wind.enjellic.com>
- <09ebfa1d-c03d-c1fe-ff0f-d99287b6ec3c@intel.com>
- <20190419141732.GA2269@wind.enjellic.com>
+ <d79261c0-f2ae-0ed8-96b6-fb4d1677e3dc@intel.com>
+ <20190419162450.GA2615@wind.enjellic.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -87,12 +87,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <8a225d74-0f57-fedd-da31-c11c4f57961d@intel.com>
-Date:   Fri, 19 Apr 2019 07:25:49 -0700
+Message-ID: <088e39dc-025a-1dea-4f26-239d5c059d6a@intel.com>
+Date:   Fri, 19 Apr 2019 09:39:03 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190419141732.GA2269@wind.enjellic.com>
+In-Reply-To: <20190419162450.GA2615@wind.enjellic.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,10 +101,23 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 4/19/19 7:17 AM, Dr. Greg wrote:
-> 3.) The approach we propose addresses these issues while imposing no
-> functional limitations on how Linux platform owners can use enclave
-> technology.
+On 4/19/19 9:24 AM, Dr. Greg wrote:
+>> Companies ideally shouldn't be getting their customers hooked on
+>> out-of-tree ABIs and customers should consume out-of-tree ABIs
+>> *expecting* them to break in the future.
+> At the risk of being indelicate, it was your company that hooked the
+> SGX development community on out-of-tree driver ABI's and software.
 
-Let's say v20 gets merged.  Is there any reason your approach can not be
-rebased on top of that code, reviewed and merged later?
+I would encourage anyone who has been impacted by this to communicate
+that back to the folks at Intel from whom they received the out-of-tree
+code about the impact.
+
+> Is there going to be an OEM mandated requirement, enforced by Intel
+> licensing, that all SGX capable platforms will implement Flexible
+> Launch Control?
+Heck if I know.  I don't think LKML is a great place to discuss Intel
+licensing requirements.
+
+What I *do* know is that when builds a platform without Flexible Launch
+Control, Linux does not support SGX on that platform.  I guess that
+could be spelled out in some documentation explicitly, if it isn't already.
