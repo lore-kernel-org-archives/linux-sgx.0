@@ -2,108 +2,153 @@ Return-Path: <SRS0=gKhM=SY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32ED4C10F11
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Apr 2019 17:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4579C10F11
+	for <linux-sgx@archiver.kernel.org>; Mon, 22 Apr 2019 20:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B3220684
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Apr 2019 17:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A053206A3
+	for <linux-sgx@archiver.kernel.org>; Mon, 22 Apr 2019 20:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfDVRRQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 22 Apr 2019 13:17:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:48829 "EHLO mga04.intel.com"
+        id S1727685AbfDVUnB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 22 Apr 2019 16:43:01 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62703 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbfDVRRQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 22 Apr 2019 13:17:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726421AbfDVUnB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 22 Apr 2019 16:43:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 10:17:15 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 13:43:00 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="339751353"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Apr 2019 10:17:15 -0700
-Date:   Mon, 22 Apr 2019 10:17:15 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Dr. Greg" <greg@enjellic.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-Message-ID: <20190422171714.GE1236@linux.intel.com>
-References: <444537E3-4156-41FB-83CA-57C5B660523F@amacapital.net>
- <f9d93291-9b59-7b66-de9f-af92246f1c9c@fortanix.com>
- <alpine.DEB.2.21.1904192337160.3174@nanos.tec.linutronix.de>
- <5854e66a-950e-1b12-5393-d9cdd15367dc@fortanix.com>
- <alpine.DEB.2.21.1904200727410.3174@nanos.tec.linutronix.de>
- <20190420160247.GA17291@wind.enjellic.com>
- <20190422150119.GA1236@linux.intel.com>
- <20190422162411.GA27389@wind.enjellic.com>
- <20190422164827.GC1236@linux.intel.com>
- <CAHk-=wjmT=uC1=18ZYV1CMfP_FBUEjh9_rabH0g+a0z-L0cgHg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjmT=uC1=18ZYV1CMfP_FBUEjh9_rabH0g+a0z-L0cgHg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-IronPort-AV: E=Sophos;i="5.60,383,1549958400"; 
+   d="scan'208";a="144785995"
+Received: from bxing-ubuntu.jf.intel.com ([10.23.30.27])
+  by orsmga003.jf.intel.com with ESMTP; 22 Apr 2019 13:42:59 -0700
+From:   Cedric Xing <cedric.xing@intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     cedric.xing@intel.com
+Subject: [RFC PATCH v1 1/3] selftests/x86: Fixed Makefile for SGX selftest
+Date:   Mon, 22 Apr 2019 13:42:57 -0700
+Message-Id: <4e463af695c92b6b5693b1f0d00a49b21fbf4656.1555965327.git.cedric.xing@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1555965327.git.cedric.xing@intel.com>
+References: <cover.1555965327.git.cedric.xing@intel.com>
+In-Reply-To: <cover.1555965327.git.cedric.xing@intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com> <cover.1555965327.git.cedric.xing@intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Apr 22, 2019 at 09:55:47AM -0700, Linus Torvalds wrote:
-> On Mon, Apr 22, 2019 at 9:48 AM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > Right, and loading a malicious enclave doesn't change those guarantees
-> > (for other enclaves).  Ergo, restricting which enclaves can execute is
-> > orthogonal to the security provided by SGX.
-> 
-> But it is absolutely worth noting that TSX made a lot of attacks both
-> easier to _do_, and also easier to _hide_.
-> 
-> All while being basically completely worthless technology to everybody
-> except for some silly SAP benchmark.
-> 
-> So it is definitely worth at least discussing the downsides of SGX. If
-> it ends up being another technology that makes it easier to create
-> malware, without actually having a lot of _good_ software use it, the
-> patches to enable it should make damn sure that the upsides actually
-> outweigh the downsides.
-> 
-> And if the current setup basically is "you have to disable reasonable
-> SElinux protections that lots of distros use today", I think it's
-> entirely reasonable saying "the downsides are bigger than the
-> upsides".
+The original x86/sgx/Makefile doesn't work when 'x86/sgx' is specified as the test target. This patch fixes that problem, along with minor changes to the dependencies between 'x86' and 'x86/sgx' in selftests/x86/Makefile.
 
-I'm not arguing against SGX playing nice with SELinux/LSMs, actually the
-opposite.  I completely agree that enclaves should be subject to LSM
-restrictions.
+Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+---
+ tools/testing/selftests/x86/Makefile     | 12 +++----
+ tools/testing/selftests/x86/sgx/Makefile | 45 +++++++++---------------
+ 2 files changed, 22 insertions(+), 35 deletions(-)
 
-AIUI, Dr. Greg is proposing a framework that uses SGX's launch control
-mechanism to restrict what enclaves can run.  My point is that restricting
-what enclaves can run is about protecting the kernel and/or platform, not
-the enclaves themselves, i.e. using launch control instead of, or in
-addition to, LSMs doesn't change the security guarantees of SGX.
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index 4fc9a42f56ea..1294c5f5b6ca 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -70,11 +70,11 @@ all_32: $(BINARIES_32)
+ 
+ all_64: $(BINARIES_64)
+ 
+-all_64: $(SUBDIRS_64)
+-	@for DIR in $(SUBDIRS_64); do			\
+-		BUILD_TARGET=$(OUTPUT)/$$DIR;		\
+-		mkdir $$BUILD_TARGET  -p;		\
+-		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;	\
++all_64: | $(SUBDIRS_64)
++	@for DIR in $|; do					\
++		BUILD_TARGET=$(OUTPUT)/$$DIR;			\
++		mkdir $$BUILD_TARGET  -p;			\
++		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$DIR $@;	\
+ 	done
+ 
+ EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
+@@ -90,7 +90,7 @@ ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),01)
+ all: warn_32bit_failure
+ 
+ warn_32bit_failure:
+-	@echo "Warning: you seem to have a broken 32-bit build" 2>&1; 	\
++	@echo "Warning: you seem to have a broken 32-bit build" 2>&1;	\
+ 	echo "environment.  This will reduce test coverage of 64-bit" 2>&1; \
+ 	echo "kernels.  If you are using a Debian-like distribution," 2>&1; \
+ 	echo "try:"; 2>&1; \
+diff --git a/tools/testing/selftests/x86/sgx/Makefile b/tools/testing/selftests/x86/sgx/Makefile
+index 1fd6f2708e81..3af15d7c8644 100644
+--- a/tools/testing/selftests/x86/sgx/Makefile
++++ b/tools/testing/selftests/x86/sgx/Makefile
+@@ -2,47 +2,34 @@ top_srcdir = ../../../../..
+ 
+ include ../../lib.mk
+ 
+-HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
+-ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
++ifeq ($(shell $(CC) -dumpmachine | cut --delimiter=- -f1),x86_64)
++all: all_64
++endif
++
++HOST_CFLAGS := -Wall -Werror -g $(INCLUDES)
++ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIE \
+ 	       -fno-stack-protector -mrdrnd $(INCLUDES)
+ 
+ TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
+ all_64: $(TEST_CUSTOM_PROGS)
+ 
+-$(TEST_CUSTOM_PROGS): $(OUTPUT)/main.o $(OUTPUT)/sgx_call.o \
+-		      $(OUTPUT)/encl_piggy.o
++$(TEST_CUSTOM_PROGS): main.c sgx_call.S $(OUTPUT)/encl_piggy.o
+ 	$(CC) $(HOST_CFLAGS) -o $@ $^
+ 
+-$(OUTPUT)/main.o: main.c
+-	$(CC) $(HOST_CFLAGS) -c $< -o $@
++$(OUTPUT)/encl_piggy.o: encl_piggy.S $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
++	$(CC) $(HOST_CFLAGS) -I$(OUTPUT) -c $< -o $@
+ 
+-$(OUTPUT)/sgx_call.o: sgx_call.S
+-	$(CC) $(HOST_CFLAGS) -c $< -o $@
+-
+-$(OUTPUT)/encl_piggy.o: $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
+-	$(CC) $(HOST_CFLAGS) -c encl_piggy.S -o $@
+-
+-$(OUTPUT)/encl.bin: $(OUTPUT)/encl.elf $(OUTPUT)/sgxsign
++$(OUTPUT)/encl.bin: $(OUTPUT)/encl.elf
+ 	objcopy --remove-section=.got.plt -O binary $< $@
+ 
+-$(OUTPUT)/encl.elf: $(OUTPUT)/encl.o $(OUTPUT)/encl_bootstrap.o
+-	$(CC) $(ENCL_CFLAGS) -T encl.lds -o $@ $^
++$(OUTPUT)/encl.elf: encl.lds encl.c encl_bootstrap.S
++	$(CC) $(ENCL_CFLAGS) -T $^ -o $@
+ 
+-$(OUTPUT)/encl.o: encl.c
+-	$(CC) $(ENCL_CFLAGS) -c $< -o $@
+-
+-$(OUTPUT)/encl_bootstrap.o: encl_bootstrap.S
+-	$(CC) $(ENCL_CFLAGS) -c $< -o $@
+-
+-$(OUTPUT)/encl.ss: $(OUTPUT)/encl.bin  $(OUTPUT)/sgxsign
+-	$(OUTPUT)/sgxsign signing_key.pem $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
++$(OUTPUT)/encl.ss: $(OUTPUT)/sgxsign signing_key.pem $(OUTPUT)/encl.bin
++	$^ $@
+ 
+ $(OUTPUT)/sgxsign: sgxsign.c
+ 	$(CC) -o $@ $< -lcrypto
+ 
+-EXTRA_CLEAN := $(OUTPUT)/sgx-selftest $(OUTPUT)/sgx-selftest.o \
+-	       $(OUTPUT)/sgx_call.o $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss \
+-	       $(OUTPUT)/encl.elf $(OUTPUT)/encl.o $(OUTPUT)/encl_bootstrap.o \
+-	       $(OUTPUT)/sgxsign
+-
+-.PHONY: clean
++EXTRA_CLEAN := $(TEST_CUSTOM_PROGS) $(addprefix $(OUTPUT)/,	\
++		encl.elf encl.bin encl.ss encl_piggy.o sgxsign)
+-- 
+2.17.1
+
