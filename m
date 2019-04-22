@@ -2,21 +2,21 @@ Return-Path: <SRS0=gKhM=SY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D644C282CE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646A7C282E5
 	for <linux-sgx@archiver.kernel.org>; Mon, 22 Apr 2019 20:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6A5206A3
+	by mail.kernel.org (Postfix) with ESMTP id 3C44520859
 	for <linux-sgx@archiver.kernel.org>; Mon, 22 Apr 2019 20:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfDVUnB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 22 Apr 2019 16:43:01 -0400
-Received: from mga18.intel.com ([134.134.136.126]:62703 "EHLO mga18.intel.com"
+        id S1726421AbfDVUnC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 22 Apr 2019 16:43:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62704 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfDVUnB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1727571AbfDVUnB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Mon, 22 Apr 2019 16:43:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,44 +24,255 @@ Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 13:43:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,383,1549958400"; 
-   d="scan'208";a="144785992"
+   d="scan'208";a="144786001"
 Received: from bxing-ubuntu.jf.intel.com ([10.23.30.27])
-  by orsmga003.jf.intel.com with ESMTP; 22 Apr 2019 13:42:59 -0700
+  by orsmga003.jf.intel.com with ESMTP; 22 Apr 2019 13:43:00 -0700
 From:   Cedric Xing <cedric.xing@intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     cedric.xing@intel.com
-Subject: [RFC PATCH v1 0/3] An alternative __vdso_sgx_enter_enclave() to allow enclave/host parameter passing using untrusted stack
-Date:   Mon, 22 Apr 2019 13:42:56 -0700
-Message-Id: <cover.1555965327.git.cedric.xing@intel.com>
+Subject: [RFC PATCH v1 3/3] selftests/x86: Augment SGX selftest to test new __vdso_sgx_enter_enclave() and its callback interface
+Date:   Mon, 22 Apr 2019 13:42:59 -0700
+Message-Id: <f82e81c9cae31634684964d3fc4e9637e7565c69.1555965327.git.cedric.xing@intel.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <cover.1555965327.git.cedric.xing@intel.com>
+References: <cover.1555965327.git.cedric.xing@intel.com>
+In-Reply-To: <cover.1555965327.git.cedric.xing@intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com> <cover.1555965327.git.cedric.xing@intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The current proposed __vdso_sgx_enter_enclave() requires enclaves to preserve %rsp, which prohibits enclaves from allocating space on the untrusted stack. However, there are existing enclaves (e.g. those built with current Intel SGX SDK libraries) relying on the untrusted stack for passing parameters to untrusted functions (aka. o-calls), which requires allocating space on the untrusted stack by enclaves. And given its simplicity and convenience, it could be desired by future SGX applications as well.
+Given the changes to __vdso_sgx_enter_enclave(), the selftest is augmented to test the newly added callback interface. This addtional test marks the whole enclave range as PROT_READ, and calls mprotect() upon #PFs to add necessary PTE permissions per PFEC (#PF Error Code) until the enclave finishes.
 
-This patchset introduces a new ABI for __vdso_sgx_enter_enclave() to anchor its stack frame on %rbp (instead of %rsp), so as to allow enclaves to "push" onto the untrusted stack by decrementing the untrusted %rsp. Additionally, this new __vdso_sgx_enter_enclave() will take one more parameter - a callback function, to be invoked upon all enclave exits (both AEX and normal exits). The callback function will be given the value of %rsp left off by the enclave, so that data "pushed" by the enclave (if any) could be addressed/accessed. Please note that the callback function is optional, and if not supplied (i.e. null), __vdso_sgx_enter_enclave() will just return (i.e. behave the same as the current implementation) after the enclave exits (or AEX due to exceptions).
+Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+---
+ tools/testing/selftests/x86/sgx/main.c     | 123 ++++++++++++++++++---
+ tools/testing/selftests/x86/sgx/sgx_call.S |  40 ++++++-
+ 2 files changed, 142 insertions(+), 21 deletions(-)
 
-The SGX selftest is augmented to test out the new callback interface, and to serve as a simple example to showcase how to use the callback interface in practice.
-
-Cedric Xing (3):
-  selftests/x86: Fixed Makefile for SGX selftest
-  x86/vdso: Modify __vdso_sgx_enter_enclave() to allow parameter passing
-    on untrusted stack
-  selftests/x86: Augment SGX selftest to test new
-    __vdso_sgx_enter_enclave() and its callback interface
-
- arch/x86/entry/vdso/vsgx_enter_enclave.S   | 156 ++++++++++++---------
- arch/x86/include/uapi/asm/sgx.h            |  14 +-
- tools/testing/selftests/x86/Makefile       |  12 +-
- tools/testing/selftests/x86/sgx/Makefile   |  45 +++---
- tools/testing/selftests/x86/sgx/main.c     | 123 +++++++++++++---
- tools/testing/selftests/x86/sgx/sgx_call.S |  40 +++++-
- 6 files changed, 264 insertions(+), 126 deletions(-)
-
+diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
+index e2265f841fb0..234cfbad14a5 100644
+--- a/tools/testing/selftests/x86/sgx/main.c
++++ b/tools/testing/selftests/x86/sgx/main.c
+@@ -9,6 +9,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <errno.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
+@@ -18,6 +19,10 @@
+ #include "../../../../../arch/x86/kernel/cpu/sgx/arch.h"
+ #include "../../../../../arch/x86/include/uapi/asm/sgx.h"
+ 
++#define _Q(x)	__Q(x)
++#define __Q(x)	#x
++#define ERRLN	"Line " _Q(__LINE__)
++
+ static const uint64_t MAGIC = 0x1122334455667788ULL;
+ 
+ struct vdso_symtab {
+@@ -138,7 +143,7 @@ static bool encl_create(int dev_fd, unsigned long bin_size,
+ 	base = mmap(NULL, secs->size, PROT_READ | PROT_WRITE | PROT_EXEC,
+ 		    MAP_SHARED, dev_fd, 0);
+ 	if (base == MAP_FAILED) {
+-		perror("mmap");
++		perror(ERRLN);
+ 		return false;
+ 	}
+ 
+@@ -224,24 +229,113 @@ static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
+ 	return false;
+ }
+ 
+-void sgx_call(void *rdi, void *rsi, void *tcs,
+-	      struct sgx_enclave_exception *exception,
+-	      void *eenter);
++int sgx_call(void *rdi, void *rsi, long rdx, void *rcx, void *r8, void *r9,
++	     void *tcs, struct sgx_enclave_exinfo *ei, void *cb, void *eenter);
++
++static void show_enclave_exinfo(const struct sgx_enclave_exinfo *exinfop,
++				const char *header)
++{
++	printf("%s: leaf:%d", header, exinfop->leaf);
++	if (exinfop->leaf != 4)
++		printf(" trap#:%d ec:%d addr:0x%llx\n", exinfop->trapnr,
++			exinfop->error_code, exinfop->address);
++	else printf("\n");
++}
++
++static void test1(void *eenter, struct sgx_secs *secs)
++{
++	uint64_t result = 0;
++	struct sgx_enclave_exinfo exinfo;
++
++	printf("[1] Entering the enclave without callback.\n");
++
++	printf("Input: 0x%lx\n Expect: Same as input\n", MAGIC);
++	sgx_call((void *)&MAGIC, &result, 0, NULL, NULL, NULL,
++		 (void *)secs->base, &exinfo, NULL, eenter);
++	if (result != MAGIC) {
++		fprintf(stderr, "0x%lx != 0x%lx\n", result, MAGIC);
++		exit(1);
++	}
++	printf(" Output: 0x%lx\n", result);
++
++	printf("Input: Null TCS\n Expect: #PF at EENTER\n");
++	sgx_call((void *)&MAGIC, &result, 0, NULL, NULL, NULL,
++		 NULL, &exinfo, NULL, eenter);
++	show_enclave_exinfo(&exinfo, " Exit");
++	if (exinfo.leaf != 2 /*EENTER*/ || exinfo.trapnr != 14 /*#PF*/)
++		exit(1);
++}
++
++static int enclave_ex_callback(long rdi, long rsi, long rdx,
++	struct sgx_enclave_exinfo *ei, long r8, long r9, void *tcs, long ursp)
++{
++	show_enclave_exinfo(ei, "  callback");
++
++	switch (ei->leaf)
++	{
++	case 4:
++		return 0;
++	case 3:
++	case 2:
++		if (ei->trapnr != 14 /*#PF*/ || (ei->error_code & 1) == 0) {
++			fprintf(stderr, ERRLN ": Unexpected exception\n");
++			exit(1);
++		}
++
++		if (mprotect((void*)(ei->address & -0x1000), 0x1000,
++			     ((ei->error_code & 2) ? PROT_WRITE : 0) |
++			     ((ei->error_code & 0x10) ? PROT_EXEC : 0) |
++			     PROT_READ)) {
++			perror(ERRLN);
++			exit(1);
++		}
++
++		return ei->leaf == 2 ? -EAGAIN : ei->leaf;
++	}
++	return -EINVAL;
++}
++
++static void test2(void *eenter, struct sgx_secs *secs)
++{
++	uint64_t result = 0;
++	struct sgx_enclave_exinfo exinfo;
++
++	printf("[2] Entering the enclave with callback.\n");
++
++	printf("Input: 0x%lx\n Expect: Same as input\n", MAGIC);
++	sgx_call((void *)&MAGIC, &result, 0, NULL, NULL, NULL,
++		 (void *)secs->base, &exinfo, enclave_ex_callback, eenter);
++	if (result != MAGIC) {
++		fprintf(stderr, "0x%lx != 0x%lx\n", result, MAGIC);
++		exit(1);
++	}
++	printf(" Output: 0x%lx\n", result);
++
++	printf("Input: Read-only enclave (0x%lx-0x%lx)\n"
++	       " Expect: #PFs to be fixed by callback\n",
++	       secs->base, secs->base + (encl_bin_end - encl_bin) - 1);
++	if (mprotect((void*)secs->base, encl_bin_end - encl_bin, PROT_READ)) {
++		perror(ERRLN);
++		exit(1);
++	}
++	while (sgx_call((void *)&MAGIC, &result, 0, NULL, NULL, NULL,
++			(void*)secs->base, &exinfo, enclave_ex_callback,
++			eenter) == -EAGAIN);
++	show_enclave_exinfo(&exinfo, " Exit");
++	if (exinfo.leaf != 4 /*EEXIT*/)
++		exit(1);
++}
+ 
+ int main(int argc, char *argv[], char *envp[])
+ {
+ 	unsigned long bin_size = encl_bin_end - encl_bin;
+ 	unsigned long ss_size = encl_ss_end - encl_ss;
+-	struct sgx_enclave_exception exception;
+ 	Elf64_Sym *eenter_sym;
+ 	struct vdso_symtab symtab;
+ 	struct sgx_secs secs;
+-	uint64_t result = 0;
+ 	void *eenter;
+ 	void *addr;
+ 
+-	memset(&exception, 0, sizeof(exception));
+-
+ 	addr = vdso_get_base_addr(envp);
+ 	if (!addr)
+ 		exit(1);
+@@ -266,14 +360,7 @@ int main(int argc, char *argv[], char *envp[])
+ 	if (!encl_load(&secs, bin_size))
+ 		exit(1);
+ 
+-	printf("Input: 0x%lx\n", MAGIC);
+-	sgx_call((void *)&MAGIC, &result, (void *)secs.base, &exception,
+-		 eenter);
+-	if (result != MAGIC) {
+-		fprintf(stderr, "0x%lx != 0x%lx\n", result, MAGIC);
+-		exit(1);
+-	}
+-
+-	printf("Output: 0x%lx\n", result);
+-	exit(0);
++	test1(eenter, &secs);
++	test2(eenter, &secs);
++	return 0;
+ }
+diff --git a/tools/testing/selftests/x86/sgx/sgx_call.S b/tools/testing/selftests/x86/sgx/sgx_call.S
+index 14bd0a044199..da8f687a60d2 100644
+--- a/tools/testing/selftests/x86/sgx/sgx_call.S
++++ b/tools/testing/selftests/x86/sgx/sgx_call.S
+@@ -7,9 +7,43 @@
+ 
+ 	.global sgx_call
+ sgx_call:
++	.cfi_startproc
++	push	%r15
++	.cfi_adjust_cfa_offset	8
++	.cfi_rel_offset		%r15, 0
++	push	%r14
++	.cfi_adjust_cfa_offset	8
++	.cfi_rel_offset		%r14, 0
++	push	%r13
++	.cfi_adjust_cfa_offset	8
++	.cfi_rel_offset		%r13, 0
++	push	%r12
++	.cfi_adjust_cfa_offset	8
++	.cfi_rel_offset		%r12, 0
+ 	push	%rbx
+-	mov	$0x02, %rax
+-	mov	%rdx, %rbx
+-	call	*%r8
++	.cfi_adjust_cfa_offset	8
++	.cfi_rel_offset		%rbx, 0
++	push	$0
++	.cfi_adjust_cfa_offset	8
++	push	0x48(%rsp)
++	.cfi_adjust_cfa_offset	8
++	push	0x48(%rsp)
++	.cfi_adjust_cfa_offset	8
++	push	0x48(%rsp)
++	.cfi_adjust_cfa_offset	8
++	mov	$2, %eax
++	call	*0x68(%rsp)
++	add	$0x20, %rsp
++	.cfi_adjust_cfa_offset	-0x20
+ 	pop	%rbx
++	.cfi_adjust_cfa_offset	-8
++	pop	%r12
++	.cfi_adjust_cfa_offset	-8
++	pop	%r13
++	.cfi_adjust_cfa_offset	-8
++	pop	%r14
++	.cfi_adjust_cfa_offset	-8
++	pop	%r15
++	.cfi_adjust_cfa_offset	-8
+ 	ret
++	.cfi_endproc
 -- 
 2.17.1
 
