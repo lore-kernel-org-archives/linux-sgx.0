@@ -2,116 +2,194 @@ Return-Path: <SRS0=01IT=SZ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBB0C282E1
-	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 19:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181C1C10F03
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 19:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE2F218D3
-	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 19:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556046462;
-	bh=9GSdW1aq+r9nV1/Bl6Pg8a6JY989aBpJAknNyTYBqWU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=hIs3WJa3Ffn//WKlJIGyM4HQjIMKpKDng41SSbhVUF+8lYwTvrvTd+VcBsxumItd+
-	 okLNSkFu8reWCzeeLnpRW5rBJuFwVWg12KrtOI6Q9H8hmdZoFThmmK2gufjzJTsWr8
-	 aopZoQKEHQCEceI0AMGqrvGN8UrgC00LnVuaY8CI=
+	by mail.kernel.org (Postfix) with ESMTP id D1B0821738
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 19:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfDWTHl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 23 Apr 2019 15:07:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40250 "EHLO mail.kernel.org"
+        id S1725956AbfDWTb5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 23 Apr 2019 15:31:57 -0400
+Received: from mga14.intel.com ([192.55.52.115]:3570 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbfDWTHk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 23 Apr 2019 15:07:40 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54C7021907
-        for <linux-sgx@vger.kernel.org>; Tue, 23 Apr 2019 19:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556046459;
-        bh=9GSdW1aq+r9nV1/Bl6Pg8a6JY989aBpJAknNyTYBqWU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tE8EDMvHYUZdISI2w7FGpF/jSAL/HeobSnoquVCzOrUVjswzg9Awgrk1G5e6HJfKh
-         D38PlZAo5bubEBtS7r0JqfnbpEm0KKC+t8JJxprba6+iU7b7wInB+aTsVdeQDt/OWy
-         ojIsREI7tc6k86ypF0gvGwKIHlBp4QVJ8BnLCfKU=
-Received: by mail-wr1-f51.google.com with SMTP id k17so21607999wrx.10
-        for <linux-sgx@vger.kernel.org>; Tue, 23 Apr 2019 12:07:39 -0700 (PDT)
-X-Gm-Message-State: APjAAAVwBu3/mI8Q6pM26QMifcrdfUYd7Bt+282xWnBMlTry/tJp7nMx
-        7Tl1Cdf8fGXB18MgOkTKhFY1t4jAGMSiQqvbuzBn/g==
-X-Google-Smtp-Source: APXvYqwbjAAuv9MqdQbukmfVqGACv2C4RdBg4SyS/qRMXdaLvf0h2YAOufody3VVB6sBsgJRHOJRN0uX17QpVKBQXKE=
-X-Received: by 2002:adf:ed82:: with SMTP id c2mr17544533wro.176.1556046457760;
- Tue, 23 Apr 2019 12:07:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <cover.1555965327.git.cedric.xing@intel.com> <f82e81c9cae31634684964d3fc4e9637e7565c69.1555965327.git.cedric.xing@intel.com>
- <CALCETrWpMxoX00SfnCgYdNbT5JmnzHNJ+73NmUjebBEjk7DuJA@mail.gmail.com> <20190423185937.GD10720@linux.intel.com>
-In-Reply-To: <20190423185937.GD10720@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 23 Apr 2019 12:07:26 -0700
-X-Gmail-Original-Message-ID: <CALCETrWcJw7+tSni3zp4kO=r6gVGkVDnc2477fPg0ErUzvJAKg@mail.gmail.com>
-Message-ID: <CALCETrWcJw7+tSni3zp4kO=r6gVGkVDnc2477fPg0ErUzvJAKg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 3/3] selftests/x86: Augment SGX selftest to test
- new __vdso_sgx_enter_enclave() and its callback interface
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave <dave.hansen@intel.com>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge <serge.ayoun@intel.com>,
-        Shay <shay.katz-zamir@intel.com>,
+        id S1725945AbfDWTb5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 23 Apr 2019 15:31:57 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Apr 2019 12:31:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,386,1549958400"; 
+   d="scan'208";a="164177286"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Apr 2019 12:26:54 -0700
+Date:   Tue, 23 Apr 2019 12:26:54 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Cedric Xing <cedric.xing@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        Hansen@linux.intel.com, Dave <dave.hansen@intel.com>,
+        Christopherson@linux.intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, Ayoun@linux.intel.com,
+        Serge <serge.ayoun@intel.com>, Katz-zamir@linux.intel.com,
+        Shay <shay.katz-zamir@intel.com>, Huang@linux.intel.com,
         Haitao <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kai <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai <kai.huang@intel.com>, David Rientjes <rientjes@google.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        Svahn@linux.intel.com, Kai <kai.svahn@intel.com>, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, Kai <kai.huang@intel.com>,
+        rientjes@google.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH v1 2/3] x86/vdso: Modify __vdso_sgx_enter_enclave()
+ to allow parameter passing on untrusted stack
+Message-ID: <20190423192654.GA12691@linux.intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+ <cover.1555965327.git.cedric.xing@intel.com>
+ <ba2a51568f3adaf74994d33ea3cbee570e20c6f6.1555965327.git.cedric.xing@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ba2a51568f3adaf74994d33ea3cbee570e20c6f6.1555965327.git.cedric.xing@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 11:59 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
+On Mon, Apr 22, 2019 at 05:37:24PM -0700, Cedric Xing wrote:
+> The previous __vdso_sgx_enter_enclave() requires enclaves to preserve %rsp,
+> which prohibits enclaves from allocating and passing parameters for
+> untrusted function calls (aka. o-calls).
 >
-> On Mon, Apr 22, 2019 at 06:29:06PM -0700, Andy Lutomirski wrote:
-> > What's not tested here is running this code with EFLAGS.TF set and
-> > making sure that it unwinds correctly.  Also, Jarkko, unless I missed
-> > something, the vDSO extable code likely has a bug.  If you run the
-> > instruction right before ENCLU with EFLAGS.TF set, then do_debug()
-> > will eat the SIGTRAP and skip to the exception handler.  Similarly, if
-> > you put an instruction breakpoint on ENCLU, it'll get skipped.  Or is
-> > the code actually correct and am I just remembering wrong?
+> This patch addresses the problem above by introducing a new ABI that preserves
+> %rbp instead of %rsp. Then __vdso_sgx_enter_enclave() can anchor its frame
+> using %rbp so that enclaves are allowed to allocate space on the untrusted
+> stack by decrementing %rsp. Please note that the stack space allocated in such
+> way will be part of __vdso_sgx_enter_enclave()'s frame so will be freed after
+> __vdso_sgx_enter_enclave() returns. Therefore, __vdso_sgx_enter_enclave() has
+> been changed to take a callback function as an optional parameter, which if
+> supplied, will be invoked upon enclave exits (both AEX (Asynchronous Enclave
+> eXit) and normal exits), with the value of %rsp left
+> off by the enclave as a parameter to the callback.
 >
-> The code is indeed broken, and I don't see a sane way to make it not
-> broken other than to never do vDSO fixup on #DB or #BP.  But that's
-> probably the right thing to do anyways since an attached debugger is
-> likely the intended recipient the 99.9999999% of the time.
+> Here's the summary of API/ABI changes in this patch. More details could be
+> found in arch/x86/entry/vdso/vsgx_enter_enclave.S.
+> * 'struct sgx_enclave_exception' is renamed to 'struct sgx_enclave_exinfo'
+>   because it is filled upon both AEX (i.e. exceptions) and normal enclave
+>   exits.
+> * __vdso_sgx_enter_enclave() anchors its frame using %rbp (instead of %rsp in
+>   the previous implementation).
+> * __vdso_sgx_enter_enclave() takes one more parameter - a callback function to
+>   be invoked upon enclave exits. This callback is optional, and if not
+>   supplied, will cause __vdso_sgx_enter_enclave() to return upon enclave exits
+>   (same behavior as previous implementation).
+> * The callback function is given as a parameter the value of %rsp at enclave
+>   exit to address data "pushed" by the enclave. A positive value returned by
+>   the callback will be treated as an ENCLU leaf for re-entering the enclave,
+>   while a zero or negative value will be passed through as the return
+>   value of __vdso_sgx_enter_enclave() to its caller. It's also safe to
+>   leave callback by longjmp() or by throwing a C++ exception.
 >
-> The crux of the matter is that it's impossible to identify whether or
-> not a #DB/#BP originated from within an enclave, e.g. an INT3 in an
-> enclave will look identical to an INT3 at the AEP.  Even if hardware
-> provided a magic flag, #DB still has scenarios where the intended
-> recipient is ambiguous, e.g. data breakpoint encountered in the enclave
-> but on an address outside of the enclave, breakpoint encountered in the
-> enclave and a code breakpoint on the AEP, etc...
+> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+> ---
+>  arch/x86/entry/vdso/vsgx_enter_enclave.S | 156 ++++++++++++++---------
+>  arch/x86/include/uapi/asm/sgx.h          |  14 +-
+>  2 files changed, 100 insertions(+), 70 deletions(-)
+>
+> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> index fe0bf6671d6d..210f4366374a 100644
+> --- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> @@ -14,88 +14,118 @@
+>  .code64
+>  .section .text, "ax"
+>
+> -#ifdef SGX_KERNEL_DOC
 
-Ugh.  It sounds like ignoring the fixup for #DB is the right call.
-But what happens if the enclave contains an INT3 or ICEBP instruction?
- Are they magically promoted to #GP, perhaps?
+This #ifdef and the pseudo-C code below has a functional purpose.  From
+the original commit:
 
-As a maybe possible alternative, if we made it so that the AEX address
-was not the same as the ENCLU, could we usefully distinguish these
-exceptions based on RIP?  I suppose it's also worth considering
-whether page faults from *inside* the enclave should result in SIGSEGV
-or result in a fixup.  We certainly want page faults from the ENCLU
-instruction itself to get fixed up, but maybe we want most exceptions
-inside the enclave to work a bit differently.  Of course, if we do
-this, we need to make sure that the semantics of returning from the
-signal handler are reasonable.
+  Note, the C-like pseudocode describing the assembly routine is wrapped
+  in a non-existent macro instead of in a comment to trick kernel-doc into
+  auto-parsing the documentation and function prototype.  This is a double
+  win as the pseudocode is intended to aid kernel developers, not userland
+  enclave developers.
+
+We don't need full pseudocode, but a C-like prototype is necessary to get
+the kernel-doc comment parsed correctly.
+
+I'll try to look at the actual code later today.
+
+>  /**
+>   * __vdso_sgx_enter_enclave() - Enter an SGX enclave
+>   *
+>   * @leaf:	**IN \%eax** - ENCLU leaf, must be EENTER or ERESUME
+> - * @tcs:	**IN \%rbx** - TCS, must be non-NULL
+> - * @ex_info:	**IN \%rcx** - Optional 'struct sgx_enclave_exception' pointer
+> + * @tcs:	**IN 0x08(\%rsp)** - TCS, must be non-NULL
+> + * @ex_info:	**IN 0x10(\%rsp)** - Optional 'struct sgx_enclave_exinfo'
+> + *				     pointer
+> + * @callback:	**IN 0x18(\%rsp)** - Optional callback function to be called on
+> + *				     enclave exit or exception
+>   *
+>   * Return:
+>   *  **OUT \%eax** -
+> - *  %0 on a clean entry/exit to/from the enclave, %-EINVAL if ENCLU leaf is
+> - *  not allowed or if TCS is NULL, %-EFAULT if ENCLU or the enclave faults
+> + *  %0 on a clean entry/exit to/from the enclave, %-EINVAL if ENCLU leaf is not
+> + *  allowed, %-EFAULT if ENCLU or the enclave faults, or a non-positive value
+> + *  returned from ``callback`` (if one is supplied).
+>   *
+>   * **Important!**  __vdso_sgx_enter_enclave() is **NOT** compliant with the
+> - * x86-64 ABI, i.e. cannot be called from standard C code.   As noted above,
+> - * input parameters must be passed via ``%eax``, ``%rbx`` and ``%rcx``, with
+> - * the return value passed via ``%eax``.  All registers except ``%rsp`` must
+> - * be treated as volatile from the caller's perspective, including but not
+> - * limited to GPRs, EFLAGS.DF, MXCSR, FCW, etc...  Conversely, the enclave
+> - * being run **must** preserve the untrusted ``%rsp`` and stack.
+> + * x86-64 ABI, i.e. cannot be called from standard C code. As noted above,
+> + * input parameters must be passed via ``%eax``, ``8(%rsp)``, ``0x10(%rsp)`` and
+> + * ``0x18(%rsp)``, with the return value passed via ``%eax``. All other registers
+> + * will be passed through to the enclave as is. All registers except ``%rbp``
+> + * must be treated as volatile from the caller's perspective, including but not
+> + * limited to GPRs, EFLAGS.DF, MXCSR, FCW, etc... Conversely, the enclave being
+> + * run **must** preserve the untrusted ``%rbp``.
+> + *
+> + * ``callback`` has the following signature:
+> + * int callback(long rdi, long rsi, long rdx,
+> + *		struct sgx_enclave_exinfo *ex_info, long r8, long r9,
+> + *		void *tcs, long ursp);
+> + * ``callback`` **shall** follow x86_64 ABI. All GPRs **except** ``%rax``, ``%rbx``
+> + * and ``rcx`` are passed through to ``callback``. ``%rdi``, ``%rsi``, ``%rdx``,
+> + * ``%r8``, ``%r9``, along with the value of ``%rsp`` when the enclave exited/excepted,
+> + * can be accessed directly as input parameters, while other GPRs can be
+> + * accessed in assembly if needed.
+> + * A positive value returned from ``callback`` will be treated as an ENCLU leaf
+> + * (e.g. EENTER/ERESUME) to reenter the enclave, while 0 or a negative return
+> + * value will be passed back to the caller of __vdso_sgx_enter_enclave().
+> + * It is also **safe** to ``longjmp()`` out of ``callback``.
+>   */
+> -__vdso_sgx_enter_enclave(u32 leaf, void *tcs,
+> -			 struct sgx_enclave_exception *ex_info)
+> -{
+> -	if (leaf != SGX_EENTER && leaf != SGX_ERESUME)
+> -		return -EINVAL;
+> -
+> -	if (!tcs)
+> -		return -EINVAL;
+> -
+> -	try {
+> -		ENCLU[leaf];
+> -	} catch (exception) {
+> -		if (e)
+> -			*e = exception;
+> -		return -EFAULT;
+> -	}
+> -
+> -	return 0;
+> -}
+> -#endif
