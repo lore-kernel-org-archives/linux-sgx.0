@@ -2,293 +2,189 @@ Return-Path: <SRS0=01IT=SZ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7F2C10F03
-	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 21:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA9FC282DD
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 23:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36750218B0
-	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 21:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 545ED218DA
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Apr 2019 23:29:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="o37SjqLo"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="fhpejLJC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726075AbfDWVP7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 23 Apr 2019 17:15:59 -0400
-Received: from mail-eopbgr780108.outbound.protection.outlook.com ([40.107.78.108]:40640
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S1729136AbfDWX33 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 23 Apr 2019 19:29:29 -0400
+Received: from mail-eopbgr690117.outbound.protection.outlook.com ([40.107.69.117]:8864
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726083AbfDWVP6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 23 Apr 2019 17:15:58 -0400
+        id S1728876AbfDWX33 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 23 Apr 2019 19:29:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XsfTfHTIOCQ/JUymmiLNl0/w6lEBIbtr6dJnFN6zcqo=;
- b=o37SjqLoxOYcnInA3W+7lK39oNQqBQjU+jxzBP+N0caTf9BBZNNLEVnwYpxrX3FUkt/rGPyjlIoMUb7Cg7cuBVMOxIbKGpG4CB39r33Skt0BbvaqvofESSa8v1SbYV6IjE/n82qaJvTmz0UDTgcQlE8yGVtpZRCkmN4FkgifFkk=
+ bh=gxrfkcAqxb2uYlZHchp9MU7ftrB5QJbBFQnIu6rDrbk=;
+ b=fhpejLJCrYNsdynKIc/PqIGM+FIzyh2J4Az7GCJ+XMyHJCbORDCNz1UH5k0y9/m6mG349ZPiAx5UDFLj44/c6FQ7hC/ODEyQtx9dKETmjpa3wRAEl9sPWFvjCF/pU/XMKTJ4qgFV2nbARw6UL6jLNl68POWJQMaJeJ4ygpwyRqs=
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB2734.namprd11.prod.outlook.com (52.135.92.25) with Microsoft SMTP
+ SN6PR11MB3101.namprd11.prod.outlook.com (52.135.126.203) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1813.12; Tue, 23 Apr 2019 21:15:51 +0000
+ 15.20.1813.17; Tue, 23 Apr 2019 23:29:24 +0000
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::11b:a687:cd42:570d]) by SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::11b:a687:cd42:570d%3]) with mapi id 15.20.1813.017; Tue, 23 Apr 2019
- 21:15:51 +0000
+ 23:29:24 +0000
 From:   Jethro Beekman <jethro@fortanix.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
         "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-Thread-Topic: [PATCH v20 00/28] Intel SGX1 support
-Thread-Index: AQHU9QnkBhtGQ+66Y0uqVL4+2rp75qZCKU6AgAAN+gCAAVPlAIAAE4gAgABGE4CAABE+gIAAAfEAgAABGQCAAADeAIAABewAgAABNYCAAAN+gIAAAP2AgAAA3wCAAATggIAEWuOAgAHjMQA=
-Date:   Tue, 23 Apr 2019 21:15:51 +0000
-Message-ID: <4f39f6b1-21dd-4ed2-87a7-1e00f734708a@fortanix.com>
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "haitao.huang@intel.com" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kai.huang@intel.com" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>
+Subject: Re: [PATCH v20 15/28] x86/sgx: Add the Linux SGX Enclave Driver
+Thread-Topic: [PATCH v20 15/28] x86/sgx: Add the Linux SGX Enclave Driver
+Thread-Index: AQHU9Qombksy6NSZXkyI7LD5DH8ik6ZIwveAgAGrtoA=
+Date:   Tue, 23 Apr 2019 23:29:24 +0000
+Message-ID: <6dd981a7-0e38-1273-45c1-b2c0d8bf6fed@fortanix.com>
 References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190418171059.GA20819@wind.enjellic.com>
- <09ebfa1d-c03d-c1fe-ff0f-d99287b6ec3c@intel.com>
- <20190419141732.GA2269@wind.enjellic.com>
- <CALCETrV=wAsyWxtxQJ7y0xNrzkE863hTfU6Ysej48Gk9yPFJZw@mail.gmail.com>
- <43aa8fdd-e777-74cb-e3f0-d36805ffa18b@fortanix.com>
- <alpine.DEB.2.21.1904192233390.3174@nanos.tec.linutronix.de>
- <8c5133bc-1301-24ca-418d-7151a6eac0e2@fortanix.com>
- <alpine.DEB.2.21.1904192248550.3174@nanos.tec.linutronix.de>
- <e1478f70-7e44-6e3e-2aaf-1b12a96328ed@fortanix.com>
- <2AE80EA3-799E-4808-BBE4-3872F425BCF8@amacapital.net>
- <49b28ca1-6e66-87d9-2202-84c58f13fb99@fortanix.com>
- <444537E3-4156-41FB-83CA-57C5B660523F@amacapital.net>
- <f9d93291-9b59-7b66-de9f-af92246f1c9c@fortanix.com>
- <alpine.DEB.2.21.1904192337160.3174@nanos.tec.linutronix.de>
- <5854e66a-950e-1b12-5393-d9cdd15367dc@fortanix.com>
- <CALCETrV7CcDnx1hVtmBnDNABG11GuMqyspJMMpV+zHpVeFu3ow@mail.gmail.com>
-In-Reply-To: <CALCETrV7CcDnx1hVtmBnDNABG11GuMqyspJMMpV+zHpVeFu3ow@mail.gmail.com>
+ <20190417103938.7762-16-jarkko.sakkinen@linux.intel.com>
+ <20190422215831.GL1236@linux.intel.com>
+In-Reply-To: <20190422215831.GL1236@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR02CA0057.namprd02.prod.outlook.com
- (2603:10b6:a03:54::34) To SN6PR11MB3167.namprd11.prod.outlook.com
+x-clientproxiedby: BYAPR08CA0037.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::14) To SN6PR11MB3167.namprd11.prod.outlook.com
  (2603:10b6:805:c4::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [67.207.107.146]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 136ca691-dc3e-4723-2104-08d6c830dd10
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600141)(711020)(4605104)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB2734;
-x-ms-traffictypediagnostic: SN6PR11MB2734:
-x-microsoft-antispam-prvs: <SN6PR11MB2734B41FB80B1309A677EFB2AA230@SN6PR11MB2734.namprd11.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: caaf75e6-6155-4760-f156-08d6c843853d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600141)(711020)(4605104)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB3101;
+x-ms-traffictypediagnostic: SN6PR11MB3101:
+x-microsoft-antispam-prvs: <SN6PR11MB3101B8E65978828C08F4984AAA230@SN6PR11MB3101.namprd11.prod.outlook.com>
 x-forefront-prvs: 0016DEFF96
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(346002)(136003)(376002)(39850400004)(199004)(189003)(71190400001)(446003)(64756008)(66446008)(66556008)(966005)(31696002)(2906002)(6916009)(14454004)(102836004)(508600001)(26005)(186003)(11346002)(86362001)(66616009)(7416002)(73956011)(5660300002)(6116002)(66066001)(99936001)(66476007)(4326008)(97736004)(66946007)(3846002)(7736002)(305945005)(99286004)(52116002)(53936002)(6436002)(316002)(6246003)(2616005)(476003)(486006)(229853002)(53546011)(31686004)(6506007)(54906003)(386003)(6512007)(6306002)(76176011)(93886005)(25786009)(68736007)(8676002)(256004)(81166006)(8936002)(14444005)(81156014)(36756003)(71200400001)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2734;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(136003)(346002)(376002)(366004)(199004)(189003)(386003)(446003)(186003)(26005)(64756008)(486006)(11346002)(6506007)(53546011)(6116002)(102836004)(476003)(52116002)(53936002)(14454004)(99936001)(2616005)(36756003)(3846002)(66476007)(66556008)(66616009)(508600001)(66446008)(4326008)(2906002)(66066001)(73956011)(110136005)(54906003)(71200400001)(8676002)(68736007)(316002)(6306002)(6486002)(81166006)(31696002)(6512007)(5660300002)(31686004)(99286004)(66946007)(81156014)(8936002)(86362001)(71190400001)(305945005)(76176011)(256004)(6246003)(7416002)(25786009)(7736002)(229853002)(97736004)(14444005)(6436002)(966005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3101;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0Vhwb/T/XdkHeOctl3n1ZOMDGTM6vHEY9KOAcUjeAOOSDPlpo5GNJIWoPDsBCdB0JFIgNPdFZ/nt4PzhI/dTfyv6mEen1E5FONrAEK2sdKI7KUQYKJVnTza5FyByhOx9AysdLs5EIIt5tLM6WQDXNl9X7WsJSDHlIqnCFNYW/MAb06LTErbsM9+WNHfMFqC/M9L8kwyy70YcrjM6iWu7tzz65H4yQ7jL8eFGGC/sH2kWhTT/OFTjaFuk33EEjcz9YOv7iB91GXqpi9bCtIpAI/oU1g190jIXZaAUfpoZkwaACRT51mjS8mVzNdk+idOLMkUc3crF4P7/MErr/j8+MUKbWLIyQ7C3K+fb7mtd0h6a/I9hnUU2aYnn8/s0Yt2X0Afctd29d7lKGQ3TVCaNZ/sTxIg4pYtQ/CPtOo0W46A=
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080603040003010206000000"
+x-microsoft-antispam-message-info: FJIQMPYgsDaus7yo9jBMyfbsNJfwfevmDjFWLPZUcwSG35EdMold/MPvSKUh0eOSmpw82kw+rTDetCnsqDtBpMXT0r9QOW6+4i2CNuvlSbdUi0cDmskdEGuLPnAhCIjCsOkvZa7flLo7E6tAxRR9nVblLbri3bq6D5fM7JNnsaY3n6luvWPerCVo1qWKEnTTA+50lzW+Hh9n6EpsiK3tJg4SroDL39hGdqs62P7bgEHCEo3xnhPL3TYbFbrYleVI1kuOiiedD69cjpeUCQYnWcUqMrN7zV2RVtAs27bbKb4I/BYoTMaJy75cqPLTPJfcaUfhBlae9ynA9Z6VwV0yxZksHoKdJwhjobi3vqtv/IIdk+CRO9qAFsrX7A/t9CnfNleIvqktc6gHSEGcsXiD5uizSmqrIt34GPW2nAj0xOc=
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090407000907020403000705"
 MIME-Version: 1.0
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 136ca691-dc3e-4723-2104-08d6c830dd10
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2019 21:15:51.5823
+X-MS-Exchange-CrossTenant-Network-Message-Id: caaf75e6-6155-4760-f156-08d6c843853d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2019 23:29:24.6579
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2734
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3101
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms080603040003010206000000
+--------------ms090407000907020403000705
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2019-04-22 09:26, Andy Lutomirski wrote:
->> On Apr 19, 2019, at 2:56 PM, Jethro Beekman <jethro@fortanix.com> wrot=
-e:
->> This works fine with v20 as-is. However, consider the equivalent of th=
-e
->> PT-based flow:
+On 2019-04-22 14:58, Sean Christopherson wrote:
+> +Cc Jethro
+>=20
+> On Wed, Apr 17, 2019 at 01:39:25PM +0300, Jarkko Sakkinen wrote:
+>> Intel Software Guard eXtensions (SGX) is a set of CPU instructions tha=
+t
+>> can be used by applications to set aside private regions of code and
+>> data. The code outside the enclave is disallowed to access the memory
+>> inside the enclave by the CPU access control.
 >>
->> mmap(PROT_READ|PROT_EXEC)
->> ioctl(EADD) <-- no error!
->=20
-> Indeed!
->=20
+>> This commit adds the Linux SGX Enclave Driver that provides an ioctl A=
+PI
+>> to manage enclaves. The address range for an enclave, commonly referre=
+d
+>> as ELRANGE in the documentation (e.g. Intel SDM), is reserved with
+>> mmap() against /dev/sgx/enclave. After that a set ioctls is used to
+>> build the enclave to the ELRANGE.
 >>
->> It's not me that's working around the LSM, it's the SGX driver! It's
->> writing to memory that's not marked writable! The fundamental issue he=
-re
->> is that the SGX instruction set has several instructions that bypass t=
-he
->> page table permission bits, and this is (naturally) confusing to any
->> kind of reference monitor like the LSM framework. You can come up with=
+>> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>=
 
->> similar scenarios that involve PROT_READ|PROT_WRITE|PROT_EXEC or
->> ptrace(PTRACE_POKETEXT). So, clearly, the proper way to fix this failu=
-re
->> of complete mediation is by enforcing appropriate page-table permissio=
-ns
->> even on the SGX instructions that don't do it themselves. Just make an=
-y
->> implicit memory access look like a regular memory access and now
->> everyone is on the same page (pun intended).
->>
+>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>> Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
+>> Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
+>> Co-developed-by: Shay Katz-zamir <shay.katz-zamir@intel.com>
+>> Signed-off-by: Shay Katz-zamir <shay.katz-zamir@intel.com>
+>> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+>> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+>> ---
 >=20
-> I agree that we should do this.  But then what?
-
-Then, we have a minimum viable SGX implementation that doesn't make=20
-things worse than they are today from a userspace code loading/LSM=20
-perspective. People without LSMs can use SGX and people with LSMs are=20
-not more vulnerable than before. I agree that we should do something=20
-along the following lines...
-
-> So I think we need a better EADD ioctl that explicitly does work on
-> PROT_READ|PROT_EXEC enclave memory but makes up for by validating the
-> *source* of the data.  The effect will be similar to mapping a
-> labeled, appraised, etc file as PROT_EXEC.
-
-=2E.. but I don't see why this would need to be in the initial patch set.=
-=20
-We need to take some time to explore the design space here (see=20
-additional comments below), and I don't think it's necessary to wait for =
-it.
-
-> Maybe, in extreme pseudocode:
+> ...
 >=20
-> fd =3D open(=E2=80=9C/dev/sgx/enclave=E2=80=9D);
-> ioctl(fd, SGX_CREATE_FROM_FILE, file_fd);
-> // fd now inherits the LSM label from the file, or is otherwise marked.=
-
-> mmap(fd, PROT_READ|PROT_EXEC, ...);
+>> +#ifdef CONFIG_ACPI
+>> +static struct acpi_device_id sgx_device_ids[] =3D {
+>> +	{"INT0E0C", 0},
+>> +	{"", 0},
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, sgx_device_ids);
+>> +#endif
+>> +
+>> +static struct platform_driver sgx_drv =3D {
+>> +	.probe =3D sgx_drv_probe,
+>> +	.remove =3D sgx_drv_remove,
+>> +	.driver =3D {
+>> +		.name			=3D "sgx",
+>> +		.acpi_match_table	=3D ACPI_PTR(sgx_device_ids),
+>> +	},
+>> +};
 >=20
-> I suppose that an alternative would be to delegate all the EADD calls
-> to a privileged daemon, but that=E2=80=99s nasty.
->=20
+> Where do we stand on removing the ACPI and platform_driver dependencies=
+?
+> Can we get rid of them sooner rather than later?
 
-What file format should this be in? I have worked with several different =
+You know my position on this...=20
+https://www.spinics.net/lists/linux-sgx/msg00624.html . I don't really=20
+have any new arguments.
 
-binary enclave formats and I don't really like any of them.
+Considering the amount of planned changes for the driver post-merge, I=20
+think it's crucial that the driver part can be swapped out with=20
+alternative implementations.
 
-# ELF
+> Now that the core SGX code is approaching stability, I'd like to start
+> sending RFCs for the EPC virtualization and KVM bits to hash out that s=
+ide
+> of things.  The ACPI crud is the last chunk of code that would require
+> non-trivial changes to the core SGX code for the proposed virtualizatio=
+n
+> implementation.  I'd strongly prefer to get it out of the way before
+> sending the KVM RFCs.
 
-Pros:
-* People know about ELF.
-* Allows storing additional metadata that is only used by userspace, not =
-
-the enclave itself.
-
-Cons:
-* ELF generally loads all kinds of stuff in memory that is not necessary =
-
-for enclaves, such as the ELF header.
-* Special tools are needed to calculate ENCLAVEHASH, for signing &=20
-verification.
-* All tools need to agree on the exact transformation.
-* Unclear how to specify things such as: which 256-byte chunks of memory =
-
-should be measured, heap, TCS pages, stacks, SSAs, etc.
-
-Questions:
-* If using ELF, should this be the same format that the Intel Linux SDK=20
-uses (not documented, but source code is available) or something newly=20
-standardized?
-
-# PE (Windows Intel SDK format)
-
-Andy suggested this in another email. I'm not sure why exactly?
-
-Pros:
-* Used by Windows enclaves?
-* Allows storing additional metadata that is only used by userspace, not =
-
-the enclave itself.
-
-Cons:
-* The format is not documented. I did some RE on this format a long time =
-
-ago. See=20
-https://github.com/fortanix/rust-sgx/blob/master/doc/WINTEL-SGX-ABI.md=20
-and=20
-https://github.com/fortanix/rust-sgx/blob/master/sgxs-tools/src/bin/isgx-=
-pe2sgx.rs.
-* PE is not really used on Linux.
-* All same cons as ELF above.
-
-# CPU-native (hash stream) "SGXS"
-
-The security properties of an enclave are completely defined by the hash =
-
-that's calculated by the processor while loading the enclave. The exact=20
-hashed data is what I call the "SGX stream" format (SGXS). This is fully =
-
-described by the Intel SDM. I've written down some notes about this at=20
-https://github.com/fortanix/rust-sgx/blob/master/doc/SGXS.md. That=20
-document also defines a notion of canonicality for streams. You can=20
-ignore the section on "Enhanced SGXS", which is a failed experiment.
-
-Pros:
-* Computing ENCLAVEHASH is a simple SHA256 of the file.
-* No complex transformations needed to load enclave.
-
-Cons:
-* No way to specify memory contents of non-measured memory.
-* No space for non-enclave metadata (including SIGSTRUCT).
-* Not a standard format for transporting binaries.
-
-# CPU-native (instruction stream)
-
-An enclave's memory contents is fully defined by the set of=20
-ECREATE/EADD/EEXTEND/EINIT instructions that the OS needs to execute.=20
-One could envision a format that describes exactly those instructions.=20
-One difference with the SGXS format described above is that the enclave=20
-memory is described as part of EADD, not EEXTEND. This allows including=20
-specific values for non-measured memory.
-
-Pros:
-* No complex transformations needed to load enclave.
-* Obvious place to store SIGSTRUCT.
-
-Cons:
-* Special tools are needed to calculate ENCLAVEHASH, for signing &=20
-verification.
-* No obvious space for non-enclave metadata.
-* Not a standard format for transporting binaries.
-
----
-
-We've been using the SGXS format for a couple of years, and also the=20
-"Enhanced SGXS" format. I think SGXS make a lot of sense for SGX=20
-software, Enhanced SGXS not so much. I've recently been pondering=20
-developing a new format that is basically an archive (tar? but=20
-preferably something with an index) of SGXS, SIGSTRUCT, some file=20
-describing non-measured memory contents (format TBD), and additional=20
-non-enclave metadata.
-
-I'd be interested in hearing people's thoughts on file formats.
+What kind of changes? Wouldn't KVM just be another consumer of the same=20
+API used by the driver?
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms080603040003010206000000
+--------------ms090407000907020403000705
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -352,8 +248,8 @@ rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
 TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
 x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDQyMzIxMTU0OFowLwYJKoZIhvcNAQkEMSIEIFWPUz0B
-5OS2BNNEgKr/IXWxEJDhL/o7ozsBy+Aq+oLTMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDQyMzIzMjkyMVowLwYJKoZIhvcNAQkEMSIEINKOiLoc
+pV/22RD7jPCIuHcHJ1hp9hxfzNIm07BS0lhcMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
@@ -363,10 +259,10 @@ XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
 R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
 Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
 YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQAIkYJsyyjGImw/g7L+EbEPHDpKNHJ6qwStVxCxipDioAiosDhL2G9r8gC9Ms2PCGNMkEnE
-5ogv5WR9ckzUJ+NtnStP7U8kmYLVQdXrCxTtBV9d+qB/hqJpUpfJ4k4c7oEybbReso+zfK0I
-9tBq4guKfI7Oof+BV6R0sP9J52w5VDt9YnhScIYdgMNmWjE/J/XRVLPQGg7j2VQcXlPzgRaJ
-POMaEEYsxuTwU1A7I75GlKysC3UMYUjDSaRqJohGj2GKeeUQciV5PlCkBW+nYE7IsEUY7XVj
-pxasSvUe8vM70Q9m8nFlGUNT+sBPeXjfDPXxYMYJgrC5cbBlFjpuvp2lAAAAAAAA
+AQAqRW2bTz/fz8sV8+ftunLCAqKnSuAVlpuuRqHFoN27WCmY+8N7DpLzND+iahEG/Kw5KyLQ
+4/RQMROOv5x2kJli/xWgMzeu+suLyo16IrqV0FIy7js+BvywOFT/3w+0q5Mf2EP8au19Gr4m
+FWfrOywDHPTg2SzXFrslBnnKUBfTRDQ89p8/fMC6DHbghwJqCWpA/YIKPGiuk3BsC72ldc/x
+Mkk/tryV298daRQr788faV38NCEJHzunzCrExI9TQuQje2dcO4Dd0B6sqz7n/dQaz7rMOc++
+QfUni4KYENb05BTw9dXTtQ6VMAIecoc8HDQfEGWtiQPPxvyGeYxSNVT1AAAAAAAA
 
---------------ms080603040003010206000000--
+--------------ms090407000907020403000705--
