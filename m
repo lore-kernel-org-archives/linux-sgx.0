@@ -2,297 +2,543 @@ Return-Path: <SRS0=QZjA=S2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D08BCC10F11
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 17:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB03C10F11
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 19:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE7020685
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 17:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 037BE20835
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 19:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbfDXR6h (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Apr 2019 13:58:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:8452 "EHLO mga09.intel.com"
+        id S1726887AbfDXTEr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Apr 2019 15:04:47 -0400
+Received: from mga03.intel.com ([134.134.136.65]:52492 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389582AbfDXR4i (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Apr 2019 13:56:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726168AbfDXTEr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Apr 2019 15:04:47 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Apr 2019 10:56:35 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Apr 2019 12:04:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,390,1549958400"; 
-   d="scan'208";a="294223209"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by orsmga004.jf.intel.com with ESMTP; 24 Apr 2019 10:56:35 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.36]) by
- ORSMSX104.amr.corp.intel.com ([169.254.4.183]) with mapi id 14.03.0415.000;
- Wed, 24 Apr 2019 10:56:35 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        "Josh Triplett" <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "David Rientjes" <rientjes@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: RE: [RFC PATCH v1 2/3] x86/vdso: Modify __vdso_sgx_enter_enclave()
+   d="scan'208";a="318655424"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by orsmga005.jf.intel.com with ESMTP; 24 Apr 2019 12:04:46 -0700
+Date:   Wed, 24 Apr 2019 12:04:46 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Cedric Xing <cedric.xing@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        akpm@linux-foundation.org, dave.hansen@intel.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, kai.svahn@intel.com, kai.huang@intel.com,
+        jarkko.sakkinen@linux.intel.com
+Subject: Re: [RFC PATCH v2 2/3] x86/vdso: Modify __vdso_sgx_enter_enclave()
  to allow parameter passing on untrusted stack
-Thread-Topic: [RFC PATCH v1 2/3] x86/vdso: Modify __vdso_sgx_enter_enclave()
- to allow parameter passing on untrusted stack
-Thread-Index: AQHU+Usmf1evzVuGMEWn0D2ZOnnJnqZJabSAgAIvAvA=
-Date:   Wed, 24 Apr 2019 17:56:34 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E87E388@ORSMSX116.amr.corp.intel.com>
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <cover.1555965327.git.cedric.xing@intel.com>
- <ba2a51568f3adaf74994d33ea3cbee570e20c6f6.1555965327.git.cedric.xing@intel.com>
- <CALCETrULHDiKk6xxMX-iDgb=ZEghkxLfX6d3x5KLQb8YAO1mKA@mail.gmail.com>
-In-Reply-To: <CALCETrULHDiKk6xxMX-iDgb=ZEghkxLfX6d3x5KLQb8YAO1mKA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDBlOWYyMjktMmUwNC00MWFmLThiNTUtYjhiNjMwNWI3ODQwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicmUxODNGRGJZM1wvdGJSb0NFa242NzhSXC9sakQ5N2RKSEYxN3ZvUHBmNWM2emxTUzY1d3YzU3RzbjV2Wm5jZmYzIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Message-ID: <20190424190446.GE18442@linux.intel.com>
+References: <cover.1555965327.git.cedric.xing@intel.com>
+ <20190424062623.4345-3-cedric.xing@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190424062623.4345-3-cedric.xing@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGkgQW5keSwNCg0KSSBzZW50IG91dCBteSBSRkMgcGF0Y2ggdjIgbGFzdCBuaWdodCwgdGhhdCBo
-YXMgeW91ciBzdWdnZXN0aW9ucyBpbmNvcnBvcmF0ZWQsIHBsdXMgYSBuZXcgdW53aW5kIHRlc3Qg
-dG8gc2luZ2xlIHN0ZXAgdGhyb3VnaCB0aGUgdkRTTyBBUEkgdG8gdGVzdCBvdXQgdGhlIENGSSBk
-aXJlY3RpdmVzLiBIb3BlZnVsbHkgaXQgaXMgYWJsZSB0byBhZGRyZXNzIGFsbCBvZiB5b3VyIGNv
-bmNlcm5zLiBJdCdzIHdvcnRoIG5vdGluZyB0aGF0LCBnaXZlbiB0aGUgY3VycmVudCBwYXRjaCBm
-aXhlcyB1cCAjREIgYW5kICNCUCBhdCBFTkNMVSwgdGhlIHVud2luZCB0ZXN0IGNhbm5vdCBydW4g
-dG8gY29tcGxldGlvbi4gSSBhc3N1bWUgU2VhbiB3aWxsIHJldmlzZSB0aGUgZml4dXAgY29kZSBz
-b29uLg0KDQpUaGFua3MhDQoNCi1DZWRyaWMNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
-LQ0KPiBGcm9tOiBBbmR5IEx1dG9taXJza2kgW21haWx0bzpsdXRvQGtlcm5lbC5vcmddDQo+IFNl
-bnQ6IE1vbmRheSwgQXByaWwgMjIsIDIwMTkgNjoyNiBQTQ0KPiBUbzogWGluZywgQ2VkcmljIDxj
-ZWRyaWMueGluZ0BpbnRlbC5jb20+DQo+IENjOiBMS01MIDxsaW51eC1rZXJuZWxAdmdlci5rZXJu
-ZWwub3JnPjsgWDg2IE1MIDx4ODZAa2VybmVsLm9yZz47IGxpbnV4LQ0KPiBzZ3hAdmdlci5rZXJu
-ZWwub3JnOyBBbmRyZXcgTW9ydG9uIDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgSGFuc2Vu
-LA0KPiBEYXZlIDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+OyBDaHJpc3RvcGhlcnNvbiwgU2VhbiBK
-DQo+IDxzZWFuLmouY2hyaXN0b3BoZXJzb25AaW50ZWwuY29tPjsgbmhvcm1hbkByZWRoYXQuY29t
-Ow0KPiBucG1jY2FsbHVtQHJlZGhhdC5jb207IEF5b3VuLCBTZXJnZSA8c2VyZ2UuYXlvdW5AaW50
-ZWwuY29tPjsgS2F0ei16YW1pciwNCj4gU2hheSA8c2hheS5rYXR6LXphbWlyQGludGVsLmNvbT47
-IEh1YW5nLCBIYWl0YW8gPGhhaXRhby5odWFuZ0BpbnRlbC5jb20+Ow0KPiBBbmR5IFNoZXZjaGVu
-a28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT47IFRob21hcyBHbGVpeG5lcg0K
-PiA8dGdseEBsaW51dHJvbml4LmRlPjsgU3ZhaG4sIEthaSA8a2FpLnN2YWhuQGludGVsLmNvbT47
-IEJvcmlzbGF2IFBldGtvdg0KPiA8YnBAYWxpZW44LmRlPjsgSm9zaCBUcmlwbGV0dCA8am9zaEBq
-b3NodHJpcGxldHQub3JnPjsgQW5kcmV3IEx1dG9taXJza2kNCj4gPGx1dG9Aa2VybmVsLm9yZz47
-IEh1YW5nLCBLYWkgPGthaS5odWFuZ0BpbnRlbC5jb20+OyBEYXZpZCBSaWVudGplcw0KPiA8cmll
-bnRqZXNAZ29vZ2xlLmNvbT47IEphcmtrbyBTYWtraW5lbiA8amFya2tvLnNha2tpbmVuQGxpbnV4
-LmludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggdjEgMi8zXSB4ODYvdmRzbzog
-TW9kaWZ5DQo+IF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIHRvIGFsbG93IHBhcmFtZXRlciBw
-YXNzaW5nIG9uIHVudHJ1c3RlZCBzdGFjaw0KPiANCj4gT24gTW9uLCBBcHIgMjIsIDIwMTkgYXQg
-NTozNyBQTSBDZWRyaWMgWGluZyA8Y2VkcmljLnhpbmdAaW50ZWwuY29tPg0KPiB3cm90ZToNCj4g
-Pg0KPiA+IFRoZSBwcmV2aW91cyBfX3Zkc29fc2d4X2VudGVyX2VuY2xhdmUoKSByZXF1aXJlcyBl
-bmNsYXZlcyB0byBwcmVzZXJ2ZQ0KPiA+ICVyc3AsIHdoaWNoIHByb2hpYml0cyBlbmNsYXZlcyBm
-cm9tIGFsbG9jYXRpbmcgYW5kIHBhc3NpbmcgcGFyYW1ldGVycw0KPiA+IGZvciB1bnRydXN0ZWQg
-ZnVuY3Rpb24gY2FsbHMgKGFrYS4gby1jYWxscykuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGFkZHJl
-c3NlcyB0aGUgcHJvYmxlbSBhYm92ZSBieSBpbnRyb2R1Y2luZyBhIG5ldyBBQkkgdGhhdA0KPiA+
-IHByZXNlcnZlcyAlcmJwIGluc3RlYWQgb2YgJXJzcC4gVGhlbiBfX3Zkc29fc2d4X2VudGVyX2Vu
-Y2xhdmUoKSBjYW4NCj4gPiBhbmNob3IgaXRzIGZyYW1lIHVzaW5nICVyYnAgc28gdGhhdCBlbmNs
-YXZlcyBhcmUgYWxsb3dlZCB0byBhbGxvY2F0ZQ0KPiA+IHNwYWNlIG9uIHRoZSB1bnRydXN0ZWQg
-c3RhY2sgYnkgZGVjcmVtZW50aW5nICVyc3AuIFBsZWFzZSBub3RlIHRoYXQNCj4gPiB0aGUgc3Rh
-Y2sgc3BhY2UgYWxsb2NhdGVkIGluIHN1Y2ggd2F5IHdpbGwgYmUgcGFydCBvZg0KPiA+IF9fdmRz
-b19zZ3hfZW50ZXJfZW5jbGF2ZSgpJ3MgZnJhbWUgc28gd2lsbCBiZSBmcmVlZCBhZnRlcg0KPiA+
-IF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIHJldHVybnMuIFRoZXJlZm9yZSwNCj4gPiBfX3Zk
-c29fc2d4X2VudGVyX2VuY2xhdmUoKSBoYXMgYmVlbiBjaGFuZ2VkIHRvIHRha2UgYSBjYWxsYmFj
-aw0KPiA+IGZ1bmN0aW9uIGFzIGFuIG9wdGlvbmFsIHBhcmFtZXRlciwgd2hpY2ggaWYgc3VwcGxp
-ZWQsIHdpbGwgYmUgaW52b2tlZA0KPiA+IHVwb24gZW5jbGF2ZSBleGl0cyAoYm90aCBBRVggKEFz
-eW5jaHJvbm91cyBFbmNsYXZlDQo+ID4gZVhpdCkgYW5kIG5vcm1hbCBleGl0cyksIHdpdGggdGhl
-IHZhbHVlIG9mICVyc3AgbGVmdCBvZmYgYnkgdGhlDQo+ID4gZW5jbGF2ZSBhcyBhIHBhcmFtZXRl
-ciB0byB0aGUgY2FsbGJhY2suDQo+ID4NCj4gPiBIZXJlJ3MgdGhlIHN1bW1hcnkgb2YgQVBJL0FC
-SSBjaGFuZ2VzIGluIHRoaXMgcGF0Y2guIE1vcmUgZGV0YWlscw0KPiA+IGNvdWxkIGJlIGZvdW5k
-IGluIGFyY2gveDg2L2VudHJ5L3Zkc28vdnNneF9lbnRlcl9lbmNsYXZlLlMuDQo+ID4gKiAnc3Ry
-dWN0IHNneF9lbmNsYXZlX2V4Y2VwdGlvbicgaXMgcmVuYW1lZCB0byAnc3RydWN0DQo+IHNneF9l
-bmNsYXZlX2V4aW5mbycNCj4gPiAgIGJlY2F1c2UgaXQgaXMgZmlsbGVkIHVwb24gYm90aCBBRVgg
-KGkuZS4gZXhjZXB0aW9ucykgYW5kIG5vcm1hbA0KPiBlbmNsYXZlDQo+ID4gICBleGl0cy4NCj4g
-PiAqIF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIGFuY2hvcnMgaXRzIGZyYW1lIHVzaW5nICVy
-YnAgKGluc3RlYWQNCj4gb2YgJXJzcCBpbg0KPiA+ICAgdGhlIHByZXZpb3VzIGltcGxlbWVudGF0
-aW9uKS4NCj4gPiAqIF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIHRha2VzIG9uZSBtb3JlIHBh
-cmFtZXRlciAtIGEgY2FsbGJhY2sNCj4gZnVuY3Rpb24gdG8NCj4gPiAgIGJlIGludm9rZWQgdXBv
-biBlbmNsYXZlIGV4aXRzLiBUaGlzIGNhbGxiYWNrIGlzIG9wdGlvbmFsLCBhbmQgaWYgbm90DQo+
-ID4gICBzdXBwbGllZCwgd2lsbCBjYXVzZSBfX3Zkc29fc2d4X2VudGVyX2VuY2xhdmUoKSB0byBy
-ZXR1cm4gdXBvbg0KPiBlbmNsYXZlIGV4aXRzDQo+ID4gICAoc2FtZSBiZWhhdmlvciBhcyBwcmV2
-aW91cyBpbXBsZW1lbnRhdGlvbikuDQo+ID4gKiBUaGUgY2FsbGJhY2sgZnVuY3Rpb24gaXMgZ2l2
-ZW4gYXMgYSBwYXJhbWV0ZXIgdGhlIHZhbHVlIG9mICVyc3AgYXQNCj4gZW5jbGF2ZQ0KPiA+ICAg
-ZXhpdCB0byBhZGRyZXNzIGRhdGEgInB1c2hlZCIgYnkgdGhlIGVuY2xhdmUuIEEgcG9zaXRpdmUg
-dmFsdWUNCj4gcmV0dXJuZWQgYnkNCj4gPiAgIHRoZSBjYWxsYmFjayB3aWxsIGJlIHRyZWF0ZWQg
-YXMgYW4gRU5DTFUgbGVhZiBmb3IgcmUtZW50ZXJpbmcgdGhlDQo+IGVuY2xhdmUsDQo+ID4gICB3
-aGlsZSBhIHplcm8gb3IgbmVnYXRpdmUgdmFsdWUgd2lsbCBiZSBwYXNzZWQgdGhyb3VnaCBhcyB0
-aGUgcmV0dXJuDQo+ID4gICB2YWx1ZSBvZiBfX3Zkc29fc2d4X2VudGVyX2VuY2xhdmUoKSB0byBp
-dHMgY2FsbGVyLiBJdCdzIGFsc28gc2FmZSB0bw0KPiA+ICAgbGVhdmUgY2FsbGJhY2sgYnkgbG9u
-Z2ptcCgpIG9yIGJ5IHRocm93aW5nIGEgQysrIGV4Y2VwdGlvbi4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IENlZHJpYyBYaW5nIDxjZWRyaWMueGluZ0BpbnRlbC5jb20+DQo+ID4gLS0tDQo+ID4g
-IGFyY2gveDg2L2VudHJ5L3Zkc28vdnNneF9lbnRlcl9lbmNsYXZlLlMgfCAxNTYgKysrKysrKysr
-KysrKystLS0tLS0tLQ0KPiAtDQo+ID4gIGFyY2gveDg2L2luY2x1ZGUvdWFwaS9hc20vc2d4Lmgg
-ICAgICAgICAgfCAgMTQgKy0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMDAgaW5zZXJ0aW9ucygr
-KSwgNzAgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvZW50cnkv
-dmRzby92c2d4X2VudGVyX2VuY2xhdmUuUw0KPiA+IGIvYXJjaC94ODYvZW50cnkvdmRzby92c2d4
-X2VudGVyX2VuY2xhdmUuUw0KPiA+IGluZGV4IGZlMGJmNjY3MWQ2ZC4uMjEwZjQzNjYzNzRhIDEw
-MDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdnNneF9lbnRlcl9lbmNsYXZlLlMN
-Cj4gPiArKysgYi9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZzZ3hfZW50ZXJfZW5jbGF2ZS5TDQo+ID4g
-QEAgLTE0LDg4ICsxNCwxMTggQEANCj4gPiAgLmNvZGU2NA0KPiA+ICAuc2VjdGlvbiAudGV4dCwg
-ImF4Ig0KPiA+DQo+ID4gLSNpZmRlZiBTR1hfS0VSTkVMX0RPQw0KPiA+ICAvKioNCj4gPiAgICog
-X192ZHNvX3NneF9lbnRlcl9lbmNsYXZlKCkgLSBFbnRlciBhbiBTR1ggZW5jbGF2ZQ0KPiA+ICAg
-Kg0KPiA+ICAgKiBAbGVhZjogICAgICAqKklOIFwlZWF4KiogLSBFTkNMVSBsZWFmLCBtdXN0IGJl
-IEVFTlRFUiBvciBFUkVTVU1FDQo+ID4gLSAqIEB0Y3M6ICAgICAgICoqSU4gXCVyYngqKiAtIFRD
-UywgbXVzdCBiZSBub24tTlVMTA0KPiA+IC0gKiBAZXhfaW5mbzogICAqKklOIFwlcmN4KiogLSBP
-cHRpb25hbCAnc3RydWN0IHNneF9lbmNsYXZlX2V4Y2VwdGlvbicNCj4gcG9pbnRlcg0KPiA+ICsg
-KiBAdGNzOiAgICAgICAqKklOIDB4MDgoXCVyc3ApKiogLSBUQ1MsIG11c3QgYmUgbm9uLU5VTEwN
-Cj4gPiArICogQGV4X2luZm86ICAgKipJTiAweDEwKFwlcnNwKSoqIC0gT3B0aW9uYWwgJ3N0cnVj
-dA0KPiBzZ3hfZW5jbGF2ZV9leGluZm8nDQo+ID4gKyAqICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHBvaW50ZXINCj4gPiArICogQGNhbGxiYWNrOiAgKipJTiAweDE4KFwlcnNwKSoq
-IC0gT3B0aW9uYWwgY2FsbGJhY2sgZnVuY3Rpb24gdG8gYmUNCj4gY2FsbGVkIG9uDQo+ID4gKyAq
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVuY2xhdmUgZXhpdCBvciBleGNlcHRp
-b24NCj4gPiAgICoNCj4gPiAgICogUmV0dXJuOg0KPiA+ICAgKiAgKipPVVQgXCVlYXgqKiAtDQo+
-ID4gLSAqICAlMCBvbiBhIGNsZWFuIGVudHJ5L2V4aXQgdG8vZnJvbSB0aGUgZW5jbGF2ZSwgJS1F
-SU5WQUwgaWYgRU5DTFUNCj4gPiBsZWFmIGlzDQo+ID4gLSAqICBub3QgYWxsb3dlZCBvciBpZiBU
-Q1MgaXMgTlVMTCwgJS1FRkFVTFQgaWYgRU5DTFUgb3IgdGhlIGVuY2xhdmUNCj4gPiBmYXVsdHMN
-Cj4gPiArICogICUwIG9uIGEgY2xlYW4gZW50cnkvZXhpdCB0by9mcm9tIHRoZSBlbmNsYXZlLCAl
-LUVJTlZBTCBpZiBFTkNMVQ0KPiA+ICsgbGVhZiBpcyBub3QNCj4gPiArICogIGFsbG93ZWQsICUt
-RUZBVUxUIGlmIEVOQ0xVIG9yIHRoZSBlbmNsYXZlIGZhdWx0cywgb3IgYQ0KPiA+ICsgbm9uLXBv
-c2l0aXZlIHZhbHVlDQo+ID4gKyAqICByZXR1cm5lZCBmcm9tIGBgY2FsbGJhY2tgYCAoaWYgb25l
-IGlzIHN1cHBsaWVkKS4NCj4gPiAgICoNCj4gPiAgICogKipJbXBvcnRhbnQhKiogIF9fdmRzb19z
-Z3hfZW50ZXJfZW5jbGF2ZSgpIGlzICoqTk9UKiogY29tcGxpYW50DQo+IHdpdGggdGhlDQo+ID4g
-LSAqIHg4Ni02NCBBQkksIGkuZS4gY2Fubm90IGJlIGNhbGxlZCBmcm9tIHN0YW5kYXJkIEMgY29k
-ZS4gICBBcyBub3RlZA0KPiBhYm92ZSwNCj4gPiAtICogaW5wdXQgcGFyYW1ldGVycyBtdXN0IGJl
-IHBhc3NlZCB2aWEgYGAlZWF4YGAsIGBgJXJieGBgIGFuZA0KPiA+IGBgJXJjeGBgLCB3aXRoDQo+
-ID4gLSAqIHRoZSByZXR1cm4gdmFsdWUgcGFzc2VkIHZpYSBgYCVlYXhgYC4gIEFsbCByZWdpc3Rl
-cnMgZXhjZXB0DQo+ID4gYGAlcnNwYGAgbXVzdA0KPiA+IC0gKiBiZSB0cmVhdGVkIGFzIHZvbGF0
-aWxlIGZyb20gdGhlIGNhbGxlcidzIHBlcnNwZWN0aXZlLCBpbmNsdWRpbmcNCj4gPiBidXQgbm90
-DQo+ID4gLSAqIGxpbWl0ZWQgdG8gR1BScywgRUZMQUdTLkRGLCBNWENTUiwgRkNXLCBldGMuLi4g
-IENvbnZlcnNlbHksIHRoZQ0KPiA+IGVuY2xhdmUNCj4gPiAtICogYmVpbmcgcnVuICoqbXVzdCoq
-IHByZXNlcnZlIHRoZSB1bnRydXN0ZWQgYGAlcnNwYGAgYW5kIHN0YWNrLg0KPiA+ICsgKiB4ODYt
-NjQgQUJJLCBpLmUuIGNhbm5vdCBiZSBjYWxsZWQgZnJvbSBzdGFuZGFyZCBDIGNvZGUuIEFzIG5v
-dGVkDQo+ID4gKyBhYm92ZSwNCj4gPiArICogaW5wdXQgcGFyYW1ldGVycyBtdXN0IGJlIHBhc3Nl
-ZCB2aWEgYGAlZWF4YGAsIGBgOCglcnNwKWBgLA0KPiA+ICsgYGAweDEwKCVyc3ApYGAgYW5kDQo+
-ID4gKyAqIGBgMHgxOCglcnNwKWBgLCB3aXRoIHRoZSByZXR1cm4gdmFsdWUgcGFzc2VkIHZpYSBg
-YCVlYXhgYC4gQWxsDQo+ID4gKyBvdGhlciByZWdpc3RlcnMNCj4gPiArICogd2lsbCBiZSBwYXNz
-ZWQgdGhyb3VnaCB0byB0aGUgZW5jbGF2ZSBhcyBpcy4gQWxsIHJlZ2lzdGVycyBleGNlcHQNCj4g
-PiArIGBgJXJicGBgDQo+ID4gKyAqIG11c3QgYmUgdHJlYXRlZCBhcyB2b2xhdGlsZSBmcm9tIHRo
-ZSBjYWxsZXIncyBwZXJzcGVjdGl2ZSwNCj4gPiArIGluY2x1ZGluZyBidXQgbm90DQo+ID4gKyAq
-IGxpbWl0ZWQgdG8gR1BScywgRUZMQUdTLkRGLCBNWENTUiwgRkNXLCBldGMuLi4gQ29udmVyc2Vs
-eSwgdGhlDQo+ID4gKyBlbmNsYXZlIGJlaW5nDQo+ID4gKyAqIHJ1biAqKm11c3QqKiBwcmVzZXJ2
-ZSB0aGUgdW50cnVzdGVkIGBgJXJicGBgLg0KPiA+ICsgKg0KPiA+ICsgKiBgYGNhbGxiYWNrYGAg
-aGFzIHRoZSBmb2xsb3dpbmcgc2lnbmF0dXJlOg0KPiA+ICsgKiBpbnQgY2FsbGJhY2sobG9uZyBy
-ZGksIGxvbmcgcnNpLCBsb25nIHJkeCwNCj4gPiArICogICAgICAgICAgICAgc3RydWN0IHNneF9l
-bmNsYXZlX2V4aW5mbyAqZXhfaW5mbywgbG9uZyByOCwgbG9uZyByOSwNCj4gPiArICogICAgICAg
-ICAgICAgdm9pZCAqdGNzLCBsb25nIHVyc3ApOw0KPiA+ICsgKiBgYGNhbGxiYWNrYGAgKipzaGFs
-bCoqIGZvbGxvdyB4ODZfNjQgQUJJLiBBbGwgR1BScyAqKmV4Y2VwdCoqDQo+ID4gKyBgYCVyYXhg
-YCwgYGAlcmJ4YGANCj4gPiArICogYW5kIGBgcmN4YGAgYXJlIHBhc3NlZCB0aHJvdWdoIHRvIGBg
-Y2FsbGJhY2tgYC4gYGAlcmRpYGAsDQo+ID4gKyBgYCVyc2lgYCwgYGAlcmR4YGAsDQo+ID4gKyAq
-IGBgJXI4YGAsIGBgJXI5YGAsIGFsb25nIHdpdGggdGhlIHZhbHVlIG9mIGBgJXJzcGBgIHdoZW4g
-dGhlDQo+ID4gKyBlbmNsYXZlIGV4aXRlZC9leGNlcHRlZCwNCj4gPiArICogY2FuIGJlIGFjY2Vz
-c2VkIGRpcmVjdGx5IGFzIGlucHV0IHBhcmFtZXRlcnMsIHdoaWxlIG90aGVyIEdQUnMgY2FuDQo+
-ID4gKyBiZQ0KPiA+ICsgKiBhY2Nlc3NlZCBpbiBhc3NlbWJseSBpZiBuZWVkZWQuDQo+ID4gKyAq
-IEEgcG9zaXRpdmUgdmFsdWUgcmV0dXJuZWQgZnJvbSBgYGNhbGxiYWNrYGAgd2lsbCBiZSB0cmVh
-dGVkIGFzIGFuDQo+ID4gKyBFTkNMVSBsZWFmDQo+ID4gKyAqIChlLmcuIEVFTlRFUi9FUkVTVU1F
-KSB0byByZWVudGVyIHRoZSBlbmNsYXZlLCB3aGlsZSAwIG9yIGENCj4gPiArIG5lZ2F0aXZlIHJl
-dHVybg0KPiANCj4gInRvIHJlZW50ZXIgdGhlIGVuY2xhdmUgd2l0aG91dCBwb3BwaW5nIHRoZSBl
-eHRyYSBkYXRhIHB1c2hlZCBieSB0aGUNCj4gZW5jbGF2ZSBvZmYgdGhlIHN0YWNrIiBvciBzaW1p
-bGFyLiAgV2UgcmVhbGx5IGRvbid0IHdhbnQgYSBzaXR1YXRpb24NCj4gd2hlcmUgc29tZW9uZSBw
-dXRzIGFsbCB0aGVyZSAia2VlcCBvbiBnb2luZyIgbG9naWMgaW4gdGhlIGNhbGxiYWNrIGFuZA0K
-PiB0aGUgc3RhY2sgdXNhZ2UgZ3Jvd3Mgd2l0aG91dCBib3VuZC4NCj4gDQo+ID4gKyAqIHZhbHVl
-IHdpbGwgYmUgcGFzc2VkIGJhY2sgdG8gdGhlIGNhbGxlciBvZg0KPiBfX3Zkc29fc2d4X2VudGVy
-X2VuY2xhdmUoKS4NCj4gPiArICogSXQgaXMgYWxzbyAqKnNhZmUqKiB0byBgYGxvbmdqbXAoKWBg
-IG91dCBvZiBgYGNhbGxiYWNrYGAuDQo+IA0KPiBJJ20gbm90IHN1cmUgdGhhdCAic2FmZSIgbmVl
-ZHMgZW1waGFzaXMuDQo+IA0KPiA+ICAgKi8NCj4gPiAtX192ZHNvX3NneF9lbnRlcl9lbmNsYXZl
-KHUzMiBsZWFmLCB2b2lkICp0Y3MsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
-dCBzZ3hfZW5jbGF2ZV9leGNlcHRpb24gKmV4X2luZm8pDQo+ID4gLXsNCj4gPiAtICAgICAgIGlm
-IChsZWFmICE9IFNHWF9FRU5URVIgJiYgbGVhZiAhPSBTR1hfRVJFU1VNRSkNCj4gPiAtICAgICAg
-ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4gLQ0KPiA+IC0gICAgICAgaWYgKCF0Y3MpDQo+
-ID4gLSAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+IC0NCj4gPiAtICAgICAgIHRy
-eSB7DQo+ID4gLSAgICAgICAgICAgICAgIEVOQ0xVW2xlYWZdOw0KPiA+IC0gICAgICAgfSBjYXRj
-aCAoZXhjZXB0aW9uKSB7DQo+ID4gLSAgICAgICAgICAgICAgIGlmIChlKQ0KPiA+IC0gICAgICAg
-ICAgICAgICAgICAgICAgICplID0gZXhjZXB0aW9uOw0KPiA+IC0gICAgICAgICAgICAgICByZXR1
-cm4gLUVGQVVMVDsNCj4gPiAtICAgICAgIH0NCj4gPiAtDQo+ID4gLSAgICAgICByZXR1cm4gMDsN
-Cj4gPiAtfQ0KPiA+IC0jZW5kaWYNCj4gPiAgRU5UUlkoX192ZHNvX3NneF9lbnRlcl9lbmNsYXZl
-KQ0KPiA+IC0gICAgICAgLyogRUVOVEVSIDw9IGxlYWYgPD0gRVJFU1VNRSAqLw0KPiA+ICsgICAg
-ICAgLyogUHJvbG9nICovDQo+ID4gKyAgICAgICAuY2ZpX3N0YXJ0cHJvYw0KPiA+ICsgICAgICAg
-cHVzaCAgICAlcmJwDQo+ID4gKyAgICAgICAuY2ZpX2FkanVzdF9jZmFfb2Zmc2V0ICA4DQo+ID4g
-KyAgICAgICAuY2ZpX3JlbF9vZmZzZXQgICAgICAgICAlcmJwLCAwDQo+ID4gKyAgICAgICBtb3Yg
-ICAgICVyc3AsICVyYnANCj4gPiArICAgICAgIC5jZmlfZGVmX2NmYV9yZWdpc3RlciAgICVyYnAN
-Cj4gPiArDQo+ID4gKzE6ICAgICAvKiBFRU5URVIgPD0gbGVhZiA8PSBFUkVTVU1FICovDQo+ID4g
-ICAgICAgICBjbXAgICAgICQweDIsICVlYXgNCj4gPiAtICAgICAgIGpiICAgICAgYmFkX2lucHV0
-DQo+ID4gLQ0KPiA+ICsgICAgICAgamIgICAgICA2Zg0KPiA+ICAgICAgICAgY21wICAgICAkMHgz
-LCAlZWF4DQo+ID4gLSAgICAgICBqYSAgICAgIGJhZF9pbnB1dA0KPiA+ICsgICAgICAgamEgICAg
-ICA2Zg0KPiA+DQo+ID4gLSAgICAgICAvKiBUQ1MgbXVzdCBiZSBub24tTlVMTCAqLw0KPiA+IC0g
-ICAgICAgdGVzdCAgICAlcmJ4LCAlcmJ4DQo+ID4gLSAgICAgICBqZSAgICAgIGJhZF9pbnB1dA0K
-PiA+ICsgICAgICAgLyogTG9hZCBUQ1MgYW5kIEFFUCAqLw0KPiA+ICsgICAgICAgbW92ICAgICAw
-eDEwKCVyYnApLCAlcmJ4DQo+ID4gKyAgICAgICBsZWEgICAgIDJmKCVyaXApLCAlcmN4DQo+ID4N
-Cj4gPiAtICAgICAgIC8qIFNhdmUgQGV4Y2VwdGlvbl9pbmZvICovDQo+ID4gLSAgICAgICBwdXNo
-ICAgICVyY3gNCj4gPiAtDQo+ID4gLSAgICAgICAvKiBMb2FkIEFFUCBmb3IgRU5DTFUgKi8NCj4g
-PiAtICAgICAgIGxlYSAgICAgMWYoJXJpcCksICAlcmN4DQo+ID4gLTE6ICAgICBlbmNsdQ0KPiA+
-IC0NCj4gPiAtICAgICAgIGFkZCAgICAgJDB4OCwgJXJzcA0KPiA+IC0gICAgICAgeG9yICAgICAl
-ZWF4LCAlZWF4DQo+ID4gLSAgICAgICByZXQNCj4gPiAtDQo+ID4gLWJhZF9pbnB1dDoNCj4gPiAt
-ICAgICAgIG1vdiAgICAgJCgtRUlOVkFMKSwgJXJheA0KPiA+IC0gICAgICAgcmV0DQo+ID4gLQ0K
-PiA+IC0ucHVzaHNlY3Rpb24gLmZpeHVwLCAiYXgiDQo+ID4gLSAgICAgICAvKiBSZS1sb2FkIEBl
-eGNlcHRpb25faW5mbyBhbmQgZmlsbCBpdCAoaWYgaXQncyBub24tTlVMTCkgKi8NCj4gPiAtMjog
-ICAgIHBvcCAgICAgJXJjeA0KPiA+IC0gICAgICAgdGVzdCAgICAlcmN4LCAlcmN4DQo+ID4gLSAg
-ICAgICBqZSAgICAgIDNmDQo+ID4gKyAgICAgICAvKiBTaW5nbGUgRU5DTFUgc2VydmluZyBhcyBi
-b3RoIEVFTlRFUiBhbmQgQUVQIChFUkVTVU1FKSAqLw0KPiA+ICsyOiAgICAgZW5jbHUNCj4gPg0K
-PiA+ICsgICAgICAgLyogRUVYSVQgcGF0aCAqLw0KPiA+ICsgICAgICAgeG9yICAgICAlZWJ4LCAl
-ZWJ4DQo+ID4gKzM6ICAgICBtb3YgICAgIDB4MTgoJXJicCksICVyY3gNCj4gPiArICAgICAgIGpy
-Y3h6ICAgNGYNCj4gPiAgICAgICAgIG1vdiAgICAgJWVheCwgRVhfTEVBRiglcmN4KQ0KPiA+IC0g
-ICAgICAgbW92ICAgICAlZGksICBFWF9UUkFQTlIoJXJjeCkNCj4gPiAtICAgICAgIG1vdiAgICAg
-JXNpLCAgRVhfRVJST1JfQ09ERSglcmN4KQ0KPiA+ICsgICAgICAgam5jICAgICA0Zg0KPiA+ICsg
-ICAgICAgbW92ICAgICAlZGksIEVYX1RSQVBOUiglcmN4KQ0KPiA+ICsgICAgICAgbW92ICAgICAl
-c2ksIEVYX0VSUk9SX0NPREUoJXJjeCkNCj4gPiAgICAgICAgIG1vdiAgICAgJXJkeCwgRVhfQURE
-UkVTUyglcmN4KQ0KPiA+IC0zOiAgICAgbW92ICAgICAkKC1FRkFVTFQpLCAlcmF4DQo+ID4gKw0K
-PiA+ICs0OiAgICAgLyogQ2FsbCAqY2FsbGJhY2sgaWYgc3VwcGxpZWQgKi8NCj4gPiArICAgICAg
-IG1vdiAgICAgMHgyMCglcmJwKSwgJXJheA0KPiA+ICsgICAgICAgdGVzdCAgICAlcmF4LCAlcmF4
-DQo+IA0KPiBNYXliZSBoYXZlIGEgY29tbWVudCBsaWtlICJBdCB0aGlzIHBvaW50LCB0aGUgZWZm
-ZWN0aXZlIHJldHVybiB2YWx1ZSBpcw0KPiBpbiBSQlguICBJZiB0aGVyZSBpcyBubyBjYWxsYmFj
-aywgdGhlbiByZXR1cm4gaXQuIg0KPiANCj4gPiArICAgICAgIGNtb3Z6ICAgJXJieCwgJXJheA0K
-PiA+ICsgICAgICAganogICAgICA3Zg0KPiA+ICsgICAgICAgLyogQWxpZ24gc3RhY2sgYW5kIGNs
-ZWFyIFJGTEFHUy5ERiBwZXIgeDg2XzY0IEFCSSAqLw0KPiA+ICsgICAgICAgbW92ICAgICAlcnNw
-LCAlcmJ4DQo+IA0KPiBXaG9hLCB0aGlzIGlzIHRvbyBzdWJ0bGUgaGVyZS4gIENhbiB5b3UgdXBk
-YXRlIHRoZSBjb21tZW50IHRvIGNsYXJpZnkNCj4gdGhhdCB0aGUgdVJTUCB2YWx1ZSBzZXQgYnkg
-dGhlIGVuY2xhdmUgbmVlZHMgdG8gYmUgc2F2ZWQgc28gdGhhdCB0aGUNCj4gZW5jbGF2ZSBjYW4g
-YmUgcmVzdW1lZCBpZiBuZWVkZWQ/DQo+IA0KPiA+ICsgICAgICAgYW5kICAgICAkLTB4MTAsICVy
-c3ANCj4gPiArICAgICAgIGNsZA0KPiA+ICsgICAgICAgLyogUGFyYW1ldGVycyBmb3IgKmNhbGxi
-YWNrICovDQo+ID4gKyAgICAgICBwdXNoICAgICVyYngNCj4gPiArICAgICAgIHB1c2ggICAgMHgx
-MCglcmJwKQ0KPiA+ICsgICAgICAgLyogQ2FsbCB2aWEgcmV0cG9saW5lICovDQo+ID4gKyAgICAg
-ICBjYWxsICAgIDQwZg0KPiA+ICsgICAgICAgLyogQ2xlYW51cCBzdGFjayAqLw0KPiA+ICsgICAg
-ICAgbW92ICAgICAlcmJ4LCAlcnNwDQo+IA0KPiBUbyBtZSwgIkNsZWFudXAgc3RhY2siIG1ha2Vz
-IG1lIHRoaW5rIHRoYXQgeW91J3JlIHJlc3RvcmluZyB0aGUgb3JpZ2luYWwNCj4gUlNQLCBidXQg
-eW91J3JlIGFjdHVhbGx5IGp1c3QgdW5kb2luZyBpbiB0aGUgc3RhY2sgYWxpZ25tZW50Lg0KPiBI
-b3cgYWJvdXQgIlVuZG8gc3RhY2sgYWxpZ25tZW50Ij8NCj4gDQo+IEJ1dCBJJ20gbm90IHNlZWlu
-ZyB0aGUgY29kZSB0aGF0IGNhdXNlcyBhIHJldHVybiB2YWx1ZSBSQVggPD0gMCB0byBqdXN0DQo+
-IHJldHVybi4NCj4gDQo+ID4gKyAgICAgICBqbXAgICAgIDFiDQo+ID4gKzQwOiAgICAvKiByZXRw
-b2xpbmUgKi8NCj4gPiArICAgICAgIGNhbGwgICAgNDJmDQo+ID4gKzQxOiAgICBwYXVzZQ0KPiA+
-ICsgICAgICAgbGZlbmNlDQo+ID4gKyAgICAgICBqbXAgICAgIDQxYg0KPiA+ICs0MjogICAgbW92
-ICAgICAlcmF4LCAoJXJzcCkNCj4gPiArICAgICAgIHJldA0KPiA+ICsNCj4gPiArNTogICAgIC8q
-IEV4Y2VwdGlvbiBwYXRoICovDQo+ID4gKyAgICAgICBtb3YgICAgICQtRUZBVUxULCAlZWJ4DQo+
-ID4gKyAgICAgICBzdGMNCj4gPiArICAgICAgIGptcCAgICAgM2INCj4gPiArDQo+ID4gKzY6ICAg
-ICAvKiBVbnN1cHBvcnRlZCBFTkNMVSBsZWFmICovDQo+ID4gKyAgICAgICBjbXAgICAgICQwLCAl
-ZWF4DQo+ID4gKyAgICAgICBqbGUgICAgIDdmDQo+ID4gKyAgICAgICBtb3YgICAgICQtRUlOVkFM
-LCAlZWF4DQo+ID4gKw0KPiA+ICs3OiAgICAgLyogRXBpbG9nICovDQo+ID4gKyAgICAgICBsZWF2
-ZQ0KPiA+ICsgICAgICAgLmNmaV9kZWZfY2ZhICAgICAgICAgICAgJXJzcCwgOA0KPiA+ICAgICAg
-ICAgcmV0DQo+ID4gLS5wb3BzZWN0aW9uDQo+ID4gKyAgICAgICAuY2ZpX2VuZHByb2MNCj4gPg0K
-PiA+IC1fQVNNX1ZEU09fRVhUQUJMRV9IQU5ETEUoMWIsIDJiKQ0KPiA+ICtfQVNNX1ZEU09fRVhU
-QUJMRV9IQU5ETEUoMmIsIDViKQ0KPiANCj4gLS1BbmR5DQo=
+On Tue, Apr 23, 2019 at 11:26:22PM -0700, Cedric Xing wrote:
+> The previous __vdso_sgx_enter_enclave() requires enclaves to preserve %rsp,
+> which prohibits enclaves from allocating and passing parameters for
+> untrusted function calls (aka. o-calls).
+> 
+> This patch addresses the problem above by introducing a new ABI that preserves
+> %rbp instead of %rsp. Then __vdso_sgx_enter_enclave() can anchor its frame
+> using %rbp so that enclaves are allowed to allocate space on the untrusted
+> stack by decrementing %rsp. Please note that the stack space allocated in such
+> way will be part of __vdso_sgx_enter_enclave()'s frame so will be freed after
+> __vdso_sgx_enter_enclave() returns. Therefore, __vdso_sgx_enter_enclave() has
+> been revised to take a callback function as an optional parameter, which if
+> supplied, will be invoked upon enclave exits (both AEX (Asynchronous Enclave
+> eXit) and normal exits), with the value of %rsp left off by the enclave as a
+> parameter to the callback.
+
+AIUI, you and Andy had an off-list discussion regarding rewriting
+__vdso_sgx_enter_enclave() vs. providing a second vDSO function.  Can you
+please summarize the discussion so that it's clear why you're pursuing a
+single function?
+
+In the end I probably agree that's it's desirable to have a single ABI and
+vDSO function since the cost is basically that the non-callback case needs
+to pass params via the stack instead of registers, but I do miss the
+simplicity of separate implementations.
+
+> Here's the summary of API/ABI changes in this patch. More details could be
+> found in arch/x86/entry/vdso/vsgx_enter_enclave.S.
+> * 'struct sgx_enclave_exception' is renamed to 'struct sgx_enclave_exinfo'
+>   because it is filled upon both AEX (i.e. exceptions) and normal enclave
+>   exits.
+> * __vdso_sgx_enter_enclave() anchors its frame using %rbp (instead of %rsp in
+>   the previous implementation).
+> * __vdso_sgx_enter_enclave() takes one more parameter - a callback function to
+>   be invoked upon enclave exits. This callback is optional, and if not
+>   supplied, will cause __vdso_sgx_enter_enclave() to return upon enclave exits
+>   (same behavior as previous implementation).
+> * The callback function is given as a parameter the value of %rsp at enclave
+>   exit to address data "pushed" by the enclave. A positive value returned by
+>   the callback will be treated as an ENCLU leaf for re-entering the enclave,
+>   while a zero or negative value will be passed through as the return
+>   value of __vdso_sgx_enter_enclave() to its caller. It's also safe to
+>   leave callback by longjmp() or by throwing a C++ exception.
+> 
+> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+> ---
+>  arch/x86/entry/vdso/vsgx_enter_enclave.S | 175 ++++++++++++++++-------
+>  arch/x86/include/uapi/asm/sgx.h          |  14 +-
+>  2 files changed, 128 insertions(+), 61 deletions(-)
+> 
+> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> index fe0bf6671d6d..debecb0d785c 100644
+> --- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> @@ -19,83 +19,150 @@
+>   * __vdso_sgx_enter_enclave() - Enter an SGX enclave
+>   *
+>   * @leaf:	**IN \%eax** - ENCLU leaf, must be EENTER or ERESUME
+> - * @tcs:	**IN \%rbx** - TCS, must be non-NULL
+> - * @ex_info:	**IN \%rcx** - Optional 'struct sgx_enclave_exception' pointer
+> + * @tcs:	**IN 0x08(\%rsp)** - TCS, must be non-NULL
+> + * @ex_info:	**IN 0x10(\%rsp)** - Optional 'struct sgx_enclave_exinfo'
+> + *				     pointer
+> + * @callback:	**IN 0x18(\%rsp)** - Optional callback function to be called on
+> + *				     enclave exit or exception
+>   *
+>   * Return:
+>   *  **OUT \%eax** -
+> - *  %0 on a clean entry/exit to/from the enclave, %-EINVAL if ENCLU leaf is
+> - *  not allowed or if TCS is NULL, %-EFAULT if ENCLU or the enclave faults
+> + *  %0 on a clean entry/exit to/from the enclave, %-EINVAL if ENCLU leaf is not
+> + *  allowed, %-EFAULT if ENCLU or the enclave faults, or a non-positive value
+> + *  returned from ``callback`` (if one is supplied).
+>   *
+>   * **Important!**  __vdso_sgx_enter_enclave() is **NOT** compliant with the
+> - * x86-64 ABI, i.e. cannot be called from standard C code.   As noted above,
+> - * input parameters must be passed via ``%eax``, ``%rbx`` and ``%rcx``, with
+> - * the return value passed via ``%eax``.  All registers except ``%rsp`` must
+> - * be treated as volatile from the caller's perspective, including but not
+> - * limited to GPRs, EFLAGS.DF, MXCSR, FCW, etc...  Conversely, the enclave
+> - * being run **must** preserve the untrusted ``%rsp`` and stack.
+> + * x86-64 ABI, i.e. cannot be called from standard C code. As noted above,
+> + * input parameters must be passed via ``%eax``, ``8(%rsp)``, ``0x10(%rsp)`` and
+> + * ``0x18(%rsp)``, with the return value passed via ``%eax``. All other
+> + * registers will be passed through to the enclave as is. All registers except
+> + * ``%rbp`` must be treated as volatile from the caller's perspective, including
+
+Hmm, this is my fault since I wrote the original comment, but stating
+"All registers except %rbp must be treated as volatile" is confusing, e.g.
+at first I thought it meant that the assembly blob was mucking with the
+registers and that they couldn't be used to pass information out of the
+enclave.
+
+Maybe something like:
+
+ * Register ABI:
+ *  - As noted above, input parameters are passed via %eax and the stack.
+ *  - The return value is passed via %eax.
+ *  - %rbx and %rcx must be treated as volatile as they are modified as part of
+ *    enclaves transitions and are used as scratch regs.
+ *  - %rbp **must** be preserved by the enclave in all cases, as it is used to
+ *    reference paramaters when handling enclave exits.
+ *  - %rdx, %rdi, %rsi and %r8-%r15 may be freely modified by the enclave
+ *    and will not be passed back to the caller untouched.
+ *  - %rsp is saved/restored across __vdso_sgx_enter_enclave(), but is passed
+ *    as-is to the callback if one is provided, i.e. the enclave may use u_rsp
+ *    to pass information to its associated callback.
+ *
+ * Callback ABI:
+ *  <more information about callback ABI>
+ * 
+
+> + * but not limited to GPRs, EFLAGS.DF, MXCSR, FCW, etc... Conversely, the
+> + * enclave being run **must** preserve the untrusted ``%rbp``.
+> + *
+> + * ``callback`` has the following signature:
+> + * int callback(long rdi, long rsi, long rdx,
+> + *		struct sgx_enclave_exinfo *exinfo, long r8, long r9,
+> + *		void *tcs, long ursp);
+> + * ``callback`` **shall** follow x86_64 ABI. All GPRs **except** ``%rax``,
+> + * ``%rbx`` and ``rcx`` are passed through to ``callback``. ``%rdi``, ``%rsi``,
+> + * ``%rdx``, ``%r8``, ``%r9``, along with the value of ``%rsp`` when the enclave
+> + * exited/excepted, can be accessed directly as input parameters, while other
+> + * GPRs can be accessed in assembly if needed.  A positive value returned from
+> + * ``callback`` will be treated as an ENCLU leaf (e.g. EENTER/ERESUME) to
+> + * reenter the enclave (without popping the extra data pushed by the enclave off
+> + * the stack), while 0 (zero) or a negative return value will be passed back to
+> + * the caller of __vdso_sgx_enter_enclave(). It is also safe to leave
+> + * ``callback`` via ``longjmp()`` or by throwing a C++ exception.
+>   */
+
+While this may format nicely in .rst (I haven't checked), it's damn near
+unreadable in its raw form.  Escaping '%' in kernel-doc is unresolved at
+this point, but this definitely is an argument for allowing the %CONST
+interpretation to be disabled entirely.
+
+longjmp() is probably the only thing that needs to be explicitly marked,
+I think it would be better to simply say "the callback" instead of using
+``callback``, i.e. use regular English instead of referencing the param.
+
+> -__vdso_sgx_enter_enclave(u32 leaf, void *tcs,
+> -			 struct sgx_enclave_exception *ex_info)
+> +typedef int (*sgx_callback)(long rdi, long rsi, long rdx,
+> +			    struct sgx_enclave_exinfo *exinfo, long r8,
+> +			    long r9, void *tcs, long ursp);
+> +int __vdso_sgx_enter_enclave(int leaf, void *tcs,
+> +			     struct sgx_enclave_exinfo *exinfo,
+> +			     sgx_callback callback)
+>  {
+> -	if (leaf != SGX_EENTER && leaf != SGX_ERESUME)
+> -		return -EINVAL;
+> -
+> -	if (!tcs)
+> -		return -EINVAL;
+> -
+> -	try {
+> -		ENCLU[leaf];
+> -	} catch (exception) {
+> -		if (e)
+> -			*e = exception;
+> -		return -EFAULT;
+> +	while (leaf == EENTER || leaf == ERESUME) {
+
+This gives the impression that looping is the common case.  I'd prefer
+using 'goto' to show that the common case is a simple fall through whereas
+the callback case can effectively loop on ENCLU.
+
+> +		int rc;
+> +		try {
+> +			ENCLU[leaf];
+> +			rc = 0;
+> +			if (exinfo)
+> +				exinfo->leaf = EEXIT;
+> +		} catch (exception) {
+> +			rc = -EFAULT;
+> +			if (exinfo)
+> +				*exinfo = exception;
+> +		}
+> +
+> +		leaf = callback ? (*callback)(
+> +			rdi, rsi, rdx, exinfo, r8, r9, tcs, ursp) : rc;
+>  	}
+>  
+> -	return 0;
+> +	return leaf > 0 ? -EINVAL : leaf;
+>  }
+>  #endif
+>  ENTRY(__vdso_sgx_enter_enclave)
+> -	/* EENTER <= leaf <= ERESUME */
+> +	/* Prolog */
+> +	.cfi_startproc
+> +	push	%rbp
+> +	.cfi_adjust_cfa_offset	8
+> +	.cfi_rel_offset		%rbp, 0
+> +	mov	%rsp, %rbp
+> +	.cfi_def_cfa_register	%rbp
+> +
+> +1:	/* EENTER <= leaf <= ERESUME */
+>  	cmp	$0x2, %eax
+> -	jb	bad_input
+> -
+> +	jb	6f
+>  	cmp	$0x3, %eax
+> -	ja	bad_input
+> +	ja	6f
+>  
+> -	/* TCS must be non-NULL */
+> -	test	%rbx, %rbx
+> -	je	bad_input
+> +	/* Load TCS and AEP */
+> +	mov	0x10(%rbp), %rbx
+> +	lea	2f(%rip), %rcx
+>  
+> -	/* Save @exception_info */
+> -	push	%rcx
+> +	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+> +2:	enclu
+>  
+> -	/* Load AEP for ENCLU */
+> -	lea	1f(%rip),  %rcx
+> -1:	enclu
+> +	/* EEXIT path */
+> +	xor	%ebx, %ebx
+> +3:	mov	0x18(%rbp), %rcx
+
+@exinfo is optional, i.e. %ecx needs to be tested before its used.
+
+> +	jrcxz	4f
+
+I dislike the number of flags and values that are stashed away only to
+be consumed later, it makes the code hard to follow.  AFAICT, a lot of
+the shenanigans are done to reuse code because exinfo was overloaded,
+but that's actually pointless, i.e. it's unnecessarily complex.
+
+Overlading the struct is pointless becase if you make it mandatory when
+using a callback then it can be nullified (when passed to the callback)
+to indicate EEXIT.  If it's still optional, then the callback needs an
+extra param to explicitly indicate EEXIT vs. -EFAULT, otherwise the
+callback has no indication whatsover of why it was invoked.
+
+My preference is for the latter since it's more explicit and obvious.
+
+Tangetially related, I'm not opposed to renaming it
+'struct sgx_enclave_exception_info' for clarity.
+
+> +	mov	%eax, EX_LEAF(%rcx)
+> +	jnc	4f
+> +	mov	%di, EX_TRAPNR(%rcx)
+> +	mov	%si, EX_ERROR_CODE(%rcx)
+> +	mov	%rdx, EX_ADDRESS(%rcx)
+
+My strong preference would be to organize the code to separate the various
+flows, i.e. happy common case, invalid input, exception handler and
+callback invocation.  And make the common case a straight shot so that
+it's more obvious what happens in the happy non-callback case.
+
+>  
+> -	add	$0x8, %rsp
+> -	xor	%eax, %eax
+> +4:	/* Call *callback if supplied */
+> +	mov	0x20(%rbp), %rax
+> +	test	%rax, %rax
+> +	/* At this point, %ebx holds the effective return value, which shall be
+> +	 * returned if no callback is specified */
+
+Use kernel-doc format for multi-line comments.  Missing punctionation at
+the end.  Blank lines between logical blocks would also help readability.
+
+E.g.:
+
+4:      /* Call *callback if supplied */
+        mov     0x20(%rbp), %rax
+        test    %rax, %rax
+
+        /*
+         * At this point, %ebx holds the effective return value, which shall be
+         * returned if no callback is specified.
+         */
+        cmovz   %rbx, %rax
+        jz      7f
+
+> +	cmovz	%rbx, %rax
+> +	jz	7f
+> +	/* Align stack per x86_64 ABI. The original %rsp is saved in %rbx to be
+> +	 * restored after *callback returns. */
+> +	mov	%rsp, %rbx
+> +	and	$-0x10, %rsp
+> +	/* Clear RFLAGS.DF per x86_64 ABI */
+> +	cld
+> +	/* Parameters for *callback */
+> +	push	%rbx
+> +	push	0x10(%rbp)
+> +	/* Call *%rax via retpoline */
+> +	call	40f
+
+Another case of stashing a value it consuming it later.  This one is
+especially brutal since %rax was loaded with CMOVcc, which means the
+reader needs to backtrack even further to understand what %rax contains
+at this point.
+
+> +	/* Restore %rsp to its original value left off by the enclave from last
+> +	 * exit */
+> +	mov	%rbx, %rsp
+> +	/* Positive return value from *callback will be interpreted as an ENCLU
+> +	 * leaf, while a non-positive value will be interpreted as the return
+> +	 * value to be passed back to the caller. */
+
+Please use imperative mood in the comments, i.e. simply state what the
+code is doing.  E.g. "will be interpreted" makes it sound like something
+else is processing the callback's return value.
+
+> +	jmp	1b
+> +40:	/* retpoline */
+> +	call	42f
+> +41:	pause
+> +	lfence
+> +	jmp	41b
+> +42:	mov	%rax, (%rsp)
+>  	ret
+>  
+> -bad_input:
+> -	mov     $(-EINVAL), %rax
+> -	ret
+> +5:	/* Exception path */
+> +	mov	$-EFAULT, %ebx
+> +	stc
+> +	jmp	3b
+>  
+> -.pushsection .fixup, "ax"
+> -	/* Re-load @exception_info and fill it (if it's non-NULL) */
+> -2:	pop	%rcx
+> -	test    %rcx, %rcx
+> -	je      3f
+> +6:	/* Unsupported ENCLU leaf */
+> +	cmp	$0, %eax
+> +	jle	7f
+> +	mov	$-EINVAL, %eax
+>  
+> -	mov	%eax, EX_LEAF(%rcx)
+> -	mov	%di,  EX_TRAPNR(%rcx)
+> -	mov	%si,  EX_ERROR_CODE(%rcx)
+> -	mov	%rdx, EX_ADDRESS(%rcx)
+> -3:	mov	$(-EFAULT), %rax
+> +7:	/* Epilog */
+> +	leave
+> +	.cfi_def_cfa		%rsp, 8
+>  	ret
+> -.popsection
+> +	.cfi_endproc
+>  
+> -_ASM_VDSO_EXTABLE_HANDLE(1b, 2b)
+> +_ASM_VDSO_EXTABLE_HANDLE(2b, 5b)
+>  
+>  ENDPROC(__vdso_sgx_enter_enclave)
+
+Putting everything together, sans comments, I'd prefer something like the
+following.  Pasted in raw code as that'll hopefully be easier to review
+and discuss than a diff.
+
+Note, swapping 'long rc' and '... *e' would allow the callback flow
+to save one memory access, but IMO the exception info belongs at the end
+since it's optional.
+
+#ifdef SGX_KERNEL_DOC
+typedef int (*sgx_callback)(long rdi, long rsi, long rdx, long ret, long r8,
+			    long r9, void *tcs, long ursp,
+			    struct sgx_enclave_exception_info *e);
+int __vdso_sgx_enter_enclave(int leaf, void *tcs,
+				struct sgx_enclave_exception_info *e,
+				sgx_callback callback)
+{
+	int ret;
+
+enter_enclave:
+	if (leaf != EENTER && leaf != ERESUME) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	try {
+		ENCLU[leaf];
+		ret = 0;
+	} catch (exception) {
+		ret = -EFAULT;
+		if (e)
+			*e = exception;
+	}
+	if (callback)
+		goto do_callback;
+out:
+	return ret;
+
+do_callback:
+	leaf = (*callback)(rdi, rsi, rdx, ret, r8, r9, e, tcs, ursp);
+	if (leaf <= 0)
+		goto out;
+	goto enter_enclave;
+}
+#endif
+ENTRY(__vdso_sgx_enter_enclave)
+	/* Prolog */
+	.cfi_startproc
+	push	%rbp
+	.cfi_adjust_cfa_offset	8
+	.cfi_rel_offset		%rbp, 0
+	mov	%rsp, %rbp
+	.cfi_def_cfa_register	%rbp
+
+1:	/* EENTER <= leaf <= ERESUME */
+	cmp	$0x2, %eax
+	jb	5f
+	cmp	$0x3, %eax
+	ja	5f
+
+	/* Load TCS and AEP */
+	mov	0x10(%rbp), %rbx
+	lea	2f(%rip), %rcx
+
+	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+2:	enclu
+
+	/* EEXIT branches here unless the enclave is doing something fancy. */
+	xor	%eax, %eax
+
+3:	cmp	$0, 0x20(%rbp)
+	jne	8f
+
+4:	leave
+	.cfi_def_cfa		%rsp, 8
+	ret
+
+5:	mov	$(-EINVAL), %rax
+	jmp	4b
+
+6:	mov	0x18(%rbp), %rcx
+	test    %rcx, %rcx
+	je	7f
+
+	/* Fill optional exception info. */
+	mov	%eax, EX_LEAF(%rcx)
+	mov	%di,  EX_TRAPNR(%rcx)
+	mov	%si,  EX_ERROR_CODE(%rcx)
+	mov	%rdx, EX_ADDRESS(%rcx)
+7:	mov	$(-EFAULT), %rax
+	jmp	3b
+
+8:	/*
+	 * Align stack per x86_64 ABI.  Save the original %rsp in %rbx to be
+	 * restored after the callback returns.
+	 */
+	mov	%rsp, %rbx
+	and	$-0x10, %rsp
+
+	/* Push @e, u_rsp and @tcs as parameters to the callback. */
+	push	0x18(%rbp)
+	push	%rbx
+	push	0x10(%rbp)
+
+	/* Pass the "return value" to the callback via %rcx. */
+	mov	%rax, %rcx
+
+	/* Clear RFLAGS.DF per x86_64 ABI */
+	cld
+
+	/* Load the callback pointer to %rax and invoke it via retpoline. */
+	mov	0x20(%rbp), %rax
+	call	40f
+
+	/* Restore %rsp to its post-exit value. */
+	mov	%rbx, %rsp
+
+	/*
+	 * If the return from callback is zero or negative, return immediately,
+	 * otherwise attempt to re-execute ENCLU with the return interpreted as
+	 * the requested ENCLU leaf.
+	 */
+	cmp	$0, %eax
+	jle	4b
+	jmp	1b
+
+40:	/* retpoline */
+	call	42f
+41:	pause
+	lfence
+	jmp	41b
+42:	mov	%rax, (%rsp)
+	ret
+	.cfi_endproc
+
+_ASM_VDSO_EXTABLE_HANDLE(2b, 6b)
+
+ENDPROC(__vdso_sgx_enter_enclave)
