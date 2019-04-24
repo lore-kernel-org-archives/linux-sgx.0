@@ -2,584 +2,297 @@ Return-Path: <SRS0=QZjA=S2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8A2C282CE
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 12:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D08BCC10F11
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 17:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE088218D2
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 12:49:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="nbYoSDRY"
+	by mail.kernel.org (Postfix) with ESMTP id 8AE7020685
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Apr 2019 17:58:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbfDXMsz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Apr 2019 08:48:55 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:53017 "EHLO mail.kapsi.fi"
+        id S2388525AbfDXR6h (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Apr 2019 13:58:37 -0400
+Received: from mga09.intel.com ([134.134.136.24]:8452 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbfDXMsz (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Apr 2019 08:48:55 -0400
-X-Greylist: delayed 1854 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Apr 2019 08:48:53 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=VYvDDgJ1Hdzjjm3vrOZWnmo83PXldwIDw6nWFnuVwAQ=; b=nbYoSDRYRKeceFBvJS7F5kYDNj
-        r7hl6TqI9tdGo11CtRi7spZOHMMfLdt7aTKl3zgb6h3rul2jyY/4XAPKtqHWZeXtTnAVEZjY54TR3
-        gPlBiwtujXR7ilfZJWQS1I9USq/V8Bs2mSR8Ydnj6VdrAzpyBNcOR5LWyansuAk5f//GvWgs9b0hK
-        NG4pU2Cd0mTvAGM6+Y7EFtIifUOy173YA0ZkPV/3KvEC1HOCICd19YJoRIT07/x4RausqPcSQ+gUt
-        DEXI8LretpvHmcFlQKINXTHH/FVm38dpvNNXydrKcguTExoXQjXE2ikHa+W46Zplk/Hf0cHjHpgml
-        tjYYX7vA==;
-Received: from web1.kapsi.fi ([2001:67c:1be8::146] helo=roundcube.kapsi.fi)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <jarkko.sakkinen@iki.fi>)
-        id 1hJGqR-0008In-U1; Wed, 24 Apr 2019 15:17:48 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 24 Apr 2019 15:17:47 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+        id S2389582AbfDXR4i (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Apr 2019 13:56:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Apr 2019 10:56:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,390,1549958400"; 
+   d="scan'208";a="294223209"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by orsmga004.jf.intel.com with ESMTP; 24 Apr 2019 10:56:35 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.36]) by
+ ORSMSX104.amr.corp.intel.com ([169.254.4.183]) with mapi id 14.03.0415.000;
+ Wed, 24 Apr 2019 10:56:35 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
+CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
         "Ayoun, Serge" <serge.ayoun@intel.com>,
         "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
+        "Josh Triplett" <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        linux-sgx-owner@vger.kernel.org
-Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-In-Reply-To: <CALCETrV9SOLNw0d2tXOW1Ntmwaqso2xA2YVOvr60btR9G7Wgxg@mail.gmail.com>
+        "David Rientjes" <rientjes@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: RE: [RFC PATCH v1 2/3] x86/vdso: Modify __vdso_sgx_enter_enclave()
+ to allow parameter passing on untrusted stack
+Thread-Topic: [RFC PATCH v1 2/3] x86/vdso: Modify __vdso_sgx_enter_enclave()
+ to allow parameter passing on untrusted stack
+Thread-Index: AQHU+Usmf1evzVuGMEWn0D2ZOnnJnqZJabSAgAIvAvA=
+Date:   Wed, 24 Apr 2019 17:56:34 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E87E388@ORSMSX116.amr.corp.intel.com>
 References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190423115611.GA5604@linux.intel.com>
- <CALCETrV9SOLNw0d2tXOW1Ntmwaqso2xA2YVOvr60btR9G7Wgxg@mail.gmail.com>
-Message-ID: <97f057aa56be342448980a2b1e68a891@iki.fi>
-X-Sender: jarkko.sakkinen@iki.fi
-User-Agent: Roundcube Webmail/1.3.3
-X-SA-Exim-Connect-IP: 2001:67c:1be8::146
-X-SA-Exim-Mail-From: jarkko.sakkinen@iki.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+ <cover.1555965327.git.cedric.xing@intel.com>
+ <ba2a51568f3adaf74994d33ea3cbee570e20c6f6.1555965327.git.cedric.xing@intel.com>
+ <CALCETrULHDiKk6xxMX-iDgb=ZEghkxLfX6d3x5KLQb8YAO1mKA@mail.gmail.com>
+In-Reply-To: <CALCETrULHDiKk6xxMX-iDgb=ZEghkxLfX6d3x5KLQb8YAO1mKA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDBlOWYyMjktMmUwNC00MWFmLThiNTUtYjhiNjMwNWI3ODQwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicmUxODNGRGJZM1wvdGJSb0NFa242NzhSXC9sakQ5N2RKSEYxN3ZvUHBmNWM2emxTUzY1d3YzU3RzbjV2Wm5jZmYzIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2019-04-23 19:52, Andy Lutomirski wrote:
-> On Tue, Apr 23, 2019 at 4:56 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
->> 
->> On Wed, Apr 17, 2019 at 01:39:10PM +0300, Jarkko Sakkinen wrote:
->> > Intel(R) SGX is a set of CPU instructions that can be used by applications
->> > to set aside private regions of code and data. The code outside the enclave
->> > is disallowed to access the memory inside the enclave by the CPU access
->> > control.  In a way you can think that SGX provides inverted sandbox. It
->> > protects the application from a malicious host.
->> >
->> > There is a new hardware unit in the processor called Memory Encryption
->> > Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
->> > one or many MEE regions that can hold enclave data by configuring them with
->> > PRMRR registers.
->> >
->> > The MEE automatically encrypts the data leaving the processor package to
->> > the MEE regions. The data is encrypted using a random key whose life-time
->> > is exactly one power cycle.
->> >
->> > The current implementation requires that the firmware sets
->> > IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
->> > decide what enclaves it wants run. The implementation does not create
->> > any bottlenecks to support read-only MSRs later on.
->> >
->> > You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
->> >
->> >       cat /proc/cpuinfo  | grep sgx
->> >
->> > v20:
->> > * Fine-tune Kconfig messages and spacing and remove MMU_NOTIFIER
->> >   dependency as MMU notifiers are no longer used in the driver.
->> > * Use mm_users instead of mm_count as refcount for mm_struct as mm_count
->> >   only protects from deleting mm_struct, not removing its contents.
->> > * Sanitize EPC when the reclaimer thread starts by doing EREMOVE for all
->> >   of them. They could be in initialized state when the kernel starts
->> >   because it might be spawned by kexec().
->> > * Documentation overhaul.
->> > * Use a device /dev/sgx/provision for delivering the provision token
->> >   instead of securityfs.
->> > * Create a reference to the enclave when already when opening
->> >   /dev/sgx/enclave.  The file is then associated with this enclave only.
->> >   mmap() can be done at free at any point and always get a reference to
->> >   the enclave. To summarize the file now represents the enclave.
->> >
->> > v19:
->> > * Took 3-4 months but in some sense this was more like a rewrite of most
->> >   of the corners of the source code. If I've forgotten to deal with some
->> >   feedback, please don't shout me. Make a remark and I will fix it for
->> >   the next version. Hopefully there won't be this big turnovers anymore.
->> > * Validate SECS attributes properly against CPUID given attributes and
->> >   against allowed attributes. SECS attributes are the ones that are
->> >   enforced whereas SIGSTRUCT attributes tell what is required to run
->> >   the enclave.
->> > * Add KSS (Key Sharing Support) to the enclave attributes.
->> > * Deny MAP_PRIVATE as an enclave is always a shared memory entity.
->> > * Revert back to shmem backing storage so that it can be easily shared
->> >   by multiple processes.
->> > * Split the recognization of an ENCLS leaf failure by using three
->> >   functions to detect it: encsl_faulted(), encls_returned_code() and
->> >   sgx_failed(). encls_failed() is only caused by a spurious expections that
->> >   should never happen. Thus, it is not defined as an inline function in
->> >   order to easily insert a kprobe to it.
->> > * Move low-level enclave management routines, page fault handler and page
->> >   reclaiming routines from driver to the core. These cannot be separated
->> >   from each other as they are heavily interdependent. The rationale is that
->> >   the core does not call any code from the driver.
->> > * Allow the driver to be compiled as a module now that it no code is using
->> >   its routines and it only uses exported symbols. Now the driver is
->> >   essentially just a thin ioctl layer.
->> > * Reworked the driver to maintain a list of mm_struct's. The VMA callbacks
->> >   add new entries to this list as the process is forked. Each entry has
->> >   its own refcount because they have a different life-cycle as the enclave
->> >   does. In effect @tgid and @mm have been removed from struct sgx_encl
->> >   and we allow forking by removing VM_DONTCOPY from vm flags.
->> > * Generate a cpu mask in the reclaimer from the cpu mask's of all
->> >   mm_struct's. This will kick out the hardware threads out of the enclave
->> >   from multiple processes. It is not a local variable because it would
->> >   eat too much of the stack space but instead a field in struct
->> >   sgx_encl.
->> > * Allow forking i.e. remove VM_DONTCOPY. I did not change the API
->> >   because the old API scaled to the workload that Andy described. The
->> >   codebase is now mostly API independent i.e. changing the API is a
->> >   small task. For me the proper trigger to chanage it is a as concrete
->> >   as possible workload that cannot be fulfilled. I hope you understand
->> >   my thinking here. I don't want to change anything w/o proper basis
->> >   but I'm ready to change anything if there is a proper basis. I do
->> >   not have any kind of attachment to any particular type of API.
->> > * Add Sean's vDSO ENCLS(EENTER) patches and update selftest to use the
->> >   new vDSO.
->> >
->> > v18:
->> > * Update the ioctl-number.txt.
->> > * Move the driver under arch/x86.
->> > * Add SGX features (SGX, SGX1, SGX2) to the disabled-features.h.
->> > * Rename the selftest as test_sgx (previously sgx-selftest).
->> > * In order to enable process accounting, swap EPC pages and PCMD's to a VMA
->> >   instead of shmem.
->> > * Allow only to initialize and run enclaves with a subset of
->> >   {DEBUG, MODE64BIT} set.
->> > * Add SGX_IOC_ENCLAVE_SET_ATTRIBUTE to allow an enclave to have privileged
->> >   attributes e.g. PROVISIONKEY.
->> >
->> > v17:
->> > * Add a simple selftest.
->> > * Fix a null pointer dereference to section->pages when its
->> >   allocation fails.
->> > * Add Sean's description of the exception handling to the documentation.
->> >
->> > v16:
->> > * Fixed SOB's in the commits that were a bit corrupted in v15.
->> > * Implemented exceptio handling properly to detect_sgx().
->> > * Use GENMASK() to define SGX_CPUID_SUB_LEAF_TYPE_MASK.
->> > * Updated the documentation to use rst definition lists.
->> > * Added the missing Documentation/x86/index.rst, which has a link to
->> >   intel_sgx.rst. Now the SGX and uapi documentation is properly generated
->> >   with 'make htmldocs'.
->> > * While enumerating EPC sections, if an undefined section is found, fail
->> >   the driver initialization instead of continuing the initialization.
->> > * Issue a warning if there are more than %SGX_MAX_EPC_SECTIONS.
->> > * Remove copyright notice from arch/x86/include/asm/sgx.h.
->> > * Migrated from ioremap_cache() to memremap().
->> >
->> > v15:
->> > * Split into more digestable size patches.
->> > * Lots of small fixes and clean ups.
->> > * Signal a "plain" SIGSEGV on an EPCM violation.
->> >
->> > v14:
->> > * Change the comment about X86_FEATURE_SGX_LC from “SGX launch
->> >   configuration” to “SGX launch control”.
->> > * Move the SGX-related CPU feature flags as part of the Linux defined
->> >   virtual leaf 8.
->> > * Add SGX_ prefix to the constants defining the ENCLS leaf functions.
->> > * Use GENMASK*() and BIT*() in sgx_arch.h instead of raw hex numbers.
->> > * Refine the long description for CONFIG_INTEL_SGX_CORE.
->> > * Do not use pr_*_ratelimited()  in the driver. The use of the rate limited
->> >   versions is legacy cruft from the prototyping phase.
->> > * Detect sleep with SGX_INVALID_EINIT_TOKEN instead of counting power
->> >   cycles.
->> > * Manually prefix with “sgx:” in the core SGX code instead of redefining
->> >   pr_fmt.
->> > * Report if IA32_SGXLEPUBKEYHASHx MSRs are not writable in the driver
->> >   instead of core because it is a driver requirement.
->> > * Change prompt to bool in the entry for CONFIG_INTEL_SGX_CORE because the
->> >   default is ‘n’.
->> > * Rename struct sgx_epc_bank as struct sgx_epc_section in order to match
->> >   the SDM.
->> > * Allocate struct sgx_epc_page instances one at a time.
->> > * Use “__iomem void *” pointers for the mapped EPC memory consistently.
->> > * Retry once on SGX_INVALID_TOKEN in sgx_einit() instead of counting power
->> >   cycles.
->> > * Call enclave swapping operations directly from the driver instead of
->> >   calling them .indirectly through struct sgx_epc_page_ops because indirect
->> >   calls are not required yet as the patch set does not contain the KVM
->> >   support.
->> > * Added special signal SEGV_SGXERR to notify about SGX EPCM violation
->> >   errors.
->> >
->> > v13:
->> > * Always use SGX_CPUID constant instead of a hardcoded value.
->> > * Simplified and documented the macros and functions for ENCLS leaves.
->> > * Enable sgx_free_page() to free active enclave pages on demand
->> >   in order to allow sgx_invalidate() to delete enclave pages.
->> >   It no longer performs EREMOVE if a page is in the process of
->> >   being reclaimed.
->> > * Use PM notifier per enclave so that we don't have to traverse
->> >   the global list of active EPC pages to find enclaves.
->> > * Removed unused SGX_LE_ROLLBACK constant from uapi/asm/sgx.h
->> > * Always use ioremap() to map EPC banks as we only support 64-bit kernel.
->> > * Invalidate IA32_SGXLEPUBKEYHASH cache used by sgx_einit() when going
->> >   to sleep.
->> >
->> > v12:
->> > * Split to more narrow scoped commits in order to ease the review process and
->> >   use co-developed-by tag for co-authors of commits instead of listing them in
->> >   the source files.
->> > * Removed cruft EXPORT_SYMBOL() declarations and converted to static variables.
->> > * Removed in-kernel LE i.e. this version of the SGX software stack only
->> >   supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
->> > * Refined documentation on launching enclaves, swapping and enclave
->> >   construction.
->> > * Refined sgx_arch.h to include alignment information for every struct that
->> >   requires it and removed structs that are not needed without an LE.
->> > * Got rid of SGX_CPUID.
->> > * SGX detection now prints log messages about firmware configuration issues.
->> >
->> > v11:
->> > * Polished ENCLS wrappers with refined exception handling.
->> > * ksgxswapd was not stopped (regression in v5) in
->> >   sgx_page_cache_teardown(), which causes a leaked kthread after driver
->> >   deinitialization.
->> > * Shutdown sgx_le_proxy when going to suspend because its EPC pages will be
->> >   invalidated when resuming, which will cause it not function properly
->> >   anymore.
->> > * Set EINITTOKEN.VALID to zero for a token that is passed when
->> >   SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
->> >   page.
->> > * Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
->> >   around the flags field, which causes a #GP. Only flags read is readable.
->> > * On read access memcpy() call inside sgx_vma_access() had src and dest
->> >   parameters in wrong order.
->> > * The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
->> >   to LE even if “KASAN_SANITIZE := false” was set in the makefile.
->> > * Fixed a regression in the #PF handler. If a page has
->> >   SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail.
->> >   It did not, which caused weird races when trying to change other parts of
->> >   swapping code.
->> > * EPC management has been refactored to a flat LRU cache and moved to
->> >   arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
->> >   of them. It can now swap from multiple enclaves in the same round.
->> > * For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINVAL
->> >   when an enclave is already initialized or dead instead of zero.
->> >
->> > v10:
->> > * Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
->> >   of the driver.
->> > * Unset the reserved flag from an enclave page if EDBGRD/WR fails
->> >   (regression in v6).
->> > * Close the anon inode when LE is stopped (regression in v9).
->> > * Update the documentation with a more detailed description of SGX.
->> >
->> > v9:
->> > * Replaced kernel-LE IPC based on pipes with an anonymous inode.
->> >   The driver does not require anymore new exports.
->> >
->> > v8:
->> > * Check that public key MSRs match the LE public key hash in the
->> >   driver initialization when the MSRs are read-only.
->> > * Fix the race in VA slot allocation by checking the fullness
->> >   immediately after succeesful allocation.
->> > * Fix the race in hash mrsigner calculation between the launch
->> >   enclave and user enclaves by having a separate lock for hash
->> >   calculation.
->> >
->> > v7:
->> > * Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAGE_MASK
->> >   when it should have been masked with ~PAGE_MASK.
->> > * Fixed a memory leak in sgx_ioc_enclave_create().
->> > * Simplified swapping code by using a pointer array for a cluster
->> >   instead of a linked list.
->> > * Squeezed struct sgx_encl_page to 32 bytes.
->> > * Fixed deferencing of an RSA key on OpenSSL 1.1.0.
->> > * Modified TC's CMAC to use kernel AES-NI. Restructured the code
->> >   a bit in order to better align with kernel conventions.
->> >
->> > v6:
->> > * Fixed semaphore underrun when accessing /dev/sgx from the launch enclave.
->> > * In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
->> > * Removed virtualization chapter from the documentation.
->> > * Changed the default filename for the signing key as signing_key.pem.
->> > * Reworked EPC management in a way that instead of a linked list of
->> >   struct sgx_epc_page instances there is an array of integers that
->> >   encodes address and bank of an EPC page (the same data as 'pa' field
->> >   earlier). The locking has been moved to the EPC bank level instead
->> >   of a global lock.
->> > * Relaxed locking requirements for EPC management. EPC pages can be
->> >   released back to the EPC bank concurrently.
->> > * Cleaned up ptrace() code.
->> > * Refined commit messages for new architectural constants.
->> > * Sorted includes in every source file.
->> > * Sorted local variable declarations according to the line length in
->> >   every function.
->> > * Style fixes based on Darren's comments to sgx_le.c.
->> >
->> > v5:
->> > * Described IPC between the Launch Enclave and kernel in the commit messages.
->> > * Fixed all relevant checkpatch.pl issues that I have forgot fix in earlier
->> >   versions except those that exist in the imported TinyCrypt code.
->> > * Fixed spelling mistakes in the documentation.
->> > * Forgot to check the return value of sgx_drv_subsys_init().
->> > * Encapsulated properly page cache init and teardown.
->> > * Collect epc pages to a temp list in sgx_add_epc_bank
->> > * Removed SGX_ENCLAVE_INIT_ARCH constant.
->> >
->> > v4:
->> > * Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
->> > * Removed __exit annotation from sgx_drv_subsys_exit().
->> > * Fixed a leak of a backing page in sgx_process_add_page_req() in the
->> >   case when vm_insert_pfn() fails.
->> > * Removed unused symbol exports for sgx_page_cache.c.
->> > * Updated sgx_alloc_page() to require encl parameter and documented the
->> >   behavior (Sean Christopherson).
->> > * Refactored a more lean API for sgx_encl_find() and documented the behavior.
->> > * Moved #PF handler to sgx_fault.c.
->> > * Replaced subsys_system_register() with plain bus_register().
->> > * Retry EINIT 2nd time only if MSRs are not locked.
->> >
->> > v3:
->> > * Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are set.
->> > * Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fails.
->> > * Use unused bits in epc_page->pa to store the bank number.
->> > * Removed #ifdef for WQ_NONREENTRANT.
->> > * If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
->> > * Added --remove-section=.got.plt to objcopy flags in order to prevent a
->> >   dummy .got.plt, which will cause an inconsistent size for the LE.
->> > * Documented sgx_encl_* functions.
->> > * Added remark about AES implementation used inside the LE.
->> > * Removed redundant sgx_sys_exit() from le/main.c.
->> > * Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
->> > * Validate miscselect in sgx_encl_create().
->> > * Fixed SSA frame size calculation to take the misc region into account.
->> > * Implemented consistent exception handling to __encls() and __encls_ret().
->> > * Implemented a proper device model in order to allow sysfs attributes
->> >   and in-kernel API.
->> > * Cleaned up various "find enclave" implementations to the unified
->> >   sgx_encl_find().
->> > * Validate that vm_pgoff is zero.
->> > * Discard backing pages with shmem_truncate_range() after EADD.
->> > * Added missing EEXTEND operations to LE signing and launch.
->> > * Fixed SSA size for GPRS region from 168 to 184 bytes.
->> > * Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
->> > * Check that TCS addresses are in ELRANGE and not just page aligned.
->> > * Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
->> > * Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
->> >
->> > v2:
->> > * get_rand_uint32() changed the value of the pointer instead of value
->> >   where it is pointing at.
->> > * Launch enclave incorrectly used sigstruct attributes-field instead of
->> >   enclave attributes-field.
->> > * Removed unused struct sgx_add_page_req from sgx_ioctl.c
->> > * Removed unused sgx_has_sgx2.
->> > * Updated arch/x86/include/asm/sgx.h so that it provides stub
->> >   implementations when sgx in not enabled.
->> > * Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
->> > * return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
->> > * removed unused global sgx_nr_pids
->> > * moved sgx_encl_release to sgx_encl.c
->> > * return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
->> >
->> > Jarkko Sakkinen (11):
->> >   x86/sgx: Add ENCLS architectural error codes
->> >   x86/sgx: Add SGX1 and SGX2 architectural data structures
->> >   x86/sgx: Add wrappers for ENCLS leaf functions
->> >   x86/sgx: Add functions to allocate and free EPC pages
->> >   x86/sgx: Add the Linux SGX Enclave Driver
->> >   x86/sgx: Add provisioning
->> >   x86/sgx: Add swapping code to the core and SGX driver
->> >   x86/sgx: ptrace() support for the SGX driver
->> >   selftests/x86: Add a selftest for SGX
->> >   x86/sgx: Update MAINTAINERS
->> >   docs: x86/sgx: Document the enclave API
->> >
->> > Kai Huang (2):
->> >   x86/cpufeatures: Add Intel-defined SGX feature bit
->> >   x86/cpufeatures: Add Intel-defined SGX_LC feature bit
->> >
->> > Sean Christopherson (15):
->> >   x86/cpufeatures: Add SGX sub-features (as Linux-defined bits)
->> >   x86/msr: Add IA32_FEATURE_CONTROL.SGX_ENABLE definition
->> >   x86/msr: Add SGX Launch Control MSR definitions
->> >   x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
->> >   x86/mm: x86/sgx: Signal SIGSEGV for userspace #PFs w/ PF_SGX
->> >   x86/cpu/intel: Detect SGX support and update caps appropriately
->> >   x86/sgx: Enumerate and track EPC sections
->> >   x86/sgx: Add sgx_einit() for initializing enclaves
->> >   x86/vdso: Add support for exception fixup in vDSO functions
->> >   x86/fault: Add helper function to sanitize error code
->> >   x86/fault: Attempt to fixup unhandled #PF in vDSO before signaling
->> >   x86/traps: Attempt to fixup exceptions in vDSO before signaling
->> >   x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave
->> >     transitions
->> >   docs: x86/sgx: Add Architecture documentation
->> >   docs: x86/sgx: Document kernel internals
->> >
->> >  Documentation/index.rst                       |   1 +
->> >  Documentation/ioctl/ioctl-number.txt          |   1 +
->> >  Documentation/x86/index.rst                   |  10 +
->> >  Documentation/x86/sgx/1.Architecture.rst      | 431 +++++++++
->> >  Documentation/x86/sgx/2.Kernel-internals.rst  |  56 ++
->> >  Documentation/x86/sgx/3.API.rst               |  27 +
->> >  Documentation/x86/sgx/index.rst               |  18 +
->> >  MAINTAINERS                                   |  12 +
->> >  arch/x86/Kconfig                              |  27 +
->> >  arch/x86/entry/vdso/Makefile                  |   6 +-
->> >  arch/x86/entry/vdso/extable.c                 |  37 +
->> >  arch/x86/entry/vdso/extable.h                 |  29 +
->> >  arch/x86/entry/vdso/vdso-layout.lds.S         |   9 +-
->> >  arch/x86/entry/vdso/vdso.lds.S                |   1 +
->> >  arch/x86/entry/vdso/vdso2c.h                  |  58 +-
->> >  arch/x86/entry/vdso/vsgx_enter_enclave.S      | 101 +++
->> >  arch/x86/include/asm/cpufeatures.h            |  24 +-
->> >  arch/x86/include/asm/disabled-features.h      |  14 +-
->> >  arch/x86/include/asm/msr-index.h              |   8 +
->> >  arch/x86/include/asm/traps.h                  |   1 +
->> >  arch/x86/include/asm/vdso.h                   |   5 +
->> >  arch/x86/include/uapi/asm/sgx.h               |  86 ++
->> >  arch/x86/include/uapi/asm/sgx_errno.h         |  91 ++
->> >  arch/x86/kernel/cpu/Makefile                  |   1 +
->> >  arch/x86/kernel/cpu/intel.c                   |  39 +
->> >  arch/x86/kernel/cpu/scattered.c               |   2 +
->> >  arch/x86/kernel/cpu/sgx/Makefile              |   2 +
->> >  arch/x86/kernel/cpu/sgx/arch.h                | 424 +++++++++
->> >  arch/x86/kernel/cpu/sgx/driver/Makefile       |   3 +
->> >  arch/x86/kernel/cpu/sgx/driver/driver.h       |  38 +
->> >  arch/x86/kernel/cpu/sgx/driver/ioctl.c        | 850 ++++++++++++++++++
->> >  arch/x86/kernel/cpu/sgx/driver/main.c         | 368 ++++++++
->> >  arch/x86/kernel/cpu/sgx/encl.c                | 709 +++++++++++++++
->> >  arch/x86/kernel/cpu/sgx/encl.h                | 136 +++
->> >  arch/x86/kernel/cpu/sgx/encls.c               |  22 +
->> >  arch/x86/kernel/cpu/sgx/encls.h               | 244 +++++
->> >  arch/x86/kernel/cpu/sgx/main.c                | 360 ++++++++
->> >  arch/x86/kernel/cpu/sgx/reclaim.c             | 482 ++++++++++
->> >  arch/x86/kernel/cpu/sgx/sgx.h                 |  90 ++
->> >  arch/x86/kernel/traps.c                       |  14 +
->> >  arch/x86/mm/fault.c                           |  44 +-
->> >  tools/arch/x86/include/asm/cpufeatures.h      |  21 +-
->> >  tools/testing/selftests/x86/Makefile          |  10 +
->> >  tools/testing/selftests/x86/sgx/Makefile      |  48 +
->> >  tools/testing/selftests/x86/sgx/defines.h     |  39 +
->> >  tools/testing/selftests/x86/sgx/encl.c        |  20 +
->> >  tools/testing/selftests/x86/sgx/encl.lds      |  33 +
->> >  .../selftests/x86/sgx/encl_bootstrap.S        |  94 ++
->> >  tools/testing/selftests/x86/sgx/encl_piggy.S  |  18 +
->> >  tools/testing/selftests/x86/sgx/encl_piggy.h  |  14 +
->> >  tools/testing/selftests/x86/sgx/main.c        | 279 ++++++
->> >  tools/testing/selftests/x86/sgx/sgx_call.S    |  15 +
->> >  tools/testing/selftests/x86/sgx/sgxsign.c     | 508 +++++++++++
->> >  .../testing/selftests/x86/sgx/signing_key.pem |  39 +
->> >  54 files changed, 5987 insertions(+), 32 deletions(-)
->> >  create mode 100644 Documentation/x86/index.rst
->> >  create mode 100644 Documentation/x86/sgx/1.Architecture.rst
->> >  create mode 100644 Documentation/x86/sgx/2.Kernel-internals.rst
->> >  create mode 100644 Documentation/x86/sgx/3.API.rst
->> >  create mode 100644 Documentation/x86/sgx/index.rst
->> >  create mode 100644 arch/x86/entry/vdso/extable.c
->> >  create mode 100644 arch/x86/entry/vdso/extable.h
->> >  create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
->> >  create mode 100644 arch/x86/include/uapi/asm/sgx.h
->> >  create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver/Makefile
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver/driver.h
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver/ioctl.c
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver/main.c
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/encls.c
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/main.c
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/reclaim.c
->> >  create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
->> >  create mode 100644 tools/testing/selftests/x86/sgx/Makefile
->> >  create mode 100644 tools/testing/selftests/x86/sgx/defines.h
->> >  create mode 100644 tools/testing/selftests/x86/sgx/encl.c
->> >  create mode 100644 tools/testing/selftests/x86/sgx/encl.lds
->> >  create mode 100644 tools/testing/selftests/x86/sgx/encl_bootstrap.S
->> >  create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.S
->> >  create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.h
->> >  create mode 100644 tools/testing/selftests/x86/sgx/main.c
->> >  create mode 100644 tools/testing/selftests/x86/sgx/sgx_call.S
->> >  create mode 100644 tools/testing/selftests/x86/sgx/sgxsign.c
->> >  create mode 100644 tools/testing/selftests/x86/sgx/signing_key.pem
->> >
->> > --
->> > 2.19.1
->> >
->> 
->> I'm on leave for this week and next week's Monday if you wonder why 
->> I'm
->> so passive in the discussion. Looking at the things next week's Tue.
->> 
->> Just a quick comment about Andy's proposal. Probably pretty DSO like
->> ELF blob could work with an addition of a section called ".tcs" for
->> entry points. They need to be recognized so that the loader can add
->> them as TCS pages.
-> 
-> Hmm.
-> 
-> There's a decent argument for specifically supporting whatever format
-> Windows uses.  There's also an argument for allowing one or more
-> enclaves to be bundled in a regular ELF DSO.  FWIW, there's no
-> fundamental reason we can't support more than one type of enclave
-> format.
-
-It would also be better to contain sigstruct so that EINIT can
-be performed. I wonder if we could use dlopen() as call path
-for this? That would also provide all the DAC/MAC/whatever
-security checks.
-
-I can start to PoC this next week once I get back to work (back
-on next Tue). I haven't studied Windows format much but I'd
-*guess* it is a COFF DLL?
-
-For me easier path to get something done would to do ELF DSO
-first. As you said they both could be done, which means that
-Windows COFF could be upstreamed later on.
-
-If this approach works, it'd mean that no ioctl's would be
-required except SGX_ENCLAVE_SET_ATTRIBUTE.
-
-PS. This quote from LWN got a bit into my feelings:
-
-"After 20 revisions of the patch set over three years, the
-authors of this work (which was posted by Jarkko Sakkinen)
-might well be forgiven for thinking that it must be about
-ready for merging."
-
-I seriously do not make any pre-conclusions ever for any patch
-that I post when it should be merged, no matter how big or
-small :-) For me this is just work...
-
-/Jarkko
+SGkgQW5keSwNCg0KSSBzZW50IG91dCBteSBSRkMgcGF0Y2ggdjIgbGFzdCBuaWdodCwgdGhhdCBo
+YXMgeW91ciBzdWdnZXN0aW9ucyBpbmNvcnBvcmF0ZWQsIHBsdXMgYSBuZXcgdW53aW5kIHRlc3Qg
+dG8gc2luZ2xlIHN0ZXAgdGhyb3VnaCB0aGUgdkRTTyBBUEkgdG8gdGVzdCBvdXQgdGhlIENGSSBk
+aXJlY3RpdmVzLiBIb3BlZnVsbHkgaXQgaXMgYWJsZSB0byBhZGRyZXNzIGFsbCBvZiB5b3VyIGNv
+bmNlcm5zLiBJdCdzIHdvcnRoIG5vdGluZyB0aGF0LCBnaXZlbiB0aGUgY3VycmVudCBwYXRjaCBm
+aXhlcyB1cCAjREIgYW5kICNCUCBhdCBFTkNMVSwgdGhlIHVud2luZCB0ZXN0IGNhbm5vdCBydW4g
+dG8gY29tcGxldGlvbi4gSSBhc3N1bWUgU2VhbiB3aWxsIHJldmlzZSB0aGUgZml4dXAgY29kZSBz
+b29uLg0KDQpUaGFua3MhDQoNCi1DZWRyaWMNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
+LQ0KPiBGcm9tOiBBbmR5IEx1dG9taXJza2kgW21haWx0bzpsdXRvQGtlcm5lbC5vcmddDQo+IFNl
+bnQ6IE1vbmRheSwgQXByaWwgMjIsIDIwMTkgNjoyNiBQTQ0KPiBUbzogWGluZywgQ2VkcmljIDxj
+ZWRyaWMueGluZ0BpbnRlbC5jb20+DQo+IENjOiBMS01MIDxsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnPjsgWDg2IE1MIDx4ODZAa2VybmVsLm9yZz47IGxpbnV4LQ0KPiBzZ3hAdmdlci5rZXJu
+ZWwub3JnOyBBbmRyZXcgTW9ydG9uIDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgSGFuc2Vu
+LA0KPiBEYXZlIDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+OyBDaHJpc3RvcGhlcnNvbiwgU2VhbiBK
+DQo+IDxzZWFuLmouY2hyaXN0b3BoZXJzb25AaW50ZWwuY29tPjsgbmhvcm1hbkByZWRoYXQuY29t
+Ow0KPiBucG1jY2FsbHVtQHJlZGhhdC5jb207IEF5b3VuLCBTZXJnZSA8c2VyZ2UuYXlvdW5AaW50
+ZWwuY29tPjsgS2F0ei16YW1pciwNCj4gU2hheSA8c2hheS5rYXR6LXphbWlyQGludGVsLmNvbT47
+IEh1YW5nLCBIYWl0YW8gPGhhaXRhby5odWFuZ0BpbnRlbC5jb20+Ow0KPiBBbmR5IFNoZXZjaGVu
+a28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT47IFRob21hcyBHbGVpeG5lcg0K
+PiA8dGdseEBsaW51dHJvbml4LmRlPjsgU3ZhaG4sIEthaSA8a2FpLnN2YWhuQGludGVsLmNvbT47
+IEJvcmlzbGF2IFBldGtvdg0KPiA8YnBAYWxpZW44LmRlPjsgSm9zaCBUcmlwbGV0dCA8am9zaEBq
+b3NodHJpcGxldHQub3JnPjsgQW5kcmV3IEx1dG9taXJza2kNCj4gPGx1dG9Aa2VybmVsLm9yZz47
+IEh1YW5nLCBLYWkgPGthaS5odWFuZ0BpbnRlbC5jb20+OyBEYXZpZCBSaWVudGplcw0KPiA8cmll
+bnRqZXNAZ29vZ2xlLmNvbT47IEphcmtrbyBTYWtraW5lbiA8amFya2tvLnNha2tpbmVuQGxpbnV4
+LmludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggdjEgMi8zXSB4ODYvdmRzbzog
+TW9kaWZ5DQo+IF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIHRvIGFsbG93IHBhcmFtZXRlciBw
+YXNzaW5nIG9uIHVudHJ1c3RlZCBzdGFjaw0KPiANCj4gT24gTW9uLCBBcHIgMjIsIDIwMTkgYXQg
+NTozNyBQTSBDZWRyaWMgWGluZyA8Y2VkcmljLnhpbmdAaW50ZWwuY29tPg0KPiB3cm90ZToNCj4g
+Pg0KPiA+IFRoZSBwcmV2aW91cyBfX3Zkc29fc2d4X2VudGVyX2VuY2xhdmUoKSByZXF1aXJlcyBl
+bmNsYXZlcyB0byBwcmVzZXJ2ZQ0KPiA+ICVyc3AsIHdoaWNoIHByb2hpYml0cyBlbmNsYXZlcyBm
+cm9tIGFsbG9jYXRpbmcgYW5kIHBhc3NpbmcgcGFyYW1ldGVycw0KPiA+IGZvciB1bnRydXN0ZWQg
+ZnVuY3Rpb24gY2FsbHMgKGFrYS4gby1jYWxscykuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGFkZHJl
+c3NlcyB0aGUgcHJvYmxlbSBhYm92ZSBieSBpbnRyb2R1Y2luZyBhIG5ldyBBQkkgdGhhdA0KPiA+
+IHByZXNlcnZlcyAlcmJwIGluc3RlYWQgb2YgJXJzcC4gVGhlbiBfX3Zkc29fc2d4X2VudGVyX2Vu
+Y2xhdmUoKSBjYW4NCj4gPiBhbmNob3IgaXRzIGZyYW1lIHVzaW5nICVyYnAgc28gdGhhdCBlbmNs
+YXZlcyBhcmUgYWxsb3dlZCB0byBhbGxvY2F0ZQ0KPiA+IHNwYWNlIG9uIHRoZSB1bnRydXN0ZWQg
+c3RhY2sgYnkgZGVjcmVtZW50aW5nICVyc3AuIFBsZWFzZSBub3RlIHRoYXQNCj4gPiB0aGUgc3Rh
+Y2sgc3BhY2UgYWxsb2NhdGVkIGluIHN1Y2ggd2F5IHdpbGwgYmUgcGFydCBvZg0KPiA+IF9fdmRz
+b19zZ3hfZW50ZXJfZW5jbGF2ZSgpJ3MgZnJhbWUgc28gd2lsbCBiZSBmcmVlZCBhZnRlcg0KPiA+
+IF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIHJldHVybnMuIFRoZXJlZm9yZSwNCj4gPiBfX3Zk
+c29fc2d4X2VudGVyX2VuY2xhdmUoKSBoYXMgYmVlbiBjaGFuZ2VkIHRvIHRha2UgYSBjYWxsYmFj
+aw0KPiA+IGZ1bmN0aW9uIGFzIGFuIG9wdGlvbmFsIHBhcmFtZXRlciwgd2hpY2ggaWYgc3VwcGxp
+ZWQsIHdpbGwgYmUgaW52b2tlZA0KPiA+IHVwb24gZW5jbGF2ZSBleGl0cyAoYm90aCBBRVggKEFz
+eW5jaHJvbm91cyBFbmNsYXZlDQo+ID4gZVhpdCkgYW5kIG5vcm1hbCBleGl0cyksIHdpdGggdGhl
+IHZhbHVlIG9mICVyc3AgbGVmdCBvZmYgYnkgdGhlDQo+ID4gZW5jbGF2ZSBhcyBhIHBhcmFtZXRl
+ciB0byB0aGUgY2FsbGJhY2suDQo+ID4NCj4gPiBIZXJlJ3MgdGhlIHN1bW1hcnkgb2YgQVBJL0FC
+SSBjaGFuZ2VzIGluIHRoaXMgcGF0Y2guIE1vcmUgZGV0YWlscw0KPiA+IGNvdWxkIGJlIGZvdW5k
+IGluIGFyY2gveDg2L2VudHJ5L3Zkc28vdnNneF9lbnRlcl9lbmNsYXZlLlMuDQo+ID4gKiAnc3Ry
+dWN0IHNneF9lbmNsYXZlX2V4Y2VwdGlvbicgaXMgcmVuYW1lZCB0byAnc3RydWN0DQo+IHNneF9l
+bmNsYXZlX2V4aW5mbycNCj4gPiAgIGJlY2F1c2UgaXQgaXMgZmlsbGVkIHVwb24gYm90aCBBRVgg
+KGkuZS4gZXhjZXB0aW9ucykgYW5kIG5vcm1hbA0KPiBlbmNsYXZlDQo+ID4gICBleGl0cy4NCj4g
+PiAqIF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIGFuY2hvcnMgaXRzIGZyYW1lIHVzaW5nICVy
+YnAgKGluc3RlYWQNCj4gb2YgJXJzcCBpbg0KPiA+ICAgdGhlIHByZXZpb3VzIGltcGxlbWVudGF0
+aW9uKS4NCj4gPiAqIF9fdmRzb19zZ3hfZW50ZXJfZW5jbGF2ZSgpIHRha2VzIG9uZSBtb3JlIHBh
+cmFtZXRlciAtIGEgY2FsbGJhY2sNCj4gZnVuY3Rpb24gdG8NCj4gPiAgIGJlIGludm9rZWQgdXBv
+biBlbmNsYXZlIGV4aXRzLiBUaGlzIGNhbGxiYWNrIGlzIG9wdGlvbmFsLCBhbmQgaWYgbm90DQo+
+ID4gICBzdXBwbGllZCwgd2lsbCBjYXVzZSBfX3Zkc29fc2d4X2VudGVyX2VuY2xhdmUoKSB0byBy
+ZXR1cm4gdXBvbg0KPiBlbmNsYXZlIGV4aXRzDQo+ID4gICAoc2FtZSBiZWhhdmlvciBhcyBwcmV2
+aW91cyBpbXBsZW1lbnRhdGlvbikuDQo+ID4gKiBUaGUgY2FsbGJhY2sgZnVuY3Rpb24gaXMgZ2l2
+ZW4gYXMgYSBwYXJhbWV0ZXIgdGhlIHZhbHVlIG9mICVyc3AgYXQNCj4gZW5jbGF2ZQ0KPiA+ICAg
+ZXhpdCB0byBhZGRyZXNzIGRhdGEgInB1c2hlZCIgYnkgdGhlIGVuY2xhdmUuIEEgcG9zaXRpdmUg
+dmFsdWUNCj4gcmV0dXJuZWQgYnkNCj4gPiAgIHRoZSBjYWxsYmFjayB3aWxsIGJlIHRyZWF0ZWQg
+YXMgYW4gRU5DTFUgbGVhZiBmb3IgcmUtZW50ZXJpbmcgdGhlDQo+IGVuY2xhdmUsDQo+ID4gICB3
+aGlsZSBhIHplcm8gb3IgbmVnYXRpdmUgdmFsdWUgd2lsbCBiZSBwYXNzZWQgdGhyb3VnaCBhcyB0
+aGUgcmV0dXJuDQo+ID4gICB2YWx1ZSBvZiBfX3Zkc29fc2d4X2VudGVyX2VuY2xhdmUoKSB0byBp
+dHMgY2FsbGVyLiBJdCdzIGFsc28gc2FmZSB0bw0KPiA+ICAgbGVhdmUgY2FsbGJhY2sgYnkgbG9u
+Z2ptcCgpIG9yIGJ5IHRocm93aW5nIGEgQysrIGV4Y2VwdGlvbi4NCj4gPg0KPiA+IFNpZ25lZC1v
+ZmYtYnk6IENlZHJpYyBYaW5nIDxjZWRyaWMueGluZ0BpbnRlbC5jb20+DQo+ID4gLS0tDQo+ID4g
+IGFyY2gveDg2L2VudHJ5L3Zkc28vdnNneF9lbnRlcl9lbmNsYXZlLlMgfCAxNTYgKysrKysrKysr
+KysrKystLS0tLS0tLQ0KPiAtDQo+ID4gIGFyY2gveDg2L2luY2x1ZGUvdWFwaS9hc20vc2d4Lmgg
+ICAgICAgICAgfCAgMTQgKy0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMDAgaW5zZXJ0aW9ucygr
+KSwgNzAgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvZW50cnkv
+dmRzby92c2d4X2VudGVyX2VuY2xhdmUuUw0KPiA+IGIvYXJjaC94ODYvZW50cnkvdmRzby92c2d4
+X2VudGVyX2VuY2xhdmUuUw0KPiA+IGluZGV4IGZlMGJmNjY3MWQ2ZC4uMjEwZjQzNjYzNzRhIDEw
+MDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdnNneF9lbnRlcl9lbmNsYXZlLlMN
+Cj4gPiArKysgYi9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZzZ3hfZW50ZXJfZW5jbGF2ZS5TDQo+ID4g
+QEAgLTE0LDg4ICsxNCwxMTggQEANCj4gPiAgLmNvZGU2NA0KPiA+ICAuc2VjdGlvbiAudGV4dCwg
+ImF4Ig0KPiA+DQo+ID4gLSNpZmRlZiBTR1hfS0VSTkVMX0RPQw0KPiA+ICAvKioNCj4gPiAgICog
+X192ZHNvX3NneF9lbnRlcl9lbmNsYXZlKCkgLSBFbnRlciBhbiBTR1ggZW5jbGF2ZQ0KPiA+ICAg
+Kg0KPiA+ICAgKiBAbGVhZjogICAgICAqKklOIFwlZWF4KiogLSBFTkNMVSBsZWFmLCBtdXN0IGJl
+IEVFTlRFUiBvciBFUkVTVU1FDQo+ID4gLSAqIEB0Y3M6ICAgICAgICoqSU4gXCVyYngqKiAtIFRD
+UywgbXVzdCBiZSBub24tTlVMTA0KPiA+IC0gKiBAZXhfaW5mbzogICAqKklOIFwlcmN4KiogLSBP
+cHRpb25hbCAnc3RydWN0IHNneF9lbmNsYXZlX2V4Y2VwdGlvbicNCj4gcG9pbnRlcg0KPiA+ICsg
+KiBAdGNzOiAgICAgICAqKklOIDB4MDgoXCVyc3ApKiogLSBUQ1MsIG11c3QgYmUgbm9uLU5VTEwN
+Cj4gPiArICogQGV4X2luZm86ICAgKipJTiAweDEwKFwlcnNwKSoqIC0gT3B0aW9uYWwgJ3N0cnVj
+dA0KPiBzZ3hfZW5jbGF2ZV9leGluZm8nDQo+ID4gKyAqICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHBvaW50ZXINCj4gPiArICogQGNhbGxiYWNrOiAgKipJTiAweDE4KFwlcnNwKSoq
+IC0gT3B0aW9uYWwgY2FsbGJhY2sgZnVuY3Rpb24gdG8gYmUNCj4gY2FsbGVkIG9uDQo+ID4gKyAq
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVuY2xhdmUgZXhpdCBvciBleGNlcHRp
+b24NCj4gPiAgICoNCj4gPiAgICogUmV0dXJuOg0KPiA+ICAgKiAgKipPVVQgXCVlYXgqKiAtDQo+
+ID4gLSAqICAlMCBvbiBhIGNsZWFuIGVudHJ5L2V4aXQgdG8vZnJvbSB0aGUgZW5jbGF2ZSwgJS1F
+SU5WQUwgaWYgRU5DTFUNCj4gPiBsZWFmIGlzDQo+ID4gLSAqICBub3QgYWxsb3dlZCBvciBpZiBU
+Q1MgaXMgTlVMTCwgJS1FRkFVTFQgaWYgRU5DTFUgb3IgdGhlIGVuY2xhdmUNCj4gPiBmYXVsdHMN
+Cj4gPiArICogICUwIG9uIGEgY2xlYW4gZW50cnkvZXhpdCB0by9mcm9tIHRoZSBlbmNsYXZlLCAl
+LUVJTlZBTCBpZiBFTkNMVQ0KPiA+ICsgbGVhZiBpcyBub3QNCj4gPiArICogIGFsbG93ZWQsICUt
+RUZBVUxUIGlmIEVOQ0xVIG9yIHRoZSBlbmNsYXZlIGZhdWx0cywgb3IgYQ0KPiA+ICsgbm9uLXBv
+c2l0aXZlIHZhbHVlDQo+ID4gKyAqICByZXR1cm5lZCBmcm9tIGBgY2FsbGJhY2tgYCAoaWYgb25l
+IGlzIHN1cHBsaWVkKS4NCj4gPiAgICoNCj4gPiAgICogKipJbXBvcnRhbnQhKiogIF9fdmRzb19z
+Z3hfZW50ZXJfZW5jbGF2ZSgpIGlzICoqTk9UKiogY29tcGxpYW50DQo+IHdpdGggdGhlDQo+ID4g
+LSAqIHg4Ni02NCBBQkksIGkuZS4gY2Fubm90IGJlIGNhbGxlZCBmcm9tIHN0YW5kYXJkIEMgY29k
+ZS4gICBBcyBub3RlZA0KPiBhYm92ZSwNCj4gPiAtICogaW5wdXQgcGFyYW1ldGVycyBtdXN0IGJl
+IHBhc3NlZCB2aWEgYGAlZWF4YGAsIGBgJXJieGBgIGFuZA0KPiA+IGBgJXJjeGBgLCB3aXRoDQo+
+ID4gLSAqIHRoZSByZXR1cm4gdmFsdWUgcGFzc2VkIHZpYSBgYCVlYXhgYC4gIEFsbCByZWdpc3Rl
+cnMgZXhjZXB0DQo+ID4gYGAlcnNwYGAgbXVzdA0KPiA+IC0gKiBiZSB0cmVhdGVkIGFzIHZvbGF0
+aWxlIGZyb20gdGhlIGNhbGxlcidzIHBlcnNwZWN0aXZlLCBpbmNsdWRpbmcNCj4gPiBidXQgbm90
+DQo+ID4gLSAqIGxpbWl0ZWQgdG8gR1BScywgRUZMQUdTLkRGLCBNWENTUiwgRkNXLCBldGMuLi4g
+IENvbnZlcnNlbHksIHRoZQ0KPiA+IGVuY2xhdmUNCj4gPiAtICogYmVpbmcgcnVuICoqbXVzdCoq
+IHByZXNlcnZlIHRoZSB1bnRydXN0ZWQgYGAlcnNwYGAgYW5kIHN0YWNrLg0KPiA+ICsgKiB4ODYt
+NjQgQUJJLCBpLmUuIGNhbm5vdCBiZSBjYWxsZWQgZnJvbSBzdGFuZGFyZCBDIGNvZGUuIEFzIG5v
+dGVkDQo+ID4gKyBhYm92ZSwNCj4gPiArICogaW5wdXQgcGFyYW1ldGVycyBtdXN0IGJlIHBhc3Nl
+ZCB2aWEgYGAlZWF4YGAsIGBgOCglcnNwKWBgLA0KPiA+ICsgYGAweDEwKCVyc3ApYGAgYW5kDQo+
+ID4gKyAqIGBgMHgxOCglcnNwKWBgLCB3aXRoIHRoZSByZXR1cm4gdmFsdWUgcGFzc2VkIHZpYSBg
+YCVlYXhgYC4gQWxsDQo+ID4gKyBvdGhlciByZWdpc3RlcnMNCj4gPiArICogd2lsbCBiZSBwYXNz
+ZWQgdGhyb3VnaCB0byB0aGUgZW5jbGF2ZSBhcyBpcy4gQWxsIHJlZ2lzdGVycyBleGNlcHQNCj4g
+PiArIGBgJXJicGBgDQo+ID4gKyAqIG11c3QgYmUgdHJlYXRlZCBhcyB2b2xhdGlsZSBmcm9tIHRo
+ZSBjYWxsZXIncyBwZXJzcGVjdGl2ZSwNCj4gPiArIGluY2x1ZGluZyBidXQgbm90DQo+ID4gKyAq
+IGxpbWl0ZWQgdG8gR1BScywgRUZMQUdTLkRGLCBNWENTUiwgRkNXLCBldGMuLi4gQ29udmVyc2Vs
+eSwgdGhlDQo+ID4gKyBlbmNsYXZlIGJlaW5nDQo+ID4gKyAqIHJ1biAqKm11c3QqKiBwcmVzZXJ2
+ZSB0aGUgdW50cnVzdGVkIGBgJXJicGBgLg0KPiA+ICsgKg0KPiA+ICsgKiBgYGNhbGxiYWNrYGAg
+aGFzIHRoZSBmb2xsb3dpbmcgc2lnbmF0dXJlOg0KPiA+ICsgKiBpbnQgY2FsbGJhY2sobG9uZyBy
+ZGksIGxvbmcgcnNpLCBsb25nIHJkeCwNCj4gPiArICogICAgICAgICAgICAgc3RydWN0IHNneF9l
+bmNsYXZlX2V4aW5mbyAqZXhfaW5mbywgbG9uZyByOCwgbG9uZyByOSwNCj4gPiArICogICAgICAg
+ICAgICAgdm9pZCAqdGNzLCBsb25nIHVyc3ApOw0KPiA+ICsgKiBgYGNhbGxiYWNrYGAgKipzaGFs
+bCoqIGZvbGxvdyB4ODZfNjQgQUJJLiBBbGwgR1BScyAqKmV4Y2VwdCoqDQo+ID4gKyBgYCVyYXhg
+YCwgYGAlcmJ4YGANCj4gPiArICogYW5kIGBgcmN4YGAgYXJlIHBhc3NlZCB0aHJvdWdoIHRvIGBg
+Y2FsbGJhY2tgYC4gYGAlcmRpYGAsDQo+ID4gKyBgYCVyc2lgYCwgYGAlcmR4YGAsDQo+ID4gKyAq
+IGBgJXI4YGAsIGBgJXI5YGAsIGFsb25nIHdpdGggdGhlIHZhbHVlIG9mIGBgJXJzcGBgIHdoZW4g
+dGhlDQo+ID4gKyBlbmNsYXZlIGV4aXRlZC9leGNlcHRlZCwNCj4gPiArICogY2FuIGJlIGFjY2Vz
+c2VkIGRpcmVjdGx5IGFzIGlucHV0IHBhcmFtZXRlcnMsIHdoaWxlIG90aGVyIEdQUnMgY2FuDQo+
+ID4gKyBiZQ0KPiA+ICsgKiBhY2Nlc3NlZCBpbiBhc3NlbWJseSBpZiBuZWVkZWQuDQo+ID4gKyAq
+IEEgcG9zaXRpdmUgdmFsdWUgcmV0dXJuZWQgZnJvbSBgYGNhbGxiYWNrYGAgd2lsbCBiZSB0cmVh
+dGVkIGFzIGFuDQo+ID4gKyBFTkNMVSBsZWFmDQo+ID4gKyAqIChlLmcuIEVFTlRFUi9FUkVTVU1F
+KSB0byByZWVudGVyIHRoZSBlbmNsYXZlLCB3aGlsZSAwIG9yIGENCj4gPiArIG5lZ2F0aXZlIHJl
+dHVybg0KPiANCj4gInRvIHJlZW50ZXIgdGhlIGVuY2xhdmUgd2l0aG91dCBwb3BwaW5nIHRoZSBl
+eHRyYSBkYXRhIHB1c2hlZCBieSB0aGUNCj4gZW5jbGF2ZSBvZmYgdGhlIHN0YWNrIiBvciBzaW1p
+bGFyLiAgV2UgcmVhbGx5IGRvbid0IHdhbnQgYSBzaXR1YXRpb24NCj4gd2hlcmUgc29tZW9uZSBw
+dXRzIGFsbCB0aGVyZSAia2VlcCBvbiBnb2luZyIgbG9naWMgaW4gdGhlIGNhbGxiYWNrIGFuZA0K
+PiB0aGUgc3RhY2sgdXNhZ2UgZ3Jvd3Mgd2l0aG91dCBib3VuZC4NCj4gDQo+ID4gKyAqIHZhbHVl
+IHdpbGwgYmUgcGFzc2VkIGJhY2sgdG8gdGhlIGNhbGxlciBvZg0KPiBfX3Zkc29fc2d4X2VudGVy
+X2VuY2xhdmUoKS4NCj4gPiArICogSXQgaXMgYWxzbyAqKnNhZmUqKiB0byBgYGxvbmdqbXAoKWBg
+IG91dCBvZiBgYGNhbGxiYWNrYGAuDQo+IA0KPiBJJ20gbm90IHN1cmUgdGhhdCAic2FmZSIgbmVl
+ZHMgZW1waGFzaXMuDQo+IA0KPiA+ICAgKi8NCj4gPiAtX192ZHNvX3NneF9lbnRlcl9lbmNsYXZl
+KHUzMiBsZWFmLCB2b2lkICp0Y3MsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
+dCBzZ3hfZW5jbGF2ZV9leGNlcHRpb24gKmV4X2luZm8pDQo+ID4gLXsNCj4gPiAtICAgICAgIGlm
+IChsZWFmICE9IFNHWF9FRU5URVIgJiYgbGVhZiAhPSBTR1hfRVJFU1VNRSkNCj4gPiAtICAgICAg
+ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4gLQ0KPiA+IC0gICAgICAgaWYgKCF0Y3MpDQo+
+ID4gLSAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+IC0NCj4gPiAtICAgICAgIHRy
+eSB7DQo+ID4gLSAgICAgICAgICAgICAgIEVOQ0xVW2xlYWZdOw0KPiA+IC0gICAgICAgfSBjYXRj
+aCAoZXhjZXB0aW9uKSB7DQo+ID4gLSAgICAgICAgICAgICAgIGlmIChlKQ0KPiA+IC0gICAgICAg
+ICAgICAgICAgICAgICAgICplID0gZXhjZXB0aW9uOw0KPiA+IC0gICAgICAgICAgICAgICByZXR1
+cm4gLUVGQVVMVDsNCj4gPiAtICAgICAgIH0NCj4gPiAtDQo+ID4gLSAgICAgICByZXR1cm4gMDsN
+Cj4gPiAtfQ0KPiA+IC0jZW5kaWYNCj4gPiAgRU5UUlkoX192ZHNvX3NneF9lbnRlcl9lbmNsYXZl
+KQ0KPiA+IC0gICAgICAgLyogRUVOVEVSIDw9IGxlYWYgPD0gRVJFU1VNRSAqLw0KPiA+ICsgICAg
+ICAgLyogUHJvbG9nICovDQo+ID4gKyAgICAgICAuY2ZpX3N0YXJ0cHJvYw0KPiA+ICsgICAgICAg
+cHVzaCAgICAlcmJwDQo+ID4gKyAgICAgICAuY2ZpX2FkanVzdF9jZmFfb2Zmc2V0ICA4DQo+ID4g
+KyAgICAgICAuY2ZpX3JlbF9vZmZzZXQgICAgICAgICAlcmJwLCAwDQo+ID4gKyAgICAgICBtb3Yg
+ICAgICVyc3AsICVyYnANCj4gPiArICAgICAgIC5jZmlfZGVmX2NmYV9yZWdpc3RlciAgICVyYnAN
+Cj4gPiArDQo+ID4gKzE6ICAgICAvKiBFRU5URVIgPD0gbGVhZiA8PSBFUkVTVU1FICovDQo+ID4g
+ICAgICAgICBjbXAgICAgICQweDIsICVlYXgNCj4gPiAtICAgICAgIGpiICAgICAgYmFkX2lucHV0
+DQo+ID4gLQ0KPiA+ICsgICAgICAgamIgICAgICA2Zg0KPiA+ICAgICAgICAgY21wICAgICAkMHgz
+LCAlZWF4DQo+ID4gLSAgICAgICBqYSAgICAgIGJhZF9pbnB1dA0KPiA+ICsgICAgICAgamEgICAg
+ICA2Zg0KPiA+DQo+ID4gLSAgICAgICAvKiBUQ1MgbXVzdCBiZSBub24tTlVMTCAqLw0KPiA+IC0g
+ICAgICAgdGVzdCAgICAlcmJ4LCAlcmJ4DQo+ID4gLSAgICAgICBqZSAgICAgIGJhZF9pbnB1dA0K
+PiA+ICsgICAgICAgLyogTG9hZCBUQ1MgYW5kIEFFUCAqLw0KPiA+ICsgICAgICAgbW92ICAgICAw
+eDEwKCVyYnApLCAlcmJ4DQo+ID4gKyAgICAgICBsZWEgICAgIDJmKCVyaXApLCAlcmN4DQo+ID4N
+Cj4gPiAtICAgICAgIC8qIFNhdmUgQGV4Y2VwdGlvbl9pbmZvICovDQo+ID4gLSAgICAgICBwdXNo
+ICAgICVyY3gNCj4gPiAtDQo+ID4gLSAgICAgICAvKiBMb2FkIEFFUCBmb3IgRU5DTFUgKi8NCj4g
+PiAtICAgICAgIGxlYSAgICAgMWYoJXJpcCksICAlcmN4DQo+ID4gLTE6ICAgICBlbmNsdQ0KPiA+
+IC0NCj4gPiAtICAgICAgIGFkZCAgICAgJDB4OCwgJXJzcA0KPiA+IC0gICAgICAgeG9yICAgICAl
+ZWF4LCAlZWF4DQo+ID4gLSAgICAgICByZXQNCj4gPiAtDQo+ID4gLWJhZF9pbnB1dDoNCj4gPiAt
+ICAgICAgIG1vdiAgICAgJCgtRUlOVkFMKSwgJXJheA0KPiA+IC0gICAgICAgcmV0DQo+ID4gLQ0K
+PiA+IC0ucHVzaHNlY3Rpb24gLmZpeHVwLCAiYXgiDQo+ID4gLSAgICAgICAvKiBSZS1sb2FkIEBl
+eGNlcHRpb25faW5mbyBhbmQgZmlsbCBpdCAoaWYgaXQncyBub24tTlVMTCkgKi8NCj4gPiAtMjog
+ICAgIHBvcCAgICAgJXJjeA0KPiA+IC0gICAgICAgdGVzdCAgICAlcmN4LCAlcmN4DQo+ID4gLSAg
+ICAgICBqZSAgICAgIDNmDQo+ID4gKyAgICAgICAvKiBTaW5nbGUgRU5DTFUgc2VydmluZyBhcyBi
+b3RoIEVFTlRFUiBhbmQgQUVQIChFUkVTVU1FKSAqLw0KPiA+ICsyOiAgICAgZW5jbHUNCj4gPg0K
+PiA+ICsgICAgICAgLyogRUVYSVQgcGF0aCAqLw0KPiA+ICsgICAgICAgeG9yICAgICAlZWJ4LCAl
+ZWJ4DQo+ID4gKzM6ICAgICBtb3YgICAgIDB4MTgoJXJicCksICVyY3gNCj4gPiArICAgICAgIGpy
+Y3h6ICAgNGYNCj4gPiAgICAgICAgIG1vdiAgICAgJWVheCwgRVhfTEVBRiglcmN4KQ0KPiA+IC0g
+ICAgICAgbW92ICAgICAlZGksICBFWF9UUkFQTlIoJXJjeCkNCj4gPiAtICAgICAgIG1vdiAgICAg
+JXNpLCAgRVhfRVJST1JfQ09ERSglcmN4KQ0KPiA+ICsgICAgICAgam5jICAgICA0Zg0KPiA+ICsg
+ICAgICAgbW92ICAgICAlZGksIEVYX1RSQVBOUiglcmN4KQ0KPiA+ICsgICAgICAgbW92ICAgICAl
+c2ksIEVYX0VSUk9SX0NPREUoJXJjeCkNCj4gPiAgICAgICAgIG1vdiAgICAgJXJkeCwgRVhfQURE
+UkVTUyglcmN4KQ0KPiA+IC0zOiAgICAgbW92ICAgICAkKC1FRkFVTFQpLCAlcmF4DQo+ID4gKw0K
+PiA+ICs0OiAgICAgLyogQ2FsbCAqY2FsbGJhY2sgaWYgc3VwcGxpZWQgKi8NCj4gPiArICAgICAg
+IG1vdiAgICAgMHgyMCglcmJwKSwgJXJheA0KPiA+ICsgICAgICAgdGVzdCAgICAlcmF4LCAlcmF4
+DQo+IA0KPiBNYXliZSBoYXZlIGEgY29tbWVudCBsaWtlICJBdCB0aGlzIHBvaW50LCB0aGUgZWZm
+ZWN0aXZlIHJldHVybiB2YWx1ZSBpcw0KPiBpbiBSQlguICBJZiB0aGVyZSBpcyBubyBjYWxsYmFj
+aywgdGhlbiByZXR1cm4gaXQuIg0KPiANCj4gPiArICAgICAgIGNtb3Z6ICAgJXJieCwgJXJheA0K
+PiA+ICsgICAgICAganogICAgICA3Zg0KPiA+ICsgICAgICAgLyogQWxpZ24gc3RhY2sgYW5kIGNs
+ZWFyIFJGTEFHUy5ERiBwZXIgeDg2XzY0IEFCSSAqLw0KPiA+ICsgICAgICAgbW92ICAgICAlcnNw
+LCAlcmJ4DQo+IA0KPiBXaG9hLCB0aGlzIGlzIHRvbyBzdWJ0bGUgaGVyZS4gIENhbiB5b3UgdXBk
+YXRlIHRoZSBjb21tZW50IHRvIGNsYXJpZnkNCj4gdGhhdCB0aGUgdVJTUCB2YWx1ZSBzZXQgYnkg
+dGhlIGVuY2xhdmUgbmVlZHMgdG8gYmUgc2F2ZWQgc28gdGhhdCB0aGUNCj4gZW5jbGF2ZSBjYW4g
+YmUgcmVzdW1lZCBpZiBuZWVkZWQ/DQo+IA0KPiA+ICsgICAgICAgYW5kICAgICAkLTB4MTAsICVy
+c3ANCj4gPiArICAgICAgIGNsZA0KPiA+ICsgICAgICAgLyogUGFyYW1ldGVycyBmb3IgKmNhbGxi
+YWNrICovDQo+ID4gKyAgICAgICBwdXNoICAgICVyYngNCj4gPiArICAgICAgIHB1c2ggICAgMHgx
+MCglcmJwKQ0KPiA+ICsgICAgICAgLyogQ2FsbCB2aWEgcmV0cG9saW5lICovDQo+ID4gKyAgICAg
+ICBjYWxsICAgIDQwZg0KPiA+ICsgICAgICAgLyogQ2xlYW51cCBzdGFjayAqLw0KPiA+ICsgICAg
+ICAgbW92ICAgICAlcmJ4LCAlcnNwDQo+IA0KPiBUbyBtZSwgIkNsZWFudXAgc3RhY2siIG1ha2Vz
+IG1lIHRoaW5rIHRoYXQgeW91J3JlIHJlc3RvcmluZyB0aGUgb3JpZ2luYWwNCj4gUlNQLCBidXQg
+eW91J3JlIGFjdHVhbGx5IGp1c3QgdW5kb2luZyBpbiB0aGUgc3RhY2sgYWxpZ25tZW50Lg0KPiBI
+b3cgYWJvdXQgIlVuZG8gc3RhY2sgYWxpZ25tZW50Ij8NCj4gDQo+IEJ1dCBJJ20gbm90IHNlZWlu
+ZyB0aGUgY29kZSB0aGF0IGNhdXNlcyBhIHJldHVybiB2YWx1ZSBSQVggPD0gMCB0byBqdXN0DQo+
+IHJldHVybi4NCj4gDQo+ID4gKyAgICAgICBqbXAgICAgIDFiDQo+ID4gKzQwOiAgICAvKiByZXRw
+b2xpbmUgKi8NCj4gPiArICAgICAgIGNhbGwgICAgNDJmDQo+ID4gKzQxOiAgICBwYXVzZQ0KPiA+
+ICsgICAgICAgbGZlbmNlDQo+ID4gKyAgICAgICBqbXAgICAgIDQxYg0KPiA+ICs0MjogICAgbW92
+ICAgICAlcmF4LCAoJXJzcCkNCj4gPiArICAgICAgIHJldA0KPiA+ICsNCj4gPiArNTogICAgIC8q
+IEV4Y2VwdGlvbiBwYXRoICovDQo+ID4gKyAgICAgICBtb3YgICAgICQtRUZBVUxULCAlZWJ4DQo+
+ID4gKyAgICAgICBzdGMNCj4gPiArICAgICAgIGptcCAgICAgM2INCj4gPiArDQo+ID4gKzY6ICAg
+ICAvKiBVbnN1cHBvcnRlZCBFTkNMVSBsZWFmICovDQo+ID4gKyAgICAgICBjbXAgICAgICQwLCAl
+ZWF4DQo+ID4gKyAgICAgICBqbGUgICAgIDdmDQo+ID4gKyAgICAgICBtb3YgICAgICQtRUlOVkFM
+LCAlZWF4DQo+ID4gKw0KPiA+ICs3OiAgICAgLyogRXBpbG9nICovDQo+ID4gKyAgICAgICBsZWF2
+ZQ0KPiA+ICsgICAgICAgLmNmaV9kZWZfY2ZhICAgICAgICAgICAgJXJzcCwgOA0KPiA+ICAgICAg
+ICAgcmV0DQo+ID4gLS5wb3BzZWN0aW9uDQo+ID4gKyAgICAgICAuY2ZpX2VuZHByb2MNCj4gPg0K
+PiA+IC1fQVNNX1ZEU09fRVhUQUJMRV9IQU5ETEUoMWIsIDJiKQ0KPiA+ICtfQVNNX1ZEU09fRVhU
+QUJMRV9IQU5ETEUoMmIsIDViKQ0KPiANCj4gLS1BbmR5DQo=
