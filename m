@@ -1,71 +1,36 @@
-Return-Path: <SRS0=kShl=TK=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=h96Y=TL=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE54AC04A6B
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 May 2019 19:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71557C04A6B
+	for <linux-sgx@archiver.kernel.org>; Sat, 11 May 2019 01:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A33112184E
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 May 2019 19:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557516169;
-	bh=A5xalmmL8H1Iq8fxzTQYLZUEYrOLdpg9dk/dWsknQFI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=tv3D8eFumEC69u7kNSUpWC+5556bGImm9GhKwGgmFh8/+qlyjb1ZmRBNGRNORUl7D
-	 etFWXd4nJTe+OzlH9gSpktfBJbvTVX3hOzD6oUEH+0Yu0wg9DsRbgJlC1qTqam1riN
-	 vcBMNl7zKVmSNDq7so5pu4IB4K5JGjz/wm2p0o2w=
+	by mail.kernel.org (Postfix) with ESMTP id 388E320656
+	for <linux-sgx@archiver.kernel.org>; Sat, 11 May 2019 01:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbfEJTWt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 10 May 2019 15:22:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35898 "EHLO mail.kernel.org"
+        id S1728064AbfEKBHZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 10 May 2019 21:07:25 -0400
+Received: from mga09.intel.com ([134.134.136.24]:12805 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727740AbfEJTWt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 10 May 2019 15:22:49 -0400
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A683521874
-        for <linux-sgx@vger.kernel.org>; Fri, 10 May 2019 19:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557516167;
-        bh=A5xalmmL8H1Iq8fxzTQYLZUEYrOLdpg9dk/dWsknQFI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0M9qAGAC0+oIV4vU1pOYOruimjxIP6xwN3M4zU10h4UPjIztj0OG/SpZtik8pMLt9
-         GDVz56oQ/ShGKiiIkHgo46c1UWx/bmxdxMhi2Ex6TH+6PlfJKb7xwrbG2R2hgWUs57
-         /t859446qfSlRWpK6BDlgEN29nRE0WIXUkSmwb0U=
-Received: by mail-wr1-f49.google.com with SMTP id v11so9056154wru.5
-        for <linux-sgx@vger.kernel.org>; Fri, 10 May 2019 12:22:47 -0700 (PDT)
-X-Gm-Message-State: APjAAAVa9cFK/0S/3EcJiz59fisdIQMWM97zkhm83J3OAT65/k8GZ/GT
-        QZooCLG/Jix8QEnRP4Y7Cv5Vu7nkvhz0gXGtKwfXag==
-X-Google-Smtp-Source: APXvYqzwrq2r4B9dU7/lca9s9tWpGlVr6bah8EziTqKYJ7y9XqMUfvQCNcoAPzJ5b+KqOLhKhXMzWEEQSpXISygfQak=
-X-Received: by 2002:adf:fb4a:: with SMTP id c10mr8719136wrs.309.1557516166095;
- Fri, 10 May 2019 12:22:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <alpine.DEB.2.21.1904192233390.3174@nanos.tec.linutronix.de>
- <8c5133bc-1301-24ca-418d-7151a6eac0e2@fortanix.com> <alpine.DEB.2.21.1904192248550.3174@nanos.tec.linutronix.de>
- <e1478f70-7e44-6e3e-2aaf-1b12a96328ed@fortanix.com> <2AE80EA3-799E-4808-BBE4-3872F425BCF8@amacapital.net>
- <49b28ca1-6e66-87d9-2202-84c58f13fb99@fortanix.com> <444537E3-4156-41FB-83CA-57C5B660523F@amacapital.net>
- <f9d93291-9b59-7b66-de9f-af92246f1c9c@fortanix.com> <alpine.DEB.2.21.1904192337160.3174@nanos.tec.linutronix.de>
- <5854e66a-950e-1b12-5393-d9cdd15367dc@fortanix.com> <CALCETrV7CcDnx1hVtmBnDNABG11GuMqyspJMMpV+zHpVeFu3ow@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F4E885F9D@ORSMSX116.amr.corp.intel.com>
- <979615a8-fd03-e3fd-fbdb-65c1e51afd93@fortanix.com> <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
- <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
- <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
-In-Reply-To: <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 10 May 2019 12:22:34 -0700
-X-Gmail-Original-Message-ID: <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
-Message-ID: <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
-Subject: Re: [PATCH v20 00/28] Intel SGX1 support
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        id S1727961AbfEKBHY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 10 May 2019 21:07:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 May 2019 18:06:53 -0700
+X-ExtLoop1: 1
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 10 May 2019 18:06:52 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.36]) by
+ ORSMSX105.amr.corp.intel.com ([169.254.2.167]) with mapi id 14.03.0415.000;
+ Fri, 10 May 2019 18:06:51 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>
+CC:     "Hansen, Dave" <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Dr. Greg" <greg@enjellic.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -84,103 +49,177 @@ Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v20 00/28] Intel SGX1 support
+Thread-Topic: [PATCH v20 00/28] Intel SGX1 support
+Thread-Index: AQHU9QnxaoiNNkdqP0yJjajWChyAgKZCnqeAgAAN+QCAAVPmAIAAE4cAgABGGYCAABE4gIAAAfWAgAABFgCAAADiAIAABegAgAABOYCAAAN6gIAAAQAAgAAA2wCAAATlgIAEWt6AgBvkEoCAAHnYgIAABJkAgAAC6gD//5XxkIAAergAgAAFGwD//7YnUA==
+Date:   Sat, 11 May 2019 01:06:51 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F4E886394@ORSMSX116.amr.corp.intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1904192233390.3174@nanos.tec.linutronix.de>
+ <8c5133bc-1301-24ca-418d-7151a6eac0e2@fortanix.com>
+ <alpine.DEB.2.21.1904192248550.3174@nanos.tec.linutronix.de>
+ <e1478f70-7e44-6e3e-2aaf-1b12a96328ed@fortanix.com>
+ <2AE80EA3-799E-4808-BBE4-3872F425BCF8@amacapital.net>
+ <49b28ca1-6e66-87d9-2202-84c58f13fb99@fortanix.com>
+ <444537E3-4156-41FB-83CA-57C5B660523F@amacapital.net>
+ <f9d93291-9b59-7b66-de9f-af92246f1c9c@fortanix.com>
+ <alpine.DEB.2.21.1904192337160.3174@nanos.tec.linutronix.de>
+ <5854e66a-950e-1b12-5393-d9cdd15367dc@fortanix.com>
+ <CALCETrV7CcDnx1hVtmBnDNABG11GuMqyspJMMpV+zHpVeFu3ow@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E885F9D@ORSMSX116.amr.corp.intel.com>
+ <979615a8-fd03-e3fd-fbdb-65c1e51afd93@fortanix.com>
+ <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
+ <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
+ <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
+ <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+In-Reply-To: <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDJhODk2ODItMDAzMi00MDI2LTkxNzctYjJlNWYxMDZmZDMyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaksrOW85SFhTUCtRYllvRDRaRGswSUZnVmVxOTRZZHhBeTR1ZHdZTHQyckZ1ZzJiaGRRMlpocnY2ZExtSU1jayJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, May 10, 2019 at 12:04 PM Jethro Beekman <jethro@fortanix.com> wrote=
-:
->
-> On 2019-05-10 11:56, Xing, Cedric wrote:
-> > Hi Jethro,
-> >
-> >> ELF files are explicitly designed such that you can map them (with mma=
-p)
-> >> in 4096-byte chunks. However, sometimes there's overlap and you will
-> >> sometimes see that a particular offset is mapped twice because the fir=
-st
-> >> half of the page in the file belongs to an RX range and the second hal=
-f
-> >> to an R-only range. Also, ELF files don't (normally) describe stack,
-> >> heap, etc. which you do need for enclaves.
-> >
-> > You have probably misread my email. By mmap(), I meant the enclave file=
- would be mapped via *multiple* mmap() calls, in the same way as what dlope=
-n() would do in loading regular shared object. The intention here is to mak=
-e the enclave file subject to the same checks as regular shared objects.
->
-> No, I didn't misread your email. My original point still stands:
-> requiring that an enclave's memory is created from one or more mmap
-> calls of a file puts significant restrictions on the enclave's on-disk
-> representation.
->
-
-For a tiny bit of background, Linux (AFAIK*) makes no effort to ensure
-the complete integrity of DSOs.  What Linux *does* do (if so
-configured) is to make sure that only approved data is mapped
-executable.  So, if you want to have some bytes be executable, those
-bytes have to come from a file that passes the relevant LSM and IMA
-checks.  So we have two valid approaches, I think.
-
-Approach 1: we treat SGX exactly the same way and make it so that only
-bytes that pass the relevant checks can be mapped as code within an
-enclave.  This imposes no particular restrictions on the file format
--- we just need some API that takes an fd, an offset, and a length,
-and adds those bytes as code to an enclave.  (It could also take a
-pointer and a length and make sure that the pointer points to
-executable memory -- same effect.)
-
-Approach 2: we decide that we want a stronger guarantee and that we
-*will* ensure the integrity of the enclave.  This means:
-
-2a) that we either need to load the entire thing from some approved
-file, and we commit to supporting one or more file formats.
-
-2b) we need to check that the eventual enclave hash is approved.  Or
-we could have a much shorter file that is just the hash and we check
-that.  At its simplest, the file could be *only* the hash, and there
-could be an LSM callback to check it.  In the future, if someone wants
-to allow enclaves to be embedded in DSOs, we could have a special ELF
-note or similar that contains an enclave hash or similar.
-
-2c) same as 2b except that we expose the whole SIGSTRUCT, not just the hash=
-.
-
-Here are some pros and cons of various bits:
-
-1 and 2a allow anti-virus software to scan the enclave code, and 2a
-allows it to scan the whole enclave.  I don't know if this is actually
-imporant.
-
-2a is by far the most complicated kernel implementation.
-
-2b and 2c are almost file-format agnostic.  1 is completely file
-format agnostic but, in exchange, it's much weaker.
-
-2b and 2c should solve most (but not all) of the launch control
-complaints that Dr. Greg cares about, in the sense that the LSM policy
-quite literally validates that the enclave is approved.
-
-As a straw man design, I propose the following, which is mostly 2c.
-The whole loading process works almost as in Jarkko's current driver,
-but the actual ioctl that triggers EINIT changes.  When you issue the
-ioctl, you pass in an fd and the SIGSTRUCT is loaded and checked from
-the fd.  The idea is that software that ships an enclave will ship a
-.sgxsig file that is literally a SIGSTRUCT for the enclave.  With
-SELinux, that file gets labeled something like
-sgx_enclave_sigstruct_t.  And we have the following extra twist: if
-you're calling the EADD ioctl to add *code* to the enclave, the driver
-checks that the code being loaded is mapped executable.  This way
-existing code-signing policies don't get subverted, and policies that
-want to impose full verification on the enclave can do so by verifying
-the .sigstruct file.
-
-What do you all think?
-
-* It's certainly the case that Linux does not *succeed* at preserving
-the overall integrity of shared objects.  If nothing else, you can
-freely mremap() them however you like.  And you can jump into them
-wherever you like.
+SGkgQW5keSBhbmQgSmV0aHJvLA0KDQo+ID4gPiBZb3UgaGF2ZSBwcm9iYWJseSBtaXNyZWFkIG15
+IGVtYWlsLiBCeSBtbWFwKCksIEkgbWVhbnQgdGhlIGVuY2xhdmUNCj4gZmlsZSB3b3VsZCBiZSBt
+YXBwZWQgdmlhICptdWx0aXBsZSogbW1hcCgpIGNhbGxzLCBpbiB0aGUgc2FtZSB3YXkgYXMNCj4g
+d2hhdCBkbG9wZW4oKSB3b3VsZCBkbyBpbiBsb2FkaW5nIHJlZ3VsYXIgc2hhcmVkIG9iamVjdC4g
+VGhlIGludGVudGlvbg0KPiBoZXJlIGlzIHRvIG1ha2UgdGhlIGVuY2xhdmUgZmlsZSBzdWJqZWN0
+IHRvIHRoZSBzYW1lIGNoZWNrcyBhcyByZWd1bGFyDQo+IHNoYXJlZCBvYmplY3RzLg0KPiA+DQo+
+ID4gTm8sIEkgZGlkbid0IG1pc3JlYWQgeW91ciBlbWFpbC4gTXkgb3JpZ2luYWwgcG9pbnQgc3Rp
+bGwgc3RhbmRzOg0KPiA+IHJlcXVpcmluZyB0aGF0IGFuIGVuY2xhdmUncyBtZW1vcnkgaXMgY3Jl
+YXRlZCBmcm9tIG9uZSBvciBtb3JlIG1tYXANCj4gPiBjYWxscyBvZiBhIGZpbGUgcHV0cyBzaWdu
+aWZpY2FudCByZXN0cmljdGlvbnMgb24gdGhlIGVuY2xhdmUncyBvbi1kaXNrDQo+ID4gcmVwcmVz
+ZW50YXRpb24uDQo+ID4NCg0KSSB3YXMgdGFsa2luZyBpbiB0aGUgY29udGV4dCBvZiBFTEYsIHdp
+dGggdGhlIGFzc3VtcHRpb24gdGhhdCBjaGFuZ2luZyBSVyBwYWdlcyB0byBSWCBpcyBkaXNhbGxv
+d2VkIGJ5IExTTS4gQW5kIGluIHRoYXQgY2FzZSBtbWFwKCl3b3VsZCBiZSB0aGUgb25seSB3YXkg
+dG8gbG9hZCBhIHBhZ2UgZnJvbSBkaXNrIHdpdGhvdXQgaGF2aW5nIHRvICJ3cml0ZSIgdG8gaXQu
+IEJ1dCB0aGF0J3MganVzdCBhbiBleGFtcGxlIGJ1dCBub3QgdGhlIGZvY3VzIG9mIHRoZSBkaXNj
+dXNzaW9uLg0KDQpUaGUgcG9pbnQgSSB3YXMgdHJ5aW5nIHRvIG1ha2Ugd2FzLCB0aGF0IHRoZSBk
+cml2ZXIgaXMgZ29pbmcgdG8gY29weSBib3RoIGNvbnRlbnQgYW5kIHBlcm1pc3Npb25zIGZyb20g
+dGhlIHNvdXJjZSBzbyB0aGUgc2VjdXJpdHkgcHJvcGVydGllcyBlc3RhYmxpc2hlZCAoYnkgSU1B
+L0xTTSkgYXJvdW5kIHRoYXQgc291cmNlIHBhZ2Ugd291bGQgYmUgY2FycmllZCBvbnRvIHRoZSBF
+UEMgcGFnZSBiZWluZyBFQUREJ2VkLiBUaGUgZHJpdmVyIGRvZXNuJ3QgY2FyZSBob3cgdGhhdCBz
+b3VyY2UgcGFnZSBjYW1lIGludG8gZXhpc3RlbmNlLiBJdCBjb3VsZCBiZSBtYXBwZWQgZnJvbSBh
+biBFTEYgZmlsZSBhcyBpbiB0aGUgZXhhbXBsZSwgb3IgaXQgY291bGQgYmUgYSByZXN1bHQgZnJv
+bSBKSVQgYXMgbG9uZyBhcyBMU00gYWxsb3dzIGl0LiBUaGUgZHJpdmVyIHdpbGwgYmUgZmlsZSBm
+b3JtYXQgYWdub3N0aWMuDQoNCj4gDQo+IEZvciBhIHRpbnkgYml0IG9mIGJhY2tncm91bmQsIExp
+bnV4IChBRkFJSyopIG1ha2VzIG5vIGVmZm9ydCB0byBlbnN1cmUNCj4gdGhlIGNvbXBsZXRlIGlu
+dGVncml0eSBvZiBEU09zLiAgV2hhdCBMaW51eCAqZG9lcyogZG8gKGlmIHNvDQo+IGNvbmZpZ3Vy
+ZWQpIGlzIHRvIG1ha2Ugc3VyZSB0aGF0IG9ubHkgYXBwcm92ZWQgZGF0YSBpcyBtYXBwZWQNCj4g
+ZXhlY3V0YWJsZS4gIFNvLCBpZiB5b3Ugd2FudCB0byBoYXZlIHNvbWUgYnl0ZXMgYmUgZXhlY3V0
+YWJsZSwgdGhvc2UNCj4gYnl0ZXMgaGF2ZSB0byBjb21lIGZyb20gYSBmaWxlIHRoYXQgcGFzc2Vz
+IHRoZSByZWxldmFudCBMU00gYW5kIElNQQ0KPiBjaGVja3MuICBTbyB3ZSBoYXZlIHR3byB2YWxp
+ZCBhcHByb2FjaGVzLCBJIHRoaW5rLg0KPiANCj4gQXBwcm9hY2ggMTogd2UgdHJlYXQgU0dYIGV4
+YWN0bHkgdGhlIHNhbWUgd2F5IGFuZCBtYWtlIGl0IHNvIHRoYXQgb25seQ0KPiBieXRlcyB0aGF0
+IHBhc3MgdGhlIHJlbGV2YW50IGNoZWNrcyBjYW4gYmUgbWFwcGVkIGFzIGNvZGUgd2l0aGluIGFu
+DQo+IGVuY2xhdmUuICBUaGlzIGltcG9zZXMgbm8gcGFydGljdWxhciByZXN0cmljdGlvbnMgb24g
+dGhlIGZpbGUgZm9ybWF0DQo+IC0tIHdlIGp1c3QgbmVlZCBzb21lIEFQSSB0aGF0IHRha2VzIGFu
+IGZkLCBhbiBvZmZzZXQsIGFuZCBhIGxlbmd0aCwNCj4gYW5kIGFkZHMgdGhvc2UgYnl0ZXMgYXMg
+Y29kZSB0byBhbiBlbmNsYXZlLiAgKEl0IGNvdWxkIGFsc28gdGFrZSBhDQo+IHBvaW50ZXIgYW5k
+IGEgbGVuZ3RoIGFuZCBtYWtlIHN1cmUgdGhhdCB0aGUgcG9pbnRlciBwb2ludHMgdG8NCj4gZXhl
+Y3V0YWJsZSBtZW1vcnkgLS0gc2FtZSBlZmZlY3QuKQ0KDQpJIGFzc3VtZSAic29tZSBBUEkiIGlz
+IHNvbWUgdXNlciBtb2RlIEFQSSBzbyB0aGlzIGFwcHJvYWNoIGlzIHRoZSBzYW1lIGFzIHdoYXQg
+SSBzdWdnZXN0ZWQgaW4gbXkgbGFzdCBlbWFpbC4gQW0gSSBjb3JyZWN0Pw0KDQo+IA0KPiBBcHBy
+b2FjaCAyOiB3ZSBkZWNpZGUgdGhhdCB3ZSB3YW50IGEgc3Ryb25nZXIgZ3VhcmFudGVlIGFuZCB0
+aGF0IHdlDQo+ICp3aWxsKiBlbnN1cmUgdGhlIGludGVncml0eSBvZiB0aGUgZW5jbGF2ZS4gIFRo
+aXMgbWVhbnM6DQo+IA0KPiAyYSkgdGhhdCB3ZSBlaXRoZXIgbmVlZCB0byBsb2FkIHRoZSBlbnRp
+cmUgdGhpbmcgZnJvbSBzb21lIGFwcHJvdmVkDQo+IGZpbGUsIGFuZCB3ZSBjb21taXQgdG8gc3Vw
+cG9ydGluZyBvbmUgb3IgbW9yZSBmaWxlIGZvcm1hdHMuDQo+IA0KPiAyYikgd2UgbmVlZCB0byBj
+aGVjayB0aGF0IHRoZSBldmVudHVhbCBlbmNsYXZlIGhhc2ggaXMgYXBwcm92ZWQuICBPcg0KPiB3
+ZSBjb3VsZCBoYXZlIGEgbXVjaCBzaG9ydGVyIGZpbGUgdGhhdCBpcyBqdXN0IHRoZSBoYXNoIGFu
+ZCB3ZSBjaGVjaw0KPiB0aGF0LiAgQXQgaXRzIHNpbXBsZXN0LCB0aGUgZmlsZSBjb3VsZCBiZSAq
+b25seSogdGhlIGhhc2gsIGFuZCB0aGVyZQ0KPiBjb3VsZCBiZSBhbiBMU00gY2FsbGJhY2sgdG8g
+Y2hlY2sgaXQuICBJbiB0aGUgZnV0dXJlLCBpZiBzb21lb25lIHdhbnRzDQo+IHRvIGFsbG93IGVu
+Y2xhdmVzIHRvIGJlIGVtYmVkZGVkIGluIERTT3MsIHdlIGNvdWxkIGhhdmUgYSBzcGVjaWFsIEVM
+Rg0KPiBub3RlIG9yIHNpbWlsYXIgdGhhdCBjb250YWlucyBhbiBlbmNsYXZlIGhhc2ggb3Igc2lt
+aWxhci4NCj4gDQo+IDJjKSBzYW1lIGFzIDJiIGV4Y2VwdCB0aGF0IHdlIGV4cG9zZSB0aGUgd2hv
+bGUgU0lHU1RSVUNULCBub3QganVzdCB0aGUNCj4gaGFzaC4NCj4gDQo+IEhlcmUgYXJlIHNvbWUg
+cHJvcyBhbmQgY29ucyBvZiB2YXJpb3VzIGJpdHM6DQo+IA0KPiAxIGFuZCAyYSBhbGxvdyBhbnRp
+LXZpcnVzIHNvZnR3YXJlIHRvIHNjYW4gdGhlIGVuY2xhdmUgY29kZSwgYW5kIDJhDQo+IGFsbG93
+cyBpdCB0byBzY2FuIHRoZSB3aG9sZSBlbmNsYXZlLiAgSSBkb24ndCBrbm93IGlmIHRoaXMgaXMg
+YWN0dWFsbHkNCj4gaW1wb3JhbnQuDQoNCkkgZ3Vlc3MgYW50aS12aXJ1cyBzb2Z0d2FyZSBjYW4g
+c2NhbiBhbnkgZW5jbGF2ZSBmaWxlIGluICphbGwqIGNhc2VzIGFzIGxvbmcgYXMgaXQgdW5kZXJz
+dGFuZHMgdGhlIGZvcm1hdCBvZiB0aGF0IGVuY2xhdmUuIEl0IGRvZXNuJ3QgbmVjZXNzYXJ5IG1l
+YW4gdGhlIGtlcm5lbCBoYXMgdG8gdW5kZXJzdGFuZCB0aGF0IGVuY2xhdmUgZm9ybWF0IChhcyBl
+bmNsYXZlIGZpbGUgY291bGQgYmUgcGFyc2VkIGluIHVzZXIgbW9kZSkgb3IgdGhlIGFudGktdmly
+dXMgc29mdHdhcmUgaGFzIHRvIHVuZGVyc3RhbmQgYWxsIGZvcm1hdHMgKGlmIGFueSkgc3VwcG9y
+dGVkIG5hdGl2ZWx5IGJ5IHRoZSBrZXJuZWwuDQogDQo+IA0KPiAyYSBpcyBieSBmYXIgdGhlIG1v
+c3QgY29tcGxpY2F0ZWQga2VybmVsIGltcGxlbWVudGF0aW9uLg0KPiANCg0KQWdyZWVkLiBJIGRv
+bid0IHNlZSBhbnkgcmVhc29uIDJhIHdvdWxkIGJlIG5lY2Vzc2FyeS4NCg0KPiAyYiBhbmQgMmMg
+YXJlIGFsbW9zdCBmaWxlLWZvcm1hdCBhZ25vc3RpYy4gIDEgaXMgY29tcGxldGVseSBmaWxlDQo+
+IGZvcm1hdCBhZ25vc3RpYyBidXQsIGluIGV4Y2hhbmdlLCBpdCdzIG11Y2ggd2Vha2VyLg0KDQpJ
+J2Qgc2F5IDEgYW5kICh2YXJpYW50cyBvZikgMiBhcmUgb3J0aG9nb25hbC4gU0dYIGFsd2F5cyBl
+bmZvcmNlcyBpbnRlZ3JpdGllcyBzbyBub3QgZG9pbmcgaW50ZWdyaXR5IGNoZWNrcyBhdCBFQURE
+IGRvZXNuJ3QgbWVhbiB0aGUgZW5jbGF2ZSBpbnRlZ3JpdHkgaXMgbm90IGJlaW5nIGVuZm9yY2Vk
+LiAxIGFuZCAyIGFyZSBiYXNpY2FsbHkgMiBkaWZmZXJlbnQgY2hlY2twb2ludHMgd2hlcmUgTFNN
+IGhvb2tzIGNvdWxkIGJlIHBsYWNlZC4gQW5kIGEgZ2l2ZW4gTFNNIGltcGxlbWVudGF0aW9uL3Bv
+bGljeSBtYXkgZW5mb3JjZSBlaXRoZXIgMSBvciAyLCBvciBib3RoLCBvciBuZWl0aGVyLiANCg0K
+PiANCj4gMmIgYW5kIDJjIHNob3VsZCBzb2x2ZSBtb3N0IChidXQgbm90IGFsbCkgb2YgdGhlIGxh
+dW5jaCBjb250cm9sDQo+IGNvbXBsYWludHMgdGhhdCBEci4gR3JlZyBjYXJlcyBhYm91dCwgaW4g
+dGhlIHNlbnNlIHRoYXQgdGhlIExTTSBwb2xpY3kNCj4gcXVpdGUgbGl0ZXJhbGx5IHZhbGlkYXRl
+cyB0aGF0IHRoZSBlbmNsYXZlIGlzIGFwcHJvdmVkLg0KPiANCj4gQXMgYSBzdHJhdyBtYW4gZGVz
+aWduLCBJIHByb3Bvc2UgdGhlIGZvbGxvd2luZywgd2hpY2ggaXMgbW9zdGx5IDJjLg0KPiBUaGUg
+d2hvbGUgbG9hZGluZyBwcm9jZXNzIHdvcmtzIGFsbW9zdCBhcyBpbiBKYXJra28ncyBjdXJyZW50
+IGRyaXZlciwNCj4gYnV0IHRoZSBhY3R1YWwgaW9jdGwgdGhhdCB0cmlnZ2VycyBFSU5JVCBjaGFu
+Z2VzLiAgV2hlbiB5b3UgaXNzdWUgdGhlDQo+IGlvY3RsLCB5b3UgcGFzcyBpbiBhbiBmZCBhbmQg
+dGhlIFNJR1NUUlVDVCBpcyBsb2FkZWQgYW5kIGNoZWNrZWQgZnJvbQ0KPiB0aGUgZmQuICBUaGUg
+aWRlYSBpcyB0aGF0IHNvZnR3YXJlIHRoYXQgc2hpcHMgYW4gZW5jbGF2ZSB3aWxsIHNoaXAgYQ0K
+PiAuc2d4c2lnIGZpbGUgdGhhdCBpcyBsaXRlcmFsbHkgYSBTSUdTVFJVQ1QgZm9yIHRoZSBlbmNs
+YXZlLiAgV2l0aA0KPiBTRUxpbnV4LCB0aGF0IGZpbGUgZ2V0cyBsYWJlbGVkIHNvbWV0aGluZyBs
+aWtlDQo+IHNneF9lbmNsYXZlX3NpZ3N0cnVjdF90LiAgQW5kIHdlIGhhdmUgdGhlIGZvbGxvd2lu
+ZyBleHRyYSB0d2lzdDogaWYNCj4geW91J3JlIGNhbGxpbmcgdGhlIEVBREQgaW9jdGwgdG8gYWRk
+ICpjb2RlKiB0byB0aGUgZW5jbGF2ZSwgdGhlIGRyaXZlcg0KPiBjaGVja3MgdGhhdCB0aGUgY29k
+ZSBiZWluZyBsb2FkZWQgaXMgbWFwcGVkIGV4ZWN1dGFibGUuICBUaGlzIHdheQ0KPiBleGlzdGlu
+ZyBjb2RlLXNpZ25pbmcgcG9saWNpZXMgZG9uJ3QgZ2V0IHN1YnZlcnRlZCwgYW5kIHBvbGljaWVz
+IHRoYXQNCj4gd2FudCB0byBpbXBvc2UgZnVsbCB2ZXJpZmljYXRpb24gb24gdGhlIGVuY2xhdmUg
+Y2FuIGRvIHNvIGJ5IHZlcmlmeWluZw0KPiB0aGUgLnNpZ3N0cnVjdCBmaWxlLg0KDQpJJ20gd2l0
+aCB5b3UgdGhhdCBpdCdzIGRlc2lyYWJsZS9uZWNlc3NhcnkgdG8gYWRkIGFuIExTTSBob29rIGF0
+IEVJTklULCBidXQgZG9uJ3Qgc2VlIHRoZSBuZWVkIGZvciAuc2lnc3RydWN0IGZpbGUgb3IgaXRz
+IGZkIGFzIGlucHV0IHRvIEVJTklUIGlvY3RsLiANCg0KR2VuZXJhbGx5IHNwZWFraW5nLCBMU00g
+bmVlZHMgdG8gZGVjaWRlIHdoZXRoZXIgb3Igbm90IHRvIGxhdW5jaCB0aGUgZW5jbGF2ZSBpbiBx
+dWVzdGlvbi4gQW5kIHRoYXQgZGVjaXNpb24gY291bGQgYmUgYmFzZWQgdXBvbiBlaXRoZXIgdGhl
+IGVuY2xhdmUgaXRzZWxmIChpLmUuIGJ5dGVzIGNvbXByaXNpbmcgdGhlIGVuY2xhdmUsIG9yIGl0
+cyBNUkVOQ0xBVkUsIG9yIGl0cyBzaWduYXR1cmUsIGFsbCBlcXVpdmFsZW50IGZyb20gY3J5cHRv
+Z3JhcGhpYyBzdGFuZHBvaW50KSwgb3Igc29tZSBleHRlcm5hbCBhdHRyaWJ1dGVzIGFzc29jaWF0
+ZWQgd2l0aCB0aGUgZW5jbGF2ZSAoZS5nLiBEQUMvTUFDIGNvbnRleHQgYXNzb2NpYXRlZCB3aXRo
+IHRoZSBlbmNsYXZlIGZpbGUpLCBvciBib3RoLiBJbiB0aGUgZm9ybWVyIGNhc2UsIHdoYXQgbWF0
+dGVycyBpcyB0aGUgY29udGVudCBvZiB0aGUgU0lHU1RSVUNUIGJ1dCBub3Qgd2hlcmUgaXQgY2Ft
+ZSBmcm9tOyB3aGlsZSBpbiB0aGUgbGF0dGVyIGNhc2UgaXQgY291bGQgYmUgZ2F0ZWQgYXQgb3Bl
+bigpIHN5c2NhbGwgc28gdGhhdCBubyBmZCB0byBTSUdTVFJVQ1QgKG9yIHRoZSBlbmNsYXZlIGlt
+YWdlIGZpbGUpIGNvdWxkIGV2ZXIgYmUgb2J0YWluZWQgYnkgdGhlIGNhbGxpbmcgcHJvY2VzcyBp
+ZiBpdCB3YXMgbm90IGFsbG93ZWQgdG8gbGF1bmNoIHRoYXQgZW5jbGF2ZSBhdCBhbGwuIEluIGVp
+dGhlciBjYXNlLCBubyBmZCBpcyBuZWNlc3NhcnkgdG8gYmUgcGFzc2VkIHRvIEVJTklUIGlvY3Rs
+LiBUaGF0IHNhaWQsIGJ5IHByb3ZpZGluZyBhIFNJR1NUUlVDVCB0byBFSU5JVCBpb2N0bCwgdGhl
+IGNhbGxpbmcgcHJvY2VzcyBoYXMgaW1wbGljaXRseSBwcm92ZW4gaXRzIGFjY2VzcyB0byBuZWVk
+ZWQgZmlsZShzKSBhdCB0aGUgZmlsZSBzeXN0ZW0gbGV2ZWwsIHNvIG9ubHkgdGhlIGNvbnRlbnQg
+KGkuZS4gTVJFTkNMQVZFIG9yIHNpZ25pbmcga2V5KSBvZiB0aGUgU0lHU1RSVUNUIG5lZWRzIHRv
+IGJlIGNoZWNrZWQgYnkgTFNNLCB3aGlsZSB0aGUgaW50ZWdyaXR5IG9mIHRoZSBlbmNsYXZlIHdp
+bGwgYmUgZW5mb3JjZWQgYnkgU0dYIGhhcmR3YXJlLg0KDQo+IA0KPiBXaGF0IGRvIHlvdSBhbGwg
+dGhpbms/DQo+IA0KDQpJIHRoaW5rIGFwcHJvYWNoIDEgYW5kICh2YXJpYW50cyBvZikgMiBhcmUg
+b3J0aG9nb25hbCBzbyBJIHdvdWxkbid0IHNraXAgZWl0aGVyIHRvIG1ha2UgdGhlIG90aGVyIG1h
+bmRhdG9yeSBmcm9tIGFyY2hpdGVjdHVyZSBwZXJzcGVjdGl2ZTsgd2hpbGUgYW4gTFNNIHBvbGlj
+eSBtYXkgb3B0IHRvIGVuZm9yY2UgZWl0aGVyIG9uZSwgb3IgYm90aC4NCg0KUHV0dGluZyBldmVy
+eXRoaW5nIHRvZ2V0aGVyLCBJJ2Qgc3VnZ2VzdCB0bzogDQogIC0gQ2hhbmdlIEVBREQgaW9jdGwg
+dG8gdGFrZSBzb3VyY2UgcGFnZSdzIFZNQSBwZXJtaXNzaW9uIGFzICgidXBwZXIgYm91bmQiIG9m
+KSBFUENNIHBlcm1pc3Npb24uIFRoaXMgbWFrZSBzdXJlIG5vIG9uZSBjYW4gY2lyY3VtdmVudCBM
+U00gdG8gZ2VuZXJhdGUgZXhlY3V0YWJsZSBjb2RlIG9uIHRoZSBmbHkgdXNpbmcgU0dYIGRyaXZl
+ci4NCiAgLSBDaGFuZ2UgRUlOSVQgaW9jdGwgdG8gaW52b2tlIChuZXc/KSBMU00gaG9vayB0byB2
+YWxpZGF0ZSBTSUdTVFJVQ1QgYmVmb3JlIGlzc3VpbmcgRUlOSVQuDQogDQo+ICogSXQncyBjZXJ0
+YWlubHkgdGhlIGNhc2UgdGhhdCBMaW51eCBkb2VzIG5vdCAqc3VjY2VlZCogYXQgcHJlc2Vydmlu
+Zw0KPiB0aGUgb3ZlcmFsbCBpbnRlZ3JpdHkgb2Ygc2hhcmVkIG9iamVjdHMuICBJZiBub3RoaW5n
+IGVsc2UsIHlvdSBjYW4NCj4gZnJlZWx5IG1yZW1hcCgpIHRoZW0gaG93ZXZlciB5b3UgbGlrZS4g
+IEFuZCB5b3UgY2FuIGp1bXAgaW50byB0aGVtDQo+IHdoZXJldmVyIHlvdSBsaWtlLg0KDQotQ2Vk
+cmljDQo=
