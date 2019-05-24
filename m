@@ -6,30 +6,31 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5C2C072B5
-	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 17:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF292C072B5
+	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 17:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7842133D
-	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 17:55:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFCC62133D
+	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 17:56:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbfEXRzA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 24 May 2019 13:55:00 -0400
-Received: from mga11.intel.com ([192.55.52.93]:52047 "EHLO mga11.intel.com"
+        id S1728410AbfEXR4s (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 24 May 2019 13:56:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:33046 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727842AbfEXRzA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 24 May 2019 13:55:00 -0400
+        id S1728222AbfEXR4s (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 24 May 2019 13:56:48 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 10:54:59 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 10:56:48 -0700
 X-ExtLoop1: 1
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga007.fm.intel.com with ESMTP; 24 May 2019 10:54:58 -0700
-Date:   Fri, 24 May 2019 10:54:58 -0700
+  by orsmga001.jf.intel.com with ESMTP; 24 May 2019 10:56:45 -0700
+Date:   Fri, 24 May 2019 10:56:47 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
@@ -57,9 +58,8 @@ Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
         "Huang, Kai" <kai.huang@intel.com>,
         David Rientjes <rientjes@google.com>
 Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190524175458.GB365@linux.intel.com>
-References: <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
- <20190523023517.GA31950@linux.intel.com>
+Message-ID: <20190524175647.GC365@linux.intel.com>
+References: <20190523023517.GA31950@linux.intel.com>
  <20190523102628.GC10955@linux.intel.com>
  <20190523141752.GA12078@linux.intel.com>
  <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
@@ -68,72 +68,46 @@ References: <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
  <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
  <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov>
  <20190524174243.GA365@linux.intel.com>
+ <56EA6C7C-F69E-42EB-9CFB-CD0300549298@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190524174243.GA365@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <56EA6C7C-F69E-42EB-9CFB-CD0300549298@amacapital.net>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, May 24, 2019 at 10:42:43AM -0700, Sean Christopherson wrote:
-> Hmm, I've been thinking more about pulling permissions from the source
-> page.  Conceptually I'm not sure we need to meet the same requirements as
-> non-enclave DSOs while the enclave is being built, i.e. do we really need
-> to force userspace to fully map the enclave in normal memory?
->  
-> Consider the Graphene scenario where it's building an enclave on the fly.
-> Pulling permissions from the source VMAs means Graphene has to map the
-> code pages of the enclave with X.  This means Graphene will need EXEDMOD
-> (or EXECMEM if Graphene isn't careful).  In a non-SGX scenario this makes
-> perfect sense since there is no way to verify the end result of RW->RX.
+On Fri, May 24, 2019 at 10:54:34AM -0700, Andy Lutomirski wrote:
 > 
-> But for SGX, assuming enclaves are whitelisted by their sigstruct (checked
-> at EINIT) and because page permissions affect sigstruct.MRENCLAVE, it *is*
-> possible to verify the resulting RX contents.  E.g. for the purposes of
-> LSMs, can't we use the .sigstruct file as a proxy for the enclave and
-> require FILE__EXECUTE on the .sigstruct inode to map/run the enclave?
+> > On May 24, 2019, at 10:42 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > 
+> > Hmm, I've been thinking more about pulling permissions from the source
+> > page.  Conceptually I'm not sure we need to meet the same requirements as
+> > non-enclave DSOs while the enclave is being built, i.e. do we really need
+> > to force userspace to fully map the enclave in normal memory?
+> > 
+> > Consider the Graphene scenario where it's building an enclave on the fly.
+> > Pulling permissions from the source VMAs means Graphene has to map the
+> > code pages of the enclave with X.  This means Graphene will need EXEDMOD
+> > (or EXECMEM if Graphene isn't careful).  In a non-SGX scenario this makes
+> > perfect sense since there is no way to verify the end result of RW->RX.
+> > 
+> > But for SGX, assuming enclaves are whitelisted by their sigstruct (checked
+> > at EINIT) and because page permissions affect sigstruct.MRENCLAVE, it *is*
+> > possible to verify the resulting RX contents.  E.g. for the purposes of
+> > LSMs, can't we use the .sigstruct file as a proxy for the enclave and
+> > require FILE__EXECUTE on the .sigstruct inode to map/run the enclave?
 > 
-> Stephen, is my logic sound?
-> 
-> 
-> If so...
-> 
->   - Require FILE__READ+FILE__EXECUTE on .sigstruct to mmap() the enclave.
-> 
->   - Prevent userspace from mapping the enclave with permissions beyond the
->     original permissions of the enclave.  This can be done by populating
->     VM_MAY{READ,WRITE,EXEC} from the SECINFO (same basic concept as Andy's
->     proposals).  E.g. pre-EINIT, mmap() and mprotect() can only succeed
->     with PROT_NONE.
-> 
->   - Require FILE__{READ,WRITE,EXECUTE} on /dev/sgx/enclave for simplicity,
->     or provide an alternate SGX_IOC_MPROTECT if we want to sidestep the
->     FILE__WRITE requirement.
+> I think it’s sound for some but not all use cases. I would imagine that a lot
+> of users won’t restrict sigstruct at all — the “use this as a sigstruct”
+> permission will be granted to everything and maybe even to memfd. But even
+> users like that might want to force their enclaves to be hardened such that
+> writable pages are never executable, in which case Graphene may need an
+> exception to run.
 
-One more thought.  EADD (and the equivalent SGX2 flow) could do
-security_mmap_file() with a NULL file on the SECINFO permissions, which
-would trigger PROCESS_EXECMEM if an enclave attempts to map a page RWX.
+Heh, I belatedly had the same thought.  See my follow-up about EXECMEM.
 
-> No changes are required to LSMs, SGX1 has a single LSM touchpoint in its
-> mmap(), and I *think* the only required userspace change is to mmap()
-> PROT_NONE when allocating the enclave's virtual address range.
-> 
-> As for Graphene, it doesn't need extra permissions to run its enclaves,
-> it just needs a way to install .sigstruct, which is a generic permissions
-> problem and not SGX specific.
-> 
-> 
-> For SGX2 maybe:
-> 
->   - No additional requirements to map an EAUG'd page as RW page.  Not
->     aligned with standard MAP_SHARED behavior, but we really don't want
->     to require FILE__WRITE, and thus allow writes to .sigstruct. 
->  
->   - Require FILE__EXECMOD on the .sigstruct to map previously writable
->     page as executable (which indirectly includes all EAUG'd pages).
->     Wiring this up will be a little funky, but we again we don't want
->     to require FILE__WRITE on .sigstruct.
-> 
+> But maybe I’m nuts.
