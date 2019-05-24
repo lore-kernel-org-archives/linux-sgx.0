@@ -3,41 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477F2C282E1
-	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 20:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AF9C282E1
+	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 20:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9B621871
-	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 20:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D8542081C
+	for <linux-sgx@archiver.kernel.org>; Fri, 24 May 2019 20:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404057AbfEXUmj convert rfc822-to-8bit (ORCPT
+        id S2391738AbfEXU6g convert rfc822-to-8bit (ORCPT
         <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 24 May 2019 16:42:39 -0400
-Received: from mga02.intel.com ([134.134.136.20]:46258 "EHLO mga02.intel.com"
+        Fri, 24 May 2019 16:58:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43463 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404022AbfEXUmj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 24 May 2019 16:42:39 -0400
+        id S1729974AbfEXU6g (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 24 May 2019 16:58:36 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 13:42:36 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 13:58:35 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,508,1549958400"; 
-   d="scan'208";a="177888961"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by fmsmga002.fm.intel.com with ESMTP; 24 May 2019 13:42:34 -0700
-Received: from orsmsx112.amr.corp.intel.com (10.22.240.13) by
- ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 24 May 2019 13:42:13 -0700
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by orsmga005.jf.intel.com with ESMTP; 24 May 2019 13:58:34 -0700
+Received: from orsmsx114.amr.corp.intel.com (10.22.240.10) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 24 May 2019 13:58:34 -0700
 Received: from orsmsx116.amr.corp.intel.com ([169.254.7.165]) by
- ORSMSX112.amr.corp.intel.com ([169.254.3.79]) with mapi id 14.03.0415.000;
- Fri, 24 May 2019 13:42:13 -0700
+ ORSMSX114.amr.corp.intel.com ([169.254.8.116]) with mapi id 14.03.0415.000;
+ Fri, 24 May 2019 13:58:34 -0700
 From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>
 CC:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Andy Lutomirski <luto@kernel.org>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -65,11 +63,10 @@ CC:     Stephen Smalley <sds@tycho.nsa.gov>,
         David Rientjes <rientjes@google.com>
 Subject: RE: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
 Thread-Topic: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Thread-Index: AQHVC0vUmIXibKT8TUm/EUnHn2XAfqZu5q2AgAAGWoCABXOKgIABz2SAgAAI9ACAAWgPAIAAAJWAgAAJhACAAByGAIAAdoKAgABA+ICAAIOmAIAAQKcAgAAWeICAAIbLAIAAGyYA///WAeCAARtHgIAAIeCAgAADbAD//5AmcIAAhdwA//+atsA=
-Date:   Fri, 24 May 2019 20:42:13 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654E8FC2@ORSMSX116.amr.corp.intel.com>
-References: <20190523102628.GC10955@linux.intel.com>
- <20190523141752.GA12078@linux.intel.com>
+Thread-Index: AQHVC0vUmIXibKT8TUm/EUnHn2XAfqZu5q2AgAAGWoCABXOKgIABz2SAgAAI9ACAAWgPAIAAAJWAgAAJhACAAByGAIAAdoKAgABA+ICAAIOmAIAAQKcAgAAWeICAAIbLAIAAGyYA///WAeCAARtHgIAAIeCAgAADbAD//5AmcIAAjJAAgAAHN4D//5WNMA==
+Date:   Fri, 24 May 2019 20:58:33 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654E8FF2@ORSMSX116.amr.corp.intel.com>
+References: <20190523141752.GA12078@linux.intel.com>
  <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
  <20190523234044.GC12078@linux.intel.com>
  <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
@@ -78,13 +75,14 @@ References: <20190523102628.GC10955@linux.intel.com>
  <20190524174243.GA365@linux.intel.com>
  <20190524175458.GB365@linux.intel.com>
  <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
- <20190524191344.GD365@linux.intel.com>
-In-Reply-To: <20190524191344.GD365@linux.intel.com>
+ <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
+ <20190524200333.GF365@linux.intel.com>
+In-Reply-To: <20190524200333.GF365@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjY1ZTdhNmItYzYwYS00NmE4LWE5N2ItOTM1ZTU1OTE0ZmViIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC9nUGZOVWtLMnZKb3g0cHU5eU0xSllENDVWXC9pcXBWMHZcL1hnVTA0UCtEa3Z1bHN5UTFBM09rWGl3RUtsTnNNWCJ9
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjhhZmZhNzQtMWUxOS00ODk5LWJjM2ItYWQxNGYyYjhkNWNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTmh4R25MMmZWWHB6OGN0TkdveFNLYytmK05rODN3UjVQNmVERnNLaDQzOVlrNFRhdGt0NUpaUWN5Mzcycmo2RCJ9
 x-ctpclassification: CTP_NT
 dlp-product: dlpe-windows
 dlp-version: 11.2.0.6
@@ -100,112 +98,80 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 > From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
 > owner@vger.kernel.org] On Behalf Of Sean Christopherson
-> Sent: Friday, May 24, 2019 12:14 PM
+> Sent: Friday, May 24, 2019 1:04 PM
 > 
-> My point is that enclaves have different properties than shared objects.
-> 
-> Normal LSM behavior with regard to executing files is to label files
-> with e.g. FILE__EXECUTE.  Because an enclave must be built to the exact
-> specifications of .sigstruct, requring FILE__EXECUTE on the .sigstruct
-> is effectively the same as requiring FILE__EXECUTE on the enclave itself.
-> 
-> Addressing your scenario of loading an executable page in EPC, doing so
-> would require one of the following:
-> 
->   - Ability to install a .sigstruct with FILE__EXECUTE
-> 
->   - PROCESS__EXECMEM
-> 
->   - FILE__EXECMOD and SGX2 support
-
-Now I got your point. It sounds a great idea to me!
-
-But instead of using .sigstruct file, I'd still recommend using file mapping (i.e. SIGSTRUCT needs to reside in executable memory). But then there'll be a hole - a process having FILE__EXECMOD on any file could use that file as a SIGSTRUCT. Probably we'll need a new type in SELinux to label enclave/sigstruct files.
-
-> 
-> > In the case a RWX page is needed, the calling process has to have a
-> > RWX page serving as the source for EADD so PROCESS__EXECMEM will have
-> been checked.
-> > For SGX2, changing an EPC page to RWX is subject to FILE__EXECMEM on
-> > /dev/sgx/enclave, which I see as a security benefit because it only
-> > affects the enclave but not the whole process hosting it.
-> 
-> There is no FILE__EXECMEM check, only PROCESS__EXECMEM and FILE__EXECMOD.
-> I assume you're referring to the latter?
-
-Yes.
-
-> 
-> I don't see a fundamental difference between having RWX in an enclave
-> and RWX in normal memory, either way the process can execute arbitrary
-> code, i.e. PROCESS__EXECMEM is appropriate.  Yes, an enclave will #UD on
-> certain instructions, but that's easily sidestepped by having a
-> trampoline in the host (marked RX) and piping arbitrary code into the
-> enclave.  Or using EEXIT to do a bit of ROP.
-
-I'm with you.
-
-With your proposal only FILE__EXECMOD is needed on /dev/sgx/enclave to launch Graphene enclaves or the like.
-
-> 
-> > > > No changes are required to LSMs, SGX1 has a single LSM touchpoint
-> > > > in
-> > > its
-> > > > mmap(), and I *think* the only required userspace change is to
-> > > > mmap() PROT_NONE when allocating the enclave's virtual address
-> range.
+> On Fri, May 24, 2019 at 12:37:44PM -0700, Andy Lutomirski wrote:
+> > On Fri, May 24, 2019 at 11:34 AM Xing, Cedric <cedric.xing@intel.com>
+> wrote:
+> > >
+> > > If "initial permissions" for enclaves are less restrictive than
+> > > shared objects, then it'd become a backdoor for circumventing LSM
+> > > when enclave whitelisting is *not* in place. For example, an
+> > > adversary may load a page, which would otherwise never be executable,
+> as an executable page in EPC.
+> > >
+> > > In the case a RWX page is needed, the calling process has to have a
+> > > RWX page serving as the source for EADD so PROCESS__EXECMEM will
+> > > have been checked. For SGX2, changing an EPC page to RWX is subject
+> > > to FILE__EXECMEM on /dev/sgx/enclave, which I see as a security
+> > > benefit because it only affects the enclave but not the whole
+> process hosting it.
 > >
-> > I'm not sure I understand the motivation behind this proposal to
-> > decouple initial EPC permissions from source pages.
+> > So the permission would be like FILE__EXECMOD on the source enclave
+> > page, because it would be mapped MAP_ANONYMOUS, PROT_WRITE?
+> > MAP_SHARED, PROT_WRITE isn't going to work because that means you can
+> > modify the file.
 > 
-> Pulling permissions from source pages means userspace needs to fully map
-> the in normal memory, including marking pages executable.  That exposes
-> the loader to having executable pages in its address space that it has
-> no intention of executing (outside of the enclave).  And for Graphene,
-> it means having to actively avoid PROCESS__EXECMEM, e.g. by using a
-> dummy backing file to build the enclave instead of anon memory.
+> Was this in response to Cedric's comment, or to my comment?
 
-Agreed.
+Creating RWX source page requires PROCESS_EXECMEM. But as I responded to Sean earlier, I think his proposal of "aggregating" all "initial" permission checks into a single SIGSTRUCT check is probably a better approach.
 
 > 
-> > I don't think it a big deal to fully mmap() enclave files, which have
-> > to be parsed by user mode anyway to determine various things including
-> > but not limited to the size of heap(s), size and number of
-> > TCSs/stacks/TLS areas, and the overall enclave size. So with PHDRs
-> > parsed, it's trivial to mmap() each segment with permissions from its
-> PHDR.
+> > I'm starting to think that looking at the source VMA permission bits
+> > or source PTE permission bits is putting a bit too much policy into
+> > the driver as opposed to the LSM.  How about delegating the whole
+> > thing to an LSM hook?  The EADD operation would invoke a new hook,
+> > something like:
 > >
-> > > > As for Graphene, it doesn't need extra permissions to run its
-> > > > enclaves, it just needs a way to install .sigstruct, which is a
-> > > > generic permissions problem and not SGX specific.
-> > > >
-> > > >
-> > > > For SGX2 maybe:
-> > > >
-> > > >   - No additional requirements to map an EAUG'd page as RW page.
-> Not
-> > > >     aligned with standard MAP_SHARED behavior, but we really don't
-> want
-> > > >     to require FILE__WRITE, and thus allow writes to .sigstruct.
-> > > >
-> > > >   - Require FILE__EXECMOD on the .sigstruct to map previously
-> writable
-> > > >     page as executable (which indirectly includes all EAUG'd
-> pages).
-> > > >     Wiring this up will be a little funky, but we again we don't
-> want
-> > > >     to require FILE__WRITE on .sigstruct.
-> > > >
+> > int security_enclave_load_bytes(void *source_addr, struct
+> > vm_area_struct *source_vma, loff_t source_offset, unsigned int
+> > maxperm);
+
+This is exactly what I was thinking. But with Sean's proposal this is probably no longer necessary.
+
 > >
-> > I'm lost. Why is EAUG tied to permissions on .sigstruct?
+> > Then you don't have to muck with mapping anything PROT_EXEC.  Instead
+> > you load from a mapping of a file and the LSM applies whatever policy
+> > it feels appropriate.  If the first pass gets something wrong, the
+> > application or library authors can take it up with the SELinux folks
+> > without breaking the whole ABI :)
+> >
+> > (I'm proposing passing in the source_vma because this hook would be
+> > called with mmap_sem held for read to avoid a TOCTOU race.)
+> >
+> > If we go this route, the only substantial change to the existing
+> > driver that's needed for an initial upstream merge is the maxperm
+> > mechanism and whatever hopefully minimal API changes are needed to
+> > allow users to conveniently set up the mappings.  And we don't need to
+> > worry about how to hack around mprotect() calling into the LSM,
+> > because the LSM will actually be aware of SGX and can just do the
+> > right thing.
 > 
-> Because for the purposes of LSM checks, .sigstruct is the enclave's
-> backing file, and mapping a previously writable enclave page as
-> exectuable is roughly equivalent to mapping a CoW'd page as exectuable.
+> This doesn't address restricting which processes can run which enclaves,
+> it only allows restricting the build flow.  Or are you suggesting this
+> be done in addition to whitelisting sigstructs?
 
-I think I've got your idea. You are trying to use permissions on .sigstruct to determine whether EAUG will be available to that specific enclave. Am I right?
+In the context of SELinux, new types could be defined to be associated with SIGSTRUCT (or more precisely, files containing SIGSTRUCTs). Then the LSM hook (I'd propose security_sgx_initialize_enclave) could enforce whatever...
 
-I'd tie EAUG to the permissions of /dev/sgx/enclave instead. But why? There are couple of reasons. For one, a SIGSTRUCT identifies the behavior of the enclave, hence the SGX features needed by that enclave. So if an enclave requires EAUG, the .sigstruct has to allow EAUG or the enclave wouldn't work. That means the system admin wouldn't have a choice but to match up what's needed by the enclave. For two, whether to allow, say loading code dynamically into an enclave, depends on whether the host process can tolerate the inherent risk. And that decision is seldom made on individual enclaves but to the host process as a whole. And /dev/sgx/enclave serves that purpose.
+> 
+> What's the value prop beyond whitelisting sigstructs?  Realistically, I
+> doubt LSMs/users will want to take the performance hit of scanning the
+> source bytes every time an enclave is loaded.
+> 
+> We could add seomthing like security_enclave_mprotect() in lieu of
+> abusing security_file_mprotect(), but passing the full source bytes
+> seems a bit much.
+
+I'd just use /dev/sgx/enclave to govern "runtime" permissions any EPC page can mmap()/mprotect() to. Then we won't need any code changes in LSM.
 
 -Cedric
-
