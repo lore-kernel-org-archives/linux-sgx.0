@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC87C28CC3
-	for <linux-sgx@archiver.kernel.org>; Thu, 30 May 2019 05:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901EAC072B1
+	for <linux-sgx@archiver.kernel.org>; Thu, 30 May 2019 06:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5CF26076
-	for <linux-sgx@archiver.kernel.org>; Thu, 30 May 2019 05:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5656625649
+	for <linux-sgx@archiver.kernel.org>; Thu, 30 May 2019 06:12:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfE3FiJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 30 May 2019 01:38:09 -0400
-Received: from mga09.intel.com ([134.134.136.24]:58205 "EHLO mga09.intel.com"
+        id S1727236AbfE3GMZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 30 May 2019 02:12:25 -0400
+Received: from mga03.intel.com ([134.134.136.65]:58224 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3FiJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 30 May 2019 01:38:09 -0400
+        id S1725961AbfE3GMY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 30 May 2019 02:12:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 22:38:08 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 23:12:23 -0700
 X-ExtLoop1: 1
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 May 2019 22:38:07 -0700
-Received: from orsmsx162.amr.corp.intel.com (10.22.240.85) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 29 May 2019 22:38:07 -0700
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 29 May 2019 23:12:22 -0700
+Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 29 May 2019 23:12:21 -0700
 Received: from orsmsx116.amr.corp.intel.com ([169.254.7.165]) by
- ORSMSX162.amr.corp.intel.com ([169.254.3.190]) with mapi id 14.03.0415.000;
- Wed, 29 May 2019 22:38:07 -0700
+ ORSMSX157.amr.corp.intel.com ([169.254.9.37]) with mapi id 14.03.0415.000;
+ Wed, 29 May 2019 23:12:21 -0700
 From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>
-CC:     Stephen Smalley <sds@tycho.nsa.gov>,
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>
+CC:     Andy Lutomirski <luto@kernel.org>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -63,10 +63,12 @@ CC:     Stephen Smalley <sds@tycho.nsa.gov>,
         David Rientjes <rientjes@google.com>
 Subject: RE: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
 Thread-Topic: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Thread-Index: AQHVC0vUmIXibKT8TUm/EUnHn2XAfqZu5q2AgAAGWoCABXOKgIABz2SAgAAI9ACAAWgPAIAAAJWAgAAJhACAAByGAIAAdoKAgABA+ICAAIOmAIAAQKcAgAAWeICAAIbLAIAAGyYA///WAeCAARtHgIAAIeCAgAADbAD//5AmcIAAjJAAgAAHN4CAABd5AIAAFI2AgAARBICAAPo7MIAArTmA///E0eAAlLibAAAA1a8AAAHamoAAMz8G0A==
-Date:   Thu, 30 May 2019 05:38:06 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654EB439@ORSMSX116.amr.corp.intel.com>
-References: <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
+Thread-Index: AQHVC0vUmIXibKT8TUm/EUnHn2XAfqZu5q2AgAAGWoCABXOKgIABz2SAgAAI9ACAAWgPAIAAAJWAgAAJhACAAByGAIAAdoKAgABA+ICAAIOmAIAAQKcAgAAWeICAAIbLAIAAGyYA///WAeCAARtHgIAAIeCAgAADbAD//5AmcIAAjJAAgAAHN4CAABd5AIAAFI2AgAARBICAAPo7MIAArTmA///E0eAAlLibAAAlK2+AABHNCZA=
+Date:   Thu, 30 May 2019 06:12:21 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+References: <20190524175458.GB365@linux.intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
  <20190524200333.GF365@linux.intel.com>
  <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
  <20190524224107.GJ365@linux.intel.com>
@@ -75,216 +77,294 @@ References: <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
  <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
  <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
  <20190528202407.GB13158@linux.intel.com>
- <CALCETrWTXCb1jru1G5G3sOp5AV8iYUtrffiSxE-5gotXtrZD-g@mail.gmail.com>
- <20190528214107.GD13158@linux.intel.com>
-In-Reply-To: <20190528214107.GD13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+In-Reply-To: <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWUyNTI4ODktOThjYS00OTNjLTljODMtZmQwNDMwMGUyYWM3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZ2hUUHhiTnF3UGNSYks4eEZ1Q3RNWHlBcXl1eldrcHJmZlZ2WU9lVWVMeGhjcUExdmZaa0VqODk4XC9kN0c0R08ifQ==
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTEwNzUxYzYtMmU3Ni00OTY5LTgyMDktMmRmZDQxMTIxNDU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOGtCMTRKdXk5K0pERE01elplVGpSSlMxM01TZldXNmFhQlwvQW1xZjduTXZXcDk2Nmg1VGd4cDJtQzNPRkpoTTkifQ==
 x-ctpclassification: CTP_NT
 dlp-product: dlpe-windows
 dlp-version: 11.0.600.7
 dlp-reaction: no-action
 x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> From: Christopherson, Sean J
-> Sent: Tuesday, May 28, 2019 2:41 PM
-> 
-> On Tue, May 28, 2019 at 01:48:02PM -0700, Andy Lutomirski wrote:
-> > On Tue, May 28, 2019 at 1:24 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > >
-> > > Actually, I think we do have everything we need from an LSM perspective.
-> > > LSMs just need to understand that sgx_enclave_load() with a NULL vma
-> > > implies a transition from RW.  For example, SELinux would interpret
-> > > sgx_enclave_load(NULL, RX) as requiring FILE__EXECMOD.
-> >
-> > You lost me here.  What operation triggers this callback?  And
-> > wouldn't sgx_enclave_load(NULL, RX) sometimes be a transition from RO
-> > or just some fresh executable zero bytes?
-> 
-> An explicit ioctl() after EACCEPTCOPY to update the allowed permissions.
-> For all intents and purposes, the EAUG'd page must start RW.  Maybe a better way to phrase
-> it is that at some point the page must be writable to have any value whatsover.
-> EACCEPTCOPY explicitly requires the page to be at least RW.  EACCEPT technically doesn't
-> require RW, but a RO or RX zero page is useless.  Userspace could still EACCEPT with RO or
-> RX, but SGX would assume a minimum of RW for the purposes of the LSM check.
-
-Why is an explicit ioctl() necessary after EACCEPTCOPY? Or why is mprotect() not sufficient?
-
-I tend to agree on Andy's MAXPERM model where MAXPERM never changes once established.
-
-> 
-> > > As Cedric mentioned earlier, the host process doesn't necessarily
-> > > know which pages will end up RW vs RX, i.e. sgx_enclave_load(NULL,
-> > > RX) already has to be invoked at runtime, and when that happens, the
-> > > kernel can take the opportunity to change the VMAs from MAY_RW to MAY_RX.
-> > >
-> > > For simplicity in the kernel and clarity in userspace, it makes
-> > > sense to require an explicit ioctl() to add the to-be-EAUG'd range.
-> > > That just leaves us wanting an ioctl() to set the post-EACCEPT{COPY} permissions.
-> > >
-> > > E.g.:
-> > >
-> > >     ioctl(<prefix>_ADD_REGION, { NULL }) /* NULL == EAUG, MAY_RW */
-> > >
-> > >     mprotect(addr, size, RW);
-> > >     ...
-> > >
-> > >     EACCEPTCOPY -> EAUG /* page fault handler */
-> > >
-> > >     ioctl(<prefix>_ACTIVATE_REGION, { addr, size, RX}) /* MAY_RX */
-> > >
-> > >     mprotect(addr, size, RX);
-> >
-> > In the maxperm model, this mprotect() will fail unless MAXPERM
-> > contains RX, which could only happen if MAXPERM=RWX.  So, regardless
-> > of how it's actually mapped to SELinux policy, MAXPERM=RWX is
-> > functionally like EXECMOD and actual RWX PTEs are functionally like
-> > EXECMEM.
-> 
-> Yep, same idea, except in the proposed flow ACTIVATE_REGION.
-
-
-> 
-> > >     ...
-> > >
-> > > And making ACTIVATE_REGION a single-shot per page eliminates the
-> > > need for the MAXPERMS concept (see below).
-> > >
-> > > > If we keep only one MAXPERM, wouldn't this be the current behavior
-> > > > of mmap()/mprotect()?
-> > > >
-> > > > To be a bit more clear, system admin sets MAXPERM upper bound in
-> > > > the form of FILE__{READ|WRITE|EXECUTE|EXECMOD} of
-> > > > /dev/sgx/enclave. Then for a process/enclave, if what it requires
-> > > > falls below what's allowed on /dev/sgx/enclave, then everything
-> > > > will just work. Otherwise, it fails in the form of -EPERM returned
-> > > > from mmap()/mprotect(). Please note that MAXPERM here applies to
-> > > > "runtime" permissions, while "initial" permissions are taken care
-> > > > of by security_enclave_{load|init}. "initial" permissions could be
-> > > > more permissive than "runtime" permissions, e.g., RX is still
-> > > > required for initial code pages even though system admins could disable dynamically
-> loaded code pages by *not* giving FILE__{EXECUTE|EXECMOD}. Therefore, the "initial"
-> > > > mapping would still have to be done by the driver (to bypass LSM),
-> > > > either via a new ioctl or as part of IOC_EINIT.
-> > >
-> > > Aha!
-> > >
-> > > Starting with Cedric's assertion that initial permissions can be
-> > > taken directly from SECINFO:
-> > >
-> > >   - Initial permissions for *EADD* pages are explicitly handled via
-> > >     sgx_enclave_load() with the exact SECINFO permissions.
-> > >
-> > >   - Initial permissions for *EAUG* are unconditionally RW.  EACCEPTCOPY
-> > >     requires the target EPC page to be RW, and EACCEPT with RO is useless.
-> > >
-> > >   - Runtime permissions break down as follows:
-> > >       R   - N/A, subset of RW (EAUG)
-> > >       W   - N/A, subset of RW (EAUG) and x86 paging can't do W
-> > >       X   - N/A, subset of RX (x86 paging can't do XO)
-> >
-> > Sure it can!  You just have a hypervisor that maps a PA bit to EPT
-> > no-read.  Then you can use that PA bit to suppress read.  Also, Linux
-> > already abuses PKRU to simulate XO, although that won't work for
-> > enclaves.
-> 
-> Heh, I intentionally said "x86 paging" to rule out EPT :-)  I'm pretty sure it's a moot
-> point though, I have a hard time believing an LSM will allow RW->X and not RW->RX.
-> 
-> > >       RW  - Handled by EAUG LSM hook (uses RW unconditionally)
-> > >       WX  - N/A, subset of RWX (x86 paging can't do WX)
-> > >       RX  - Handled by ACTIVATE_REGION
-> > >       RWX - Handled by ACTIVATE_REGION
-> > >
-> > > In other words, if we define the SGX -> LSM calls as follows (minus
-> > > the file pointer and other params for brevity):
-> > >
-> > >   - <prefix>_ACTIVATE_REGION(vma, perms) -> sgx_enclave_load(NULL,
-> > > perms)
-
-I'm not sure on what security_enclave_load()'s decision would be based.
-
-> > >
-> > >   - <prefix>_ADD_REGION(vma) -> sgx_enclave_load(vma, SECINFO.perms)
-> > >
-> > >   - <prefix>_ADD_REGION(NULL) -> sgx_enclave_load(NULL, RW)
-> > >
-> > > then SGX and LSMs have all the information and hooks needed.  The
-> > > catch is that the LSM semantics of sgx_enclave_load(..., RW) would
-> > > need to be different than normal shared memory, e.g. FILE__WRITE
-> > > should *not* be required, but that's ok since it's an SGX specific
-> > > hook.  And if for some reason an LSM wanted to gate access to EAUG
-> > > *without* FILE__EXECMOD, it'd have the necessary information to do so.
-> > >
-> > > The userspace changes are fairly minimal:
-> > >
-> > >   - For SGX1, use PROT_NONE for the initial mmap() and refactor ADD_PAGE
-> > >     to ADD_REGION.
-> > >
-> > >   - For SGX2, do an explicit ADD_REGION on the ranges to be EAUG'd, and an
-> > >     ACTIVATE_REGION to make a region RX or R (no extra ioctl() required to
-> > >     keep RW permissions).
-> > >
-> > > Because ACTIVATE_REGION can only be done once per page, to do
-> > > *abitrary*
-> > > mprotect() transitions, userspace would need to set the
-> > > added/activated permissions to be a superset of the transitions,
-> > > e.g. RW -> RX would require RWX, but that's a non-issue.
-> > >
-> >
-> > I may be misunderstanding or just be biased to my own proposal, but
-> > this seems potentially more complicated and less flexible than the
-> > MAXPERM model.  One of the main things that made me come up with
-> > MAXPERM is that I wanted to avoid any complicated PTE/VMA modification
-> > or runtime changes.  So, with MAXPERM, we still need to track the
-> > MAXPERM bits per page, but we don't ever need to *change* them or to
-> > worry about what is or is not mapped anywhere at any given time.  With
-> > ACTIVATE_REGION, don't we need to make sure that we don't have a
-> > second VMA pointing at the same pages?  Or am I just confused?
-> 
-> In theory, it's still your MAXPERM model, but with the unnecessary states removed and the
-> others enforced/handled by the natural SGX transitions instead of explictly in ioctls.
-> Underneath the hood the SGX driver would still need to track the MAXPERM.
-
-What are the "unnecessary states" removed? 
-
-I'm not sure understand the proposal fully. The whole thing looks to me like the driver is undertaking things that should/would otherwise be done by mmap()/mprotect() syscalls. It also imposes unnecessary restrictions on user mode code, such as mmap(PROT_NONE), ACTIVATE_REGION can be called only once, etc. What'd happen if ACTIVATE_REGION is called with a range spanning multiple/partial VMAs? What'd happen if an enclave was unmapped than mapped again? I'd say the proposal is unintuitive at least.
-
-In theory, if the driver can keep track of MAXPERM for all pages within an enclave, then it could fail mmap() if the requested prot conflicts with any page's MAXPERM within that range. Otherwise, MAXPERM could be copied into VM_MAY* flags then mprotect() will just follow through. Wouldn't that be a much simpler and more intuitive approach?
-
-> 
-> With SGX1, SECINFO == MAXPERM.  With SGX2, ACTIVATE_REGION == MAXPERM, with the
-> implication that the previous state is always RW.
-> 
-> > >   - For SGX1 it's a nop since it's impossible to change the EPCM
-> > >     permissions, i.e. the page would need to be RWX regardless.
-> >
-> > I may still be missing something, but, for SGX1, it's possible at
-> > least in principle for the enclave to request, via ocall or similar,
-> > that the untrusted runtime do mprotect().  It's not even such a bad
-> > idea.  Honestly, enclaves *shouldn't* have anything actually writable
-> > and executable at once because the enclaves don't want to be easily
-> > exploited.
-> 
-> Yes, but the *EPCM* permissions are immutable.  So if an enclave wants to do RW->RX it has
-> to intialize its pages to RWX.  And because the untrusted runtime is, ahem, untrusted, the
-> enclave cannot rely on userspace to never map its pages RWX.  In other words, from a
-> enclave security perspective, an SGX1 enclave+runtime that uses RW->RX is no different
-> than an enclave that uses RWX.  Using your earlier terminology, an SGX1 enclave *should*
-> get a dirty looks if maps a page RWX in the EPCM, even if it only intends RW->RX behavior.
-> 
-> > >   - For SGX2, userspace can suck it up and request RWX to do completely
-> > >     arbitrary transitions (working as intended), or the kernel can support
-> > >     trimming (removing) pages from an enclave, which would allow userspace
-> > >     to do "arbitrary" transitions by first removing the page.
+PiBGcm9tOiBsaW51eC1zZ3gtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtc2d4
+LW93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmDQo+IE9mIFN0ZXBoZW4gU21hbGxleQ0K
+PiBTZW50OiBXZWRuZXNkYXksIE1heSAyOSwgMjAxOSA3OjA4IEFNDQo+IA0KPiBPbiA1LzI4LzE5
+IDQ6MjQgUE0sIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+ID4gT24gU2F0LCBNYXkgMjUs
+IDIwMTkgYXQgMTE6MDk6MzhQTSAtMDcwMCwgWGluZywgQ2VkcmljIHdyb3RlOg0KPiA+Pj4gRnJv
+bTogQW5keSBMdXRvbWlyc2tpIFttYWlsdG86bHV0b0BrZXJuZWwub3JnXQ0KPiA+Pj4gU2VudDog
+U2F0dXJkYXksIE1heSAyNSwgMjAxOSA1OjU4IFBNDQo+ID4+Pg0KPiA+Pj4gT24gU2F0LCBNYXkg
+MjUsIDIwMTkgYXQgMzo0MCBQTSBYaW5nLCBDZWRyaWMgPGNlZHJpYy54aW5nQGludGVsLmNvbT4g
+d3JvdGU6DQo+ID4+Pj4NCj4gPj4+PiBJZiB3ZSB0aGluayBvZiBFQUREIGFzIGEgd2F5IG9mIG1t
+YXAoKSdpbmcgYW4gZW5jbGF2ZSBmaWxlIGludG8gbWVtb3J5LA0KPiA+Pj4+IHdvdWxkIHRoaXMN
+Cj4gPj4+IHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpIGJlIHRoZSBzYW1lIGFzDQo+ID4+PiBzZWN1
+cml0eV9tbWFwX2ZpbGUoc291cmNlX3ZtYS0+dm1fZmlsZSwgbWF4cGVybSwgTUFQX1BSSVZBVEUp
+LCBleGNlcHQgdGhhdA0KPiA+Pj4gdGhlIHRhcmdldCBpcyBub3cgRVBDIGluc3RlYWQgb2YgcmVn
+dWxhciBwYWdlcz8NCj4gPj4+DQo+ID4+PiBIbW0sIHRoYXQncyBjbGV2ZXIuICBBbHRob3VnaCBp
+dCBzZWVtcyBwbGF1c2libGUgdGhhdCBhbiBMU00gd291bGQgd2FudCB0bw0KPiA+Pj4gYWxsb3cg
+Ulggb3IgUldYIG9mIGEgZ2l2ZW4gZmlsZSBwYWdlIGJ1dCBvbmx5IGluIHRoZSBjb250ZXh0IG9m
+IGFuIGFwcHJvdmVkDQo+ID4+PiBlbmNsYXZlLCBzbyBJIHRoaW5rIGl0IHNob3VsZCBzdGlsbCBi
+ZSBpdHMgb3duIGhvb2suDQo+ID4+DQo+ID4+IFdoYXQgZG8geW91IG1lYW4gYnkgImluIHRoZSBj
+b250ZXh0IG9mIGFuIGFwcHJvdmVkIGVuY2xhdmUiPyBFUEMgcGFnZXMgYXJlDQo+ID4+ICppbmFj
+Y2Vzc2libGUqIHRvIGFueSBzb2Z0d2FyZSB1bnRpbCBhZnRlciBFSU5JVC4gU28gaXQgd291bGQg
+bmV2ZXIgYmUgYQ0KPiA+PiBzZWN1cml0eSBjb25jZXJuIHRvIEVBREQgYSBwYWdlIHdpdGggd3Jv
+bmcgcGVybWlzc2lvbnMgYXMgbG9uZyBhcyB0aGUgZW5jbGF2ZQ0KPiA+PiB3b3VsZCBiZSBkZW5p
+ZWQgZXZlbnR1YWxseSBieSBMU00gYXQgRUlOSVQuDQo+ID4+DQo+ID4+IEJ1dCBJIGFja25vd2xl
+ZGdlIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gbG9hZGluZyBhIHBhZ2UgaW50byByZWd1bGFyIG1l
+bW9yeQ0KPiA+PiB2cy4gaW50byBFUEMuIFNvIGl0J3MgYmVuZWZpY2lhbCB0byBoYXZlIGEgc2Vw
+YXJhdGUgaG9vaywgd2hpY2ggaWYgbm90DQo+ID4+IGhvb2tlZCwgd291bGQgcGFzcyB0aHJvdWdo
+IHRvIHNlY3VyaXR5X21tYXBfZmlsZSgpIGJ5IGRlZmF1bHQ/DQo+ID4NCj4gPiBNYXBwaW5nIHRo
+ZSBlbmNsYXZlIHdpbGwgc3RpbGwgZ28gdGhyb3VnaCBzZWN1cml0eV9tbWFwX2ZpbGUoKSwgdGhl
+IGV4dHJhDQo+ID4gc2VjdXJpdHlfZW5jbGF2ZV9sb2FkKCkgaG9vayBhbGxvd3MgdGhlIG1tYXAo
+KSB0byB1c2UgUFJPVF9OT05FLg0KPiA+DQo+ID4+PiBJZiBpdCdzIGdvaW5nIHRvIGJlIGluIGFu
+IGFyYml0cmFyeSBmaWxlLCB0aGVuIEkgdGhpbmsgdGhlIHNpZ25hdHVyZSBuZWVkcyB0byBiZSBt
+b3JlDQo+IGxpa2U6DQo+ID4+Pg0KPiA+Pj4gaW50IHNlY3VyaXR5X2VuY2xhdmVfaW5pdChzdHJ1
+Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnNpZ3N0cnVjdF92bWEsIGxvZmZfdA0KPiBzaWdzdHJ1Y3Rfb2Zm
+c2V0LA0KPiA+Pj4gY29uc3Qgc2d4X3NpZ3N0cnVjdCAqc2lnc3RydWN0KTsNCj4gPj4+DQo+ID4+
+PiBTbyB0aGF0IHRoZSBMU00gc3RpbGwgaGFzIHRoZSBvcHBvcnR1bml0eSB0byBiYXNlIGl0cyBk
+ZWNpc2lvbiBvbiB0aGUgY29udGVudHMgb2YgdGhlDQo+ID4+PiBTSUdTVFJVQ1QuICBBY3R1YWxs
+eSwgd2UgbmVlZCB0aGF0IGNoYW5nZSByZWdhcmRsZXNzLg0KPiA+Pg0KPiA+PiBXb3VsZG4ndCB0
+aGUgcGFpciBvZiB7IHNpZ3N0cnVjdF92bWEsIHNpZ3N0cnVjdF9vZmZzZXQgfSBiZSB0aGUgc2Ft
+ZSBhcyBqdXN0DQo+ID4+IGEgcG9pbnRlciwgYmVjYXVzZSB0aGUgVk1BIGNvdWxkIGJlIGxvb2tl
+ZCB1cCB1c2luZyB0aGUgcG9pbnRlciBhbmQgdGhlDQo+ID4+IG9mZnNldCB3b3VsZCB0aGVuIGJl
+IChwb2ludGVyIC0gdm1hLT52bV9zdGFydCk/DQo+ID4NCj4gPiBWTUEgaGFzIHZtX2ZpbGUsIGUu
+Zy4gdGhlIC5zaWdzdHJ1Y3QgZmlsZSBsYWJlbGVkIGJ5IExTTXMuICBUaGF0IGJlaW5nDQo+ID4g
+c2FpZCwgd2h5IGRvZXMgdGhlIExTTSBuZWVkIHRoZSBWTUE/ICBFLmcuIHdoeSBub3QgdGhpcz8N
+Cj4gPg0KPiA+ICAgIGludCBzZWN1cml0eV9lbmNsYXZlX2luaXQoc3RydWN0IGZpbGUgKmZpbGUs
+IHN0cnVjdCBzZ3hfc2lnc3RydWN0ICpzaWdzdHJ1Y3QpOw0KPiA+DQo+ID4+Pj4gTG9vc2VseSBz
+cGVha2luZywgYW4gZW5jbGF2ZSAoaW5jbHVkaW5nIGluaXRpYWwgY29udGVudHMgb2YgYWxsIG9m
+IGl0cyBwYWdlcyBhbmQNCj4gdGhlaXINCj4gPj4+IHBlcm1pc3Npb25zKSBhbmQgaXRzIE1SRU5D
+TEFWRSBhcmUgYSAxLXRvLTEgY29ycmVzcG9uZGVuY2UgKGdpdmVuIHRoZSBjb2xsaXNpb24NCj4g
+cmVzaXN0YW50DQo+ID4+PiBwcm9wZXJ0eSBvZiBTSEEtMikuIFNvIG9ubHkgb25lIGlzIG5lZWRl
+ZCBmb3IgYSBkZWNpc2lvbiwgYW5kIGVpdGhlciBvbmUgd291bGQgbGVhZCB0bw0KPiB0aGUNCj4g
+Pj4+IHNhbWUgZGVjaXNpb24uIFNvIEkgZG9uJ3Qgc2VlIGFueXRoaW5nIG1ha2luZyBhbnkgc2Vu
+c2UgaGVyZS4NCj4gPj4+Pg0KPiA+Pj4+IFRoZW9yZXRpY2FsbHkgc3BlYWtpbmcsIGlmIExTTSBj
+YW4gbWFrZSBhIGRlY2lzaW9uIGF0IEVJTklUIGJ5IG1lYW5zIG9mDQo+ID4+PiBzZWN1cml0eV9l
+bmNsYXZlX2xvYWQoKSwgdGhlbiBzZWN1cml0eV9lbmNsYXZlX2xvYWQoKSBpcyBuZXZlciBuZWVk
+ZWQuDQo+ID4+Pj4NCj4gPj4+PiBJbiBwcmFjdGljZSwgSSBzdXBwb3J0IGtlZXBpbmcgYm90aCBi
+ZWNhdXNlIHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpIGNhbiBvbmx5IGFwcHJvdmUNCj4gYW4NCj4g
+Pj4+IGVudW1lcmFibGUgc2V0IHdoaWxlIHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpIGNhbiBhcHBy
+b3ZlIGEgbm9uLWVudW1lcmFibGUgc2V0IG9mDQo+IGVuY2xhdmVzLg0KPiA+Pj4gTW9yZW92ZXIs
+IGluIG9yZGVyIHRvIGRldGVybWluZSB0aGUgdmFsaWRpdHkgb2YgYSBNUkVOQ0xBVkUgKGFzIGlu
+IGRldmVsb3BtZW50IG9mIGENCj4gcG9saWN5DQo+ID4+PiBvciBpbiBjcmVhdGlvbiBvZiBhIHdo
+aXRlL2JsYWNrIGxpc3QpLCBzeXN0ZW0gYWRtaW5zIHdpbGwgbmVlZCB0aGUgYXVkaXQgbG9nIHBy
+b2R1Y2VkDQo+IGJ5DQo+ID4+PiBzZWN1cml0eV9lbmNsYXZlX2xvYWQoKS4NCj4gPj4+DQo+ID4+
+PiBJJ20gY29uZnVzZWQuICBUaGluZ3MgbGlrZSBNUlNJR05FUiBhcmVuJ3Qga25vd24gdW50aWwg
+dGhlIFNJR1NUUlVDVCBzaG93cw0KPiA+Pj4gdXAuICBBbHNvLCBzZWN1cml0eV9lbmNsYXZlX2xv
+YWQoKSBwcm92aWRlcyBubyBwcm90ZWN0aW9uIGFnYWluc3QgbG9hZGluZyBhDQo+ID4+PiBtaXNo
+bWFzaCBvZiB0d28gZGlmZmVyZW50IGVuY2xhdmUgZmlsZXMuICBJIHNlZSBzZWN1cml0eV9lbmNs
+YXZlX2luaXQoKSBhcw0KPiA+Pj4gInZlcmlmeSB0aGlzIFNJR1NUUlVDVCBhZ2FpbnN0IHlvdXIg
+cG9saWN5IG9uIHdobyBtYXkgc2lnbiBlbmNsYXZlcyBhbmQvb3INCj4gPj4+IGdyYW50IEVYRUNN
+T0QgZGVwZW5kaW5nIG9uIFNJR1NUUlVDVCIgYW5kIHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpIGFz
+DQo+ID4+PiAiaW1wbGVtZW50IHlvdXIgRVhFQ01PRCAvIEVYRUNVVEUgLyBXUklURSAvIHdoYXRl
+dmVyIHBvbGljeSBhbmQgcG9zc2libHkNCj4gPj4+IGNoZWNrIGVuY2xhdmUgZmlsZXMgZm9yIHNv
+bWUgbGFiZWwuIg0KPiA+Pg0KPiA+PiBTb3JyeSBmb3IgdGhlIGNvbmZ1c2lvbi4gSSB3YXMgc2F5
+aW5nIHRoZSBzYW1lIHRoaW5nIGV4Y2VwdCB0aGF0IHRoZSBkZWNpc2lvbg0KPiA+PiBvZiBzZWN1
+cml0eV9lbmNsYXZlX2xvYWQoKSBkb2Vzbid0IGhhdmUgdG8gZGVwZW5kIG9uIFNJR1NUUlVDVC4g
+R2l2ZW4geW91cg0KPiA+PiBwcm90b3R5cGUgb2Ygc2VjdXJpdHlfZW5jbGF2ZV9sb2FkKCksIEkg
+dGhpbmsgd2UgYXJlIG9uIHRoZSBzYW1lIHBhZ2UuIEkgbWFkZQ0KPiA+PiB0aGUgYWJvdmUgY29t
+bWVudCB0byBvYmplY3QgdG8gdGhlIGlkZWEgb2YgInJlcXVpcmUgdGhhdCB0aGUgc2lnc3RydWN0
+IGJlDQo+ID4+IHN1cHBsaWVkIGJlZm9yZSBhbnkgRUFERCBvcGVyYXRpb25zIHNvIHRoYXQgdGhl
+IG1heHBlcm0gZGVjaXNpb25zIGNhbiBkZXBlbmQNCj4gPj4gb24gdGhlIHNpZ3N0cnVjdCIuDQo+
+ID4NCj4gPiBFeGNlcHQgdGhhdCBoYXZpbmcgdGhlIHNpZ3N0cnVjdCBhbGxvd3MgdXNpbmcgdGhl
+IHNpZ3N0cnVjdCBhcyB0aGUgcHJveHkNCj4gPiBmb3IgdGhlIGVuY2xhdmUuICBJIHRoaW5rIHRo
+ZSBsYXN0IGJpZyBkaXNjb25uZWN0IGlzIHRoYXQgQW5keSBhbmQgSSB3YW50DQo+ID4gdG8gdGll
+IGV2ZXJ5dGhpbmcgdG8gYW4gZW5jbGF2ZS1zcGVjaWZpYyBmaWxlLCBpLmUuIHNpZ3N0cnVjdCwg
+d2hpbGUgeW91DQo+ID4gYXJlIHByb3Bvc2luZyBsYWJlbGluZyAvZGV2L3NneC9lbmNsYXZlLiAg
+SWYgc29tZW9uZSB3YW50cyB0byBjcmFtIHNldmVyYWwNCj4gPiBzaWdzdHJ1Y3RzIGludG8gYSBz
+aW5nbGUgZmlsZSwgc28gYmUgaXQsIGJ1dCB1c2luZyAvZGV2L3NneC9lbmNsYXZlIG1lYW5zDQo+
+ID4gdXNlcnMgY2FuJ3QgZG8gcGVyLWVuY2xhdmUgcGVybWlzc2lvbnMsIHBlcmlvZC4NCj4gPg0K
+PiA+IFdoYXQgaXMgeW91ciBvYmplY3Rpb24gdG8gd29ya2luZyBvbiB0aGUgc2lnc3RydWN0Pw0K
+PiA+DQo+ID4+Pj4+PiBQYXNzaW5nIGJvdGggd291bGQgYWxsb3cgdHlpbmcgRVhFQ01PRCB0byAv
+ZGV2L3NneC9lbmNsYXZlIGFzDQo+ID4+Pj4+PiBDZWRyaWMgd2FudGVkICh3aXRob3V0IGhhdmlu
+ZyB0byBwbGF5IGdhbWVzIGFuZCBwYXNzDQo+ID4+Pj4+PiAvZGV2L3NneC9lbmNsYXZlIHRvIHNl
+Y3VyaXR5X2VuY2xhdmVfbG9hZCgpKSwgYnV0IEkgZG9uJ3QgdGhpbmsNCj4gPj4+Pj4+IHRoZXJl
+J3MgYW55dGhpbmcgZnVuZGFtZW50YWxseSBicm9rZW4gd2l0aCB1c2luZyAuc2lnc3RydWN0IGZv
+cg0KPiA+Pj4+Pj4gRVhFQ01PRC4gIEl0IHJlcXVpcmVzIG1vcmUgdmVyYm9zZSBsYWJlbGluZywg
+YnV0IHRoYXQncyBub3QgYSBiYWQgdGhpbmcuDQo+ID4+Pj4+DQo+ID4+Pj4+IFRoZSBiZW5lZml0
+IG9mIHB1dHRpbmcgaXQgb24gLnNpZ3N0cnVjdCBpcyB0aGF0IGl0IGNhbiBiZSBwZXItZW5jbGF2
+ZS4NCj4gPj4+Pj4NCj4gPj4+Pj4gQXMgSSB1bmRlcnN0YW5kIGl0IGZyb20gRmVkb3JhIHBhY2th
+Z2luZywgdGhlIHdheSB0aGlzIHdvcmtzIG9uDQo+ID4+Pj4+IGRpc3Ryb3MgaXMgZ2VuZXJhbGx5
+IHRoYXQgYSBwYWNrYWdlIHdpbGwgaW5jbHVkZSBzb21lIGZpbGVzIGFuZA0KPiA+Pj4+PiB0aGVp
+ciBhc3NvY2lhdGVkIGxhYmVscywgYW5kLCBpZiB0aGUgcGFja2FnZSBuZWVkcyBFWEVDTU9ELCB0
+aGVuIHRoZQ0KPiA+Pj4+PiBmaWxlcyBhcmUgbGFiZWxlZCB3aXRoIEVYRUNNT0QgYW5kIHRoZSBh
+dXRob3Igb2YgdGhlIHJlbGV2YW50IGNvZGUgbWlnaHQgZ2V0IGEgZGlydHkNCj4gPj4+IGxvb2su
+DQo+ID4+Pj4+DQo+ID4+Pj4+IFRoaXMgY291bGQgdHJhbnNsYXRlIHRvIHRoZSBhdXRob3Igb2Yg
+YW4gZXhjbGF2ZSB0aGF0IG5lZWRzIFJXWA0KPiA+Pj4+PiByZWdpb25zIGdldHRpbmcgYSBkaXJ0
+eSBsb29rIHdpdGhvdXQgbGVha2luZyB0aGlzIHBlcm1pc3Npb24gaW50byBvdGhlciBlbmNsYXZl
+cy4NCj4gPj4+Pj4NCj4gPj4+Pj4gKEluIG15IG9waW5pb24sIHRoZSBkaXJ0eSBsb29rcyBhcmUg
+YWN0dWFsbHkgdGhlIGJlc3Qgc2VjdXJpdHkNCj4gPj4+Pj4gYmVuZWZpdCBvZiB0aGUgZW50aXJl
+IGNvbmNlcHQgb2YgTFNNcyBtYWtpbmcgUldYIGRpZmZpY3VsdC4gIEENCj4gPj4+Pj4gc3VmZmlj
+aWVudGx5IGNyZWF0aXZlIGF0dGFja2VyIGNhbiBhbG1vc3QgYWx3YXlzIGJ5cGFzcyBXXlgNCj4g
+Pj4+Pj4gcmVzdHJpY3Rpb25zIG9uY2UgdGhleeKAmXZlIHB3bmVkIHlvdSwgYnV0IFdeWCBtYWtl
+cyBpdCBoYXJkZXIgdG8gcHduDQo+ID4+Pj4+IHlvdSBpbiB0aGUgZmlyc3QgcGxhY2UsIGFuZCBT
+RUxpbnV4IG1ha2VzIGl0IHJlYWxseSBvYnZpb3VzIHdoZW4NCj4gPj4+Pj4gcGFja2FnaW5nIGEg
+cHJvZ3JhbSB0aGF0IGRvZXNu4oCZdCByZXNwZWN0IFdeWC4gIFRoZSB1cHNob3QgaXMgdGhhdCBh
+DQo+ID4+Pj4+IGxvdCBvZiBwcm9ncmFtcyBnb3QgZml4ZWQuKQ0KPiA+Pj4+DQo+ID4+Pj4gSSdt
+IGxvc3QgaGVyZS4gRHluYW1pY2FsbHkgbGlua2VkIGVuY2xhdmVzLCBpZiBydW5uaW5nIG9uIFNH
+WDIsIHdvdWxkIG5lZWQgUlctPlJYLA0KPiBpLmUuDQo+ID4+PiBGSUxFX19FWEVDTU9EIG9uIC9k
+ZXYvc2d4L2VuY2xhdmUuIEJ1dCB0aGV5IG5ldmVyIG5lZWQgUldYLCBpLmUuIFBST0NFU1NfX0VY
+RUNNRU0uDQo+ID4+Pg0KPiA+Pj4gSG1tLiAgSWYgd2Ugd2FudCB0byBtYWtlIHRoaXMgZGlzdGlu
+Y3Rpb24sIHdlIG5lZWQgc29tZXRoaW5nIGEgYmlnIHJpY2hlcg0KPiA+Pj4gdGhhbiBteSBwcm9w
+b3NlZCBjYWxsYmFja3MuICBBIGNoZWNrIG9mIHRoZSBhY3R1YWwgbXByb3RlY3QoKSAvIG1tYXAo
+KQ0KPiA+Pj4gcGVybWlzc2lvbnMgd291bGQgYWxzbyBiZSBuZWVkZWQuICBTcGVjaWZpY2FsbHks
+IGFsbG93aW5nIE1BWFBFUk09UldYDQo+ID4+PiB3b3VsZG4ndCBpbXBseSB0aGF0IFBST1RfV1JJ
+VEUgfCBQUk9UX0VYRUMgaXMgYWxsb3dlZC4NCj4gPg0KPiA+IEFjdHVhbGx5LCBJIHRoaW5rIHdl
+IGRvIGhhdmUgZXZlcnl0aGluZyB3ZSBuZWVkIGZyb20gYW4gTFNNIHBlcnNwZWN0aXZlLg0KPiA+
+IExTTXMganVzdCBuZWVkIHRvIHVuZGVyc3RhbmQgdGhhdCBzZ3hfZW5jbGF2ZV9sb2FkKCkgd2l0
+aCBhIE5VTEwgdm1hDQo+ID4gaW1wbGllcyBhIHRyYW5zaXRpb24gZnJvbSBSVy4gIEZvciBleGFt
+cGxlLCBTRUxpbnV4IHdvdWxkIGludGVycHJldA0KPiA+IHNneF9lbmNsYXZlX2xvYWQoTlVMTCwg
+UlgpIGFzIHJlcXVpcmluZyBGSUxFX19FWEVDTU9ELg0KPiA+DQo+ID4gQXMgQ2VkcmljIG1lbnRp
+b25lZCBlYXJsaWVyLCB0aGUgaG9zdCBwcm9jZXNzIGRvZXNuJ3QgbmVjZXNzYXJpbHkga25vdw0K
+PiA+IHdoaWNoIHBhZ2VzIHdpbGwgZW5kIHVwIFJXIHZzIFJYLCBpLmUuIHNneF9lbmNsYXZlX2xv
+YWQoTlVMTCwgUlgpDQo+ID4gYWxyZWFkeSBoYXMgdG8gYmUgaW52b2tlZCBhdCBydW50aW1lLCBh
+bmQgd2hlbiB0aGF0IGhhcHBlbnMsIHRoZSBrZXJuZWwNCj4gPiBjYW4gdGFrZSB0aGUgb3Bwb3J0
+dW5pdHkgdG8gY2hhbmdlIHRoZSBWTUFzIGZyb20gTUFZX1JXIHRvIE1BWV9SWC4NCj4gPg0KPiA+
+IEZvciBzaW1wbGljaXR5IGluIHRoZSBrZXJuZWwgYW5kIGNsYXJpdHkgaW4gdXNlcnNwYWNlLCBp
+dCBtYWtlcyBzZW5zZSB0bw0KPiA+IHJlcXVpcmUgYW4gZXhwbGljaXQgaW9jdGwoKSB0byBhZGQg
+dGhlIHRvLWJlLUVBVUcnZCByYW5nZS4gIFRoYXQganVzdA0KPiA+IGxlYXZlcyB1cyB3YW50aW5n
+IGFuIGlvY3RsKCkgdG8gc2V0IHRoZSBwb3N0LUVBQ0NFUFR7Q09QWX0gcGVybWlzc2lvbnMuDQo+
+ID4NCj4gPiBFLmcuOg0KPiA+DQo+ID4gICAgICBpb2N0bCg8cHJlZml4Pl9BRERfUkVHSU9OLCB7
+IE5VTEwgfSkgLyogTlVMTCA9PSBFQVVHLCBNQVlfUlcgKi8NCj4gPg0KPiA+ICAgICAgbXByb3Rl
+Y3QoYWRkciwgc2l6ZSwgUlcpOw0KPiA+ICAgICAgLi4uDQo+ID4NCj4gPiAgICAgIEVBQ0NFUFRD
+T1BZIC0+IEVBVUcgLyogcGFnZSBmYXVsdCBoYW5kbGVyICovDQo+ID4NCj4gPiAgICAgIGlvY3Rs
+KDxwcmVmaXg+X0FDVElWQVRFX1JFR0lPTiwgeyBhZGRyLCBzaXplLCBSWH0pIC8qIE1BWV9SWCAq
+Lw0KPiA+DQo+ID4gICAgICBtcHJvdGVjdChhZGRyLCBzaXplLCBSWCk7DQo+ID4NCj4gPiAgICAg
+IC4uLg0KPiA+DQo+ID4gQW5kIG1ha2luZyBBQ1RJVkFURV9SRUdJT04gYSBzaW5nbGUtc2hvdCBw
+ZXIgcGFnZSBlbGltaW5hdGVzIHRoZSBuZWVkIGZvcg0KPiA+IHRoZSBNQVhQRVJNUyBjb25jZXB0
+IChzZWUgYmVsb3cpLg0KPiA+DQo+ID4+IElmIHdlIGtlZXAgb25seSBvbmUgTUFYUEVSTSwgd291
+bGRuJ3QgdGhpcyBiZSB0aGUgY3VycmVudCBiZWhhdmlvciBvZg0KPiA+PiBtbWFwKCkvbXByb3Rl
+Y3QoKT8NCj4gPj4NCj4gPj4gVG8gYmUgYSBiaXQgbW9yZSBjbGVhciwgc3lzdGVtIGFkbWluIHNl
+dHMgTUFYUEVSTSB1cHBlciBib3VuZCBpbiB0aGUgZm9ybSBvZg0KPiA+PiBGSUxFX197UkVBRHxX
+UklURXxFWEVDVVRFfEVYRUNNT0R9IG9mIC9kZXYvc2d4L2VuY2xhdmUuIFRoZW4gZm9yIGENCj4g
+Pj4gcHJvY2Vzcy9lbmNsYXZlLCBpZiB3aGF0IGl0IHJlcXVpcmVzIGZhbGxzIGJlbG93IHdoYXQn
+cyBhbGxvd2VkIG9uDQo+ID4+IC9kZXYvc2d4L2VuY2xhdmUsIHRoZW4gZXZlcnl0aGluZyB3aWxs
+IGp1c3Qgd29yay4gT3RoZXJ3aXNlLCBpdCBmYWlscyBpbiB0aGUNCj4gPj4gZm9ybSBvZiAtRVBF
+Uk0gcmV0dXJuZWQgZnJvbSBtbWFwKCkvbXByb3RlY3QoKS4gUGxlYXNlIG5vdGUgdGhhdCBNQVhQ
+RVJNIGhlcmUNCj4gPj4gYXBwbGllcyB0byAicnVudGltZSIgcGVybWlzc2lvbnMsIHdoaWxlICJp
+bml0aWFsIiBwZXJtaXNzaW9ucyBhcmUgdGFrZW4gY2FyZQ0KPiA+PiBvZiBieSBzZWN1cml0eV9l
+bmNsYXZlX3tsb2FkfGluaXR9LiAiaW5pdGlhbCIgcGVybWlzc2lvbnMgY291bGQgYmUgbW9yZQ0K
+PiA+PiBwZXJtaXNzaXZlIHRoYW4gInJ1bnRpbWUiIHBlcm1pc3Npb25zLCBlLmcuLCBSWCBpcyBz
+dGlsbCByZXF1aXJlZCBmb3IgaW5pdGlhbA0KPiA+PiBjb2RlIHBhZ2VzIGV2ZW4gdGhvdWdoIHN5
+c3RlbSBhZG1pbnMgY291bGQgZGlzYWJsZSBkeW5hbWljYWxseSBsb2FkZWQgY29kZQ0KPiA+PiBw
+YWdlcyBieSAqbm90KiBnaXZpbmcgRklMRV9fe0VYRUNVVEV8RVhFQ01PRH0uIFRoZXJlZm9yZSwg
+dGhlICJpbml0aWFsIg0KPiA+PiBtYXBwaW5nIHdvdWxkIHN0aWxsIGhhdmUgdG8gYmUgZG9uZSBi
+eSB0aGUgZHJpdmVyICh0byBieXBhc3MgTFNNKSwgZWl0aGVyIHZpYQ0KPiA+PiBhIG5ldyBpb2N0
+bCBvciBhcyBwYXJ0IG9mIElPQ19FSU5JVC4NCj4gPg0KPiA+IEFoYSENCj4gPg0KPiA+IFN0YXJ0
+aW5nIHdpdGggQ2VkcmljJ3MgYXNzZXJ0aW9uIHRoYXQgaW5pdGlhbCBwZXJtaXNzaW9ucyBjYW4g
+YmUgdGFrZW4NCj4gPiBkaXJlY3RseSBmcm9tIFNFQ0lORk86DQo+ID4NCj4gPiAgICAtIEluaXRp
+YWwgcGVybWlzc2lvbnMgZm9yICpFQUREKiBwYWdlcyBhcmUgZXhwbGljaXRseSBoYW5kbGVkIHZp
+YQ0KPiA+ICAgICAgc2d4X2VuY2xhdmVfbG9hZCgpIHdpdGggdGhlIGV4YWN0IFNFQ0lORk8gcGVy
+bWlzc2lvbnMuDQo+ID4NCj4gPiAgICAtIEluaXRpYWwgcGVybWlzc2lvbnMgZm9yICpFQVVHKiBh
+cmUgdW5jb25kaXRpb25hbGx5IFJXLiAgRUFDQ0VQVENPUFkNCj4gPiAgICAgIHJlcXVpcmVzIHRo
+ZSB0YXJnZXQgRVBDIHBhZ2UgdG8gYmUgUlcsIGFuZCBFQUNDRVBUIHdpdGggUk8gaXMgdXNlbGVz
+cy4NCj4gPg0KPiA+ICAgIC0gUnVudGltZSBwZXJtaXNzaW9ucyBicmVhayBkb3duIGFzIGZvbGxv
+d3M6DQo+ID4gICAgICAgIFIgICAtIE4vQSwgc3Vic2V0IG9mIFJXIChFQVVHKQ0KPiA+ICAgICAg
+ICBXICAgLSBOL0EsIHN1YnNldCBvZiBSVyAoRUFVRykgYW5kIHg4NiBwYWdpbmcgY2FuJ3QgZG8g
+Vw0KPiA+ICAgICAgICBYICAgLSBOL0EsIHN1YnNldCBvZiBSWCAoeDg2IHBhZ2luZyBjYW4ndCBk
+byBYTykNCj4gPiAgICAgICAgUlcgIC0gSGFuZGxlZCBieSBFQVVHIExTTSBob29rICh1c2VzIFJX
+IHVuY29uZGl0aW9uYWxseSkNCj4gPiAgICAgICAgV1ggIC0gTi9BLCBzdWJzZXQgb2YgUldYICh4
+ODYgcGFnaW5nIGNhbid0IGRvIFdYKQ0KPiA+ICAgICAgICBSWCAgLSBIYW5kbGVkIGJ5IEFDVElW
+QVRFX1JFR0lPTg0KPiA+ICAgICAgICBSV1ggLSBIYW5kbGVkIGJ5IEFDVElWQVRFX1JFR0lPTg0K
+PiA+DQo+ID4gSW4gb3RoZXIgd29yZHMsIGlmIHdlIGRlZmluZSB0aGUgU0dYIC0+IExTTSBjYWxs
+cyBhcyBmb2xsb3dzIChtaW51cyB0aGUNCj4gPiBmaWxlIHBvaW50ZXIgYW5kIG90aGVyIHBhcmFt
+cyBmb3IgYnJldml0eSk6DQo+ID4NCj4gPiAgICAtIDxwcmVmaXg+X0FDVElWQVRFX1JFR0lPTih2
+bWEsIHBlcm1zKSAtPiBzZ3hfZW5jbGF2ZV9sb2FkKE5VTEwsIHBlcm1zKQ0KPiA+DQo+ID4gICAg
+LSA8cHJlZml4Pl9BRERfUkVHSU9OKHZtYSkgLT4gc2d4X2VuY2xhdmVfbG9hZCh2bWEsIFNFQ0lO
+Rk8ucGVybXMpDQo+ID4NCj4gPiAgICAtIDxwcmVmaXg+X0FERF9SRUdJT04oTlVMTCkgLT4gc2d4
+X2VuY2xhdmVfbG9hZChOVUxMLCBSVykNCj4gPg0KPiA+IHRoZW4gU0dYIGFuZCBMU01zIGhhdmUg
+YWxsIHRoZSBpbmZvcm1hdGlvbiBhbmQgaG9va3MgbmVlZGVkLiAgVGhlIGNhdGNoDQo+ID4gaXMg
+dGhhdCB0aGUgTFNNIHNlbWFudGljcyBvZiBzZ3hfZW5jbGF2ZV9sb2FkKC4uLiwgUlcpIHdvdWxk
+IG5lZWQgdG8gYmUNCj4gPiBkaWZmZXJlbnQgdGhhbiBub3JtYWwgc2hhcmVkIG1lbW9yeSwgZS5n
+LiBGSUxFX19XUklURSBzaG91bGQgKm5vdCogYmUNCj4gPiByZXF1aXJlZCwgYnV0IHRoYXQncyBv
+ayBzaW5jZSBpdCdzIGFuIFNHWCBzcGVjaWZpYyBob29rLiAgQW5kIGlmIGZvciBzb21lDQo+ID4g
+cmVhc29uIGFuIExTTSB3YW50ZWQgdG8gZ2F0ZSBhY2Nlc3MgdG8gRUFVRyAqd2l0aG91dCogRklM
+RV9fRVhFQ01PRCwgaXQnZA0KPiA+IGhhdmUgdGhlIG5lY2Vzc2FyeSBpbmZvcm1hdGlvbiB0byBk
+byBzby4NCj4gDQo+IEFzc3VtaW5nIHRoYXQgc2d4X2VuY2xhdmVfbG9hZCgpIGlzIGEgTFNNIGhv
+b2sgKHByb2JhYmx5IG5hbWVkDQo+IHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpIGluc3RlYWQpLCB0
+aGVuOg0KPiANCj4gYSkgRG9lcyB0aGUgc2lnc3RydWN0IGZpbGUgZ2V0IHBhc3NlZCB0byB0aGlz
+IGhvb2sgaW4gZXZlcnkgY2FzZSwgZXZlbg0KPiB3aGVuIHZtYSBpcyBOVUxMPyAgSSB0aGluayB0
+aGUgYW5zd2VyIGlzIHllcywganVzdCB3YW50IHRvIGNvbmZpcm0uDQoNCkknbSBjb25mdXNlZC4g
+DQoNCkluIHRoZSBjYXNlIG9mIEVBREQgKG5vbi1OVUxMIHZtYSksIGFyZSB3ZSBwYXNzaW5nIGJv
+dGggdm1hIGFuZCBzaWdzdHJ1Y3QgZmlsZT8gSWYgc28sIHdoaWNoIGZpbGUgZGljdGF0ZXMgYWxs
+b3dlZCBwZXJtaXNzaW9ucywgdm1hLT52bV9maWxlIG9yIHNpZ3N0cnVjdCwgb3IgYm90aD8/Pw0K
+DQpJbiB0aGUgY2FzZSBvZiBFQVVHIChOVUxMIHZtYSksIGFsbCBvdGhlciBwYXJhbWV0ZXJzIGFy
+ZSBjb25zdGFudCBmb3IgYW55IGdpdmVuIGVuY2xhdmUuIFRoZW4gd2h5IGRvIHdlIGNhbGwgdGhp
+cyBzYW1lIGhvb2sgZm9yIGV2ZXJ5IHJlZ2lvbiBhZGRlZCwgYXNzdW1pbmcgdGhlIGhvb2sgd2ls
+bCByZXR1cm4gdGhlIHNhbWUgdmFsdWUgZXZlcnl0aW1lIGFueXdheT8gIA0KDQpBbmQgaXQgbG9v
+a3MgbGlrZSBBQ1RJVkFURV9SRUdJT04gaXMgbmVlZGVkIG9ubHkgYmVjYXVzZSB0aGUgcHJvcG9z
+ZWQgc2VjdXJpdHlfZW5jbGF2ZV9sb2FkKCkgd291bGQgYmFzZSBpdHMgZGVjaXNpb24gb24gdGhl
+IHNpZ3N0cnVjdCBmaWxlLiBBbiBhbHRlcm5hdGl2ZSBpcyB0byBiYXNlIHRoYXQgZGVjaXNpb24g
+b24gL2Rldi9zZ3gvZW5jbGF2ZS4gT2YgY291cnNlIHRoZSBmb3JtZXIgaGFzIGZpbmVyIGdyYW51
+bGFyaXR5IGJ1dCBpcyB0aGF0IHJlYWxseSBuZWNlc3Nhcnk/IEZyb20gc2VjdXJpdHkgcGVyc3Bl
+Y3RpdmUsIG9ubHkgdGhlIHdlYWtlc3QgbGluayBtYXR0ZXJzLiBGSUxFX19FWEVDTU9EIG9uIGEg
+cmVndWxhciBzaGFyZWQgb2JqZWN0IGNvdWxkIGFsbG93IGV4cGxvaXRzIG9mIGFsbCBidWdzIHRo
+cm91Z2hvdXQgdGhlIGhvc3QgcHJvY2VzcyBiZWNhdXNlIGNvZGUgd2l0aGluIHRoYXQgc2hhcmVk
+IG9iamVjdCBpcyBtb2RpZmlhYmxlIGJ5IG5vdCBvbmx5IGl0c2VsZiBidXQgYWxzbyBhbnkgY29k
+ZSB3aXRoaW4gdGhhdCBzYW1lIHByb2Nlc3MuIEluIGNvbnRyYXN0LCBGSUxFX19FWEVDTU9EIG9u
+IC9kZXYvc2d4L2VuY2xhdmUgb25seSBhbGxvd3MgZW5jbGF2ZXMgdG8gbW9kaWZ5IHRoZW1zZWx2
+ZXMuIFRoZXkgY2Fubm90IG1vZGlmeSBlYWNoIG90aGVyLCBuZWl0aGVyIGNhbiAidW50cnVzdGVk
+IiBjb2RlIG91dHNpZGUgb2YgZW5jbGF2ZXMgbW9kaWZ5IGFueSBvZiB0aGVtLiBTbyBpdCBkb2Vz
+bid0IGxvb2sgbGlrZSBhIHdlYWtlciBsaW5rIHRvIG1lLiBNb3Jlb3ZlciwgcmVxdWlyaW5nIEZJ
+TEVfX0VYRUNNT0Qgb24gc2lnc3RydWN0IG1lYW5zIGl0IGNvdWxkIGJlIHVzZWQgYXMgYSB0YXJn
+ZXQgYnVmZmVyIGZvciBjb2RlIGluamVjdGlvbiBhdHRhY2tzLiBJTUhPIHRoYXQgKmxvd2Vycyog
+dGhlIHNlY3VyaXR5IG9mIHRoZSB3aG9sZSBwcm9jZXNzLg0KDQo+IA0KPiBiKSBTaG91bGQgd2Ug
+dXNlIGEgZGlmZmVyZW50IGhvb2sgZm9yIEFDVElWQVRFX1JFR0lPTiB0aGFuIGZvcg0KPiBBRERf
+UkVHSU9OIG9yIGlzIHRoZSBkaXN0aW5jdGlvbiBiZXR3ZWVuIHRoZW0gaXJyZWxldmFudC91bm5l
+Y2Vzc2FyeQ0KPiBmcm9tIGFuIGFjY2VzcyBjb250cm9sIHBvaW50IG9mIHZpZXc/IEF0IHByZXNl
+bnQgTFNNL1NFTGludXggd29uJ3QgYmUNCj4gYWJsZSB0byBkaXN0aW5ndWlzaCBBQ1RJVkFURV9S
+RUdJT04odm1hLCBSVykgZnJvbSBBRERfUkVHSU9OKE5VTEwpIGFib3ZlDQo+IHNpbmNlIHRoZXkg
+d2lsbCBib3RoIGludm9rZSB0aGUgc2FtZSBob29rIHdpdGggdGhlIHNhbWUgYXJndW1lbnRzIElJ
+VUMuDQo+IERvZXMgaXQgbWF0dGVyPyAgSXQncyBvayBpZiB0aGUgYW5zd2VyIGlzIG5vLCBqdXN0
+IHdhbnQgdG8gY29uZmlybS4NCj4gDQo+IGMpIElzIHRoZXJlIHN0aWxsIGFsc28gYSBzZXBhcmF0
+ZSBzZWN1cml0eV9lbmNsYXZlX2luaXQoKSBob29rIHRoYXQgd2lsbA0KPiBiZSBjYWxsZWQsIGFu
+ZCBpZiBzbywgaG93IGRvZXMgaXQgZGlmZmVyIGFuZCB3aGVuIGlzIGl0IGNhbGxlZCByZWxhdGl2
+ZQ0KPiB0byBzZWN1cml0eV9lbmNsYXZlX2xvYWQoKT8NCg0KSSB0aGluayBzZWN1cml0eV9lbmNs
+YXZlX2luaXQoKSB3aWxsIGFsd2F5cyBiZSB1c2VmdWwsIGFzIGl0IG9mZmVycyBhIHdheSBmb3Ig
+TFNNIHRvIGltcGxlbWVudCB3aGl0ZWxpc3RpbmcvYmxhY2tsaXN0aW5nLiBPZiBjb3Vyc2UgYW4g
+TFNNIG1vZHVsZSBsaWtlIFNFTGludXggY2FuIGxvb2sgaW50byB0aGUgYmFja2luZyBpbm9kZSB0
+b28uIEkgdGhpbmsgdGhlIGhvb2sgc2hvdWxkIGhhdmUgYSBzaWduYXR1cmUgbGlrZToNCg0KaW50
+IHNlY3VyaXR5X2VuY2xhdmVfaW5pdChzdHJ1Y3Qgc2d4X3NpZ3N0cnVjdCBfX3VzZXIgKnNpZ3N0
+cnVjdCk7DQoNCkFuIExTTSB0aGF0IGNhcmVzIGFib3V0IHRoZSBiYWNraW5nIGZpbGUgY291bGQg
+bG9vayBpbnRvIHZtX2ZpbGUgb2YgdGhlIFZNQSBjb3ZlcmluZyB0aGUgYnVmZmVyLCB3aGlsZSBh
+biBMU00gdGhhdCBjYXJlcyB0aGUgc2lnc3RydWN0IGl0c2VsZiAoZS5nLiBzaWduaW5nIGtleSkg
+Y291bGQganVzdCBsb29rIGludG8gdGhlIGJ1ZmZlci4gDQoNCj4gDQo+IGQpIFdoYXQgY2hlY2tz
+IHdlcmUgeW91IGVudmlzaW9uaW5nIGVhY2ggb2YgdGhlc2UgY2FsbHMgbWFraW5nPw0KPiANCj4g
+V2l0aCB0aGUgc2VwYXJhdGUgc2VjdXJpdHlfZW5jbGF2ZV8qKCkgaG9va3MsIHdlIGNvdWxkIGRl
+ZmluZSBhbmQgdXNlDQo+IG5ldyBFTkNMQVZFX18qIHBlcm1pc3Npb25zLCBlLmcuIEVOQ0xBVkVf
+X0xPQUQsIEVOQ0xBVkVfX0lOSVQsDQo+IEVOQ0xBVkVfX0VYRUNVVEUsIEVOQ0xBVkVfX0VYRUNN
+RU0sIEVOQ0xBVkVfX0VYRUNNT0QsIGlmIHdlIHdhbnQgdG8NCj4gZGlzdGluZ3Vpc2ggdGhlc2Ug
+b3BlcmF0aW9ucyBmcm9tIHJlZ3VsYXIgZmlsZSBtbWFwL21wcm90ZWN0IG9wZXJhdGlvbnMuDQoN
+CkknbSBub3Qgc3VyZSBpZiB0aGVzZSBFTkNMQVZFX18qIGZsYWdzIGFyZSBhbiBvdmVya2lsbCwg
+dW5sZXNzIHdlIHdhbnQgdG8gZW5mb3JjZSBhbiBlbmNsYXZlIGZpbGUgY2Fubm90IGJlIGxvYWRl
+ZCBhcyBhIHJlZ3VsYXIgc2hhcmVkIG9iamVjdCBvciB2aWNlIHZlcnNhLg0KDQo+IA0KPiA+DQo+
+ID4gVGhlIHVzZXJzcGFjZSBjaGFuZ2VzIGFyZSBmYWlybHkgbWluaW1hbDoNCj4gPg0KPiA+ICAg
+IC0gRm9yIFNHWDEsIHVzZSBQUk9UX05PTkUgZm9yIHRoZSBpbml0aWFsIG1tYXAoKSBhbmQgcmVm
+YWN0b3IgQUREX1BBR0UNCj4gPiAgICAgIHRvIEFERF9SRUdJT04uDQo+ID4NCj4gPiAgICAtIEZv
+ciBTR1gyLCBkbyBhbiBleHBsaWNpdCBBRERfUkVHSU9OIG9uIHRoZSByYW5nZXMgdG8gYmUgRUFV
+RydkLCBhbmQgYW4NCj4gPiAgICAgIEFDVElWQVRFX1JFR0lPTiB0byBtYWtlIGEgcmVnaW9uIFJY
+IG9yIFIgKG5vIGV4dHJhIGlvY3RsKCkgcmVxdWlyZWQgdG8NCj4gPiAgICAgIGtlZXAgUlcgcGVy
+bWlzc2lvbnMpLg0KPiA+DQo+ID4gQmVjYXVzZSBBQ1RJVkFURV9SRUdJT04gY2FuIG9ubHkgYmUg
+ZG9uZSBvbmNlIHBlciBwYWdlLCB0byBkbyAqYWJpdHJhcnkqDQo+ID4gbXByb3RlY3QoKSB0cmFu
+c2l0aW9ucywgdXNlcnNwYWNlIHdvdWxkIG5lZWQgdG8gc2V0IHRoZSBhZGRlZC9hY3RpdmF0ZWQN
+Cj4gPiBwZXJtaXNzaW9ucyB0byBiZSBhIHN1cGVyc2V0IG9mIHRoZSB0cmFuc2l0aW9ucywgZS5n
+LiBSVyAtPiBSWCB3b3VsZA0KPiA+IHJlcXVpcmUgUldYLCBidXQgdGhhdCdzIGEgbm9uLWlzc3Vl
+Lg0KPiA+DQo+ID4gICAgLSBGb3IgU0dYMSBpdCdzIGEgbm9wIHNpbmNlIGl0J3MgaW1wb3NzaWJs
+ZSB0byBjaGFuZ2UgdGhlIEVQQ00NCj4gPiAgICAgIHBlcm1pc3Npb25zLCBpLmUuIHRoZSBwYWdl
+IHdvdWxkIG5lZWQgdG8gYmUgUldYIHJlZ2FyZGxlc3MuDQo+ID4NCj4gPiAgICAtIEZvciBTR1gy
+LCB1c2Vyc3BhY2UgY2FuIHN1Y2sgaXQgdXAgYW5kIHJlcXVlc3QgUldYIHRvIGRvIGNvbXBsZXRl
+bHkNCj4gPiAgICAgIGFyYml0cmFyeSB0cmFuc2l0aW9ucyAod29ya2luZyBhcyBpbnRlbmRlZCks
+IG9yIHRoZSBrZXJuZWwgY2FuIHN1cHBvcnQNCj4gPiAgICAgIHRyaW1taW5nIChyZW1vdmluZykg
+cGFnZXMgZnJvbSBhbiBlbmNsYXZlLCB3aGljaCB3b3VsZCBhbGxvdyB1c2Vyc3BhY2UNCj4gPiAg
+ICAgIHRvIGRvICJhcmJpdHJhcnkiIHRyYW5zaXRpb25zIGJ5IGZpcnN0IHJlbW92aW5nIHRoZSBw
+YWdlLg0KPiA+DQoNCg==
