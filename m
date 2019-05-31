@@ -7,17 +7,17 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332B7C04AB6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8238DC28CC2
 	for <linux-sgx@archiver.kernel.org>; Fri, 31 May 2019 23:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1512425725
+	by mail.kernel.org (Postfix) with ESMTP id 5AF7F25725
 	for <linux-sgx@archiver.kernel.org>; Fri, 31 May 2019 23:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfEaXch (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1726867AbfEaXch (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 31 May 2019 19:32:37 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59346 "EHLO mga07.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:59345 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbfEaXcd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726550AbfEaXcd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Fri, 31 May 2019 19:32:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -54,9 +54,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH 4/9] mm: Introduce vm_ops->mprotect()
-Date:   Fri, 31 May 2019 16:31:54 -0700
-Message-Id: <20190531233159.30992-5-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 3/9] x86/sgx: Allow userspace to add multiple pages in single ioctl()
+Date:   Fri, 31 May 2019 16:31:53 -0700
+Message-Id: <20190531233159.30992-4-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
 References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
@@ -67,77 +67,231 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX will use the mprotect() hook to prevent userspace from circumventing
-various security checks, i.e. Linux Security Modules.
+...to improve performance when building enclaves by reducing the number
+of user<->system transitions.  Rather than provide arbitrary batching,
+e.g. with per-page SECINFO and mrmask, take advantage of the fact that
+any sane enclave will have large swaths of pages with identical
+properties, e.g. code vs. data sections.
 
-Enclaves are built by copying data from normal memory into the Enclave
-Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
-single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
-single MAP_SHARED vm_file.  Furthermore, all enclaves will need read,
-write and execute pages in the EPC.
-
-As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
-can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
-that originated in a non-EXECUTE file (which is long gone by the time
-mprotect() is called).
-
-By hooking mprotect(), SGX can make explicit LSM upcalls while an
-enclave is being built, i.e. when the kernel has a handle to origin of
-each enclave page, and enforce the result of the LSM policy whenever
-userspace maps the enclave page in the future.
-
-Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
-that approach is quite ugly, e.g. would require userspace to call an
-SGX ioctl() prior to using mprotect() to extend a page's protections.
+For simplicity and stability in the initial implementation, loop over
+the existing add page flow instead of taking a more agressive approach,
+which would require tracking transitions between VMAs and holding
+mmap_sem for an extended duration.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- include/linux/mm.h |  2 ++
- mm/mprotect.c      | 15 +++++++++++----
- 2 files changed, 13 insertions(+), 4 deletions(-)
+ arch/x86/include/uapi/asm/sgx.h        |  21 ++---
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 104 +++++++++++++++----------
+ 2 files changed, 74 insertions(+), 51 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0e8834ac32b7..50a42364a885 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -458,6 +458,8 @@ struct vm_operations_struct {
- 	void (*close)(struct vm_area_struct * area);
- 	int (*split)(struct vm_area_struct * area, unsigned long addr);
- 	int (*mremap)(struct vm_area_struct * area);
-+	int (*mprotect)(struct vm_area_struct * area, unsigned long start,
-+			unsigned long end, unsigned long prot);
- 	vm_fault_t (*fault)(struct vm_fault *vmf);
- 	vm_fault_t (*huge_fault)(struct vm_fault *vmf,
- 			enum page_entry_size pe_size);
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index bf38dfbbb4b4..e466ca5e4fe0 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -547,13 +547,20 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 			goto out;
- 		}
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 9ed690a38c70..4a12d6abbcb7 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -12,8 +12,8 @@
  
--		error = security_file_mprotect(vma, reqprot, prot);
--		if (error)
--			goto out;
+ #define SGX_IOC_ENCLAVE_CREATE \
+ 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+-#define SGX_IOC_ENCLAVE_ADD_PAGE \
+-	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
++#define SGX_IOC_ENCLAVE_ADD_PAGES \
++	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+ #define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+@@ -32,21 +32,22 @@ struct sgx_enclave_create  {
+ };
+ 
+ /**
+- * struct sgx_enclave_add_page - parameter structure for the
+- *                               %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+- * @addr:	address within the ELRANGE
+- * @src:	address for the page data
+- * @secinfo:	address for the SECINFO data
+- * @mrmask:	bitmask for the measured 256 byte chunks
++ * struct sgx_enclave_add_pages - parameter structure for the
++ *                                %SGX_IOC_ENCLAVE_ADD_PAGES ioctl
++ * @addr:	start address within the ELRANGE
++ * @src:	start address for the pages' data
++ * @secinfo:	address for the SECINFO data (common to all pages)
++ * @nr_pages:	number of pages (must be virtually contiguous)
++ * @mrmask:	bitmask for the measured 256 byte chunks (common to all pages)
+  */
+-struct sgx_enclave_add_page {
++struct sgx_enclave_add_pages {
+ 	__u64	addr;
+ 	__u64	src;
+ 	__u64	secinfo;
++	__u32	nr_pages;
+ 	__u16	mrmask;
+ } __attribute__((__packed__));
+ 
 -
- 		tmp = vma->vm_end;
- 		if (tmp > end)
- 			tmp = end;
+ /**
+  * struct sgx_enclave_init - parameter structure for the
+  *                           %SGX_IOC_ENCLAVE_INIT ioctl
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index a27ec26a9350..6acfcbdeca9a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -487,10 +487,9 @@ static int sgx_validate_tcs(struct sgx_encl *encl, struct sgx_tcs *tcs)
+ 	return 0;
+ }
+ 
+-static int __sgx_encl_add_page(struct sgx_encl *encl,
++static int sgx_encl_queue_page(struct sgx_encl *encl,
+ 			       struct sgx_encl_page *encl_page,
+-			       void *data,
+-			       struct sgx_secinfo *secinfo,
++			       void *data, struct sgx_secinfo *secinfo,
+ 			       unsigned int mrmask)
+ {
+ 	unsigned long page_index = sgx_encl_get_index(encl, encl_page);
+@@ -529,9 +528,9 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+ 	return 0;
+ }
+ 
+-static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+-			     void *data, struct sgx_secinfo *secinfo,
+-			     unsigned int mrmask)
++static int __sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
++			       void *data, struct sgx_secinfo *secinfo,
++			       unsigned int mrmask)
+ {
+ 	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
+ 	struct sgx_encl_page *encl_page;
+@@ -563,7 +562,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+ 		goto out;
+ 	}
+ 
+-	ret = __sgx_encl_add_page(encl, encl_page, data, secinfo, mrmask);
++	ret = sgx_encl_queue_page(encl, encl_page, data, secinfo, mrmask);
+ 	if (ret) {
+ 		radix_tree_delete(&encl_page->encl->page_tree,
+ 				  PFN_DOWN(encl_page->desc));
+@@ -575,56 +574,79 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+ 	return ret;
+ }
+ 
+-/**
+- * sgx_ioc_enclave_add_page - handler for %SGX_IOC_ENCLAVE_ADD_PAGE
+- *
+- * @filep:	open file to /dev/sgx
+- * @cmd:	the command value
+- * @arg:	pointer to an &sgx_enclave_add_page instance
+- *
+- * Add a page to an uninitialized enclave (EADD), and optionally extend the
+- * enclave's measurement with the contents of the page (EEXTEND).  EADD and
+- * EEXTEND are done asynchronously via worker threads.  A successful
+- * sgx_ioc_enclave_add_page() only indicates the page has been added to the
+- * work queue, it does not guarantee adding the page to the enclave will
+- * succeed.
+- *
+- * Return:
+- *   0 on success,
+- *   -errno otherwise
+- */
+-static long sgx_ioc_enclave_add_page(struct file *filep, unsigned int cmd,
+-				     unsigned long arg)
++static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
++			     unsigned long src, struct sgx_secinfo *secinfo,
++			     unsigned int mrmask)
+ {
+-	struct sgx_enclave_add_page *addp = (void *)arg;
+-	struct sgx_encl *encl = filep->private_data;
+-	struct sgx_secinfo secinfo;
+ 	struct page *data_page;
+ 	void *data;
+ 	int ret;
+ 
+-	if (copy_from_user(&secinfo, (void __user *)addp->secinfo,
+-			   sizeof(secinfo)))
+-		return -EFAULT;
+-
+ 	data_page = alloc_page(GFP_HIGHUSER);
+ 	if (!data_page)
+ 		return -ENOMEM;
+ 
+ 	data = kmap(data_page);
+ 
+-	if (copy_from_user((void *)data, (void __user *)addp->src, PAGE_SIZE)) {
++	if (copy_from_user((void *)data, (void __user *)src, PAGE_SIZE)) {
+ 		ret = -EFAULT;
+ 		goto out;
+ 	}
+ 
+-	ret = sgx_encl_add_page(encl, addp->addr, data, &secinfo, addp->mrmask);
+-	if (ret)
+-		goto out;
+-
++	ret = __sgx_encl_add_page(encl, addr, data, secinfo, mrmask);
+ out:
+ 	kunmap(data_page);
+ 	__free_page(data_page);
 +
-+		if (vma->vm_ops && vma->vm_ops->mprotect) {
-+			error = vma->vm_ops->mprotect(vma, nstart, tmp, prot);
-+			if (error)
-+				goto out;
-+		}
++	return ret;
++}
 +
-+		error = security_file_mprotect(vma, reqprot, prot);
-+		if (error)
-+			goto out;
++/**
++ * sgx_ioc_enclave_add_pages - handler for %SGX_IOC_ENCLAVE_ADD_PAGES
++ *
++ * @filep:	open file to /dev/sgx
++ * @cmd:	the command value
++ * @arg:	pointer to an &sgx_enclave_add_page instance
++ *
++ * Add a range of pages to an uninitialized enclave (EADD), and optionally
++ * extend the enclave's measurement with the contents of the page (EEXTEND).
++ * The range of pages must be virtually contiguous.  The SECINFO and
++ * measurement maskare applied to all pages, i.e. pages with different
++ * properties must be added in separate calls.
++ *
++ * EADD and EEXTEND are done asynchronously via worker threads.  A successful
++ * sgx_ioc_enclave_add_page() only indicates the pages have been added to the
++ * work queue, it does not guarantee adding the pages to the enclave will
++ * succeed.
++ *
++ * Return:
++ *   0 on success,
++ *   -errno otherwise
++ */
++static long sgx_ioc_enclave_add_pages(struct file *filep, unsigned int cmd,
++				      unsigned long arg)
++{
++	struct sgx_enclave_add_pages *addp = (void *)arg;
++	struct sgx_encl *encl = filep->private_data;
++	struct sgx_secinfo secinfo;
++	unsigned int i;
++	int ret;
 +
- 		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
- 		if (error)
- 			goto out;
++	if (copy_from_user(&secinfo, (void __user *)addp->secinfo,
++			   sizeof(secinfo)))
++		return -EFAULT;
++
++	for (i = 0, ret = 0; i < addp->nr_pages && !ret; i++) {
++		if (signal_pending(current))
++			return -ERESTARTSYS;
++
++		if (need_resched())
++			cond_resched();
++
++		ret = sgx_encl_add_page(encl, addp->addr + i*PAGE_SIZE,
++					addp->src + i*PAGE_SIZE,
++					&secinfo, addp->mrmask);
++	}
+ 	return ret;
+ }
+ 
+@@ -823,8 +845,8 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_CREATE:
+ 		handler = sgx_ioc_enclave_create;
+ 		break;
+-	case SGX_IOC_ENCLAVE_ADD_PAGE:
+-		handler = sgx_ioc_enclave_add_page;
++	case SGX_IOC_ENCLAVE_ADD_PAGES:
++		handler = sgx_ioc_enclave_add_pages;
+ 		break;
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		handler = sgx_ioc_enclave_init;
 -- 
 2.21.0
 
