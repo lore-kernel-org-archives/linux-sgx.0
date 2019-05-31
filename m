@@ -7,17 +7,17 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF740C04AB6
-	for <linux-sgx@archiver.kernel.org>; Fri, 31 May 2019 23:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7925C04AB6
+	for <linux-sgx@archiver.kernel.org>; Fri, 31 May 2019 23:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1D5259B8
-	for <linux-sgx@archiver.kernel.org>; Fri, 31 May 2019 23:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B59AC259B8
+	for <linux-sgx@archiver.kernel.org>; Fri, 31 May 2019 23:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfEaXcb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 31 May 2019 19:32:31 -0400
+        id S1727087AbfEaXdZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 31 May 2019 19:33:25 -0400
 Received: from mga07.intel.com ([134.134.136.100]:59345 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfEaXcb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726635AbfEaXcb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Fri, 31 May 2019 19:32:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -54,9 +54,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH 1/9] x86/sgx: Remove unused local variable in sgx_encl_release()
-Date:   Fri, 31 May 2019 16:31:51 -0700
-Message-Id: <20190531233159.30992-2-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
+Date:   Fri, 31 May 2019 16:31:52 -0700
+Message-Id: <20190531233159.30992-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
 References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
@@ -67,23 +67,41 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+SGX enclaves have an associated Enclave Linear Range (ELRANGE) that is
+tracked and enforced by the CPU using a base+mask approach, similar to
+how hardware range registers such as the variable MTRRs.  As a result,
+the ELRANGE must be naturally sized and aligned.
+
+To reduce boilerplate code that would be needed in every userspace
+enclave loader, the SGX driver naturally aligns the mmap() address and
+also requires the range to be naturally sized.  Unfortunately, SGX fails
+to grant a waiver to the MAP_FIXED case, e.g. incorrectly rejects mmap()
+if userspace is attempting to map a small slice of an existing enclave.
+
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encl.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/driver/main.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7216bdf07bd0..f23ea0fbaa47 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -463,7 +463,6 @@ EXPORT_SYMBOL_GPL(sgx_encl_destroy);
- void sgx_encl_release(struct kref *ref)
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index afe844aa81d6..129d356aff30 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -79,7 +79,13 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
+ 					   unsigned long pgoff,
+ 					   unsigned long flags)
  {
- 	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
--	struct sgx_encl_mm *encl_mm;
+-	if (len < 2 * PAGE_SIZE || len & (len - 1) || flags & MAP_PRIVATE)
++	if (flags & MAP_PRIVATE)
++		return -EINVAL;
++
++	if (flags & MAP_FIXED)
++		return addr;
++
++	if (len < 2 * PAGE_SIZE || len & (len - 1))
+ 		return -EINVAL;
  
- 	if (encl->pm_notifier.notifier_call)
- 		unregister_pm_notifier(&encl->pm_notifier);
+ 	addr = current->mm->get_unmapped_area(file, addr, 2 * len, pgoff,
 -- 
 2.21.0
 
