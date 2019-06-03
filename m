@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06620C04AB5
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8D9C282CE
+	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D62B52662E
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F61623A46
+	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbfFCWQo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 3 Jun 2019 18:16:44 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19879 "EHLO mga09.intel.com"
+        id S1726097AbfFCW1Z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 3 Jun 2019 18:27:25 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27917 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726101AbfFCWQo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:16:44 -0400
+        id S1726025AbfFCW1Z (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:27:25 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:54:20 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 14:05:46 -0700
 X-ExtLoop1: 1
 Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
-  by orsmga001.jf.intel.com with ESMTP; 03 Jun 2019 13:54:07 -0700
-Date:   Mon, 3 Jun 2019 23:54:05 +0300
+  by fmsmga005.fm.intel.com with ESMTP; 03 Jun 2019 14:05:35 -0700
+Date:   Tue, 4 Jun 2019 00:05:34 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
         "Xing, Cedric" <cedric.xing@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         William Roberts <bill.c.roberts@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -57,9 +57,8 @@ Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         "Huang, Kai" <kai.huang@intel.com>,
         David Rientjes <rientjes@google.com>
 Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190603205405.GE4894@linux.intel.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
- <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+Message-ID: <20190603210534.GF4894@linux.intel.com>
+References: <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
  <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
  <20190528202407.GB13158@linux.intel.com>
  <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
@@ -68,10 +67,11 @@ References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.c
  <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
  <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
  <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+In-Reply-To: <20190530180110.GB23930@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -79,24 +79,38 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
-> > What is the "source file" i.e. the target of the check?  Enclave file,
-> > sigstruct file, or /dev/sgx/enclave?
-> 
-> Enclave file -- that is, the file backing the vma from which the data
-> is loaded.
+On Thu, May 30, 2019 at 11:01:10AM -0700, Sean Christopherson wrote:
+>   - Requires enclave builder to mark enclave pages executable in the
+>     non-enclave VMAs, which may unnecessarily require EXECMOD on the
+>     source file, or even worse, EXECMEM, and potentially increases the
+>     attack surface since the file must be executable.
 
-Wonder why KVM gets away without having this given that enclaves are
-lot alike VMs.
+Enclave builder marks *non-enclave pages*? Not following.
 
-> It's provided by userspace based on whether it thinks the data in
-> question is enclave code.  source->vm_file is the file from which the
-> code is being loaded.  I'm assuming that the user code will only set
-> excute_intent ==true if it actually wants to execute the code, so, if
-> there's a denial, it will be fatal.  The normal case will be that the
-> request will be granted on the basis of EXECUTE.
+> W^X handling:
+>   - mmap() to /dev/sgx/enclave only allowed with PROT_NONE, i.e. force
+>     userspace through mprotect() to simplify the kernel implementation.
+>   - Add vm_ops mprotect() ops hook (I'll refer to SGX's implementation
+>     as SGX.mprotect())
+>   - Take explicit ALLOW_WRITE at ADD_REGION, a.k.a. EADD
+>   - ADD_REGION also used to describe EAUG region (tentatively for SGX2).
+>   - Track "can be written at some point in time (past or future)" as
+>     ALLOW_WRITE (to avoid confusiong with MAY_WRITE).  A priori knowledge
+>     of writability avoids having to track/coordinate PROT_WRITE across
+>     VMAs and MMs.
 
-AFAIK user spaces tells that already with the SECINFO flags. I don't
-get why we need a duplicate parameter.
+Still not sure why you want to use vm_ops instead of file_operations.
+
+The approach I've been proposing earlier in this email thread before
+these new proposals can be summarized from hook perspective as:
+
+- Allow mmap() only before ECREATE and require it to be size
+  of the ELRANGE (ECREATE ioctl would check this). This would
+  be with PROT_NONE.
+- Disallow mprotect() before EINIT. Requires a new callback
+  to file_operations like mmap() has.
+- After EINIT check for each mprotect() that it matches the
+  permissions of underlying enclave pages. Disallow mmap()
+  after EINIT.
 
 /Jarkko
