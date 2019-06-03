@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1C4C04AB5
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E333C04AB5
+	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494E526647
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E527626741
+	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 22:05:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfFCWFj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 3 Jun 2019 18:05:39 -0400
+        id S1726327AbfFCWFq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 3 Jun 2019 18:05:46 -0400
 Received: from mga05.intel.com ([192.55.52.43]:46272 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbfFCWFi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:05:38 -0400
+        id S1726281AbfFCWFj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:05:39 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:44:07 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:48:04 -0700
 X-ExtLoop1: 1
 Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
-  by orsmga004.jf.intel.com with ESMTP; 03 Jun 2019 13:43:54 -0700
-Date:   Mon, 3 Jun 2019 23:43:53 +0300
+  by orsmga001.jf.intel.com with ESMTP; 03 Jun 2019 13:47:50 -0700
+Date:   Mon, 3 Jun 2019 23:47:49 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         "Xing, Cedric" <cedric.xing@intel.com>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         William Roberts <bill.c.roberts@gmail.com>,
@@ -58,9 +58,8 @@ Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         "Huang, Kai" <kai.huang@intel.com>,
         David Rientjes <rientjes@google.com>
 Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190603204353.GC4894@linux.intel.com>
-References: <20190524224107.GJ365@linux.intel.com>
- <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
+Message-ID: <20190603204749.GD4894@linux.intel.com>
+References: <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
  <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
  <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
  <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
@@ -69,10 +68,11 @@ References: <20190524224107.GJ365@linux.intel.com>
  <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
  <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
  <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+In-Reply-To: <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -80,37 +80,12 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, May 30, 2019 at 07:31:14AM -0700, Andy Lutomirski wrote:
->  - To create an X mapping of an enclave page that came from EADD, you
-> need EXECUTE on the source file.  Optionally, we could also permit
-> this if you have EXECMOD.
+On Thu, May 30, 2019 at 11:04:24AM -0400, Stephen Smalley wrote:
+> Does this occur for both setting initial permissions and runtime permissions
+> or just runtime? Both userspace- and driver-initiated mmap/mprotect
+> operations or just userspace-initiated ones?  Does the driver use interfaces
+> that call the mmap/mprotect hooks or lower level functions?
 
-Source file? EADD ioctl takes memory buffer in right now.
-
-> And I have two design proposals.  One is static and one is dynamic.
-> To implement either one, we will probably need a new .may_mprotect vm
-> operation, and that operation can call an LSM hook.  Or we can give
-> LSMs a way to detect that a given vm_area_struct is an enclave.  As I
-> see it, this is an implementation detail that is certainly solveable.
-
-Why VM operation and not file operation?
-
-> EADD takes an execute_intent flag.  It calls a new hook:
-> 
->   int security_enclave_load(struct vm_area_struct *source, bool execute_intent);
-> 
-> This hook will fail if execute_intent==true and the caller has neither
-> EXECUTE, EXECMOD, nor EXECMEM.
-> 
-> EAUG sets execute_intent = false.
-> 
-> EINIT takes a sigstruct pointer.  SGX can (when initially upstreamed
-> or later on once there's demand) call a new hook:
-> 
->   security_enclave_init(struct sigstruct *sigstruct, struct
-> vm_area_struct *source);
-
-What is the source VMA in these callbacks? Why is @execute_intent
-needed anyway as a ioctl arugment and not deduced from SECINFO?
+The driver never initiates mmap() or mprotect().
 
 /Jarkko
