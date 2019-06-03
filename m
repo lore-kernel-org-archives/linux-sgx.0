@@ -2,122 +2,40 @@ Return-Path: <SRS0=nxNq=UC=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0A4C04AB5
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 17:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C889C04AB5
+	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 18:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E6202705E
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 17:47:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="e7m7KjGV"
+	by mail.kernel.org (Postfix) with ESMTP id 6839D218BC
+	for <linux-sgx@archiver.kernel.org>; Mon,  3 Jun 2019 18:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfFCRrc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 3 Jun 2019 13:47:32 -0400
-Received: from usfb19pa11.eemsg.mail.mil ([214.24.26.82]:50584 "EHLO
-        USFB19PA11.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFCRrc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 3 Jun 2019 13:47:32 -0400
-X-EEMSG-check-017: 146585815|USFB19PA11_EEMSG_MP7.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USFB19PA11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Jun 2019 17:47:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1559584035; x=1591120035;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=D9rQ+Kb4wPjRxt8tnRaPTooSv6Yh0Ti/B5jMD7OS2rE=;
-  b=e7m7KjGVbsxrAXbg16jCs1umZnkLRr7Vy5SQFtrk8JLLFfrfC8oyM79k
-   MpT+CnmeIzZKhXbRS2p6kBbhGeKapB963tK+enPgHBFhj7nA8hIpbcR1P
-   FAVrEjPn/JpRzbWoMayQXFS52X2GHFX4wRFnc2mhG808ED0Nuf6mrbssY
-   lNRIel/ltXS4wf7/Q6wyU6TCHvkHHQAMZHvl1BHx+VTBKngWiQaKNkoxe
-   Wa0p3VINgJ9qXfRIhtqKT+EIAU5HZt4j88Bj6cjOkiRNjdQrKzRZ5kvCR
-   KfyPRBES/gSKX/KAMCfQblYtvh7Jt2WuYRbxXmDPnpW9oYehAc8nP0kxE
-   w==;
-X-IronPort-AV: E=Sophos;i="5.60,547,1549929600"; 
-   d="scan'208";a="24342573"
-IronPort-PHdr: =?us-ascii?q?9a23=3AoG1WUBwOGfTb++/XCy+O+j09IxM/srCxBDY+r6?=
- =?us-ascii?q?Qd0e0SKfad9pjvdHbS+e9qxAeQG9mCsrQd0LWd6vm5EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCegbb9oMRm7owfcusYLjYd/N6o61w?=
- =?us-ascii?q?fErGZPd+lK321jOEidnwz75se+/Z5j9zpftvc8/MNeUqv0Yro1Q6VAADspL2?=
- =?us-ascii?q?466svrtQLeTQSU/XsTTn8WkhtTDAfb6hzxQ4r8vTH7tup53ymaINH2QLUpUj?=
- =?us-ascii?q?ms86tnVBnlgzocOjUn7G/YlNB/jKNDoBKguRN/xZLUYJqIP/Z6Z6/RYM8WSX?=
- =?us-ascii?q?ZEUstXWSNBGIe8ZJYRAeQHM+hTso3xq0IOoBa6AAWhAv7kxD1ViX/sxaA0zv?=
- =?us-ascii?q?ovEQ/G0gIjEdwBvnvbo9fpO6kdSu210KvFwC/fY/9K1zrw6o7FeQ0hr/GWWr?=
- =?us-ascii?q?JwdNLcx1QzFwzbllWQqZLqPzWI3eoQtmiU9e5gVeaxhG8ntgp8pSOvydo3io?=
- =?us-ascii?q?TSmoIUykzL9SV+wIovI924U1R0bcSrEJtXqSGXLo17Sd4hTWFwoCs217ILtJ?=
- =?us-ascii?q?GhcCUK1Zgr3QDTZvOZf4SS/x7uUvuaLy1ii3J/Yr2/gg6/8U2nyuLhSMa5yE?=
- =?us-ascii?q?1Kri9ZktnUsXANygDT5tCHSvRj+keh3i6C1xzJ5eFeIEA0iLHbJ4Q9wr8wip?=
- =?us-ascii?q?UTsUPDEjXwmErql6+Zal8o+u2p6+Tjernmp5mcOJFoigzmL6gjlcOyDf44Pw?=
- =?us-ascii?q?QTRWSX5+ux2KP58UHkWLlKi+c5kqjdsJDUP8Qboau5DhdO0ok+8BayFCum0d?=
- =?us-ascii?q?QEknkHK1JJYhSHj5PzNF3UL/D4Cum/j0y2kDh33/DGIqHhApLVI3ffjrjuYK?=
- =?us-ascii?q?x9609AxwYpwtFf5pRUCr4aLfLyXE/xqMLXDhsjPwOoxObnDc131pkCVmKXHq?=
- =?us-ascii?q?+ZLKTSvEeT5u0xOeaMYpUZuDTnJ/c55/7ul345mUQBfamuxZsXaG63Hu59I0?=
- =?us-ascii?q?WeZ3rhmdYBEWEWvgUgSOzmkkGNUTlWZ3yqRaIz+ik7CJ66DYfEXo2tgqaO3D?=
- =?us-ascii?q?24Hp1VYWBKEEuMHm3rd4WHWvcMbjydIsl6nzwAVLihTZIh1B60uA/7zbpnMv?=
- =?us-ascii?q?Tb+ikCuZ3/09h14vXZlQsu+jxsE8Sdz2aNQnlwnmMVWz8227tyoU9jxVeZ16?=
- =?us-ascii?q?h3nfhYGcZU5/NTXQcwLYTcwPBiC9DuRgLBec+ESFSjQtWhGzExVNMxw8QVbk?=
- =?us-ascii?q?Z7Adqiiw7M3yuwD78SjbyLC4Q+8rjA0HjpO8Z913HG2bE6j1Y4WMtPOnOpi7?=
- =?us-ascii?q?V/9wfJA47Jl0WYl6CweasA2y7N8X+JzXCSs0FATA5wTaLFUGgbZkvXq9T5+0?=
- =?us-ascii?q?zDQ6a1Cbs5LgRB1NSCKqpWatzplFlGQfDjN8nDY2K1hWi9HgiIxrySY4rwYW?=
- =?us-ascii?q?kd3zvSCFICkw8N+XaKLw8+Bj2uo2jGFjxhCUrvY1/w8el5sH67VlU7zxyOb0?=
- =?us-ascii?q?B6z7q64AMVhfiFR/MW2bIEvz0hpCtuEFmh2NLWDsKKpxB9c6VEfdM9/FBH2H?=
- =?us-ascii?q?rHuAxlJJOgNaFihkUFfgRvpUzuzRR3Cp5Ykcgutnwl0BR9Jbif0FNbeDOSxY?=
- =?us-ascii?q?rwNaHPKmnu4BCvbLbb2krA39aS+6cP7uk4qlr4sQG3GUot7W9n38NW03SC/J?=
- =?us-ascii?q?XKChQdUZbrXkYw7Rh6qKnQYjMh6IPMyX1sLa60vyfA2903GOslygygf9BEPa?=
- =?us-ascii?q?OKEw/yCdEaCNKoKOwrlFmldA4LPOdX9KQsJcOpa+OG2LK3POZnhD+pkH5I4J?=
- =?us-ascii?q?5j3U6W9ypzUOjI340bzPGexQaHVjH8jEu/vcDzg4xLeTYSHm+nwyj+GIFRfr?=
- =?us-ascii?q?FyfZoMCWq2P823ydF+hpH2Vn5c9V6jAU4G2NOzeRqVaVz93AJR2V4KrnO5gS?=
- =?us-ascii?q?G41SB7kyk1rqqD2yzD2/jidB0dOm5VXmZiiUrjIZOvgtAeXUioaRUplRS86U?=
- =?us-ascii?q?b0wKhbuaJ/IHTJTkdUfij2KGdiXrG3trqYbM5F8IkovjlPUOSgfVCaTabwox?=
- =?us-ascii?q?8b0yPlAmtfyyk3dzK0tZXjmRx1lmadIW1trHrWZ85w3w3T5N/CSv5L2DoJWi?=
- =?us-ascii?q?14hSPQBlimMNmj5c+UmIvbsuCiS2KhUYVecCbowI6Brya75nNlAQe5n/+tnt?=
- =?us-ascii?q?3rCw860TX019NyTyXHsA78YpX316S9Ke9nekhoBFnh68t1A41+iYQwhZ4L1H?=
- =?us-ascii?q?gEiZWa42AHnX3wMdpFw6L+amQCRToRz97S+gjl11VpLmiVyILhSnWd3sxhas?=
- =?us-ascii?q?GgbWMVwiI96ttHCKOV7LxCgCt0rUO0rQzWYfhgmDcS1OEh6GIbg+EOvgoh1C?=
- =?us-ascii?q?KdAqodHUNAJyzjiwyI78yirKVQfGuvd7iw1E1kndCkFr6CpBpRWGzndZg/HS?=
- =?us-ascii?q?9/9Nl/PEjQ333074HuYMPQYs4Lth2IjxfAiPBYKJQplvoPmSVoJXjyvXkhy+?=
- =?us-ascii?q?4miBxjxou6s5aaJGVt5q25HgRUOSHyZ8MW4jvtl7pRnt6K34CzGZVsAi4LU4?=
- =?us-ascii?q?XyTfKnDj0er+7oNgaJED0hrHeWArvfHQmD6Eh4q3LDCYykN3aSJHMB19VtWA?=
- =?us-ascii?q?GdJFBDgAATRDg6hZ45GRqqxcD7c0d2/CwR51/hphpN0O1oMhj/Un3EqQepbD?=
- =?us-ascii?q?c0VIaQLB5M4g5e4EfVNNSU7vhvECFA4p2hsAuNJ3SbZwtSDGEJRlaLB1f5Mr?=
- =?us-ascii?q?mu+NnP6e6YBuWlIvvPZ7WOtfJRV/OSyZ2z1Ytm+i6GNt+TMXl6E/07xk1DUG?=
- =?us-ascii?q?hjFMTfhjoPUS0XliLXY86ApBez5DN3ody/8Pv1XgLv5oyPBqBWMdVu/RC2nK?=
- =?us-ascii?q?iCO/SRhCZ/NTZXyJcMyWXUx7gY2V4YkztueCW1EbQcqS7NS7rdmqxNAB4acS?=
- =?us-ascii?q?9zL9VI4Lg83glLIsPbi9X11qJmgf4xEVtKSVvhmsSxb8wQP269LE/HBFqMNL?=
- =?us-ascii?q?mePjLL29r6brm4Sb1RkupUsR69tSyGHED9Jj6DjSXmVwizMeFQiyGWJB5euI?=
- =?us-ascii?q?amchZtEmXjTtXmaga7MN9rlz02wKU0hnfUOm4ALThwaURNrqef7SlAmPVwB3?=
- =?us-ascii?q?RB7mZ5LemDgyuZ7PPXKpcMvftrHyR7jeRa4HshxrtU6iFEWOJ6mC/IotFypF?=
- =?us-ascii?q?Gml/GFyiB7XxpWtjZLmIWLsF14OaXY6JZAX2rE/BAT4mWLEBkKqNxlCtrgu6?=
- =?us-ascii?q?BU1NfDjr78KDBH89jM58sTG9DUKN6bMHomKRfoFj/UDA8BTT6qL27fglZRn+?=
- =?us-ascii?q?2I+n2PqZg1sYbjmIASSr9AT1E1F/UaClh7E9wGOpt4QjQkkbuDhs4S+XW+tA?=
- =?us-ascii?q?XRRNldvp3fTvKSAfTvKDKYjblcfRcH2qn0LZgJNo36x0NtdkN1kZ/LG0rWQd?=
- =?us-ascii?q?BCvClhYhUor0VK9XgtBlE0jgjVawWipDc4GPKunxV8wl91bOg39Tyq81YxKX?=
- =?us-ascii?q?LLojc9lA86ntCzxXjbWz7rLbysWplWBjDvsE51eqj2SgA9T0f6yVdpPTGCRf?=
- =?us-ascii?q?Raj6FhbnxskA/Ro4BIH9ZdS7FJZFkbwvTBI70K2E5fqSLv/kZE5urDBJ0qwA?=
- =?us-ascii?q?kja52vqDRb0gFgbdg4I4TUJaxU3h5RgL6Dummj0eVnkyEEIENYy3+fYC4Fvg?=
- =?us-ascii?q?QzM7AiIye5trh35ReqhypIeG9KUeEj5P1t6BVuaKy70yv83usbeQiKPOuFIv?=
- =?us-ascii?q?bc4jWRmA=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2CKAQCvW/Vc/wHyM5BmGwEBAQEDAQEBBwMBAQGBZYFiB?=
- =?us-ascii?q?SqBOzOEPJNYAgaBECWJUJEICQEBAQEBAQEBATQBAgEBhEACgxIjOBMBAwEBA?=
- =?us-ascii?q?QQBAQEBAwEBbCiCOikBgmYBAQEBAyMEETQKAxALFQECAgImAgJXBgEMCAEBF?=
- =?us-ascii?q?4JIP4F3FKlNfjOFR4MigUaBDCiLWhd4gQeBEScMgl8+hB0Tgx6CWASNaYU1V?=
- =?us-ascii?q?JUHCYIPghiRFAYbgiKKc4lZjQCYLCGBWCsIAhgIIQ+DKIIaF448IwOBNgEBj?=
- =?us-ascii?q?WoBJYIsAQE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 03 Jun 2019 17:47:13 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x53Hl9Cl011449;
-        Mon, 3 Jun 2019 13:47:10 -0400
-Subject: Re: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
-To:     "Xing, Cedric" <cedric.xing@intel.com>,
+        id S1726817AbfFCSDD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 3 Jun 2019 14:03:03 -0400
+Received: from mga09.intel.com ([134.134.136.24]:62804 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbfFCSDC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 3 Jun 2019 14:03:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 11:03:00 -0700
+X-ExtLoop1: 1
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by orsmga001.jf.intel.com with ESMTP; 03 Jun 2019 11:03:00 -0700
+Received: from orsmsx161.amr.corp.intel.com (10.22.240.84) by
+ ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 3 Jun 2019 11:02:59 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.165]) by
+ ORSMSX161.amr.corp.intel.com ([169.254.4.187]) with mapi id 14.03.0415.000;
+ Mon, 3 Jun 2019 11:03:00 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+CC:     Andy Lutomirski <luto@kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         LSM List <linux-security-module@vger.kernel.org>,
@@ -127,7 +45,7 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Hansen, Dave" <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -143,110 +61,118 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         "Roberts, William C" <william.c.roberts@intel.com>,
         "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: RE: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
+Thread-Topic: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
+Thread-Index: AQHVGAkeu//pWDttTk+JsIicrUDwLaaG/FIQgAOxr4D//4xvIA==
+Date:   Mon, 3 Jun 2019 18:02:59 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654ECFEE@ORSMSX116.amr.corp.intel.com>
 References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
  <960B34DE67B9E140824F1DCDEC400C0F654EC5FD@ORSMSX116.amr.corp.intel.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <e5e1dc77-eb56-bdab-8164-602ea544ea6e@tycho.nsa.gov>
-Date:   Mon, 3 Jun 2019 13:47:09 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F654EC5FD@ORSMSX116.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ <e5e1dc77-eb56-bdab-8164-602ea544ea6e@tycho.nsa.gov>
+In-Reply-To: <e5e1dc77-eb56-bdab-8164-602ea544ea6e@tycho.nsa.gov>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzRkYzI0ZmYtOWRhYS00NWE0LWEwMDQtYjA5Y2FiODIzYzhmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVDJBbGtVa1orakFQSnZkMlgxOXlZaFFSa3ZuTjVQWHRQb0d1V0dIUFEwMkdxZnQ3bjFmU2pZWDdLTmZtWitqZiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/2/19 3:29 AM, Xing, Cedric wrote:
-> Hi Sean,
-> 
->> From: Christopherson, Sean J
->> Sent: Friday, May 31, 2019 4:32 PM
->>
->> This series is the result of a rather absurd amount of discussion over how to get SGX to play
->> nice with LSM policies, without having to resort to evil shenanigans or put undue burden on
->> userspace.  The discussion definitely wandered into completely insane territory at times, but
->> I think/hope we ended up with something reasonable.
->>
->> The basic gist of the approach is to require userspace to declare what protections are
->> maximally allowed for any given page, e.g. add a flags field for loading enclave pages that
->> takes ALLOW_{READ,WRITE,EXEC}.  LSMs can then adjust the allowed protections, e.g. clear
->> ALLOW_EXEC to prevent ever mapping the page with PROT_EXEC.  SGX enforces the allowed perms
->> via a new mprotect() vm_ops hook, e.g. like regular mprotect() uses MAY_{READ,WRITE,EXEC}.
->>
->> ALLOW_EXEC is used to deny hings like loading an enclave from a noexec file system or from a
->> file without EXECUTE permissions, e.g. without the ALLOW_EXEC concept, on SGX2 hardware
->> (regardless of kernel support) userspace could EADD from a noexec file using read-only
->> permissions, and later use mprotect() and ENCLU[EMODPE] to gain execute permissions.
->>
->> ALLOW_WRITE is used in conjuction with ALLOW_EXEC to enforce SELinux's EXECMOD (or EXECMEM).
->>
->> This is very much an RFC series.  It's only compile tested, likely has obvious bugs, the
->> SELinux patch could be completely harebrained, etc...
->> My goal at this point is to get feedback at a macro level, e.g. is the core concept
->> viable/acceptable, are there objection to hooking mprotect(), etc...
->>
->> Andy and Cedric, hopefully this aligns with your general expectations based on our last
->> discussion.
-> 
-> I couldn't understand the real intentions of ALLOW_* flags until I saw them in code. I have to say C is more expressive than English in that regard :)
-> 
-> Generally I agree with your direction but think ALLOW_* flags are completely internal to LSM because they can be both produced and consumed inside an LSM module. So spilling them into SGX driver and also user mode code makes the solution ugly and in some cases impractical because not every enclave host process has a priori knowledge on whether or not an enclave page would be EMODPE'd at runtime.
-> 
-> Theoretically speaking, what you really need is a per page flag (let's name it WRITTEN?) indicating whether a page has ever been written to (or more precisely, granted PROT_WRITE), which will be used to decide whether to grant PROT_EXEC when requested in future. Given the fact that all mprotect() goes through LSM and mmap() is limited to PROT_NONE, it's easy for LSM to capture that flag by itself instead of asking user mode code to provide it.
-> 
-> That said, here is the summary of what I think is a better approach.
-> * In hook security_file_alloc(), if @file is an enclave, allocate some data structure to store for every page, the WRITTEN flag as described above. WRITTEN is cleared initially for all pages.
->    Open: Given a file of type struct file *, how to tell if it is an enclave (i.e. /dev/sgx/enclave)?
-> * In hook security_mmap_file(), if @file is an enclave, make sure @prot can only be PROT_NONE. This is to force all protection changes to go through security_file_mprotect().
-> * In the newly introduced hook security_enclave_load(), set WRITTEN for pages that are requested PROT_WRITE.
-> * In hook security_file_mprotect(), if @vma->vm_file is an enclave, look up and use WRITTEN flags for all pages within @vma, along with other global flags (e.g. PROCESS__EXECMEM/FILE__EXECMOD in the case of SELinux) to decide on 
-allowing/rejecting @prot.
-
-At this point we have no knowledge of the source vma/file, right?  So 
-what do we check FILE__EXECUTE and/or FILE__EXECMOD against? 
-vma->vm_file at this point is /dev/sgx/enclave, right?
-
-> * In hook security_file_free(), if @file is an enclave, free storage allocated for WRITTEN flags.
-> 
-> I'll try to make more detailed comments in my replies to individual patches sometime tomorrow.
-> 
->>
->> Lastly, I added a patch to allow userspace to add multiple pages in a single ioctl().  It's
->> obviously not directly related to the security stuff, but the idea tangentially came up during
->> earlier discussions and it's something I think the UAPI should provide (it's a tiny change).
->> Since I was modifying the UAPI anyways, I threw it in.
->>
->> Sean Christopherson (9):
->>    x86/sgx: Remove unused local variable in sgx_encl_release()
->>    x86/sgx: Do not naturally align MAP_FIXED address
->>    x86/sgx: Allow userspace to add multiple pages in single ioctl()
->>    mm: Introduce vm_ops->mprotect()
->>    x86/sgx: Restrict mapping without an enclave page to PROT_NONE
->>    x86/sgx: Require userspace to provide allowed prots to ADD_PAGES
->>    x86/sgx: Enforce noexec filesystem restriction for enclaves
->>    LSM: x86/sgx: Introduce ->enclave_load() hook for Intel SGX
->>    security/selinux: Add enclave_load() implementation
->>
->>   arch/x86/include/uapi/asm/sgx.h        |  30 ++++--
->>   arch/x86/kernel/cpu/sgx/driver/ioctl.c | 143 +++++++++++++++++--------
->> arch/x86/kernel/cpu/sgx/driver/main.c  |  13 ++-
->>   arch/x86/kernel/cpu/sgx/encl.c         |  31 +++++-
->>   arch/x86/kernel/cpu/sgx/encl.h         |   4 +
->>   include/linux/lsm_hooks.h              |  16 +++
->>   include/linux/mm.h                     |   2 +
->>   include/linux/security.h               |   2 +
->>   mm/mprotect.c                          |  15 ++-
->>   security/security.c                    |   8 ++
->>   security/selinux/hooks.c               |  85 +++++++++++++++
->>   11 files changed, 290 insertions(+), 59 deletions(-)
->>
->> --
->> 2.21.0
-> 
-> -Cedric
-> 
-
+PiBGcm9tOiBsaW51eC1zZ3gtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtc2d4
+LQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBTdGVwaGVuIFNtYWxsZXkN
+Cj4gU2VudDogTW9uZGF5LCBKdW5lIDAzLCAyMDE5IDEwOjQ3IEFNDQo+IA0KPiBPbiA2LzIvMTkg
+MzoyOSBBTSwgWGluZywgQ2VkcmljIHdyb3RlOg0KPiA+IEhpIFNlYW4sDQo+ID4NCj4gPj4gRnJv
+bTogQ2hyaXN0b3BoZXJzb24sIFNlYW4gSg0KPiA+PiBTZW50OiBGcmlkYXksIE1heSAzMSwgMjAx
+OSA0OjMyIFBNDQo+ID4+DQo+ID4+IFRoaXMgc2VyaWVzIGlzIHRoZSByZXN1bHQgb2YgYSByYXRo
+ZXIgYWJzdXJkIGFtb3VudCBvZiBkaXNjdXNzaW9uDQo+ID4+IG92ZXIgaG93IHRvIGdldCBTR1gg
+dG8gcGxheSBuaWNlIHdpdGggTFNNIHBvbGljaWVzLCB3aXRob3V0IGhhdmluZyB0bw0KPiA+PiBy
+ZXNvcnQgdG8gZXZpbCBzaGVuYW5pZ2FucyBvciBwdXQgdW5kdWUgYnVyZGVuIG9uIHVzZXJzcGFj
+ZS4gIFRoZQ0KPiA+PiBkaXNjdXNzaW9uIGRlZmluaXRlbHkgd2FuZGVyZWQgaW50byBjb21wbGV0
+ZWx5IGluc2FuZSB0ZXJyaXRvcnkgYXQNCj4gdGltZXMsIGJ1dCBJIHRoaW5rL2hvcGUgd2UgZW5k
+ZWQgdXAgd2l0aCBzb21ldGhpbmcgcmVhc29uYWJsZS4NCj4gPj4NCj4gPj4gVGhlIGJhc2ljIGdp
+c3Qgb2YgdGhlIGFwcHJvYWNoIGlzIHRvIHJlcXVpcmUgdXNlcnNwYWNlIHRvIGRlY2xhcmUNCj4g
+Pj4gd2hhdCBwcm90ZWN0aW9ucyBhcmUgbWF4aW1hbGx5IGFsbG93ZWQgZm9yIGFueSBnaXZlbiBw
+YWdlLCBlLmcuIGFkZCBhDQo+ID4+IGZsYWdzIGZpZWxkIGZvciBsb2FkaW5nIGVuY2xhdmUgcGFn
+ZXMgdGhhdCB0YWtlcw0KPiA+PiBBTExPV197UkVBRCxXUklURSxFWEVDfS4gIExTTXMgY2FuIHRo
+ZW4gYWRqdXN0IHRoZSBhbGxvd2VkDQo+ID4+IHByb3RlY3Rpb25zLCBlLmcuIGNsZWFyIEFMTE9X
+X0VYRUMgdG8gcHJldmVudCBldmVyIG1hcHBpbmcgdGhlIHBhZ2UNCj4gd2l0aCBQUk9UX0VYRUMu
+ICBTR1ggZW5mb3JjZXMgdGhlIGFsbG93ZWQgcGVybXMgdmlhIGEgbmV3IG1wcm90ZWN0KCkNCj4g
+dm1fb3BzIGhvb2ssIGUuZy4gbGlrZSByZWd1bGFyIG1wcm90ZWN0KCkgdXNlcyBNQVlfe1JFQUQs
+V1JJVEUsRVhFQ30uDQo+ID4+DQo+ID4+IEFMTE9XX0VYRUMgaXMgdXNlZCB0byBkZW55IGhpbmdz
+IGxpa2UgbG9hZGluZyBhbiBlbmNsYXZlIGZyb20gYQ0KPiA+PiBub2V4ZWMgZmlsZSBzeXN0ZW0g
+b3IgZnJvbSBhIGZpbGUgd2l0aG91dCBFWEVDVVRFIHBlcm1pc3Npb25zLCBlLmcuDQo+ID4+IHdp
+dGhvdXQgdGhlIEFMTE9XX0VYRUMgY29uY2VwdCwgb24gU0dYMiBoYXJkd2FyZSAocmVnYXJkbGVz
+cyBvZg0KPiA+PiBrZXJuZWwgc3VwcG9ydCkgdXNlcnNwYWNlIGNvdWxkIEVBREQgZnJvbSBhIG5v
+ZXhlYyBmaWxlIHVzaW5nIHJlYWQtDQo+IG9ubHkgcGVybWlzc2lvbnMsIGFuZCBsYXRlciB1c2Ug
+bXByb3RlY3QoKSBhbmQgRU5DTFVbRU1PRFBFXSB0byBnYWluDQo+IGV4ZWN1dGUgcGVybWlzc2lv
+bnMuDQo+ID4+DQo+ID4+IEFMTE9XX1dSSVRFIGlzIHVzZWQgaW4gY29uanVjdGlvbiB3aXRoIEFM
+TE9XX0VYRUMgdG8gZW5mb3JjZQ0KPiBTRUxpbnV4J3MgRVhFQ01PRCAob3IgRVhFQ01FTSkuDQo+
+ID4+DQo+ID4+IFRoaXMgaXMgdmVyeSBtdWNoIGFuIFJGQyBzZXJpZXMuICBJdCdzIG9ubHkgY29t
+cGlsZSB0ZXN0ZWQsIGxpa2VseQ0KPiA+PiBoYXMgb2J2aW91cyBidWdzLCB0aGUgU0VMaW51eCBw
+YXRjaCBjb3VsZCBiZSBjb21wbGV0ZWx5IGhhcmVicmFpbmVkLA0KPiBldGMuLi4NCj4gPj4gTXkg
+Z29hbCBhdCB0aGlzIHBvaW50IGlzIHRvIGdldCBmZWVkYmFjayBhdCBhIG1hY3JvIGxldmVsLCBl
+LmcuIGlzDQo+ID4+IHRoZSBjb3JlIGNvbmNlcHQgdmlhYmxlL2FjY2VwdGFibGUsIGFyZSB0aGVy
+ZSBvYmplY3Rpb24gdG8gaG9va2luZw0KPiBtcHJvdGVjdCgpLCBldGMuLi4NCj4gPj4NCj4gPj4g
+QW5keSBhbmQgQ2VkcmljLCBob3BlZnVsbHkgdGhpcyBhbGlnbnMgd2l0aCB5b3VyIGdlbmVyYWwg
+ZXhwZWN0YXRpb25zDQo+ID4+IGJhc2VkIG9uIG91ciBsYXN0IGRpc2N1c3Npb24uDQo+ID4NCj4g
+PiBJIGNvdWxkbid0IHVuZGVyc3RhbmQgdGhlIHJlYWwgaW50ZW50aW9ucyBvZiBBTExPV18qIGZs
+YWdzIHVudGlsIEkgc2F3DQo+ID4gdGhlbSBpbiBjb2RlLiBJIGhhdmUgdG8gc2F5IEMgaXMgbW9y
+ZSBleHByZXNzaXZlIHRoYW4gRW5nbGlzaCBpbiB0aGF0DQo+ID4gcmVnYXJkIDopDQo+ID4NCj4g
+PiBHZW5lcmFsbHkgSSBhZ3JlZSB3aXRoIHlvdXIgZGlyZWN0aW9uIGJ1dCB0aGluayBBTExPV18q
+IGZsYWdzIGFyZQ0KPiBjb21wbGV0ZWx5IGludGVybmFsIHRvIExTTSBiZWNhdXNlIHRoZXkgY2Fu
+IGJlIGJvdGggcHJvZHVjZWQgYW5kDQo+IGNvbnN1bWVkIGluc2lkZSBhbiBMU00gbW9kdWxlLiBT
+byBzcGlsbGluZyB0aGVtIGludG8gU0dYIGRyaXZlciBhbmQgYWxzbw0KPiB1c2VyIG1vZGUgY29k
+ZSBtYWtlcyB0aGUgc29sdXRpb24gdWdseSBhbmQgaW4gc29tZSBjYXNlcyBpbXByYWN0aWNhbA0K
+PiBiZWNhdXNlIG5vdCBldmVyeSBlbmNsYXZlIGhvc3QgcHJvY2VzcyBoYXMgYSBwcmlvcmkga25v
+d2xlZGdlIG9uIHdoZXRoZXINCj4gb3Igbm90IGFuIGVuY2xhdmUgcGFnZSB3b3VsZCBiZSBFTU9E
+UEUnZCBhdCBydW50aW1lLg0KPiA+DQo+ID4gVGhlb3JldGljYWxseSBzcGVha2luZywgd2hhdCB5
+b3UgcmVhbGx5IG5lZWQgaXMgYSBwZXIgcGFnZSBmbGFnIChsZXQncw0KPiBuYW1lIGl0IFdSSVRU
+RU4/KSBpbmRpY2F0aW5nIHdoZXRoZXIgYSBwYWdlIGhhcyBldmVyIGJlZW4gd3JpdHRlbiB0byAo
+b3INCj4gbW9yZSBwcmVjaXNlbHksIGdyYW50ZWQgUFJPVF9XUklURSksIHdoaWNoIHdpbGwgYmUg
+dXNlZCB0byBkZWNpZGUNCj4gd2hldGhlciB0byBncmFudCBQUk9UX0VYRUMgd2hlbiByZXF1ZXN0
+ZWQgaW4gZnV0dXJlLiBHaXZlbiB0aGUgZmFjdCB0aGF0DQo+IGFsbCBtcHJvdGVjdCgpIGdvZXMg
+dGhyb3VnaCBMU00gYW5kIG1tYXAoKSBpcyBsaW1pdGVkIHRvIFBST1RfTk9ORSwgaXQncw0KPiBl
+YXN5IGZvciBMU00gdG8gY2FwdHVyZSB0aGF0IGZsYWcgYnkgaXRzZWxmIGluc3RlYWQgb2YgYXNr
+aW5nIHVzZXIgbW9kZQ0KPiBjb2RlIHRvIHByb3ZpZGUgaXQuDQo+ID4NCj4gPiBUaGF0IHNhaWQs
+IGhlcmUgaXMgdGhlIHN1bW1hcnkgb2Ygd2hhdCBJIHRoaW5rIGlzIGEgYmV0dGVyIGFwcHJvYWNo
+Lg0KPiA+ICogSW4gaG9vayBzZWN1cml0eV9maWxlX2FsbG9jKCksIGlmIEBmaWxlIGlzIGFuIGVu
+Y2xhdmUsIGFsbG9jYXRlIHNvbWUNCj4gZGF0YSBzdHJ1Y3R1cmUgdG8gc3RvcmUgZm9yIGV2ZXJ5
+IHBhZ2UsIHRoZSBXUklUVEVOIGZsYWcgYXMgZGVzY3JpYmVkDQo+IGFib3ZlLiBXUklUVEVOIGlz
+IGNsZWFyZWQgaW5pdGlhbGx5IGZvciBhbGwgcGFnZXMuDQo+ID4gICAgT3BlbjogR2l2ZW4gYSBm
+aWxlIG9mIHR5cGUgc3RydWN0IGZpbGUgKiwgaG93IHRvIHRlbGwgaWYgaXQgaXMgYW4NCj4gZW5j
+bGF2ZSAoaS5lLiAvZGV2L3NneC9lbmNsYXZlKT8NCj4gPiAqIEluIGhvb2sgc2VjdXJpdHlfbW1h
+cF9maWxlKCksIGlmIEBmaWxlIGlzIGFuIGVuY2xhdmUsIG1ha2Ugc3VyZQ0KPiBAcHJvdCBjYW4g
+b25seSBiZSBQUk9UX05PTkUuIFRoaXMgaXMgdG8gZm9yY2UgYWxsIHByb3RlY3Rpb24gY2hhbmdl
+cyB0bw0KPiBnbyB0aHJvdWdoIHNlY3VyaXR5X2ZpbGVfbXByb3RlY3QoKS4NCj4gPiAqIEluIHRo
+ZSBuZXdseSBpbnRyb2R1Y2VkIGhvb2sgc2VjdXJpdHlfZW5jbGF2ZV9sb2FkKCksIHNldCBXUklU
+VEVODQo+IGZvciBwYWdlcyB0aGF0IGFyZSByZXF1ZXN0ZWQgUFJPVF9XUklURS4NCj4gPiAqIElu
+IGhvb2sgc2VjdXJpdHlfZmlsZV9tcHJvdGVjdCgpLCBpZiBAdm1hLT52bV9maWxlIGlzIGFuIGVu
+Y2xhdmUsDQo+ID4gbG9vayB1cCBhbmQgdXNlIFdSSVRURU4gZmxhZ3MgZm9yIGFsbCBwYWdlcyB3
+aXRoaW4gQHZtYSwgYWxvbmcgd2l0aA0KPiA+IG90aGVyIGdsb2JhbCBmbGFncyAoZS5nLiBQUk9D
+RVNTX19FWEVDTUVNL0ZJTEVfX0VYRUNNT0QgaW4gdGhlIGNhc2Ugb2YNCj4gPiBTRUxpbnV4KSB0
+byBkZWNpZGUgb24NCj4gYWxsb3dpbmcvcmVqZWN0aW5nIEBwcm90Lg0KPiANCj4gQXQgdGhpcyBw
+b2ludCB3ZSBoYXZlIG5vIGtub3dsZWRnZSBvZiB0aGUgc291cmNlIHZtYS9maWxlLCByaWdodD8g
+IFNvDQo+IHdoYXQgZG8gd2UgY2hlY2sgRklMRV9fRVhFQ1VURSBhbmQvb3IgRklMRV9fRVhFQ01P
+RCBhZ2FpbnN0Pw0KPiB2bWEtPnZtX2ZpbGUgYXQgdGhpcyBwb2ludCBpcyAvZGV2L3NneC9lbmNs
+YXZlLCByaWdodD8NCg0KTXkgYXBvbG9neSB0byB0aGUgY29uZnVzaW9ucyBoZXJlLg0KDQpZZXMs
+IHZtYS0+dm1fZmlsZSBpcyBhbHdheXMgL2Rldi9zZ3gvZW5jbGF2ZSwgYnV0IGVhY2ggb3Blbigi
+L2Rldi9zZ3gvZW5jbGF2ZSIpIHJldHVybnMgYSAqbmV3KiBmaWxlIHN0cnVjdCAobGV0J3MgZGVu
+b3RlIGl0IGFzIEBlbmNsYXZlX2ZkKSB0aGF0IHVuaXF1ZWx5IGlkZW50aWZpZXMgb25lIGVuY2xh
+dmUgaW5zdGFuY2UsIGFuZCB0aGUgZXhwZWN0YXRpb24gaXMgdGhhdCBAZW5jbGF2ZV9mZC0+Zl9z
+ZWN1cml0eSB3b3VsZCBiZSB1c2VkIGJ5IExTTSB0byBzdG9yZSBlbmNsYXZlIHNwZWNpZmljIGlu
+Zm9ybWF0aW9uLCBpbmNsdWRpbmcgQUxMT1dfKiBmbGFncyBhbmQgd2hhdGV2ZXIgZGVlbWVkIGFw
+cHJvcHJpYXRlIGJ5IGFuIExTTSBtb2R1bGUuDQoNCkluIHRoZSBjYXNlIG9mIFNFTGludXgsIGFu
+ZCBpZiB0aGUgY2hvaWNlIGlzIHRvIHVzZSBGSUxFX19FWEVDTU9EIG9mIC5zaWdzdHJ1Y3QgZmls
+ZSB0byBhdXRob3JpemUgUlctPlJYIGF0IHJ1bnRpbWUsIHRoZW4gU0VMaW51eCBjb3VsZCBjYWNo
+ZSB0aGF0IGZsYWcgaW4gQGVuY2xhdmVfZmQtPmZfc2VjdXJpdHkgdXBvbiBzZWN1cml0eV9lbmNs
+YXZlX2luaXQoKS4NCg==
