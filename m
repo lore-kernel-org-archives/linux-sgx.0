@@ -2,60 +2,35 @@ Return-Path: <SRS0=DpJx=UD=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C12CC282CE
-	for <linux-sgx@archiver.kernel.org>; Tue,  4 Jun 2019 14:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FEAC282CE
+	for <linux-sgx@archiver.kernel.org>; Tue,  4 Jun 2019 15:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2641F2166E
-	for <linux-sgx@archiver.kernel.org>; Tue,  4 Jun 2019 14:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559659912;
-	bh=5ctEf83W1rzW6eB+79+i8bY5zg2vYEZv2TuztgDU1RY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ci9pyKpX61dVXEGsI6N3a6q8zsvagghh/OxVcj9MJfxQ4fqiu+Rj/553sZTrPESWz
-	 lKmKJbr1DKHlvVm5T4w1OSAsr0i7F3xU5NGovkbqytJEl7jCSAlHc065VBZfkAt5DR
-	 0KArXnj7QoZybdCwbA2tYPvb+WZ0ryZI8c8MDg28=
+	by mail.kernel.org (Postfix) with ESMTP id 0FE1B2190D
+	for <linux-sgx@archiver.kernel.org>; Tue,  4 Jun 2019 15:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfFDOvv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 4 Jun 2019 10:51:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33702 "EHLO mail.kernel.org"
+        id S1728002AbfFDPc0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 4 Jun 2019 11:32:26 -0400
+Received: from mga06.intel.com ([134.134.136.31]:2019 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbfFDOvv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:51:51 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83E4D2445E
-        for <linux-sgx@vger.kernel.org>; Tue,  4 Jun 2019 14:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559659909;
-        bh=5ctEf83W1rzW6eB+79+i8bY5zg2vYEZv2TuztgDU1RY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Z5muKAvqiH60dr+oNPEC5AgAynLm9WObA1y/7r3P5vBrYOMRVlNWOziGBm96tx8jy
-         33EdItZ/kx1zx2ArVzadldXmio1CnXaZVB+cf5KkQBUyoV+JBNsoC/Zc17ggxYccHH
-         rsc7CH3kNqzgv6bujbnoiS28SXtUqo/CVBeSFWsI=
-Received: by mail-wr1-f43.google.com with SMTP id p11so11318777wre.7
-        for <linux-sgx@vger.kernel.org>; Tue, 04 Jun 2019 07:51:49 -0700 (PDT)
-X-Gm-Message-State: APjAAAV+g2xWmMBSC/s9Bod5MRHn7HAMiRVba6MwjUoPJoEbQJe7weXp
-        PtzLuZyBHV0w2xU6p4eqFAbBw5NPfzoErhW0Qr/Xig==
-X-Google-Smtp-Source: APXvYqwSuFe0LRPOuT6rqk2lttgw4kckoPd0dgTaQOVZmyVeGTJe31yqRs0TFMt3H2on2lXIznmhTkbDYf/W+odaTKU=
-X-Received: by 2002:adf:fe90:: with SMTP id l16mr6870186wrr.221.1559659907969;
- Tue, 04 Jun 2019 07:51:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com> <20190531233159.30992-5-sean.j.christopherson@intel.com>
-In-Reply-To: <20190531233159.30992-5-sean.j.christopherson@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Jun 2019 07:51:36 -0700
-X-Gmail-Original-Message-ID: <CALCETrWjZBp4Br2Lo03aBu9_PhH0Cr4Az_ywLADo-rztu4Y67Q@mail.gmail.com>
-Message-ID: <CALCETrWjZBp4Br2Lo03aBu9_PhH0Cr4Az_ywLADo-rztu4Y67Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/9] mm: Introduce vm_ops->mprotect()
+        id S1727972AbfFDPc0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 4 Jun 2019 11:32:26 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 08:32:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,550,1549958400"; 
+   d="scan'208";a="181589010"
+Received: from tvuori-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.93.210])
+  by fmsmga002.fm.intel.com with ESMTP; 04 Jun 2019 08:32:16 -0700
+Date:   Tue, 4 Jun 2019 18:32:15 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Cedric Xing <cedric.xing@intel.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         James Morris <jmorris@namei.org>,
@@ -81,87 +56,127 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 5/9] x86/sgx: Restrict mapping without an enclave
+ page to PROT_NONE
+Message-ID: <20190604153201.GA3811@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-6-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531233159.30992-6-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, May 31, 2019 at 4:32 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> SGX will use the mprotect() hook to prevent userspace from circumventing
-> various security checks, i.e. Linux Security Modules.
->
-> Enclaves are built by copying data from normal memory into the Enclave
-> Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
-> single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
-> single MAP_SHARED vm_file.  Furthermore, all enclaves will need read,
-> write and execute pages in the EPC.
->
-> As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
-> can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
-> that originated in a non-EXECUTE file (which is long gone by the time
-> mprotect() is called).
->
-> By hooking mprotect(), SGX can make explicit LSM upcalls while an
-> enclave is being built, i.e. when the kernel has a handle to origin of
-> each enclave page, and enforce the result of the LSM policy whenever
-> userspace maps the enclave page in the future.
->
-> Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
-> that approach is quite ugly, e.g. would require userspace to call an
-> SGX ioctl() prior to using mprotect() to extend a page's protections.
->
+On Fri, May 31, 2019 at 04:31:55PM -0700, Sean Christopherson wrote:
+> To support LSM integration, SGX will require userspace to explicitly
+> specify the allowed protections for each page.  The allowed protections
+> will be supplied to and modified by LSMs (based on their policies).
+
+How the allowed protections are modified by LSMs? AFAIK they don't touch
+the PROT_* flags but I could be wrong too.
+
+> To prevent userspace from circumventing the allowed protections, do not
+> allow PROT_{READ,WRITE,EXEC} mappings to an enclave without an
+> associated enclave page (which will track the allowed protections).
+> 
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  include/linux/mm.h |  2 ++
->  mm/mprotect.c      | 15 +++++++++++----
->  2 files changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0e8834ac32b7..50a42364a885 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -458,6 +458,8 @@ struct vm_operations_struct {
->         void (*close)(struct vm_area_struct * area);
->         int (*split)(struct vm_area_struct * area, unsigned long addr);
->         int (*mremap)(struct vm_area_struct * area);
-> +       int (*mprotect)(struct vm_area_struct * area, unsigned long start,
-> +                       unsigned long end, unsigned long prot);
->         vm_fault_t (*fault)(struct vm_fault *vmf);
->         vm_fault_t (*huge_fault)(struct vm_fault *vmf,
->                         enum page_entry_size pe_size);
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index bf38dfbbb4b4..e466ca5e4fe0 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -547,13 +547,20 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
->                         goto out;
->                 }
->
-> -               error = security_file_mprotect(vma, reqprot, prot);
-> -               if (error)
-> -                       goto out;
-> -
->                 tmp = vma->vm_end;
->                 if (tmp > end)
->                         tmp = end;
+>  arch/x86/kernel/cpu/sgx/driver/main.c |  5 +++++
+>  arch/x86/kernel/cpu/sgx/encl.c        | 30 +++++++++++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/encl.h        |  3 +++
+>  3 files changed, 38 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+> index 129d356aff30..65a87c2fdf02 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+> @@ -63,6 +63,11 @@ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+>  static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+>  {
+>  	struct sgx_encl *encl = file->private_data;
+> +	int ret;
 > +
-> +               if (vma->vm_ops && vma->vm_ops->mprotect) {
-> +                       error = vma->vm_ops->mprotect(vma, nstart, tmp, prot);
-> +                       if (error)
-> +                               goto out;
-> +               }
-> +
-> +               error = security_file_mprotect(vma, reqprot, prot);
-> +               if (error)
-> +                       goto out;
-> +
+> +	ret = sgx_map_allowed(encl, vma->vm_start, vma->vm_end, vma->vm_flags);
+> +	if (ret)
+> +		return ret;
+>  
+>  	vma->vm_ops = &sgx_vm_ops;
+>  	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index f23ea0fbaa47..955d4f430adc 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -235,6 +235,35 @@ static void sgx_vma_close(struct vm_area_struct *vma)
+>  	kref_put(&encl->refcount, sgx_encl_release);
+>  }
+>  
+> +int sgx_map_allowed(struct sgx_encl *encl, unsigned long start,
+> +		    unsigned long end, unsigned long prot)
 
-I think that, if you're going to do it like this, you need to call it
-mprotect_and_check_security or something.  Or you could just add
-.may_mprotect, which is allowed to fail but, on success, falls through
-to call security_file_mprotect and mprotect_fixup().
+Documentation missing.
 
---Andy
+> +{
+> +	struct sgx_encl_page *page;
+> +	unsigned long addr;
+> +
+> +	prot &= (VM_READ | VM_WRITE | VM_EXEC);
+> +	if (!prot || !encl)
+> +		return 0;
+> +
+> +	mutex_lock(&encl->lock);
+> +
+> +	for (addr = start; addr < end; addr += PAGE_SIZE) {
+> +		page = radix_tree_lookup(&encl->page_tree, addr >> PAGE_SHIFT);
+> +		if (!page)
+> +			return -EACCES;
+> +	}
+> +
+> +	mutex_unlock(&encl->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
+> +			    unsigned long end, unsigned long prot)
+> +{
+> +	return sgx_map_allowed(vma->vm_private_data, start, end, prot);
+> +}
+> +
+>  static unsigned int sgx_vma_fault(struct vm_fault *vmf)
+>  {
+>  	unsigned long addr = (unsigned long)vmf->address;
+> @@ -372,6 +401,7 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
+>  const struct vm_operations_struct sgx_vm_ops = {
+>  	.close = sgx_vma_close,
+>  	.open = sgx_vma_open,
+> +	.mprotect = sgx_vma_mprotect,
+>  	.fault = sgx_vma_fault,
+>  	.access = sgx_vma_access,
+>  };
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+> index c557f0374d74..6e310e3b3fff 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.h
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -106,6 +106,9 @@ static inline unsigned long sgx_pcmd_offset(pgoff_t page_index)
+>  	       sizeof(struct sgx_pcmd);
+>  }
+>  
+> +int sgx_map_allowed(struct sgx_encl *encl, unsigned long start,
+> +		    unsigned long end, unsigned long prot);
+> +
+>  enum sgx_encl_mm_iter {
+>  	SGX_ENCL_MM_ITER_DONE		= 0,
+>  	SGX_ENCL_MM_ITER_NEXT		= 1,
+> -- 
+> 2.21.0
+
+This is missing explanation why it is OK to have a mismatch between
+the SECINFO flags and VM_* flags. Maybe that could be explained in
+sgx_map_allowed() documentation.
+
+/Jarkko
