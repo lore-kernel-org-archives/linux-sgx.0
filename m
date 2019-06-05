@@ -3,129 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6128EC28CC5
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 14:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8589C28CC5
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 15:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40856206B8
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 14:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A0B206B8
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 15:06:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbfFEOwW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Jun 2019 10:52:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:27111 "EHLO mga07.intel.com"
+        id S1726442AbfFEPGy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Jun 2019 11:06:54 -0400
+Received: from mga06.intel.com ([134.134.136.31]:26266 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728306AbfFEOwV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 5 Jun 2019 10:52:21 -0400
+        id S1728467AbfFEPGy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:06:54 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 07:52:21 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 08:06:53 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Jun 2019 07:52:20 -0700
-Date:   Wed, 5 Jun 2019 07:52:19 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@intel.com" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "kai.huang@intel.com" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>
-Subject: Re: [PATCH v20 15/28] x86/sgx: Add the Linux SGX Enclave Driver
-Message-ID: <20190605145219.GC26328@linux.intel.com>
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190417103938.7762-16-jarkko.sakkinen@linux.intel.com>
- <20190422215831.GL1236@linux.intel.com>
- <6dd981a7-0e38-1273-45c1-b2c0d8bf6fed@fortanix.com>
- <20190424002653.GB14422@linux.intel.com>
- <20190604201232.GA7775@linux.intel.com>
- <20190605142908.GD11331@linux.intel.com>
+Received: from araresx-wtg1.ger.corp.intel.com (HELO localhost) ([10.252.46.102])
+  by orsmga007.jf.intel.com with ESMTP; 05 Jun 2019 08:06:40 -0700
+Date:   Wed, 5 Jun 2019 18:06:34 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH 6/9] x86/sgx: Require userspace to provide allowed
+ prots to ADD_PAGES
+Message-ID: <20190605150634.GH11331@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-7-sean.j.christopherson@intel.com>
+ <20190604162306.GB3811@linux.intel.com>
+ <20190604164514.GB32350@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190605142908.GD11331@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190604164514.GB32350@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 05:29:08PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Jun 04, 2019 at 01:12:32PM -0700, Sean Christopherson wrote:
-> > On Tue, Apr 23, 2019 at 05:26:53PM -0700, Sean Christopherson wrote:
-> > > On Tue, Apr 23, 2019 at 11:29:24PM +0000, Jethro Beekman wrote:
-> > > > On 2019-04-22 14:58, Sean Christopherson wrote:
-> > > > >Where do we stand on removing the ACPI and platform_driver dependencies?
-> > > > >Can we get rid of them sooner rather than later?
-> > > > 
-> > > > You know my position on this...
-> > > > https://www.spinics.net/lists/linux-sgx/msg00624.html . I don't really have
-> > > > any new arguments.
-> > > > 
-> > > > Considering the amount of planned changes for the driver post-merge, I think
-> > > > it's crucial that the driver part can be swapped out with alternative
-> > > > implementations.
-> > > 
-> > > This gets far outside of my area of expertise as I think this is more of
-> > > a policy question as opposed to a technical question, e.g. do we export
-> > > function simply to allow out-of-tree alternatives.
-> > > 
-> > > > >Now that the core SGX code is approaching stability, I'd like to start
-> > > > >sending RFCs for the EPC virtualization and KVM bits to hash out that side
-> > > > >of things.  The ACPI crud is the last chunk of code that would require
-> > > > >non-trivial changes to the core SGX code for the proposed virtualization
-> > > > >implementation.  I'd strongly prefer to get it out of the way before
-> > > > >sending the KVM RFCs.
-> > > > 
-> > > > What kind of changes? Wouldn't KVM just be another consumer of the same API
-> > > > used by the driver?
-> > > 
-> > > Nope, userspace "only" needs to be able to mmap() arbitrary chunks of EPC.
-> > > Except for EPC management, which is already in built into the kernel, the
-> > > EPC virtualization code has effectively zero overlap with the driver.  Of
-> > > course this is all technically speculative since none of this is upstream...
-> > 
-> > Jarkko, can you weigh in with your thoughts on the ACPI stuff?
-> 
-> If there is LKM, then it is required (for loading the LKM).
->
-> I think we should see how the access control gets implemented first and
-> see what constraints it introduces. It might help with to make the right
-> decision whether to allow LKM or not.
+On Tue, Jun 04, 2019 at 09:45:14AM -0700, Sean Christopherson wrote:
+> Heh, yeah, it's not duplicating LSM functionality.  What I was trying to
+> say is that this patch allows LSMs to implement policies that are
+> equivalent to their existing functionality, e.g. paves the way to add
+> security_enclave_load() as an equivalent to security_file_mprotect().
 
-At this point I don't see the access control stuff impacting the LKM
-decision.
+I would suggest describing explicitly in the commit message what you
+want to do, which you said here e.g. "I do this because I want to add
+LSM hooks". This also relevant information for the LKM discussion.
 
-Irrespetive of the access control thing, there are (at least) two issues
-with using ACPI to probe the driver:
+Lets see how the next version looks like now that you have some
+feedback.
 
-  - ACPI probing breaks if there are multiple device, i.e. when KVM adds
-    a raw EPC device.  We could do something like probe the driver via
-    ACPI but manually load the raw EPC device from core SGX code, but IMO
-    taking that approach should be a concious decision.
+In the whole scope of the patch set, in order to make it more
+readable, I'll give following suggestions on how it is organized:
 
-  - ACPI probing means core SGX will consume resources for EPC management
-    even if there is no end consumer, e.g. the driver refuses to load due
-    to lack of FLC support.
+1. Leave out anything that is not strictly necessary (cosmetic
+fix, batch operation if possible). Better to focus one thing at
+a time.
+2. Try to organize it so that each function is fully defined in
+the scope of one patch even if it would mean larger patches.
+3. Do not add one call site helpers unless there is a good
+reason to do so. A good reason would be something like needing
+to extensive work in error rollback, which would make the
+caller a mess.
 
-It would be very helpful for us to make a decision about LKM support
-sooner rather than later, e.g. to start reworking the core code now and so
-that I can send RFCs for KVM support.  IMO we're just delaying the
-inevitable and slowing down upstreaming in the process.
+/Jarkko
