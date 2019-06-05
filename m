@@ -6,17 +6,17 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4D2C46460
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED4DC28CC6
 	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 19:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37772089E
+	by mail.kernel.org (Postfix) with ESMTP id 5F66920874
 	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 19:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfFETt3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1726535AbfFETt3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 5 Jun 2019 15:49:29 -0400
 Received: from mga01.intel.com ([192.55.52.88]:2918 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfFETt3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726501AbfFETt3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 5 Jun 2019 15:49:29 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -32,9 +32,9 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: [PATCH 5/7] x86/sgx: Add flag to zero added region instead of copying from source
-Date:   Wed,  5 Jun 2019 12:48:43 -0700
-Message-Id: <20190605194845.926-6-sean.j.christopherson@intel.com>
+Subject: [PATCH 2/7] x86/sgx: Remove unnecessary @cmd parameter from ioctl helpers
+Date:   Wed,  5 Jun 2019 12:48:40 -0700
+Message-Id: <20190605194845.926-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190605194845.926-1-sean.j.christopherson@intel.com>
 References: <20190605194845.926-1-sean.j.christopherson@intel.com>
@@ -45,105 +45,107 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-For some enclaves, e.g. an enclave with a small code footprint and a
-large working set, the vast majority of pages added to the enclave are
-zero pages.  Introduce a flag to denote such zero pages.  The major
-benefit of the flag will be realized in a future patch to use Linux's
-actual zero page as the source, as opposed to explicitly zeroing the
-enclave's backing memory.
-
-Use bit 8 for the SGX_ZERO_REGION flag to avoid an anticipated conflict
-with passing PROT_{READ,WRITE,EXEC} in bits 2:0, and to leave room in
-case there is a need for additional protection related bits.
+Each ioctl command is directly and uniquely associated with a handler,
+i.e. the command is implied by the function itself.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/include/uapi/asm/sgx.h        |  5 +++++
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 15 ++++++++++++---
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 30d114f6b3bd..18204722f238 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -31,6 +31,9 @@ struct sgx_enclave_create  {
- 	__u64	src;
- };
- 
-+/* Zero an added region instead of copying data from a source page. */
-+#define SGX_ZERO_REGION	0x100
-+
- /**
-  * struct sgx_enclave_add_region - parameter structure for the
-  *                                 %SGX_IOC_ENCLAVE_ADD_REGION ioctl
-@@ -38,6 +41,7 @@ struct sgx_enclave_create  {
-  * @src:	start address for the pages' data
-  * @size:	size of region, in bytes
-  * @secinfo:	address of the SECINFO data (common to the entire region)
-+ * @flags:	miscellaneous flags
-  * @mrmask:	bitmask of 256 byte chunks to measure (applied per 4k page)
-  */
- struct sgx_enclave_add_region {
-@@ -45,6 +49,7 @@ struct sgx_enclave_add_region {
- 	__u64	src;
- 	__u64	size;
- 	__u64	secinfo;
-+	__u32	flags;
- 	__u16	mrmask;
- } __attribute__((__packed__));
- 
 diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index b69350696b87..c35264ea0c93 100644
+index cc057d487499..a0742d18aa36 100644
 --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -459,6 +459,9 @@ static int sgx_validate_tcs(struct sgx_encl *encl, struct sgx_tcs *tcs)
+@@ -383,7 +383,6 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ /**
+  * sgx_ioc_enclave_create - handler for %SGX_IOC_ENCLAVE_CREATE
+  * @filep:	open file to /dev/sgx
+- * @cmd:	the command value
+  * @arg:	pointer to an &sgx_enclave_create instance
+  *
+  * Allocate kernel data structures for a new enclave and execute ECREATE after
+@@ -397,8 +396,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+  *   0 on success,
+  *   -errno otherwise
+  */
+-static long sgx_ioc_enclave_create(struct file *filep, unsigned int cmd,
+-				   unsigned long arg)
++static long sgx_ioc_enclave_create(struct file *filep, unsigned long arg)
  {
- 	int i;
- 
-+	if (!tcs)
-+		return -EINVAL;
-+
- 	if (tcs->flags & SGX_TCS_RESERVED_MASK)
- 		return -EINVAL;
- 
-@@ -510,7 +513,10 @@ static int sgx_encl_queue_page(struct sgx_encl *encl,
- 	}
- 
- 	backing_ptr = kmap(backing);
--	memcpy(backing_ptr, data, PAGE_SIZE);
-+	if (data)
-+		memcpy(backing_ptr, data, PAGE_SIZE);
-+	else
-+		memset(backing_ptr, 0, PAGE_SIZE);
- 	kunmap(backing);
- 	if (page_type == SGX_SECINFO_TCS)
- 		encl_page->desc |= SGX_ENCL_PAGE_TCS;
-@@ -576,12 +582,15 @@ static int __sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
- 
- static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
- 			     unsigned long src, struct sgx_secinfo *secinfo,
--			     unsigned int mrmask)
-+			     unsigned int mrmask, unsigned long flags)
+ 	struct sgx_enclave_create *createp = (struct sgx_enclave_create *)arg;
+ 	struct sgx_encl *encl = filep->private_data;
+@@ -579,7 +577,6 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+  * sgx_ioc_enclave_add_page - handler for %SGX_IOC_ENCLAVE_ADD_PAGE
+  *
+  * @filep:	open file to /dev/sgx
+- * @cmd:	the command value
+  * @arg:	pointer to an &sgx_enclave_add_page instance
+  *
+  * Add a page to an uninitialized enclave (EADD), and optionally extend the
+@@ -593,8 +590,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+  *   0 on success,
+  *   -errno otherwise
+  */
+-static long sgx_ioc_enclave_add_page(struct file *filep, unsigned int cmd,
+-				     unsigned long arg)
++static long sgx_ioc_enclave_add_page(struct file *filep, unsigned long arg)
  {
- 	struct page *data_page;
- 	void *data;
- 	int ret;
+ 	struct sgx_enclave_add_page *addp = (void *)arg;
+ 	struct sgx_encl *encl = filep->private_data;
+@@ -721,7 +717,6 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+  * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
+  *
+  * @filep:	open file to /dev/sgx
+- * @cmd:	the command value
+  * @arg:	pointer to an &sgx_enclave_init instance
+  *
+  * Flush any outstanding enqueued EADD operations and perform EINIT.  The
+@@ -733,8 +728,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+  *   SGX error code on EINIT failure,
+  *   -errno otherwise
+  */
+-static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+-				 unsigned long arg)
++static long sgx_ioc_enclave_init(struct file *filep, unsigned long arg)
+ {
+ 	struct sgx_enclave_init *initp = (struct sgx_enclave_init *)arg;
+ 	struct sgx_encl *encl = filep->private_data;
+@@ -770,7 +764,6 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+ /**
+  * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
+  * @filep:	open file to /dev/sgx
+- * @cmd:	the command value
+  * @arg:	pointer to a struct sgx_enclave_set_attribute instance
+  *
+  * Mark the enclave as being allowed to access a restricted attribute bit.
+@@ -786,8 +779,7 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+  *
+  * Return: 0 on success, -errno otherwise
+  */
+-static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
+-					  unsigned long arg)
++static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned long arg)
+ {
+ 	struct sgx_enclave_set_attribute *params = (void *)arg;
+ 	struct sgx_encl *encl = filep->private_data;
+@@ -810,8 +802,7 @@ static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
+ 	return ret;
+ }
  
-+	if (flags & SGX_ZERO_REGION)
-+		return __sgx_encl_add_page(encl, addr, NULL, secinfo, mrmask);
-+
- 	data_page = alloc_page(GFP_HIGHUSER);
- 	if (!data_page)
- 		return -ENOMEM;
-@@ -658,7 +667,7 @@ static long sgx_ioc_enclave_add_region(struct file *filep, void __user *arg)
- 			cond_resched();
+-typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
+-			  unsigned long arg);
++typedef long (*sgx_ioc_t)(struct file *filep, unsigned long arg);
  
- 		ret = sgx_encl_add_page(encl, region.addr + i, region.src + i,
--					&secinfo, region.mrmask);
-+					&secinfo, region.mrmask, region.flags);
- 		if (ret)
- 			break;
- 	}
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ {
+@@ -839,5 +830,5 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	if (copy_from_user(data, (void __user *)arg, _IOC_SIZE(cmd)))
+ 		return -EFAULT;
+ 
+-	return handler(filep, cmd, (unsigned long)((void *)data));
++	return handler(filep, (unsigned long)((void *)data));
+ }
 -- 
 2.21.0
 
