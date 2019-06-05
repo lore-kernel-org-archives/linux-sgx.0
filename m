@@ -2,33 +2,33 @@ Return-Path: <SRS0=6XgF=UE=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8589C28CC5
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 15:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE34C28CC5
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 15:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A0B206B8
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 15:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0292067C
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 15:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfFEPGy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Jun 2019 11:06:54 -0400
-Received: from mga06.intel.com ([134.134.136.31]:26266 "EHLO mga06.intel.com"
+        id S1728508AbfFEPK1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Jun 2019 11:10:27 -0400
+Received: from mga09.intel.com ([134.134.136.24]:9770 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728467AbfFEPGy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:06:54 -0400
+        id S1728483AbfFEPK1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:10:27 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 08:06:53 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 08:10:26 -0700
 X-ExtLoop1: 1
 Received: from araresx-wtg1.ger.corp.intel.com (HELO localhost) ([10.252.46.102])
-  by orsmga007.jf.intel.com with ESMTP; 05 Jun 2019 08:06:40 -0700
-Date:   Wed, 5 Jun 2019 18:06:34 +0300
+  by fmsmga006.fm.intel.com with ESMTP; 05 Jun 2019 08:10:19 -0700
+Date:   Wed, 5 Jun 2019 18:10:18 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Cedric Xing <cedric.xing@intel.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         James Morris <jmorris@namei.org>,
@@ -54,17 +54,17 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH 6/9] x86/sgx: Require userspace to provide allowed
- prots to ADD_PAGES
-Message-ID: <20190605150634.GH11331@linux.intel.com>
+Subject: Re: [RFC PATCH 7/9] x86/sgx: Enforce noexec filesystem restriction
+ for enclaves
+Message-ID: <20190605151006.GI11331@linux.intel.com>
 References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
- <20190531233159.30992-7-sean.j.christopherson@intel.com>
- <20190604162306.GB3811@linux.intel.com>
- <20190604164514.GB32350@linux.intel.com>
+ <20190531233159.30992-8-sean.j.christopherson@intel.com>
+ <20190604162555.GC3811@linux.intel.com>
+ <CALCETrUqcQNbRvBe2UqQih8RHnuwn3KaC=xJU1cRsaEVsCQUgw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604164514.GB32350@linux.intel.com>
+In-Reply-To: <CALCETrUqcQNbRvBe2UqQih8RHnuwn3KaC=xJU1cRsaEVsCQUgw@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -72,30 +72,25 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 09:45:14AM -0700, Sean Christopherson wrote:
-> Heh, yeah, it's not duplicating LSM functionality.  What I was trying to
-> say is that this patch allows LSMs to implement policies that are
-> equivalent to their existing functionality, e.g. paves the way to add
-> security_enclave_load() as an equivalent to security_file_mprotect().
+On Tue, Jun 04, 2019 at 01:25:10PM -0700, Andy Lutomirski wrote:
+> On Tue, Jun 4, 2019 at 9:26 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Fri, May 31, 2019 at 04:31:57PM -0700, Sean Christopherson wrote:
+> > > Do not allow an enclave page to be mapped with PROT_EXEC if the source
+> > > page is backed by a file on a noexec file system.
+> > >
+> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >
+> > Why don't you just check in sgx_encl_add_page() that whether the path
+> > comes from noexec and deny if SECINFO contains X?
+> >
+> 
+> SECINFO seems almost entirely useless for this kind of thing because
+> of SGX2.  I'm thinking that SECINFO should be completely ignored for
+> anything other than its required architectural purpose.
 
-I would suggest describing explicitly in the commit message what you
-want to do, which you said here e.g. "I do this because I want to add
-LSM hooks". This also relevant information for the LKM discussion.
-
-Lets see how the next version looks like now that you have some
-feedback.
-
-In the whole scope of the patch set, in order to make it more
-readable, I'll give following suggestions on how it is organized:
-
-1. Leave out anything that is not strictly necessary (cosmetic
-fix, batch operation if possible). Better to focus one thing at
-a time.
-2. Try to organize it so that each function is fully defined in
-the scope of one patch even if it would mean larger patches.
-3. Do not add one call site helpers unless there is a good
-reason to do so. A good reason would be something like needing
-to extensive work in error rollback, which would make the
-caller a mess.
+Not exactly sure why using it to pass the RWX bits to EADD ioctl would
+cause anything to SGX2 support.
 
 /Jarkko
