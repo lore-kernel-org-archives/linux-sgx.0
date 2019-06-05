@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305B1C28D1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD525C28D1B
 	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 19:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1683920883
+	by mail.kernel.org (Postfix) with ESMTP id 89C392083E
 	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 19:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfFETt3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Jun 2019 15:49:29 -0400
+        id S1726501AbfFETta (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Jun 2019 15:49:30 -0400
 Received: from mga01.intel.com ([192.55.52.88]:2918 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726512AbfFETt3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 5 Jun 2019 15:49:29 -0400
+        id S1726537AbfFETta (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 5 Jun 2019 15:49:30 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
@@ -32,9 +32,9 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: [PATCH 6/7] x86/sgx: Use the actual zero page as the source when adding zero pages
-Date:   Wed,  5 Jun 2019 12:48:44 -0700
-Message-Id: <20190605194845.926-7-sean.j.christopherson@intel.com>
+Subject: [PATCH 7/7] x86/sgx: Add a reserved field to sgx_enclave_add_region to drop 'packed'
+Date:   Wed,  5 Jun 2019 12:48:45 -0700
+Message-Id: <20190605194845.926-8-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190605194845.926-1-sean.j.christopherson@intel.com>
 References: <20190605194845.926-1-sean.j.christopherson@intel.com>
@@ -45,115 +45,50 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Using the zero page avoids dirtying the backing page, inserting TLB
-entries, the cost of memset, etc...  For some enclaves, e.g. an enclave
-with a small code footprint and a large working set, this results in a
-20%+ reduction in enclave build time.
+A reserved field could prove useful in the future, and packed structs
+can result in inefficiencies due to its impact on alignment.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 50 ++++++++++++++++----------
- 1 file changed, 32 insertions(+), 18 deletions(-)
+ arch/x86/include/uapi/asm/sgx.h        | 4 +++-
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 3 +++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 18204722f238..e2d9b3d512ef 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -43,6 +43,7 @@ struct sgx_enclave_create  {
+  * @secinfo:	address of the SECINFO data (common to the entire region)
+  * @flags:	miscellaneous flags
+  * @mrmask:	bitmask of 256 byte chunks to measure (applied per 4k page)
++ * @reserved:	reserved for future use, must be zero
+  */
+ struct sgx_enclave_add_region {
+ 	__u64	addr;
+@@ -51,7 +52,8 @@ struct sgx_enclave_add_region {
+ 	__u64	secinfo;
+ 	__u32	flags;
+ 	__u16	mrmask;
+-} __attribute__((__packed__));
++	__u16	reserved;
++};
+ 
+ /**
+  * struct sgx_enclave_init - parameter structure for the
 diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index c35264ea0c93..e05a539e96fc 100644
+index e05a539e96fc..bae5f3155376 100644
 --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -19,6 +19,7 @@ struct sgx_add_page_req {
- 	struct sgx_secinfo secinfo;
- 	unsigned long mrmask;
- 	struct list_head list;
-+	bool zero_page;
- };
+@@ -663,6 +663,9 @@ static long sgx_ioc_enclave_add_region(struct file *filep, void __user *arg)
+ 	if (!IS_ALIGNED(region.addr, 4096) || !IS_ALIGNED(region.size, 4096))
+ 		return -EINVAL;
  
- static int sgx_encl_grow(struct sgx_encl *encl)
-@@ -76,6 +77,7 @@ static bool sgx_process_add_page_req(struct sgx_add_page_req *req,
- 	struct sgx_pageinfo pginfo;
- 	struct page *backing;
- 	unsigned long addr;
-+	void *contents;
- 	int ret;
- 	int i;
- 
-@@ -84,9 +86,15 @@ static bool sgx_process_add_page_req(struct sgx_add_page_req *req,
- 
- 	addr = SGX_ENCL_PAGE_ADDR(encl_page);
- 
--	backing = sgx_encl_get_backing_page(encl, page_index);
--	if (IS_ERR(backing))
--		return false;
-+	if (!req->zero_page) {
-+		backing = sgx_encl_get_backing_page(encl, page_index);
-+		if (IS_ERR(backing))
-+			return false;
-+		contents = kmap_atomic(backing);
-+	} else {
-+		backing = NULL;
-+		contents = __va(page_to_pfn(ZERO_PAGE(0)) << PAGE_SHIFT);
-+	}
- 
- 	/*
- 	 * The SECINFO field must be 64-byte aligned, copy it to a local
-@@ -99,11 +107,13 @@ static bool sgx_process_add_page_req(struct sgx_add_page_req *req,
- 	pginfo.secs = (unsigned long)sgx_epc_addr(encl->secs.epc_page);
- 	pginfo.addr = addr;
- 	pginfo.metadata = (unsigned long)&secinfo;
--	pginfo.contents = (unsigned long)kmap_atomic(backing);
-+	pginfo.contents = (unsigned long)contents;
- 	ret = __eadd(&pginfo, sgx_epc_addr(epc_page));
--	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
--	put_page(backing);
-+	if (backing) {
-+		kunmap_atomic(contents);
-+		put_page(backing);
-+	}
- 
- 	if (ret) {
- 		if (encls_failed(ret))
-@@ -506,18 +516,20 @@ static int sgx_encl_queue_page(struct sgx_encl *encl,
- 	if (!req)
- 		return -ENOMEM;
- 
--	backing = sgx_encl_get_backing_page(encl, page_index);
--	if (IS_ERR(backing)) {
--		kfree(req);
--		return PTR_ERR(backing);
--	}
-+	if (data) {
-+		backing = sgx_encl_get_backing_page(encl, page_index);
-+		if (IS_ERR(backing)) {
-+			kfree(req);
-+			return PTR_ERR(backing);
-+		}
- 
--	backing_ptr = kmap(backing);
--	if (data)
-+		backing_ptr = kmap(backing);
- 		memcpy(backing_ptr, data, PAGE_SIZE);
--	else
--		memset(backing_ptr, 0, PAGE_SIZE);
--	kunmap(backing);
-+		kunmap(backing);
-+	} else {
-+		backing = NULL;
-+		req->zero_page = true;
-+	}
- 	if (page_type == SGX_SECINFO_TCS)
- 		encl_page->desc |= SGX_ENCL_PAGE_TCS;
- 	memcpy(&req->secinfo, secinfo, sizeof(*secinfo));
-@@ -529,8 +541,10 @@ static int sgx_encl_queue_page(struct sgx_encl *encl,
- 	list_add_tail(&req->list, &encl->add_page_reqs);
- 	if (empty)
- 		queue_work(sgx_encl_wq, &encl->work);
--	set_page_dirty(backing);
--	put_page(backing);
-+	if (backing) {
-+		set_page_dirty(backing);
-+		put_page(backing);
-+	}
- 	return 0;
- }
++	if (region.reserved)
++		return -EINVAL;
++
+ 	if (!region.size)
+ 		return 0;
  
 -- 
 2.21.0
