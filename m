@@ -2,21 +2,21 @@ Return-Path: <SRS0=6XgF=UE=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADABC28CC5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F31C28D18
 	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 19:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6382083E
+	by mail.kernel.org (Postfix) with ESMTP id CE67720872
 	for <linux-sgx@archiver.kernel.org>; Wed,  5 Jun 2019 19:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfFETt2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1726532AbfFETt2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 5 Jun 2019 15:49:28 -0400
 Received: from mga01.intel.com ([192.55.52.88]:2918 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726501AbfFETt2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726512AbfFETt2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 5 Jun 2019 15:49:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -32,10 +32,12 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: [PATCH 0/7] x86/sgx: Clean up and enhance add pages ioctl
-Date:   Wed,  5 Jun 2019 12:48:38 -0700
-Message-Id: <20190605194845.926-1-sean.j.christopherson@intel.com>
+Subject: [PATCH 1/7] x86/sgx: Remove dead code to handle non-existent IOR ioctl
+Date:   Wed,  5 Jun 2019 12:48:39 -0700
+Message-Id: <20190605194845.926-2-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190605194845.926-1-sean.j.christopherson@intel.com>
+References: <20190605194845.926-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -43,37 +45,31 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This series is intended to be included in v21 of Jarkko's SGX series and
-applies on Jarkko's current master:
+There are currently no SGX ioctls that require writing data back to
+userspace.
 
-  dfc89a83b5bc ("docs: x86/sgx: Document the enclave API")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-The primary goal of the series is to tweak the ioctl for adding pages to
-an enclave so that it is somewhat extensible, e.g. add a flags field that
-can be reused for access control integration and SGX2/EAUG, and add a size
-field so that multiple pages can be added in a single call (batching EADD
-has been mentioned at various times in the past).
-
-The secondary goal is to improve the performance of building enclaves.
-Handling multiple pages in a single call helps somewhat, but the real win
-(for some enclaves) is using the kernel's zero page as the source for EADD
-when possible.
-
-Sean Christopherson (7):
-  x86/sgx: Remove dead code to handle non-existent IOR ioctl
-  x86/sgx: Remove unnecessary @cmd parameter from ioctl helpers
-  x86/sgx: Let ioctl helpers do copy to/from user
-  x86/sgx: Allow userspace to add multiple pages in single ioctl()
-  x86/sgx: Add flag to zero added region instead of copying from source
-  x86/sgx: Use the actual zero page as the source when adding zero pages
-  x86/sgx: Add a reserved field to sgx_enclave_add_region to drop
-    'packed'
-
- Documentation/x86/sgx/3.API.rst        |   2 +-
- arch/x86/include/uapi/asm/sgx.h        |  30 +--
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 252 +++++++++++++++----------
- 3 files changed, 171 insertions(+), 113 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index a27ec26a9350..cc057d487499 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -839,11 +839,5 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	if (copy_from_user(data, (void __user *)arg, _IOC_SIZE(cmd)))
+ 		return -EFAULT;
+ 
+-	ret = handler(filep, cmd, (unsigned long)((void *)data));
+-	if (!ret && (cmd & IOC_OUT)) {
+-		if (copy_to_user((void __user *)arg, data, _IOC_SIZE(cmd)))
+-			return -EFAULT;
+-	}
+-
+-	return ret;
++	return handler(filep, cmd, (unsigned long)((void *)data));
+ }
 -- 
 2.21.0
 
