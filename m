@@ -2,145 +2,104 @@ Return-Path: <SRS0=qw+Y=UF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3D6C28D18
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E1FC28EB4
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 15:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E35F20866
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 282782083E
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 15:33:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfFFCLv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Jun 2019 22:11:51 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61631 "EHLO mga17.intel.com"
+        id S1729312AbfFFPdJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Jun 2019 11:33:09 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24534 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfFFCLu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:11:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728916AbfFFPdJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:33:09 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 19:11:49 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 08:33:07 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
-  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 19:11:49 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
-Date:   Wed,  5 Jun 2019 19:11:41 -0700
-Message-Id: <20190606021145.12604-2-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190606021145.12604-1-sean.j.christopherson@intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+Received: from harend-mobl.ger.corp.intel.com (HELO localhost) ([10.252.33.8])
+  by orsmga006.jf.intel.com with ESMTP; 06 Jun 2019 08:32:56 -0700
+Date:   Thu, 6 Jun 2019 18:32:51 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "haitao.huang@intel.com" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kai.huang@intel.com" <kai.huang@intel.com>,
+        "rientjes@google.com" <rientjes@google.com>
+Subject: Re: [PATCH v20 15/28] x86/sgx: Add the Linux SGX Enclave Driver
+Message-ID: <20190606153230.GA25112@linux.intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+ <20190417103938.7762-16-jarkko.sakkinen@linux.intel.com>
+ <20190422215831.GL1236@linux.intel.com>
+ <6dd981a7-0e38-1273-45c1-b2c0d8bf6fed@fortanix.com>
+ <20190424002653.GB14422@linux.intel.com>
+ <20190604201232.GA7775@linux.intel.com>
+ <20190605142908.GD11331@linux.intel.com>
+ <20190605145219.GC26328@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605145219.GC26328@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX will use the may_mprotect() hook to prevent userspace from
-circumventing various security checks, e.g. Linux Security Modules.
-Naming it may_mprotect() instead of simply mprotect() is intended to
-reflect the hook's purpose as a way to gate mprotect() as opposed to
-a wholesale replacement.
+On Wed, Jun 05, 2019 at 07:52:19AM -0700, Sean Christopherson wrote:
+> At this point I don't see the access control stuff impacting the LKM
+> decision.
+> 
+> Irrespetive of the access control thing, there are (at least) two issues
+> with using ACPI to probe the driver:
+> 
+>   - ACPI probing breaks if there are multiple device, i.e. when KVM adds
+>     a raw EPC device.  We could do something like probe the driver via
+>     ACPI but manually load the raw EPC device from core SGX code, but IMO
+>     taking that approach should be a concious decision.
+> 
+>   - ACPI probing means core SGX will consume resources for EPC management
+>     even if there is no end consumer, e.g. the driver refuses to load due
+>     to lack of FLC support.
+> 
+> It would be very helpful for us to make a decision about LKM support
+> sooner rather than later, e.g. to start reworking the core code now and so
+> that I can send RFCs for KVM support.  IMO we're just delaying the
+> inevitable and slowing down upstreaming in the process.
 
-Enclaves are built by copying data from normal memory into the Enclave
-Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
-single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
-MAP_SHARED vm_file that references single file path.  Furthermore, all
-enclaves will need read, write and execute pages in the EPC.
+I think a good reason to not have LKM is that it can be added after
+reaching the mainline if there ever becomes strong enough reasons to
+do so.
 
-As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
-can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
-that originated in a non-EXECUTE file (which is long gone by the time
-mprotect() is called).
+I have similar situation with TPM where TPM core would better be just
+part of the core but since tristate was introduced, it is hard to revert
+that decision.
 
-By hooking mprotect(), SGX can make explicit LSM upcalls while an
-enclave is being built, i.e. when the kernel has a handle to origin of
-each enclave page, and enforce the result of the LSM policy whenever
-userspace maps the enclave page in the future.
+I would prefer do this update myself rather than taking patches as it
+takes me probably shorter time to implement the change rather than
+reviewing and squashing patches. I'll get it done ASAP.
 
-Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
-that approach is quite ugly, e.g. would require userspace to call an
-SGX ioctl() prior to using mprotect() to extend a page's protections.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- include/linux/mm.h |  2 ++
- mm/mprotect.c      | 15 +++++++++++----
- 2 files changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0e8834ac32b7..a697996040ac 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -458,6 +458,8 @@ struct vm_operations_struct {
- 	void (*close)(struct vm_area_struct * area);
- 	int (*split)(struct vm_area_struct * area, unsigned long addr);
- 	int (*mremap)(struct vm_area_struct * area);
-+	int (*may_mprotect)(struct vm_area_struct * area, unsigned long start,
-+			    unsigned long end, unsigned long prot);
- 	vm_fault_t (*fault)(struct vm_fault *vmf);
- 	vm_fault_t (*huge_fault)(struct vm_fault *vmf,
- 			enum page_entry_size pe_size);
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index bf38dfbbb4b4..18732543b295 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -547,13 +547,20 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 			goto out;
- 		}
- 
--		error = security_file_mprotect(vma, reqprot, prot);
--		if (error)
--			goto out;
--
- 		tmp = vma->vm_end;
- 		if (tmp > end)
- 			tmp = end;
-+
-+		if (vma->vm_ops && vma->vm_ops->may_mprotect) {
-+			error = vma->vm_ops->may_mprotect(vma, nstart, tmp, prot);
-+			if (error)
-+				goto out;
-+		}
-+
-+		error = security_file_mprotect(vma, reqprot, prot);
-+		if (error)
-+			goto out;
-+
- 		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
- 		if (error)
- 			goto out;
--- 
-2.21.0
-
+/Jarkko
