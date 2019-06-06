@@ -6,62 +6,71 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E1FC28EB4
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 15:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862A0C04AB5
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 15:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 282782083E
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 15:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 669A720665
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 15:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbfFFPdJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 6 Jun 2019 11:33:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24534 "EHLO mga07.intel.com"
+        id S1729235AbfFFPhj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Jun 2019 11:37:39 -0400
+Received: from mga18.intel.com ([134.134.136.126]:14081 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728916AbfFFPdJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:33:09 -0400
+        id S1729173AbfFFPhi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:37:38 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 08:33:07 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 08:37:37 -0700
 X-ExtLoop1: 1
 Received: from harend-mobl.ger.corp.intel.com (HELO localhost) ([10.252.33.8])
-  by orsmga006.jf.intel.com with ESMTP; 06 Jun 2019 08:32:56 -0700
-Date:   Thu, 6 Jun 2019 18:32:51 +0300
+  by fmsmga008.fm.intel.com with ESMTP; 06 Jun 2019 08:37:24 -0700
+Date:   Thu, 6 Jun 2019 18:37:23 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
         "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@intel.com" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "kai.huang@intel.com" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>
-Subject: Re: [PATCH v20 15/28] x86/sgx: Add the Linux SGX Enclave Driver
-Message-ID: <20190606153230.GA25112@linux.intel.com>
-References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
- <20190417103938.7762-16-jarkko.sakkinen@linux.intel.com>
- <20190422215831.GL1236@linux.intel.com>
- <6dd981a7-0e38-1273-45c1-b2c0d8bf6fed@fortanix.com>
- <20190424002653.GB14422@linux.intel.com>
- <20190604201232.GA7775@linux.intel.com>
- <20190605142908.GD11331@linux.intel.com>
- <20190605145219.GC26328@linux.intel.com>
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
+Message-ID: <20190606153710.GB25112@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-3-sean.j.christopherson@intel.com>
+ <20190604114951.GC30594@linux.intel.com>
+ <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654EDBDE@ORSMSX116.amr.corp.intel.com>
+ <20190605151653.GK11331@linux.intel.com>
+ <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190605145219.GC26328@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -69,37 +78,27 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 07:52:19AM -0700, Sean Christopherson wrote:
-> At this point I don't see the access control stuff impacting the LKM
-> decision.
+On Wed, Jun 05, 2019 at 01:14:04PM -0700, Andy Lutomirski wrote:
 > 
-> Irrespetive of the access control thing, there are (at least) two issues
-> with using ACPI to probe the driver:
 > 
->   - ACPI probing breaks if there are multiple device, i.e. when KVM adds
->     a raw EPC device.  We could do something like probe the driver via
->     ACPI but manually load the raw EPC device from core SGX code, but IMO
->     taking that approach should be a concious decision.
+> > On Jun 5, 2019, at 8:17 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> > 
+> >> On Tue, Jun 04, 2019 at 10:10:22PM +0000, Xing, Cedric wrote:
+> >> A bit off topic here. This mmap()/mprotect() discussion reminds me a
+> >> question (guess for Jarkko): Now that vma->vm_file->private_data keeps
+> >> a pointer to the enclave, why do we store it again in vma->vm_private?
+> >> It isn't a big deal but non-NULL vm_private does prevent mprotect()
+> >> from merging adjacent VMAs. 
+> > 
+> > Same semantics as with a regular mmap i.e. you can close the file and
+> > still use the mapping.
+> > 
+> > 
 > 
->   - ACPI probing means core SGX will consume resources for EPC management
->     even if there is no end consumer, e.g. the driver refuses to load due
->     to lack of FLC support.
-> 
-> It would be very helpful for us to make a decision about LKM support
-> sooner rather than later, e.g. to start reworking the core code now and so
-> that I can send RFCs for KVM support.  IMO we're just delaying the
-> inevitable and slowing down upstreaming in the process.
+> The file should be properly refcounted — vm_file should not go away while it’s mapped.
 
-I think a good reason to not have LKM is that it can be added after
-reaching the mainline if there ever becomes strong enough reasons to
-do so.
-
-I have similar situation with TPM where TPM core would better be just
-part of the core but since tristate was introduced, it is hard to revert
-that decision.
-
-I would prefer do this update myself rather than taking patches as it
-takes me probably shorter time to implement the change rather than
-reviewing and squashing patches. I'll get it done ASAP.
+Right, makes sense. It is easy one to change essentially just removing
+internal refcount from sgx_encl and using file for the same. I'll update
+this to my tree along with the changes to remove LKM/ACPI bits ASAP.
 
 /Jarkko
