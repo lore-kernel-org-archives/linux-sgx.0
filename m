@@ -7,18 +7,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336B0C28D18
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5923FC28CC5
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1B420866
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D0C420866
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Jun 2019 02:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfFFCL6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Jun 2019 22:11:58 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61631 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfFFCLw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726747AbfFFCLw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 5 Jun 2019 22:11:52 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61633 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726724AbfFFCLv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:11:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
@@ -54,9 +54,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH v2 4/5] LSM: x86/sgx: Introduce ->enclave_load() hook for Intel SGX
-Date:   Wed,  5 Jun 2019 19:11:44 -0700
-Message-Id: <20190606021145.12604-5-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v2 3/5] x86/sgx: Enforce noexec filesystem restriction for enclaves
+Date:   Wed,  5 Jun 2019 19:11:43 -0700
+Message-Id: <20190606021145.12604-4-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190606021145.12604-1-sean.j.christopherson@intel.com>
 References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
@@ -67,156 +67,85 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-enclave_load() is roughly analogous to the existing file_mprotect().
-
-Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
-VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
-MAP_SHARED.  Furthermore, all enclaves need read, write and execute
-VMAs.  As a result, the existing/standard call to file_mprotect() does
-not provide any meaningful security for enclaves since an LSM can only
-deny/grant access to the EPC as a whole.
-
-security_enclave_load() is called when SGX is first loading an enclave
-page, i.e. copying a page from normal memory into the EPC.  Although
-the prototype for enclave_load() is similar to file_mprotect(), e.g.
-SGX could theoretically use file_mprotect() and set reqprot=prot, a
-separate hook is desirable as the semantics of an enclave's protection
-bits are different than those of vmas, e.g. an enclave page tracks the
-maximal set of protections, whereas file_mprotect() operates on the
-actual protections being provided.  In other words, LSMs will likely
-want to implement different policies for enclave page protections.
-
-Note, extensive discussion yielded no sane alternative to some form of
-SGX specific LSM hook[1].
-
-[1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
+Do not allow an enclave page to be mapped with PROT_EXEC if the source
+vma does not have VM_MAYEXEC.  This effectively enforces noexec as
+do_mmap() clears VM_MAYEXEC if the vma is being loaded from a noexec
+path, i.e. prevents executing a file by loading it into an enclave.
+Checking noexec indirectly by way of VM_MAYEXEC naturally handles any
+other cases that clear VM_MAYEXEC to deny execute permissions.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 12 ++++++------
- include/linux/lsm_hooks.h              | 13 +++++++++++++
- include/linux/security.h               | 12 ++++++++++++
- security/security.c                    |  7 +++++++
- 4 files changed, 38 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 47 +++++++++++++++++++++++---
+ 1 file changed, 42 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index 44b2d73de7c3..29c0df672250 100644
+index ef5c2ce0f37b..44b2d73de7c3 100644
 --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -8,6 +8,7 @@
- #include <linux/highmem.h>
- #include <linux/ratelimit.h>
- #include <linux/sched/signal.h>
-+#include <linux/security.h>
- #include <linux/shmem_fs.h>
- #include <linux/slab.h>
- #include <linux/suspend.h>
-@@ -582,9 +583,6 @@ static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
- 	struct vm_area_struct *vma;
- 	int ret;
+@@ -577,6 +577,44 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+ 	return ret;
+ }
  
--	if (!(prot & VM_EXEC))
--		return 0;
++static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
++{
++	struct vm_area_struct *vma;
++	int ret;
++
++	if (!(prot & VM_EXEC))
++		return 0;
++
++	/* Hold mmap_sem across copy_from_user() to avoid a TOCTOU race. */
++	down_read(&current->mm->mmap_sem);
++
++	vma = find_vma(current->mm, src);
++	if (!vma) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	/*
++	 * Query VM_MAYEXEC as an indirect path_noexec() check (see do_mmap()),
++	 * but with some future proofing against other cases that may deny
++	 * execute permissions.
++	 */
++	if (!(vma->vm_flags & VM_MAYEXEC)) {
++		ret = -EACCES;
++		goto out;
++	}
++
++	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
++		ret = -EFAULT;
++	else
++		ret = 0;
++
++out:
++	up_read(&current->mm->mmap_sem);
++
++	return ret;
++}
++
+ /**
+  * sgx_ioc_enclave_add_page - handler for %SGX_IOC_ENCLAVE_ADD_PAGE
+  *
+@@ -616,13 +654,12 @@ static long sgx_ioc_enclave_add_page(struct file *filep, unsigned int cmd,
+ 
+ 	data = kmap(data_page);
+ 
+-	if (copy_from_user((void *)data, (void __user *)addp->src, PAGE_SIZE)) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
 -
- 	/* Hold mmap_sem across copy_from_user() to avoid a TOCTOU race. */
- 	down_read(&current->mm->mmap_sem);
+ 	prot = addp->flags & (PROT_READ | PROT_WRITE | PROT_EXEC);
  
-@@ -599,15 +597,17 @@ static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
- 	 * but with some future proofing against other cases that may deny
- 	 * execute permissions.
- 	 */
--	if (!(vma->vm_flags & VM_MAYEXEC)) {
-+	if ((prot & VM_EXEC) && !(vma->vm_flags & VM_MAYEXEC)) {
- 		ret = -EACCES;
- 		goto out;
- 	}
- 
-+	ret = security_enclave_load(vma, prot);
++	ret = sgx_encl_page_copy(data, addp->src, prot);
 +	if (ret)
 +		goto out;
 +
- 	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
- 		ret = -EFAULT;
--	else
--		ret = 0;
- 
- out:
- 	up_read(&current->mm->mmap_sem);
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 47f58cfb6a19..c6f47a7eef70 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1446,6 +1446,12 @@
-  * @bpf_prog_free_security:
-  *	Clean up the security information stored inside bpf prog.
-  *
-+ * Security hooks for Intel SGX enclaves.
-+ *
-+ * @enclave_load:
-+ *	@vma: the source memory region of the enclave page being loaded.
-+ *	@prot: the (maximal) protections of the enclave page.
-+ *	Return 0 if permission is granted.
-  */
- union security_list_options {
- 	int (*binder_set_context_mgr)(struct task_struct *mgr);
-@@ -1807,6 +1813,10 @@ union security_list_options {
- 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
- 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
- #endif /* CONFIG_BPF_SYSCALL */
-+
-+#ifdef CONFIG_INTEL_SGX
-+	int (*enclave_load)(struct vm_area_struct *vma, unsigned long prot);
-+#endif /* CONFIG_INTEL_SGX */
- };
- 
- struct security_hook_heads {
-@@ -2046,6 +2056,9 @@ struct security_hook_heads {
- 	struct hlist_head bpf_prog_alloc_security;
- 	struct hlist_head bpf_prog_free_security;
- #endif /* CONFIG_BPF_SYSCALL */
-+#ifdef CONFIG_INTEL_SGX
-+	struct hlist_head enclave_load;
-+#endif /* CONFIG_INTEL_SGX */
- } __randomize_layout;
- 
- /*
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 659071c2e57c..0b6d1eb7368b 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1829,5 +1829,17 @@ static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_BPF_SYSCALL */
- 
-+#ifdef CONFIG_INTEL_SGX
-+#ifdef CONFIG_SECURITY
-+int security_enclave_load(struct vm_area_struct *vma, unsigned long prot);
-+#else
-+static inline int security_enclave_load(struct vm_area_struct *vma,
-+					unsigned long prot)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_SECURITY */
-+#endif /* CONFIG_INTEL_SGX */
-+
- #endif /* ! __LINUX_SECURITY_H */
- 
-diff --git a/security/security.c b/security/security.c
-index 613a5c00e602..c6f7f26969b2 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2359,3 +2359,10 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
- 	call_void_hook(bpf_prog_free_security, aux);
- }
- #endif /* CONFIG_BPF_SYSCALL */
-+
-+#ifdef CONFIG_INTEL_SGX
-+int security_enclave_load(struct vm_area_struct *vma, unsigned long prot)
-+{
-+	return call_int_hook(enclave_load, 0, vma, prot);
-+}
-+#endif /* CONFIG_INTEL_SGX */
+ 	ret = sgx_encl_add_page(encl, addp->addr, data, &secinfo, addp->mrmask,
+ 				prot);
+ 	if (ret)
 -- 
 2.21.0
 
