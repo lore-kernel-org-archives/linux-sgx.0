@@ -2,33 +2,32 @@ Return-Path: <SRS0=YVcv=UJ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532F5C31E42
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 15:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58F7C31E41
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 16:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36DF42089E
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 15:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A51AE21726
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 16:00:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403805AbfFJP4A (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 Jun 2019 11:56:00 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5731 "EHLO mga12.intel.com"
+        id S2390335AbfFJQAc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 Jun 2019 12:00:32 -0400
+Received: from mga18.intel.com ([134.134.136.126]:54869 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404020AbfFJPzu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:55:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S2389356AbfFJQAb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 10 Jun 2019 12:00:31 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 08:55:49 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 09:00:31 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga004.jf.intel.com with ESMTP; 10 Jun 2019 08:55:49 -0700
-Date:   Mon, 10 Jun 2019 08:55:49 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Received: from cmargarx-wtg.ger.corp.intel.com (HELO localhost) ([10.249.34.77])
+  by orsmga001.jf.intel.com with ESMTP; 10 Jun 2019 09:00:19 -0700
+Date:   Mon, 10 Jun 2019 19:00:18 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Cedric Xing <cedric.xing@intel.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
@@ -55,100 +54,73 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
-Message-ID: <20190610155549.GB15995@linux.intel.com>
+Subject: Re: [RFC PATCH v2 3/5] x86/sgx: Enforce noexec filesystem
+ restriction for enclaves
+Message-ID: <20190610160005.GC3752@linux.intel.com>
 References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
- <20190606021145.12604-2-sean.j.christopherson@intel.com>
- <20190610150600.GA3752@linux.intel.com>
+ <20190606021145.12604-4-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610150600.GA3752@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190606021145.12604-4-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 06:06:00PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Jun 05, 2019 at 07:11:41PM -0700, Sean Christopherson wrote:
-> > SGX will use the may_mprotect() hook to prevent userspace from
-> > circumventing various security checks, e.g. Linux Security Modules.
-> > Naming it may_mprotect() instead of simply mprotect() is intended to
-> > reflect the hook's purpose as a way to gate mprotect() as opposed to
-> > a wholesale replacement.
-> 
-> "This commit adds may_mprotect() to struct vm_operations_struct, which
-> can be used to ask from the owner of a VMA if mprotect() is allowed."
-> 
-> This would be more appropriate statement because that is what the code
-> change aims for precisely. I did not even understand what you meant by
-> gating in this context. I would leave SGX and LSM's (and especially
-> "various security checks", which means abssolutely nothing) out of the
-> first paragraph completely.
-> 
-> > Enclaves are built by copying data from normal memory into the Enclave
-> > Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
-> > single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
-> > MAP_SHARED vm_file that references single file path.  Furthermore, all
-> > enclaves will need read, write and execute pages in the EPC.
-> 
-> I would just say that "Due to the fact that EPC is delivered as IO
-> memory from the preboot firmware, it can be only mapped as MAP_SHARED".
-> It is what it is.
+On Wed, Jun 05, 2019 at 07:11:43PM -0700, Sean Christopherson wrote:
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * Query VM_MAYEXEC as an indirect path_noexec() check (see do_mmap()),
+> +	 * but with some future proofing against other cases that may deny
+> +	 * execute permissions.
+> +	 */
+> +	if (!(vma->vm_flags & VM_MAYEXEC)) {
+> +		ret = -EACCES;
+> +		goto out;
+> +	}
+> +
+> +	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
+> +		ret = -EFAULT;
+> +	else
+> +		ret = 0;
+> +
+> +out:
+> +	up_read(&current->mm->mmap_sem);
+> +
+> +	return ret;
+> +}
 
-I was trying to convey that the nature of SGX itself requires that an
-enclave's pages are shared between process.  E.g. {MAP,VM}_SHARED would be
-required even if we modified the mmu to handle EPC memory in such a way
-that it didn't have to be tagged with VM_PFNMAP.
+I would suggest to express the above instead like this for clarity
+and consistency:
 
-> > As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
-> > can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
-> > that originated in a non-EXECUTE file (which is long gone by the time
-> > mprotect() is called).
-> 
-> I have hard time following what is paragraph is trying to say.
-> 
-> > By hooking mprotect(), SGX can make explicit LSM upcalls while an
-> > enclave is being built, i.e. when the kernel has a handle to origin of
-> > each enclave page, and enforce the result of the LSM policy whenever
-> > userspace maps the enclave page in the future.
-> 
-> "LSM policy whenever calls mprotect()"? I'm no sure why you mean by
-> mapping here and if there is any need to talk about future. Isn't this
-> needed now?
+		goto err_map_sem;
+	}
 
-Future is referring to the timeline of a running kernel, not the future
-of the kernel code.
+	/* Query VM_MAYEXEC as an indirect path_noexec() check
+	 * (see do_mmap()).
+	 */
+	if (!(vma->vm_flags & VM_MAYEXEC)) {
+		ret = -EACCES;
+		goto err_mmap_sem;
+	}
 
-Rather than trying to explain all of the above with words, I'll provide
-code examples to show how ->may_protect() will be used by SGX and why it
-is the preferred solution.
+	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE)) {
+		ret = -EFAULT;
+		goto err_mmap_sem;
+	}
 
-> > Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
-> > that approach is quite ugly, e.g. would require userspace to call an
-> > SGX ioctl() prior to using mprotect() to extend a page's protections.
-> 
-> Instead of talking "playing games" I would state what could be done with
-> VM_MAY{READ,WRITE,EXEC} and why it is bad. Leaves questions otherwise.
-> 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > ---
-> >  include/linux/mm.h |  2 ++
-> >  mm/mprotect.c      | 15 +++++++++++----
-> >  2 files changed, 13 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 0e8834ac32b7..a697996040ac 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -458,6 +458,8 @@ struct vm_operations_struct {
-> >  	void (*close)(struct vm_area_struct * area);
-> >  	int (*split)(struct vm_area_struct * area, unsigned long addr);
-> >  	int (*mremap)(struct vm_area_struct * area);
-> > +	int (*may_mprotect)(struct vm_area_struct * area, unsigned long start,
-> > +			    unsigned long end, unsigned long prot);
-> 
-> Could be just boolean.
-> 
-> /Jarkko
+	return 0;
+
+err_mmap_sem:
+	up_read(&current->mm->mmap_sem);
+	return ret;
+}
+
+The comment about future proofing is unnecessary.
+
+/Jarkk
