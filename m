@@ -3,49 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D374BC31E43
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 17:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B7CC31E44
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 17:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A848B207E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 17:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A15720820
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Jun 2019 17:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfFJRG3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 Jun 2019 13:06:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:8749 "EHLO mga07.intel.com"
+        id S2387896AbfFJRg5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 Jun 2019 13:36:57 -0400
+Received: from mga07.intel.com ([134.134.136.100]:10650 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbfFJRG3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:06:29 -0400
+        id S2387895AbfFJRg5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:36:57 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 10:06:28 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 10:36:56 -0700
 X-ExtLoop1: 1
 Received: from cmargarx-wtg.ger.corp.intel.com (HELO localhost) ([10.249.34.77])
-  by orsmga004.jf.intel.com with ESMTP; 10 Jun 2019 10:06:24 -0700
-Date:   Mon, 10 Jun 2019 20:06:23 +0300
+  by fmsmga005.fm.intel.com with ESMTP; 10 Jun 2019 10:36:46 -0700
+Date:   Mon, 10 Jun 2019 20:36:45 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [PATCH 5/7] x86/sgx: Add flag to zero added region instead of
- copying from source
-Message-ID: <20190610170623.GB10114@linux.intel.com>
-References: <20190605194845.926-1-sean.j.christopherson@intel.com>
- <20190605194845.926-6-sean.j.christopherson@intel.com>
- <CALCETrXkWHOFUD0erQ+TZMY3VmGJz8=tk9rXOtdi8fP_GDEKCA@mail.gmail.com>
- <20190606173243.GE23169@linux.intel.com>
- <A948B013-BCA7-4C76-B816-CC27F38BF761@amacapital.net>
+To:     Cedric Xing <cedric.xing@intel.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        luto@kernel.org, sds@tycho.nsa.gov, jmorris@namei.org,
+        serge@hallyn.com, paul@paul-moore.com, eparis@parisplace.org,
+        jethro@fortanix.com, dave.hansen@intel.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        nhorman@redhat.com, pmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
+        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
+        rientjes@google.com, william.c.roberts@intel.com,
+        philip.b.tricca@intel.com
+Subject: Re: [RFC PATCH v1 0/3] security/x86/sgx: SGX specific LSM hooks
+Message-ID: <20190610173645.GA13732@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <cover.1560131039.git.cedric.xing@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <A948B013-BCA7-4C76-B816-CC27F38BF761@amacapital.net>
+In-Reply-To: <cover.1560131039.git.cedric.xing@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -53,22 +55,48 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 12:32:23PM -0700, Andy Lutomirski wrote:
-> Sigh.
+On Mon, Jun 10, 2019 at 12:03:03AM -0700, Cedric Xing wrote:
+> This series intends to make the new SGX subsystem and the existing LSM
+> architecture work together smoothly so that, say, SGX cannot be abused to work
+> around restrictions set forth by LSM. This series applies on top of Jarkko
+> Sakkinen's SGX series v20 (https://lkml.org/lkml/2019/4/17/344), where abundant
+> details of this SGX/LSM problem could be found.
 > 
-> It seems silly to add a workaround for a language that has trouble
-> calling somewhat-but-not-too-slow syscalls or ioctls.
+> This series is an alternative to Sean Christopherson's recent RFC series
+> (https://lkml.org/lkml/2019/6/5/1070) that was trying to solve the same
+> problem. The key problem is for LSM to determine the "maximal (most permissive)
+> protection" allowed for individual enclave pages. Sean's approach is to take
+> that from user mode code as a parameter of the EADD ioctl, validate it with LSM
+> ahead of time, and then enforce it inside the SGX subsystem. The major
+> disadvantage IMHO is that a priori knowledge of "maximal protection" is needed,
+> but it isn't always available in certain use cases. In fact, it is an unusual
+> approach to take "maximal protection" from user code, as what SELinux is doing
+> today is to determine "maximal protection" of a vma using attributes associated
+> with vma->vm_file instead. When it comes to enclaves, vma->vm_file always
+> points /dev/sgx/enclave, so what's missing is a new way for LSM modules to
+> remember origins of enclave pages so that they don't solely depend on
+> vma->vm_file to determine "maximal protection".
 > 
-> How about fixing this in Go directly?  Either convince the golang
-> people to add a way to allocate a real thread for a particular region
-> of code or have the Go SGX folks write a bit of C code to do  a whole
-> bunch of ioctls and have Go call *that*.  Then the mess stays in Go
-> where it belongs.
+> This series takes advantage of the fact that enclave pages cannot be remapped
+> (to different linear address), therefore the pair of { vma->vm_file,
+> linear_address } can be used to uniquely identify an enclave page. Then by
+> notifying LSM on creation of every enclave page (via a new LSM hook -
+> security_enclave_load), LSM modules would be able to track origin and
+> protection changes of every page, hence be able to judge correctly upon
+> mmap/mprotect requests.
+> 
+> Cedric Xing (3):
+>   LSM/x86/sgx: Add SGX specific LSM hooks
+>   LSM/x86/sgx: Implement SGX specific hooks in SELinux
+>   LSM/x86/sgx: Call new LSM hooks from SGX subsystem
 
-A worker thread would be only appropriate if the existing SGX code was
-already in the mainline because then it would break the user space.
+A patch set containing direct LSM changes should consider all LSMs.
+This will allow all the LSM maintainers to consider the changes. Now we
+have a limited audience and we are favoring one LSM.
 
-Doing it either way right now does not break anything so there is no
-case for having it.
+There is no good reason why direct LSM changes cannot be done
+post-upstreaming like we do for virtualization.
+
+Looking at Sean's patches, overally 1/5-3/5 make perfect sense.
 
 /Jarkko
