@@ -2,62 +2,72 @@ Return-Path: <SRS0=wmvE=UL=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94127C31E46
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jun 2019 15:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36178C31E46
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jun 2019 18:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED7120874
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jun 2019 15:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BB5F20B7C
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jun 2019 18:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbfFLPXn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 Jun 2019 11:23:43 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6264 "EHLO mga12.intel.com"
+        id S1726519AbfFLSOE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 Jun 2019 14:14:04 -0400
+Received: from mga09.intel.com ([134.134.136.24]:19033 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfFLPXn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:23:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725497AbfFLSOE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:14:04 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 08:23:42 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 11:14:04 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga004.jf.intel.com with ESMTP; 12 Jun 2019 08:23:42 -0700
-Date:   Wed, 12 Jun 2019 08:23:42 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Received: from suygunge-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.116])
+  by fmsmga004.fm.intel.com with ESMTP; 12 Jun 2019 11:14:02 -0700
+Date:   Wed, 12 Jun 2019 21:14:01 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Cedric Xing <cedric.xing@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [PATCH 7/7] x86/sgx: Add a reserved field to
- sgx_enclave_add_region to drop 'packed'
-Message-ID: <20190612152341.GE20308@linux.intel.com>
+Subject: Re: [PATCH 0/7] x86/sgx: Clean up and enhance add pages ioctl
+Message-ID: <20190612181401.GA27606@linux.intel.com>
 References: <20190605194845.926-1-sean.j.christopherson@intel.com>
- <20190605194845.926-8-sean.j.christopherson@intel.com>
- <20190612151439.GA5723@linux.intel.com>
+ <20190612151605.GB5723@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612151439.GA5723@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190612151605.GB5723@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 06:14:39PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Jun 05, 2019 at 12:48:45PM -0700, Sean Christopherson wrote:
-> > A reserved field could prove useful in the future, and packed structs
-> > can result in inefficiencies due to its impact on alignment.
+On Wed, Jun 12, 2019 at 06:16:05PM +0300, Jarkko Sakkinen wrote:
+> On Wed, Jun 05, 2019 at 12:48:38PM -0700, Sean Christopherson wrote:
+> > This series is intended to be included in v21 of Jarkko's SGX series and
+> > applies on Jarkko's current master:
 > > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >   dfc89a83b5bc ("docs: x86/sgx: Document the enclave API")
+> > 
+> > The primary goal of the series is to tweak the ioctl for adding pages to
+> > an enclave so that it is somewhat extensible, e.g. add a flags field that
+> > can be reused for access control integration and SGX2/EAUG, and add a size
+> > field so that multiple pages can be added in a single call (batching EADD
+> > has been mentioned at various times in the past).
+> > 
+> > The secondary goal is to improve the performance of building enclaves.
+> > Handling multiple pages in a single call helps somewhat, but the real win
+> > (for some enclaves) is using the kernel's zero page as the source for EADD
+> > when possible.
 > 
-> Rather should extend mrmask just to 32 bits.
+> For v21 I will add 1, 2 and 6 from these. Thanks.
 
-I considered that option, but extending mrmask would probably confusing
-to userspace, e.g. we'd have to document that bits 31:15 are ignored.
+I meant to say 1, 2 and 3 (typo). 
+
+/Jarkko
