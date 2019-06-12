@@ -1,221 +1,220 @@
-Return-Path: <SRS0=yZGw=UK=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=wmvE=UL=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0490FC31E44
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 Jun 2019 22:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826BFC31E44
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jun 2019 00:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C772086D
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 Jun 2019 22:55:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49DEF21721
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jun 2019 00:09:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Bl3JANCS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436957AbfFKWzp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 11 Jun 2019 18:55:45 -0400
-Received: from mga18.intel.com ([134.134.136.126]:47106 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436750AbfFKWzp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 11 Jun 2019 18:55:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 15:55:44 -0700
-X-ExtLoop1: 1
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga007.jf.intel.com with ESMTP; 11 Jun 2019 15:55:44 -0700
-Received: from orsmsx115.amr.corp.intel.com (10.22.240.11) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 11 Jun 2019 15:55:44 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.166]) by
- ORSMSX115.amr.corp.intel.com ([169.254.4.229]) with mapi id 14.03.0415.000;
- Tue, 11 Jun 2019 15:55:43 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
+        id S2406267AbfFLAJd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 11 Jun 2019 20:09:33 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36004 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405912AbfFLAJd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 11 Jun 2019 20:09:33 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f21so1847518pgi.3
+        for <linux-sgx@vger.kernel.org>; Tue, 11 Jun 2019 17:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=i3PsJwwDPsMEThcXBS4rchzEL1RqZkKdH+CwL/ZYuMY=;
+        b=Bl3JANCSsnwSitJTWTfdgv5r0urYyObtgFnzXllgN0+LpM9C0WkN0RoCQpiNiEKN/F
+         UYqwtjiNTA+9tYZcvTjiZVrkdDEsgEyLglUTcJYGBmLyjgDbVpZBZLNrX7qFJ3nDWHcb
+         W2HY2Uz+eWXZ9D6r5SgxN7XCOCq7ijmDNrOF1gdegdauLyOhfHRm+SXgztoBPvABTuc2
+         lmMWdb9NLlLOyydS6e07W/28K9+971Q/KuoFv3iYPkxbz3crZCFWnjfPwhxezXd6gU6s
+         7x3YaiANYeYeSZ0EBRf00a43z1GzDvBfUmdvNrUukroL2ySnVpAZRL/YghT+GzeN70FS
+         PC5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=i3PsJwwDPsMEThcXBS4rchzEL1RqZkKdH+CwL/ZYuMY=;
+        b=p404NOzS34jtVoV0uvfs4fPrlAjUKs1Cx9MfIQ+FwF6Qqz3p4uCtuk6eX0hIm3gkcs
+         L83yB+C+hidgH8TVGcgV+5Ce4XMoma9lVm2DlxvWgwG7Nyd5vR/eXu6o/hUlbDPdoCYS
+         V5kQrJ6NncF+ryjBxFHfvILLS/HDCV+ZRYH7PEFQrsuyhj0pKNFkMX26XMU7djZJWz3N
+         gDqsiiapzb1yF6pB96ypZn0xyOzPpBQQvy7m/bTqNQkmxHdisK4f4wWvtdyadKndRtcA
+         8xZlOh5hMo8NHM/2/4Yi07uQoF9ueV1YZuaieEvJ8mCdqyp7G2CORSA0//N4dCnT9bPo
+         brEg==
+X-Gm-Message-State: APjAAAVUWKTupHOG4CKAw77gziqka1kwH1MqSN7TpMpuBPM09cQNRH0J
+        6H1rWhoIbsK8hAv71wF4buuY0w==
+X-Google-Smtp-Source: APXvYqy5+q46U41txHcFBZpRYAZLn2uuixoWepqfy1WrfIIerCO4LhHBaAIwbEkFPrzEuxfJ7pZJKA==
+X-Received: by 2002:a63:de43:: with SMTP id y3mr23364910pgi.271.1560298171849;
+        Tue, 11 Jun 2019 17:09:31 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b062:7159:60af:2fa5:3435:5195? ([2600:1010:b062:7159:60af:2fa5:3435:5195])
+        by smtp.gmail.com with ESMTPSA id 18sm14248201pfy.0.2019.06.11.17.09.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 17:09:30 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave pages' protection bits
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F655010EF@ORSMSX116.amr.corp.intel.com>
+Date:   Tue, 11 Jun 2019 17:09:28 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
         "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-CC:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
+        Jethro Beekman <jethro@fortanix.com>,
         "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         "nhorman@redhat.com" <nhorman@redhat.com>,
-        "pmccallum@redhat.com" <pmccallum@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
         "Ayoun, Serge" <serge.ayoun@intel.com>,
         "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>,
+        David Rientjes <rientjes@google.com>,
         "Roberts, William C" <william.c.roberts@intel.com>,
         "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: RE: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Thread-Topic: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks
- in SELinux
-Thread-Index: AQHVH1ilvNGS2ZisK0eWTCWidam/YaaW7RmA///+7GA=
-Date:   Tue, 11 Jun 2019 22:55:42 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F65502A85@ORSMSX116.amr.corp.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
-In-Reply-To: <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTYzZDA3ZGYtZTk5ZS00OGE1LWI0YzctNjQzMDNmNjkyOGMyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoib1FobnpwRWxYcWtxZWZYK0RjWTZZbk9QeEc1TGJTYW05K2VrWE9JdWZPWEdMbXdQOXZWY3dZbjA3WlVMZXFIVyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <331B31BF-9892-4FB3-9265-3E37412F80F4@amacapital.net>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com> <20190606021145.12604-3-sean.j.christopherson@intel.com> <960B34DE67B9E140824F1DCDEC400C0F65500E13@ORSMSX116.amr.corp.intel.com> <CALCETrWv9FYDtiHMfnfH==jE00tt7F22t-zcnP+XjfRCQgLr7A@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F655010EF@ORSMSX116.amr.corp.intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiBGcm9tOiBsaW51eC1zZ3gtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtc2d4
-LQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBTdGVwaGVuIFNtYWxsZXkN
-Cj4gU2VudDogVHVlc2RheSwgSnVuZSAxMSwgMjAxOSA2OjQwIEFNDQo+IA0KPiA+DQo+ID4gKyNp
-ZmRlZiBDT05GSUdfSU5URUxfU0dYDQo+ID4gKwlyYyA9IHNneHNlY19tcHJvdGVjdCh2bWEsIHBy
-b3QpOw0KPiA+ICsJaWYgKHJjIDw9IDApDQo+ID4gKwkJcmV0dXJuIHJjOw0KPiANCj4gV2h5IGFy
-ZSB5b3Ugc2tpcHBpbmcgdGhlIGZpbGVfbWFwX3Byb3RfY2hlY2soKSBjYWxsIHdoZW4gcmMgPT0g
-MD8NCj4gV2hhdCB3b3VsZCBTRUxpbnV4IGNoZWNrIGlmIHlvdSBkaWRuJ3QgZG8gc28gLQ0KPiBG
-SUxFX19SRUFEfEZJTEVfX1dSSVRFfEZJTEVfX0VYRUNVVEUgdG8gL2Rldi9zZ3gvZW5jbGF2ZT8g
-IElzIGl0IGENCj4gcHJvYmxlbSB0byBsZXQgU0VMaW51eCBwcm9jZWVkIHdpdGggdGhhdCBjaGVj
-az8NCg0KV2UgY2FuIGNvbnRpbnVlIHRoZSBjaGVjay4gQnV0IGluIHByYWN0aWNlLCBhbGwgRklM
-RV9fe1JFQUR8V1JJVEV8RVhFQ1VURX0gYXJlIG5lZWRlZCBmb3IgZXZlcnkgZW5jbGF2ZSwgdGhl
-biB3aGF0J3MgdGhlIHBvaW50IG9mIGNoZWNraW5nIHRoZW0/IEZJTEVfX0VYRUNNT0QgbWF5IGJl
-IHRoZSBvbmx5IGZsYWcgdGhhdCBoYXMgYSBtZWFuaW5nLCBidXQgaXQncyBraW5kIG9mIHJlZHVu
-ZGFudCBiZWNhdXNlIHNpZ3N0cnVjdCBmaWxlIHdhcyBjaGVja2VkIGFnYWluc3QgdGhhdCBhbHJl
-YWR5Lg0KDQo+ID4gK3N0YXRpYyBpbnQgc2VsaW51eF9lbmNsYXZlX2xvYWQoc3RydWN0IGZpbGUg
-KmVuY2wsIHVuc2lnbmVkIGxvbmcgYWRkciwNCj4gPiArCQkJCXVuc2lnbmVkIGxvbmcgc2l6ZSwg
-dW5zaWduZWQgbG9uZyBwcm90LA0KPiA+ICsJCQkJc3RydWN0IHZtX2FyZWFfc3RydWN0ICpzb3Vy
-Y2UpDQo+ID4gK3sNCj4gPiArCWlmIChzb3VyY2UpIHsNCj4gPiArCQkvKioNCj4gPiArCQkgKiBB
-ZGRpbmcgcGFnZSBmcm9tIHNvdXJjZSA9PiBFQUREIHJlcXVlc3QNCj4gPiArCQkgKi8NCj4gPiAr
-CQlpbnQgcmMgPSBzZWxpbnV4X2ZpbGVfbXByb3RlY3Qoc291cmNlLCBwcm90LCBwcm90KTsNCj4g
-PiArCQlpZiAocmMpDQo+ID4gKwkJCXJldHVybiByYzsNCj4gPiArDQo+ID4gKwkJaWYgKCEocHJv
-dCAmIFZNX0VYRUMpICYmDQo+ID4gKwkJICAgIHNlbGludXhfZmlsZV9tcHJvdGVjdChzb3VyY2Us
-IFZNX0VYRUMsIFZNX0VYRUMpKQ0KPiANCj4gSSB3b3VsZG4ndCBjb25mbGF0ZSBWTV9FWEVDIHdp
-dGggUFJPVF9FWEVDIGV2ZW4gaWYgdGhleSBoYXBwZW4gdG8gYmUNCj4gZGVmaW5lZCB3aXRoIHRo
-ZSBzYW1lIHZhbHVlcyBjdXJyZW50bHkuICBFbHNld2hlcmUgdGhlIGtlcm5lbCBhcHBlYXJzIHRv
-DQo+IGV4cGxpY2l0bHkgdHJhbnNsYXRlIHRoZW0gYWxhIGNhbGNfdm1fcHJvdF9iaXRzKCkuDQoN
-ClRoYW5rcyEgSSdkIGNoYW5nZSB0aGVtIHRvIFBST1RfRVhFQyBpbiB0aGUgbmV4dCB2ZXJzaW9u
-Lg0KDQo+IA0KPiBBbHNvLCB0aGlzIHdpbGwgbWVhbiB0aGF0IHdlIHdpbGwgYWx3YXlzIHBlcmZv
-cm0gYW4gZXhlY3V0ZSBjaGVjayBvbiBhbGwNCj4gc291cmNlcywgdGhlcmVieSB0cmlnZ2VyaW5n
-IGF1ZGl0IGRlbmlhbCBtZXNzYWdlcyBmb3IgYW55IEVBREQgc291cmNlcw0KPiB0aGF0IGFyZSBv
-bmx5IGludGVuZGVkIHRvIGJlIGRhdGEuICBEZXBlbmRpbmcgb24gdGhlIHNvdXJjZSwgdGhpcyBj
-b3VsZA0KPiB0cmlnZ2VyIFBST0NFU1NfX0VYRUNNRU0gb3IgRklMRV9fRVhFQ01PRCBvciBGSUxF
-X19FWEVDVVRFLiAgSW4gYSB3b3JsZA0KPiB3aGVyZSB1c2VycyBvZnRlbiBqdXN0IHJ1biBhbnkg
-ZGVuaWFscyB0aGV5IHNlZSB0aHJvdWdoIGF1ZGl0MmFsbG93LA0KPiB0aGV5J2xsIGVuZCB1cCBh
-bHdheXMgYWxsb3dpbmcgdGhlbSBhbGwuICBIb3cgY2FuIHRoZXkgdGVsbCB3aGV0aGVyIGl0DQo+
-IHdhcyBuZWVkZWQ/IEl0IHdvdWxkIGJlIHByZWZlcmFibGUgaWYgd2UgY291bGQgb25seSB0cmln
-Z2VyIGV4ZWN1dGUNCj4gY2hlY2tzIHdoZW4gdGhlcmUgaXMgc29tZSBwcm9iYWJpbGl0eSB0aGF0
-IGV4ZWN1dGUgd2lsbCBiZSByZXF1ZXN0ZWQgaW4NCj4gdGhlIGZ1dHVyZS4gIEFsdGVybmF0aXZl
-cyB3b3VsZCBiZSB0byBzaWxlbmNlIHRoZSBhdWRpdCBvZiB0aGVzZQ0KPiBwZXJtaXNzaW9uIGNo
-ZWNrcyBhbHdheXMgdmlhIHVzZSBvZiBfbm9hdWRpdCgpIGludGVyZmFjZXMgb3IgdG8gc2lsZW5j
-ZQ0KPiBhdWRpdCBvZiB0aGVzZSBwZXJtaXNzaW9ucyB2aWEgZG9udGF1ZGl0IHJ1bGVzIGluIHBv
-bGljeSwgYnV0IHRoZSBsYXR0ZXINCj4gd291bGQgaGlkZSBhbGwgZGVuaWFscyBvZiB0aGUgcGVy
-bWlzc2lvbiBieSB0aGUgcHJvY2Vzcywgbm90IGp1c3QgdGhvc2UNCj4gdHJpZ2dlcmVkIGZyb20g
-c2VjdXJpdHlfZW5jbGF2ZV9sb2FkKCkuICBBbmQgaWYgd2Ugc2lsZW5jZSB0aGVtLCB0aGVuIHdl
-DQo+IHdvbid0IHNlZSB0aGVtIGV2ZW4gaWYgdGhleSB3ZXJlIG5lZWRlZC4NCg0KKl9ub2F1ZGl0
-KCkgaXMgZXhhY3RseSB3aGF0IEkgd2FudGVkLiBCdXQgSSBjb3VsZG4ndCBmaW5kIHNlbGludXhf
-ZmlsZV9tcHJvdGVjdF9ub2F1ZGl0KCkvZmlsZV9oYXNfcGVybV9ub2F1ZGl0KCksIGFuZCBJJ20g
-cmVsdWN0YW50IHRvIGR1cGxpY2F0ZSBjb2RlLiBBbnkgc3VnZ2VzdGlvbnM/DQogDQo+IA0KPiA+
-ICsJCQlwcm90ID0gMDsNCj4gPiArCQllbHNlIHsNCj4gPiArCQkJcHJvdCA9IFNHWF9fRVhFQ1VU
-RTsNCj4gPiArCQkJaWYgKHNvdXJjZS0+dm1fZmlsZSAmJg0KPiA+ICsJCQkgICAgIWZpbGVfaGFz
-X3Blcm0oY3VycmVudF9jcmVkKCksIHNvdXJjZS0+dm1fZmlsZSwNCj4gPiArCQkJCQkgICBGSUxF
-X19FWEVDTU9EKSkNCj4gPiArCQkJCXByb3QgfD0gU0dYX19FWEVDTU9EOw0KPiANCj4gU2ltaWxh
-cmx5LCB0aGlzIG1lYW5zIHRoYXQgd2Ugd2lsbCBhbHdheXMgcGVyZm9ybSBhIEZJTEVfX0VYRUNN
-T0QgY2hlY2sNCj4gb24gYWxsIGV4ZWN1dGFibGUgc291cmNlcywgdHJpZ2dlcmluZyBhdWRpdCBk
-ZW5pYWwgbWVzc2FnZXMgZm9yIGFueSBFQUREDQo+IHNvdXJjZSB0aGF0IGlzIGV4ZWN1dGFibGUg
-YnV0IHRvIHdoaWNoIEVYRUNNT0QgaXMgbm90IGFsbG93ZWQsIGFuZCBhZ2Fpbg0KPiB0aGUgbW9z
-dCBjb21tb24gcGF0dGVybiB3aWxsIGJlIHRoYXQgdXNlcnMgd2lsbCBhZGQgRVhFQ01PRCB0byBh
-bGwNCj4gZXhlY3V0YWJsZSBzb3VyY2VzIHRvIGF2b2lkIHRoaXMuDQo+IA0KPiA+ICsJCX0NCj4g
-PiArCQlyZXR1cm4gc2d4c2VjX2VhZGQoZW5jbCwgYWRkciwgc2l6ZSwgcHJvdCk7DQo+ID4gKwl9
-IGVsc2Ugew0KPiA+ICsJCS8qKg0KPiA+ICsJCSAgKiBBZGRpbmcgcGFnZSBmcm9tIE5VTEwgPT4g
-RUFVRyByZXF1ZXN0DQo+ID4gKwkJICAqLw0KPiA+ICsJCXJldHVybiBzZ3hzZWNfZWF1ZyhlbmNs
-LCBhZGRyLCBzaXplLCBwcm90KTsNCj4gPiArCX0NCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGlj
-IGludCBzZWxpbnV4X2VuY2xhdmVfaW5pdChzdHJ1Y3QgZmlsZSAqZW5jbCwNCj4gPiArCQkJCWNv
-bnN0IHN0cnVjdCBzZ3hfc2lnc3RydWN0ICpzaWdzdHJ1Y3QsDQo+ID4gKwkJCQlzdHJ1Y3Qgdm1f
-YXJlYV9zdHJ1Y3QgKnZtYSkNCj4gPiArew0KPiA+ICsJaW50IHJjID0gMDsNCj4gPiArDQo+ID4g
-KwlpZiAoIXZtYSkNCj4gPiArCQlyYyA9IC1FSU5WQUw7DQo+IA0KPiBJcyBpdCBldmVyIHZhbGlk
-IHRvIGNhbGwgdGhpcyBob29rIHdpdGggYSBOVUxMIHZtYT8gIElmIG5vdCwgdGhpcyBzaG91bGQN
-Cj4gYmUgaGFuZGxlZC9wcmV2ZW50ZWQgYnkgdGhlIGNhbGxlci4gIElmIHNvLCBJJ2QganVzdCBy
-ZXR1cm4gLUVJTlZBTA0KPiBpbW1lZGlhdGVseSBoZXJlLg0KDQp2bWEgc2hhbGwgbmV2ZXIgYmUg
-TlVMTC4gSSdsbCB1cGRhdGUgaXQgaW4gdGhlIG5leHQgdmVyc2lvbi4NCg0KPiANCj4gPiArDQo+
-ID4gKwlpZiAoIXJjICYmICEodm1hLT52bV9mbGFncyAmIFZNX0VYRUMpKQ0KPiA+ICsJCXJjID0g
-c2VsaW51eF9maWxlX21wcm90ZWN0KHZtYSwgVk1fRVhFQywgVk1fRVhFQyk7DQo+IA0KPiBJIGhh
-ZCB0aG91Z2h0IHdlIHdlcmUgdHJ5aW5nIHRvIGF2b2lkIG92ZXJsb2FkaW5nIEZJTEVfX0VYRUNV
-VEUgKG9yDQo+IHdoYXRldmVyIGdldHMgY2hlY2tlZCBoZXJlLCBlLmcuIGNvdWxkIGJlIFBST0NF
-U1NfX0VYRUNNRU0gb3INCj4gRklMRV9fRVhFQ01PRCkgb24gdGhlIHNpZ3N0cnVjdCBmaWxlLCBz
-aW5jZSB0aGUgY2FsbGVyIGlzbid0IHRydWx5DQo+IGV4ZWN1dGluZyBjb2RlIGZyb20gaXQuDQoN
-CkFncmVlZC4gQW5vdGhlciBwcm9ibGVtIHdpdGggRklMRV9fRVhFQ01PRCBvbiB0aGUgc2lnc3Ry
-dWN0IGZpbGUgaXMgdGhhdCB1c2VyIGNvZGUgd291bGQgdGhlbiBiZSBhbGxvd2VkIHRvIG1vZGlm
-eSBTSUdTVFJVQ1QgYXQgd2lsbCwgd2hpY2ggZWZmZWN0aXZlbHkgd2lwZXMgb3V0IHRoZSBwcm90
-ZWN0aW9uIHByb3ZpZGVkIGJ5IEZJTEVfX0VYRUNVVEUuDQoNCj4gDQo+IEknZCBkZWZpbmUgbmV3
-IEVOQ0xBVkVfXyogcGVybWlzc2lvbnMsIGluY2x1ZGluZyBhbiB1cC1mcm9udA0KPiBFTkNMQVZF
-X19JTklUIHBlcm1pc3Npb24gdGhhdCBnb3Zlcm5zIHdoZXRoZXIgdGhlIHNpZ3N0cnVjdCBmaWxl
-IGNhbiBiZQ0KPiB1c2VkIGF0IGFsbCBpcnJlc3BlY3RpdmUgb2YgbWVtb3J5IHByb3RlY3Rpb25z
-Lg0KDQpBZ3JlZWQuDQoNCj4gDQo+IFRoZW4geW91IGNhbiBhbHNvIGhhdmUgRU5DTEFWRV9fRVhF
-Q1VURSwgRU5DTEFWRV9fRVhFQ01FTSwNCj4gRU5DTEFWRV9fRVhFQ01PRCBmb3IgdGhlIGV4ZWN1
-dGUtcmVsYXRlZCBjaGVja3MuICBPciB5b3UgY2FuIHVzZSB0aGUNCj4gL2Rldi9zZ3gvZW5jbGF2
-ZSBpbm9kZSBhcyB0aGUgdGFyZ2V0IGZvciB0aGUgZXhlY3V0ZSBjaGVja3MgYW5kIGp1c3QNCj4g
-cmV1c2UgdGhlIGZpbGUgcGVybWlzc2lvbnMgdGhlcmUuDQoNCk5vdyB3ZSd2ZSBnb3QgMiBvcHRp
-b25zIC0gMSkgTmV3IEVOQ0xBVkVfXyogZmxhZ3Mgb24gc2lnc3RydWN0IGZpbGUgb3IgMikgRklM
-RV9fKiBvbiAvZGV2L3NneC9lbmNsYXZlLiBXaGljaCBvbmUgZG8geW91IHRoaW5rIG1ha2VzIG1v
-cmUgc2Vuc2U/DQoNCkVOQ0xBVkVfX0VYRUNNRU0gc2VlbXMgdG8gb2ZmZXIgZmluZXIgZ3JhbnVs
-YXJpdHkgKHRoYW4gUFJPQ0VTU19fRVhFQ01FTSkgYnV0IEkgd29uZGVyIGlmIGl0J2QgaGF2ZSBh
-bnkgcmVhbCB1c2UgaW4gcHJhY3RpY2UuDQoNCj4gPiAraW50IHNneHNlY19tcHJvdGVjdChzdHJ1
-Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwgc2l6ZV90IHByb3QpIHsNCj4gPiArCXN0cnVjdCBlbmNs
-YXZlX3NlYyAqZXNlYzsNCj4gPiArCWludCByYzsNCj4gPiArDQo+ID4gKwlpZiAoIXZtYS0+dm1f
-ZmlsZSB8fCAhKGVzZWMgPSBfX2VzZWMoc2VsaW51eF9maWxlKHZtYS0+dm1fZmlsZSkpKSkNCj4g
-ew0KPiA+ICsJCS8qIFBvc2l0aXZlIHJldHVybiB2YWx1ZSBpbmRpY2F0ZXMgbm9uLWVuY2xhdmUg
-Vk1BICovDQo+ID4gKwkJcmV0dXJuIDE7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJZG93bl9yZWFk
-KCZlc2VjLT5zZW0pOw0KPiA+ICsJcmMgPSBlbmNsYXZlX21wcm90ZWN0KCZlc2VjLT5yZWdpb25z
-LCB2bWEtPnZtX3N0YXJ0LCB2bWEtPnZtX2VuZCwNCj4gPiArcHJvdCk7DQo+IA0KPiBXaHkgaXMg
-aXQgc2FmZSBmb3IgdGhpcyB0byBvbmx5IHVzZSBkb3duX3JlYWQoKT8gZW5jbGF2ZV9tcHJvdGVj
-dCgpIGNhbg0KPiBjYWxsIGVuY2xhdmVfcHJvdF9zZXRfY2IoKSB3aGljaCBtb2RpZmllcyB0aGUg
-bGlzdD8NCg0KUHJvYmFibHkgYmVjYXVzZSBpdCB3YXMgdG9vIGxhdGUgYXQgbmlnaHQgd2hlbiBJ
-IHdyb3RlIHRoaXMgbGluZTotKCBHb29kIGNhdGNoIQ0KDQo+IA0KPiBJIGhhdmVuJ3QgbG9va2Vk
-IGF0IHRoaXMgY29kZSBjbG9zZWx5LCBidXQgaXQgZmVlbHMgbGlrZSBhIGxvdCBvZiBTR1gtDQo+
-IHNwZWNpZmljIGxvZ2ljIGVtYmVkZGVkIGludG8gU0VMaW51eCB0aGF0IHdpbGwgaGF2ZSB0byBi
-ZSByZXBlYXRlZCBvcg0KPiByZXVzZWQgZm9yIGV2ZXJ5IHNlY3VyaXR5IG1vZHVsZS4gIERvZXMg
-U0dYIG5vdCB0cmFjayB0aGlzIHN0YXRlIGl0c2VsZj8NCg0KSSBjYW4gdGVsbCB5b3UgaGF2ZSBs
-b29rZWQgcXVpdGUgY2xvc2VseSwgYW5kIEkgdHJ1bHkgdGhpbmsgeW91IGZvciB5b3VyIHRpbWUh
-DQoNCllvdSBhcmUgcmlnaHQgdGhhdCB0aGVyZSBhcmUgU0dYIHNwZWNpZmljIHN0dWZmLiBNb3Jl
-IHByZWNpc2VseSwgU0dYIGVuY2xhdmVzIGRvbid0IGhhdmUgYWNjZXNzIHRvIGFueXRoaW5nIGV4
-Y2VwdCBtZW1vcnksIHNvIHRoZXJlIGFyZSBvbmx5IDMgcXVlc3Rpb25zIHRoYXQgbmVlZCB0byBi
-ZSBhbnN3ZXJlZCBmb3IgZWFjaCBlbmNsYXZlIHBhZ2U6IDEpIHdoZXRoZXIgWCBpcyBhbGxvd2Vk
-OyAyKSB3aGV0aGVyIFctPlggaXMgYWxsb3dlZCBhbmQgMyB3aGV0aGVyIFdYIGlzIGFsbG93ZWQu
-IFRoaXMgcHJvcG9zYWwgdHJpZXMgdG8gY2FjaGUgdGhlIGFuc3dlcnMgdG8gdGhvc2UgcXVlc3Rp
-b25zIHVwb24gY3JlYXRpb24gb2YgZWFjaCBlbmNsYXZlIHBhZ2UsIG1lYW5pbmcgaXQgaW52b2x2
-ZXMgYSkgZmlndXJpbmcgb3V0IHRoZSBhbnN3ZXJzIGFuZCBiKSAicmVtZW1iZXIiIHRoZW0gZm9y
-IGV2ZXJ5IHBhZ2UuICNiIGlzIGdlbmVyaWMsIG1vc3RseSBjYXB0dXJlZCBpbiBpbnRlbF9zZ3gu
-YywgYW5kIGNvdWxkIGJlIHNoYXJlZCBhbW9uZyBhbGwgTFNNIG1vZHVsZXM7IHdoaWxlICNhIGlz
-IFNFTGludXggc3BlY2lmaWMuIEkgY291bGQgbW92ZSBpbnRlbF9zZ3guYyB1cCBvbmUgbGV2ZWwg
-aW4gdGhlIGRpcmVjdG9yeSBoaWVyYXJjaHkgaWYgdGhhdCdzIHdoYXQgeW91J2Qgc3VnZ2VzdC4N
-Cg0KQnkgIlNHWCIsIGRpZCB5b3UgbWVhbiB0aGUgU0dYIHN1YnN5c3RlbSBiZWluZyB1cHN0cmVh
-bWVkPyBJdCBkb2VzbuKAmXQgdHJhY2sgdGhhdCBzdGF0ZS4gSW4gcHJhY3RpY2UsIHRoZXJlJ3Mg
-bm8gd2F5IGZvciBTR1ggdG8gdHJhY2sgaXQgYmVjYXVzZSB0aGVyZSdzIG5vIHZtX29wcy0+bWF5
-X21wcm90ZWN0KCkgY2FsbGJhY2suIEl0IGRvZXNuJ3QgZm9sbG93IHRoZSBwaGlsb3NvcGh5IG9m
-IExpbnV4IGVpdGhlciwgYXMgbXByb3RlY3QoKSBkb2Vzbid0IHRyYWNrIGl0IGZvciByZWd1bGFy
-IG1lbW9yeS4gQW5kIGl0IGRvZXNuJ3QgaGF2ZSBhIHVzZSB3aXRob3V0IExTTSwgc28gSSBiZWxp
-ZXZlIGl0IG1ha2VzIG1vcmUgc2Vuc2UgdG8gdHJhY2sgaXQgaW5zaWRlIExTTS4NCg==
+
+
+On Jun 10, 2019, at 3:28 PM, Xing, Cedric <cedric.xing@intel.com> wrote:
+
+>> From: Andy Lutomirski [mailto:luto@kernel.org]
+>> Sent: Monday, June 10, 2019 12:15 PM
+>>=20
+>> On Mon, Jun 10, 2019 at 11:29 AM Xing, Cedric <cedric.xing@intel.com>
+>> wrote:
+>>>=20
+>>>> From: Christopherson, Sean J
+>>>> Sent: Wednesday, June 05, 2019 7:12 PM
+>>>>=20
+>>>> +/**
+>>>> + * sgx_map_allowed - check vma protections against the associated
+>>>> enclave page
+>>>> + * @encl:    an enclave
+>>>> + * @start:   start address of the mapping (inclusive)
+>>>> + * @end:     end address of the mapping (exclusive)
+>>>> + * @prot:    protection bits of the mapping
+>>>> + *
+>>>> + * Verify a userspace mapping to an enclave page would not violate
+>>>> +the security
+>>>> + * requirements of the *kernel*.  Note, this is in no way related
+>>>> +to the
+>>>> + * page protections enforced by hardware via the EPCM.  The EPCM
+>>>> +protections
+>>>> + * can be directly extended by the enclave, i.e. cannot be relied
+>>>> +upon by the
+>>>> + * kernel for security guarantees of any kind.
+>>>> + *
+>>>> + * Return:
+>>>> + *   0 on success,
+>>>> + *   -EACCES if the mapping is disallowed
+>>>> + */
+>>>> +int sgx_map_allowed(struct sgx_encl *encl, unsigned long start,
+>>>> +                 unsigned long end, unsigned long prot) {
+>>>> +     struct sgx_encl_page *page;
+>>>> +     unsigned long addr;
+>>>> +
+>>>> +     prot &=3D (VM_READ | VM_WRITE | VM_EXEC);
+>>>> +     if (!prot || !encl)
+>>>> +             return 0;
+>>>> +
+>>>> +     mutex_lock(&encl->lock);
+>>>> +
+>>>> +     for (addr =3D start; addr < end; addr +=3D PAGE_SIZE) {
+>>>> +             page =3D radix_tree_lookup(&encl->page_tree, addr >>
+>>>> PAGE_SHIFT);
+>>>> +
+>>>> +             /*
+>>>> +              * Do not allow R|W|X to a non-existent page, or
+>> protections
+>>>> +              * beyond those of the existing enclave page.
+>>>> +              */
+>>>> +             if (!page || (prot & ~page->prot))
+>>>> +                     return -EACCES;
+>>>=20
+>>> In SGX2, pages will be "mapped" before being populated.
+>>>=20
+>>> Here's a brief summary for those who don't have enough background on
+>> how new EPC pages could be added to a running enclave in SGX2:
+>>>  - There are 2 new instructions - EACCEPT and EAUG.
+>>>  - EAUG is used by SGX module to add (augment) a new page to an
+>> existing enclave. The newly added page is *inaccessible* until the
+>> enclave *accepts* it.
+>>>  - EACCEPT is the instruction for an enclave to accept a new page.
+>>>=20
+>>> And the s/w flow for an enclave to request new EPC pages is expected
+>> to be something like the following:
+>>>  - The enclave issues EACCEPT at the linear address that it would
+>> like a new page.
+>>>  - EACCEPT results in #PF, as there's no page at the linear address
+>> above.
+>>>  - SGX module is notified about the #PF, in form of its vma->vm_ops-
+>>> fault() being called by kernel.
+>>>  - SGX module EAUGs a new EPC page at the fault address, and resumes
+>> the enclave.
+>>>  - EACCEPT is reattempted, and succeeds at this time.
+>>=20
+>> This seems like an odd workflow.  Shouldn't the #PF return back to
+>> untrusted userspace so that the untrusted user code can make its own
+>> decision as to whether it wants to EAUG a page there as opposed to, say,
+>> killing the enclave or waiting to keep resource usage under control?
+>=20
+> This may seem odd to some at the first glance. But if you can think of how=
+ static heap (pre-allocated by EADD before EINIT) works, the load parses the=
+ "metadata" coming with the enclave to decide the address/size of the heap, E=
+ADDs it, and calls it done. In the case of "dynamic" heap (allocated dynamic=
+ally by EAUG after EINIT), the same thing applies - the loader determines th=
+e range of the heap, tells the SGX module about it, and calls it done. Every=
+thing else is the between the enclave and the SGX module.
+>=20
+> In practice, untrusted code usually doesn't know much about enclaves, just=
+ like it doesn't know much about the shared objects loaded into its address s=
+pace either. Without the necessary knowledge, untrusted code usually just do=
+es what it is told (via o-calls, or return value from e-calls), without judg=
+ing that's right or wrong.=20
+>=20
+> When it comes to #PF like what I described, of course a signal could be se=
+nt to the untrusted code but what would it do then? Usually it'd just come b=
+ack asking for a page at the fault address. So we figured it'd be more effic=
+ient to just have the kernel EAUG at #PF.=20
+>=20
+> Please don't get me wrong though, as I'm not dictating what the s/w flow s=
+hall be. It's just going to be a choice offered to user mode. And that choic=
+e was planned to be offered via mprotect() - i.e. a writable vma causes kern=
+el to EAUG while a non-writable vma will result in a signal (then the user m=
+ode could decide whether to EAUG). The key point is flexibility - as we want=
+ to allow all reasonable s/w flows instead of dictating one over others. We h=
+ad similar discussions on vDSO API before. And I think you accepted my appro=
+ach because of its flexibility. Am I right?
+
+As long as user code can turn this off, I have no real objection. But it mig=
+ht make sense to have it be more explicit =E2=80=94 have an ioctl set up a r=
+ange as =E2=80=9CEAUG-on-demand=E2=80=9D.
+
+But this is all currently irrelevant. We can argue about it when the patches=
+ show up. :)=
