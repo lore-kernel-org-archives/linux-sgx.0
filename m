@@ -2,196 +2,203 @@ Return-Path: <SRS0=rpH8=UM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B383CC31E45
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CE8C31E45
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92BEB20665
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AEB820665
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:58:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="nNfSFEda"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbfFMQ5Z convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:57:25 -0400
-Received: from mga07.intel.com ([134.134.136.100]:45747 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729926AbfFMBCf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:02:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 18:02:34 -0700
-X-ExtLoop1: 1
-Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
-  by fmsmga005.fm.intel.com with ESMTP; 12 Jun 2019 18:02:33 -0700
-Received: from orsmsx115.amr.corp.intel.com (10.22.240.11) by
- ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 12 Jun 2019 18:02:33 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.166]) by
- ORSMSX115.amr.corp.intel.com ([169.254.4.229]) with mapi id 14.03.0415.000;
- Wed, 12 Jun 2019 18:02:32 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>
-CC:     Stephen Smalley <sds@tycho.nsa.gov>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: RE: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Thread-Topic: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks
- in SELinux
-Thread-Index: AQHVH1ilvNGS2ZisK0eWTCWidam/YaaW7RmAgACMWICAAWfBAIAAKpIA//+YzvA=
-Date:   Thu, 13 Jun 2019 01:02:32 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F65503305@ORSMSX116.amr.corp.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
- <20190611220243.GB3416@linux.intel.com>
- <CALCETrWQT3AG+-OKBOzuw-a6VPApkNYsKqZiBmS56-b-72bfYQ@mail.gmail.com>
- <20190612220242.GJ20308@linux.intel.com>
-In-Reply-To: <20190612220242.GJ20308@linux.intel.com>
+        id S2393184AbfFMQ6c (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:58:32 -0400
+Received: from mail-eopbgr720105.outbound.protection.outlook.com ([40.107.72.105]:6223
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729879AbfFMAoc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 Jun 2019 20:44:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fortanix.onmicrosoft.com; s=selector1-fortanix-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WmlzQDMbmb1/kLTjWsF8/xVuw7TuXqdvRmjmnSFYd8o=;
+ b=nNfSFEdaV6SHGaOICj8LmTkJsMvCyO08/odPtRSlRq+y/VzXlilWA8wE6PoGYykuDW9GJdC0e2hR6vKysursVagjJJoC705eEvKq3cZ2o+EFq4bl8TYY55Hod39Cg/4iizSudhjv0/jQLjUUTxMt0opJkpKOx3aISfWXDU7GOCY=
+Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
+ SN6PR11MB3120.namprd11.prod.outlook.com (52.135.127.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.15; Thu, 13 Jun 2019 00:44:28 +0000
+Received: from SN6PR11MB3167.namprd11.prod.outlook.com
+ ([fe80::95a7:7f01:a25f:c318]) by SN6PR11MB3167.namprd11.prod.outlook.com
+ ([fe80::95a7:7f01:a25f:c318%7]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
+ 00:44:28 +0000
+From:   Jethro Beekman <jethro@fortanix.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [PATCH 7/7] x86/sgx: Add a reserved field to
+ sgx_enclave_add_region to drop 'packed'
+Thread-Topic: [PATCH 7/7] x86/sgx: Add a reserved field to
+ sgx_enclave_add_region to drop 'packed'
+Thread-Index: AQHVG9fQYgkh9xZnvESTyAN27yiq06aYK2uAgAAChwCAAJyqgA==
+Date:   Thu, 13 Jun 2019 00:44:28 +0000
+Message-ID: <271c7507-b043-1ba4-b603-17cf7bf7b313@fortanix.com>
+References: <20190605194845.926-1-sean.j.christopherson@intel.com>
+ <20190605194845.926-8-sean.j.christopherson@intel.com>
+ <20190612151439.GA5723@linux.intel.com>
+ <20190612152341.GE20308@linux.intel.com>
+In-Reply-To: <20190612152341.GE20308@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: 
+X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDhmOWQxYWItZGYxOC00NDE5LWI5YmQtMjdkNDE0ZTdmYjVmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYmM4cGFEMU03UU9yd1pLVSs0bEU5czk2RUNacmxySk1RU2w5b1puWjlWTkRIQ3BLdnZJeEVoa1VsTHdMV2pJMiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-clientproxiedby: BL0PR03CA0031.namprd03.prod.outlook.com
+ (2603:10b6:208:2d::44) To SN6PR11MB3167.namprd11.prod.outlook.com
+ (2603:10b6:805:c4::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jethro@fortanix.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [172.56.38.96]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: abd2d97b-a2b1-4b6c-4876-08d6ef984a69
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB3120;
+x-ms-traffictypediagnostic: SN6PR11MB3120:
+x-microsoft-antispam-prvs: <SN6PR11MB31201A5E92AB94D554E225D4AAEF0@SN6PR11MB3120.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(346002)(396003)(136003)(366004)(376002)(199004)(189003)(86362001)(71200400001)(386003)(486006)(3846002)(26005)(186003)(476003)(11346002)(6116002)(52116002)(25786009)(305945005)(76176011)(4326008)(7736002)(99286004)(4744005)(446003)(2616005)(53936002)(110136005)(64756008)(66616009)(36756003)(66556008)(66946007)(31696002)(66476007)(316002)(54906003)(73956011)(2906002)(66446008)(102836004)(508600001)(71190400001)(31686004)(6506007)(99936001)(66066001)(5660300002)(256004)(81156014)(6436002)(6246003)(53546011)(68736007)(229853002)(6486002)(8936002)(6512007)(8676002)(14454004)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3120;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fortanix.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JrUiCXnceBSWo8fg+5H6wI+H6/Dek7Wx+SE4RnOQdyep4rIzzi/B3jlCcMQCRvHW6lgZrH5dykvj0q9XpXewkJS97Akw9ABCo+tgtd9GF/zvKP2Pvf124bWpT2tsYTn/8ScoRx2JKj7v91xbF+DDs6IxLXCcD7uwysApmaNU/WKiGHpR4iXveqAkZpI6/Fc46ZuKi35tt8tRMBKMSlWt6GslzkBWRie7wW2lCGimlFETXk5kTnjoBWX/LH4O3zBTubbYsHBD7/FyVL94JOnmuzQmFUstOMuELijAj36DcqcmXL9OxMOkvQMHK7z3tSBcKHEH2f6Qb2DYpJ6VMlCQzrY16JtNB07/kO8tOrxdiIJm3SSbZN3R0YXe0fBKUknOFNPH1f4eoNsUjNN3nx++tjdesyE8XBXElr5Tp2CIpXM=
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060609030601080507080300"
 MIME-Version: 1.0
+X-OriginatorOrg: fortanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: abd2d97b-a2b1-4b6c-4876-08d6ef984a69
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 00:44:28.5043
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jethro@fortanix.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3120
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> From: Christopherson, Sean J
-> Sent: Wednesday, June 12, 2019 3:03 PM
-> 
-> > I think this model works quite well in an SGX1 world.  The main thing
-> > that makes me uneasy about this model is that, in SGX2, it requires
-> > that an SGX2-compatible enclave loader must pre-declare to the kernel
-> > whether it intends for its dynamically allocated memory to be
-> > ALLOW_EXEC.  If ALLOW_EXEC is set but not actually needed, it will
-> > still fail if DENY_X_IF_ALLOW_WRITE ends up being set.  The other
-> > version below does not have this limitation.
-> 
-> I'm not convinced this will be a meaningful limitation in practice,
-> though that's probably obvious from my RFCs :-).  That being said, the
-> UAPI quirk is essentially a dealbreaker for multiple people, so let's
-> drop #1.
-> 
-> I discussed the options with Cedric offline, and he is ok with option #2
-> *if* the idea actually translates to acceptable code and doesn't present
-> problems for userspace and/or future SGX features.
-> 
-> So, I'll work on an RFC series to implement #2 as described below.  If
-> it works out, yay!  If not, i.e. option #2 is fundamentally broken, I'll
-> shift my focus to Cedric's code (option #3).
-> 
-> > >   2. Pre-check LSM permissions and dynamically track mappings to
-> enclave
-> > >      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
-> > >      based on the pre-checked permissions.
-> > >
-> > >      Pros: Does not impact SGX UAPI, medium kernel complexity
-> > >      Cons: Auditing is complex/weird, requires taking enclave-
-> specific
-> > >            lock during mprotect() to query/update tracking.
-> >
-> > Here's how this looks in my mind.  It's quite similar, except that
-> > ALLOW_READ, ALLOW_WRITE, and ALLOW_EXEC are replaced with a little
-> > state machine.
-> >
-> > EADD does not take any special flags.  It calls this LSM hook:
-> >
-> >   int security_enclave_load(struct vm_area_struct *source);
-> >
-> > This hook can return -EPERM.  Otherwise it 0 or
-> > ALLOC_EXEC_IF_UNMODIFIED (i.e. 1).  This hook enforces permissions (a)
-> and (b).
-> >
-> > The driver tracks a state for each page, and the possible states are:
-> >
-> >  - CLEAN_MAYEXEC /* no W or X VMAs have existed, but X is okay */
-> >  - CLEAN_NOEXEC /* no W or X VMAs have existed, and X is not okay */
-> >  - CLEAN_EXEC /* no W VMA has existed, but an X VMA has existed */
-> >  - DIRTY /* a W VMA has existed */
-> >
-> > The initial state for a page is CLEAN_MAYEXEC if the hook said
-> > ALLOW_EXEC_IF_UNMODIFIED and CLEAN_NOEXEC otherwise.
-> >
-> > The future EAUG does not call a hook at all and puts pages into the
-> > state CLEAN_NOEXEC.  If SGX3 or later ever adds EAUG-but-don't-clear,
-> > it can call security_enclave_load() and add CLEAN_MAYEXEC pages if
-> appropriate.
-> >
-> > EINIT takes a sigstruct pointer.  SGX calls a new hook:
-> >
-> >   unsigned int security_enclave_init(struct sigstruct *sigstruct,
-> > struct vm_area_struct *source, unsigned int flags);
-> >
-> > This hook can return -EPERM.  Otherwise it returns 0 or a combination
-> > of flags DENY_WX and DENY_X_DIRTY.  The driver saves this value.
-> > These represent permissions (c) and (d).
-> >
-> > If we want to have a permission for "execute code supplied from
-> > outside the enclave that was not measured", we could have a flag like
-> > HAS_UNMEASURED_CLEAN_EXEC_PAGE that the LSM could consider.
-> >
-> > mmap() and mprotect() enforce the following rules:
-> >
-> >  - If VM_EXEC is requested and (either the page is DIRTY or VM_WRITE
-> is
-> >    requested) and DENY_X_DIRTY, then deny.
-> >
-> >  - If VM_WRITE and VM_EXEC are both requested and DENY_WX, then deny.
-> >
-> >  - If VM_WRITE is requested, we need to update the state.  If it was
-> >    CLEAN_EXEC, then we reject if DENY_X_DIRTY.  Otherwise we change
-> the
-> >    state to DIRTY.
-> >
-> >  - If VM_EXEC is requested and the page is CLEAN_NOEXEC, then deny.
-> >
-> > mprotect() and mmap() do *not* call SGX-specific LSM hooks to ask for
-> > permission, although they can optionally call an LSM hook if they hit
-> > one of the -EPERM cases for auditing purposes.
-> >
-> > Before the SIGSTRUCT is provided to the driver, the driver acts as
-> > though DENY_X_DIRTY and DENY_WX are both set.
+--------------ms060609030601080507080300
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-I think we've been discussing 2 topics simultaneously, one is the state machine that accepts/rejects mmap/mprotect requests, while the other is where is the best place to put it. I think we have an agreement on the former, and IMO option #2 and #3 differ only in the latter.
+On 2019-06-12 08:23, Sean Christopherson wrote:
+> On Wed, Jun 12, 2019 at 06:14:39PM +0300, Jarkko Sakkinen wrote:
+>> On Wed, Jun 05, 2019 at 12:48:45PM -0700, Sean Christopherson wrote:
+>>> A reserved field could prove useful in the future, and packed structs=
 
-Option #2 keeps the state machine inside SGX subsystem, so it could reuse existing data structures for page tracking/locking to some extent. Sean may have smarter ideas, but it looks to me like the existing 'struct sgx_encl_page' tracks individual enclave pages while the FSM states apply to ranges. So in order *not* to test page by page in mmap/mprotect, I guess some new range oriented structures are still necessary. But I don't think it very important anyway. 
+>>> can result in inefficiencies due to its impact on alignment.
+>>>
+>>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>>
+>> Rather should extend mrmask just to 32 bits.
+>=20
+> I considered that option, but extending mrmask would probably confusing=
 
-My major concern is more from the architecture/modularity perspective. Specifically, the state machine is defined by LSM but SGX does the state transitions. That's a brittle relationship that'd break easily if the state machine changes in future, or if different LSM modules want to define different FSMs (comprised of different set of states and/or triggers). After all, what's needed by the SGX subsystem is just the decision, not the FSM definition. I think we should take a closer look at this area once Sean's patch comes out.
+> to userspace, e.g. we'd have to document that bits 31:15 are ignored.
+>=20
 
+Yeah this doesn't make a whole lot of sense to me.
+
+--
+Jethro Beekman | Fortanix
+
+
+--------------ms060609030601080507080300
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
+CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
+bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
+MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
+b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
+Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
+LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
+lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
+O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
+ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
+BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
+MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
+AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
+hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
+bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
+dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
+bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
+v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
+shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
+rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
+eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
+qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
+apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
+BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
+T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
+b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
+GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
+ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
+bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
+NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
+NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
+qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
+jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
+ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
+jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
+Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
+BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
+VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
+hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
+QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
+7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
++2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
+E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
+gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
+SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
+/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
+m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
+UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
+rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
+TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
+x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDYxMzAwNDQyNVowLwYJKoZIhvcNAQkEMSIEIHxkTf7Z
+Spi4nDkVveeM7j6ZHaM0Uv0BytcJu15k6sByMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
+Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
+Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
+XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
+R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
+Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
+YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
+AQArsoxaeuTk6OZowfdm5QsS3qV0R01ffnOpHy6UjiuQljY9IKp+WLTPKx15cxvGyq7YGYeX
+qwKuYZl/Viubq/2wiTLkGao9NtAdjfkPqAYptfxMtN1tBgcTcqKm9ntNTjLc1SX66zYM7rjx
+HdDOMmWVxzXdXSXkTtkNIpdjcb1xjKOPAPfnY8VvDItP4pBKrxFsRGn+gzCDLIcxF7DlgkiM
+mBcrfNDLlW3ZQZw4lYGRc6JDC4RnSFh62FmdkFvZHvuFRnXgIGhkfefKpuAMRwMMnYVY0XDw
+1NEZj/3qX/8wOfAv9US/iUOy95ZC4d4YujIe4pHh6XMMaqEjAc7Z5Y8WAAAAAAAA
+
+--------------ms060609030601080507080300--
