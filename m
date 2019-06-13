@@ -2,38 +2,38 @@ Return-Path: <SRS0=rpH8=UM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CE8C31E45
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6310DC31E45
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEB820665
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23D1020665
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="nNfSFEda"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="f1vP/Irb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393184AbfFMQ6c (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:58:32 -0400
-Received: from mail-eopbgr720105.outbound.protection.outlook.com ([40.107.72.105]:6223
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        id S2404196AbfFMQ6o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:58:44 -0400
+Received: from mail-eopbgr800139.outbound.protection.outlook.com ([40.107.80.139]:4512
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729879AbfFMAoc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:44:32 -0400
+        id S1729878AbfFMAnu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 Jun 2019 20:43:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector1-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WmlzQDMbmb1/kLTjWsF8/xVuw7TuXqdvRmjmnSFYd8o=;
- b=nNfSFEdaV6SHGaOICj8LmTkJsMvCyO08/odPtRSlRq+y/VzXlilWA8wE6PoGYykuDW9GJdC0e2hR6vKysursVagjJJoC705eEvKq3cZ2o+EFq4bl8TYY55Hod39Cg/4iizSudhjv0/jQLjUUTxMt0opJkpKOx3aISfWXDU7GOCY=
+ bh=FJDJYXMRcRxXKiZRQxC4DUL1k2MqPsc5v8DPM5gl1HQ=;
+ b=f1vP/IrbUDTdH4iq0+Uw9W/yQL6Q8fhJiJZwK795Jj0sUt9qYkcDa2XilJyikXvlkPP99XN9Zm3a+Ze8fw03/BM5OZIMM5ZJV5iLHzJo/zvAD3iPqytKUpMYXYHQguIO0oI9DV94m9tD90nALtcJPNQt/AFuzahaAbLF53lt/3U=
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB3120.namprd11.prod.outlook.com (52.135.127.11) with Microsoft SMTP
+ SN6PR11MB3454.namprd11.prod.outlook.com (52.135.111.209) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Thu, 13 Jun 2019 00:44:28 +0000
+ 15.20.1987.11; Thu, 13 Jun 2019 00:43:42 +0000
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::95a7:7f01:a25f:c318]) by SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::95a7:7f01:a25f:c318%7]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
- 00:44:28 +0000
+ 00:43:42 +0000
 From:   Jethro Beekman <jethro@fortanix.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -42,85 +42,164 @@ CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         Cedric Xing <cedric.xing@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [PATCH 7/7] x86/sgx: Add a reserved field to
- sgx_enclave_add_region to drop 'packed'
-Thread-Topic: [PATCH 7/7] x86/sgx: Add a reserved field to
- sgx_enclave_add_region to drop 'packed'
-Thread-Index: AQHVG9fQYgkh9xZnvESTyAN27yiq06aYK2uAgAAChwCAAJyqgA==
-Date:   Thu, 13 Jun 2019 00:44:28 +0000
-Message-ID: <271c7507-b043-1ba4-b603-17cf7bf7b313@fortanix.com>
+Subject: Re: [PATCH 4/7] x86/sgx: Allow userspace to add multiple pages in
+ single ioctl()
+Thread-Topic: [PATCH 4/7] x86/sgx: Allow userspace to add multiple pages in
+ single ioctl()
+Thread-Index: AQHVG9fRgGNALS7dK0GDigS6wliYTqaYymQA
+Date:   Thu, 13 Jun 2019 00:43:42 +0000
+Message-ID: <f2e88e83-e5f6-fecb-c180-b75be1d1a582@fortanix.com>
 References: <20190605194845.926-1-sean.j.christopherson@intel.com>
- <20190605194845.926-8-sean.j.christopherson@intel.com>
- <20190612151439.GA5723@linux.intel.com>
- <20190612152341.GE20308@linux.intel.com>
-In-Reply-To: <20190612152341.GE20308@linux.intel.com>
+ <20190605194845.926-5-sean.j.christopherson@intel.com>
+In-Reply-To: <20190605194845.926-5-sean.j.christopherson@intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BL0PR03CA0031.namprd03.prod.outlook.com
- (2603:10b6:208:2d::44) To SN6PR11MB3167.namprd11.prod.outlook.com
+x-clientproxiedby: BL0PR03CA0016.namprd03.prod.outlook.com
+ (2603:10b6:208:2d::29) To SN6PR11MB3167.namprd11.prod.outlook.com
  (2603:10b6:805:c4::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [172.56.38.96]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: abd2d97b-a2b1-4b6c-4876-08d6ef984a69
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB3120;
-x-ms-traffictypediagnostic: SN6PR11MB3120:
-x-microsoft-antispam-prvs: <SN6PR11MB31201A5E92AB94D554E225D4AAEF0@SN6PR11MB3120.namprd11.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: da6b912f-58bd-44c8-3e82-08d6ef982efc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB3454;
+x-ms-traffictypediagnostic: SN6PR11MB3454:
+x-microsoft-antispam-prvs: <SN6PR11MB34547041417D08232B8B97E2AAEF0@SN6PR11MB3454.namprd11.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(346002)(396003)(136003)(366004)(376002)(199004)(189003)(86362001)(71200400001)(386003)(486006)(3846002)(26005)(186003)(476003)(11346002)(6116002)(52116002)(25786009)(305945005)(76176011)(4326008)(7736002)(99286004)(4744005)(446003)(2616005)(53936002)(110136005)(64756008)(66616009)(36756003)(66556008)(66946007)(31696002)(66476007)(316002)(54906003)(73956011)(2906002)(66446008)(102836004)(508600001)(71190400001)(31686004)(6506007)(99936001)(66066001)(5660300002)(256004)(81156014)(6436002)(6246003)(53546011)(68736007)(229853002)(6486002)(8936002)(6512007)(8676002)(14454004)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3120;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(366004)(346002)(396003)(39840400004)(199004)(189003)(446003)(508600001)(8676002)(31686004)(11346002)(81166006)(14454004)(476003)(6116002)(81156014)(486006)(66446008)(2616005)(3846002)(8936002)(68736007)(229853002)(6512007)(6436002)(6246003)(73956011)(6486002)(25786009)(66476007)(26005)(2906002)(66946007)(66616009)(64756008)(66556008)(4326008)(186003)(99936001)(54906003)(86362001)(19627235002)(76176011)(71200400001)(53936002)(52116002)(36756003)(316002)(71190400001)(386003)(31696002)(6506007)(99286004)(5660300002)(110136005)(102836004)(7736002)(305945005)(256004)(14444005)(53546011)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3454;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JrUiCXnceBSWo8fg+5H6wI+H6/Dek7Wx+SE4RnOQdyep4rIzzi/B3jlCcMQCRvHW6lgZrH5dykvj0q9XpXewkJS97Akw9ABCo+tgtd9GF/zvKP2Pvf124bWpT2tsYTn/8ScoRx2JKj7v91xbF+DDs6IxLXCcD7uwysApmaNU/WKiGHpR4iXveqAkZpI6/Fc46ZuKi35tt8tRMBKMSlWt6GslzkBWRie7wW2lCGimlFETXk5kTnjoBWX/LH4O3zBTubbYsHBD7/FyVL94JOnmuzQmFUstOMuELijAj36DcqcmXL9OxMOkvQMHK7z3tSBcKHEH2f6Qb2DYpJ6VMlCQzrY16JtNB07/kO8tOrxdiIJm3SSbZN3R0YXe0fBKUknOFNPH1f4eoNsUjNN3nx++tjdesyE8XBXElr5Tp2CIpXM=
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060609030601080507080300"
+x-microsoft-antispam-message-info: Mwaj7vfO8VsZIs7GK4/j3eDTykS0nhRvoMqVy8hXbzZcqSizLUTVuT3fDXg7gu7NeV5c8qdanHbyFep/heBJZ3EuhsxcE66/8nkYrWSnXVePfDqUL8EwVc/RF9H8AMFYv5TP7JuAIuWGpux9sFnZ/qZ+HHukK6jA5b/0i5xl4uT/VfzLB/KmJnC74mPQR07WYH625P8Nb6XGtZAG1t7AqUgXBTZaoFP8dLoy/YaVosvNIzWZez+VsYERnXe5yM0RBBBMYoC3Q3I6EV/zTORapYg9CwImOIJ6KIvNdxuNI2X608/SY4ahttG2tcs8bevkEWTMchxoLNRA9j0CUoAWMgzLOTTyAVzGEp0Tlv0iQw/TTIN3TjmgPGpDRc0xBjxUUOhbvztNIJmFJnhj2LpA+Jb5yu+8C4YXTyJrff7WKSE=
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090107060001060501060607"
 MIME-Version: 1.0
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: abd2d97b-a2b1-4b6c-4876-08d6ef984a69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 00:44:28.5043
+X-MS-Exchange-CrossTenant-Network-Message-Id: da6b912f-58bd-44c8-3e82-08d6ef982efc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 00:43:42.4722
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: jethro@fortanix.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3120
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3454
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms060609030601080507080300
+--------------ms090107060001060501060607
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2019-06-12 08:23, Sean Christopherson wrote:
-> On Wed, Jun 12, 2019 at 06:14:39PM +0300, Jarkko Sakkinen wrote:
->> On Wed, Jun 05, 2019 at 12:48:45PM -0700, Sean Christopherson wrote:
->>> A reserved field could prove useful in the future, and packed structs=
+On 2019-06-05 12:48, Sean Christopherson wrote:
+> ...to improve performance when building enclaves by reducing the number=
 
->>> can result in inefficiencies due to its impact on alignment.
->>>
->>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->>
->> Rather should extend mrmask just to 32 bits.
+> of user<->system transitions.  Rather than provide arbitrary batching,
+> e.g. with per-page SECINFO and mrmask, take advantage of the fact that
+> any sane enclave will have large swaths of pages with identical
+> properties, e.g. code vs. data sections.
 >=20
-> I considered that option, but extending mrmask would probably confusing=
+> For simplicity and stability in the initial implementation, loop over
+> the existing add page flow instead of taking a more agressive approach,=
 
-> to userspace, e.g. we'd have to document that bits 31:15 are ignored.
+> which would require tracking transitions between VMAs and holding
+> mmap_sem for an extended duration.
 >=20
+> On an error, update the userspace struct to reflect progress made, e.g.=
 
-Yeah this doesn't make a whole lot of sense to me.
+> so that the ioctl can be re-invoked to finish adding pages after a non-=
+
+> fatal error.
+>=20
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   Documentation/x86/sgx/3.API.rst        |   2 +-
+>   arch/x86/include/uapi/asm/sgx.h        |  21 ++--
+>   arch/x86/kernel/cpu/sgx/driver/ioctl.c | 128 +++++++++++++++++-------=
+-
+>   3 files changed, 98 insertions(+), 53 deletions(-)
+>=20
+> diff --git a/Documentation/x86/sgx/3.API.rst b/Documentation/x86/sgx/3.=
+API.rst
+> index b113aeb05f54..44550aa41073 100644
+> --- a/Documentation/x86/sgx/3.API.rst
+> +++ b/Documentation/x86/sgx/3.API.rst
+> @@ -22,6 +22,6 @@ controls the `PROVISON_KEY` attribute.
+>  =20
+>   .. kernel-doc:: arch/x86/kernel/cpu/sgx/driver/ioctl.c
+>      :functions: sgx_ioc_enclave_create
+> -               sgx_ioc_enclave_add_page
+> +               sgx_ioc_enclave_add_region
+>                  sgx_ioc_enclave_init
+>                  sgx_ioc_enclave_set_attribute
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/as=
+m/sgx.h
+> index 9ed690a38c70..30d114f6b3bd 100644
+> --- a/arch/x86/include/uapi/asm/sgx.h
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -12,8 +12,8 @@
+>  =20
+>   #define SGX_IOC_ENCLAVE_CREATE \
+>   	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+> -#define SGX_IOC_ENCLAVE_ADD_PAGE \
+> -	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+> +#define SGX_IOC_ENCLAVE_ADD_REGION \
+> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_region)
+>   #define SGX_IOC_ENCLAVE_INIT \
+>   	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+>   #define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+> @@ -32,21 +32,22 @@ struct sgx_enclave_create  {
+>   };
+>  =20
+>   /**
+> - * struct sgx_enclave_add_page - parameter structure for the
+> - *                               %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> - * @addr:	address within the ELRANGE
+> - * @src:	address for the page data
+> - * @secinfo:	address for the SECINFO data
+> - * @mrmask:	bitmask for the measured 256 byte chunks
+> + * struct sgx_enclave_add_region - parameter structure for the
+> + *                                 %SGX_IOC_ENCLAVE_ADD_REGION ioctl
+> + * @addr:	start address within the ELRANGE
+> + * @src:	start address for the pages' data
+> + * @size:	size of region, in bytes
+> + * @secinfo:	address of the SECINFO data (common to the entire region)=
+
+> + * @mrmask:	bitmask of 256 byte chunks to measure (applied per 4k page=
+)
+>    */
+> -struct sgx_enclave_add_page {
+> +struct sgx_enclave_add_region {
+>   	__u64	addr;
+>   	__u64	src;
+> +	__u64	size;
+>   	__u64	secinfo;
+>   	__u16	mrmask;
+
+Considering:
+
+1. I might want to load multiple pages that are not consecutive in memory=
+=2E
+2. Repeating mrmask (other than 0 or ~0) doesn't really make sense for=20
+ranges.
+
+I'd be in favor of an approach that passes an array of=20
+sgx_enclave_add_page instead.
+
+Somewhat unrelated: have you considered optionally "gifting" enclave=20
+source pages to the kernel (as in vmsplice)? That would avoid the=20
+copy_from_user.
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms060609030601080507080300
+--------------ms090107060001060501060607
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -184,8 +263,8 @@ rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
 TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
 x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDYxMzAwNDQyNVowLwYJKoZIhvcNAQkEMSIEIHxkTf7Z
-Spi4nDkVveeM7j6ZHaM0Uv0BytcJu15k6sByMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDYxMzAwNDMzOFowLwYJKoZIhvcNAQkEMSIEIKqez0Km
+02APhLvMTRbPC3KqBCBAgIXMY1S/mEUuolAKMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
@@ -195,10 +274,10 @@ XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
 R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
 Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
 YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQArsoxaeuTk6OZowfdm5QsS3qV0R01ffnOpHy6UjiuQljY9IKp+WLTPKx15cxvGyq7YGYeX
-qwKuYZl/Viubq/2wiTLkGao9NtAdjfkPqAYptfxMtN1tBgcTcqKm9ntNTjLc1SX66zYM7rjx
-HdDOMmWVxzXdXSXkTtkNIpdjcb1xjKOPAPfnY8VvDItP4pBKrxFsRGn+gzCDLIcxF7DlgkiM
-mBcrfNDLlW3ZQZw4lYGRc6JDC4RnSFh62FmdkFvZHvuFRnXgIGhkfefKpuAMRwMMnYVY0XDw
-1NEZj/3qX/8wOfAv9US/iUOy95ZC4d4YujIe4pHh6XMMaqEjAc7Z5Y8WAAAAAAAA
+AQA3dZT/DlORbeP3mggDRHi8KBu2pe+4T9u2TqOv/1N+G1dkfavr5sV4VXTglY43rQInX6LB
+Cpq5Th+ucAMWPSc9L6LoVNGwcEUWmnga8wnZ6Ht68lbS1uLS8BoCJyxpJvBUnORahV56Jbau
+1JktTQd7EyjGjhovDuPVGtgKowY3id+YctvX6BfcM7Tgtoz5pqtpC7yMRTWfPtKNzw5HaChG
+aUfoBGOKFirP7evn9MvT6iOnSR1DpjDjX9GdjZShPLyP/R/yZseKO1tMdkNsW3nLW3LUUFIj
+LSNNfX1v1eNWcAVFaWNHkx3Td1/VSds65CMc1Bpt65BF+AkYeU5ettAZAAAAAAAA
 
---------------ms060609030601080507080300--
+--------------ms090107060001060501060607--
