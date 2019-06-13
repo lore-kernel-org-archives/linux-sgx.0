@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D155C31E45
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E40C31E49
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F67020449
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 320AC2173C
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403770AbfFMQaP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:30:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57287 "EHLO mga11.intel.com"
+        id S1727472AbfFMQak (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:30:40 -0400
+Received: from mga12.intel.com ([192.55.52.136]:55087 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730917AbfFMQaN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:30:13 -0400
+        id S2392369AbfFMQaZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:30:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 09:30:13 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 09:30:25 -0700
 X-ExtLoop1: 1
 Received: from gengelha-mobl.ger.corp.intel.com (HELO localhost) ([10.249.32.179])
-  by orsmga006.jf.intel.com with ESMTP; 13 Jun 2019 09:30:10 -0700
+  by orsmga004.jf.intel.com with ESMTP; 13 Jun 2019 09:30:22 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     luto@kernel.org, cedric.xing@intel.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Subject: [PATCH RFC] x86/sgx: Do not increase encl->refcount for VMAs
-Date:   Thu, 13 Jun 2019 19:30:07 +0300
-Message-Id: <20190613163008.4060-1-jarkko.sakkinen@linux.intel.com>
+Date:   Thu, 13 Jun 2019 19:30:08 +0300
+Message-Id: <20190613163008.4060-2-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190613163008.4060-1-jarkko.sakkinen@linux.intel.com>
+References: <20190613163008.4060-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
