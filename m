@@ -4,107 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44770C31E45
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 15:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B195C31E49
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 15:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E84A20449
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 15:12:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AC9120449
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 15:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733076AbfFMPMT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:12:19 -0400
-Received: from mga09.intel.com ([134.134.136.24]:61276 "EHLO mga09.intel.com"
+        id S1732531AbfFMPMo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Jun 2019 11:12:44 -0400
+Received: from mga06.intel.com ([134.134.136.31]:43094 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732284AbfFMNsL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:48:11 -0400
+        id S1732279AbfFMNqF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:46:05 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 06:48:09 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 06:46:04 -0700
 X-ExtLoop1: 1
-Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
-  by orsmga006.jf.intel.com with ESMTP; 13 Jun 2019 06:48:01 -0700
-Date:   Thu, 13 Jun 2019 16:48:00 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga007.jf.intel.com with ESMTP; 13 Jun 2019 06:46:03 -0700
+Date:   Thu, 13 Jun 2019 06:46:03 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
         Andy Lutomirski <luto@kernel.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
-Message-ID: <20190613134800.GA12791@linux.intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
- <20190531233159.30992-3-sean.j.christopherson@intel.com>
- <20190604114951.GC30594@linux.intel.com>
- <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654EDBDE@ORSMSX116.amr.corp.intel.com>
- <20190605151653.GK11331@linux.intel.com>
- <5A85C1D7-A159-437E-B42A-3F4254E07305@amacapital.net>
- <20190606153710.GB25112@linux.intel.com>
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [PATCH 5/7] x86/sgx: Add flag to zero added region instead of
+ copying from source
+Message-ID: <20190613134603.GA5850@linux.intel.com>
+References: <20190605194845.926-1-sean.j.christopherson@intel.com>
+ <20190605194845.926-6-sean.j.christopherson@intel.com>
+ <CALCETrXkWHOFUD0erQ+TZMY3VmGJz8=tk9rXOtdi8fP_GDEKCA@mail.gmail.com>
+ <20190606173243.GE23169@linux.intel.com>
+ <A948B013-BCA7-4C76-B816-CC27F38BF761@amacapital.net>
+ <20190610185340.GJ15995@linux.intel.com>
+ <35dd5d44-5ddf-09d3-e2d3-8570b2cdf6f5@fortanix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190606153710.GB25112@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <35dd5d44-5ddf-09d3-e2d3-8570b2cdf6f5@fortanix.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 06:37:10PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Jun 05, 2019 at 01:14:04PM -0700, Andy Lutomirski wrote:
-> > 
-> > 
-> > > On Jun 5, 2019, at 8:17 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> > > 
-> > >> On Tue, Jun 04, 2019 at 10:10:22PM +0000, Xing, Cedric wrote:
-> > >> A bit off topic here. This mmap()/mprotect() discussion reminds me a
-> > >> question (guess for Jarkko): Now that vma->vm_file->private_data keeps
-> > >> a pointer to the enclave, why do we store it again in vma->vm_private?
-> > >> It isn't a big deal but non-NULL vm_private does prevent mprotect()
-> > >> from merging adjacent VMAs. 
-> > > 
-> > > Same semantics as with a regular mmap i.e. you can close the file and
-> > > still use the mapping.
-> > > 
-> > > 
-> > 
-> > The file should be properly refcounted — vm_file should not go away while it’s mapped.
+On Thu, Jun 13, 2019 at 12:38:02AM +0000, Jethro Beekman wrote:
+> On 2019-06-10 11:53, Sean Christopherson wrote:
+> >On Fri, Jun 07, 2019 at 12:32:23PM -0700, Andy Lutomirski wrote:
+> >>
+> >>>On Jun 6, 2019, at 10:32 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> >>>
+> >>>>On Thu, Jun 06, 2019 at 10:20:38AM -0700, Andy Lutomirski wrote:
+> >>>>On Wed, Jun 5, 2019 at 12:49 PM Sean Christopherson
+> >>>><sean.j.christopherson@intel.com> wrote:
+> >>>>>
+> >>>>>For some enclaves, e.g. an enclave with a small code footprint and a
+> >>>>>large working set, the vast majority of pages added to the enclave are
+> >>>>>zero pages.  Introduce a flag to denote such zero pages.  The major
+> >>>>>benefit of the flag will be realized in a future patch to use Linux's
+> >>>>>actual zero page as the source, as opposed to explicitly zeroing the
+> >>>>>enclave's backing memory.
+> >>>>>
+> >>>>
+> >>>>I feel like I probably asked this at some point, but why is there a
+> >>>>workqueue here at all?
+> >>>
+> >>>Performance.  A while back I wrote a patch set to remove the worker queue
+> >>>and discovered that it tanks enclave build time when the enclave is being
+> >>>hosted by a Golang application.  Here's a snippet from a mail discussing
+> >>>the code.
+> >>>
+> >>>    The bad news is that I don't think we can remove the add page worker
+> >>>    as applications with userspace schedulers, e.g. Go's M:N scheduler,
+> >>>    can see a 10x or more throughput improvement when using the worker
+> >>>    queue.  I did a bit of digging for the Golang case to make sure I
+> >>>    wasn't doing something horribly stupid/naive and found that it's a
+> >>>    generic issue in Golang with blocking (or just long-running) system
+> >>>    calls.  Because Golang multiplexes Goroutines on top of OS threads,
+> >>>    blocking syscalls introduce latency and context switching overhead,
+> >>>    e.g. Go's scheduler will spin up a new OS thread to service other
+> >>>    Goroutines after it realizes the syscall has blocked, and will later
+> >>>    destroy one of the OS threads so that it doesn't build up too many
+> >>>    unused.
+> >>>
+> >>>IIRC, the scenario is spinning up several goroutines, each building an
+> >>>enclave.  I played around with adding a flag to do a synchronous EADD
+> >>>but didn't see a meaningful change in performance for the simple case.
+> >>>Supporting both the worker queue and direct paths was complex enough
+> >>>that I decided it wasn't worth the trouble for initial upstreaming.
+> >>
+> >>Sigh.
+> >>
+> >>It seems silly to add a workaround for a language that has trouble calling
+> >>somewhat-but-not-too-slow syscalls or ioctls.
+> >>
+> >>How about fixing this in Go directly?  Either convince the golang people to
+> >>add a way to allocate a real thread for a particular region of code or have
+> >>the Go SGX folks write a bit of C code to do  a whole bunch of ioctls and
+> >>have Go call *that*.  Then the mess stays in Go where it belongs.
+> >
+> >Actually, I'm pretty sure changing the ioctl() from ADD_PAGE to ADD_REGION
+> >would eliminate the worst of the golang slowdown without requiring
+> >userspace to get super fancy.  I'm in favor of eliminating the work queue,
+> >especially if the UAPI is changed to allow adding multiple pages in a
+> >single syscall.
+> >
+> 
+> I don't know if this is going to matter a whole lot, but have you considered
+> the performance impact of needing to the EPC paging while doing the EADD
+> ioctl and how this interacts with having a workqueue?
 
-mm already takes care of that so vm_file does not go away. Still
-we need an internal refcount for enclaves to synchronize with the
-swapper. In summary nothing needs to be done.
-
-> Right, makes sense. It is easy one to change essentially just removing
-> internal refcount from sgx_encl and using file for the same. I'll update
-> this to my tree along with the changes to remove LKM/ACPI bits ASAP.
-
-/Jarkko
+Yep, other than the goroutine case, eliminating the workqueue doesn't
+substantially affect performance in either direction, regardless of the
+pressure on the EPC.
