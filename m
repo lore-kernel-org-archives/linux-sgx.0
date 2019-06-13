@@ -2,84 +2,89 @@ Return-Path: <SRS0=rpH8=UM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6310DC31E45
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B535C31E45
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23D1020665
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A9F20665
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="f1vP/Irb"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="Md+WZxgq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404196AbfFMQ6o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:58:44 -0400
-Received: from mail-eopbgr800139.outbound.protection.outlook.com ([40.107.80.139]:4512
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1729859AbfFMQ7F (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:59:05 -0400
+Received: from mail-eopbgr820134.outbound.protection.outlook.com ([40.107.82.134]:47040
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729878AbfFMAnu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:43:50 -0400
+        id S1729853AbfFMAiM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 Jun 2019 20:38:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector1-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJDJYXMRcRxXKiZRQxC4DUL1k2MqPsc5v8DPM5gl1HQ=;
- b=f1vP/IrbUDTdH4iq0+Uw9W/yQL6Q8fhJiJZwK795Jj0sUt9qYkcDa2XilJyikXvlkPP99XN9Zm3a+Ze8fw03/BM5OZIMM5ZJV5iLHzJo/zvAD3iPqytKUpMYXYHQguIO0oI9DV94m9tD90nALtcJPNQt/AFuzahaAbLF53lt/3U=
+ bh=W5ogVbIpugCE0KDah3yPZchzuykmwyO2u20kKubrK58=;
+ b=Md+WZxgqc8KXqfBV+ZTf6okQEWgs2cKkNbWHhX/sh5lUj1o9BkSkrCJ0Fm1tXYweKCaGH9rzR4XJXWkrvyUiiHuXbBBQRtHmjkkuArLcZ1H93mSM9YSY2UXA73LC7kE62hPXt1FGGjYxxZ5rAJFAepNv6aZDWIEx4MotYAt2Lbo=
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
  SN6PR11MB3454.namprd11.prod.outlook.com (52.135.111.209) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Thu, 13 Jun 2019 00:43:42 +0000
+ 15.20.1987.11; Thu, 13 Jun 2019 00:38:03 +0000
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::95a7:7f01:a25f:c318]) by SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::95a7:7f01:a25f:c318%7]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
- 00:43:42 +0000
+ 00:38:03 +0000
 From:   Jethro Beekman <jethro@fortanix.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+CC:     Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [PATCH 4/7] x86/sgx: Allow userspace to add multiple pages in
- single ioctl()
-Thread-Topic: [PATCH 4/7] x86/sgx: Allow userspace to add multiple pages in
- single ioctl()
-Thread-Index: AQHVG9fRgGNALS7dK0GDigS6wliYTqaYymQA
-Date:   Thu, 13 Jun 2019 00:43:42 +0000
-Message-ID: <f2e88e83-e5f6-fecb-c180-b75be1d1a582@fortanix.com>
+Subject: Re: [PATCH 5/7] x86/sgx: Add flag to zero added region instead of
+ copying from source
+Thread-Topic: [PATCH 5/7] x86/sgx: Add flag to zero added region instead of
+ copying from source
+Thread-Index: AQHVG9fQxd63APJpO0OWGSPlIs2PraaO4KEAgAADYICAAbPEgIAErC4AgAOE3AA=
+Date:   Thu, 13 Jun 2019 00:38:02 +0000
+Message-ID: <35dd5d44-5ddf-09d3-e2d3-8570b2cdf6f5@fortanix.com>
 References: <20190605194845.926-1-sean.j.christopherson@intel.com>
- <20190605194845.926-5-sean.j.christopherson@intel.com>
-In-Reply-To: <20190605194845.926-5-sean.j.christopherson@intel.com>
+ <20190605194845.926-6-sean.j.christopherson@intel.com>
+ <CALCETrXkWHOFUD0erQ+TZMY3VmGJz8=tk9rXOtdi8fP_GDEKCA@mail.gmail.com>
+ <20190606173243.GE23169@linux.intel.com>
+ <A948B013-BCA7-4C76-B816-CC27F38BF761@amacapital.net>
+ <20190610185340.GJ15995@linux.intel.com>
+In-Reply-To: <20190610185340.GJ15995@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BL0PR03CA0016.namprd03.prod.outlook.com
- (2603:10b6:208:2d::29) To SN6PR11MB3167.namprd11.prod.outlook.com
+x-clientproxiedby: BL0PR1501CA0029.namprd15.prod.outlook.com
+ (2603:10b6:207:17::42) To SN6PR11MB3167.namprd11.prod.outlook.com
  (2603:10b6:805:c4::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [172.56.38.96]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: da6b912f-58bd-44c8-3e82-08d6ef982efc
+x-ms-office365-filtering-correlation-id: f92f8b25-e45d-418f-3785-08d6ef97646d
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB3454;
 x-ms-traffictypediagnostic: SN6PR11MB3454:
-x-microsoft-antispam-prvs: <SN6PR11MB34547041417D08232B8B97E2AAEF0@SN6PR11MB3454.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-microsoft-antispam-prvs: <SN6PR11MB3454A83ECFE37BD0A69E5982AAEF0@SN6PR11MB3454.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:486;
 x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(366004)(346002)(396003)(39840400004)(199004)(189003)(446003)(508600001)(8676002)(31686004)(11346002)(81166006)(14454004)(476003)(6116002)(81156014)(486006)(66446008)(2616005)(3846002)(8936002)(68736007)(229853002)(6512007)(6436002)(6246003)(73956011)(6486002)(25786009)(66476007)(26005)(2906002)(66946007)(66616009)(64756008)(66556008)(4326008)(186003)(99936001)(54906003)(86362001)(19627235002)(76176011)(71200400001)(53936002)(52116002)(36756003)(316002)(71190400001)(386003)(31696002)(6506007)(99286004)(5660300002)(110136005)(102836004)(7736002)(305945005)(256004)(14444005)(53546011)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3454;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(396003)(346002)(376002)(136003)(189003)(199004)(316002)(52116002)(53936002)(36756003)(6506007)(31696002)(71190400001)(386003)(86362001)(71200400001)(76176011)(305945005)(14444005)(256004)(53546011)(66066001)(5660300002)(99286004)(7736002)(102836004)(110136005)(486006)(66446008)(3846002)(2616005)(6116002)(476003)(81156014)(68736007)(8936002)(8676002)(508600001)(446003)(81166006)(14454004)(11346002)(31686004)(66616009)(66946007)(186003)(4326008)(54906003)(99936001)(64756008)(66556008)(6436002)(6486002)(73956011)(6246003)(229853002)(6512007)(25786009)(66476007)(26005)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3454;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Mwaj7vfO8VsZIs7GK4/j3eDTykS0nhRvoMqVy8hXbzZcqSizLUTVuT3fDXg7gu7NeV5c8qdanHbyFep/heBJZ3EuhsxcE66/8nkYrWSnXVePfDqUL8EwVc/RF9H8AMFYv5TP7JuAIuWGpux9sFnZ/qZ+HHukK6jA5b/0i5xl4uT/VfzLB/KmJnC74mPQR07WYH625P8Nb6XGtZAG1t7AqUgXBTZaoFP8dLoy/YaVosvNIzWZez+VsYERnXe5yM0RBBBMYoC3Q3I6EV/zTORapYg9CwImOIJ6KIvNdxuNI2X608/SY4ahttG2tcs8bevkEWTMchxoLNRA9j0CUoAWMgzLOTTyAVzGEp0Tlv0iQw/TTIN3TjmgPGpDRc0xBjxUUOhbvztNIJmFJnhj2LpA+Jb5yu+8C4YXTyJrff7WKSE=
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090107060001060501060607"
+x-microsoft-antispam-message-info: ZpNomLu5aCyWPvEdCWv8kZAI9bNXXIKojYBlznG3fvWK83w6e/1ZRr8jO4quRu1TN1sy67BmMATrf96FoZ6sypnvhOvogsiy0lbmQx9V8CW6HND78bfwN0RSAKwzHhAHjm1oXqRcjaar19Vdj7FhYxsOpX8FcatWqwFcjbwil3gEIS39UonfYPw9vCD99itGA0opOXpEPNPsz0brKQOZEez0exJXltDOkyNKly7COdZ2UNWcwEtFR/Roitzm4sCRQJ9GjKZzTM8QC+f84Gw739tLg2xvRlo1/E+YXevmtqRhHaqEO29mg7N5Gg6AxUq020LGXGW7RoUSZQ9xFCAnn6JEhL2Ki3FqVltMCOrBW7BpbHmuLELauFYNC25AOPUdGPMdpSC3ldrH8r8OOYjHHhJDtfNz5GQc/917J2Wr4QA=
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030905080801060807000608"
 MIME-Version: 1.0
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da6b912f-58bd-44c8-3e82-08d6ef982efc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 00:43:42.4722
+X-MS-Exchange-CrossTenant-Network-Message-Id: f92f8b25-e45d-418f-3785-08d6ef97646d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 00:38:02.9659
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
@@ -91,115 +96,110 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms090107060001060501060607
+--------------ms030905080801060807000608
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2019-06-05 12:48, Sean Christopherson wrote:
-> ...to improve performance when building enclaves by reducing the number=
+On 2019-06-10 11:53, Sean Christopherson wrote:
+> On Fri, Jun 07, 2019 at 12:32:23PM -0700, Andy Lutomirski wrote:
+>>
+>>> On Jun 6, 2019, at 10:32 AM, Sean Christopherson <sean.j.christophers=
+on@intel.com> wrote:
+>>>
+>>>> On Thu, Jun 06, 2019 at 10:20:38AM -0700, Andy Lutomirski wrote:
+>>>> On Wed, Jun 5, 2019 at 12:49 PM Sean Christopherson
+>>>> <sean.j.christopherson@intel.com> wrote:
+>>>>>
+>>>>> For some enclaves, e.g. an enclave with a small code footprint and =
+a
+>>>>> large working set, the vast majority of pages added to the enclave =
+are
+>>>>> zero pages.  Introduce a flag to denote such zero pages.  The major=
 
-> of user<->system transitions.  Rather than provide arbitrary batching,
-> e.g. with per-page SECINFO and mrmask, take advantage of the fact that
-> any sane enclave will have large swaths of pages with identical
-> properties, e.g. code vs. data sections.
->=20
-> For simplicity and stability in the initial implementation, loop over
-> the existing add page flow instead of taking a more agressive approach,=
+>>>>> benefit of the flag will be realized in a future patch to use Linux=
+'s
+>>>>> actual zero page as the source, as opposed to explicitly zeroing th=
+e
+>>>>> enclave's backing memory.
+>>>>>
+>>>>
+>>>> I feel like I probably asked this at some point, but why is there a
+>>>> workqueue here at all?
+>>>
+>>> Performance.  A while back I wrote a patch set to remove the worker q=
+ueue
+>>> and discovered that it tanks enclave build time when the enclave is b=
+eing
+>>> hosted by a Golang application.  Here's a snippet from a mail discuss=
+ing
+>>> the code.
+>>>
+>>>     The bad news is that I don't think we can remove the add page wor=
+ker
+>>>     as applications with userspace schedulers, e.g. Go's M:N schedule=
+r,
+>>>     can see a 10x or more throughput improvement when using the worke=
+r
+>>>     queue.  I did a bit of digging for the Golang case to make sure I=
 
-> which would require tracking transitions between VMAs and holding
-> mmap_sem for an extended duration.
->=20
-> On an error, update the userspace struct to reflect progress made, e.g.=
+>>>     wasn't doing something horribly stupid/naive and found that it's =
+a
+>>>     generic issue in Golang with blocking (or just long-running) syst=
+em
+>>>     calls.  Because Golang multiplexes Goroutines on top of OS thread=
+s,
+>>>     blocking syscalls introduce latency and context switching overhea=
+d,
+>>>     e.g. Go's scheduler will spin up a new OS thread to service other=
 
-> so that the ioctl can be re-invoked to finish adding pages after a non-=
+>>>     Goroutines after it realizes the syscall has blocked, and will la=
+ter
+>>>     destroy one of the OS threads so that it doesn't build up too man=
+y
+>>>     unused.
+>>>
+>>> IIRC, the scenario is spinning up several goroutines, each building a=
+n
+>>> enclave.  I played around with adding a flag to do a synchronous EADD=
 
-> fatal error.
->=20
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->   Documentation/x86/sgx/3.API.rst        |   2 +-
->   arch/x86/include/uapi/asm/sgx.h        |  21 ++--
->   arch/x86/kernel/cpu/sgx/driver/ioctl.c | 128 +++++++++++++++++-------=
--
->   3 files changed, 98 insertions(+), 53 deletions(-)
->=20
-> diff --git a/Documentation/x86/sgx/3.API.rst b/Documentation/x86/sgx/3.=
-API.rst
-> index b113aeb05f54..44550aa41073 100644
-> --- a/Documentation/x86/sgx/3.API.rst
-> +++ b/Documentation/x86/sgx/3.API.rst
-> @@ -22,6 +22,6 @@ controls the `PROVISON_KEY` attribute.
->  =20
->   .. kernel-doc:: arch/x86/kernel/cpu/sgx/driver/ioctl.c
->      :functions: sgx_ioc_enclave_create
-> -               sgx_ioc_enclave_add_page
-> +               sgx_ioc_enclave_add_region
->                  sgx_ioc_enclave_init
->                  sgx_ioc_enclave_set_attribute
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/as=
-m/sgx.h
-> index 9ed690a38c70..30d114f6b3bd 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -12,8 +12,8 @@
->  =20
->   #define SGX_IOC_ENCLAVE_CREATE \
->   	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-> -#define SGX_IOC_ENCLAVE_ADD_PAGE \
-> -	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
-> +#define SGX_IOC_ENCLAVE_ADD_REGION \
-> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_region)
->   #define SGX_IOC_ENCLAVE_INIT \
->   	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
->   #define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-> @@ -32,21 +32,22 @@ struct sgx_enclave_create  {
->   };
->  =20
->   /**
-> - * struct sgx_enclave_add_page - parameter structure for the
-> - *                               %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> - * @addr:	address within the ELRANGE
-> - * @src:	address for the page data
-> - * @secinfo:	address for the SECINFO data
-> - * @mrmask:	bitmask for the measured 256 byte chunks
-> + * struct sgx_enclave_add_region - parameter structure for the
-> + *                                 %SGX_IOC_ENCLAVE_ADD_REGION ioctl
-> + * @addr:	start address within the ELRANGE
-> + * @src:	start address for the pages' data
-> + * @size:	size of region, in bytes
-> + * @secinfo:	address of the SECINFO data (common to the entire region)=
-
-> + * @mrmask:	bitmask of 256 byte chunks to measure (applied per 4k page=
-)
->    */
-> -struct sgx_enclave_add_page {
-> +struct sgx_enclave_add_region {
->   	__u64	addr;
->   	__u64	src;
-> +	__u64	size;
->   	__u64	secinfo;
->   	__u16	mrmask;
-
-Considering:
-
-1. I might want to load multiple pages that are not consecutive in memory=
+>>> but didn't see a meaningful change in performance for the simple case=
 =2E
-2. Repeating mrmask (other than 0 or ~0) doesn't really make sense for=20
-ranges.
+>>> Supporting both the worker queue and direct paths was complex enough
+>>> that I decided it wasn't worth the trouble for initial upstreaming.
+>>
+>> Sigh.
+>>
+>> It seems silly to add a workaround for a language that has trouble cal=
+ling
+>> somewhat-but-not-too-slow syscalls or ioctls.
+>>
+>> How about fixing this in Go directly?  Either convince the golang peop=
+le to
+>> add a way to allocate a real thread for a particular region of code or=
+ have
+>> the Go SGX folks write a bit of C code to do  a whole bunch of ioctls =
+and
+>> have Go call *that*.  Then the mess stays in Go where it belongs.
+>=20
+> Actually, I'm pretty sure changing the ioctl() from ADD_PAGE to ADD_REG=
+ION
+> would eliminate the worst of the golang slowdown without requiring
+> userspace to get super fancy.  I'm in favor of eliminating the work que=
+ue,
+> especially if the UAPI is changed to allow adding multiple pages in a
+> single syscall.
+>=20
 
-I'd be in favor of an approach that passes an array of=20
-sgx_enclave_add_page instead.
-
-Somewhat unrelated: have you considered optionally "gifting" enclave=20
-source pages to the kernel (as in vmsplice)? That would avoid the=20
-copy_from_user.
+I don't know if this is going to matter a whole lot, but have you=20
+considered the performance impact of needing to the EPC paging while=20
+doing the EADD ioctl and how this interacts with having a workqueue?
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms090107060001060501060607
+--------------ms030905080801060807000608
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -263,8 +263,8 @@ rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
 TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
 x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDYxMzAwNDMzOFowLwYJKoZIhvcNAQkEMSIEIKqez0Km
-02APhLvMTRbPC3KqBCBAgIXMY1S/mEUuolAKMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDYxMzAwMzc1OFowLwYJKoZIhvcNAQkEMSIEIFkhJRZH
+Ve2pgMI7juNPyXVkQDuYPtYEWu+XG+Ufr0djMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
@@ -274,10 +274,10 @@ XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
 R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
 Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
 YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQA3dZT/DlORbeP3mggDRHi8KBu2pe+4T9u2TqOv/1N+G1dkfavr5sV4VXTglY43rQInX6LB
-Cpq5Th+ucAMWPSc9L6LoVNGwcEUWmnga8wnZ6Ht68lbS1uLS8BoCJyxpJvBUnORahV56Jbau
-1JktTQd7EyjGjhovDuPVGtgKowY3id+YctvX6BfcM7Tgtoz5pqtpC7yMRTWfPtKNzw5HaChG
-aUfoBGOKFirP7evn9MvT6iOnSR1DpjDjX9GdjZShPLyP/R/yZseKO1tMdkNsW3nLW3LUUFIj
-LSNNfX1v1eNWcAVFaWNHkx3Td1/VSds65CMc1Bpt65BF+AkYeU5ettAZAAAAAAAA
+AQBVFABKMTWOp4bgSHbvXa99fgnfwkRpMW1tz5yyhaSvf0DrlgkU0HnarQruIQGNhXCUQtNs
+wjV8KzJ08bQoUuB6hpj8HYQsvkGkRkof6XvSm4Js6sQeG8nya3Y49QPm99uc0xn8LzhM6ZVf
+rAMEc4rnlBlxa8WJBLW7QAfBFYp12hh1mr6S5ORorBbMJFQJOcTI3ZLvHSyIqU75KkeBOPLJ
+/DSV/eD13tbfEPPgr5zxB7stL8i4xbQYZjI2Spr8b2nVVViTB99ewXSr7Dnfjh9M9SzWLTMZ
+48gfuhCpq90rTB/eK8g0FUP9P0L0YS9mpa3txrNvATvwcln+Lop98aCvAAAAAAAA
 
---------------ms090107060001060501060607--
+--------------ms030905080801060807000608--
