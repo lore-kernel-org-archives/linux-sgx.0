@@ -2,117 +2,91 @@ Return-Path: <SRS0=httf=UQ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2979C31E5B
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDD1C31E5B
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 23:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF932080A
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C813020861
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 23:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560814993;
+	bh=20LCI2udVS1+GC4MIM4kUTV0MsoEIVmoR3bcSnfEmjM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=gVrIeRN4NjqE7lkWIR03KcsLNcCEVoK0noEaWKpVsjd/IuBzrE94Fm2qYf0eA74Ig
+	 yzfPzutlv9+DF0ipv2GUcZ/MxvPDtvIE8R/bHb6JriHE6mZ2+osl84wqVHwxTZ+w+w
+	 hMTmVY2PhxVeICSUPYNlHJwKdOmWZAuTxrw1ua8U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfFQWcV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Jun 2019 18:32:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37354 "EHLO mga14.intel.com"
+        id S1727419AbfFQXnN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Jun 2019 19:43:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfFQWcV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:32:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:32:21 -0700
-X-ExtLoop1: 1
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 15:32:20 -0700
+        id S1726724AbfFQXnN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Jun 2019 19:43:13 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C03020B1F
+        for <linux-sgx@vger.kernel.org>; Mon, 17 Jun 2019 23:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560814992;
+        bh=20LCI2udVS1+GC4MIM4kUTV0MsoEIVmoR3bcSnfEmjM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=r5DJ+0d4KFD5Va+2HV6ciAOC0KbbfzBinkPCyGIsvRFIZxdpzbV766AXww+aIDmdn
+         s32mrue+3TWIPU7nACS982JP2h4744nPg1033dPTR07MHwoGLJ5yHDrxhK9GQROrWQ
+         OQgsAS5j20DMHrcd7FZ+XCyuanUTFV85FhsSM4Vs=
+Received: by mail-wr1-f43.google.com with SMTP id p13so11826983wru.10
+        for <linux-sgx@vger.kernel.org>; Mon, 17 Jun 2019 16:43:12 -0700 (PDT)
+X-Gm-Message-State: APjAAAU9Vu8w7p82lC/dAW+1IM+0UauZH4nGG25s9qjmRUwIozvoRDBY
+        M8psjpQKnEgjlcjz0KUsKN7SZMJYhvlie9HtwX1z/A==
+X-Google-Smtp-Source: APXvYqwIc0Uc8SEUuG89RGHgDedJ7LbcOFi1P4UFmGMfPatGup2AqynuqD/NLfXKapg7+U2tJbSu3aLgVDyqp5TCFnU=
+X-Received: by 2002:adf:a443:: with SMTP id e3mr25414278wra.221.1560814991074;
+ Mon, 17 Jun 2019 16:43:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190617222438.2080-1-sean.j.christopherson@intel.com> <20190617222438.2080-2-sean.j.christopherson@intel.com>
+In-Reply-To: <20190617222438.2080-2-sean.j.christopherson@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 17 Jun 2019 16:42:59 -0700
+X-Gmail-Original-Message-ID: <CALCETrXgzzYXrMzcHEYiYE+tvCzU3vFErdzoDEMhMXN_qkQXQw@mail.gmail.com>
+Message-ID: <CALCETrXgzzYXrMzcHEYiYE+tvCzU3vFErdzoDEMhMXN_qkQXQw@mail.gmail.com>
 Subject: Re: [RFC PATCH v3 01/12] x86/sgx: Add mm to enclave at mmap()
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Cedric Xing <cedric.xing@intel.com>,
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
- <20190617222438.2080-2-sean.j.christopherson@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <60460d9f-d6f5-313b-85e8-db2023ff0fb6@intel.com>
-Date:   Mon, 17 Jun 2019 15:32:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190617222438.2080-2-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/17/19 3:24 PM, Sean Christopherson wrote:
-> +static int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
-> +{
-> +	struct sgx_encl_mm *encl_mm;
-> +
-> +	encl_mm = kzalloc(sizeof(*encl_mm), GFP_KERNEL);
-> +	if (!encl_mm)
-> +		return -ENOMEM;
-> +
-> +	encl_mm->encl = encl;
-> +	encl_mm->mm = mm;
-> +	kref_init(&encl_mm->refcount);
-> +
-> +	spin_lock(&encl->mm_lock);
-> +	list_add(&encl_mm->list, &encl->mm_list);
-> +	spin_unlock(&encl->mm_lock);
-> +
-> +	return 0;
-> +}
+On Mon, Jun 17, 2019 at 3:24 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> The enclave mm tracking is currently broken:
+>
+>   - Adding current->mm during ECREATE is wrong as there is no guarantee
+>     that the current process has mmap()'d the enclave, i.e. there may
+>     never be an associated sgx_vma_close() to drop the encl_mm.
+>
+>   - Adding mm's at sgx_vma_open() is wrong as vm_ops->open is called
+>     only when splitting or duplicating a vma.  If userspace performs a
+>     single mmap() on the enclave then SGX will fail to track the mm.
+>     This bug is partially hidden by tracking current->mm at ECREATE.
+>
+> Rework the tracking to get/add the mm at mmap().  A side effect of the
+> bug fix is that sgx_vma_{open,close}() should never encounter a vma with
+> an associated enclave and no associated encl_mm, i.e. WARN if an encl_mm
+> cannot be found in either condition.
+>
 
-This probably need commenting and/or changelogging about the mm
-refcounting or lack thereof.
+It would be nifty if you could also kill .vm_close, since then VMAs
+could be merged properly.  Would this be straightforward?
+
+--Andy
