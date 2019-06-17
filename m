@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91585C31E5B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76D9C31E61
 	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B962082C
+	by mail.kernel.org (Postfix) with ESMTP id B50352082C
 	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbfFQWYu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1728701AbfFQWYu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 17 Jun 2019 18:24:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:43046 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:29313 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726797AbfFQWYt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:24:49 -0400
+        id S1728711AbfFQWYu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Jun 2019 18:24:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:24:48 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:24:48 -0700
 X-ExtLoop1: 1
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
   by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 15:24:47 -0700
@@ -33,9 +33,9 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [RFC PATCH v3 05/12] x86/sgx: Enforce noexec filesystem restriction for enclaves
-Date:   Mon, 17 Jun 2019 15:24:31 -0700
-Message-Id: <20190617222438.2080-6-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v3 08/12] security/selinux: Require SGX_EXECMEM to map enclave page WX
+Date:   Mon, 17 Jun 2019 15:24:34 -0700
+Message-Id: <20190617222438.2080-9-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190617222438.2080-1-sean.j.christopherson@intel.com>
 References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
@@ -46,78 +46,68 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Do not allow an enclave page to be mapped with PROT_EXEC if the source
-vma does not have VM_MAYEXEC.  This effectively enforces noexec as
-do_mmap() clears VM_MAYEXEC if the vma is being loaded from a noexec
-path, i.e. prevents executing a file by loading it into an enclave.
+Hook enclave_map() to require a new per-process capability, SGX_EXECMEM,
+when mapping an enclave as simultaneously writable and executable.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 42 +++++++++++++++++++++++---
- 1 file changed, 37 insertions(+), 5 deletions(-)
+ security/selinux/hooks.c            | 21 +++++++++++++++++++++
+ security/selinux/include/classmap.h |  3 ++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index 8e95e45411f2..f239300e0fc2 100644
---- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -564,6 +564,39 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
- 	return ret;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3ec702cf46ca..22e0f4a71333 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6726,6 +6726,23 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
  }
+ #endif
  
-+static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
++#ifdef CONFIG_INTEL_SGX
++static int selinux_enclave_map(unsigned long prot)
 +{
-+	struct vm_area_struct *vma;
-+	int ret;
++	const struct cred *cred = current_cred();
++	u32 sid = cred_sid(cred);
 +
-+	/* Hold mmap_sem across copy_from_user() to avoid a TOCTOU race. */
-+	down_read(&current->mm->mmap_sem);
++	/* SGX is supported only in 64-bit kernels. */
++	WARN_ON_ONCE(!default_noexec);
 +
-+	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
-+	if (prot & PROT_EXEC) {
-+		vma = find_vma(current->mm, src);
-+		if (!vma) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
-+
-+		if (!(vma->vm_flags & VM_MAYEXEC)) {
-+			ret = -EACCES;
-+			goto out;
-+		}
-+	}
-+
-+	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
-+		ret = -EFAULT;
-+	else
-+		ret = 0;
-+
-+out:
-+	up_read(&current->mm->mmap_sem);
-+
-+	return ret;
++	if ((prot & PROT_EXEC) && (prot & PROT_WRITE))
++		return avc_has_perm(&selinux_state, sid, sid,
++				    SECCLASS_PROCESS2, PROCESS2__SGX_EXECMEM,
++				    NULL);
++	return 0;
 +}
++#endif
 +
- /**
-  * sgx_ioc_enclave_add_page - handler for %SGX_IOC_ENCLAVE_ADD_PAGE
-  *
-@@ -604,13 +637,12 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
- 
- 	data = kmap(data_page);
- 
--	if (copy_from_user((void *)data, (void __user *)addp.src, PAGE_SIZE)) {
--		ret = -EFAULT;
--		goto out;
--	}
--
- 	prot = addp.flags & (PROT_READ | PROT_WRITE | PROT_EXEC);
- 
-+	ret = sgx_encl_page_copy(data, addp.src, prot);
-+	if (ret)
-+		goto out;
+ struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_cred = sizeof(struct task_security_struct),
+ 	.lbs_file = sizeof(struct file_security_struct),
+@@ -6968,6 +6985,10 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
+ 	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
+ #endif
 +
- 	ret = sgx_encl_add_page(encl, addp.addr, data, &secinfo, addp.mrmask,
- 				prot);
- 	if (ret)
++#ifdef CONFIG_INTEL_SGX
++	LSM_HOOK_INIT(enclave_map, selinux_enclave_map),
++#endif
+ };
+ 
+ static __init int selinux_init(void)
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 201f7e588a29..0f525f5b926f 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -51,7 +51,8 @@ struct security_class_mapping secclass_map[] = {
+ 	    "execmem", "execstack", "execheap", "setkeycreate",
+ 	    "setsockcreate", "getrlimit", NULL } },
+ 	{ "process2",
+-	  { "nnp_transition", "nosuid_transition", NULL } },
++	  { "nnp_transition", "nosuid_transition",
++	    "sgx_execmem", NULL } },
+ 	{ "system",
+ 	  { "ipc_info", "syslog_read", "syslog_mod",
+ 	    "syslog_console", "module_request", "module_load", NULL } },
 -- 
 2.21.0
 
