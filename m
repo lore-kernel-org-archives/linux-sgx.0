@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB647C468B0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3331C31E5E
 	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D612085A
+	by mail.kernel.org (Postfix) with ESMTP id CA568208C0
 	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbfFQWYt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1728658AbfFQWYt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 17 Jun 2019 18:24:49 -0400
-Received: from mga03.intel.com ([134.134.136.65]:29311 "EHLO mga03.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:43047 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfFQWYt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726797AbfFQWYt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Mon, 17 Jun 2019 18:24:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:24:48 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:24:48 -0700
 X-ExtLoop1: 1
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
   by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 15:24:47 -0700
@@ -33,9 +33,9 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [RFC PATCH v3 11/12] security/apparmor: Add enclave_load() implementation
-Date:   Mon, 17 Jun 2019 15:24:37 -0700
-Message-Id: <20190617222438.2080-12-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v3 03/12] selftests: x86/sgx: Mark the enclave loader as not needing an exec stack
+Date:   Mon, 17 Jun 2019 15:24:29 -0700
+Message-Id: <20190617222438.2080-4-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190617222438.2080-1-sean.j.christopherson@intel.com>
 References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
@@ -46,59 +46,37 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Require execute permissions when loading an enclave from a file.
+The SGX enclave loader doesn't need an executable stack, but linkers
+will assume it does due to the lack of .note.GNU-stack sections in the
+loader's assembly code.  As a result, the kernel tags the loader as
+having "read implies exec", and so adds PROT_EXEC to all mmap()s, even
+those for mapping EPC regions.  This will cause problems in the future
+when userspace needs to explicit state a page's protection bits when the
+page is added to an enclave, e.g. adding TCS pages as R+W will cause
+mmap() to fail when the kernel tacks on +X.
+
+Explicitly tell the linker that an executable stack is not needed.
+Alternatively, each .S file could add .note.GNU-stack, but the loader
+should never need an executable stack so zap it in one fell swoop.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- security/apparmor/include/audit.h |  2 ++
- security/apparmor/lsm.c           | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
+ tools/testing/selftests/x86/sgx/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
-index ee559bc2acb8..84470483e04d 100644
---- a/security/apparmor/include/audit.h
-+++ b/security/apparmor/include/audit.h
-@@ -107,6 +107,8 @@ enum audit_type {
- #define OP_PROF_LOAD "profile_load"
- #define OP_PROF_RM "profile_remove"
+diff --git a/tools/testing/selftests/x86/sgx/Makefile b/tools/testing/selftests/x86/sgx/Makefile
+index 1fd6f2708e81..10136b73096b 100644
+--- a/tools/testing/selftests/x86/sgx/Makefile
++++ b/tools/testing/selftests/x86/sgx/Makefile
+@@ -2,7 +2,7 @@ top_srcdir = ../../../../..
  
-+#define OP_ENCL_LOAD "enclave_load"
-+
+ include ../../lib.mk
  
- struct apparmor_audit_data {
- 	int error;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 87500bde5a92..2ed1157e1f58 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -517,6 +517,17 @@ static int apparmor_file_mprotect(struct vm_area_struct *vma,
- 			   !(vma->vm_flags & VM_SHARED) ? MAP_PRIVATE : 0);
- }
+-HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
++HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
+ ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
+ 	       -fno-stack-protector -mrdrnd $(INCLUDES)
  
-+#ifdef CONFIG_INTEL_SGX
-+static int apparmor_enclave_load(struct vm_area_struct *vma, unsigned long prot,
-+				bool measured)
-+{
-+	if (!(prot & PROT_EXEC))
-+		return 0;
-+
-+	return common_file_perm(OP_ENCL_LOAD, vma->vm_file, AA_EXEC_MMAP);
-+}
-+#endif
-+
- static int apparmor_sb_mount(const char *dev_name, const struct path *path,
- 			     const char *type, unsigned long flags, void *data)
- {
-@@ -1243,6 +1254,9 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(secid_to_secctx, apparmor_secid_to_secctx),
- 	LSM_HOOK_INIT(secctx_to_secid, apparmor_secctx_to_secid),
- 	LSM_HOOK_INIT(release_secctx, apparmor_release_secctx),
-+#ifdef CONFIG_INTEL_SGX
-+	LSM_HOOK_INIT(enclave_load, apparmor_enclave_load),
-+#endif
- };
- 
- /*
 -- 
 2.21.0
 
