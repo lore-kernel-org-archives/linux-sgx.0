@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACECC31E5D
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB647C468B0
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020FA20861
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82D612085A
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jun 2019 22:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbfFQWYt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1728579AbfFQWYt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 17 Jun 2019 18:24:49 -0400
-Received: from mga01.intel.com ([192.55.52.88]:43046 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:29311 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbfFQWYt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726593AbfFQWYt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Mon, 17 Jun 2019 18:24:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:24:47 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:24:48 -0700
 X-ExtLoop1: 1
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
   by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 15:24:47 -0700
@@ -33,9 +33,9 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [RFC PATCH v3 02/12] x86/sgx: Do not naturally align MAP_FIXED address
-Date:   Mon, 17 Jun 2019 15:24:28 -0700
-Message-Id: <20190617222438.2080-3-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v3 11/12] security/apparmor: Add enclave_load() implementation
+Date:   Mon, 17 Jun 2019 15:24:37 -0700
+Message-Id: <20190617222438.2080-12-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190617222438.2080-1-sean.j.christopherson@intel.com>
 References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
@@ -46,41 +46,59 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX enclaves have an associated Enclave Linear Range (ELRANGE) that is
-tracked and enforced by the CPU using a base+mask approach, similar to
-how hardware range registers such as the variable MTRRs.  As a result,
-the ELRANGE must be naturally sized and aligned.
-
-To reduce boilerplate code that would be needed in every userspace
-enclave loader, the SGX driver naturally aligns the mmap() address and
-also requires the range to be naturally sized.  Unfortunately, SGX fails
-to grant a waiver to the MAP_FIXED case, e.g. incorrectly rejects mmap()
-if userspace is attempting to map a small slice of an existing enclave.
+Require execute permissions when loading an enclave from a file.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver/main.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ security/apparmor/include/audit.h |  2 ++
+ security/apparmor/lsm.c           | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
-index 03eca4bccee1..d7de4d9aea87 100644
---- a/arch/x86/kernel/cpu/sgx/driver/main.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/main.c
-@@ -105,7 +105,13 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
- 					   unsigned long pgoff,
- 					   unsigned long flags)
- {
--	if (len < 2 * PAGE_SIZE || len & (len - 1) || flags & MAP_PRIVATE)
-+	if (flags & MAP_PRIVATE)
-+		return -EINVAL;
-+
-+	if (flags & MAP_FIXED)
-+		return addr;
-+
-+	if (len < 2 * PAGE_SIZE || len & (len - 1))
- 		return -EINVAL;
+diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
+index ee559bc2acb8..84470483e04d 100644
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -107,6 +107,8 @@ enum audit_type {
+ #define OP_PROF_LOAD "profile_load"
+ #define OP_PROF_RM "profile_remove"
  
- 	addr = current->mm->get_unmapped_area(file, addr, 2 * len, pgoff,
++#define OP_ENCL_LOAD "enclave_load"
++
+ 
+ struct apparmor_audit_data {
+ 	int error;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 87500bde5a92..2ed1157e1f58 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -517,6 +517,17 @@ static int apparmor_file_mprotect(struct vm_area_struct *vma,
+ 			   !(vma->vm_flags & VM_SHARED) ? MAP_PRIVATE : 0);
+ }
+ 
++#ifdef CONFIG_INTEL_SGX
++static int apparmor_enclave_load(struct vm_area_struct *vma, unsigned long prot,
++				bool measured)
++{
++	if (!(prot & PROT_EXEC))
++		return 0;
++
++	return common_file_perm(OP_ENCL_LOAD, vma->vm_file, AA_EXEC_MMAP);
++}
++#endif
++
+ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 			     const char *type, unsigned long flags, void *data)
+ {
+@@ -1243,6 +1254,9 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(secid_to_secctx, apparmor_secid_to_secctx),
+ 	LSM_HOOK_INIT(secctx_to_secid, apparmor_secctx_to_secid),
+ 	LSM_HOOK_INIT(release_secctx, apparmor_release_secctx),
++#ifdef CONFIG_INTEL_SGX
++	LSM_HOOK_INIT(enclave_load, apparmor_enclave_load),
++#endif
+ };
+ 
+ /*
 -- 
 2.21.0
 
