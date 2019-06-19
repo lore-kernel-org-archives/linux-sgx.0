@@ -2,21 +2,21 @@ Return-Path: <SRS0=/aec=US=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18318C4646C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B808C48BE3
 	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jun 2019 22:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAEA5215EA
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jun 2019 22:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 733E8215EA
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jun 2019 22:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbfFSWYO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Jun 2019 18:24:14 -0400
+        id S1730758AbfFSWYP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Jun 2019 18:24:15 -0400
 Received: from mga18.intel.com ([134.134.136.126]:40155 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726322AbfFSWYO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726246AbfFSWYO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 19 Jun 2019 18:24:14 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,9 +24,9 @@ Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 15:24:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
-   d="scan'208";a="150743741"
+   d="scan'208";a="150743757"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
-  by orsmga007.jf.intel.com with ESMTP; 19 Jun 2019 15:24:12 -0700
+  by orsmga007.jf.intel.com with ESMTP; 19 Jun 2019 15:24:13 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
@@ -40,10 +40,12 @@ Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
-Date:   Wed, 19 Jun 2019 15:23:49 -0700
-Message-Id: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v4 04/12] x86/sgx: Require userspace to define enclave pages' protection bits
+Date:   Wed, 19 Jun 2019 15:23:53 -0700
+Message-Id: <20190619222401.14942-5-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -51,170 +53,361 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-For those of you whom I neglected to cc on v3, here's a quick recap:
+Existing Linux Security Module policies restrict userspace's ability to
+map memory, e.g. may require priveleged permissions to map a page that
+is simultaneously writable and executable.  Said permissions are often
+tied to the file which backs the mapped memory, i.e. vm_file.
 
-  My original plan was for my next RFC to be an implementation of Andy's
-  proposed "dynamic tracking" model, but I was completely flummoxed by the
-  auditing[1].  Cedric's RFC has the same auditing complexities, so I
-  I ended up back at the "make userspace state its intentions" approach.
+For reasons explained below, SGX does not allow LSMs to enforce policies
+using existing LSM hooks such as file_mprotect().  Explicitly track the
+protection bits for an enclave page (separate from the vma/pte bits) and
+require userspace to explicit define a page's protection bits when the
+page is added to the enclave.  Enclave page protection bits paves the
+way to adding security_enclave_load() LSM hook as an SGX equivalent to
+security_file_mprotect(), e.g. SGX can pass the page's protection bits
+and source vma to LSMs.   The source vma will allow LSMs to tie
+permissions to files, e.g. the file containing the enclave's code and
+initial data, and the protection bits will allow LSMs to make decisions
+based on the capabilities of the process, e.g. if a process is allowed
+to load unmeasured code or load code from anonymous memory.
 
-There are no significant LSM changes in v4, e.g. a bug fix and some
-renaming.  I'm spinning v4 early to get the cc list correct, and also
-because I'm about to disappear on vacation for two weeks.
+Due to the nature of the Enclave Page Cache, and because the EPC is
+manually managed by SGX, all enclave vmas are backed by the same file,
+i.e. /dev/sgx/enclave.  Specifically, a single file allows SGX to use
+file op hooks to move pages in/out of the EPC.
 
-Except for patch 12 (see below), the SGX changes have been fully tested,
-including updating the kernel's selftest as well as my own fork of (an old
-version of) Intel's SDK to use the new UAPI.  The LSM changes have been
-smoke tested, but I haven't actually configured AppArmor or SELinux to
-verify the permissions work as intended.
+Furthermore, EPC pages for any given enclave are fundamentally shared
+between processes, i.e. CoW semantics are not possible with EPC pages
+due to hardware restrictions such as 1:1 mappings between virtual and
+physical addresses (within the enclave).
 
-Patches 1-3 are not directly related to LSM support.  They're included
-here as the actual LSM RFC patches are essentially untestable without
-them, and so that the patches apply to Jarkko's tree.  Ignore patches
-1-3 unless you actually want to run code.
+Lastly, all real world enclaves will need read, write and execute
+permissions to EPC pages.
 
-Patches 4-11 are the meat of the RFC.
+As a result, SGX does not play nice with existing LSM behavior as it is
+impossible to apply policies to enclaves with reasonable granularity,
+e.g. an LSM can deny access to EPC altogether, but can't deny
+potentially unwanted behavior such as mapping pages WX, loading code
+from anonymous memory, loading unmeasured code, etc...
 
-Patch 12 is purely to show how we might implement SGX2 support.  It's not
-intended to be included in the initial upstreaming of SGX.
+For example, because all (practical) enclaves need RW pages for data and
+RX pages for code, SELinux's existing policies will require all enclaves
+to have FILE__READ, FILE__WRITE and FILE__EXECUTE permissions on
+/dev/sgx/enclave.  Witholding FILE__WRITE or FILE__EXECUTE in an attempt
+to deny RW->RX or RWX would prevent running *any* enclave, even those
+that cleanly separate RW and RX pages.  And because /dev/sgx/enclave
+requires MAP_SHARED, the anonymous/CoW checks that would trigger
+FILE__EXECMOD or PROCESS__EXECMEM permissions will never fire.
 
-The full code is available at https://github.com/sean-jc/linux.git in
-a few forms (tagged);
+Taking protection bits has a second use in that it can be used to
+prevent loading an enclave from a noexec file system.  On SGX2 hardware,
+regardless of kernel support for SGX2, userspace could EADD a page from
+a noexec path using read-only permissions and later mprotect() and
+ENCLU[EMODPE] the page to gain execute permissions.  By requiring
+the enclave's page protections up front, SGX will be able to enforce
+noexec paths when building enclaves.
 
-  sgx-lsm-v4        - Jarkko's full tree plus patches 1-11
-  sgx-lsm-v4-eaug   - Everything above plus patch 12
+To prevent userspace from circumventing the allowed protections, do not
+allow PROT_{READ,WRITE,EXEC} mappings to an enclave without an
+associated enclave page, i.e. prevent creating a mapping with unchecked
+protection bits.
 
+Many alternatives[1][2] have been explored, most notably the concept of
+having SGX check (at load time) and save the permissions of the enclave
+loader.  The permissions would then be enforced by SGX at run time, e.g.
+via mmap()/mprotect() hooks of some form.  The basic functionality of
+pre-checking permissions is relatively straightforward, but supporting
+LSM auditing is complex and fraught with pitfalls.  If auditing is done
+at the time of denial then the audit logs will potentially show a large
+number of false positives.  Auditing when the denial is enforced, e.g.
+at mprotect(), suffers from its own problems, e.g.:
 
-<boilerplate>
+  - Requires LSMs to pre-generate audit messages so that they can be
+    replayed by SGX when the denial is actually enforced.
 
-This series is a delta to Jarkko's ongoing SGX series and applies on
-Jarkko's current master at https://github.com/jsakkine-intel/linux-sgx.git:
+  - System changes can result in stale audit messages, e.g. if files
+    are removed from the system, an LSM profile is modified, etc...
 
-  91f3aa6d241d ("docs: x86/sgx: Document the enclave API")
+  - A process could log what is essentially a false positive denial,
+    e.g. if the current process has the requisite capability but the
+    original enclave loader did not.
 
-The basic gist of the approach is to track an enclave's page protections
-separately from any vmas that map the page, and separate from the hardware
-enforced protections.  The SGX UAPI is modified to require userspace to
-explicitly define the protections for each enclave page, i.e. the ioctl
-to add pages to an enclave is extended to take PROT_{READ,WRITE,EXEC}
-flags.
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h        |  6 ++--
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 15 +++++---
+ arch/x86/kernel/cpu/sgx/driver/main.c  | 49 ++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encl.h         |  1 +
+ tools/testing/selftests/x86/sgx/main.c | 32 +++++++++++++++--
+ 5 files changed, 94 insertions(+), 9 deletions(-)
 
-An enclave page's protections are the maximal protections that userspace
-can use to map the page, e.g. mprotect() and mmap() are rejected if the
-protections for the vma would be more permissible than those of the
-associated enclave page.
-
-Tracking protections for an enclave page (in additional to vmas) allows
-SGX to invoke LSM upcalls while the enclave is being built.  This is
-critical to enabling LSMs to implement policies for enclave pages that
-are functionally equivalent to existing policies for normal pages.
-
-</boilerplate>
-
-[1] https://lkml.kernel.org/r/20190614003759.GE18385@linux.intel.com
-
-v4:
-
-  - Rename SGX__EXECMEM and SGX__EXECMOD to SGX__MAPWX and SGX_EXECDIRTY
-    respectively [Stephen].
-
-  - Fix an inverted check on IS_PRIVATE file check [Stephen].
-
-  - Take a '__u8 prot' in SGX_IOC_ENCLAVE_ADD_PAGE [Jarkko].
-
-  - Rebased to Jarkko's latest code base.
-
-  - Replace patch 1 with a variant that does encl_mm tracking via
-    mmu_notifier and SRCU.  Not relevant for most people, but I wanted
-    to show the end state if we get rid of the per-vma tracking.
-
-v3: https://patchwork.kernel.org/cover/11000601/
-
-  - Clear VM_MAY* flags instead of using .may_mprotect() to enforce
-    maximal enclave page protections.
-
-  - Update the SGX selftest to work with the new API.
-
-  - Rewrite SELinux code to use SGX specific permissions, with the goal
-    of addressing Andy's feedback regarding what people will actually
-    care about when it comes to SGX, e.g. add permissions for restricing
-    unmeasured code and stop trying to infer permissions from the source
-    of each enclave page.
-
-  - Add a (very minimal) AppArmor patch.
-
-  - Show line of sight to SGX2 support.
-
-  - Rebased to Jarkko's latest code base.
-
-v2: https://lkml.kernel.org/r/20190606021145.12604-1-sean.j.christopherson@intel.com
-
-  - Dropped the patch(es) to extend the SGX UAPI to allow adding multiple
-    enclave pages in a single syscall [Jarkko].
-
-  - Reject ioctl() immediately on LSM denial [Stephen].
-
-  - Rework SELinux code to avoid checking EXEMEM multiple times [Stephen].
-
-  - Adding missing equivalents to existing selinux_file_protect() checks
-    [Stephen].
-
-  - Hold mmap_sem across copy_to_user() to prevent a TOCTOU race when
-    checking the source vma [Stephen].
-
-  - Stubify security_enclave_load() if !CONFIG_SECURITY [Stephen].
-
-  - Make flags a 32-bit field [Andy].
-
-  - Don't validate the SECINFO protection flags against the enclave
-    page's protection flags [Andy].
-
-  - Rename mprotect() hook to may_mprotect() [Andy].
-
-  - Test 'vma->vm_flags & VM_MAYEXEC' instead of manually checking for
-    a noexec path [Jarkko].
-
-  - Drop the SGX defined flags (use PROT_*) [Jarkko].
-
-  - Improve comments and changelogs [Jarkko].
-
-v1: https://lkml.kernel.org/r/20190531233159.30992-1-sean.j.christopherson@intel.com
-
-Sean Christopherson (12):
-  x86/sgx: Use mmu_notifier.release() instead of per-vma refcounting
-  x86/sgx: Do not naturally align MAP_FIXED address
-  selftests: x86/sgx: Mark the enclave loader as not needing an exec
-    stack
-  x86/sgx: Require userspace to define enclave pages' protection bits
-  x86/sgx: Enforce noexec filesystem restriction for enclaves
-  mm: Introduce vm_ops->may_mprotect()
-  LSM: x86/sgx: Introduce ->enclave_map() hook for Intel SGX
-  security/selinux: Require SGX_MAPWX to map enclave page WX
-  LSM: x86/sgx: Introduce ->enclave_load() hook for Intel SGX
-  security/selinux: Add enclave_load() implementation
-  security/apparmor: Add enclave_load() implementation
-  LSM: x86/sgx: Show line of sight to LSM support SGX2's EAUG
-
- arch/x86/Kconfig                         |   2 +
- arch/x86/include/uapi/asm/sgx.h          |   6 +-
- arch/x86/kernel/cpu/sgx/driver/ioctl.c   |  69 ++++--
- arch/x86/kernel/cpu/sgx/driver/main.c    | 106 ++++++++-
- arch/x86/kernel/cpu/sgx/encl.c           | 277 ++++++++++++-----------
- arch/x86/kernel/cpu/sgx/encl.h           |  22 +-
- arch/x86/kernel/cpu/sgx/reclaim.c        |  71 ++----
- include/linux/lsm_hooks.h                |  20 ++
- include/linux/mm.h                       |   2 +
- include/linux/security.h                 |  18 ++
- mm/mprotect.c                            |  15 +-
- security/apparmor/include/audit.h        |   2 +
- security/apparmor/lsm.c                  |  14 ++
- security/security.c                      |  12 +
- security/selinux/hooks.c                 |  72 ++++++
- security/selinux/include/classmap.h      |   6 +-
- tools/testing/selftests/x86/sgx/Makefile |   2 +-
- tools/testing/selftests/x86/sgx/main.c   |  32 ++-
- 18 files changed, 532 insertions(+), 216 deletions(-)
-
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 6dba9f282232..67a3babbb24d 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -35,15 +35,17 @@ struct sgx_enclave_create  {
+  * @src:	address for the page data
+  * @secinfo:	address for the SECINFO data
+  * @mrmask:	bitmask for the measured 256 byte chunks
++ * @prot:	maximal PROT_{READ,WRITE,EXEC} protections for the page
+  */
+ struct sgx_enclave_add_page {
+ 	__u64	addr;
+ 	__u64	src;
+ 	__u64	secinfo;
+-	__u64	mrmask;
++	__u16	mrmask;
++	__u8	prot;
++	__u8	pad;
+ };
+ 
+-
+ /**
+  * struct sgx_enclave_init - parameter structure for the
+  *                           %SGX_IOC_ENCLAVE_INIT ioctl
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index 3552d642b26f..e18d2afd2aad 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -2,6 +2,7 @@
+ // Copyright(c) 2016-19 Intel Corporation.
+ 
+ #include <asm/mman.h>
++#include <linux/mman.h>
+ #include <linux/delay.h>
+ #include <linux/file.h>
+ #include <linux/hashtable.h>
+@@ -235,7 +236,8 @@ static int sgx_validate_secs(const struct sgx_secs *secs,
+ }
+ 
+ static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+-						 unsigned long addr)
++						 unsigned long addr,
++						 unsigned long prot)
+ {
+ 	struct sgx_encl_page *encl_page;
+ 	int ret;
+@@ -247,6 +249,7 @@ static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+ 		return ERR_PTR(-ENOMEM);
+ 	encl_page->desc = addr;
+ 	encl_page->encl = encl;
++	encl_page->vm_prot_bits = calc_vm_prot_bits(prot, 0);
+ 	ret = radix_tree_insert(&encl->page_tree, PFN_DOWN(encl_page->desc),
+ 				encl_page);
+ 	if (ret) {
+@@ -517,7 +520,7 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+ 
+ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+ 			     void *data, struct sgx_secinfo *secinfo,
+-			     unsigned int mrmask)
++			     unsigned int mrmask, unsigned long prot)
+ {
+ 	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
+ 	struct sgx_encl_page *encl_page;
+@@ -543,7 +546,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+ 		goto out;
+ 	}
+ 
+-	encl_page = sgx_encl_page_alloc(encl, addr);
++	encl_page = sgx_encl_page_alloc(encl, addr, prot);
+ 	if (IS_ERR(encl_page)) {
+ 		ret = PTR_ERR(encl_page);
+ 		goto out;
+@@ -584,6 +587,7 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
+ 	struct sgx_enclave_add_page addp;
+ 	struct sgx_secinfo secinfo;
+ 	struct page *data_page;
++	unsigned long prot;
+ 	void *data;
+ 	int ret;
+ 
+@@ -605,7 +609,10 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
+ 		goto out;
+ 	}
+ 
+-	ret = sgx_encl_add_page(encl, addp.addr, data, &secinfo, addp.mrmask);
++	prot = addp.prot & (PROT_READ | PROT_WRITE | PROT_EXEC);
++
++	ret = sgx_encl_add_page(encl, addp.addr, data, &secinfo, addp.mrmask,
++				prot);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index 29384cdd0842..dabfe2a7245a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -93,15 +93,64 @@ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+ }
+ #endif
+ 
++/*
++ * Returns the AND of VM_{READ,WRITE,EXEC} permissions across all pages
++ * covered by the specific VMA.  A non-existent (or yet to be added) enclave
++ * page is considered to have no RWX permissions, i.e. is inaccessible.
++ */
++static unsigned long sgx_allowed_rwx(struct sgx_encl *encl,
++				     struct vm_area_struct *vma)
++{
++	unsigned long allowed_rwx = VM_READ | VM_WRITE | VM_EXEC;
++	unsigned long idx, idx_start, idx_end;
++	struct sgx_encl_page *page;
++
++	idx_start = PFN_DOWN(vma->vm_start);
++	idx_end = PFN_DOWN(vma->vm_end - 1);
++
++	for (idx = idx_start; idx <= idx_end; ++idx) {
++		/*
++		 * No need to take encl->lock, vm_prot_bits is set prior to
++		 * insertion and never changes, and racing with adding pages is
++		 * a userspace bug.
++		 */
++		rcu_read_lock();
++		page = radix_tree_lookup(&encl->page_tree, idx);
++		rcu_read_unlock();
++
++		/* Do not allow R|W|X to a non-existent page. */
++		if (!page)
++			allowed_rwx = 0;
++		else
++			allowed_rwx &= page->vm_prot_bits;
++		if (!allowed_rwx)
++			break;
++	}
++
++	return allowed_rwx;
++}
++
+ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct sgx_encl *encl = file->private_data;
++	unsigned long allowed_rwx;
+ 	int ret;
+ 
++	allowed_rwx = sgx_allowed_rwx(encl, vma);
++	if (vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC) & ~allowed_rwx)
++		return -EACCES;
++
+ 	ret = sgx_encl_mm_add(encl, vma->vm_mm);
+ 	if (ret)
+ 		return ret;
+ 
++	if (!(allowed_rwx & VM_READ))
++		vma->vm_flags &= ~VM_MAYREAD;
++	if (!(allowed_rwx & VM_WRITE))
++		vma->vm_flags &= ~VM_MAYWRITE;
++	if (!(allowed_rwx & VM_EXEC))
++		vma->vm_flags &= ~VM_MAYEXEC;
++
+ 	vma->vm_ops = &sgx_vm_ops;
+ 	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
+ 	vma->vm_private_data = encl;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 0904b3c20ed0..5ad018c8d74c 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -43,6 +43,7 @@ enum sgx_encl_page_desc {
+ 
+ struct sgx_encl_page {
+ 	unsigned long desc;
++	unsigned long vm_prot_bits;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_va_page *va_page;
+ 	struct sgx_encl *encl;
+diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
+index e2265f841fb0..77e93f8e8a59 100644
+--- a/tools/testing/selftests/x86/sgx/main.c
++++ b/tools/testing/selftests/x86/sgx/main.c
+@@ -2,6 +2,7 @@
+ // Copyright(c) 2016-18 Intel Corporation.
+ 
+ #include <elf.h>
++#include <errno.h>
+ #include <fcntl.h>
+ #include <stdbool.h>
+ #include <stdio.h>
+@@ -18,6 +19,8 @@
+ #include "../../../../../arch/x86/kernel/cpu/sgx/arch.h"
+ #include "../../../../../arch/x86/include/uapi/asm/sgx.h"
+ 
++#define PAGE_SIZE  4096
++
+ static const uint64_t MAGIC = 0x1122334455667788ULL;
+ 
+ struct vdso_symtab {
+@@ -135,8 +138,7 @@ static bool encl_create(int dev_fd, unsigned long bin_size,
+ 	for (secs->size = 4096; secs->size < bin_size; )
+ 		secs->size <<= 1;
+ 
+-	base = mmap(NULL, secs->size, PROT_READ | PROT_WRITE | PROT_EXEC,
+-		    MAP_SHARED, dev_fd, 0);
++	base = mmap(NULL, secs->size, PROT_NONE, MAP_SHARED, dev_fd, 0);
+ 	if (base == MAP_FAILED) {
+ 		perror("mmap");
+ 		return false;
+@@ -147,7 +149,7 @@ static bool encl_create(int dev_fd, unsigned long bin_size,
+ 	ioc.src = (unsigned long)secs;
+ 	rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_CREATE, &ioc);
+ 	if (rc) {
+-		fprintf(stderr, "ECREATE failed rc=%d.\n", rc);
++		fprintf(stderr, "ECREATE failed rc=%d, err=%d.\n", rc, errno);
+ 		munmap(base, secs->size);
+ 		return false;
+ 	}
+@@ -160,8 +162,14 @@ static bool encl_add_page(int dev_fd, unsigned long addr, void *data,
+ {
+ 	struct sgx_enclave_add_page ioc;
+ 	struct sgx_secinfo secinfo;
++	unsigned long prot;
+ 	int rc;
+ 
++	if (flags == SGX_SECINFO_TCS)
++		prot = PROT_READ | PROT_WRITE;
++	else
++		prot = PROT_READ | PROT_WRITE | PROT_EXEC;
++
+ 	memset(&secinfo, 0, sizeof(secinfo));
+ 	secinfo.flags = flags;
+ 
+@@ -169,6 +177,7 @@ static bool encl_add_page(int dev_fd, unsigned long addr, void *data,
+ 	ioc.mrmask = 0xFFFF;
+ 	ioc.addr = addr;
+ 	ioc.src = (uint64_t)data;
++	ioc.prot = prot;
+ 
+ 	rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_ADD_PAGE, &ioc);
+ 	if (rc) {
+@@ -184,6 +193,7 @@ static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
+ 	struct sgx_enclave_init ioc;
+ 	uint64_t offset;
+ 	uint64_t flags;
++	void *addr;
+ 	int dev_fd;
+ 	int rc;
+ 
+@@ -215,6 +225,22 @@ static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
+ 		goto out_map;
+ 	}
+ 
++	addr = mmap((void *)secs->base, PAGE_SIZE, PROT_READ | PROT_WRITE,
++		    MAP_SHARED | MAP_FIXED, dev_fd, 0);
++	if (addr == MAP_FAILED) {
++		fprintf(stderr, "mmap() failed on TCS, errno=%d.\n", errno);
++		return false;
++	}
++
++	addr = mmap((void *)(secs->base + PAGE_SIZE), bin_size - PAGE_SIZE,
++		    PROT_READ | PROT_WRITE | PROT_EXEC,
++		    MAP_SHARED | MAP_FIXED, dev_fd, 0);
++	if (addr == MAP_FAILED) {
++		fprintf(stderr, "mmap() failed, errno=%d.\n", errno);
++		return false;
++	}
++
++
+ 	close(dev_fd);
+ 	return true;
+ out_map:
 -- 
 2.21.0
 
