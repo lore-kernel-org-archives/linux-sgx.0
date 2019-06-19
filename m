@@ -1,101 +1,89 @@
-Return-Path: <SRS0=PKbn=UR=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=/aec=US=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B375BC31E5B
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jun 2019 16:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A91C31E49
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jun 2019 12:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8686620873
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jun 2019 16:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A96CB2084A
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jun 2019 12:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbfFRQGO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Jun 2019 12:06:14 -0400
-Received: from mga12.intel.com ([192.55.52.136]:39684 "EHLO mga12.intel.com"
+        id S1727244AbfFSMVy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Jun 2019 08:21:54 -0400
+Received: from mga01.intel.com ([192.55.52.88]:19557 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729247AbfFRQGO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:06:14 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727134AbfFSMVy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:21:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 09:06:13 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 05:21:53 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,389,1557212400"; 
-   d="scan'208";a="181422407"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Jun 2019 09:06:13 -0700
-Date:   Tue, 18 Jun 2019 09:06:13 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v3 01/12] x86/sgx: Add mm to enclave at mmap()
-Message-ID: <20190618160613.GC13781@linux.intel.com>
-References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
- <20190617222438.2080-2-sean.j.christopherson@intel.com>
- <CALCETrXgzzYXrMzcHEYiYE+tvCzU3vFErdzoDEMhMXN_qkQXQw@mail.gmail.com>
- <20190618141147.GB13781@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
+   d="scan'208";a="358597345"
+Received: from stephanf-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.34.117])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Jun 2019 05:21:50 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     sean.j.christopherson@intel.com
+Cc:     linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH] x86/sgx: rip off the refcount from sgx_encl_add_page flow
+Date:   Wed, 19 Jun 2019 15:21:43 +0300
+Message-Id: <20190619122143.12028-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618141147.GB13781@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 07:11:47AM -0700, Sean Christopherson wrote:
-> On Mon, Jun 17, 2019 at 04:42:59PM -0700, Andy Lutomirski wrote:
-> > On Mon, Jun 17, 2019 at 3:24 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > >
-> > > The enclave mm tracking is currently broken:
-> > >
-> > >   - Adding current->mm during ECREATE is wrong as there is no guarantee
-> > >     that the current process has mmap()'d the enclave, i.e. there may
-> > >     never be an associated sgx_vma_close() to drop the encl_mm.
-> > >
-> > >   - Adding mm's at sgx_vma_open() is wrong as vm_ops->open is called
-> > >     only when splitting or duplicating a vma.  If userspace performs a
-> > >     single mmap() on the enclave then SGX will fail to track the mm.
-> > >     This bug is partially hidden by tracking current->mm at ECREATE.
-> > >
-> > > Rework the tracking to get/add the mm at mmap().  A side effect of the
-> > > bug fix is that sgx_vma_{open,close}() should never encounter a vma with
-> > > an associated enclave and no associated encl_mm, i.e. WARN if an encl_mm
-> > > cannot be found in either condition.
-> > >
-> > 
-> > It would be nifty if you could also kill .vm_close, since then VMAs
-> > could be merged properly.  Would this be straightforward?
-> 
-> Hmm, we probably could move the mm tracking to f_op->{open,release}.  The
+With the file bound approach we can flush the work queue when the file
+is closed.
 
-Scratch that thought, pre-coffee brain was thinking there was a magical
-file op that was called whenever a new reference to the file was acquired.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 3 +--
+ arch/x86/kernel/cpu/sgx/driver/main.c  | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-The only idea I can think of to avoid .vm_close() would be to not refcount
-the mm at all, and instead register a mmu notifier at .mmap() and use
-mmu_notifier.release() to remove the mm.  The downside is that the mm
-tracking would be sticky, i.e. once a process mmap()'d an enclave it would
-forever be tracked by the enclave.  Practically speaking, in the worst
-case this would add a small amount of overhead to reclaiming from an
-enclave that was temporarily mapped by multiple processes.  So it might
-be a viable option?
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index d17c60dca114..f56d3c712dc4 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -172,7 +172,7 @@ static void sgx_add_page_worker(struct work_struct *work)
+ 
+ next:
+ 		kfree(req);
+-	} while (!kref_put(&encl->refcount, sgx_encl_release) && !is_empty);
++	} while (!is_empty);
+ }
+ 
+ static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
+@@ -520,7 +520,6 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+ 	req->encl_page = encl_page;
+ 	req->mrmask = mrmask;
+ 	empty = list_empty(&encl->add_page_reqs);
+-	kref_get(&encl->refcount);
+ 	list_add_tail(&req->list, &encl->add_page_reqs);
+ 	if (empty)
+ 		queue_work(sgx_encl_wq, &encl->work);
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index 0c831ee5e2de..9ea082372682 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -47,6 +47,7 @@ static int sgx_release(struct inode *inode, struct file *file)
+ {
+ 	struct sgx_encl *encl = file->private_data;
+ 
++	flush_work(&encl->work);
+ 	kref_put(&encl->refcount, sgx_encl_release);
+ 
+ 	return 0;
+-- 
+2.20.1
 
-> downside to that approach is that EPC reclaim would unnecessarily walk the
-> vmas for processes that have opened the enclave but not mapped any EPC
-> pages.  In the grand scheme, that's a minor issue and probably worth the
-> tradeoff of vma merging.
-> 
-> On the plus side, in addition to zapping ->close, I think it would allow
-> for a simpler vma walking scheme.  Maybe.
