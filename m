@@ -2,33 +2,33 @@ Return-Path: <SRS0=8b/w=UU=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E939C43613
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jun 2019 01:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11ECC43613
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jun 2019 02:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3F72064B
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jun 2019 01:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADA35206BA
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jun 2019 02:28:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725936AbfFUBt2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 20 Jun 2019 21:49:28 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4923 "EHLO mga06.intel.com"
+        id S1725941AbfFUC2S (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 20 Jun 2019 22:28:18 -0400
+Received: from mga06.intel.com ([134.134.136.31]:6289 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbfFUBt1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:49:27 -0400
+        id S1725911AbfFUC2S (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 20 Jun 2019 22:28:18 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 18:27:02 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 19:28:17 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
-   d="scan'208";a="335677470"
+   d="scan'208";a="181996563"
 Received: from mudigirx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.61.12])
-  by orsmga005.jf.intel.com with ESMTP; 20 Jun 2019 18:26:56 -0700
-Date:   Fri, 21 Jun 2019 04:26:54 +0300
+  by fmsmga001.fm.intel.com with ESMTP; 20 Jun 2019 19:28:12 -0700
+Date:   Fri, 21 Jun 2019 05:28:10 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
@@ -42,15 +42,15 @@ Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 05/12] x86/sgx: Enforce noexec filesystem
- restriction for enclaves
-Message-ID: <20190621012654.GI20474@linux.intel.com>
+Subject: Re: [RFC PATCH v4 07/12] LSM: x86/sgx: Introduce ->enclave_map()
+ hook for Intel SGX
+Message-ID: <20190621022810.GL20474@linux.intel.com>
 References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190619222401.14942-6-sean.j.christopherson@intel.com>
+ <20190619222401.14942-8-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619222401.14942-6-sean.j.christopherson@intel.com>
+In-Reply-To: <20190619222401.14942-8-sean.j.christopherson@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -58,51 +58,51 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 03:23:54PM -0700, Sean Christopherson wrote:
-> Do not allow an enclave page to be mapped with PROT_EXEC if the source
-> vma does not have VM_MAYEXEC.  This effectively enforces noexec as
-> do_mmap() clears VM_MAYEXEC if the vma is being loaded from a noexec
-> path, i.e. prevents executing a file by loading it into an enclave.
+On Wed, Jun 19, 2019 at 03:23:56PM -0700, Sean Christopherson wrote:
+> enclave_map() is an SGX specific variant of file_mprotect() and
+> mmap_file(), and is provided so that LSMs can apply W^X restrictions to
+> enclaves.
+> 
+> Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
+> VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
+> MAP_SHARED.  Furthermore, all enclaves need read, write and execute
+> VMAs.  As a result, applying W^X restrictions on /dev/sgx/enclave using
+> existing LSM hooks is for all intents and purposes impossible, e.g.
+> denying either W or X would deny access to any enclave.
+> 
+> Note, extensive discussion yielded no sane alternative to some form of
+> SGX specific LSM hook[1].
+> 
+> [1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
 > 
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 42 +++++++++++++++++++++++---
->  1 file changed, 37 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> index e18d2afd2aad..1fca70a36ce3 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> @@ -564,6 +564,39 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
->  	return ret;
->  }
->  
-> +static int sgx_encl_page_copy(void *dst, unsigned long src, unsigned long prot)
 
-I will probably forget the context with this name after this has been
-merged :-) So many functions dealing with enclave pages. Two
-alternatives that come up to my mind:
+All the non-LSM changes are almost cleared from my part.
 
-1. sgx_encl_page_user_import()
-2. sgx_encl_page_user_copy_from()
+I would suggest that we scrape v21 together as soon as you return from
+your vacation discluding the LSM hooks.
 
-Not saying that they are beatiful names but at least you immediately
-know the context.
+There is no any particular reason to get the LSM changes to the mainline
+before the SGX foundations so now is the right time close things
+underlying them.
 
-> +{
-> +	struct vm_area_struct *vma;
-> +	int ret;
-> +
-> +	/* Hold mmap_sem across copy_from_user() to avoid a TOCTOU race. */
-> +	down_read(&current->mm->mmap_sem);
-> +
-> +	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
-> +	if (prot & PROT_EXEC) {
-> +		vma = find_vma(current->mm, src);
-> +		if (!vma) {
-> +			ret = -EFAULT;
-> +			goto out;
+I'm now in the same boat with your changes to the ioctl API, which means
+that we are ready to go. I feel a tiny bit bad that it took me so long
+time with [1] but I'm a simple minded person so what I can do :-)
 
-Should this be -EINVAL instead?
+Once you can come back please deal with the suggestions that I made
+and provide a "pure" SRCU patch (apologies for repeating myself). I
+will the squash them to the existing patch set.
+
+After that is fully done we can make v21 scope decision when it comes
+to the enclave life-cycle.
+
+Even if the LSM changes  would not be upstreamed as part of the
+foundations I can start holding versions of them in my tree but only
+after v21 is out.
+
+Can you cope with this plan?
+
+[1] https://patchwork.kernel.org/patch/11005431/
 
 /Jarkko
