@@ -2,118 +2,120 @@ Return-Path: <SRS0=BFWe=UY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B28CC48BD7
-	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jun 2019 20:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4779FC48BD5
+	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jun 2019 20:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5572208CA
-	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jun 2019 20:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1740E205ED
+	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jun 2019 20:48:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="hxdoUt7Q"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="dDm1QEFM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfFYUgy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 25 Jun 2019 16:36:54 -0400
-Received: from usfb19pa16.eemsg.mail.mil ([214.24.26.87]:3939 "EHLO
-        usfb19pa16.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfFYUgx (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 25 Jun 2019 16:36:53 -0400
-X-EEMSG-check-017: 210661010|USFB19PA16_EEMSG_MP12.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by usfb19pa16.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 25 Jun 2019 20:34:46 +0000
+        id S1726422AbfFYUsd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 25 Jun 2019 16:48:33 -0400
+Received: from upbd19pa10.eemsg.mail.mil ([214.24.27.85]:46061 "EHLO
+        upbd19pa10.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfFYUsd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 25 Jun 2019 16:48:33 -0400
+X-EEMSG-check-017: 235564070|UPBD19PA10_EEMSG_MP10.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by upbd19pa10.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 25 Jun 2019 20:48:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1561494887; x=1593030887;
+  s=tycho.nsa.gov; t=1561495709; x=1593031709;
   h=subject:to:cc:references:from:message-id:date:
    mime-version:in-reply-to:content-transfer-encoding;
-  bh=zLLmH2ssTiiJvAfz8t+SAuAi/SMtxFWoOr+76U/1dXg=;
-  b=hxdoUt7QUs8v2/6tqwkc7C5+tGbjh01LEdw0Y/TgEXMnPxXZI2zlEMHA
-   BtqsJXeP61O9Y7MJsZUBTJY2UiOzPTa9yBnqL0+onP+bCnXnYQCh6rVb0
-   hjVxKi1bROxcWxS978e1Aamag71ocdO1koOnXEPZOLFLjGIsP4wDdv5kH
-   XTPqsAXMgI4YDniURZq7SoSqKS7Oz+HoWyGkY2IEb8V0mJeLqttsbaWOS
-   YBL/j9XtNtUkWQ9RAmeDp162zPCCOd+wGCxAPwEkmOhePJ1BxBT8xrppR
-   GSujrU+3pcON09LTNOtuDwyURZwzXGycIBivs5MhC4nFQAeQpYqwxb62g
-   A==;
+  bh=MSfZVikYJFvpHGCJvjCguWrYquay7d8+I+tuynlxbwk=;
+  b=dDm1QEFMfMs8whkW+H6m1abKfIA9nWsmNM9eR/9MLH6OTuhU7znwoLHS
+   Bh2Xf0eDAi2vZyY4Dm+Po6VRS5IPtBpHRtLjDfz0NHJRWkZ17zLHJw2V4
+   iqEak9mlc9mOo7ZJBg8buUAFLDFe5WZaFlC47h6tyvd6tXA289lzCe9wI
+   R7htypujl1UFENN2gLpUzHNowOyS/2R4w75xM7O6tCi5Q2NFET856+PVM
+   1HJCWrU0xBVi34V76K1NIHh/nZlCjnM1jf0RhPYXX6c7uGb4H/fPCR6jp
+   wHthjo1KdGjqTTOuk1wD2EEwUPI9/jvxjvKY/Bns8+X2BVImtUktl0rhz
+   w==;
 X-IronPort-AV: E=Sophos;i="5.63,417,1557187200"; 
-   d="scan'208";a="25112503"
-IronPort-PHdr: =?us-ascii?q?9a23=3A79H9hx8+NxiECP9uRHKM819IXTAuvvDOBiVQ1K?=
- =?us-ascii?q?B+1OkXIJqq85mqBkHD//Il1AaPAdyBrasYwLOM4+igATVGvc/Y9ihaMdRlbF?=
- =?us-ascii?q?wssY0uhQsuAcqIWwXQDcXBSGgEJvlET0Jv5HqhMEJYS47UblzWpWCuv3ZJQk?=
- =?us-ascii?q?2sfQV6Kf7oFYHMks+5y/69+4HJYwVPmTGxfa5+IA+5oAnMqMUam5ZuJ6k+xh?=
- =?us-ascii?q?fUvHdFePldyWd0KV6OhRrx6dq88IN5/yhMp/4t8tNLXLnncag/UbFWFiktPX?=
- =?us-ascii?q?ov5M3suxnDTA+P6WUZX24LjBdGABXL4Q/jUJvpvST0quRy2C+BPc3rVr80Qi?=
- =?us-ascii?q?it771qSBDzligKMSMy/XzNhcxxiKJbpw+hpwB6zoXJboyZKOZyc6XAdt4BW2?=
- =?us-ascii?q?FPQtheWDBAAoOkbosAEewBPfpDr4Lgo1cCtAayCRWwCO/qzDJHiGX23akn2O?=
- =?us-ascii?q?o/Fw/I0hErE9YXvHnaqNj5MaEfWv23wqbV1zXOd+5Y1ynz6IbIcR4vr/+DUr?=
- =?us-ascii?q?1yfsXNxkciDB/Fg1eKpID5Iz+Y2OYAvm6G5ORgT+KvjGsnphlsrDiz2Mgsko?=
- =?us-ascii?q?nJiZwTylvZ6Ct5xZw6Jdm8SEFlYd+vDZxdtzqHOIttWc4iX2Fptzo6yr0Bo5?=
- =?us-ascii?q?K7ejMKx449yx7QbPyHbZGF7xT+X+iSOTd1nG9pdb2wihqo8UWs1/fwWte73V?=
- =?us-ascii?q?pUtCZJj9/BvW0X2RPJ8MiIUP5981+k2TaIyg/c9PlJIVsxlarHM54hxaMwlo?=
- =?us-ascii?q?YLvUTDACD2nEL2gbeKdko+4Oio6vnnYq78qp+AN457lgH+MqM0lsy5Hes4KR?=
- =?us-ascii?q?QBU3Ke+eS90L3v5Uz5QLNUgf0qiqTVrZ/XKMsBqqO5HgNZyJgv5hmhAzu8zd?=
- =?us-ascii?q?gUhXwHI0hEeBKDgYjpIVbOIPXgAPeknlusiyxmx+zGP7L9ApXNKWLPkLH6fb?=
- =?us-ascii?q?ln8UJcxw0zzc5H65JOFr4BOO7zWlP2tNHAFR82LRa7w+D9BNV/zI8RRWKPAr?=
- =?us-ascii?q?WYMKPJrV+I4fovI+mSa48Pozb9LP4l6uXvjX8/hV8SY62p0YELZ3C/G/RsO1?=
- =?us-ascii?q?+Zbmb0gtcdDWcKuRIzTO7wh12YUj5TZHGyU7gn5j4hC4KmDobDRoazj7yHxy?=
- =?us-ascii?q?q7GpxWZmZbClGDC3vodoOEW+sSZyKWOMNujjsEVb25QY87yR6urBP6y6ZgLu?=
- =?us-ascii?q?fM/i0YtJTj1MV65uHKjhEy+jN1At+D02GCUW50hHkERzwo06Blp0xy1FOD3b?=
- =?us-ascii?q?J/g/xCGtxZ/+lJXRsiNZ7A0+x6DMj/WgbAftePVVanTcyqASovQd0t3t8OeU?=
- =?us-ascii?q?d9G8mijxza2iqqBKIal6GPBJMq6a/cwXfxKNhny3rc16kukUMmQs1ROm2inK?=
- =?us-ascii?q?J/8BLTB4HRmUWDi6mqbbgc3DLK9Gqb1mqBokVYUA92UaXYUnESfVXWrdvn6U?=
- =?us-ascii?q?PYVbOuCqooMhFHycGcLqtGcNrpjU9JRP37ItTRf3qxm3usBRaP3r6NYovqe2?=
- =?us-ascii?q?EZ3CXcEkcElhof8mqcOQgkASeuuHzRDCZyFVL0eE7s8O9+qG+lQU8w1Q2Fc0?=
- =?us-ascii?q?ph17+t8B4PmfOcU+8T3q4DuCo5tzp7Bk290MzWCtaavApuYKVcbskg4FdJ0W?=
- =?us-ascii?q?LWqRZ9M4ehL6Bkml4RbQB3s1ny2BVwD4VKidIqo28yzApuNaKY10tMdzGd3Z?=
- =?us-ascii?q?D3IL3XMGjy/Au0Zq7QwF7e1ciZ+qYV5PQ/sVXjsxmjFlA+/HV/z9lVz3yc64?=
- =?us-ascii?q?3XAwUIT5L+TFw79xhgqLHceSky+YXU2GZtMamyrj/NxdYpCPE5xRanetdVKL?=
- =?us-ascii?q?mEGxPqE80GG8iuL/QnlES3YR0ZJuBS9bI7M9mpdvuH3q6rM/1tnDOgjWRb/o?=
- =?us-ascii?q?991liA+DZ7Su7Nx5wF2e2X3hObVzfgi1esqsT3mZ1YZTEVBWe/yjbrBJRXZq?=
- =?us-ascii?q?JseYYHE2CuI9e4xt9mnZ7iR2ZY9EK/B1MBwMKpewSdb0D93Q1K0kQaunKnmS?=
- =?us-ascii?q?yizzxoiT4pqKuf3SPUz+v+cxoHP3ZBRHN+glf0PYi0k9caUVCnbwgzihSl6l?=
- =?us-ascii?q?33yLZdpKR9MWbTRUNIfynqIG14TqSwsb+CadZV6Jw0qSVXTPi8YVeCR77luR?=
- =?us-ascii?q?QazifjEnBGxD8hajGqvoz1nxl9iGKaNnZ8smDVdt13xRfat5TgQqtq0zMADA?=
- =?us-ascii?q?J4kzjMGl+kP9Sz5tKS38PYv+m4EWDnXZ1JcDL3ypuAuTGg4mtCABujkvT1kd?=
- =?us-ascii?q?riR0xy8ybh1NptHR7BrxX9ZITtn/C4OPhkfU4uH1b/6Mt8F4dWloo2mYFW2H?=
- =?us-ascii?q?4Gi5HT9n0CxzTdK9JejJniYWINSDhD+Nvc5AzoyQU3NX6S757oXXWahM16bp?=
- =?us-ascii?q?+1ZX1AiXF11NxDFKrBtO8MpiByuFft6FuKMPU=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BMAAAPhRJd/wHyM5BlHAEBAQQBAQcEAQGBVQUBAQsBg?=
- =?us-ascii?q?WwqgTwyKIQWk0YBAQEBAQEGgQkIJYlTjxOBewkBAQEBAQEBAQE0AQIBAYRAA?=
- =?us-ascii?q?oJ1IzYHDgEDAQEBBAEBAQEEAQFsikOCOikBgmcBBSMEEUEQCxgCAiYCAlcGA?=
- =?us-ascii?q?QwGAgEBgl8/gXcUpXJ+M4VHgymBRoEMKAGLXRd4gQeBEScMgl8+h06CWASOI?=
- =?us-ascii?q?YYmlGJrCYIXgh6RRwYCGYIpixmKDC2Me5kNCSiBWCsIAhgIIQ+DJ4JNF448I?=
- =?us-ascii?q?wMwAYEFAQGPaQEB?=
+   d="scan'208";a="29420040"
+IronPort-PHdr: =?us-ascii?q?9a23=3AT61FfxGP/4Rq6aLicx84Xp1GYnF86YWxBRYc79?=
+ =?us-ascii?q?8ds5kLTJ76oM64bnLW6fgltlLVR4KTs6sC17OM9fm8EjVasd7B6ClELMUVEU?=
+ =?us-ascii?q?ddyI0/pE8JOIa9E0r1LfrnPWQRPf9pcxtbxUy9KlVfA83kZlff8TWY5D8WHQ?=
+ =?us-ascii?q?jjZ0IufrymUoHdgN6q2O+s5pbdfxtHhCanYbN1MR66sRjdutMZjId/NKo90A?=
+ =?us-ascii?q?bFr3RHd+hL229lJk+YkxLg6sut5pJu/Dlct+87+8JcTan2erkzQKBFAjghL2?=
+ =?us-ascii?q?07/tDguwPZTQuI6HscU2EWnQRNDgPY8hz0XYr/vzXjuOZl1yaUIcP5TbYvWT?=
+ =?us-ascii?q?S/9KhrUwPniD0GNzEi7m7ajNF7gb9BrxKgoxx/xJPUYJ2QOfFjcK7RYc8WSG?=
+ =?us-ascii?q?xcVctKSSdPHp2zYJcOD+oZPOZXsY/9p0cVrRCjAQWgHf7jxiNUinPz26A13f?=
+ =?us-ascii?q?4hEQXb1wI+GdwAvmnfoNHsOKoSVe25ya/FxijBYfxLwzfw8JXGfA4vof+MXr?=
+ =?us-ascii?q?x+f8TexkYtGAzZgVudspDlMjGP2+gRr2SW4ehtWOSygGAnsQFxpT2vy98xhI?=
+ =?us-ascii?q?nVmI0V0lDE+jt/wI0oONO4TVR0YdqgEJROtyCRKox7Qtg/TGFzoys61r0Hto?=
+ =?us-ascii?q?K7fCgN0pgnwQXfZOadf4iH5RLjSv+cLDFlj3xmYLKynwu+/Eevx+HmVsS4zU?=
+ =?us-ascii?q?xGojRKn9XSrHwByhre4dWdRPRn5EeuwzOP2hjW6uFDPE87i7LWK4Ukwr4sjp?=
+ =?us-ascii?q?oTtlnDHjPulEX2kqCWckIk9/C06+v9eLXmp4KcN5RuhgHiMqUhhsy/AeMiPg?=
+ =?us-ascii?q?gIQ2eb4viz2Kfm/U34RLVGlvw2kq/Hv5DGPckXu6G0DgBP3osj9hqzFSmq3d?=
+ =?us-ascii?q?sGkXUdMV5JYBeHgJLoO1HKLvD4F/C/g1G0nTdw2v/GJabsAonNL3ffkLfheq?=
+ =?us-ascii?q?xx60hHyAUp19xf6JVUCq8ZLPLpRkDxrMDYDgM+MwGs3+noFshy1pkfWW2TGK?=
+ =?us-ascii?q?OYP6LSsVmH5u80IumMYpMVtyj5K/Q/+/Huino5k0cHfaa1xZsXdGy4HvN+Lk?=
+ =?us-ascii?q?WCf3XjmNEBHX0IvgYkUOPqiEeCUT9IZ3auWKI8/jE7B5y8DYfYQYCthqeM3C?=
+ =?us-ascii?q?a9Hp1KeG9GDkqAHmvvd4WBQ/0Mcj6dItd9kjwYUrisU40h2gu0tA/5yLpnKf?=
+ =?us-ascii?q?DY+jYCupLg19h15uvTmg809TFvC8Sd0meNT3x7n28SRj822rx/rlJ5yluZza?=
+ =?us-ascii?q?d4hPlYH8RJ5/xVSgc6KYLcz+tiBtD2WwLBeMqJSVm/TtW9DjEwQck8w8EBY0?=
+ =?us-ascii?q?ljAdWulBPD0DSwA78TibOLAIY48qXG33j+P8x90WrJ1LE9j1k6RctCLWmmhq?=
+ =?us-ascii?q?959wjOCI/Fil6ZmLi2eqQBxi7N9XuDzGqXsEFdVw5/TLjFXXQBaUbNs9T56V?=
+ =?us-ascii?q?3NT6W0BbQkLARB08iCJbVOatHzilVGXvjjMszEY22tg2ewGQqIxrSUYYrxZW?=
+ =?us-ascii?q?od2CTdCE4ZkwEc5nuGKwc+CTm7o27EDzxhC0jvY0Xy/ul6sn+7SVU0zw6SZU?=
+ =?us-ascii?q?17y7W14gIVheCbS/4L0LMEuSMhqzF1HFmn2tLaEcaPqxB7fKVbetwy/k1H1X?=
+ =?us-ascii?q?7CtwFmP5ygKbxiiUAacwhto0zu0BB3AJ1akcc2tHMq0BZyKaWA3VxdbTyYxo?=
+ =?us-ascii?q?7/O73NJmnp4B+va7TZ2kzQ0NaS5KgP8u81q1TlvAG1CEUi929r3MVS03uZ/p?=
+ =?us-ascii?q?/KFhYdUYrtUkYr8Bh3v7PaYiw654POz31sMLK0vyTE290zAesq1Begc81YMK?=
+ =?us-ascii?q?OeGw/4C9caCNS2KOw2h1ipaQoJM/1I+64qIcyqbfuG17StPOZ7gj2mi39K4I?=
+ =?us-ascii?q?F70kKQ6SV8TvTE0IoCw/GdxgGHTSvzjE+9ssDrnoBJfTUSHnejySjjH4NRZb?=
+ =?us-ascii?q?N9fZwNCWiwJ8273NJ+h4TiW3RA7l6sG0sG2NO1eRqVd1H93xNf1VgXoXy9ni?=
+ =?us-ascii?q?u11DJ0kzYzrqqDxiPOxeXidRUdNmFXQ2liiE/mIZKogNACQEiocw8pmQOq5U?=
+ =?us-ascii?q?bg2adbq79yIHfVQUdKYSf2K2ViUqqsubaYf8FP75Yo4m1rV7H2UVGcRfq1iB?=
+ =?us-ascii?q?YWySLoVSMKzz03bTCh/IX4mRNSiWSBIXI1p33cL4U4jzzf/t3HWflJ3jccXy?=
+ =?us-ascii?q?5+zXHsC1G6d/vjtYGPmp7F9OL4XGK7V4ZPdjHrwJmbsy2T5Gt2DBn5lPe2zJ?=
+ =?us-ascii?q?mvMwEg0iz8n+JjVibJqhv6Kt3p3r65MuUhZUBrB1765sxSHoB4j5t2hZcM1H?=
+ =?us-ascii?q?xcjZKQqykpi2D2ZO5H1Lr+YXxFfjsCx9rY8UCxw0F4Bm6YzIL+EHOGy41uYM?=
+ =?us-ascii?q?fsMTBe4T40880fUPTc17dDhyYg5wPl/A8=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BOAAAgiBJd/wHyM5BlGgEBAQEBAgEBAQEHAgEBAQGBZ?=
+ =?us-ascii?q?4FtKoE8MoQ9knlNAQEBAQEBBoERJYlTkQ4JAQEBAQEBAQEBNAECAQGEQAKCd?=
+ =?us-ascii?q?SM4EwEDAQEBBAEBAQEEAQFsikOCOikBgmYBAQEBAyMEEUEQCxUBAgICJgICV?=
+ =?us-ascii?q?wYBDAgBAYJfP4F3FKVWfjOFR4MpgUaBDCiLXhd4gQeBOAyCXz6HToJYBI4hh?=
+ =?us-ascii?q?iaVTQmCF4IekUcGG5dOLYx7mR0hgVgrCAIYCCEPgyiCTBcUjigjA4E2AQGPX?=
+ =?us-ascii?q?AEB?=
 Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 25 Jun 2019 20:34:44 +0000
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 25 Jun 2019 20:48:28 +0000
 Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5PKYfGk014706;
-        Tue, 25 Jun 2019 16:34:43 -0400
-Subject: Re: [RFC PATCH v4 10/12] security/selinux: Add enclave_load()
- implementation
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5PKmR80021153;
+        Tue, 25 Jun 2019 16:48:27 -0400
+Subject: Re: [RFC PATCH v4 07/12] LSM: x86/sgx: Introduce ->enclave_map() hook
+ for Intel SGX
+To:     "Xing, Cedric" <cedric.xing@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
         James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Paul Moore <paul@paul-moore.com>
+        "Dr . Greg Wettstein" <greg@enjellic.com>
 References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190619222401.14942-11-sean.j.christopherson@intel.com>
+ <20190619222401.14942-8-sean.j.christopherson@intel.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551847B@ORSMSX116.amr.corp.intel.com>
 From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <92082311-78a2-44dd-5907-ba31e195a5c4@tycho.nsa.gov>
-Date:   Tue, 25 Jun 2019 16:34:41 -0400
+Message-ID: <8235709b-9034-4751-30ce-720e41e31525@tycho.nsa.gov>
+Date:   Tue, 25 Jun 2019 16:48:27 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190619222401.14942-11-sean.j.christopherson@intel.com>
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F6551847B@ORSMSX116.amr.corp.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -122,151 +124,31 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/19/19 6:23 PM, Sean Christopherson wrote:
-> The goal of selinux_enclave_load() is to provide a facsimile of the
-> existing selinux_file_mprotect() and file_map_prot_check() policies,
-> but tailored to the unique properties of SGX.
+On 6/21/19 12:54 PM, Xing, Cedric wrote:
+>> From: Christopherson, Sean J
+>> Sent: Wednesday, June 19, 2019 3:24 PM
+>>
+>> diff --git a/security/security.c b/security/security.c
+>> index 613a5c00e602..03951e08bdfc 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -2359,3 +2359,10 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
+>>   	call_void_hook(bpf_prog_free_security, aux);
+>>   }
+>>   #endif /* CONFIG_BPF_SYSCALL */
+>> +
+>> +#ifdef CONFIG_INTEL_SGX
+>> +int security_enclave_map(unsigned long prot)
+>> +{
+>> +	return call_int_hook(enclave_map, 0, prot);
+>> +}
+>> +#endif /* CONFIG_INTEL_SGX */
 > 
-> For example, an enclave page is technically backed by a MAP_SHARED file,
-> but the "file" is essentially shared memory that is never persisted
-> anywhere and also requires execute permissions (for some pages).
-> 
-> Enclaves are also less priveleged than normal user code, e.g. SYSCALL
-> instructions #UD if attempted in an enclave.  For this reason, add SGX
-> specific permissions instead of reusing existing permissions such as
-> FILE__EXECUTE so that policies can allow running code in an enclave, or
-> allow dynamically loading code in an enclave without having to grant the
-> same capability to normal user code outside of the enclave.
-> 
-> Intended use of each permission:
-> 
->    - SGX_EXECDIRTY: dynamically load code within the enclave itself
->    - SGX_EXECUNMR: load unmeasured code into the enclave, e.g. Graphene
->    - SGX_EXECANON: load code from anonymous memory (likely Graphene)
->    - SGX_EXECUTE: load an enclave from a file, i.e. normal behavior
-> 
-> Note, equivalents to FILE__READ and FILE__WRITE are intentionally never
-> required.  Writes to the enclave page are contained to the EPC, i.e.
-> never hit the original file, and read permissions have already been
-> vetted (or the VMA doesn't have PROT_READ, in which case loading the
-> page into the enclave will fail).
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->   security/selinux/hooks.c            | 55 +++++++++++++++++++++++++++--
->   security/selinux/include/classmap.h |  5 +--
->   2 files changed, 55 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index fc239e541b62..8a431168e454 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -6727,6 +6727,12 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
->   #endif
->   
->   #ifdef CONFIG_INTEL_SGX
-> +static inline int sgx_has_perm(u32 sid, u32 requested)
-> +{
-> +	return avc_has_perm(&selinux_state, sid, sid,
-> +			    SECCLASS_PROCESS2, requested, NULL);
-> +}
-> +
->   static int selinux_enclave_map(unsigned long prot)
->   {
->   	const struct cred *cred = current_cred();
-> @@ -6736,11 +6742,53 @@ static int selinux_enclave_map(unsigned long prot)
->   	WARN_ON_ONCE(!default_noexec);
->   
->   	if ((prot & PROT_EXEC) && (prot & PROT_WRITE))
-> -		return avc_has_perm(&selinux_state, sid, sid,
-> -				    SECCLASS_PROCESS2, PROCESS2__SGX_MAPWX,
-> -				    NULL);
-> +		return sgx_has_perm(sid, PROCESS2__SGX_MAPWX);
-> +
->   	return 0;
->   }
-> +
-> +static int selinux_enclave_load(struct vm_area_struct *vma, unsigned long prot,
-> +				bool measured)
-> +{
-> +	const struct cred *cred = current_cred();
-> +	u32 sid = cred_sid(cred);
-> +	int ret;
-> +
-> +	/* SGX is supported only in 64-bit kernels. */
-> +	WARN_ON_ONCE(!default_noexec);
-> +
-> +	/* Only executable enclave pages are restricted in any way. */
-> +	if (!(prot & PROT_EXEC))
-> +		return 0;
-> +
-> +	/*
-> +	 * WX at load time only requires EXECDIRTY, e.g. to allow W->X.  Actual
-> +	 * WX mappings require MAPWX (see selinux_enclave_map()).
-> +	 */
-> +	if (prot & PROT_WRITE) {
-> +		ret = sgx_has_perm(sid, PROCESS2__SGX_EXECDIRTY);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +	if (!measured) {
-> +		ret = sgx_has_perm(sid, PROCESS2__SGX_EXECUNMR);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
-> +	if (!vma->vm_file || IS_PRIVATE(file_inode(vma->vm_file)) ||
-> +	    vma->anon_vma)
-> +		/*
-> +		 * Loading enclave code from an anonymous mapping or from a
-> +		 * modified private file mapping.
-> +		 */
-> +		ret = sgx_has_perm(sid, PROCESS2__SGX_EXECANON);
-> +	else
-> +		/* Loading from a shared or unmodified private file mapping. */
-> +		ret = file_has_perm(cred, vma->vm_file, FILE__SGX_EXECUTE);
-> +out:
-> +	return ret;
-> +}
+> Why is this new security_enclave_map() necessary while security_mmap_file() will also be invoked?
 
-Same comment on this patch: we might want to generalize the permission 
-names in hopes of being able to reuse them in the future for similar 
-constructs on other architectures.  SGX -> ENCLAVE throughout?
+security_mmap_file() doesn't know about enclaves.  It will just end up 
+checking FILE__READ, FILE__WRITE, and FILE__EXECUTE to /dev/sgx/enclave. 
+This was noted in the patch description.
 
 
->   #endif
->   
->   struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
-> @@ -6988,6 +7036,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->   
->   #ifdef CONFIG_INTEL_SGX
->   	LSM_HOOK_INIT(enclave_map, selinux_enclave_map),
-> +	LSM_HOOK_INIT(enclave_load, selinux_enclave_load),
->   #endif
->   };
->   
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index cfd91e879bdf..baa1757be46a 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -7,7 +7,7 @@
->   
->   #define COMMON_FILE_PERMS COMMON_FILE_SOCK_PERMS, "unlink", "link", \
->       "rename", "execute", "quotaon", "mounton", "audit_access", \
-> -    "open", "execmod"
-> +    "open", "execmod", "sgx_execute"
->   
->   #define COMMON_SOCK_PERMS COMMON_FILE_SOCK_PERMS, "bind", "connect", \
->       "listen", "accept", "getopt", "setopt", "shutdown", "recvfrom",  \
-> @@ -52,7 +52,8 @@ struct security_class_mapping secclass_map[] = {
->   	    "setsockcreate", "getrlimit", NULL } },
->   	{ "process2",
->   	  { "nnp_transition", "nosuid_transition",
-> -	    "sgx_mapwx", NULL } },
-> +	    "sgx_mapwx", "sgx_execdirty", "sgx_execanon", "sgx_execunmr",
-> +	    NULL } },
->   	{ "system",
->   	  { "ipc_info", "syslog_read", "syslog_mod",
->   	    "syslog_console", "module_request", "module_load", NULL } },
-> 
 
