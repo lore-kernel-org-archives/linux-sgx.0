@@ -2,163 +2,99 @@ Return-Path: <SRS0=Ho1r=UZ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF35C48BD3
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jun 2019 12:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 921BBC48BDA
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jun 2019 20:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6EF12147A
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jun 2019 12:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A0C208E3
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jun 2019 20:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfFZMur (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 26 Jun 2019 08:50:47 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:36394 "EHLO wind.enjellic.com"
+        id S1726396AbfFZUjR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 Jun 2019 16:39:17 -0400
+Received: from namei.org ([65.99.196.166]:48592 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfFZMur (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:50:47 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5QCnw2O020449;
-        Wed, 26 Jun 2019 07:49:58 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5QCnvFQ020448;
-        Wed, 26 Jun 2019 07:49:57 -0500
-Date:   Wed, 26 Jun 2019 07:49:57 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
+        id S1726227AbfFZUjP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 26 Jun 2019 16:39:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x5QKd5NF030044;
+        Wed, 26 Jun 2019 20:39:05 GMT
+Date:   Thu, 27 Jun 2019 06:39:05 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     "Dr. Greg" <greg@enjellic.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Cedric Xing <cedric.xing@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [RFC PATCH v4 08/12] security/selinux: Require SGX_MAPWX to map enclave page WX
-Message-ID: <20190626124957.GA20130@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com> <20190619222401.14942-9-sean.j.christopherson@intel.com> <119f6de8-e7b6-6ebd-be12-862303806ea7@tycho.nsa.gov>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <119f6de8-e7b6-6ebd-be12-862303806ea7@tycho.nsa.gov>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 26 Jun 2019 07:49:58 -0500 (CDT)
+        Jethro Beekman <jethro@fortanix.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, casey.schaufler@intel.com,
+        william.c.roberts@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [RFC PATCH v3 09/12] LSM: x86/sgx: Introduce ->enclave_load()
+ hook for Intel SGX
+In-Reply-To: <20190623171626.GA25683@wind.enjellic.com>
+Message-ID: <alpine.LRH.2.21.1906270637300.28132@namei.org>
+References: <20190617222438.2080-1-sean.j.christopherson@intel.com> <20190617222438.2080-10-sean.j.christopherson@intel.com> <0c4f75a0ae2fdeee6db07f3a224918f321163d56.camel@linux.intel.com> <alpine.LRH.2.21.1906200702040.28119@namei.org>
+ <20190623171626.GA25683@wind.enjellic.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 04:19:35PM -0400, Stephen Smalley wrote:
+On Sun, 23 Jun 2019, Dr. Greg wrote:
 
-Good morning, I hope the week is going well for everyone.
+> The most relevant and important control with respect to whether or not
+> an enclave should be allowed to execute is evaluation of the
+> SIGSTRUCT.  Given the trajectory that platform security is on, SGX is
+> not going to be the last technology of its type nor the only
+> technology that makes use of cryptographically based code provenance.
+> 
+> As a result, if we are content with handing an opaque pointer of a
+> descriptive struture to an LSM routine, a generic hook that is tasked
+> with verifying code or execution environment provenance doesn't seem
+> like it would need to be technology specific nor controversial.
+> 
+> That leaves as the last thorny issue the question of dynamic
+> allocation of memory for executable content.  As we have stated
+> before, and at the outset of this note, from a security perspective
+> this is only, effectively, a binary question for the platform owner as
+> to whether or not the concept should be allowed.
+> 
+> A generic LSM hook, appropriately named, could execute that decision
+> without being SGX specific.  Arguably, the hook should be named to
+> indicate that it is seeking approval for allocating memory to be used
+> for anonymous executable content, since that is what it would be
+> effectively requesting approval for, in the case of SGX.
+> 
+> For completeness a third generic hook may be useful.  The purpose of
+> that hook would be to verify a block of memory as being
+> measured or signed for consideration as executable content.  Arguably
+> that will have utility far beyond SGX.
+> 
+> In the case of SGX it would address the issue as to whether or not a
+> block of executable content in untrusted space is eligible for
+> anonymous execution.  That may be a useful security measure in order
+> to provide some control over an enclave being used as a random
+> execution oracle.
+> 
+> It obviously has no security utility against the enclave author since,
+> as we have noted before, it is possible for the enclave author to
+> simply pull whatever code is desired over an encrypted network
+> connection.
+> 
+> > James Morris
+> 
+> Hopefully these comments are a useful basis for further discussion.
 
-> On 6/19/19 6:23 PM, Sean Christopherson wrote:
-> >Hook enclave_map() to require a new per-process capability, SGX_MAPWX,
-> >when mapping an enclave as simultaneously writable and executable.
-> >Note, @prot contains the actual protection bits that will be set by the
-> >kernel, not the maximal protection bits specified by userspace when the
-> >page was first loaded into the enclave.
-> >
-> >Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> >---
-> >  security/selinux/hooks.c            | 21 +++++++++++++++++++++
-> >  security/selinux/include/classmap.h |  3 ++-
-> >  2 files changed, 23 insertions(+), 1 deletion(-)
-> >
-> >diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >index 3ec702cf46ca..fc239e541b62 100644
-> >--- a/security/selinux/hooks.c
-> >+++ b/security/selinux/hooks.c
-> >@@ -6726,6 +6726,23 @@ static void selinux_bpf_prog_free(struct 
-> >bpf_prog_aux *aux)
-> >  }
-> >  #endif
-> >  
-> >+#ifdef CONFIG_INTEL_SGX
-> >+static int selinux_enclave_map(unsigned long prot)
-> >+{
-> >+	const struct cred *cred = current_cred();
-> >+	u32 sid = cred_sid(cred);
-> >+
-> >+	/* SGX is supported only in 64-bit kernels. */
-> >+	WARN_ON_ONCE(!default_noexec);
-> >+
-> >+	if ((prot & PROT_EXEC) && (prot & PROT_WRITE))
-> >+		return avc_has_perm(&selinux_state, sid, sid,
-> >+				    SECCLASS_PROCESS2, PROCESS2__SGX_MAPWX,
-> >+				    NULL);
+Thanks, this is helpful.
 
-> Possibly we should use a slightly more general name for the
-> permission to allow reusing it in the future if/when another
-> architecture introduces a similar construct under a different
-> branding?  ENCLAVE_* seems slightly more generic than SGX_*.
+-- 
+James Morris
+<jmorris@namei.org>
 
-Perhaps TEE_*, since it is generic and expresses the notion of
-privileges specific to an alternate execution environment.
-
-> I was interested in testing this code but sadly the driver reports
-> the following on my development workstation:
->
-> [    1.644191] sgx: The launch control MSRs are not writable
-> [    1.695477] sgx: EPC section 0x70200000-0x75f7ffff
-> [    1.771760] sgx: The public key MSRs are not writable
->
-> I guess I'm out of luck until/unless I get a NUC or server class
-> hardware that supports flexible launch control?  Seems developer
-> unfriendly.
-
-Indeed.
-
-Most importantly, it is decidedly unfriendly to the future of the
-technology on Linux.
-
-More problematically, from a development perspective, the driver is
-incompatible with the current Intel runtime, which makes testing at a
-level beyond the one page test harness that is included with the
-patchset impossible.
-
-As I noted previously, before the LSM discussion, we have a patch that
-addresses the compatibility, security and launch control issues the
-original version of the driver had.  If you missed the thread, it is
-available from the following URL:
-
-ftp://ftp.idfusion.net/pub/idfusion/jarkko-master-SFLC.patch
-
-It will be a bit dated by now and doesn't address the API change
-needed to set page permissions.  It is a pretty solid starting point
-if you want to use the existing runtime to do more then trivial
-testing.
-
-We have an extension to the existing driver that we will be releasing,
-so users of our SRDE will be able to use both the out-of-tree and
-in-tree drivers.  It also re-establishes launch control and provides a
-very simplistic interface to implement ring-0 security for launch
-control on flexible launch control platforms.
-
-I'm in Israel right now but we should have a GIT tree against the
-current development branches by the weekend.  We will be testing the
-driver with our SRDE against real world enclaves as we advance the
-driver forward.
-
-Have a good day.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC
-4206 N. 19th Ave.           Implementing measured information privacy
-Fargo, ND  58102            and integrity architectures.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@idfusion.net
-------------------------------------------------------------------------------
-"This place is so screwed up.  It's just like the Titanic, only
- we don't even have a band playing.
-                                -- Terrance George Wieland
-                                   Resurrection.
