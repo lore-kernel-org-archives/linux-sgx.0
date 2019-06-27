@@ -2,21 +2,22 @@ Return-Path: <SRS0=2cS5=U2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8669C48BE4
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jun 2019 18:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4D5C48BEA
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jun 2019 18:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56D320645
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jun 2019 18:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60D5F20645
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jun 2019 18:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfF0S41 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 27 Jun 2019 14:56:27 -0400
+        id S1726497AbfF0S42 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 27 Jun 2019 14:56:28 -0400
 Received: from mga12.intel.com ([192.55.52.136]:10284 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0S41 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726426AbfF0S41 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Thu, 27 Jun 2019 14:56:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,22 +25,23 @@ Received: from fmsmga006.fm.intel.com ([10.253.24.20])
   by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 11:56:26 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
-   d="scan'208";a="361259284"
+   d="scan'208";a="361259288"
 Received: from bxing-desk.ccr.corp.intel.com (HELO ubt18.jf.intel.com) ([134.134.148.187])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Jun 2019 11:56:25 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 27 Jun 2019 11:56:26 -0700
 From:   Cedric Xing <cedric.xing@intel.com>
 To:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Cc:     Cedric Xing <cedric.xing@intel.com>, casey.schaufler@intel.com,
-        jmorris@namei.org, luto@kernel.org, jethro@fortanix.com,
-        greg@enjellic.com, sds@tycho.nsa.gov,
+        selinux@vger.kernel.org, cedric.xing@intel.com
+Cc:     casey.schaufler@intel.com, jmorris@namei.org, luto@kernel.org,
+        jethro@fortanix.com, greg@enjellic.com, sds@tycho.nsa.gov,
         jarkko.sakkinen@linux.intel.com, sean.j.christopherson@intel.com
-Subject: [RFC PATCH v2 0/3] security/x86/sgx: SGX specific LSM hooks
-Date:   Thu, 27 Jun 2019 11:56:18 -0700
-Message-Id: <cover.1561588012.git.cedric.xing@intel.com>
+Subject: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+Date:   Thu, 27 Jun 2019 11:56:19 -0700
+Message-Id: <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190619222401.14942-1-sean.j.christopherson@intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+In-Reply-To: <cover.1561588012.git.cedric.xing@intel.com>
+References: <cover.1561588012.git.cedric.xing@intel.com>
+In-Reply-To: <cover.1561588012.git.cedric.xing@intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com> <cover.1561588012.git.cedric.xing@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,142 +50,609 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This series intends to make the new SGX subsystem to work with the existing LSM
-architecture smoothly so that, say, SGX cannot be abused to work around
-restrictions set forth by LSM modules/policies. 
+SGX enclaves are loaded from pages in regular memory. Given the ability to
+create executable pages, the newly added SGX subsystem may present a backdoor
+for adversaries to circumvent LSM policies, such as creating an executable
+enclave page from a modified regular page that would otherwise not be made
+executable as prohibited by LSM. Therefore arises the primary question of
+whether an enclave page should be allowed to be created from a given source
+page in regular memory.
 
-This patch is based on and could be applied cleanly on top of Jarkko Sakkinen’s
-SGX patch series v20 (https://patchwork.kernel.org/cover/10905141/).
+A related question is whether to grant/deny a mprotect() request on a given
+enclave page/range. mprotect() is traditionally covered by
+security_file_mprotect() hook, however, enclave pages have a different lifespan
+than either MAP_PRIVATE or MAP_SHARED. Particularly, MAP_PRIVATE pages have the
+same lifespan as the VMA while MAP_SHARED pages have the same lifespan as the
+backing file (on disk), but enclave pages have the lifespan of the enclave’s
+file descriptor. For example, enclave pages could be munmap()’ed then mmap()’ed
+again without losing contents (like MAP_SHARED), but all enclave pages will be
+lost once its file descriptor has been closed (like MAP_PRIVATE). That said,
+LSM modules need some new data structure for tracking protections of enclave
+pages/ranges so that they can make proper decisions at mmap()/mprotect()
+syscalls.
 
-For those who haven’t followed closely, the whole discussion started from the
-primary question of how to prevent creating an executable enclave page from a
-regular memory page that is NOT executable as prohibited by LSM
-modules/policies. And that can be translated into 2 relating questions in
-practice, i.e. 1) how to determine the allowed initial protections of enclave
-pages when they are being loaded and 2) how to determine the allowed
-protections of enclave pages at runtime. Those who are familiar with LSM may
-notice that, for regular files, #1 is determined by security_mmap_file() while
-#2 is covered by security_file_mprotect(). Those 2 hooks however are
-insufficient for enclaves due to the distinct composition and lifespan of
-enclave pages. Specifically, security_mmap_file() only passes in the file but
-is not specific on which portion of the file being mmap()’ed, with the
-assumption that all pages of the same file shall have the same set of
-allowed/disallowed protections. But that assumption is no longer true for
-enclaves for 2 reasons: a) pages of an enclave may be loaded from different
-image files with different attributes and b) enclave pages retain contents
-across munmap()/mmap(), therefore, say, if a policy prohibits execution of
-modified pages, then pages flagged modified have to stay modified across
-munmap()/mmap() so that the policy cannot be circumvented by remapping (i.e.
-munmap() followed by mmap() on the same range). But the lack of range
-information in security_mmap_file()’s arguments simply blocks LSM modules from
-tracking enclave pages properly.
+The last question, which is orthogonal to the 2 above, is whether or not to
+allow a given enclave to launch/run. Enclave pages are not visible to the rest
+of the system, so to some extent offer a better place for malicious software to
+hide. Thus, it is sometimes desirable to whitelist/blacklist enclaves by their
+measurements, signing public keys, or image files.
 
-A rational solution would always involve tracking the correspondence between
-enclave pages and their origin (e.g. files from which they were loaded), which
-is similar to tracking regular memory pages and their origin via vm_file of
-struct vm_area_struct. But given the longer lifespan of enclave pages (than
-VMAs they are mapped into), such correspondence has to be stored in a separate
-data structure outside of VMAs. In theory, the correspondence could be stored
-either in LSM or in the SGX subsystem. This series has picked the former
-because firstly, such information is useful only within LSM so it makes more
-sense to keep it as “LSM internal” and secondly, keeping the data structure
-inside LSM would allow additional information to be cached in LSM modules
-without affecting the rest of the kernel, while lastly, those data structures
-would be gone when LSM is disabled hence would not impose any unnecessary
-overhead. As you can see in the SELinux implementation of those new hooks
-enclosed in this series, options are offered (via kernel command line
-parameter) to system administrators between accurate auditing (decisions made
-at the time of request) and low memory/performance overhead (decisions
-made/cached ahead of time at page instantiation). And that’s one of the
-benefits of keeping everything inside LSM.
+To address the questions above, 2 new LSM hooks are added for enclaves.
+  - security_enclave_load() – This hook allows LSM to decide whether or not to
+    allow instantiation of a range of enclave pages using the specified VMA. It
+    is invoked when a range of enclave pages is about to be loaded. It serves 3
+    purposes: 1) indicate to LSM that the file struct in subject is an enclave;
+    2) allow LSM to decide whether or not to instantiate those pages and 3)
+    allow LSM to initialize internal data structures for tracking
+    origins/protections of those pages.
+  - security_enclave_init() – This hook allows whitelisting/blacklisting or
+    performing whatever checks deemed appropriate before an enclave is allowed
+    to run. An LSM module may opt to use the file backing the SIGSTRUCT as a
+    proxy to dictate allowed protections for anonymous pages.
 
-Those who are familiar with this topic and related discussions may also notice
-that, Sean Christopherson has sent out an RFC patch recently to address the
-same problem as this series. He adopted the other approach of tracking
-page/origin correspondence inside the SGX subsystem. However, to reduce memory
-overhead in practice, he cached the FSM (Finite State Machine) instead of
-page/origin correspondences. By “FSM”, I mean policy FSM defined as sets of
-states and events that may trigger state transitions. Generally speaking, any
-LSM module has its own definition of FSM and usually uses attributes attached
-to files to argument the FSM, then it advances the FSM as events are observed
-and gives out decision based on the current FSM state. Sean’s implementation
-attempts to move the FSM into the SGX subsystem, and by caching the arguments
-returned by LSM it tries to monitor events and reach the same decisions by
-itself. So from architecture perspective, that model has to face tough
-challenges in reality, such as how to support multiple LSM modules that employ
-different FSMs to govern page protection transitions. Implementation wise, his
-model also imposes unwanted restrictions specifically to SGX2, such as:
-  - Complicated/Restricted UAPI – Enclave loaders are required to provide
-    “maximal protection” at page load time, but such information is NOT always
-    available. For example, Graphene containers may run different applications
-    comprised of different set of executables and/or shared objects. Some of
-    them may contain self-modifying code (or text relocation) while others
-    don’t. The generic enclave loader usually doesn’t have such information so
-    wouldn’t be able to provide it ahead of time.
-  - Inefficient Auditing – Audit logs are supposed to help system
-    administrators to determine the set of minimally needed permissions and to
-    detect abnormal behaviors. But consider the “maximal protection” model, if
-    “maximal protection” is set to be too permissive, then audit log wouldn’t
-    be able to detect anomalies; or if “maximal protection” is too restrictive,
-    then audit log cannot identify the file violating the policy. In either
-    case the audit log cannot fulfill its purposes.
-  - Inability to support #PF driven EPC allocation in SGX2 – For those
-    unfamiliar with SGX2 software flows, an SGX2 enclave requests a page by
-    issuing EACCEPT on the address that a new page is wanted, and the resulted
-    #PF is expected to be handled by the kernel by EAUG’ing an EPC page at the
-    fault address, and then the enclave would be resumed and the faulting
-    EACCEPT retried, and succeed. The key requirement is to allow mmap()’ing
-    non-existing enclave pages so that the SGX module/subsystem could respond
-    to #PFs by EAUG’ing new pages. Sean’s implementation doesn’t allow
-    mmap()’ing non-existing pages for variety of reasons and therefore blocks
-    this major SGX2 usage.
+mprotect() of enclave pages continue to be governed by
+security_file_mprotect(), with the expectation that LSM is able to distinguish
+between regular and enclave pages inside the hook. For mmap(), the SGX
+subsystem is expected to invoke security_file_mprotect() explicitly to check
+protections against the requested protections for existing enclave pages. As
+stated earlier, enclave pages have different lifespan than the existing
+MAP_PRIVATE and MAP_SHARED pages, so would require a new data structure outside
+of VMA to track their protections and/or origins. Enclave Memory Area (or EMA
+for short) has been introduced to address the need. EMAs are maintained by the
+LSM framework for all LSM modules to share. EMAs will be instantiated for
+enclaves only so will not impose memory/performance overheads for regular
+applications/files. Please see include/linux/lsm_ema.h and security/lsm_ema.c
+for details.
 
-History:
-  - This is version 2 of this patch series, with the following changes per
-    comments/requests from the community:
-    + A new data structure – EMA (Enclave Memory Area) is introduced to track
-      range/origin correspondences for enclaves. EMAs are maintained by the LSM
-      framework to be shared among all LSM modules. EMAs are allocated for
-      enclave files only so will not impose overhead to regular
-      applications/files.
-    + Improved auditing – A new kernel command line option
-      “lsm.ema.cache_decisions” is introduced, if on, would cause LSM modules
-      to make/cache decisions at page instantiation (i.e. enclave_load() hook)
-      instead of at time of request (i.e. file_mprotect() hook), in order to
-      save memory by NOT keeping enclave source files open. System
-      administrators are expected to run LSM in permissive mode along with this
-      option off to figure out the minimal permissions necessary, then turn it
-      back on in enforcing mode to minimize memory/performance overheads.
-    + In the SELinux implementation of the new hooks, FILE__EXECUTE on the file
-      containing SIGSTRUCT is interpreted as approval for launch, while
-      FILE__EXECMOD is interpreted as allowing anonymous pages (i.e. pages
-      EAUG’ed, or EADD’ed from an anonymous source page) to be executable.
-      Allowed protections for other pages loaded from files are dictated by the
-      source files’ FILE__EXECUTE/FILE__EXECMOD. This series intentionally
-      avoids defining new permissions so that user mode tools could continue to
-      work by treating enclave files the same way as regular executables and/or
-      shared objects.
-  - v1 –  https://patchwork.kernel.org/cover/10984127/
+A new setup parameter – lsm.ema.cache_decisions has been introduced to offer
+the choice between memory consumption and accuracy of audit logs. Enabling
+lsm.ema.cache_decisions causes LSM framework NOT to keep backing files open for
+EMAs. While that saves memory, it requires LSM modules to make and cache
+decisions ahead of time, and makes it difficult for LSM modules to generate
+accurate audit logs. System administrators are expected to run LSM in
+permissive mode with lsm.ema.cache_decisions off to determine the minimal
+permissions needed, and then turn it back on in enforcing mode for optimal
+performance and memory usage. lsm.ema.cache_decisions is on by default and
+could be turned off by appending “lsm.ema.cache_decisions=0” or
+“lsm.ema.cache_decisions=off” to the kernel command line.
 
-Cedric Xing (3):
-  x86/sgx: Add SGX specific LSM hooks
-  x86/sgx: Call LSM hooks from SGX subsystem/module
-  x86/sgx: Implement SGX specific hooks in SELinux
-
- arch/x86/kernel/cpu/sgx/driver/ioctl.c |  80 ++++++++-
- arch/x86/kernel/cpu/sgx/driver/main.c  |  16 +-
- include/linux/lsm_ema.h                | 171 ++++++++++++++++++
- include/linux/lsm_hooks.h              |  29 ++++
- include/linux/security.h               |  23 +++
- security/Makefile                      |   1 +
- security/lsm_ema.c                     | 132 ++++++++++++++
- security/security.c                    |  47 ++++-
- security/selinux/hooks.c               | 229 ++++++++++++++++++++++++-
- security/selinux/include/objsec.h      |  24 +++
- 10 files changed, 732 insertions(+), 20 deletions(-)
+Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+---
+ include/linux/lsm_ema.h   | 171 ++++++++++++++++++++++++++++++++++++++
+ include/linux/lsm_hooks.h |  29 +++++++
+ include/linux/security.h  |  23 +++++
+ security/Makefile         |   1 +
+ security/lsm_ema.c        | 132 +++++++++++++++++++++++++++++
+ security/security.c       |  47 ++++++++++-
+ 6 files changed, 402 insertions(+), 1 deletion(-)
  create mode 100644 include/linux/lsm_ema.h
  create mode 100644 security/lsm_ema.c
 
+diff --git a/include/linux/lsm_ema.h b/include/linux/lsm_ema.h
+new file mode 100644
+index 000000000000..a09b8f96da05
+--- /dev/null
++++ b/include/linux/lsm_ema.h
+@@ -0,0 +1,171 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
++/**
++ * Enclave Memory Area interface for LSM modules
++ *
++ * Copyright(c) 2016-19 Intel Corporation.
++ */
++
++#ifndef _LSM_EMA_H_
++#define _LSM_EMA_H_
++
++#include <linux/list.h>
++#include <linux/mutex.h>
++#include <linux/fs.h>
++#include <linux/file.h>
++
++/**
++ * lsm_ema - LSM Enclave Memory Area structure
++ *
++ * Data structure to track origins of enclave pages
++ *
++ * @link:
++ *	Link to adjacent EMAs. EMAs are sorted by their addresses in ascending
++ *	order
++ * @start:
++ *	Starting address
++ * @end:
++ *	Ending address
++ * @source:
++ *	File from which this range was loaded from, or NULL if not loaded from
++ *	any files
++ */
++struct lsm_ema {
++	struct list_head	link;
++	size_t			start;
++	size_t			end;
++	struct file		*source;
++};
++
++#define lsm_ema_data(ema, blob_sizes)	\
++	((char *)((struct lsm_ema *)(ema) + 1) + blob_sizes.lbs_ema_data)
++
++/**
++ * lsm_ema_map - LSM Enclave Memory Map structure
++ *
++ * Container for EMAs of an enclave
++ *
++ * @list:
++ *	Head of a list of sorted EMAs
++ * @lock:
++ *	Acquire before querying/updateing the list EMAs
++ */
++struct lsm_ema_map {
++	struct list_head	list;
++	struct mutex		lock;
++};
++
++/**
++ * These are functions to be used by the LSM framework, and must be defined
++ * regardless CONFIG_INTEL_SGX is enabled or not.
++ */
++
++#ifdef CONFIG_INTEL_SGX
++void lsm_ema_global_init(size_t);
++void lsm_free_ema_map(atomic_long_t *);
++#else
++static inline void lsm_ema_global_init(size_t ema_data_size)
++{
++}
++
++static inline void lsm_free_ema_map(atomic_long_t *p)
++{
++}
++#endif
++
++/**
++ * Below are APIs to be used by LSM modules
++ */
++
++struct lsm_ema_map *lsm_init_or_get_ema_map(atomic_long_t *);
++struct lsm_ema *lsm_alloc_ema(void);
++void lsm_free_ema(struct lsm_ema *);
++void lsm_init_ema(struct lsm_ema *, size_t, size_t, struct file *);
++int lsm_merge_ema(struct lsm_ema *, struct lsm_ema_map *);
++struct lsm_ema *lsm_split_ema(struct lsm_ema *, size_t, struct lsm_ema_map *);
++
++static inline struct lsm_ema_map *lsm_get_ema_map(struct file *f)
++{
++	return (void *)atomic_long_read(f->f_security);
++}
++
++static inline int __must_check lsm_lock_ema(struct lsm_ema_map *map)
++{
++	return mutex_lock_interruptible(&map->lock);
++}
++
++static inline void lsm_unlock_ema(struct lsm_ema_map *map)
++{
++	mutex_unlock(&map->lock);
++}
++
++static inline struct lsm_ema *lsm_prev_ema(struct lsm_ema *p,
++					   struct lsm_ema_map *map)
++{
++	p = list_prev_entry(p, link);
++	return &p->link == &map->list ? NULL : p;
++}
++
++static inline struct lsm_ema *lsm_next_ema(struct lsm_ema *p,
++					   struct lsm_ema_map *map)
++{
++	p = list_next_entry(p, link);
++	return &p->link == &map->list ? NULL : p;
++}
++
++static inline struct lsm_ema *lsm_find_ema(struct lsm_ema_map *map, size_t a)
++{
++	struct lsm_ema *p;
++
++	BUG_ON(!mutex_is_locked(&map->lock));
++
++	list_for_each_entry(p, &map->list, link)
++		if (a < p->end)
++			break;
++	return &p->link == &map->list ? NULL : p;
++}
++
++static inline int lsm_insert_ema(struct lsm_ema_map *map, struct lsm_ema *n)
++{
++	struct lsm_ema *p = lsm_find_ema(map, n->start);
++
++	if (!p)
++		list_add_tail(&n->link, &map->list);
++	else if (n->end <= p->start)
++		list_add_tail(&n->link, &p->link);
++	else
++		return -EEXIST;
++
++	lsm_merge_ema(n, map);
++	if (p)
++		lsm_merge_ema(p, map);
++	return 0;
++}
++
++static inline int lsm_for_each_ema(struct lsm_ema_map *map, size_t start,
++				   size_t end, int (*cb)(struct lsm_ema *,
++							 void *), void *arg)
++{
++	struct lsm_ema *ema;
++	int rc;
++
++	ema = lsm_find_ema(map, start);
++	while (ema && end > ema->start) {
++		if (start > ema->start)
++			lsm_split_ema(ema, start, map);
++		if (end < ema->end)
++			ema = lsm_split_ema(ema, end, map);
++
++		rc = (*cb)(ema, arg);
++		lsm_merge_ema(ema, map);
++		if (rc)
++			return rc;
++
++		ema = lsm_next_ema(ema, map);
++	}
++
++	if (ema)
++		lsm_merge_ema(ema, map);
++	return 0;
++}
++
++#endif /* _LSM_EMA_H_ */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 47f58cfb6a19..ade1f9f81e64 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -29,6 +29,8 @@
+ #include <linux/init.h>
+ #include <linux/rculist.h>
+ 
++struct lsm_ema;
++
+ /**
+  * union security_list_options - Linux Security Module hook function list
+  *
+@@ -1446,6 +1448,21 @@
+  * @bpf_prog_free_security:
+  *	Clean up the security information stored inside bpf prog.
+  *
++ * @enclave_load:
++ *	Decide if a range of pages shall be allowed to be loaded into an
++ *	enclave
++ *
++ *	@encl points to the file identifying the target enclave
++ *	@ema specifies the target range to be loaded
++ *	@flags contains protections being requested for the target range
++ *	@source points to the VMA containing the source pages to be loaded
++ *
++ * @enclave_init:
++ *	Decide if an enclave shall be allowed to launch
++ *
++ *	@encl points to the file identifying the target enclave being launched
++ *	@sigstruct contains a copy of the SIGSTRUCT in kernel memory
++ *	@source points to the VMA backing SIGSTRUCT in user memory
+  */
+ union security_list_options {
+ 	int (*binder_set_context_mgr)(struct task_struct *mgr);
+@@ -1807,6 +1824,13 @@ union security_list_options {
+ 	int (*bpf_prog_alloc_security)(struct bpf_prog_aux *aux);
+ 	void (*bpf_prog_free_security)(struct bpf_prog_aux *aux);
+ #endif /* CONFIG_BPF_SYSCALL */
++
++#ifdef CONFIG_INTEL_SGX
++	int (*enclave_load)(struct file *encl, struct lsm_ema *ema,
++			    size_t flags, struct vm_area_struct *source);
++	int (*enclave_init)(struct file *encl, struct sgx_sigstruct *sigstruct,
++			    struct vm_area_struct *source);
++#endif
+ };
+ 
+ struct security_hook_heads {
+@@ -2046,6 +2070,10 @@ struct security_hook_heads {
+ 	struct hlist_head bpf_prog_alloc_security;
+ 	struct hlist_head bpf_prog_free_security;
+ #endif /* CONFIG_BPF_SYSCALL */
++#ifdef CONFIG_INTEL_SGX
++	struct hlist_head enclave_load;
++	struct hlist_head enclave_init;
++#endif
+ } __randomize_layout;
+ 
+ /*
+@@ -2069,6 +2097,7 @@ struct lsm_blob_sizes {
+ 	int	lbs_ipc;
+ 	int	lbs_msg_msg;
+ 	int	lbs_task;
++	int	lbs_ema_data;
+ };
+ 
+ /*
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 659071c2e57c..52c200810004 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1829,5 +1829,28 @@ static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_BPF_SYSCALL */
+ 
++#ifdef CONFIG_INTEL_SGX
++struct sgx_sigstruct;
++#ifdef CONFIG_SECURITY
++int security_enclave_load(struct file *encl, size_t start, size_t end,
++			  size_t flags, struct vm_area_struct *source);
++int security_enclave_init(struct file *encl, struct sgx_sigstruct *sigstruct,
++			  struct vm_area_struct *source);
++#else
++static inline int security_enclave_load(struct file *encl, size_t start,
++					size_t end, struct vm_area_struct *src)
++{
++	return 0;
++}
++
++static inline int security_enclave_init(struct file *encl,
++					struct sgx_sigstruct *sigstruct,
++					struct vm_area_struct *src)
++{
++	return 0;
++}
++#endif /* CONFIG_SECURITY */
++#endif /* CONFIG_INTEL_SGX */
++
+ #endif /* ! __LINUX_SECURITY_H */
+ 
+diff --git a/security/Makefile b/security/Makefile
+index c598b904938f..1bab8f1344b6 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
++obj-$(CONFIG_INTEL_SGX)			+= lsm_ema.o
+ 
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+diff --git a/security/lsm_ema.c b/security/lsm_ema.c
+new file mode 100644
+index 000000000000..68fae0724d37
+--- /dev/null
++++ b/security/lsm_ema.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-18 Intel Corporation.
++
++#include <linux/lsm_ema.h>
++#include <linux/slab.h>
++
++static struct kmem_cache *lsm_ema_cache;
++static size_t lsm_ema_data_size;
++static int lsm_ema_cache_decisions = 1;
++
++void lsm_ema_global_init(size_t ema_size)
++{
++	BUG_ON(lsm_ema_data_size > 0);
++
++	lsm_ema_data_size = ema_size;
++
++	ema_size += sizeof(struct lsm_ema);
++	ema_size = max(ema_size, sizeof(struct lsm_ema_map));
++	lsm_ema_cache = kmem_cache_create("lsm_ema_cache", ema_size,
++					  __alignof__(struct lsm_ema),
++					  SLAB_PANIC, NULL);
++
++}
++
++struct lsm_ema_map *lsm_init_or_get_ema_map(atomic_long_t *p)
++{
++	struct lsm_ema_map *map;
++
++	map = (typeof(map))atomic_long_read(p);
++	if (!map) {
++		long n;
++
++		map = (typeof(map))lsm_alloc_ema();
++		if (!map)
++			return NULL;
++
++		INIT_LIST_HEAD(&map->list);
++		mutex_init(&map->lock);
++
++		n = atomic_long_cmpxchg(p, 0, (long)map);
++		if (n) {
++			atomic_long_t a;
++			atomic_long_set(&a, (long)map);
++			map = (typeof(map))n;
++			lsm_free_ema_map(&a);
++		}
++	}
++	return map;
++}
++
++void lsm_free_ema_map(atomic_long_t *p)
++{
++	struct lsm_ema_map *map;
++	struct lsm_ema *ema, *n;
++
++	map = (typeof(map))atomic_long_read(p);
++	if (!map)
++		return;
++
++	BUG_ON(mutex_is_locked(&map->lock));
++
++	list_for_each_entry_safe(ema, n, &map->list, link)
++		lsm_free_ema(ema);
++	kmem_cache_free(lsm_ema_cache, map);
++}
++
++struct lsm_ema *lsm_alloc_ema(void)
++{
++	return kmem_cache_zalloc(lsm_ema_cache, GFP_KERNEL);
++}
++
++void lsm_free_ema(struct lsm_ema *ema)
++{
++	list_del(&ema->link);
++	if (ema->source)
++		fput(ema->source);
++	kmem_cache_free(lsm_ema_cache, ema);
++}
++
++void lsm_init_ema(struct lsm_ema *ema, size_t start, size_t end,
++		  struct file *source)
++{
++	INIT_LIST_HEAD(&ema->link);
++	ema->start = start;
++	ema->end = end;
++	if (!lsm_ema_cache_decisions && source)
++		ema->source = get_file(source);
++}
++
++int lsm_merge_ema(struct lsm_ema *p, struct lsm_ema_map *map)
++{
++	struct lsm_ema *prev = list_prev_entry(p, link);
++
++	BUG_ON(!mutex_is_locked(&map->lock));
++
++	if (&prev->link == &map->list || prev->end != p->start ||
++	    prev->source != p->source ||
++	    memcmp(prev + 1, p + 1, lsm_ema_data_size))
++		return 0;
++
++	p->start = prev->start;
++	fput(prev->source);
++	lsm_free_ema(prev);
++	return 1;
++}
++
++struct lsm_ema *lsm_split_ema(struct lsm_ema *p, size_t at,
++			      struct lsm_ema_map *map)
++{
++	struct lsm_ema *n;
++
++	BUG_ON(!mutex_is_locked(&map->lock));
++
++	if (at <= p->start || at >= p->end)
++		return p;
++
++	n = lsm_alloc_ema();
++	if (likely(n)) {
++		lsm_init_ema(n, p->start, at, p->source);
++		memcpy(n + 1, p + 1, lsm_ema_data_size);
++		p->start = at;
++		list_add_tail(&n->link, &p->link);
++	}
++	return n;
++}
++
++static int __init set_ema_cache_decisions(char *str)
++{
++	lsm_ema_cache_decisions = (strcmp(str, "0") && strcmp(str, "off"));
++	return 1;
++}
++__setup("lsm.ema.cache_decisions=", set_ema_cache_decisions);
+diff --git a/security/security.c b/security/security.c
+index f493db0bf62a..d50883f18be2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/lsm_hooks.h>
++#include <linux/lsm_ema.h>
+ #include <linux/integrity.h>
+ #include <linux/ima.h>
+ #include <linux/evm.h>
+@@ -41,7 +42,9 @@ static struct kmem_cache *lsm_file_cache;
+ static struct kmem_cache *lsm_inode_cache;
+ 
+ char *lsm_names;
+-static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
++static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init = {
++	.lbs_file = sizeof(atomic_long_t) * IS_ENABLED(CONFIG_INTEL_SGX),
++};
+ 
+ /* Boot-time LSM user choice */
+ static __initdata const char *chosen_lsm_order;
+@@ -169,6 +172,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+ 	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+ 	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
++	lsm_set_blob_size(&needed->lbs_ema_data, &blob_sizes.lbs_ema_data);
+ }
+ 
+ /* Prepare LSM for initialization. */
+@@ -314,6 +318,7 @@ static void __init ordered_lsm_init(void)
+ 		lsm_inode_cache = kmem_cache_create("lsm_inode_cache",
+ 						    blob_sizes.lbs_inode, 0,
+ 						    SLAB_PANIC, NULL);
++	lsm_ema_global_init(blob_sizes.lbs_ema_data);
+ 
+ 	lsm_early_cred((struct cred *) current->cred);
+ 	lsm_early_task(current);
+@@ -1357,6 +1362,7 @@ void security_file_free(struct file *file)
+ 	blob = file->f_security;
+ 	if (blob) {
+ 		file->f_security = NULL;
++		lsm_free_ema_map(blob);
+ 		kmem_cache_free(lsm_file_cache, blob);
+ 	}
+ }
+@@ -1420,6 +1426,7 @@ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ {
+ 	return call_int_hook(file_mprotect, 0, vma, reqprot, prot);
+ }
++EXPORT_SYMBOL(security_file_mprotect);
+ 
+ int security_file_lock(struct file *file, unsigned int cmd)
+ {
+@@ -2355,3 +2362,41 @@ void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ 	call_void_hook(bpf_prog_free_security, aux);
+ }
+ #endif /* CONFIG_BPF_SYSCALL */
++
++#ifdef CONFIG_INTEL_SGX
++int security_enclave_load(struct file *encl, size_t start, size_t end,
++			  size_t flags, struct vm_area_struct *src)
++{
++	struct lsm_ema_map *map;
++	struct lsm_ema *ema;
++	int rc;
++
++	map = lsm_init_or_get_ema_map(encl->f_security);
++	if (unlikely(!map))
++		return -ENOMEM;
++
++	ema = lsm_alloc_ema();
++	if (unlikely(!ema))
++		return -ENOMEM;
++
++	lsm_init_ema(ema, start, end, src->vm_file);
++	rc = call_int_hook(enclave_load, 0, encl, ema, flags, src);
++	if (!rc)
++		rc = lsm_lock_ema(map);
++	if (!rc) {
++		rc = lsm_insert_ema(map, ema);
++		lsm_unlock_ema(map);
++	}
++	if (rc)
++		lsm_free_ema(ema);
++	return rc;
++}
++EXPORT_SYMBOL(security_enclave_load);
++
++int security_enclave_init(struct file *encl, struct sgx_sigstruct *sigstruct,
++			  struct vm_area_struct *src)
++{
++	return call_int_hook(enclave_init, 0, encl, sigstruct, src);
++}
++EXPORT_SYMBOL(security_enclave_init);
++#endif /* CONFIG_INTEL_SGX */
 -- 
 2.17.1
 
