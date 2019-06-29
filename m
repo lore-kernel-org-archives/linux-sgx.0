@@ -1,221 +1,139 @@
-Return-Path: <SRS0=YIp+=U3=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=WPzH=U4=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D3BC4646D
-	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jun 2019 22:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A2DC5B57A
+	for <linux-sgx@archiver.kernel.org>; Sat, 29 Jun 2019 01:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56AA208E3
-	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jun 2019 22:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADEB22086D
+	for <linux-sgx@archiver.kernel.org>; Sat, 29 Jun 2019 01:16:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVETekdA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfF1W3p (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 28 Jun 2019 18:29:45 -0400
-Received: from mga02.intel.com ([134.134.136.20]:65480 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfF1W3p (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 28 Jun 2019 18:29:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 15:29:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,429,1557212400"; 
-   d="scan'208";a="183775314"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Jun 2019 15:29:43 -0700
-Received: from orsmsx158.amr.corp.intel.com (10.22.240.20) by
- ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 28 Jun 2019 15:29:42 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.97]) by
- ORSMSX158.amr.corp.intel.com ([169.254.10.128]) with mapi id 14.03.0439.000;
- Fri, 28 Jun 2019 15:29:42 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
+        id S1726894AbfF2BQM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 28 Jun 2019 21:16:12 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35487 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbfF2BQL (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 28 Jun 2019 21:16:11 -0400
+Received: by mail-io1-f66.google.com with SMTP id m24so16385042ioo.2;
+        Fri, 28 Jun 2019 18:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qRwEW4To+9Vet9WyMly39lecgpipf9b/EueO2sYjm1w=;
+        b=DVETekdASMfs54APu7zxBq6Si1VkIFmkWK+gEf9ZWHs2sxE9SH640E2MLy7macJjbD
+         DadtE4nlwk95jh0rJf496K8YsoQsPr+nGrEGeoO3NobdiG198KkWiq2Rd1/j1YyG39nS
+         tttL6oJox9A+PcYmz3pXplZekTb6j50UAFnB+P0UCHp5YisJ+KmqCJ3+8xqqLP9G+XWc
+         oUPsKgLf0clSs9W4929IxEBQcrBJejwUgu9KEcnHX2zyILDpVKotZjxdAosIANxEeCTV
+         FMlW/q5jfrkwQGhN4m4qRlqpDDMGwu3Wm/heHIfgcgI0NP5maAcX7MVGDl3yR5rNwWbF
+         006A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qRwEW4To+9Vet9WyMly39lecgpipf9b/EueO2sYjm1w=;
+        b=DDGmYj+1DxTZZRmE0kMzJxNSPUVgXWp1KxQ4djwFt1abRxE54zl3zOuYTXkCvjmU9+
+         58z23qgSDaZZ66Yi06dRUGkeZPId3sQ9DFQcEXaMageA04S2zBw9ai2iDOxDGh5sML0Z
+         0ZWD6SjrolHnJ5FBPYgPhbNt/XblkPXTfekrczoFY4gzpKWam7lkOl+tisw9jDbugk5F
+         H/4HHpiU7HYRu0zE+vKEYSyemKW6O0Ls4tRSHLnQga2KJRhUVSJI0wLPdBak5F32N4LF
+         c0HXDINLGI36e4m1YD0CvWy/AOQdIeuLs6cGPlpFQWUt+q3/ICTZYLEfeqdccx0Rp8m0
+         y5xA==
+X-Gm-Message-State: APjAAAUwc7f3UOotwFElLWkcCw1XZ90FCiB9ssXvmsDR6hTXdLY7f67k
+        eHsqce4oUgNjEGJ3rwue/YIi4lCmIt9+XzEqTvc=
+X-Google-Smtp-Source: APXvYqxR0UvmySPdpUIVdaiAuxcEHnu2QQTNWDyMMm2p6X9bFwKh22s+2y3+9nlVch+Z3kMtgFfsAVdW5GWIcsLNXcQ=
+X-Received: by 2002:a5d:9d97:: with SMTP id 23mr14593214ion.204.1561770969818;
+ Fri, 28 Jun 2019 18:16:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190619222401.14942-11-sean.j.christopherson@intel.com> <960B34DE67B9E140824F1DCDEC400C0F6551877E@ORSMSX116.amr.corp.intel.com>
+ <b36d6fd0-3135-e48d-ed84-d69853bd79f1@tycho.nsa.gov> <960B34DE67B9E140824F1DCDEC400C0F6551B824@ORSMSX116.amr.corp.intel.com>
+ <99499d1a-56eb-60b0-596c-6d24e38d4757@tycho.nsa.gov> <960B34DE67B9E140824F1DCDEC400C0F6551C422@ORSMSX116.amr.corp.intel.com>
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F6551C422@ORSMSX116.amr.corp.intel.com>
+From:   Stephen Smalley <stephen.smalley@gmail.com>
+Date:   Fri, 28 Jun 2019 21:15:57 -0400
+Message-ID: <CAB9W1A1D=uDEdfSjS9DDNbThA1_HwATJN3=BcxZdXX5qMGHFrA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 10/12] security/selinux: Add enclave_load() implementation
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-CC:     "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "greg@enjellic.com" <greg@enjellic.com>,
-        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Subject: RE: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-Thread-Topic: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-Thread-Index: AQHVLG/L9SgvyZq9qEim/LcvveBd6KawhbyA//+RRaCAAIfxgP//kpmggAGW7oD//9akQA==
-Date:   Fri, 28 Jun 2019 22:29:41 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F6551C4A1@ORSMSX116.amr.corp.intel.com>
-References: <cover.1561588012.git.cedric.xing@intel.com>
- <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
- <b08798a5-65f7-f96e-1c04-39dd0e60c114@schaufler-ca.com>
- <960B34DE67B9E140824F1DCDEC400C0F6551B8D7@ORSMSX116.amr.corp.intel.com>
- <9f525db2-f46b-b4cb-c4e9-b9dbd18ed4d2@schaufler-ca.com>
- <960B34DE67B9E140824F1DCDEC400C0F6551B975@ORSMSX116.amr.corp.intel.com>
- <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com>
-In-Reply-To: <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDE3NmE0ZTctNDNhMS00NDUwLWIwOGYtYjM1ZGQwNGMxZWVmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiS25RTjRTS1ZKQTlcL1FuNnh1bEJDUTgrNTFoMkM0T3kzUGpFVTkyckU1WFRZcUF6WElhVGtkdXk0amMwYnBnS3gifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiBGcm9tOiBDYXNleSBTY2hhdWZsZXIgW21haWx0bzpjYXNleUBzY2hhdWZsZXItY2EuY29tXQ0K
-PiBTZW50OiBGcmlkYXksIEp1bmUgMjgsIDIwMTkgMTA6MjIgQU0NCj4gPg0KPiA+IEFuZCB3aGF0
-J3MgdGhlIGNvbmNlcm4gaGVyZSBpZiBpdCBiZWNvbWVzIHBhcnQgb2YgdGhlIExTTQ0KPiBpbmZy
-YXN0cnVjdHVyZS4NCj4gDQo+IFRoZSBMU00gaW5mcmFzdHJ1Y3R1cmUgcHJvdmlkZXMgYSBmcmFt
-ZXdvcmsgZm9yIGhvb2tzDQo+IGFuZCBhbGxvY2F0aW9uIG9mIGJsb2JzLiBUaGF0J3MgaXQuIEl0
-J3MgYSBsYXllciBmb3INCj4gY29ubmVjdGluZyBzeXN0ZW0gZmVhdHVyZXMgbGlrZSBWRlMsIElQ
-QyBhbmQgdGhlIElQIHN0YWNrDQo+IHRvIHRoZSBzZWN1cml0eSBtb2R1bGVzLiBJdCBkb2VzIG5v
-dCBpbXBsZW1lbnQgYW55IHBvbGljeQ0KPiBvZiBpdCdzIG93bi4gV2UgYXJlIG5vdCBnb2luZyB0
-byBpbXBsZW1lbnQgU0dYIG9yIGFueSBvdGhlcg0KPiBtZWNoYW5pc20gd2l0aGluIHRoZSBMU00g
-aW5mcmFzdHJ1Y3R1cmUuDQoNCkVNQSBkb2Vzbid0IGZvcmNlL2ltcGxlbWVudCBhbnkgcG9saWN5
-IGVpdGhlci4gSXQganVzdCBzdXBwbGVtZW50cyBWTUEuDQoNCj4gDQo+ID4+PiAgSXQgaXMgZ29p
-bmcgdG8gYmUgc2hhcmVkIGFtb25nIGFsbCBMU01zIHRoYXQgd291bGQgbGlrZSB0byB0cmFjaw0K
-PiA+PiBlbmNsYXZlIHBhZ2VzIGFuZCB0aGVpciBvcmlnaW5zLg0KPiA+Pg0KPiA+PiBUaGF0J3Mg
-dHJ1ZSBmb3IgSW5maW5pQmFuZCwgdHVuIGFuZCBzY3RwIGFzIHdlbGwuIExvb2sgYXQgdGhlaXIN
-Cj4gPj4gaW1wbGVtZW50YXRpb25zLg0KPiA+IEFzIGZhciBhcyBJIGNhbiB0ZWxsLCBJbmZpbmlC
-YW5kLCB0dW4gYW5kIHNjdHAsIGFsbCBvZiB0aGVtIHNlZW1lZA0KPiB1c2VkIGluc2lkZSBTRUxp
-bnV4IG9ubHkuDQo+IA0KPiBTbz8NCg0KU28gdGhleSBhcmUgTk9UIHNoYXJlZCBhbW9uZyBMU01z
-LCB3aGljaCBhcmUgZGlmZmVyZW50IHRoYW4gRU1BLg0KDQo+IA0KPiA+IElmIHlvdSBoYWQgYSBj
-aGFuY2UgdG8gbG9vayBhdCB2MSBvZiBteSBzZXJpZXMsIEkgc3RhcnRlZCBieSBidXJ5aW5nDQo+
-IGV2ZXJ5dGhpbmcgaW5zaWRlIFNFTGludXggdG9vLiBCdXQgU3RlcGhlbiBwb2ludGVkIG91dCBz
-dWNoIHRyYWNraW5nDQo+IHdvdWxkIGJlIG5lZWRlZCBieSBhbGwgTFNNcyBzbyBjb2RlIGR1cGxp
-Y2F0aW9uIG1pZ2h0IGJlIGEgY29uY2Vybi4gVGh1cw0KPiBJIHJlc3BvbmRlZCBieSBtb3Zpbmcg
-aXQgaW50byBMU00gaW5mcmFzdHJ1Y3R1cmUuDQo+IA0KPiBXaGF0IHlvdSBuZWVkIHRvIGRvIGlz
-IG1vdmUgYWxsIHRoZSBsc21fZW1hIGNvZGUgaW50byBpdHMgb3duDQo+IHBsYWNlICh3aGljaCBj
-b3VsZCBiZSBzZWN1cml0eS9lbmNsYXZlKS4gTWFuYWdlIHlvdXIgaW50ZXJuYWwNCj4gZGF0YSBh
-cyB5b3UgbGlrZS4gTFNNcyAoZS5nLiBTRUxpbnV4KSBjYW4gY2FsbCB5b3VyIEFQSXMgaWYNCj4g
-bmVlZGVkLiBJZiB0aGUgTFNNcyBuZWVkIHRvIHN0b3JlIFNHWCBpbmZvcm1hdGlvbiB3aXRoIHRo
-ZSBmaWxlDQo+IHN0cnVjdHVyZSB0aGV5IG5lZWQgdG8gaW5jbHVkZSB0aGF0IGluIHRoZSBzcGFj
-ZSB0aGV5IGFzayBmb3IgaW4NCj4gdGhlIGZpbGUgYmxvYi4NCg0KSSB0aG91Z2h0IHN1YmRpcmVj
-dG9yaWVzIHdlcmUgZm9yIExTTSBtb2R1bGVzLiBFTUEgaXMgbW9yZSBsaWtlIGF1ZGl0aW5nIGNv
-ZGUsIHdoaWNoIGhhcyBhIGhlYWRlciBpbiBpbmNsdWRlL2xpbnV4LyBhbmQgYW4gaW1wbGVtZW50
-YXRpb24gaW4gc2VjdXJpdHkvLiBJcyB0aGF0IHJpZ2h0Pw0KDQo+IA0KPiANCj4gPj4+IEFuZCB0
-aGV5IGNvdWxkIGJlIGV4dGVuZGVkIHRvIHN0b3JlIG1vcmUgaW5mb3JtYXRpb24gYXMgZGVlbWVk
-DQo+ID4+IGFwcHJvcHJpYXRlIGJ5IHRoZSBMU00gbW9kdWxlLg0KPiA+Pg0KPiA+PiBXaGljaCBp
-cyB3aGF0IGJsb2JzIGFyZSBmb3IsIGJ1dCB0aGF0IGRvZXMgbm90IGFwcGVhciB0byBiZSBob3cN
-Cj4gPj4geW91J3JlIHVzaW5nIGVpdGhlciB0aGUgZmlsZSBibG9iIG9yIHlvdXIgbmV3IGVtYSBi
-bG9iLg0KPiA+IEEgbHNtX2VtYV9tYXAgcG9pbnRlciBpcyBzdG9yZWQgaW4gZmlsZS0+Zl9zZWN1
-cml0eS4NCj4gDQo+IFRoYXQncyB1cCB0byB0aGUgaW5kaXZpZHVhbCBzZWN1cml0eSBtb2R1bGUg
-dG8gZGVjaWRlLg0KDQpUaGF0J3MgZG9hYmxlLiBUaGUgZHJhd2JhY2sgaXMsIGlmIHRoZXJlIGFy
-ZSBOIExTTSBtb2R1bGVzIGFjdGl2ZSwgdGhlbiB0aGUgc2FtZSBpbmZvcm1hdGlvbiB3aWxsIGJl
-IGR1cGxpY2F0ZWQgTiB0aW1lcy4gV2lsbCB0aGF0IGJlIGEgcHJvYmxlbT8NCg0KPiANCj4gPiAg
-RWFjaCBsc21fZW1hX21hcCBjb250YWlucyBhIGxpc3Qgb2YgbHNtX2VtYSBzdHJ1Y3R1cmVzLiBJ
-biBteSBsYXN0DQo+IHBhdGNoLCBTRUxpbnV4IHN0b3JlcyBhIGVtYV9zZWN1cml0eV9zdHJ1Y3Qg
-d2l0aCBldmVyeSBlbWEsIGJ5IHNldHRpbmcNCj4gc2VsaW51eF9ibG9iX3NpemVzLmxic19lbWFf
-ZGF0YSB0byBzaXplb2YoZW1hX3NlY3VyaXR5X3N0cnVjdCkuDQo+IA0KPiBZb3UgYXJlIG1hbmFn
-aW5nIHRoZSBlbWEgbWFwIGxpc3RzLiBZb3UgZG9uJ3QgbmVlZCB0aGUgTFNNDQo+IGluZnJhc3Ry
-dWN0dXJlIHRvIGRvIHRoYXQuDQo+IA0KPiA+IGVtYV9zZWN1cml0eV9zdHJ1Y3QgaXMgaW5pdGlh
-bGl6ZWQgaW4gc2VsaW51eF9lbmNsYXZlX2xvYWQoKSwgYW5kDQo+IGNoZWNrZWQgaW4gZW5jbGF2
-ZV9tcHJvdGVjdCgpLCB3aGljaCBpcyBhIHN1YnJvdXRpbmUgb2YNCj4gc2VsaW51eF9maWxlX21w
-cm90ZWN0KCkuIEJUVywgaXQgaXMgYWxsb2NlZC9mcmVlZCBhdXRvbWF0aWNhbGx5IGJ5IExTTQ0K
-PiBpbmZyYXN0cnVjdHVyZSBpbiBzZWN1cml0eV9lbmNsYXZlX2xvYWQoKS9zZWN1cml0eV9maWxl
-X2ZyZWUoKS4NCj4gDQo+IERvIHlvdSBtZWFuIHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpL3NlY3Vy
-aXR5X2VuY2xhdmVfZnJlZSgpID8NCj4gVGhlcmUgaXMgbm8gd2F5IHlvdSBjYW4gcG9zc2libHkg
-aGF2ZSBzYW5lIGJlaGF2aW9yIGlmIHlvdSdyZQ0KPiBhbGxvY2F0aW9uIGFuZCBmcmVlIGFyZW4n
-dCB0aWVkIHRvIHRoZSBzYW1lIGJsb2IuDQoNClRoZXJlJ3Mgbm8gc2VjdXJpdHlfKmVuY2xhdmUq
-X2ZyZWUoKS4gbHNtX2VtYV9tYXAgaXMgYWxsb2NhdGVkIG9ubHkgZm9yIGVuY2xhdmVzLiBCdXQg
-TFNNIGRvZXNuJ3Qga25vdyB3aGljaCBmaWxlIGlzIGFuIGVuY2xhdmUsIHNvIHRoZSBhbGxvY2F0
-aW9uIGlzIGRlZmVycmVkIHVudGlsIHRoZSBmaXJzdCBzZWN1cml0eV9lbmNsYXZlX2xvYWQoKS4g
-c2VjdXJpdHlfZmlsZV9mcmVlKCkgZnJlZXMgdGhlIG1hcCBpZiBpdCBpc24ndCBOVUxMLg0KDQo+
-IA0KPiA+Pj4gIFRoZSBsYXN0IHBhdGNoIG9mIHRoaXMgc2VyaWVzIHNob3dzIGhvdyB0byBleHRl
-bmQgRU1BIGluc2lkZQ0KPiBTRUxpbnV4Lg0KPiA+PiBJIGRvbid0IHNlZSAoYnV0IEkgYWRtaXQg
-dGhlIGNvZGUgZG9lc24ndCBtYWtlIGEgbG90IG9mIHNlbnNlIHRvIG1lKQ0KPiA+PiBhbnl0aGlu
-ZyB5b3UgY291bGRuJ3QgZG8gaW4gdGhlIFNFTGludXggY29kZSBieSBhZGRpbmcgZGF0YSB0byB0
-aGUNCj4gPj4gZmlsZSBibG9iLiBUaGUgZGF0YSB5b3UncmUgYWRkaW5nIHRvIHRoZSBMU00gaW5m
-cmFzdHJ1Y3R1cmUgZG9lc24ndA0KPiA+PiBiZWxvbmcgdGhlcmUsIGFuZCBpdCBkb2Vzbid0IG5l
-ZWQgdG8gYmUgdGhlcmUuDQo+ID4gWW91IGFyZSBjb3JyZWN0LiBNeSB2MSBkaWQgaXQgaW5zaWRl
-IFNFTGludXguDQo+ID4NCj4gPiBUaGUga2V5IHF1ZXN0aW9uIEkgdGhpbmsgaXMgd2hldGhlciBv
-bmx5IFNFTGludXggbmVlZHMgaXQsIG9yIGFsbCBMU01zDQo+IG5lZWQgaXQuIFN0ZXBoZW4gdGhv
-dWdodCBpdCB3YXMgdGhlIGxhdHRlciAoYW5kIEkgYWdyZWUgd2l0aCBoaW0pIHNvIEkNCj4gbW92
-ZWQgaXQgaW50byB0aGUgTFNNIGluZnJhc3RydWN0dXJlIHRvIGJlIHNoYXJlZCwganVzdCBsaWtl
-IHRoZQ0KPiBhdWRpdGluZyBjb2RlLg0KPiANCj4gWW91IGFyZSBib3RoIHJpZ2h0IHRoYXQgaXQg
-ZG9lc24ndCBiZWxvbmcgaW4gdGhlIFNFTGludXggY29kZS4NCj4gSXQgYWxzbyBkb2Vzbid0IGJl
-bG9uZyBhcyBwYXJ0IG9mIHRoZSBMU00gaW5mcmFzdHJ1Y3R1cmUuDQoNClRoZW4gd2hhdCBpcyB5
-b3VyIHN1Z2dlc3Rpb24/IA0KDQpJcyB0aGUgY29kZSBpbiBzZWN1cml0eV9lbmNsYXZlX2xvYWQo
-KS9zZWN1cml0eV9maWxlX2ZyZWUoKSB0aGF0IGJvdGhlcnMgeW91PyBCZWNhdXNlIHlvdSB0aGlu
-ayB0aGV5IHNob3VsZG4ndCBkbyBhbnl0aGluZyBtb3JlIHRoYW4ganVzdCBhIHNpbmdsZSBsaW5l
-IG9mIGNhbGxfaW50L3ZvaWRfaG9va3MoKT8NCg0KPiANCj4gPj4+PiBOb3QgYWNjZXB0YWJsZSBm
-b3IgdGhlIExTTSBpbmZyYXN0cnVjdHVyZS4gVGhleQ0KPiA+Pj4+IGFyZSBpbmNvbnNpc3RlbnQg
-d2l0aCB0aGUgd2F5IGRhdGEgaXMgdXNlZCB0aGVyZS4NCj4gPj4+IEknbSBub3Qgc3VyZSBJIHVu
-ZGVyc3RhbmQgdGhpcyBjb21tZW50Lg0KPiA+PiBJdCBtZWFucyB0aGF0IHlvdXIgZGVmaW5pdGlv
-biBhbmQgdXNlIG9mIHRoZSBsc21fZW1hX2Jsb2INCj4gPj4gZG9lcyBub3QgbWF0Y2ggdGhlIHdh
-eSBvdGhlciBibG9icyBhcmUgbWFuYWdlZCBhbmQgdXNlZC4NCj4gPj4gVGhlIExTTSBpbmZyYXN0
-cnVjdHVyZSB1c2VzIHRoZXNlIGVudHJpZXMgaW4gYSB2ZXJ5IHBhcnRpY3VsYXINCj4gPj4gd2F5
-LCBhbmQgeW91J3JlIHRyeWluZyB0byB1c2UgaXQgZGlmZmVyZW50bHkuIFlvdXIgbWlnaHQgYmUN
-Cj4gPj4gYWJsZSB0byBjaGFuZ2UgdGhlIHJlc3Qgb2YgdGhlIGVuY2xhdmUgc3lzdGVtIHRvIHVz
-ZSBpdA0KPiA+PiBjb3JyZWN0bHksIG9yIHlvdSBtaWdodCBiZSBhYmxlIHRvIGZpbmQgYSBkaWZm
-ZXJlbnQgcGxhY2UNCj4gPj4gZm9yIGl0Lg0KPiA+IEknbSBzdGlsbCBub3Qgc3VyZSB3aHkgeW91
-IHRoaW5rIHRoaXMgKGxic19lbWFfZGF0YSkgaXMgaW5jb25zaXN0ZW50DQo+IHdpdGggb3RoZXIg
-YmxvYnMuDQo+ID4NCj4gPiBTYW1lIGFzIGFsbCBvdGhlciBibG9icywgYW4gTFNNIHJlcXVlc3Rz
-IGl0IGJ5IHN0b3JpbmcgdGhlIG5lZWRlZCBzaXplDQo+IGluIGl0LCBhbmQgaXMgYXNzaWduZWQg
-YW4gb2Zmc2V0LCBhbmQgdGhlIGJ1ZmZlciBpcyBhbGxvY2F0ZWQvZnJlZWQgYnkNCj4gdGhlIGlu
-ZnJhc3RydWN0dXJlLiBBbSBJIG1pc3NpbmcgYW55dGhpbmc/DQo+IA0KPiBZZXMuIEFzaWRlIGZy
-b20gYWxsb2NhdGlvbiBhbmQgZGVsZXRpb24gdGhlIGluZnJhc3RydWN0dXJlIGRvZXMNCj4gbm90
-aGluZyB3aXRoIHRoZSBibG9icy4gVGhlIGJsb2JzIGFyZSB1c2VkIG9ubHkgYnkgdGhlIHNlY3Vy
-aXR5DQo+IG1vZHVsZXMuIEFsbCBvdGhlciBkYXRhIGlzIG1haW50YWluZWQgYW5kIHVzZWQgZWxz
-ZXdoZXJlLiBTR1gNCj4gc3BlY2lmaWMgZGF0YSBuZWVkcyB0byBtZSBtYWludGFpbmVkIGFuZCBt
-YW5hZ2VkIGVsc2V3aGVyZS4NCj4gDQo+ID4+PiBBcyBJIHN0YXRlZCBpbiB0aGUgY292ZXIgbGV0
-dGVyLCB0aGUgcHJpbWFyeSBxdWVzdGlvbiBpcyBob3cgdG8NCj4gPj4gcHJldmVudCBTR1ggZnJv
-bSBiZWluZyBhYnVzZWQgYXMgYSBiYWNrZG9vciB0byBtYWtlIGV4ZWN1dGFibGUgcGFnZXMNCj4g
-Pj4gdGhhdCB3b3VsZCBvdGhlcndpc2Ugbm90IGJlIGV4ZWN1dGFibGUgd2l0aG91dCBTR1guIEFu
-eSBMU00gbW9kdWxlDQo+ID4+IHVuYXdhcmUgb2YgdGhhdCB3b3VsZCBsZWF2ZSB0aGF0ICJob2xl
-IiBvcGVuLiBTbyB0cmFja2luZyBlbmNsYXZlDQo+IHBhZ2VzDQo+ID4+IHdpbGwgYmVjb21lIGEg
-Y29tbW9uIHRhc2sgZm9yIGFsbCBMU01zIHRoYXQgY2FyZSBwYWdlIHByb3RlY3Rpb25zLA0KPiBh
-bmQNCj4gPj4gdGhhdCdzIHdoeSBJIHBsYWNlIGl0IGluc2lkZSBMU00gaW5mcmFzdHJ1Y3R1cmUu
-DQo+ID4+DQo+ID4+IFBhZ2UgcHJvdGVjdGlvbnMgYXJlIGFuIGltcG9ydGFudCBwYXJ0IG9mIG1h
-bnkgc2VjdXJpdHkgZmVhdHVyZXMsDQo+ID4+IGJ1dCB0aGF0J3MgYmVzaWRlIHRoZSBwb2ludC4g
-VGhlIExTTSBzeXN0ZW0gcHJvdmlkZXMgbWVjaGFuaXNtIGZvcg0KPiA+PiBwcm92aWRpbmcgYWRk
-aXRpb25hbCByZXN0cmljdGlvbnMgdG8gZXhpc3Rpbmcgc2VjdXJpdHkgbWVjaGFuaXNtcy4NCj4g
-Pj4gRmlyc3QsIHlvdSBjcmVhdGUgdGhlIHNlY3VyaXR5IG1lY2hhbmlzbSAoZS5nLiBlbmNsYXZl
-cykgdGhlbiB5b3UNCj4gPj4gYWRkIExTTSBob29rcyBzbyB0aGF0IHNlY3VyaXR5IG1vZHVsZXMg
-KGUuZy4gU0VMaW51eCkgY2FuIGFwcGx5DQo+ID4+IHRoZWlyIG93biBwb2xpY2llcyBpbiBhZGRp
-dGlvbi4gSW4gc3VwcG9ydCBvZiB0aGlzLCB0aGUgTFNNIGJsb2INCj4gPj4gbWVjaGFuaXNtIGFs
-bG93cyBzZWN1cml0eSBtb2R1bGVzIHRvIG1haW50YWluIHRoZWlyIG93biBpbmZvcm1hdGlvbg0K
-PiA+PiBhYm91dCB0aGUgc3lzdGVtIGNvbXBvbmVudHMgKGUuZy4gZmlsZSwgaW5vZGUsIGNyZWQs
-IHRhc2spIHRoZXkNCj4gPj4gY2FyZSBhYm91dC4gVGhlIExTTSBpbmZyYXN0cnVjdHVyZSBkb2Vz
-IG5vdCBpdHNlbGYgcHJvdmlkZSBvcg0KPiA+PiBzdXBwb3J0IHNlY3VyaXR5IGRhdGEgb3IgcG9s
-aWN5LiBUaGF0J3Mgc3RyaWN0bHkgZm9yIHRoZSBtb2R1bGVzDQo+ID4+IHRvIGRvLg0KPiA+IEFn
-cmVlZCENCj4gPg0KPiA+IEVNQSBkb2Vzbid0IGRpY3RhdGUgcG9saWNpZXMgZm9yIHN1cmUuIElz
-IGl0IGNvbnNpZGVyZWQgInNlY3VyaXR5DQo+IGRhdGEiPyBJJ20gbm90IHN1cmUgdGhlIGRlZmlu
-aXRpb24gb2YgInNlY3VyaXR5IGRhdGEiIGhlcmUuIEl0IGRvZXMNCj4gc3RvcmUgc29tZSAiZGF0
-YSIsIHNvbWV0aGluZyB0aGF0IG11bHRpcGxlIExTTSBtb2R1bGVzIHdvdWxkIG5lZWQgdG8NCj4g
-ZHVwbGljYXRlIGlmIG5vdCBwdWxsZWQgaW50byBhIGNvbW1vbiBwbGFjZS4gSXQgaXMgbWVhbnQg
-dG8gYmUgYQ0KPiAiaGVscGVyIiBkYXRhIHN0cnVjdHVyZSwganVzdCBsaWtlIHRoZSBhdWRpdGlu
-ZyBjb2RlLg0KPiANCj4gR29vZCBleGFtcGxlLiBZb3UnbGwgc2VlIHRoYXQgdGhlcmUgaXMgbm8g
-YXVkaXQgY29kZSBpbiB0aGUNCj4gTFNNIGluZnJhc3RydWN0dXJlLiBOb25lLiBObyBhdWRpdCBk
-YXRhLCBlaXRoZXIuIEl0J3MgYWxsIHRha2VuDQo+IGNhcmUgb2YgaW4gdGhlIGF1ZGl0IHN5c3Rl
-bS4gDQoNCkRpZCB5b3UgbWVhbiBzZWN1cml0eS9zZWN1cml0eS5jIGRpZG4ndCBjYWxsIGludG8g
-YW55IGF1ZGl0IGZ1bmN0aW9ucz8gbHNtX2F1ZGl0LmMgaXMgbG9jYXRlZCBpbiBzZWN1cml0eS8g
-YW5kIGl0cyBoZWFkZXIgaW4gaW5jbHVkZS9saW51eC8gYnV0IHlvdSBkb24ndCBoYXZlIGEgcHJv
-YmxlbSB3aXRoIHRoZW0uIEFtIEkgcmlnaHQ/DQoNCklJVUMsIHlvdSB3YW50IG1lIHRvIHBhY2sg
-d2hhdGV2ZXIgaW5zaWRlIHNlY3VyaXR5X2VuY2xhdmVfbG9hZCgpL3NlY3VyaXR5X2ZpbGVfZnJl
-ZSgpIGludG8gc29tZSBBUElzIHRvIGJlIGNhbGxlZCBieSBpbmRpdmlkdWFsIExTTSBtb2R1bGVz
-LiBCdXQgaWYgeW91IGNhbiBwYXkgYSBiaXQgbW9yZSBhdHRlbnRpb24gdG8gdGhlIGNvZGUsIGFu
-IEVNQSBjYW4gYmUgaW5zZXJ0ZWQgdG8gdGhlIG1hcCBvbmx5IGFmdGVyICphbGwqIExTTSBtb2R1
-bGVzIGhhdmUgYXBwcm92ZWQgaXQuIFNvIGlmIGl0IGlzIHNwcmVhZCBpbnRvIGluZGl2aWR1YWwg
-TFNNcyBhbmQgaWYgdGhlcmUgYXJlIG11bHRpcGxlIGFjdGl2ZSBMU01zLCB0aGVyZSBjb3VsZCBi
-ZSBpbmNvbnNpc3RlbmNlIGFtb25nIExTTXMgaWYgdGhleSBlYWNoIG1haW50YWlucyBpdHMgb3du
-IG1hcCBhbmQgbWFrZXMgZGlmZmVyZW50IGRlY2lzaW9ucyBvbiB0aGUgc2FtZSBFTUEgYXQgZW5j
-bGF2ZV9sb2FkKCkuIEknbSBub3Qgc2F5aW5nIHRoYXQncyB1bnJlc29sdmFibGUgYnV0IGRlZmlu
-aXRlbHkgbW9yZSBlcnJvciBwcm9uZSwgYmVzaWRlcyB3YXN0aW5nIG1lbW9yeS4gT3IgZG8geW91
-IGhhdmUgYW55IHByYWN0aWNhbCBzdWdnZXN0aW9ucz8gDQo=
+On Fri, Jun 28, 2019 at 5:20 PM Xing, Cedric <cedric.xing@intel.com> wrote:
+>
+> > From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
+> > owner@vger.kernel.org] On Behalf Of Stephen Smalley
+> > Sent: Friday, June 28, 2019 9:17 AM
+> >
+> > FWIW, adding new permissions only requires updating policy configuratio=
+n,
+> > not userspace code/tools.  But in any event, we can reuse the execute-
+> > related permissions if it makes sense but still consider introducing
+> > additional, new permissions, possibly in a separate "enclave" security
+> > class, if we want explicit control over enclave loading, e.g.
+> > ENCLAVE__LOAD, ENCLAVE__INIT, etc.
+>
+> I'm not so familiar with SELinux tools so my apology in advance if I end =
+up mixing up things.
+>
+> I'm not only talking about the new permissions, but also how to apply the=
+m to enclave files. Intel SGX SDK packages enclaves as .so files, and I gue=
+ss that's the most straight forward way that most others would do. So if di=
+fferent permissions are defined, then user mode tools would have to disting=
+uish enclaves from regular .so files in order to grant them different permi=
+ssions. Would that be something extra to existing tools?
+
+It doesn't require any userspace code changes.  It is just a matter of
+defining some configuration data in the policy for the new
+permissions, one or more security labels (tags) for the SGX .so files,
+and rules allowing access where desired, and then setting those
+security labels on the SGX .so files (via the security.selinux
+extended attribute on the files).  Even the last part is generally
+handled by updating a configuration specifying how files should be
+labeled and then rpm automatically labels the files when created, or
+you can manually restorecon them. If the new permissions are defined
+in their own security class rather than reusing existing ones, then
+they can even be defined entirely via a local or third party policy
+module separate from the distro policy if desired/needed.
+
+>
+> >
+> > One residual concern I have with the reuse of FILE__EXECUTE is using it
+> > for the sigstruct file as the fallback case.  If the sigstruct is alway=
+s
+> > part of the same file as the code, then it probably doesn't matter.  Bu=
+t
+> > otherwise, it is somewhat odd to have to allow the host process to
+> > execute from the sigstruct file if it is only data (the signature).
+>
+> I agree with you. But do you think it a practical problem today? As far a=
+s I know, no one is deploying sigstructs in dedicated files. I'm just tryin=
+g to touch as few things as possible until there's definitely a need to do =
+so.
+
+I don't know, and it wasn't clear to me from the earlier discussions.
+If not and if it is acceptable to require them to be in files in the
+first place, then perhaps it isn't necessary.
