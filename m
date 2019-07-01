@@ -2,132 +2,135 @@ Return-Path: <SRS0=btop=U6=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E39FC0650E
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Jul 2019 17:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1A2C0650E
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Jul 2019 17:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4162146F
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Jul 2019 17:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562003639;
-	bh=ch7eOSgWD0jMKDrhWGJYm6JgKNYyQgaHBKN7b7GZLWQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=dulGKaE+6aebBic8xBCTn00/0l6xo31+KZTQolVuXli5/h250x5g+xQjXCc7Dv3gO
-	 8JgowOhTzwVPgjDk3L5f4weeUufQXdf414wtde/Hlh28fQ9SnSJuS77xNpd6ecZL8d
-	 40nW+om6prfiPPqMOPfCqNMz2QcligO2Sb4sZwHU=
+	by mail.kernel.org (Postfix) with ESMTP id BFCCC2146F
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Jul 2019 17:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbfGARx7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Jul 2019 13:53:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57856 "EHLO mail.kernel.org"
+        id S1729828AbfGAR5n (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Jul 2019 13:57:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:39628 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728148AbfGARx7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Jul 2019 13:53:59 -0400
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C7521841
-        for <linux-sgx@vger.kernel.org>; Mon,  1 Jul 2019 17:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562003638;
-        bh=ch7eOSgWD0jMKDrhWGJYm6JgKNYyQgaHBKN7b7GZLWQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=R2E8ihjYKf8Or/Kf1Ubv0uk+qmlr6i9AG5Ovy7mKcv0wlnakcALGDrAizdSlac8GR
-         dbPOSiEbkepWs/wzw8vsg0rMym9oXEn0LaSTvnxQMAXP7RxsW4xeaIchxEpbGwxnUb
-         C7T55nYiOLHpztz4vQCtvCrpAKS2yil00NPS+lYs=
-Received: by mail-wm1-f47.google.com with SMTP id a15so376848wmj.5
-        for <linux-sgx@vger.kernel.org>; Mon, 01 Jul 2019 10:53:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAW4BWMDkiEfWbcpBaBwOpdhV3XJqv+GFYG7Y6ljT9z/VOnPqMkN
-        S43DLZYE03UvAHgWazz6esCpuN0yj4H6++aFBo7IHw==
-X-Google-Smtp-Source: APXvYqwXNA1G7G0DBHKKIQjryo6GeIlnfjN637NQ3mc547Q5zLsZcGNFiEx/XiuKDVDS7V3cG9qpYra5xmkYWqZYgfI=
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr341083wmi.0.1562003637068;
- Mon, 01 Jul 2019 10:53:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190619222401.14942-11-sean.j.christopherson@intel.com> <960B34DE67B9E140824F1DCDEC400C0F6551877E@ORSMSX116.amr.corp.intel.com>
- <b36d6fd0-3135-e48d-ed84-d69853bd79f1@tycho.nsa.gov> <CALCETrWPzSaFUWi4q4Vq_0RrtNMFZAKkwKkya=p6cfB50x2tMQ@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F6551D558@ORSMSX116.amr.corp.intel.com>
-In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F6551D558@ORSMSX116.amr.corp.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 1 Jul 2019 10:53:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrXjq9JNjXZo3Va83Ca7fiAJx7ZM9VRWYebzpyH6ug0cKg@mail.gmail.com>
-Message-ID: <CALCETrXjq9JNjXZo3Va83Ca7fiAJx7ZM9VRWYebzpyH6ug0cKg@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 10/12] security/selinux: Add enclave_load() implementation
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        id S1727130AbfGAR5n (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jul 2019 13:57:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jul 2019 10:57:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,440,1557212400"; 
+   d="scan'208";a="362342925"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by fmsmga006.fm.intel.com with ESMTP; 01 Jul 2019 10:57:41 -0700
+Received: from orsmsx126.amr.corp.intel.com (10.22.240.126) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 1 Jul 2019 10:57:41 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.97]) by
+ ORSMSX126.amr.corp.intel.com ([169.254.4.136]) with mapi id 14.03.0439.000;
+ Mon, 1 Jul 2019 10:57:40 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <stephen.smalley@gmail.com>
+CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "greg@enjellic.com" <greg@enjellic.com>,
+        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Subject: RE: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+Thread-Topic: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+Thread-Index: AQHVLG/L9SgvyZq9qEim/LcvveBd6KawhbyA//+RRaCAAIfxgP//kpmggAGW7oCAAIp0gIABTq0AgAJvZOA=
+Date:   Mon, 1 Jul 2019 17:57:40 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com>
+References: <cover.1561588012.git.cedric.xing@intel.com>
+ <72420cff8fa944b64e57df8d25c63bd30f8aacfa.1561588012.git.cedric.xing@intel.com>
+ <b08798a5-65f7-f96e-1c04-39dd0e60c114@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551B8D7@ORSMSX116.amr.corp.intel.com>
+ <9f525db2-f46b-b4cb-c4e9-b9dbd18ed4d2@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551B975@ORSMSX116.amr.corp.intel.com>
+ <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com>
+ <CAB9W1A1RpM_9D_49E1VauuKE1tL=TyfeATomv47HX4FONnjA4A@mail.gmail.com>
+ <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com>
+In-Reply-To: <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWNhYmQ1YmMtZjYxZS00YmM0LTk4ZTEtYWNhNDUzMzA5NWIxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQThNVG5oXC9PdDJjQXVyRFZiVHdleDVSRUFnRWl3RlZVVVMwZDM0UlwvbXVQbE5nMU4rXC8wYm8ra29xeFpCUEo1VyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 10:46 AM Xing, Cedric <cedric.xing@intel.com> wrote:
->
-> > From: Andy Lutomirski [mailto:luto@kernel.org]
-> > Sent: Saturday, June 29, 2019 4:42 PM
-> >
-> > On Tue, Jun 25, 2019 at 2:09 PM Stephen Smalley <sds@tycho.nsa.gov>
-> > wrote:
-> > >
-> > > On 6/21/19 5:22 PM, Xing, Cedric wrote:
-> > > >> From: Christopherson, Sean J
-> > > >> Sent: Wednesday, June 19, 2019 3:24 PM
-> > > >>
-> > > >> Intended use of each permission:
-> > > >>
-> > > >>    - SGX_EXECDIRTY: dynamically load code within the enclave itsel=
-f
-> > > >>    - SGX_EXECUNMR: load unmeasured code into the enclave, e.g.
-> > > >> Graphene
-> > > >
-> > > > Why does it matter whether a code page is measured or not?
-> > >
-> > > It won't be incorporated into an attestation?
-> > >
-> >
-> > Also, if there is, in parallel, a policy that limits the set of enclave
-> > SIGSTRUCTs that are accepted, requiring all code be measured makes it
-> > harder to subvert by writing incompetent or maliciously incompetent
-> > enclaves.
->
-> As analyzed in my reply to one of Stephen's comments, no executable page =
-shall be "enclave only" as enclaves have access to host's memory, so if an =
-executable page in regular memory is considered posting a threat to the pro=
-cess, it should be considered posting the same threat inside an enclave as =
-well.
-
-Huh?  The SDM (37.3 in whateve version I'm reading) says "Code fetches
-from inside an enclave to a linear address outside that enclave result
-in a #GP(0) exception."  Enclaves execute enclave code only.
-
-In any event, I believe we're discussing taking readable memory from
-outside the enclave and copying it to an executable code inside the
-enclave.
-
->
-> That said, every executable enclave page should have an executable source=
- page (doesn=E2=80=99t have to executable, as long as mprotect(X) would suc=
-ceed on it, as shown in my patch)
-
-Does Sean's series require this?  I think that, if we can get away
-with it, it's a lot nicer to *not* require user code to map the source
-pages PROT_EXEC.  Some policy may check that it's VM_MAYEXEC or check
-some other attribute of the VMA, but actually requiring PROT_EXEC
-seems like we're weakening existing hardening measures to enforce a
-policy, which is a mistake.
+PiBGcm9tOiBsaW51eC1zZ3gtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtc2d4
+LQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBDYXNleSBTY2hhdWZsZXIN
+Cj4gDQo+IE9uIDYvMjgvMjAxOSA2OjM3IFBNLCBTdGVwaGVuIFNtYWxsZXkgd3JvdGU6DQo+ID4g
+T24gRnJpLCBKdW4gMjgsIDIwMTkgYXQgMToyMiBQTSBDYXNleSBTY2hhdWZsZXIgPGNhc2V5QHNj
+aGF1Zmxlci0NCj4gY2EuY29tPiB3cm90ZToNCj4gPj4gT24gNi8yNy8yMDE5IDU6NDcgUE0sIFhp
+bmcsIENlZHJpYyB3cm90ZToNCj4gPj4+PiBGcm9tOiBDYXNleSBTY2hhdWZsZXIgW21haWx0bzpj
+YXNleUBzY2hhdWZsZXItY2EuY29tXQ0KPiA+Pj4+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDI3LCAy
+MDE5IDQ6MzcgUE0NCj4gPj4+Pj4+IFRoaXMgY29kZSBzaG91bGQgbm90IGJlIG1peGVkIGluIHdp
+dGggdGhlIExTTSBpbmZyYXN0cnVjdHVyZS4NCj4gPj4+Pj4+IEl0IHNob3VsZCBhbGwgYmUgY29u
+dGFpbmVkIGluIGl0cyBvd24gbW9kdWxlLCB1bmRlcg0KPiBzZWN1cml0eS9lbmNsYXZlLg0KPiA+
+Pj4+PiBsc21fZW1hIGlzICppbnRlbmRlZCogdG8gYmUgcGFydCBvZiB0aGUgTFNNIGluZnJhc3Ry
+dWN0dXJlLg0KPiA+Pj4+IFRoYXQncyBub3QgZ29pbmcgdG8gZmx5LCBub3QgZm9yIGEgbWludXRl
+Lg0KPiA+Pj4gV2h5IG5vdCwgaWYgdGhlcmUncyBhIG5lZWQgZm9yIGl0Pw0KPiA+Pj4NCj4gPj4+
+IEFuZCB3aGF0J3MgdGhlIGNvbmNlcm4gaGVyZSBpZiBpdCBiZWNvbWVzIHBhcnQgb2YgdGhlIExT
+TQ0KPiBpbmZyYXN0cnVjdHVyZS4NCj4gPj4gVGhlIExTTSBpbmZyYXN0cnVjdHVyZSBwcm92aWRl
+cyBhIGZyYW1ld29yayBmb3IgaG9va3MgYW5kIGFsbG9jYXRpb24NCj4gPj4gb2YgYmxvYnMuIFRo
+YXQncyBpdC4gSXQncyBhIGxheWVyIGZvciBjb25uZWN0aW5nIHN5c3RlbSBmZWF0dXJlcyBsaWtl
+DQo+ID4+IFZGUywgSVBDIGFuZCB0aGUgSVAgc3RhY2sgdG8gdGhlIHNlY3VyaXR5IG1vZHVsZXMu
+IEl0IGRvZXMgbm90DQo+ID4+IGltcGxlbWVudCBhbnkgcG9saWN5IG9mIGl0J3Mgb3duLiBXZSBh
+cmUgbm90IGdvaW5nIHRvIGltcGxlbWVudCBTR1gNCj4gPj4gb3IgYW55IG90aGVyIG1lY2hhbmlz
+bSB3aXRoaW4gdGhlIExTTSBpbmZyYXN0cnVjdHVyZS4NCj4gPiBJIGRvbid0IHRoaW5rIHlvdSB1
+bmRlcnN0YW5kIHRoZSBwdXJwb3NlIG9mIHRoaXMgY29kZS4gIEl0IGlzbid0DQo+ID4gaW1wbGVt
+ZW50aW5nIFNHWCwgbm9yIGlzIGl0IG5lZWRlZCBieSBTR1guDQo+ID4gSXQgaXMgcHJvdmlkaW5n
+IHNoYXJlZCBpbmZyYXN0cnVjdHVyZSBmb3Igc2VjdXJpdHkgbW9kdWxlcywgc2ltaWxhciB0bw0K
+PiA+IGxzbV9hdWRpdC5jLCBzbyB0aGF0IHNlY3VyaXR5IG1vZHVsZXMgY2FuIGVuZm9yY2UgV15Y
+IG9yIHNpbWlsYXINCj4gPiBtZW1vcnkgcHJvdGVjdGlvbiBndWFyYW50ZWVzIGZvciBTR1ggZW5j
+bGF2ZSBtZW1vcnksIHdoaWNoIGhhcyB1bmlxdWUNCj4gPiBwcm9wZXJ0aWVzIHRoYXQgcmVuZGVy
+IHRoZSBleGlzdGluZyBtbWFwIGFuZCBtcHJvdGVjdCBob29rcw0KPiA+IGluc3VmZmljaWVudC4g
+VGhleSBjYW4gY2VydGFpbmx5IGltcGxlbWVudCBpdCBvbmx5IGZvciBTRUxpbnV4LCBidXQNCj4g
+PiB0aGVuIGFueSBvdGhlciBzZWN1cml0eSBtb2R1bGUgdGhhdCB3YW50cyB0byBwcm92aWRlIHN1
+Y2ggZ3VhcmFudGVlcw0KPiA+IHdpbGwgaGF2ZSB0byByZXBsaWNhdGUgdGhhdCBjb2RlLg0KPiAN
+Cj4gSSBhbSBub3Qgb2JqZWN0aW5nIHRvIHRoZSBwdXJwb3NlIG9mIHRoZSBjb2RlLg0KPiBJICph
+bSogb2JqZWN0aW5nIHRvIGNhbGxpbmcgaXQgcGFydCBvZiB0aGUgTFNNIGluZnJhc3RydWN0dXJl
+Lg0KPiBJdCBuZWVkcyB0byBiZSBpdCdzIG93biB0aGluZywgb2ZmIHNvbWV3aGVyZSBlbHNlLg0K
+PiBJdCBtdXN0IG5vdCB1c2UgdGhlIGxzbV8gcHJlZml4LiBUaGF0J3MgbmFtZXNwYWNlIHBvbGx1
+dGlvbi4NCj4gVGhlIGNvZGUgbXVzdCBub3QgYmUgZW1iZWRkZWQgaW4gdGhlIExTTSBpbmZyYXN0
+cnVjdHVyZSBjb2RlLCB0aGF0DQo+IGJyZWFrcyB3aXRoIGhvdyBldmVyeXRoaW5nIGVsc2Ugd29y
+a3MuDQoNCklmIHlvdSB1bmRlcnN0YW5kIHRoZSBwdXJwb3NlLCB0aGVuIHdoeSBhcmUgeW91IG9i
+amVjdGluZyB0aGUgbHNtXyBwcmVmaXggYXMgdGhleSBhcmUgQVBJcyB0byBiZSB1c2VkIGJ5IGFs
+bCBMU00gbW9kdWxlcz8gT3Igd2hhdCBzaG91bGQgYmUgdGhlIHByZWZpeCBpbiB5b3VyIG1pbmQ/
+IE9yIHdoYXQga2luZCBvZiBBUElzIGRvIHlvdSB0aGluayBjYW4gcXVhbGlmeSB0aGUgbHNtXyBw
+cmVmaXg/DQoNCkFuZCBJJ2QgbGlrZSB0byBjbGFyaWZ5IHRoYXQgaXQgZG9lc24ndCBicmVhayBh
+bnl0aGluZywgYnV0IGlzIGp1c3QgYSBiaXQgZGlmZmVyZW50LCBpbiB0aGF0IHNlY3VyaXR5X2Vu
+Y2xhdmVfbG9hZCgpIGFuZCBzZWN1cml0eV9maWxlX2ZyZWUoKSBjYWxsIGludG8gdGhvc2UgQVBJ
+cy4gQnV0IHRoZXJlJ3MgYSBuZWVkIGZvciB0aGVtIGJlY2F1c2Ugb3RoZXJ3aXNlIGNvZGUvZGF0
+YSB3b3VsZCBoYXZlIHRvIGJlIGR1cGxpY2F0ZWQgYW1vbmcgTFNNcyBhbmQgdGhlIGxvZ2ljIHdv
+dWxkIGJlIGhhcmRlciB0byBjb21wcmVoZW5kLiBTbyB0aGF0J3MgYSB0cmFkZS1vZmYuIFRoZW4g
+d2hhdCdzIHRoZSBwcmFjdGljYWwgZHJhd2JhY2sgb2YgZG9pbmcgdGhhdD8gSWYgbm8sIHdoeSB3
+b3VsZCB3ZSB3YW50IHRvIHBheSBmb3IgdGhlIGNvc3QgZm9yIG5vdCBkb2luZyB0aGF0Pw0KDQo+
+IA0KPiAuLi4gYW5kIHRoZSBub3Rpb24gdGhhdCB5b3UgYWxsb2NhdGUgZGF0YSBmb3Igb25lIGJs
+b2IgdGhhdCBnZXRzIGZyZWVkDQo+IHJlbGF0aXZlIHRvIGFub3RoZXIgYnJlYWtzIHRoZSBkYXRh
+IG1hbmFnZW1lbnQgbW9kZWwuDQoNCldoYXQgZG8geW91IG1lYW4gaGVyZT8NCg0KRU1BIGJsb2Jz
+IGFyZSBhbGxvY2F0ZWQvZnJlZWQgKm5vdCogcmVsYXRpdmUgdG8gYW55IG90aGVyIGJsb2JzLg0K
