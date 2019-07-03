@@ -2,31 +2,48 @@ Return-Path: <SRS0=3ZKM=VA=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB4BC06513
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Jul 2019 09:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D626C0650E
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Jul 2019 15:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2FB218A3
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Jul 2019 09:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F01322184C
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Jul 2019 15:32:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jhXOAUCU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfGCJr0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Jul 2019 05:47:26 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:37002 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbfGCJr0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:47:26 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x639krAT029727;
-        Wed, 3 Jul 2019 04:46:53 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x639kp8l029726;
-        Wed, 3 Jul 2019 04:46:51 -0500
-Date:   Wed, 3 Jul 2019 04:46:51 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
+        id S1726574AbfGCPcQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Jul 2019 11:32:16 -0400
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:46479
+        "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726490AbfGCPcQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Jul 2019 11:32:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1562167934; bh=gPn3VR+vKmnih+Fq7XlDCGPdcyZngRl1EEGOKVxMZus=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jhXOAUCUmoNICFnimugBLOaeA46nbwjG62DYNnz8HUKT9Hh9+HH21Tnr1w6CD/Ubsdi5Uo5Ds61SZnn1ly533xBNvBPlOXEO+8oxQbpfWo7RO6uaoHeG2vEvedBQsN99vhIIsQzaGxQxXwExd6kZ6sIFCSzkn3p89N+UirjJnSCc7UYiPMxmIHMlZyxPqnCNroSh9DHjEuzawOYt1lTHzhiCBySlBeA0mSH2/GIksDcxabxd+R4nofgXnjx7uBu9DLb8BP2j7t7msjXx3aLlnfz1vXui1lDsaNM+x36a2nu+6uXmFXH4QEnLbw+3aWTJPYV4NhcfDX0gwtBA9i+IJg==
+X-YMail-OSG: QRBsUiwVM1mI4u5qvdJRjoB68UCarYbPNDRQ_IKI5p2VrmmxhQPKxAgM8ZH33le
+ Hb.OovnLp.GoI1OlZEKhCBlxl8vMX4eiFjN9RdBisKdhRrLsakQIIgblo_bWwSRlXnbCKTmgy2Sh
+ VPuNoGlrlbkcI5XDMPndKF71_4bEKwa57qebgsq2r1HrZb5OCnN14FV5Wy5XHpOx6qyT24EuUir.
+ o2oLcT7hNv0OHiQ.YiX8nAGupmoqFF1qpslpTt9caKEqU1JH0tMWf2F5nrE1tHizi8L.j6oGW19C
+ 9hSwryhN1m94l1aDGM7kIl1.MmZq6Jpq0f3wlx.ryxIBeBjtsOqw.ptGyMnUE.rR5Fk4_m6oxpuL
+ rV4ufU.lPD.SrYASMeCfZ_EGJs698NLHDVumYSa7guC2mnJ7jpgKsi0evwOiP4c6f3JN8NFulfJ5
+ ia_6ulzxa9IEYHmhUWC3Nc09SMknO6KT_htl27avoyIgDiAyMDDMbNx7teTF7_lqTOF3M50FfXvJ
+ Slop63ZnEFSsaPVsHsGyD5XUYGRz41I486ziSJiavC.xanDMx4JhyADR1hkYegtY43oRdAi.h9zu
+ jBJdSe6HjoEAeYPy5U7mpZRdzD5p4jYq2S7EALT35FwRg58q0uPA3u5Na9zPAcF4PmuxMVfnovRo
+ bmboAfDWQSNYud_jSf0zqSywNiazXjJPCIUxkAYmX2CBRsHU4K2s7WJckOKYqYOtDG24ozZnlEbc
+ fC26G3k3oRgAaIvec6dDWSQfui6DnCAWehyHdWyag3YHNJ0yajbafdBYnnkBrKOCEVriPY3V3R2x
+ vaThyWE3dloO.F2ADL.joo913jHenCwC_zc8FV2KUkNGqk.mAB1XHnreHZbZ70ZeR8Svu082vttg
+ IiIjTTG7y4wRIbrRyVXdjtMx_hFesjt9Sc0stQ4JKIGb1z5QNdQ9sYp3RSiycvc2Bpber3pbSAt5
+ 6o.TFyS4y3lBmyWE6GnS.sREnAjyS.TxIj_f4AGVC3Rd2VfrSb9lAY8MAVhwF1j50PJw.TJDg4Cu
+ LezzwfllxPTOB333Ex9akeLUMSDJiYlD4Tfd_o3.eC9luIDZQ_6z8y6bRv6bsmkAsjIS6IP.QHju
+ j_0S3OBho2lVfS97Qh99dYy4NyiFV0G7p_nUall_gem2o2IbQfwTXTjIvopKrrQtCX9Zk8CDGf5i
+ H5Fhd.0EO5_qUPffqkPyXcI5hJl1dj2oGB5tpICt_o2cJ36GKW3djc_j4JMeJS8J7Ve5Pqym9B_A
+ T.vJC94CEc0nROtoyqB8n5LO0v0MOIW4Xkg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Wed, 3 Jul 2019 15:32:14 +0000
+Received: by smtp403.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 98fcc1d7930538352537f158c9267fc3;
+          Wed, 03 Jul 2019 15:32:11 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+To:     "Dr. Greg" <greg@enjellic.com>, casey@schaufler-ca.com
 Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
         Stephen Smalley <stephen.smalley@gmail.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
@@ -40,98 +57,174 @@ Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
         "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
         "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
         "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-Message-ID: <20190703094651.GA29601@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F6551B975@ORSMSX116.amr.corp.intel.com> <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com> <CAB9W1A1RpM_9D_49E1VauuKE1tL=TyfeATomv47HX4FONnjA4A@mail.gmail.com> <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com> <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com> <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com> <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 03 Jul 2019 04:46:53 -0500 (CDT)
+References: <960B34DE67B9E140824F1DCDEC400C0F6551B975@ORSMSX116.amr.corp.intel.com>
+ <f6f16990-0291-c530-61dd-dcd26525285c@schaufler-ca.com>
+ <CAB9W1A1RpM_9D_49E1VauuKE1tL=TyfeATomv47HX4FONnjA4A@mail.gmail.com>
+ <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com>
+ <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com>
+ <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com>
+ <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
+ <20190703094651.GA29601@wind.enjellic.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <012fc47d-4e9d-3398-0d9d-d9298a758c8d@schaufler-ca.com>
+Date:   Wed, 3 Jul 2019 08:32:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190703094651.GA29601@wind.enjellic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 08:44:40AM -0700, Casey Schaufler wrote:
+On 7/3/2019 2:46 AM, Dr. Greg wrote:
+> On Tue, Jul 02, 2019 at 08:44:40AM -0700, Casey Schaufler wrote:
+>
+> Good morning, I hope this note finds the week going well for everyone.
+>
+>> On 7/2/2019 12:42 AM, Xing, Cedric wrote:
+>>> ...
+>>> Guess this discussion will never end if we don't get into
+>>> code. Guess it'd be more productive to talk over phone then come back=
 
-Good morning, I hope this note finds the week going well for everyone.
+>>> to this thread with a conclusion. Will that be ok with you?
+>> I don't think that a phone call is going to help. Talking code
+>> issues tends to muddle them in my brain. If you can give me a few
+>> days I will propose a rough version of how I think your code should
+>> be integrated into the LSM environment. I'm spending more time
+>> trying (unsuccessfully :( ) to discribe the issues in English than
+>> it will probably take in C.
+> While Casey is off writing his rosetta stone,
 
-> On 7/2/2019 12:42 AM, Xing, Cedric wrote:
-> > ...
-> > Guess this discussion will never end if we don't get into
-> > code. Guess it'd be more productive to talk over phone then come back
-> > to this thread with a conclusion. Will that be ok with you?
+I'd hardly call it that. More of an effort to round the
+corners on the square peg. And Cedric has some ideas on
+how to approach that.
 
-> I don't think that a phone call is going to help. Talking code
-> issues tends to muddle them in my brain. If you can give me a few
-> days I will propose a rough version of how I think your code should
-> be integrated into the LSM environment. I'm spending more time
-> trying (unsuccessfully :( ) to discribe the issues in English than
-> it will probably take in C.
+> let me suggest that the
+> most important thing we need to do is to take a little time, step back
+> and look at the big picture with respect to what we are trying to
+> accomplish and if we are going about it in a way that makes any sense
+> from an engineering perspective.
+>
+> This conversation shouldn't be about SGX, it should be about the best
+> way for the kernel/LSM to discipline a Trusted Execution Environment
+> (TEE).  As I have noted previously, a TEE is a 'blackbox' that, by
+> design, is intended to allow execution of code and processing of data
+> in a manner that is resistant to manipulation or inspection by
+> untrusted userspace, the kernel and/or the hardware itself.
+>
+> Given that fact, if we are to be intellectually honest, we need to ask
+> ourselves how effective we believe we can be in controlling any TEE
+> with kernel based mechanisms.  This is particularly the case if the
+> author of any code running in the TEE has adversarial intent.
+>
+> Here is the list of controls that we believe an LSM can, effectively,
+> implement against a TEE:
+>
+> 1.) Code provenance and origin.
+>
+> 2.) Cryptographic verification of dynamically executable content.
+>
+> 2.) The ability of a TEE to implement anonymous executable content.
+>
+> If people are in agreement with this concept, it is difficult to
+> understand why we should be implementing complex state machines and
+> the like, whether it is in the driver or the LSM.  Security code has
+> to be measured with a metric of effectiveness, otherwise we are
+> engaging in security theater.
+>
+> I believe that if we were using this lens, we would already have a
+> mainline SGX driver, since we seem to have most of the needed LSM
+> infrastructure and any additional functionality would be a straight
+> forward implementation.  Most importantly, the infrastructure would
+> not be SGX specific, which would seem to be a desirable political
+> concept.
 
-While Casey is off writing his rosetta stone, let me suggest that the
-most important thing we need to do is to take a little time, step back
-and look at the big picture with respect to what we are trying to
-accomplish and if we are going about it in a way that makes any sense
-from an engineering perspective.
+Generality introduced in the absence of multiple instances
+often results in unnecessary complexity, unused interfaces
+and feature compromise. Guessing what other TEE systems might
+do, and constraining SGX to those models (or the other way around)
+is a well established road to ruin. The LSM infrastructure is
+a fine example. For the first ten years the "general" mechanism
+had a single user. I'd say to hold off on the general until there
+is more experience with the specific. It's easier to construct
+a general mechanism around things that work than to fit things
+that need to work into some preconceived notion of generality.=20
 
-This conversation shouldn't be about SGX, it should be about the best
-way for the kernel/LSM to discipline a Trusted Execution Environment
-(TEE).  As I have noted previously, a TEE is a 'blackbox' that, by
-design, is intended to allow execution of code and processing of data
-in a manner that is resistant to manipulation or inspection by
-untrusted userspace, the kernel and/or the hardware itself.
+>
+> If we are not willing to engage in this discussion we are going to end
+> up with a quasi-technology specific solution that isn't implementing
+> any relevant security guarantees.
+>
+> FWIW, we wouldn't even be having this, now lengthy discussion, if I
+> wouldn't have aggressively advocated, starting last November, that an
+> SGX driver needed some form of execution control if there was a desire
+> for the technology to not pose a security risk to the platform.  So
+> humor me a little bit.... :-)
+>
+> Best wishes for a productive remainder of the week to everyone.
+>
+> Dr. Greg
+>
+> As always,
+> Dr. Greg Wettstein, Ph.D, Worker
+> IDfusion, LLC
+> 4206 N. 19th Ave.           Implementing measured information privacy
+> Fargo, ND  58102            and integrity architectures.
+> PH: 701-281-1686
+> FAX: 701-281-3949           EMAIL: greg@idfusion.net
+> -----------------------------------------------------------------------=
+-------
+> "... remember that innovation is saying 'no' to 1000 things."
 
-Given that fact, if we are to be intellectually honest, we need to ask
-ourselves how effective we believe we can be in controlling any TEE
-with kernel based mechanisms.  This is particularly the case if the
-author of any code running in the TEE has adversarial intent.
-
-Here is the list of controls that we believe an LSM can, effectively,
-implement against a TEE:
-
-1.) Code provenance and origin.
-
-2.) Cryptographic verification of dynamically executable content.
-
-2.) The ability of a TEE to implement anonymous executable content.
-
-If people are in agreement with this concept, it is difficult to
-understand why we should be implementing complex state machines and
-the like, whether it is in the driver or the LSM.  Security code has
-to be measured with a metric of effectiveness, otherwise we are
-engaging in security theater.
-
-I believe that if we were using this lens, we would already have a
-mainline SGX driver, since we seem to have most of the needed LSM
-infrastructure and any additional functionality would be a straight
-forward implementation.  Most importantly, the infrastructure would
-not be SGX specific, which would seem to be a desirable political
-concept.
-
-If we are not willing to engage in this discussion we are going to end
-up with a quasi-technology specific solution that isn't implementing
-any relevant security guarantees.
-
-FWIW, we wouldn't even be having this, now lengthy discussion, if I
-wouldn't have aggressively advocated, starting last November, that an
-SGX driver needed some form of execution control if there was a desire
-for the technology to not pose a security risk to the platform.  So
-humor me a little bit.... :-)
-
-Best wishes for a productive remainder of the week to everyone.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC
-4206 N. 19th Ave.           Implementing measured information privacy
-Fargo, ND  58102            and integrity architectures.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@idfusion.net
-------------------------------------------------------------------------------
-"... remember that innovation is saying 'no' to 1000 things."
