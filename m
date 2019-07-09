@@ -1,55 +1,67 @@
-Return-Path: <SRS0=W/oj=VF=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=ZaoB=VG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB86C606B0
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Jul 2019 23:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F45DC606D4
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Jul 2019 00:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C265B2082A
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Jul 2019 23:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23AC3216C4
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Jul 2019 00:02:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZeVk1Nfm"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Fcg/07gN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfGHXxs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Jul 2019 19:53:48 -0400
-Received: from sonic310-23.consmr.mail.bf2.yahoo.com ([74.6.135.197]:39912
-        "EHLO sonic310-23.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725939AbfGHXxs (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 8 Jul 2019 19:53:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1562630026; bh=aaU3QEOexX5/RpFIIQjF/8s6bTWRrRAGnfopCw/bYsg=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=ZeVk1NfmdB13Oamn9baqC2dnrpFwM9OvbMQ27PA+Ptzc8amF3H3namUeSAZKMqc4xhMImu9ZpVepnU6PFyZmf6yaP5DqmzTVtgcBXai/HBg/8pdCmlYT+W66F+YxmrX480OgxzriGmxHTg3ZcD2gRvkuptdqST1KPfQ9JyFNcdNVMgZ8P1PQdNgkisffs36wi3CaQg93KOCz9yFIIcR8GrfVgCosu10sqDBWT1kntPU647bh2IJUnanzetMfztd3w7gKlXTyEiI64oiquK0ID3TNVDPbRyefzLYILJPLIa5IptmSMiRqoQFLt9Bm/GjlIguzJbR98Zdh/rthEi+kqg==
-X-YMail-OSG: ahQj6TYVM1mtG5HnBuDAFJIuHhtwUhw6jsYnB5QZq7ZyjuV9gciruMSA72yUeAW
- VVRYr1Wfb.SOM6k8duwE63Uc_IgtNez1MD8aBeTPRspXEXtfqPMIXr6opmU_mpFCEiu0.80zExGM
- qG6S.CajY2NYc7fX6KuJjGDKrqjfqdJbt97wY6twyASJfYTfXm_puMIChd79oA0waf_Yh6MDOt_t
- H2FBFOM667n_jeSY_2gc7BoG3vgzBLv85clfZlOmwjVYIjWvwMvUsT_TcaTXCmze0idBrZrfwx1q
- rLe_yNpda5fGBjxmVrIIwBsVLFPz0PoJn0v46kOgUo136UwtP.EqA.HBF__5qQ04MNdgUS1cp_fj
- sPnOyKLfnbUTykbxuHB6baYiHRX.YBtkK2VZ_CtXdaRUAudfOSnM7pqrLANENAXE4wmWo4831807
- PwcHypz_0.Yq0nGkuci7qOVFy9GHS8AFJ37GQPj3Ro3OXWfIhKiE8i1QWDJ3LDQwNUEBNVuqpPYF
- sM.PYkRt6Y8uYs0fD_Khev5KSM9ZZRtagvlyAM8E0k2uk_WF2FH12CTnDqoLAEWsfAtlFw.ICc06
- 08wYW4aN32IM8MHdFZlz3kkXWPy_NQ9MV7he7oFwId5sJA8jdorq_RQffUgzSgiEHFL9e5MgBYrW
- 7LeZVx.v4XxCW8OkZzeQXrbi1cnVnIVY4QHqU3dHSAago36pwmuZvQOjh5ty.Ka_DkHrMWEhKEXH
- 8znaWjKvyGxwZJq6mQEbphGx2thp1e.G3ILiuM6cmBWBVerI0t8YH.GLfkrX0yhtRZAyvUqIIwDu
- H8oaRRr9p6gmAZs1vOgaWNkKdF.UOhZvAhPR6A5J9iXcjl9U1hgxcZWV5lGF0tTjqWJjjjwJ4ZCE
- seouKd85A1aqYkRsBNE3ztMh9Ki9_YRIA7TlOtu6ePlkClsWwuwvsZa1Fcz1jRnVe57zXkLUhLwQ
- 2f86yTWm5VxbYivbe5WBaf6v2VETxz3V6hP7Ga74dyuMIm_PKIJ8VOgOM_T1imVfPGbVwDOKwzJy
- FPb5.J5us3UkoKzo4FhekuaIXXaWABROZVsjiNH_XhFSIEp42B2gSAOEEhJKEZ9b4utF9u3ZL8.g
- xIXS9Zzb3Ym2ixMYrHmIFp61JemNCsMfmgRKhNhSNh4N1R7RGyN3PxL0LvDwCyyR4FLXnw7PXU6a
- WoP0XHFsjvH4U88NoUgIGXPlyacIAd1cmH_W.p3U9sx2Hkw3tAXXGy_W_nGEe7Hhvf9nOw8OIKWr
- TCA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Mon, 8 Jul 2019 23:53:46 +0000
-Received: by smtp432.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID f0fcb9de2197ac8dc1d60d3d32ef7f8d;
-          Mon, 08 Jul 2019 23:53:45 +0000 (UTC)
-Subject: Re: [RFC PATCH v3 3/4] X86/sgx: Introduce EMA as a new LSM module
-To:     "Xing, Cedric" <cedric.xing@intel.com>, linux-sgx@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        casey@schaufler-ca.com
-References: <cover.1562542383.git.cedric.xing@intel.com>
- <41e1a1a2f66226d88d45675434eb34dde5d0f50d.1562542383.git.cedric.xing@intel.com>
- <fb4352a4-7ef4-6824-a2ab-21e5fcb208ae@schaufler-ca.com>
- <ce4dcce2-88fb-ccec-f173-fc567d9ca006@intel.com>
+        id S1725912AbfGIACF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Jul 2019 20:02:05 -0400
+Received: from sonic309-23.consmr.mail.bf2.yahoo.com ([74.6.129.197]:39492
+        "EHLO sonic309-23.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725864AbfGIACE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 8 Jul 2019 20:02:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1562630521; bh=0bABuSM8vXX/kRlsageKPfgn55dZl7H1znqPEjOgo/Q=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Fcg/07gN9ycliYqt0CrIE94dmIDMoQLbZVYzwxxEAVJr7ukVg8XppfUtpiYVp1sshOk4CcrCQGA89a4Q5aB/4MwU1HncDyeGtdWGfqzcQOreHCFg0VTpSqEFblUz4fDXOpC2tjTSg5crQJnWgws3VX0hS9mvJ1aVRneJ/N/QWB1qGYczgJjKl+R36TEFJSAIfPCaSRPXj87iK1a8X1Y68vcNeOeyirj9wtSUXBP3QF0CT9yN52QOirVr+r+hFSmxpE6wFkPIOAgFT0q6yquxp9Vw9tba+K9wO1UaI4KB07/upf2qqdmsWL3NXwJH472jyQCwJ+BVv0zLl7bt8hcSZg==
+X-YMail-OSG: KBZNYx0VM1kMefjnITkys91Y53xZrTpuIYQsj3ZTgPXTF8HVxd9fblRRORolD6h
+ Vn.9JpG.x4tuX9RHes0gvoVCg8S15jnd6e.t.NDr.Ov.J9RZDNHZPHPM2a7GRM7Ar18.LK5Oq0pv
+ _T0hayBEp.ioEMmIrPmSlbfI8m5FdLBWtAjE89Vj_vQGjNpkBeVwzn.mMWd7V6TH8_dKti5T5syj
+ ZJsStHWawY4qUwMcFRKtCy3i.sLIKofR36xFZ8Wa479RPEpqf91ujWcflDOLw.bv_sLeAjAHkMTs
+ 3icoj1P2BLR6t9KtD1bYOIqlcnhADRqLZUfHfh99bFhsBHx9WyLp8DDen9YMgHQ4HbauFa5n61fI
+ hwTzh_HzzS.R6l60JwfqyEtdcmzMFyXRR5G29T2YKC0L8GEhE37L1uJPCKAl2RTL1BlYC_7KuUUE
+ FLn5TDmTqhFpUu8Tm8T0IZoISfEMHpAFvxFVOZW9UmxinM_UBYWTWM0R.jE_WTsTPyGR99prSCpN
+ iSEe0V3TW4oq.tH1cc5xOtWxzlfcvA1HzUp5jY0aD1YelejV4a7OF8b1MAkz_mcJHlN2CO7eEEXU
+ SdV9LgIi_lkobJAA7RaOcF_5QSE5M6aak.hBETARcTUXMbt5gQcv3KMHJ9YYtnP4WTORVHKe1bk9
+ mU29VWjkf1oq4jlLURossMmfk5FkvysgAuKoz_HocTnICTgR9us.9aHTe5Ip9ZDQvzxbaWwreSEs
+ twKhVFAHHdfBRXo4QrKG5FMETL_n_RQsAdzlvFO5E2Ns2DB93jyDaN6cszyqK_DopUJLY3Ejpfjv
+ W4nOaXJPK6veTH.vBLCritlIeug--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Tue, 9 Jul 2019 00:02:01 +0000
+Received: by smtp409.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fa96bfe426bb012e6c874f9d1fca7ee3;
+          Tue, 09 Jul 2019 00:02:01 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
+To:     "Dr. Greg" <greg@enjellic.com>, casey@schaufler-ca.com
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <stephen.smalley@gmail.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+References: <CAB9W1A1RpM_9D_49E1VauuKE1tL=TyfeATomv47HX4FONnjA4A@mail.gmail.com>
+ <18833f2e-9d18-1f39-6bc5-9242910ab25c@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com>
+ <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com>
+ <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com>
+ <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com>
+ <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com>
+ <20190703094651.GA29601@wind.enjellic.com>
+ <012fc47d-4e9d-3398-0d9d-d9298a758c8d@schaufler-ca.com>
+ <20190707133023.GA4521@wind.enjellic.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
@@ -96,12 +108,12 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <decc7ae6-a89f-1ae5-6289-f3dcaa6390b0@schaufler-ca.com>
-Date:   Mon, 8 Jul 2019 16:53:45 -0700
+Message-ID: <256013f7-292d-7014-9abb-61755f07eb25@schaufler-ca.com>
+Date:   Mon, 8 Jul 2019 17:02:00 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <ce4dcce2-88fb-ccec-f173-fc567d9ca006@intel.com>
+In-Reply-To: <20190707133023.GA4521@wind.enjellic.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
@@ -110,159 +122,127 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/8/2019 10:16 AM, Xing, Cedric wrote:
-> On 7/8/2019 9:26 AM, Casey Schaufler wrote:
->> In this scheme you use an ema LSM to manage your ema data.
->> A quick sketch looks like:
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0sgx_something_in() calls
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 security_enclave_load() cal=
-ls
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ema=
-_enclave_load()
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sel=
-inux_enclave_load()
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 oth=
-erlsm_enclave_load()
->>
->> Why is this better than:
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0sgx_something_in() calls
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ema_enclave_load()
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 security_enclave_load() cal=
-ls
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sel=
-inux_enclave_load()
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 oth=
-erlsm_enclave_load()
+On 7/7/2019 6:30 AM, Dr. Greg wrote:
+> On Wed, Jul 03, 2019 at 08:32:10AM -0700, Casey Schaufler wrote:
 >
-> Are you talking about moving EMA somewhere outside LSM?
-
-Yes. That's what I've been saying all along.
-
-> If so, where?
-
-I tried to make it obvious. Put the call to your EMA code
-on the line before you call security_enclave_load().
-
+> Good morning, I hope the weekend has been enjoyable for everyone.
 >
->>
->> If you did really want ema to behave like an LSM
->> you would put the file data that SELinux is managing
->> into the ema portion of the blob and provide interfaces
->> for the SELinux (or whoever) to use that. Also, it's
->> an abomination (as I've stated before) for ema to
->> rely on SELinux to provide a file_free() hook for
->> ema's data. If you continue down the LSM route, you
->> need to provide an ema_file_free() hook. You can't
->> count on SELinux to do it for you. If there are multiple
->> LSMs (coming soon!) that use the ema data, they'll all
->> try to free it, and then Bad Things can happen.
->
-> I'm afraid you have misunderstood the code. What is kept open and gets =
-closed in selinux_file_free() is the sigstruct file. SELinux uses it to d=
-etermine the page permissions for enclave pages from anonymous sources. I=
-t is a policy choice made inside SELinux and has nothing to do with EMA.
+>>>> On 7/2/2019 12:42 AM, Xing, Cedric wrote:
+>>>>> ...
+>>>>> Guess this discussion will never end if we don't get into
+>>>>> code. Guess it'd be more productive to talk over phone then come ba=
+ck
+>>>>> to this thread with a conclusion. Will that be ok with you?
+>>>> I don't think that a phone call is going to help. Talking code
+>>>> issues tends to muddle them in my brain. If you can give me a few
+>>>> days I will propose a rough version of how I think your code should
+>>>> be integrated into the LSM environment. I'm spending more time
+>>>> trying (unsuccessfully :( ) to discribe the issues in English than
+>>>> it will probably take in C.
+>>> While Casey is off writing his rosetta stone,
+>> I'd hardly call it that. More of an effort to round the corners on
+>> the square peg. And Cedric has some ideas on how to approach that.
+> Should we infer from this comment that, of the two competing
+> strategies, Cedric's is the favored architecture?
 
-OK.
-
->
-> There's indeed an ema_file_free_security() to free the EMA map for encl=
-aves being closed. EMA does *NOT* rely on any other LSMs to free data for=
- it. The only exception is when an LSM fails enclave_load(), it has to ca=
-ll ema_remove_range() to remove the range being added, which was *not* re=
-quired originally in v2.
-
-OK.
-
->
->>> +/**
->>> + * ema - Enclave Memory Area structure for LSM modules
->>
->> LSM modules is redundant. "LSM" or "LSMs" would be better.
->
-> Noted
->
->>> diff --git a/security/Makefile b/security/Makefile
->>> index c598b904938f..b66d03a94853 100644
->>> --- a/security/Makefile
->>> +++ b/security/Makefile
->>> @@ -28,6 +28,7 @@ obj-$(CONFIG_SECURITY_YAMA)=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 +=3D yama/
->>> =C2=A0 obj-$(CONFIG_SECURITY_LOADPIN)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 +=3D loadpin/
->>> =C2=A0 obj-$(CONFIG_SECURITY_SAFESETID)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 +=3D safesetid/
->>> =C2=A0 obj-$(CONFIG_CGROUP_DEVICE)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 +=3D device_cgroup.o
->>> +obj-$(CONFIG_INTEL_SGX)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 +=3D commonema.o
->>
->> The config option and the file name ought to match,
->> or at least be closer.
->
-> Just trying to match file names as "capability" uses commoncap.c.
-
-Fine, then you should be using CONFIG_SECURITY_EMA.
-
->
-> Like I said, this feature could potentially be used by TEEs other than =
-SGX. For now, SGX is the only user so it is tied to CONFIG_INTEL_SGX. I c=
-an rename it to ema.c or enclave.c. Do you have a preference?
-
-Make
-	CONFIG_SECURITY_EMA
-	depends on CONFIG_INTEL_SGX
-
-When another TEE (maybe MIPS_SSRPQ) comes along you can have
-
-	CONFIG_SECURITY_EMA
-	depends on CONFIG_INTEL_SGX || CONFIG_MIPS_SSRPQ
-=C2=A0
-
->
->>> diff --git a/security/commonema.c b/security/commonema.c
->>
->> Put this in a subdirectory. Please.
->
-> Then why is commoncap.c located in this directory? I'm just trying to m=
-atch the existing convention.
-
-commoncap is not optional. It is a base part of the
-security subsystem. ema is optional.
+With Cedric's latest patches I'd say there's only one
+strategy. There's still some refinement to do, but we're
+getting there.
 
 
->
->>> +static struct lsm_blob_sizes ema_blob_sizes __lsm_ro_after_init =3D =
-{
->>> +=C2=A0=C2=A0=C2=A0 .lbs_file =3D sizeof(atomic_long_t),
->>> +};
->>
->> If this is ema's data ema must manage it. You *must* have
->> a file_free().
->
-> There is one indeed - ema_file_free_security().
+>>> let me suggest that the
+>>> most important thing we need to do is to take a little time, step bac=
+k
+>>> and look at the big picture with respect to what we are trying to
+>>> accomplish and if we are going about it in a way that makes any sense=
 
-I see it now.
+>>> from an engineering perspective.
+>>>
+>>> This conversation shouldn't be about SGX, it should be about the best=
 
+>>> way for the kernel/LSM to discipline a Trusted Execution Environment
+>>> (TEE).  As I have noted previously, a TEE is a 'blackbox' that, by
+>>> design, is intended to allow execution of code and processing of data=
+
+>>> in a manner that is resistant to manipulation or inspection by
+>>> untrusted userspace, the kernel and/or the hardware itself.
+>>>
+>>> Given that fact, if we are to be intellectually honest, we need to as=
+k
+>>> ourselves how effective we believe we can be in controlling any TEE
+>>> with kernel based mechanisms.  This is particularly the case if the
+>>> author of any code running in the TEE has adversarial intent.
+>>>
+>>> Here is the list of controls that we believe an LSM can, effectively,=
+
+>>> implement against a TEE:
+>>>
+>>> 1.) Code provenance and origin.
+>>>
+>>> 2.) Cryptographic verification of dynamically executable content.
+>>>
+>>> 2.) The ability of a TEE to implement anonymous executable content.
+>>>
+>>> If people are in agreement with this concept, it is difficult to
+>>> understand why we should be implementing complex state machines and
+>>> the like, whether it is in the driver or the LSM.  Security code has
+>>> to be measured with a metric of effectiveness, otherwise we are
+>>> engaging in security theater.
+>>>
+>>> I believe that if we were using this lens, we would already have a
+>>> mainline SGX driver, since we seem to have most of the needed LSM
+>>> infrastructure and any additional functionality would be a straight
+>>> forward implementation.  Most importantly, the infrastructure would
+>>> not be SGX specific, which would seem to be a desirable political
+>>> concept.
+>> Generality introduced in the absence of multiple instances
+>> often results in unnecessary complexity, unused interfaces
+>> and feature compromise. Guessing what other TEE systems might
+>> do, and constraining SGX to those models (or the other way around)
+>> is a well established road to ruin. The LSM infrastructure is
+>> a fine example. For the first ten years the "general" mechanism
+>> had a single user. I'd say to hold off on the general until there
+>> is more experience with the specific. It's easier to construct
+>> a general mechanism around things that work than to fit things
+>> that need to work into some preconceived notion of generality.=20
+> All well taken points from an implementation perspective, but they
+> elide the point I was trying to make.  Which is the fact that without
+> any semblance of a discussion regarding the requirements needed to
+> implement a security architecture around the concept of a TEE, this
+> entire process, despite Cedric's well intentioned efforts, amounts to
+> pounding a square solution into the round hole of a security problem.
+
+Lead with code. I love a good requirements document, but
+one of the few places where I agree with the agile folks is
+that working code speaks loudly.
+
+> Which, as I noted in my e-mail, is tantamount to security theater.
+
+Not buying that. Not rejecting it, either. Without code
+to judge it's kind of hard to say.
+
+> Everyone wants to see this driver upstream.  If we would have had a
+> reasoned discussion regarding what it means to implement proper
+> controls around a TEE, when we started to bring these issues forward
+> last November, we could have possibly been on the road to having a
+> driver with reasoned security controls and one that actually delivers
+> the security guarantees the hardware was designed to deliver.
 >
->>
->>> +
->>> +static atomic_long_t *_map_file(struct file *encl)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 return (void *)((char *)(encl->f_security) + ema_=
-blob_sizes.lbs_file);
->>
->> I don't trust all the casting going on here, especially since
->> you don't end up with the type you should be returning.
+> Best wishes for a productive week to everyone.
 >
-> Will change.
+> Dr. Greg
 >
->>> +}
->>> +
->>> +static struct ema_map *_alloc_map(void)
->>
->> Function header comments, please.
->
-> Will add.
+> As always,
+> Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+> 4206 N. 19th Ave.           Specializing in information infra-structure=
+
+> Fargo, ND  58102            development.
+> PH: 701-281-1686            EMAIL: greg@enjellic.com
+> -----------------------------------------------------------------------=
+-------
+> "Any intelligent fool can make things bigger and more complex... It
+>  takes a touch of genius - and a lot of courage to move in the opposite=
+
+>  direction."
+>                                 -- Albert Einstein
 
