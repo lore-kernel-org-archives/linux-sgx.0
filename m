@@ -2,143 +2,80 @@ Return-Path: <SRS0=ZaoB=VG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9AAC73C5C
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Jul 2019 22:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B0EC73C60
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Jul 2019 22:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B41E20693
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Jul 2019 22:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C86AE20656
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Jul 2019 22:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfGIWNx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 9 Jul 2019 18:13:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:14410 "EHLO mga02.intel.com"
+        id S1726875AbfGIWZg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 9 Jul 2019 18:25:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:47813 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbfGIWNw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 9 Jul 2019 18:13:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726318AbfGIWZf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 9 Jul 2019 18:25:35 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 15:13:52 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 15:25:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,472,1557212400"; 
-   d="scan'208";a="168120230"
-Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
-  by orsmga003.jf.intel.com with ESMTP; 09 Jul 2019 15:13:52 -0700
-Subject: Re: [RFC PATCH v3 3/4] X86/sgx: Introduce EMA as a new LSM module
-To:     Casey Schaufler <casey@schaufler-ca.com>,
+   d="scan'208";a="364289696"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Jul 2019 15:25:34 -0700
+Date:   Tue, 9 Jul 2019 15:25:34 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-References: <cover.1562542383.git.cedric.xing@intel.com>
- <41e1a1a2f66226d88d45675434eb34dde5d0f50d.1562542383.git.cedric.xing@intel.com>
- <fb4352a4-7ef4-6824-a2ab-21e5fcb208ae@schaufler-ca.com>
- <ce4dcce2-88fb-ccec-f173-fc567d9ca006@intel.com>
- <decc7ae6-a89f-1ae5-6289-f3dcaa6390b0@schaufler-ca.com>
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-Message-ID: <1f5b5fc1-9a95-9748-f9dc-0486c6ae30d8@intel.com>
-Date:   Tue, 9 Jul 2019 15:13:53 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        selinux@vger.kernel.org,
+        Bill Roberts <william.c.roberts@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
+Message-ID: <20190709222534.GG25369@linux.intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
+ <20190708172930.GA20791@linux.intel.com>
+ <20190709162203.gzyvulah5u7eksip@linux.intel.com>
+ <20190709170917.GD25369@linux.intel.com>
+ <512391ba-fe0d-e758-ae32-09660c1264f7@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <decc7ae6-a89f-1ae5-6289-f3dcaa6390b0@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <512391ba-fe0d-e758-ae32-09660c1264f7@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/8/2019 4:53 PM, Casey Schaufler wrote:
-> On 7/8/2019 10:16 AM, Xing, Cedric wrote:
->> On 7/8/2019 9:26 AM, Casey Schaufler wrote:
->>> In this scheme you use an ema LSM to manage your ema data.
->>> A quick sketch looks like:
->>>
->>>      sgx_something_in() calls
->>>          security_enclave_load() calls
->>>              ema_enclave_load()
->>>              selinux_enclave_load()
->>>              otherlsm_enclave_load()
->>>
->>> Why is this better than:
->>>
->>>      sgx_something_in() calls
->>>          ema_enclave_load()
->>>          security_enclave_load() calls
->>>              selinux_enclave_load()
->>>              otherlsm_enclave_load()
->>
->> Are you talking about moving EMA somewhere outside LSM?
+On Tue, Jul 09, 2019 at 01:41:28PM -0700, Xing, Cedric wrote:
+> On 7/9/2019 10:09 AM, Sean Christopherson wrote:
+> >Translating those to SGX, with a lot of input from Stephen, I ended up
+> >with the following:
+> >
+> >   - FILE__ENCLAVE_EXECUTE: equivalent to FILE__EXECUTE, required to gain X
+> >                            on an enclave page loaded from a regular file
+> >
+> >   - PROCESS2__ENCLAVE_EXECDIRTY: hybrid of EXECMOD and EXECUTE+WRITE,
+> >                                  required to gain W->X on an enclave page
 > 
-> Yes. That's what I've been saying all along.
-> 
->> If so, where?
-> 
-> I tried to make it obvious. Put the call to your EMA code
-> on the line before you call security_enclave_load().
+> EXECMOD basically indicates a file containing self-modifying code. Your
+> ENCLAVE_EXECDIRTY is however a process permission, which is illogical.
 
-Sorry but I'm still confused.
+How is it illogical?  If a PROCESS wants to EXECute a DIRTY ENCLAVE page,
+then it needs PROCESS2__ENCLAVE_EXECDIRTY.
 
-EMA code is used by LSMs only. Making it callable from other parts of 
-the kernel IMHO is probably not a good idea. And more importantly I 
-don't understand the motivation behind it. Would you please elaborate?
-
->>>> +/**
->>>> + * ema - Enclave Memory Area structure for LSM modules
->>>
->>> LSM modules is redundant. "LSM" or "LSMs" would be better.
->>
->> Noted
->>
->>>> diff --git a/security/Makefile b/security/Makefile
->>>> index c598b904938f..b66d03a94853 100644
->>>> --- a/security/Makefile
->>>> +++ b/security/Makefile
->>>> @@ -28,6 +28,7 @@ obj-$(CONFIG_SECURITY_YAMA)        += yama/
->>>>    obj-$(CONFIG_SECURITY_LOADPIN)        += loadpin/
->>>>    obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
->>>>    obj-$(CONFIG_CGROUP_DEVICE)        += device_cgroup.o
->>>> +obj-$(CONFIG_INTEL_SGX)            += commonema.o
->>>
->>> The config option and the file name ought to match,
->>> or at least be closer.
->>
->> Just trying to match file names as "capability" uses commoncap.c.
-> 
-> Fine, then you should be using CONFIG_SECURITY_EMA.
-> 
->>
->> Like I said, this feature could potentially be used by TEEs other than SGX. For now, SGX is the only user so it is tied to CONFIG_INTEL_SGX. I can rename it to ema.c or enclave.c. Do you have a preference?
-> 
-> Make
-> 	CONFIG_SECURITY_EMA
-> 	depends on CONFIG_INTEL_SGX
-> 
-> When another TEE (maybe MIPS_SSRPQ) comes along you can have
-> 
-> 	CONFIG_SECURITY_EMA
-> 	depends on CONFIG_INTEL_SGX || CONFIG_MIPS_SSRPQ
-
-Your suggestions are reasonable. Given such config change wouldn't 
-affect any code, can we do it later, e.g., when additional TEEs come 
-online and make use of these new hooks? After all, 
-security_enclave_init() will need amendment anyway as one of its current 
-parameters is of type 'struct sgx_sigstruct', which will need to be 
-replaced with something more generic. At the time being, I'd like to 
-keep things intuitive so as not to confuse reviewers.
-
->>
->>>> diff --git a/security/commonema.c b/security/commonema.c
->>>
->>> Put this in a subdirectory. Please.
->>
->> Then why is commoncap.c located in this directory? I'm just trying to match the existing convention.
-> 
-> commoncap is not optional. It is a base part of the
-> security subsystem. ema is optional.
-
-Alright. I'd move it into a sub-folder and rename it to ema.c. Would you 
-be ok with that?
+FILE__EXECMOD on /dev/sgx/enclave is a process permission masquerading as
+a file permission, let's call it what it is.
