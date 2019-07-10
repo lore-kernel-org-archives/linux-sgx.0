@@ -6,79 +6,89 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DD1C74A35
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 18:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EA4C74A35
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 20:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615A9208C4
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 18:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF58A20844
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 20:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfGJSQK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Jul 2019 14:16:10 -0400
-Received: from mga17.intel.com ([192.55.52.151]:16034 "EHLO mga17.intel.com"
+        id S1727325AbfGJUTg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Jul 2019 16:19:36 -0400
+Received: from mga01.intel.com ([192.55.52.88]:56654 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727004AbfGJSQJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:16:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726111AbfGJUTg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Jul 2019 16:19:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 11:16:09 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 13:19:35 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,475,1557212400"; 
-   d="scan'208";a="365016610"
-Received: from bxing-mobl.amr.corp.intel.com (HELO [10.255.93.70]) ([10.255.93.70])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Jul 2019 11:16:08 -0700
-Subject: Re: [RFC PATCH v3 4/4] x86/sgx: Implement SGX specific hooks in
- SELinux
-To:     Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-References: <cover.1561588012.git.cedric.xing@intel.com>
- <cover.1562542383.git.cedric.xing@intel.com>
- <3a9efc8d3c27490dbcfe802ce3facddd62f47872.1562542383.git.cedric.xing@intel.com>
- <20190710154915.GA4331@linux.intel.com>
- <d6506d52-2da6-7667-aae4-e3eef7596e93@fortanix.com>
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-Message-ID: <f0ed568f-9fd6-1c86-6eee-0fa8f5d0b811@intel.com>
-Date:   Wed, 10 Jul 2019 11:16:08 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+   d="scan'208";a="249577377"
+Received: from mwsinger-mobl3.ger.corp.intel.com (HELO localhost) ([10.252.34.170])
+  by orsmga001.jf.intel.com with ESMTP; 10 Jul 2019 13:19:30 -0700
+Date:   Wed, 10 Jul 2019 23:19:30 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Bill Roberts <william.c.roberts@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
+Message-ID: <20190710201930.ly7ykediuy35cjze@linux.intel.com>
+References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
+ <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
+ <20190708172930.GA20791@linux.intel.com>
+ <20190709162203.gzyvulah5u7eksip@linux.intel.com>
+ <20190709170917.GD25369@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <d6506d52-2da6-7667-aae4-e3eef7596e93@fortanix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709170917.GD25369@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/10/2019 9:08 AM, Jethro Beekman wrote:
-> On 2019-07-10 08:49, Sean Christopherson wrote:
->> On Sun, Jul 07, 2019 at 04:41:34PM -0700, Cedric Xing wrote:
->>> selinux_enclave_init() determines if an enclave is allowed to launch, 
->>> using the
->>> criteria described earlier. This implementation does NOT accept 
->>> SIGSTRUCT in
->>> anonymous memory. The backing file is also cached in struct
->>> file_security_struct and will serve as the base for decisions for 
->>> anonymous
->>> pages.
->>
->> Did we ever reach a consensus on whether sigstruct must reside in a file?
+On Tue, Jul 09, 2019 at 10:09:17AM -0700, Sean Christopherson wrote:
+> On Tue, Jul 09, 2019 at 07:22:03PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Jul 08, 2019 at 10:29:30AM -0700, Sean Christopherson wrote:
+> > > On Fri, Jul 05, 2019 at 07:05:49PM +0300, Jarkko Sakkinen wrote:
+> > > > On Wed, Jun 19, 2019 at 03:23:49PM -0700, Sean Christopherson wrote:
+> > > > 
+> > > > I still don't get why we need this whole mess and do not simply admit
+> > > > that there are two distinct roles:
+> > > > 
+> > > > 1. Creator
+> > > > 2. User
+> > > 
+> > > Because SELinux has existing concepts of EXECMEM and EXECMOD.
+> > 
+> > What is the official documentation for those? I've only found some
+> > explanations from discussions and some RHEL sysadmin guides.
 > 
-> This would be inconvenient for me, but I guess I can create a memfd?
+> No clue.  My knowledge was gleaned from the code and from Stephen's
+> feedback.
 
-No, sigstruct doesn't have to reside in a file.
+OK, thanks for elaboration. Got nailed some details I was missing :-)
 
-But the current direction is, in SELinux, what the enclave can do 
-depends on permissions given to the file containing sigstruct. That 
-said, if SELinux is in effect, sigstruct has to reside in a real file 
-with FILE__EXECUTE permission for the enclave to launch. memfd wouldn't 
-work. To some extent, that serves the purpose of whitelisting.
+Anyway, to accompany your code changes I'm eager to document this not
+least because it is a good peer test that this all make sense (you
+cannot "unit test" a security model so that is the next best thing).
 
-> -- 
-> Jethro Beekman | Fortanix
-> 
+Still, we need a documentation reference to reflect the narrative
+for these changes, seriously. It cannot be that SELinux is widely
+deployed and it completely lacks documentation for its basic
+objects, can it?
+
+/Jarkko
