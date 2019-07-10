@@ -6,145 +6,80 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E151C74A2B
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 16:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B32CC74A35
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 17:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A38E20665
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 16:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13C3A214AF
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Jul 2019 17:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfGJQ57 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Jul 2019 12:57:59 -0400
-Received: from mga06.intel.com ([134.134.136.31]:22559 "EHLO mga06.intel.com"
+        id S1727175AbfGJRZz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Jul 2019 13:25:55 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26994 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727414AbfGJQ57 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Jul 2019 12:57:59 -0400
+        id S1726708AbfGJRZz (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Jul 2019 13:25:55 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 09:57:58 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2019 10:25:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,475,1557212400"; 
-   d="scan'208";a="156555167"
+   d="scan'208";a="173918101"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
-  by orsmga007.jf.intel.com with ESMTP; 10 Jul 2019 09:57:58 -0700
-Date:   Wed, 10 Jul 2019 09:57:58 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 10 Jul 2019 10:25:54 -0700
+Date:   Wed, 10 Jul 2019 10:25:54 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
-Message-ID: <20190710165758.GD4348@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
- <20190708172930.GA20791@linux.intel.com>
- <20190709162203.gzyvulah5u7eksip@linux.intel.com>
- <20190709170917.GD25369@linux.intel.com>
- <512391ba-fe0d-e758-ae32-09660c1264f7@intel.com>
- <20190709222534.GG25369@linux.intel.com>
- <35b9dd93-4988-d998-056c-aeae36076bc0@intel.com>
+Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define
+ enclave pages' protection bits
+Message-ID: <20190710172553.GE4348@linux.intel.com>
+References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
+ <20190617222438.2080-5-sean.j.christopherson@intel.com>
+ <dc3d59c2783ea81d85d4d447bd1a4a2d5fe51421.camel@linux.intel.com>
+ <20190619152018.GC1203@linux.intel.com>
+ <20190620221702.GE20474@linux.intel.com>
+ <20190707190809.GE19593@linux.intel.com>
+ <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
+ <20190708161932.GE20433@linux.intel.com>
+ <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <35b9dd93-4988-d998-056c-aeae36076bc0@intel.com>
+In-Reply-To: <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 04:11:08PM -0700, Xing, Cedric wrote:
-> On 7/9/2019 3:25 PM, Sean Christopherson wrote:
-> >On Tue, Jul 09, 2019 at 01:41:28PM -0700, Xing, Cedric wrote:
-> >>On 7/9/2019 10:09 AM, Sean Christopherson wrote:
-> >>>Translating those to SGX, with a lot of input from Stephen, I ended up
-> >>>with the following:
-> >>>
-> >>>   - FILE__ENCLAVE_EXECUTE: equivalent to FILE__EXECUTE, required to gain X
-> >>>                            on an enclave page loaded from a regular file
-> >>>
-> >>>   - PROCESS2__ENCLAVE_EXECDIRTY: hybrid of EXECMOD and EXECUTE+WRITE,
-> >>>                                  required to gain W->X on an enclave page
-> >>
-> >>EXECMOD basically indicates a file containing self-modifying code. Your
-> >>ENCLAVE_EXECDIRTY is however a process permission, which is illogical.
-> >
-> >How is it illogical?  If a PROCESS wants to EXECute a DIRTY ENCLAVE page,
-> >then it needs PROCESS2__ENCLAVE_EXECDIRTY
-> Just think of the purpose of FILE__EXECMOD. It indicates to LSM the file has
-> self-modifying code, hence W->X transition should be considered "normal" and
-> allowed, regardless which process that file is loaded into.
+On Tue, Jul 09, 2019 at 07:06:34PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Jul 08, 2019 at 09:19:32AM -0700, Sean Christopherson wrote:
+> > > 2. Probably some "user story" type of examples would help with the
+> > > discussion overall [1] i.e. how one would use this for
+> > > her own good.
+> > 
+> > The compelling story is Andy's original concern that userspace could
+> > circumvent existing security policies by running code in an enclave.
+> > 
+> > AIUI, closing the LSM loophole is the minimal requirement to get SGX
+> > upstreamed.  The extensive discussion has largely been focused on
+> > ensuring that whatever mechanism is used to close the loophole will
+> > play nice with future SGX functionality and/or LSM security policies.
 > 
-> The same thing for enclaves here. Whether an enclave contains self-modifying
-> code is specific to that enclave, regardless which process it is loaded
-> into.
+> OK, might be getting here where I fall out of the wagon so:
 > 
-> But what are you doing is quite the opposite, and that's I mean by
-> "illogical".
+> Doesn't Andy's example anyway require a process that has privileges to
+> make pages executable i.e. it could run arbitrary code even without an
+> enclave?
 
-Ah.  My intent was to minimize the number of new labels, and because W->X
-scenarios are not guaranteed to be backed by a file, I went with a per
-process permission.  Ditto for EXECANON.  I'm not opposed to also having a
-per file permission that can be used when possible.
-
-Something like this?  And maybe merge EXECANON and EXECDIRTY into a single
-permission?
-
-Depending on whether sigstruct is required to be in a pinned file, EAUG
-pages would need either EXECDIRTY or EXECMOD.
-
-static int selinux_enclave_load(struct vm_area_struct *vma, unsigned long prot,
-				bool measured)
-{
-	const struct cred *cred = current_cred();
-	u32 sid = cred_sid(cred);
-	int ret;
-
-	/* Currently supported only in noexec kernels. */
-	WARN_ON_ONCE(!default_noexec);
-
-	/* Only executable enclave pages are restricted in any way. */
-	if (!(prot & PROT_EXEC))
-		return 0;
-
-	if (!measured) {
-		ret = enclave_has_perm(sid, PROCESS2__ENCLAVE_EXECUNMR);
-		if (ret)
-			goto out;
-	}
-
-	if (!vma->vm_file || IS_PRIVATE(file_inode(vma->vm_file))) {
-		ret = enclave_has_perm(sid, PROCESS2__ENCLAVE_EXECANON);
-		if (ret)
-			goto out;
-
-		/* Ability to do W->X within the enclave. */
-		if (prot & PROT_WRITE)
-			ret = enclave_has_perm(sid,
-					       PROCESS2__ENCLAVE_EXECDIRTY);
-	} else {
-		ret = file_has_perm(cred, vma->vm_file, FILE__ENCLAVE_EXECUTE);
-		if (ret)
-			goto out;
-
-		/*
-		 * Load code from a modified private mapping, or from any file
-		 * mapping with the ability to do W->X within the enclave.
-		 */
-		if (vma->anon_vma || (prot & PROT_WRITE))
-			ret = file_has_perm(cred, vma->vm_file,
-					    FILE__ENCLAVE_EXECMOD);
-	}
-
-out:
-	return ret;
-}
+Ah, no.  He did raise that concern, but it'd only be an issue if the
+enclave fd were backed by an anon inode, in which case all enclaves would
+need EXECMEM in order to gain PROT_EXEC on EPC.  Because the fd is backed
+/dev/sgx/enclave, userspace just needs FILE__EXECUTE on /dev/sgx/enclave.
