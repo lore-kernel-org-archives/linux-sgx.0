@@ -2,59 +2,53 @@ Return-Path: <SRS0=cFJI=VI=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B499C74A52
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Jul 2019 09:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB40C74A52
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Jul 2019 09:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7324E21019
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Jul 2019 09:26:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEF3E208E4
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Jul 2019 09:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfGKJ0P (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 11 Jul 2019 05:26:15 -0400
-Received: from mga06.intel.com ([134.134.136.31]:50811 "EHLO mga06.intel.com"
+        id S1728055AbfGKJgZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 11 Jul 2019 05:36:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62994 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbfGKJ0P (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:26:15 -0400
+        id S1726088AbfGKJgZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 11 Jul 2019 05:36:25 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 02:26:14 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 02:36:24 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,478,1557212400"; 
-   d="scan'208";a="249728059"
+   d="scan'208";a="167975960"
 Received: from spoledic-mobl.ger.corp.intel.com (HELO localhost) ([10.252.50.84])
-  by orsmga001.jf.intel.com with ESMTP; 11 Jul 2019 02:26:10 -0700
-Date:   Thu, 11 Jul 2019 12:26:09 +0300
+  by fmsmga007.fm.intel.com with ESMTP; 11 Jul 2019 02:36:20 -0700
+Date:   Thu, 11 Jul 2019 12:36:21 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Bill Roberts <william.c.roberts@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [RFC PATCH v4 00/12] security: x86/sgx: SGX vs. LSM
-Message-ID: <20190711092609.jxe4uubwg5qbwfju@linux.intel.com>
-References: <20190619222401.14942-1-sean.j.christopherson@intel.com>
- <20190705160549.tzsck5ho5kvtdhit@linux.intel.com>
- <20190708172930.GA20791@linux.intel.com>
- <20190709162203.gzyvulah5u7eksip@linux.intel.com>
- <20190709170917.GD25369@linux.intel.com>
- <20190710221638.bwnwtcozpv44ojdg@linux.intel.com>
- <38d3b0ee-be9c-cb1a-785a-325a3ade003b@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        kai.svahn@intel.com, kai.huang@intel.com
+Subject: Re: [RFC PATCH v2 0/3] An alternative __vdso_sgx_enter_enclave() to
+ allow enclave/host parameter passing using untrusted stack
+Message-ID: <20190711093621.4wstj7bc7w6wxxj2@linux.intel.com>
+References: <cover.1555965327.git.cedric.xing@intel.com>
+ <20190424062623.4345-1-cedric.xing@intel.com>
+ <20190710111719.nnoedfo4wvbfghq7@linux.intel.com>
+ <686e47d2-f45c-6828-39d1-48374925de6c@intel.com>
+ <20190710224628.epjxwlpqqxdurmzo@linux.intel.com>
+ <a2d2ba5c-c7b3-a76b-594f-df2e14234b1d@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <38d3b0ee-be9c-cb1a-785a-325a3ade003b@intel.com>
+In-Reply-To: <a2d2ba5c-c7b3-a76b-594f-df2e14234b1d@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
@@ -62,41 +56,35 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 04:16:42PM -0700, Xing, Cedric wrote:
-> > Still puzzling with EXECMOD given that how it is documented in
-> > https://selinuxproject.org/page/ObjectClassesPerms. If anything in that
-> > document is out of date, would be nice if it was updated.
+On Wed, Jul 10, 2019 at 03:54:20PM -0700, Xing, Cedric wrote:
+> On 7/10/2019 3:46 PM, Jarkko Sakkinen wrote:
+> > On Wed, Jul 10, 2019 at 11:08:37AM -0700, Xing, Cedric wrote:
+> > > > With these conclusions I think the current vDSO API is sufficient for
+> > > > Linux.
+> > > 
+> > > The new vDSO API is to support data exchange on stack. It has nothing to do
+> > > with debugging. BTW, the community has closed on this.
+> > 
+> > And how that is useful?
 > 
-> If you search for "EXECMOD" in security/selinux/hooks.c in the latest
-> (Linux-5.2) master, you'll find only one occurrence - at line 3702.
+> There is a lengthy discussion on its usefulness so I don't want to repeat.
+> In short, it allows using untrusted stack as a convenient method to exchange
+> data with the enclave. It is currently being used by Intel's SGX SDK for
+> e/o-calls parameters.
 > 
-> The logic over there, if translated into English, basically says
-> FILE__EXECMOD is required (on the backing file) if mprotect() is called to
-> request X on a private file mapping that has been modified by the calling
-> process. That's what Sean meant by "W->X".
+> > > The CFI directives are for stack unwinding. They don't affect what the code
+> > > does so you can just treat them as NOPs if you don't understand what they
+> > > do. However, they are useful to not only debuggers but also exception
+> > > handling code. libunwind also has a setjmp()/longjmp() implementation based
+> > > on CFI directives.
+> > 
+> > Of course I won't merge code of which usefulness I don't understand.
+> 
+> Sure.
+> 
+> Any other questions I can help with?
 
-Looking at that part of code, there is this comment:
-
-/*
- * We are making executable a file mapping that has
- * had some COW done. Since pages might have been
- * written, check ability to execute the possibly
- * modified content.  This typically should only
- * occur for text relocations.
- */
-
-There is no COW done with enclaves, never. Thus, EXECMOD does not
-connect in any possible way to SGX. OR, that comment is false.
-
-Which one is it?
-
-Also the official documentation for SELinux speaks only about COW
-mappings.
-
-Also the condition supports all this as a *private* file mapping ends up
-to the anon_vma list when it gets written. We have a *shared* file
-mapping
-
-Nothing that you say makes sense to me, sorry...
+I dissected my concerns in other email. We can merge this feature after
+v21 if it makes sense.
 
 /Jarkko
