@@ -2,95 +2,98 @@ Return-Path: <SRS0=inPB=VJ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA710C742A5
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Jul 2019 03:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 915C1C742A8
+	for <linux-sgx@archiver.kernel.org>; Fri, 12 Jul 2019 03:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C306E20644
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Jul 2019 03:47:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E5E216B7
+	for <linux-sgx@archiver.kernel.org>; Fri, 12 Jul 2019 03:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbfGLDr4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 11 Jul 2019 23:47:56 -0400
-Received: from mga03.intel.com ([134.134.136.65]:17342 "EHLO mga03.intel.com"
+        id S1729723AbfGLD4J (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 11 Jul 2019 23:56:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:47871 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729421AbfGLDr4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 11 Jul 2019 23:47:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1729459AbfGLD4J (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 11 Jul 2019 23:56:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 20:47:55 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 20:56:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,481,1557212400"; 
-   d="scan'208";a="177382568"
-Received: from gonegri-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.192])
-  by orsmga002.jf.intel.com with ESMTP; 11 Jul 2019 20:47:53 -0700
-Date:   Fri, 12 Jul 2019 06:47:52 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+   d="scan'208";a="160273422"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.165])
+  by orsmga008.jf.intel.com with ESMTP; 11 Jul 2019 20:56:08 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: Re: [PATCH for_v21] docs: x86/sgx: Add a blurb on basic EPC
- management to 'kernel internals'
-Message-ID: <20190712034752.2grjs2uyjssa2cd3@linux.intel.com>
-References: <20190711214417.16565-1-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v21] x86/sgx: Flush work if and only if the work struct has been init'd
+Date:   Thu, 11 Jul 2019 20:56:06 -0700
+Message-Id: <20190712035606.6056-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190711214417.16565-1-sean.j.christopherson@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 02:44:17PM -0700, Sean Christopherson wrote:
-> Add a section on how EPC is managed and why.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  Documentation/x86/sgx/2.Kernel-internals.rst | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/Documentation/x86/sgx/2.Kernel-internals.rst b/Documentation/x86/sgx/2.Kernel-internals.rst
-> index de359bf605ca..5c90a65936f2 100644
-> --- a/Documentation/x86/sgx/2.Kernel-internals.rst
-> +++ b/Documentation/x86/sgx/2.Kernel-internals.rst
-> @@ -15,6 +15,26 @@ attempt to play nice in the face of a misconfigured system.  With the exception
->  of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
->  CPUs have a configuration that is identical to the boot CPU.
->  
-> +EPC management
-> +==============
-> +
-> +Because the kernel can't arbitrarily read EPC memory or share RO backing pages
-> +between enclaves, traditional memory models such as CoW and fork() do not work
-> +with enclaves.  In other words, the architectural rules of EPC forces it to be
-> +treated as MAP_SHARED at all times.
-> +
-> +The inability to employ traditional memory models also means that EPC memory
-> +must be isolated from normal memory pools, e.g. attempting to use EPC memory
-> +for normal mappings would result in faults and/or perceived data corruption.
-> +Furthermore, EPC is not enumerated by as normal memory, e.g. BIOS enumerates
-> +EPC as reserved memory in the e820 tables, or not at all.  As a result, EPC
-> +memory is directly managed by the SGX subsystem, e.g. SGX employs VM_PFNMAP to
-> +manually insert/zap/swap page table entries, and exposes EPC to userspace via
-> +a well known device, /dev/sgx/enclave.
-> +
-> +The net effect is that all enclave VMAs must be MAP_SHARED and are backed by
-> +a single file, /dev/sgx/enclave.
-> +
->  EPC oversubscription
->  ====================
->  
-> -- 
-> 2.22.0
-> 
+flush_work() complains if it is invoked with a null work function, and
+the enclave's work function isn't initialized until the create ioctl().
 
+WARNING: CPU: 10 PID: 1619 at linux/kernel/workqueue.c:3031 __flush_work+0x198/0x1b0
+Modules linked in:
+CPU: 10 PID: 1619 Comm: lsdt Tainted: G        W         5.2.0-rc2+ #651
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+RIP: 0010:__flush_work+0x198/0x1b0
+Code: <0f> 0b 31 c0 eb b7 e8 4d fa fd ff 0f 1f 00 66 2e 0f 1f 84 00 00 00
+RSP: 0018:ffffc900011b7c60 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88846c79a020 RCX: 0000000000000000
+RDX: ffff888465cc8000 RSI: 0000000000000000 RDI: ffff88846c79a240
+RBP: ffff88846c79a240 R08: 0000000000000000 R09: 0000000000000000
+R10: ffff8884683aba10 R11: 0000000000000001 R12: ffff88846c79a050
+R13: ffff88846c79a040 R14: dead000000000200 R15: ffff88846d447f00
+FS:  00007f110c801700(0000) GS:ffff88846fb00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c420009b80 CR3: 0000000005009003 CR4: 0000000000360ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ? kmem_cache_free+0x187/0x1b0
+ sgx_release+0xa8/0xd0
+ __fput+0xad/0x210
+ task_work_run+0x84/0xa0
+ do_exit+0x2db/0xb40
+ do_group_exit+0x3a/0xa0
+ get_signal+0x14e/0x7b0
+ do_signal+0x30/0x680
+ ? __x64_sys_futex+0x134/0x180
+ exit_to_usermode_loop+0x61/0xd0
+ do_syscall_64+0xfb/0x120
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/driver/main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-/Jarkko
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index 2d1943c13879..45e2dd8c2845 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -51,7 +51,8 @@ static int sgx_release(struct inode *inode, struct file *file)
+ 	encl->flags |= SGX_ENCL_DEAD;
+ 	mutex_unlock(&encl->lock);
+ 
+-	flush_work(&encl->work);
++	if (encl->work.func)
++		flush_work(&encl->work);
+ 	kref_put(&encl->refcount, sgx_encl_release);
+ 
+ 	return 0;
+-- 
+2.22.0
+
