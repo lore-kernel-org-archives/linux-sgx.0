@@ -1,118 +1,115 @@
-Return-Path: <SRS0=inPB=VJ=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=72mU=VK=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6ABC742BB
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Jul 2019 12:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDA3C742D7
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Jul 2019 06:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3911120863
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Jul 2019 12:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23E7A204FD
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Jul 2019 06:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbfGLM4p (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 12 Jul 2019 08:56:45 -0400
-Received: from mga04.intel.com ([192.55.52.120]:17217 "EHLO mga04.intel.com"
+        id S1726538AbfGMGv2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 13 Jul 2019 02:51:28 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55267 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbfGLM4p (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:56:45 -0400
+        id S1726274AbfGMGv2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 13 Jul 2019 02:51:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 05:56:45 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 23:51:28 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,482,1557212400"; 
-   d="scan'208";a="157129889"
-Received: from jroll-mobl.ger.corp.intel.com (HELO localhost) ([10.249.35.79])
-  by orsmga007.jf.intel.com with ESMTP; 12 Jul 2019 05:56:43 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     sean.j.christopherson@intel.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH] x86/sgx: Use a loop to release mm_struct's in sgx_release()
-Date:   Fri, 12 Jul 2019 15:56:40 +0300
-Message-Id: <20190712125640.18650-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+X-IronPort-AV: E=Sophos;i="5.63,485,1557212400"; 
+   d="scan'208";a="318200501"
+Received: from bxing-ubuntu.jf.intel.com ([10.23.30.27])
+  by orsmga004.jf.intel.com with ESMTP; 12 Jul 2019 23:51:27 -0700
+From:   Cedric Xing <cedric.xing@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com
+Cc:     cedric.xing@intel.com, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, kai.svahn@intel.com, kai.huang@intel.com
+Subject: [RFC PATCH v4 0/3] x86/sgx: Amend vDSO API to allow enclave/host parameter passing on untrusted stack
+Date:   Fri, 12 Jul 2019 23:51:24 -0700
+Message-Id: <cover.1563000446.git.cedric.xing@intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+In-Reply-To: <cover.1562813643.git.cedric.xing@intel.com>
+References: <cover.1562813643.git.cedric.xing@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Instead of an awkward goto-construct use a loop-construct to delete
-entries from the list of mm_struct's.
+This patchset is based upon, and can be applied cleanly on SGX1 patch v20
+(https://lkml.org/lkml/2019/4/17/344) by Jarkko Sakkinen.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-Still problems with my test env so only compilation test at this point.
- arch/x86/kernel/cpu/sgx/driver/main.c | 39 +++++++++++++--------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+The current proposed __vdso_sgx_enter_enclave() requires enclaves to preserve
+%rsp, which prohibits enclaves from allocating space on the untrusted stack.
+However, there are existing enclaves (e.g. those built with current Intel SGX
+SDK libraries) relying on the untrusted stack for passing parameters to
+untrusted functions (aka. o-calls), which requires allocating space on the
+untrusted stack by enclaves. After all, passing data via untrusted stack is
+very easy to implement (by enclaves), with essentially no overhead, therefore
+is very suitable for exchanging data in small amounts, so could be desirable by
+future SGX applications as well.
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
-index 27cf271b25f6..bb7f1932529f 100644
---- a/arch/x86/kernel/cpu/sgx/driver/main.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/main.c
-@@ -55,30 +55,27 @@ static int sgx_release(struct inode *inode, struct file *file)
- 	struct sgx_encl *encl = file->private_data;
- 	struct sgx_encl_mm *encl_mm;
- 
--	/*
--	 * Objects can't be *moved* off an RCU protected list (deletion is ok),
--	 * nor can the object be freed until after synchronize_srcu().
--	 */
--restart:
--	spin_lock(&encl->mm_lock);
--	if (list_empty(&encl->mm_list)) {
--		encl_mm = NULL;
--	} else {
--		encl_mm = list_first_entry(&encl->mm_list, struct sgx_encl_mm,
--					   list);
--		list_del_rcu(&encl_mm->list);
--	}
--	spin_unlock(&encl->mm_lock);
-+	for ( ; ; )  {
-+		spin_lock(&encl->mm_lock);
-+
-+		if (list_empty(&encl->mm_list)) {
-+			encl_mm = NULL;
-+		} else {
-+			encl_mm = list_first_entry(&encl->mm_list,
-+						   struct sgx_encl_mm, list);
-+			list_del_rcu(&encl_mm->list);
-+		}
- 
--	if (encl_mm) {
--		synchronize_srcu(&encl->srcu);
-+		spin_unlock(&encl->mm_lock);
- 
--		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
-+		/* The list is empty, ready to go. */
-+		if (!encl_mm)
-+			break;
- 
-+		synchronize_srcu(&encl->srcu);
-+		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
- 		kfree(encl_mm);
--
--		goto restart;
--	}
-+	};
- 
- 	mutex_lock(&encl->lock);
- 	encl->flags |= SGX_ENCL_DEAD;
-@@ -86,8 +83,8 @@ static int sgx_release(struct inode *inode, struct file *file)
- 
- 	if (encl->work.func)
- 		flush_work(&encl->work);
--	kref_put(&encl->refcount, sgx_encl_release);
- 
-+	kref_put(&encl->refcount, sgx_encl_release);
- 	return 0;
- }
- 
+This patchset introduces a new ABI for __vdso_sgx_enter_enclave() to anchor its
+stack frame on %rbp (instead of %rsp), so as to allow enclaves to "push" onto
+the untrusted stack by decrementing the untrusted %rsp. And in order to service
+o-calls and to preserve the untrusted stack upon exceptions, the new vDSO API
+takes one more optional parameter - "callback", which if supplied, will be
+invoked on all enclave exits (including normal and asynchronous exits). Ample
+details regarding the new ABI have been documented as comments inside the
+source code located in arch/x86/entry/vsgx_enter_enclave.S
+
+Please note that there was a lengthy discussion on what is the "best" approach
+for passing parameters for trusted/untrusted calls. Unfortunately there's no
+single "best" approach that fits all use cases, hence this new ABI has been
+designed intentionally to accommodate varieties. Therefore, to those not
+interested in using the untrusted stack, whatever worked with the old ABI
+proposed by Sean will continue to work with this new ABI.
+
+The SGX selftest has been augmented by two new tests. One exercises the new
+callback interface, and serves as a simple example to showcase how to use it;
+while the other validates the hand-crafted CFI directives in
+__vdso_sgx_enter_enclave() by single-stepping through it and unwinding call
+stack at every instruction.
+
+Changelog:
+  · This is version 4 of this patch series with the following changes.
+    - Removed unrelated cosmetic changes.
+    - Rewrote and reformatted comments in
+      arch/x86/entry/vdso/vsgx_enter_enclave.S to follow kernel-doc
+      conventions. New comments now can be converted to nice looking man pages.
+    - Fixed minor issues in the unwinding selftest and now it can run to
+      completion successfully with Sean's fix in vDSO fixup code
+      (https://patchwork.kernel.org/patch/11040801/). Comments have also been
+      added to describe the tests done.
+  · v3 - https://patchwork.kernel.org/cover/11039263/
+  · v2 - https://patchwork.kernel.org/cover/10914161/
+  · v1 - https://patchwork.kernel.org/cover/10911615/
+
+Cedric Xing (3):
+  selftests/x86/sgx: Fix Makefile for SGX selftest
+  x86/vdso: Modify __vdso_sgx_enter_enclave() to allow parameter passing
+    on untrusted stack
+  selftests/x86/sgx: Augment SGX selftest to test vDSO API
+
+ arch/x86/entry/vdso/vsgx_enter_enclave.S   | 310 ++++++++++++++-----
+ arch/x86/include/uapi/asm/sgx.h            |  14 +-
+ tools/testing/selftests/x86/sgx/Makefile   |  49 ++-
+ tools/testing/selftests/x86/sgx/main.c     | 344 ++++++++++++++++++---
+ tools/testing/selftests/x86/sgx/sgx_call.S |  40 ++-
+ 5 files changed, 600 insertions(+), 157 deletions(-)
+
 -- 
-2.20.1
+2.17.1
 
