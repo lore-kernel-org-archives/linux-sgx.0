@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71901C31E40
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Jul 2019 17:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F9AC31E40
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Jul 2019 17:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B292064A
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Jul 2019 17:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 882AB2064A
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Jul 2019 17:13:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfGMRN1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 13 Jul 2019 13:13:27 -0400
-Received: from mga14.intel.com ([192.55.52.115]:18336 "EHLO mga14.intel.com"
+        id S1727949AbfGMRNi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 13 Jul 2019 13:13:38 -0400
+Received: from mga01.intel.com ([192.55.52.88]:19294 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727961AbfGMRN1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 13 Jul 2019 13:13:27 -0400
+        id S1727936AbfGMRNi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 13 Jul 2019 13:13:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2019 10:13:26 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2019 10:13:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,487,1557212400"; 
-   d="scan'208";a="341981730"
+   d="scan'208";a="341981751"
 Received: from hbriegel-mobl.ger.corp.intel.com (HELO localhost) ([10.252.50.48])
-  by orsmga005.jf.intel.com with ESMTP; 13 Jul 2019 10:13:17 -0700
+  by orsmga005.jf.intel.com with ESMTP; 13 Jul 2019 10:13:28 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -39,9 +39,9 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v21 27/28] docs: x86/sgx: Document kernel internals
-Date:   Sat, 13 Jul 2019 20:08:03 +0300
-Message-Id: <20190713170804.2340-28-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v21 28/28] docs: x86/sgx: Document the enclave API
+Date:   Sat, 13 Jul 2019 20:08:04 +0300
+Message-Id: <20190713170804.2340-29-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
 References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
@@ -52,111 +52,58 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Document the enclave driver API i.e. the set of ioctl's used to create
+and manage enclaves and set their privileges
 
-Document some of the more tricky parts of the kernel implementation
-internals.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- Documentation/x86/sgx/2.Kernel-internals.rst | 76 ++++++++++++++++++++
- Documentation/x86/sgx/index.rst              |  1 +
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/x86/sgx/2.Kernel-internals.rst
+ Documentation/x86/sgx/3.API.rst | 27 +++++++++++++++++++++++++++
+ Documentation/x86/sgx/index.rst |  1 +
+ 2 files changed, 28 insertions(+)
+ create mode 100644 Documentation/x86/sgx/3.API.rst
 
-diff --git a/Documentation/x86/sgx/2.Kernel-internals.rst b/Documentation/x86/sgx/2.Kernel-internals.rst
+diff --git a/Documentation/x86/sgx/3.API.rst b/Documentation/x86/sgx/3.API.rst
 new file mode 100644
-index 000000000000..5c90a65936f2
+index 000000000000..b113aeb05f54
 --- /dev/null
-+++ b/Documentation/x86/sgx/2.Kernel-internals.rst
-@@ -0,0 +1,76 @@
++++ b/Documentation/x86/sgx/3.API.rst
+@@ -0,0 +1,27 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+================
-+Kernel Internals
-+================
++===
++API
++===
 +
-+CPU configuration
-+=================
++The enclave life-cycle starts by opening `/dev/sgx/enclave`. After this there is
++already a data structure inside kernel tracking the enclave that is initially
++uncreated. After this a set of ioctl's can be used to create, populate and
++initialize the enclave.
 +
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
++You can close (if you want) the fd after you've mmap()'d. As long as the file is
++open the enclave stays alive so you might want to do that after you don't need
++it anymore. Even munmap() won't destruct the enclave if the file is open.
++Neither will closing the fd as long as you have mmap() done over the fd (even
++if it does not across the range defined in SECS).
 +
-+EPC management
-+==============
++Finally, there is ioctl to authorize priviliged attributes:
++`SGX_IOC_ENCLAVE_SET_ATTRIBUTE`. Each of them is presented by a file inside
++`/dev/sgx/`. Right now there is only one such file `/dev/sgx/provision`, which
++controls the `PROVISON_KEY` attribute.
 +
-+Because the kernel can't arbitrarily read EPC memory or share RO backing pages
-+between enclaves, traditional memory models such as CoW and fork() do not work
-+with enclaves.  In other words, the architectural rules of EPC forces it to be
-+treated as MAP_SHARED at all times.
-+
-+The inability to employ traditional memory models also means that EPC memory
-+must be isolated from normal memory pools, e.g. attempting to use EPC memory
-+for normal mappings would result in faults and/or perceived data corruption.
-+Furthermore, EPC is not enumerated by as normal memory, e.g. BIOS enumerates
-+EPC as reserved memory in the e820 tables, or not at all.  As a result, EPC
-+memory is directly managed by the SGX subsystem, e.g. SGX employs VM_PFNMAP to
-+manually insert/zap/swap page table entries, and exposes EPC to userspace via
-+a well known device, /dev/sgx/enclave.
-+
-+The net effect is that all enclave VMAs must be MAP_SHARED and are backed by
-+a single file, /dev/sgx/enclave.
-+
-+EPC oversubscription
-+====================
-+
-+SGX allows to have larger enclaves than amount of available EPC by providing a
-+subset of leaf instruction for swapping EPC pages to the system memory.  The
-+details of these instructions are discussed in the architecture document. Due
-+to the unique requirements for swapping EPC pages, and because EPC pages do not
-+have associated page structures, management of the EPC is not handled by the
-+standard memory subsystem.
-+
-+SGX directly handles swapping of EPC pages, including a thread to initiate the
-+reclaiming process and a rudimentary LRU mechanism. When the amount of free EPC
-+pages goes below a low watermark the swapping thread starts reclaiming pages.
-+The pages that have not been recently accessed (i.e. do not have the A bit set)
-+are selected as victim pages. Each enclave holds an shmem file as a backing
-+storage for reclaimed pages.
-+
-+Launch Control
-+==============
-+
-+The current kernel implementation supports only writable MSRs. The launch is
-+performed by setting the MSRs to the hash of the public key modulus of the
-+enclave signer and a token with the valid bit set to zero. Because kernel makes
-+ultimately all the launch decisions token are not needed for anything.  We
-+don't need or have a launch enclave for generating them as the MSRs must always
-+be writable.
-+
-+Provisioning
-+============
-+
-+The use of provisioning must be controlled because it allows to get access to
-+the provisioning keys to attest to a remote party that the software is running
-+inside a legit enclave. This could be used by a malware network to ensure that
-+its nodes are running inside legit enclaves.
-+
-+The driver introduces a special device file /dev/sgx/provision and a special
-+ioctl SGX_IOC_ENCLAVE_SET_ATTRIBUTE to accomplish this. A file descriptor
-+pointing to /dev/sgx/provision is passed to ioctl from which kernel authorizes
-+the PROVISION_KEY attribute to the enclave.
++.. kernel-doc:: arch/x86/kernel/cpu/sgx/driver/ioctl.c
++   :functions: sgx_ioc_enclave_create
++               sgx_ioc_enclave_add_page
++               sgx_ioc_enclave_init
++               sgx_ioc_enclave_set_attribute
 diff --git a/Documentation/x86/sgx/index.rst b/Documentation/x86/sgx/index.rst
-index c5dfef62e612..5d660e83d984 100644
+index 5d660e83d984..de0b78328611 100644
 --- a/Documentation/x86/sgx/index.rst
 +++ b/Documentation/x86/sgx/index.rst
-@@ -14,3 +14,4 @@ potentially malicious.
-    :maxdepth: 1
+@@ -15,3 +15,4 @@ potentially malicious.
  
     1.Architecture
-+   2.Kernel-internals
+    2.Kernel-internals
++   3.API
 -- 
 2.20.1
 
