@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86245C73C66
-	for <linux-sgx@archiver.kernel.org>; Sun, 14 Jul 2019 14:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB3CC73C66
+	for <linux-sgx@archiver.kernel.org>; Sun, 14 Jul 2019 14:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE9A205F4
-	for <linux-sgx@archiver.kernel.org>; Sun, 14 Jul 2019 14:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D12205F4
+	for <linux-sgx@archiver.kernel.org>; Sun, 14 Jul 2019 14:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbfGNOlG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 14 Jul 2019 10:41:06 -0400
-Received: from mga03.intel.com ([134.134.136.65]:58194 "EHLO mga03.intel.com"
+        id S1728346AbfGNOre (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 14 Jul 2019 10:47:34 -0400
+Received: from mga07.intel.com ([134.134.136.100]:34105 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbfGNOlF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 14 Jul 2019 10:41:05 -0400
+        id S1728146AbfGNOre (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 14 Jul 2019 10:47:34 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2019 07:40:40 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2019 07:47:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,490,1557212400"; 
-   d="scan'208";a="172005252"
+   d="scan'208";a="172006173"
 Received: from hgenzken-mobl.ger.corp.intel.com (HELO localhost) ([10.249.35.131])
-  by orsmga006.jf.intel.com with ESMTP; 14 Jul 2019 07:40:35 -0700
-Date:   Sun, 14 Jul 2019 17:40:34 +0300
+  by orsmga006.jf.intel.com with ESMTP; 14 Jul 2019 07:47:03 -0700
+Date:   Sun, 14 Jul 2019 17:47:02 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     "Xing, Cedric" <cedric.xing@intel.com>
 Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
@@ -37,7 +37,7 @@ Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
         kai.svahn@intel.com, kai.huang@intel.com
 Subject: Re: [RFC PATCH v4 3/3] selftests/x86/sgx: Augment SGX selftest to
  test vDSO API
-Message-ID: <20190714144034.bxvihfak6qc7w5fb@linux.intel.com>
+Message-ID: <20190714144702.jzwrs6kanopv4227@linux.intel.com>
 References: <cover.1563000446.git.cedric.xing@intel.com>
  <657fe13cbf962d72dc1afc0e25577d8e89225702.1563000446.git.cedric.xing@intel.com>
  <dddd9db0d2e7a4d4246ecbb096d0b35cd0aecb2a.camel@linux.intel.com>
@@ -54,13 +54,16 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Sat, Jul 13, 2019 at 10:20:58AM -0700, Xing, Cedric wrote:
-> > All I asked was patch that just changes the calling convention to send v21
-> > and include the vDSO change. How hard can that be?
-> 
-> Your selftest Makefile was broken. You had to run the test manually. It
-> broke the build on 32-bit platforms.
+> Like I said, there are plenty of test### functions in the selftests. And
+> your original version didn't have even a name - everything was inside main()
+> without any comments. How was your original version "reviewable"?
 
-1. We don't support 32-bit.
-2. All changes should be in their own commits.
+I don't care. We can do better than that.
+
+If you have a specific thing that needs a comment in my selftest, please
+remark and I can add it.
+
+As for your last question, I neither care about metaphysics. Please,
+stick to the content.
 
 /Jarkko
