@@ -1,53 +1,44 @@
-Return-Path: <SRS0=VoGi=VL=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=tSvt=VM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC35C742D2
-	for <linux-sgx@archiver.kernel.org>; Sun, 14 Jul 2019 14:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B983C7618F
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Jul 2019 09:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E008620644
-	for <linux-sgx@archiver.kernel.org>; Sun, 14 Jul 2019 14:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 459AC2083D
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Jul 2019 09:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbfGNOyX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 14 Jul 2019 10:54:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:34543 "EHLO mga07.intel.com"
+        id S1729428AbfGOJ3H (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Jul 2019 05:29:07 -0400
+Received: from mga05.intel.com ([192.55.52.43]:41918 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbfGNOyX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 14 Jul 2019 10:54:23 -0400
+        id S1729413AbfGOJ3G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 15 Jul 2019 05:29:06 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2019 07:53:57 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2019 02:29:06 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,490,1557212400"; 
-   d="scan'208";a="172006952"
-Received: from hgenzken-mobl.ger.corp.intel.com (HELO localhost) ([10.249.35.131])
-  by orsmga006.jf.intel.com with ESMTP; 14 Jul 2019 07:53:52 -0700
-Date:   Sun, 14 Jul 2019 17:53:50 +0300
+X-IronPort-AV: E=Sophos;i="5.63,493,1557212400"; 
+   d="scan'208";a="318626819"
+Received: from pertsuli-mobl.ger.corp.intel.com (HELO localhost) ([10.252.36.224])
+  by orsmga004.jf.intel.com with ESMTP; 15 Jul 2019 02:29:03 -0700
+Date:   Mon, 15 Jul 2019 12:29:02 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        kai.svahn@intel.com, kai.huang@intel.com
-Subject: Re: [RFC PATCH v4 1/3] selftests/x86/sgx: Fix Makefile for SGX
- selftest
-Message-ID: <20190714145350.22cvim2u4mmkowr7@linux.intel.com>
-References: <cover.1563000446.git.cedric.xing@intel.com>
- <757d44a0e67bfa09d97eea918bc0d20383b5e80e.1563000446.git.cedric.xing@intel.com>
- <c6a99c107c1e6b814c1968146c87291c3e84aa2f.camel@linux.intel.com>
- <8bf125023ad2e99a8620112a393ca95f9939f4fd.camel@linux.intel.com>
- <84c792d8-a5ef-1030-9072-9670b6ba966c@intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     sean.j.christopherson@intel.com
+Subject: Re: [PATCH] x86/sgx: Return 0 when !CONFIG_INTEL_SGX_DRIVER
+Message-ID: <20190715092902.l4gtg6ytog6ckd6d@linux.intel.com>
+References: <20190714143212.971-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <84c792d8-a5ef-1030-9072-9670b6ba966c@intel.com>
+In-Reply-To: <20190714143212.971-1-jarkko.sakkinen@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
@@ -55,21 +46,18 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 10:29:12AM -0700, Xing, Cedric wrote:
-> Please note that your patchset hasn't been upstreamed yet. Your Makefile is
-> problematic to begin with. Technically it's your job to make it work before
-> sending out any patches. You didn't explain what's done for each line of
-> Makefile in your commit message either.
+On Sun, Jul 14, 2019 at 05:32:12PM +0300, Jarkko Sakkinen wrote:
+> When the config option is not enabled the initialization is always
+> succesful.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Yes, it is different case to do the initial version of the whole thing
-that suggest fixes to it. The latter needs to have more granularity.
-Bug fixes in any type of software development should be isolated to
-separate change sets. It is just a sane QA practice.
+It would whole a lot simpler if the call was just flagged:
 
-> Not saying documentation is unimportant, but the purposes for those changes
-> are obvious and easy to understand for anyone having reasonable knowledge on
-> how Makefile works.
->
-> I'm totally fine not fixing the Makefile. You can just leave them out.
+#ifdef CONFIG_INTEL_SGX_DRIVER
+	ret = sgx_drv_init();
+	if (ret)
+		goto err_kthread;
+#endif
 
 /Jarkko
