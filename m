@@ -3,106 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECDFC76195
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Jul 2019 22:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA0AC76191
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Jul 2019 22:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53482086C
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Jul 2019 22:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C0692053B
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Jul 2019 22:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563229440;
-	bh=sXN8yTSkzlc2tuMkiJcjFdTjSzcCd65oQqUJ3FJmeJY=;
+	s=default; t=1563229777;
+	bh=1o/MhE8wLDRGugzlRBNF+fQFZHSjqcfwu7zrwe+cre8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mwKsiTzjkXb1fhRBR9I8NwRm8ReNb2wOem9et7BXDRNDyPIaVNm6qJtVJiArUN5fk
-	 OMDN/ovRpDw/G8Jm38xN4GrSYwVGMBEhLGy7lSPmvsazesTKkMdLmrP0KVMvBJwl6i
-	 XoNZw/fQxvQhurQmpeI0JC7tdKqRjx8wYLhjXgLA=
+	b=PFry9rq3yqQDu9YSJNfDK0n7gw4Bf8tgFqWC+iXUVfXBziCqUGdbvoBLW+ptnubLn
+	 KmfpK+MgYUHF3sqOlsNHfvHEP1VRb7ygaYPKtotwzf320OhI3hKjhjNafh5+5y+mso
+	 GByGbwzsV6ckAjNPWwJ/b6oy0AHNVcVbdhweyBLI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732573AbfGOWYA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Jul 2019 18:24:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38992 "EHLO mail.kernel.org"
+        id S1731153AbfGOW3g (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Jul 2019 18:29:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730676AbfGOWYA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 15 Jul 2019 18:24:00 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        id S1730676AbfGOW3g (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 15 Jul 2019 18:29:36 -0400
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B4882086C
-        for <linux-sgx@vger.kernel.org>; Mon, 15 Jul 2019 22:23:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CC2D2053B
+        for <linux-sgx@vger.kernel.org>; Mon, 15 Jul 2019 22:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563229438;
-        bh=sXN8yTSkzlc2tuMkiJcjFdTjSzcCd65oQqUJ3FJmeJY=;
+        s=default; t=1563229775;
+        bh=1o/MhE8wLDRGugzlRBNF+fQFZHSjqcfwu7zrwe+cre8=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yON+IeagokTNon69qlcZndQWj7stI4VQZQG7sYNtg2WMcfC2tsSYgTRnz2O2zMiHu
-         bxqjJ6RDNj36L80JFV6bcheGpUt0M+2iRiyYzR3mHI7EA7U3RClMAgaRo5FQWhDWpw
-         Nq7QbNzbDqlOv8A62BrrHUzwF4k2wiK0UPJ+dhNs=
-Received: by mail-wr1-f41.google.com with SMTP id n4so18779890wrs.3
-        for <linux-sgx@vger.kernel.org>; Mon, 15 Jul 2019 15:23:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAUE+ezLBgHGcL4nME3dE9MJzLWBx4Hd6wQiK+VswkoDnQ080k3I
-        bJp3kZeuCbPpweiPD2q165WbK6oFSPBXWnB6J8YcSQ==
-X-Google-Smtp-Source: APXvYqyj/9VuP/+ihUF83njy2/IebE75lbwjE05Fh3u3X6o4w/jRKgrJb1caiXxXudMLSyjB+41C03VLnS0S0oyPpNY=
-X-Received: by 2002:adf:cc85:: with SMTP id p5mr29293788wrj.47.1563229437236;
- Mon, 15 Jul 2019 15:23:57 -0700 (PDT)
+        b=ZpDkylhailMnpdRsfDMZ9sgx/6WEvUFf2W1QdSbfg4+IbzCmjlQLl1e7CWFk0vulR
+         pHQIxZkjMsk9EwsDA66rGR/qXwTfDqrYaTo/8NHMSyKlaer43RgO+s+jJGyz/yxkU3
+         KpksNaWKviuwgv0NXhFqVRCJcyvaqIDpnSvfUsts=
+Received: by mail-wm1-f54.google.com with SMTP id s15so16703587wmj.3
+        for <linux-sgx@vger.kernel.org>; Mon, 15 Jul 2019 15:29:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAXOzTJqJSlTUk4anVXum19W97BeFwWo4MEdp0aDXiQEMMudV3Dk
+        T7FHWEe/C95eodDoxOJDBjAUJom9EhuxOv+E4O3vWw==
+X-Google-Smtp-Source: APXvYqwrGgYmx1u4B6STzlyQ0IXuhijCGw7k58WoJIe8fye9JZ3JBNz6Xc04hL1kryvhnKuWBaLSrjJHUIzF81iDO7I=
+X-Received: by 2002:a1c:c5c2:: with SMTP id v185mr27926618wmf.161.1563229773990;
+ Mon, 15 Jul 2019 15:29:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <960B34DE67B9E140824F1DCDEC400C0F6551D585@ORSMSX116.amr.corp.intel.com>
- <f59529e4-6cc8-2405-d7db-2519727f9a80@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551D7F7@ORSMSX116.amr.corp.intel.com>
- <63c92ab6-dc8d-826b-b8bf-05ad262f06e4@schaufler-ca.com> <960B34DE67B9E140824F1DCDEC400C0F6551DBF7@ORSMSX116.amr.corp.intel.com>
- <9e45df1b-3aac-e851-4ef2-5b262f5139bd@schaufler-ca.com> <20190703094651.GA29601@wind.enjellic.com>
- <012fc47d-4e9d-3398-0d9d-d9298a758c8d@schaufler-ca.com> <20190707133023.GA4521@wind.enjellic.com>
- <256013f7-292d-7014-9abb-61755f07eb25@schaufler-ca.com> <20190711102247.GA5357@wind.enjellic.com>
-In-Reply-To: <20190711102247.GA5357@wind.enjellic.com>
+References: <20190617222438.2080-1-sean.j.christopherson@intel.com>
+ <20190617222438.2080-5-sean.j.christopherson@intel.com> <dc3d59c2783ea81d85d4d447bd1a4a2d5fe51421.camel@linux.intel.com>
+ <20190619152018.GC1203@linux.intel.com> <20190620221702.GE20474@linux.intel.com>
+ <20190707190809.GE19593@linux.intel.com> <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
+ <20190708161932.GE20433@linux.intel.com> <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
+ <20190710172553.GE4348@linux.intel.com>
+In-Reply-To: <20190710172553.GE4348@linux.intel.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 15 Jul 2019 15:23:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrWmvtSaqtdZWeBdTMYP-38xeyWhf5TP9vV+OY30nHgJbQ@mail.gmail.com>
-Message-ID: <CALCETrWmvtSaqtdZWeBdTMYP-38xeyWhf5TP9vV+OY30nHgJbQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/3] x86/sgx: Add SGX specific LSM hooks
-To:     "Dr. Greg" <greg@idfusion.net>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Stephen Smalley <stephen.smalley@gmail.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+Date:   Mon, 15 Jul 2019 15:29:23 -0700
+X-Gmail-Original-Message-ID: <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
+Message-ID: <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define enclave
+ pages' protection bits
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "sds@tycho.nsa.gov" <sds@tycho.nsa.gov>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+        James Morris <jmorris@namei.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 3:23 AM Dr. Greg <greg@idfusion.net> wrote:
+On Wed, Jul 10, 2019 at 10:25 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
 >
-> On Mon, Jul 08, 2019 at 05:02:00PM -0700, Casey Schaufler wrote:
->
-> > > On 7/7/2019 6:30 AM, Dr. Greg wrote:
-> > > All well taken points from an implementation perspective, but they
-> > > elide the point I was trying to make.  Which is the fact that without
-> > > any semblance of a discussion regarding the requirements needed to
-> > > implement a security architecture around the concept of a TEE, this
-> > > entire process, despite Cedric's well intentioned efforts, amounts to
-> > > pounding a square solution into the round hole of a security problem.
->
-> > Lead with code. I love a good requirements document, but one of the
-> > few places where I agree with the agile folks is that working code
-> > speaks loudly.
+> On Tue, Jul 09, 2019 at 07:06:34PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Jul 08, 2019 at 09:19:32AM -0700, Sean Christopherson wrote:
+> > > > 2. Probably some "user story" type of examples would help with the
+> > > > discussion overall [1] i.e. how one would use this for
+> > > > her own good.
+> > >
+> > > The compelling story is Andy's original concern that userspace could
+> > > circumvent existing security policies by running code in an enclave.
+> > >
+> > > AIUI, closing the LSM loophole is the minimal requirement to get SGX
+> > > upstreamed.  The extensive discussion has largely been focused on
+> > > ensuring that whatever mechanism is used to close the loophole will
+> > > play nice with future SGX functionality and/or LSM security policies.
 > >
-> > > Which, as I noted in my e-mail, is tantamount to security theater.
+> > OK, might be getting here where I fall out of the wagon so:
 > >
-> > Not buying that. Not rejecting it, either. Without code
-> > to judge it's kind of hard to say.
+> > Doesn't Andy's example anyway require a process that has privileges to
+> > make pages executable i.e. it could run arbitrary code even without an
+> > enclave?
 >
-> We tried the code approach.
->
+> Ah, no.  He did raise that concern, but it'd only be an issue if the
+> enclave fd were backed by an anon inode, in which case all enclaves would
+> need EXECMEM in order to gain PROT_EXEC on EPC.  Because the fd is backed
+> /dev/sgx/enclave, userspace just needs FILE__EXECUTE on /dev/sgx/enclave.
 
-You sent code.  That code did not, in any respect, address the issue
-of how LSMs were supposed to control what code got executed.
+I would say it differently: regardless of exactly how /dev/sgx/enclave
+is wired up under the hood, we want a way that a process can be
+granted permission to usefully run enclaves without being granted
+permission to execute whatever bytes of code it wants.  Preferably
+without requiring LSMs to maintain some form of enclave signature
+whitelist.
 
-Do you have an actual suggestion here that we should pay attention to?
+This is pretty much the only hard requirement I see.  We really could
+achieve this, in a somewhat limited form, by saying that LSMs can
+approve or reject the SIGSTRUCT.  But doing it that way is a bit nasty
+as we've noticed, for a few reasons.  Several of you have raised
+objections to requiring SIGSTRUCT to come from a .sigstruct file.  We
+also need to worry about a SIGSTRUCT that refers to an enclave that
+forgot to measure its text.  And we need to worry about SGX2.
+
+So this whole messy exercise boils down to: a bunch of security policy
+authors think that EXECMEM and similar are not to be given out
+lightly.  How to we allow policies like that to be compatible with
+SGX?
