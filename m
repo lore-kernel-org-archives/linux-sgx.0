@@ -1,197 +1,155 @@
-Return-Path: <SRS0=+VJP=VO=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=MIYG=VV=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297D1C7618F
-	for <linux-sgx@archiver.kernel.org>; Wed, 17 Jul 2019 22:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF43C76186
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jul 2019 20:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F43208C0
-	for <linux-sgx@archiver.kernel.org>; Wed, 17 Jul 2019 22:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1B0B204EC
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jul 2019 20:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbfGQWhE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 17 Jul 2019 18:37:04 -0400
-Received: from mga03.intel.com ([134.134.136.65]:4184 "EHLO mga03.intel.com"
+        id S2388866AbfGXTfq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Jul 2019 15:35:46 -0400
+Received: from mga18.intel.com ([134.134.136.126]:56931 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727606AbfGQWhE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 17 Jul 2019 18:37:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S2389255AbfGXTfn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:35:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 15:37:03 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 12:35:42 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,275,1559545200"; 
-   d="scan'208";a="366717388"
-Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Jul 2019 15:37:02 -0700
-Subject: Re: [PATCH v21 24/28] selftests/x86: Add a selftest for SGX
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="321437783"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by orsmga004.jf.intel.com with ESMTP; 24 Jul 2019 12:35:42 -0700
+Date:   Wed, 24 Jul 2019 12:35:42 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com
+Subject: Re: [PATCH v21 08/28] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
+Message-ID: <20190724193542.GD25376@linux.intel.com>
 References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
- <20190713170804.2340-25-jarkko.sakkinen@linux.intel.com>
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-Message-ID: <e7b51875-c190-bab6-28ec-0eaa6caf2955@intel.com>
-Date:   Wed, 17 Jul 2019 15:37:03 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190713170804.2340-25-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/13/2019 10:08 AM, Jarkko Sakkinen wrote:
-> Add a selftest for SGX. It is a trivial test where a simple enclave
-> copies one 64-bit word of memory between two memory locations given to
-> the enclave as arguments.
+On Sat, Jul 13, 2019 at 08:07:44PM +0300, Jarkko Sakkinen wrote:
+>  arch/x86/kernel/cpu/intel.c | 71 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->   tools/testing/selftests/x86/Makefile          |  10 +
->   tools/testing/selftests/x86/sgx/Makefile      |  48 ++
->   tools/testing/selftests/x86/sgx/defines.h     |  39 ++
->   tools/testing/selftests/x86/sgx/encl.c        |  20 +
->   tools/testing/selftests/x86/sgx/encl.lds      |  33 ++
->   .../selftests/x86/sgx/encl_bootstrap.S        |  94 ++++
->   tools/testing/selftests/x86/sgx/encl_piggy.S  |  18 +
->   tools/testing/selftests/x86/sgx/encl_piggy.h  |  14 +
->   tools/testing/selftests/x86/sgx/main.c        | 301 +++++++++++
->   tools/testing/selftests/x86/sgx/sgx_call.S    |  49 ++
->   tools/testing/selftests/x86/sgx/sgxsign.c     | 508 ++++++++++++++++++
->   .../testing/selftests/x86/sgx/signing_key.pem |  39 ++
->   12 files changed, 1173 insertions(+)
->   create mode 100644 tools/testing/selftests/x86/sgx/Makefile
->   create mode 100644 tools/testing/selftests/x86/sgx/defines.h
->   create mode 100644 tools/testing/selftests/x86/sgx/encl.c
->   create mode 100644 tools/testing/selftests/x86/sgx/encl.lds
->   create mode 100644 tools/testing/selftests/x86/sgx/encl_bootstrap.S
->   create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.S
->   create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.h
->   create mode 100644 tools/testing/selftests/x86/sgx/main.c
->   create mode 100644 tools/testing/selftests/x86/sgx/sgx_call.S
->   create mode 100644 tools/testing/selftests/x86/sgx/sgxsign.c
->   create mode 100644 tools/testing/selftests/x86/sgx/signing_key.pem
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index 8d6d92ebeb54..1503b251d10f 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -623,6 +623,72 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  	c->x86_phys_bits -= keyid_bits;
+>  }
+>  
+> +static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
+> +{
+> +	unsigned long long fc;
+> +
+> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +		pr_err_once("sgx: The feature control MSR is not locked\n");
+> +		goto err_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		pr_err_once("sgx: SGX is not enabled in IA32_FEATURE_CONTROL MSR\n");
+> +		goto err_unsupported;
+> +	}
+> +
+> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> +		pr_err_once("sgx: SGX1 instruction set is not supported\n");
+> +		goto err_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+> +		pr_info_once("sgx: The launch control MSRs are not writable\n");
+> +		goto err_msrs_rdonly;
+> +	}
+> +
+> +	return;
+> +
+> +err_unsupported:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +
+> +err_msrs_rdonly:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+> +}
+> +
+> +static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+> +{
+> +	u64 epb;
+> +
+> +	/*
+> +	 * Initialize MSR_IA32_ENERGY_PERF_BIAS if not already initialized.
+> +	 * (x86_energy_perf_policy(8) is available to change it at run-time.)
+> +	 */
+> +	if (!cpu_has(c, X86_FEATURE_EPB))
+> +		return;
+> +
+> +	rdmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
+> +	if ((epb & 0xF) != ENERGY_PERF_BIAS_PERFORMANCE)
+> +		return;
+> +
+> +	pr_warn_once("ENERGY_PERF_BIAS: Set to 'normal', was 'performance'\n");
+> +	pr_warn_once("ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)\n");
+> +	epb = (epb & ~0xF) | ENERGY_PERF_BIAS_NORMAL;
+> +	wrmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
+> +}
+> +
+> +static void intel_bsp_resume(struct cpuinfo_x86 *c)
+> +{
+> +	/*
+> +	 * MSR_IA32_ENERGY_PERF_BIAS is lost across suspend/resume,
+> +	 * so reinitialize it properly like during bootup:
+> +	 */
+> +	init_intel_energy_perf(c);
+> +}
+> +
+>  static void init_cpuid_fault(struct cpuinfo_x86 *c)
+>  {
+>  	u64 msr;
+> @@ -760,6 +826,11 @@ static void init_intel(struct cpuinfo_x86 *c)
+>  	if (cpu_has(c, X86_FEATURE_TME))
+>  		detect_tme(c);
+>  
+> +	if (IS_ENABLED(CONFIG_INTEL_SGX) && cpu_has(c, X86_FEATURE_SGX))
+> +		detect_sgx(c);
+> +
+> +	init_intel_energy_perf(c);
+
+All of the energy_perf additions are bogus, looks like a rebase gone wrong.
+
+> +
+>  	init_intel_misc_features(c);
+>  }
+>  
+> -- 
+> 2.20.1
 > 
-> diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-> index fa07d526fe39..a1831406fd01 100644
-> --- a/tools/testing/selftests/x86/Makefile
-> +++ b/tools/testing/selftests/x86/Makefile
-> @@ -1,4 +1,7 @@
->   # SPDX-License-Identifier: GPL-2.0
-> +
-> +SUBDIRS_64 := sgx
-> +
->   all:
->   
->   include ../lib.mk
-> @@ -68,6 +71,13 @@ all_32: $(BINARIES_32)
->   
->   all_64: $(BINARIES_64)
->   
-> +all_64: $(SUBDIRS_64)
-
-$(SUBDIRS_64) aren't targets. No need for all_64 to depend on them.
-
-> +	@for DIR in $(SUBDIRS_64); do			\
-> +		BUILD_TARGET=$(OUTPUT)/$$DIR;		\
-> +		mkdir $$BUILD_TARGET  -p;		\
-> +		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;	\
-
-Please use $(MAKE), otherwise command line options cannot be passed onto 
-sub-makes.
-
-> +	done
-
-The above only builds but will not run SGX tests.
-
-Also, 'clean' target will not descend into sgx folder either.
-
-> +
->   EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
->   
->   $(BINARIES_32): $(OUTPUT)/%_32: %.c
-> diff --git a/tools/testing/selftests/x86/sgx/Makefile b/tools/testing/selftests/x86/sgx/Makefile
-> new file mode 100644
-> index 000000000000..10136b73096b
-> --- /dev/null
-> +++ b/tools/testing/selftests/x86/sgx/Makefile
-> @@ -0,0 +1,48 @@
-> +top_srcdir = ../../../../..
-> +
-> +include ../../lib.mk
-> +
-> +HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
-> +ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
-> +	       -fno-stack-protector -mrdrnd $(INCLUDES)
-> +
-> +TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
-> +all_64: $(TEST_CUSTOM_PROGS)
-> +
-> +$(TEST_CUSTOM_PROGS): $(OUTPUT)/main.o $(OUTPUT)/sgx_call.o \
-> +		      $(OUTPUT)/encl_piggy.o
-> +	$(CC) $(HOST_CFLAGS) -o $@ $^
-> +
-> +$(OUTPUT)/main.o: main.c
-> +	$(CC) $(HOST_CFLAGS) -c $< -o $@
-
-.o files don't have to be generated/kept. And to be consistent with 
-other selftests, please don't generate/keep them.
-
-> +
-> +$(OUTPUT)/sgx_call.o: sgx_call.S
-> +	$(CC) $(HOST_CFLAGS) -c $< -o $@
-> +
-> +$(OUTPUT)/encl_piggy.o: $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
-> +	$(CC) $(HOST_CFLAGS) -c encl_piggy.S -o $@
-
-Without -I, the above command breaks when "O=<target dir>" is specified.
-
-> +
-> +$(OUTPUT)/encl.bin: $(OUTPUT)/encl.elf $(OUTPUT)/sgxsign
-> +	objcopy --remove-section=.got.plt -O binary $< $@
-
-.got.plt section will never be present for statically linked binaries.
-
-> +
-> +$(OUTPUT)/encl.elf: $(OUTPUT)/encl.o $(OUTPUT)/encl_bootstrap.o
-> +	$(CC) $(ENCL_CFLAGS) -T encl.lds -o $@ $^
-
-Please fix the warning of ".note.gnu.build-id section discarded".
-
-> +
-> +$(OUTPUT)/encl.o: encl.c
-> +	$(CC) $(ENCL_CFLAGS) -c $< -o $@
-> +
-> +$(OUTPUT)/encl_bootstrap.o: encl_bootstrap.S
-> +	$(CC) $(ENCL_CFLAGS) -c $< -o $@
-> +
-> +$(OUTPUT)/encl.ss: $(OUTPUT)/encl.bin  $(OUTPUT)/sgxsign
-> +	$(OUTPUT)/sgxsign signing_key.pem $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
-> +
-> +$(OUTPUT)/sgxsign: sgxsign.c
-> +	$(CC) -o $@ $< -lcrypto
-> +
-> +EXTRA_CLEAN := $(OUTPUT)/sgx-selftest $(OUTPUT)/sgx-selftest.o \
-> +	       $(OUTPUT)/sgx_call.o $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss \
-> +	       $(OUTPUT)/encl.elf $(OUTPUT)/encl.o $(OUTPUT)/encl_bootstrap.o \
-> +	       $(OUTPUT)/sgxsign
-> +
-
-encl_piggy.o, main.o and test_sgx are not cleaned.
-
-> +.PHONY: clean
