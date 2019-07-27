@@ -7,17 +7,17 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABBDC7618B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D602C76190
 	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395F920840
+	by mail.kernel.org (Postfix) with ESMTP id 7D42220869
 	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbfG0Fwy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1727903AbfG0Fwy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Sat, 27 Jul 2019 01:52:54 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40956 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:40958 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728438AbfG0FwW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1728380AbfG0FwW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Sat, 27 Jul 2019 01:52:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -25,7 +25,7 @@ Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
-   d="scan'208";a="254568639"
+   d="scan'208";a="254568629"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:16 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -39,9 +39,9 @@ To:     Paolo Bonzini <pbonzini@redhat.com>,
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>
-Subject: [RFC PATCH 20/21] x86/sgx: Export sgx_set_attribute() for use by KVM
-Date:   Fri, 26 Jul 2019 22:52:13 -0700
-Message-Id: <20190727055214.9282-21-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 17/21] KVM: VMX: Add handler for ENCLS[EINIT] to support SGX Launch Control
+Date:   Fri, 26 Jul 2019 22:52:10 -0700
+Message-Id: <20190727055214.9282-18-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190727055214.9282-1-sean.j.christopherson@intel.com>
 References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
@@ -52,68 +52,65 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-To prevent userspace from circumventing access to the PROVISIONKEY by
-running an enclave in a VM, KVM will deny access to the PROVISIONKEY
-unless userspace proves to KVM that it is allowed to access the key.
-Export sgx_set_attribute() so that it may be used by KVM to verify an
-SGX attribute file.
+SGX Launch Control (LC) modifies the behavior of ENCLS[EINIT] to query
+a set of user-controllable MSRs (Launch Enclave, a.k.a. LE, Hash MSRs)
+when verifying the key used to sign an enclave.  On CPUs without LC
+support, the public key hash of allowed LEs is hardwired into the CPU to
+an Intel controlled key (the Intel key is also the reset value of the LE
+hash MSRs).
+
+When LC is enabled in the host, EINIT must be intercepted and executed
+in the host using the guest's LE hash MSR value, even if the guest's
+values are fixed to hardware default values.  The MSRs are not switched
+on VM-Enter/VM-Exit as writing the MSRs is extraordinarily expensive,
+e.g. each WRMSR is 4x slower than a regular WRMSR and on par with a full
+VM-Enter -> VM-Exit transition.  Furthermore, as the MSRS aren't allowed
+in the hardware-supported lists, i.e. would need to be manually read and
+written.  On the other hand, EINIT takes tens of thousands of cycles to
+execute (it's so slow that it's interruptible), i.e. the ~1k cycles of
+overhead to trap-and-execute EINIT is unlikely to be noticed by the
+guest, let alone impact the overall performance of SGX.
+
+Actual usage of the handler will be added in a future patch, i.e. when
+SGX virtualization is fully enabled.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/include/asm/sgx.h             | 2 ++
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 1 +
- arch/x86/kernel/cpu/sgx/main.c         | 1 +
- arch/x86/kernel/cpu/sgx/sgx.h          | 1 -
- 4 files changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx/sgx.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index f0f0176b8e2f..65c9417d3a80 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -6,6 +6,8 @@
+diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
+index 5b08e7dcc3a3..2bcfa3b6c75e 100644
+--- a/arch/x86/kvm/vmx/sgx.c
++++ b/arch/x86/kvm/vmx/sgx.c
+@@ -221,3 +221,27 @@ int handle_encls_ecreate(struct kvm_vcpu *vcpu)
  
- struct sgx_pageinfo;
- 
-+int sgx_set_attribute(u64 *allowed_attributes, unsigned int attribute_fd);
-+
- #if IS_ENABLED(CONFIG_KVM_INTEL)
- int sgx_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs, int *trapnr);
- int sgx_einit(void __user *sigstruct, void __user *token,
-diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index a1cb5f772363..1b7a05cd9d02 100644
---- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -2,6 +2,7 @@
- // Copyright(c) 2016-19 Intel Corporation.
- 
- #include <asm/mman.h>
-+#include <asm/sgx.h>
- #include <linux/mman.h>
- #include <linux/delay.h>
- #include <linux/file.h>
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 542427c6ae9c..68e5c704378a 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -336,6 +336,7 @@ int sgx_set_attribute(u64 *allowed_attributes, unsigned int attribute_fd)
- 	*allowed_attributes |= SGX_ATTR_PROVISIONKEY;
- 	return 0;
+ 	return sgx_encls_postamble(vcpu, ret, trapnr, secs_gva);
  }
-+EXPORT_SYMBOL_GPL(sgx_set_attribute);
- 
- static void sgx_dev_release(struct device *dev)
- {
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 3f3311024bd0..fab12cc0e7c5 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -96,6 +96,5 @@ void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce);
- __init int sgx_dev_init(const char *name, struct device *dev,
- 			struct cdev *cdev, const struct file_operations *fops,
- 			int minor);
--int sgx_set_attribute(u64 *allowed_attributes, unsigned int attribute_fd);
- 
- #endif /* _X86_SGX_H */
++
++int handle_encls_einit(struct kvm_vcpu *vcpu)
++{
++	unsigned long sig_hva, secs_hva, token_hva;
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	gva_t sig_gva, secs_gva, token_gva;
++	int ret, trapnr;
++
++	if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 1808, 4096, &sig_gva) ||
++	    sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096, &secs_gva) ||
++	    sgx_get_encls_gva(vcpu, kvm_rdx_read(vcpu), 304, 512, &token_gva))
++		return 1;
++
++	if (sgx_gva_to_hva(vcpu, sig_gva, false, &sig_hva) ||
++	    sgx_gva_to_hva(vcpu, secs_gva, true, &secs_hva) ||
++	    sgx_gva_to_hva(vcpu, token_gva, false, &token_hva))
++		return 1;
++
++	ret = sgx_einit((void __user *)sig_hva, (void __user *)token_hva,
++			(void __user *)secs_hva, vmx->msr_ia32_sgxlepubkeyhash,
++			&trapnr);
++
++	return sgx_encls_postamble(vcpu, ret, trapnr, secs_hva);
++}
 -- 
 2.22.0
 
