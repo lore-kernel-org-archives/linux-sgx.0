@@ -2,31 +2,31 @@ Return-Path: <SRS0=PICp=VY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9497C7618B
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1561C761A9
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9758720840
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEA2E21734
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:52:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfG0FwQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 27 Jul 2019 01:52:16 -0400
+        id S1728451AbfG0FwW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 27 Jul 2019 01:52:22 -0400
 Received: from mga02.intel.com ([134.134.136.20]:40956 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfG0FwQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:52:16 -0400
+        id S1728347AbfG0FwV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:52:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:15 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
-   d="scan'208";a="254568578"
+   d="scan'208";a="254568626"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:15 -0700
+  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:16 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
@@ -38,10 +38,12 @@ To:     Paolo Bonzini <pbonzini@redhat.com>,
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>
-Subject: [RFC PATCH 00/21] x86/sgx: KVM: Add SGX virtualization
-Date:   Fri, 26 Jul 2019 22:51:53 -0700
-Message-Id: <20190727055214.9282-1-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 16/21] KVM: VMX: Edd emulation of SGX Launch Control LE hash MSRs
+Date:   Fri, 26 Jul 2019 22:52:09 -0700
+Message-Id: <20190727055214.9282-17-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190727055214.9282-1-sean.j.christopherson@intel.com>
+References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -49,103 +51,127 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This is an "early" RFC series for adding SGX virtualization to KVM.  SGX
-virtualization (more specifically, EPC virtualization) is dependent on the
-not-yet-merged SGX enabling series and so cannot be considered for
-inclusion any time soon.
+SGX Launch Control (LC) modifies the behavior of ENCLS[EINIT] to query
+a set of user-controllable MSRs (Launch Enclave, a.k.a. LE, Hash MSRs)
+when verifying the key used to sign an enclave.  On CPUs without LC
+support, the public key hash of allowed LEs is hardwired into the CPU to
+an Intel controlled key (the Intel key is also the reset value of the LE
+hash MSRs).  Track the guest's desired hash and stuff it into hardware
+when executing EINIT on behalf of the guest (in a future patch).
 
-The primary goal of this RFC is to get feedback on the overall approach,
-e.g. code location, uAPI changes, functionality, etc...  My hope is to
-sort out any major issues sooner rather than later, so that if/when the
-base SGX enabling is merged, virtualization support can quickly follow
-suit.
+Note, KVM allows writes to the LE hash MSRs if IA32_FEATURE_CONTROL is
+unlocked.  This is technically not arch behavior, but it's roughly
+equivalent to the arch behavior of the MSRs being writable prior to
+activating SGX[1].  Emulating SGX activation is feasible, but adds no
+tangible benefits and would just create extra work for KVM and guest
+firmware.
 
-That being said, nitpicking and bikeshedding is more than welcome :-)
+[1] SGX related bits in IA32_FEATURE_CONTROL cannot be set until SGX
+    is activated, e.g. by firmware.  SGX activation is triggered by
+    setting bit 0 in MSR 0x7a.  Until SGX is activated, the LE hash
+    MSRs are writable, e.g. to allow firmware to lock down the LE
+    root key with a non-Intel value.
 
-This code applies on top of a slightly modified version of v21 of the SGX
-enabling series[1].  The modifications on top of the SGX series are a few
-minor bug fixes that are not related to SGX virtualization, but affect
-code that is moved/modified by this series.  The full source for the
-modified version of v21 can be found at:
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/vmx.h |  2 ++
+ 2 files changed, 44 insertions(+)
 
- https://github.com/sean-jc/linux.git
-
-under the tag:
-
-  sgx-v21-ish
-
-A corresponding Qemu RFC will (hopefully) follow next week, the Qemu
-patches need a bit more cleanup...
-
-[1] https://lkml.kernel.org/r/20190713170804.2340-1-jarkko.sakkinen@linux.intel.com
-
-Sean Christopherson (21):
-  x86/sgx: Add defines for SGX device minor numbers
-  x86/sgx: Move bus registration and device init to common code
-  x86/sgx: Move provisioning device to common code
-  x86/sgx: Add /dev/sgx/virt_epc device to allocate "raw" EPC for VMs
-  x86/sgx: Expose SGX architectural definitions to the kernel
-  KVM: x86: Add SGX sub-features leaf to reverse CPUID table
-  KVM: x86: Add WARN_ON_ONCE(index!=0) in __do_cpuid_ent
-  KVM: x86: Add kvm_x86_ops hook to short circuit emulation
-  KVM: VMX: Add basic handling of VM-Exit from SGX enclave
-  KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for VMX/SGX
-  KVM: x86: Export kvm_propagate_fault (as kvm_propagate_page_fault)
-  KVM: x86: Define new #PF SGX error code bit
-  x86/sgx: Move the intermediate EINIT helper into the driver
-  x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
-  KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
-  KVM: VMX: Edd emulation of SGX Launch Control LE hash MSRs
-  KVM: VMX: Add handler for ENCLS[EINIT] to support SGX Launch Control
-  KVM: x86: Invoke kvm_x86_ops->cpuid_update() after kvm_update_cpuid()
-  KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
-  x86/sgx: Export sgx_set_attribute() for use by KVM
-  KVM: x86: Add capability to grant VM access to privileged SGX
-    attribute
-
- Documentation/virtual/kvm/api.txt             |  20 ++
- arch/x86/Kconfig                              |  13 +
- arch/x86/include/asm/kvm_host.h               |   8 +-
- arch/x86/include/asm/sgx.h                    |  17 +
- .../cpu/sgx/arch.h => include/asm/sgx_arch.h} |   1 +
- arch/x86/include/asm/vmx.h                    |   1 +
- arch/x86/include/uapi/asm/vmx.h               |   1 +
- arch/x86/kernel/cpu/sgx/Makefile              |   1 +
- arch/x86/kernel/cpu/sgx/driver/driver.h       |   3 +-
- arch/x86/kernel/cpu/sgx/driver/ioctl.c        |  40 ++-
- arch/x86/kernel/cpu/sgx/driver/main.c         |  73 +----
- arch/x86/kernel/cpu/sgx/encl.c                |   2 +-
- arch/x86/kernel/cpu/sgx/encls.h               |   2 +-
- arch/x86/kernel/cpu/sgx/main.c                | 141 ++++++--
- arch/x86/kernel/cpu/sgx/sgx.h                 |  16 +-
- arch/x86/kernel/cpu/sgx/virt.c                | 308 ++++++++++++++++++
- arch/x86/kernel/cpu/sgx/virt.h                |  14 +
- arch/x86/kvm/Makefile                         |   2 +
- arch/x86/kvm/cpuid.c                          | 135 ++++++--
- arch/x86/kvm/cpuid.h                          |  20 ++
- arch/x86/kvm/emulate.c                        |   1 +
- arch/x86/kvm/mmu.c                            |  12 -
- arch/x86/kvm/svm.c                            |  19 +-
- arch/x86/kvm/vmx/nested.c                     |  21 +-
- arch/x86/kvm/vmx/nested.h                     |   5 +
- arch/x86/kvm/vmx/sgx.c                        | 247 ++++++++++++++
- arch/x86/kvm/vmx/sgx.h                        |  11 +
- arch/x86/kvm/vmx/vmcs12.c                     |   1 +
- arch/x86/kvm/vmx/vmcs12.h                     |   4 +-
- arch/x86/kvm/vmx/vmx.c                        | 251 +++++++++++++-
- arch/x86/kvm/vmx/vmx.h                        |   6 +
- arch/x86/kvm/x86.c                            |  40 ++-
- arch/x86/kvm/x86.h                            |   5 -
- include/uapi/linux/kvm.h                      |   1 +
- tools/testing/selftests/x86/sgx/defines.h     |   2 +-
- 35 files changed, 1234 insertions(+), 210 deletions(-)
- create mode 100644 arch/x86/include/asm/sgx.h
- rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx_arch.h} (99%)
- create mode 100644 arch/x86/kernel/cpu/sgx/virt.c
- create mode 100644 arch/x86/kernel/cpu/sgx/virt.h
- create mode 100644 arch/x86/kvm/vmx/sgx.c
- create mode 100644 arch/x86/kvm/vmx/sgx.h
-
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index abcd2f7a36f5..819c47fee157 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -390,6 +390,8 @@ static const struct kvm_vmx_segment_field {
+ 
+ u64 host_efer;
+ 
++static u64 sgx_pubkey_hash[4] __ro_after_init;
++
+ /*
+  * Though SYSCALL is only supported in 64-bit mode on Intel CPUs, kvm
+  * will emulate SYSCALL in legacy mode if the vendor string in guest
+@@ -1740,6 +1742,13 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_IA32_FEATURE_CONTROL:
+ 		msr_info->data = vmx->msr_ia32_feature_control;
+ 		break;
++	case MSR_IA32_SGXLEPUBKEYHASH0 ... MSR_IA32_SGXLEPUBKEYHASH3:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_SGX_LC))
++			return 1;
++		msr_info->data = to_vmx(vcpu)->msr_ia32_sgxlepubkeyhash
++			[msr_info->index - MSR_IA32_SGXLEPUBKEYHASH0];
++		break;
+ 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
+ 		if (!nested_vmx_allowed(vcpu))
+ 			return 1;
+@@ -1953,6 +1962,15 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		if (msr_info->host_initiated && data == 0)
+ 			vmx_leave_nested(vcpu);
+ 		break;
++	case MSR_IA32_SGXLEPUBKEYHASH0 ... MSR_IA32_SGXLEPUBKEYHASH3:
++		if (!msr_info->host_initiated &&
++		    (!guest_cpuid_has(vcpu, X86_FEATURE_SGX_LC) ||
++		    ((vmx->msr_ia32_feature_control & FEATURE_CONTROL_LOCKED) &&
++		    !(vmx->msr_ia32_feature_control & FEATURE_CONTROL_SGX_LE_WR))))
++			return 1;
++		vmx->msr_ia32_sgxlepubkeyhash
++			[msr_index - MSR_IA32_SGXLEPUBKEYHASH0] = data;
++		break;
+ 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
+ 		if (!msr_info->host_initiated)
+ 			return 1; /* they are read-only */
+@@ -6698,6 +6716,9 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+ 	else
+ 		memset(&vmx->nested.msrs, 0, sizeof(vmx->nested.msrs));
+ 
++	memcpy(vmx->msr_ia32_sgxlepubkeyhash, sgx_pubkey_hash,
++	       sizeof(sgx_pubkey_hash));
++
+ 	vmx->nested.posted_intr_nv = -1;
+ 	vmx->nested.current_vmptr = -1ull;
+ 
+@@ -7588,6 +7609,27 @@ static __init int hardware_setup(void)
+ 	if (!enable_ept || !cpu_has_vmx_intel_pt())
+ 		pt_mode = PT_MODE_SYSTEM;
+ 
++	/*
++	 * Use Intel's default value for Skylake hardware if Launch Control is
++	 * not supported, i.e. Intel's hash is hardcoded into silicon, or if
++	 * Launch Control is supported and enabled, i.e. mimic the reset value
++	 * and let the guest write the MSRs at will.  If Launch Control is
++	 * supported but disabled, then we have to use the current MSR values
++	 * as the MSRs the hash MSRs exist but are locked and not writable.
++	 */
++	if (boot_cpu_has(X86_FEATURE_SGX_LC) ||
++	    rdmsrl_safe(MSR_IA32_SGXLEPUBKEYHASH0, &sgx_pubkey_hash[0])) {
++		sgx_pubkey_hash[0] = 0xa6053e051270b7acULL;
++		sgx_pubkey_hash[1] = 0x6cfbe8ba8b3b413dULL;
++		sgx_pubkey_hash[2] = 0xc4916d99f2b3735dULL;
++		sgx_pubkey_hash[3] = 0xd4f8c05909f9bb3bULL;
++	} else {
++		/* MSR_IA32_SGXLEPUBKEYHASH0 is read above */
++		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH1, sgx_pubkey_hash[1]);
++		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH2, sgx_pubkey_hash[2]);
++		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH3, sgx_pubkey_hash[3]);
++	}
++
+ 	if (nested) {
+ 		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
+ 					   vmx_capability.ept, enable_apicv);
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 6d1b57e0337e..1519c6918190 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -272,6 +272,8 @@ struct vcpu_vmx {
+ 	 */
+ 	u64 msr_ia32_feature_control;
+ 	u64 msr_ia32_feature_control_valid_bits;
++	/* SGX Launch Control public key hash */
++	u64 msr_ia32_sgxlepubkeyhash[4];
+ 	u64 ept_pointer;
+ 
+ 	struct pt_desc pt_desc;
 -- 
 2.22.0
 
