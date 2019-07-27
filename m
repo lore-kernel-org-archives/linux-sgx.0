@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC01C76194
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8477AC76190
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11EC2147A
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C89B20840
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbfG0FwT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 27 Jul 2019 01:52:19 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40956 "EHLO mga02.intel.com"
+        id S1728882AbfG0FyB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 27 Jul 2019 01:54:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40958 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728220AbfG0FwT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:52:19 -0400
+        id S1728033AbfG0FwR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:52:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
-   d="scan'208";a="254568595"
+   d="scan'208";a="254568581"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:15 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -39,9 +39,9 @@ To:     Paolo Bonzini <pbonzini@redhat.com>,
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>
-Subject: [RFC PATCH 06/21] KVM: x86: Add SGX sub-features leaf to reverse CPUID table
-Date:   Fri, 26 Jul 2019 22:51:59 -0700
-Message-Id: <20190727055214.9282-7-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 01/21] x86/sgx: Add defines for SGX device minor numbers
+Date:   Fri, 26 Jul 2019 22:51:54 -0700
+Message-Id: <20190727055214.9282-2-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190727055214.9282-1-sean.j.christopherson@intel.com>
 References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
@@ -52,104 +52,81 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX
-that enumerates the SGX instruction sets that are supported by the
-CPU, e.g. SGX1, SGX2, etc...
-
-Since Linux only cares about two bits at this time (SGX1 and SGX2), the
-SGX bits were relocated to to Linux-defined word 8, i.e. CPUID_LNX_3,
-instead of adding a dedicated SGX word so as to conserve space.  But,
-to make KVM's life simple, the bit numbers of the SGX features were
-intentionally kept the same between the Intel-defined leaf and the
-Linux-defined leaf.
-
-Add build-time assertions to ensure X86_FEATURE_SGX{1,2} are at the
-expected locations, and that KVM isn't trying to do a reverse CPUID
-lookup on a non-SGX bit in CPUID_LNX_3.
-
-Relocate bit() to cpuid.h where it belongs (it's NOT a generic bit
-function) and add a beefy comment explaining what the hell it's doing.
+Add defines to track the minor numbers for each SGX device in
+preparation for moving the helper code and provisioning device to the
+common subsystem, and in preparation for adding a third device, i.e. a
+virtual EPC device.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kvm/cpuid.h   | 20 ++++++++++++++++++++
- arch/x86/kvm/emulate.c |  1 +
- arch/x86/kvm/x86.h     |  5 -----
- 3 files changed, 21 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver/driver.h | 1 -
+ arch/x86/kernel/cpu/sgx/driver/main.c   | 9 +++++----
+ arch/x86/kernel/cpu/sgx/sgx.h           | 4 ++++
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index d78a61408243..aed49d639c3b 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -53,6 +53,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
- 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
- 	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
-+	[CPUID_LNX_3]         = {      0x12, 0, CPUID_EAX},
- };
+diff --git a/arch/x86/kernel/cpu/sgx/driver/driver.h b/arch/x86/kernel/cpu/sgx/driver/driver.h
+index da60839b133a..6ce18c766a5a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver/driver.h
+@@ -15,7 +15,6 @@
+ #include "../encls.h"
+ #include "../sgx.h"
  
- static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
-@@ -61,6 +62,7 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+-#define SGX_DRV_NR_DEVICES	2
+ #define SGX_EINIT_SPIN_COUNT	20
+ #define SGX_EINIT_SLEEP_COUNT	50
+ #define SGX_EINIT_SLEEP_TIME	20
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index bb7f1932529f..a2506a49c95a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -211,7 +211,7 @@ int __init sgx_drv_init(void)
+ 	if (ret)
+ 		return ret;
  
- 	BUILD_BUG_ON(x86_leaf >= ARRAY_SIZE(reverse_cpuid));
- 	BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
-+	BUILD_BUG_ON(x86_leaf == CPUID_LNX_3 && (x86_feature & 31) > 1);
+-	ret = alloc_chrdev_region(&sgx_devt, 0, SGX_DRV_NR_DEVICES, "sgx");
++	ret = alloc_chrdev_region(&sgx_devt, 0, SGX_MAX_NR_DEVICES, "sgx");
+ 	if (ret < 0)
+ 		goto err_bus;
  
- 	return reverse_cpuid[x86_leaf];
- }
-@@ -89,6 +91,24 @@ static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
+@@ -238,12 +238,13 @@ int __init sgx_drv_init(void)
  	}
- }
  
-+/*
-+ * Retrieve the bit from an X86_FEATURE_* definition using a simple AND to
-+ * isolate the bit number from the feature definition.  Note that this works
-+ * only for features that are NOT scattered, i.e. the X86_FEATURE_* bit number
-+ * must match the hardware-defined CPUID bit number.  The only exception to
-+ * this rule is the SGX sub-features leaf, which is scattered but only in the
-+ * sense that its bits are relocated from hardware-defined leaf 0x12.0.EAX to
-+ * Linux defined word 8, but its bit numbers are maintained (KVM asserts this
-+ * expectation at build time).
-+ */
-+static __always_inline u32 bit(unsigned x86_feature)
-+{
-+	BUILD_BUG_ON((X86_FEATURE_SGX1 & 31) != 0);
-+	BUILD_BUG_ON((X86_FEATURE_SGX2 & 31) != 1);
+ 	ret = sgx_dev_init("sgx/enclave", &sgx_encl_dev, &sgx_encl_cdev,
+-			   &sgx_encl_fops, 0);
++			   &sgx_encl_fops, SGX_ENCL_DEV_MINOR);
+ 	if (ret)
+ 		goto err_chrdev_region;
+ 
+ 	ret = sgx_dev_init("sgx/provision", &sgx_provision_dev,
+-			   &sgx_provision_cdev, &sgx_provision_fops, 1);
++			   &sgx_provision_cdev, &sgx_provision_fops,
++			   SGX_PROV_DEV_MINOR);
+ 	if (ret)
+ 		goto err_encl_dev;
+ 
+@@ -277,7 +278,7 @@ int __init sgx_drv_init(void)
+ 	put_device(&sgx_encl_dev);
+ 
+ err_chrdev_region:
+-	unregister_chrdev_region(sgx_devt, SGX_DRV_NR_DEVICES);
++	unregister_chrdev_region(sgx_devt, SGX_MAX_NR_DEVICES);
+ 
+ err_bus:
+ 	bus_unregister(&sgx_bus_type);
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index c9276d4b6ffe..4e2c3ce94f63 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -89,4 +89,8 @@ void sgx_free_page(struct sgx_epc_page *page);
+ int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+ 	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
+ 
++#define SGX_ENCL_DEV_MINOR	0
++#define SGX_PROV_DEV_MINOR	1
++#define SGX_MAX_NR_DEVICES	2
 +
-+	return 1 << (x86_feature & 31);
-+}
-+
- static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
- {
- 	int *reg;
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 4a387a235424..6ffe23febcd7 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -29,6 +29,7 @@
- #include "tss.h"
- #include "mmu.h"
- #include "pmu.h"
-+#include "cpuid.h"
- 
- /*
-  * Operand types
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index a470ff0868c5..1e0c7b17effa 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -139,11 +139,6 @@ static inline int is_paging(struct kvm_vcpu *vcpu)
- 	return likely(kvm_read_cr0_bits(vcpu, X86_CR0_PG));
- }
- 
--static inline u32 bit(int bitno)
--{
--	return 1 << (bitno & 31);
--}
--
- static inline u8 vcpu_virt_addr_bits(struct kvm_vcpu *vcpu)
- {
- 	return kvm_read_cr4_bits(vcpu, X86_CR4_LA57) ? 57 : 48;
+ #endif /* _X86_SGX_H */
 -- 
 2.22.0
 
