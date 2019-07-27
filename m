@@ -2,29 +2,29 @@ Return-Path: <SRS0=PICp=VY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0564C7618B
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74766C7618B
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D6620840
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51E982147A
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbfG0FxS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 27 Jul 2019 01:53:18 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40956 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728303AbfG0FwU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1728308AbfG0FwU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Sat, 27 Jul 2019 01:52:20 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40960 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728222AbfG0FwT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:52:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
-   d="scan'208";a="254568611"
+   d="scan'208";a="254568598"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:15 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -38,9 +38,9 @@ To:     Paolo Bonzini <pbonzini@redhat.com>,
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>
-Subject: [RFC PATCH 11/21] KVM: x86: Export kvm_propagate_fault (as kvm_propagate_page_fault)
-Date:   Fri, 26 Jul 2019 22:52:04 -0700
-Message-Id: <20190727055214.9282-12-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 07/21] KVM: x86: Add WARN_ON_ONCE(index!=0) in __do_cpuid_ent
+Date:   Fri, 26 Jul 2019 22:52:00 -0700
+Message-Id: <20190727055214.9282-8-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190727055214.9282-1-sean.j.christopherson@intel.com>
 References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
@@ -51,69 +51,98 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Support for SGX Launch Control requires KVM to trap and execute
-ENCLS[EINIT] on behalf of the guest.  Interception of ENCLS leafs
-occurs immediately after CPL0 checks, i.e. before any processing
-of the leaf-specific operands.  As such, it's possible that KVM
-could intercept an EINIT from L2 and encounter an EPT fault while
-walking L1's EPT tables.  Rather than force EINIT through the
-generic emulator, export kvm_propagate_fault() so that the EINIT
-handler can inject the proper page fault.  Rename the function to
-kvm_propagate_page_fault() to clarify that it is only for page
-faults, and WARN if it is invoked with an exception other than
-PF_VECTOR.
+Except for one outlier, function 7, all cases in __do_cpuid_ent and
+its children assume that the index passed in is zero.  Furthermore,
+the index is fully under KVM's control and all callers pass an index
+of zero.  In other words, a non-zero index would indicate either a
+bug in the caller or a new case that is expected to be handled.  WARN
+and return an error on a non-zero index and remove the now unreachable
+code in function 7 for handling a non-zero index.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/x86.c              | 7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kvm/cpuid.c | 57 ++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 1341d8390ebe..397d755bb353 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1357,6 +1357,7 @@ void kvm_queue_exception_e(struct kvm_vcpu *vcpu, unsigned nr, u32 error_code);
- void kvm_requeue_exception(struct kvm_vcpu *vcpu, unsigned nr);
- void kvm_requeue_exception_e(struct kvm_vcpu *vcpu, unsigned nr, u32 error_code);
- void kvm_inject_page_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault);
-+bool kvm_propagate_page_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault);
- int kvm_read_guest_page_mmu(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 			    gfn_t gfn, void *data, int offset, int len,
- 			    u32 access);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 2b64bb854571..ec92c5534336 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -587,8 +587,10 @@ void kvm_inject_page_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault)
- }
- EXPORT_SYMBOL_GPL(kvm_inject_page_fault);
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 4992e7c99588..70e488951f25 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -410,6 +410,14 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+ 		F(MD_CLEAR);
  
--static bool kvm_propagate_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault)
-+bool kvm_propagate_page_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault)
- {
-+	WARN_ON(fault->vector != PF_VECTOR);
++	/*
++	 * The code below assumes index == 0, which simplifies handling leafs
++	 * with a dynamic number of sub-leafs.  The index is fully under KVM's
++	 * control, i.e. a non-zero value is a bug.
++	 */
++	if (WARN_ON_ONCE(index != 0))
++		return -EINVAL;
 +
- 	if (mmu_is_nested(vcpu) && !fault->nested_page_fault)
- 		vcpu->arch.nested_mmu.inject_page_fault(vcpu, fault);
- 	else
-@@ -596,6 +598,7 @@ static bool kvm_propagate_fault(struct kvm_vcpu *vcpu, struct x86_exception *fau
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
  
- 	return fault->nested_page_fault;
- }
-+EXPORT_SYMBOL_GPL(kvm_propagate_page_fault);
- 
- void kvm_inject_nmi(struct kvm_vcpu *vcpu)
- {
-@@ -6089,7 +6092,7 @@ static bool inject_emulated_exception(struct kvm_vcpu *vcpu)
- {
- 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
- 	if (ctxt->exception.vector == PF_VECTOR)
--		return kvm_propagate_fault(vcpu, &ctxt->exception);
-+		return kvm_propagate_page_fault(vcpu, &ctxt->exception);
- 
- 	if (ctxt->exception.error_code_valid)
- 		kvm_queue_exception_e(vcpu, ctxt->exception.vector,
+@@ -480,38 +488,31 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 		entry->ecx = 0;
+ 		entry->edx = 0;
+ 		break;
+-	case 7: {
++	case 7:
+ 		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
+ 		/* Mask ebx against host capability word 9 */
+-		if (index == 0) {
+-			entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
+-			cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
+-			// TSC_ADJUST is emulated
+-			entry->ebx |= F(TSC_ADJUST);
+-			entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
+-			f_la57 = entry->ecx & F(LA57);
+-			cpuid_mask(&entry->ecx, CPUID_7_ECX);
+-			/* Set LA57 based on hardware capability. */
+-			entry->ecx |= f_la57;
+-			entry->ecx |= f_umip;
+-			/* PKU is not yet implemented for shadow paging. */
+-			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+-				entry->ecx &= ~F(PKU);
+-			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
+-			cpuid_mask(&entry->edx, CPUID_7_EDX);
+-			/*
+-			 * We emulate ARCH_CAPABILITIES in software even
+-			 * if the host doesn't support it.
+-			 */
+-			entry->edx |= F(ARCH_CAPABILITIES);
+-		} else {
+-			entry->ebx = 0;
+-			entry->ecx = 0;
+-			entry->edx = 0;
+-		}
++		entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
++		cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
++		// TSC_ADJUST is emulated
++		entry->ebx |= F(TSC_ADJUST);
++		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
++		f_la57 = entry->ecx & F(LA57);
++		cpuid_mask(&entry->ecx, CPUID_7_ECX);
++		/* Set LA57 based on hardware capability. */
++		entry->ecx |= f_la57;
++		entry->ecx |= f_umip;
++		/* PKU is not yet implemented for shadow paging. */
++		if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
++			entry->ecx &= ~F(PKU);
++		entry->edx &= kvm_cpuid_7_0_edx_x86_features;
++		cpuid_mask(&entry->edx, CPUID_7_EDX);
++		/*
++		 * We emulate ARCH_CAPABILITIES in software even
++		 * if the host doesn't support it.
++		 */
++		entry->edx |= F(ARCH_CAPABILITIES);
+ 		entry->eax = 0;
+ 		break;
+-	}
+ 	case 9:
+ 		break;
+ 	case 0xa: { /* Architectural Performance Monitoring */
 -- 
 2.22.0
 
