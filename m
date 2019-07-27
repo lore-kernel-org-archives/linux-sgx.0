@@ -1,155 +1,151 @@
-Return-Path: <SRS0=MIYG=VV=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=PICp=VY=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF43C76186
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jul 2019 20:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9497C7618B
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B0B204EC
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jul 2019 20:27:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9758720840
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388866AbfGXTfq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Jul 2019 15:35:46 -0400
-Received: from mga18.intel.com ([134.134.136.126]:56931 "EHLO mga18.intel.com"
+        id S1726523AbfG0FwQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 27 Jul 2019 01:52:16 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40956 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389255AbfGXTfn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:35:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726197AbfG0FwQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:52:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 12:35:42 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:15 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="321437783"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
-  by orsmga004.jf.intel.com with ESMTP; 24 Jul 2019 12:35:42 -0700
-Date:   Wed, 24 Jul 2019 12:35:42 -0700
+X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
+   d="scan'208";a="254568578"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:15 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v21 08/28] x86/cpu/intel: Detect SGX support and update
- caps appropriately
-Message-ID: <20190724193542.GD25376@linux.intel.com>
-References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
- <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: [RFC PATCH 00/21] x86/sgx: KVM: Add SGX virtualization
+Date:   Fri, 26 Jul 2019 22:51:53 -0700
+Message-Id: <20190727055214.9282-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 08:07:44PM +0300, Jarkko Sakkinen wrote:
->  arch/x86/kernel/cpu/intel.c | 71 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index 8d6d92ebeb54..1503b251d10f 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -623,6 +623,72 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  	c->x86_phys_bits -= keyid_bits;
->  }
->  
-> +static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +	unsigned long long fc;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +		pr_err_once("sgx: The feature control MSR is not locked\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> +		pr_err_once("sgx: SGX is not enabled in IA32_FEATURE_CONTROL MSR\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> +		pr_err_once("sgx: SGX1 instruction set is not supported\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
-> +		pr_info_once("sgx: The launch control MSRs are not writable\n");
-> +		goto err_msrs_rdonly;
-> +	}
-> +
-> +	return;
-> +
-> +err_unsupported:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> +
-> +err_msrs_rdonly:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> +}
-> +
-> +static void init_intel_energy_perf(struct cpuinfo_x86 *c)
-> +{
-> +	u64 epb;
-> +
-> +	/*
-> +	 * Initialize MSR_IA32_ENERGY_PERF_BIAS if not already initialized.
-> +	 * (x86_energy_perf_policy(8) is available to change it at run-time.)
-> +	 */
-> +	if (!cpu_has(c, X86_FEATURE_EPB))
-> +		return;
-> +
-> +	rdmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
-> +	if ((epb & 0xF) != ENERGY_PERF_BIAS_PERFORMANCE)
-> +		return;
-> +
-> +	pr_warn_once("ENERGY_PERF_BIAS: Set to 'normal', was 'performance'\n");
-> +	pr_warn_once("ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)\n");
-> +	epb = (epb & ~0xF) | ENERGY_PERF_BIAS_NORMAL;
-> +	wrmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
-> +}
-> +
-> +static void intel_bsp_resume(struct cpuinfo_x86 *c)
-> +{
-> +	/*
-> +	 * MSR_IA32_ENERGY_PERF_BIAS is lost across suspend/resume,
-> +	 * so reinitialize it properly like during bootup:
-> +	 */
-> +	init_intel_energy_perf(c);
-> +}
-> +
->  static void init_cpuid_fault(struct cpuinfo_x86 *c)
->  {
->  	u64 msr;
-> @@ -760,6 +826,11 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	if (cpu_has(c, X86_FEATURE_TME))
->  		detect_tme(c);
->  
-> +	if (IS_ENABLED(CONFIG_INTEL_SGX) && cpu_has(c, X86_FEATURE_SGX))
-> +		detect_sgx(c);
-> +
-> +	init_intel_energy_perf(c);
+This is an "early" RFC series for adding SGX virtualization to KVM.  SGX
+virtualization (more specifically, EPC virtualization) is dependent on the
+not-yet-merged SGX enabling series and so cannot be considered for
+inclusion any time soon.
 
-All of the energy_perf additions are bogus, looks like a rebase gone wrong.
+The primary goal of this RFC is to get feedback on the overall approach,
+e.g. code location, uAPI changes, functionality, etc...  My hope is to
+sort out any major issues sooner rather than later, so that if/when the
+base SGX enabling is merged, virtualization support can quickly follow
+suit.
 
-> +
->  	init_intel_misc_features(c);
->  }
->  
-> -- 
-> 2.20.1
-> 
+That being said, nitpicking and bikeshedding is more than welcome :-)
+
+This code applies on top of a slightly modified version of v21 of the SGX
+enabling series[1].  The modifications on top of the SGX series are a few
+minor bug fixes that are not related to SGX virtualization, but affect
+code that is moved/modified by this series.  The full source for the
+modified version of v21 can be found at:
+
+ https://github.com/sean-jc/linux.git
+
+under the tag:
+
+  sgx-v21-ish
+
+A corresponding Qemu RFC will (hopefully) follow next week, the Qemu
+patches need a bit more cleanup...
+
+[1] https://lkml.kernel.org/r/20190713170804.2340-1-jarkko.sakkinen@linux.intel.com
+
+Sean Christopherson (21):
+  x86/sgx: Add defines for SGX device minor numbers
+  x86/sgx: Move bus registration and device init to common code
+  x86/sgx: Move provisioning device to common code
+  x86/sgx: Add /dev/sgx/virt_epc device to allocate "raw" EPC for VMs
+  x86/sgx: Expose SGX architectural definitions to the kernel
+  KVM: x86: Add SGX sub-features leaf to reverse CPUID table
+  KVM: x86: Add WARN_ON_ONCE(index!=0) in __do_cpuid_ent
+  KVM: x86: Add kvm_x86_ops hook to short circuit emulation
+  KVM: VMX: Add basic handling of VM-Exit from SGX enclave
+  KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for VMX/SGX
+  KVM: x86: Export kvm_propagate_fault (as kvm_propagate_page_fault)
+  KVM: x86: Define new #PF SGX error code bit
+  x86/sgx: Move the intermediate EINIT helper into the driver
+  x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
+  KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+  KVM: VMX: Edd emulation of SGX Launch Control LE hash MSRs
+  KVM: VMX: Add handler for ENCLS[EINIT] to support SGX Launch Control
+  KVM: x86: Invoke kvm_x86_ops->cpuid_update() after kvm_update_cpuid()
+  KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
+  x86/sgx: Export sgx_set_attribute() for use by KVM
+  KVM: x86: Add capability to grant VM access to privileged SGX
+    attribute
+
+ Documentation/virtual/kvm/api.txt             |  20 ++
+ arch/x86/Kconfig                              |  13 +
+ arch/x86/include/asm/kvm_host.h               |   8 +-
+ arch/x86/include/asm/sgx.h                    |  17 +
+ .../cpu/sgx/arch.h => include/asm/sgx_arch.h} |   1 +
+ arch/x86/include/asm/vmx.h                    |   1 +
+ arch/x86/include/uapi/asm/vmx.h               |   1 +
+ arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+ arch/x86/kernel/cpu/sgx/driver/driver.h       |   3 +-
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c        |  40 ++-
+ arch/x86/kernel/cpu/sgx/driver/main.c         |  73 +----
+ arch/x86/kernel/cpu/sgx/encl.c                |   2 +-
+ arch/x86/kernel/cpu/sgx/encls.h               |   2 +-
+ arch/x86/kernel/cpu/sgx/main.c                | 141 ++++++--
+ arch/x86/kernel/cpu/sgx/sgx.h                 |  16 +-
+ arch/x86/kernel/cpu/sgx/virt.c                | 308 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/virt.h                |  14 +
+ arch/x86/kvm/Makefile                         |   2 +
+ arch/x86/kvm/cpuid.c                          | 135 ++++++--
+ arch/x86/kvm/cpuid.h                          |  20 ++
+ arch/x86/kvm/emulate.c                        |   1 +
+ arch/x86/kvm/mmu.c                            |  12 -
+ arch/x86/kvm/svm.c                            |  19 +-
+ arch/x86/kvm/vmx/nested.c                     |  21 +-
+ arch/x86/kvm/vmx/nested.h                     |   5 +
+ arch/x86/kvm/vmx/sgx.c                        | 247 ++++++++++++++
+ arch/x86/kvm/vmx/sgx.h                        |  11 +
+ arch/x86/kvm/vmx/vmcs12.c                     |   1 +
+ arch/x86/kvm/vmx/vmcs12.h                     |   4 +-
+ arch/x86/kvm/vmx/vmx.c                        | 251 +++++++++++++-
+ arch/x86/kvm/vmx/vmx.h                        |   6 +
+ arch/x86/kvm/x86.c                            |  40 ++-
+ arch/x86/kvm/x86.h                            |   5 -
+ include/uapi/linux/kvm.h                      |   1 +
+ tools/testing/selftests/x86/sgx/defines.h     |   2 +-
+ 35 files changed, 1234 insertions(+), 210 deletions(-)
+ create mode 100644 arch/x86/include/asm/sgx.h
+ rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx_arch.h} (99%)
+ create mode 100644 arch/x86/kernel/cpu/sgx/virt.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/virt.h
+ create mode 100644 arch/x86/kvm/vmx/sgx.c
+ create mode 100644 arch/x86/kvm/vmx/sgx.h
+
+-- 
+2.22.0
+
