@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74766C7618B
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932FAC7618B
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51E982147A
-	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 718D42147A
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Jul 2019 05:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbfG0FwU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 27 Jul 2019 01:52:20 -0400
+        id S1728825AbfG0Fx2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 27 Jul 2019 01:53:28 -0400
 Received: from mga02.intel.com ([134.134.136.20]:40960 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728222AbfG0FwT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:52:19 -0400
+        id S1728305AbfG0FwU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:52:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
-   d="scan'208";a="254568598"
+   d="scan'208";a="254568614"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:15 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -38,9 +38,9 @@ To:     Paolo Bonzini <pbonzini@redhat.com>,
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>
-Subject: [RFC PATCH 07/21] KVM: x86: Add WARN_ON_ONCE(index!=0) in __do_cpuid_ent
-Date:   Fri, 26 Jul 2019 22:52:00 -0700
-Message-Id: <20190727055214.9282-8-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 12/21] KVM: x86: Define new #PF SGX error code bit
+Date:   Fri, 26 Jul 2019 22:52:05 -0700
+Message-Id: <20190727055214.9282-13-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190727055214.9282-1-sean.j.christopherson@intel.com>
 References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
@@ -51,98 +51,38 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Except for one outlier, function 7, all cases in __do_cpuid_ent and
-its children assume that the index passed in is zero.  Furthermore,
-the index is fully under KVM's control and all callers pass an index
-of zero.  In other words, a non-zero index would indicate either a
-bug in the caller or a new case that is expected to be handled.  WARN
-and return an error on a non-zero index and remove the now unreachable
-code in function 7 for handling a non-zero index.
+Page faults that are signaled by the SGX Enclave Page Cache Map (EPCM),
+as opposed to the traditional IA32/EPT page tables, set an SGX bit in
+the error code to indicate that the #PF was induced by SGX.  KVM will
+need to emulate this behavior as part of its trap-and-execute-EINIT
+scheme needed to virtualize SGX Launch Control, e.g. if EINIT itself
+faults due to the EPC being zapped by hardware after suspend-resume.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kvm/cpuid.c | 57 ++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 28 deletions(-)
+ arch/x86/include/asm/kvm_host.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 4992e7c99588..70e488951f25 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -410,6 +410,14 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
- 		F(MD_CLEAR);
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 397d755bb353..103df8cbdd24 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -201,6 +201,7 @@ enum {
+ #define PFERR_RSVD_BIT 3
+ #define PFERR_FETCH_BIT 4
+ #define PFERR_PK_BIT 5
++#define PFERR_SGX_BIT 15
+ #define PFERR_GUEST_FINAL_BIT 32
+ #define PFERR_GUEST_PAGE_BIT 33
  
-+	/*
-+	 * The code below assumes index == 0, which simplifies handling leafs
-+	 * with a dynamic number of sub-leafs.  The index is fully under KVM's
-+	 * control, i.e. a non-zero value is a bug.
-+	 */
-+	if (WARN_ON_ONCE(index != 0))
-+		return -EINVAL;
-+
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
+@@ -210,6 +211,7 @@ enum {
+ #define PFERR_RSVD_MASK (1U << PFERR_RSVD_BIT)
+ #define PFERR_FETCH_MASK (1U << PFERR_FETCH_BIT)
+ #define PFERR_PK_MASK (1U << PFERR_PK_BIT)
++#define PFERR_SGX_MASK (1U << PFERR_SGX_BIT)
+ #define PFERR_GUEST_FINAL_MASK (1ULL << PFERR_GUEST_FINAL_BIT)
+ #define PFERR_GUEST_PAGE_MASK (1ULL << PFERR_GUEST_PAGE_BIT)
  
-@@ -480,38 +488,31 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 		entry->ecx = 0;
- 		entry->edx = 0;
- 		break;
--	case 7: {
-+	case 7:
- 		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
- 		/* Mask ebx against host capability word 9 */
--		if (index == 0) {
--			entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
--			cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
--			// TSC_ADJUST is emulated
--			entry->ebx |= F(TSC_ADJUST);
--			entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
--			f_la57 = entry->ecx & F(LA57);
--			cpuid_mask(&entry->ecx, CPUID_7_ECX);
--			/* Set LA57 based on hardware capability. */
--			entry->ecx |= f_la57;
--			entry->ecx |= f_umip;
--			/* PKU is not yet implemented for shadow paging. */
--			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
--				entry->ecx &= ~F(PKU);
--			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
--			cpuid_mask(&entry->edx, CPUID_7_EDX);
--			/*
--			 * We emulate ARCH_CAPABILITIES in software even
--			 * if the host doesn't support it.
--			 */
--			entry->edx |= F(ARCH_CAPABILITIES);
--		} else {
--			entry->ebx = 0;
--			entry->ecx = 0;
--			entry->edx = 0;
--		}
-+		entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
-+		cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
-+		// TSC_ADJUST is emulated
-+		entry->ebx |= F(TSC_ADJUST);
-+		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
-+		f_la57 = entry->ecx & F(LA57);
-+		cpuid_mask(&entry->ecx, CPUID_7_ECX);
-+		/* Set LA57 based on hardware capability. */
-+		entry->ecx |= f_la57;
-+		entry->ecx |= f_umip;
-+		/* PKU is not yet implemented for shadow paging. */
-+		if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
-+			entry->ecx &= ~F(PKU);
-+		entry->edx &= kvm_cpuid_7_0_edx_x86_features;
-+		cpuid_mask(&entry->edx, CPUID_7_EDX);
-+		/*
-+		 * We emulate ARCH_CAPABILITIES in software even
-+		 * if the host doesn't support it.
-+		 */
-+		entry->edx |= F(ARCH_CAPABILITIES);
- 		entry->eax = 0;
- 		break;
--	}
- 	case 9:
- 		break;
- 	case 0xa: { /* Architectural Performance Monitoring */
 -- 
 2.22.0
 
