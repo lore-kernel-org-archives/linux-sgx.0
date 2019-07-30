@@ -1,4 +1,4 @@
-Return-Path: <SRS0=RmO4=V2=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=srJP=V3=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A7C433FF
-	for <linux-sgx@archiver.kernel.org>; Mon, 29 Jul 2019 17:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9EEC76186
+	for <linux-sgx@archiver.kernel.org>; Tue, 30 Jul 2019 02:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC82206E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 29 Jul 2019 17:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BF64206A2
+	for <linux-sgx@archiver.kernel.org>; Tue, 30 Jul 2019 02:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfG2RFt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 29 Jul 2019 13:05:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:57308 "EHLO mga14.intel.com"
+        id S1731489AbfG3Ctm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 29 Jul 2019 22:49:42 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43707 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727487AbfG2RFt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 29 Jul 2019 13:05:49 -0400
+        id S1730760AbfG3Ctl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 29 Jul 2019 22:49:41 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 10:05:49 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 19:49:41 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,323,1559545200"; 
-   d="scan'208";a="190627735"
+X-IronPort-AV: E=Sophos;i="5.64,325,1559545200"; 
+   d="scan'208";a="346858151"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Jul 2019 10:05:47 -0700
-Date:   Mon, 29 Jul 2019 10:05:47 -0700
+  by orsmga005.jf.intel.com with ESMTP; 29 Jul 2019 19:49:41 -0700
+Date:   Mon, 29 Jul 2019 19:49:40 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -40,64 +40,49 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Joerg Roedel <joro@8bytes.org>,
         "H. Peter Anvin" <hpa@zytor.com>, kvm list <kvm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org
-Subject: Re: [RFC PATCH 04/21] x86/sgx: Add /dev/sgx/virt_epc device to
- allocate "raw" EPC for VMs
-Message-ID: <20190729170547.GH21120@linux.intel.com>
+Subject: Re: [RFC PATCH 08/21] KVM: x86: Add kvm_x86_ops hook to short
+ circuit emulation
+Message-ID: <20190730024940.GL21120@linux.intel.com>
 References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
- <20190727055214.9282-5-sean.j.christopherson@intel.com>
- <CALCETrXLE6RpR9p9eGPNvU+Nt=yyCkqsQHv7hzmNaC61sFK7Jg@mail.gmail.com>
+ <20190727055214.9282-9-sean.j.christopherson@intel.com>
+ <CALCETrU_51Ae=F9HzUwsUuSkJ1or63p_eG+f3uKkBqFx=bheUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrXLE6RpR9p9eGPNvU+Nt=yyCkqsQHv7hzmNaC61sFK7Jg@mail.gmail.com>
+In-Reply-To: <CALCETrU_51Ae=F9HzUwsUuSkJ1or63p_eG+f3uKkBqFx=bheUA@mail.gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Jul 27, 2019 at 10:44:24AM -0700, Andy Lutomirski wrote:
+On Sat, Jul 27, 2019 at 10:38:03AM -0700, Andy Lutomirski wrote:
 > On Fri, Jul 26, 2019 at 10:52 PM Sean Christopherson
 > <sean.j.christopherson@intel.com> wrote:
 > >
-> > Add an SGX device to enable userspace to allocate EPC without an
-> > associated enclave.  The intended and only known use case for direct EPC
-> > allocation is to expose EPC to a KVM guest, hence the virt_epc moniker,
-> > virt.{c,h} files and INTEL_SGX_VIRTUALIZATION Kconfig.
+> > Similar to the existing AMD #NPF case where emulation of the current
+> > instruction is not possible due to lack of information, virtualization
+> > of Intel SGX will introduce a scenario where emulation is not possible
+> > due to the VMExit occurring in an SGX enclave.  And again similar to
+> > the AMD case, emulation can be initiated by kvm_mmu_page_fault(), i.e.
+> > outside of the control of the vendor-specific code.
 > >
-> > Although KVM is the end consumer of EPC, and will need hooks into the
-> > virtual EPC management if oversubscription of EPC for guest is ever
-> > supported (see below), implement direct access to EPC in the SGX
-> > subsystem instead of in KVM.  Doing so has two major advantages:
+> > While the cause and architecturally visible behavior of the two cases
+> > is different,  e.g. Intel SGX will inject a #UD whereas AMD #NPF is a
+> > clean resume or complete shutdown, the impact on the common emulation
+> > code is identical: KVM must stop emulation immediately and resume the
+> > guest.
 > >
-> >   - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
-> >     just another memory backend for guests.
+> > Replace the exisiting need_emulation_on_page_fault() with a more generic
+> > is_emulatable() kvm_x86_ops callback, which is called unconditionally
+> > by x86_emulate_instruction().
+> >
 > 
-> This is general grumbling more than useful feedback, but I wish there
-> was a way for KVM's userspace to add a memory region that is *not*
-> backed by a memory mapping.  For SGX, this would avoid the slightly
-> awkward situation where useless EPC pages are mapped by QEMU.  For
-> SEV, it would solve the really fairly awful situation where the SEV
-> pages are mapped *incoherently* for QEMU.  And even in the absence of
-> fancy hardware features, it would allow the guest to have secrets in
-> memory that are not exposed to wild reads, speculation attacks, etc
-> coming from QEMU.
-> 
-> I realize the implementation would be extremely intrusive, but it just
-> might make it a lot easier to do things like making SEV pages property
-> movable.  Similarly, I could see EPC oversubscription being less nasty
-> in this model.  For one thing, it would make it more straightforward
-> to keep track of exactly which VMs have a given EPC page mapped,
-> whereas right now this driver only really knows which host userspace
-> mm has the EPC page mapped.
+> Having recently noticed that emulate_ud() is broken when the guest's
+> TF is set, I suppose I should ask: does your new code function
+> sensibly when TF is set?
 
-Host userspace vs VM doesn't add much, if any, complexity to EPC
-oversubscription, especially since the problem of supporting multiple mm
-structs needs to be solved for the native driver anyways.
-
-The nastiness of oversubscribing a VM is primarily in dealing with
-EBLOCK/ETRACK/EWB conflicts between guest and host.  The other nasty bit
-is that it all but requires fancier VA page management, e.g. allocating a
-dedicated VA slot for every EPC page doesn't scale when presenting a
-multi-{GB,TB} EPC to a guest, especially since there's no guarantee the
-guest will ever access EPC.
+Barring a VMX fault injection interaction I'm not thinking of, yes.  The
+SGX reaction to the #UD VM-Exit is to inject a #UD and resume the guest,
+pending breakpoints shouldn't be affected in any way (unless some other
+part of KVM mucks with them, e.g. when guest single-stepping is enabled).
