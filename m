@@ -1,85 +1,64 @@
-Return-Path: <SRS0=srJP=V3=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=jAuJ=V5=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92452C76186
-	for <linux-sgx@archiver.kernel.org>; Tue, 30 Jul 2019 03:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF186C433FF
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Aug 2019 16:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F6A020693
-	for <linux-sgx@archiver.kernel.org>; Tue, 30 Jul 2019 03:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFA3F20657
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Aug 2019 16:22:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbfG3DIx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 29 Jul 2019 23:08:53 -0400
-Received: from mga03.intel.com ([134.134.136.65]:15685 "EHLO mga03.intel.com"
+        id S1732877AbfHAQWW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Aug 2019 12:22:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:55567 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfG3DIw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:08:52 -0400
+        id S1732876AbfHAQWW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:22:22 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 20:08:51 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 09:22:21 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,325,1559545200"; 
-   d="scan'208";a="179599286"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Jul 2019 20:08:51 -0700
-Date:   Mon, 29 Jul 2019 20:08:51 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [RFC PATCH 08/21] KVM: x86: Add kvm_x86_ops hook to short
- circuit emulation
-Message-ID: <20190730030850.GM21120@linux.intel.com>
-References: <20190727055214.9282-1-sean.j.christopherson@intel.com>
- <20190727055214.9282-9-sean.j.christopherson@intel.com>
+X-IronPort-AV: E=Sophos;i="5.64,334,1559545200"; 
+   d="scan'208";a="348135540"
+Received: from ohoehne-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.57])
+  by orsmga005.jf.intel.com with ESMTP; 01 Aug 2019 09:22:20 -0700
+Date:   Thu, 1 Aug 2019 19:22:19 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-sgx@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Return 0 when !CONFIG_INTEL_SGX_DRIVER
+Message-ID: <20190801162219.fqmkxlp4mgm4gi3f@linux.intel.com>
+References: <20190714143212.971-1-jarkko.sakkinen@linux.intel.com>
+ <20190715135902.GA442@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190727055214.9282-9-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190715135902.GA442@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 10:52:01PM -0700, Sean Christopherson wrote:
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 48c865a4e5dd..0fb8b60eb136 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -7115,10 +7115,25 @@ static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
->  	return -ENODEV;
->  }
->  
-> -static bool svm_need_emulation_on_page_fault(struct kvm_vcpu *vcpu)
-> +static bool svm_is_emulatable(struct kvm_vcpu *vcpu, void *insn, int insn_len)
->  {
->  	bool is_user, smap;
->  
-> +	if (likely(!insn || insn_len))
-> +		return true;
-> +
-> +	/*
-> +	 * Under certain conditions insn_len may be zero on #NPF.  This can
-> +	 * happen if a guest gets a page-fault on data access but the HW table
-> +	 * walker is not able to read the instruction page (e.g instruction
-> +	 * page is not present in memory). In those cases we simply restart the
-> +	 * guest, with the exception of AMD Erratum 1096 which is unrecoverable.
-> +	 */
-> +	if (unlikely(insn && !insn_len)) {
-> +		if (!kvm_x86_ops->need_emulation_on_page_fault(vcpu))
-> +			return 1;
-> +	}
+On Mon, Jul 15, 2019 at 06:59:03AM -0700, Sean Christopherson wrote:
+> On Sun, Jul 14, 2019 at 05:32:12PM +0300, Jarkko Sakkinen wrote:
+> > When the config option is not enabled the initialization is always
+> > succesful.
+> 
+> Why would the be initialization be considered successful?  It's dead code
+> and memory consumption if the driver can't load.  When KVM support gets
+> added, the initialization can be considered successful if the driver *or*
+> virtual EPC are enabled and load cleanly.
 
-Doh, obviously forgot to compile for SVM when rebasing.
+When a config option disabled means it that the functionality does not
+exist at all, which means that there is nothing to fail. That is why it
+would be actually better to flag the whole call than the way it is done
+in this patch.
+
+/Jarkko
