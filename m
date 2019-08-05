@@ -6,92 +6,97 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23970C433FF
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Aug 2019 16:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6C0C0650F
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Aug 2019 20:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F352B208C3
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Aug 2019 16:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23CC12086D
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Aug 2019 20:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfHEQQq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Aug 2019 12:16:46 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32039 "EHLO mga09.intel.com"
+        id S1730034AbfHEUvJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Aug 2019 16:51:09 -0400
+Received: from mga17.intel.com ([192.55.52.151]:55069 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfHEQQq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:16:46 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1729566AbfHEUvI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Aug 2019 16:51:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:16:45 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 13:51:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="373754202"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Aug 2019 09:16:45 -0700
-Date:   Mon, 5 Aug 2019 09:16:44 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v21 16/28] x86/sgx: Add the Linux SGX Enclave Driver
-Message-ID: <20190805161644.GD29275@linux.intel.com>
-References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
- <20190713170804.2340-17-jarkko.sakkinen@linux.intel.com>
+   d="scan'208";a="192498836"
+Received: from unknown (HELO localhost) ([10.252.52.83])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Aug 2019 13:51:05 -0700
+Date:   Mon, 5 Aug 2019 23:51:04 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define
+ enclave pages' protection bits
+Message-ID: <20190805205104.6ylxomqq37deqb3v@linux.intel.com>
+References: <20190619152018.GC1203@linux.intel.com>
+ <20190620221702.GE20474@linux.intel.com>
+ <20190707190809.GE19593@linux.intel.com>
+ <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
+ <20190708161932.GE20433@linux.intel.com>
+ <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
+ <20190710172553.GE4348@linux.intel.com>
+ <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
+ <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
+ <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190713170804.2340-17-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 08:07:52PM +0300, Jarkko Sakkinen wrote:
-> +static unsigned long sgx_get_unmapped_area(struct file *file,
-> +					   unsigned long addr,
-> +					   unsigned long len,
-> +					   unsigned long pgoff,
-> +					   unsigned long flags)
-> +{
-> +	if (flags & MAP_PRIVATE)
-> +		return -EINVAL;
-> +
-> +	if (flags & MAP_FIXED)
-> +		return addr;
-> +
-> +	if (len < 2 * PAGE_SIZE || len & (len - 1))
-> +		return -EINVAL;
-> +
-> +	addr = current->mm->get_unmapped_area(file, addr, 2 * len, pgoff,
-> +					      flags);
-> +	if (IS_ERR_VALUE(addr))
-> +		return addr;
-> +
-> +	addr = (addr + (len - 1)) & ~(len - 1);
-> +
-> +	return addr;
-> +}
+On Sun, Aug 04, 2019 at 03:20:24PM -0700, Andy Lutomirski wrote:
+> On Thu, Aug 1, 2019 at 9:38 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Mon, Jul 15, 2019 at 03:29:23PM -0700, Andy Lutomirski wrote:
+> > > I would say it differently: regardless of exactly how /dev/sgx/enclave
+> > > is wired up under the hood, we want a way that a process can be
+> > > granted permission to usefully run enclaves without being granted
+> > > permission to execute whatever bytes of code it wants.  Preferably
+> > > without requiring LSMs to maintain some form of enclave signature
+> > > whitelist.
+> >
+> > Would it be better to have a signer whitelist instead or some
+> > combination? E.g. you could whiteliste either by signer or
+> > enclave signature.
+> >
+> 
+> I'm not sure, and also don't really think we need to commit to an
+> answer right now.  I do think that the eventual solution should be
+> more flexible than just whitelisting the signers.  In particular, it
+> should be possible to make secure enclaves, open-source or otherwise,
+> that are reproducibly buildable.  This more or less requires that the
+> signing private key not be a secret, which means that no one would
+> want to whitelist the signing key.  The enclave would be trusted, and
+> would seal data, on the basis of its MRENCLAVE, and the policy, if
+> any, would want to whitelist the MRENCLAVE or perhaps the whole
+> SIGSTRUCT.
+> 
+> But my overall point is that it should be possible to have a conherent
+> policy that allows any enclave whatsoever to run but that still
+> respects EXECMEM and such.
 
-Thinking about this more, I don't think the driver should verify or adjust
-@addr and @len during non-fixed mmap().  There is no requirement that
-userspace must map the full ELRANGE, or that an enclave's ELRANGE can
-*never* be mapped to non-EPC.  The architectural requirement is that an
-access that hits ELRANGE must map to the EPC *if* the CPU is executing the
-associated enclave.
+So could kernel embed a fixed signing key that would be made available
+through sysfs for signing? Already have one for my selftest.
 
-This means that a process can have random mappings that overlap an
-enclave's ELRANGE while the enclave is active, it just can't access that
-memory from within the enclave.
-
-A good example is a large enclave, e.g. 3gb of actual code/data, that
-userspace wants to locate below 4gb for some reason, e.g. running an
-unmodified non-enclave binary under graphene.  Requiring @addr+@len to be
-naturally sized and aligned will force @addr to 0x0, which is often
-disallowed by the kernel.
+/Jarkko
