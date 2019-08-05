@@ -1,108 +1,97 @@
-Return-Path: <SRS0=xPMG=WA=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=oZh+=WB=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CAAC19759
-	for <linux-sgx@archiver.kernel.org>; Sun,  4 Aug 2019 22:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23970C433FF
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Aug 2019 16:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAE520882
-	for <linux-sgx@archiver.kernel.org>; Sun,  4 Aug 2019 22:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564957239;
-	bh=4+uDKxvqM9OIkq0s1X/uCEDzLdtlyFxWBL44sjlJLNY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=r9CrGegI+g7Y1d8kHv2EPWjUqZyo2x8dSHgmeRlcPkk9VKfVlb4wTahM3v3KlwIUV
-	 a/WQFrtCCVu/tTPscLSTB3ehjSKlqUzlH+9+5cjEmfUcTUrbw4Ie9ctFfoZEqoc7w7
-	 2aimMpWqcAFBhNegfpc74wKgPFzBwgA01yFZ/Qkg=
+	by mail.kernel.org (Postfix) with ESMTP id F352B208C3
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Aug 2019 16:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfHDWUj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 4 Aug 2019 18:20:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35026 "EHLO mail.kernel.org"
+        id S1727328AbfHEQQq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Aug 2019 12:16:46 -0400
+Received: from mga09.intel.com ([134.134.136.24]:32039 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbfHDWUj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 4 Aug 2019 18:20:39 -0400
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F8E3217F4
-        for <linux-sgx@vger.kernel.org>; Sun,  4 Aug 2019 22:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564957237;
-        bh=4+uDKxvqM9OIkq0s1X/uCEDzLdtlyFxWBL44sjlJLNY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Tiia823kYS4VDzjd3QxvKVRALE/EH8rPqaqkmTqlmNOoAD4i6yTKF0V4z2qSE7POp
-         O/1WaTfPduF1J9dqqYXGfA7Eu9OWFwaRwDyFYkaUAP2k6FNXzF/+TikFXkV5InohzH
-         hRbanB6qfPyAdE9NCgYLBJLxtoSdb9msGaf6saM0=
-Received: by mail-wm1-f43.google.com with SMTP id 207so72944101wma.1
-        for <linux-sgx@vger.kernel.org>; Sun, 04 Aug 2019 15:20:37 -0700 (PDT)
-X-Gm-Message-State: APjAAAUqeRHMkhjH/4ij11El1AaxMLAlJjfmAmXSiVwEiSskat9b8ER4
-        6zT0qPPXVTVm6vwSVKVug0vtg3vhpJIPxMp7ydrbQw==
-X-Google-Smtp-Source: APXvYqypYUCkDQdokcmAHSDQYXibQ3M2IW5YYjvxRskvGd32mMTS3XclDKNYo+ABvlfFbHHa0Y348qCjKX1x2AaSd3c=
-X-Received: by 2002:a1c:a942:: with SMTP id s63mr14669087wme.76.1564957236010;
- Sun, 04 Aug 2019 15:20:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617222438.2080-5-sean.j.christopherson@intel.com>
- <dc3d59c2783ea81d85d4d447bd1a4a2d5fe51421.camel@linux.intel.com>
- <20190619152018.GC1203@linux.intel.com> <20190620221702.GE20474@linux.intel.com>
- <20190707190809.GE19593@linux.intel.com> <1b7369a08e98dd08a4f8bb19b16479f12bee130f.camel@linux.intel.com>
- <20190708161932.GE20433@linux.intel.com> <20190709160634.3yupyabf5svnj4ds@linux.intel.com>
- <20190710172553.GE4348@linux.intel.com> <CALCETrXMAwHod_KZYPGWjTjg-fxOb1=02=Qj2g1o624wOPfPZQ@mail.gmail.com>
- <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
-In-Reply-To: <20190801163839.wvcnq57hity4wwrk@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 4 Aug 2019 15:20:24 -0700
-X-Gmail-Original-Message-ID: <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
-Message-ID: <CALCETrWBewZyqVUf3cPDj11eSWXqfDG0z50vVw+Yg0Z8r0AtCg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 04/12] x86/sgx: Require userspace to define enclave
- pages' protection bits
+        id S1726691AbfHEQQq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Aug 2019 12:16:46 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:16:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="373754202"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Aug 2019 09:16:45 -0700
+Date:   Mon, 5 Aug 2019 09:16:44 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>, linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v21 16/28] x86/sgx: Add the Linux SGX Enclave Driver
+Message-ID: <20190805161644.GD29275@linux.intel.com>
+References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
+ <20190713170804.2340-17-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190713170804.2340-17-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 9:38 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Mon, Jul 15, 2019 at 03:29:23PM -0700, Andy Lutomirski wrote:
-> > I would say it differently: regardless of exactly how /dev/sgx/enclave
-> > is wired up under the hood, we want a way that a process can be
-> > granted permission to usefully run enclaves without being granted
-> > permission to execute whatever bytes of code it wants.  Preferably
-> > without requiring LSMs to maintain some form of enclave signature
-> > whitelist.
->
-> Would it be better to have a signer whitelist instead or some
-> combination? E.g. you could whiteliste either by signer or
-> enclave signature.
->
+On Sat, Jul 13, 2019 at 08:07:52PM +0300, Jarkko Sakkinen wrote:
+> +static unsigned long sgx_get_unmapped_area(struct file *file,
+> +					   unsigned long addr,
+> +					   unsigned long len,
+> +					   unsigned long pgoff,
+> +					   unsigned long flags)
+> +{
+> +	if (flags & MAP_PRIVATE)
+> +		return -EINVAL;
+> +
+> +	if (flags & MAP_FIXED)
+> +		return addr;
+> +
+> +	if (len < 2 * PAGE_SIZE || len & (len - 1))
+> +		return -EINVAL;
+> +
+> +	addr = current->mm->get_unmapped_area(file, addr, 2 * len, pgoff,
+> +					      flags);
+> +	if (IS_ERR_VALUE(addr))
+> +		return addr;
+> +
+> +	addr = (addr + (len - 1)) & ~(len - 1);
+> +
+> +	return addr;
+> +}
 
-I'm not sure, and also don't really think we need to commit to an
-answer right now.  I do think that the eventual solution should be
-more flexible than just whitelisting the signers.  In particular, it
-should be possible to make secure enclaves, open-source or otherwise,
-that are reproducibly buildable.  This more or less requires that the
-signing private key not be a secret, which means that no one would
-want to whitelist the signing key.  The enclave would be trusted, and
-would seal data, on the basis of its MRENCLAVE, and the policy, if
-any, would want to whitelist the MRENCLAVE or perhaps the whole
-SIGSTRUCT.
+Thinking about this more, I don't think the driver should verify or adjust
+@addr and @len during non-fixed mmap().  There is no requirement that
+userspace must map the full ELRANGE, or that an enclave's ELRANGE can
+*never* be mapped to non-EPC.  The architectural requirement is that an
+access that hits ELRANGE must map to the EPC *if* the CPU is executing the
+associated enclave.
 
-But my overall point is that it should be possible to have a conherent
-policy that allows any enclave whatsoever to run but that still
-respects EXECMEM and such.
+This means that a process can have random mappings that overlap an
+enclave's ELRANGE while the enclave is active, it just can't access that
+memory from within the enclave.
+
+A good example is a large enclave, e.g. 3gb of actual code/data, that
+userspace wants to locate below 4gb for some reason, e.g. running an
+unmodified non-enclave binary under graphene.  Requiring @addr+@len to be
+naturally sized and aligned will force @addr to 0x0, which is often
+disallowed by the kernel.
