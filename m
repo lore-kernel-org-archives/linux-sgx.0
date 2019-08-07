@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFB4C19759
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Aug 2019 06:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40E6C19759
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Aug 2019 06:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD88214C6
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Aug 2019 06:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D1F21BF6
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Aug 2019 06:40:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="TvwdNgMx"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="Y6DZcoa3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfHGGdh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Aug 2019 02:33:37 -0400
-Received: from mail-eopbgr740099.outbound.protection.outlook.com ([40.107.74.99]:28512
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1727187AbfHGGkz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Aug 2019 02:40:55 -0400
+Received: from mail-eopbgr700124.outbound.protection.outlook.com ([40.107.70.124]:22017
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726734AbfHGGdh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Aug 2019 02:33:37 -0400
+        id S1726883AbfHGGke (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Aug 2019 02:40:34 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g2R8GX6ATIzL9O0UftG8U9wDi/VOaFYcNyk3bbxir+B1PfDKYYgqUkW1ogwzlgliP4AG6yizRKfOIzUIAciijbDDqOQNh6QaVPo/ODc8r37XT9p2SMFVl2Vtdz+Su85r1YoGspkKAoAfSD9I7kD7TJCExDlBYRGLlTyk3EUuGMXB6c/B1zbO3l498isy9iNyWTSy1KxIdE3a24p6r8CArhlmnirLqWkEOI8J1Xw8w7EYcxN3TUP15mY8OkktmEa3k74xDoxlFEoCoWYH2PexKa6NpvVH3tAIHwi6SpPHFPEZ+VZmYos35foYuevb1qmkGI2jzrskF3mf9qieCgZmtw==
+ b=ldZfibAOctKzfIjYOgWsaeAluGkww9MFY4za031bIihYqBd+0rg5iKhlZ6CJ4CmPn9Oe/UM4nMLc6+A4+gsB/2KSk7k9Iz7PuVADmH9EecrSV45rG5co0tv0mY+voUKUO61TndzkpqleAndhyi344iszYJZMEmzcK5qgpw6Ci7o2Hwrqq/Tx580oumsZsN63vHrcw+SW5rmtxi0jXT9PgUGp8dDUKfQrPdRgFkmEMVLljtLxY5LIzp/f19T963rFFXaRSnT4qILi6nff3Ag7dHmXoZXT8eDXNR+q1m/TZpOjnB3tOtjrY1eOmCT2p9+X3lkZxA6NVoK5pSs/GqJw8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ov8jvhmw1UJenhQ4i4J8UWW8D/uxgTpfm1JgbKAZa9k=;
- b=VRxXqw3RobQ6LDPU0gXmppeN1qDBBo5gGylFpi68Rwuw2XD/rpqyyrUKgO0GvM2s+RI2aTrmCqmhIyu1DFR+CZ6BGKGQSDla5r6tYE2FBGImBSTs2XjQNc6riT8/ICdzu9IOXO+RpESI0YBI5FJv+w1xjNv1lSNf9uy5A/Lbj1mZ0H9/cpDqnAxAGZqDD0cBwGE/qFmgQ8umpRR5uTSU5/HbFq+9HwN2zS1WopMqQ7io4gP2HXDd1K7g0ehAuxbMzNUEBJD7Qe1qLri3GGHqU1OXW9OOpy5inS++pI/p6CvaBH4tFDazzsSdQmFBNgNo/Q+0xU3X9z/CUZx7PdLfVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
- dkim=pass header.d=fortanix.com; arc=none
+ bh=P2d8OsfOmcQphS5PjO02vzFKM5Nlva0x/VInvCwrPrw=;
+ b=cdh18dP51vsxkSqjPP4mktrZVuUZDvLvaQlKQO+uRkQQGmcA0IsaO4oYshltJCD1tRY0MTsaDBfm7L20W9z4Pf/hyVhH98MYfgxuRL9uGD5v4E6On23K4R+YARbK3SABeXt6ifDksayKlcaUfExDZ3xAhv78eB6aq8kyduw/W4dsHZYhnBYAZDlJhMnFrHOnINuOGmH3oRDRBdfXN6weYcX5H8fZoVKetD9friMBQdF6aOVZxjX9xESxBLtNzNvlTKqUdNngNHZGJbxekyF4qwIE4M1RjZa+w1l/2mJ/hGA1F4J/Dx9eGXIWXrap6npTRF+YyHO6v2QgEtlCg0uL1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fortanix.com;dmarc=pass action=none
+ header.from=fortanix.com;dkim=pass header.d=fortanix.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ov8jvhmw1UJenhQ4i4J8UWW8D/uxgTpfm1JgbKAZa9k=;
- b=TvwdNgMxKzj4YiB16+YB7HcPMOHKbvFLCWM67pgPymPC3bnhnbA0x/qBWHWMnw0tp1OUzJtk2HNwNhTvfnQsTXvMzjjjyw1QXMH7XxM6T1b8sco/5Q7t9YtpBgYzq9crJ7RBdc1p8mdQ3Qa0WJnaozv7uS2KLuit0slO17QLhQE=
+ bh=P2d8OsfOmcQphS5PjO02vzFKM5Nlva0x/VInvCwrPrw=;
+ b=Y6DZcoa3aV5P5UmAesZosLUrAxcghMIAWgtcCWXNvF6Sa+SX3Q8CzoXFRL5xdlooAgSkMwjNsauw24NCHNWOiG11qUVvMmUGz+ULrUDyrI6JxbCkEXXFB65/d5vpcFRVsBMBfLy84FDf/rifn/ihi9r77BJ5SuJzNAnZF/xuPj4=
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB2558.namprd11.prod.outlook.com (52.135.91.13) with Microsoft SMTP
+ SN6PR11MB2640.namprd11.prod.outlook.com (52.135.91.151) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.15; Wed, 7 Aug 2019 06:33:32 +0000
+ 15.20.2136.17; Wed, 7 Aug 2019 06:40:31 +0000
 Received: from SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::bd32:8938:dba:9379]) by SN6PR11MB3167.namprd11.prod.outlook.com
  ([fe80::bd32:8938:dba:9379%5]) with mapi id 15.20.2136.018; Wed, 7 Aug 2019
- 06:33:32 +0000
+ 06:40:30 +0000
 From:   Jethro Beekman <jethro@fortanix.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -67,134 +67,94 @@ CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         "kai.huang@intel.com" <kai.huang@intel.com>,
         "rientjes@google.com" <rientjes@google.com>,
         "cedric.xing@intel.com" <cedric.xing@intel.com>
-Subject: Re: [PATCH v21 18/28] x86/sgx: Add swapping code to the core and SGX
- driver
-Thread-Topic: [PATCH v21 18/28] x86/sgx: Add swapping code to the core and SGX
- driver
-Thread-Index: AQHVOZ4NAiOFPCgCukiMmtKAFgXQyabvYNqA
-Date:   Wed, 7 Aug 2019 06:33:32 +0000
-Message-ID: <ba0aa229-d764-4e26-5de3-044fe28ddf61@fortanix.com>
+Subject: Re: [PATCH v21 00/28] Intel SGX foundations
+Thread-Topic: [PATCH v21 00/28] Intel SGX foundations
+Thread-Index: AQHVOZ2TUfYdM/CPWE6WCIX/rqIUqKbKL+2AgCUy3wA=
+Date:   Wed, 7 Aug 2019 06:40:30 +0000
+Message-ID: <df88d6ca-9f16-f6c0-fc2b-ee452a26563e@fortanix.com>
 References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
- <20190713170804.2340-19-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190713170804.2340-19-jarkko.sakkinen@linux.intel.com>
+ <20190714143653.ziwgmtgysknxfgnl@linux.intel.com>
+In-Reply-To: <20190714143653.ziwgmtgysknxfgnl@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR17CA0035.namprd17.prod.outlook.com
- (2603:10b6:208:15e::48) To SN6PR11MB3167.namprd11.prod.outlook.com
- (2603:10b6:805:c4::16)
+x-clientproxiedby: BL0PR01CA0015.prod.exchangelabs.com (2603:10b6:208:71::28)
+ To SN6PR11MB3167.namprd11.prod.outlook.com (2603:10b6:805:c4::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [172.58.43.30]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a976e662-eca9-4ee4-b89d-08d71b012aa1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB2558;
-x-ms-traffictypediagnostic: SN6PR11MB2558:
-x-microsoft-antispam-prvs: <SN6PR11MB2558BC07C6B2EF2ED42D37E0AAD40@SN6PR11MB2558.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-office365-filtering-correlation-id: 09ad9116-7650-43e2-4ce9-08d71b0223c3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(49563074)(7193020);SRVR:SN6PR11MB2640;
+x-ms-traffictypediagnostic: SN6PR11MB2640:
+x-microsoft-antispam-prvs: <SN6PR11MB26401E0B4C1C6E6F8BB7A80AAAD40@SN6PR11MB2640.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
 x-forefront-prvs: 01221E3973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(39840400004)(366004)(376002)(189003)(199004)(36756003)(446003)(31696002)(53546011)(6506007)(14444005)(386003)(256004)(53936002)(76176011)(8676002)(508600001)(66066001)(2501003)(7416002)(14454004)(68736007)(86362001)(186003)(81156014)(6512007)(81166006)(8936002)(486006)(2201001)(4326008)(26005)(6246003)(2616005)(476003)(11346002)(6486002)(229853002)(102836004)(6436002)(316002)(99286004)(54906003)(71200400001)(71190400001)(110136005)(66946007)(66446008)(64756008)(66556008)(66476007)(66616009)(305945005)(7736002)(5660300002)(52116002)(31686004)(99936001)(3846002)(6116002)(2906002)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2558;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(136003)(39840400004)(376002)(189003)(199004)(54534003)(2616005)(68736007)(6436002)(2906002)(14454004)(53546011)(6506007)(99936001)(8676002)(102836004)(14444005)(256004)(76176011)(476003)(81156014)(386003)(486006)(86362001)(446003)(81166006)(36756003)(11346002)(6486002)(7416002)(4326008)(66066001)(5660300002)(99286004)(229853002)(6512007)(8936002)(53936002)(31696002)(2201001)(54906003)(6116002)(3846002)(71200400001)(71190400001)(110136005)(64756008)(66556008)(7736002)(6246003)(66476007)(26005)(508600001)(25786009)(31686004)(2501003)(66616009)(66446008)(52116002)(305945005)(316002)(186003)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2640;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dgCYXKLVaoJihrTmjruw94wxu6GT+5cr32C/bqOogG4q1pUckDFDO9XmXG6NpAJrkFfNjo2fI31WjmNpPwq7Y45SZzubpHYpcOnDuCtpRIaXj2d95GV135OMJx1r5cV7wBetngjNzEkZOeokp5iaiti6lqAsDAFTjXLvvDm8THFfD4xNrBeNLE3ry+FXXh61mvbaTLjPd2OwK+r4NGdvR2r+jA+xdest7M6vq6bYDiqApGp5yrRaZfDFU8VazMJVP4ucpDB5GRg0x+RH8VQLAOh1xRXhBnhuVjkJ6d01QSellEPU2WsWxGjiXExmW7HlQ1lY8DPw0fP8xX09E05JmLOSri/tLHwYgu2Ex2mblGpQ9gKbBpstqYaaYVI5SNuJWziqlKhemUctdlXosveaYAHD1nRYYACNkQyVIenBl6w=
-x-ms-exchange-transport-forked: True
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms010005060905030001000302"
+x-microsoft-antispam-message-info: dot3UP4QNL+4/NeYVG3wW3JA9UAMyPV7Ep9BqS+27rPHr0QQr0URWSGkf0rqGsr5/X7GHeaw1gyjYYYzGbfEPQ+lA2A+71DAqTFmO1Pux/8Hh8HRRcFROaeLPK6Etd3Wvab2Yf0e8060FkwZIbRFbb99jdq1XM+ZkTmnQHaiAl8r7qpFaIPeTkRdEw5Knm3eLnQQIjCEwdRwJTv8I4nRwgFDqVZtJqXSQy4IiffGkfHXgyNaynaAnDlgs2sffZcpUinfBMjnjk35rq0tTqTuhIQ6Ps9yybs/bGcjBDJSO/6ynQA1rJ5sCOOglQao+OxS8+CH5R1RjYMOuhzy1YpngvbSgWIeRDDYc3+sCTtZpRxcA2r+ROdW5/ErpgBIC71pJ438OScIBf7MzzhSgV2rQWaRw1Zgal06qj04/5I/K58=
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050905070108070004010706"
 MIME-Version: 1.0
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a976e662-eca9-4ee4-b89d-08d71b012aa1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 06:33:32.4850
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09ad9116-7650-43e2-4ce9-08d71b0223c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 06:40:30.2619
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: jethro@fortanix.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2558
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2640
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms010005060905030001000302
+--------------ms050905070108070004010706
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2019-07-13 10:07, Jarkko Sakkinen wrote:
-> Because the kernel is untrusted, swapping pages in/out of the Enclave
-> Page Cache (EPC) has specialized requirements:
+On 2019-07-14 07:36, Jarkko Sakkinen wrote:
+> On Sat, Jul 13, 2019 at 08:07:36PM +0300, Jarkko Sakkinen wrote:
+>> v21:
+>> * Check on mmap() that the VMA does cover an area that does not have
+>>    enclave pages. Only mapping with PROT_NONE can do that to reserve
+>>    initial address space for an enclave.
+>> * Check om mmap() and mprotect() that the VMA permissions do not
+>>    surpass the enclave permissions.
+>> * Remove two refcounts from vma_close(): mm_list and encl->refcount.
+>>    Enclave refcount is only need for swapper/enclave sync and we can
+>>    remove mm_list refcount by destroying mm_struct when the process
+>>    is closed. By not having vm_close() the Linux MM can merge VMAs.
+>> * Do not naturally align MAP_FIXED address.
+>> * Numerous small fixes and clean ups.
+>> * Use SRCU for synchronizing the list of mm_struct's.
+>> * Move to stack based call convention in the vDSO.
 >=20
-> * The kernel cannot directly access EPC memory, i.e. cannot copy data
->    to/from the EPC.
-> * To evict a page from the EPC, the kernel must "prove" to hardware tha=
+> I forgot something:
+>=20
+> * CONFIG_INTEL_SGX_DRIVER is not bistate i.e. no more LKM support. It i=
+s
+>    still useful to have the compile-time option because VM host does no=
 t
->    are no valid TLB entries for said page since a stale TLB entry would=
-
->    allow an attacker to bypass SGX access controls.
-> * When loading a page back into the EPC, hardware must be able to verif=
-y
->    the integrity and freshness of the data.
-> * When loading an enclave page, e.g. regular pages and Thread Control
->    Structures (TCS), hardware must be able to associate the page with a=
-
->    Secure Enclave Control Structure (SECS).
+>    need to have it enabled. Now sgx_init() calls explicitly sgx_drv_ini=
+t().
+>    In addition, platform driver has been ripped a way because we no
+>    longer need ACPI hotplug. In effect, the device is now parentless.
 >=20
-> To satisfy the above requirements, the CPU provides dedicated ENCLS
-> functions to support paging data in/out of the EPC:
->=20
-> * EBLOCK:   Mark a page as blocked in the EPC Map (EPCM).  Attempting
->              to access a blocked page that misses the TLB will fault.
-> * ETRACK:   Activate blocking tracking.  Hardware verifies that all
->              translations for pages marked as "blocked" have been flush=
-ed
-> 	    from the TLB.
-> * EPA:      Add version array page to the EPC.  As the name suggests, a=
 
->              VA page is an 512-entry array of version numbers that are
-> 	    used to uniquely identify pages evicted from the EPC.
-> * EWB:      Write back a page from EPC to memory, e.g. RAM.  Software
->              must supply a VA slot, memory to hold the a Paging Crypto
-> 	    Metadata (PCMD) of the page and obviously backing for the
-> 	    evicted page.
-> * ELD{B,U}: Load a page in {un}blocked state from memory to EPC.  The
->              driver only uses the ELDU variant as there is no use case
-> 	    for loading a page as "blocked" in a bare metal environment.
->=20
-> To top things off, all of the above ENCLS functions are subject to
-> strict concurrency rules, e.g. many operations will #GP fault if two
-> or more operations attempt to access common pages/structures.
->=20
-> To put it succinctly, paging in/out of the EPC requires coordinating
-> with the SGX driver where all of an enclave's tracking resides.  But,
-> simply shoving all reclaim logic into the driver is not desirable as
-> doing so has unwanted long term implications:
->=20
-> * Oversubscribing EPC to KVM guests, i.e. virtualizing SGX in KVM and
->    swapping a guest's EPC pages (without the guest's cooperation) needs=
-
->    the same high level flows for reclaim but has painfully different
->    semantics in the details.
-> * Accounting EPC, i.e. adding an EPC cgroup controller, is desirable
->    as EPC is effectively a specialized memory type and even more scarce=
-
->    than system memory.  Providing a single touchpoint for EPC accountin=
-g
->    regardless of end consumer greatly simplifies the EPC controller.
-> * Allowing the userspace-facing driver to be built as a loaded module
->    is desirable, e.g. for debug, testing and development.  The cgroup
->    infrastructure does not support dependencies on loadable modules.
-> * Separating EPC swapping from the driver once it has been tightly
->    coupled to the driver is non-trivial (speaking from experience).
-
-Some of these points seem stale now.
+I think you also missed in the changelog that you're now checking page=20
+permissions in EADD.
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms010005060905030001000302
+--------------ms050905070108070004010706
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -258,8 +218,8 @@ rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
 TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
 x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDgwNzA2MzMzN1owLwYJKoZIhvcNAQkEMSIEIDmvvszq
-ZlLmq23PG63UdwzLkt3ZXuitDPmhw85xWG4QMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
+BwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDgwNzA2NDAzNFowLwYJKoZIhvcNAQkEMSIEIAoHFZVV
+HZE73LQHlfAs9a/sYM2EYNmub9PQYxtQSc18MGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
 MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
@@ -269,10 +229,10 @@ XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
 R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
 Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
 YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQB7j4/tdYcTz7+bwv+BscUT3/APTgmJuQEx9gOjbMogI8BQpB5rMw/Qdap842cwpG7iQjm8
-6naU8lLshbUOEUfInOzLAaM0UWfL8m0JXpkeOOciRWRFRx6T6SLQTZlVrCbqzbKArygvxXEz
-XXEtLJzTAk4Wwm+yn2iIgvIhhDaSrE3LbtIxdNP3PxLYDUOm4r6XmGQ/mF1tEj7tPQl4rgL9
-+q3cnZlxSxRTaXn1smGW58BN9WOfUVnYn2m6Yv7ElfLM8Zgalrfy8Gc6WdCDNDeZp+5f6dEL
-2wMJha9pKGCDM3QIVjrPTKJE5y+lbIbWJqcWfJU5pQfR8sI4pk52LEq2AAAAAAAA
+AQCw4pB4EpHg8Eo77eD1nbVHj6KkeHTrwUTg/pWcnZqagz579BGMAkDZrsDLWdiOd+w5NL01
+R/XHhqIiOtT/Td/8Zc/VapicBO7GTChSN3BFAbvU26cOz0tCKKYpSL4c8c1no+xu5nrwfkyX
+/X5LmbPbNIEhyT/BRySiSfZq/LfBP5rYAhNI6NNifSxhmUFG4l3T1XSRUM74TIzRbzyZSJ66
+zZ7U5P/LeOQrDhFVkuQmbc8mJrRbhyRT/7YUI4QpSvlD55N6Gk4I33J9r2tL8J3E9lxx/wGT
+ul9XYHTFNuD5iE+vlJ6D3E8BU4jvVFQ7HARHScqQbpixBDA/bMfln7u/AAAAAAAA
 
---------------ms010005060905030001000302--
+--------------ms050905070108070004010706--
