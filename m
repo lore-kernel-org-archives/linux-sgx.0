@@ -6,17 +6,17 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1589C0650F
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Aug 2019 22:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E37C32757
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Aug 2019 22:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A292173C
+	by mail.kernel.org (Postfix) with ESMTP id E150321743
 	for <linux-sgx@archiver.kernel.org>; Thu,  8 Aug 2019 22:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404518AbfHHWNo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S2404325AbfHHWNo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Thu, 8 Aug 2019 18:13:44 -0400
-Received: from mga03.intel.com ([134.134.136.65]:19064 "EHLO mga03.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:19058 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404325AbfHHWNo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S2404533AbfHHWNo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Thu, 8 Aug 2019 18:13:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,15 +24,15 @@ Received: from fmsmga001.fm.intel.com ([10.253.24.23])
   by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 15:13:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,363,1559545200"; 
-   d="scan'208";a="193247279"
+   d="scan'208";a="193247273"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by fmsmga001.fm.intel.com with ESMTP; 08 Aug 2019 15:13:43 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH for_v22 6/6] x86/sgx: Pass userspace source address directly to EADD
-Date:   Thu,  8 Aug 2019 15:13:40 -0700
-Message-Id: <20190808221340.29460-7-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v22 5/6] x86/sgx: Remove the EADD page worker
+Date:   Thu,  8 Aug 2019 15:13:39 -0700
+Message-Id: <20190808221340.29460-6-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808221340.29460-1-sean.j.christopherson@intel.com>
 References: <20190808221340.29460-1-sean.j.christopherson@intel.com>
@@ -43,245 +43,344 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Invoke EADD with the userspace source address instead of first copying
-the data to a kernel page to avoid the overhead of alloc_page() and
-copy_from_user().
+Remove the work queue approach to adding pages to an enclave.  There
+are several benefits to fully adding pages within the context of the
+ioctl() call:
 
-Since EADD can now fault due to consuming a userspace address, drop the
-TCS page validation and let hardware generate a fault if the TCS is bad.
-Because the vast majority of the TCS is reserved bytes, verifying the
-TCS essentially requires reading the entire page, which runs counter to
-the goal of invoking EADD with the userspace address.
+  - Simplifies the code base
+  - Provides userspace with accurate error information, e.g. the ioctl()
+    now fails if EPC allocation fails
+  - Paves the way for passing the user's source page directly to EADD
+    to eliminate the overhead of allocating a kernel page and copying
+    the user data into said kernel page.
+
+The downside to removing the worker is that applications with their own
+scheduler, e.g. Go's M:N scheduler, can see a significant reduction in
+throughput (10x or more) when building multiple enclaves in parallel,
+e.g. in the Go case, spinning up several goroutines with each goroutine
+building a different enclave.
 
 Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver/ioctl.c | 148 ++++++-------------------
- 1 file changed, 33 insertions(+), 115 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 191 ++++++-------------------
+ arch/x86/kernel/cpu/sgx/driver/main.c  |   4 -
+ arch/x86/kernel/cpu/sgx/encl.h         |   2 -
+ 3 files changed, 40 insertions(+), 157 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-index e083625dcd15..3b4297441e27 100644
+index 2d876429ba9a..e083625dcd15 100644
 --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-@@ -301,71 +301,46 @@ static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
- 	return 0;
+@@ -14,14 +14,6 @@
+ #include <linux/suspend.h>
+ #include "driver.h"
+ 
+-struct sgx_add_page_req {
+-	struct sgx_encl *encl;
+-	struct sgx_encl_page *encl_page;
+-	struct sgx_secinfo secinfo;
+-	unsigned long mrmask;
+-	struct list_head list;
+-};
+-
+ static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl,
+ 					 unsigned int disallowed_flags)
+ {
+@@ -77,115 +69,6 @@ static void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
+ 	}
  }
  
--static bool sgx_validate_offset(struct sgx_encl *encl, unsigned long offset)
+-static bool sgx_process_add_page_req(struct sgx_add_page_req *req,
+-				     struct sgx_epc_page *epc_page)
 -{
--	if (offset & (PAGE_SIZE - 1))
+-	struct sgx_encl_page *encl_page = req->encl_page;
+-	struct sgx_encl *encl = req->encl;
+-	unsigned long page_index = sgx_encl_get_index(encl, encl_page);
+-	struct sgx_secinfo secinfo;
+-	struct sgx_pageinfo pginfo;
+-	struct page *backing;
+-	unsigned long addr;
+-	int ret;
+-	int i;
+-
+-	if (encl->flags &  SGX_ENCL_DEAD)
 -		return false;
 -
--	if (offset >= encl->size)
+-	addr = SGX_ENCL_PAGE_ADDR(encl_page);
+-
+-	backing = sgx_encl_get_backing_page(encl, page_index);
+-	if (IS_ERR(backing))
 -		return false;
+-
+-	/*
+-	 * The SECINFO field must be 64-byte aligned, copy it to a local
+-	 * variable that is guaranteed to be aligned as req->secinfo may
+-	 * or may not be 64-byte aligned, e.g. req may have been allocated
+-	 * via kzalloc which is not aware of __aligned attributes.
+-	 */
+-	memcpy(&secinfo, &req->secinfo, sizeof(secinfo));
+-
+-	pginfo.secs = (unsigned long)sgx_epc_addr(encl->secs.epc_page);
+-	pginfo.addr = addr;
+-	pginfo.metadata = (unsigned long)&secinfo;
+-	pginfo.contents = (unsigned long)kmap_atomic(backing);
+-	ret = __eadd(&pginfo, sgx_epc_addr(epc_page));
+-	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+-
+-	put_page(backing);
+-
+-	if (ret) {
+-		if (encls_failed(ret))
+-			ENCLS_WARN(ret, "EADD");
+-		return false;
+-	}
+-
+-	for_each_set_bit(i, &req->mrmask, 16) {
+-		ret = __eextend(sgx_epc_addr(encl->secs.epc_page),
+-				sgx_epc_addr(epc_page) + (i * 0x100));
+-		if (ret) {
+-			if (encls_failed(ret))
+-				ENCLS_WARN(ret, "EEXTEND");
+-			return false;
+-		}
+-	}
+-
+-	encl_page->encl = encl;
+-	encl_page->epc_page = epc_page;
+-	encl->secs_child_cnt++;
+-	sgx_mark_page_reclaimable(encl_page->epc_page);
 -
 -	return true;
 -}
 -
--static int sgx_validate_tcs(struct sgx_encl *encl, struct sgx_tcs *tcs)
+-static void sgx_add_page_worker(struct work_struct *work)
 -{
--	int i;
+-	struct sgx_add_page_req *req;
+-	bool skip_rest = false;
+-	bool is_empty = false;
+-	struct sgx_encl *encl;
+-	struct sgx_epc_page *epc_page;
 -
--	if (tcs->flags & SGX_TCS_RESERVED_MASK)
--		return -EINVAL;
+-	encl = container_of(work, struct sgx_encl, work);
 -
--	if (tcs->flags & SGX_TCS_DBGOPTIN)
--		return -EINVAL;
+-	do {
+-		schedule();
 -
--	if (!sgx_validate_offset(encl, tcs->ssa_offset))
--		return -EINVAL;
+-		mutex_lock(&encl->lock);
+-		if (encl->flags & SGX_ENCL_DEAD)
+-			skip_rest = true;
 -
--	if (!sgx_validate_offset(encl, tcs->fs_offset))
--		return -EINVAL;
+-		req = list_first_entry(&encl->add_page_reqs,
+-				       struct sgx_add_page_req, list);
+-		list_del(&req->list);
+-		is_empty = list_empty(&encl->add_page_reqs);
+-		mutex_unlock(&encl->lock);
 -
--	if (!sgx_validate_offset(encl, tcs->gs_offset))
--		return -EINVAL;
+-		if (skip_rest)
+-			goto next;
 -
--	if ((tcs->fs_limit & 0xFFF) != 0xFFF)
--		return -EINVAL;
+-		epc_page = sgx_alloc_page(req->encl_page, true);
 -
--	if ((tcs->gs_limit & 0xFFF) != 0xFFF)
--		return -EINVAL;
+-		mutex_lock(&encl->lock);
 -
--	for (i = 0; i < SGX_TCS_RESERVED_SIZE; i++)
--		if (tcs->reserved[i])
--			return -EINVAL;
+-		if (IS_ERR(epc_page)) {
+-			sgx_encl_destroy(encl);
+-			skip_rest = true;
+-		} else if (!sgx_process_add_page_req(req, epc_page)) {
+-			sgx_free_page(epc_page);
+-			sgx_encl_destroy(encl);
+-			skip_rest = true;
+-		}
 -
--	return 0;
+-		mutex_unlock(&encl->lock);
+-
+-next:
+-		kfree(req);
+-	} while (!is_empty);
 -}
 -
+ static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
+ {
+ 	u32 size_max = PAGE_SIZE;
+@@ -298,8 +181,6 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 
+ 	encl->backing = backing;
+ 
+-	INIT_WORK(&encl->work, sgx_add_page_worker);
+-
+ 	secs_epc = sgx_alloc_page(&encl->secs, true);
+ 	if (IS_ERR(secs_epc)) {
+ 		ret = PTR_ERR(secs_epc);
+@@ -465,40 +346,42 @@ static int sgx_validate_tcs(struct sgx_encl *encl, struct sgx_tcs *tcs)
+ 
  static int __sgx_encl_add_page(struct sgx_encl *encl,
  			       struct sgx_encl_page *encl_page,
- 			       struct sgx_epc_page *epc_page,
--			       void *data,
--			       struct sgx_secinfo *secinfo,
--			       unsigned long mrmask)
-+			       struct sgx_secinfo *secinfo, unsigned long src,
-+			       unsigned long prot, unsigned long mrmask)
++			       struct sgx_epc_page *epc_page,
+ 			       void *data,
+ 			       struct sgx_secinfo *secinfo,
+-			       unsigned int mrmask)
++			       unsigned long mrmask)
  {
- 	struct sgx_pageinfo pginfo;
-+	struct vm_area_struct *vma;
- 	int ret;
- 	int i;
+-	unsigned long page_index = sgx_encl_get_index(encl, encl_page);
+-	struct sgx_add_page_req *req = NULL;
+-	struct page *backing;
+-	void *backing_ptr;
+-	int empty;
++	struct sgx_pageinfo pginfo;
++	int ret;
++	int i;
  
- 	pginfo.secs = (unsigned long)sgx_epc_addr(encl->secs.epc_page);
- 	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
- 	pginfo.metadata = (unsigned long)secinfo;
--	pginfo.contents = (unsigned long)data;
-+	pginfo.contents = src;
+-	req = kzalloc(sizeof(*req), GFP_KERNEL);
+-	if (!req)
+-		return -ENOMEM;
++	pginfo.secs = (unsigned long)sgx_epc_addr(encl->secs.epc_page);
++	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
++	pginfo.metadata = (unsigned long)secinfo;
++	pginfo.contents = (unsigned long)data;
  
-+	down_read(&current->mm->mmap_sem);
-+
-+	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
-+	if (encl_page->vm_prot_bits & VM_EXEC) {
-+		vma = find_vma(current->mm, src);
-+		if (!vma) {
-+			up_read(&current->mm->mmap_sem);
+-	backing = sgx_encl_get_backing_page(encl, page_index);
+-	if (IS_ERR(backing)) {
+-		kfree(req);
+-		return PTR_ERR(backing);
++	ret = __eadd(&pginfo, sgx_epc_addr(epc_page));
++	if (ret) {
++		if (encls_failed(ret))
++			ENCLS_WARN(ret, "EADD");
++		return -EFAULT;
+ 	}
+ 
+-	backing_ptr = kmap(backing);
+-	memcpy(backing_ptr, data, PAGE_SIZE);
+-	kunmap(backing);
++	for_each_set_bit(i, &mrmask, 16) {
++		ret = __eextend(sgx_epc_addr(encl->secs.epc_page),
++				sgx_epc_addr(epc_page) + (i * 0x100));
++		if (ret) {
++			if (encls_failed(ret))
++				ENCLS_WARN(ret, "EEXTEND");
 +			return -EFAULT;
-+		}
-+
-+		if (!(vma->vm_flags & VM_MAYEXEC)) {
-+			up_read(&current->mm->mmap_sem);
-+			return -EACCES;
 +		}
 +	}
 +
-+	__uaccess_begin();
- 	ret = __eadd(&pginfo, sgx_epc_addr(epc_page));
--	if (ret) {
--		if (encls_failed(ret))
--			ENCLS_WARN(ret, "EADD");
-+	__uaccess_end();
-+
-+	up_read(&current->mm->mmap_sem);
-+
-+	if (ret)
- 		return -EFAULT;
--	}
++	encl_page->encl = encl;
++	encl_page->epc_page = epc_page;
++	encl->secs_child_cnt++;
++	sgx_mark_page_reclaimable(encl_page->epc_page);
  
- 	for_each_set_bit(i, &mrmask, 16) {
- 		ret = __eextend(sgx_epc_addr(encl->secs.epc_page),
-@@ -385,9 +360,9 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+-	memcpy(&req->secinfo, secinfo, sizeof(*secinfo));
+-	req->encl = encl;
+-	req->encl_page = encl_page;
+-	req->mrmask = mrmask;
+-	empty = list_empty(&encl->add_page_reqs);
+-	list_add_tail(&req->list, &encl->add_page_reqs);
+-	if (empty)
+-		queue_work(sgx_encl_wq, &encl->work);
+-	set_page_dirty(backing);
+-	put_page(backing);
  	return 0;
  }
  
--static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
--			     void *data, struct sgx_secinfo *secinfo,
--			     unsigned int mrmask, unsigned long prot)
-+static int sgx_encl_add_page(struct sgx_encl *encl,
-+			     struct sgx_enclave_add_page *addp,
-+			     struct sgx_secinfo *secinfo, unsigned long prot)
+@@ -508,6 +391,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
  {
  	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
  	struct sgx_encl_page *encl_page;
-@@ -395,13 +370,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
++	struct sgx_epc_page *epc_page;
  	struct sgx_va_page *va_page;
  	int ret;
  
--	if (page_type == SGX_SECINFO_TCS) {
--		ret = sgx_validate_tcs(encl, data);
--		if (ret)
--			return ret;
--	}
--
--	encl_page = sgx_encl_page_alloc(encl, addr, prot, page_type);
-+	encl_page = sgx_encl_page_alloc(encl, addp->addr, prot, page_type);
+@@ -521,6 +405,12 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
  	if (IS_ERR(encl_page))
  		return PTR_ERR(encl_page);
  
-@@ -424,8 +393,8 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
++	epc_page = sgx_alloc_page(encl_page, true);
++	if (IS_ERR(epc_page)) {
++		kfree(encl_page);
++		return PTR_ERR(epc_page);
++	}
++
+ 	mutex_lock(&encl->lock);
+ 
+ 	va_page = sgx_encl_grow(encl, SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD);
+@@ -534,7 +424,8 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
  	if (ret)
  		goto err_out_shrink;
  
--	ret = __sgx_encl_add_page(encl, encl_page, epc_page, data, secinfo,
--				  mrmask);
-+	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
-+				  addp->src, prot, addp->mrmask);
+-	ret = __sgx_encl_add_page(encl, encl_page, data, secinfo, mrmask);
++	ret = __sgx_encl_add_page(encl, encl_page, epc_page, data, secinfo,
++				  mrmask);
  	if (ret)
  		goto err_out;
  
-@@ -446,36 +415,6 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
- 	return ret;
- }
+@@ -548,6 +439,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+ 	sgx_encl_shrink(encl, va_page);
  
--static int sgx_encl_page_import_user(void *dst, unsigned long src,
--				     unsigned long prot)
--{
--	struct vm_area_struct *vma;
--	int ret = 0;
--
--	down_read(&current->mm->mmap_sem);
--
--	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
--	if (prot & PROT_EXEC) {
--		vma = find_vma(current->mm, src);
--		if (!vma) {
--			ret = -EFAULT;
--			goto out;
--		}
--
--		if (!(vma->vm_flags & VM_MAYEXEC)) {
--			ret = -EACCES;
--			goto out;
--		}
--	}
--
--	if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
--		ret = -EFAULT;
--
--out:
--	up_read(&current->mm->mmap_sem);
--	return ret;
--}
--
- /**
-  * sgx_ioc_enclave_add_page - handler for %SGX_IOC_ENCLAVE_ADD_PAGE
+ err_out_free:
++	sgx_free_page(epc_page);
+ 	kfree(encl_page);
+ 
+ 	mutex_unlock(&encl->lock);
+@@ -591,14 +483,13 @@ static int sgx_encl_page_import_user(void *dst, unsigned long src,
+  * @arg:	a user pointer to a struct sgx_enclave_add_page instance
   *
-@@ -497,10 +436,7 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
- 	struct sgx_encl *encl = filep->private_data;
- 	struct sgx_enclave_add_page addp;
- 	struct sgx_secinfo secinfo;
--	struct page *data_page;
- 	unsigned long prot;
--	void *data;
--	int ret;
+  * Add a page to an uninitialized enclave (EADD), and optionally extend the
+- * enclave's measurement with the contents of the page (EEXTEND). Adding is done
+- * asynchronously. A success only indicates that the page has been added to a
+- * work queue.
++ * enclave's measurement with the contents of the page (EEXTEND).
+  *
+  * Return:
+  *   0 on success,
+  *   -EINVAL if other than RWX protection bits have been set
+  *   -EACCES if the source page is located in a noexec partition
++ *   -ENOMEM if any memory allocation, including EPC, fails
+  *   -errno otherwise
+  */
+ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
+@@ -701,8 +592,6 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 	if (ret)
+ 		return ret;
  
- 	if (!(encl->flags & SGX_ENCL_CREATED))
- 		return -EINVAL;
-@@ -522,12 +458,6 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
- 	if (sgx_validate_secinfo(&secinfo))
- 		return -EINVAL;
+-	flush_work(&encl->work);
+-
+ 	mutex_lock(&encl->lock);
  
--	data_page = alloc_page(GFP_HIGHUSER);
--	if (!data_page)
--		return -ENOMEM;
--
--	data = kmap(data_page);
--
- 	prot = _calc_vm_trans(secinfo.flags, SGX_SECINFO_R, PROT_READ)  |
- 	       _calc_vm_trans(secinfo.flags, SGX_SECINFO_W, PROT_WRITE) |
- 	       _calc_vm_trans(secinfo.flags, SGX_SECINFO_X, PROT_EXEC);
-@@ -536,19 +466,7 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
- 	if ((secinfo.flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
- 		prot |= PROT_READ | PROT_WRITE;
+ 	if (encl->flags & (SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD)) {
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index dfa107247f2d..e740d71e2311 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -32,7 +32,6 @@ static int sgx_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
  
--	ret = sgx_encl_page_import_user(data, addp.src, prot);
--	if (ret)
--		goto out;
+ 	kref_init(&encl->refcount);
+-	INIT_LIST_HEAD(&encl->add_page_reqs);
+ 	INIT_LIST_HEAD(&encl->va_pages);
+ 	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
+ 	mutex_init(&encl->lock);
+@@ -81,9 +80,6 @@ static int sgx_release(struct inode *inode, struct file *file)
+ 	encl->flags |= SGX_ENCL_DEAD;
+ 	mutex_unlock(&encl->lock);
+ 
+-	if (encl->work.func)
+-		flush_work(&encl->work);
 -
--	ret = sgx_encl_add_page(encl, addp.addr, data, &secinfo, addp.mrmask,
--				prot);
--	if (ret)
--		goto out;
--
--out:
--	kunmap(data_page);
--	__free_page(data_page);
--	return ret;
-+	return sgx_encl_add_page(encl, &addp, &secinfo, prot);
+ 	kref_put(&encl->refcount, sgx_encl_release);
+ 	return 0;
  }
- 
- static int __sgx_get_key_hash(struct crypto_shash *tfm, const void *modulus,
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 379fe4c22b5d..79885aae8869 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -81,8 +81,6 @@ struct sgx_encl {
+ 	unsigned long ssaframesize;
+ 	struct list_head va_pages;
+ 	struct radix_tree_root page_tree;
+-	struct list_head add_page_reqs;
+-	struct work_struct work;
+ 	struct sgx_encl_page secs;
+ 	cpumask_t cpumask;
+ };
 -- 
 2.22.0
 
