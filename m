@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB55C3A59C
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Aug 2019 16:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EA7C3A59C
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Aug 2019 16:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B71D2133F
-	for <linux-sgx@archiver.kernel.org>; Fri, 16 Aug 2019 16:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52A82086C
+	for <linux-sgx@archiver.kernel.org>; Fri, 16 Aug 2019 16:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfHPQAd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 16 Aug 2019 12:00:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:39292 "EHLO mga14.intel.com"
+        id S1727347AbfHPQIO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 16 Aug 2019 12:08:14 -0400
+Received: from mga14.intel.com ([192.55.52.115]:39936 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbfHPQAd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:00:33 -0400
+        id S1727300AbfHPQIO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:08:14 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 09:00:32 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 09:08:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,393,1559545200"; 
-   d="scan'208";a="171454460"
+   d="scan'208";a="178801713"
 Received: from ppiatekx-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.39.24])
-  by orsmga008.jf.intel.com with ESMTP; 16 Aug 2019 09:00:29 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 16 Aug 2019 09:08:12 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Cedric Xing <cedric.xing@intel.com>
-Subject: [PATCH] selftests/x86/sgx: Fix objcopy call in the Makefile
-Date:   Fri, 16 Aug 2019 19:00:10 +0300
-Message-Id: <20190816160010.14203-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v2] selftests/x86/sgx: Fix objcopy call in the Makefile
+Date:   Fri, 16 Aug 2019 19:08:09 +0300
+Message-Id: <20190816160809.15627-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,15 +51,29 @@ Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Reported-by: Cedric Xing <cedric.xing@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- tools/testing/selftests/x86/sgx/Makefile | 2 +-
+- Was missing the part that creates OBJCOPY if it does not exist (e.g.
+  predefined by a cross compilation environment or simply doing a host
+  compilation)
+ tools/testing/selftests/x86/sgx/Makefile | 6 +++++-
  tools/testing/selftests/x86/sgx/encl.lds | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/tools/testing/selftests/x86/sgx/Makefile b/tools/testing/selftests/x86/sgx/Makefile
-index 10136b73096b..018814d0305b 100644
+index 10136b73096b..fdd67478c52b 100644
 --- a/tools/testing/selftests/x86/sgx/Makefile
 +++ b/tools/testing/selftests/x86/sgx/Makefile
-@@ -23,7 +23,7 @@ $(OUTPUT)/encl_piggy.o: $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
+@@ -2,6 +2,10 @@ top_srcdir = ../../../../..
+ 
+ include ../../lib.mk
+ 
++ifndef OBJCOPY
++OBJCOPY := $(CROSS_COMPILE)objcopy
++endif
++
+ HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
+ ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
+ 	       -fno-stack-protector -mrdrnd $(INCLUDES)
+@@ -23,7 +27,7 @@ $(OUTPUT)/encl_piggy.o: $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
  	$(CC) $(HOST_CFLAGS) -c encl_piggy.S -o $@
  
  $(OUTPUT)/encl.bin: $(OUTPUT)/encl.elf $(OUTPUT)/sgxsign
