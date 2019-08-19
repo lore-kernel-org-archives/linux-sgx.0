@@ -2,89 +2,58 @@ Return-Path: <SRS0=kvvX=WP=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2069C3A5A0
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 13:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27C0C3A5A0
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 15:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 845582085A
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 13:28:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADA042082A
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 15:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfHSN24 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 19 Aug 2019 09:28:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32180 "EHLO mga09.intel.com"
+        id S1726728AbfHSPYe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 19 Aug 2019 11:24:34 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3495 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727172AbfHSN24 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 19 Aug 2019 09:28:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726211AbfHSPYe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 19 Aug 2019 11:24:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 06:28:56 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 08:24:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
-   d="scan'208";a="261844562"
+   d="scan'208";a="177907623"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
-  by orsmga001.jf.intel.com with ESMTP; 19 Aug 2019 06:28:54 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 19 Aug 2019 08:24:32 -0700
+Date:   Mon, 19 Aug 2019 18:24:31 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        sean.j.christopherson@intel.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v3 6/7] selftests/x86: Revert SGX changes
-Date:   Mon, 19 Aug 2019 16:28:29 +0300
-Message-Id: <20190819132830.9056-7-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
-References: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
+To:     sean.j.christopherson@intel.com
+Cc:     linux-sgx@vger.kernel.org
+Subject: mmap(), #PF handler and EADD interaction
+Message-ID: <20190819152431.x5ajhd67cpqag5ue@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The SGX changes are incorrect in the makefile but the more important
-reason to revert the SGX changes is that we can split the binding
-to a separate commit in our main patch set.
+I did some backtracking today how the permission flow worked.
 
-There is a design choice to be made whether to bound the selftest by
-recursing from the x86 makefile or alternatively have it added to
-TARGETS (i.e. TARGET += "x86/sgx"). Thus, the change that implements
-the binding must a be a separate commit.
+With the maximum VM flags defined for a page, what if EADD is done after
+mmap()?  E.g. we first do mmap() with RWX and later EADD with lets say
+RW.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- tools/testing/selftests/x86/Makefile | 10 ----------
- 1 file changed, 10 deletions(-)
+The first thing that comes to mind is that the #PF handler should caught
+this corner case.
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index a1831406fd01..fa07d526fe39 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -1,7 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--
--SUBDIRS_64 := sgx
--
- all:
- 
- include ../lib.mk
-@@ -71,13 +68,6 @@ all_32: $(BINARIES_32)
- 
- all_64: $(BINARIES_64)
- 
--all_64: $(SUBDIRS_64)
--	@for DIR in $(SUBDIRS_64); do			\
--		BUILD_TARGET=$(OUTPUT)/$$DIR;		\
--		mkdir $$BUILD_TARGET  -p;		\
--		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;	\
--	done
--
- EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
- 
- $(BINARIES_32): $(OUTPUT)/%_32: %.c
--- 
-2.20.1
+Now the code correctly validates when you do either mmap() and
+mprotect() after EADD(s) but I think "other way around" is missing.
 
+/Jarkko
