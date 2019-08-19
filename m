@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7154BC3A5A1
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 13:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2069C3A5A0
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 13:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA272085A
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 13:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 845582085A
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Aug 2019 13:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfHSN27 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 19 Aug 2019 09:28:59 -0400
+        id S1727368AbfHSN24 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 19 Aug 2019 09:28:56 -0400
 Received: from mga09.intel.com ([134.134.136.24]:32180 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727172AbfHSN27 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 19 Aug 2019 09:28:59 -0400
+        id S1727172AbfHSN24 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 19 Aug 2019 09:28:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 06:28:58 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 06:28:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
-   d="scan'208";a="261844569"
+   d="scan'208";a="261844562"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
-  by orsmga001.jf.intel.com with ESMTP; 19 Aug 2019 06:28:57 -0700
+  by orsmga001.jf.intel.com with ESMTP; 19 Aug 2019 06:28:54 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     serge.ayoun@intel.com, shay.katz-zamir@intel.com,
         sean.j.christopherson@intel.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v3 7/7] selftests/x86: Recurse into subdirectories
-Date:   Mon, 19 Aug 2019 16:28:30 +0300
-Message-Id: <20190819132830.9056-8-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3 6/7] selftests/x86: Revert SGX changes
+Date:   Mon, 19 Aug 2019 16:28:29 +0300
+Message-Id: <20190819132830.9056-7-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
 References: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
@@ -45,84 +45,46 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Recurse into a list of subdirectories defined by SUBDIRS when running
-x86 selftests. Override run_tests, install, emit_tests and clean
-targets to implement this behaviour.
+The SGX changes are incorrect in the makefile but the more important
+reason to revert the SGX changes is that we can split the binding
+to a separate commit in our main patch set.
 
-A possible alternative would be to add "x86/sgx" to TARGETS. However,
-this would be problematic because detecting 64-bit build would have
-to duplicated.
-
-The implementation is derived from the makefiles of powerpc and sparc64
-selftests.
+There is a design choice to be made whether to bound the selftest by
+recursing from the x86 makefile or alternatively have it added to
+TARGETS (i.e. TARGET += "x86/sgx"). Thus, the change that implements
+the binding must a be a separate commit.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- tools/testing/selftests/x86/Makefile | 44 ++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ tools/testing/selftests/x86/Makefile | 10 ----------
+ 1 file changed, 10 deletions(-)
 
 diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index fa07d526fe39..80571bac8ed5 100644
+index a1831406fd01..fa07d526fe39 100644
 --- a/tools/testing/selftests/x86/Makefile
 +++ b/tools/testing/selftests/x86/Makefile
-@@ -10,6 +10,8 @@ CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
- CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
- CAN_BUILD_WITH_NOPIE := $(shell ./check_cc.sh $(CC) trivial_program.c -no-pie)
+@@ -1,7 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-
+-SUBDIRS_64 := sgx
+-
+ all:
  
-+SUBDIRS := sgx
-+
- TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
- 			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
- 			protection_keys test_vdso test_vsyscall mov_ss_trap \
-@@ -59,6 +61,48 @@ endif
+ include ../lib.mk
+@@ -71,13 +68,6 @@ all_32: $(BINARIES_32)
  
- ifeq ($(CAN_BUILD_X86_64),1)
- all: all_64
-+	@for DIR in $(SUBDIRS); do \
-+		BUILD_TARGET=$(OUTPUT)/$$DIR; \
-+		mkdir $$BUILD_TARGET  -p; \
-+		make OUTPUT=$$BUILD_TARGET -C $$DIR $@; \
-+	done
-+
-+DEFAULT_RUN_TESTS := $(RUN_TESTS)
-+override define RUN_TESTS
-+	$(DEFAULT_RUN_TESTS)
-+	@for TARGET in $(SUBDIRS); do \
-+		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET run_tests; \
-+	done;
-+endef
-+
-+DEFAULT_INSTALL_RULE := $(INSTALL_RULE)
-+override define INSTALL_RULE
-+	$(DEFAULT_INSTALL_RULE)
-+	@for TARGET in $(SUBDIRS); do \
-+		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET install; \
-+	done;
-+endef
-+
-+DEFAULT_EMIT_TESTS := $(EMIT_TESTS)
-+override define EMIT_TESTS
-+	$(DEFAULT_EMIT_TESTS)
-+	@for TARGET in $(SUBDIRS); do \
-+		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -s -C $$TARGET emit_tests; \
-+	done;
-+endef
-+
-+DEFAULT_CLEAN := $(CLEAN)
-+override define CLEAN
-+	$(DEFAULT_CLEAN)
-+	@for TARGET in $(SUBDIRS); do \
-+		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET clean; \
-+	done;
-+endef
-+
- TEST_PROGS += $(BINARIES_64)
- EXTRA_CFLAGS += -DCAN_BUILD_64
- $(foreach t,$(TARGETS_C_64BIT_ALL),$(eval $(call gen-target-rule-64,$(t))))
+ all_64: $(BINARIES_64)
+ 
+-all_64: $(SUBDIRS_64)
+-	@for DIR in $(SUBDIRS_64); do			\
+-		BUILD_TARGET=$(OUTPUT)/$$DIR;		\
+-		mkdir $$BUILD_TARGET  -p;		\
+-		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;	\
+-	done
+-
+ EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
+ 
+ $(BINARIES_32): $(OUTPUT)/%_32: %.c
 -- 
 2.20.1
 
