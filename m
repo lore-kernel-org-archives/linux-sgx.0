@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240D8C3A5A1
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 16:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A86C3A5A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 16:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED752233FD
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 16:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C305621743
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 16:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732169AbfHVQOw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Aug 2019 12:14:52 -0400
-Received: from mga01.intel.com ([192.55.52.88]:56726 "EHLO mga01.intel.com"
+        id S2388459AbfHVQUJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Aug 2019 12:20:09 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43213 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732157AbfHVQOw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:14:52 -0400
+        id S1729718AbfHVQUJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:20:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 09:14:52 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 09:20:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
-   d="scan'208";a="169833775"
+   d="scan'208";a="190637600"
 Received: from greathea-mobl2.ger.corp.intel.com ([10.252.39.37])
-  by orsmga007.jf.intel.com with ESMTP; 22 Aug 2019 09:14:49 -0700
-Message-ID: <bda7981d0f8466c5863402c3955f1013b301bf0b.camel@linux.intel.com>
-Subject: Re: [PATCH v3 7/7] selftests/x86: Recurse into subdirectories
+  by orsmga002.jf.intel.com with ESMTP; 22 Aug 2019 09:20:06 -0700
+Message-ID: <ebaf1b9a964defb9a191a65888a92fa248fce9f1.camel@linux.intel.com>
+Subject: Re: [PATCH 2/5] x86/sgx: Use memchr_inv() in sgx_validate_secinfo()
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com
-Date:   Thu, 22 Aug 2019 19:14:48 +0300
-In-Reply-To: <79055c34e594caad23ad44601cde826cc4c20ac9.camel@linux.intel.com>
-References: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
-         <20190819132830.9056-8-jarkko.sakkinen@linux.intel.com>
-         <20190822034204.GR29345@linux.intel.com>
-         <10e17b91a46c1f3c8ef66baf987cd3d66ed14424.camel@linux.intel.com>
-         <70eaaa28acc8f773d20a4371a99a4a90745129bb.camel@linux.intel.com>
-         <79055c34e594caad23ad44601cde826cc4c20ac9.camel@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Sean Christopherson <sean.j.christpherson@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Serge Ayoun <serge.ayoun@intel.com>
+Date:   Thu, 22 Aug 2019 19:20:04 +0300
+In-Reply-To: <20190822034713.GT29345@linux.intel.com>
+References: <20190819152544.7296-1-jarkko.sakkinen@linux.intel.com>
+         <20190819152544.7296-3-jarkko.sakkinen@linux.intel.com>
+         <20190822034713.GT29345@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.2-1 
@@ -51,47 +50,17 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 2019-08-22 at 19:13 +0300, Jarkko Sakkinen wrote:
-> On Thu, 2019-08-22 at 18:02 +0300, Jarkko Sakkinen wrote:
-> > On Thu, 2019-08-22 at 17:59 +0300, Jarkko Sakkinen wrote:
-> > > On Wed, 2019-08-21 at 20:42 -0700, Sean Christopherson wrote:
-> > > > On Mon, Aug 19, 2019 at 04:28:30PM +0300, Jarkko Sakkinen wrote:
-> > > > > Recurse into a list of subdirectories defined by SUBDIRS when running
-> > > > > x86 selftests. Override run_tests, install, emit_tests and clean
-> > > > > targets to implement this behaviour.
-> > > > 
-> > > > The code looks good (which doesn't say much, my Makefile knowledge is
-> > > > garbage), but the result is a bit odd.  x86/sgx doesn't implement
-> > > > emit_tests (or at least test_sgx doesn't show up), while the rest of the
-> > > > x86 tests don't support install.
-> > > > 
-> > > > AFAICT the Makefile is itself weird; it's definitely different than other
-> > > > selftests Makfiles.  I don't see any reason to delay this patch, but it
-> > > > feels like something here needs to be cleaned up.
-> > > 
-> > > Lets fix emit_tests before sending v22.
-> > 
-> > Selftest patches have been squahed. Further improvements are welcome.
-> > Thanks for the review!
+On Wed, 2019-08-21 at 20:47 -0700, Sean Christopherson wrote:
+> > +	if (memchr_inv(secinfo->reserved, 0, SGX_SECINFO_RESERVED_SIZE))
 > 
-> At least my use case is satisfied with these fixes:
+> Doing 'sizeof(secinfo->reserved)' would be preferable, that way we're not
+> dependent on SGX_SECINFO_RESERVED_SIZE being in bytes (I had to check).
 > 
-> $ ls output/target/usr/lib/kselftests/x86 
-> test_sgx
-> 
-> I can build initramfs now with the selftest bundled. Oddly enough none of the
-> other x86 selftests get included.
+> Obviously not in this patch, but the same cleanup can be applied to
+> sgx_validate_secs().
 
-# ls /usr/lib/kselftests/x86
-test_sgx
-# /usr/lib/kselftests/x86/test_sgx 
-Binary size 24576 (0x6000), SIGSTRUCT size 1808
-Loading the enclave.
-Input: 0x1122334455667788
-Output: 0x1122334455667788
-
-This is a big improvement for me :-) Do not have to upload selftest anymore
-with minicom or scp.
+Thanks for the valid remark, I squashed with that change. I also
+edited prepending commit and removed the constant altogether.
 
 /Jarkko
 
