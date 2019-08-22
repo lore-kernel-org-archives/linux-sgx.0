@@ -6,87 +6,260 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1FAC3A59E
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 00:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E91EDC3A5A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 00:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C49D21848
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 00:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BED9D206BA
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 00:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbfHVAeA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 21 Aug 2019 20:34:00 -0400
-Received: from mga09.intel.com ([134.134.136.24]:21106 "EHLO mga09.intel.com"
+        id S1730290AbfHVAzx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 21 Aug 2019 20:55:53 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24480 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbfHVAeA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 21 Aug 2019 20:34:00 -0400
+        id S1728724AbfHVAzx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 21 Aug 2019 20:55:53 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 17:33:59 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 17:55:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,414,1559545200"; 
-   d="scan'208";a="178669329"
+   d="scan'208";a="207947509"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Aug 2019 17:33:58 -0700
-Date:   Wed, 21 Aug 2019 17:33:58 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 21 Aug 2019 17:55:51 -0700
+Date:   Wed, 21 Aug 2019 17:55:51 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/sgx: Remove duplicate check for entry->epc_page
- in sgx_encl_load_page()
-Message-ID: <20190822003358.GO29345@linux.intel.com>
+Subject: Re: [PATCH 2/2] x86/sgx: Determine SECS at compile time in
+ sgx_encl_eldu()
+Message-ID: <20190822005551.GP29345@linux.intel.com>
 References: <20190821232902.29476-1-jarkko.sakkinen@linux.intel.com>
- <20190821232902.29476-2-jarkko.sakkinen@linux.intel.com>
+ <20190821232902.29476-3-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190821232902.29476-2-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190821232902.29476-3-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 02:29:01AM +0300, Jarkko Sakkinen wrote:
-> The existence of the page is checked first hand for legit race
-> conditions (either two or more concurrent threads running the #PF
-> handler or the reclaimer has taken over the page):
+On Thu, Aug 22, 2019 at 02:29:02AM +0300, Jarkko Sakkinen wrote:
+> Using address resolution of any kind is obviously an overkill for
+> anything that we know at compile time. Those sites should not hard
+> bind how we store SECS.
 > 
-> /* Page is already resident in the EPC. */
-> if (entry->epc_page) {
-> 	if (entry->desc & SGX_ENCL_PAGE_RECLAIMED)
-> 		return ERR_PTR(-EBUSY);
-> 
-> 	return entry;
-> }
-> 
-> After that the existence is a checked as a condition for ELDU.
-> 
-> This commit removes the redundant check.
+> This commit adds @secs_child to sgx_encl_eldu() and sgx_encl_ewb()
+> and replaces sgx_encl_get_index() with a macro SGX_ENCL_PAGE_INDEX()
+
+Why use a macro instead of an inline function?
+
+> The new macro assumes that it is operated on SECS children and it is a
+> right call because it neither makes sense to bind large architectural
+> decisions inside the smallest helpers (e.g. where and how we store SECS).
 > 
 > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
-
-Ha, I remember seeing this a while back and completely forgot about it.
-
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-
->  arch/x86/kernel/cpu/sgx/encl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/x86/kernel/cpu/sgx/driver/ioctl.c |  4 +--
+>  arch/x86/kernel/cpu/sgx/encl.c         | 50 ++++++++++++--------------
+>  arch/x86/kernel/cpu/sgx/encl.h         |  4 +--
+>  arch/x86/kernel/cpu/sgx/reclaim.c      | 34 +++++++++++-------
+>  4 files changed, 48 insertions(+), 44 deletions(-)
 > 
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> index 9b784a061a47..fbf2aa9da5fc 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> @@ -82,7 +82,7 @@ static bool sgx_process_add_page_req(struct sgx_add_page_req *req,
+>  {
+>  	struct sgx_encl_page *encl_page = req->encl_page;
+>  	struct sgx_encl *encl = req->encl;
+> -	unsigned long page_index = sgx_encl_get_index(encl_page);
+> +	unsigned long page_index = SGX_ENCL_PAGE_INDEX(encl_page);
+>  	struct sgx_secinfo secinfo;
+>  	struct sgx_pageinfo pginfo;
+>  	struct page *backing;
+> @@ -475,7 +475,7 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+>  			       struct sgx_secinfo *secinfo,
+>  			       unsigned int mrmask)
+>  {
+> -	unsigned long page_index = sgx_encl_get_index(encl_page);
+> +	unsigned long page_index = SGX_ENCL_PAGE_INDEX(encl_page);
+>  	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
+>  	struct sgx_add_page_req *req = NULL;
+>  	struct page *backing;
 > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index a20d498e9dcd..d6397f7ef3b8 100644
+> index d6397f7ef3b8..16d97198dafb 100644
 > --- a/arch/x86/kernel/cpu/sgx/encl.c
 > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -123,7 +123,7 @@ static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
->  			return ERR_CAST(epc_page);
+> @@ -13,18 +13,26 @@
+>  #include "sgx.h"
+>  
+>  static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+> -			   struct sgx_epc_page *epc_page)
+> +			   struct sgx_epc_page *epc_page, bool secs_child)
+
+secs_child isn't my first choice on names.  I see "secs" and think "this
+is an SECS page".  I'd prefer is_secs, or maybe is_child?
+
+>  {
+>  	unsigned long va_offset = SGX_ENCL_PAGE_VA_OFFSET(encl_page);
+>  	struct sgx_encl *encl = encl_page->encl;
+> -	pgoff_t page_index = sgx_encl_get_index(encl_page);
+> -	pgoff_t pcmd_index = sgx_pcmd_index(encl, page_index);
+> -	unsigned long pcmd_offset = sgx_pcmd_offset(page_index);
+>  	struct sgx_pageinfo pginfo;
+> +	unsigned long pcmd_offset;
+>  	struct page *backing;
+> +	pgoff_t page_index;
+> +	pgoff_t pcmd_index;
+>  	struct page *pcmd;
+>  	int ret;
+>  
+> +	if (secs_child)
+> +		page_index = SGX_ENCL_PAGE_INDEX(encl_page);
+> +	else
+> +		page_index = PFN_DOWN(encl->size);
+> +
+> +	pcmd_index = sgx_pcmd_index(encl, page_index);
+> +	pcmd_offset = sgx_pcmd_offset(page_index);
+> +
+>  	backing = sgx_encl_get_backing_page(encl, page_index);
+>  	if (IS_ERR(backing)) {
+>  		ret = PTR_ERR(backing);
+> @@ -40,8 +48,11 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
+>  	pginfo.contents = (unsigned long)kmap_atomic(backing);
+>  	pginfo.metadata = (unsigned long)kmap_atomic(pcmd) + pcmd_offset;
+> -	pginfo.secs = SGX_ENCL_PAGE_IS_SECS(encl_page) ? 0 :
+> -			(unsigned long)sgx_epc_addr(encl->secs.epc_page);
+> +
+> +	if (secs_child)
+> +		pginfo.secs = (u64)sgx_epc_addr(encl->secs.epc_page);
+> +	else
+> +		pginfo.secs = 0;
+
+Rather than pass a bool, we can pass 'struct sgx_epc_page *parent_secs'.
+That'd avoid having to name a bool, and would clean up this type of code.
+In general, I dislike boolean parameters where the caller uses true/false
+as I can never remember the context of true/false.
+
+>  
+>  	ret = __eldu(&pginfo, sgx_epc_addr(epc_page),
+>  		     sgx_epc_addr(encl_page->va_page->epc_page) + va_offset);
+> @@ -64,7 +75,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  	return ret;
+>  }
+>  
+
+...
+
+> --- a/arch/x86/kernel/cpu/sgx/reclaim.c
+> +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+> @@ -220,17 +220,26 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
+>  }
+>  
+>  static int __sgx_encl_ewb(struct sgx_encl *encl, struct sgx_epc_page *epc_page,
+> -			  struct sgx_va_page *va_page, unsigned int va_offset)
+> +			  struct sgx_va_page *va_page, unsigned int va_offset,
+> +			  bool secs_child)
+>  {
+>  	struct sgx_encl_page *encl_page = epc_page->owner;
+> -	pgoff_t page_index = sgx_encl_get_index(encl_page);
+> -	pgoff_t pcmd_index = sgx_pcmd_index(encl, page_index);
+> -	unsigned long pcmd_offset = sgx_pcmd_offset(page_index);
+>  	struct sgx_pageinfo pginfo;
+> +	unsigned long pcmd_offset;
+>  	struct page *backing;
+> +	pgoff_t page_index;
+> +	pgoff_t pcmd_index;
+>  	struct page *pcmd;
+>  	int ret;
+>  
+> +	if (secs_child)
+> +		page_index = SGX_ENCL_PAGE_INDEX(encl_page);
+> +	else
+> +		page_index = PFN_DOWN(encl->size);
+> +
+> +	pcmd_index = sgx_pcmd_index(encl, page_index);
+> +	pcmd_offset = sgx_pcmd_offset(page_index);
+> +
+>  	backing = sgx_encl_get_backing_page(encl, page_index);
+>  	if (IS_ERR(backing)) {
+>  		ret = PTR_ERR(backing);
+> @@ -291,7 +300,7 @@ static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
+>  	return cpumask;
+>  }
+>  
+> -static void sgx_encl_ewb(struct sgx_epc_page *epc_page, bool do_free)
+> +static void sgx_encl_ewb(struct sgx_epc_page *epc_page, bool secs_child)
+
+Same comments on the param as ELDU.  The SECS pointer is needed for ETRACK,
+so it's not completely extraneous.
+
+>  {
+>  	struct sgx_encl_page *encl_page = epc_page->owner;
+>  	struct sgx_encl *encl = encl_page->encl;
+> @@ -308,7 +317,8 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page, bool do_free)
+>  		if (sgx_va_page_full(va_page))
+>  			list_move_tail(&va_page->list, &encl->va_pages);
+>  
+> -		ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset);
+> +		ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
+> +				     secs_child);
+>  		if (ret == SGX_NOT_TRACKED) {
+>  			ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
+>  			if (ret) {
+> @@ -318,7 +328,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page, bool do_free)
+>  			}
+>  
+>  			ret = __sgx_encl_ewb(encl, epc_page, va_page,
+> -					     va_offset);
+> +					     va_offset, secs_child);
+>  			if (ret == SGX_NOT_TRACKED) {
+>  				/*
+>  				 * Slow path, send IPIs to kick cpus out of the
+> @@ -330,7 +340,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page, bool do_free)
+>  				on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
+>  						 sgx_ipi_cb, NULL, 1);
+>  				ret = __sgx_encl_ewb(encl, epc_page, va_page,
+> -						     va_offset);
+> +						     va_offset, secs_child);
+>  			}
+>  		}
+>  
+> @@ -340,12 +350,12 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page, bool do_free)
+>  
+>  		encl_page->desc |= va_offset;
+>  		encl_page->va_page = va_page;
+> -	} else if (!do_free) {
+> +	} else if (secs_child) {
+>  		ret = __eremove(sgx_epc_addr(epc_page));
+>  		WARN(ret, "EREMOVE returned %d\n", ret);
 >  	}
 >  
-> -	epc_page = entry->epc_page ? entry->epc_page : sgx_encl_eldu(entry);
-> +	epc_page = sgx_encl_eldu(entry);
->  	if (IS_ERR(epc_page))
->  		return ERR_CAST(epc_page);
+> -	if (do_free)
+> +	if (!secs_child)
+>  		sgx_free_page(epc_page);
 >  
+>  	encl_page->epc_page = NULL;
+> @@ -358,11 +368,11 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+>  
+>  	mutex_lock(&encl->lock);
+>  
+> -	sgx_encl_ewb(epc_page, false);
+> +	sgx_encl_ewb(epc_page, true);
+>  	encl->secs_child_cnt--;
+>  	if (!encl->secs_child_cnt &&
+>  	    (encl->flags & (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED))) {
+> -		sgx_encl_ewb(encl->secs.epc_page, true);
+> +		sgx_encl_ewb(encl->secs.epc_page, false);
+>  	}
+>  
+>  	mutex_unlock(&encl->lock);
 > -- 
 > 2.20.1
 > 
