@@ -2,168 +2,132 @@ Return-Path: <SRS0=Yp/Y=WS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD7BC3A59D
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 04:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F14C3A59D
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 10:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEAD02173E
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 04:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 050E8205ED
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 10:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725783AbfHVEAr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Aug 2019 00:00:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:10597 "EHLO mga11.intel.com"
+        id S1729113AbfHVKjV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Aug 2019 06:39:21 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26488 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbfHVEAr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 22 Aug 2019 00:00:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1729880AbfHVKjV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 22 Aug 2019 06:39:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 21:00:46 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 03:39:20 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,415,1559545200"; 
-   d="scan'208";a="196143336"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 21:00:46 -0700
-Date:   Wed, 21 Aug 2019 21:00:46 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Sean Christopherson <sean.j.christpherson@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>
-Subject: Re: [PATCH 5/5] x86/sgx: Rename vm_prot_bits as max_vm_flags
-Message-ID: <20190822040046.GW29345@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.64,416,1559545200"; 
+   d="scan'208";a="196218356"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga001.fm.intel.com with ESMTP; 22 Aug 2019 03:39:20 -0700
+Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 22 Aug 2019 03:39:20 -0700
+Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
+ FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 22 Aug 2019 03:39:20 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.203]) by
+ hasmsx109.ger.corp.intel.com ([169.254.3.38]) with mapi id 14.03.0439.000;
+ Thu, 22 Aug 2019 13:39:17 +0300
+From:   "Ayoun, Serge" <serge.ayoun@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+CC:     Sean Christopherson <sean.j.christpherson@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>
+Subject: RE: [PATCH 3/5] x86/sgx: Make sgx_validate_secinfo() more readable
+Thread-Topic: [PATCH 3/5] x86/sgx: Make sgx_validate_secinfo() more readable
+Thread-Index: AQHVVqJrRDWN4xlrz0iNUe8HsD09iacG/e5A
+Date:   Thu, 22 Aug 2019 10:39:17 +0000
+Message-ID: <88B7642769729B409B4A93D7C5E0C5E7C661E682@hasmsx108.ger.corp.intel.com>
 References: <20190819152544.7296-1-jarkko.sakkinen@linux.intel.com>
- <20190819152544.7296-6-jarkko.sakkinen@linux.intel.com>
+ <20190819152544.7296-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190819152544.7296-4-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODE1NzgxZmYtZDdiMy00NGE5LWI1MWQtYWUzMGY1MmRlMzQ1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTkF6aFdRdlYyY3BmT1lBejMwRkswbWVYOGhPMVowdVpJZGNpeUJ1S2lTazZaMUsrRG1VUXNUMFNHMENEVHl3QiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.184.70.10]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819152544.7296-6-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 06:25:44PM +0300, Jarkko Sakkinen wrote:
-> vm_prot_bits is very bad and misleading name for the field in struct
-> sgx_encl_page. What the field contains exactly is not @prot of
-> mprotect() but the *maximum* VM flags for the VMA that contains the
-> given enclave page.
+> From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Sent: Monday, August 19, 2019 18:26
+> To: linux-sgx@vger.kernel.org
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; Sean Christopherson
+> <sean.j.christpherson@intel.com>; Katz-zamir, Shay <shay.katz-
+> zamir@intel.com>; Ayoun, Serge <serge.ayoun@intel.com>
+> Subject: [PATCH 3/5] x86/sgx: Make sgx_validate_secinfo() more readable
 > 
-> Thus, the only viable name for the field is max_vm_flags. In functions
-> that also pass VM flags the parameter name is renamed from vm_prot_bits
-> to vm_flags.
-
-Why not max_vm_prot_bits?  'vm_flags' implies the field contains all
-manner of VM_FLAGS.  The 'vm_prot_bits' name was derived from
-calc_vm_prot_bits() to provide this differentiation, especially since
-there's also a calc_vm_flag_bits(),
-
-> To summarize, this commit makes two improvements to clarify the
-> permission handling:
-> 
-> 1. Changes the name to match better the contents.
-> 2. Uses naming to differentiate the field inside the struct and
->    the parameter passed to functions.
+> Split the huge conditional statement to three separate ones in order to make
+> it easier to understand what is going on in the validation code.
 > 
 > Cc: Sean Christopherson <sean.j.christpherson@intel.com>
 > Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
 > Cc: Serge Ayoun <serge.ayoun@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/driver/ioctl.c |  2 +-
->  arch/x86/kernel/cpu/sgx/encl.c         | 14 +++++++-------
->  arch/x86/kernel/cpu/sgx/encl.h         |  4 ++--
->  3 files changed, 10 insertions(+), 10 deletions(-)
+>  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> index 2415dcb20a6e..b61e06daad6e 100644
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> index d5f326411df0..99b1b9776c3a 100644
 > --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
 > +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> @@ -261,7 +261,7 @@ static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
->  	encl_page->encl = encl;
->  
->  	/* Calculate maximum of the VM flags for the page. */
-> -	encl_page->vm_prot_bits = calc_vm_prot_bits(prot, 0);
-> +	encl_page->max_vm_flags = calc_vm_prot_bits(prot, 0);
->  
->  	ret = radix_tree_insert(&encl->page_tree, PFN_DOWN(encl_page->desc),
->  				encl_page);
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index a20d498e9dcd..890eacb45a80 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -292,25 +292,25 @@ static unsigned int sgx_vma_fault(struct vm_fault *vmf)
->   * @encl:		an enclave
->   * @start:		lower bound of the address range, inclusive
->   * @end:		upper bound of the address range, exclusive
-> - * @vm_prot_bits:	requested protections of the address range
-> + * @vm_flags:		requested VM flags for the address range
->   *
->   * Iterate through the enclave pages contained within [@start, @end) to verify
-> - * the permissions requested by @vm_prot_bits do not exceed that of any enclave
-> - * page to be mapped.  Page addresses that do not have an associated enclave
-> - * page are interpreted to zero permissions.
-> + * the the VM flags do not exceed that of any enclave page to be mapped. Page
-> + * addresses that do not have an associated enclave page are interpreted to zero
-> + * permissions.
->   *
->   * Return:
->   *   0 on success,
->   *   -EACCES if VMA permissions exceed enclave page permissions
->   */
->  int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-> -		     unsigned long end, unsigned long vm_prot_bits)
-> +		     unsigned long end, unsigned long vm_flags)
-
-If 'vm_prot_bits' is distasteful, 'prot' would be preferrable as its used
-throughout the kernel for variable that hold only the prot bits.
-
->  {
->  	unsigned long idx, idx_start, idx_end;
->  	struct sgx_encl_page *page;
->  
->  	/* PROT_NONE always succeeds. */
-> -	if (!vm_prot_bits)
-> +	if (!vm_flags)
->  		return 0;
->  
->  	idx_start = PFN_DOWN(start);
-> @@ -321,7 +321,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
->  		page = radix_tree_lookup(&encl->page_tree, idx);
->  		mutex_unlock(&encl->lock);
->  
-> -		if (!page || (~page->vm_prot_bits & vm_prot_bits))
-> +		if (!page || (~page->max_vm_flags & vm_flags))
->  			return -EACCES;
->  	}
->  
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-> index d3a1687ed84c..0e28b784a8c5 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -44,7 +44,7 @@ enum sgx_encl_page_desc {
->  
->  struct sgx_encl_page {
->  	unsigned long desc;
-> -	unsigned long vm_prot_bits;
-> +	unsigned long max_vm_flags;
->  	struct sgx_epc_page *epc_page;
->  	struct sgx_va_page *va_page;
->  	struct sgx_encl *encl;
-> @@ -134,6 +134,6 @@ void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
->  bool sgx_va_page_full(struct sgx_va_page *va_page);
->  
->  int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-> -		     unsigned long end, unsigned long vm_prot_bits);
-> +		     unsigned long end, unsigned long vm_flags);
->  
->  #endif /* _X86_ENCL_H */
-> -- 
-> 2.20.1
+> @@ -415,10 +415,15 @@ static int sgx_validate_secinfo(struct sgx_secinfo
+> *secinfo)
+>  	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
+>  	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
 > 
+> -	if ((secinfo->flags & SGX_SECINFO_RESERVED_MASK) ||
+> -	    ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R)) ||
+> -	    (page_type != SGX_SECINFO_TCS && page_type !=
+> SGX_SECINFO_TRIM &&
+> -	     page_type != SGX_SECINFO_REG))
+> +	if ((page_type != SGX_SECINFO_REG &&
+> +	     page_type != SGX_SECINFO_TCS &&
+> +	     page_type != SGX_SECINFO_TRIM))
+> +		return -EINVAL;
+
+sgx_validate_secinfo() is called via eadd ioctl. Eadd will fail with
+TRIM page type, so you probably need to remove it from the if
+sgx2.0 does not change this behavior
+
+> +
+> +	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
+> +		return -EINVAL;
+> +
+> +	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
+>  		return -EINVAL;
+> 
+>  	if (memchr_inv(secinfo->reserved, 0,
+> SGX_SECINFO_RESERVED_SIZE))
+> --
+> 2.20.1
+
+---------------------------------------------------------------------
+Intel Israel (74) Limited
+
+This e-mail and any attachments may contain confidential material for
+the sole use of the intended recipient(s). Any review or distribution
+by others is strictly prohibited. If you are not the intended
+recipient, please contact the sender and delete all copies.
+
