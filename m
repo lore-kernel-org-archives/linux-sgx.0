@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67152C3A5A1
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 14:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E34DC3A5A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 14:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A5FF2133F
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 14:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E003A233A2
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 14:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388069AbfHVOzl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Aug 2019 10:55:41 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48013 "EHLO mga01.intel.com"
+        id S1730624AbfHVO6M (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Aug 2019 10:58:12 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48000 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732015AbfHVOzk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:55:40 -0400
+        id S1729922AbfHVO6M (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:58:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 07:55:40 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 07:58:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
-   d="scan'208";a="208194070"
+   d="scan'208";a="183912356"
 Received: from greathea-mobl2.ger.corp.intel.com ([10.252.39.37])
-  by fmsmga002.fm.intel.com with ESMTP; 22 Aug 2019 07:55:39 -0700
-Message-ID: <8fb904130d8e64b4ef5af4a99fce15a6b4351d8a.camel@linux.intel.com>
-Subject: Re: [PATCH 2/2] x86/sgx: Determine SECS at compile time in
- sgx_encl_eldu()
+  by orsmga006.jf.intel.com with ESMTP; 22 Aug 2019 07:58:09 -0700
+Message-ID: <3da7770443eb8cb83e186f20f8886f24ee2d80b8.camel@linux.intel.com>
+Subject: Re: [PATCH v3 0/7] Fix the reported SGX selftest makefile issues
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org
-Date:   Thu, 22 Aug 2019 17:55:38 +0300
-In-Reply-To: <20190822005551.GP29345@linux.intel.com>
-References: <20190821232902.29476-1-jarkko.sakkinen@linux.intel.com>
-         <20190821232902.29476-3-jarkko.sakkinen@linux.intel.com>
-         <20190822005551.GP29345@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com
+Date:   Thu, 22 Aug 2019 17:58:08 +0300
+In-Reply-To: <20190822033158.GQ29345@linux.intel.com>
+References: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
+         <20190822033158.GQ29345@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.2-1 
@@ -48,32 +47,28 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 2019-08-21 at 17:55 -0700, Sean Christopherson wrote:
-> On Thu, Aug 22, 2019 at 02:29:02AM +0300, Jarkko Sakkinen wrote:
-> > Using address resolution of any kind is obviously an overkill for
-> > anything that we know at compile time. Those sites should not hard
-> > bind how we store SECS.
+On Wed, 2019-08-21 at 20:31 -0700, Sean Christopherson wrote:
+> On Mon, Aug 19, 2019 at 04:28:23PM +0300, Jarkko Sakkinen wrote:
+> > Cedric Xing reported various issues in the selftest makefiles, which are
+> > hopefully taken care by these patches.
 > > 
-> > This commit adds @secs_child to sgx_encl_eldu() and sgx_encl_ewb()
-> > and replaces sgx_encl_get_index() with a macro SGX_ENCL_PAGE_INDEX()
+> > As the last patch this patch set contains a patch that implements the
+> > subdirectory traversal the for the x86 selftest directory tree. This
+> > patch is meant to be a separate patch in the main SGX patch set so that
+> > the bindings can be reviewed separately.
 > 
-> Why use a macro instead of an inline function?
+> Doesn't have to be this series, but the build artifacts should be added
+> to .gitignore.
+> 
+> Untracked files:
+>   (use "git add <file>..." to include in what will be committed)
+> 
+>         sgx/encl.ss
+>         sgx/sgxsign
+>         sgx/test_sgx
 
-Just for consistency and nothing else.
-
-It falls into same category as the two other macros in encl.h:
-unconditionally give attributes of the page with some calculation
-appied (the earlier function had a real flow).
-
-We could consider separately converting all of the three as inline
-functions though (not in the context of this patch).
-
-> Rather than pass a bool, we can pass 'struct sgx_epc_page *parent_secs'.
-> That'd avoid having to name a bool, and would clean up this type of code.
-> In general, I dislike boolean parameters where the caller uses true/false
-> as I can never remember the context of true/false.
-
-Sure, but why not just @secs? It is always a parent.
+Oh, good catch. Lets do it as a separate patch after I've squashed
+everything.
 
 /Jarkko
 
