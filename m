@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9AEC3A5A1
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 15:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2C7C3A5A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 15:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A190233FD
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 15:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 334302089E
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 15:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732853AbfHVPvc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Aug 2019 11:51:32 -0400
-Received: from mga12.intel.com ([192.55.52.136]:31586 "EHLO mga12.intel.com"
+        id S1727894AbfHVPzI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Aug 2019 11:55:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:39375 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727953AbfHVPvb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 22 Aug 2019 11:51:31 -0400
+        id S1725876AbfHVPzH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 22 Aug 2019 11:55:07 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 08:51:31 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 08:55:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
-   d="scan'208";a="169822096"
+   d="scan'208";a="169823793"
 Received: from greathea-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.39.37])
-  by orsmga007.jf.intel.com with ESMTP; 22 Aug 2019 08:51:28 -0700
+  by orsmga007.jf.intel.com with ESMTP; 22 Aug 2019 08:55:04 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH v2] x86/sgx: Determine SECS at compile time in sgx_encl_eldu()
-Date:   Thu, 22 Aug 2019 18:51:24 +0300
-Message-Id: <20190822155124.9439-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3] x86/sgx: Determine SECS at compile time in sgx_encl_eldu()
+Date:   Thu, 22 Aug 2019 18:55:01 +0300
+Message-Id: <20190822155501.8276-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,6 +54,7 @@ conditional logic is no longer required.
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
+v3: Forgot to flip the conditions in __sgx_encl_eldu().
 v2: Use @secs_page in the ELDU flow. Rename @secs_child as
     @is_secs_child in EWB flow.
  arch/x86/kernel/cpu/sgx/encl.c    | 51 ++++++++++++++-----------------
@@ -62,7 +63,7 @@ v2: Use @secs_page in the ELDU flow. Rename @secs_child as
  3 files changed, 47 insertions(+), 42 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index d6397f7ef3b8..89fa520be8a2 100644
+index d6397f7ef3b8..054911ddb938 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
 @@ -13,18 +13,27 @@
@@ -87,9 +88,9 @@ index d6397f7ef3b8..89fa520be8a2 100644
  	int ret;
  
 +	if (secs_page)
-+		page_index = PFN_DOWN(encl->size);
-+	else
 +		page_index = SGX_ENCL_PAGE_INDEX(encl_page);
++	else
++		page_index = PFN_DOWN(encl->size);
 +
 +	pcmd_index = sgx_pcmd_index(encl, page_index);
 +	pcmd_offset = sgx_pcmd_offset(page_index);
@@ -105,9 +106,9 @@ index d6397f7ef3b8..89fa520be8a2 100644
 -			(unsigned long)sgx_epc_addr(encl->secs.epc_page);
 +
 +	if (secs_page)
-+		pginfo.secs = 0;
-+	else
 +		pginfo.secs = (u64)sgx_epc_addr(secs_page);
++	else
++		pginfo.secs = 0;
  
  	ret = __eldu(&pginfo, sgx_epc_addr(epc_page),
  		     sgx_epc_addr(encl_page->va_page->epc_page) + va_offset);
