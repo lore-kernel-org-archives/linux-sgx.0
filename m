@@ -2,45 +2,43 @@ Return-Path: <SRS0=Yp/Y=WS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACB4C3A5A1
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 16:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268FCC3A5A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 17:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEC6F23401
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 16:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5F3233FE
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 17:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbfHVQ7h (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Aug 2019 12:59:37 -0400
-Received: from mga06.intel.com ([134.134.136.31]:59259 "EHLO mga06.intel.com"
+        id S1731961AbfHVRA1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Aug 2019 13:00:27 -0400
+Received: from mga17.intel.com ([192.55.52.151]:46146 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726844AbfHVQ7h (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:59:37 -0400
+        id S1729052AbfHVRA1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:00:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 09:59:37 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 10:00:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
-   d="scan'208";a="208240577"
+   d="scan'208";a="208241113"
 Received: from greathea-mobl2.ger.corp.intel.com ([10.252.39.37])
-  by fmsmga002.fm.intel.com with ESMTP; 22 Aug 2019 09:59:34 -0700
-Message-ID: <6a5fb735e795c25ceb075d4a6f4db20653b731af.camel@linux.intel.com>
-Subject: Re: [PATCH 4/5] x86/sgx: Validate TCS permssions in
- sgx_validate_secinfo()
+  by fmsmga002.fm.intel.com with ESMTP; 22 Aug 2019 10:00:23 -0700
+Message-ID: <5156a9c133e757dfcf8a8d003d39992aed6ade9a.camel@linux.intel.com>
+Subject: Re: [PATCH for_v22 v2 8/8] x86/sgx: Pass userspace source address
+ directly to EADD
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Date:   Thu, 22 Aug 2019 19:59:34 +0300
-In-Reply-To: <fa7ef5b767298ac19857d8342a8eca65e31eb843.camel@linux.intel.com>
-References: <20190819152544.7296-1-jarkko.sakkinen@linux.intel.com>
-         <20190819152544.7296-5-jarkko.sakkinen@linux.intel.com>
-         <20190821184544.ii37h7hhxjiocbb4@linux.intel.com>
-         <88B7642769729B409B4A93D7C5E0C5E7C661E7A7@hasmsx108.ger.corp.intel.com>
-         <fa7ef5b767298ac19857d8342a8eca65e31eb843.camel@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-sgx@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 22 Aug 2019 20:00:15 +0300
+In-Reply-To: <20190822145049.GD25467@linux.intel.com>
+References: <20190813011252.4121-1-sean.j.christopherson@intel.com>
+         <20190813011252.4121-9-sean.j.christopherson@intel.com>
+         <74a9dbbed67ef131bf2179821ce74696120b35e1.camel@linux.intel.com>
+         <20190822145049.GD25467@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.2-1 
@@ -51,30 +49,23 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 2019-08-22 at 19:46 +0300, Jarkko Sakkinen wrote:
-> On Thu, 2019-08-22 at 11:33 +0000, Ayoun, Serge wrote:
-> > Also replying to Sean.
-> > Sean is right that never mind the value in secsinfo->flags, HW will reset RWX
-> > For TCS pages.
-> > So basically you may not enforce and and could not check those but... The signature depends
-> > On those flags, so if you put a non-zero flag value, eadd will pass but if you
-> > compute the signature according to this non zero value then you will have
-> > a delta between ur signature and HW's signature: einit will fail.
-> > So this is tricky and more a usability issue.
-> > I vote for checking the flag is zeroed.
+On Thu, 2019-08-22 at 07:50 -0700, Sean Christopherson wrote:
+> On Thu, Aug 22, 2019 at 05:37:18PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, 2019-08-12 at 18:12 -0700, Sean Christopherson wrote:
+> > > Invoke EADD with the userspace source address instead of first copying
+> > > the data to a kernel page to avoid the overhead of alloc_page() and
+> > > copy_from_user().
+> > > 
+> > > Suggested-by: Andy Lutomirski <luto@kernel.org>
+> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > NAK because takes away TCS validation and the commit message
+> > does not give any reasoning for doing that.
 > 
-> As I responded to Sean that as long as the ioctl does not adjust
-> prot bits I'm cool with any sane solution. What do you think of
-> requiring at minimum RW?
-> 
-> Doing that kind of adjusting is just doing fixup's for corrupted
-> data from the user space.
+> Doh, I have a thorough explanation, but apparently it never made it from
+> my head to the changelog.  I'll send v2 as a standalone patch.
 
-Kind of missed your comment about EINIT in rush! A valid point
-and good catch.
-
-I still think my 2nd proposal would be more appropriate than this
-patch. Signatures will work and we don't need special cases anywhere.
+Yeah, w/o explanation I won't just take away functionality :-)
 
 /Jarkko
 
