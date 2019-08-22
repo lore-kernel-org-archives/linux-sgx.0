@@ -3,58 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F14C3A59D
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 10:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3B2C3A5A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 11:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050E8205ED
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 10:39:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA8DD233FD
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 11:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbfHVKjV convert rfc822-to-8bit (ORCPT
+        id S1732911AbfHVLdp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Aug 2019 06:39:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:26488 "EHLO mga14.intel.com"
+        Thu, 22 Aug 2019 07:33:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:33795 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729880AbfHVKjV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 22 Aug 2019 06:39:21 -0400
+        id S1731987AbfHVLdo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 22 Aug 2019 07:33:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 03:39:20 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 04:33:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,416,1559545200"; 
-   d="scan'208";a="196218356"
+   d="scan'208";a="181357148"
 Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Aug 2019 03:39:20 -0700
+  by orsmga003.jf.intel.com with ESMTP; 22 Aug 2019 04:33:42 -0700
 Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
  FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 22 Aug 2019 03:39:20 -0700
-Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
+ id 14.3.439.0; Thu, 22 Aug 2019 04:33:39 -0700
+Received: from hasmsx114.ger.corp.intel.com (10.184.198.65) by
  FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 22 Aug 2019 03:39:20 -0700
+ id 14.3.439.0; Thu, 22 Aug 2019 04:33:39 -0700
 Received: from hasmsx108.ger.corp.intel.com ([169.254.9.203]) by
- hasmsx109.ger.corp.intel.com ([169.254.3.38]) with mapi id 14.03.0439.000;
- Thu, 22 Aug 2019 13:39:17 +0300
+ HASMSX114.ger.corp.intel.com ([169.254.14.15]) with mapi id 14.03.0439.000;
+ Thu, 22 Aug 2019 14:33:36 +0300
 From:   "Ayoun, Serge" <serge.ayoun@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-CC:     Sean Christopherson <sean.j.christpherson@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>
-Subject: RE: [PATCH 3/5] x86/sgx: Make sgx_validate_secinfo() more readable
-Thread-Topic: [PATCH 3/5] x86/sgx: Make sgx_validate_secinfo() more readable
-Thread-Index: AQHVVqJrRDWN4xlrz0iNUe8HsD09iacG/e5A
-Date:   Thu, 22 Aug 2019 10:39:17 +0000
-Message-ID: <88B7642769729B409B4A93D7C5E0C5E7C661E682@hasmsx108.ger.corp.intel.com>
+CC:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Subject: RE: [PATCH 4/5] x86/sgx: Validate TCS permssions in
+ sgx_validate_secinfo()
+Thread-Topic: [PATCH 4/5] x86/sgx: Validate TCS permssions in
+ sgx_validate_secinfo()
+Thread-Index: AQHVWFCvFMHTkYfGZE23NSwbiGthjqcHCJYg
+Date:   Thu, 22 Aug 2019 11:33:35 +0000
+Message-ID: <88B7642769729B409B4A93D7C5E0C5E7C661E7A7@hasmsx108.ger.corp.intel.com>
 References: <20190819152544.7296-1-jarkko.sakkinen@linux.intel.com>
- <20190819152544.7296-4-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190819152544.7296-4-jarkko.sakkinen@linux.intel.com>
+ <20190819152544.7296-5-jarkko.sakkinen@linux.intel.com>
+ <20190821184544.ii37h7hhxjiocbb4@linux.intel.com>
+In-Reply-To: <20190821184544.ii37h7hhxjiocbb4@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODE1NzgxZmYtZDdiMy00NGE5LWI1MWQtYWUzMGY1MmRlMzQ1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTkF6aFdRdlYyY3BmT1lBejMwRkswbWVYOGhPMVowdVpJZGNpeUJ1S2lTazZaMUsrRG1VUXNUMFNHMENEVHl3QiJ9
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZDhiMWIyNzctOWNjMy00YWU1LWI1NGUtMGY4ZGRmMmQ4ZDU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWVRqeDFPMTRvNjlRbkJBR3VMNFI1M1MrVXBjckgrXC8wNXBFNXdPRDZlejJWbDBGZzMxTzd1R1YxckJqbFhzSTMifQ==
 x-ctpclassification: CTP_NT
 dlp-product: dlpe-windows
 dlp-version: 11.2.0.6
@@ -68,61 +70,66 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Sent: Monday, August 19, 2019 18:26
+> From: linux-sgx-owner@vger.kernel.org <linux-sgx-owner@vger.kernel.org>
+> On Behalf Of Jarkko Sakkinen
+> Sent: Wednesday, August 21, 2019 21:46
 > To: linux-sgx@vger.kernel.org
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; Sean Christopherson
-> <sean.j.christpherson@intel.com>; Katz-zamir, Shay <shay.katz-
-> zamir@intel.com>; Ayoun, Serge <serge.ayoun@intel.com>
-> Subject: [PATCH 3/5] x86/sgx: Make sgx_validate_secinfo() more readable
+> Cc: Christopherson, Sean J <sean.j.christopherson@intel.com>
+> Subject: Re: [PATCH 4/5] x86/sgx: Validate TCS permssions in
+> sgx_validate_secinfo()
 > 
-> Split the huge conditional statement to three separate ones in order to make
-> it easier to understand what is going on in the validation code.
-> 
-> Cc: Sean Christopherson <sean.j.christpherson@intel.com>
-> Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
-> Cc: Serge Ayoun <serge.ayoun@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> index d5f326411df0..99b1b9776c3a 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> @@ -415,10 +415,15 @@ static int sgx_validate_secinfo(struct sgx_secinfo
+> On Mon, Aug 19, 2019 at 06:25:43PM +0300, Jarkko Sakkinen wrote:
+> > The validation of TCS permissions was missing from
+> > sgx_validate_secinfo(). This patch adds the validation.
+> >
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> > b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> > index 99b1b9776c3a..2415dcb20a6e 100644
+> > --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> > @@ -423,6 +423,12 @@ static int sgx_validate_secinfo(struct sgx_secinfo
 > *secinfo)
->  	u64 page_type = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
->  	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
+> >  	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
+> >  		return -EINVAL;
+> >
+> > +	/* CPU will silently overwrite the permissions as zero, which means
+> > +	 * that we need to validate it ourselves.
+> > +	 */
+> > +	if (page_type == SGX_SECINFO_TCS && perm)
+> > +		return -EINVAL;
+> > +
+> >  	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
+> >  		return -EINVAL;
+> >
+> > --
+> > 2.20.1
+> >
 > 
-> -	if ((secinfo->flags & SGX_SECINFO_RESERVED_MASK) ||
-> -	    ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R)) ||
-> -	    (page_type != SGX_SECINFO_TCS && page_type !=
-> SGX_SECINFO_TRIM &&
-> -	     page_type != SGX_SECINFO_REG))
-> +	if ((page_type != SGX_SECINFO_REG &&
-> +	     page_type != SGX_SECINFO_TCS &&
-> +	     page_type != SGX_SECINFO_TRIM))
-> +		return -EINVAL;
-
-sgx_validate_secinfo() is called via eadd ioctl. Eadd will fail with
-TRIM page type, so you probably need to remove it from the if
-sgx2.0 does not change this behavior
-
-> +
-> +	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
-> +		return -EINVAL;
-> +
-> +	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
->  		return -EINVAL;
+> OK, just found out that this patch did not end up to my test image and
+> causes a regression.
 > 
->  	if (memchr_inv(secinfo->reserved, 0,
-> SGX_SECINFO_RESERVED_SIZE))
-> --
-> 2.20.1
+> I think this should be fixed in sgx_encl_may_map() by having the
+> following special case for TCS (in addition to the change in this
+> patch of course):
+> 
+> 1. Check if we encounter a TCS page.
+> 2. If yes, we evaluate RW for the VM flags.
+> 
 
+Also replying to Sean.
+Sean is right that never mind the value in secsinfo->flags, HW will reset RWX
+For TCS pages.
+So basically you may not enforce and and could not check those but... The signature depends
+On those flags, so if you put a non-zero flag value, eadd will pass but if you
+compute the signature according to this non zero value then you will have
+a delta between ur signature and HW's signature: einit will fail.
+So this is tricky and more a usability issue.
+I vote for checking the flag is zeroed.
 ---------------------------------------------------------------------
 Intel Israel (74) Limited
 
