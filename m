@@ -6,134 +6,102 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FC8C3A59E
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 03:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0325C3A59E
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 03:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F3221848
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 03:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9364F22CF7
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Aug 2019 03:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfHVDmF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 21 Aug 2019 23:42:05 -0400
-Received: from mga09.intel.com ([134.134.136.24]:42773 "EHLO mga09.intel.com"
+        id S1727923AbfHVDn5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 21 Aug 2019 23:43:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:61518 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726894AbfHVDmF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 21 Aug 2019 23:42:05 -0400
+        id S1726894AbfHVDn5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 21 Aug 2019 23:43:57 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 20:42:04 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 20:43:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,415,1559545200"; 
-   d="scan'208";a="169629880"
+   d="scan'208";a="190428168"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga007.jf.intel.com with ESMTP; 21 Aug 2019 20:42:04 -0700
-Date:   Wed, 21 Aug 2019 20:42:04 -0700
+  by orsmga002.jf.intel.com with ESMTP; 21 Aug 2019 20:43:56 -0700
+Date:   Wed, 21 Aug 2019 20:43:56 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com
-Subject: Re: [PATCH v3 7/7] selftests/x86: Recurse into subdirectories
-Message-ID: <20190822034204.GR29345@linux.intel.com>
-References: <20190819132830.9056-1-jarkko.sakkinen@linux.intel.com>
- <20190819132830.9056-8-jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Sean Christopherson <sean.j.christpherson@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Serge Ayoun <serge.ayoun@intel.com>
+Subject: Re: [PATCH 1/5] x86/sgx: Document permission handling better
+Message-ID: <20190822034356.GS29345@linux.intel.com>
+References: <20190819152544.7296-1-jarkko.sakkinen@linux.intel.com>
+ <20190819152544.7296-2-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190819132830.9056-8-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190819152544.7296-2-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 04:28:30PM +0300, Jarkko Sakkinen wrote:
-> Recurse into a list of subdirectories defined by SUBDIRS when running
-> x86 selftests. Override run_tests, install, emit_tests and clean
-> targets to implement this behaviour.
-
-The code looks good (which doesn't say much, my Makefile knowledge is
-garbage), but the result is a bit odd.  x86/sgx doesn't implement
-emit_tests (or at least test_sgx doesn't show up), while the rest of the
-x86 tests don't support install.
-
-AFAICT the Makefile is itself weird; it's definitely different than other
-selftests Makfiles.  I don't see any reason to delay this patch, but it
-feels like something here needs to be cleaned up.
-
-> A possible alternative would be to add "x86/sgx" to TARGETS. However,
-> this would be problematic because detecting 64-bit build would have
-> to duplicated.
+On Mon, Aug 19, 2019 at 06:25:40PM +0300, Jarkko Sakkinen wrote:
+> The way permissions are managed inside the driver is not trivial and
+> intuitive. The non-obvious parts were not properly remarked in the
+> source code. This patch refines them a bit.
 > 
-> The implementation is derived from the makefiles of powerpc and sparc64
-> selftests.
-> 
+> Cc: Sean Christopherson <sean.j.christpherson@intel.com>
+> Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
+> Cc: Serge Ayoun <serge.ayoun@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  tools/testing/selftests/x86/Makefile | 44 ++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+>  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-> index fa07d526fe39..80571bac8ed5 100644
-> --- a/tools/testing/selftests/x86/Makefile
-> +++ b/tools/testing/selftests/x86/Makefile
-> @@ -10,6 +10,8 @@ CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
->  CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
->  CAN_BUILD_WITH_NOPIE := $(shell ./check_cc.sh $(CC) trivial_program.c -no-pie)
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> index 9b784a061a47..64d3286f3324 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> @@ -259,7 +259,10 @@ static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+>  		return ERR_PTR(-ENOMEM);
+>  	encl_page->desc = addr;
+>  	encl_page->encl = encl;
+> +
+> +	/* Calculate maximum of the VM flags for the page. */
+>  	encl_page->vm_prot_bits = calc_vm_prot_bits(prot, 0);
+> +
+>  	ret = radix_tree_insert(&encl->page_tree, PFN_DOWN(encl_page->desc),
+>  				encl_page);
+>  	if (ret) {
+> @@ -640,11 +643,15 @@ static long sgx_ioc_enclave_add_page(struct file *filep, void __user *arg)
 >  
-> +SUBDIRS := sgx
-> +
->  TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
->  			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
->  			protection_keys test_vdso test_vsyscall mov_ss_trap \
-> @@ -59,6 +61,48 @@ endif
+>  	data = kmap(data_page);
 >  
->  ifeq ($(CAN_BUILD_X86_64),1)
->  all: all_64
-> +	@for DIR in $(SUBDIRS); do \
-> +		BUILD_TARGET=$(OUTPUT)/$$DIR; \
-> +		mkdir $$BUILD_TARGET  -p; \
-> +		make OUTPUT=$$BUILD_TARGET -C $$DIR $@; \
-> +	done
-> +
-> +DEFAULT_RUN_TESTS := $(RUN_TESTS)
-> +override define RUN_TESTS
-> +	$(DEFAULT_RUN_TESTS)
-> +	@for TARGET in $(SUBDIRS); do \
-> +		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-> +		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET run_tests; \
-> +	done;
-> +endef
-> +
-> +DEFAULT_INSTALL_RULE := $(INSTALL_RULE)
-> +override define INSTALL_RULE
-> +	$(DEFAULT_INSTALL_RULE)
-> +	@for TARGET in $(SUBDIRS); do \
-> +		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-> +		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET install; \
-> +	done;
-> +endef
-> +
-> +DEFAULT_EMIT_TESTS := $(EMIT_TESTS)
-> +override define EMIT_TESTS
-> +	$(DEFAULT_EMIT_TESTS)
-> +	@for TARGET in $(SUBDIRS); do \
-> +		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-> +		$(MAKE) OUTPUT=$$BUILD_TARGET -s -C $$TARGET emit_tests; \
-> +	done;
-> +endef
-> +
-> +DEFAULT_CLEAN := $(CLEAN)
-> +override define CLEAN
-> +	$(DEFAULT_CLEAN)
-> +	@for TARGET in $(SUBDIRS); do \
-> +		BUILD_TARGET=$(OUTPUT)/$$TARGET; \
-> +		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET clean; \
-> +	done;
-> +endef
-> +
->  TEST_PROGS += $(BINARIES_64)
->  EXTRA_CFLAGS += -DCAN_BUILD_64
->  $(foreach t,$(TARGETS_C_64BIT_ALL),$(eval $(call gen-target-rule-64,$(t))))
+> +	/* Set prot bits matching to the SECINFO permissions. */
+>  	prot = _calc_vm_trans(secinfo.flags, SGX_SECINFO_R, PROT_READ)  |
+>  	       _calc_vm_trans(secinfo.flags, SGX_SECINFO_W, PROT_WRITE) |
+>  	       _calc_vm_trans(secinfo.flags, SGX_SECINFO_X, PROT_EXEC);
+>  
+> -	/* TCS pages need to be RW in the PTEs, but can be 0 in the EPCM. */
+> +	/* TCS pages must always RW set for CPU access while the SECINFO
+
+Should be
+
+	/*
+	 * TCS pages ...
+
+> +	 * permissions are *always* zero - the CPU ignores the user provided
+> +	 * values and silently overwrites zero permissions.
+
+Maybe 'overwrites with zero permissions'?
+
+> +	 */
+>  	if ((secinfo.flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
+>  		prot |= PROT_READ | PROT_WRITE;
+>  
 > -- 
 > 2.20.1
 > 
