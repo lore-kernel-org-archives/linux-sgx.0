@@ -2,291 +2,84 @@ Return-Path: <SRS0=j74F=WZ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB76C3A59F
-	for <linux-sgx@archiver.kernel.org>; Thu, 29 Aug 2019 22:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B84AC3A59F
+	for <linux-sgx@archiver.kernel.org>; Thu, 29 Aug 2019 22:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E12C2166E
-	for <linux-sgx@archiver.kernel.org>; Thu, 29 Aug 2019 22:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 364B02166E
+	for <linux-sgx@archiver.kernel.org>; Thu, 29 Aug 2019 22:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfH2WP1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 29 Aug 2019 18:15:27 -0400
-Received: from mga04.intel.com ([192.55.52.120]:22606 "EHLO mga04.intel.com"
+        id S1727802AbfH2WWN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 29 Aug 2019 18:22:13 -0400
+Received: from mga07.intel.com ([134.134.136.100]:14287 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727969AbfH2WP1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:15:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727763AbfH2WWM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:22:12 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 15:15:26 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 15:22:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
-   d="scan'208";a="210701749"
+   d="scan'208";a="265126803"
 Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Aug 2019 15:15:25 -0700
+  by orsmga001.jf.intel.com with ESMTP; 29 Aug 2019 15:22:10 -0700
+Date:   Fri, 30 Aug 2019 01:22:08 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v2 2/2] selftests/x86/sgx: Read encl.bin and encl.ss from the file system
-Date:   Fri, 30 Aug 2019 01:15:19 +0300
-Message-Id: <20190829221519.13243-2-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829221519.13243-1-jarkko.sakkinen@linux.intel.com>
-References: <20190829221519.13243-1-jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-sgx@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] x86/sgx: Reject concurrent ioctls on single
+ enclave
+Message-ID: <20190829222208.tqcwo7xg4t4wiuv7@linux.intel.com>
+References: <20190827192717.27312-1-sean.j.christopherson@intel.com>
+ <20190827192717.27312-3-sean.j.christopherson@intel.com>
+ <20190829131543.ejdsviysr2u33rnj@linux.intel.com>
+ <20190829160001.GD26580@linux.intel.com>
+ <20190829181438.oxix5d7qfgru7bd7@linux.intel.com>
+ <20190829184332.GA27262@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829184332.GA27262@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Do not link encl.bin and encl.ss to the test application binary. Linking
-data files directly to the ELF are legacy from in-kernel LE
-implementation.
+On Thu, Aug 29, 2019 at 11:43:33AM -0700, Sean Christopherson wrote:
+> On Thu, Aug 29, 2019 at 09:14:38PM +0300, Jarkko Sakkinen wrote:
+> > On Thu, Aug 29, 2019 at 09:00:01AM -0700, Sean Christopherson wrote:
+> > > > #PF handler should be good as it has this conditional:
+> > > > 
+> > > > flags = atomic_read(&encl->flags);
+> > > > 
+> > > > if ((flags & SGX_ENCL_DEAD) || !(flags & SGX_ENCL_INITIALIZED))
+> > > > 	return ERR_PTR(-EFAULT);
+> > > > 
+> > > > What about the reclaimer?
+> > > 
+> > > Can you elaborate?  I'm not sure what you're asking.
+> > 
+> > I'm thinking of a race between list_add() in the ioctl and
+> > list_move_tail() in the reclaimer.
+> 
+> Ah crud, I forgot that the reclaimer can manipulate the list of VA pages,
+> I was thinking they were invisible to the reclaimer.
+> 
+> > A quick way to fix this would be move sgx_alloc_va_page() from
+> > sgx_encl_grow() and return NULL if a new allocation is required.
+> 
+> We don't even need to do that, moving the list_add() from sgx_encl_grow()
+> to its caller would be sufficient.  Same concept, but the allocation would
+> be handled by sgx_encl_grow() instead of having to duplicate that code in
+> sgx_encl_add_page() and sgx_encl_create().
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-Add encl.ss as target so that it gets packaged
- tools/testing/selftests/x86/sgx/Makefile     |  12 +--
- tools/testing/selftests/x86/sgx/encl_piggy.S |  19 ----
- tools/testing/selftests/x86/sgx/main.c       | 101 +++++++++++++++----
- 3 files changed, 88 insertions(+), 44 deletions(-)
- delete mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.S
+Yeah, that was whole point that list_add() cannot be done without
+encl->lock. Anything that works goes...
 
-diff --git a/tools/testing/selftests/x86/sgx/Makefile b/tools/testing/selftests/x86/sgx/Makefile
-index 4310a5b6ecc7..a09ef5f965dc 100644
---- a/tools/testing/selftests/x86/sgx/Makefile
-+++ b/tools/testing/selftests/x86/sgx/Makefile
-@@ -10,11 +10,11 @@ HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
- ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
- 	       -fno-stack-protector -mrdrnd $(INCLUDES)
- 
--TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
-+TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
-+
- all: $(TEST_CUSTOM_PROGS)
- 
--$(TEST_CUSTOM_PROGS): $(OUTPUT)/main.o $(OUTPUT)/sgx_call.o \
--		      $(OUTPUT)/encl_piggy.o
-+$(OUTPUT)/test_sgx: $(OUTPUT)/main.o $(OUTPUT)/sgx_call.o
- 	$(CC) $(HOST_CFLAGS) -o $@ $^
- 
- $(OUTPUT)/main.o: main.c
-@@ -23,16 +23,13 @@ $(OUTPUT)/main.o: main.c
- $(OUTPUT)/sgx_call.o: sgx_call.S
- 	$(CC) $(HOST_CFLAGS) -c $< -o $@
- 
--$(OUTPUT)/encl_piggy.o: $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
--	$(CC) $(HOST_CFLAGS) -I$(OUTPUT) -c encl_piggy.S -o $@
--
- $(OUTPUT)/encl.bin: $(OUTPUT)/encl.elf $(OUTPUT)/sgxsign
- 	$(OBJCOPY) -O binary $< $@
- 
- $(OUTPUT)/encl.elf: encl.lds encl.c encl_bootstrap.S
- 	$(CC) $(ENCL_CFLAGS) -T $^ -o $@
- 
--$(OUTPUT)/encl.ss: $(OUTPUT)/encl.bin  $(OUTPUT)/sgxsign
-+$(OUTPUT)/encl.ss: $(OUTPUT)/encl.bin
- 	$(OUTPUT)/sgxsign signing_key.pem $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
- 
- $(OUTPUT)/sgxsign: sgxsign.c
-@@ -40,7 +37,6 @@ $(OUTPUT)/sgxsign: sgxsign.c
- 
- EXTRA_CLEAN := \
- 	$(OUTPUT)/encl.bin \
--	$(OUTPUT)/encl_piggy.o \
- 	$(OUTPUT)/encl.elf \
- 	$(OUTPUT)/encl.ss \
- 	$(OUTPUT)/sgx_call.o \
-diff --git a/tools/testing/selftests/x86/sgx/encl_piggy.S b/tools/testing/selftests/x86/sgx/encl_piggy.S
-deleted file mode 100644
-index a7f6447abbba..000000000000
---- a/tools/testing/selftests/x86/sgx/encl_piggy.S
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
--/*
-- * Copyright(c) 2016-18 Intel Corporation.
-- */
--
--	.section ".rodata", "a"
--	.balign 4096
--
--encl_bin:
--	.globl encl_bin
--	.incbin	"encl.bin"
--encl_bin_end:
--	.globl encl_bin_end
--
--encl_ss:
--	.globl encl_ss
--	.incbin	"encl.ss"
--encl_ss_end:
--	.globl encl_ss_end
-diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
-index 68a22ef3f05c..2160bcd0ccd9 100644
---- a/tools/testing/selftests/x86/sgx/main.c
-+++ b/tools/testing/selftests/x86/sgx/main.c
-@@ -14,6 +14,7 @@
- #include <sys/mman.h>
- #include <sys/stat.h>
- #include <sys/time.h>
-+#include <sys/types.h>
- #include "encl_piggy.h"
- #include "defines.h"
- #include "../../../../../arch/x86/kernel/cpu/sgx/arch.h"
-@@ -189,7 +190,8 @@ static bool encl_add_page(int dev_fd, unsigned long addr, void *data,
- 	return true;
- }
- 
--static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
-+static bool encl_build(struct sgx_secs *secs, void *bin,
-+		       unsigned long bin_size, struct sgx_sigstruct *sigstruct)
- {
- 	struct sgx_enclave_init ioc;
- 	uint64_t offset;
-@@ -215,11 +217,11 @@ static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
- 				SGX_SECINFO_W | SGX_SECINFO_X;
- 
- 		if (!encl_add_page(dev_fd, secs->base + offset,
--				   encl_bin + offset, flags))
-+				   bin + offset, flags))
- 			goto out_map;
- 	}
- 
--	ioc.sigstruct = (uint64_t)&encl_ss;
-+	ioc.sigstruct = (uint64_t)sigstruct;
- 	rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_INIT, &ioc);
- 	if (rc) {
- 		printf("EINIT failed rc=%d\n", rc);
-@@ -241,7 +243,6 @@ static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
- 		return false;
- 	}
- 
--
- 	close(dev_fd);
- 	return true;
- out_map:
-@@ -251,20 +252,95 @@ static bool encl_load(struct sgx_secs *secs, unsigned long bin_size)
- 	return false;
- }
- 
-+bool get_file_size(const char *path, off_t *bin_size)
-+{
-+	struct stat sb;
-+	int ret;
-+
-+	ret = stat(path, &sb);
-+	if (ret) {
-+		perror("stat");
-+		return false;
-+	}
-+
-+	if (!sb.st_size || sb.st_size & 0xfff) {
-+		fprintf(stderr, "Invalid blob size %lu\n", sb.st_size);
-+		return false;
-+	}
-+
-+	*bin_size = sb.st_size;
-+	return true;
-+}
-+
-+bool encl_data_map(const char *path, void **bin, off_t *bin_size)
-+{
-+	int fd;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd == -1)  {
-+		fprintf(stderr, "open() %s failed, errno=%d.\n", path, errno);
-+		return false;
-+	}
-+
-+	if (!get_file_size(path, bin_size))
-+		goto err_out;
-+
-+	*bin = mmap(NULL, *bin_size, PROT_READ, MAP_PRIVATE, fd, 0);
-+	if (*bin == MAP_FAILED) {
-+		fprintf(stderr, "mmap() %s failed, errno=%d.\n", path, errno);
-+		goto err_out;
-+	}
-+
-+	close(fd);
-+	return true;
-+
-+err_out:
-+	close(fd);
-+	return false;
-+}
-+
-+bool load_sigstruct(const char *path, void *sigstruct)
-+{
-+	int fd;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd == -1)  {
-+		fprintf(stderr, "open() %s failed, errno=%d.\n", path, errno);
-+		return false;
-+	}
-+
-+	if (read(fd, sigstruct, sizeof(struct sgx_sigstruct)) !=
-+	    sizeof(struct sgx_sigstruct)) {
-+		fprintf(stderr, "read() %s failed, errno=%d.\n", path, errno);
-+		close(fd);
-+		return false;
-+	}
-+
-+	close(fd);
-+	return true;
-+}
-+
- int sgx_call(void *rdi, void *rsi, long rdx, void *rcx, void *r8, void *r9,
- 	     void *tcs, struct sgx_enclave_exception *ei, void *cb);
- 
- int main(int argc, char *argv[], char *envp[])
- {
--	unsigned long bin_size = encl_bin_end - encl_bin;
--	unsigned long ss_size = encl_ss_end - encl_ss;
- 	struct sgx_enclave_exception exception;
--	Elf64_Sym *eenter_sym;
-+	struct sgx_sigstruct sigstruct;
- 	struct vdso_symtab symtab;
-+	Elf64_Sym *eenter_sym;
- 	struct sgx_secs secs;
- 	uint64_t result = 0;
-+	off_t bin_size;
-+	void *bin;
- 	void *addr;
- 
-+	if (!encl_data_map("encl.bin", &bin, &bin_size))
-+		exit(1);
-+
-+	if (!load_sigstruct("encl.ss", &sigstruct))
-+		exit(1);
-+
- 	memset(&exception, 0, sizeof(exception));
- 
- 	addr = vdso_get_base_addr(envp);
-@@ -279,16 +355,7 @@ int main(int argc, char *argv[], char *envp[])
- 		exit(1);
- 	eenter = addr + eenter_sym->st_value;
- 
--	printf("Binary size %lu (0x%lx), SIGSTRUCT size %lu\n", bin_size,
--	       bin_size, ss_size);
--	if (ss_size != sizeof(struct sgx_sigstruct)) {
--		fprintf(stderr, "The size of SIGSTRUCT should be %lu\n",
--			sizeof(struct sgx_sigstruct));
--		exit(1);
--	}
--
--	printf("Loading the enclave.\n");
--	if (!encl_load(&secs, bin_size))
-+	if (!encl_build(&secs, bin, bin_size, &sigstruct))
- 		exit(1);
- 
- 	printf("Input: 0x%lx\n", MAGIC);
--- 
-2.20.1
-
+/Jarkko
