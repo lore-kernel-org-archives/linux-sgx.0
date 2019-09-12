@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9ED8C4CEC6
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Sep 2019 19:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61467C4CEC7
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Sep 2019 19:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76492081B
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Sep 2019 19:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33C7F2081B
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Sep 2019 19:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfILTrm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Sep 2019 15:47:42 -0400
-Received: from mga07.intel.com ([134.134.136.100]:55553 "EHLO mga07.intel.com"
+        id S1726540AbfILTrt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Sep 2019 15:47:49 -0400
+Received: from mga06.intel.com ([134.134.136.31]:19814 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbfILTrm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Sep 2019 15:47:42 -0400
+        id S1726496AbfILTrs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Sep 2019 15:47:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 12:47:41 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 12:47:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="336682904"
+   d="scan'208";a="336682930"
 Received: from dscaswel-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.53.44])
-  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 12:47:37 -0700
+  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 12:47:44 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     sean.j.christopherson@intel.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH RESEND 02/11] x86/sgx: Clean up internal includes
-Date:   Thu, 12 Sep 2019 20:47:11 +0100
-Message-Id: <20190912194720.7107-3-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH RESEND 03/11] x86/sgx: Write backing storage only if EWB is successful
+Date:   Thu, 12 Sep 2019 20:47:12 +0100
+Message-Id: <20190912194720.7107-4-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190912194720.7107-1-jarkko.sakkinen@linux.intel.com>
 References: <20190912194720.7107-1-jarkko.sakkinen@linux.intel.com>
@@ -46,147 +46,37 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Include arch.h from sgx.h and include sgx.h from other headers. This
-makes a sane include order. Any new header should only need to include
-sgx.h. The .c files must just include the modules that they use.
+Do not call set_page_dirty() unless the EWB operation is successful.
+Probably nothing bad will happen by doing this but it is still an
+unnecessary action.
 
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
 Cc: Serge Ayoun <serge.ayoun@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver.c  | 2 ++
- arch/x86/kernel/cpu/sgx/driver.h  | 3 ---
- arch/x86/kernel/cpu/sgx/encl.c    | 2 --
- arch/x86/kernel/cpu/sgx/encl.h    | 1 +
- arch/x86/kernel/cpu/sgx/encls.h   | 2 +-
- arch/x86/kernel/cpu/sgx/ioctl.c   | 2 ++
- arch/x86/kernel/cpu/sgx/main.c    | 3 +--
- arch/x86/kernel/cpu/sgx/reclaim.c | 3 ++-
- arch/x86/kernel/cpu/sgx/sgx.h     | 1 +
- 9 files changed, 10 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/sgx/reclaim.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index a1da479ffd3a..1ceeb742c1da 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -9,6 +9,8 @@
- #include <linux/suspend.h>
- #include <asm/traps.h>
- #include "driver.h"
-+#include "encl.h"
-+#include "encls.h"
- 
- MODULE_DESCRIPTION("Intel SGX Enclave Driver");
- MODULE_AUTHOR("Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>");
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index 1e35933cf8a4..2f13886522a8 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -10,9 +10,6 @@
- #include <linux/sched.h>
- #include <linux/workqueue.h>
- #include <uapi/asm/sgx.h>
--#include "arch.h"
--#include "encl.h"
--#include "encls.h"
- #include "sgx.h"
- 
- #define SGX_DRV_NR_DEVICES	2
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 9bf49e30a568..1c1fbc95be33 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -7,10 +7,8 @@
- #include <linux/shmem_fs.h>
- #include <linux/suspend.h>
- #include <linux/sched/mm.h>
--#include "arch.h"
- #include "encl.h"
- #include "encls.h"
--#include "sgx.h"
- 
- static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 			   struct sgx_epc_page *epc_page,
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index c7608964d69e..95e5713a50ad 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -15,6 +15,7 @@
- #include <linux/radix-tree.h>
- #include <linux/srcu.h>
- #include <linux/workqueue.h>
-+#include "sgx.h"
- 
- /**
-  * enum sgx_encl_page_desc - defines bits for an enclave page's descriptor
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index aea3b9d09936..6631afbf2f64 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -8,7 +8,7 @@
- #include <linux/rwsem.h>
- #include <linux/types.h>
- #include <asm/asm.h>
--#include "arch.h"
-+#include "sgx.h"
- 
- /**
-  * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index e2205a433b87..e57dda38513b 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -13,6 +13,8 @@
- #include <linux/slab.h>
- #include <linux/suspend.h>
- #include "driver.h"
-+#include "encl.h"
-+#include "encls.h"
- 
- static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
- {
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index e4f751651a65..c58ab5f28669 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -9,9 +9,8 @@
- #include <linux/sched/signal.h>
- #include <linux/slab.h>
- #include "driver.h"
--#include "arch.h"
-+#include "encl.h"
- #include "encls.h"
--#include "sgx.h"
- 
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
- int sgx_nr_epc_sections;
 diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index bd8ac11a4278..d82ce1eaa60e 100644
+index d82ce1eaa60e..213406756443 100644
 --- a/arch/x86/kernel/cpu/sgx/reclaim.c
 +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -10,7 +10,8 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include "driver.h"
--#include "sgx.h"
-+#include "encl.h"
-+#include "encls.h"
+@@ -266,9 +266,12 @@ static int __sgx_encl_ewb(struct sgx_encl *encl, struct sgx_epc_page *epc_page,
+ 	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - pcmd_offset));
+ 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
  
- struct task_struct *ksgxswapd_tsk;
- DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index f0ff7bd3d18e..bc6a644af2b5 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -9,6 +9,7 @@
- #include <linux/types.h>
- #include <asm/asm.h>
- #include <uapi/asm/sgx_errno.h>
-+#include "arch.h"
+-	set_page_dirty(pcmd);
++	if (!ret) {
++		set_page_dirty(pcmd);
++		set_page_dirty(backing);
++	}
++
+ 	put_page(pcmd);
+-	set_page_dirty(backing);
  
- struct sgx_epc_page {
- 	unsigned long desc;
+ err_pcmd:
+ 	put_page(backing);
 -- 
 2.20.1
 
