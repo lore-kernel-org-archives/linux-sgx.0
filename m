@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B84C49ED7
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91FFC49ED7
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7B3214D9
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B53214AF
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfIPKSq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Sep 2019 06:18:46 -0400
+        id S1728106AbfIPKSv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Sep 2019 06:18:51 -0400
 Received: from mga14.intel.com ([192.55.52.115]:12234 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbfIPKSq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:18:46 -0400
+        id S1725853AbfIPKSv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Sep 2019 06:18:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 03:18:46 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 03:18:51 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="180387462"
+   d="scan'208";a="180387486"
 Received: from sweber1-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.40.159])
-  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2019 03:18:43 -0700
+  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2019 03:18:48 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Shay Katz-zamir <shay.katz-zamir@intel.com>,
         Serge Ayoun <serge.ayoun@intel.com>
-Subject: [PATCH v3 06/17] x86/sgx: Move sgx_einit() to encls.c
-Date:   Mon, 16 Sep 2019 13:17:52 +0300
-Message-Id: <20190916101803.30726-7-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3 07/17] x86/sgx: Remove pages in sgx_reclaimer_write()
+Date:   Mon, 16 Sep 2019 13:17:53 +0300
+Message-Id: <20190916101803.30726-8-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
 References: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
@@ -46,188 +46,72 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Move sgx_einit() to encls.c as it is essentially a global wrapper for
-EINIT somewhat independent of the code using it. It does not have any
-binding with the code in main.c.
+The overall flow is somewhat simpler if sgx_reclaimer_write() takes care
+of freeing and removing pages and sgx_encl_ewb() focuses only on doing
+ENCLS[EWB]. Move sgx_free_page() and __eremove() from sgx_encl_ewb() to
+sgx_reclaimer_write().
 
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
 Cc: Serge Ayoun <serge.ayoun@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/Makefile |  2 +-
- arch/x86/kernel/cpu/sgx/encls.c  | 56 ++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encls.h  |  3 ++
- arch/x86/kernel/cpu/sgx/main.c   | 50 ----------------------------
- arch/x86/kernel/cpu/sgx/sgx.h    |  2 --
- 5 files changed, 60 insertions(+), 53 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/sgx/encls.c
+ arch/x86/kernel/cpu/sgx/reclaim.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-index cfd29c42264b..379e9c52848e 100644
---- a/arch/x86/kernel/cpu/sgx/Makefile
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -1,5 +1,5 @@
- # core
--obj-y += encl.o main.o reclaim.o
-+obj-y += encl.o encls.o main.o reclaim.o
+diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+index cfda38a9b05c..353888256b2b 100644
+--- a/arch/x86/kernel/cpu/sgx/reclaim.c
++++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+@@ -357,16 +357,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page, unsigned int pt)
  
- # driver
- obj-y += driver.o ioctl.o
-diff --git a/arch/x86/kernel/cpu/sgx/encls.c b/arch/x86/kernel/cpu/sgx/encls.c
-new file mode 100644
-index 000000000000..cda09cf8b927
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/encls.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+// Copyright(c) 2016-19 Intel Corporation.
-+
-+#include <linux/highmem.h>
-+#include <asm/cpufeature.h>
-+#include "encls.h"
-+
-+/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
-+static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
-+
-+static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
-+{
-+	u64 *cache;
-+	int i;
-+
-+	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
-+	for (i = 0; i < 4; i++) {
-+		if (enforce || (lepubkeyhash[i] != cache[i])) {
-+			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-+			cache[i] = lepubkeyhash[i];
-+		}
-+	}
-+}
-+
-+/**
-+ * sgx_einit() - Initialize an enclave
-+ * @sigstruct:		a pointer a SIGSTRUCT
-+ * @token:		a pointer an EINITTOKEN (optional)
-+ * @secs:		a pointer a SECS
-+ * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
-+ *
-+ * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
-+ * to @lepubkeyhash (if possible and necessary).
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -errno or SGX error on failure
-+ */
-+int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-+	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
-+{
+ 		encl_page->desc |= va_offset;
+ 		encl_page->va_page = va_page;
+-	} else if (pt != SGX_SECINFO_SECS) {
+-		ret = __eremove(sgx_epc_addr(epc_page));
+-		WARN(ret, "EREMOVE returned %d\n", ret);
+ 	}
+-
+-	/* The reclaimer is not aware of SECS pages. */
+-	if (pt == SGX_SECINFO_SECS)
+-		sgx_free_page(epc_page);
+-
+-	encl_page->epc_page = NULL;
+ }
+ 
+ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+@@ -374,6 +365,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+ 	struct sgx_encl_page *encl_page = epc_page->owner;
+ 	struct sgx_encl *encl = encl_page->encl;
+ 	unsigned int pt;
 +	int ret;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
-+		return __einit(sigstruct, token, sgx_epc_addr(secs));
-+
-+	preempt_disable();
-+	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
-+	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
-+	if (ret == SGX_INVALID_EINITTOKEN) {
-+		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
-+		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
+ 
+ 	if (encl_page->desc & SGX_ENCL_PAGE_TCS)
+ 		pt = SGX_SECINFO_TCS;
+@@ -383,13 +375,22 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+ 	mutex_lock(&encl->lock);
+ 
+ 	sgx_encl_ewb(epc_page, pt);
++	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
++		ret = __eremove(sgx_epc_addr(epc_page));
++		WARN(ret, "EREMOVE returned %d\n", ret);
 +	}
-+	preempt_enable();
-+	return ret;
-+}
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index b7e6462e58b8..e3713337c187 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -257,4 +257,7 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
- 	return __encls_ret_2(SGX_EMODT, secinfo, addr);
- }
  
-+int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-+	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
++	encl_page->epc_page = NULL;
+ 	encl->secs_child_cnt--;
+ 
+ 	if (!encl->secs_child_cnt &&
+ 	    (atomic_read(&encl->flags) &
+-	     (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED)))
++	     (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED))) {
+ 		sgx_encl_ewb(encl->secs.epc_page, SGX_SECINFO_SECS);
++		sgx_free_page(encl->secs.epc_page);
 +
- #endif /* _X86_ENCLS_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index c58ab5f28669..4c03e5f33414 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -15,9 +15,6 @@
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
- int sgx_nr_epc_sections;
++		encl->secs.epc_page = NULL;
++	}
  
--/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
--static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
--
- static struct sgx_epc_page *sgx_section_try_take_page(
- 	struct sgx_epc_section *section)
- {
-@@ -162,53 +159,6 @@ void sgx_free_page(struct sgx_epc_page *page)
- 	WARN(ret > 0, "sgx: EREMOVE returned %d (0x%x)", ret, ret);
+ 	mutex_unlock(&encl->lock);
  }
- 
--static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
--{
--	u64 *cache;
--	int i;
--
--	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
--	for (i = 0; i < 4; i++) {
--		if (enforce || (lepubkeyhash[i] != cache[i])) {
--			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
--			cache[i] = lepubkeyhash[i];
--		}
--	}
--}
--
--/**
-- * sgx_einit - initialize an enclave
-- * @sigstruct:		a pointer a SIGSTRUCT
-- * @token:		a pointer an EINITTOKEN (optional)
-- * @secs:		a pointer a SECS
-- * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
-- *
-- * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
-- * to @lepubkeyhash (if possible and necessary).
-- *
-- * Return:
-- *   0 on success,
-- *   -errno or SGX error on failure
-- */
--int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
--	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
--{
--	int ret;
--
--	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
--		return __einit(sigstruct, token, sgx_epc_addr(secs));
--
--	preempt_disable();
--	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
--	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
--	if (ret == SGX_INVALID_EINITTOKEN) {
--		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
--		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
--	}
--	preempt_enable();
--	return ret;
--}
--
- static __init void sgx_free_epc_section(struct sgx_epc_section *section)
- {
- 	struct sgx_epc_page *page;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index bc6a644af2b5..9b08690262b5 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -85,7 +85,5 @@ void sgx_reclaim_pages(void);
- struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim);
- int __sgx_free_page(struct sgx_epc_page *page);
- void sgx_free_page(struct sgx_epc_page *page);
--int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
--	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
- 
- #endif /* _X86_SGX_H */
 -- 
 2.20.1
 
