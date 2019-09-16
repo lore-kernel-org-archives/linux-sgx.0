@@ -2,273 +2,93 @@ Return-Path: <SRS0=4JBP=XL=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7965CC49ED7
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C803C49ED7
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 18:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B515206C2
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:19:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB275206C2
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 18:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfIPKTk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Sep 2019 06:19:40 -0400
-Received: from mga14.intel.com ([192.55.52.115]:12263 "EHLO mga14.intel.com"
+        id S2390491AbfIPSho (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Sep 2019 14:37:44 -0400
+Received: from mga02.intel.com ([134.134.136.20]:43300 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729906AbfIPKTj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:19:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S2390490AbfIPSho (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Sep 2019 14:37:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 03:19:39 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 11:37:43 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="180387654"
-Received: from sweber1-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.40.159])
-  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2019 03:19:36 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>
-Subject: [PATCH v3 17/17] x86/sgx: Fix pages in the BLOCKED state ending up to the free pool
-Date:   Mon, 16 Sep 2019 13:18:03 +0300
-Message-Id: <20190916101803.30726-18-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
-References: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.64,513,1559545200"; 
+   d="scan'208";a="386291054"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Sep 2019 11:37:43 -0700
+Date:   Mon, 16 Sep 2019 11:37:43 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] v23 updates
+Message-ID: <20190916183742.GK18871@linux.intel.com>
+References: <20190916041417.12533-1-jarkko.sakkinen@linux.intel.com>
+ <20190916075806.GB26608@linux.intel.com>
+ <20190916080143.GA27356@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190916080143.GA27356@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-A blocked page can end up legitly to the free pool if pinning fails because
-we interpret that as an EWB failure and simply put it to the free pool.
-This corrupts the EPC page allocator.
+On Mon, Sep 16, 2019 at 11:01:43AM +0300, Jarkko Sakkinen wrote:
+> On Mon, Sep 16, 2019 at 10:58:06AM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Sep 16, 2019 at 07:14:00AM +0300, Jarkko Sakkinen wrote:
+> > > My flush of updates for v23. Contains a bunch of clean ups and bug
+> > > fixes with the main focus on the page reclaimer. The main goal has
+> > > been to disclose all the other possibilities for failure after
+> > > ENCLS[EBLOCK] other than EPCM conflict when the whole EPC is
+> > > invalidated.
+> > 
+> > I have at least one more update to the reclaimer but want to merge these
+> > first.
+> > 
+> > It adds optional struct epc_page **reclaimed_page to
+> > sgx_reclaim_pages(). If NULL, the function will just append everything
+> > to the free pool. Otherwise, it will use it to return one of the
+> > reclaimed pages if there are any.
+> > 
+> > sgx_alloc_page() then does the following when @reclaim=true:
+> > 
+> > 1. If page in free page pool, take one.
+> > 2. If not, try to reclaim one.
+> > 3. If nothing was reclaimed -ENOMEM.
+> > 
+> > Right now sgx_alloc_page() can in theory take however long.
+> > 
+> > I wonder why we do not return -ENOMEM also when @reclaim=false. Where
+> > did this returning -EBUSY came from? Can't recall.
+> 
+> Checked. I guess it is just for ELDU flow but does not make sense
+> otherwise. Tuning sgx_vma_fault() should be enough. I mean with
+> the above change we would start to return -EBUSY sometimes in
+> OOM situations.
 
-Fix the bug by pinning the backing storage when picking the victim pages. A
-clean rollback can still be done when the memory allocation fails as pages
-can be still returned back to the enclave.
+Returning -EBUSY is done to differentiate between the case where reclaim
+is possible, i.e. sgx_active_page_list is *not* empty, but disallowed, and
+the case where reclaim is impossible, i.e. sgx_active_page_list is empty.
+If reclaim is impossible then the fault handler should signal SIGSEGV so
+that processes start dying and/or killing enclaves to free up EPC.
 
-This in effect removes any other failure cases from sgx_encl_ewb() other
-than EPCM conflict when the host has went through a sleep cycle. In that
-case putting a page back to the free pool is perfectly fine because it is
-uninitialized.
-
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
-Cc: Serge Ayoun <serge.ayoun@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/kernel/cpu/sgx/reclaim.c | 95 ++++++++++++++++++-------------
- 1 file changed, 57 insertions(+), 38 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index 7d628a1388e2..d6e580e55456 100644
---- a/arch/x86/kernel/cpu/sgx/reclaim.c
-+++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -206,32 +206,24 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
- 
- static int __sgx_encl_ewb(struct sgx_encl *encl, struct sgx_epc_page *epc_page,
- 			  struct sgx_va_page *va_page, unsigned int va_offset,
--			  unsigned int page_index)
-+			  struct sgx_backing *backing)
- {
- 	struct sgx_pageinfo pginfo;
--	struct sgx_backing b;
- 	int ret;
- 
--	ret = sgx_encl_get_backing(encl, page_index, &b);
--	if (ret)
--		return ret;
--
- 	pginfo.addr = 0;
--	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
--	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) + b.pcmd_offset;
- 	pginfo.secs = 0;
-+
-+	pginfo.contents = (unsigned long)kmap_atomic(backing->contents);
-+	pginfo.metadata = (unsigned long)kmap_atomic(backing->pcmd) +
-+			  backing->pcmd_offset;
-+
- 	ret = __ewb(&pginfo, sgx_epc_addr(epc_page),
- 		    sgx_epc_addr(va_page->epc_page) + va_offset);
--	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
--	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
--	if (!ret) {
--		set_page_dirty(b.pcmd);
--		set_page_dirty(b.contents);
--	}
--
--	put_page(b.pcmd);
--	put_page(b.contents);
-+	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
-+					      backing->pcmd_offset));
-+	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
- 	return ret;
- }
-@@ -265,7 +257,7 @@ static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
- }
- 
- static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
--			 unsigned int page_index)
-+			 struct sgx_backing *backing)
- {
- 	struct sgx_encl_page *encl_page = epc_page->owner;
- 	struct sgx_encl *encl = encl_page->encl;
-@@ -281,8 +273,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 	if (sgx_va_page_full(va_page))
- 		list_move_tail(&va_page->list, &encl->va_pages);
- 
--	ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
--			     page_index);
-+	ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset, backing);
- 	if (ret == SGX_NOT_TRACKED) {
- 		ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
- 		if (ret) {
-@@ -292,7 +283,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 		}
- 
- 		ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
--				     page_index);
-+				     backing);
- 		if (ret == SGX_NOT_TRACKED) {
- 			/*
- 			 * Slow path, send IPIs to kick cpus out of the
-@@ -304,7 +295,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
- 					 sgx_ipi_cb, NULL, 1);
- 			ret = __sgx_encl_ewb(encl, epc_page, va_page,
--					     va_offset, page_index);
-+					     va_offset, backing);
- 		}
- 	}
- 
-@@ -314,15 +305,20 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 
- 		sgx_encl_destroy(encl);
- 	} else {
-+		set_page_dirty(backing->pcmd);
-+		set_page_dirty(backing->contents);
-+
- 		encl_page->desc |= va_offset;
- 		encl_page->va_page = va_page;
- 	}
- }
- 
--static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
-+static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
-+				struct sgx_backing *backing)
- {
- 	struct sgx_encl_page *encl_page = epc_page->owner;
- 	struct sgx_encl *encl = encl_page->encl;
-+	struct sgx_backing secs_backing;
- 	int ret;
- 
- 	mutex_lock(&encl->lock);
-@@ -331,7 +327,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
- 		ret = __eremove(sgx_epc_addr(epc_page));
- 		WARN(ret, "EREMOVE returned %d\n", ret);
- 	} else {
--		sgx_encl_ewb(epc_page, SGX_ENCL_PAGE_INDEX(encl_page));
-+		sgx_encl_ewb(epc_page, backing);
- 	}
- 
- 	encl_page->epc_page = NULL;
-@@ -340,10 +336,17 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
- 	if (!encl->secs_child_cnt &&
- 	    (atomic_read(&encl->flags) &
- 	     (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED))) {
--		sgx_encl_ewb(encl->secs.epc_page, PFN_DOWN(encl->size));
--		sgx_free_page(encl->secs.epc_page);
-+		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
-+					   &secs_backing);
-+		if (!ret) {
-+			sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
-+			sgx_free_page(encl->secs.epc_page);
-+
-+			encl->secs.epc_page = NULL;
- 
--		encl->secs.epc_page = NULL;
-+			put_page(secs_backing.pcmd);
-+			put_page(secs_backing.contents);
-+		}
- 	}
- 
- 	mutex_unlock(&encl->lock);
-@@ -351,17 +354,21 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
- 
- /**
-  * sgx_reclaim_pages() - Reclaim EPC pages from the consumers
-- * Takes a fixed chunk of pages from the global list of consumed EPC pages and
-- * tries to swap them. Only the pages that are either being freed by the
-- * consumer or actively used are skipped.
-+ *
-+ * Take a fixed number of pages from the head of the active page pool and
-+ * reclaim them to the enclave's private shmem files. Skip the pages, which
-+ * have been accessed since the last scan. Move those pages to the tail of
-+ * active page pool so that the pages get scanned in LRU like fashion.
-  */
- void sgx_reclaim_pages(void)
- {
--	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN + 1];
-+	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
-+	struct sgx_backing backing[SGX_NR_TO_SCAN];
- 	struct sgx_epc_section *section;
- 	struct sgx_encl_page *encl_page;
- 	struct sgx_epc_page *epc_page;
- 	int cnt = 0;
-+	int ret;
- 	int i;
- 
- 	spin_lock(&sgx_active_page_list_lock);
-@@ -388,13 +395,21 @@ void sgx_reclaim_pages(void)
- 		epc_page = chunk[i];
- 		encl_page = epc_page->owner;
- 
--		if (sgx_can_reclaim(epc_page)) {
--			mutex_lock(&encl_page->encl->lock);
--			encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
--			mutex_unlock(&encl_page->encl->lock);
--			continue;
--		}
-+		if (!sgx_can_reclaim(epc_page))
-+			goto skip;
- 
-+		ret = sgx_encl_get_backing(encl_page->encl,
-+					   SGX_ENCL_PAGE_INDEX(encl_page),
-+					   &backing[i]);
-+		if (ret)
-+			goto skip;
-+
-+		mutex_lock(&encl_page->encl->lock);
-+		encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
-+		mutex_unlock(&encl_page->encl->lock);
-+		continue;
-+
-+skip:
- 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
- 
- 		spin_lock(&sgx_active_page_list_lock);
-@@ -416,7 +431,11 @@ void sgx_reclaim_pages(void)
- 			continue;
- 
- 		encl_page = epc_page->owner;
--		sgx_reclaimer_write(epc_page);
-+		sgx_reclaimer_write(epc_page, &backing[i]);
-+
-+		put_page(backing->pcmd);
-+		put_page(backing->contents);
-+
- 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
- 		epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
- 
--- 
-2.20.1
-
+Barring a kernel bug, I don't think it's possible for sgx_active_page_list
+to be empty when only the driver is supported, but both KVM and EPC cgroup
+support will introduce (relatively common) scenarios where there are no
+pages on the active/reclaimable list.  Technically we probably don't need
+the -EBUSY logic, but my vote is to keep it since it's a nice fallback in
+case there are kernel bugs.
