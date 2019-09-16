@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D90C49ED7
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FB8C4CECE
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D84D214D9
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:19:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2859E214AF
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 10:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729640AbfIPKTK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Sep 2019 06:19:10 -0400
+        id S1728662AbfIPKTQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Sep 2019 06:19:16 -0400
 Received: from mga14.intel.com ([192.55.52.115]:12263 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbfIPKTK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:19:10 -0400
+        id S1725853AbfIPKTP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Sep 2019 06:19:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 03:19:10 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 03:19:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="180387566"
+   d="scan'208";a="180387588"
 Received: from sweber1-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.40.159])
-  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2019 03:19:07 -0700
+  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2019 03:19:12 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Shay Katz-zamir <shay.katz-zamir@intel.com>,
         Serge Ayoun <serge.ayoun@intel.com>
-Subject: [PATCH v3 11/17] x86/sgx: Call sgx_encl_destroy() when the EWB flow fails
-Date:   Mon, 16 Sep 2019 13:17:57 +0300
-Message-Id: <20190916101803.30726-12-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3 12/17] x86/sgx: Open code sgx_reclaimer_get() and sgx_reclaimer_put()
+Date:   Mon, 16 Sep 2019 13:17:58 +0300
+Message-Id: <20190916101803.30726-13-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
 References: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
@@ -46,31 +46,110 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-There is not much we can do if the EWB flow fails. It can fail if the
-binding of the backing storage fails or if the enclave is running inside
-a VM and the host is suspended.
+Open code sgx_reclaimer_get() and sgx_reclaimer_put(). They are legacy
+from the callback interface. Wrapping a function call inside a function
+does not make sense.
 
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
 Cc: Serge Ayoun <serge.ayoun@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/reclaim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/reclaim.c | 47 ++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 29 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index 4ae6122c18e5..c2a85db68307 100644
+index c2a85db68307..5a4d44dd02d7 100644
 --- a/arch/x86/kernel/cpu/sgx/reclaim.c
 +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -345,7 +345,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 		if (encls_failed(ret) || encls_returned_code(ret))
- 			ENCLS_WARN(ret, "EWB");
+@@ -121,22 +121,6 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page)
+ 	spin_unlock(&sgx_active_page_list_lock);
+ }
  
--		sgx_free_va_slot(va_page, va_offset);
-+		sgx_encl_destroy(encl);
- 	} else {
- 		encl_page->desc |= va_offset;
- 		encl_page->va_page = va_page;
+-bool sgx_reclaimer_get(struct sgx_epc_page *epc_page)
+-{
+-	struct sgx_encl_page *encl_page = epc_page->owner;
+-	struct sgx_encl *encl = encl_page->encl;
+-
+-	return kref_get_unless_zero(&encl->refcount) != 0;
+-}
+-
+-void sgx_reclaimer_put(struct sgx_epc_page *epc_page)
+-{
+-	struct sgx_encl_page *encl_page = epc_page->owner;
+-	struct sgx_encl *encl = encl_page->encl;
+-
+-	kref_put(&encl->refcount, sgx_encl_release);
+-}
+-
+ static bool sgx_reclaimer_evict(struct sgx_epc_page *epc_page)
+ {
+ 	struct sgx_encl_page *page = epc_page->owner;
+@@ -392,6 +376,7 @@ void sgx_reclaim_pages(void)
+ {
+ 	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN + 1];
+ 	struct sgx_epc_section *section;
++	struct sgx_encl_page *encl_page;
+ 	struct sgx_epc_page *epc_page;
+ 	int cnt = 0;
+ 	int i;
+@@ -404,8 +389,9 @@ void sgx_reclaim_pages(void)
+ 		epc_page = list_first_entry(&sgx_active_page_list,
+ 					    struct sgx_epc_page, list);
+ 		list_del_init(&epc_page->list);
++		encl_page = epc_page->owner;
+ 
+-		if (sgx_reclaimer_get(epc_page))
++		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0)
+ 			chunk[cnt++] = epc_page;
+ 		else
+ 			/* The owner is freeing the page. No need to add the
+@@ -417,10 +403,12 @@ void sgx_reclaim_pages(void)
+ 
+ 	for (i = 0; i < cnt; i++) {
+ 		epc_page = chunk[i];
++		encl_page = epc_page->owner;
++
+ 		if (sgx_reclaimer_evict(epc_page))
+ 			continue;
+ 
+-		sgx_reclaimer_put(epc_page);
++		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+ 
+ 		spin_lock(&sgx_active_page_list_lock);
+ 		list_add_tail(&epc_page->list, &sgx_active_page_list);
+@@ -437,19 +425,20 @@ void sgx_reclaim_pages(void)
+ 
+ 	for (i = 0; i < cnt; i++) {
+ 		epc_page = chunk[i];
+-		if (epc_page) {
+-			sgx_reclaimer_write(epc_page);
+-			sgx_reclaimer_put(epc_page);
+-			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++		if (!epc_page)
++			continue;
+ 
+-			section = sgx_epc_section(epc_page);
+ 
+-			spin_lock(&section->lock);
+-			list_add_tail(&epc_page->list,
+-				      &section->page_list);
+-			section->free_cnt++;
+-			spin_unlock(&section->lock);
+-		}
++		encl_page = epc_page->owner;
++		sgx_reclaimer_write(epc_page);
++		kref_put(&encl_page->encl->refcount, sgx_encl_release);
++		epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++
++		section = sgx_epc_section(epc_page);
++		spin_lock(&section->lock);
++		list_add_tail(&epc_page->list, &section->page_list);
++		section->free_cnt++;
++		spin_unlock(&section->lock);
+ 	}
+ }
+ 
 -- 
 2.20.1
 
