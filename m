@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D649C49ED7
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 07:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19969C4CEC7
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 08:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202B820650
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 07:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED33A20890
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 08:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfIPH6J (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Sep 2019 03:58:09 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3693 "EHLO mga14.intel.com"
+        id S1730395AbfIPIBr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Sep 2019 04:01:47 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18797 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbfIPH6J (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Sep 2019 03:58:09 -0400
+        id S1726075AbfIPIBr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Sep 2019 04:01:47 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 00:58:09 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 01:01:46 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,512,1559545200"; 
-   d="scan'208";a="216126755"
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="191001054"
 Received: from sshkruni-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.38.138])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Sep 2019 00:58:08 -0700
-Date:   Mon, 16 Sep 2019 10:58:06 +0300
+  by orsmga006.jf.intel.com with ESMTP; 16 Sep 2019 01:01:45 -0700
+Date:   Mon, 16 Sep 2019 11:01:43 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     sean.j.christopherson@intel.com
 Subject: Re: [PATCH v2 00/17] v23 updates
-Message-ID: <20190916075806.GB26608@linux.intel.com>
+Message-ID: <20190916080143.GA27356@linux.intel.com>
 References: <20190916041417.12533-1-jarkko.sakkinen@linux.intel.com>
+ <20190916075806.GB26608@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190916041417.12533-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190916075806.GB26608@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -46,30 +47,36 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 07:14:00AM +0300, Jarkko Sakkinen wrote:
-> My flush of updates for v23. Contains a bunch of clean ups and bug
-> fixes with the main focus on the page reclaimer. The main goal has
-> been to disclose all the other possibilities for failure after
-> ENCLS[EBLOCK] other than EPCM conflict when the whole EPC is
-> invalidated.
+On Mon, Sep 16, 2019 at 10:58:06AM +0300, Jarkko Sakkinen wrote:
+> On Mon, Sep 16, 2019 at 07:14:00AM +0300, Jarkko Sakkinen wrote:
+> > My flush of updates for v23. Contains a bunch of clean ups and bug
+> > fixes with the main focus on the page reclaimer. The main goal has
+> > been to disclose all the other possibilities for failure after
+> > ENCLS[EBLOCK] other than EPCM conflict when the whole EPC is
+> > invalidated.
+> 
+> I have at least one more update to the reclaimer but want to merge these
+> first.
+> 
+> It adds optional struct epc_page **reclaimed_page to
+> sgx_reclaim_pages(). If NULL, the function will just append everything
+> to the free pool. Otherwise, it will use it to return one of the
+> reclaimed pages if there are any.
+> 
+> sgx_alloc_page() then does the following when @reclaim=true:
+> 
+> 1. If page in free page pool, take one.
+> 2. If not, try to reclaim one.
+> 3. If nothing was reclaimed -ENOMEM.
+> 
+> Right now sgx_alloc_page() can in theory take however long.
+> 
+> I wonder why we do not return -ENOMEM also when @reclaim=false. Where
+> did this returning -EBUSY came from? Can't recall.
 
-I have at least one more update to the reclaimer but want to merge these
-first.
-
-It adds optional struct epc_page **reclaimed_page to
-sgx_reclaim_pages(). If NULL, the function will just append everything
-to the free pool. Otherwise, it will use it to return one of the
-reclaimed pages if there are any.
-
-sgx_alloc_page() then does the following when @reclaim=true:
-
-1. If page in free page pool, take one.
-2. If not, try to reclaim one.
-3. If nothing was reclaimed -ENOMEM.
-
-Right now sgx_alloc_page() can in theory take however long.
-
-I wonder why we do not return -ENOMEM also when @reclaim=false. Where
-did this returning -EBUSY came from? Can't recall.
+Checked. I guess it is just for ELDU flow but does not make sense
+otherwise. Tuning sgx_vma_fault() should be enough. I mean with
+the above change we would start to return -EBUSY sometimes in
+OOM situations.
 
 /Jarkko
