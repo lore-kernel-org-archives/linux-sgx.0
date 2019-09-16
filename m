@@ -2,54 +2,43 @@ Return-Path: <SRS0=4JBP=XL=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11028C49ED7
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 05:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D649C49ED7
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 07:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D571720890
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 05:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 202B820650
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Sep 2019 07:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbfIPFYE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Sep 2019 01:24:04 -0400
-Received: from mga14.intel.com ([192.55.52.115]:10041 "EHLO mga14.intel.com"
+        id S1730344AbfIPH6J (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Sep 2019 03:58:09 -0400
+Received: from mga14.intel.com ([192.55.52.115]:3693 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbfIPFYE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Sep 2019 01:24:04 -0400
+        id S1726316AbfIPH6J (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Sep 2019 03:58:09 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Sep 2019 22:24:04 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 00:58:09 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,510,1559545200"; 
-   d="scan'208";a="216087558"
-Received: from abonnier-mobl5.ger.corp.intel.com (HELO localhost) ([10.252.54.54])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Sep 2019 22:23:54 -0700
-Date:   Mon, 16 Sep 2019 08:23:49 +0300
+X-IronPort-AV: E=Sophos;i="5.64,512,1559545200"; 
+   d="scan'208";a="216126755"
+Received: from sshkruni-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.38.138])
+  by fmsmga002.fm.intel.com with ESMTP; 16 Sep 2019 00:58:08 -0700
+Date:   Mon, 16 Sep 2019 10:58:06 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com
-Subject: Re: [PATCH v22 00/24] Intel SGX foundations
-Message-ID: <20190916052349.GA4556@linux.intel.com>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <eed916f3-73e1-2695-4cd1-0b252ac9b553@intel.com>
- <20190914134136.GG9560@linux.intel.com>
- <8339d3c0-8e80-9cd5-948e-47733f7c29b7@intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     sean.j.christopherson@intel.com
+Subject: Re: [PATCH v2 00/17] v23 updates
+Message-ID: <20190916075806.GB26608@linux.intel.com>
+References: <20190916041417.12533-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8339d3c0-8e80-9cd5-948e-47733f7c29b7@intel.com>
+In-Reply-To: <20190916041417.12533-1-jarkko.sakkinen@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -57,46 +46,30 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Sep 14, 2019 at 08:32:38AM -0700, Dave Hansen wrote:
-> On 9/14/19 6:41 AM, Jarkko Sakkinen wrote:
-> > 
-> > The proposed LSM hooks give the granularity to make yes/no decision
-> > based on the
-> > 
-> > * The origin of the source of the source for the enclave.
-> > * The requested permissions for the added or mapped peage.
-> > 
-> > The hooks to do these checks are provided for mmap() and EADD
-> > operations.
-> > 
-> > With just file permissions you can still limit mmap() by having a
-> > privileged process to build the enclaves and pass the file descriptor
-> > to the enclave user who can mmap() the enclave within the constraints
-> > set by the enclave pages (their permissions refine the roof that you
-> > can mmap() any memory range within an enclave).
-> 
-> The LSM hooks are presumably fixing a problem that these patches
-> introduce.  What's that problem?
+On Mon, Sep 16, 2019 at 07:14:00AM +0300, Jarkko Sakkinen wrote:
+> My flush of updates for v23. Contains a bunch of clean ups and bug
+> fixes with the main focus on the page reclaimer. The main goal has
+> been to disclose all the other possibilities for failure after
+> ENCLS[EBLOCK] other than EPCM conflict when the whole EPC is
+> invalidated.
 
-I've seen the claims that one would have to degrade one's LSM policy but
-I don't think that is true.
+I have at least one more update to the reclaimer but want to merge these
+first.
 
-With just UNIX permissions you have probably have to restrict the access
-to /dev/sgx/enclave to control who can build enclaves. The processes who
-do not have this privilege can mmap() the enclave once they get the file
-descriptor through forking or SCM_RIGHTS.
+It adds optional struct epc_page **reclaimed_page to
+sgx_reclaim_pages(). If NULL, the function will just append everything
+to the free pool. Otherwise, it will use it to return one of the
+reclaimed pages if there are any.
 
-After SGX_IOC_ENCLAVE_INIT, the memory layout is sealed and the client
-process can only use the enclave.
+sgx_alloc_page() then does the following when @reclaim=true:
 
-Further, we have /dev/sgx/provision to restrict, which enclaves can
-attest themselves to a remote party.
+1. If page in free page pool, take one.
+2. If not, try to reclaim one.
+3. If nothing was reclaimed -ENOMEM.
 
-*If anything*, I would rather investigate possibility to use keyring for
-enclave signer's public keys or perhaps having extended attribute for
-the signer (SHA256) in the enclave file that could be compared during
-the EINIT.
+Right now sgx_alloc_page() can in theory take however long.
 
-I think either can be considered post-upstreaming.
+I wonder why we do not return -ENOMEM also when @reclaim=false. Where
+did this returning -EBUSY came from? Can't recall.
 
 /Jarkko
