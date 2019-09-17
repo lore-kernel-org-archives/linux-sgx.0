@@ -4,166 +4,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B6C4CEC9
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC44C4CEC9
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2115206C2
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63D3421852
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbfIQXVU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Sep 2019 19:21:20 -0400
-Received: from mga01.intel.com ([192.55.52.88]:60052 "EHLO mga01.intel.com"
+        id S1726073AbfIQXZF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Sep 2019 19:25:05 -0400
+Received: from mga12.intel.com ([192.55.52.136]:39603 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728554AbfIQXVU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Sep 2019 19:21:20 -0400
+        id S1726054AbfIQXZF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Sep 2019 19:25:05 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 16:21:19 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 16:25:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,518,1559545200"; 
-   d="scan'208";a="386705531"
+   d="scan'208";a="180940510"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Sep 2019 16:21:19 -0700
-Date:   Tue, 17 Sep 2019 16:21:19 -0700
+  by orsmga008.jf.intel.com with ESMTP; 17 Sep 2019 16:25:04 -0700
+Date:   Tue, 17 Sep 2019 16:25:04 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org,
         Shay Katz-zamir <shay.katz-zamir@intel.com>,
         Serge Ayoun <serge.ayoun@intel.com>
-Subject: Re: [PATCH v3 09/17] x86/sgx: Move SGX_ENCL_DEAD check to
- sgx_reclaimer_write()
-Message-ID: <20190917232119.GG10319@linux.intel.com>
+Subject: Re: [PATCH v3 13/17] x86/sgx: Introduce sgx_can_reclaim()
+Message-ID: <20190917232504.GH10319@linux.intel.com>
 References: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
- <20190916101803.30726-10-jarkko.sakkinen@linux.intel.com>
+ <20190916101803.30726-14-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190916101803.30726-10-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190916101803.30726-14-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 01:17:55PM +0300, Jarkko Sakkinen wrote:
-> Do enclave state checks only in sgx_reclaimer_write(). Checking the
-> enclave state is not part of the sgx_encl_ewb() flow. The check is done
-> differently for SECS and for addressable pages.
+On Mon, Sep 16, 2019 at 01:17:59PM +0300, Jarkko Sakkinen wrote:
+> Make sgx_reclaim_evict() idempotennt and rename it to sgx_can_reclaim() and
+> set SGX_ENCL_PAGE_RECLAIMED in the call site.
 > 
 > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 > Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
 > Cc: Serge Ayoun <serge.ayoun@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/reclaim.c | 69 +++++++++++++++----------------
->  1 file changed, 34 insertions(+), 35 deletions(-)
+>  arch/x86/kernel/cpu/sgx/reclaim.c | 32 +++++++++++++++++--------------
+>  1 file changed, 18 insertions(+), 14 deletions(-)
 > 
 > diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-> index e758a06919e4..a3e36f959c74 100644
+> index 5a4d44dd02d7..cc3155b61513 100644
 > --- a/arch/x86/kernel/cpu/sgx/reclaim.c
 > +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-> @@ -308,47 +308,45 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
->  
->  	encl_page->desc &= ~SGX_ENCL_PAGE_RECLAIMED;
->  
-> -	if (!(atomic_read(&encl->flags) & SGX_ENCL_DEAD)) {
-> -		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
-> -					   list);
-> -		va_offset = sgx_alloc_va_slot(va_page);
-> -		if (sgx_va_page_full(va_page))
-> -			list_move_tail(&va_page->list, &encl->va_pages);
-> +	va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
-> +				   list);
-> +	va_offset = sgx_alloc_va_slot(va_page);
-> +	if (sgx_va_page_full(va_page))
-> +		list_move_tail(&va_page->list, &encl->va_pages);
-> +
-> +	ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
-> +			     page_index);
-> +	if (ret == SGX_NOT_TRACKED) {
-> +		ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
-> +		if (ret) {
-> +			if (encls_failed(ret) ||
-> +			    encls_returned_code(ret))
-> +				ENCLS_WARN(ret, "ETRACK");
-> +		}
->  
->  		ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
->  				     page_index);
->  		if (ret == SGX_NOT_TRACKED) {
-> -			ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
-> -			if (ret) {
-> -				if (encls_failed(ret) ||
-> -				    encls_returned_code(ret))
-> -					ENCLS_WARN(ret, "ETRACK");
-> -			}
-> -
-> -			ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
-> -					     page_index);
-> -			if (ret == SGX_NOT_TRACKED) {
-> -				/*
-> -				 * Slow path, send IPIs to kick cpus out of the
-> -				 * enclave.  Note, it's imperative that the cpu
-> -				 * mask is generated *after* ETRACK, else we'll
-> -				 * miss cpus that entered the enclave between
-> -				 * generating the mask and incrementing epoch.
-> -				 */
-> -				on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
-> -						 sgx_ipi_cb, NULL, 1);
-> -				ret = __sgx_encl_ewb(encl, epc_page, va_page,
-> -						     va_offset, page_index);
-> -			}
-> +			/*
-> +			 * Slow path, send IPIs to kick cpus out of the
-> +			 * enclave.  Note, it's imperative that the cpu
-> +			 * mask is generated *after* ETRACK, else we'll
-> +			 * miss cpus that entered the enclave between
-> +			 * generating the mask and incrementing epoch.
-> +			 */
-> +			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
-> +					 sgx_ipi_cb, NULL, 1);
-> +			ret = __sgx_encl_ewb(encl, epc_page, va_page,
-> +					     va_offset, page_index);
->  		}
-> +	}
->  
-> -		if (ret)
-> -			if (encls_failed(ret) || encls_returned_code(ret))
-> -				ENCLS_WARN(ret, "EWB");
-> +	if (ret)
-> +		if (encls_failed(ret) || encls_returned_code(ret))
-> +			ENCLS_WARN(ret, "EWB");
->  
-> -		encl_page->desc |= va_offset;
-> -		encl_page->va_page = va_page;
-> -	}
-> +	encl_page->desc |= va_offset;
-> +	encl_page->va_page = va_page;
+> @@ -121,7 +121,19 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page)
+>  	spin_unlock(&sgx_active_page_list_lock);
 >  }
 >  
->  static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
-> @@ -359,10 +357,11 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+> -static bool sgx_reclaimer_evict(struct sgx_epc_page *epc_page)
+> +/**
+> + * sgx_can_reclaim() - Filter out the pages that should not be reclaimed
+> + * @epc_page:	a candidate EPC page
+> + *
+> + * Do not reclaim this page if it has been recently accessed by any mm_struct
+> + * *and* if the enclave is still alive.  No need to take the enclave's lock,
+> + * worst case scenario reclaiming pages from a dead enclave is delayed slightly.
+> + * A live enclave with a recently accessed page is more common and avoiding lock
+> + * contention in that case is a boon to performance.
+> + *
+> + * Return: true if the page should be reclaimed
+> + */
+> +static bool sgx_can_reclaim(struct sgx_epc_page *epc_page)
+>  {
+>  	struct sgx_encl_page *page = epc_page->owner;
+>  	struct sgx_encl *encl = page->encl;
+> @@ -147,21 +159,9 @@ static bool sgx_reclaimer_evict(struct sgx_epc_page *epc_page)
 >  
->  	mutex_lock(&encl->lock);
+>  	srcu_read_unlock(&encl->srcu, idx);
 >  
-> -	sgx_encl_ewb(epc_page, SGX_ENCL_PAGE_INDEX(encl_page));
->  	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
->  		ret = __eremove(sgx_epc_addr(epc_page));
->  		WARN(ret, "EREMOVE returned %d\n", ret);
-> +	} else {
-> +		sgx_encl_ewb(epc_page, SGX_ENCL_PAGE_INDEX(encl_page));
+> -	/*
+> -	 * Do not reclaim this page if it has been recently accessed by any
+> -	 * mm_struct *and* if the enclave is still alive.  No need to take
+> -	 * the enclave's lock, worst case scenario reclaiming pages from a
+> -	 * dead enclave is delayed slightly.  A live enclave with a recently
+> -	 * accessed page is more common and avoiding lock contention in that
+> -	 * case is a boon to performance.
+> -	 */
+>  	if (!ret && !(atomic_read(&encl->flags) & SGX_ENCL_DEAD))
+>  		return false;
+>  
+> -	mutex_lock(&encl->lock);
+> -	page->desc |= SGX_ENCL_PAGE_RECLAIMED;
+> -	mutex_unlock(&encl->lock);
+> -
+>  	return true;
+>  }
+>  
+> @@ -405,8 +405,12 @@ void sgx_reclaim_pages(void)
+>  		epc_page = chunk[i];
+>  		encl_page = epc_page->owner;
+>  
+> -		if (sgx_reclaimer_evict(epc_page))
+> +		if (sgx_can_reclaim(epc_page)) {
+> +			mutex_lock(&encl_page->encl->lock);
+> +			encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
 
-The sgx_encl_ewb() for SECS also needs to be skipped, otherwise we'll
-attempt EWB on a dead enclave.  If the enclave is dead we can simply
-free the SECS.
+If we move setting SGX_ENCL_PAGE_RECLAIMED here, then we should also
+move the clearing (currently in sgx_encl_ewb()) into the loop that
+calls sgx_reclaimer_write().  That would also fix the issue of
+SGX_ENCL_PAGE_RECLAIMED being left set when the enclave is dead.
 
->  	}
+> +			mutex_unlock(&encl_page->encl->lock);
+>  			continue;
+> +		}
 >  
->  	encl_page->epc_page = NULL;
+>  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+>  
 > -- 
 > 2.20.1
 > 
