@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B32E4C4CEC9
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B6C4CEC9
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B540216C8
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2115206C2
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbfIQXN2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Sep 2019 19:13:28 -0400
-Received: from mga09.intel.com ([134.134.136.24]:53119 "EHLO mga09.intel.com"
+        id S1728593AbfIQXVU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Sep 2019 19:21:20 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60052 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfIQXN2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Sep 2019 19:13:28 -0400
+        id S1728554AbfIQXVU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Sep 2019 19:21:20 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 16:13:27 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 16:21:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,518,1559545200"; 
-   d="scan'208";a="193891776"
+   d="scan'208";a="386705531"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Sep 2019 16:13:26 -0700
-Date:   Tue, 17 Sep 2019 16:13:26 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 17 Sep 2019 16:21:19 -0700
+Date:   Tue, 17 Sep 2019 16:21:19 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org,
@@ -36,7 +36,7 @@ Cc:     linux-sgx@vger.kernel.org,
         Serge Ayoun <serge.ayoun@intel.com>
 Subject: Re: [PATCH v3 09/17] x86/sgx: Move SGX_ENCL_DEAD check to
  sgx_reclaimer_write()
-Message-ID: <20190917231326.GF10319@linux.intel.com>
+Message-ID: <20190917232119.GG10319@linux.intel.com>
 References: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
  <20190916101803.30726-10-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
@@ -154,13 +154,13 @@ On Mon, Sep 16, 2019 at 01:17:55PM +0300, Jarkko Sakkinen wrote:
 >  	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
 >  		ret = __eremove(sgx_epc_addr(epc_page));
 >  		WARN(ret, "EREMOVE returned %d\n", ret);
-
-SGX_ENCL_PAGE_RECLAIMED is left dangling on encl_page in the SGX_ENCL_DEAD
-case.  It doesn't affect functionality, but it could complicate debug if
-anything goes awry.
-
 > +	} else {
 > +		sgx_encl_ewb(epc_page, SGX_ENCL_PAGE_INDEX(encl_page));
+
+The sgx_encl_ewb() for SECS also needs to be skipped, otherwise we'll
+attempt EWB on a dead enclave.  If the enclave is dead we can simply
+free the SECS.
+
 >  	}
 >  
 >  	encl_page->epc_page = NULL;
