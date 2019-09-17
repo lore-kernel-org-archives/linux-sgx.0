@@ -6,126 +6,308 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC44C4CEC9
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40408C4CECD
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D3421852
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC2F206C2
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Sep 2019 23:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbfIQXZF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Sep 2019 19:25:05 -0400
-Received: from mga12.intel.com ([192.55.52.136]:39603 "EHLO mga12.intel.com"
+        id S1726297AbfIQXeh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Sep 2019 19:34:37 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29836 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbfIQXZF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Sep 2019 19:25:05 -0400
+        id S1725920AbfIQXeh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Sep 2019 19:34:37 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 16:25:04 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 16:34:36 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,518,1559545200"; 
-   d="scan'208";a="180940510"
+   d="scan'208";a="187601644"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga008.jf.intel.com with ESMTP; 17 Sep 2019 16:25:04 -0700
-Date:   Tue, 17 Sep 2019 16:25:04 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 17 Sep 2019 16:34:36 -0700
+Date:   Tue, 17 Sep 2019 16:34:35 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org,
         Shay Katz-zamir <shay.katz-zamir@intel.com>,
         Serge Ayoun <serge.ayoun@intel.com>
-Subject: Re: [PATCH v3 13/17] x86/sgx: Introduce sgx_can_reclaim()
-Message-ID: <20190917232504.GH10319@linux.intel.com>
+Subject: Re: [PATCH v3 17/17] x86/sgx: Fix pages in the BLOCKED state ending
+ up to the free pool
+Message-ID: <20190917233435.GI10319@linux.intel.com>
 References: <20190916101803.30726-1-jarkko.sakkinen@linux.intel.com>
- <20190916101803.30726-14-jarkko.sakkinen@linux.intel.com>
+ <20190916101803.30726-18-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190916101803.30726-14-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190916101803.30726-18-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 01:17:59PM +0300, Jarkko Sakkinen wrote:
-> Make sgx_reclaim_evict() idempotennt and rename it to sgx_can_reclaim() and
-> set SGX_ENCL_PAGE_RECLAIMED in the call site.
+On Mon, Sep 16, 2019 at 01:18:03PM +0300, Jarkko Sakkinen wrote:
+> A blocked page can end up legitly to the free pool if pinning fails because
+> we interpret that as an EWB failure and simply put it to the free pool.
+> This corrupts the EPC page allocator.
+> 
+> Fix the bug by pinning the backing storage when picking the victim pages. A
+> clean rollback can still be done when the memory allocation fails as pages
+> can be still returned back to the enclave.
+> 
+> This in effect removes any other failure cases from sgx_encl_ewb() other
+> than EPCM conflict when the host has went through a sleep cycle. In that
+> case putting a page back to the free pool is perfectly fine because it is
+> uninitialized.
 > 
 > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 > Cc: Shay Katz-zamir <shay.katz-zamir@intel.com>
 > Cc: Serge Ayoun <serge.ayoun@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/reclaim.c | 32 +++++++++++++++++--------------
->  1 file changed, 18 insertions(+), 14 deletions(-)
+>  arch/x86/kernel/cpu/sgx/reclaim.c | 95 ++++++++++++++++++-------------
+>  1 file changed, 57 insertions(+), 38 deletions(-)
 > 
 > diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-> index 5a4d44dd02d7..cc3155b61513 100644
+> index 7d628a1388e2..d6e580e55456 100644
 > --- a/arch/x86/kernel/cpu/sgx/reclaim.c
 > +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-> @@ -121,7 +121,19 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page)
->  	spin_unlock(&sgx_active_page_list_lock);
->  }
+> @@ -206,32 +206,24 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
 >  
-> -static bool sgx_reclaimer_evict(struct sgx_epc_page *epc_page)
-> +/**
-> + * sgx_can_reclaim() - Filter out the pages that should not be reclaimed
-> + * @epc_page:	a candidate EPC page
-> + *
-> + * Do not reclaim this page if it has been recently accessed by any mm_struct
-> + * *and* if the enclave is still alive.  No need to take the enclave's lock,
-> + * worst case scenario reclaiming pages from a dead enclave is delayed slightly.
-> + * A live enclave with a recently accessed page is more common and avoiding lock
-> + * contention in that case is a boon to performance.
-> + *
-> + * Return: true if the page should be reclaimed
-> + */
-> +static bool sgx_can_reclaim(struct sgx_epc_page *epc_page)
+>  static int __sgx_encl_ewb(struct sgx_encl *encl, struct sgx_epc_page *epc_page,
+>  			  struct sgx_va_page *va_page, unsigned int va_offset,
+> -			  unsigned int page_index)
+> +			  struct sgx_backing *backing)
 >  {
->  	struct sgx_encl_page *page = epc_page->owner;
->  	struct sgx_encl *encl = page->encl;
-> @@ -147,21 +159,9 @@ static bool sgx_reclaimer_evict(struct sgx_epc_page *epc_page)
+>  	struct sgx_pageinfo pginfo;
+> -	struct sgx_backing b;
+>  	int ret;
 >  
->  	srcu_read_unlock(&encl->srcu, idx);
->  
-> -	/*
-> -	 * Do not reclaim this page if it has been recently accessed by any
-> -	 * mm_struct *and* if the enclave is still alive.  No need to take
-> -	 * the enclave's lock, worst case scenario reclaiming pages from a
-> -	 * dead enclave is delayed slightly.  A live enclave with a recently
-> -	 * accessed page is more common and avoiding lock contention in that
-> -	 * case is a boon to performance.
-> -	 */
->  	if (!ret && !(atomic_read(&encl->flags) & SGX_ENCL_DEAD))
->  		return false;
->  
-> -	mutex_lock(&encl->lock);
-> -	page->desc |= SGX_ENCL_PAGE_RECLAIMED;
-> -	mutex_unlock(&encl->lock);
+> -	ret = sgx_encl_get_backing(encl, page_index, &b);
+> -	if (ret)
+> -		return ret;
 > -
->  	return true;
+>  	pginfo.addr = 0;
+> -	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
+> -	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) + b.pcmd_offset;
+>  	pginfo.secs = 0;
+> +
+> +	pginfo.contents = (unsigned long)kmap_atomic(backing->contents);
+> +	pginfo.metadata = (unsigned long)kmap_atomic(backing->pcmd) +
+> +			  backing->pcmd_offset;
+> +
+>  	ret = __ewb(&pginfo, sgx_epc_addr(epc_page),
+>  		    sgx_epc_addr(va_page->epc_page) + va_offset);
+> -	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
+> -	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+>  
+> -	if (!ret) {
+> -		set_page_dirty(b.pcmd);
+> -		set_page_dirty(b.contents);
+> -	}
+> -
+> -	put_page(b.pcmd);
+> -	put_page(b.contents);
+> +	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
+> +					      backing->pcmd_offset));
+> +	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+>  
+>  	return ret;
+>  }
+> @@ -265,7 +257,7 @@ static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
 >  }
 >  
-> @@ -405,8 +405,12 @@ void sgx_reclaim_pages(void)
+>  static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+> -			 unsigned int page_index)
+> +			 struct sgx_backing *backing)
+>  {
+>  	struct sgx_encl_page *encl_page = epc_page->owner;
+>  	struct sgx_encl *encl = encl_page->encl;
+> @@ -281,8 +273,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+>  	if (sgx_va_page_full(va_page))
+>  		list_move_tail(&va_page->list, &encl->va_pages);
+>  
+> -	ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
+> -			     page_index);
+> +	ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset, backing);
+>  	if (ret == SGX_NOT_TRACKED) {
+>  		ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
+>  		if (ret) {
+> @@ -292,7 +283,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+>  		}
+>  
+>  		ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
+> -				     page_index);
+> +				     backing);
+>  		if (ret == SGX_NOT_TRACKED) {
+>  			/*
+>  			 * Slow path, send IPIs to kick cpus out of the
+> @@ -304,7 +295,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+>  			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
+>  					 sgx_ipi_cb, NULL, 1);
+>  			ret = __sgx_encl_ewb(encl, epc_page, va_page,
+> -					     va_offset, page_index);
+> +					     va_offset, backing);
+>  		}
+>  	}
+>  
+> @@ -314,15 +305,20 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+>  
+>  		sgx_encl_destroy(encl);
+>  	} else {
+> +		set_page_dirty(backing->pcmd);
+> +		set_page_dirty(backing->contents);
+> +
+>  		encl_page->desc |= va_offset;
+>  		encl_page->va_page = va_page;
+>  	}
+>  }
+>  
+> -static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+> +static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+> +				struct sgx_backing *backing)
+>  {
+>  	struct sgx_encl_page *encl_page = epc_page->owner;
+>  	struct sgx_encl *encl = encl_page->encl;
+> +	struct sgx_backing secs_backing;
+>  	int ret;
+>  
+>  	mutex_lock(&encl->lock);
+> @@ -331,7 +327,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+>  		ret = __eremove(sgx_epc_addr(epc_page));
+>  		WARN(ret, "EREMOVE returned %d\n", ret);
+>  	} else {
+> -		sgx_encl_ewb(epc_page, SGX_ENCL_PAGE_INDEX(encl_page));
+> +		sgx_encl_ewb(epc_page, backing);
+>  	}
+>  
+>  	encl_page->epc_page = NULL;
+> @@ -340,10 +336,17 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+>  	if (!encl->secs_child_cnt &&
+>  	    (atomic_read(&encl->flags) &
+>  	     (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED))) {
+> -		sgx_encl_ewb(encl->secs.epc_page, PFN_DOWN(encl->size));
+> -		sgx_free_page(encl->secs.epc_page);
+> +		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
+> +					   &secs_backing);
+> +		if (!ret) {
+> +			sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
+> +			sgx_free_page(encl->secs.epc_page);
+> +
+> +			encl->secs.epc_page = NULL;
+>  
+> -		encl->secs.epc_page = NULL;
+> +			put_page(secs_backing.pcmd);
+> +			put_page(secs_backing.contents);
+> +		}
+>  	}
+>  
+>  	mutex_unlock(&encl->lock);
+> @@ -351,17 +354,21 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page)
+>  
+>  /**
+>   * sgx_reclaim_pages() - Reclaim EPC pages from the consumers
+> - * Takes a fixed chunk of pages from the global list of consumed EPC pages and
+> - * tries to swap them. Only the pages that are either being freed by the
+> - * consumer or actively used are skipped.
+> + *
+> + * Take a fixed number of pages from the head of the active page pool and
+> + * reclaim them to the enclave's private shmem files. Skip the pages, which
+> + * have been accessed since the last scan. Move those pages to the tail of
+> + * active page pool so that the pages get scanned in LRU like fashion.
+>   */
+>  void sgx_reclaim_pages(void)
+>  {
+> -	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN + 1];
+> +	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
+> +	struct sgx_backing backing[SGX_NR_TO_SCAN];
+>  	struct sgx_epc_section *section;
+>  	struct sgx_encl_page *encl_page;
+>  	struct sgx_epc_page *epc_page;
+>  	int cnt = 0;
+> +	int ret;
+>  	int i;
+>  
+>  	spin_lock(&sgx_active_page_list_lock);
+> @@ -388,13 +395,21 @@ void sgx_reclaim_pages(void)
 >  		epc_page = chunk[i];
 >  		encl_page = epc_page->owner;
 >  
-> -		if (sgx_reclaimer_evict(epc_page))
-> +		if (sgx_can_reclaim(epc_page)) {
-> +			mutex_lock(&encl_page->encl->lock);
-> +			encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
+> -		if (sgx_can_reclaim(epc_page)) {
+> -			mutex_lock(&encl_page->encl->lock);
+> -			encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
+> -			mutex_unlock(&encl_page->encl->lock);
+> -			continue;
+> -		}
+> +		if (!sgx_can_reclaim(epc_page))
 
-If we move setting SGX_ENCL_PAGE_RECLAIMED here, then we should also
-move the clearing (currently in sgx_encl_ewb()) into the loop that
-calls sgx_reclaimer_write().  That would also fix the issue of
-SGX_ENCL_PAGE_RECLAIMED being left set when the enclave is dead.
+Would it make sense to use a more explicit name for sgx_can_reclaim(),
+e.g. sgx_age_epc_page() or something?  "can reclaim" makes it sound like
+there are scenarios where reclaim is impossible, but really it's just that
+we don't want to reclaim a recently accessed page.
 
-> +			mutex_unlock(&encl_page->encl->lock);
->  			continue;
-> +		}
+> +			goto skip;
 >  
+> +		ret = sgx_encl_get_backing(encl_page->encl,
+> +					   SGX_ENCL_PAGE_INDEX(encl_page),
+> +					   &backing[i]);
+> +		if (ret)
+> +			goto skip;
+> +
+> +		mutex_lock(&encl_page->encl->lock);
+> +		encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
+> +		mutex_unlock(&encl_page->encl->lock);
+> +		continue;
+> +
+> +skip:
+
+Eww.  The call to sgx_encl_get_backing() makes it rather ugly no matter
+what, but this seems slightly less ugly:
+
+	for (i = 0; i < cnt; i++) {
+		epc_page = chunk[i];
+		encl_page = epc_page->owner;
+
+		if (!sgx_can_reclaim(chunk[i]) ||
+		    sgx_encl_get_backing(encl_page->encl,
+					 SGX_ENCL_PAGE_INDEX(encl_page),
+					 &backing[i]) {
+			kref_put(&encl_page->encl->refcount, sgx_encl_release);
+
+			spin_lock(&sgx_active_page_list_lock);
+			list_add_tail(&epc_page->list, &sgx_active_page_list);
+			spin_unlock(&sgx_active_page_list_lock);
+
+			chunk[i] = NULL;
+			continue;
+		}
+
+		mutex_lock(&encl_page->encl->lock);
+		encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
+		mutex_unlock(&encl_page->encl->lock);
+	}
+
 >  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+>  
+>  		spin_lock(&sgx_active_page_list_lock);
+> @@ -416,7 +431,11 @@ void sgx_reclaim_pages(void)
+>  			continue;
+>  
+>  		encl_page = epc_page->owner;
+> -		sgx_reclaimer_write(epc_page);
+> +		sgx_reclaimer_write(epc_page, &backing[i]);
+> +
+> +		put_page(backing->pcmd);
+> +		put_page(backing->contents);
+
+These should be backing[i]->
+
+> +
+>  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+>  		epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
 >  
 > -- 
 > 2.20.1
