@@ -2,129 +2,103 @@ Return-Path: <SRS0=S/Hi=XT=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B85C432C1
-	for <linux-sgx@archiver.kernel.org>; Tue, 24 Sep 2019 16:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904CEC432C1
+	for <linux-sgx@archiver.kernel.org>; Tue, 24 Sep 2019 16:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49F5D2168B
-	for <linux-sgx@archiver.kernel.org>; Tue, 24 Sep 2019 16:04:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ff/YhN34"
+	by mail.kernel.org (Postfix) with ESMTP id 68A0F2168B
+	for <linux-sgx@archiver.kernel.org>; Tue, 24 Sep 2019 16:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391509AbfIXQEn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:04:43 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60798 "EHLO mail.skyhub.de"
+        id S2406148AbfIXQLv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:11:51 -0400
+Received: from mga18.intel.com ([134.134.136.126]:51719 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391013AbfIXQEn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:04:43 -0400
-Received: from zn.tnic (p200300EC2F0DB700CDA5DCD899733FA6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:b700:cda5:dcd8:9973:3fa6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 50C9B1EC067D;
-        Tue, 24 Sep 2019 18:04:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569341082;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=B65A+4m2oOkrdOYhHvIUF/+WeMZC/CwF40XD3ZWO76o=;
-        b=ff/YhN34wwlnqB0jOpcUhTUPwOU7CjnP7rjUYW9LF59y1ukJeOYLRdHjJQ4b0FnuKWHfbL
-        XeIiVlFy9spVsRlSev5rnAUXwZtpEbgCMufoytjtV3p/T4qClxPUPJiybzhsBbd9PwJ/cP
-        R21px6jw4ed3uQbEYgo2o5OVGp/q+20=
-Date:   Tue, 24 Sep 2019 18:04:42 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        id S2388230AbfIXQLu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:11:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 09:11:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,544,1559545200"; 
+   d="scan'208";a="364047230"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by orsmga005.jf.intel.com with ESMTP; 24 Sep 2019 09:11:50 -0700
+Date:   Tue, 24 Sep 2019 09:11:50 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v22 03/24] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
-Message-ID: <20190924160442.GH19317@zn.tnic>
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, Kai Huang <kai.huang@linux.intel.com>
+Subject: Re: [PATCH v22 01/24] x86/cpufeatures: x86/msr: Add Intel SGX
+ hardware bits
+Message-ID: <20190924161150.GA16218@linux.intel.com>
 References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-4-jarkko.sakkinen@linux.intel.com>
+ <20190903142655.21943-2-jarkko.sakkinen@linux.intel.com>
+ <20190924152848.GF19317@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190903142655.21943-4-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190924152848.GF19317@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 05:26:34PM +0300, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Tue, Sep 24, 2019 at 05:28:48PM +0200, Borislav Petkov wrote:
+> On Tue, Sep 03, 2019 at 05:26:32PM +0300, Jarkko Sakkinen wrote:
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > index 998c2cc08363..c5582e766121 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -222,12 +222,22 @@
+> >  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+> >  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+> >  
+> > -/* Virtualization flags: Linux defined, word 8 */
+> > -#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+> > -#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
+> > -#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
+> > -#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
+> > -#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
+> > +/*
+> > + * Scattered Intel features: Linux defined, word 8.
+> > + *
+> > + * Note that the bit location of the SGX features is meaningful as KVM expects
+> > + * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
+> > + * must remain at bit 0, SGX2 at bit 1, etc...
 > 
-> Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
-> a #PF with SGX set happens.
+> Eww, no.
 > 
-> CPU throws a #PF with the SGX bit in the event of Enclave Page Cache Map
-> (EPCM) conflict. The EPCM is a CPU-internal table, which describes the
-> properties for a enclave page. Enclaves are measured and signed software
-> entities, which SGX hosts. [1]
+> > + */
+> > +#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
+> > +#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
+> > +/* Bits [0:7] are reserved for SGX */
 > 
-> Although the primary purpose of the EPCM conflict checks  is to prevent
-> malicious accesses to an enclave, an illegit access can happen also for
-> legit reasons.
+> That leaf has "Bits 31 - 07: Reserved." So what happens if they start
+> adding more bits there? We shoosh the other defines even further into
+> the word?
 > 
-> All SGX reserved memory, including EPCM is encrypted with a transient
-> key that does not survive from the power transition. Throwing a SIGSEGV
-> allows user space software react when this happens (e.g. rec-create the
-> enclave, which was invalidated).
-> 
-> [1] Intel SDM: 36.5.1 Enclave Page Cache Map (EPCM)
-> 
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/include/asm/traps.h |  1 +
->  arch/x86/mm/fault.c          | 13 +++++++++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-> index b25e633033c3..81472cae4024 100644
-> --- a/arch/x86/include/asm/traps.h
-> +++ b/arch/x86/include/asm/traps.h
-> @@ -171,5 +171,6 @@ enum x86_pf_error_code {
->  	X86_PF_RSVD	=		1 << 3,
->  	X86_PF_INSTR	=		1 << 4,
->  	X86_PF_PK	=		1 << 5,
-> +	X86_PF_SGX	=		1 << 15,
->  };
->  #endif /* _ASM_X86_TRAPS_H */
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 9ceacd1156db..c2dea3f9e263 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1178,6 +1178,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
->  	if (error_code & X86_PF_PK)
->  		return 1;
->  
-> +	/*
-> +	 * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
-> +	 * access is allowed by the PTE but not the EPCM.  This usually happens
-> +	 * when the EPCM is yanked out from under us, e.g. by hardware after a
-> +	 * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
-> +	 * fix the source of the fault as the EPCM can't be directly modified
-> +	 * by software.  Handle the fault as an access error in order to signal
-> +	 * userspace, e.g. so that userspace can rebuild their enclave(s), even
+> Talk to your hw guys, if the plan is to leave those bits for other
+> feature flags, then let's allocate a new capability word for F12_EAX.
 
-s/, e.g.//
+We tried that, you shot it down[*], hence these shenanigans.  With respect
+to more SGX feature flags, the original changelog even stated "with more
+expected in the not-too-distant future".
 
--- 
-Regards/Gruss,
-    Boris.
+I'm not arguing that this isn't ugly, just want to make it clear that
+we're not wantonly throwing junk into the kernel.  I'm all for a dedicated
+SGX word, it makes our lives easier.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+[*] https://lkml.kernel.org/r/20180828102140.GA31102@nazgul.tnic
