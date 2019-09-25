@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E893C432C2
-	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 01:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF516C432C1
+	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 01:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7738C20872
-	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 01:08:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C23214DA
+	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 01:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfIYBIV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 24 Sep 2019 21:08:21 -0400
-Received: from mga11.intel.com ([192.55.52.93]:13213 "EHLO mga11.intel.com"
+        id S2411367AbfIYBkR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 24 Sep 2019 21:40:17 -0400
+Received: from mga01.intel.com ([192.55.52.88]:5036 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729301AbfIYBIV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 24 Sep 2019 21:08:21 -0400
+        id S2389596AbfIYBkQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 24 Sep 2019 21:40:16 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 18:08:20 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 18:40:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,546,1559545200"; 
-   d="scan'208";a="188633606"
+   d="scan'208";a="364183193"
 Received: from wujunyox-mobl3.ger.corp.intel.com (HELO localhost) ([10.249.38.101])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Sep 2019 18:08:17 -0700
-Date:   Wed, 25 Sep 2019 04:08:18 +0300
+  by orsmga005.jf.intel.com with ESMTP; 24 Sep 2019 18:40:13 -0700
+Date:   Wed, 25 Sep 2019 04:40:13 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     sean.j.christopherson@intel.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com
 Subject: Re: master branch updated
-Message-ID: <20190925010818.GB3261@linux.intel.com>
+Message-ID: <20190925014013.GA4156@linux.intel.com>
 References: <20190925010715.GA3261@linux.intel.com>
+ <20190925010818.GB3261@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925010715.GA3261@linux.intel.com>
+In-Reply-To: <20190925010818.GB3261@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -47,17 +48,21 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 04:07:15AM +0300, Jarkko Sakkinen wrote:
-> The master branch has been updated.
+On Wed, Sep 25, 2019 at 04:08:18AM +0300, Jarkko Sakkinen wrote:
+> On Wed, Sep 25, 2019 at 04:07:15AM +0300, Jarkko Sakkinen wrote:
+> > The master branch has been updated.
+> > 
+> > Changelog to v22:
+> > 
+> > * Return -EIO instead of -ECANCELED when ptrace() fails to read a TCS page.
+> > * In the reclaimer, pin the page before ENCLS[EBLOCK] because pinning can fail
+> >   (because of OOM) even in legit behaviour and after EBLOCK the reclaiming
+> >   flow can be only reverted by killing the whole enclave.
 > 
-> Changelog to v22:
-> 
-> * Return -EIO instead of -ECANCELED when ptrace() fails to read a TCS page.
-> * In the reclaimer, pin the page before ENCLS[EBLOCK] because pinning can fail
->   (because of OOM) even in legit behaviour and after EBLOCK the reclaiming
->   flow can be only reverted by killing the whole enclave.
+> I have one update to make sgx_alloc_page() and then my code changes for
+> v23 are done.
 
-I have one update to make sgx_alloc_page() and then my code changes for
-v23 are done.
+That's not all actually. I also update the selftest so that it fills
+memory enough to trigger the reclaimer.
 
 /Jarkko
