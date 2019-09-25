@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26123C432C2
-	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 16:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9CAC432C2
+	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 17:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6AA214DA
-	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 16:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 112422146E
+	for <linux-sgx@archiver.kernel.org>; Wed, 25 Sep 2019 17:18:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732931AbfIYQtd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 25 Sep 2019 12:49:33 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55094 "EHLO mga18.intel.com"
+        id S2440302AbfIYRSZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 25 Sep 2019 13:18:25 -0400
+Received: from mga05.intel.com ([192.55.52.43]:11420 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731087AbfIYQtd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 25 Sep 2019 12:49:33 -0400
+        id S2440280AbfIYRSZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 25 Sep 2019 13:18:25 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 09:49:32 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 10:18:24 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,548,1559545200"; 
-   d="scan'208";a="193831908"
+   d="scan'208";a="273030650"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga006.jf.intel.com with ESMTP; 25 Sep 2019 09:49:32 -0700
-Date:   Wed, 25 Sep 2019 09:49:32 -0700
+  by orsmga001.jf.intel.com with ESMTP; 25 Sep 2019 10:18:24 -0700
+Date:   Wed, 25 Sep 2019 10:18:24 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -43,43 +43,65 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Haim Cohen <haim.cohen@intel.com>
 Subject: Re: [PATCH v22 02/24] x86/cpufeatures: x86/msr: Intel SGX Launch
  Control hardware bits
-Message-ID: <20190925164932.GE31852@linux.intel.com>
+Message-ID: <20190925171824.GF31852@linux.intel.com>
 References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
  <20190903142655.21943-3-jarkko.sakkinen@linux.intel.com>
  <20190924155232.GG19317@zn.tnic>
- <20190925140903.GA19638@linux.intel.com>
- <20190925151949.GE3891@zn.tnic>
+ <20190924202210.GC16218@linux.intel.com>
+ <20190925085156.GA3891@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925151949.GE3891@zn.tnic>
+In-Reply-To: <20190925085156.GA3891@zn.tnic>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 05:19:49PM +0200, Borislav Petkov wrote:
-> On Wed, Sep 25, 2019 at 05:09:03PM +0300, Jarkko Sakkinen wrote:
-> > The driver will support only the case where the bit is set i.e. that
-> > it can freely write to the MSRs MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}.
-> > It will refuse to initialize otherwise.
+On Wed, Sep 25, 2019 at 10:51:56AM +0200, Borislav Petkov wrote:
+> On Tue, Sep 24, 2019 at 01:22:10PM -0700, Sean Christopherson wrote:
+> > Sadly, because FEATURE_CONTROL must be locked to fully enable SGX, the
+> > reality is that any BIOS that supports SGX will lock FEATURE_CONTROL.
 > 
-> See this:
+> That's fine. The question is, would OEMs leave the hash MSRs writable?
+
+Realistically, there will likely be a non-trivial number of systems with
+SGX_LE_WR=0 but SGX enabled.
+
+> If, as you say above, we clear SGX feature bit - not only
+> X86_FEATURE_SGX_LC - when the MSRs are not writable, then we're fine.
+> Platforms sticking their own hash in there won't be supported but I
+> guess their aim is not to be supported in Linux anyway.
 > 
-> https://lkml.kernel.org/r/20190925085156.GA3891@zn.tnic
+> > That's the status quo today as well since VMX (and SMX/TXT) is also
+> > enabled via FEATURE_CONTROL.  KVM does have logic to enable VMX and lock
+> > FEATURE_CONTROL if the MSR isn't locked, but AIUI that exists only to work
+> > with old BIOSes.
+> > 
+> > If we want to support setting and locking FEATURE_CONTROL in the extremely
+> > unlikely scenario that BIOS left it unlocked, the proper change would be
 > 
-> AFAICT, when FEATURE_CONTROL_SGX_LE_WR is not set, you're not clearing
-> all SGX feature bits. But you should, methinks.
+> I wouldn't be too surprised if this happened. BIOS is very inventive.
 
-Correct, only X86_FEATURE_SGX_LC is cleared.  The idea is to have SGX_LC
-reflect whether or not flexible launch control is fully enabled, no more
-no less.
+Given the number of steps BIOS needs to take to enable SGX, that'd be one
+"inventive" BIOS. :-)
 
-Functionally, this doesn't impact support for native enclaves as the
-driver will refuse to load if SGX_LC=0.
+Anyways, adding logic to opportunistically set FEATURE_CONTROL during boot
+should be trivial.  I'll prep a patch and send it separately from the SGX
+series, moving the existing KVM code would be a good change irrespective
+of SGX.
 
-Looking forward, this *will* affect KVM.  As proposed, KVM would expose
-SGX to a guest regardless of SGX_LC support.
+> > One note on Launch Control that isn't covered in the SDM: the LE hash
+> > MSRs can also be written before SGX is activated.  SGX activation must
+> > occur before FEATURE_CONTROL is locked, meaning BIOS can set the LE
+> > hash MSRs to a non-intel and then lock FEATURE_CONTROL with SGX_LE_WR=0.
+> 
+> This is exactly what I'm afraid of. The OEM vendors locking this down.
 
-https://lkml.kernel.org/r/20190727055214.9282-17-sean.j.christopherson@intel.com
+It's inevitable that some systems will lock down the LE hash MSRs, either
+intentionally or due to lack of support for SGX_LE_WR.  The latter is
+probably going to be more common than OEMs intentionally locking the MSRs,
+because some Intel reference BIOSes simply don't support SGX_LE_WR, e.g. I
+have a Coffee Lake SDP that has hardware support for SGX_LC, but the BIOS
+doesn't provide any way to set SGX_LE_WR or leave FEATURE_CONTROL unlocked.
