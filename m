@@ -2,273 +2,197 @@ Return-Path: <SRS0=CuW6=XW=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE69FC4360C
-	for <linux-sgx@archiver.kernel.org>; Fri, 27 Sep 2019 16:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09ACCC4360C
+	for <linux-sgx@archiver.kernel.org>; Fri, 27 Sep 2019 17:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9719620872
-	for <linux-sgx@archiver.kernel.org>; Fri, 27 Sep 2019 16:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F9820872
+	for <linux-sgx@archiver.kernel.org>; Fri, 27 Sep 2019 17:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="XWy65qVU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pi1TqRZg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbfI0Q1l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 27 Sep 2019 12:27:41 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:58802 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727079AbfI0Q1l (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 27 Sep 2019 12:27:41 -0400
-Received: from zn.tnic (p200300EC2F0ABB004403369600A4C2F6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:bb00:4403:3696:a4:c2f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B85841EC03F6;
-        Fri, 27 Sep 2019 18:27:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569601654;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bzUHzRHgCzLLNVb4xQdR2HsiS3SSRgRSDcqXL7xXSA8=;
-        b=XWy65qVU7edK7EuBN2xvLq2EDLuN3jG9+ieqVlaL8pAH0iGNiE9UUXmdMKMN/iI00y8sHh
-        Iq7i1ZnJk7K+7OFT7HXitFjotbKSd1KQWA5jZzmUeWIx68tF5nJYe9UdgQT2F17YzTlLme
-        4U+hdUPU1Vb/xVNdeocaQqrKR0p9CC8=
-Date:   Fri, 27 Sep 2019 18:27:35 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        id S1727334AbfI0RHZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 27 Sep 2019 13:07:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43932 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfI0RHZ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 27 Sep 2019 13:07:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xTQzDROB7e5nWLLWCEXdqxNLgL3OQIo5th8TD+vu3MY=; b=pi1TqRZgUI6qRdwcep8MPDrUL
+        kyxNrxGrZPjdFHRGDprgUf6KB/GZkSh5Y2P/T4UDvK5JZojqrdhNf4ZUvt1hkW4h1HsZ6aTXSTBgr
+        cU6zc/gLSlq8OylD4OB+sXGFZlzaaC7bdk1E3PS1lVdOEkIUXd1GhgzGZBHFSGxCFW06jypX37mTC
+        cOU8KmHO8CiBw7EPROjFOfXE00CTrwqhu2cB/LPScMPOrwUhQsGunPTmhulCoEcdsEy3X0YF+C3sP
+        MuqVAeBXVKDNH7kzzenVR5Q3WITyRsTWAT9hbb6WJVXbJ0GNnX1G9NNOd8iFIMvPCKvHSAIz3mIKY
+        qzi+E0Wtg==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iDti3-00057T-Ob; Fri, 27 Sep 2019 17:07:11 +0000
+Subject: Re: [PATCH v22 24/24] docs: x86/sgx: Document kernel internals
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v22 06/24] x86/sgx: Add SGX microarchitectural data
- structures
-Message-ID: <20190927162735.GC23002@zn.tnic>
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com
 References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-7-jarkko.sakkinen@linux.intel.com>
+ <20190903142655.21943-25-jarkko.sakkinen@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <97dbd2a8-f1e5-a3f9-dac7-f1f4d6b6cd4c@infradead.org>
+Date:   Fri, 27 Sep 2019 10:07:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190903142655.21943-25-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190903142655.21943-7-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 05:26:37PM +0300, Jarkko Sakkinen wrote:
-> Define the SGX microarchitectural data structures used by various SGX
-> opcodes. This is not an exhaustive representation of all SGX data
-> structures but only those needed by the kernel.
+On 9/3/19 7:26 AM, Jarkko Sakkinen wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> [1] Intel SDM: 37.6 INTEL® SGX DATA STRUCTURES OVERVIEW
-
-That footnote is not being referred to. Just make it a sentence.
-
-Btw, you could tell your SDM folks to fix formulations like:
-
-"The use of EAX is implied implicitly by the ENCLS, ENCLU, and ENCLV
-		   ^^^^^^^^^^^^^^^^^^^
-
-instructions.... The use of additional registers does not use ModR/M
-encoding and is implied implicitly by the respective leaf function
-		^^^^^^^^^^^^^^^^^^^
-
-index."
-
-"implied" alone wasn't enough I guess. :)
-
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Document some of the more tricky parts of the kernel implementation
+> internals.
+> 
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Hi,
+Some edits for you to consider.
+
 > ---
->  arch/x86/kernel/cpu/sgx/arch.h | 423 +++++++++++++++++++++++++++++++++
->  1 file changed, 423 insertions(+)
->  create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
+>  Documentation/x86/sgx/2.Kernel-internals.rst | 76 ++++++++++++++++++++
+>  Documentation/x86/sgx/index.rst              |  1 +
+>  2 files changed, 77 insertions(+)
+>  create mode 100644 Documentation/x86/sgx/2.Kernel-internals.rst
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+> diff --git a/Documentation/x86/sgx/2.Kernel-internals.rst b/Documentation/x86/sgx/2.Kernel-internals.rst
 > new file mode 100644
-> index 000000000000..725a47f9f761
+> index 000000000000..5c90a65936f2
 > --- /dev/null
-> +++ b/arch/x86/kernel/cpu/sgx/arch.h
-> @@ -0,0 +1,423 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +/**
-> + * Copyright(c) 2016-18 Intel Corporation.
-> + *
-> + * Contains data structures defined by the SGX architecture.  Data structures
-> + * defined by the Linux software stack should not be placed here.
-> + */
-> +#ifndef _ASM_X86_SGX_ARCH_H
-> +#define _ASM_X86_SGX_ARCH_H
+> +++ b/Documentation/x86/sgx/2.Kernel-internals.rst
+> @@ -0,0 +1,76 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +#include <linux/types.h>
+> +================
+> +Kernel Internals
+> +================
 > +
-> +#define SGX_CPUID				0x12
-> +#define SGX_CPUID_FIRST_VARIABLE_SUB_LEAF	2
+> +CPU configuration
+> +=================
 > +
-> +/**
-> + * enum sgx_sub_leaf_types - SGX CPUID variable sub-leaf types
-> + * %SGX_CPUID_SUB_LEAF_INVALID:		Indicates this sub-leaf is invalid.
-> + * %SGX_CPUID_SUB_LEAF_EPC_SECTION:	Sub-leaf enumerates an EPC section.
-> + */
-> +enum sgx_sub_leaf_types {
-> +	SGX_CPUID_SUB_LEAF_INVALID	= 0x0,
-> +	SGX_CPUID_SUB_LEAF_EPC_SECTION	= 0x1,
-> +};
+> +Because SGX has an ever evolving and expanding feature set, it's possible for
+> +a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
+> +e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
+> +*not* support such a heterogeneous system configuration, nor does it even
+> +attempt to play nice in the face of a misconfigured system.  With the exception
+> +of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
+> +CPUs have a configuration that is identical to the boot CPU.
 > +
-> +#define SGX_CPUID_SUB_LEAF_TYPE_MASK	GENMASK(3, 0)
+> +EPC management
+> +==============
 > +
-> +/**
-> + * enum sgx_encls_leaves - ENCLS leaf functions
-> + * %SGX_ECREATE:	Create an enclave.
-> + * %SGX_EADD:		Add a page to an uninitialized enclave.
-> + * %SGX_EINIT:		Initialize an enclave, i.e. launch an enclave.
-> + * %SGX_EREMOVE:	Remove a page from an enclave.
-> + * %SGX_EDBGRD:		Read a word from an enclve (peek).
-> + * %SGX_EDBGWR:		Write a word to an enclave (poke).
-> + * %SGX_EEXTEND:	Measure 256 bytes of an added enclave page.
-> + * %SGX_ELDB:		Load a swapped page in blocked state.
-> + * %SGX_ELDU:		Load a swapped page in unblocked state.
-> + * %SGX_EBLOCK:		Change page state to blocked i.e. entering hardware
-> + *			threads cannot access it and create new TLB entries.
-> + * %SGX_EPA:		Create a Version Array (VA) page used to store isvsvn
-> + *			number for a swapped EPC page.
-> + * %SGX_EWB:		Swap an enclave page to the regular memory. Checks that
-> + *			all threads have exited that were in the previous
-> + *			shoot-down sequence.
-> + * %SGX_ETRACK:		Start a new shoot down sequence. Used to together with
-> + *			EBLOCK to make sure that a page is safe to swap.
-> + * %SGX_EAUG:		Add a page to an initialized enclave.
-> + * %SGX_EMODPR:		Restrict an EPC page's permissions.
-> + * %SGX_EMODT:		Modify the page type of an EPC page.
-> + */
-> +enum sgx_encls_leaves {
-> +	SGX_ECREATE	= 0x00,
-> +	SGX_EADD	= 0x01,
-> +	SGX_EINIT	= 0x02,
-> +	SGX_EREMOVE	= 0x03,
-> +	SGX_EDGBRD	= 0x04,
-> +	SGX_EDGBWR	= 0x05,
-> +	SGX_EEXTEND	= 0x06,
-> +	SGX_ELDB	= 0x07,
-> +	SGX_ELDU	= 0x08,
-> +	SGX_EBLOCK	= 0x09,
-> +	SGX_EPA		= 0x0A,
-> +	SGX_EWB		= 0x0B,
-> +	SGX_ETRACK	= 0x0C,
-> +	SGX_EAUG	= 0x0D,
-> +	SGX_EMODPR	= 0x0E,
-> +	SGX_EMODT	= 0x0F,
-> +};
-> +
-> +#define SGX_MODULUS_SIZE 384
-> +
-> +/**
-> + * enum sgx_miscselect - additional information to an SSA frame
-> + * %SGX_MISC_EXINFO:	Report #PF or #GP to the SSA frame.
-> + *
-> + * Save State Area (SSA) is a stack inside the enclave used to store processor
-> + * state when an exception or interrupt occurs. This enum defines additional
-> + * information stored to an SSA frame.
-> + */
-> +enum sgx_miscselect {
-> +	SGX_MISC_EXINFO		= BIT(0),
-> +};
-> +
-> +#define SGX_MISC_RESERVED_MASK	GENMASK_ULL(63, 1)
-> +
-> +#define SGX_SSA_GPRS_SIZE		182
-> +#define SGX_SSA_MISC_EXINFO_SIZE	16
-> +
-> +/**
-> + * enum sgx_attributes - the attributes field in &struct sgx_secs
-> + * %SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-> + * %SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
-> + * %SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-> + * %SGX_ATTR_PROVISIONKEY:      Allow to use provisioning keys for remote
-> + *				attestation.
-> + * %SGX_ATTR_KSS:		Allow to use key separation and sharing (KSS).
-> + * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-> + *				sign cryptographic tokens that can be passed to
-> + *				EINIT as an authorization to run an enclave.
-> + */
-> +enum sgx_attribute {
-> +	SGX_ATTR_INIT		= BIT(0),
-> +	SGX_ATTR_DEBUG		= BIT(1),
-> +	SGX_ATTR_MODE64BIT	= BIT(2),
-> +	SGX_ATTR_PROVISIONKEY	= BIT(4),
-> +	SGX_ATTR_EINITTOKENKEY	= BIT(5),
-> +	SGX_ATTR_KSS		= BIT(7),
-> +};
-> +
-> +#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(7) | GENMASK_ULL(63, 8))
+> +Because the kernel can't arbitrarily read EPC memory or share RO backing pages
+> +between enclaves, traditional memory models such as CoW and fork() do not work
+> +with enclaves.  In other words, the architectural rules of EPC forces it to be
 
-Looking how bit 7 is part of the reserved mask but you have it above
-as SGX_ATTR_KSS too. Bit 6, OTOH, is not mentioned anywhere and it
-very much looks like you need to have BIT_ULL(6) above as part of the
-reserved mask instead of bit 7.
+                                                                  force
 
-Hmmm?
+> +treated as MAP_SHARED at all times.
+> +
+> +The inability to employ traditional memory models also means that EPC memory
+> +must be isolated from normal memory pools, e.g. attempting to use EPC memory
+> +for normal mappings would result in faults and/or perceived data corruption.
+> +Furthermore, EPC is not enumerated by as normal memory, e.g. BIOS enumerates
 
-> +#define SGX_ATTR_ALLOWED_MASK	(SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | \
-> +				 SGX_ATTR_KSS)
-> +#define SGX_SECS_RESERVED1_SIZE 24
-> +#define SGX_SECS_RESERVED2_SIZE 32
-> +#define SGX_SECS_RESERVED3_SIZE 96
-> +#define SGX_SECS_RESERVED4_SIZE 3836
+                           enumerated as
 
-I'd make those defines shorter...
+> +EPC as reserved memory in the e820 tables, or not at all.  As a result, EPC
+> +memory is directly managed by the SGX subsystem, e.g. SGX employs VM_PFNMAP to
+> +manually insert/zap/swap page table entries, and exposes EPC to userspace via
+> +a well known device, /dev/sgx/enclave.
+> +
+> +The net effect is that all enclave VMAs must be MAP_SHARED and are backed by
+> +a single file, /dev/sgx/enclave.
+> +
+> +EPC oversubscription
+> +====================
+> +
+> +SGX allows to have larger enclaves than amount of available EPC by providing a
+
+                                      than the amount of
+
+> +subset of leaf instruction for swapping EPC pages to the system memory.  The
+
+                  instructions  {I think}
+
+> +details of these instructions are discussed in the architecture document. Due
+> +to the unique requirements for swapping EPC pages, and because EPC pages do not
+> +have associated page structures, management of the EPC is not handled by the
+> +standard memory subsystem.
+> +
+> +SGX directly handles swapping of EPC pages, including a thread to initiate the
+> +reclaiming process and a rudimentary LRU mechanism. When the amount of free EPC
+> +pages goes below a low watermark the swapping thread starts reclaiming pages.
+> +The pages that have not been recently accessed (i.e. do not have the A bit set)
+> +are selected as victim pages. Each enclave holds an shmem file as a backing
+> +storage for reclaimed pages.
+> +
+> +Launch Control
+> +==============
+> +
+> +The current kernel implementation supports only writable MSRs. The launch is
+> +performed by setting the MSRs to the hash of the public key modulus of the
+> +enclave signer and a token with the valid bit set to zero. Because kernel makes
+
+                                                              Because the kernel
+
+> +ultimately all the launch decisions token are not needed for anything.  We
+
+   ultimately makes all the launch decisions, tokens are not
+
+
+> +don't need or have a launch enclave for generating them as the MSRs must always
+> +be writable.
+> +
+> +Provisioning
+> +============
+> +
+> +The use of provisioning must be controlled because it allows to get access to
+> +the provisioning keys to attest to a remote party that the software is running
+> +inside a legit enclave. This could be used by a malware network to ensure that
+
+            legitimate
+
+> +its nodes are running inside legit enclaves.
+
+                                legitimate
 
 > +
-> +/**
-> + * struct sgx_secs - SGX Enclave Control Structure (SECS)
-> + * @size:		size of the address space
-> + * @base:		base address of the  address space
-> + * @ssa_frame_size:	size of an SSA frame
-> + * @miscselect:		additional information stored to an SSA frame
-> + * @attributes:		attributes for enclave
-> + * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-> + * @mrenclave:		SHA256-hash of the enclave contents
-> + * @mrsigner:		SHA256-hash of the public key used to sign the SIGSTRUCT
-> + * @isvprodid:		a user-defined value that is used in key derivation
-> + * @isvsvn:		a user-defined value that is used in key derivation
-> + *
-> + * SGX Enclave Control Structure (SECS) is a special enclave page that is not
-> + * visible in the address space. In fact, this structure defines the address
-> + * range and other global attributes for the enclave and it is the first EPC
-> + * page created for any enclave. It is moved from a temporary buffer to an EPC
-> + * by the means of ENCLS(ECREATE) leaf.
-> + */
-> +struct sgx_secs {
-> +	u64 size;
-> +	u64 base;
-> +	u32 ssa_frame_size;
-> +	u32 miscselect;
-> +	u8  reserved1[SGX_SECS_RESERVED1_SIZE];
-> +	u64 attributes;
-> +	u64 xfrm;
-> +	u32 mrenclave[8];
-> +	u8  reserved2[SGX_SECS_RESERVED2_SIZE];
-> +	u32 mrsigner[8];
-> +	u8  reserved3[SGX_SECS_RESERVED3_SIZE];
-> +	u16 isvprodid;
-> +	u16 isvsvn;
-> +	u8  reserved4[SGX_SECS_RESERVED4_SIZE];
+> +The driver introduces a special device file /dev/sgx/provision and a special
+> +ioctl SGX_IOC_ENCLAVE_SET_ATTRIBUTE to accomplish this. A file descriptor
+> +pointing to /dev/sgx/provision is passed to ioctl from which kernel authorizes
+> +the PROVISION_KEY attribute to the enclave.
 
-... so that they don't stick too much here.
 
-...
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+~Randy
