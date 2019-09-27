@@ -1,99 +1,144 @@
-Return-Path: <SRS0=9Y++=XV=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=CuW6=XW=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB046C352A9
-	for <linux-sgx@archiver.kernel.org>; Thu, 26 Sep 2019 17:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66957C4360C
+	for <linux-sgx@archiver.kernel.org>; Fri, 27 Sep 2019 10:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A11222C6
-	for <linux-sgx@archiver.kernel.org>; Thu, 26 Sep 2019 17:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347B5207E0
+	for <linux-sgx@archiver.kernel.org>; Fri, 27 Sep 2019 10:20:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lHF9+y0r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbfIZRmh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 26 Sep 2019 13:42:37 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:43814 "EHLO wind.enjellic.com"
+        id S1726116AbfI0KUQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 27 Sep 2019 06:20:16 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60750 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727824AbfIZRmh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 26 Sep 2019 13:42:37 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x8QHgPKl023931;
-        Thu, 26 Sep 2019 12:42:25 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x8QHgO7N023930;
-        Thu, 26 Sep 2019 12:42:24 -0500
-Date:   Thu, 26 Sep 2019 12:42:24 -0500
-From:   "Dr. G.W. Wettstein" <greg@wind.enjellic.com>
-Message-Id: <201909261742.x8QHgO7N023930@wind.enjellic.com>
-In-Reply-To: Sean Christopherson <sean.j.christopherson@intel.com>
-       "Re: SGX release branch." (Sep 19,  1:00pm)
-Reply-To: greg@enjellic.com
-X-Mailer: Mail User's Shell (7.2.6-ESD1.0 03/31/2012)
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: Re: SGX release branch.
-Cc:     linux-sgx@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        shay.katz-zamir@intel.com, serge.ayoun@intel.com
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 26 Sep 2019 12:42:25 -0500 (CDT)
+        id S1726087AbfI0KUP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 27 Sep 2019 06:20:15 -0400
+Received: from zn.tnic (p200300EC2F0ABB00FD8B4CEC558476E8.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:bb00:fd8b:4cec:5584:76e8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A912B1EC0716;
+        Fri, 27 Sep 2019 12:20:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1569579613;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bvEi6n7NBCi367l5LS3E1JRtEJOQ/n+3qud74Zlw/UE=;
+        b=lHF9+y0rrasRNBd/VkCcTfZRIDvyTjicJg4FTtoJK8P7TrcZkiWpj19o2SXJr16Hxal5QW
+        SVV/hOoPRXF10iYdd3dWsW5Rov75YCocjgpOoaXHgK66pHHYQ884I+PrJIZErdk0ecHtIp
+        jr6F/Gq+AmwkBWtYMOo/g7WaqSvW/2s=
+Date:   Fri, 27 Sep 2019 12:20:13 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
+        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com
+Subject: Re: [PATCH v22 05/24] x86/sgx: Add ENCLS architectural error codes
+Message-ID: <20190927102013.GA23002@zn.tnic>
+References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
+ <20190903142655.21943-6-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190903142655.21943-6-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sep 19,  1:00pm, Sean Christopherson wrote:
-} Subject: Re: SGX release branch.
-
-Good day to everyone.
-
-> On Thu, Sep 19, 2019 at 09:50:30AM -0500, Dr. G.W. Wettstein wrote:
-> > It would be perhaps helpful for everyone if we could have a quick
-> > summary of what the remote branches in jarkko-sgx are are targeting.
+On Tue, Sep 03, 2019 at 05:26:36PM +0300, Jarkko Sakkinen wrote:
+> Document ENCLS architectural error codes. These error codes are returned by
+> the SGX opcodes. Make the header as part of the uapi so that they can be
+> used in some situations directly returned to the user space (ENCLS[EINIT]
+> leaf function error codes could be one potential use case).
 > 
-> I recommend ignoring everything except jarkko/master.  master isn't
-> necessarily the bleeding edge, but it's the canonical reference with
-> respect to changes that have passed internal review, and for the most part
-> it is stable (there have been a few hiccups).
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/uapi/asm/sgx_errno.h | 91 +++++++++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+>  create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
+> 
+> diff --git a/arch/x86/include/uapi/asm/sgx_errno.h b/arch/x86/include/uapi/asm/sgx_errno.h
+> new file mode 100644
+> index 000000000000..48b87aed58d7
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/sgx_errno.h
+> @@ -0,0 +1,91 @@
+> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
+> +/*
+> + * Copyright(c) 2018 Intel Corporation.
+> + *
+> + * Contains the architecturally defined error codes that are returned by SGX
+> + * instructions, e.g. ENCLS, and may be propagated to userspace via errno.
+> + */
+> +
+> +#ifndef _UAPI_ASM_X86_SGX_ERRNO_H
+> +#define _UAPI_ASM_X86_SGX_ERRNO_H
+> +
+> +/**
+> + * enum sgx_encls_leaves - return codes for ENCLS, ENCLU and ENCLV
+> + * %SGX_SUCCESS:		No error.
+> + * %SGX_INVALID_SIG_STRUCT:	SIGSTRUCT contains an invalid value.
+> + * %SGX_INVALID_ATTRIBUTE:	Enclave is not attempting to access a resource
 
-> All other branches in Jarkko's repository are either unrelated to
-> the initial upstreaming and/or are for Jarkko's own development.
+That first "not" looks wrong.
 
-Thank you for the clarifications.
+> + *				for which it is not authorized.
+> + * %SGX_BLKSTATE:		EPC page is already blocked.
+> + * %SGX_INVALID_MEASUREMENT:	SIGSTRUCT or EINITTOKEN contains an incorrect
+> + *				measurement.
+> + * %SGX_NOTBLOCKABLE:		EPC page type is not one which can be blocked.
+> + * %SGX_PG_INVLD:		EPC page is invalid (and cannot be blocked).
+> + * %SGX_EPC_PAGE_CONFLICT:	EPC page in use by another SGX instruction.
+> + * %SGX_INVALID_SIGNATURE:	Enclave's signature does not validate with
+> + *				public key enclosed in SIGSTRUCT.
+> + * %SGX_MAC_COMPARE_FAIL:	MAC check failed when reloading EPC page.
+> + * %SGX_PAGE_NOT_BLOCKED:	EPC page is not marked as blocked.
+> + * %SGX_NOT_TRACKED:		ETRACK has not been completed on the EPC page.
+> + * %SGX_VA_SLOT_OCCUPIED:	Version array slot contains a valid entry.
+> + * %SGX_CHILD_PRESENT:		Enclave has child pages present in the EPC.
+> + * %SGX_ENCLAVE_ACT:		Logical processors are currently executing
+> + *				inside the enclave.
+> + * %SGX_ENTRYEPOCH_LOCKED:	SECS locked for EPOCH update, i.e. an ETRACK is
+> + *				currently executing on the SECS.
+> + * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
+> + *				public key does not match IA32_SGXLEPUBKEYHASH.
+> + * %SGX_PREV_TRK_INCMPL:	All processors did not complete the previous
+> + *				tracking sequence.
+> + * %SGX_PG_IS_SECS:		Target EPC page is an SECS and cannot be
+> + *				blocked.
+> + * %SGX_PAGE_ATTRIBUTES_MISMATCH:	Attributes of the EPC page do not match
+> + *					the expected values.
 
-Is it just us or is there something up with the history on these
-branches?
+You sometimes call it "PG" and sometimes "PAGE". Unify?
 
-We have a local tracking branch that was created on a previous
-instance of jarkko-sgx/master that doesn't bear any resemblance to the
-current state of jarkko-sgx/master.  The version that we had branched
-against had the driver broken into a core and driver component, the
-driver was in a sub-directory of the core SGX code and could be built
-as a module.
+> + * %SGX_PAGE_NOT_MODIFIABLE:	EPC page cannot be modified because it is in
+> + *				the PENDING or MODIFIED state.
+> + * %SGX_PAGE_NOT_DEBUGGABLE:	EPC page cannot be modified because it is in
+> + *				the PENDING or MODIFIED state.
 
-We created a new tracking branch against the current jarkko-sgx/master
-and the driver architecture is completely different.  Most notably the
-driver cannot be built as a module and there is no driver
-sub-directory.
+Same description text?
 
-We have also also universally had pull's end up with merge conflicts,
-even when there have been no changes to the local branch.
+...
 
-I'm assuming now, given the comments above, that moving forward
-jarkko-sgx/master will be a continuous development history?
+-- 
+Regards/Gruss,
+    Boris.
 
-Have a good remainder of the week.
-
-Dr. Greg
-
-}-- End of excerpt from Sean Christopherson
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC               SGX secured infrastructure and
-4206 N. 19th Ave.           autonomously self-defensive platforms.
-Fargo, ND  58102
-PH: 701-281-1686            EMAIL: greg@idfusion.net
-------------------------------------------------------------------------------
-"Courage is not the absence of fear, but rather the judgement that
- something else is more important than fear."
-                                -- Ambrose Redmoon
+https://people.kernel.org/tglx/notes-about-netiquette
