@@ -6,17 +6,17 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 914EBECE598
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA5AC4360C
 	for <linux-sgx@archiver.kernel.org>; Tue,  8 Oct 2019 04:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719FD206C2
+	by mail.kernel.org (Postfix) with ESMTP id 9528F20679
 	for <linux-sgx@archiver.kernel.org>; Tue,  8 Oct 2019 04:46:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfJHEqT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1729638AbfJHEqT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Tue, 8 Oct 2019 00:46:19 -0400
 Received: from mga11.intel.com ([192.55.52.93]:8177 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729638AbfJHEqT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1729285AbfJHEqT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Tue, 8 Oct 2019 00:46:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,15 +24,15 @@ Received: from fmsmga001.fm.intel.com ([10.253.24.23])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 21:46:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="206566533"
+   d="scan'208";a="206566537"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by fmsmga001.fm.intel.com with ESMTP; 07 Oct 2019 21:46:18 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 15/16] selftests/x86/sgx: Add sub-test for exception behavior with exit handler
-Date:   Mon,  7 Oct 2019 21:46:12 -0700
-Message-Id: <20191008044613.12350-16-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 16/16] x86/vdso: sgx: Rework __vdso_sgx_enter_enclave() to prefer "no callback"
+Date:   Mon,  7 Oct 2019 21:46:13 -0700
+Message-Id: <20191008044613.12350-17-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191008044613.12350-1-sean.j.christopherson@intel.com>
 References: <20191008044613.12350-1-sean.j.christopherson@intel.com>
@@ -43,154 +43,171 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a test to verify the kernel and vDSO provide the correct exception
-info when using an exit handler, e.g. leaf, trapnr and error_code, and
-that the vDSO correctly interprets the return from the exit handler.  To
-do so, change the enclave's protections to read-only and iteratively fix
-the faults encountered, with various assertions along the way, e.g. the
-first fault should always be a !writable fault on the TCS, at least
-three total faults should occur, etc...
+Rework __vdso_sgx_enter_enclave() to prioritize the flow where userspace
+is not providing a callback, which is the preferred method of operation.
+Using a callback requires a retpoline, and the only known motivation for
+employing a callback is to allow the enclave to muck with the stack of
+the untrusted runtime.
 
-Suggested-by: Cedric Xing <cedric.xing@intel.com>
+Opportunistically replace the majority of the local labels with local
+symbol names to improve the readability of the code.
+
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- tools/testing/selftests/x86/sgx/defines.h |  2 +
- tools/testing/selftests/x86/sgx/main.c    | 87 ++++++++++++++++++++++-
- 2 files changed, 87 insertions(+), 2 deletions(-)
+ arch/x86/entry/vdso/vsgx_enter_enclave.S | 120 ++++++++++++++---------
+ 1 file changed, 71 insertions(+), 49 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/sgx/defines.h b/tools/testing/selftests/x86/sgx/defines.h
-index ab9671b8a993..199a830e198a 100644
---- a/tools/testing/selftests/x86/sgx/defines.h
-+++ b/tools/testing/selftests/x86/sgx/defines.h
-@@ -37,7 +37,9 @@ typedef uint64_t u64;
- #include "../../../../../arch/x86/include/uapi/asm/sgx.h"
+diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+index de54e47c83f4..fc5622dcd2fa 100644
+--- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
++++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+@@ -85,75 +85,97 @@ ENTRY(__vdso_sgx_enter_enclave)
+ 	mov	%rsp, %rbp
+ 	.cfi_def_cfa_register	%rbp
  
- #define ENCLU_EENTER	2
-+#define ENCLU_ERESUME	3
+-1:	/* EENTER <= leaf <= ERESUME */
++.Lenter_enclave:
++	/* EENTER <= leaf <= ERESUME */
+ 	cmp	$0x2, %eax
+-	jb	6f
++	jb	.Linvalid_leaf
+ 	cmp	$0x3, %eax
+-	ja	6f
++	ja	.Linvalid_leaf
  
- #define GP_VECTOR 13
-+#define PF_VECTOR 14
+ 	/* Load TCS and AEP */
+ 	mov	0x10(%rbp), %rbx
+-	lea	2f(%rip), %rcx
++	lea	.Lasync_exit_pointer(%rip), %rcx
  
- #endif /* TYPES_H */
-diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
-index ae1822b10c6f..8c3f0cd41098 100644
---- a/tools/testing/selftests/x86/sgx/main.c
-+++ b/tools/testing/selftests/x86/sgx/main.c
-@@ -337,14 +337,58 @@ static int basic_exit_handler(long rdi, long rsi, long rdx, int ret,
- 	return 0;
- }
+ 	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+-2:	enclu
++.Lasync_exit_pointer:
++.Lenclu_eenter_eresume:
++	enclu
  
-+static int nr_page_faults;
+-	/* EEXIT path */
++	/* EEXIT jumps here unless the enclave is doing something fancy. */
+ 	xor	%eax, %eax
+-3:	mov	%eax, %ecx
+-
+-	/* Call the exit handler if supplied */
+-	mov	0x20(%rbp), %rax
+-	test	%rax, %rax
+-	jz	7f
+-	/* Align stack per x86_64 ABI. The original %rsp is saved in %rbx to be
+-	 * restored after the exit handler returns. */
 +
-+static int mprotect_exit_handler(long rdi, long rsi, long rdx, int ret,
-+				 long r8, long r9, void *tcs, long ursp,
-+				 struct sgx_enclave_exception *e)
-+{
-+	int prot, rc;
++	/* Invoke userspace's exit handler if one was provided. */
++.Lhandle_exit:
++	cmp	$0, 0x20(%rbp)
++	jne	.Linvoke_userspace_handler
 +
-+	if (!ret)
-+		return 0;
++.Lout:
++	leave
++	.cfi_def_cfa		%rsp, 8
++	ret
 +
-+	++nr_page_faults;
++.Linvalid_leaf:
++	mov	$(-EINVAL), %eax
++	jmp	.Lout
 +
-+	ASSERT_EQ(ret, -EFAULT);
-+	ASSERT_EQ(e->trapnr, PF_VECTOR);
-+	TEST_ASSERT(e->leaf == ENCLU_EENTER || e->leaf == ENCLU_ERESUME,
-+		    "Expected #PF on EENTER or ERESUME, leaf = %d\n", e->leaf);
-+	TEST_ASSERT(e->error_code & 1, "Unexpected !PRESENT #PF");
++.Lhandle_exception:
++	mov	0x18(%rbp), %rcx
++	test    %rcx, %rcx
++	je	.Lskip_exception_info
 +
-+	/* The first #PF should be on the TCS, passed in via R9. */
-+	if (nr_page_faults == 1)
-+		ASSERT_EQ(r9, (e->address & ~0xfff));
++	/* Fill optional exception info. */
++	mov	%eax, EX_LEAF(%rcx)
++	mov	%di,  EX_TRAPNR(%rcx)
++	mov	%si,  EX_ERROR_CODE(%rcx)
++	mov	%rdx, EX_ADDRESS(%rcx)
++.Lskip_exception_info:
++	mov	$(-EFAULT), %eax
++	jmp	.Lhandle_exit
 +
-+	prot = PROT_READ;
-+	if (e->error_code & 0x2)
-+		prot |= PROT_WRITE;
-+	if (e->error_code & 0x10)
-+		prot |= PROT_EXEC;
-+	rc = mprotect((void *)(e->address & ~0xfff), PAGE_SIZE, prot);
-+	ASSERT_EQ(rc, 0);
-+
++.Linvoke_userspace_handler:
 +	/*
-+	 * If EENTER faulted, bounce all the way back to the test to verify
-+	 * the vDSO is handling the return value correctly.
++	 * Align stack per x86_64 ABI. Save the original %rsp in %rbx to be
++	 * restored after the callback returns.
 +	 */
-+	if (e->leaf == ENCLU_EENTER)
-+		return -EAGAIN;
+ 	mov	%rsp, %rbx
+ 	and	$-0x10, %rsp
+-	/* Clear RFLAGS.DF per x86_64 ABI */
+-	cld
+-	/* Parameters for the exit handler */
 +
-+	/* Else ERESUME faulted, simply do ERESUME again. */
-+	return e->leaf;
-+}
++	/* Push @e, u_rsp and @tcs as parameters to the callback. */
+ 	push	0x18(%rbp)
+ 	push	%rbx
+ 	push	0x10(%rbp)
+-	/* Call *%rax via retpoline */
+-	call	40f
+-	/* Restore %rsp to its original value left off by the enclave from last
+-	 * exit */
 +
- /*
-  * Test the vDSO API, __vdso_sgx_enter_enclave(), with an exit handler.
-  */
--static void test_vdso_with_exit_handler(struct sgx_secs *secs)
-+static void test_vdso_with_exit_handler(struct sgx_secs *secs,
-+					unsigned long encl_size)
- {
- 	struct sgx_enclave_exception exception;
- 	uint64_t result = 0;
- 	long ret;
-+	int r;
++	/* Pass the "return" value to the callback via %rcx. */
++	mov	%eax, %ecx
++
++	/* Clear RFLAGS.DF per x86_64 ABI */
++	cld
++
++	/* Load the callback pointer to %rax and invoke it via retpoline. */
++	mov	0x20(%rbp), %rax
++	call	.Lretpoline
++
++	/* Restore %rsp to its post-exit value. */
+ 	mov	%rbx, %rsp
+-	/* Positive return value from the exit handler will be interpreted as
+-	 * an ENCLU leaf, while a non-positive value will be interpreted as the
+-	 * return value to be passed back to the caller. */
+-	jmp	1b
+-40:	/* retpoline */
+-	call	42f
+-41:	pause
+-	lfence
+-	jmp	41b
+-42:	mov	%rax, (%rsp)
+-	ret
  
- 	memset(&exception, 0, sizeof(exception));
- 
-@@ -352,6 +396,45 @@ static void test_vdso_with_exit_handler(struct sgx_secs *secs)
- 		       &exception, basic_exit_handler);
- 	ASSERT_EQ(ret, 0);
- 	ASSERT_EQ(result, MAGIC);
-+
+-5:	/* Exception path */
+-	mov	0x18(%rbp), %rcx
+-	jrcxz	52f
+-	mov	%eax, EX_LEAF(%rcx)
+-	mov	%di,  EX_TRAPNR(%rcx)
+-	mov	%si,  EX_ERROR_CODE(%rcx)
+-	mov	%rdx, EX_ADDRESS(%rcx)
+-52:	mov	$-EFAULT, %eax
+-	jmp	3b
+-
+-6:	/* Unsupported ENCLU leaf */
 +	/*
-+	 * Map the enclave read-only, then re-enter the enclave.  The exit
-+	 * handler will service the resulting page faults using mprotect() to
-+	 * restore the correct permissions.
++	 * If the return from callback is zero or negative, return immediately,
++	 * else re-execute ENCLU with the postive return value interpreted as
++	 * the requested ENCLU leaf.
 +	 */
-+	r = mprotect((void *)secs->base, encl_size, PROT_READ);
-+	TEST_ASSERT(!r, "mprotect() on enclave failed: %s\n", strerror(errno));
-+
-+
-+	/* Loop on EENTER until it succeeds or it fails unexpectedly. */
-+	result = 0;
-+	do {
-+		/*
-+		 * Pass the address of the TCS to the exit handler via R9.
-+		 * The first page fault should be on the TCS and R9 should
-+		 * not be modified prior to entering the enclave (which
-+		 * requires an accessible TCS page).
-+		 */
-+		ret = sgx_call((void *)&MAGIC, &result, 0, 0, 0, secs->base,
-+			       (void *)secs->base, &exception,
-+			       mprotect_exit_handler);
-+	} while (ret == -EAGAIN);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(result, MAGIC);
-+
-+	/* Enclave should re-execute cleanly. */
-+	result = 0;
-+	ret = sgx_call((void *)&MAGIC, &result, 0, 0, 0, 0, (void *)secs->base,
-+		       &exception, basic_exit_handler);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(result, MAGIC);
-+
-+	/*
-+	 * At least three faults should occur: one for the TCS, one for the
-+	 * executable code, and one for the writable data (@result).
-+	 */
-+	TEST_ASSERT(nr_page_faults >= 3, "Expected 3+ page faults, only hit %d",
-+		    nr_page_faults);
- }
+ 	cmp	$0, %eax
+-	jle	7f
+-	mov	$-EINVAL, %eax
++	jle	.Lout
++	jmp	.Lenter_enclave
  
- int main(int argc, char *argv[], char *envp[])
-@@ -381,7 +464,7 @@ int main(int argc, char *argv[], char *envp[])
- 	encl_build(&secs, bin, bin_size, &sigstruct);
+-7:	/* Epilog */
+-	leave
+-	.cfi_def_cfa		%rsp, 8
++.Lretpoline:
++	call	2f
++1:	pause
++	lfence
++	jmp	1b
++2:	mov	%rax, (%rsp)
+ 	ret
+ 	.cfi_endproc
  
- 	test_vdso_no_exit_handler(&secs);
--	test_vdso_with_exit_handler(&secs);
-+	test_vdso_with_exit_handler(&secs, bin_size);
+-_ASM_VDSO_EXTABLE_HANDLE(2b, 5b)
++_ASM_VDSO_EXTABLE_HANDLE(.Lenclu_eenter_eresume, .Lhandle_exception)
  
- 	printf("All tests passed!\n");
- 	exit(0);
+ ENDPROC(__vdso_sgx_enter_enclave)
 -- 
 2.22.0
 
