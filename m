@@ -2,181 +2,249 @@ Return-Path: <SRS0=7vij=YC=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0CEC47404
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Oct 2019 14:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C090ECE58C
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Oct 2019 18:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BAE7206BB
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Oct 2019 14:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 375A420679
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Oct 2019 18:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbfJIOfd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Oct 2019 10:35:33 -0400
-Received: from mga09.intel.com ([134.134.136.24]:54212 "EHLO mga09.intel.com"
+        id S1731133AbfJISBO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 9 Oct 2019 14:01:14 -0400
+Received: from mga17.intel.com ([192.55.52.151]:44853 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728019AbfJIOfc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 9 Oct 2019 10:35:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1730546AbfJISBN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 9 Oct 2019 14:01:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 07:35:31 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 11:00:56 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,276,1566889200"; 
-   d="scan'208";a="206889973"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Oct 2019 07:35:30 -0700
-Date:   Wed, 9 Oct 2019 17:35:29 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     sean.j.christopherson@intel.com, shay.katz-zamir@intel.com,
-        serge.ayoun@intel.com
-Subject: Re: x86/sgx: v23-rc1
-Message-ID: <20191009143529.GA19213@linux.intel.com>
-References: <20191009140723.GA18318@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.67,277,1566889200"; 
+   d="scan'208";a="395103355"
+Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
+  by fmsmga006.fm.intel.com with ESMTP; 09 Oct 2019 11:00:55 -0700
+Subject: Re: [PATCH for_v23 16/16] x86/vdso: sgx: Rework
+ __vdso_sgx_enter_enclave() to prefer "no callback"
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org
+References: <20191008044613.12350-1-sean.j.christopherson@intel.com>
+ <20191008044613.12350-17-sean.j.christopherson@intel.com>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <15c03e7e-cd98-5ea2-82a1-a11bec4abe2a@intel.com>
+Date:   Wed, 9 Oct 2019 11:00:55 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009140723.GA18318@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191008044613.12350-17-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 05:07:23PM +0300, Jarkko Sakkinen wrote:
-> Baseline before adding Sean's updates. This contains only my updates. I
-> spent this day mostly fixing diff's. Especially these two were somewhat
-> unclean:
-> 
-> 1. x86/sgx: Add a page reclaimer
-> 2. x86/sgx: Linux Enclave Driver
-> 
-> Now they pile up nicely (I think). So I decided to do this tag since now
-> commit's in the sense of form and shape are legit. And also because
-> things, well, work.
-> 
-> I'll continue from this by integrating Sean's changes. You can see below
-> what has been already changed.
-> 
-> /Jarkko
-> 
-> tag v23-rc1
-> Tagger: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Date:   Wed Oct 9 16:59:10 2019 +0300
-> 
-> x86/sgx: v23-rc1 patch set
-> 
-> * Return -EIO instead of -ECANCELED when ptrace() fails to read a TCS page.
-> * In the reclaimer, pin page before ENCLS[EBLOCK] because pinning can fail
->   (because of OOM) even in legit behaviour and after EBLOCK the reclaiming
->   flow can be only reverted by killing the whole enclave.
-> * Fixed SGX_ATTR_RESERVED_MASK. Bit 7 was marked as reserved while in fact
->   it should have been bit 6 (Table 37-3 in the SDM).
-> * Return -EPERM from SGX_IOC_ENCLAVE_INIT when ENCLS[EINIT] returns an SGX
->   error code.
-> -----BEGIN PGP SIGNATURE-----
-> 
-> iJYEABYIAD4WIQRE6pSOnaBC00OEHEIaerohdGur0gUCXZ3nxCAcamFya2tvLnNh
-> a2tpbmVuQGxpbnV4LmludGVsLmNvbQAKCRAaerohdGur0mKVAQDcmIGs2f8y8hDY
-> b7zaQdNbaAMgsEkQ3ohMA88fbm2UQwD+P7y5AcAxzdccbgh++7RDy6XR2Ow2pluW
-> vCGUvRAhgwY=
-> =LCI3
-> -----END PGP SIGNATURE-----
-> 
-> /Jarkko
+On 10/7/2019 9:46 PM, Sean Christopherson wrote:
+> Rework __vdso_sgx_enter_enclave() to prioritize the flow where userspace
+> is not providing a callback, which is the preferred method of operation.
 
-Getting this with rc1 (after running selftest). Leaving from office.
-No time to check this today but here are anyway logs.
+Processors have branch predictors so your "prioritizing" may not get 
+what your want.
 
-[   96.906523] ============================================
-[   96.906600] WARNING: possible recursive locking detected
-[   96.906679] 5.4.0-rc1-custom #66 Not tainted
-[   96.906741] --------------------------------------------
-[   96.906817] test_sgx/1297 is trying to acquire lock:
-[   96.906889] ffff99032aebdb18 (&mm->mmap_sem#2){++++}, at: __do_page_fault+0x424/0x4f0
-[   96.907009]
-               but task is already holding lock:
-[   96.907091] ffff99032aebdb18 (&mm->mmap_sem#2){++++}, at: sgx_ioc_enclave_add_page+0x1fc/0x620
-[   96.907217]
-               other info that might help us debug this:
-[   96.907308]  Possible unsafe locking scenario:
+But if you still insist, a simple ht/hnt prefixing the original branch 
+instruction would have sufficed. Rearrangement of code blocks is indeed 
+unnecessary.
 
-[   96.907391]        CPU0
-[   96.907428]        ----
-[   96.907464]   lock(&mm->mmap_sem#2);
-[   96.907516]   lock(&mm->mmap_sem#2);
-[   96.907569]
-                *** DEADLOCK ***
+A caveat though, for any given process, whether it supplies a callback 
+or not is usually hard-coded. So either it always takes the callback 
+path, or it always takes the other. And the branch predictor will do 
+well in both cases. It's usually unwise to apply ht/hnt prefixes.
 
-[   96.907650]  May be due to missing lock nesting notation
+> Using a callback requires a retpoline, and the only known motivation for
+> employing a callback is to allow the enclave to muck with the stack of
+> the untrusted runtime.
+> 
+> Opportunistically replace the majority of the local labels with local
+> symbol names to improve the readability of the code.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/entry/vdso/vsgx_enter_enclave.S | 120 ++++++++++++++---------
+>   1 file changed, 71 insertions(+), 49 deletions(-)
+> 
+> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> index de54e47c83f4..fc5622dcd2fa 100644
+> --- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> @@ -85,75 +85,97 @@ ENTRY(__vdso_sgx_enter_enclave)
+>   	mov	%rsp, %rbp
+>   	.cfi_def_cfa_register	%rbp
+>   
+> -1:	/* EENTER <= leaf <= ERESUME */
+> +.Lenter_enclave:
+> +	/* EENTER <= leaf <= ERESUME */
+>   	cmp	$0x2, %eax
+> -	jb	6f
+> +	jb	.Linvalid_leaf
+>   	cmp	$0x3, %eax
+> -	ja	6f
+> +	ja	.Linvalid_leaf
+>   
+>   	/* Load TCS and AEP */
+>   	mov	0x10(%rbp), %rbx
+> -	lea	2f(%rip), %rcx
+> +	lea	.Lasync_exit_pointer(%rip), %rcx
+>   
+>   	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+> -2:	enclu
+> +.Lasync_exit_pointer:
+> +.Lenclu_eenter_eresume:
+> +	enclu
+>   
+> -	/* EEXIT path */
+> +	/* EEXIT jumps here unless the enclave is doing something fancy. */
+>   	xor	%eax, %eax
+> -3:	mov	%eax, %ecx
+> -
+> -	/* Call the exit handler if supplied */
+> -	mov	0x20(%rbp), %rax
+> -	test	%rax, %rax
+> -	jz	7f
 
-[   96.907745] 2 locks held by test_sgx/1297:
-[   96.907804]  #0: ffff99032aebdb18 (&mm->mmap_sem#2){++++}, at: sgx_ioc_enclave_add_page+0x1fc/0x620
-[   96.907935]  #1: ffff990322de0080 (&encl->lock){+.+.}, at: sgx_ioc_enclave_add_page+0x212/0x620
-[   96.910109]
-               stack backtrace:
-[   96.914616] CPU: 0 PID: 1297 Comm: test_sgx Not tainted 5.4.0-rc1-custom #66
-[   96.918182] Hardware name: Intel Corporation NUC7CJYH/NUC7JYB, BIOS JYGLKCPX.86A.0047.2018.1219.1246 12/19/2018
-[   96.921795] Call Trace:
-[   96.925209]  dump_stack+0x8e/0xd5
-[   96.928462]  __lock_acquire+0xeab/0x1470
-[   96.931648]  ? __do_fault+0x57/0x11d
-[   96.934761]  lock_acquire+0xa3/0x180
-[   96.937820]  ? __do_page_fault+0x424/0x4f0
-[   96.940866]  down_read+0x30/0x150
-[   96.943867]  ? __do_page_fault+0x424/0x4f0
-[   96.946889]  __do_page_fault+0x424/0x4f0
-[   96.949792]  do_page_fault+0x2c/0x1a0
-[   96.952602]  page_fault+0x39/0x40
-[   96.955400] RIP: 0010:sgx_ioc_enclave_add_page+0x3aa/0x620
-[   96.958181] Code: 9d 10 ff ff ff 48 89 c8 48 81 e1 00 f0 ff ff 83 e0 0f 48 8d 14 40 48 8d 04 90 49 8d 04 c0 48 2b 08 48 03 48 08 b8 01 00 00 00 <0f> 01 cf 31 c0 0f 01 ca 85 c0 0f 85 0b 02 00 00 65 48 8b 04 25 c0
-[   96.964133] RSP: 0018:ffffb46640df3c80 EFLAGS: 00050286
-[   96.967141] RAX: 0000000000000001 RBX: ffffb46640df3cc0 RCX: ffffb4664ddfd000
-[   96.970254] RDX: 0000000000000000 RSI: 00007f2d7a30f000 RDI: 0000000000000246
-[   96.973440] RBP: ffffb46640df3db0 R08: ffffffffa8faf8a0 R09: 0000000000000000
-[   96.976698] R10: 0000000000000000 R11: 0000000000000000 R12: ffff990322de0000
-[   96.980048] R13: ffff99032ba198c0 R14: 0000000000000000 R15: ffff99033a10cfe0
-[   96.983425]  ? avc_has_extended_perms+0x1f6/0x610
-[   96.986830]  sgx_ioctl+0x87/0x470
-[   96.990247]  ? sgx_ioctl+0x87/0x470
-[   96.993696]  do_vfs_ioctl+0xa9/0x6d0
-[   96.997151]  ? tomoyo_file_ioctl+0x19/0x20
-[   97.000571]  ksys_ioctl+0x75/0x80
-[   97.003983]  ? do_syscall_64+0x17/0x230
-[   97.007285]  __x64_sys_ioctl+0x1a/0x20
-[   97.010487]  do_syscall_64+0x5f/0x230
-[   97.013612]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   97.016791] RIP: 0033:0x7f2d79e135d7
-[   97.019897] Code: b3 66 90 48 8b 05 b1 48 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 81 48 2d 00 f7 d8 64 89 01 48
-[   97.026332] RSP: 002b:00007ffd983721f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000010
-[   97.029673] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2d79e135d7
-[   97.033037] RDX: 00007ffd98372260 RSI: 000000004020a401 RDI: 0000000000000003
-[   97.036426] RBP: 00007ffd98372330 R08: 0000000000000003 R09: 0000000000000000
-[   97.039813] R10: 00007ffd98372350 R11: 0000000000000202 R12: 00005565ae6e89e0
-[   97.043190] R13: 00007ffd98373c40 R14: 0000000000000000 R15: 0000000000000000
-[  681.794211] kmemleak: 1 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+> -	/* Align stack per x86_64 ABI. The original %rsp is saved in %rbx to be
+> -	 * restored after the exit handler returns. */
+> +
+> +	/* Invoke userspace's exit handler if one was provided. */
+> +.Lhandle_exit:
+> +	cmp	$0, 0x20(%rbp)
+> +	jne	.Linvoke_userspace_handler
+> +
+> +.Lout:
+> +	leave
+> +	.cfi_def_cfa		%rsp, 8
+> +	ret
+> +
+> +.Linvalid_leaf:
 
-$ sudo cat /sys/kernel/debug/kmemleak
-[sudo] password for jsakkine:
-unreferenced object 0xffff990325b69eb0 (size 16):
-  comm "kworker/u8:1", pid 31, jiffies 4294895395 (age 1718.288s)
-  hex dump (first 16 bytes):
-    6d 65 6d 73 74 69 63 6b 30 00 01 00 00 00 00 00  memstick0.......
-  backtrace:
-    [<0000000010512df5>] __kmalloc_track_caller+0x139/0x280
-    [<00000000a5374cb0>] kstrdup+0x31/0x60
-    [<00000000c59be911>] kstrdup_const+0x24/0x30
-    [<00000000ff88e957>] kvasprintf_const+0x86/0xa0
-    [<0000000050affb9a>] kobject_set_name_vargs+0x23/0x90
-    [<00000000839b8dd7>] dev_set_name+0x4e/0x70
-    [<0000000069897a8c>] memstick_check+0xdf/0x3a3 [memstick]
-    [<00000000dffb0c9f>] process_one_work+0x281/0x5c0
-    [<00000000090981e2>] worker_thread+0x34/0x400
-    [<00000000bb117b3c>] kthread+0x121/0x140
-    [<000000004d2f4c32>] ret_from_fork+0x24/0x50
+Please set frame pointer back to %rbp here, or stack unwinding will fail.
 
-/Jarkko
+> +	mov	$(-EINVAL), %eax
+> +	jmp	.Lout
+> +
+> +.Lhandle_exception:
+> +	mov	0x18(%rbp), %rcx
+> +	test    %rcx, %rcx
+> +	je	.Lskip_exception_info
+
+A single "jrcxz .Lskip_exception_info" is equivalent to the above 2 
+instructions combined.
+
+> +
+> +	/* Fill optional exception info. */
+> +	mov	%eax, EX_LEAF(%rcx)
+> +	mov	%di,  EX_TRAPNR(%rcx)
+> +	mov	%si,  EX_ERROR_CODE(%rcx)
+> +	mov	%rdx, EX_ADDRESS(%rcx)
+> +.Lskip_exception_info:
+> +	mov	$(-EFAULT), %eax
+> +	jmp	.Lhandle_exit
+> +
+> +.Linvoke_userspace_handler:
+> +	/*
+> +	 * Align stack per x86_64 ABI. Save the original %rsp in %rbx to be
+> +	 * restored after the callback returns.
+> +	 */
+>   	mov	%rsp, %rbx
+>   	and	$-0x10, %rsp
+> -	/* Clear RFLAGS.DF per x86_64 ABI */
+> -	cld
+> -	/* Parameters for the exit handler */
+> +
+> +	/* Push @e, u_rsp and @tcs as parameters to the callback. */
+>   	push	0x18(%rbp)
+>   	push	%rbx
+>   	push	0x10(%rbp)
+> -	/* Call *%rax via retpoline */
+> -	call	40f
+> -	/* Restore %rsp to its original value left off by the enclave from last
+> -	 * exit */
+> +
+> +	/* Pass the "return" value to the callback via %rcx. */
+> +	mov	%eax, %ecx
+
+@e (ex_info) is almost always needed by every callback as it also serves 
+as the "context pointer". The return value on the other hand is 
+insignificant because it could be deduced from @e->EX_LEAF anyway. So 
+I'd retain %rcx and push %rax to the stack instead, given the purpose of 
+this patch is to squeeze out a bit performance.
+
+> +
+> +	/* Clear RFLAGS.DF per x86_64 ABI */
+> +	cld
+> +
+> +	/* Load the callback pointer to %rax and invoke it via retpoline. */
+> +	mov	0x20(%rbp), %rax
+
+Per X86_64 ABI, %rsp shall be 16 bytes aligned before "call". But %rsp 
+here doesn't look aligned properly.
+
+> +	call	.Lretpoline
+> +
+> +	/* Restore %rsp to its post-exit value. */
+>   	mov	%rbx, %rsp
+> -	/* Positive return value from the exit handler will be interpreted as
+> -	 * an ENCLU leaf, while a non-positive value will be interpreted as the
+> -	 * return value to be passed back to the caller. */
+> -	jmp	1b
+> -40:	/* retpoline */
+> -	call	42f
+> -41:	pause
+> -	lfence
+> -	jmp	41b
+> -42:	mov	%rax, (%rsp)
+> -	ret
+>   
+> -5:	/* Exception path */
+> -	mov	0x18(%rbp), %rcx
+> -	jrcxz	52f
+> -	mov	%eax, EX_LEAF(%rcx)
+> -	mov	%di,  EX_TRAPNR(%rcx)
+> -	mov	%si,  EX_ERROR_CODE(%rcx)
+> -	mov	%rdx, EX_ADDRESS(%rcx)
+> -52:	mov	$-EFAULT, %eax
+> -	jmp	3b
+> -
+> -6:	/* Unsupported ENCLU leaf */
+> +	/*
+> +	 * If the return from callback is zero or negative, return immediately,
+> +	 * else re-execute ENCLU with the postive return value interpreted as
+> +	 * the requested ENCLU leaf.
+> +	 */
+>   	cmp	$0, %eax
+> -	jle	7f
+> -	mov	$-EINVAL, %eax
+> +	jle	.Lout
+> +	jmp	.Lenter_enclave
+>   
+> -7:	/* Epilog */
+> -	leave
+> -	.cfi_def_cfa		%rsp, 8
+> +.Lretpoline:
+> +	call	2f
+> +1:	pause
+> +	lfence
+> +	jmp	1b
+> +2:	mov	%rax, (%rsp)
+>   	ret
+>   	.cfi_endproc
+>   
+> -_ASM_VDSO_EXTABLE_HANDLE(2b, 5b)
+> +_ASM_VDSO_EXTABLE_HANDLE(.Lenclu_eenter_eresume, .Lhandle_exception)
+>   
+>   ENDPROC(__vdso_sgx_enter_enclave)
+> 
