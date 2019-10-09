@@ -6,17 +6,17 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF515ECE596
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F28ECE597
 	for <linux-sgx@archiver.kernel.org>; Wed,  9 Oct 2019 04:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9798621835
+	by mail.kernel.org (Postfix) with ESMTP id 767C9206C0
 	for <linux-sgx@archiver.kernel.org>; Wed,  9 Oct 2019 04:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbfJIEmo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1730004AbfJIEmo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 9 Oct 2019 00:42:44 -0400
 Received: from mga11.intel.com ([192.55.52.93]:6367 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729040AbfJIEmo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1729658AbfJIEmo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 9 Oct 2019 00:42:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,15 +24,15 @@ Received: from fmsmga004.fm.intel.com ([10.253.24.48])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 21:42:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,273,1566889200"; 
-   d="scan'208";a="218504427"
+   d="scan'208";a="218504424"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by fmsmga004.fm.intel.com with ESMTP; 08 Oct 2019 21:42:43 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 5/7] x86/sgx: Add a flag to ADD_PAGES to allow replicating the source page
-Date:   Tue,  8 Oct 2019 21:42:39 -0700
-Message-Id: <20191009044241.3591-6-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 4/7] selftests/x86/sgx: Update enclave build flow to do multi-page add
+Date:   Tue,  8 Oct 2019 21:42:38 -0700
+Message-Id: <20191009044241.3591-5-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191009044241.3591-1-sean.j.christopherson@intel.com>
 References: <20191009044241.3591-1-sean.j.christopherson@intel.com>
@@ -43,63 +43,80 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a flag to allow userspace to replicate a single source page to
-multiple target pages in the enclave, e.g. to zero the .bss, initialize
-the heap, etc...
+Add the enclaves regular pages in a single ioctl to test the multi-page
+capabilities of the ioctl.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/include/uapi/asm/sgx.h | 7 ++++++-
- arch/x86/kernel/cpu/sgx/ioctl.c | 3 ++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ tools/testing/selftests/x86/sgx/main.c | 27 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 84734229d8dd..42634e99945e 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -28,6 +28,9 @@ struct sgx_enclave_create  {
- 	__u64	src;
- };
+diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
+index 7cffc16c02e0..4b652fd800f5 100644
+--- a/tools/testing/selftests/x86/sgx/main.c
++++ b/tools/testing/selftests/x86/sgx/main.c
+@@ -164,10 +164,10 @@ static bool encl_create(int dev_fd, unsigned long bin_size,
+ 	return true;
+ }
  
-+/* Replicate a single source data page to all target pages. */
-+#define SGX_ADD_PAGES_REPLICATE_SRC	BIT(0)
+-static bool encl_add_page(int dev_fd, unsigned long offset, void *data,
+-			  uint64_t flags)
++static bool encl_add_pages(int dev_fd, unsigned long offset, void *data,
++			   unsigned long nr_pages, uint64_t flags)
+ {
+-	struct sgx_enclave_add_page ioc;
++	struct sgx_enclave_add_pages ioc;
+ 	struct sgx_secinfo secinfo;
+ 	int rc;
+ 
+@@ -178,9 +178,10 @@ static bool encl_add_page(int dev_fd, unsigned long offset, void *data,
+ 	ioc.mrmask = 0xFFFF;
+ 	ioc.offset = offset;
+ 	ioc.src = (uint64_t)data;
++	ioc.nr_pages = nr_pages;
+ 	memset(ioc.reserved, 0, sizeof(ioc.reserved));
+ 
+-	rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_ADD_PAGE, &ioc);
++	rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_ADD_PAGES, &ioc);
+ 	if (rc) {
+ 		fprintf(stderr, "EADD failed rc=%d.\n", rc);
+ 		return false;
+@@ -189,12 +190,13 @@ static bool encl_add_page(int dev_fd, unsigned long offset, void *data,
+ 	return true;
+ }
+ 
++#define SGX_REG_PAGE_FLAGS \
++	(SGX_SECINFO_REG | SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X)
 +
- /**
-  * struct sgx_enclave_add_pages - parameter structure for the
-  *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-@@ -35,6 +38,7 @@ struct sgx_enclave_create  {
-  * @src:	start address for the page data
-  * @nr_pages:	number of pages to add to enclave
-  * @secinfo:	address for the SECINFO data
-+ * @flags:	misc control flags
-  * @mrmask:	bitmask for the measured 256 byte chunks
-  * @reserved:	reserved for future use
-  */
-@@ -43,8 +47,9 @@ struct sgx_enclave_add_pages {
- 	__u64	src;
- 	__u64	nr_pages;
- 	__u64	secinfo;
-+	__u32	flags;
- 	__u16	mrmask;
--	__u8	reserved[6];
-+	__u8	reserved[2];
- };
+ static bool encl_build(struct sgx_secs *secs, void *bin,
+ 		       unsigned long bin_size, struct sgx_sigstruct *sigstruct)
+ {
+ 	struct sgx_enclave_init ioc;
+-	uint64_t offset;
+-	uint64_t flags;
+ 	void *addr;
+ 	int dev_fd;
+ 	int rc;
+@@ -208,16 +210,9 @@ static bool encl_build(struct sgx_secs *secs, void *bin,
+ 	if (!encl_create(dev_fd, bin_size, secs))
+ 		goto out_dev_fd;
  
- /**
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 4597dd8f5c91..9c6d582612cb 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -529,7 +529,8 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
- 			break;
+-	for (offset = 0; offset < bin_size; offset += 0x1000) {
+-		if (!offset)
+-			flags = SGX_SECINFO_TCS;
+-		else
+-			flags = SGX_SECINFO_REG | SGX_SECINFO_R |
+-				SGX_SECINFO_W | SGX_SECINFO_X;
+-
+-		if (!encl_add_page(dev_fd, offset, bin + offset, flags))
+-			goto out_map;
+-	}
++	encl_add_pages(dev_fd, 0, bin, 1, SGX_SECINFO_TCS);
++	encl_add_pages(dev_fd, PAGE_SIZE, bin + PAGE_SIZE,
++		       (bin_size / PAGE_SIZE) - 1, SGX_REG_PAGE_FLAGS);
  
- 		addp.offset += PAGE_SIZE;
--		addp.src += PAGE_SIZE;
-+		if (!(addp.flags & SGX_ADD_PAGES_REPLICATE_SRC))
-+			addp.src += PAGE_SIZE;
- 	}
- 
- 	if (copy_to_user(arg, &addp, sizeof(addp)))
+ 	ioc.sigstruct = (uint64_t)sigstruct;
+ 	rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_INIT, &ioc);
 -- 
 2.22.0
 
