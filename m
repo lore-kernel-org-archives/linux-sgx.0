@@ -2,21 +2,21 @@ Return-Path: <SRS0=iuVh=YD=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A79ECE58D
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 23:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1088DC10F14
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 23:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27242190F
+	by mail.kernel.org (Postfix) with ESMTP id DFC522190F
 	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 23:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfJJXVK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1726828AbfJJXVK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Thu, 10 Oct 2019 19:21:10 -0400
 Received: from mga07.intel.com ([134.134.136.100]:34955 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfJJXVK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726135AbfJJXVK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Thu, 10 Oct 2019 19:21:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -24,16 +24,18 @@ Received: from fmsmga001.fm.intel.com ([10.253.24.23])
   by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 16:21:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="207300618"
+   d="scan'208";a="207300624"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by fmsmga001.fm.intel.com with ESMTP; 10 Oct 2019 16:21:09 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 v2 0/9] x86/sgx: Misc page related fixes
-Date:   Thu, 10 Oct 2019 16:20:59 -0700
-Message-Id: <20191010232108.27075-1-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 v2 2/9] x86/sgx: Do not EWB SECS if the enclave is dead
+Date:   Thu, 10 Oct 2019 16:21:01 -0700
+Message-Id: <20191010232108.27075-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20191010232108.27075-1-sean.j.christopherson@intel.com>
+References: <20191010232108.27075-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -41,32 +43,69 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Two critical bug fixes for a memory leak in sgx_encl_destroy() and a
-livelock due to the EPC page free count getting corrupted.  The rest of
-the patches are minor bug fixes and enhancements I collected in the
-process of hunting down the livelock.
+Don't EWB if the enclave is dead when opportunistically zapping the SECS
+during reclaim as VA pages are freed by sgx_encl_destroy(), i.e.
+sgx_encl_ewb() will consume a bad encl->va_pages if the enclave has been
+destroyed.
 
-v2: Fully fix the memory leak, which was hilariously worse than originally
-    thought.  Fun fact, the leak has existed since v18, i.e. nearly a year.
+Add a comment in sgx_encl_destroy() to explicit call out that it's ok to
+free VA pages.
 
-Sean Christopherson (9):
-  x86/sgx: WARN once if an enclave is released with unfreed EPC pages
-  x86/sgx: Do not EWB SECS if the enclave is dead
-  x86/sgx: Fix a memory leak in sgx_encl_destroy()
-  x86/sgx: WARN on any non-zero return from __eremove()
-  x86/sgx: WARN only once if EREMOVE fails
-  x86/sgx: Split second half of sgx_free_page() to a separate helper
-  x86/sgx: Use the post-reclaim variant of __sgx_free_page()
-  x86/sgx: Don't update free page count if EPC section allocation fails
-  x86/sgx: Reinstate per EPC section free page counts
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c    |  6 +++++-
+ arch/x86/kernel/cpu/sgx/reclaim.c | 19 +++++++++++--------
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
- arch/x86/kernel/cpu/sgx/encl.c    | 34 ++++++++++++-------
- arch/x86/kernel/cpu/sgx/ioctl.c   |  6 ++--
- arch/x86/kernel/cpu/sgx/main.c    | 54 ++++++++++++++++++++++---------
- arch/x86/kernel/cpu/sgx/reclaim.c | 25 +++++++-------
- arch/x86/kernel/cpu/sgx/sgx.h     | 19 ++++++++++-
- 5 files changed, 96 insertions(+), 42 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index b4d7b2f9609f..ea21d3737a32 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -484,7 +484,11 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+ 		encl->secs.epc_page = NULL;
+ 	}
+ 
+-
++	/*
++	 * The reclaimer is responsible for checking SGX_ENCL_DEAD before doing
++	 * EWB, thus it's safe to free VA pages even if the reclaimer holds a
++	 * reference to the enclave.
++	 */
+ 	while (!list_empty(&encl->va_pages)) {
+ 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+ 					   list);
+diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+index 391fbc3e7e98..8143c9a20894 100644
+--- a/arch/x86/kernel/cpu/sgx/reclaim.c
++++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+@@ -321,16 +321,19 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+ 	encl_page->epc_page = NULL;
+ 	encl->secs_child_cnt--;
+ 
+-	if (!encl->secs_child_cnt &&
+-	    (atomic_read(&encl->flags) &
+-	     (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED))) {
+-		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
+-					   &secs_backing);
+-		if (!ret) {
+-			sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
++	if (!encl->secs_child_cnt) {
++		if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
+ 			sgx_free_page(encl->secs.epc_page);
+-
+ 			encl->secs.epc_page = NULL;
++		} else if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
++			ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
++						   &secs_backing);
++			if (!ret) {
++				sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
++
++				sgx_free_page(encl->secs.epc_page);
++				encl->secs.epc_page = NULL;
++			}
+ 
+ 			sgx_encl_put_backing(&secs_backing, true);
+ 		}
 -- 
 2.22.0
 
