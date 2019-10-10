@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 619CFECE58D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44744ECE596
 	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3AF214E0
+	by mail.kernel.org (Postfix) with ESMTP id 1316E21835
 	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbfJJVnE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1727459AbfJJVnE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Thu, 10 Oct 2019 17:43:04 -0400
-Received: from mga17.intel.com ([192.55.52.151]:35146 "EHLO mga17.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:32755 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727437AbfJJVnE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S1726983AbfJJVnE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Thu, 10 Oct 2019 17:43:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 14:43:04 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 14:43:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="194145500"
+   d="scan'208";a="194145480"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by fmsmga007.fm.intel.com with ESMTP; 10 Oct 2019 14:43:03 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 8/9] x86/sgx: Don't update free page count if EPC section allocation fails
-Date:   Thu, 10 Oct 2019 14:43:00 -0700
-Message-Id: <20191010214301.25669-9-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 2/9] x86/sgx: Do not EWB SECS if the enclave is dead
+Date:   Thu, 10 Oct 2019 14:42:54 -0700
+Message-Id: <20191010214301.25669-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191010214301.25669-1-sean.j.christopherson@intel.com>
 References: <20191010214301.25669-1-sean.j.christopherson@intel.com>
@@ -43,31 +43,69 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Update the number of free pages only after an EPC section is fully
-initialized, else the free page count will be left in a bogus state if
-allocation fails.
+Don't EWB if the enclave is dead when opportunistically zapping the SECS
+during reclaim as VA pages are freed by sgx_encl_destroy(), i.e.
+sgx_encl_ewb() will consume a bad encl->va_pages if the enclave has been
+destroyed.
+
+Add a comment in sgx_encl_destroy() to explicit call out that it's ok to
+free VA pages.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/encl.c    |  6 +++++-
+ arch/x86/kernel/cpu/sgx/reclaim.c | 19 +++++++++++--------
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index e22cdbb431a3..48a4f37b5b3c 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -216,9 +216,10 @@ static bool __init sgx_alloc_epc_section(u64 addr, u64 size,
- 
- 		page->desc = (addr + (i << PAGE_SHIFT)) | index;
- 		list_add_tail(&page->list, &section->unsanitized_page_list);
--		sgx_nr_free_pages++;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index b4d7b2f9609f..ea21d3737a32 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -484,7 +484,11 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+ 		encl->secs.epc_page = NULL;
  	}
  
-+	sgx_nr_free_pages += nr_pages;
-+
- 	return true;
+-
++	/*
++	 * The reclaimer is responsible for checking SGX_ENCL_DEAD before doing
++	 * EWB, thus it's safe to free VA pages even if the reclaimer holds a
++	 * reference to the enclave.
++	 */
+ 	while (!list_empty(&encl->va_pages)) {
+ 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+ 					   list);
+diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+index 391fbc3e7e98..8143c9a20894 100644
+--- a/arch/x86/kernel/cpu/sgx/reclaim.c
++++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+@@ -321,16 +321,19 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+ 	encl_page->epc_page = NULL;
+ 	encl->secs_child_cnt--;
  
- err_out:
+-	if (!encl->secs_child_cnt &&
+-	    (atomic_read(&encl->flags) &
+-	     (SGX_ENCL_DEAD | SGX_ENCL_INITIALIZED))) {
+-		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
+-					   &secs_backing);
+-		if (!ret) {
+-			sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
++	if (!encl->secs_child_cnt) {
++		if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
+ 			sgx_free_page(encl->secs.epc_page);
+-
+ 			encl->secs.epc_page = NULL;
++		} else if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
++			ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
++						   &secs_backing);
++			if (!ret) {
++				sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
++
++				sgx_free_page(encl->secs.epc_page);
++				encl->secs.epc_page = NULL;
++			}
+ 
+ 			sgx_encl_put_backing(&secs_backing, true);
+ 		}
 -- 
 2.22.0
 
