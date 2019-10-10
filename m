@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41438ECE597
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 22:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55085C4360C
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 23:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B34D218AC
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 22:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37555214E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 23:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfJJWzk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Oct 2019 18:55:40 -0400
-Received: from mga06.intel.com ([134.134.136.31]:20137 "EHLO mga06.intel.com"
+        id S1726788AbfJJXVJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Oct 2019 19:21:09 -0400
+Received: from mga07.intel.com ([134.134.136.100]:34955 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726616AbfJJWzj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 10 Oct 2019 18:55:39 -0400
+        id S1726135AbfJJXVJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 10 Oct 2019 19:21:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 15:55:38 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 16:21:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="197400458"
+   d="scan'208";a="207300621"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga003.jf.intel.com with ESMTP; 10 Oct 2019 15:55:38 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 10 Oct 2019 16:21:09 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 4/4] x86/sgx: Drop mmap_sem before EEXTENDing an enclave page
-Date:   Thu, 10 Oct 2019 15:55:30 -0700
-Message-Id: <20191010225530.26400-5-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 v2 1/9] x86/sgx: WARN once if an enclave is released with unfreed EPC pages
+Date:   Thu, 10 Oct 2019 16:21:00 -0700
+Message-Id: <20191010232108.27075-2-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191010225530.26400-1-sean.j.christopherson@intel.com>
-References: <20191010225530.26400-1-sean.j.christopherson@intel.com>
+In-Reply-To: <20191010232108.27075-1-sean.j.christopherson@intel.com>
+References: <20191010232108.27075-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -43,56 +43,29 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Drop mmap_sem, which needs to be held for read across EADD, prior to
-doing EEXTEND on the newly added page to avoid holding mmap_sem for an
-extended duration.  EEXTEND doesn't access user pages and holding
-encl->lock without mmap_sem is perfectly ok, while EEXTEND is a _slow_
-operation, to the point where it operates on 256-byte chunks
-instead of 4k pages to maintain a reasonable latency for a single
-instruction.
+Add a WARN to detect EPC page leaks when releasing an enclave.  The
+release flow uses the common sgx_encl_destroy() helper, which is allowed
+to be called while the reclaimer holds references to the enclave's EPC
+pages and so can't WARN in the scenario where the SECS is leaked because
+it has active child pages.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/sgx/encl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index fd4117f18564..46f2769d16fe 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -403,11 +403,15 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
- 	 */
- 	ret = radix_tree_insert(&encl->page_tree, PFN_DOWN(encl_page->desc),
- 				encl_page);
--	if (ret)
-+	if (ret) {
-+		up_read(&current->mm->mmap_sem);
- 		goto err_out_unlock;
-+	}
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index c13c3ba3430a..b4d7b2f9609f 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -511,6 +511,7 @@ void sgx_encl_release(struct kref *ref)
+ 		fput(encl->backing);
  
- 	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
- 				  addp->src);
-+	up_read(&current->mm->mmap_sem);
-+
- 	if (ret)
- 		goto err_out;
+ 	WARN_ONCE(!list_empty(&encl->mm_list), "mm_list non-empty");
++	WARN_ON_ONCE(encl->secs_child_cnt || encl->secs.epc_page);
  
-@@ -427,7 +431,6 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
- 		sgx_mark_page_reclaimable(encl_page->epc_page);
- 
- 	mutex_unlock(&encl->lock);
--	up_read(&current->mm->mmap_sem);
- 	return ret;
- 
- err_out:
-@@ -437,7 +440,6 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
- err_out_unlock:
- 	sgx_encl_shrink(encl, va_page);
- 	mutex_unlock(&encl->lock);
--	up_read(&current->mm->mmap_sem);
- 
- err_out_free:
- 	sgx_free_page(epc_page);
+ 	kfree(encl);
+ }
 -- 
 2.22.0
 
