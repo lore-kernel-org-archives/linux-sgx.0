@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13C1C10F14
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A638ECE58D
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 855B3218AC
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB30214E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfJJVnG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1727460AbfJJVnG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Thu, 10 Oct 2019 17:43:06 -0400
-Received: from mga18.intel.com ([134.134.136.126]:32755 "EHLO mga18.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:32763 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfJJVnG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:43:06 -0400
+        id S1727462AbfJJVnE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 10 Oct 2019 17:43:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 14:43:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="194145496"
+   d="scan'208";a="194145489"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
   by fmsmga007.fm.intel.com with ESMTP; 10 Oct 2019 14:43:03 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 7/9] x86/sgx: Use the post-reclaim variant of __sgx_free_page()
-Date:   Thu, 10 Oct 2019 14:42:59 -0700
-Message-Id: <20191010214301.25669-8-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 5/9] x86/sgx: WARN only once if EREMOVE fails
+Date:   Thu, 10 Oct 2019 14:42:57 -0700
+Message-Id: <20191010214301.25669-6-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191010214301.25669-1-sean.j.christopherson@intel.com>
 References: <20191010214301.25669-1-sean.j.christopherson@intel.com>
@@ -43,110 +43,29 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Use __sgx_free_page() in all locations where the EPC page is supposed to
-be unreclaimable so that a WARN fires if the page is unexpectedly marked
-for reclaim.
+WARN only once if EREMOVE fails to avoid spamming the kernel log if a
+catastrophic failure occurs.  Warning on every failure is helpful for
+development, but is a bad idea for production code as EREMOVE rarely
+fails just once...
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encl.c    | 8 ++++----
- arch/x86/kernel/cpu/sgx/ioctl.c   | 6 +++---
- arch/x86/kernel/cpu/sgx/reclaim.c | 4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 68ec8944692a..d2349ca8975c 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -73,7 +73,7 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 5170d4ba1096..84a44251387b 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -137,7 +137,7 @@ int sgx_free_page(struct sgx_epc_page *page)
+ 	spin_unlock(&sgx_active_page_list_lock);
  
- 	ret = __sgx_encl_eldu(encl_page, epc_page, secs_page);
- 	if (ret) {
--		sgx_free_page(epc_page);
-+		__sgx_free_page(epc_page);
- 		return ERR_PTR(ret);
- 	}
+ 	ret = __eremove(sgx_epc_addr(page));
+-	WARN(ret, "EREMOVE returned %d (0x%x)", ret, ret);
++	WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret);
  
-@@ -479,7 +479,7 @@ void sgx_encl_destroy(struct sgx_encl *encl)
- 	}
- 
- 	if (!encl->secs_child_cnt && encl->secs.epc_page) {
--		sgx_free_page(encl->secs.epc_page);
-+		__sgx_free_page(encl->secs.epc_page);
- 		encl->secs.epc_page = NULL;
- 	}
- 
-@@ -492,7 +492,7 @@ void sgx_encl_destroy(struct sgx_encl *encl)
- 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
- 					   list);
- 		list_del(&va_page->list);
--		sgx_free_page(va_page->epc_page);
-+		__sgx_free_page(va_page->epc_page);
- 		kfree(va_page);
- 	}
- }
-@@ -687,7 +687,7 @@ struct sgx_epc_page *sgx_alloc_va_page(void)
- 	ret = __epa(sgx_epc_addr(epc_page));
- 	if (ret) {
- 		WARN_ONCE(1, "EPA returned %d (0x%x)", ret, ret);
--		sgx_free_page(epc_page);
-+		__sgx_free_page(epc_page);
- 		return ERR_PTR(-EFAULT);
- 	}
- 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index eeed919ed3e2..7a6bc3bf8f8c 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -47,7 +47,7 @@ static void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
- 	encl->page_cnt--;
- 
- 	if (va_page) {
--		sgx_free_page(va_page->epc_page);
-+		__sgx_free_page(va_page->epc_page);
- 		list_del(&va_page->list);
- 		kfree(va_page);
- 	}
-@@ -220,7 +220,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	return 0;
- 
- err_out:
--	sgx_free_page(encl->secs.epc_page);
-+	__sgx_free_page(encl->secs.epc_page);
- 	encl->secs.epc_page = NULL;
- 
- err_out_backing:
-@@ -441,7 +441,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
- 	up_read(&current->mm->mmap_sem);
- 
- err_out_free:
--	sgx_free_page(epc_page);
-+	__sgx_free_page(epc_page);
- 	kfree(encl_page);
- 
- 	return ret;
-diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index 8143c9a20894..3f183dd0e653 100644
---- a/arch/x86/kernel/cpu/sgx/reclaim.c
-+++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -323,7 +323,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- 
- 	if (!encl->secs_child_cnt) {
- 		if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
--			sgx_free_page(encl->secs.epc_page);
-+			__sgx_free_page(encl->secs.epc_page);
- 			encl->secs.epc_page = NULL;
- 		} else if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
- 			ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
-@@ -331,7 +331,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- 			if (!ret) {
- 				sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
- 
--				sgx_free_page(encl->secs.epc_page);
-+				__sgx_free_page(encl->secs.epc_page);
- 				encl->secs.epc_page = NULL;
- 			}
- 
+ 	spin_lock(&section->lock);
+ 	list_add_tail(&page->list, &section->page_list);
 -- 
 2.22.0
 
