@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575BCECE597
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756E9ECE596
 	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C00B20B7C
+	by mail.kernel.org (Postfix) with ESMTP id 4A5ED218AC
 	for <linux-sgx@archiver.kernel.org>; Thu, 10 Oct 2019 21:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfJJVnG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1726986AbfJJVnG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Thu, 10 Oct 2019 17:43:06 -0400
-Received: from mga17.intel.com ([192.55.52.151]:35146 "EHLO mga17.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:32763 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbfJJVnE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:43:04 -0400
+        id S1727464AbfJJVnG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 10 Oct 2019 17:43:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 14:43:04 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 14:43:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,281,1566889200"; 
-   d="scan'208";a="194145503"
+   d="scan'208";a="194145492"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Oct 2019 14:43:04 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 10 Oct 2019 14:43:03 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v23 9/9] x86/sgx: Reinstate per EPC section free page counts
-Date:   Thu, 10 Oct 2019 14:43:01 -0700
-Message-Id: <20191010214301.25669-10-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v23 6/9] x86/sgx: Split second half of sgx_free_page() to a separate helper
+Date:   Thu, 10 Oct 2019 14:42:58 -0700
+Message-Id: <20191010214301.25669-7-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191010214301.25669-1-sean.j.christopherson@intel.com>
 References: <20191010214301.25669-1-sean.j.christopherson@intel.com>
@@ -43,138 +43,97 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Track the free page count on a per EPC section basis so that the value
-is properly protected by the section's spinlock.
-
-As was pointed out when the change was proposed[*], using a global
-non-atomic counter to track the number of free EPC pages is not safe.
-The order of non-atomic reads and writes are not guaranteed, i.e.
-concurrent RMW operats can write stale data.  This causes a variety
-of bad behavior, e.g. livelocks because the free page count wraps and
-causes the swap thread to stop reclaiming.
+Move the post-reclaim half of sgx_free_page() to a standalone helper so
+that it can be used in flows where the page is known to be
+non-reclaimable.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c    | 11 +++++------
- arch/x86/kernel/cpu/sgx/reclaim.c |  4 ++--
- arch/x86/kernel/cpu/sgx/sgx.h     | 18 +++++++++++++++++-
- 3 files changed, 24 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c | 44 ++++++++++++++++++++++++++--------
+ arch/x86/kernel/cpu/sgx/sgx.h  |  1 +
+ 2 files changed, 35 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 48a4f37b5b3c..cc87690fa1ec 100644
+index 84a44251387b..e22cdbb431a3 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -13,18 +13,17 @@
- 
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
- int sgx_nr_epc_sections;
--unsigned long sgx_nr_free_pages;
- 
- static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section)
- {
- 	struct sgx_epc_page *page;
- 
--	if (list_empty(&section->page_list))
-+	if (!section->free_cnt)
- 		return NULL;
- 
- 	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
- 	list_del_init(&page->list);
--	sgx_nr_free_pages--;
-+	section->free_cnt--;
- 	return page;
- }
- 
-@@ -97,7 +96,7 @@ struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
- 		schedule();
- 	}
- 
--	if (sgx_nr_free_pages < SGX_NR_LOW_PAGES)
-+	if (!sgx_at_least_N_free_pages(SGX_NR_LOW_PAGES))
- 		wake_up(&ksgxswapd_waitq);
- 
+@@ -103,6 +103,39 @@ struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
  	return entry;
-@@ -131,7 +130,7 @@ void __sgx_free_page(struct sgx_epc_page *page)
- 
- 	spin_lock(&section->lock);
- 	list_add_tail(&page->list, &section->page_list);
--	sgx_nr_free_pages++;
-+	section->free_cnt++;
- 	spin_unlock(&section->lock);
- 
- }
-@@ -218,7 +217,7 @@ static bool __init sgx_alloc_epc_section(u64 addr, u64 size,
- 		list_add_tail(&page->list, &section->unsanitized_page_list);
- 	}
- 
--	sgx_nr_free_pages += nr_pages;
-+	section->free_cnt = nr_pages;
- 
- 	return true;
- 
-diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index 3f183dd0e653..8619141f4bed 100644
---- a/arch/x86/kernel/cpu/sgx/reclaim.c
-+++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -68,7 +68,7 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
- 
- static inline bool sgx_should_reclaim(void)
- {
--	return sgx_nr_free_pages < SGX_NR_HIGH_PAGES &&
-+	return !sgx_at_least_N_free_pages(SGX_NR_HIGH_PAGES) &&
- 	       !list_empty(&sgx_active_page_list);
  }
  
-@@ -430,7 +430,7 @@ void sgx_reclaim_pages(void)
- 		section = sgx_epc_section(epc_page);
- 		spin_lock(&section->lock);
- 		list_add_tail(&epc_page->list, &section->page_list);
--		sgx_nr_free_pages++;
-+		section->free_cnt++;
- 		spin_unlock(&section->lock);
- 	}
- }
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 87e375e8c25e..c7f0277299f6 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -30,6 +30,7 @@ struct sgx_epc_page {
- struct sgx_epc_section {
- 	unsigned long pa;
- 	void *va;
-+	unsigned long free_cnt;
- 	struct list_head page_list;
- 	struct list_head unsanitized_page_list;
- 	spinlock_t lock;
-@@ -73,12 +74,27 @@ static inline void *sgx_epc_addr(struct sgx_epc_page *page)
- #define SGX_NR_HIGH_PAGES	64
- 
- extern int sgx_nr_epc_sections;
--extern unsigned long sgx_nr_free_pages;
- extern struct task_struct *ksgxswapd_tsk;
- extern struct wait_queue_head(ksgxswapd_waitq);
- extern struct list_head sgx_active_page_list;
- extern spinlock_t sgx_active_page_list_lock;
- 
-+static inline bool sgx_at_least_N_free_pages(unsigned long threshold)
++
++/**
++ * __sgx_free_page() - Free an EPC page
++ * @page:	pointer a previously allocated EPC page
++ *
++ * EREMOVE an EPC page and insert it back to the list of free pages. The page
++ * must not be reclaimable.
++ */
++void __sgx_free_page(struct sgx_epc_page *page)
 +{
 +	struct sgx_epc_section *section;
-+	unsigned long free_cnt = 0;
-+	int i;
++	int ret;
 +
-+	for (i = 0; i < sgx_nr_epc_sections; i++) {
-+		section = &sgx_epc_sections[i];
-+		free_cnt += section->free_cnt;
-+		if (free_cnt >= threshold)
-+			return true;
-+	}
++	/*
++	 * Don't take sgx_active_page_list_lock when asserting the page isn't
++	 * reclaimable, missing a WARN in the very rare case is preferable to
++	 * unnecessarily taking a global lock in the common case.
++	 */
++	WARN_ON_ONCE(page->desc & SGX_EPC_PAGE_RECLAIMABLE);
 +
-+	return false;
++	ret = __eremove(sgx_epc_addr(page));
++	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
++		return;
++
++	section = sgx_epc_section(page);
++
++	spin_lock(&section->lock);
++	list_add_tail(&page->list, &section->page_list);
++	sgx_nr_free_pages++;
++	spin_unlock(&section->lock);
++
 +}
 +
- bool __init sgx_page_reclaimer_init(void);
- void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
- void sgx_reclaim_pages(void);
+ /**
+  * sgx_free_page() - Free an EPC page
+  * @page:	pointer a previously allocated EPC page
+@@ -116,9 +149,6 @@ struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
+  */
+ int sgx_free_page(struct sgx_epc_page *page)
+ {
+-	struct sgx_epc_section *section = sgx_epc_section(page);
+-	int ret;
+-
+ 	/*
+ 	 * Remove the page from the active list if necessary.  If the page
+ 	 * is actively being reclaimed, i.e. RECLAIMABLE is set but the
+@@ -136,13 +166,7 @@ int sgx_free_page(struct sgx_epc_page *page)
+ 	}
+ 	spin_unlock(&sgx_active_page_list_lock);
+ 
+-	ret = __eremove(sgx_epc_addr(page));
+-	WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret);
+-
+-	spin_lock(&section->lock);
+-	list_add_tail(&page->list, &section->page_list);
+-	sgx_nr_free_pages++;
+-	spin_unlock(&section->lock);
++	__sgx_free_page(page);
+ 
+ 	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 160a3c996ef6..87e375e8c25e 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -85,6 +85,7 @@ void sgx_reclaim_pages(void);
+ 
+ struct sgx_epc_page *sgx_try_alloc_page(void);
+ struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim);
++void __sgx_free_page(struct sgx_epc_page *page);
+ int sgx_free_page(struct sgx_epc_page *page);
+ 
+ #endif /* _X86_SGX_H */
 -- 
 2.22.0
 
