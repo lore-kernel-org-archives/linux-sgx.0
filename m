@@ -1,4 +1,4 @@
-Return-Path: <SRS0=gA9u=YE=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=ZtyI=YG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,115 +6,125 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B483ECE58D
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Oct 2019 18:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C57CC4360C
+	for <linux-sgx@archiver.kernel.org>; Sun, 13 Oct 2019 15:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 662E421835
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Oct 2019 18:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 175662085B
+	for <linux-sgx@archiver.kernel.org>; Sun, 13 Oct 2019 15:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbfJKSPv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 11 Oct 2019 14:15:51 -0400
-Received: from mga03.intel.com ([134.134.136.65]:58405 "EHLO mga03.intel.com"
+        id S1729133AbfJMPPk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 13 Oct 2019 11:15:40 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:45132 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfJKSPu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 11 Oct 2019 14:15:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2019 11:15:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,285,1566889200"; 
-   d="scan'208";a="346101167"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga004.jf.intel.com with ESMTP; 11 Oct 2019 11:15:50 -0700
-Date:   Fri, 11 Oct 2019 11:15:50 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>
-Subject: Re: x86/sgx: v23-rc2
-Message-ID: <20191011181550.GB30935@linux.intel.com>
-References: <20191010113745.GA12842@linux.intel.com>
- <a657081e-cdaf-7c9d-2695-23c9c07bcfbf@fortanix.com>
-MIME-Version: 1.0
+        id S1726085AbfJMPPk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 13 Oct 2019 11:15:40 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x9DFFPph013241;
+        Sun, 13 Oct 2019 10:15:25 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x9DFFPcP013240;
+        Sun, 13 Oct 2019 10:15:25 -0500
+Date:   Sun, 13 Oct 2019 10:15:25 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-sgx@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [PATCH for_v23 0/7] x86/sgx: Improve add pages ioctl
+Message-ID: <20191013151524.GA13191@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20191009044241.3591-1-sean.j.christopherson@intel.com> <op.z9fc9yu4wjvjmi@hhuan26-mobl.amr.corp.intel.com> <20191011143725.GA30935@linux.intel.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a657081e-cdaf-7c9d-2695-23c9c07bcfbf@fortanix.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191011143725.GA30935@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 13 Oct 2019 10:15:25 -0500 (CDT)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:37:25PM +0000, Jethro Beekman wrote:
-> UAPI:
+On Fri, Oct 11, 2019 at 07:37:25AM -0700, Sean Christopherson wrote:
+
+> +cc Jethro and Greg
+
+Good morning, I hope everyone is having or has had a pleasant weekend.
+
+> On Wed, Oct 09, 2019 at 10:28:36PM -0500, Haitao Huang wrote:
+> > On Tue, 08 Oct 2019 23:42:34 -0500, Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > 
+> > >Enhance the SGX_IOC_ENCLAVE_ADD_PAGE{S} ioctl so that userspace can add
+> > >multiple pages to an enclave in a single syscall.  Also provide a flag
+> > >that allows replicating a single source page to multiple target pages so
+> > >that userspace doesn't need to allocate a giant chunk of memory when
+> > >initializing things like the enlave's .bss, heap, etc...
+> > >
+> > >People that actually develop runtimes, please weigh in.  Jarkko also
+> > >suggested going with a fully flexible ioctl, e.g. essentially creating an
+> > >array of the existing struct so that mrmask and/or secinfo can be unique
+> > >per page.  AFAICT that's overkill and more cumbersome to use as it forces
+> > >userspace to allocate the full array.  My understanding is that the
+> > >majority of enclaves will have contiguous blocks of pages with identical
+> > >mrmask and secinfo, e.g. code segments, ro data, etc..., thus the less
+> > >flexible but easier-in-theory to use approach proposed here.
+> > >
+> > We think using the same mask for all pages (solution in this patch set) is
+> > reasonable. Although it seems odd that all pages would apply the same mask,
+> > this allows enough flexibility we can foresee.
+
+> Jethro, last time I brought this up you mentioned that it'd be nice to
+> have an array of pages[*] instead of the repeat-for-each-page concept.
+> Is there a use case where taking an array would provide a substantial
+> benefit to userspace?  Taking an array has downsides, and I think would
+> actually be worse for the vast majority of use cases.
+>
+> ... [ Example code removed ] ...
+>
+> The loop is mildly annoying, but the real killer is the array allocation.
+> SECINFO is 64 bytes, which means each entry is 88 bytes or more, e.g. around
+> 180kb to add an 8mb chunk of .bss or heap.
 > 
-> This got a whole lot more complex for userspace compared to the out-of-tree
-> driver.
+> My intention is/was for the multi-page add to be an opportunistic
+> optimization, not a way to add all enclave pages in a single ioctl.
 > 
-> 1. Manually needing to mmap a naturally-aligned memory region by allocating
-> too much memory and then unmapping parts is quite annoying. Why was the
-> auto-aligning removed? I think this will need to be handled the same for
-> every consumer of SGX, so I don't see why this is not handled in the kernel.
-> It never seems wrong to align if NULL is passed as the requested address.
-> Alternatively, is there room in the flags for a MAP_ALIGNED bit?
+> [*] https://patchwork.kernel.org/patch/10977721/#22699225
 
-I'm pretty sure everyone agrees it's annoying.  The short of it is that
-the SGX driver is the wrong place to do the alignment.  The driver could
-key off addr=0, but we don't want to take on that implicit behavior.
+The simpler the better from our perspective.
 
-A MAP_ALIGNED flag to have the allocation be naturally aligned is the
-ideal solution.  It's definitely something we should pursue, but that can
-and probably should be done in parallel to the SGX series.
+We would use the 'one-shot' method to initialize a block of pages with
+a set of common characteristics.  Essentially constructing an image of
+enclave page characteristics in userspace in order to load an enclave
+image isn't something that we would envision doing.
 
-> 2. Having to re-open the device for every enclave is also annoying. This
-> means you need a filesystem available throughout the process lifetime. I
-> tried dup, but that doesn't work. Can we make dup work?
+> > Another option acceptable to us (Intel SGX runtime) is to change it to a
+> > flag and have bit zero define whether the whole page is measured via
+> > EEXTEND. This is simpler and allows other bits reserved for future usages.
+> > However, it would fail any SGX runtime that is measuring partial page for
+> > optimization purposes.
 
-The semantics of dup() won't get you what want, as dup() just creates a
-new descriptor pointing at the same file.
+> This can be an orthogonal change.  I agree it makes sense to drop
+> mrmask and instead have a SGX_ADD_PAGES_MEASURED flag to cover the
+> whole page.  Hiding the 256-byte granualarity from userspace is a
+> good idea as it's not intrinsically tied to the SGX architecture and
+> exists only because of latency requirements.  And most of the kernel
+> interfaces work on 4k granularity.
 
-An alternative solution that was proposed was to have an ioctl() for
-creating an enclave.  But that means using an anonymous inode, which runs
-afoul of SELinux permissions, e.g. every _process_ that runs enclaves
-would require EXECMEM.  Linus was quite clear that SGX wouldn't be merged
-if using it required users to degrade existing security.
+Specifying the ability to measure an entire page is also a straight
+forward simplicity optimization that we would embrace.
 
-I'm open to other ideas.  I wasn't aware this was a pain point and file
-stuff isn't exactly my area of expertise, so I haven't put much/any
-thought into alternatives.
+Have a good week.
 
-> 3. Needing to mprotect every page with the precise permissions needed after
-> EINIT is really bad. This means I have to remember this data for every page
-> between EADD and EINIT. I don't care about SELinux, I trust the ECPM will do
-> its job for me. Can we make it so that I can protect the whole range at once,
-> or protect the individual pages at EADD time?
+Dr. Greg
 
-You can mprotect() or mmap(..., MAP_FIXED) an enclave range once all
-pages covered by the specified range have been added to the enclave, i.e.
-at EADD.  I double checked this with the selftest.  Holler if you're
-seeing different behavior.
-
-
-> VDSO:
-> 
-> It is *difficult* to link to weakly link to a symbol in the VDSO. Anyway, I
-> figured it out.
-> 
-> 1. What if I don't want to automatically ERESUME after kernel interrupt?
-
-Do EENTER/ERESUME directly instead of going through the vDSO.
-
-> 2. I normally do a sanity check after ENCLU[EENTER] that EAX = EEXIT. The
-> current implementation just clears EAX instead without looking at it.
-
-Hmm, the only reason I can think of for checking EAX would be to support
-userspace mucking with EAX in a #DB/#BP signal handler.  At that point, I
-would expect the signal handler to modify RIP as well.  Reaching the XOR
-via any other non-EEXIT path would require a kernel bug.
-
-Was there a specific scenario or use case you had in mind?  I'm not
-against adding a check, I just don't see what value it would provide.
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC               SGX secured infrastructure and
+4206 N. 19th Ave.           autonomously self-defensive platforms.
+Fargo, ND  58102
+PH: 701-281-1686            EMAIL: greg@idfusion.net
+------------------------------------------------------------------------------
+"Thank heaven for startups; without them we'd never have any
+ advances."
+                                -- Seymour Cray
