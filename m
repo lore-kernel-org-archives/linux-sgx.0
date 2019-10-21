@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474F8C47E49
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Oct 2019 11:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602DBCA9EAF
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Oct 2019 11:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEF720B7C
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Oct 2019 11:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38F822084C
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Oct 2019 11:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbfJULI1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Oct 2019 07:08:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:63304 "EHLO mga17.intel.com"
+        id S1727433AbfJULTK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Oct 2019 07:19:10 -0400
+Received: from mga01.intel.com ([192.55.52.88]:33149 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbfJULI0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:08:26 -0400
+        id S1726767AbfJULTK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Oct 2019 07:19:10 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 04:08:26 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 04:19:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,323,1566889200"; 
-   d="scan'208";a="203306813"
+   d="scan'208";a="222429391"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.130])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Oct 2019 04:08:24 -0700
-Date:   Mon, 21 Oct 2019 14:08:23 +0300
+  by fmsmga004.fm.intel.com with ESMTP; 21 Oct 2019 04:19:08 -0700
+Date:   Mon, 21 Oct 2019 14:19:08 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org, Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH for_v2? v2 08/14] selftests/harness: Move operator macros
- to their own header file
-Message-ID: <20191021110823.GB7398@linux.intel.com>
-References: <20191017030340.18301-1-sean.j.christopherson@intel.com>
- <20191017030340.18301-9-sean.j.christopherson@intel.com>
- <20191017165356.GD6667@linux.intel.com>
- <20191017181309.GE20903@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org
+Subject: Re: [PATCH for_v23 v3 12/12] x86/sgx: Reinstate per EPC section free
+ page counts
+Message-ID: <20191021111908.GC7398@linux.intel.com>
+References: <20191016183745.8226-1-sean.j.christopherson@intel.com>
+ <20191016183745.8226-13-sean.j.christopherson@intel.com>
+ <20191018124942.GC4027@linux.intel.com>
+ <20191018143057.GA26319@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017181309.GE20903@linux.intel.com>
+In-Reply-To: <20191018143057.GA26319@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
@@ -51,36 +50,33 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 11:13:09AM -0700, Sean Christopherson wrote:
-> On Thu, Oct 17, 2019 at 07:53:56PM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Oct 16, 2019 at 08:03:34PM -0700, Sean Christopherson wrote:
-> > > Move the operator macros, ASSERT_* and EXTEND_*, to a standalone header
-> > > so that they can be reused by other selftests without pulling in the
-> > > full harness framework, which is cumbersome to use for testing features
-> > > that require a substantial amount of setup, need callbacks, etc...
+On Fri, Oct 18, 2019 at 07:30:57AM -0700, Sean Christopherson wrote:
+> On Fri, Oct 18, 2019 at 03:49:42PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Oct 16, 2019 at 11:37:45AM -0700, Sean Christopherson wrote:
+> > > Track the free page count on a per EPC section basis so that the value
+> > > is properly protected by the section's spinlock.
+> > > 
+> > > As was pointed out when the change was proposed[*], using a global
+> > > non-atomic counter to track the number of free EPC pages is not safe.
+> > > The order of non-atomic reads and writes are not guaranteed, i.e.
+> > > concurrent RMW operats can write stale data.  This causes a variety
+> > > of bad behavior, e.g. livelocks because the free page count wraps and
+> > > causes the swap thread to stop reclaiming.
 > > > 
 > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > > 
-> > Is it possible to just use a "dull" selftest and not go into this before
-> > the code is upstreamed? If yes, lets go with that.
+> > What is the reason not change it just to atomic?
 > 
-> It's certainly possible, but the code is verbose and ugly (IMO), which
-> means it will be harder for other to review.
+> The purpose of separate sections is to avoid bouncing locks and whatnot
+> across packages.  Adding a global atomic to the hotpath defeats that
+> purpose.
 
-Ok, I'll try to explain in more verbose terms how I see this.
+I do get that but it does not actually cause incorrect behaviour,
+right? Not being atomic obivously does because READ part of the
+READ+STORE can get re-ordered.
 
-Not all selftests use the harness and I'm not yet confident that SGX has
-to. Unfortunately, ugly is for me something that I cannot put metrics
-on. Also, often "ugly" is actually better than layering because it is
-more transparent.
+> Can't the sysfs read helper aggregate the info?
 
-The test is comprised of simple POSIX calls that everyone knows whereas
-using kselftest harness requires learning new framework. Less macros
-makes code also easier to debug and pair compare to dissembly when
-required. I've done the latter at least a few times.
-
-It will also add a requirement for code reviewers who are simply looking
-for a code example how SGX works also to learn the harness. In the scope
-of the patch set the selftest serves as a such example.
+Sure.
 
 /Jarkko
