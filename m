@@ -1,83 +1,88 @@
-Return-Path: <SRS0=T+5Q=YO=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=OrTC=YP=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23DFCA9EAF
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Oct 2019 11:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8C1CA9EA0
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Oct 2019 03:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BF42089C
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Oct 2019 11:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F7E2173B
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Oct 2019 03:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbfJULZD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Oct 2019 07:25:03 -0400
-Received: from mga18.intel.com ([134.134.136.126]:2805 "EHLO mga18.intel.com"
+        id S1730304AbfJVDUI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Oct 2019 23:20:08 -0400
+Received: from mga02.intel.com ([134.134.136.20]:57153 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbfJULZD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:25:03 -0400
+        id S1730156AbfJVDUI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Oct 2019 23:20:08 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 04:25:02 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 20:20:07 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,323,1566889200"; 
-   d="scan'208";a="196081510"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.130])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Oct 2019 04:24:59 -0700
-Date:   Mon, 21 Oct 2019 14:24:58 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>
-Cc:     linux-sgx@vger.kernel.org
-Subject: Re: [PATCH for_v23 3/7] x86/sgx: Tweak ADD_PAGE ioctl to allow
- adding multiple pages
-Message-ID: <20191021112458.GA11086@linux.intel.com>
-References: <20191009044241.3591-1-sean.j.christopherson@intel.com>
- <20191009044241.3591-4-sean.j.christopherson@intel.com>
- <20191014213255.GD26869@linux.intel.com>
- <20191014213546.GE26869@linux.intel.com>
- <20191014233127.GO22962@linux.intel.com>
- <20191016101723.GA8964@linux.intel.com>
- <20191016101956.GC8964@linux.intel.com>
- <20191016102912.GA10013@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.67,325,1566889200"; 
+   d="scan'208";a="201545189"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by orsmga006.jf.intel.com with ESMTP; 21 Oct 2019 20:20:07 -0700
+Date:   Mon, 21 Oct 2019 20:20:07 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, Cedric Xing <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH for_v2? v2 08/14] selftests/harness: Move operator macros
+ to their own header file
+Message-ID: <20191022032007.GB32147@linux.intel.com>
+References: <20191017030340.18301-1-sean.j.christopherson@intel.com>
+ <20191017030340.18301-9-sean.j.christopherson@intel.com>
+ <20191017165356.GD6667@linux.intel.com>
+ <20191017181309.GE20903@linux.intel.com>
+ <20191021110823.GB7398@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191016102912.GA10013@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021110823.GB7398@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 01:29:12PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Oct 16, 2019 at 01:19:56PM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Oct 16, 2019 at 01:17:23PM +0300, Jarkko Sakkinen wrote:
-> > > On Mon, Oct 14, 2019 at 04:31:28PM -0700, Sean Christopherson wrote:
-> > > > I don't mind taking this to v23 review, but what do you mean by robustness
-> > > > in this context?
+On Mon, Oct 21, 2019 at 02:08:23PM +0300, Jarkko Sakkinen wrote:
+> On Thu, Oct 17, 2019 at 11:13:09AM -0700, Sean Christopherson wrote:
+> > On Thu, Oct 17, 2019 at 07:53:56PM +0300, Jarkko Sakkinen wrote:
+> > > On Wed, Oct 16, 2019 at 08:03:34PM -0700, Sean Christopherson wrote:
+> > > > Move the operator macros, ASSERT_* and EXTEND_*, to a standalone header
+> > > > so that they can be reused by other selftests without pulling in the
+> > > > full harness framework, which is cumbersome to use for testing features
+> > > > that require a substantial amount of setup, need callbacks, etc...
+> > > > 
+> > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > > > 
-> > > I think I kind of got this together API-wise:
-> > > 
-> > > #define SGX_ENCLAVE_ADD_PAGES_MEASURE 1
-> > > 
-> > > struct sgx_enclave_add_pages {
-> > > 	__u64 src;
-> > > 	__u64 offset;
-> > > 	__u64 length;
-> > > 	__u64 secinfo;
-> > > };
+> > > Is it possible to just use a "dull" selftest and not go into this before
+> > > the code is upstreamed? If yes, lets go with that.
+> > 
+> > It's certainly possible, but the code is verbose and ugly (IMO), which
+> > means it will be harder for other to review.
+> 
+> Ok, I'll try to explain in more verbose terms how I see this.
+> 
+> Not all selftests use the harness and I'm not yet confident that SGX has
+> to. Unfortunately, ugly is for me something that I cannot put metrics
+> on. Also, often "ugly" is actually better than layering because it is
+> more transparent.
+> 
+> The test is comprised of simple POSIX calls that everyone knows whereas
+> using kselftest harness requires learning new framework. Less macros
+> makes code also easier to debug and pair compare to dissembly when
+> required. I've done the latter at least a few times.
+> 
+> It will also add a requirement for code reviewers who are simply looking
+> for a code example how SGX works also to learn the harness. In the scope
+> of the patch set the selftest serves as a such example.
 
-Offset would be split as 48:8:8 aka PAGE_INDEX:MRSTART:FLAGS
-Length would be split as 48:8:8 aka NR_PAGES:MREND:0
-
-Forgot from my earlier description that measurement starting
-point would better to be also after the page start but with
-this bit presentation everything can be cleanly described.
-
-/Jarkko
+Eh, if SGX were actually using any of the harness stuff, sure, but I'd
+hope most reviewers intuitively understand what ASSERT_EQ does.
