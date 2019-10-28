@@ -4,29 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F65FCA9EC0
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Oct 2019 21:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5999CA9EC2
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Oct 2019 21:05:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED386217D6
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Oct 2019 21:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93A45217D6
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Oct 2019 21:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388868AbfJ1VFH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Oct 2019 17:05:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49908 "EHLO mga04.intel.com"
+        id S2389243AbfJ1VFR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Oct 2019 17:05:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:49912 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727148AbfJ1VFH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:05:07 -0400
+        id S2389225AbfJ1VFR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 28 Oct 2019 17:05:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 14:05:07 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 14:05:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,241,1569308400"; 
-   d="scan'208";a="224759637"
+   d="scan'208";a="224759670"
 Received: from shrehore-mobl1.ti.intel.com (HELO localhost) ([10.251.82.5])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Oct 2019 14:04:59 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 28 Oct 2019 14:05:08 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -39,122 +40,132 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v23 09/24] x86/sgx: Add functions to allocate and free EPC pages
-Date:   Mon, 28 Oct 2019 23:03:09 +0200
-Message-Id: <20191028210324.12475-10-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v23 10/24] x86/sgx: Add sgx_einit() for wrapping ENCLS[EINIT]
+Date:   Mon, 28 Oct 2019 23:03:10 +0200
+Message-Id: <20191028210324.12475-11-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
 References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add functions for allocating page from Enclave Page Cache (EPC). A page is
-allocated by going through the EPC sections and returning the first free
-page.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-When a page is freed, it might have a valid state, which means that the
-callee has assigned it to an enclave, which are protected memory ares used
-to run code protected from outside access. The page is returned back to the
-invalid state with ENCLS[EREMOVE] [1].
+Enclaves are SGX hosted measured and signed software entities. ENCLS[EINIT]
+leaf function checks that the enclave has a legit signed measurement and
+transforms the enclave to the state ready for execution. The signed
+measurement is provided by the caller in the form of SIGSTRUCT data
+structure [1].
 
-[1] Intel SDM: 40.3 INTEL® SGX SYSTEM LEAF FUNCTION REFERENCE
+Wrap ENCLS[EINIT] into sgx_einit(). Set MSR_IA32_SGXLEPUBKEYHASH* MSRs to
+match the public key contained in the SIGSTRUCT [2]. This sets Linux to
+enforce a policy where the provided public key is as long as the signed
+measurement matches the enclave contents in memory.
 
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Add a per-cpu cache to avoid unnecessary reads and write to the MSRs
+as they are expensive operations.
+
+[1] Intel SDM: 37.1.3 ENCLAVE SIGNATURE STRUCTURE (SIGSTRUCT)
+[2] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
+
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 60 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++
- 2 files changed, 63 insertions(+)
+ arch/x86/kernel/cpu/sgx/Makefile |  1 +
+ arch/x86/kernel/cpu/sgx/encls.c  | 57 ++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encls.h  |  3 ++
+ 3 files changed, 61 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/sgx/encls.c
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index f8ba10516eaf..6a37df61ae32 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -13,6 +13,66 @@
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
- int sgx_nr_epc_sections;
- 
-+static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section)
+diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+index 2dec75916a5e..874492d9e3bd 100644
+--- a/arch/x86/kernel/cpu/sgx/Makefile
++++ b/arch/x86/kernel/cpu/sgx/Makefile
+@@ -1,3 +1,4 @@
+ obj-y += \
++	encls.o \
+ 	main.o \
+ 	reclaim.o
+diff --git a/arch/x86/kernel/cpu/sgx/encls.c b/arch/x86/kernel/cpu/sgx/encls.c
+new file mode 100644
+index 000000000000..44291062967a
+--- /dev/null
++++ b/arch/x86/kernel/cpu/sgx/encls.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-19 Intel Corporation.
++
++#include <asm/cpufeature.h>
++#include <asm/traps.h>
++#include "encls.h"
++#include "sgx.h"
++
++/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
++static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
++
++static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
 +{
-+	struct sgx_epc_page *page;
-+
-+	if (list_empty(&section->page_list))
-+		return NULL;
-+
-+	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
-+	list_del_init(&page->list);
-+	return page;
-+}
-+
-+/**
-+ * sgx_try_alloc_page() - Allocate an EPC page
-+ *
-+ * Try to grab a page from the free EPC page list.
-+ *
-+ * Return:
-+ *   a pointer to a &struct sgx_epc_page instance,
-+ *   -errno on error
-+ */
-+struct sgx_epc_page *sgx_try_alloc_page(void)
-+{
-+	struct sgx_epc_section *section;
-+	struct sgx_epc_page *page;
++	u64 *cache;
 +	int i;
 +
-+	for (i = 0; i < sgx_nr_epc_sections; i++) {
-+		section = &sgx_epc_sections[i];
-+		spin_lock(&section->lock);
-+		page = __sgx_try_alloc_page(section);
-+		spin_unlock(&section->lock);
-+
-+		if (page)
-+			return page;
++	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
++	for (i = 0; i < 4; i++) {
++		if (enforce || (lepubkeyhash[i] != cache[i])) {
++			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
++			cache[i] = lepubkeyhash[i];
++		}
 +	}
-+
-+	return ERR_PTR(-ENOMEM);
 +}
 +
 +/**
-+ * sgx_free_page() - Free an EPC page
-+ * @page:	pointer a previously allocated EPC page
++ * sgx_einit - initialize an enclave
++ * @sigstruct:		a pointer a SIGSTRUCT
++ * @token:		a pointer an EINITTOKEN (optional)
++ * @secs:		a pointer a SECS
++ * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
 + *
-+ * EREMOVE an EPC page and insert it back to the list of free pages.
++ * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
++ * to @lepubkeyhash (if possible and necessary).
++ *
++ * Return:
++ *   0 on success,
++ *   -errno or SGX error on failure
 + */
-+void sgx_free_page(struct sgx_epc_page *page)
++int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
++	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
 +{
-+	struct sgx_epc_section *section = sgx_epc_section(page);
 +	int ret;
 +
-+	ret = __eremove(sgx_epc_addr(page));
-+	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
-+		return;
++	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
++		return __einit(sigstruct, token, sgx_epc_addr(secs));
 +
-+	spin_lock(&section->lock);
-+	list_add_tail(&page->list, &section->page_list);
-+	spin_unlock(&section->lock);
++	preempt_disable();
++	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
++	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	if (ret == SGX_INVALID_EINITTOKEN) {
++		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
++		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	}
++	preempt_enable();
++	return ret;
 +}
-+
- static void __init sgx_free_epc_section(struct sgx_epc_section *section)
- {
- 	struct sgx_epc_page *page;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 9d8036f997b1..a6d734a70362 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -67,4 +67,7 @@ extern struct task_struct *ksgxswapd_tsk;
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index d6381e4f6eb2..af94bbfe4cf6 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -248,4 +248,7 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+ 	return __encls_ret_3(EWB, pginfo, addr, va);
+ }
  
- bool __init sgx_page_reclaimer_init(void);
- 
-+struct sgx_epc_page *sgx_try_alloc_page(void);
-+void sgx_free_page(struct sgx_epc_page *page);
++int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
++	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
 +
- #endif /* _X86_SGX_H */
+ #endif /* _X86_ENCLS_H */
 -- 
 2.20.1
 
