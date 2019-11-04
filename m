@@ -2,107 +2,88 @@ Return-Path: <SRS0=L1tv=Y4=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC68CA9EC9
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 Nov 2019 21:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2546CA9ED4
+	for <linux-sgx@archiver.kernel.org>; Mon,  4 Nov 2019 22:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A90A20717
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 Nov 2019 21:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8851204FD
+	for <linux-sgx@archiver.kernel.org>; Mon,  4 Nov 2019 22:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbfKDVVY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Nov 2019 16:21:24 -0500
-Received: from mga01.intel.com ([192.55.52.88]:53332 "EHLO mga01.intel.com"
+        id S2387842AbfKDW1D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Nov 2019 17:27:03 -0500
+Received: from mga02.intel.com ([134.134.136.20]:41985 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbfKDVVX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:21:23 -0500
+        id S2387852AbfKDW1C (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:27:02 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 13:21:23 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 14:27:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
-   d="scan'208";a="191881950"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga007.jf.intel.com with ESMTP; 04 Nov 2019 13:21:22 -0800
-Date:   Mon, 4 Nov 2019 13:21:22 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+   d="scan'208";a="232234750"
+Received: from rczubala-mobl.ger.corp.intel.com (HELO localhost) ([10.252.7.245])
+  by fmsmga002.fm.intel.com with ESMTP; 04 Nov 2019 14:26:59 -0800
+Date:   Tue, 5 Nov 2019 00:26:58 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: Re: [PATCH for v24 3/3] x86/sgx: Remove a subordinate clause
-Message-ID: <20191104212122.GC5960@linux.intel.com>
+Subject: Re: [PATCH for v24 1/3] x86/sgx: Use GFP_KERNEL for allocations
+Message-ID: <20191104222658.GA3606@linux.intel.com>
 References: <20191104200141.5385-1-jarkko.sakkinen@linux.intel.com>
- <20191104200141.5385-3-jarkko.sakkinen@linux.intel.com>
+ <20191104204602.GA5960@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191104200141.5385-3-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191104204602.GA5960@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 10:01:41PM +0200, Jarkko Sakkinen wrote:
-> The subordinate clause of last sentence of the sgx_ioc_enclave_pages()
-> does not provide any insight not already provided. Thus, remove it.
-
-Isn't the whole point of the documentation to help the user understand
-*how* to use the API, not simply state exactly what the code does?
-
-> Also, using "i.e." (and "e.g.") in the documentation should be
-> considered a bad practice because it leaves it open ended.
-
-How does stating the practical effect of the semantics leave the docs open
-ended?  The man pages for open[1], close[2], read[3], dlopen[4], etc...
-all provide examples (usually with "for example" verbiage) to call out
-common scenarios to help the reader understand the details, and close()
-also uses "i.e." to clarify.
-
-[1] http://man7.org/linux/man-pages/man2/open.2.html
-[2] http://man7.org/linux/man-pages/man2/close.2.html
-[3] http://man7.org/linux/man-pages/man2/read.2.html
-[4] http://man7.org/linux/man-pages/man3/dlopen.3.html
- 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/ioctl.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
+On Mon, Nov 04, 2019 at 12:46:02PM -0800, Sean Christopherson wrote:
+> On Mon, Nov 04, 2019 at 10:01:39PM +0200, Jarkko Sakkinen wrote:
+> > The reasoning is the same as in
+> > 
+> > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/abd55954f91a3aacc1d260d2411cf776ec4d5fd2
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/ioctl.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > index 5b28a9c0cb68..d53aee5a64c1 100644
+> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > @@ -259,7 +259,7 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+> >  	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
+> >  		return -EFAULT;
+> >  
+> > -	secs_page = alloc_page(GFP_HIGHUSER);
+> > +	secs_page = alloc_page(GFP_KERNEL);
+> >  	if (!secs_page)
+> >  		return -ENOMEM;
+> >  
+> > @@ -674,7 +674,7 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+> >  	if (copy_from_user(&einit, arg, sizeof(einit)))
+> >  		return -EFAULT;
+> >  
+> > -	initp_page = alloc_page(GFP_HIGHUSER);
+> > +	initp_page = alloc_page(GFP_KERNEL);
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 289af607f634..87b2fb62825a 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -468,11 +468,9 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
->   * @encl:       pointer to an enclave instance (via ioctl() file pointer)
->   * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
->   *
-> - * Add (EADD) one or more pages to an uninitialized enclave, and optionally
-> - * extend (EEXTEND) the measurement with the contents of the page. The range of
+> Would it make sense to use GFP_KERNEL_ACCOUNT?  The accounting would be
+> weird for the case where userspace is using a builder process, but even in
+> that case it's not flat out wrong to account per-enclave memory allocations.
 
-Why are you dropping the reference to the ENCLS functions?  Yes, it's
-stating the obvious for those of us that have been buried in SGX for the
-last few years, but for newbies reading the docs I think there is value in
-explicitly connecting the actions to the ENCLS function.
+I did not find a single call site that would use that for allocating
+memory for function-internal data.
 
-> - * pages must be virtually contiguous. The SECINFO and measurement mask are
-> - * applied to all pages, i.e. pages with different properties must be added in
-> - * separate calls.
-> + * Add one or more pages to an uninitialized enclave, and optionally extend the
-> + * measurement with the contents of the page. The address range of pages must
-> + * be contiguous. The SECINFO and measurement mask are applied to all pages.
-
-I like making it "address range", but I'd prefer to keep the "virtually"
-qualifier.  Again, probably stating the obvious for many readers, but I
-don't think it's ever harmful and I like the clarification it provides
-without having to stop and consider the context.
-
->   *
->   * A SECINFO for a TCS is required to always contain zero permissions because
->   * CPU silently zeros them. Allowing anything else would cause a mismatch in
-> -- 
-> 2.20.1
-> 
+/Jarkko
