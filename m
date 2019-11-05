@@ -2,108 +2,85 @@ Return-Path: <SRS0=ABp+=Y5=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D250ACA9ED3
-	for <linux-sgx@archiver.kernel.org>; Tue,  5 Nov 2019 02:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 027B4C010A3
+	for <linux-sgx@archiver.kernel.org>; Tue,  5 Nov 2019 11:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A46B8214E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  5 Nov 2019 02:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBFDD21928
+	for <linux-sgx@archiver.kernel.org>; Tue,  5 Nov 2019 11:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbfKECRW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Nov 2019 21:17:22 -0500
-Received: from mga12.intel.com ([192.55.52.136]:24068 "EHLO mga12.intel.com"
+        id S2388654AbfKELLo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 5 Nov 2019 06:11:44 -0500
+Received: from mga18.intel.com ([134.134.136.126]:18842 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728987AbfKECRW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:17:22 -0500
+        id S2388494AbfKELLn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 5 Nov 2019 06:11:43 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 18:17:20 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 03:11:43 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,269,1569308400"; 
-   d="scan'208";a="204819309"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga003.jf.intel.com with ESMTP; 04 Nov 2019 18:17:20 -0800
-Date:   Mon, 4 Nov 2019 18:17:20 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org
-Subject: Re: [PATCH for v24 1/3] x86/sgx: Use GFP_KERNEL for allocations
-Message-ID: <20191105021720.GE5960@linux.intel.com>
-References: <20191104200141.5385-1-jarkko.sakkinen@linux.intel.com>
- <20191104204602.GA5960@linux.intel.com>
- <20191104222658.GA3606@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
+   d="scan'208";a="403317098"
+Received: from zpanjkov-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.3.163])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2019 03:11:29 -0800
+Date:   Tue, 5 Nov 2019 13:11:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191105111057.GA20879@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <20191029092920.GA14494@linux.intel.com>
+ <20191030093045.GB12481@linux.intel.com>
+ <20191031211252.GC10507@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191104222658.GA3606@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191031211252.GC10507@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 12:26:58AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Nov 04, 2019 at 12:46:02PM -0800, Sean Christopherson wrote:
-> > On Mon, Nov 04, 2019 at 10:01:39PM +0200, Jarkko Sakkinen wrote:
-> > > The reasoning is the same as in
-> > > 
-> > > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/abd55954f91a3aacc1d260d2411cf776ec4d5fd2
-> > > 
-> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > ---
-> > >  arch/x86/kernel/cpu/sgx/ioctl.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > index 5b28a9c0cb68..d53aee5a64c1 100644
-> > > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > @@ -259,7 +259,7 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
-> > >  	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
-> > >  		return -EFAULT;
-> > >  
-> > > -	secs_page = alloc_page(GFP_HIGHUSER);
-> > > +	secs_page = alloc_page(GFP_KERNEL);
-> > >  	if (!secs_page)
-> > >  		return -ENOMEM;
-> > >  
-> > > @@ -674,7 +674,7 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
-> > >  	if (copy_from_user(&einit, arg, sizeof(einit)))
-> > >  		return -EFAULT;
-> > >  
-> > > -	initp_page = alloc_page(GFP_HIGHUSER);
-> > > +	initp_page = alloc_page(GFP_KERNEL);
-> > 
-> > Would it make sense to use GFP_KERNEL_ACCOUNT?  The accounting would be
-> > weird for the case where userspace is using a builder process, but even in
-> > that case it's not flat out wrong to account per-enclave memory allocations.
+On Thu, Oct 31, 2019 at 11:12:52PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Oct 30, 2019 at 02:30:45AM -0700, Sean Christopherson wrote:
+> > Why?  The number of pages processed is effectively returned via the params
+> > on any error, e.g. wouldn't it be more appropriate to return -ERESTARTSYS?
+> > And I don't see any reason to add an arbitrary cap on the number of pages,
+> > e.g. SGX plays nice with the scheduler and signals, and restricting the
+> > number of EPC pages available to a process via cgroups (returning -ENOMEM)
+> > is a better solution for managing EPC.
 > 
-> I did not find a single call site that would use that for allocating
-> memory for function-internal data.
+> Returning -ENOMEM does not tell you from which page to retry.
 
-Actually, the fact that the allocations are transient is an even better
-argument for accounting the memory, as the weirdness I was referring to
-doesn't exist for the builder concept.
+API should be robust enough to be able to cap the amount of data
+processed with or without cgroups like send(), recv(), read() and
+write() are and the call pattern for it must be a loop not a single shot
+call for any megalomaniac length.
 
-But looking more closely, Documentation/core-api/memory-allocation.rst
-states:
+I'll add @count to address this. This output field will contain the
+number of bytes actually written instead of overwriting input
+parameters, which is a bad practice in anyway.
 
-  * Untrusted allocations triggered from userspace should be a subject
-    of kmem accounting and must have ``__GFP_ACCOUNT`` bit set. There
-    is the handy ``GFP_KERNEL_ACCOUNT`` shortcut for ``GFP_KERNEL``
-    allocations that should be accounted.
+We don't need to actually cap to anything but API must be able to
+support such scenario. Caller must be prepared to deal with the
+situation where the return value is zero but @count < @length.
 
-
-That means all uses of GFP_KERNEL except in sgx_alloc_epc_section() should
-be converted to GFP_KERNEL_ACCOUNTED.  As is, depending on fd limits[*], a
-single process can easily burn through multiple GBs of memory simply by
-opening /dev/sgx/enclave in a loop.
-
-[*] AFAICT, systemd is upping the max number of open files to 1M on my
-    systems.  I don't _think_ I changed a setting anywhere?
+/Jarkko
