@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064C9C432C0
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Nov 2019 18:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2794C432C0
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Nov 2019 18:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8531223E4
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Nov 2019 18:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96316223E4
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Nov 2019 18:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfKSSlq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 19 Nov 2019 13:41:46 -0500
+        id S1727124AbfKSSlu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 19 Nov 2019 13:41:50 -0500
 Received: from mga11.intel.com ([192.55.52.93]:54713 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726985AbfKSSlq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 19 Nov 2019 13:41:46 -0500
+        id S1726985AbfKSSlu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 19 Nov 2019 13:41:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 10:41:46 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 10:41:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,219,1571727600"; 
-   d="scan'208";a="357191651"
+   d="scan'208";a="357191671"
 Received: from mthoma4-mobl.ger.corp.intel.com (HELO localhost) ([10.251.82.166])
-  by orsmga004.jf.intel.com with ESMTP; 19 Nov 2019 10:41:43 -0800
+  by orsmga004.jf.intel.com with ESMTP; 19 Nov 2019 10:41:48 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH for v24 v3 2/4] x86/sgx: %SGX_IOC_ENCLAVE_ADD_PAGES: Destroy enclave when ENCLS fails
-Date:   Tue, 19 Nov 2019 20:41:35 +0200
-Message-Id: <20191119184137.16004-2-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH for v24 v3 3/4] x86/sgx: Detach sgx_encl_add_page() from struct sgx_enclave_add_pages
+Date:   Tue, 19 Nov 2019 20:41:36 +0200
+Message-Id: <20191119184137.16004-3-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191119184137.16004-1-jarkko.sakkinen@linux.intel.com>
 References: <20191119184137.16004-1-jarkko.sakkinen@linux.intel.com>
@@ -44,57 +44,71 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Destroy enclave on ENCLS[EADD] failure in order to get consistent
-behavior when any ENCLS fails in this ioctl.
+Internals should not have direct bindings to the ioctl API. Therefore,
+unpack &sgx_enclave_add_pages and pass its fields as separate parameters to
+sgx_enclave_add_page(). This will also remove an inconsistency: secinfo is
+already passed as a separate parameter whereas other fields are read from
+the struct.
 
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 2d6f7b8cc429..a2b411a8236d 100644
+index a2b411a8236d..f08008bef943 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -413,8 +413,13 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
+@@ -360,16 +360,16 @@ static int __sgx_encl_extend(struct sgx_encl *encl,
+ 	return 0;
+ }
+ 
+-static int sgx_encl_add_page(struct sgx_encl *encl,
+-			     struct sgx_enclave_add_pages *addp,
+-			     struct sgx_secinfo *secinfo)
++static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
++			     unsigned long offset, unsigned long length,
++			     struct sgx_secinfo *secinfo, unsigned long flags)
+ {
+ 	struct sgx_encl_page *encl_page;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_va_page *va_page;
+ 	int ret;
+ 
+-	encl_page = sgx_encl_page_alloc(encl, addp->offset, secinfo->flags);
++	encl_page = sgx_encl_page_alloc(encl, offset, secinfo->flags);
+ 	if (IS_ERR(encl_page))
+ 		return PTR_ERR(encl_page);
+ 
+@@ -412,7 +412,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
+ 		goto err_out_unlock;
  
  	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
- 				  addp->src);
--	if (ret)
-+	if (ret) {
-+		/* ENCLS failure. */
-+		if (ret == -EIO)
-+			sgx_encl_destroy(encl);
-+
- 		goto err_out;
-+	}
+-				  addp->src);
++				  src);
+ 	if (ret) {
+ 		/* ENCLS failure. */
+ 		if (ret == -EIO)
+@@ -430,7 +430,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
+ 	encl_page->epc_page = epc_page;
+ 	encl->secs_child_cnt++;
  
- 	/*
- 	 * Complete the "add" before doing the "extend" so that the "add"
-@@ -428,10 +433,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
- 	if (addp->flags & SGX_PAGE_MEASURE) {
+-	if (addp->flags & SGX_PAGE_MEASURE) {
++	if (flags & SGX_PAGE_MEASURE) {
  		ret = __sgx_encl_extend(encl, epc_page);
  
--		/*
--		 * Destroy the enclave if EEXTEND fails, EADD can't be undone.
--		 * Note, destroy() also frees the resources for the added page.
--		 */
-+		/* ENCLS failure. */
- 		if (ret) {
- 			sgx_encl_destroy(encl);
- 			goto out_unlock;
-@@ -494,6 +496,10 @@ static int sgx_encl_add_page(struct sgx_encl *encl,
-  * re-invoke SGX_IOC_ENCLAVE_ADD_PAGES using the same struct in response to an
-  * ERESTARTSYS error.
-  *
-+ * If ENCLS opcode fails, that effectively means that EPC has been invalidated.
-+ * When this happens the enclave is destroyed and -EIO is returned to the
-+ * caller.
-+ *
-  * Return:
-  *   0 on success,
-  *   -EACCES if an executable source page is located in a noexec partition,
+ 		/* ENCLS failure. */
+@@ -547,7 +547,8 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 		if (need_resched())
+ 			cond_resched();
+ 
+-		ret = sgx_encl_add_page(encl, &addp, &secinfo);
++		ret = sgx_encl_add_page(encl, addp.src, addp.offset,
++					addp.length, &secinfo, addp.flags);
+ 		if (ret)
+ 			break;
+ 
 -- 
 2.20.1
 
