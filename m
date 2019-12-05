@@ -1,81 +1,111 @@
-Return-Path: <SRS0=wzDQ=ZY=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=0WoA=Z3=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CBAC432C0
-	for <linux-sgx@archiver.kernel.org>; Mon,  2 Dec 2019 18:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A27C43603
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 Dec 2019 10:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA17720718
-	for <linux-sgx@archiver.kernel.org>; Mon,  2 Dec 2019 18:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A77412464D
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 Dec 2019 10:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfLBSVF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 2 Dec 2019 13:21:05 -0500
-Received: from mga07.intel.com ([134.134.136.100]:58535 "EHLO mga07.intel.com"
+        id S1728955AbfLEKCC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 Dec 2019 05:02:02 -0500
+Received: from mga05.intel.com ([192.55.52.43]:43804 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727671AbfLBSVF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:21:05 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726239AbfLEKCC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 5 Dec 2019 05:02:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 10:21:04 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 02:02:01 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="410523120"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga005.fm.intel.com with ESMTP; 02 Dec 2019 10:21:02 -0800
-Date:   Mon, 2 Dec 2019 10:21:03 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v24 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191202182102.GF4063@linux.intel.com>
-References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
- <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
- <op.0b6gvhtiwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+X-IronPort-AV: E=Sophos;i="5.69,281,1571727600"; 
+   d="scan'208";a="214137872"
+Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.112])
+  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2019 02:01:58 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Huang Haitao <haitao.huang@intel.com>
+Subject: [PATCH] x86/sgx: Fix double-free when EADD fails
+Date:   Thu,  5 Dec 2019 12:01:51 +0200
+Message-Id: <20191205100151.18950-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <op.0b6gvhtiwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 09:48:43AM -0600, Haitao Huang wrote:
-> On Fri, 29 Nov 2019 17:13:14 -0600, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> 
-> 
-> >+
-> >+	for (c = 0 ; c < addp.length; c += PAGE_SIZE) {
-> >+		if (signal_pending(current)) {
-> >+			ret = -ERESTARTSYS;
-> >+			break;
-> >+		}
-> 
-> This IOC is not idempotent as pages EADDed at this point can not be
-> re-EADDed again. So we can't return ERESTARTSYS
+radix_tree_delete() gets called twice for the same page  when EADD
+fails. This commit fixes the issue.
 
-Ah, and now I remember why I opted for modifying the parameters directly
-instead of including a "number processed" field.  Andy pointed out the
-ERESTARTSYS thing in the original multi-page add RFC[*], so presumably
-updating the params and returning ERESTARTSYS is legal/acceptable.
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Reported-by: Huang Haitao <haitao.huang@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-[*] https://lkml.kernel.org/r/CALCETrUb4X9_L9RXKhmyNpfSCsbNodP=BfbfO8Fz_efq24jp8w@mail.gmail.com
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index ab9e48cd294b..2ff12038a8a4 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -413,13 +413,8 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 
+ 	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
+ 				  src);
+-	if (ret) {
+-		/* ENCLS failure. */
+-		if (ret == -EIO)
+-			sgx_encl_destroy(encl);
+-
++	if (ret)
+ 		goto err_out;
+-	}
+ 
+ 	/*
+ 	 * Complete the "add" before doing the "extend" so that the "add"
+@@ -432,17 +427,12 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 
+ 	if (flags & SGX_PAGE_MEASURE) {
+ 		ret = __sgx_encl_extend(encl, epc_page);
+-
+-		/* ENCLS failure. */
+-		if (ret) {
+-			sgx_encl_destroy(encl);
+-			goto out_unlock;
+-		}
++		if (ret)
++			goto err_out;
+ 	}
+ 
+ 	sgx_mark_page_reclaimable(encl_page->epc_page);
+ 
+-out_unlock:
+ 	mutex_unlock(&encl->lock);
+ 	up_read(&current->mm->mmap_sem);
+ 	return ret;
+@@ -460,6 +450,13 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	sgx_free_page(epc_page);
+ 	kfree(encl_page);
+ 
++	/*
++	 * Destroy enclave on ENCLS failure as this means that EPC has been
++	 * invalidated.
++	 */
++	if (ret == -EIO)
++		sgx_encl_destroy(encl);
++
+ 	return ret;
+ }
+ 
+-- 
+2.20.1
+
