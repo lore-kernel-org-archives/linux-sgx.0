@@ -2,39 +2,40 @@ Return-Path: <SRS0=a1ch=2H=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C9DC43603
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Dec 2019 14:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B60C43603
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Dec 2019 15:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 547F224672
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Dec 2019 14:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137A9218AC
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Dec 2019 15:17:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="KzqHlTMn"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="IgvRwOM0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbfLQOp5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Dec 2019 09:45:57 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35976 "EHLO mail.skyhub.de"
+        id S1727417AbfLQPRy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Dec 2019 10:17:54 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40798 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbfLQOp4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:45:56 -0500
+        id S1726560AbfLQPRy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Dec 2019 10:17:54 -0500
 Received: from zn.tnic (p200300EC2F0BBF00B1FF9AA6AAA46E12.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:bf00:b1ff:9aa6:aaa4:6e12])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 53EF31EC0C98;
-        Tue, 17 Dec 2019 15:45:55 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E7211EC0ABC;
+        Tue, 17 Dec 2019 16:17:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576593955;
+        t=1576595873;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=4Z3n2EH/Q0VRUKMKsCjrgjVpECFcgut+s/l07f0q4KQ=;
-        b=KzqHlTMnAxbxCs4KE/SDF5ei56nQeE+tLbIS3dTJN7rDw1vGM3hz6vyYTX8HdiUSntYNG6
-        TBze4+Fy7qr6GDN20idaL3ly5eYL1IqNv7ekgn3Dqw0UshJMok7GIj8z4Mis1UNsHR+Y6O
-        pgmSPsocd1sn6GhNrFCczQafMRXNFbU=
-Date:   Tue, 17 Dec 2019 15:45:48 +0100
+        bh=eMPRb1cz3Nt28bOIAgvze0vVdLfDNbhPiLCjieiXvPg=;
+        b=IgvRwOM0qg8wEd4JMvkhf5NcFcChnH2T+nAaI8DilOhfGUq/o51WiLa8tL5G3bV7q7eDZj
+        YN3wzHwN3uisJTfNImBcWCzTgf7LymqJflfElCgg1g6+v3SuE6of3/fouMnEPaPsYQsNbr
+        E/0wOJ3MIYeFtXVSrxFfD8e/Z2HFiVc=
+Date:   Tue, 17 Dec 2019 16:17:44 +0100
 From:   Borislav Petkov <bp@alien8.de>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -46,59 +47,95 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
         kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
         puiterwijk@redhat.com
-Subject: Re: [PATCH v24 06/24] x86/sgx: Add wrappers for ENCLS leaf functions
-Message-ID: <20191217144548.GF28788@zn.tnic>
+Subject: Re: [PATCH v24 07/24] x86/cpu/intel: Detect SGX supprt
+Message-ID: <20191217151744.GG28788@zn.tnic>
 References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
- <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
+ <20191129231326.18076-8-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20191129231326.18076-8-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 01:13:08AM +0200, Jarkko Sakkinen wrote:
-> +/**
-> + * encls_failed() - Check if an ENCLS leaf function failed
-> + * @ret:	the return value of an ENCLS leaf function call
-> + *
-> + * Check if an ENCLS leaf function failed. This happens when the leaf function
-> + * causes a fault that is not caused by an EPCM conflict or when the leaf
-> + * function returns a non-zero value.
-> + */
-> +static inline bool encls_failed(int ret)
-> +{
-> +	int epcm_trapnr =
-> +		boot_cpu_has(X86_FEATURE_SGX2) ? X86_TRAP_PF : X86_TRAP_GP;
-> +	bool fault = ret & ENCLS_FAULT_FLAG;
-> +
-> +	return (fault && ENCLS_TRAPNR(ret) != epcm_trapnr) || (!fault && ret);
-> +}
+On Sat, Nov 30, 2019 at 01:13:09AM +0200, Jarkko Sakkinen wrote:
 
-Can we make this function more readable?
+Typo in the subject:
 
-static inline bool encls_failed(int ret)
-{
-        int epcm_trapnr;
+Subject: Re: [PATCH v24 07/24] x86/cpu/intel: Detect SGX supprt
+							 ^^^^^^
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> When the CPU supports SGX, check that the BIOS has enabled SGX and SGX1
+> opcodes are available. Otherwise, all the SGX related capabilities.
+> 
+> In addition, clear X86_FEATURE_SGX_LC also in the case when the launch
+> enclave are read-only. This way the feature bit reflects the level that
+> Linux supports the launch control.
+> 
+> The check is done for every CPU, not just BSP, in order to verify that
+> MSR_IA32_FEATURE_CONTROL is correctly configured on all CPUs. The other
+> parts of the kernel, like the enclave driver, expect the same
+> configuration from all CPUs.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/intel.c | 41 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 
-        if (boot_cpu_has(X86_FEATURE_SGX2))
-                epcm_trapnr = X86_TRAP_PF;
-        else
-                epcm_trapnr = X86_TRAP_GP;
+...
 
-        if (ret & ENCLS_FAULT_FLAG)
-                return ENCLS_TRAPNR(ret) != epcm_trapnr;
+> @@ -761,6 +797,11 @@ static void init_intel(struct cpuinfo_x86 *c)
+>  	if (cpu_has(c, X86_FEATURE_TME))
+>  		detect_tme(c);
+>  
+> +#ifdef CONFIG_INTEL_SGX
+> +	if (cpu_has(c, X86_FEATURE_SGX))
+> +		detect_sgx(c);
+> +#endif
 
-        return !!ret;
-}
+You can remove the ifdeffery here and put the ifdef around the function
+body and drop the __maybe_unused tag:
 
-I hope I've converted it correctly but I might've missed some corner
-case...
-
-Thx.
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index ef41431b3f70..2f3414eff99d 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -624,8 +624,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 	c->x86_phys_bits -= keyid_bits;
+ }
+ 
+-static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
++static void detect_sgx(struct cpuinfo_x86 *c)
+ {
++#ifdef CONFIG_INTEL_SGX
+ 	unsigned long long fc;
+ 
+ 	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+@@ -658,6 +659,7 @@ static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
+ 
+ err_msrs_rdonly:
+ 	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
++#endif
+ }
+ 
+ static void init_cpuid_fault(struct cpuinfo_x86 *c)
+@@ -797,10 +799,8 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 	if (cpu_has(c, X86_FEATURE_TME))
+ 		detect_tme(c);
+ 
+-#ifdef CONFIG_INTEL_SGX
+ 	if (cpu_has(c, X86_FEATURE_SGX))
+ 		detect_sgx(c);
+-#endif
+ 
+ 	init_intel_misc_features(c);
+ 
 
 -- 
 Regards/Gruss,
