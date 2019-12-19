@@ -1,79 +1,102 @@
-Return-Path: <SRS0=GWrB=2I=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=bk6Q=2J=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1FEC43603
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Dec 2019 16:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347FBC43603
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Dec 2019 00:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38BFA227BF
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Dec 2019 16:18:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="mB6F5CRI"
+	by mail.kernel.org (Postfix) with ESMTP id 01A5522314
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Dec 2019 00:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfLRQS3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Dec 2019 11:18:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43134 "EHLO mail.skyhub.de"
+        id S1726599AbfLSAjH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Dec 2019 19:39:07 -0500
+Received: from mga12.intel.com ([192.55.52.136]:56776 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726955AbfLRQS2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:18:28 -0500
-Received: from zn.tnic (p200300EC2F0B8B009D1D67E59157F47A.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:8b00:9d1d:67e5:9157:f47a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 640811EC05B0;
-        Wed, 18 Dec 2019 17:18:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576685907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mYgMkr+bARNjL6EZJiJMKopGv36OxLWLBBdhBNmcynU=;
-        b=mB6F5CRI3SPwmtL9swsspuLi/U1OMA8fOzm10p2XewVSTpv6+f1wTPhPrtzbQQ1sZFdPoH
-        7vNT/CCa4IuLTlJoxWFTaMdR78PXSQO+ccx/x4lFkxHrjvHyD+khwE+6mrK43Hjf0lTFTI
-        QdR8UTJ+AGBCLT2fehDS6SoQb8JGg7M=
-Date:   Wed, 18 Dec 2019 17:18:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
+        id S1726518AbfLSAjH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Dec 2019 19:39:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 16:39:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="228070707"
+Received: from jtreacy-mobl1.ger.corp.intel.com ([10.251.82.127])
+  by orsmga002.jf.intel.com with ESMTP; 18 Dec 2019 16:39:00 -0800
+Message-ID: <dd33820c8874f8e4c7628243e0583a419be7fed4.camel@linux.intel.com>
+Subject: Re: [PATCH v24 06/24] x86/sgx: Add wrappers for ENCLS leaf functions
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com
-Subject: Re: [PATCH v24 08/24] x86/sgx: Enumerate and track EPC sections
-Message-ID: <20191218161821.GG24886@zn.tnic>
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
+        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
+        puiterwijk@redhat.com
+Date:   Thu, 19 Dec 2019 02:39:00 +0200
+In-Reply-To: <20191217144548.GF28788@zn.tnic>
 References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
- <20191129231326.18076-9-jarkko.sakkinen@linux.intel.com>
- <20191218091856.GA24886@zn.tnic>
- <20191218151944.GA25201@linux.intel.com>
+         <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
+         <20191217144548.GF28788@zn.tnic>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191218151944.GA25201@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 07:19:44AM -0800, Sean Christopherson wrote:
-> Yes, EPC pages are architecturally defined to be 4k sized and aligned.
+On Tue, 2019-12-17 at 15:45 +0100, Borislav Petkov wrote:
+> On Sat, Nov 30, 2019 at 01:13:08AM +0200, Jarkko Sakkinen wrote:
+> > +/**
+> > + * encls_failed() - Check if an ENCLS leaf function failed
+> > + * @ret:	the return value of an ENCLS leaf function call
+> > + *
+> > + * Check if an ENCLS leaf function failed. This happens when the leaf function
+> > + * causes a fault that is not caused by an EPCM conflict or when the leaf
+> > + * function returns a non-zero value.
+> > + */
+> > +static inline bool encls_failed(int ret)
+> > +{
+> > +	int epcm_trapnr =
+> > +		boot_cpu_has(X86_FEATURE_SGX2) ? X86_TRAP_PF : X86_TRAP_GP;
+> > +	bool fault = ret & ENCLS_FAULT_FLAG;
+> > +
+> > +	return (fault && ENCLS_TRAPNR(ret) != epcm_trapnr) || (!fault && ret);
+> > +}
 > 
->   36.5 Enclave Page Cache
+> Can we make this function more readable?
 > 
->   The EPC is divided into EPC pages. An EPC page is 4KB in size and always
->   aligned on a 4KB boundary.
+> static inline bool encls_failed(int ret)
+> {
+>         int epcm_trapnr;
+> 
+>         if (boot_cpu_has(X86_FEATURE_SGX2))
+>                 epcm_trapnr = X86_TRAP_PF;
+>         else
+>                 epcm_trapnr = X86_TRAP_GP;
+> 
+>         if (ret & ENCLS_FAULT_FLAG)
+>                 return ENCLS_TRAPNR(ret) != epcm_trapnr;
+> 
+>         return !!ret;
+> }
+> 
+> I hope I've converted it correctly but I might've missed some corner
+> case...
+> 
+> Thx.
 
-Aha, thx!
+Absolutely. I absolutely hate too "clever code".
 
--- 
-Regards/Gruss,
-    Boris.
+/Jarkko
 
-https://people.kernel.org/tglx/notes-about-netiquette
