@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5C5C2D0D3
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Dec 2019 00:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B281EC43603
+	for <linux-sgx@archiver.kernel.org>; Sat, 21 Dec 2019 00:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D962146E
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Dec 2019 00:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8F52070C
+	for <linux-sgx@archiver.kernel.org>; Sat, 21 Dec 2019 00:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfLUAb7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 20 Dec 2019 19:31:59 -0500
-Received: from mga07.intel.com ([134.134.136.100]:9723 "EHLO mga07.intel.com"
+        id S1726462AbfLUAuz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 20 Dec 2019 19:50:55 -0500
+Received: from mga17.intel.com ([192.55.52.151]:57300 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfLUAb7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 20 Dec 2019 19:31:59 -0500
+        id S1726346AbfLUAuz (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 20 Dec 2019 19:50:55 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 16:31:57 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 16:50:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,337,1571727600"; 
-   d="scan'208";a="267658125"
+   d="scan'208";a="391028389"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Dec 2019 16:31:57 -0800
+  by orsmga005.jf.intel.com with ESMTP; 20 Dec 2019 16:50:54 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v25 3/4] x86/sgx: Drop unused @encl parameter from __sgx_encl_ewb()
-Date:   Fri, 20 Dec 2019 16:31:55 -0800
-Message-Id: <20191221003156.27236-4-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v25] x86/sgx: Move the intermediate EINIT helper into the driver
+Date:   Fri, 20 Dec 2019 16:50:53 -0800
+Message-Id: <20191221005053.27620-1-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191221003156.27236-1-sean.j.christopherson@intel.com>
-References: <20191221003156.27236-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
@@ -43,57 +41,172 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Remove the unused @encl parameter from __sgx_encl_ewb() to help shorten
-the line lengths of its call sites.
+Move sgx_einit() into the driver code, along with the LE hash MSR
+management.  Providing sgx_einit() in the common SGX code was a bit
+premature.  The thought was that the native SGX driver and KVM would
+be able to use a common EINIT helper, but that may or may not hold
+true depending on how KVM's implementation shakes out.  For example,
+KVM may want to pass user pointers directly to EINIT in order to
+avoid copying large amounts of data to in-kernel temp structures.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/reclaim.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index c5c0ba92ab63..030b1c24da07 100644
---- a/arch/x86/kernel/cpu/sgx/reclaim.c
-+++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -223,7 +223,7 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
- 	mutex_unlock(&encl->lock);
+I hedged a bit in the changelog, but I'm 99% confident KVM support will
+use a different implementation for EINIT.  Figure moving the code is worth
+doing in the initial series since it eliminates encls.c.  My thought is
+that the KVM series can move just the sgx_lepubkeyhash_cache code into
+main.c so it can be shared with virtual EPC code.
+
+ arch/x86/kernel/cpu/sgx/Makefile |  1 -
+ arch/x86/kernel/cpu/sgx/encls.c  | 57 --------------------------------
+ arch/x86/kernel/cpu/sgx/encls.h  |  3 --
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 37 +++++++++++++++++++++
+ 4 files changed, 37 insertions(+), 61 deletions(-)
+ delete mode 100644 arch/x86/kernel/cpu/sgx/encls.c
+
+diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+index 3ddcdabab081..f8d32da3a67a 100644
+--- a/arch/x86/kernel/cpu/sgx/Makefile
++++ b/arch/x86/kernel/cpu/sgx/Makefile
+@@ -1,7 +1,6 @@
+ obj-y += \
+ 	driver.o \
+ 	encl.o \
+-	encls.o \
+ 	ioctl.o \
+ 	main.o \
+ 	reclaim.o
+diff --git a/arch/x86/kernel/cpu/sgx/encls.c b/arch/x86/kernel/cpu/sgx/encls.c
+deleted file mode 100644
+index 44291062967a..000000000000
+--- a/arch/x86/kernel/cpu/sgx/encls.c
++++ /dev/null
+@@ -1,57 +0,0 @@
+-// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+-// Copyright(c) 2016-19 Intel Corporation.
+-
+-#include <asm/cpufeature.h>
+-#include <asm/traps.h>
+-#include "encls.h"
+-#include "sgx.h"
+-
+-/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
+-static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
+-
+-static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
+-{
+-	u64 *cache;
+-	int i;
+-
+-	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
+-	for (i = 0; i < 4; i++) {
+-		if (enforce || (lepubkeyhash[i] != cache[i])) {
+-			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
+-			cache[i] = lepubkeyhash[i];
+-		}
+-	}
+-}
+-
+-/**
+- * sgx_einit - initialize an enclave
+- * @sigstruct:		a pointer a SIGSTRUCT
+- * @token:		a pointer an EINITTOKEN (optional)
+- * @secs:		a pointer a SECS
+- * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
+- *
+- * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
+- * to @lepubkeyhash (if possible and necessary).
+- *
+- * Return:
+- *   0 on success,
+- *   -errno or SGX error on failure
+- */
+-int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+-	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
+-{
+-	int ret;
+-
+-	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
+-		return __einit(sigstruct, token, sgx_epc_addr(secs));
+-
+-	preempt_disable();
+-	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
+-	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
+-	if (ret == SGX_INVALID_EINITTOKEN) {
+-		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
+-		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
+-	}
+-	preempt_enable();
+-	return ret;
+-}
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index af94bbfe4cf6..d6381e4f6eb2 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -248,7 +248,4 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+ 	return __encls_ret_3(EWB, pginfo, addr, va);
  }
  
--static int __sgx_encl_ewb(struct sgx_encl *encl, struct sgx_epc_page *epc_page,
-+static int __sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 			  struct sgx_va_page *va_page, unsigned int va_offset,
- 			  struct sgx_backing *backing)
+-int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+-	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
+-
+ #endif /* _X86_ENCLS_H */
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 5c9e6e161698..f5812a834329 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -16,6 +16,9 @@
+ #include "encl.h"
+ #include "encls.h"
+ 
++/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
++static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
++
+ static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
  {
-@@ -292,7 +292,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 	if (sgx_va_page_full(va_page))
- 		list_move_tail(&va_page->list, &encl->va_pages);
+ 	struct sgx_va_page *va_page = NULL;
+@@ -578,6 +581,40 @@ static int sgx_get_key_hash(const void *modulus, void *hash)
+ 	return ret;
+ }
  
--	ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset, backing);
-+	ret = __sgx_encl_ewb(epc_page, va_page, va_offset, backing);
- 	if (ret == SGX_NOT_TRACKED) {
- 		ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
- 		if (ret) {
-@@ -300,8 +300,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 				ENCLS_WARN(ret, "ETRACK");
- 		}
- 
--		ret = __sgx_encl_ewb(encl, epc_page, va_page, va_offset,
--				     backing);
-+		ret = __sgx_encl_ewb(epc_page, va_page, va_offset, backing);
- 		if (ret == SGX_NOT_TRACKED) {
- 			/*
- 			 * Slow path, send IPIs to kick cpus out of the
-@@ -312,8 +311,8 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 			 */
- 			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
- 					 sgx_ipi_cb, NULL, 1);
--			ret = __sgx_encl_ewb(encl, epc_page, va_page,
--					     va_offset, backing);
-+			ret = __sgx_encl_ewb(epc_page, va_page, va_offset,
-+					     backing);
- 		}
- 	}
- 
++static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
++{
++	u64 *cache;
++	int i;
++
++	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
++	for (i = 0; i < 4; i++) {
++		if (enforce || (lepubkeyhash[i] != cache[i])) {
++			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
++			cache[i] = lepubkeyhash[i];
++		}
++	}
++}
++
++static int sgx_einit(struct sgx_sigstruct *sigstruct,
++		     struct sgx_einittoken *token,
++		     struct sgx_epc_page *secs, u64 *lepubkeyhash)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
++		return __einit(sigstruct, token, sgx_epc_addr(secs));
++
++	preempt_disable();
++	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
++	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	if (ret == SGX_INVALID_EINITTOKEN) {
++		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
++		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	}
++	preempt_enable();
++	return ret;
++}
++
+ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 			 struct sgx_einittoken *token)
+ {
 -- 
 2.24.1
 
