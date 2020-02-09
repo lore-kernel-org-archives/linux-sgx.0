@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC229C2BA83
-	for <linux-sgx@archiver.kernel.org>; Sun,  9 Feb 2020 21:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88088C2BA83
+	for <linux-sgx@archiver.kernel.org>; Sun,  9 Feb 2020 21:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6CD2082E
-	for <linux-sgx@archiver.kernel.org>; Sun,  9 Feb 2020 21:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64E5620838
+	for <linux-sgx@archiver.kernel.org>; Sun,  9 Feb 2020 21:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgBIV0r (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 9 Feb 2020 16:26:47 -0500
-Received: from mga09.intel.com ([134.134.136.24]:49735 "EHLO mga09.intel.com"
+        id S1727592AbgBIV0x (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 9 Feb 2020 16:26:53 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54519 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727416AbgBIV0r (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 9 Feb 2020 16:26:47 -0500
+        id S1727416AbgBIV0w (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 9 Feb 2020 16:26:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 13:26:46 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 13:26:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,422,1574150400"; 
-   d="scan'208";a="405398658"
+   d="scan'208";a="405398737"
 Received: from jradtke-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.22.75])
-  by orsmga005.jf.intel.com with ESMTP; 09 Feb 2020 13:26:41 -0800
+  by orsmga005.jf.intel.com with ESMTP; 09 Feb 2020 13:26:47 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -38,289 +38,115 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v26 05/22] x86/sgx: Add wrappers for ENCLS leaf functions
-Date:   Sun,  9 Feb 2020 23:25:52 +0200
-Message-Id: <20200209212609.7928-6-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v26 06/22] x86/cpu/intel: Detect SGX supprt
+Date:   Sun,  9 Feb 2020 23:25:53 +0200
+Message-Id: <20200209212609.7928-7-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
 References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-ENCLS is a ring 0 instruction, which contains a set of leaf functions for
-managing an enclave. Enclaves are measured and signed software entities,
-which are protected by asserting the outside memory accesses and memory
-encryption.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add a two-layer macro system along with an encoding scheme to allow
-wrappers to return trap numbers along ENCLS-specific error codes. The
-bottom layer of the macro system splits between the leafs that return an
-error code and those that do not. The second layer generates the correct
-input/output annotations based on the number of operands for each leaf
-function.
+Configure SGX as part of feature control MSR initialization and update
+the associated X86_FEATURE flags accordingly.  Because the kernel will
+require the LE hash MSRs to be writable when running native enclaves,
+disable X86_FEATURE_SGX (and all derivatives) if SGX Launch Control is
+not (or cannot) be fully enabled via feature control MSR.
 
-ENCLS leaf functions are documented in
+The check is done for every CPU, not just BSP, in order to verify that
+MSR_IA32_FEATURE_CONTROL is correctly configured on all CPUs. The other
+parts of the kernel, like the enclave driver, expect the same
+configuration from all CPUs.
 
-  Intel SDM: 36.6 ENCLAVE INSTRUCTIONS AND INTEL®
+Note, unlike VMX, clear the X86_FEATURE_SGX* flags for all CPUs if any
+CPU lacks SGX support as the kernel expects SGX to be available on all
+CPUs.  X86_FEATURE_VMX is intentionally cleared only for the current CPU
+so that KVM can provide additional information if KVM fails to load,
+e.g. print which CPU doesn't support VMX.  KVM/VMX requires additional
+per-CPU enabling, e.g. to set CR4.VMXE and do VMXON, and so already has
+the necessary infrastructure to do per-CPU checks.  SGX on the other
+hand doesn't require additional enabling, so clearing the feature flags
+on all CPUs means the SGX subsystem doesn't need to manually do support
+checks on a per-CPU basis.
 
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encls.h | 239 ++++++++++++++++++++++++++++++++
- 1 file changed, 239 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
+ arch/x86/kernel/cpu/feat_ctl.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-new file mode 100644
-index 000000000000..30132edddcd6
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -0,0 +1,239 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+#ifndef _X86_ENCLS_H
-+#define _X86_ENCLS_H
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/rwsem.h>
-+#include <linux/types.h>
-+#include <asm/asm.h>
-+#include <asm/traps.h>
-+#include "sgx.h"
-+
-+enum sgx_encls_leaf {
-+	ECREATE	= 0x00,
-+	EADD	= 0x01,
-+	EINIT	= 0x02,
-+	EREMOVE	= 0x03,
-+	EDGBRD	= 0x04,
-+	EDGBWR	= 0x05,
-+	EEXTEND	= 0x06,
-+	ELDU	= 0x08,
-+	EBLOCK	= 0x09,
-+	EPA	= 0x0A,
-+	EWB	= 0x0B,
-+	ETRACK	= 0x0C,
-+};
-+
-+/**
-+ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
-+ *
-+ * ENCLS has its own (positive value) error codes and also generates
-+ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
-+ * with system error codes as everything percolates back up the stack.
-+ * Unfortunately (for us), we need to precisely identify each unique
-+ * error code, e.g. the action taken if EWB fails varies based on the
-+ * type of fault and on the exact SGX error code, i.e. we can't simply
-+ * convert all faults to -EFAULT.
-+ *
-+ * To make all three error types coexist, we set bit 30 to identify an
-+ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
-+ * between positive (faults and SGX error codes) and negative (system
-+ * error codes) values.
-+ */
-+#define ENCLS_FAULT_FLAG 0x40000000
-+
-+/* Retrieve the encoded trapnr from the specified return code. */
-+#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
-+
-+/* Issue a WARN() about an ENCLS leaf. */
-+#define ENCLS_WARN(r, name) {						  \
-+	do {								  \
-+		int _r = (r);						  \
-+		WARN(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
-+	} while (0);							  \
-+}
-+
-+/**
-+ * encls_failed() - Check if an ENCLS leaf function failed
-+ * @ret:	the return value of an ENCLS leaf function call
-+ *
-+ * Check if an ENCLS leaf function failed. This happens when the leaf function
-+ * causes a fault that is not caused by an EPCM conflict or when the leaf
-+ * function returns a non-zero value.
-+ */
-+static inline bool encls_failed(int ret)
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 0268185bef94..b16b71a6da74 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -92,6 +92,14 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
+ }
+ #endif /* CONFIG_X86_VMX_FEATURE_NAMES */
+ 
++static void clear_sgx_caps(void)
 +{
-+        int epcm_trapnr;
-+
-+        if (boot_cpu_has(X86_FEATURE_SGX2))
-+                epcm_trapnr = X86_TRAP_PF;
-+        else
-+                epcm_trapnr = X86_TRAP_GP;
-+
-+        if (ret & ENCLS_FAULT_FLAG)
-+                return ENCLS_TRAPNR(ret) != epcm_trapnr;
-+
-+        return !!ret;
++	setup_clear_cpu_cap(X86_FEATURE_SGX);
++	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
++	setup_clear_cpu_cap(X86_FEATURE_SGX1);
++	setup_clear_cpu_cap(X86_FEATURE_SGX2);
 +}
 +
-+/**
-+ * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
-+ * @rax:	leaf number
-+ * @inputs:	asm inputs for the leaf
-+ *
-+ * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
-+ * And because SGX isn't complex enough as it is, leafs that return an error
-+ * code also modify flags.
-+ *
-+ * Return:
-+ *	0 on success,
-+ *	SGX error code on failure
-+ */
-+#define __encls_ret_N(rax, inputs...)				\
-+	({							\
-+	int ret;						\
-+	asm volatile(						\
-+	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"2:\n"							\
-+	".section .fixup,\"ax\"\n"				\
-+	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-+	"   jmp 2b\n"						\
-+	".previous\n"						\
-+	_ASM_EXTABLE_FAULT(1b, 3b)				\
-+	: "=a"(ret)						\
-+	: "a"(rax), inputs					\
-+	: "memory", "cc");					\
-+	ret;							\
-+	})
+ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ {
+ 	bool tboot = tboot_enabled();
+@@ -99,6 +107,7 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 
+ 	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+ 		clear_cpu_cap(c, X86_FEATURE_VMX);
++		clear_sgx_caps();
+ 		return;
+ 	}
+ 
+@@ -123,13 +132,21 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
+ 	}
+ 
++	/*
++	 * Enable SGX if and only if the kernel supports SGX and Launch Control
++	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
++	 */
++	if (cpu_has(c, X86_FEATURE_SGX) && cpu_has(c, X86_FEATURE_SGX_LC) &&
++	    IS_ENABLED(CONFIG_INTEL_SGX))
++		msr |= FEAT_CTL_SGX_ENABLED | FEAT_CTL_SGX_LC_ENABLED;
 +
-+#define __encls_ret_1(rax, rcx)		\
-+	({				\
-+	__encls_ret_N(rax, "c"(rcx));	\
-+	})
+ 	wrmsrl(MSR_IA32_FEAT_CTL, msr);
+ 
+ update_caps:
+ 	set_cpu_cap(c, X86_FEATURE_MSR_IA32_FEAT_CTL);
+ 
+ 	if (!cpu_has(c, X86_FEATURE_VMX))
+-		return;
++		goto update_sgx;
+ 
+ 	if ( (tboot && !(msr & FEAT_CTL_VMX_ENABLED_INSIDE_SMX)) ||
+ 	    (!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))) {
+@@ -142,4 +159,14 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 		init_vmx_capabilities(c);
+ #endif
+ 	}
 +
-+#define __encls_ret_2(rax, rbx, rcx)		\
-+	({					\
-+	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
-+	})
-+
-+#define __encls_ret_3(rax, rbx, rcx, rdx)			\
-+	({							\
-+	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
-+	})
-+
-+/**
-+ * __encls_N - encode an ENCLS leaf that doesn't return an error code
-+ * @rax:	leaf number
-+ * @rbx_out:	optional output variable
-+ * @inputs:	asm inputs for the leaf
-+ *
-+ * Emit assembly for an ENCLS leaf that does not return an error code,
-+ * e.g. ECREATE.  Leaves without error codes either succeed or fault.
-+ * @rbx_out is an optional parameter for use by EDGBRD, which returns
-+ * the the requested value in RBX.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   trapnr with ENCLS_FAULT_FLAG set on fault
-+ */
-+#define __encls_N(rax, rbx_out, inputs...)			\
-+	({							\
-+	int ret;						\
-+	asm volatile(						\
-+	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"   xor %%eax,%%eax;\n"					\
-+	"2:\n"							\
-+	".section .fixup,\"ax\"\n"				\
-+	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
-+	"   jmp 2b\n"						\
-+	".previous\n"						\
-+	_ASM_EXTABLE_FAULT(1b, 3b)				\
-+	: "=a"(ret), "=b"(rbx_out)				\
-+	: "a"(rax), inputs					\
-+	: "memory");						\
-+	ret;							\
-+	})
-+
-+#define __encls_2(rax, rbx, rcx)				\
-+	({							\
-+	unsigned long ign_rbx_out;				\
-+	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
-+	})
-+
-+#define __encls_1_1(rax, data, rcx)			\
-+	({						\
-+	unsigned long rbx_out;				\
-+	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
-+	if (!ret)					\
-+		data = rbx_out;				\
-+	ret;						\
-+	})
-+
-+static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
-+{
-+	return __encls_2(ECREATE, pginfo, secs);
-+}
-+
-+static inline int __eextend(void *secs, void *addr)
-+{
-+	return __encls_2(EEXTEND, secs, addr);
-+}
-+
-+static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
-+{
-+	return __encls_2(EADD, pginfo, addr);
-+}
-+
-+static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
-+			  void *secs)
-+{
-+	return __encls_ret_3(EINIT, sigstruct, secs, einittoken);
-+}
-+
-+static inline int __eremove(void *addr)
-+{
-+	return __encls_ret_1(EREMOVE, addr);
-+}
-+
-+static inline int __edbgwr(void *addr, unsigned long *data)
-+{
-+	return __encls_2(EDGBWR, *data, addr);
-+}
-+
-+static inline int __edbgrd(void *addr, unsigned long *data)
-+{
-+	return __encls_1_1(EDGBRD, *data, addr);
-+}
-+
-+static inline int __etrack(void *addr)
-+{
-+	return __encls_ret_1(ETRACK, addr);
-+}
-+
-+static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
-+			 void *va)
-+{
-+	return __encls_ret_3(ELDU, pginfo, addr, va);
-+}
-+
-+static inline int __eblock(void *addr)
-+{
-+	return __encls_ret_1(EBLOCK, addr);
-+}
-+
-+static inline int __epa(void *addr)
-+{
-+	unsigned long rbx = SGX_PAGE_TYPE_VA;
-+
-+	return __encls_2(EPA, rbx, addr);
-+}
-+
-+static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
-+			void *va)
-+{
-+	return __encls_ret_3(EWB, pginfo, addr, va);
-+}
-+
-+#endif /* _X86_ENCLS_H */
++update_sgx:
++	if (!cpu_has(c, X86_FEATURE_SGX) || !cpu_has(c, X86_FEATURE_SGX_LC)) {
++		clear_sgx_caps();
++	} else if (!(msr & FEAT_CTL_SGX_ENABLED) ||
++		   !(msr & FEAT_CTL_SGX_LC_ENABLED)) {
++		if (IS_ENABLED(CONFIG_INTEL_SGX))
++			pr_err_once("SGX disabled by BIOS\n");
++		clear_sgx_caps();
++	}
+ }
 -- 
 2.20.1
 
