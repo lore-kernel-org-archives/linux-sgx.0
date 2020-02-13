@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EC8C2BA83
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Feb 2020 13:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7C4C2BA83
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Feb 2020 14:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54ED6222C2
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Feb 2020 13:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7DF2168B
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Feb 2020 14:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="HOaayirW"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="SoYPC9wW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbgBMNaA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Feb 2020 08:30:00 -0500
-Received: from mail-dm6nam11on2132.outbound.protection.outlook.com ([40.107.223.132]:59297
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        id S1730163AbgBMOAH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Feb 2020 09:00:07 -0500
+Received: from mail-co1nam11on2120.outbound.protection.outlook.com ([40.107.220.120]:44128
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729588AbgBMN37 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:29:59 -0500
+        id S1730036AbgBMOAH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:00:07 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YvWMHCJWy3vVKUiHYChHGpAbdhkae9efL6CQ+FDxAvZ6wunJNqh69yZGEKBVTG/pjRgfF+cFmExnW9WpULbiFMfsTBNJIE90Rhowz6suKqilMMNw1n2ZVfh1cOOjdtRym+ZF7SJq6DVpdvYChD9LoxXWqqvX6cKL+fQA7UdUAugKRurtgyO7AGm1hA9y1I8YpWGQm6OwXrzYXrWFF3/umMHdsZ80WKWZTdGAocVvvvkA6oGhwsTgFUW+tWXGt/Wvk+MGruBtOaQChU1OZ1Qc5i1gaW7lxZYEBc+HDBuS7CZjYvtLYy5TuT9Eb93J/p7TaeIfVsP8b03o2wrdaDaoeQ==
+ b=ZHALXOmemsJToDTcHfbLo7Wi/l4EhZTPgzsT7ApFAPJoNasdiXj+LB9cVizzMX6Nu8NXQM1LcPrxzNjdeVNmnYVYlco7noqO67HzwhttupyX2sTvFfR9Wt83qo4Z9+RgcXDji1uN0T9xZZJMbuXifz5QCVTkTrxUYqJ0yOWIexHVPGcqiD3oXPv5Ty/5ZhPhAi3+D83NlQIS9flGKymUcWifZwLWWSFhoTlQpoRsH4BJnYyCjwvqHYxNcytw23mS+eNhEQ8q4/I1Iu+FTcv+4ekHdUwwg+J92oM8G2tQpo99bzVkvYgr/rdEeyMQAvMQut8w9MN9C80SewWLZFclTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KVmaogsyZvX8ij3vibQhdy/ko6E0z2tez6rzoA1i1Vo=;
- b=Fqg0LtM8jbLoYeR7lKTK10u0JmVyxiAFFXHRLUCA6ibjM8hKA0zRuo+lT0uWLre0I2sm1aJbrAx1Cab+iNrJy97GdEyAflMDZg3dh2lIDux+npnhLtHsQ4GzmxpZmLJiIGegJfj5/0PqSsKq7uES4b4aGAVW04WbpKktVRbXYFloR+jc5MQ0Z66FyFme8/X9oBOHc4PzCXhs1qtXJnYtGFMWcxiq7b2CwC9/S17bEaFj+8Xa+5sKJ5cI4JNw7Fo/CtG03IleAx3MKTXLD6Lp56qSPAATVHhMfhnGJl3ypn40qLyqdD8a3CddtzMr45ar8RWenybl4QLE1GTNuaORPg==
+ bh=NIU37tZkVlHbyFJyTV4+QGUxuhrr/iXpGQSs/ZgSVII=;
+ b=SH1hi6DRAzn+r807dBFvDueRTbj2EHyh+oVmevaDVC6azSGO6lphRhd2lHsVgW6aRKqTS/GWc0C/+kyibRWjm4zHazNNdbIXoUfeWo570uE8+5ouOOlCXSZ/GgpgbssXcFuACp8Xb1WPXQp+1AjMjMxfQxqSu9G7cFCoGxQWbPZqOTPOUW+es5sOWRRZLUwoNVQp1QvqP0AU3S8JhxJfSCvmgcIt5b/Mcyxjvvx7fZpHbyLZW3VNeZegXCz9K8B7MikdhW65r1cmUNY8vPCsKDwmnBiVkf2iDF0zZPzxxzIHSdF0fhVZsRVUMk6EBri1oWKbjwS+yVYqIdjmR3enLg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
  dkim=pass header.d=fortanix.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KVmaogsyZvX8ij3vibQhdy/ko6E0z2tez6rzoA1i1Vo=;
- b=HOaayirWjlZV+7PMLvWl55E8HSU95SL35T/gIWKS6ywc65YG7mA+vjE9CPt7PwRviMISwLXJiiA1rwgExYnoM+AALDjLUtUpDJi1ZGgfZVLmBpI9yro4T/W+y4eVUpi5y3DoiHZC71nFEh0BmcgvIXpo9C+GousQCPEWUsrKU80=
+ bh=NIU37tZkVlHbyFJyTV4+QGUxuhrr/iXpGQSs/ZgSVII=;
+ b=SoYPC9wWWhICakNycVVNrGNzILFQoRPiWuQxTC9jMu1U4IDVQuMh5/KmfL7vt1rSQ8DIrrqIbBKKmmcvPMMMY5fZMfkXUNQ4prnD+1Q3sYyJWkdF3/4sMWkKlas8v2rqFtCTIiknmKdPDo8Pt7i3DZQA3NUqPAVD2tTfqYuhcvQ=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 Received: from BYAPR11MB3734.namprd11.prod.outlook.com (20.178.239.29) by
- BYAPR11MB3141.namprd11.prod.outlook.com (20.177.226.205) with Microsoft SMTP
+ BYAPR11MB2919.namprd11.prod.outlook.com (20.177.226.213) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.25; Thu, 13 Feb 2020 13:29:55 +0000
+ 15.20.2707.21; Thu, 13 Feb 2020 14:00:02 +0000
 Received: from BYAPR11MB3734.namprd11.prod.outlook.com
  ([fe80::180:d484:4d3f:fd99]) by BYAPR11MB3734.namprd11.prod.outlook.com
  ([fe80::180:d484:4d3f:fd99%7]) with mapi id 15.20.2729.025; Thu, 13 Feb 2020
- 13:29:54 +0000
-Subject: Re: [PATCH v26 19/22] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
+ 14:00:02 +0000
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -59,415 +58,209 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
-        Andy Lutomirski <luto@amacapital.net>
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>
 References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
- <20200209212609.7928-20-jarkko.sakkinen@linux.intel.com>
+ <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
 From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <2b61b106-4dfd-ed47-3333-99280e33ca88@fortanix.com>
-Date:   Thu, 13 Feb 2020 14:29:44 +0100
+Message-ID: <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
+Date:   Thu, 13 Feb 2020 14:59:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
-In-Reply-To: <20200209212609.7928-20-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0323.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a4::23) To BYAPR11MB3734.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0218.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:b::14) To BYAPR11MB3734.namprd11.prod.outlook.com
  (2603:10b6:a03:fe::29)
 MIME-Version: 1.0
-Received: from [10.195.0.226] (212.61.132.179) by LO2P265CA0323.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:a4::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.23 via Frontend Transport; Thu, 13 Feb 2020 13:29:50 +0000
+Received: from [10.195.0.226] (212.61.132.179) by LO2P265CA0218.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:b::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Thu, 13 Feb 2020 13:59:57 +0000
 X-Originating-IP: [212.61.132.179]
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c06abc3b-2b29-4a7d-a969-08d7b088cfde
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3141:
-X-Microsoft-Antispam-PRVS: <BYAPR11MB31414E16576441FB397297B2AA1A0@BYAPR11MB3141.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Office365-Filtering-Correlation-Id: 6c421f50-3b1a-4975-c01e-08d7b08d04f8
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2919:
+X-Microsoft-Antispam-PRVS: <BYAPR11MB29195A8170A0131131468CCEAA1A0@BYAPR11MB2919.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
 X-Forefront-PRVS: 031257FE13
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39840400004)(376002)(346002)(136003)(189003)(199004)(2906002)(6666004)(66556008)(30864003)(8936002)(66476007)(36756003)(4326008)(6486002)(16526019)(8676002)(31696002)(186003)(66946007)(5660300002)(81156014)(26005)(52116002)(2616005)(316002)(7416002)(508600001)(86362001)(31686004)(16576012)(81166006)(956004)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB3141;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39830400003)(366004)(346002)(376002)(199004)(189003)(8676002)(66476007)(52116002)(26005)(54906003)(66946007)(186003)(4001150100001)(508600001)(31686004)(53546011)(16576012)(316002)(16526019)(66556008)(7416002)(6486002)(36756003)(8936002)(2906002)(86362001)(31696002)(4326008)(2616005)(6666004)(81156014)(81166006)(5660300002)(956004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2919;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MzP5jZtc3Ai93UDL2YLBBQOJ7DfMbHimX6GkEZoTPwjbRf70Mj9hPvrev957Y2zKch8P02QykOVm/aWOFLKHOLQxH6paoaDuk7OxxAfDpnBG1TZWVC91+BbL8hzO/dDjCd3Yud98VpSdFriMVPGsdpQoTLCvxTW9B4OAMFStMTwXs8VgP65AWsU0m5mjDYpn0nsUy/LPuWsIlGV5IMK0+NDhj40wlVuyKuvBy9aWc6w3hinVPddjLBSwjn6vfgwBmXx0ErqVeRXLm7TPluFl4YpxHoDebrL+UR0u461yCk+gKDxc4FihuzrHf8LrHvo0HGLwfmXkbA4QkosCWC/o5yGSmDtHvCkRh3yvQXXax/5sfkJDXUQJWdGuQ71cf9JrqV7w1It6s3CS1+89LSssecksZXmZgiPH6Lbe5raQ25ZTCXkh3O+QUz0hZvk4aYYS
-X-MS-Exchange-AntiSpam-MessageData: ipmf+MhziyD8LCQxTgWYDChrVVNtqUO5iw4Dbb3Fwl+C1ggWVk8grUlHTaBsrjHe3jNyVcd+kXXZ5ft4DDCYjbtqXIC7/0yeKzbsGD+fotbJhF1Ov6/8no5AvaIR7z6sX4nr707/BVYRjUUv9ttYnw==
+X-Microsoft-Antispam-Message-Info: +dmZiQkJICCYzCoXtRv6KDoBK0BzSYEa7VKJZ7G6cBkEwt4oxUecQMntEpMw7eXCBjX5MrDVU2flJPmJp5hBzFsZRPDql5/PkxqSv28fsR+Sr/88ScmF1W+UlyHzo3upcVfNvDjNGJQiw2CDKy/IY8qnxX47ULho9OvYK6f6rx7rGknb+2MR367xcPmDERHbmuk8xvFvJSk4usL/ALUzE8DbQbNGGcUXncELcW/kduN+f/t0Rx1LhAEbvB07ea1mSZMrQHca21CUnfWCPtwKUWUpLN9Ay679mfRwMH+wOXuJXM21hCKru4d00tN7ytWjBZKqI8Q15AiByc8f7HrAtDQk5BuTe0t9lxfggYmr71CYfV/dXKPc5MoBymYajmSum/Zzo9ARA9DXU3MV7xomRF51EBqAS3OXuKpsEVI4F2JyQ6Qt0QGsSm9qpofB1oqE
+X-MS-Exchange-AntiSpam-MessageData: zfsLGCFPonbQozrX+1oZjs3HHOgGgundyWmCCIjPuDgTLpES5f3/EVWqBN3Wlrw5wFyzFZKahmGoFotTZtjTDjVfQlFMQYLyGN60+bgCMuLPQdCpZDiVLXb1sACRUgoKHgzPokA+lvbDmo2r4x3z4A==
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c06abc3b-2b29-4a7d-a969-08d7b088cfde
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 13:29:54.9079
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c421f50-3b1a-4975-c01e-08d7b08d04f8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 14:00:02.0570
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: subjbTyqC2dfl0bVkqay3Pfkl6qJCdtXfAw/eBSrQ7TFTYEN+Lb5aJHncdOnohzM/yfSzmjFiFEy782jUl6GJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3141
+X-MS-Exchange-CrossTenant-UserPrincipalName: hwWytOlp9mwfjxrJ9bNkNuQnd0kT5PpwHlbmCPz9f30pHozYYTcC/Ksf1JuGuGiWOUWoQde4Aqk6ZfJAguX5aQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2919
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-
---
-Jethro Beekman | Fortanix
-
-On 2020-02-09 22:26, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the SGX hosted software entity is disallowed to
+> access the memory inside the enclave enforced by the CPU. We call these
+> entities as enclaves.
 > 
-> Intel Software Guard Extensions (SGX) introduces a new CPL3-only enclave
-> mode that runs as a sort of black box shared object that is hosted by an
-> untrusted normal CPL3 process.
+> This commit implements a driver that provides an ioctl API to construct
+> and run enclaves. Enclaves are constructed from pages residing in
+> reserved physical memory areas. The contents of these pages can only be
+> accessed when they are mapped as part of an enclave, by a hardware
+> thread running inside the enclave.
 > 
-> Skipping over a great deal of gory architecture details[1], SGX was
-> designed in such a way that the host process can utilize a library to
-> build, launch and run an enclave.  This is roughly analogous to how
-> e.g. libc implementations are used by most applications so that the
-> application can focus on its business logic.
+> The starting state of an enclave consists of a fixed measured set of
+> pages that are copied to the EPC during the construction process by
+> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+> that defines the enclave properties.
 > 
-> The big gotcha is that because enclaves can generate *and* handle
-> exceptions, any SGX library must be prepared to handle nearly any
-> exception at any time (well, any time a thread is executing in an
-> enclave).  In Linux, this means the SGX library must register a
-> signal handler in order to intercept relevant exceptions and forward
-> them to the enclave (or in some cases, take action on behalf of the
-> enclave).  Unfortunately, Linux's signal mechanism doesn't mesh well
-> with libraries, e.g. signal handlers are process wide, are difficult
-> to chain, etc...  This becomes particularly nasty when using multiple
-> levels of libraries that register signal handlers, e.g. running an
-> enclave via cgo inside of the Go runtime.
+> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> the EPC and EINIT check a given signed measurement and moves the enclave
+> into a state ready for execution.
 > 
-> In comes vDSO to save the day.  Now that vDSO can fixup exceptions,
-> add a function, __vdso_sgx_enter_enclave(), to wrap enclave transitions
-> and intercept any exceptions that occur when running the enclave.
+> An initialized enclave can only be accessed through special Thread Control
+> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+> function converts a thread into enclave mode and continues the execution in
+> the offset defined by the TCS provided to EENTER. An enclave is exited
+> through syscall, exception, interrupts or by explicitly calling another
+> ENCLU leaf EEXIT.
 > 
-> __vdso_sgx_enter_enclave() does NOT adhere to the x86-64 ABI and instead
-> uses a custom calling convention.  The primary motivation is to avoid
-> issues that arise due to asynchronous enclave exits.  The x86-64 ABI
-> requires that EFLAGS.DF, MXCSR and FCW be preserved by the callee, and
-> unfortunately for the vDSO, the aformentioned registers/bits are not
-> restored after an asynchronous exit, e.g. EFLAGS.DF is in an unknown
-> state while MXCSR and FCW are reset to their init values.  So the vDSO
-> cannot simply pass the buck by requiring enclaves to adhere to the
-> x86-64 ABI.  That leaves three somewhat reasonable options:
+> The permissions, which enclave page is added will set the limit for maximum
+> permissions that can be set for mmap() and mprotect(). This will
+> effectively allow to build different security schemes between producers and
+> consumers of enclaves. Later on we can increase granularity with LSM hooks
+> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+> consumers)
 > 
->   1) Save/restore non-volatile GPRs, MXCSR and FCW, and clear EFLAGS.DF
-> 
->      + 100% compliant with the x86-64 ABI
->      + Callable from any code
->      + Minimal documentation required
->      - Restoring MXCSR/FCW is likely unnecessary 99% of the time
->      - Slow
-> 
->   2) Save/restore non-volatile GPRs and clear EFLAGS.DF
-> 
->      + Mostly compliant with the x86-64 ABI
->      + Callable from any code that doesn't use SIMD registers
->      - Need to document deviations from x86-64 ABI, i.e. MXCSR and FCW
-> 
->   3) Require the caller to save/restore everything.
-> 
->      + Fast
->      + Userspace can pass all GPRs to the enclave (minus EAX, RBX and RCX)
->      - Custom ABI
->      - For all intents and purposes must be called from an assembly wrapper
-> 
-> __vdso_sgx_enter_enclave() implements option (3).  The custom ABI is
-> mostly a documentation issue, and even that is offset by the fact that
-> being more similar to hardware's ENCLU[EENTER/ERESUME] ABI reduces the
-> amount of documentation needed for the vDSO, e.g. options (2) and (3)
-> would need to document which registers are marshalled to/from enclaves.
-> Requiring an assembly wrapper imparts minimal pain on userspace as SGX
-> libraries and/or applications need a healthy chunk of assembly, e.g. in
-> the enclave, regardless of the vDSO's implementation.
-> 
-> Note, the C-like pseudocode describing the assembly routine is wrapped
-> in a non-existent macro instead of in a comment to trick kernel-doc into
-> auto-parsing the documentation and function prototype.  This is a double
-> win as the pseudocode is intended to aid kernel developers, not userland
-> enclave developers.
-> 
-> [1] Documentation/x86/sgx/1.Architecture.rst
-> 
-> Suggested-by: Andy Lutomirski <luto@amacapital.net>
+> Cc: linux-security-module@vger.kernel.org
+> Cc: Nathaniel McCallum <npmccallum@redhat.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Cedric Xing <cedric.xing@intel.com>
-> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  arch/x86/entry/vdso/Makefile             |   2 +
->  arch/x86/entry/vdso/vdso.lds.S           |   1 +
->  arch/x86/entry/vdso/vsgx_enter_enclave.S | 187 +++++++++++++++++++++++
->  arch/x86/include/uapi/asm/sgx.h          |  37 +++++
->  4 files changed, 227 insertions(+)
->  create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  arch/x86/include/uapi/asm/sgx.h               |  66 ++
+>  arch/x86/kernel/cpu/sgx/Makefile              |   3 +
+>  arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
+>  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
+>  arch/x86/kernel/cpu/sgx/encl.c                | 329 +++++++++
+>  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
+>  arch/x86/kernel/cpu/sgx/ioctl.c               | 697 ++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/main.c                |  12 +-
+>  arch/x86/kernel/cpu/sgx/reclaim.c             |   1 +
+>  10 files changed, 1419 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/include/uapi/asm/sgx.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
+>  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
+>  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
 > 
-> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-> index 629053b77e4a..d1d609d1626e 100644
-> --- a/arch/x86/entry/vdso/Makefile
-> +++ b/arch/x86/entry/vdso/Makefile
-> @@ -24,6 +24,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
->  
->  # files to link into the vdso
->  vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
-> +vobjs-$(VDSO64-y)		+= vsgx_enter_enclave.o
->  
->  # files to link into kernel
->  obj-y				+= vma.o extable.o
-> @@ -90,6 +91,7 @@ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS
->  CFLAGS_REMOVE_vclock_gettime.o = -pg
->  CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
->  CFLAGS_REMOVE_vgetcpu.o = -pg
-> +CFLAGS_REMOVE_vsgx_enter_enclave.o = -pg
->  
->  #
->  # X32 processes use x32 vDSO to access 64bit kernel data.
-> diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
-> index 36b644e16272..4bf48462fca7 100644
-> --- a/arch/x86/entry/vdso/vdso.lds.S
-> +++ b/arch/x86/entry/vdso/vdso.lds.S
-> @@ -27,6 +27,7 @@ VERSION {
->  		__vdso_time;
->  		clock_getres;
->  		__vdso_clock_getres;
-> +		__vdso_sgx_enter_enclave;
->  	local: *;
->  	};
->  }
-> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> new file mode 100644
-> index 000000000000..94a8e5f99961
-> --- /dev/null
-> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> @@ -0,0 +1,187 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/export.h>
-> +#include <asm/errno.h>
-> +
-> +#include "extable.h"
-> +
-> +#define EX_LEAF		0*8
-> +#define EX_TRAPNR	0*8+4
-> +#define EX_ERROR_CODE	0*8+6
-> +#define EX_ADDRESS	1*8
-> +
-> +.code64
-> +.section .text, "ax"
-> +
-> +/**
-> + * __vdso_sgx_enter_enclave() - Enter an SGX enclave
-> + * @leaf:	ENCLU leaf, must be EENTER or ERESUME
-> + * @tcs:	TCS, must be non-NULL
-> + * @e:		Optional struct sgx_enclave_exception instance
-> + * @handler:	Optional enclave exit handler
-> + *
-> + * **Important!**  __vdso_sgx_enter_enclave() is **NOT** compliant with the
-> + * x86-64 ABI, i.e. cannot be called from standard C code.
-> + *
-> + * Input ABI:
-> + *  @leaf	%eax
-> + *  @tcs	8(%rsp)
-> + *  @e 		0x10(%rsp)
-> + *  @handler	0x18(%rsp)
-> + *
-> + * Output ABI:
-> + *  @ret	%eax
-> + *
-> + * All general purpose registers except RAX, RBX and RCX are passed as-is to
-> + * the enclave. RAX, RBX and RCX are consumed by EENTER and ERESUME and are
-> + * loaded with @leaf, asynchronous exit pointer, and @tcs respectively.
-> + *
-> + * RBP and the stack are used to anchor __vdso_sgx_enter_enclave() to the
-> + * pre-enclave state, e.g. to retrieve @e and @handler after an enclave exit.
-> + * All other registers are available for use by the enclave and its runtime,
-> + * e.g. an enclave can push additional data onto the stack (and modify RSP) to
-> + * pass information to the optional exit handler (see below).
-> + *
-> + * Most exceptions reported on ENCLU, including those that occur within the
-> + * enclave, are fixed up and reported synchronously instead of being delivered
-> + * via a standard signal. Debug Exceptions (#DB) and Breakpoints (#BP) are
-> + * never fixed up and are always delivered via standard signals. On synchrously
-> + * reported exceptions, -EFAULT is returned and details about the exception are
-> + * recorded in @e, the optional sgx_enclave_exception struct.
-> +
-> + * If an exit handler is provided, the handler will be invoked on synchronous
-> + * exits from the enclave and for all synchronously reported exceptions. In
-> + * latter case, @e is filled prior to invoking the handler.
-> + *
-> + * The exit handler's return value is interpreted as follows:
-> + *  >0:		continue, restart __vdso_sgx_enter_enclave() with @ret as @leaf
-> + *   0:		success, return @ret to the caller
-> + *  <0:		error, return @ret to the caller
-> + *
-> + * The userspace exit handler is responsible for unwinding the stack, e.g. to
-> + * pop @e, u_rsp and @tcs, prior to returning to __vdso_sgx_enter_enclave().
-> + * The exit handler may also transfer control, e.g. via longjmp() or a C++
-> + * exception, without returning to __vdso_sgx_enter_enclave().
-> + *
-> + * Return:
-> + *  0 on success,
-> + *  -EINVAL if ENCLU leaf is not allowed,
-> + *  -EFAULT if an exception occurs on ENCLU or within the enclave
-> + *  -errno for all other negative values returned by the userspace exit handler
-> + */
-> +#ifdef SGX_KERNEL_DOC
-> +/* C-style function prototype to coerce kernel-doc into parsing the comment. */
-> +int __vdso_sgx_enter_enclave(int leaf, void *tcs,
-> +			     struct sgx_enclave_exception *e,
-> +			     sgx_enclave_exit_handler_t handler);
-> +#endif
-> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> +	/* Prolog */
-> +	.cfi_startproc
-> +	push	%rbp
-> +	.cfi_adjust_cfa_offset	8
-> +	.cfi_rel_offset		%rbp, 0
-> +	mov	%rsp, %rbp
-> +	.cfi_def_cfa_register	%rbp
-> +
-> +.Lenter_enclave:
-> +	/* EENTER <= leaf <= ERESUME */
-> +	cmp	$0x2, %eax
-> +	jb	.Linvalid_leaf
-> +	cmp	$0x3, %eax
-> +	ja	.Linvalid_leaf
-> +
-> +	/* Load TCS and AEP */
-> +	mov	0x10(%rbp), %rbx
-> +	lea	.Lasync_exit_pointer(%rip), %rcx
-> +
-> +	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
-> +.Lasync_exit_pointer:
-> +.Lenclu_eenter_eresume:
-> +	enclu
-> +
-> +	/* EEXIT jumps here unless the enclave is doing something fancy. */
-> +	xor	%eax, %eax
-> +
-> +	/* Invoke userspace's exit handler if one was provided. */
-> +.Lhandle_exit:
-> +	cmp	$0, 0x20(%rbp)
-> +	jne	.Linvoke_userspace_handler
-> +
-> +.Lout:
-> +	leave
-> +	.cfi_def_cfa		%rsp, 8
-> +	ret
-> +
-> +	/* The out-of-line code runs with the pre-leave stack frame. */
-> +	.cfi_def_cfa		%rbp, 16
-> +
-> +.Linvalid_leaf:
-> +	mov	$(-EINVAL), %eax
-> +	jmp	.Lout
-> +
-> +.Lhandle_exception:
-> +	mov	0x18(%rbp), %rcx
-> +	test    %rcx, %rcx
-> +	je	.Lskip_exception_info
-> +
-> +	/* Fill optional exception info. */
-> +	mov	%eax, EX_LEAF(%rcx)
-> +	mov	%di,  EX_TRAPNR(%rcx)
-> +	mov	%si,  EX_ERROR_CODE(%rcx)
-> +	mov	%rdx, EX_ADDRESS(%rcx)
-> +.Lskip_exception_info:
-> +	mov	$(-EFAULT), %eax
-> +	jmp	.Lhandle_exit
-> +
-> +.Linvoke_userspace_handler:
-> +	/* Pass the untrusted RSP (at exit) to the callback via %rcx. */
-> +	mov	%rsp, %rcx
-> +
-> +	/* Save the untrusted RSP in %rbx (non-volatile register). */
-> +	mov	%rsp, %rbx
-> +
-> +	/*
-> +	 * Align stack per x86_64 ABI. Note, %rsp needs to be 16-byte aligned
-> +	 * _after_ pushing the parameters on the stack, hence the bonus push.
-> +	 */
-> +	and	$-0x10, %rsp
-> +	push	%rax
-> +
-> +	/* Push @e, the "return" value and @tcs as params to the callback. */
-> +	push	0x18(%rbp)
-> +	push	%rax
-> +	push	0x10(%rbp)
-> +
-> +	/* Clear RFLAGS.DF per x86_64 ABI */
-> +	cld
-> +
-> +	/* Load the callback pointer to %rax and invoke it via retpoline. */
-> +	mov	0x20(%rbp), %rax
-> +	call	.Lretpoline
-> +
-> +	/* Restore %rsp to its post-exit value. */
-> +	mov	%rbx, %rsp
-> +
-> +	/*
-> +	 * If the return from callback is zero or negative, return immediately,
-> +	 * else re-execute ENCLU with the postive return value interpreted as
-> +	 * the requested ENCLU leaf.
-> +	 */
-> +	cmp	$0, %eax
-> +	jle	.Lout
-> +	jmp	.Lenter_enclave
-> +
-> +.Lretpoline:
-> +	call	2f
-> +1:	pause
-> +	lfence
-> +	jmp	1b
-> +2:	mov	%rax, (%rsp)
-> +	ret
-> +	.cfi_endproc
-> +
-> +_ASM_VDSO_EXTABLE_HANDLE(.Lenclu_eenter_eresume, .Lhandle_exception)
-> +
-> +SYM_FUNC_END(__vdso_sgx_enter_enclave)
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 2e91370dc159..1c54dd2704db 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -321,6 +321,7 @@ Code  Seq#    Include File                                           Comments
+>                                                                       <mailto:tlewis@mindspring.com>
+>  0xA3  90-9F  linux/dtlk.h
+>  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
+> +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+>  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+>  0xAB  00-1F  linux/nbd.h
+>  0xAC  00-1F  linux/raw.h
 > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index 57d0d30c79b3..e196cfd44b70 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
+> new file mode 100644
+> index 000000000000..5edb08ab8fd0
+> --- /dev/null
 > +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -74,4 +74,41 @@ struct sgx_enclave_set_attribute {
->  	__u64 attribute_fd;
->  };
->  
-> +/**
-> + * struct sgx_enclave_exception - structure to report exceptions encountered in
-> + *				  __vdso_sgx_enter_enclave()
-> + *
-> + * @leaf:	ENCLU leaf from \%eax at time of exception
-> + * @trapnr:	exception trap number, a.k.a. fault vector
-> + * @error_code:	exception error code
-> + * @address:	exception address, e.g. CR2 on a #PF
-> + * @reserved:	reserved for future use
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
+> +/*
+> + * Copyright(c) 2016-19 Intel Corporation.
 > + */
-> +struct sgx_enclave_exception {
-> +	__u32 leaf;
-> +	__u16 trapnr;
-> +	__u16 error_code;
-> +	__u64 address;
-> +	__u64 reserved[2];
+> +#ifndef _UAPI_ASM_X86_SGX_H
+> +#define _UAPI_ASM_X86_SGX_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +/**
+> + * enum sgx_epage_flags - page control flags
+> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
+> + *			ENCLS[EEXTEND] operations.
+> + */
+> +enum sgx_page_flags {
+> +	SGX_PAGE_MEASURE	= 0x01,
+> +};
+> +
+> +#define SGX_MAGIC 0xA4
+> +
+> +#define SGX_IOC_ENCLAVE_CREATE \
+> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
+> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+> +#define SGX_IOC_ENCLAVE_INIT \
+> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +
+> +/**
+> + * struct sgx_enclave_create - parameter structure for the
+> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
+> + * @src:	address for the SECS page data
+> + */
+> +struct sgx_enclave_create  {
+> +	__u64	src;
 > +};
 > +
 > +/**
-> + * typedef sgx_enclave_exit_handler_t - Exit handler function accepted by
-> + *					__vdso_sgx_enter_enclave()
-> + *
-> + * @rdi:	RDI at the time of enclave exit
-> + * @rsi:	RSI at the time of enclave exit
-> + * @rdx:	RDX at the time of enclave exit
-> + * @ursp:	RSP at the time of enclave exit (untrusted stack)
-> + * @r8:		R8 at the time of enclave exit
-> + * @r9:		R9 at the time of enclave exit
-> + * @tcs:	Thread Control Structure used to enter enclave
-> + * @ret:	0 on success (EEXIT), -EFAULT on an exception
-> + * @e:		Pointer to struct sgx_enclave_exception (as provided by caller)
+> + * struct sgx_enclave_add_pages - parameter structure for the
+> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> + * @src:	start address for the page data
+> + * @offset:	starting page offset
+> + * @length:	length of the data (multiple of the page size)
+> + * @secinfo:	address for the SECINFO data
+> + * @flags:	page control flags
+> + * @count:	number of bytes added (multiple of the page size)
 > + */
-> +typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-> +					  long ursp, long r8, long r9,
-> +					  void *tcs, int ret,
-> +					  struct sgx_enclave_exception *e);
-> +
->  #endif /* _UAPI_ASM_X86_SGX_H */
-> 
+> +struct sgx_enclave_add_pages {
+> +	__u64	src;
+> +	__u64	offset;
+> +	__u64	length;
+> +	__u64	secinfo;
+> +	__u64	flags;
+> +	__u64	count;
+> +};
+
+Compared to the last time I looked at the patch set, this API removes the ability to measure individual pages chunks. That is not acceptable.
+
+On 2019-10-11 16:37, Sean Christopherson wrote:
+> Hiding the 256-byte granualarity from userspace is a good idea as it's not
+> intrinsically tied to the SGX architecture and exists only because of
+> latency requirements.
+
+What do you mean by "it's not intrinsically tied to the SGX architecture"? This is a fundamental part of the SGX instruction set. This is the instruction definition from the SDM: "EEXTEND—Extend Uninitialized Enclave Measurement by 256 Bytes".
+
+The exact sequence of EADD/EEXTEND calls is part of the enclave hash. The OS mustn't arbitrarily restrict how an enclave may be loaded. If the enclave loader were to follows OS-specific restrictions, that would result in effectively different enclaves. Because of these interoperability concerns, 256-byte granularity *must* be exposed through the UAPI.
+
+Besides only partially measuring a page, there are some other fringe cases that are technically possible, although I haven't seen any toolchains that do that. These include not interleaving EADD and EEXTEND, not using logical ordering for the EEXTENDs, and call EEXTEND multiple times on the same chunk. Maximum interoperability would require supporting any EADD/EEXTEND sequence.
+
+Maybe we should just add an EEXTEND@offset ioctl? This would give fine-grained control when needed (one could set flags=0 in the add pages ioctl and interleave with EEXTEND as needed). If you're ok adding an EEXTEND ioctl I don't think this issue needs to block landing the driver in its current form, in which case:
+
+Tested-by: Jethro Beekman <jethro@fortanix.com>
+
+Sorry for being super late with this, I know you asked me for feedback about this specific point in October. However, I did previously mention several times that being able to measure individual 256-byte chunks is necessary.
+
+--
+Jethro Beekman | Fortanix
