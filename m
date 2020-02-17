@@ -1,149 +1,122 @@
-Return-Path: <SRS0=Eu7F=4D=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=+BDs=4F=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F0CC7114E
-	for <linux-sgx@archiver.kernel.org>; Sat, 15 Feb 2020 18:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A5CC7619B
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Feb 2020 08:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F48E2083B
-	for <linux-sgx@archiver.kernel.org>; Sat, 15 Feb 2020 18:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F16420718
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Feb 2020 08:52:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="PYl+Lf+K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgBOSed (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 15 Feb 2020 13:34:33 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:57132 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgBOSed (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 15 Feb 2020 13:34:33 -0500
-X-Greylist: delayed 1678 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Feb 2020 13:34:32 EST
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 01FI5tpD026045;
-        Sat, 15 Feb 2020 12:05:55 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 01FI5sx3026044;
-        Sat, 15 Feb 2020 12:05:54 -0600
-Date:   Sat, 15 Feb 2020 12:05:54 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>
-Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
-Message-ID: <20200215180554.GA25482@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com> <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com> <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com> <20200213180737.GC18610@linux.intel.com> <a4d9a58d-6984-5894-f6c8-73f2b2b466aa@fortanix.com> <20200214171146.GD20690@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214171146.GD20690@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 15 Feb 2020 12:05:55 -0600 (CST)
+        id S1728272AbgBQIwg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Feb 2020 03:52:36 -0500
+Received: from mail-dm6nam12on2094.outbound.protection.outlook.com ([40.107.243.94]:39420
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728217AbgBQIwf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 17 Feb 2020 03:52:35 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fBUQDGLbdNqxTX7cci0Q4pzLHWCh+dIR5rvDdTg1kuaf8+umi7sLtm96gl8gY+i+B0JVLX4Sjl5FqFmeM7QQR66IQ+HcALMqK2T5vCsflDq4Akiaj8qY9mXmss2ew40ssH82bZ1l6xFy+fNeLqbBDonaJhIwX0TeJeFnC8qHvuQ+Os1T7IUSkK2e3NTgxsal676d0ucS8R6xDikCNk6rPYHXgYS1cXqA0AfByh4gtre9pUjDHo37ce817XA0vzVG4zgUgNjyyPDXqAdQCN2oo1xs4rK1e0U7mfk8YOys8dr2IisSrVMk9nvyOutxHYaryVox7eWMK98dzVA/8+ubmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Et+Hrgx7ZI2Q3fqOUro8rnvTg08rG5RdJUmN9BN8+w=;
+ b=JCGS3spLSQOymhNg9TecoL1Fs8Treh93Gzp5Zpsqo/Px6t9SFLJl4aoXxbDBMHM2iLCfYP2InLHLOukYdRdO5IVLUjpBT/vHnhN4ruqHy7M3/tLZaCkUXiVgCxXuQDq/CT4iH2JTgkzpfBnyhoyRdsc+2TuGJYWi3CzDgS0v5XUhsTArTdjX+mmTBfx2SWyFFxteUir1GSgiqKklS7eImDkkRV3F9ZEIQq+UaWIPFckuya54Y507jxEP8wC2OO0ORaY5zA29N1dtANzRwpyJa9lIV/oXoY4T1cUh1DwNbR6iKGgAv6EPOw49/PFyRcx7FV8mAwG+i6LnQ6cxYgqVOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
+ dkim=pass header.d=fortanix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Et+Hrgx7ZI2Q3fqOUro8rnvTg08rG5RdJUmN9BN8+w=;
+ b=PYl+Lf+Krm6dutjdil+EjXjMphRIAt0AnMOuRTQEAm4lPZDUd83nzcPSUXb0S8vEGlp7ip1ZuKYcvls0X/CZ4HwfJpdfnBPmZyD5fC+T6n0cQvjWjhbAYoWCDEjjyurLqC8K+w8E9IjIq43oZ8EHqxKFkC/5vpmgF1x1NOPKonE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jethro@fortanix.com; 
+Received: from BYAPR11MB3734.namprd11.prod.outlook.com (20.178.239.29) by
+ BYAPR11MB3256.namprd11.prod.outlook.com (20.177.127.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.22; Mon, 17 Feb 2020 08:52:32 +0000
+Received: from BYAPR11MB3734.namprd11.prod.outlook.com
+ ([fe80::180:d484:4d3f:fd99]) by BYAPR11MB3734.namprd11.prod.outlook.com
+ ([fe80::180:d484:4d3f:fd99%7]) with mapi id 15.20.2729.028; Mon, 17 Feb 2020
+ 08:52:32 +0000
+Subject: Re: x86/sgx: v23-rc2
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>
+References: <20191010113745.GA12842@linux.intel.com>
+ <a657081e-cdaf-7c9d-2695-23c9c07bcfbf@fortanix.com>
+ <20191011181550.GB30935@linux.intel.com>
+ <8dc2ab24-baf1-5e57-3906-35e7286f7ffe@fortanix.com>
+ <20191017175735.GD20903@linux.intel.com>
+ <eaf66973-9c9b-b06c-4b96-134e41c18d80@fortanix.com>
+ <20200215072406.GA9958@linux.intel.com>
+From:   Jethro Beekman <jethro@fortanix.com>
+Message-ID: <ed49f988-e4e5-b2b9-0108-f489e9b5f449@fortanix.com>
+Date:   Mon, 17 Feb 2020 09:52:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+In-Reply-To: <20200215072406.GA9958@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0075.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8::15) To BYAPR11MB3734.namprd11.prod.outlook.com
+ (2603:10b6:a03:fe::29)
+MIME-Version: 1.0
+Received: from [10.195.0.226] (212.61.132.179) by LO2P265CA0075.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:8::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Mon, 17 Feb 2020 08:52:30 +0000
+X-Originating-IP: [212.61.132.179]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: be1a00d8-76b1-4f84-62f3-08d7b386b9de
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3256:
+X-Microsoft-Antispam-PRVS: <BYAPR11MB3256793BBA80E29FE50A7947AA160@BYAPR11MB3256.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0316567485
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39830400003)(396003)(136003)(366004)(189003)(199004)(66946007)(966005)(4326008)(186003)(16526019)(508600001)(53546011)(31686004)(52116002)(86362001)(66476007)(316002)(4744005)(66556008)(2616005)(956004)(5660300002)(81156014)(81166006)(8676002)(8936002)(36756003)(54906003)(6916009)(31696002)(26005)(6666004)(2906002)(6486002)(16576012);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB3256;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fortanix.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /DSEcGAddk6HCtbpTCdmcqPxaKqQis37apbAtF15LVduK6yCPeiZzSU897l5gIe8LgdnkETF15RafoWRBbKj9GeqDXyWPXZGt/RjVs7nkZJIBNlTVgNFCZHMqaoa01LWMkppQtQcSEVJQZZwnDcYjlvqmwwT4IA7g0VIU8E3vn1BeFGmRfYs3mUqZPmr5lVJBWMv727WYJkZUa6QfsNMa4ct8VsEg13Zc7zQYp/Cy276tsMA2K2iZEl2RvJhel039g/YORmzZJaF/WDIkHdYWAqSnLMZjBfkDbiphUJkgJgciMJs7CAq1xpFpnDhbqkqIMB4u/B2V79Cg8sclD6CBMTq+6/Dp24rAUpIul9UFaUeG29ZMO4OJxNpwfm7iSVtnpkpCzFlw844EdIPmNfjUsHZ+oLmA2+QBJ6C479anjelL8AnQLHVZXzzHkpEWxEJVVkwgc5pWenE4TiMH9Yf6Ckl8oucDGeF3AuzOo9Xnuo/gdPM8mgkLkyGh4eII6kVHeTT7JM7Dq663sc0qcbi8Q==
+X-MS-Exchange-AntiSpam-MessageData: buo8Xzbnmt4G/qlAPplIf4rbPf/j+7LKqU0qIPGzswovf8XGg42299mQNZwwSIODY7NDuxABeWIWHUbwFfQlJ+d9G46fGgJWrs0S1AUd6FLN0DUNiw16O9u1+j+HSQUFBTW9PEX7zy7g7Dt9jPxnxA==
+X-OriginatorOrg: fortanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be1a00d8-76b1-4f84-62f3-08d7b386b9de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2020 08:52:32.7969
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1ZZdLxosP6ihzS1882YsTzHZ7zsJSBi97mPWEAHBDjtQ9vah14kz0blIOB2n6hZFeLprloT2eHaISuDAKCRVgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3256
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 09:11:46AM -0800, Sean Christopherson wrote:
+On 2020-02-15 08:24, Jarkko Sakkinen wrote:
+> On Thu, Feb 13, 2020 at 03:10:24PM +0100, Jethro Beekman wrote:
+>>>> There are other scenarios where it's not just the permissions on
+>>>> /dev/sgx/enclave that are the problem but using the filesystem in general
+>>>> that is. Maybe you've used seccomp to disable file operations, etc.
+>>>
+>>> Andy and Jarkko, thoughts?
+>>
+>> Folks, any more thoughts on how to resolve the issue that you need to
+>> call open() for every enclave?
+> 
+> Why is it an issue?
 
-Good morning to everyone, I hope the weekend is going well.
+Already discussed in https://www.spinics.net/lists/linux-sgx/msg02075.html
 
-> On Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
-> > On 2020-02-13 19:07, Sean Christopherson wrote:
-> > > On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
-> > >> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
-> > >>> +/**
-> > >>> + * struct sgx_enclave_add_pages - parameter structure for the
-> > >>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> > >>> + * @src:	start address for the page data
-> > >>> + * @offset:	starting page offset
-> > >>> + * @length:	length of the data (multiple of the page size)
-> > >>> + * @secinfo:	address for the SECINFO data
-> > >>> + * @flags:	page control flags
-> > >>> + * @count:	number of bytes added (multiple of the page size)
-> > >>> + */
-> > >>> +struct sgx_enclave_add_pages {
-> > >>> +	__u64	src;
-> > >>> +	__u64	offset;
-> > >>> +	__u64	length;
-> > >>> +	__u64	secinfo;
-> > >>> +	__u64	flags;
-> > >>> +	__u64	count;
-> > >>> +};
-> > >>
-> > >> Compared to the last time I looked at the patch set, this API
-> > >> removes the ability to measure individual pages chunks. That is
-> > >> not acceptable.
-> > >
-> > > Why is it not acceptable?  E.g. what specific use case do you
-> > > have that _requires_ on measuring partial 4k pages of an
-> > > enclave?
-> >
-> > The use case is someone gives me an enclave and I want to load
-> > it. If I don't load it exactly as the enclave author specified,
-> > the enclave hash will be different, and it won't work.
-
-> And if our ABI says "thou shall measure in 4k chunks", then it's an
-> invalid enclave if its author generated MRENCLAVE using a different
-> granularity.
-
-The enclave isn't invalid with respect to the hardware ISA or a
-potential application or business case need.  It is only invalid with
-respect to how a small group of kernel developers have decided that
-runtime/application developers, and ultimately their users, should use
-hardware that they have purchased and own.
-
-Interestingly, the very antithesis of what started the open source
-movement.
-
-If Jethro/Fortanix have a business case for measuring partial pages,
-which incidentally he may not be able to divulge at this time, it
-seems the driver should support it if the hardware does.
-
-An interesting phenomenon is evolving with respect to Linux.  With
-secure boot, kernel module signing, and now the lockdown patches; the
-major Linux vendors are in a position to use cryptographic constraints
-to limit what the general Linux user community has available to it,
-and particularly in the case of SGX, how the Linux application
-eco-system can evolve.
-
-I find this situation particularly fascinating.
-
-Intel has choreographed 30+ million dollars of capital investment in
-Fortanix in order to advance the development of an SGX software
-eco-system.  Given who is authoring the driver, one would think that
-the Fortanix engineering desires/needs would be given careful
-consideration before the hardware capabilities are limited by the
-driver ABI, an ABI that will be subsequently cryptographically
-constrained from innovation.
-
-My apologies in advance for any intended or perceived indelicacies on
-these issues.
-
-Have a good weekend.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC               SGX secured infrastructure and
-4206 N. 19th Ave.           autonomously self-defensive platforms.
-Fargo, ND  58102
-PH: 701-281-1686            EMAIL: greg@idfusion.net
-------------------------------------------------------------------------------
-"Snow removal teaches all the important elements of succesful corporate
- politics:  1.) Be the first one to work.  2.) Always signal your
- intentions before moving.  3.) Be damn sure you're driving something
- big enough to deal with anything that decides not to get out of your way."
-                                -- Dr. G.W. Wettstein
-                                   Guerrilla Tactics for Corporate Survival
+--
+Jethro Beekman | Fortanix
