@@ -2,67 +2,66 @@ Return-Path: <SRS0=W/xJ=4V=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 129A9C3F2CE
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ABAC3F2CE
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55D221775
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76210217F4
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:28:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="exFzldm1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AouXiq99"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgCDTYj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 Mar 2020 14:24:39 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31725 "EHLO
+        id S1728539AbgCDT2Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 4 Mar 2020 14:28:16 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37372 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728539AbgCDTYj (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 4 Mar 2020 14:24:39 -0500
+        with ESMTP id S1726440AbgCDT2P (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 4 Mar 2020 14:28:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583349877;
+        s=mimecast20190719; t=1583350093;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=elkV9pMhFxfcXAWU57AK4g9YGhtBqwRP1jPxbO4AgRM=;
-        b=exFzldm1xBER5+8wgej0qfWosFXEoatHpkyBiMkHwU7tQaHq037Z9fQSpkNbPlNmZAaoxk
-        C//lQT2OzA+ZHcyVgaq1GH4Wxom+gX+gLphH5PwFdHtfrFZODzRbsRe0vJtvBRGv8RLdVa
-        STdaZL75Gk6UTa8BhQPYz/pDqHzGJ+4=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-174-cZa1R33vNc28GpzLBpgNww-1; Wed, 04 Mar 2020 14:24:33 -0500
-X-MC-Unique: cZa1R33vNc28GpzLBpgNww-1
-Received: by mail-io1-f72.google.com with SMTP id t12so2208941iog.12
-        for <linux-sgx@vger.kernel.org>; Wed, 04 Mar 2020 11:24:33 -0800 (PST)
+        bh=ddCmJnchG7ddEu+kg1f4rZXhrNk22lXtAjVoUaUZxJM=;
+        b=AouXiq99OHsCHZ5h/517RcFKRLl0/vL4g/lrPKaxsUOIRCYR1TLxhhC/P4tbtOUEb3aJ2J
+        ois2geQb/gYGpdBjD7B+a2Sa+Bl7eBGdvLEciSoThny1SXzxvfeZ78jM/Kxh8vbozpZJ+b
+        lMxansFhd8b/TCcq+9H0UKxmSm/JfnA=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-296-jRqfxzLyNj-XGXmY1BfBag-1; Wed, 04 Mar 2020 14:28:10 -0500
+X-MC-Unique: jRqfxzLyNj-XGXmY1BfBag-1
+Received: by mail-il1-f199.google.com with SMTP id h87so2377439ild.11
+        for <linux-sgx@vger.kernel.org>; Wed, 04 Mar 2020 11:28:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=elkV9pMhFxfcXAWU57AK4g9YGhtBqwRP1jPxbO4AgRM=;
-        b=oVYE9gkxbOMSUOZbLNnYqEukvu93ZrsBLtT5qAa+xCbP/Dh3ZUjzecC0BjNCs/i5hc
-         JD8O9Ropotsbvkd967+2gVv4QyN2gGhqHNmIqt2J7pkW0xu4Kc4GC4KHoOw/BEZg9tGZ
-         NCOXPEQordnsO+eaX+jqQRNDedLATWz/NJr4PXVpNCvILcTUMoOvh3xV/s22rlWq2H+J
-         130ltdiGWR9EkOejUl34lIJiyKtK9rcCDf35g5RcPvx/Qm6pjPMQiWkfWZ+eLCcPVa5f
-         yTgGVPk3tZ20oh4/KU8Cha+gEtK9RMyUWZ36MFnWs12TipPAE3bOuujTTpHQ/O38YmKA
-         GUhQ==
-X-Gm-Message-State: ANhLgQ234xklgaj55mWF8/TS5EfFJSICi4/EnfXizRDjwJ9lk2GKkc6M
-        YeDHQ234atX+XcLLnA/Wwyq8BqqQOkXbQ/ZFjtcbpxscXRnztBH4vbLBhVEA6DLTCB70hjEhr/1
-        7kwxEfwxLbKjdFKjun2w3i+iJKqcPbb0UVCzW
-X-Received: by 2002:a6b:701a:: with SMTP id l26mr3258887ioc.116.1583349872434;
-        Wed, 04 Mar 2020 11:24:32 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vt/T1hcxXPuYl89i0Yv3vUwo+P+YE+uNcuSGRyw0g+4a+i2CYqFyPIZFNtU/ruH+lhQUQN1bxHiTZqs4rbtPUQ=
-X-Received: by 2002:a6b:701a:: with SMTP id l26mr3258829ioc.116.1583349871630;
- Wed, 04 Mar 2020 11:24:31 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=ddCmJnchG7ddEu+kg1f4rZXhrNk22lXtAjVoUaUZxJM=;
+        b=uReGagp+/WYy3YZI9gARqjGGxqf0vAdZOzmjZv8CYB4mPjVpGuGSZKbXwBVeDEPvOA
+         aHmhZxexPQTNA9+7ZGoKIlqr8zaeXTSC2Bt2htaCmIS6XJLBIdfHCJlbgYqwt1TuvZFc
+         galjNsLXOA53ELK7xTtW2CBYRXlZ3KuR6TFCcmU5oen3D/hCrqSJD0JwUoa+jgBLIVmU
+         R7wKxR6PMMo1OLzRFeesx67+Qwcla5/DsP9W3raCtmrq4gJ3WbF9WvNDf1pkwk6a/M3l
+         b4DCdPtP+b5fW5dM0T8fEHaOf4ej0UkWGtSCvY4u2PLIjFHik/4DNMOsH8chEYKbbgU3
+         FuuA==
+X-Gm-Message-State: ANhLgQ1T99TgI9E1fpod6gXNge4KPxQyY7+l92DfCpwf6jYIUnHc+6I6
+        m1ruk8Hh3Kf/3JbUWWUbpH18rXwA2eZMdEgxdqqiW+kIar4ymHfjaj+ZyvbXGTssc9r78K5Wjg7
+        6orDOLobs2+5bhf+ByuLkuW8VtsbfZbMPXl9l
+X-Received: by 2002:a92:9a02:: with SMTP id t2mr4062379ili.11.1583350088792;
+        Wed, 04 Mar 2020 11:28:08 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vvkBd2AQEGLOta97fREI3HNu/Ot1f5Mj5+fXn+LAYpK+QRvnex7gK0Udv1sgqXz7eadDuG8IsnOnfpmiQvTX+M=
+X-Received: by 2002:a92:9a02:: with SMTP id t2mr4062321ili.11.1583350088213;
+ Wed, 04 Mar 2020 11:28:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com> <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
 From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Wed, 4 Mar 2020 14:24:20 -0500
-Message-ID: <CAOASepOqbZFYGHpHRtm377muBEmO=wYpnfrzRX5or5V7hNpg8g@mail.gmail.com>
-Subject: Re: [PATCH v28 00/22] Intel SGX foundations
+Date:   Wed, 4 Mar 2020 14:27:57 -0500
+Message-ID: <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
+Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
@@ -74,610 +73,39 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
         Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
         kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Patrick Uiterwijk <puiterwijk@redhat.com>
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        linux-kselftest@vger.kernel.org
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-FYI, builds of the Fedora kernel with this patch set should complete
-shortly at this copr repo:
-https://copr.fedorainfracloud.org/coprs/npmccallum/enarx/builds/
-
-On Tue, Mar 3, 2020 at 6:36 PM Jarkko Sakkinen
+On Tue, Mar 3, 2020 at 6:39 PM Jarkko Sakkinen
 <jarkko.sakkinen@linux.intel.com> wrote:
 >
-> Intel(R) SGX is a set of CPU instructions that can be used by application=
-s
-> to set aside private regions of code and data. The code outside the encla=
-ve
-> is disallowed to access the memory inside the enclave by the CPU access
-> control.
+> Add a selftest for SGX. It is a trivial test where a simple enclave
+> copies one 64-bit word of memory between two memory locations given to
+> the enclave as arguments. Use ENCLS[EENTER] to invoke the enclave.
 >
-> There is a new hardware unit in the processor called Memory Encryption
-> Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
-> one or many MEE regions that can hold enclave data by configuring them wi=
-th
-> PRMRR registers.
->
-> The MEE automatically encrypts the data leaving the processor package to
-> the MEE regions. The data is encrypted using a random key whose life-time
-> is exactly one power cycle.
->
-> The current implementation requires that the firmware sets
-> IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
-> decide what enclaves it wants run. The implementation does not create
-> any bottlenecks to support read-only MSRs later on.
->
-> You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
->
->         cat /proc/cpuinfo  | grep sgx
->
-> v28:
-> * Documented to Documentation/x86/sgx.rst how the kernel manages the
->   enclave ownership.
-> * Removed non-LC flow from sgx_einit().
-> * Removed struct sgx_einittoken since only the size of the corresponding
->   microarchitectural structure is used in the series ATM.
->
-> v27:
-> * Disallow RIE processes to use enclaves as there could a permission
->   conflict between VMA and enclave permissions.
-> * In the documentation, replace "grep /proc/cpuinfo" with
->   "grep sgx /proc/cpuinfo".
->
-> v26:
-> * Fixed the commit author in "x86/sgx: Linux Enclave Driver", which was
->   changed in v25 by mistake.
-> * Addressed a bunch of grammar mistakes in sgx.rst (thanks Randy once
->   again for such a detailed feedback).
-> * Added back the MAINTAINERS update commit, which was mistakenly removed
->   in v25.
-> * EREMOVE's for SECS cannot be done while sanitizing an EPC section. The
->   CPU does not allow to remove a SECS page before all of its children hav=
-e
->   been removed, and a child page can be in some other section than the on=
-e
->   currently being processed. Thus, removed special SECS processing from
->   sgx_sanitize_page() and instead put sections through it twice. In the
->   2nd round the lists should only contain SECS pages.
->
-> v25:
-> * Fix a double-free issue when SGX_IOC_ENCLAVE_ADD_PAGES
->   fails on executing ENCLS[EADD]. The rollback path executed
->   radix_tree_delete() on the same address twice when this happened.
-> * Return -EINTR instead of -ERESTARTSYS in SGX_IOC_ENCLAVE_ADD_PAGES when
->   a signal is pending.
-> * As requested by Borislav, move the CPUID 0x12 features to their own wor=
-d
->   in cpufeatures.
-> * Sean fixed a bug from sgx_reclaimer_write() where sgx_encl_put_backing(=
-)
->   was called with an uninitialized pointer when sgx_encl_get_backing()
->   fails.
-> * Migrated /dev/sgx/* to misc. This is future-proof as struct miscdevice
->   has 'groups' for setting up sysfs attributes for the device.
-> * Use device_initcall instead of subsys_initcall so that misc_class is
->   initialized before SGX is initialized.
-> * Return -EACCES in SGX_IOC_ENCLAVE_INIT when caller tries to select
->   enclave attributes that we the kernel does not allow it to set instead
->   of -EINVAL.
-> * Unless SGX public key MSRs are writable always deny the feature from
->   Linux. Previously this was only denied from driver. How VMs should be
->   supported is not really part of initial patch set, which makes this
->   an obvious choice.
-> * Cleaned up and refined documentation to be more approachable.
->
-> v24:
-> * Reclaim unmeasured and TCS pages (regression in v23).
-> * Replace usages of GFP_HIGHUSER with GFP_KERNEL.
-> * Return -EIO on when EADD or EEXTEND fails in %SGX_IOC_ENCLAVE_ADD_PAGES
->   and use the same rollback (destroy enclave). This can happen when host
->   suspends itself unknowingly to a VM running enclaves. From -EIO the use=
-r
->   space can deduce what happened.
-> * Have a separate @count in struct sgx_enclave_add_pages to output number
->   of bytes processed instead of overwriting the input parameters for
->   clarity and more importantly that the API provides means for partial
->   processing (@count could be less than @length in success case).
->
-> v23:
-> * Replace SGX_ENCLAVE_ADD_PAGE with SGX_ENCLAVE_ADD_PAGES. Replace @mrmas=
-k
->   with %SGX_PAGE_MEASURE flag.
-> * Return -EIO instead of -ECANCELED when ptrace() fails to read a TCS pag=
-e.
-> * In the reclaimer, pin page before ENCLS[EBLOCK] because pinning can fai=
-l
->   (because of OOM) even in legit behaviour and after EBLOCK the reclaimin=
-g
->   flow can be only reverted by killing the whole enclave.
-> * Fixed SGX_ATTR_RESERVED_MASK. Bit 7 was marked as reserved while in fac=
-t
->   it should have been bit 6 (Table 37-3 in the SDM).
-> * Return -EPERM from SGX_IOC_ENCLAVE_INIT when ENCLS[EINIT] returns an SG=
-X
->   error code.
->
-> v22:
-> * Refined bunch commit messages and added associated SDM references as
->   many of them were too exhausting and some outdated.
-> * Alignment checks have been removed from mmap() because it does not defi=
-ne the
->   ELRANGE. VMAs only act as windows to the enclave. The semantics compare
->   somewhat how mmap() works with regular files.
-> * We now require user space addresses given to SGX_IOC_ENCLAVE_ADD_PAGE t=
-o be
->   page aligned so that we can pass the page directly to EADD and do not h=
-ave
->   to do an extra copy. This was made effectively possible by removing the
->   worker thread for adding pages.
-> * The selftest build files have been refined throughout of various glitch=
-es
->   and work properly in a cross compilation environment such as BuildRoot.
->   In addition, libcalls fail the build with an assertion in the linker
->   script, if they end up to the enclave binary.
-> * CONFIG_INTEL_SGX_DRIVER has been removed because you cannot use SGX cor=
-e
->   for anything without having the driver. This could change when KVM supp=
-ort
->   is added.
-> * We require zero permissions in SECINFO for TCS pages because the CPU
->   overwrites SECINFO flags with zero permissions and measures the page
->   only after that. Allowing to pass TCS with non-zero permissions would
->   cause mismatching measurement between the one provided in SIGSTRUCT and
->   the one computed by the CPU.
-> * Obviously lots of small fixes and clean ups (does make sense to
->   document them all).
->
-> v21:
-> * Check on mmap() that the VMA does cover an area that does not have
->   enclave pages. Only mapping with PROT_NONE can do that to reserve
->   initial address space for an enclave.
-> * Check om mmap() and mprotect() that the VMA permissions do not
->   surpass the enclave permissions.
-> * Remove two refcounts from vma_close(): mm_list and encl->refcount.
->   Enclave refcount is only need for swapper/enclave sync and we can
->   remove mm_list refcount by destroying mm_struct when the process
->   is closed. By not having vm_close() the Linux MM can merge VMAs.
-> * Do not naturally align MAP_FIXED address.
-> * Numerous small fixes and clean ups.
-> * Use SRCU for synchronizing the list of mm_struct's.
-> * Move to stack based call convention in the vDSO.
->
-> v20:
-> * Fine-tune Kconfig messages and spacing and remove MMU_NOTIFIER
->   dependency as MMU notifiers are no longer used in the driver.
-> * Use mm_users instead of mm_count as refcount for mm_struct as mm_count
->   only protects from deleting mm_struct, not removing its contents.
-> * Sanitize EPC when the reclaimer thread starts by doing EREMOVE for all
->   of them. They could be in initialized state when the kernel starts
->   because it might be spawned by kexec().
-> * Documentation overhaul.
-> * Use a device /dev/sgx/provision for delivering the provision token
->   instead of securityfs.
-> * Create a reference to the enclave when already when opening
->   /dev/sgx/enclave.  The file is then associated with this enclave only.
->   mmap() can be done at free at any point and always get a reference to
->   the enclave. To summarize the file now represents the enclave.
->
-> v19:
-> * Took 3-4 months but in some sense this was more like a rewrite of most
->   of the corners of the source code. If I've forgotten to deal with some
->   feedback, please don't shout me. Make a remark and I will fix it for
->   the next version. Hopefully there won't be this big turnovers anymore.
-> * Validate SECS attributes properly against CPUID given attributes and
->   against allowed attributes. SECS attributes are the ones that are
->   enforced whereas SIGSTRUCT attributes tell what is required to run
->   the enclave.
-> * Add KSS (Key Sharing Support) to the enclave attributes.
-> * Deny MAP_PRIVATE as an enclave is always a shared memory entity.
-> * Revert back to shmem backing storage so that it can be easily shared
->   by multiple processes.
-> * Split the recognization of an ENCLS leaf failure by using three
->   functions to detect it: encsl_faulted(), encls_returned_code() and
->   sgx_failed(). encls_failed() is only caused by a spurious expections th=
-at
->   should never happen. Thus, it is not defined as an inline function in
->   order to easily insert a kprobe to it.
-> * Move low-level enclave management routines, page fault handler and page
->   reclaiming routines from driver to the core. These cannot be separated
->   from each other as they are heavily interdependent. The rationale is th=
-at
->   the core does not call any code from the driver.
-> * Allow the driver to be compiled as a module now that it no code is usin=
-g
->   its routines and it only uses exported symbols. Now the driver is
->   essentially just a thin ioctl layer.
-> * Reworked the driver to maintain a list of mm_struct's. The VMA callback=
-s
->   add new entries to this list as the process is forked. Each entry has
->   its own refcount because they have a different life-cycle as the enclav=
-e
->   does. In effect @tgid and @mm have been removed from struct sgx_encl
->   and we allow forking by removing VM_DONTCOPY from vm flags.
-> * Generate a cpu mask in the reclaimer from the cpu mask's of all
->   mm_struct's. This will kick out the hardware threads out of the enclave
->   from multiple processes. It is not a local variable because it would
->   eat too much of the stack space but instead a field in struct
->   sgx_encl.
-> * Allow forking i.e. remove VM_DONTCOPY. I did not change the API
->   because the old API scaled to the workload that Andy described. The
->   codebase is now mostly API independent i.e. changing the API is a
->   small task. For me the proper trigger to chanage it is a as concrete
->   as possible workload that cannot be fulfilled. I hope you understand
->   my thinking here. I don't want to change anything w/o proper basis
->   but I'm ready to change anything if there is a proper basis. I do
->   not have any kind of attachment to any particular type of API.
-> * Add Sean's vDSO ENCLS(EENTER) patches and update selftest to use the
->   new vDSO.
->
-> v18:
-> * Update the ioctl-number.txt.
-> * Move the driver under arch/x86.
-> * Add SGX features (SGX, SGX1, SGX2) to the disabled-features.h.
-> * Rename the selftest as test_sgx (previously sgx-selftest).
-> * In order to enable process accounting, swap EPC pages and PCMD's to a V=
-MA
->   instead of shmem.
-> * Allow only to initialize and run enclaves with a subset of
->   {DEBUG, MODE64BIT} set.
-> * Add SGX_IOC_ENCLAVE_SET_ATTRIBUTE to allow an enclave to have privilege=
-d
->   attributes e.g. PROVISIONKEY.
->
-> v17:
-> * Add a simple selftest.
-> * Fix a null pointer dereference to section->pages when its
->   allocation fails.
-> * Add Sean's description of the exception handling to the documentation.
->
-> v16:
-> * Fixed SOB's in the commits that were a bit corrupted in v15.
-> * Implemented exceptio handling properly to detect_sgx().
-> * Use GENMASK() to define SGX_CPUID_SUB_LEAF_TYPE_MASK.
-> * Updated the documentation to use rst definition lists.
-> * Added the missing Documentation/x86/index.rst, which has a link to
->   intel_sgx.rst. Now the SGX and uapi documentation is properly generated
->   with 'make htmldocs'.
-> * While enumerating EPC sections, if an undefined section is found, fail
->   the driver initialization instead of continuing the initialization.
-> * Issue a warning if there are more than %SGX_MAX_EPC_SECTIONS.
-> * Remove copyright notice from arch/x86/include/asm/sgx.h.
-> * Migrated from ioremap_cache() to memremap().
->
-> v15:
-> * Split into more digestable size patches.
-> * Lots of small fixes and clean ups.
-> * Signal a "plain" SIGSEGV on an EPCM violation.
->
-> v14:
-> * Change the comment about X86_FEATURE_SGX_LC from =E2=80=9CSGX launch
->   configuration=E2=80=9D to =E2=80=9CSGX launch control=E2=80=9D.
-> * Move the SGX-related CPU feature flags as part of the Linux defined
->   virtual leaf 8.
-> * Add SGX_ prefix to the constants defining the ENCLS leaf functions.
-> * Use GENMASK*() and BIT*() in sgx_arch.h instead of raw hex numbers.
-> * Refine the long description for CONFIG_INTEL_SGX_CORE.
-> * Do not use pr_*_ratelimited()  in the driver. The use of the rate limit=
-ed
->   versions is legacy cruft from the prototyping phase.
-> * Detect sleep with SGX_INVALID_EINIT_TOKEN instead of counting power
->   cycles.
-> * Manually prefix with =E2=80=9Csgx:=E2=80=9D in the core SGX code instea=
-d of redefining
->   pr_fmt.
-> * Report if IA32_SGXLEPUBKEYHASHx MSRs are not writable in the driver
->   instead of core because it is a driver requirement.
-> * Change prompt to bool in the entry for CONFIG_INTEL_SGX_CORE because th=
-e
->   default is =E2=80=98n=E2=80=99.
-> * Rename struct sgx_epc_bank as struct sgx_epc_section in order to match
->   the SDM.
-> * Allocate struct sgx_epc_page instances one at a time.
-> * Use =E2=80=9C__iomem void *=E2=80=9D pointers for the mapped EPC memory=
- consistently.
-> * Retry once on SGX_INVALID_TOKEN in sgx_einit() instead of counting powe=
-r
->   cycles.
-> * Call enclave swapping operations directly from the driver instead of
->   calling them .indirectly through struct sgx_epc_page_ops because indire=
-ct
->   calls are not required yet as the patch set does not contain the KVM
->   support.
-> * Added special signal SEGV_SGXERR to notify about SGX EPCM violation
->   errors.
->
-> v13:
-> * Always use SGX_CPUID constant instead of a hardcoded value.
-> * Simplified and documented the macros and functions for ENCLS leaves.
-> * Enable sgx_free_page() to free active enclave pages on demand
->   in order to allow sgx_invalidate() to delete enclave pages.
->   It no longer performs EREMOVE if a page is in the process of
->   being reclaimed.
-> * Use PM notifier per enclave so that we don't have to traverse
->   the global list of active EPC pages to find enclaves.
-> * Removed unused SGX_LE_ROLLBACK constant from uapi/asm/sgx.h
-> * Always use ioremap() to map EPC banks as we only support 64-bit kernel.
-> * Invalidate IA32_SGXLEPUBKEYHASH cache used by sgx_einit() when going
->   to sleep.
->
-> v12:
-> * Split to more narrow scoped commits in order to ease the review process=
- and
->   use co-developed-by tag for co-authors of commits instead of listing th=
-em in
->   the source files.
-> * Removed cruft EXPORT_SYMBOL() declarations and converted to static vari=
-ables.
-> * Removed in-kernel LE i.e. this version of the SGX software stack only
->   supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
-> * Refined documentation on launching enclaves, swapping and enclave
->   construction.
-> * Refined sgx_arch.h to include alignment information for every struct th=
-at
->   requires it and removed structs that are not needed without an LE.
-> * Got rid of SGX_CPUID.
-> * SGX detection now prints log messages about firmware configuration issu=
-es.
->
-> v11:
-> * Polished ENCLS wrappers with refined exception handling.
-> * ksgxswapd was not stopped (regression in v5) in
->   sgx_page_cache_teardown(), which causes a leaked kthread after driver
->   deinitialization.
-> * Shutdown sgx_le_proxy when going to suspend because its EPC pages will =
-be
->   invalidated when resuming, which will cause it not function properly
->   anymore.
-> * Set EINITTOKEN.VALID to zero for a token that is passed when
->   SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
->   page.
-> * Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
->   around the flags field, which causes a #GP. Only flags read is readable=
-.
-> * On read access memcpy() call inside sgx_vma_access() had src and dest
->   parameters in wrong order.
-> * The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
->   to LE even if =E2=80=9CKASAN_SANITIZE :=3D false=E2=80=9D was set in th=
-e makefile.
-> * Fixed a regression in the #PF handler. If a page has
->   SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail=
-.
->   It did not, which caused weird races when trying to change other parts =
-of
->   swapping code.
-> * EPC management has been refactored to a flat LRU cache and moved to
->   arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
->   of them. It can now swap from multiple enclaves in the same round.
-> * For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINV=
-AL
->   when an enclave is already initialized or dead instead of zero.
->
-> v10:
-> * Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
->   of the driver.
-> * Unset the reserved flag from an enclave page if EDBGRD/WR fails
->   (regression in v6).
-> * Close the anon inode when LE is stopped (regression in v9).
-> * Update the documentation with a more detailed description of SGX.
->
-> v9:
-> * Replaced kernel-LE IPC based on pipes with an anonymous inode.
->   The driver does not require anymore new exports.
->
-> v8:
-> * Check that public key MSRs match the LE public key hash in the
->   driver initialization when the MSRs are read-only.
-> * Fix the race in VA slot allocation by checking the fullness
->   immediately after succeesful allocation.
-> * Fix the race in hash mrsigner calculation between the launch
->   enclave and user enclaves by having a separate lock for hash
->   calculation.
->
-> v7:
-> * Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAG=
-E_MASK
->   when it should have been masked with ~PAGE_MASK.
-> * Fixed a memory leak in sgx_ioc_enclave_create().
-> * Simplified swapping code by using a pointer array for a cluster
->   instead of a linked list.
-> * Squeezed struct sgx_encl_page to 32 bytes.
-> * Fixed deferencing of an RSA key on OpenSSL 1.1.0.
-> * Modified TC's CMAC to use kernel AES-NI. Restructured the code
->   a bit in order to better align with kernel conventions.
->
-> v6:
-> * Fixed semaphore underrun when accessing /dev/sgx from the launch enclav=
-e.
-> * In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
-> * Removed virtualization chapter from the documentation.
-> * Changed the default filename for the signing key as signing_key.pem.
-> * Reworked EPC management in a way that instead of a linked list of
->   struct sgx_epc_page instances there is an array of integers that
->   encodes address and bank of an EPC page (the same data as 'pa' field
->   earlier). The locking has been moved to the EPC bank level instead
->   of a global lock.
-> * Relaxed locking requirements for EPC management. EPC pages can be
->   released back to the EPC bank concurrently.
-> * Cleaned up ptrace() code.
-> * Refined commit messages for new architectural constants.
-> * Sorted includes in every source file.
-> * Sorted local variable declarations according to the line length in
->   every function.
-> * Style fixes based on Darren's comments to sgx_le.c.
->
-> v5:
-> * Described IPC between the Launch Enclave and kernel in the commit messa=
-ges.
-> * Fixed all relevant checkpatch.pl issues that I have forgot fix in earli=
-er
->   versions except those that exist in the imported TinyCrypt code.
-> * Fixed spelling mistakes in the documentation.
-> * Forgot to check the return value of sgx_drv_subsys_init().
-> * Encapsulated properly page cache init and teardown.
-> * Collect epc pages to a temp list in sgx_add_epc_bank
-> * Removed SGX_ENCLAVE_INIT_ARCH constant.
->
-> v4:
-> * Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
-> * Removed __exit annotation from sgx_drv_subsys_exit().
-> * Fixed a leak of a backing page in sgx_process_add_page_req() in the
->   case when vm_insert_pfn() fails.
-> * Removed unused symbol exports for sgx_page_cache.c.
-> * Updated sgx_alloc_page() to require encl parameter and documented the
->   behavior (Sean Christopherson).
-> * Refactored a more lean API for sgx_encl_find() and documented the behav=
-ior.
-> * Moved #PF handler to sgx_fault.c.
-> * Replaced subsys_system_register() with plain bus_register().
-> * Retry EINIT 2nd time only if MSRs are not locked.
->
-> v3:
-> * Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are se=
-t.
-> * Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fail=
-s.
-> * Use unused bits in epc_page->pa to store the bank number.
-> * Removed #ifdef for WQ_NONREENTRANT.
-> * If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
-> * Added --remove-section=3D.got.plt to objcopy flags in order to prevent =
-a
->   dummy .got.plt, which will cause an inconsistent size for the LE.
-> * Documented sgx_encl_* functions.
-> * Added remark about AES implementation used inside the LE.
-> * Removed redundant sgx_sys_exit() from le/main.c.
-> * Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
-> * Validate miscselect in sgx_encl_create().
-> * Fixed SSA frame size calculation to take the misc region into account.
-> * Implemented consistent exception handling to __encls() and __encls_ret(=
-).
-> * Implemented a proper device model in order to allow sysfs attributes
->   and in-kernel API.
-> * Cleaned up various "find enclave" implementations to the unified
->   sgx_encl_find().
-> * Validate that vm_pgoff is zero.
-> * Discard backing pages with shmem_truncate_range() after EADD.
-> * Added missing EEXTEND operations to LE signing and launch.
-> * Fixed SSA size for GPRS region from 168 to 184 bytes.
-> * Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
-> * Check that TCS addresses are in ELRANGE and not just page aligned.
-> * Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
-> * Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
->
-> v2:
-> * get_rand_uint32() changed the value of the pointer instead of value
->   where it is pointing at.
-> * Launch enclave incorrectly used sigstruct attributes-field instead of
->   enclave attributes-field.
-> * Removed unused struct sgx_add_page_req from sgx_ioctl.c
-> * Removed unused sgx_has_sgx2.
-> * Updated arch/x86/include/asm/sgx.h so that it provides stub
->   implementations when sgx in not enabled.
-> * Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
-> * return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
-> * removed unused global sgx_nr_pids
-> * moved sgx_encl_release to sgx_encl.c
-> * return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
->
-> Jarkko Sakkinen (12):
->   x86/sgx: Update MAINTAINERS
->   x86/sgx: Add SGX microarchitectural data structures
->   x86/sgx: Add wrappers for ENCLS leaf functions
->   x86/sgx: Add functions to allocate and free EPC pages
->   x86/sgx: Linux Enclave Driver
->   docs: x86/sgx: Document SGX micro architecture and kernel internals
->   selftests/x86: Recurse into subdirectories
->   selftests/x86: Add a selftest for SGX
->   x86/sgx: Add provisioning
->   x86/sgx: Add a page reclaimer
->   x86/sgx: ptrace() support for the SGX driver
->   selftests/x86: Add vDSO selftest for SGX
->
-> Sean Christopherson (10):
->   x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
->   x86/cpufeatures: x86/msr: Intel SGX Launch Control hardware bits
->   x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
->   x86/cpu/intel: Detect SGX supprt
->   x86/sgx: Enumerate and track EPC sections
->   mm: Introduce vm_ops->may_mprotect()
->   x86/vdso: Add support for exception fixup in vDSO functions
->   x86/fault: Add helper function to sanitize error code
->   x86/traps: Attempt to fixup exceptions in vDSO before signaling
->   x86/vdso: Implement a vDSO for Intel SGX enclave call
->
->  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
->  Documentation/x86/index.rst                   |   1 +
->  Documentation/x86/sgx.rst                     | 192 +++++
->  MAINTAINERS                                   |  11 +
->  arch/x86/Kconfig                              |  14 +
->  arch/x86/entry/vdso/Makefile                  |   8 +-
->  arch/x86/entry/vdso/extable.c                 |  46 +
->  arch/x86/entry/vdso/extable.h                 |  29 +
->  arch/x86/entry/vdso/vdso-layout.lds.S         |   9 +-
->  arch/x86/entry/vdso/vdso.lds.S                |   1 +
->  arch/x86/entry/vdso/vdso2c.h                  |  58 +-
->  arch/x86/entry/vdso/vsgx_enter_enclave.S      | 187 ++++
->  arch/x86/include/asm/cpufeature.h             |   5 +-
->  arch/x86/include/asm/cpufeatures.h            |   8 +-
->  arch/x86/include/asm/disabled-features.h      |  18 +-
->  arch/x86/include/asm/msr-index.h              |   8 +
->  arch/x86/include/asm/required-features.h      |   2 +-
->  arch/x86/include/asm/traps.h                  |   1 +
->  arch/x86/include/asm/vdso.h                   |   5 +
->  arch/x86/include/uapi/asm/sgx.h               | 114 +++
->  arch/x86/kernel/cpu/Makefile                  |   1 +
->  arch/x86/kernel/cpu/common.c                  |   4 +
->  arch/x86/kernel/cpu/feat_ctl.c                |  29 +-
->  arch/x86/kernel/cpu/sgx/Makefile              |   6 +
->  arch/x86/kernel/cpu/sgx/arch.h                | 343 ++++++++
->  arch/x86/kernel/cpu/sgx/driver.c              | 209 +++++
->  arch/x86/kernel/cpu/sgx/driver.h              |  32 +
->  arch/x86/kernel/cpu/sgx/encl.c                | 757 ++++++++++++++++
->  arch/x86/kernel/cpu/sgx/encl.h                | 127 +++
->  arch/x86/kernel/cpu/sgx/encls.h               | 238 ++++++
->  arch/x86/kernel/cpu/sgx/ioctl.c               | 805 ++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/main.c                | 280 ++++++
->  arch/x86/kernel/cpu/sgx/reclaim.c             | 458 ++++++++++
->  arch/x86/kernel/cpu/sgx/sgx.h                 | 108 +++
->  arch/x86/kernel/traps.c                       |  14 +
->  arch/x86/mm/fault.c                           |  45 +-
->  include/linux/mm.h                            |   2 +
->  mm/mprotect.c                                 |  14 +-
->  tools/arch/x86/include/asm/cpufeatures.h      |   7 +-
->  tools/testing/selftests/x86/Makefile          |  44 +
+> Cc: linux-sgx@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
 >  tools/testing/selftests/x86/sgx/.gitignore    |   3 +
 >  tools/testing/selftests/x86/sgx/Makefile      |  48 ++
 >  tools/testing/selftests/x86/sgx/defines.h     |  17 +
 >  tools/testing/selftests/x86/sgx/encl.c        |  20 +
->  tools/testing/selftests/x86/sgx/encl.lds      |  34 +
->  .../selftests/x86/sgx/encl_bootstrap.S        |  94 ++
->  tools/testing/selftests/x86/sgx/main.c        | 379 +++++++++
->  tools/testing/selftests/x86/sgx/sgx_call.S    |  66 ++
->  tools/testing/selftests/x86/sgx/sgx_call.h    |  14 +
->  tools/testing/selftests/x86/sgx/sgxsign.c     | 493 +++++++++++
->  .../testing/selftests/x86/sgx/signing_key.pem |  39 +
->  51 files changed, 5417 insertions(+), 31 deletions(-)
->  create mode 100644 Documentation/x86/sgx.rst
->  create mode 100644 arch/x86/entry/vdso/extable.c
->  create mode 100644 arch/x86/entry/vdso/extable.h
->  create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
->  create mode 100644 arch/x86/include/uapi/asm/sgx.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
->  create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
->  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/main.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/reclaim.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
+>  tools/testing/selftests/x86/sgx/encl.lds      |  34 ++
+>  .../selftests/x86/sgx/encl_bootstrap.S        |  94 ++++
+>  tools/testing/selftests/x86/sgx/main.c        | 247 +++++++++
+>  tools/testing/selftests/x86/sgx/sgx_call.S    |  23 +
+>  tools/testing/selftests/x86/sgx/sgx_call.h    |  11 +
+>  tools/testing/selftests/x86/sgx/sgxsign.c     | 493 ++++++++++++++++++
+>  .../testing/selftests/x86/sgx/signing_key.pem |  39 ++
+>  11 files changed, 1029 insertions(+)
 >  create mode 100644 tools/testing/selftests/x86/sgx/.gitignore
 >  create mode 100644 tools/testing/selftests/x86/sgx/Makefile
 >  create mode 100644 tools/testing/selftests/x86/sgx/defines.h
@@ -690,6 +118,1121 @@ a
 >  create mode 100644 tools/testing/selftests/x86/sgx/sgxsign.c
 >  create mode 100644 tools/testing/selftests/x86/sgx/signing_key.pem
 >
+> diff --git a/tools/testing/selftests/x86/sgx/.gitignore b/tools/testing/selftests/x86/sgx/.gitignore
+> new file mode 100644
+> index 000000000000..98eb2d439606
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/.gitignore
+> @@ -0,0 +1,3 @@
+> +encl.ss
+> +sgxsign
+> +test_sgx
+> diff --git a/tools/testing/selftests/x86/sgx/Makefile b/tools/testing/selftests/x86/sgx/Makefile
+> new file mode 100644
+> index 000000000000..f838700029e2
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/Makefile
+> @@ -0,0 +1,48 @@
+> +top_srcdir = ../../../../..
+> +
+> +include ../../lib.mk
+> +
+> +ifndef OBJCOPY
+> +OBJCOPY := $(CROSS_COMPILE)objcopy
+> +endif
+> +
+> +INCLUDES := -I$(top_srcdir)/tools/include
+> +HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
+> +ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
+> +              -fno-stack-protector -mrdrnd $(INCLUDES)
+> +
+> +TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
+> +
+> +all: $(TEST_CUSTOM_PROGS)
+> +
+> +$(OUTPUT)/test_sgx: $(OUTPUT)/main.o $(OUTPUT)/sgx_call.o
+> +       $(CC) $(HOST_CFLAGS) -o $@ $^
+> +
+> +$(OUTPUT)/main.o: main.c
+> +       $(CC) $(HOST_CFLAGS) -c $< -o $@
+> +
+> +$(OUTPUT)/sgx_call.o: sgx_call.S
+> +       $(CC) $(HOST_CFLAGS) -c $< -o $@
+> +
+> +$(OUTPUT)/encl.bin: $(OUTPUT)/encl.elf $(OUTPUT)/sgxsign
+> +       $(OBJCOPY) -O binary $< $@
+> +
+> +$(OUTPUT)/encl.elf: encl.lds encl.c encl_bootstrap.S
+> +       $(CC) $(ENCL_CFLAGS) -T $^ -o $@
+> +
+> +$(OUTPUT)/encl.ss: $(OUTPUT)/encl.bin
+> +       $(OUTPUT)/sgxsign signing_key.pem $(OUTPUT)/encl.bin $(OUTPUT)/encl.ss
+> +
+> +$(OUTPUT)/sgxsign: sgxsign.c
+> +       $(CC) $(INCLUDES) -o $@ $< -lcrypto
+> +
+> +EXTRA_CLEAN := \
+> +       $(OUTPUT)/encl.bin \
+> +       $(OUTPUT)/encl.elf \
+> +       $(OUTPUT)/encl.ss \
+> +       $(OUTPUT)/sgx_call.o \
+> +       $(OUTPUT)/sgxsign \
+> +       $(OUTPUT)/test_sgx \
+> +       $(OUTPUT)/test_sgx.o \
+> +
+> +.PHONY: clean
+> diff --git a/tools/testing/selftests/x86/sgx/defines.h b/tools/testing/selftests/x86/sgx/defines.h
+> new file mode 100644
+> index 000000000000..87264f85cb9f
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/defines.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright(c) 2016-19 Intel Corporation.
+> + */
+> +
+> +#ifndef DEFINES_H
+> +#define DEFINES_H
+> +
+> +#include <stdint.h>
+> +
+> +#define __aligned(x) __attribute__((__aligned__(x)))
+> +#define __packed __attribute__((packed))
+> +
+> +#include "../../../../../arch/x86/kernel/cpu/sgx/arch.h"
+> +#include "../../../../../arch/x86/include/uapi/asm/sgx.h"
+> +
+> +#endif /* DEFINES_H */
+> diff --git a/tools/testing/selftests/x86/sgx/encl.c b/tools/testing/selftests/x86/sgx/encl.c
+> new file mode 100644
+> index 000000000000..ede915399742
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/encl.c
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-18 Intel Corporation.
+> +
+> +#include <stddef.h>
+> +#include "defines.h"
+> +
+> +static void *memcpy(void *dest, const void *src, size_t n)
+> +{
+> +       size_t i;
+> +
+> +       for (i = 0; i < n; i++)
+> +               ((char *)dest)[i] = ((char *)src)[i];
+> +
+> +       return dest;
+> +}
+> +
+> +void encl_body(void *rdi, void *rsi)
+> +{
+> +       memcpy(rsi, rdi, 8);
+> +}
+> diff --git a/tools/testing/selftests/x86/sgx/encl.lds b/tools/testing/selftests/x86/sgx/encl.lds
+> new file mode 100644
+> index 000000000000..9a56d3064104
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/encl.lds
+> @@ -0,0 +1,34 @@
+> +OUTPUT_FORMAT(elf64-x86-64)
+> +
+> +SECTIONS
+> +{
+> +       . = 0;
+> +       .tcs : {
+> +               *(.tcs*)
+> +       }
+> +
+> +       . = ALIGN(4096);
+> +       .text : {
+> +               *(.text*)
+> +               *(.rodata*)
+> +       }
+> +
+> +       . = ALIGN(4096);
+> +       .data : {
+> +               *(.data*)
+> +       }
+> +
+> +       /DISCARD/ : {
+> +               *(.data*)
+> +               *(.comment*)
+> +               *(.note*)
+> +               *(.debug*)
+> +               *(.eh_frame*)
+> +       }
+> +}
+> +
+> +ASSERT(!DEFINED(.altinstructions), "ALTERNATIVES are not supported in enclaves")
+> +ASSERT(!DEFINED(.altinstr_replacement), "ALTERNATIVES are not supported in enclaves")
+> +ASSERT(!DEFINED(.discard.retpoline_safe), "RETPOLINE ALTERNATIVES are not supported in enclaves")
+> +ASSERT(!DEFINED(.discard.nospec), "RETPOLINE ALTERNATIVES are not supported in enclaves")
+> +ASSERT(!DEFINED(.got.plt), "Libcalls are not supported in enclaves")
+> diff --git a/tools/testing/selftests/x86/sgx/encl_bootstrap.S b/tools/testing/selftests/x86/sgx/encl_bootstrap.S
+> new file mode 100644
+> index 000000000000..d07f970ccdf9
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/encl_bootstrap.S
+> @@ -0,0 +1,94 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +/*
+> + * Copyright(c) 2016-18 Intel Corporation.
+> + */
+> +
+> +       .macro ENCLU
+> +       .byte 0x0f, 0x01, 0xd7
+> +       .endm
+> +
+> +       .section ".tcs", "a"
+> +       .balign 4096
+> +
+> +       .fill   1, 8, 0                 # STATE (set by CPU)
+> +       .fill   1, 8, 0                 # FLAGS
+> +       .quad   encl_ssa                # OSSA
+> +       .fill   1, 4, 0                 # CSSA (set by CPU)
+> +       .fill   1, 4, 1                 # NSSA
+> +       .quad   encl_entry              # OENTRY
+> +       .fill   1, 8, 0                 # AEP (set by EENTER and ERESUME)
+> +       .fill   1, 8, 0                 # OFSBASE
+> +       .fill   1, 8, 0                 # OGSBASE
+> +       .fill   1, 4, 0xFFFFFFFF        # FSLIMIT
+> +       .fill   1, 4, 0xFFFFFFFF        # GSLIMIT
+> +       .fill   4024, 1, 0              # Reserved
+> +
+> +       .text
+> +
+> +encl_entry:
+> +       # RBX contains the base address for TCS, which is also the first address
+> +       # inside the enclave. By adding the value of le_stack_end to it, we get
+> +       # the absolute address for the stack.
+> +       lea     (encl_stack)(%rbx), %rax
+> +       xchg    %rsp, %rax
+> +       push    %rax
+> +
+> +       push    %rcx # push the address after EENTER
+> +       push    %rbx # push the enclave base address
+> +
+> +       call    encl_body
+> +
+> +       pop     %rbx # pop the enclave base address
+> +
+> +       # Restore XSAVE registers to a synthetic state.
+> +       mov     $0xFFFFFFFF, %rax
+> +       mov     $0xFFFFFFFF, %rdx
+> +       lea     (xsave_area)(%rbx), %rdi
+> +       fxrstor (%rdi)
+> +
+> +       # Clear GPRs.
+> +       xor     %rcx, %rcx
+> +       xor     %rdx, %rdx
+> +       xor     %rdi, %rdi
+> +       xor     %rsi, %rsi
+> +       xor     %r8, %r8
+> +       xor     %r9, %r9
+> +       xor     %r10, %r10
+> +       xor     %r11, %r11
+> +       xor     %r12, %r12
+> +       xor     %r13, %r13
+> +       xor     %r14, %r14
+> +       xor     %r15, %r15
+> +
+> +       # Reset status flags.
+> +       add     %rdx, %rdx # OF = SF = AF = CF = 0; ZF = PF = 1
+> +
+> +       # Prepare EEXIT target by popping the address of the instruction after
+> +       # EENTER to RBX.
+> +       pop     %rbx
+> +
+> +       # Restore the caller stack.
+> +       pop     %rax
+> +       mov     %rax, %rsp
+> +
+> +       # EEXIT
+> +       mov     $4, %rax
+> +       enclu
+> +
+> +       .section ".data", "aw"
+> +
+> +encl_ssa:
+> +       .space 4096
+> +
+> +xsave_area:
+> +       .fill   1, 4, 0x037F            # FCW
+> +       .fill   5, 4, 0
+> +       .fill   1, 4, 0x1F80            # MXCSR
+> +       .fill   1, 4, 0xFFFF            # MXCSR_MASK
+> +       .fill   123, 4, 0
+> +       .fill   1, 4, 0x80000000        # XCOMP_BV[63] = 1, compaction mode
+> +       .fill   12, 4, 0
+
+I find this much more readable:
+
+xsave_area:
+        # Legacy
+        .fill   1, 4, 0x037F            # FCW
+        .fill   5, 4, 0
+        .fill   1, 4, 0x1F80            # MXCSR
+        .fill   1, 4, 0xFFFF            # MXCSR_MASK
+        .fill   60, 8, 0
+
+        # Header
+        .fill   1, 8, 0                 # XSTATE_BV
+        .fill   1, 8, 1 << 63           # XCOMP_BV (compaction mode)
+        .fill   6, 8, 0
+
+Also, since people are likely to copy this code for their own
+enclaves, it would be helpful to document which flags are set in FCW
+and MXCSR.
+
+> +
+> +       .balign 4096
+> +       .space 8192
+> +encl_stack:
+> diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
+> new file mode 100644
+> index 000000000000..48ed5fdfb3cb
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/main.c
+> @@ -0,0 +1,247 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-18 Intel Corporation.
+> +
+> +#include <elf.h>
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdint.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/mman.h>
+> +#include <sys/stat.h>
+> +#include <sys/time.h>
+> +#include <sys/types.h>
+> +#include "defines.h"
+> +#include "sgx_call.h"
+> +
+> +#define PAGE_SIZE  4096
+> +
+> +static const uint64_t MAGIC = 0x1122334455667788ULL;
+> +
+> +static bool encl_create(int dev_fd, unsigned long bin_size,
+> +                       struct sgx_secs *secs)
+> +{
+> +       struct sgx_enclave_create ioc;
+> +       void *area;
+> +       int rc;
+> +
+> +       memset(secs, 0, sizeof(*secs));
+> +       secs->ssa_frame_size = 1;
+> +       secs->attributes = SGX_ATTR_MODE64BIT;
+> +       secs->xfrm = 3;
+> +
+> +       for (secs->size = 4096; secs->size < bin_size; )
+> +               secs->size <<= 1;
+> +
+> +       area = mmap(NULL, secs->size * 2, PROT_NONE, MAP_SHARED, dev_fd, 0);
+> +       if (area == MAP_FAILED) {
+> +               perror("mmap");
+> +               return false;
+> +       }
+> +
+> +       secs->base = ((uint64_t)area + secs->size - 1) & ~(secs->size - 1);
+> +
+> +       munmap(area, secs->base - (uint64_t)area);
+> +       munmap((void *)(secs->base + secs->size),
+> +              (uint64_t)area + secs->size - secs->base);
+> +
+> +       ioc.src = (unsigned long)secs;
+> +       rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_CREATE, &ioc);
+> +       if (rc) {
+> +               fprintf(stderr, "ECREATE failed rc=%d, err=%d.\n", rc, errno);
+> +               munmap((void *)secs->base, secs->size);
+> +               return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +static bool encl_add_pages(int dev_fd, unsigned long offset, void *data,
+> +                          unsigned long length, uint64_t flags)
+> +{
+> +       struct sgx_enclave_add_pages ioc;
+> +       struct sgx_secinfo secinfo;
+> +       int rc;
+> +
+> +       memset(&secinfo, 0, sizeof(secinfo));
+> +       secinfo.flags = flags;
+> +
+> +       ioc.src = (uint64_t)data;
+> +       ioc.offset = offset;
+> +       ioc.length = length;
+> +       ioc.secinfo = (unsigned long)&secinfo;
+> +       ioc.flags = SGX_PAGE_MEASURE;
+> +
+> +       rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_ADD_PAGES, &ioc);
+> +       if (rc) {
+> +               fprintf(stderr, "EADD failed rc=%d.\n", rc);
+> +               return false;
+> +       }
+> +
+> +       if (ioc.count != ioc.length) {
+> +               fprintf(stderr, "Partially processed, update the test.\n");
+> +               return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +#define SGX_REG_PAGE_FLAGS \
+> +       (SGX_SECINFO_REG | SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X)
+> +
+> +static bool encl_build(struct sgx_secs *secs, void *bin,
+> +                      unsigned long bin_size, struct sgx_sigstruct *sigstruct)
+> +{
+> +       struct sgx_enclave_init ioc;
+> +       void *addr;
+> +       int dev_fd;
+> +       int rc;
+> +
+> +       dev_fd = open("/dev/sgx/enclave", O_RDWR);
+> +       if (dev_fd < 0) {
+> +               fprintf(stderr, "Unable to open /dev/sgx\n");
+> +               return false;
+> +       }
+> +
+> +       if (!encl_create(dev_fd, bin_size, secs))
+> +               goto out_dev_fd;
+> +
+> +       if (!encl_add_pages(dev_fd, 0, bin, PAGE_SIZE, SGX_SECINFO_TCS))
+> +               goto out_dev_fd;
+> +
+> +       if (!encl_add_pages(dev_fd, PAGE_SIZE, bin + PAGE_SIZE,
+> +                           bin_size - PAGE_SIZE, SGX_REG_PAGE_FLAGS))
+> +               goto out_dev_fd;
+> +
+> +       ioc.sigstruct = (uint64_t)sigstruct;
+> +       rc = ioctl(dev_fd, SGX_IOC_ENCLAVE_INIT, &ioc);
+> +       if (rc) {
+> +               printf("EINIT failed rc=%d\n", rc);
+> +               goto out_map;
+> +       }
+> +
+> +       addr = mmap((void *)secs->base, PAGE_SIZE, PROT_READ | PROT_WRITE,
+> +                   MAP_SHARED | MAP_FIXED, dev_fd, 0);
+> +       if (addr == MAP_FAILED) {
+> +               fprintf(stderr, "mmap() failed on TCS, errno=%d.\n", errno);
+> +               return false;
+> +       }
+> +
+> +       addr = mmap((void *)(secs->base + PAGE_SIZE), bin_size - PAGE_SIZE,
+> +                   PROT_READ | PROT_WRITE | PROT_EXEC,
+> +                   MAP_SHARED | MAP_FIXED, dev_fd, 0);
+> +       if (addr == MAP_FAILED) {
+> +               fprintf(stderr, "mmap() failed, errno=%d.\n", errno);
+> +               return false;
+> +       }
+> +
+> +       close(dev_fd);
+> +       return true;
+> +out_map:
+> +       munmap((void *)secs->base, secs->size);
+> +out_dev_fd:
+> +       close(dev_fd);
+> +       return false;
+> +}
+> +
+> +bool get_file_size(const char *path, off_t *bin_size)
+> +{
+> +       struct stat sb;
+> +       int ret;
+> +
+> +       ret = stat(path, &sb);
+> +       if (ret) {
+> +               perror("stat");
+> +               return false;
+> +       }
+> +
+> +       if (!sb.st_size || sb.st_size & 0xfff) {
+> +               fprintf(stderr, "Invalid blob size %lu\n", sb.st_size);
+> +               return false;
+> +       }
+> +
+> +       *bin_size = sb.st_size;
+> +       return true;
+> +}
+> +
+> +bool encl_data_map(const char *path, void **bin, off_t *bin_size)
+> +{
+> +       int fd;
+> +
+> +       fd = open(path, O_RDONLY);
+> +       if (fd == -1)  {
+> +               fprintf(stderr, "open() %s failed, errno=%d.\n", path, errno);
+> +               return false;
+> +       }
+> +
+> +       if (!get_file_size(path, bin_size))
+> +               goto err_out;
+> +
+> +       *bin = mmap(NULL, *bin_size, PROT_READ, MAP_PRIVATE, fd, 0);
+> +       if (*bin == MAP_FAILED) {
+> +               fprintf(stderr, "mmap() %s failed, errno=%d.\n", path, errno);
+> +               goto err_out;
+> +       }
+> +
+> +       close(fd);
+> +       return true;
+> +
+> +err_out:
+> +       close(fd);
+> +       return false;
+> +}
+> +
+> +bool load_sigstruct(const char *path, void *sigstruct)
+> +{
+> +       int fd;
+> +
+> +       fd = open(path, O_RDONLY);
+> +       if (fd == -1)  {
+> +               fprintf(stderr, "open() %s failed, errno=%d.\n", path, errno);
+> +               return false;
+> +       }
+> +
+> +       if (read(fd, sigstruct, sizeof(struct sgx_sigstruct)) !=
+> +           sizeof(struct sgx_sigstruct)) {
+> +               fprintf(stderr, "read() %s failed, errno=%d.\n", path, errno);
+> +               close(fd);
+> +               return false;
+> +       }
+> +
+> +       close(fd);
+> +       return true;
+> +}
+> +
+> +int main(int argc, char *argv[], char *envp[])
+> +{
+> +       struct sgx_sigstruct sigstruct;
+> +       struct sgx_secs secs;
+> +       uint64_t result = 0;
+> +       off_t bin_size;
+> +       void *bin;
+> +
+> +       if (!encl_data_map("encl.bin", &bin, &bin_size))
+> +               exit(1);
+> +
+> +       if (!load_sigstruct("encl.ss", &sigstruct))
+> +               exit(1);
+> +
+> +       if (!encl_build(&secs, bin, bin_size, &sigstruct))
+> +               exit(1);
+> +
+> +       printf("Input: 0x%lx\n", MAGIC);
+> +
+> +       sgx_call_eenter((void *)&MAGIC, &result, (void *)secs.base);
+> +       if (result != MAGIC) {
+> +               fprintf(stderr, "0x%lx != 0x%lx\n", result, MAGIC);
+> +               exit(1);
+> +       }
+> +
+> +       printf("Output: 0x%lx\n", result);
+> +
+> +       exit(0);
+> +}
+> diff --git a/tools/testing/selftests/x86/sgx/sgx_call.S b/tools/testing/selftests/x86/sgx/sgx_call.S
+> new file mode 100644
+> index 000000000000..ca4c7893f9d9
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/sgx_call.S
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +/**
+> +* Copyright(c) 2016-18 Intel Corporation.
+> +*/
+> +
+> +       .text
+> +
+> +       .macro ENCLU
+> +       .byte 0x0f, 0x01, 0xd7
+> +       .endm
+> +
+> +       .text
+> +
+> +       .global sgx_call_eenter
+> +sgx_call_eenter:
+> +       push    %rbx
+> +       mov     $0x02, %rax
+> +       mov     %rdx, %rbx
+> +       lea     sgx_async_exit(%rip), %rcx
+> +sgx_async_exit:
+> +       ENCLU
+> +       pop     %rbx
+> +       ret
+> diff --git a/tools/testing/selftests/x86/sgx/sgx_call.h b/tools/testing/selftests/x86/sgx/sgx_call.h
+> new file mode 100644
+> index 000000000000..bf72068ada23
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/sgx_call.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright(c) 2016-19 Intel Corporation.
+> + */
+> +
+> +#ifndef SGX_CALL_H
+> +#define SGX_CALL_H
+> +
+> +void sgx_call_eenter(void *rdi, void *rsi, void *entry);
+> +
+> +#endif /* SGX_CALL_H */
+> diff --git a/tools/testing/selftests/x86/sgx/sgxsign.c b/tools/testing/selftests/x86/sgx/sgxsign.c
+> new file mode 100644
+> index 000000000000..3d9007af40c9
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/sgxsign.c
+> @@ -0,0 +1,493 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-18 Intel Corporation.
+> +
+> +#define _GNU_SOURCE
+> +#include <getopt.h>
+> +#include <stdbool.h>
+> +#include <stdint.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/stat.h>
+> +#include <sys/types.h>
+> +#include <unistd.h>
+> +#include <openssl/err.h>
+> +#include <openssl/pem.h>
+> +#include "defines.h"
+> +
+> +struct sgx_sigstruct_payload {
+> +       struct sgx_sigstruct_header header;
+> +       struct sgx_sigstruct_body body;
+> +};
+> +
+> +static bool check_crypto_errors(void)
+> +{
+> +       int err;
+> +       bool had_errors = false;
+> +       const char *filename;
+> +       int line;
+> +       char str[256];
+> +
+> +       for ( ; ; ) {
+> +               if (ERR_peek_error() == 0)
+> +                       break;
+> +
+> +               had_errors = true;
+> +               err = ERR_get_error_line(&filename, &line);
+> +               ERR_error_string_n(err, str, sizeof(str));
+> +               fprintf(stderr, "crypto: %s: %s:%d\n", str, filename, line);
+> +       }
+> +
+> +       return had_errors;
+> +}
+> +
+> +static void exit_usage(const char *program)
+> +{
+> +       fprintf(stderr,
+> +               "Usage: %s/sign-le <key> <enclave> <sigstruct>\n", program);
+> +       exit(1);
+> +}
+> +
+> +static inline const BIGNUM *get_modulus(RSA *key)
+> +{
+> +#if OPENSSL_VERSION_NUMBER < 0x10100000L
+> +       return key->n;
+> +#else
+> +       const BIGNUM *n;
+> +
+> +       RSA_get0_key(key, &n, NULL, NULL);
+> +       return n;
+> +#endif
+> +}
+> +
+> +static RSA *load_sign_key(const char *path)
+> +{
+> +       FILE *f;
+> +       RSA *key;
+> +
+> +       f = fopen(path, "rb");
+> +       if (!f) {
+> +               fprintf(stderr, "Unable to open %s\n", path);
+> +               return NULL;
+> +       }
+> +       key = RSA_new();
+> +       if (!PEM_read_RSAPrivateKey(f, &key, NULL, NULL))
+> +               return NULL;
+> +       fclose(f);
+> +
+> +       if (BN_num_bytes(get_modulus(key)) != SGX_MODULUS_SIZE) {
+> +               fprintf(stderr, "Invalid key size %d\n",
+> +                       BN_num_bytes(get_modulus(key)));
+> +               RSA_free(key);
+> +               return NULL;
+> +       }
+> +
+> +       return key;
+> +}
+> +
+> +static void reverse_bytes(void *data, int length)
+> +{
+> +       int i = 0;
+> +       int j = length - 1;
+> +       uint8_t temp;
+> +       uint8_t *ptr = data;
+> +
+> +       while (i < j) {
+> +               temp = ptr[i];
+> +               ptr[i] = ptr[j];
+> +               ptr[j] = temp;
+> +               i++;
+> +               j--;
+> +       }
+> +}
+> +
+> +enum mrtags {
+> +       MRECREATE = 0x0045544145524345,
+> +       MREADD = 0x0000000044444145,
+> +       MREEXTEND = 0x00444E4554584545,
+> +};
+> +
+> +static bool mrenclave_update(EVP_MD_CTX *ctx, const void *data)
+> +{
+> +       if (!EVP_DigestUpdate(ctx, data, 64)) {
+> +               fprintf(stderr, "digest update failed\n");
+> +               return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +static bool mrenclave_commit(EVP_MD_CTX *ctx, uint8_t *mrenclave)
+> +{
+> +       unsigned int size;
+> +
+> +       if (!EVP_DigestFinal_ex(ctx, (unsigned char *)mrenclave, &size)) {
+> +               fprintf(stderr, "digest commit failed\n");
+> +               return false;
+> +       }
+> +
+> +       if (size != 32) {
+> +               fprintf(stderr, "invalid digest size = %u\n", size);
+> +               return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +struct mrecreate {
+> +       uint64_t tag;
+> +       uint32_t ssaframesize;
+> +       uint64_t size;
+> +       uint8_t reserved[44];
+> +} __attribute__((__packed__));
+> +
+> +
+> +static bool mrenclave_ecreate(EVP_MD_CTX *ctx, uint64_t blob_size)
+> +{
+> +       struct mrecreate mrecreate;
+> +       uint64_t encl_size;
+> +
+> +       for (encl_size = 0x1000; encl_size < blob_size; )
+> +               encl_size <<= 1;
+> +
+> +       memset(&mrecreate, 0, sizeof(mrecreate));
+> +       mrecreate.tag = MRECREATE;
+> +       mrecreate.ssaframesize = 1;
+> +       mrecreate.size = encl_size;
+> +
+> +       if (!EVP_DigestInit_ex(ctx, EVP_sha256(), NULL))
+> +               return false;
+> +
+> +       return mrenclave_update(ctx, &mrecreate);
+> +}
+> +
+> +struct mreadd {
+> +       uint64_t tag;
+> +       uint64_t offset;
+> +       uint64_t flags; /* SECINFO flags */
+> +       uint8_t reserved[40];
+> +} __attribute__((__packed__));
+> +
+> +static bool mrenclave_eadd(EVP_MD_CTX *ctx, uint64_t offset, uint64_t flags)
+> +{
+> +       struct mreadd mreadd;
+> +
+> +       memset(&mreadd, 0, sizeof(mreadd));
+> +       mreadd.tag = MREADD;
+> +       mreadd.offset = offset;
+> +       mreadd.flags = flags;
+> +
+> +       return mrenclave_update(ctx, &mreadd);
+> +}
+> +
+> +struct mreextend {
+> +       uint64_t tag;
+> +       uint64_t offset;
+> +       uint8_t reserved[48];
+> +} __attribute__((__packed__));
+> +
+> +static bool mrenclave_eextend(EVP_MD_CTX *ctx, uint64_t offset, uint8_t *data)
+> +{
+> +       struct mreextend mreextend;
+> +       int i;
+> +
+> +       for (i = 0; i < 0x1000; i += 0x100) {
+> +               memset(&mreextend, 0, sizeof(mreextend));
+> +               mreextend.tag = MREEXTEND;
+> +               mreextend.offset = offset + i;
+> +
+> +               if (!mrenclave_update(ctx, &mreextend))
+> +                       return false;
+> +
+> +               if (!mrenclave_update(ctx, &data[i + 0x00]))
+> +                       return false;
+> +
+> +               if (!mrenclave_update(ctx, &data[i + 0x40]))
+> +                       return false;
+> +
+> +               if (!mrenclave_update(ctx, &data[i + 0x80]))
+> +                       return false;
+> +
+> +               if (!mrenclave_update(ctx, &data[i + 0xC0]))
+> +                       return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +/**
+> + * measure_encl - measure enclave
+> + * @path: path to the enclave
+> + * @mrenclave: measurement
+> + *
+> + * Calculates MRENCLAVE. Assumes that the very first page is a TCS page and
+> + * following pages are regular pages. Does not measure the contents of the
+> + * enclave as the signing tool is used at the moment only for the launch
+> + * enclave, which is pass-through (everything gets a token).
+> + */
+> +static bool measure_encl(const char *path, uint8_t *mrenclave)
+> +{
+> +       FILE *file;
+> +       struct stat sb;
+> +       EVP_MD_CTX *ctx;
+> +       uint64_t flags;
+> +       uint64_t offset;
+> +       uint8_t data[0x1000];
+> +       int rc;
+> +
+> +       ctx = EVP_MD_CTX_create();
+> +       if (!ctx)
+> +               return false;
+> +
+> +       file = fopen(path, "rb");
+> +       if (!file) {
+> +               perror("fopen");
+> +               EVP_MD_CTX_destroy(ctx);
+> +               return false;
+> +       }
+> +
+> +       rc = stat(path, &sb);
+> +       if (rc) {
+> +               perror("stat");
+> +               goto out;
+> +       }
+> +
+> +       if (!sb.st_size || sb.st_size & 0xfff) {
+> +               fprintf(stderr, "Invalid blob size %lu\n", sb.st_size);
+> +               goto out;
+> +       }
+> +
+> +       if (!mrenclave_ecreate(ctx, sb.st_size))
+> +               goto out;
+> +
+> +       for (offset = 0; offset < sb.st_size; offset += 0x1000) {
+> +               if (!offset)
+> +                       flags = SGX_SECINFO_TCS;
+> +               else
+> +                       flags = SGX_SECINFO_REG | SGX_SECINFO_R |
+> +                               SGX_SECINFO_W | SGX_SECINFO_X;
+> +
+> +               if (!mrenclave_eadd(ctx, offset, flags))
+> +                       goto out;
+> +
+> +               rc = fread(data, 1, 0x1000, file);
+> +               if (!rc)
+> +                       break;
+> +               if (rc < 0x1000)
+> +                       goto out;
+> +
+> +               if (!mrenclave_eextend(ctx, offset, data))
+> +                       goto out;
+> +       }
+> +
+> +       if (!mrenclave_commit(ctx, mrenclave))
+> +               goto out;
+> +
+> +       fclose(file);
+> +       EVP_MD_CTX_destroy(ctx);
+> +       return true;
+> +out:
+> +       fclose(file);
+> +       EVP_MD_CTX_destroy(ctx);
+> +       return false;
+> +}
+> +
+> +/**
+> + * sign_encl - sign enclave
+> + * @sigstruct: pointer to SIGSTRUCT
+> + * @key: 3072-bit RSA key
+> + * @signature: byte array for the signature
+> + *
+> + * Calculates EMSA-PKCSv1.5 signature for the given SIGSTRUCT. The result is
+> + * stored in big-endian format so that it can be further passed to OpenSSL
+> + * libcrypto functions.
+> + */
+> +static bool sign_encl(const struct sgx_sigstruct *sigstruct, RSA *key,
+> +                     uint8_t *signature)
+> +{
+> +       struct sgx_sigstruct_payload payload;
+> +       unsigned int siglen;
+> +       uint8_t digest[SHA256_DIGEST_LENGTH];
+> +       bool ret;
+> +
+> +       memcpy(&payload.header, &sigstruct->header, sizeof(sigstruct->header));
+> +       memcpy(&payload.body, &sigstruct->body, sizeof(sigstruct->body));
+> +
+> +       SHA256((unsigned char *)&payload, sizeof(payload), digest);
+> +
+> +       ret = RSA_sign(NID_sha256, digest, SHA256_DIGEST_LENGTH, signature,
+> +                      &siglen, key);
+> +
+> +       return ret;
+> +}
+> +
+> +struct q1q2_ctx {
+> +       BN_CTX *bn_ctx;
+> +       BIGNUM *m;
+> +       BIGNUM *s;
+> +       BIGNUM *q1;
+> +       BIGNUM *qr;
+> +       BIGNUM *q2;
+> +};
+> +
+> +static void free_q1q2_ctx(struct q1q2_ctx *ctx)
+> +{
+> +       BN_CTX_free(ctx->bn_ctx);
+> +       BN_free(ctx->m);
+> +       BN_free(ctx->s);
+> +       BN_free(ctx->q1);
+> +       BN_free(ctx->qr);
+> +       BN_free(ctx->q2);
+> +}
+> +
+> +static bool alloc_q1q2_ctx(const uint8_t *s, const uint8_t *m,
+> +                          struct q1q2_ctx *ctx)
+> +{
+> +       ctx->bn_ctx = BN_CTX_new();
+> +       ctx->s = BN_bin2bn(s, SGX_MODULUS_SIZE, NULL);
+> +       ctx->m = BN_bin2bn(m, SGX_MODULUS_SIZE, NULL);
+> +       ctx->q1 = BN_new();
+> +       ctx->qr = BN_new();
+> +       ctx->q2 = BN_new();
+> +
+> +       if (!ctx->bn_ctx || !ctx->s || !ctx->m || !ctx->q1 || !ctx->qr ||
+> +           !ctx->q2) {
+> +               free_q1q2_ctx(ctx);
+> +               return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +static bool calc_q1q2(const uint8_t *s, const uint8_t *m, uint8_t *q1,
+> +                     uint8_t *q2)
+> +{
+> +       struct q1q2_ctx ctx;
+> +
+> +       if (!alloc_q1q2_ctx(s, m, &ctx)) {
+> +               fprintf(stderr, "Not enough memory for Q1Q2 calculation\n");
+> +               return false;
+> +       }
+> +
+> +       if (!BN_mul(ctx.q1, ctx.s, ctx.s, ctx.bn_ctx))
+> +               goto out;
+> +
+> +       if (!BN_div(ctx.q1, ctx.qr, ctx.q1, ctx.m, ctx.bn_ctx))
+> +               goto out;
+> +
+> +       if (BN_num_bytes(ctx.q1) > SGX_MODULUS_SIZE) {
+> +               fprintf(stderr, "Too large Q1 %d bytes\n",
+> +                       BN_num_bytes(ctx.q1));
+> +               goto out;
+> +       }
+> +
+> +       if (!BN_mul(ctx.q2, ctx.s, ctx.qr, ctx.bn_ctx))
+> +               goto out;
+> +
+> +       if (!BN_div(ctx.q2, NULL, ctx.q2, ctx.m, ctx.bn_ctx))
+> +               goto out;
+> +
+> +       if (BN_num_bytes(ctx.q2) > SGX_MODULUS_SIZE) {
+> +               fprintf(stderr, "Too large Q2 %d bytes\n",
+> +                       BN_num_bytes(ctx.q2));
+> +               goto out;
+> +       }
+> +
+> +       BN_bn2bin(ctx.q1, q1);
+> +       BN_bn2bin(ctx.q2, q2);
+> +
+> +       free_q1q2_ctx(&ctx);
+> +       return true;
+> +out:
+> +       free_q1q2_ctx(&ctx);
+> +       return false;
+> +}
+> +
+> +static bool save_sigstruct(const struct sgx_sigstruct *sigstruct,
+> +                          const char *path)
+> +{
+> +       FILE *f = fopen(path, "wb");
+> +
+> +       if (!f) {
+> +               fprintf(stderr, "Unable to open %s\n", path);
+> +               return false;
+> +       }
+> +
+> +       fwrite(sigstruct, sizeof(*sigstruct), 1, f);
+> +       fclose(f);
+> +       return true;
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +       uint64_t header1[2] = {0x000000E100000006, 0x0000000000010000};
+> +       uint64_t header2[2] = {0x0000006000000101, 0x0000000100000060};
+> +       struct sgx_sigstruct ss;
+> +       const char *program;
+> +       int opt;
+> +       RSA *sign_key;
+> +
+> +       memset(&ss, 0, sizeof(ss));
+> +       ss.header.header1[0] = header1[0];
+> +       ss.header.header1[1] = header1[1];
+> +       ss.header.header2[0] = header2[0];
+> +       ss.header.header2[1] = header2[1];
+> +       ss.exponent = 3;
+> +
+> +#ifndef CONFIG_EINITTOKENKEY
+> +       ss.body.attributes = SGX_ATTR_MODE64BIT;
+> +#else
+> +       ss.body.attributes = SGX_ATTR_MODE64BIT | SGX_ATTR_EINITTOKENKEY;
+> +#endif
+> +       ss.body.xfrm = 3,
+> +
+> +       program = argv[0];
+> +
+> +       do {
+> +               opt = getopt(argc, argv, "");
+> +               switch (opt) {
+> +               case -1:
+> +                       break;
+> +               default:
+> +                       exit_usage(program);
+> +               }
+> +       } while (opt != -1);
+> +
+> +       argc -= optind;
+> +       argv += optind;
+> +
+> +       if (argc < 3)
+> +               exit_usage(program);
+> +
+> +       /* sanity check only */
+> +       if (check_crypto_errors())
+> +               exit(1);
+> +
+> +       sign_key = load_sign_key(argv[0]);
+> +       if (!sign_key)
+> +               goto out;
+> +
+> +       BN_bn2bin(get_modulus(sign_key), ss.modulus);
+> +
+> +       if (!measure_encl(argv[1], ss.body.mrenclave))
+> +               goto out;
+> +
+> +       if (!sign_encl(&ss, sign_key, ss.signature))
+> +               goto out;
+> +
+> +       if (!calc_q1q2(ss.signature, ss.modulus, ss.q1, ss.q2))
+> +               goto out;
+> +
+> +       /* convert to little endian */
+> +       reverse_bytes(ss.signature, SGX_MODULUS_SIZE);
+> +       reverse_bytes(ss.modulus, SGX_MODULUS_SIZE);
+> +       reverse_bytes(ss.q1, SGX_MODULUS_SIZE);
+> +       reverse_bytes(ss.q2, SGX_MODULUS_SIZE);
+> +
+> +       if (!save_sigstruct(&ss, argv[2]))
+> +               goto out;
+> +       exit(0);
+> +out:
+> +       check_crypto_errors();
+> +       exit(1);
+> +}
+> diff --git a/tools/testing/selftests/x86/sgx/signing_key.pem b/tools/testing/selftests/x86/sgx/signing_key.pem
+> new file mode 100644
+> index 000000000000..d76f21f19187
+> --- /dev/null
+> +++ b/tools/testing/selftests/x86/sgx/signing_key.pem
+> @@ -0,0 +1,39 @@
+> +-----BEGIN RSA PRIVATE KEY-----
+> +MIIG4wIBAAKCAYEApalGbq7Q+usM91CPtksu3D+b0Prc8gAFL6grM3mg85A5Bx8V
+> +cfMXPgtrw8EYFwQxDAvzZWwl+9VfOX0ECrFRBkOHcOiG0SnADN8+FLj1UiNUQwbp
+> +S6OzhNWuRcSbGraSOyUlVlV0yMQSvewyzGklOaXBe30AJqzIBc8QfdSxKuP8rs0Z
+> +ga6k/Bl73osrYKByILJTUUeZqjLERsE6GebsdzbWgKn8qVqng4ZS4yMNg6LeRlH3
+> ++9CIPgg4jwpSLHcp7dq2qTIB9a0tGe9ayp+5FbucpB6U7ePold0EeRN6RlJGDF9k
+> +L93v8P5ykz5G5gYZ2g0K1X2sHIWV4huxPgv5PXgdyQYbK+6olqj0d5rjYuwX57Ul
+> +k6SroPS1U6UbdCjG5txM+BNGU0VpD0ZhrIRw0leQdnNcCO9sTJuInZrgYacSVJ7u
+> +mtB+uCt+uzUesc+l+xPRYA+9e14lLkZp7AAmo9FvL816XDI09deehJ3i/LmHKCRN
+> +tuqC5TprRjFwUr6dAgEDAoIBgG5w2Z8fNfycs0+LCnmHdJLVEotR6KFVWMpwHMz7
+> +wKJgJgS/Y6FMuilc8oKAuroCy11dTO5IGVKOP3uorVx2NgQtBPXwWeDGgAiU1A3Q
+> +o4wXjYIEm4fCd63jyYPYZ2ckYXzDbjmOTdstYdPyzIhGGNEZK6eoqsRzMAPfYFPj
+> +IMdCqHSIu6vJw1K7p+myHOsVoWshjODaZnF3LYSA0WaZ8vokjwBxUxuRxQJZjJds
+> +s60XPtmL+qfgWtQFewoG4XL6GuD8FcXccynRRtzrLtFNPIl9BQfWfjBBhTC1/Te1
+> +0Z6XbZvpdUTD9OfLB7SbR2OUFNpKQgriO0iYVdbW3cr7uu38Zwp4W1TX73DPjoi6
+> +KNooP6SGWd4mRJW2+dUmSYS4QNG8eVVZswKcploEIXlAKRsOe4kzJJ1iETugIe85
+> +uX8nd1WYEp65xwoRUg8hqng0MeyveVbXqNKuJG6tzNDt9kgFYo+hmC/oouAW2Dtc
+> +T9jdRAwKJXqA2Eg6OkgXCEv+kwKBwQDYaQiFMlFhsmLlqI+EzCUh7c941/cL7m6U
+> +7j98+8ngl0HgCEcrc10iJVCKakQW3YbPzAx3XkKTaGjWazvvrFarXIGlOud64B8a
+> +iWyQ7VdlnmZnNEdk+C83tI91OQeaTKqRLDGzKh29Ry/jL8Pcbazt+kDgxa0H7qJp
+> +roADUanLQuNkYubpbhFBh3xpa2EExaVq6rF7nIVsD8W9TrbmPKA4LgH7z0iy544D
+> +kVCNYsTjYDdUWP+WiSor8kCnnpjnN9sCgcEAw/eNezUD1UDf6OYFC9+5JZJFn4Tg
+> +mZMyN93JKIb199ffwnjtHUSjcyiWeesXucpzwtGbTcwQnDisSW4oneYKLSEBlBaq
+> +scqiUugyGZZOthFSCbdXYXMViK2vHrKlkse7GxVlROKcEhM/pRBrmjaGO8eWR+D4
+> +FO2wCXzVs3KgV6j779frw0vC54oHOxc9+Lu1rSHp4i+600koyvL/zF6U/5tZXIvN
+> +YW2yoiQJnjCmVA1pwbwV6KAUTPDTMnBK+YjnAoHBAJBGBa4hi5Z27JkbCliIGMFJ
+> +NPs6pLKe9GNJf6in2+sPgUAFhMeiPhbDiwbxgrnpBIqICE+ULGJFmzmc0p/IOceT
+> +ARjR76dAFLxbnbXzj5kURETNhO36yiUjCk4mBRGIcbYddndxaSjaH+zKgpLzyJ6m
+> +1esuc1qfFvEfAAI2cTIsl5hB70ZJYNZaUvDyQK3ZGPHxy6e9rkgKg9OJz0QoatAe
+> +q/002yHvtAJg4F5B2JeVejg7VQ8GHB1MKxppu0TP5wKBwQCCpQj8zgKOKz/wmViy
+> +lSYZDC5qWJW7t3bP6TDFr06lOpUsUJ4TgxeiGw778g/RMaKB4RIz3WBoJcgw9BsT
+> +7rFza1ZiucchMcGMmswRDt8kC4wGejpA92Owc8oUdxkMhSdnY5jYlxK2t3/DYEe8
+> +JFl9L7mFQKVjSSAGUzkiTGrlG1Kf5UfXh9dFBq98uilQfSPIwUaWynyM23CHTKqI
+> +Pw3/vOY9sojrnncWwrEUIG7is5vWfWPwargzSzd29YdRBe8CgcEAuRVewK/YeNOX
+> +B7ZG6gKKsfsvrGtY7FPETzLZAHjoVXYNea4LVZ2kn4hBXXlvw/4HD+YqcTt4wmif
+> +5JQlDvjNobUiKJZpzy7hklVhF7wZFl4pCF7Yh43q9iQ7gKTaeUG7MiaK+G8Zz8aY
+> +HW9rsiihbdZkccMvnPfO9334XMxl3HtBRzLstjUlbLB7Sdh+7tZ3JQidCOFNs5pE
+> +XyWwnASPu4tKfDahH1UUTp1uJcq/6716CSWg080avYxFcn75qqsb
+> +-----END RSA PRIVATE KEY-----
 > --
 > 2.25.0
 >
