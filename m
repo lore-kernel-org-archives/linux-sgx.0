@@ -5,62 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ABAC3F2CE
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CD8C3F2D9
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76210217F4
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 804BE2166E
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Mar 2020 19:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AouXiq99"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ctuYI8Kq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbgCDT2Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 Mar 2020 14:28:16 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37372 "EHLO
+        id S1728955AbgCDTpM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 4 Mar 2020 14:45:12 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38614 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726440AbgCDT2P (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 4 Mar 2020 14:28:15 -0500
+        with ESMTP id S1728614AbgCDTpM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 4 Mar 2020 14:45:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583350093;
+        s=mimecast20190719; t=1583351109;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ddCmJnchG7ddEu+kg1f4rZXhrNk22lXtAjVoUaUZxJM=;
-        b=AouXiq99OHsCHZ5h/517RcFKRLl0/vL4g/lrPKaxsUOIRCYR1TLxhhC/P4tbtOUEb3aJ2J
-        ois2geQb/gYGpdBjD7B+a2Sa+Bl7eBGdvLEciSoThny1SXzxvfeZ78jM/Kxh8vbozpZJ+b
-        lMxansFhd8b/TCcq+9H0UKxmSm/JfnA=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-296-jRqfxzLyNj-XGXmY1BfBag-1; Wed, 04 Mar 2020 14:28:10 -0500
-X-MC-Unique: jRqfxzLyNj-XGXmY1BfBag-1
-Received: by mail-il1-f199.google.com with SMTP id h87so2377439ild.11
-        for <linux-sgx@vger.kernel.org>; Wed, 04 Mar 2020 11:28:10 -0800 (PST)
+        bh=MYTlvE225yjHAB1eytiGhLDE5hwDW0XaKRabhRc08M0=;
+        b=ctuYI8KqVnnFNM8Y7t3czTKQ+zMcRzWJBnuhfKNHicQsef/sn4C5qmRgch0snJR71Lfjj+
+        7Yo6MY84J3hL39DLDYK1KriBIko4IUNaZAIltLUt2uBbVoEBeVuu6kwBn5Wwbg+B0L0EHJ
+        3uYAFwv4XHrTH1BgmJlaAzd4ysosWwM=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-405-aSiCoGNYOzS8jAcM4wEa3A-1; Wed, 04 Mar 2020 14:45:07 -0500
+X-MC-Unique: aSiCoGNYOzS8jAcM4wEa3A-1
+Received: by mail-io1-f69.google.com with SMTP id t12so2242840iog.12
+        for <linux-sgx@vger.kernel.org>; Wed, 04 Mar 2020 11:45:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ddCmJnchG7ddEu+kg1f4rZXhrNk22lXtAjVoUaUZxJM=;
-        b=uReGagp+/WYy3YZI9gARqjGGxqf0vAdZOzmjZv8CYB4mPjVpGuGSZKbXwBVeDEPvOA
-         aHmhZxexPQTNA9+7ZGoKIlqr8zaeXTSC2Bt2htaCmIS6XJLBIdfHCJlbgYqwt1TuvZFc
-         galjNsLXOA53ELK7xTtW2CBYRXlZ3KuR6TFCcmU5oen3D/hCrqSJD0JwUoa+jgBLIVmU
-         R7wKxR6PMMo1OLzRFeesx67+Qwcla5/DsP9W3raCtmrq4gJ3WbF9WvNDf1pkwk6a/M3l
-         b4DCdPtP+b5fW5dM0T8fEHaOf4ej0UkWGtSCvY4u2PLIjFHik/4DNMOsH8chEYKbbgU3
-         FuuA==
-X-Gm-Message-State: ANhLgQ1T99TgI9E1fpod6gXNge4KPxQyY7+l92DfCpwf6jYIUnHc+6I6
-        m1ruk8Hh3Kf/3JbUWWUbpH18rXwA2eZMdEgxdqqiW+kIar4ymHfjaj+ZyvbXGTssc9r78K5Wjg7
-        6orDOLobs2+5bhf+ByuLkuW8VtsbfZbMPXl9l
-X-Received: by 2002:a92:9a02:: with SMTP id t2mr4062379ili.11.1583350088792;
-        Wed, 04 Mar 2020 11:28:08 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vvkBd2AQEGLOta97fREI3HNu/Ot1f5Mj5+fXn+LAYpK+QRvnex7gK0Udv1sgqXz7eadDuG8IsnOnfpmiQvTX+M=
-X-Received: by 2002:a92:9a02:: with SMTP id t2mr4062321ili.11.1583350088213;
- Wed, 04 Mar 2020 11:28:08 -0800 (PST)
+        bh=MYTlvE225yjHAB1eytiGhLDE5hwDW0XaKRabhRc08M0=;
+        b=ZmbUC+Gp4mBqllaOXN39YisGYFNihka+2wGr+PafJborw3YDAT4/W4zIXaxTfrSMfr
+         vQgUvEbV8/q6rEWVF1pR1vG7ZgHrKSt5puPXVJi4PPXg7l6W6Xs8XtbgmvtjlUwi5MsG
+         2Zrq9enOAQrcnG1oYHOhwKWsJVaT96LTUclqtrsNBlPMCX3G4yQu+dN2I1kwKf9GF9yj
+         Eaf4Me08oaDz2QUE+pfxx31S5nLBTxEBIvj0QsAHHH3vqe+3AL85VHve2Veo4cEZI+Op
+         5pPZECN3XfjF/7rNRXOTeQYTrePUgc4UFnqsvL2ca3xxGWMbgel1wBCbDxJl52ZxKzMh
+         ZEyg==
+X-Gm-Message-State: ANhLgQ1HIZtt0GXv6Hhjum17xlbRDJZVyV+BF8WZnFqmxKBOIw0DhxpG
+        JPuwMA02KVHSY7ctoCijtC/TTr852XEPCImukFGqOdhKpHfZGtGZ3qdfsytsHeOt7dIYEzeQJHg
+        dD/JiazSf7D/UK5AnOqFhOLxm0nbTY9A15iuL
+X-Received: by 2002:a92:9f4e:: with SMTP id u75mr4211897ili.116.1583351105289;
+        Wed, 04 Mar 2020 11:45:05 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vtrzju66vDtf65j4nIv6rLKTi7YZzB5Dr9+W9RUpGDLtMsvp3V3AIXbOj0UV70NyRS/hFxmZwoXLKT4Qg3XkBU=
+X-Received: by 2002:a92:9f4e:: with SMTP id u75mr4211851ili.116.1583351104713;
+ Wed, 04 Mar 2020 11:45:04 -0800 (PST)
 MIME-Version: 1.0
 References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com> <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
 In-Reply-To: <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
 From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Wed, 4 Mar 2020 14:27:57 -0500
-Message-ID: <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
+Date:   Wed, 4 Mar 2020 14:44:53 -0500
+Message-ID: <CAOASepPRvPL6yggWDa=Cair4yOijsUdYviHk99NaP4gZJRoK3A@mail.gmail.com>
 Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -340,7 +340,21 @@ On Tue, Mar 3, 2020 at 6:39 PM Jarkko Sakkinen
 > +
 > +       # Reset status flags.
 > +       add     %rdx, %rdx # OF = SF = AF = CF = 0; ZF = PF = 1
-> +
+
+# Reset status flags.
+add     %rdx, %rdx # OF = SF = AF = CF = 0; ZF = PF = 1
+cld # DF = 0
+
+This was a recent CVE on the SDK. We don't need more people copying
+vulnerable code into their own projects.
+
+Likewise, you should also clear GPRs, reset extended GPU state and
+reset flags before calling encl_body().
+
+Alternatively, drop all the state clearing and simply put a comment in
+for people to do that. My general rule here is to either not provide
+an example at all or provide a secure example that people can copy.
+
 > +       # Prepare EEXIT target by popping the address of the instruction after
 > +       # EENTER to RBX.
 > +       pop     %rbx
@@ -366,26 +380,6 @@ On Tue, Mar 3, 2020 at 6:39 PM Jarkko Sakkinen
 > +       .fill   123, 4, 0
 > +       .fill   1, 4, 0x80000000        # XCOMP_BV[63] = 1, compaction mode
 > +       .fill   12, 4, 0
-
-I find this much more readable:
-
-xsave_area:
-        # Legacy
-        .fill   1, 4, 0x037F            # FCW
-        .fill   5, 4, 0
-        .fill   1, 4, 0x1F80            # MXCSR
-        .fill   1, 4, 0xFFFF            # MXCSR_MASK
-        .fill   60, 8, 0
-
-        # Header
-        .fill   1, 8, 0                 # XSTATE_BV
-        .fill   1, 8, 1 << 63           # XCOMP_BV (compaction mode)
-        .fill   6, 8, 0
-
-Also, since people are likely to copy this code for their own
-enclaves, it would be helpful to document which flags are set in FCW
-and MXCSR.
-
 > +
 > +       .balign 4096
 > +       .space 8192
