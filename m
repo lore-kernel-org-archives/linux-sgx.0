@@ -2,175 +2,115 @@ Return-Path: <SRS0=iPl9=4W=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB8AC3F2D2
-	for <linux-sgx@archiver.kernel.org>; Thu,  5 Mar 2020 19:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF675C3F2D2
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 Mar 2020 19:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B6C2072A
-	for <linux-sgx@archiver.kernel.org>; Thu,  5 Mar 2020 19:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59C420801
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 Mar 2020 19:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbgCETEH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 5 Mar 2020 14:04:07 -0500
-Received: from mga11.intel.com ([192.55.52.93]:53080 "EHLO mga11.intel.com"
+        id S1725989AbgCETEc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 Mar 2020 14:04:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:31615 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725977AbgCETEG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 5 Mar 2020 14:04:06 -0500
+        id S1725977AbgCETEb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 5 Mar 2020 14:04:31 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 11:03:57 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 11:04:31 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,519,1574150400"; 
-   d="scan'208";a="413622077"
+   d="scan'208";a="287749694"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga005.jf.intel.com with ESMTP; 05 Mar 2020 11:03:54 -0800
-Date:   Thu, 5 Mar 2020 11:03:54 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Mar 2020 11:04:30 -0800
+Date:   Thu, 5 Mar 2020 11:04:30 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
         dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
         haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
         tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
         josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
         rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-mm@kvack.org, Ismo Puustinen <ismo.puustinen@intel.com>,
-        Mark Shanahan <mark.shanahan@intel.com>,
-        Mikko Ylinen <mikko.ylinen@intel.com>,
-        Derek Bombien <derek.bombien@intel.com>
-Subject: Re: [PATCH v28 16/22] x86/sgx: Add a page reclaimer
-Message-ID: <20200305190354.GK11500@linux.intel.com>
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>
+Subject: Re: [PATCH v28 11/22] x86/sgx: Linux Enclave Driver
+Message-ID: <20200305190430.GL11500@linux.intel.com>
 References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-17-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-12-jarkko.sakkinen@linux.intel.com>
+ <20200305174015.GJ11500@linux.intel.com>
+ <e445c2f8-fddd-5740-0e26-a03e023918bf@fortanix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303233609.713348-17-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <e445c2f8-fddd-5740-0e26-a03e023918bf@fortanix.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-+cc some more Intel people
+On Thu, Mar 05, 2020 at 07:24:11PM +0100, Jethro Beekman wrote:
+> On 2020-03-05 18:40, Sean Christopherson wrote:
+> > On Wed, Mar 04, 2020 at 01:35:58AM +0200, Jarkko Sakkinen wrote:
+> >> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> >> new file mode 100644
+> >> index 000000000000..5edb08ab8fd0
+> >> --- /dev/null
+> >> +++ b/arch/x86/include/uapi/asm/sgx.h
+> >> @@ -0,0 +1,66 @@
+> >> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
+> >> +/*
+> >> + * Copyright(c) 2016-19 Intel Corporation.
+> >> + */
+> >> +#ifndef _UAPI_ASM_X86_SGX_H
+> >> +#define _UAPI_ASM_X86_SGX_H
+> >> +
+> >> +#include <linux/types.h>
+> >> +#include <linux/ioctl.h>
+> >> +
+> >> +/**
+> >> + * enum sgx_epage_flags - page control flags
+> >> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
+> >> + *			ENCLS[EEXTEND] operations.
+> >> + */
+> >> +enum sgx_page_flags {
+> >> +	SGX_PAGE_MEASURE	= 0x01,
+> >> +};
+> >> +
+> >> +#define SGX_MAGIC 0xA4
+> >> +
+> >> +#define SGX_IOC_ENCLAVE_CREATE \
+> >> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+> >> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
+> >> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+> >> +#define SGX_IOC_ENCLAVE_INIT \
+> >> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> >> +
+> >> +/**
+> >> + * struct sgx_enclave_create - parameter structure for the
+> >> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
+> >> + * @src:	address for the SECS page data
+> >> + */
+> >> +struct sgx_enclave_create  {
+> >> +	__u64	src;
+> > 
+> > Would it make sense to add reserved fields to the structs so that new
+> > features can be added in a backwards compatible way?  E.g. if we want to
+> > allow userspace to control the backing store by passing in a file
+> > descriptor ENCLAVE_CREATE.
+> 
+> Reserving space for future fields is not necessary because the size of the
+> struct is encoded in the ioctl number. The kernel can use this to
+> differentiate between different call versions from userspace.
 
-On Wed, Mar 04, 2020 at 01:36:03AM +0200, Jarkko Sakkinen wrote:
-> +static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
-> +					      pgoff_t index)
-> +{
-> +	struct inode *inode = encl->backing->f_path.dentry->d_inode;
-> +	struct address_space *mapping = inode->i_mapping;
-> +	gfp_t gfpmask = mapping_gfp_mask(mapping);
-
-Question for folks that care about cgroup accounting: should the shmem page
-allocation be accounted, even though it'll charge the "wrong" task?  E.g.
-
-	gfp_t gfpmask = mapping_gfp_mask(mapping) | __GFP_ACCOUNT;
-
-
-Background details...
-
-To reclaim an EPC page, the encrypted data must be written to addressable
-memory when the page is evicted from the EPC.  I.e. RAM or persistent
-memory acts as swap space for the EPC.  In the SGX code this is referred to
-as the "backing store" or just "backing".
-
-As implemented, the backing for EPC reclaim is not pre-allocated.  I don't
-think anyone would want to change this behavior as it would eat regular
-memory even if EPC isn't oversubscribed.
-
-But, as implemented it's not accounted.  The reason we haven't explicitly
-forced accounting is because allocations for the backing would be charged
-to the task doing the evicting, as opposed to the task that originally
-allocated the EPC page.  This means that task 'A' can do a DOS of sorts on
-task 'B' by allocating a large amount of EPC with the goal of causing 'B'
-to trigger (normal memory) OOM and get killed.
-
-AFAICT, that's still preferable to not accounting at all, e.g. at least 'B'
-would need to be allocating a decent amount of EPC as well to trigger OOM,
-as opposed to today where the allocations are completely unaccounted and so
-cause a more global OOM.
-
-We've also discussed taking a file descriptor to hold the backing, but
-unless I'm misreading the pagecache code, that doesn't solve the incorrect
-accounting problem because the current task, i.e. evicting task, would be
-charged.  In other words, whether the backing is kernel or user controlled
-is purely an ABI question.
-
-In theory, SGX could do some form of manual memcg accounting in
-sgx_encl_get_backing_page(), but that gets ridiculously ugly, if it's even
-possible, e.g. determining whether or not the page was already allocated
-would be a nightmare.
-
-
-Long term, I think this can be solved, or at least mitigated, by adding
-a "backing" limit to the EPC cgroup (which obviously doesn't exist in yet)
-to allow limiting the amount of memory that can be indirectly consumed by
-creating a large enclave.  E.g. account each page during ENCLAVE_ADD_PAGES,
-with some logic to transfer the charges when a mm_struct is disassociated
-from an enclave (which will probably be needed for the base EPC cgroup
-anyways).
-
-> +
-> +	return shmem_read_mapping_page_gfp(mapping, index, gfpmask);
-> +}
-> +
-> +/**
-> + * sgx_encl_get_backing() - Pin the backing storage
-> + * @encl:	an enclave
-> + * @page_index:	enclave page index
-> + * @backing:	data for accessing backing storage for the page
-> + *
-> + * Pin the backing storage pages for storing the encrypted contents and Paging
-> + * Crypto MetaData (PCMD) of an enclave page.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -errno otherwise.
-> + */
-> +int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
-> +			 struct sgx_backing *backing)
-> +{
-> +	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-> +	struct page *contents;
-> +	struct page *pcmd;
-> +
-> +	contents = sgx_encl_get_backing_page(encl, page_index);
-> +	if (IS_ERR(contents))
-> +		return PTR_ERR(contents);
-> +
-> +	pcmd = sgx_encl_get_backing_page(encl, pcmd_index);
-> +	if (IS_ERR(pcmd)) {
-> +		put_page(contents);
-> +		return PTR_ERR(pcmd);
-> +	}
-> +
-> +	backing->page_index = page_index;
-> +	backing->contents = contents;
-> +	backing->pcmd = pcmd;
-> +	backing->pcmd_offset =
-> +		(page_index & (PAGE_SIZE / sizeof(struct sgx_pcmd) - 1)) *
-> +		sizeof(struct sgx_pcmd);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * sgx_encl_put_backing() - Unpin the backing storage
-> + * @backing:	data for accessing backing storage for the page
-> + * @do_write:	mark pages dirty
-> + */
-> +void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write)
-> +{
-> +	if (do_write) {
-> +		set_page_dirty(backing->pcmd);
-> +		set_page_dirty(backing->contents);
-> +	}
-> +
-> +	put_page(backing->pcmd);
-> +	put_page(backing->contents);
-> +}
+Ah, perfect!  Thanks!
