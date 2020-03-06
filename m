@@ -2,132 +2,112 @@ Return-Path: <SRS0=xE7g=4X=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAE1C10DCE
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Mar 2020 15:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC9DC10DCE
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Mar 2020 18:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8C02073D
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Mar 2020 15:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A30E2067C
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Mar 2020 18:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbgCFPmx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 6 Mar 2020 10:42:53 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:59400 "EHLO wind.enjellic.com"
+        id S1726171AbgCFSe4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 6 Mar 2020 13:34:56 -0500
+Received: from mga02.intel.com ([134.134.136.20]:23402 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbgCFPmw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:42:52 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 026FgN7D021662;
-        Fri, 6 Mar 2020 09:42:23 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 026FgMhA021661;
-        Fri, 6 Mar 2020 09:42:22 -0600
-Date:   Fri, 6 Mar 2020 09:42:22 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-Message-ID: <20200306154222.GA20820@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com> <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com> <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com> <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
-Mime-Version: 1.0
+        id S1725873AbgCFSe4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 6 Mar 2020 13:34:56 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 10:34:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
+   d="scan'208";a="442031866"
+Received: from wbakowsk-mobl.ger.corp.intel.com (HELO localhost) ([10.252.27.142])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Mar 2020 10:34:53 -0800
+Date:   Fri, 6 Mar 2020 20:34:52 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>
+Subject: Re: x86/sgx: v23-rc2
+Message-ID: <20200306183452.GB7472@linux.intel.com>
+References: <20200215072406.GA9958@linux.intel.com>
+ <ed49f988-e4e5-b2b9-0108-f489e9b5f449@fortanix.com>
+ <20200217185512.GA7677@linux.intel.com>
+ <20200218104243.GA13967@wind.enjellic.com>
+ <20200218155247.GA18374@linux.intel.com>
+ <20200219162640.GA29921@wind.enjellic.com>
+ <20200220195537.GA23349@linux.intel.com>
+ <20200221011913.GA15165@wind.enjellic.com>
+ <20200221130009.GB3112@linux.intel.com>
+ <20200305195157.GO11500@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 06 Mar 2020 09:42:23 -0600 (CST)
+In-Reply-To: <20200305195157.GO11500@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 01:33:28PM +0200, Jarkko Sakkinen wrote:
-
-Good morning, I hope the end of the week is going well for everyone.
-
-> On Wed, 2020-03-04 at 14:27 -0500, Nathaniel McCallum wrote:
-> >         # Header
-> >         .fill   1, 8, 0                 # XSTATE_BV
-> >         .fill   1, 8, 1 << 63           # XCOMP_BV (compaction mode)
-> >         .fill   6, 8, 0
+On Thu, Mar 05, 2020 at 11:51:57AM -0800, Sean Christopherson wrote:
+> On Fri, Feb 21, 2020 at 03:00:31PM +0200, Jarkko Sakkinen wrote:
+> > On Thu, Feb 20, 2020 at 07:19:13PM -0600, Dr. Greg wrote:
+> > > > > This would seem to imply that the driver is rather firmly architected
+> > > > > on the notion of one open() per enclave, a concept that Jethro seems
+> > > > > to have issues with.
+> > > 
+> > > > I don't understand what concept you are talking about.
+> > > 
+> > > If memory serves me correctly, Jethro envisioned a model where a
+> > > single open of the SGX driver node would return a file descriptor that
+> > > could then be used to create/load/initialize multiple enclaves.  Your
+> > > clarifications indicate that a separate open will be needed for each
+> > > and every enclave instance that will be orchestrated.
+> > > 
+> > > Jethro, if I'm mistating your position on this, please jump in and
+> > > clarify.
 > > 
-> > Also, since people are likely to copy this code for their own
-> > enclaves, it would be helpful to document which flags are set in FCW
-> > and MXCSR.
+> > Ah.
+> > 
+> > You are speaking about having a factory to create enclaves and a
+> > management interface. I.e. you'd have ioctl to create enclave that gives
+> > you a file descriptor to access its management interface.
+> > 
+> > Out of top of my head I cannot recall why this was not favored in the
+> > end but generally speaking added complexity should be justified by some
+> > considerably strong measures.
+> 
+> The primary issue is that having an ioctl() to create enclaves means the
+> enclave fd would be an anon inode.  From a security (well, SELinux)
+> perspective, anon inodes are problematic for two reasons:
+> 
+>   - Anon inodes are exempt from SELinux ioctl() whitelisting.  This
+>     probably isn't a huge deal?
+> 
+>   - Mapping an anon inode with PROT_EXEC requires SELinux's EXECMEM, i.e.
+>     all enclave runtimes would require EXECMEM, which is a big step
+>     backwards in terms of security and drew the ire of Linus[1].
+> 
+> That being said, there is a proposed patch set to add support for "secure"
+> anon inodes[2], which I believe would eliminate all of the above problems.
+> Of course we'd be stuck with the current anon inode behavior until that
+> patch set lands (I'm feeling optomistic today ;-) ).
+> 
+> [1] https://lkml.kernel.org/r/CAHk-=wjmT=uC1=18ZYV1CMfP_FBUEjh9_rabH0g+a0z-L0cgHg@mail.gmail.com
+> [2] https://lkml.kernel.org/r/20200214032635.75434-1-dancol@google.com
 
-> It was meant as a test program but I'd guess what you say is true
-> because it also might be the only alternative user space to Intel's
-> :-) And a great starting point if you want to do things from
-> scratch.
->
-> Because I meant it as a smoke test program for SGX, not everything
-> is too well documented but given the multipurpose use for that code
-> I'll make the improvements that you are suggesting.
+Still does not address what I said in my response: what are the
+strong enough measures to use anon inode in the first place even
+if there is a "secure" version.
 
-At the risk of what will certainly be a fair amount of criticism, I
-will take on the moniker of being the pernicious voice of reality, if
-not intellectual honesty, in all of this.  No market or security
-relevant enclaves are going to get built by developers starting from
-scratch or copying this code, useful and informative as it might be,
-into their enclaves.
-
-That isn't to say that it isn't good to have some example code but
-Nate's point in a previous e-mail is well taken, it shouldn't have
-known security vulnerabilities in it.  Given the current realities of
-speculative execution attacks, there are a ton of subtle issues
-surrounding entry and exit into enclaves, which by definition is the
-primary attack surface for a trusted execution environment.
-
-For the sake of those reading along at home, relevant enclave
-development needs, at an absolute minimum, the following:
-
-1.) A lot of trusted runtime initialization and scaffolding code.
-2.) An embedded C/C++ library.
-3.) A compiler intrinsics implementation.
-
-That gets you, maybe, something that you can start thinking about,
-'hello world', with, but nothing useful with respect to what anyone
-would want to do with an enclave.
-
-On top of that you need a lot of platform software to get the enclave
-relevantly signed, loaded, executed and supported.  Not the least of
-which is support for remote attestation, which means rolling up one's
-sleeves to do either a DCAP implementation or an EPID provisioning
-implementation.  The latter of which, believe me, is not for the faint
-of heart given that you have to develop it in an unknown oracle model.
-
-My point in all of this is that the only relevant consumers of this
-driver are groups that are resourced well enough to understand,
-deliver and support all of this infrastructure.  I will leave it to
-others, and history, to judge whether or not the driver has been
-developed with this frame of reference.
-
-> /Jarkko
-
-Best wishes for a pleasant weekend.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           SGX secured infrastructure and autonomously
-Fargo, ND  58102            self-defensive platforms.
-PH: 701-281-1686            EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"The couple is registered at Herbergers, Target and Fleet Farm."
-                                -- Wedding invitation
-                                   West Central Minnesota
+/Jarkko
