@@ -3,108 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC834C10F27
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 Mar 2020 13:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76E2C10DCE
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 Mar 2020 19:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC2F2468C
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 Mar 2020 13:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AECB621D7E
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 Mar 2020 19:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbgCJNI1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 10 Mar 2020 09:08:27 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19572 "EHLO mga01.intel.com"
+        id S1727313AbgCJT3o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 10 Mar 2020 15:29:44 -0400
+Received: from mga12.intel.com ([192.55.52.136]:21692 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731107AbgCJNIZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:08:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726545AbgCJT3o (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 10 Mar 2020 15:29:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 06:08:24 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 12:29:44 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
-   d="scan'208";a="388926224"
-Received: from akharche-mobl2.ccr.corp.intel.com (HELO localhost) ([10.251.86.23])
-  by orsmga004.jf.intel.com with ESMTP; 10 Mar 2020 06:08:19 -0700
-Date:   Tue, 10 Mar 2020 15:08:18 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
+X-IronPort-AV: E=Sophos;i="5.70,538,1574150400"; 
+   d="scan'208";a="353693892"
+Received: from hhuan26-mobl1.amr.corp.intel.com ([10.254.76.69])
+  by fmsmga001.fm.intel.com with ESMTP; 10 Mar 2020 12:29:41 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
+        "Dr. Greg" <greg@enjellic.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
         linux-kselftest@vger.kernel.org
 Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-Message-ID: <20200310130818.GA32334@linux.intel.com>
 References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
  <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
- <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
- <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
- <20200306154222.GA20820@wind.enjellic.com>
- <20200306190753.GH7472@linux.intel.com>
- <20200307174223.GA30928@wind.enjellic.com>
+ <20200306053210.GA16297@wind.enjellic.com>
+Date:   Tue, 10 Mar 2020 14:29:41 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200307174223.GA30928@wind.enjellic.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+In-Reply-To: <20200306053210.GA16297@wind.enjellic.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Mar 07, 2020 at 11:42:23AM -0600, Dr. Greg wrote:
-> On Fri, Mar 06, 2020 at 09:07:53PM +0200, Jarkko Sakkinen wrote:
-> 
-> Good morning, I hope the weekend is going well for everyone.
-> 
-> > Actually many people have applaused to have a small scoped, even if
-> > not perfect, test program to look at how SGX works. One that is only
-> > dependent on glibc. None of the selftests are meant to be production
-> > peaces of code. You are getting wrong the role of the selftest in
-> > the first place.
-> 
-> We certainly want to be counted in the camp of those who are
-> applausing you for making the selftests available, particularly the
-> new VDSO setup and entry code.
-> 
-> We arguably have similar motivations.  We architected and authored an
-> entire SGX runtime that has as its only dependencies the MUSL C
-> library, libelf and OpenSSL, primarily because we needed an easily
-> auditable and low footprint SGX implementation.
+On Thu, 05 Mar 2020 23:32:10 -0600, Dr. Greg <greg@enjellic.com> wrote:
 
-Good to hear!
+> On Wed, Mar 04, 2020 at 01:36:01AM +0200, Jarkko Sakkinen wrote:
+>
+> Good evening, I hope the end of the week is going well for everyone.
+>
+>> Add a selftest for SGX. It is a trivial test where a simple enclave
+>> copies one 64-bit word of memory between two memory locations given
+>> to the enclave as arguments. Use ENCLS[EENTER] to invoke the
+>> enclave.
+>
+> Just as a clarification, are you testing the new driver against signed
+> production class enclaves in .so format that also include metadata
+> layout directives or is the driver just getting tested against the two
+> page toy enclave that copies a word of memory from one memory location
+> to another?
+>
 
-> To the point at hand though, I'm certainly not a very smart guy so I
-> doubt that I am able to understand the role of the selftests.  We do
-> seem to agree though that they only provide a rudimentary exercise of
-> the driver.
+We (Intel SGX SDK/PSW team) tested this driver for enclaves in .so format  
+with metadata. Our 2.8 release supports v24 and 2.9 supports v25+. Both  
+production signed and debug signed enclaves worked.
 
-The role of kselftests is not to be production code. They are somewhat
-adhoc pieces of code that just check that "things turn on" e.g. in a
-new kernel release or a new hardware platform.
+*Note* we did make some code changes in our runtime for v24+, mainly  
+dealing with src & EPC page alignment for EADD, open one fd per enclave,  
+use -z noexecstack linker option, etc. You can see the changes on GitHub.
 
-> We also seem to agree that the primary role of the driver is to
-> service the needs of those of us that are building production level
-> SGX runtime stacks.  In service of that premise, it would be helpful
-> to know if you are internally testing the driver/VDSO against enclaves
-> of production quality, with metadata, or just the two page selftest
-> enclave.
+> Our PSW/runtime is currently failing to initialize production class
+> enclaves secondary to a return value of -4 from the ENCLU[EINIT]
+> instruction, which means the measurement of the loaded enclave has
+> failed to match the value in the signature structure.
+>
+> The same enclave loads fine with the out of kernel driver.  Our
+> diagnostics tell us we are feeding identical page streams and
+> permissions to the page add ioctl's of both drivers.  The identity
+> modulus signature of the signing key for the enclave is being written
+> to the launch control registers.
+>
+> We see the same behavior from both our unit test enclaves and the
+> Quoting Enclave from the Intel SGX runtime.
+>
+We did not see any issue loading QE in our tests. Please directly email me  
+on this test if you have specific questions.
 
-I do agree that a more complete test suite would be an essential thing
-to have. In that I'd just use the SDK and implement it outside the
-kernel tree.
+> When we ported our runtime loader to the new driver ABI we kept things
+> simple and add only a single page at a time in order to replicate the
+> behavior of the old driver.
+>
+> Secondly, we were wondering what distribution you are building the
+> self-tests with?  Initial indications are that the selftest signing
+> utility doesn't build properly with OpenSSL 1.1.1.
+>
+> Have a good day.
+>
+> Dr. Greg
+>
+> As always,
+> Dr. Greg Wettstein, Ph.D, Worker
+> IDfusion, LLC               SGX secured infrastructure and
+> 4206 N. 19th Ave.           autonomously self-defensive platforms.
+> Fargo, ND  58102
+> PH: 701-281-1686            EMAIL: greg@idfusion.net
+> ------------------------------------------------------------------------------
+> "Don't worry about people stealing your ideas.  If your ideas are any
+>  good, you'll have to ram them down people's throats."
+>                                 -- Howard Aiken
 
-Unfortunately I do not have time to implement such.
 
-/Jarkko
+-- 
+Using Opera's mail client: http://www.opera.com/mail/
