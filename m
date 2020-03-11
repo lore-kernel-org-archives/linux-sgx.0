@@ -2,142 +2,121 @@ Return-Path: <SRS0=LjX6=44=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07830C18E5A
-	for <linux-sgx@archiver.kernel.org>; Wed, 11 Mar 2020 09:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9A5C10F27
+	for <linux-sgx@archiver.kernel.org>; Wed, 11 Mar 2020 13:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D756A21D7E
-	for <linux-sgx@archiver.kernel.org>; Wed, 11 Mar 2020 09:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E828222D9
+	for <linux-sgx@archiver.kernel.org>; Wed, 11 Mar 2020 13:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbgCKJNl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 11 Mar 2020 05:13:41 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:59852 "EHLO wind.enjellic.com"
+        id S1729481AbgCKN2l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 11 Mar 2020 09:28:41 -0400
+Received: from mga09.intel.com ([134.134.136.24]:27576 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgCKJNk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 11 Mar 2020 05:13:40 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 02B9DEfJ008298;
-        Wed, 11 Mar 2020 04:13:14 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 02B9DDv2008297;
-        Wed, 11 Mar 2020 04:13:13 -0500
-Date:   Wed, 11 Mar 2020 04:13:13 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
+        id S1729103AbgCKN2l (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 11 Mar 2020 09:28:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 06:28:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="236284341"
+Received: from jarea-mobl.ger.corp.intel.com (HELO localhost) ([10.252.13.203])
+  by fmsmga008.fm.intel.com with ESMTP; 11 Mar 2020 06:28:33 -0700
+Date:   Wed, 11 Mar 2020 15:28:32 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
+        dave.hansen@intel.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
         linux-kselftest@vger.kernel.org
 Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-Message-ID: <20200311091313.GA8094@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com> <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com> <20200306053210.GA16297@wind.enjellic.com> <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-Mime-Version: 1.0
+Message-ID: <20200311132832.GA75185@linux.intel.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
+ <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
+ <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 11 Mar 2020 04:13:14 -0500 (CDT)
+In-Reply-To: <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:29:41PM -0500, Haitao Huang wrote:
-
-Good morning, I hope this note finds the week going well for everyone.
-
-> On Thu, 05 Mar 2020 23:32:10 -0600, Dr. Greg <greg@enjellic.com> wrote:
+On Thu, Mar 05, 2020 at 01:33:28PM +0200, Jarkko Sakkinen wrote:
+> On Wed, 2020-03-04 at 14:27 -0500, Nathaniel McCallum wrote:
+> > > > +xsave_area:
+> > > +       .fill   1, 4, 0x037F            # FCW
+> > > +       .fill   5, 4, 0
+> > > +       .fill   1, 4, 0x1F80            # MXCSR
+> > > +       .fill   1, 4, 0xFFFF            # MXCSR_MASK
+> > > +       .fill   123, 4, 0
+> > > +       .fill   1, 4, 0x80000000        # XCOMP_BV[63] = 1, compaction mode
+> > > +       .fill   12, 4, 0
+> > 
+> > I find this much more readable:
 > 
-> >On Wed, Mar 04, 2020 at 01:36:01AM +0200, Jarkko Sakkinen wrote:
-> >
-> >Good evening, I hope the end of the week is going well for everyone.
-> >
-> >>Add a selftest for SGX. It is a trivial test where a simple enclave
-> >>copies one 64-bit word of memory between two memory locations given
-> >>to the enclave as arguments. Use ENCLS[EENTER] to invoke the
-> >>enclave.
-> >
-> >Just as a clarification, are you testing the new driver against signed
-> >production class enclaves in .so format that also include metadata
-> >layout directives or is the driver just getting tested against the two
-> >page toy enclave that copies a word of memory from one memory location
-> >to another?
+> And I always aim to get things more readable. Thank you.
+> 
+> > xsave_area:
+> >         # Legacy
+> >         .fill   1, 4, 0x037F            # FCW
+> >         .fill   5, 4, 0
+> >         .fill   1, 4, 0x1F80            # MXCSR
+> >         .fill   1, 4, 0xFFFF            # MXCSR_MASK
+> >         .fill   60, 8, 0
+> > 
+> >         # Header
+> >         .fill   1, 8, 0                 # XSTATE_BV
+> >         .fill   1, 8, 1 << 63           # XCOMP_BV (compaction mode)
+> >         .fill   6, 8, 0
+> > 
+> > Also, since people are likely to copy this code for their own
+> > enclaves, it would be helpful to document which flags are set in FCW
+> > and MXCSR.
+> 
+> It was meant as a test program but I'd guess what you say is true
+> because it also might be the only alternative user space to Intel's
+> :-) And a great starting point if you want to do things from scratch.
+> 
+> Because I meant it as a smoke test program for SGX, not everything is
+> too well documented but given the multipurpose use for that code I'll
+> make the improvements that you are suggesting.
 
-> We (Intel SGX SDK/PSW team) tested this driver for enclaves in .so
-> format with metadata. Our 2.8 release supports v24 and 2.9 supports
-> v25+. Both production signed and debug signed enclaves worked.
+For FPU Control World (FCW), I think 0x037F is not the right value even
+if section 18.5 in the x86 SDM says that it is the initial value for it.
 
-Very good, this was the feedback we were hoping to get.
+I took that value from that section.
 
-> *Note* we did make some code changes in our runtime for v24+, mainly
-> dealing with src & EPC page alignment for EADD, open one fd per
-> enclave, use -z noexecstack linker option, etc. You can see the
-> changes on GitHub.
+The reason I think that there is an error in the SDM is that if you look
+at the section 8.1.5, you'll see that bit 6 is a reserved bit. Thus,
+does not make to set it on.
 
-Yes, we made all of those changes as well, in a similar fashion.
+I think the legit value ought to be 0x33F i.e. unset bit 6.
 
-This was the third time that we have changed the enclave creation
-mmap() and alignment constraints, only to take us back to what we had
-started with... :-)(
+In any case check:
 
-> >Our PSW/runtime is currently failing to initialize production class
-> >enclaves secondary to a return value of -4 from the ENCLU[EINIT]
-> >instruction, which means the measurement of the loaded enclave has
-> >failed to match the value in the signature structure.
-> >
-> >The same enclave loads fine with the out of kernel driver.  Our
-> >diagnostics tell us we are feeding identical page streams and
-> >permissions to the page add ioctl's of both drivers.  The identity
-> >modulus signature of the signing key for the enclave is being written
-> >to the launch control registers.
-> >
-> >We see the same behavior from both our unit test enclaves and the
-> >Quoting Enclave from the Intel SGX runtime.
+https://raw.githubusercontent.com/jsakkine-intel/linux-sgx/master/tools/testing/selftests/x86/sgx/encl_bootstrap.S
 
-> We did not see any issue loading QE in our tests. Please directly
-> email me on this test if you have specific questions.
+I.e. both have now a reference:
 
-It isn't anything specific to the QE, we just used that as an example,
-since it has no special attribute requirements and would seem to be a
-good reference test for everyone working on runtimes.
+1. To the section that describes the default.
+2. To the section that describes what the bits mean.
 
-We are missing some nuance with the latest version of the driver, our
-runtime was working fine with the new driver a year ago.
-
-It almost has to be a problem with metadata, we are suspicious of
-guard page processing.
-
-We are following the same strategy that we had used previously and
-leaving a 'hole' in the enclave for each guard page at its RVA offset.
-The comment in the add page ioctl indicating that the page range has
-to be contiguous caught our eye and has us questioning if this
-continues to be the correct approach.
-
-Do you remember, off the top of your head, having to address guard
-pages differently?
-
-Have a good remainder of the week.
-
-Dr. Greg
-
-> Using Opera's mail client: http://www.opera.com/mail/
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC               SGX secured infrastructure and
-4206 N. 19th Ave.           autonomously self-defensive platforms.
-Fargo, ND  58102
-PH: 701-281-1686            EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Work makes life enjoyable."
-                                -- North Dakota Germans
+/Jarkko
