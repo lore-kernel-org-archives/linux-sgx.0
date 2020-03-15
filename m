@@ -1,68 +1,100 @@
-Return-Path: <SRS0=6AlZ=47=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=qxyk=5A=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D5DC10DCE
-	for <linux-sgx@archiver.kernel.org>; Sat, 14 Mar 2020 03:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA682C0044D
+	for <linux-sgx@archiver.kernel.org>; Sun, 15 Mar 2020 01:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486AB2074D
-	for <linux-sgx@archiver.kernel.org>; Sat, 14 Mar 2020 03:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB5920771
+	for <linux-sgx@archiver.kernel.org>; Sun, 15 Mar 2020 01:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgCNDay (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 13 Mar 2020 23:30:54 -0400
-Received: from mga14.intel.com ([192.55.52.115]:58624 "EHLO mga14.intel.com"
+        id S1726553AbgCOB2k (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 14 Mar 2020 21:28:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:28478 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbgCNDay (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 13 Mar 2020 23:30:54 -0400
+        id S1725783AbgCOB2k (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:28:40 -0400
+IronPort-SDR: OSHhI0BtLsbUJhS4gyun97prmK0J/hx0AYK7hvzgnl4XNfQdfVmrPx/wT7RiuxBcVBeuw2ygkA
+ 6hnZsgkxaBjg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 20:30:53 -0700
-IronPort-SDR: RsJpAh5vDst8J0O815UZuGaP14477JunOjsvcWN+e8B8ZpVC1UvDt1FalBa6KIQTNf0kyiT6RJ
- 3StsXyfZbX6w==
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2020 18:25:35 -0700
+IronPort-SDR: 7dXMEkMlPBhCsDZMMGbFY2QSBSl03GSPFEkuh4wHq6I0PEu1I9WX6dq7pEhJpxQ+ewL9QtLlQ4
+ EAHtV3T75Gow==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,551,1574150400"; 
-   d="scan'208";a="322965628"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga001.jf.intel.com with ESMTP; 13 Mar 2020 20:30:53 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH] x86/sgx: Fix a build error introduced by WARN->ENCLS_WARN conversion
-Date:   Fri, 13 Mar 2020 20:30:51 -0700
-Message-Id: <20200314033051.32137-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
+X-IronPort-AV: E=Sophos;i="5.70,554,1574150400"; 
+   d="scan'208";a="278653419"
+Received: from mbenhamu-mobl2.ger.corp.intel.com (HELO localhost) ([10.251.177.145])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Mar 2020 18:25:25 -0700
+Date:   Sun, 15 Mar 2020 03:25:23 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
+        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Connor Kuehl <ckuehl@redhat.com>,
+        Harald Hoyer <harald@redhat.com>,
+        Lily Sturmann <lsturman@redhat.com>
+Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+Message-ID: <20200315012523.GC208715@linux.intel.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
+ <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Remove an unwanted param when invoking ENCLS_WARN on EREMOVE failure.
+On Wed, Mar 11, 2020 at 01:30:07PM -0400, Nathaniel McCallum wrote:
+> Currently, the selftest has a wrapper around
+> __vdso_sgx_enter_enclave() which preserves all x86-64 ABI callee-saved
+> registers (CSRs), though it uses none of them. Then it calls this
+> function which uses %rbx but preserves none of the CSRs. Then it jumps
+> into an enclave which zeroes all these registers before returning.
+> Thus:
+> 
+>   1. wrapper saves all CSRs
+>   2. wrapper repositions stack arguments
+>   3. __vdso_sgx_enter_enclave() modifies, but does not save %rbx
+>   4. selftest zeros all CSRs
+>   5. wrapper loads all CSRs
+> 
+> I'd like to propose instead that the enclave be responsible for saving
+> and restoring CSRs. So instead of the above we have:
+>   1. __vdso_sgx_enter_enclave() saves %rbx
+>   2. enclave saves CSRs
+>   3. enclave loads CSRs
+>   4. __vdso_sgx_enter_enclave() loads %rbx
+> 
+> I know that lots of other stuff happens during enclave transitions,
+> but at the very least we could reduce the number of instructions
+> through this critical path.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kernel/cpu/sgx/reclaim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What Jethro said and also that it is a good general principle to cut
+down the semantics of any vdso as minimal as possible.
 
-diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index 9afe5e7d50a6..eb5008c37b64 100644
---- a/arch/x86/kernel/cpu/sgx/reclaim.c
-+++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -352,7 +352,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- 
- 	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
- 		ret = __eremove(sgx_epc_addr(epc_page));
--		ENCLS_WARN(ret, "EREMOVE returned %d\n", ret);
-+		ENCLS_WARN(ret, "EREMOVE returned %d\n");
- 	} else {
- 		sgx_encl_ewb(epc_page, backing);
- 	}
--- 
-2.24.1
+I.e. even if saving RBX would make somehow sense it *can* be left
+out without loss in terms of what can be done with the vDSO.
 
+/Jarkko
