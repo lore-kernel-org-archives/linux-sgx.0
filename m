@@ -2,121 +2,236 @@ Return-Path: <SRS0=bOfw=5C=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47E8C2BB1D
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 01:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3C5C10F29
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 05:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8484020663
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 01:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 527A720663
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 05:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733025AbgCQBJ7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Mar 2020 21:09:59 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:60356 "EHLO wind.enjellic.com"
+        id S1725769AbgCQFPo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Mar 2020 01:15:44 -0400
+Received: from mga04.intel.com ([192.55.52.120]:35512 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733017AbgCQBJ7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Mar 2020 21:09:59 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 02H17IhN002955;
-        Mon, 16 Mar 2020 20:07:18 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 02H17Irm002954;
-        Mon, 16 Mar 2020 20:07:18 -0500
-Date:   Mon, 16 Mar 2020 20:07:18 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-Message-ID: <20200317010718.GA2546@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com> <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com> <20200306053210.GA16297@wind.enjellic.com> <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 16 Mar 2020 20:07:18 -0500 (CDT)
+        id S1725468AbgCQFPn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Mar 2020 01:15:43 -0400
+IronPort-SDR: fj4Q1kw5mjblip6FdfFbbTlpyA+DliWU5xVwNTuU5JgToRudqk8dDbhN5ROGMR9A8vuUvF3FuO
+ ua8WLXxVShOQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 22:15:43 -0700
+IronPort-SDR: rl6ZxK/8BkYcbQ88ZsePzi7q5zfSU6WeX9i9rCEeRL4itABfRErBO+dp3aNLV0Rubh/AZ6pnL6
+ 9JOh7ua99nxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
+   d="scan'208";a="237808260"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Mar 2020 22:15:42 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org
+Subject: [PATCH] x86/sgx: Fix deadlock and race conditions between fork() and EPC reclaim
+Date:   Mon, 16 Mar 2020 22:15:39 -0700
+Message-Id: <20200317051539.10447-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:29:41PM -0500, Haitao Huang wrote:
+Drop the synchronize_srcu() from sgx_encl_mm_add() and replace it with a
+mm_list versioning concept to avoid deadlock when adding a mm during
+dup_mmap()/fork(), and to ensure copied PTEs are zapped.
 
-Good evening, I hope the week is going well for everyone.
+When dup_mmap() runs, it holds mmap_sem for write in both the old mm and
+new mm.  Invoking synchronize_srcu() while holding mmap_sem of a mm that
+is already attached to the enclave will deadlock if the reclaimer is in
+the process of walking mm_list, as the reclaimer will try to acquire
+mmap_sem (of the old mm) while holding encl->srcu for read.
 
-> >Just as a clarification, are you testing the new driver against
-> >signed production class enclaves in .so format that also include
-> >metadata layout directives or is the driver just getting tested
-> >against the two page toy enclave that copies a word of memory from
-> >one memory location to another?
+ INFO: task ksgxswapd:181 blocked for more than 120 seconds.
+ ksgxswapd       D    0   181      2 0x80004000
+ Call Trace:
+  __schedule+0x2db/0x700
+  schedule+0x44/0xb0
+  rwsem_down_read_slowpath+0x370/0x470
+  down_read+0x95/0xa0
+  sgx_reclaim_pages+0x1d2/0x7d0
+  ksgxswapd+0x151/0x2e0
+  kthread+0x120/0x140
+  ret_from_fork+0x35/0x40
 
-> We (Intel SGX SDK/PSW team) tested this driver for enclaves in .so
-> format with metadata. Our 2.8 release supports v24 and 2.9 supports
-> v25+. Both production signed and debug signed enclaves worked.
->
-> *Note* we did make some code changes in our runtime for v24+, mainly
-> dealing with src & EPC page alignment for EADD, open one fd per
-> enclave, use -z noexecstack linker option, etc. You can see the
-> changes on GitHub.
+ INFO: task fork_consistenc:18824 blocked for more than 120 seconds.
+ fork_consistenc D    0 18824  18786 0x00004320
+ Call Trace:
+  __schedule+0x2db/0x700
+  schedule+0x44/0xb0
+  schedule_timeout+0x205/0x300
+  wait_for_completion+0xb7/0x140
+  __synchronize_srcu.part.22+0x81/0xb0
+  synchronize_srcu_expedited+0x27/0x30
+  synchronize_srcu+0x57/0xe0
+  sgx_encl_mm_add+0x12b/0x160
+  sgx_vma_open+0x22/0x40
+  dup_mm+0x521/0x580
+  copy_process+0x1a56/0x1b50
+  _do_fork+0x85/0x3a0
+  __x64_sys_clone+0x8e/0xb0
+  do_syscall_64+0x57/0x1b0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Lots of knobs getting turned at the same time but we sorted out all
-the issues and our runtime is now passing its regression tests with
-the new driver, with an exception that we note below.
+Furthermore, doing synchronize_srcu() in sgx_encl_mm_add() does not
+prevent the new mm from having stale PTEs pointing at the EPC page to be
+reclaimed.  dup_mmap() calls vm_ops->open()/sgx_encl_mm_add() _after_
+PTEs are copied to the new mm, i.e. blocking fork() until reclaim zaps
+the old mm is pointless as the stale PTEs have already been created in
+the new mm.
 
-I suspect that we might have the only complete and architecturally
-independent runtime implementation so if the new driver is working
-against yours and ours it would seem to be a reasonable test spectrum
-for the driver.
+All other flows that walk mm_list can safely race with dup_mmap() or are
+protected by a different mechanism.  Add comments to all srcu readers
+that don't check the list version to document why its ok for the flow to
+ignore the version.
 
-> >We see the same behavior from both our unit test enclaves and the
-> >Quoting Enclave from the Intel SGX runtime.
+Note, synchronize_srcu() is still needed when removing a mm from an
+enclave, as the srcu readers must complete their walk before the mm can
+be freed.  Removing a mm is never done while holding mmap_sem.
 
-> We did not see any issue loading QE in our tests. Please directly
-> email me on this test if you have specific questions.
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c    | 22 +++++++++++++++++++--
+ arch/x86/kernel/cpu/sgx/encl.h    |  1 +
+ arch/x86/kernel/cpu/sgx/reclaim.c | 33 +++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+), 2 deletions(-)
 
-As it turns out the major problem we were running into with respect to
-the QE test was the fact that generic use of atexit() handlers was
-disabled by changes that went into the 2.8 SDK.  Our runtime and SDK
-assume that enclave atexit() handling works.
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index d6a19bdd1921..b9a7c56f7c25 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -196,6 +196,12 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 	struct sgx_encl_mm *encl_mm;
+ 	int ret;
+ 
++	/*
++	 * This flow relies on mmap_sem to provide mutual exclusivity (for a
++	 * given mm) to prevent duplicate instances of an encl_mm on the list.
++	 */
++	lockdep_assert_held_write(&mm->mmap_sem);
++
+ 	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD)
+ 		return -EINVAL;
+ 
+@@ -223,10 +229,22 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 
+ 	spin_lock(&encl->mm_lock);
+ 	list_add_rcu(&encl_mm->list, &encl->mm_list);
++	/*
++	 * Ensure the mm is added to the list before updating the version.
++	 * Pairs with the smp_rmb() in sgx_reclaimer_block().
++	 */
++	smp_wmb();
++	encl->mm_list_version++;
+ 	spin_unlock(&encl->mm_lock);
+ 
+-	synchronize_srcu(&encl->srcu);
+-
++	/*
++	 * DO NOT call synchronize_srcu()!  When this is called via dup_mmap(),
++	 * mmap_sem is held for write in both the old mm and new mm, and the
++	 * reclaimer may be holding srcu for read while waiting on down_read()
++	 * for the old mm's mmap_sem, i.e. synchronizing will deadlock.
++	 * Incrementing the list version ensures readers that must not race
++	 * with a mm being added will see the updated list.
++	 */
+ 	return 0;
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 44b353aa8866..f0f72e591244 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -74,6 +74,7 @@ struct sgx_encl {
+ 	struct mutex lock;
+ 	struct list_head mm_list;
+ 	spinlock_t mm_lock;
++	unsigned long mm_list_version;
+ 	struct file *backing;
+ 	struct kref refcount;
+ 	struct srcu_struct srcu;
+diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+index 39f0ddefbb79..3b4b849c5b2e 100644
+--- a/arch/x86/kernel/cpu/sgx/reclaim.c
++++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+@@ -155,6 +155,11 @@ static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+ 	bool ret = true;
+ 	int idx;
+ 
++	/*
++	 * Note, this can race with sgx_encl_mm_add(), but worst case scenario
++	 * a page will be reclaimed immediately after it's accessed in the new
++	 * process/mm.
++	 */
+ 	idx = srcu_read_lock(&encl->srcu);
+ 
+ 	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+@@ -184,10 +189,20 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
+ 	struct sgx_encl_page *page = epc_page->owner;
+ 	unsigned long addr = SGX_ENCL_PAGE_ADDR(page);
+ 	struct sgx_encl *encl = page->encl;
++	unsigned long mm_list_version;
+ 	struct sgx_encl_mm *encl_mm;
+ 	struct vm_area_struct *vma;
+ 	int idx, ret;
+ 
++retry:
++	mm_list_version = encl->mm_list_version;
++	/*
++	 * Ensure the list version is read before walking the list to prevent
++	 * beginning the walk with the old list using the new version.  Pairs
++	 * with the smp_wmb() in sgx_encl_mm_add().
++	 */
++	smp_rmb();
++
+ 	idx = srcu_read_lock(&encl->srcu);
+ 
+ 	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+@@ -207,6 +222,19 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
+ 
+ 	srcu_read_unlock(&encl->srcu, idx);
+ 
++	/*
++	 * Redo the zapping if a mm was added to the list while zapping was in
++	 * progress.  dup_mmap() copies the PTEs for VM_PFNMAP VMAs, i.e. the
++	 * new mm won't take a page fault and so won't see that the page is
++	 * tagged RECLAIMED.  Note, vm_ops->open()/sgx_encl_mm_add() is called
++	 * _after_ PTEs are copied, and dup_mmap() holds the old mm's mmap_sem
++	 * for write, so the version check is only needed to protect against
++	 * dup_mmap() running after the list walk started but before the old
++	 * mm's PTEs were zapped.
++	 */
++	if (unlikely(encl->mm_list_version != mm_list_version))
++		goto retry;
++
+ 	mutex_lock(&encl->lock);
+ 
+ 	if (!(atomic_read(&encl->flags) & SGX_ENCL_DEAD)) {
+@@ -250,6 +278,11 @@ static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
+ 	struct sgx_encl_mm *encl_mm;
+ 	int idx;
+ 
++	/*
++	 * Note, this can race with sgx_encl_mm_add(), but ETRACK has already
++	 * been executed, so CPUs running in the new mm will enter the enclave
++	 * in a different epoch.
++	 */
+ 	cpumask_clear(cpumask);
+ 
+ 	idx = srcu_read_lock(&encl->srcu);
+-- 
+2.24.1
 
-The enclave UNINIT ECALL is only allowed on runtimes that are
-advertising EDMM support.  That seems excessively restrictive since
-atexit() handling is generically useful for enclaves that are not
-using EDMM.  Our runtime allows EDMM to be disabled and we have
-enclaves that gate on that for security purposes.
-
-On a quasi-related note, it appears that the 1.4 compatibility
-metadata created by post 2.0 signing tools is leaking layout
-descriptors that a version 1.4 runtime doesn't understand.
-
-Do you want to exchange e-mail on this or should we direct
-conversations about these issues with others on your SDK team.
-
-Have a good remainder of the week.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      SGX secured infrastructure and
-Enjellic Systems Development, LLC     autonomously self-defensive
-4206 N. 19th Ave.                     platforms.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"All parts should go together without forcing.  You must remember that
- the parts you are reassembling were disassembled by you.  Therefore,
- if you can't get them together again, there must be a reason.  By all
- means, do not use a hammer."
-                                -- IBM maintenance manual, 1925
