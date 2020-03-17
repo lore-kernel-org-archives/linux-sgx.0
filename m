@@ -6,131 +6,117 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FDDC0044D
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 00:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A47E8C2BB1D
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 01:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1D4206E2
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 00:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8484020663
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Mar 2020 01:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733217AbgCQA1H (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Mar 2020 20:27:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:11938 "EHLO mga05.intel.com"
+        id S1733025AbgCQBJ7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Mar 2020 21:09:59 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:60356 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733009AbgCQA1G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Mar 2020 20:27:06 -0400
-IronPort-SDR: SWYlLZolBDWgGg27spfn+BDNr9JSrfcecYrvVdvAeQ50w98B+8VupXfi4cH5/FtfW0FYKcu8WO
- YhHlzfyp50OQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 17:27:06 -0700
-IronPort-SDR: f6fK7XCFbrqoX9QH1ubWde0FEwjXYcIVIFQIg2HLkvaCEhnvMUzkd3g7CoAam5wv6BSWBZZJRg
- KITRnQGJhFkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,562,1574150400"; 
-   d="scan'208";a="390888441"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga004.jf.intel.com with ESMTP; 16 Mar 2020 17:27:06 -0700
-Date:   Mon, 16 Mar 2020 17:27:06 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
+        id S1733017AbgCQBJ7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Mar 2020 21:09:59 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 02H17IhN002955;
+        Mon, 16 Mar 2020 20:07:18 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 02H17Irm002954;
+        Mon, 16 Mar 2020 20:07:18 -0500
+Date:   Mon, 16 Mar 2020 20:07:18 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200317002706.GN24267@linux.intel.com>
-References: <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
- <20200315012523.GC208715@linux.intel.com>
- <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
- <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
- <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
- <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
- <20200316225322.GJ24267@linux.intel.com>
- <fa773504-4cc1-5cbd-c018-890f7a5d3152@intel.com>
- <20200316235934.GM24267@linux.intel.com>
- <ca2c9ac0-b717-ee96-c7df-4e39f03a9193@intel.com>
-MIME-Version: 1.0
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
+Message-ID: <20200317010718.GA2546@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com> <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com> <20200306053210.GA16297@wind.enjellic.com> <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca2c9ac0-b717-ee96-c7df-4e39f03a9193@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 16 Mar 2020 20:07:18 -0500 (CDT)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 05:18:14PM -0700, Xing, Cedric wrote:
-> On 3/16/2020 4:59 PM, Sean Christopherson wrote:
-> >On Mon, Mar 16, 2020 at 04:50:26PM -0700, Xing, Cedric wrote:
-> >>On 3/16/2020 3:53 PM, Sean Christopherson wrote:
-> >>>On Mon, Mar 16, 2020 at 11:38:24PM +0200, Jarkko Sakkinen wrote:
-> >>>>>My suggestions explicitly maintained robustness, and in fact increased
-> >>>>>it. If you think we've lost capability, please speak with specificity
-> >>>>>rather than in vague generalities. Under my suggestions we can:
-> >>>>>1. call the vDSO from C
-> >>>>>2. pass context to the handler
-> >>>>>3. have additional stack manipulation options in the handler
-> >>>>>
-> >>>>>The cost for this is a net 2 additional instructions. No existing
-> >>>>>capability is lost.
-> >>>>
-> >>>>My vague generality in this case is just that the whole design
-> >>>>approach so far has been to minimize the amount of wrapping to
-> >>>>EENTER.
-> >>>
-> >>>Yes and no.   If we wanted to minimize the amount of wrapping around the
-> >>>vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
-> >>>first place.  The whole process has been about balancing the wants of each
-> >>>use case against the overall quality of the API and code.
-> >>>
-> >>The design of this vDSO API was NOT to minimize wrapping, but to allow
-> >>maximal flexibility. More specifically, we strove not to restrict how info
-> >>was exchanged between the enclave and its host process. After all, calling
-> >>convention is compiler specific - i.e. the enclave could be built by a
-> >>different compiler (e.g. MSVC) that doesn't share the same list of CSRs as
-> >>the host process. Therefore, the API has been implemented to pass through
-> >>virtually all registers except those used by EENTER itself. Similarly, all
-> >>registers are passed back from enclave to the caller (or the exit handler)
-> >>except those used by EEXIT. %rbp is an exception because the vDSO API has to
-> >>anchor the stack, using either %rsp or %rbp. We picked %rbp to allow the
-> >>enclave to allocate space on the stack.
-> >
-> >And unless I'm missing something, using %rcx to pass @leaf would still
-> >satisfy the above, correct?  Ditto for saving/restoring %rbx.
-> >
-> >I.e. a runtime that's designed to work with enclave's using a different
-> >calling convention wouldn't be able to take advantage of being able to call
-> >the vDSO from C, but neither would it take on any meaningful burden.
-> >
-> Not exactly.
-> 
-> If called directly from C code, the caller would expect CSRs to be
-> preserved. Then who should preserve CSRs? It can't be the enclave because it
-> may not follow the same calling convention. Moreover, the enclave may run
-> into an exception, in which case it doesn't have the ability to restore
-> CSRs. So it has to be done by the vDSO API. That means CSRs will be
-> overwritten upon enclave exits, which violates the goal of "passing all
-> registers back to the caller except those used by EEXIT".
+On Tue, Mar 10, 2020 at 02:29:41PM -0500, Haitao Huang wrote:
 
-IIUC, Nathaniel's use case is to run only enclaves that are compatible
-with Linux's calling convention and to handle enclave exceptions in the
-exit handler.
+Good evening, I hope the week is going well for everyone.
 
-As I qualified above, there would certainly be runtimes and use cases that
-would find no advantage in passing @leaf via %rcx and preserving %rbx.  I'm
-well aware the Intel SDK falls into that bucket.  But again, the cost to
-such runtimes is precisely one reg->reg MOV instruction.
+> >Just as a clarification, are you testing the new driver against
+> >signed production class enclaves in .so format that also include
+> >metadata layout directives or is the driver just getting tested
+> >against the two page toy enclave that copies a word of memory from
+> >one memory location to another?
+
+> We (Intel SGX SDK/PSW team) tested this driver for enclaves in .so
+> format with metadata. Our 2.8 release supports v24 and 2.9 supports
+> v25+. Both production signed and debug signed enclaves worked.
+>
+> *Note* we did make some code changes in our runtime for v24+, mainly
+> dealing with src & EPC page alignment for EADD, open one fd per
+> enclave, use -z noexecstack linker option, etc. You can see the
+> changes on GitHub.
+
+Lots of knobs getting turned at the same time but we sorted out all
+the issues and our runtime is now passing its regression tests with
+the new driver, with an exception that we note below.
+
+I suspect that we might have the only complete and architecturally
+independent runtime implementation so if the new driver is working
+against yours and ours it would seem to be a reasonable test spectrum
+for the driver.
+
+> >We see the same behavior from both our unit test enclaves and the
+> >Quoting Enclave from the Intel SGX runtime.
+
+> We did not see any issue loading QE in our tests. Please directly
+> email me on this test if you have specific questions.
+
+As it turns out the major problem we were running into with respect to
+the QE test was the fact that generic use of atexit() handlers was
+disabled by changes that went into the 2.8 SDK.  Our runtime and SDK
+assume that enclave atexit() handling works.
+
+The enclave UNINIT ECALL is only allowed on runtimes that are
+advertising EDMM support.  That seems excessively restrictive since
+atexit() handling is generically useful for enclaves that are not
+using EDMM.  Our runtime allows EDMM to be disabled and we have
+enclaves that gate on that for security purposes.
+
+On a quasi-related note, it appears that the 1.4 compatibility
+metadata created by post 2.0 signing tools is leaking layout
+descriptors that a version 1.4 runtime doesn't understand.
+
+Do you want to exchange e-mail on this or should we direct
+conversations about these issues with others on your SDK team.
+
+Have a good remainder of the week.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      SGX secured infrastructure and
+Enjellic Systems Development, LLC     autonomously self-defensive
+4206 N. 19th Ave.                     platforms.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"All parts should go together without forcing.  You must remember that
+ the parts you are reassembling were disassembled by you.  Therefore,
+ if you can't get them together again, there must be a reason.  By all
+ means, do not use a hammer."
+                                -- IBM maintenance manual, 1925
