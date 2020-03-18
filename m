@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CFBC4332D
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Mar 2020 22:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E626CC4332D
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Mar 2020 22:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE7320754
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Mar 2020 22:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A6420767
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Mar 2020 22:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbgCRWjv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Mar 2020 18:39:51 -0400
-Received: from mga06.intel.com ([134.134.136.31]:41336 "EHLO mga06.intel.com"
+        id S1726858AbgCRW7D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Mar 2020 18:59:03 -0400
+Received: from mga02.intel.com ([134.134.136.20]:4164 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbgCRWju (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:39:50 -0400
-IronPort-SDR: 16vwUxItd219oym/u9uvTyHEr+eEG2ECLFxyN89lVOd0dthG9sPvLDxLr0OQC2uUIuQSHIwH6y
- ndoE5swUfJPQ==
+        id S1726647AbgCRW7D (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Mar 2020 18:59:03 -0400
+IronPort-SDR: 9WLFitB2A/CCd9StxPkajMUfvQd1yT7jNwYB3zxIRMalGpC6yLrKnmHLW/YVnz8UI/49+yKWeq
+ BXcA9KdelbxQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 15:39:49 -0700
-IronPort-SDR: OIZt4/Bulq5VM9kt6gz93SuZccv60eWXlc2inejhm2wUCfLxduTFCDDxrd8BuexZGUz7Mwo9Py
- fiNQdjwwpBsw==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 15:59:02 -0700
+IronPort-SDR: Kzst+XzI+DA9X70tno+9tD6RtOdSqyNfKYu4iKARH8e1uGk8kjFAyBcsBsbDzpfY8djoShcw5+
+ fj3lYTunmHAQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,569,1574150400"; 
-   d="scan'208";a="355843989"
+   d="scan'208";a="263542576"
 Received: from mbeldzik-mobl.ger.corp.intel.com (HELO localhost) ([10.252.55.127])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Mar 2020 15:39:39 -0700
-Date:   Thu, 19 Mar 2020 00:39:37 +0200
+  by orsmga002.jf.intel.com with ESMTP; 18 Mar 2020 15:58:51 -0700
+Date:   Thu, 19 Mar 2020 00:58:50 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
         dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
@@ -51,7 +51,7 @@ Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
         Lily Sturmann <lsturman@redhat.com>
 Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
-Message-ID: <20200318223937.GC52244@linux.intel.com>
+Message-ID: <20200318225850.GD52244@linux.intel.com>
 References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
  <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
  <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
@@ -61,60 +61,134 @@ References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
  <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
  <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
  <20200316225322.GJ24267@linux.intel.com>
+ <CAOASepNbvproKLFLUvH=+m1xXFeDCWup6O7Pi1py6ENFdarMKg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200316225322.GJ24267@linux.intel.com>
+In-Reply-To: <CAOASepNbvproKLFLUvH=+m1xXFeDCWup6O7Pi1py6ENFdarMKg@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:53:22PM -0700, Sean Christopherson wrote:
-> Yes and no.   If we wanted to minimize the amount of wrapping around the
-> vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
-> first place.  The whole process has been about balancing the wants of each
-> use case against the overall quality of the API and code.
+On Tue, Mar 17, 2020 at 12:28:58PM -0400, Nathaniel McCallum wrote:
+> On Mon, Mar 16, 2020 at 6:53 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Mon, Mar 16, 2020 at 11:38:24PM +0200, Jarkko Sakkinen wrote:
+> > > On Mon, 2020-03-16 at 10:01 -0400, Nathaniel McCallum wrote:
+> > > > On Mon, Mar 16, 2020 at 9:56 AM Jarkko Sakkinen
+> > > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > > On Sun, 2020-03-15 at 13:53 -0400, Nathaniel McCallum wrote:
+> > > > > > On Sat, Mar 14, 2020 at 9:25 PM Jarkko Sakkinen
+> > > > > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > > > > On Wed, Mar 11, 2020 at 01:30:07PM -0400, Nathaniel McCallum wrote:
+> > > > > > > > Currently, the selftest has a wrapper around
+> > > > > > > > __vdso_sgx_enter_enclave() which preserves all x86-64 ABI callee-saved
+> > > > > > > > registers (CSRs), though it uses none of them. Then it calls this
+> > > > > > > > function which uses %rbx but preserves none of the CSRs. Then it jumps
+> > > > > > > > into an enclave which zeroes all these registers before returning.
+> > > > > > > > Thus:
+> > > > > > > >
+> > > > > > > >   1. wrapper saves all CSRs
+> > > > > > > >   2. wrapper repositions stack arguments
+> > > > > > > >   3. __vdso_sgx_enter_enclave() modifies, but does not save %rbx
+> > > > > > > >   4. selftest zeros all CSRs
+> > > > > > > >   5. wrapper loads all CSRs
+> > > > > > > >
+> > > > > > > > I'd like to propose instead that the enclave be responsible for saving
+> > > > > > > > and restoring CSRs. So instead of the above we have:
+> > > > > > > >   1. __vdso_sgx_enter_enclave() saves %rbx
+> > > > > > > >   2. enclave saves CSRs
+> > > > > > > >   3. enclave loads CSRs
+> > > > > > > >   4. __vdso_sgx_enter_enclave() loads %rbx
+> > > > > > > >
+> > > > > > > > I know that lots of other stuff happens during enclave transitions,
+> > > > > > > > but at the very least we could reduce the number of instructions
+> > > > > > > > through this critical path.
+> > > > > > >
+> > > > > > > What Jethro said and also that it is a good general principle to cut
+> > > > > > > down the semantics of any vdso as minimal as possible.
+> > > > > > >
+> > > > > > > I.e. even if saving RBX would make somehow sense it *can* be left
+> > > > > > > out without loss in terms of what can be done with the vDSO.
+> > > > > >
+> > > > > > Please read the rest of the thread. Sean and I have hammered out some
+> > > > > > sensible and effective changes.
+> > > > >
+> > > > > Have skimmed through that discussion but it comes down how much you get
+> > > > > by obviously degrading some of the robustness. Complexity of the calling
+> > > > > pattern is not something that should be emphasized as that is something
+> > > > > that is anyway hidden inside the runtime.
+> > > >
+> > > > My suggestions explicitly maintained robustness, and in fact increased
+> > > > it. If you think we've lost capability, please speak with specificity
+> > > > rather than in vague generalities. Under my suggestions we can:
+> > > > 1. call the vDSO from C
+> > > > 2. pass context to the handler
+> > > > 3. have additional stack manipulation options in the handler
+> > > >
+> > > > The cost for this is a net 2 additional instructions. No existing
+> > > > capability is lost.
+> > >
+> > > My vague generality in this case is just that the whole design
+> > > approach so far has been to minimize the amount of wrapping to
+> > > EENTER.
+> >
+> > Yes and no.   If we wanted to minimize the amount of wrapping around the
+> > vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
+> > first place.  The whole process has been about balancing the wants of each
+> > use case against the overall quality of the API and code.
+> >
+> > > And since this has been kind of agreed by most of the
+> > > stakeholders doing something against the chosen strategy is
+> > > something I do hold some resistance.
+> >
+> > Up until Nathaniel joined the party, the only stakeholder in terms of the
+> > exit handler was the Intel SDK.
+> 
+> I would hope that having additional stakeholders would ease the path
+> to adoption.
+> 
+> > There was a general consensus to pass
+> > registers as-is when there isn't a strong reason to do otherwise.  Note
+> > that Nathaniel has also expressed approval of that approach.
+> 
+> I still approve that approach.
+> 
+> > So I think the question that needs to be answered is whether the benefits
+> > of using %rcx instead of %rax to pass @leaf justify the "pass registers
+> > as-is" guideline.  We've effectively already given this waiver for %rbx,
+> > as the whole reason why the TCS is passed in on the stack instead of via
+> > %rbx is so that it can be passed to the exit handler.  E.g. the vDSO
+> > could take the TCS in %rbx and save it on the stack, but we're throwing
+> > the baby out with the bathwater at that point.
+> >
+> > The major benefits being that the vDSO would be callable from C and that
+> > the kernel could define a legitimate prototype instead of a frankenstein
+> > prototype that's half assembly and half C.  For me, those are significant
+> > benefits and well worth the extra MOV, PUSH and POP.  For some use cases
+> > it would eliminate the need for an assembly wrapper.  For runtimes that
+> > need an assembly wrapper for whatever reason, it's probably still a win as
+> > a well designed runtime can avoid register shuffling in the wrapper.  And
+> > if there is a runtime that isn't covered by the above, it's at worst an
+> > extra MOV.
+> >
+> 
 
-Minimizing is not something that happens in a void. Given the user base
-for the SDK having the handler was a necessity. Otherwise, we would not
-have that handler in the first place.
+Guys, maybe it is just enough discussing. I see things go in circles at
+least. Just send a patch against current tree and we'll look into it
+then?
 
-> Up until Nathaniel joined the party, the only stakeholder in terms of the
-> exit handler was the Intel SDK.  There was a general consensus to pass
-> registers as-is when there isn't a strong reason to do otherwise.  Note
-> that Nathaniel has also expressed approval of that approach.
+I'm a strong believer of "good enough" well, in everything in life. With
+a legit patch it is easier to evaluate if what we get is just a
+different version of good enough, or perhaps we might get some useful
+value out of it.
 
-OK, great.
+If you think that you get together something C callable, please
+*prove* that by also updating the self test.
 
-> The major benefits being that the vDSO would be callable from C and that
-> the kernel could define a legitimate prototype instead of a frankenstein
-> prototype that's half assembly and half C.  For me, those are significant
-
-I was not aware that there was a plot to make it callable by C.
-
-OK, so right now
-
-A. @leaf =  %eax
-B. @tcs = 8(%rsp)
-C. @e = 0x10(%rsp)
-D. @handler = 0x18(%rsp)
-
-On x86-64 Linux C calling convention means DI/SI/DX/CX type of thing.
-
-So what is the thing that we are referring to C calling convetion in
-this email discussion?
-
-> benefits and well worth the extra MOV, PUSH and POP.  For some use cases
-> it would eliminate the need for an assembly wrapper.  For runtimes that
-> need an assembly wrapper for whatever reason, it's probably still a win as
-> a well designed runtime can avoid register shuffling in the wrapper.  And
-> if there is a runtime that isn't covered by the above, it's at worst an
-> extra MOV.
-
-Is it cool if I rip of the documentation from vsgx_enter_enclave.S and
-move it to Documentation/ ? It is nasty to keep and update it where it
-is right now. How it is right now, it is destined to rotten.
+Fair enough?
 
 /Jarkko
