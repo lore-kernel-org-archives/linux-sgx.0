@@ -2,159 +2,173 @@ Return-Path: <SRS0=xedp=5E=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A514C4332B
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Mar 2020 01:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D21C4332B
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Mar 2020 01:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B6C20768
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Mar 2020 01:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D835820767
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Mar 2020 01:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgCSBDJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Mar 2020 21:03:09 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15997 "EHLO mga11.intel.com"
+        id S1726866AbgCSBLg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Mar 2020 21:11:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:30443 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbgCSBDI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Mar 2020 21:03:08 -0400
-IronPort-SDR: UDarT0/D/mTUCwecBuFy32V5q6u2OVguKKwZO/R5comHwo7QHJFjRJzkXUgig5dXe+4XWRoNTG
- 4AT+xjx+B/Dw==
+        id S1726596AbgCSBLg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Mar 2020 21:11:36 -0400
+IronPort-SDR: z+Xnw+ooV5X8SpyebheMXAKKldT7w3mk9yIOMmnVouDLBUTb6D3QAmzmJcsPavpb7kRZ8XalrR
+ fUdycMgGM1Hw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 18:03:07 -0700
-IronPort-SDR: CGUYWfkphOuI4TIm7YiOkLmPVqj85z7yp25k0oamOOD/R+j1F8nhSgN8bm9EUnvY4ZnaYA4Y3C
- 1ot4B9TZezhQ==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 18:11:35 -0700
+IronPort-SDR: i73lLUW869lbCkAxvh3QwV81J+duelWJOjG1Pt56dzzK2pO2ULI/AuKlNp2lx1DJm1J4KXOf6v
+ PeSdEVf0JoZg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,569,1574150400"; 
-   d="scan'208";a="238348272"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Mar 2020 18:03:06 -0700
-Date:   Wed, 18 Mar 2020 18:03:06 -0700
+   d="scan'208";a="324358690"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga001.jf.intel.com with ESMTP; 18 Mar 2020 18:11:35 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
+        Cedric Xing <cedric.xing@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
         Andy Lutomirski <luto@amacapital.net>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200319010306.GA8347@linux.intel.com>
-References: <254f1e35-4302-e55f-c00d-0f91d9503498@fortanix.com>
- <CAOASepOm8-2UCdEnVMopEprMGWjkYUbUTX++dHaqCafi2ju8mA@mail.gmail.com>
- <20200313164622.GC5181@linux.intel.com>
- <CAOASepN1hxSgxVJAJiAbSmuCTCHd=95Mnvh6BKNSPJs=EpAmbQ@mail.gmail.com>
- <20200313184452.GD5181@linux.intel.com>
- <CAOASepP_oGOenjCvAvLg+e+=fz4H0X=cyD+v5ywD0peeXEEmYg@mail.gmail.com>
- <20200313220820.GE5181@linux.intel.com>
- <CAOASepMicT6CrYyDkoYizh4nAZ+1Zn4rGQh7QjfzSK72Fj6u_g@mail.gmail.com>
- <20200318234057.GE26164@linux.intel.com>
- <858d19ed-868b-b4be-cbac-6cb92349d8fb@intel.com>
+        linux-sgx@vger.kernel.org
+Subject: [PATCH for_v29 0/8] x86/sgx: Make vDSO callable from C
+Date:   Wed, 18 Mar 2020 18:11:22 -0700
+Message-Id: <20200319011130.8556-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <858d19ed-868b-b4be-cbac-6cb92349d8fb@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 05:38:29PM -0700, Xing, Cedric wrote:
-> On 3/18/2020 4:40 PM, Sean Christopherson wrote:
-> %rbx can always be restored as long as it is saved at a fixed offset from
-> %rbp. For example, given the standard prolog below:
-> 
-> 	push	%rbp
-> 	mov	%rsp, %rbp
-> 	push	%rbx
-> 
-> It can be paired with the following standard epilog:
-> 
-> 	mov	-8(%rbp), %rbx
-> 	leave
-> 	ret
-> 
-> Alternatively, given "red zone" of 128 bytes, the following epilog will also
-> work:
-> 
-> 	leave
-> 	mov	-0x10(%rsp), %rbx
-> 	ret
-> 
-> In no cases do we have to worry about enclave mucking the stack as long as
-> %rbp is preserved.
-> 
-> >>>>While this is more work, it is standard calling convention work that
-> >>>>doesn't require internal knowledge of __vdso..(). Alternatively, if we
-> >>>>don't like the extra work, we can document the %rbx hack explicitly
-> >>>>into the handler documentation and make it part of the interface. But
-> >>>>we need some explicit way for the handler to pop enclave output stack
-> >>>>params that doesn't depend on internal knowledge of the __vdso...()
-> >>>>invariants.
-> >>>
-> >>>IIUC, this is what you're suggesting?  Having to align the stack makes this
-> >>>a bit annoying, but it's not bad by any means.
-> >>>
-> >>>diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> >>>index 94a8e5f99961..05d54f79b557 100644
-> >>>--- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> >>>+++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> >>>@@ -139,8 +139,9 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> >>>         /* Pass the untrusted RSP (at exit) to the callback via %rcx. */
-> >>>         mov     %rsp, %rcx
-> >>>
-> >>>-       /* Save the untrusted RSP in %rbx (non-volatile register). */
-> >>>+       /* Save the untrusted RSP offset in %rbx (non-volatile register). */
-> >>>         mov     %rsp, %rbx
-> >>>+       and     $0xf, %rbx
-> >>>
-> >>>         /*
-> >>>          * Align stack per x86_64 ABI. Note, %rsp needs to be 16-byte aligned
-> >>>@@ -161,8 +162,8 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> >>>         mov     0x20(%rbp), %rax
-> >>>         call    .Lretpoline
-> >>>
-> >>>-       /* Restore %rsp to its post-exit value. */
-> >>>-       mov     %rbx, %rsp
-> >>>+       /* Undo the post-exit %rsp adjustment. */
-> >>>+       lea     0x20(%rsp,%rbx), %rsp
-> >>>
-> 
-> Per discussion above, this is useful only if the enclave has problem
-> cleaning up its own mess left on the untrusted stack, and the exit handler
-> wants to EENTER the enclave again by returning to __vdso...(). It sounds
-> very uncommon to me, and more like a bug than an expected behavior. Are
-> there any existing code doing this or any particular application that needs
-> this. If no, I'd say not to do it.
+Nathaniel pointed out that __vdso_sgx_enter_enclave() is tantalizingly
+close to being callable from C (with caveats and a cooperative enclave).
+The missing pieces are preserving %rbx and taking @leaf as a standard
+paramter (hey look, %rcx is available!).
 
-Ya, I'm on the fence as well.  The only counter-argument is that doing:
+As requested, update the selftest to invoke the vDSO from C, and fix
+bugs along the way.  Don't suppose you've changed your mind about waiting
+until after upstreaming to add a proper framework?
 
-	push	%rbp
-	mov	%rsp, %rbp
-	push	%rbx
+I also did a lot more testing on my internal code base to verify the
+%rsp tweaks play nice with the exit handler, and to prove that an exit
+handler can even cleanly handle exceptions in the enclave.
 
-	...
+Here's the relevant code from my internal test suite, might want to have
+eye bleach ready ;-).  I tested the exception handling by overwriting
+@ms in enter_enclave() with a bogus value, e.g. 0xdeadull << 0x48.  The
+nested call to the vDSO (in the exit handler) with EMCD_EXCEPTION has the
+enclave dump its register.  The host (this runs as cgo in a Golang process)
+dumps the exception info.
 
-	pop	%rbx
-	leave
-	ret
+I also verified the relative %rsp fixup by corrupting %rsp in the enclave,
+verifying it exploded as expected (I added extra consumption in the vDSO to
+force this) and then adding code to undo the damage in the exit handler and
+verifying things got back to normal.
 
-with the relative adjustment would allow the exit handler (or enclave) to
-change %rbx.  I'm not saying that is remote sane, but if we're going for
-maximum flexibility...
+Last thread of thought, IMO taking a context param (as suggested by
+Nathaniel) is unnecessary.  As shown below, the runtime effectively has a
+context param in the form of "struct sgx_enclave_exception *e", the handler
+just needs to be willing to cast (or use container_of()).  There are a
+multitude of other ways to pass info as well.
 
-Anyways, patches incoming, let's discuss there.
+vdso_sgx_enter_enclave_t __enter_enclave;
+
+vDSO::vDSO()
+{
+    if (__enter_enclave)
+        abort();
+
+    uintptr_t vdso = (uintptr_t)getauxval(AT_SYSINFO_EHDR);
+    vdso_init_from_sysinfo_ehdr(vdso);
+
+    __enter_enclave = (vdso_sgx_enter_enclave_t)vdso_sym("LINUX_2.6", "__vdso_sgx_enter_enclave");
+    if (!__enter_enclave)
+        abort();
+}
+
+struct sgx_vdso_ctxt {
+    sgx_exception_t e;
+    long            ret;
+    Enclave *       enclave;
+    jmp_buf         buf;
+};
+
+static int exit_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r9,
+                        void *tcs, int ret, struct sgx_enclave_exception *e)
+{
+    struct sgx_vdso_ctxt *ctxt = (struct sgx_vdso_ctxt *)e;
+    int r;
+
+    if (!ret) {
+        if (ctxt)
+            ctxt->ret = rdi;
+        return 0;
+    }
+
+    if (!ctxt)
+        exit(EFAULT);
+
+    r = __enter_enclave(ECMD_EXCEPTION, (unsigned long)&ctxt->e.regs, 0, EENTER,
+                        0, 0, tcs, NULL, exit_handler);
+    if (r)
+        exit(-r);
+
+    ctxt->enclave->set_exception(ctxt->e);
+
+    longjmp(ctxt->buf, ret);
+}
+
+sgx_status_t vDSO::enter_enclave(Enclave &enclave, const long fn, void *ms, tcs_t *tcs)
+{
+    struct sgx_vdso_ctxt ctxt;
+    ctxt.enclave = &enclave;
+
+    int ret = setjmp(ctxt.buf);
+    if (ret) {
+        if (ret != -EFAULT)
+            return SGX_ERROR_INVALID_PARAMETER;
+
+        SE_URTS_ERROR("\nEnclave exception, base = %lx, size = %lx",
+                      enclave.get_base(), enclave.get_size());
+
+        return SGX_ERROR_UNHANDLED_EXCEPTION;
+    }
+
+    ret = __enter_enclave(fn, (unsigned long)ms, 0, EENTER, 0, 0, tcs,
+                          &ctxt.e.fault, exit_handler);
+    if (ret == -EINVAL)
+        return SGX_ERROR_INVALID_PARAMETER;
+
+    return (sgx_status_t)ctxt.ret;
+}
+
+Sean Christopherson (8):
+  x86/sgx: vdso: Remove an incorrect statement the enter enclave comment
+  x86/sgx: vdso: Make the %rsp fixup on return from handler relative
+  x86/sgx: vdso: Make __vdso_sgx_enter_enclave() callable from C code
+  x86/sgx: vdso: Define a typedef for __vdso_sgx_enter_enclave
+  selftests/x86: sgx: Zero out @result before invoking vDSO sub-test
+  selftests/x86: sgx: Pass EENTER to vDSO wrapper instead of hardcoding
+  selftests/x86: sgx: Stop clobbering non-volatile registers
+  selftests/x86: Add selftest to invoke __vsgx_enter_enclave() from C
+
+ arch/x86/entry/vdso/vsgx_enter_enclave.S      | 72 ++-----------------
+ arch/x86/include/uapi/asm/sgx.h               | 61 ++++++++++++++++
+ .../selftests/x86/sgx/encl_bootstrap.S        |  6 +-
+ tools/testing/selftests/x86/sgx/main.c        | 17 ++++-
+ tools/testing/selftests/x86/sgx/sgx_call.S    |  1 -
+ tools/testing/selftests/x86/sgx/sgx_call.h    |  2 +-
+ 6 files changed, 85 insertions(+), 74 deletions(-)
+
+-- 
+2.24.1
+
