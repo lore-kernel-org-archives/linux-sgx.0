@@ -1,135 +1,157 @@
-Return-Path: <SRS0=/STu=5G=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=VWPK=5I=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10555C4332B
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Mar 2020 20:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BE7C1975A
+	for <linux-sgx@archiver.kernel.org>; Mon, 23 Mar 2020 03:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1FFF2077D
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Mar 2020 20:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EFA72070A
+	for <linux-sgx@archiver.kernel.org>; Mon, 23 Mar 2020 03:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgCUUL1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 21 Mar 2020 16:11:27 -0400
-Received: from mga11.intel.com ([192.55.52.93]:58223 "EHLO mga11.intel.com"
+        id S1726983AbgCWDqk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 22 Mar 2020 23:46:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:64502 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbgCUUL1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 21 Mar 2020 16:11:27 -0400
-IronPort-SDR: zH4aEHZ+g7v0+QJL3Gf9fg8O3V32Zv9KzQ6QThih0z6ZrqV9Lma3F1XhchMvkoyIYVd7RRVg7Z
- RToKvesT4xWQ==
+        id S1726979AbgCWDqk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 22 Mar 2020 23:46:40 -0400
+IronPort-SDR: S2KTvPP/p0rEmSfuPA0jQaMKDTt2O3fsHFhG0j1keQm84Al2AuguL6qI/ufZs8qzIxOVyBceF0
+ hHKjeLhmQd/A==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 13:11:27 -0700
-IronPort-SDR: VGDssGqPjR4Aw6jAWUkOV2rxwlhcWjzSmJSulpDZ5u6eYleoleKExCp9ojLn6NsUTa7txZDpEX
- M4XCQfLSzuDQ==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2020 20:46:39 -0700
+IronPort-SDR: GGaGk3ZEfE+fXiJVxDsXc5XmCklkwVPkEOWh2ceMYofBKRjmfO8GntFNxsHD1MWz/tJdT9TP5R
+ 2woU/kAF78Rw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,289,1580803200"; 
-   d="scan'208";a="446994199"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga006.fm.intel.com with ESMTP; 21 Mar 2020 13:11:26 -0700
-Date:   Sat, 21 Mar 2020 13:11:26 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-sgx@vger.kernel.org
-Subject: Re: [PATCH for_v29 0/8] x86/sgx: Make vDSO callable from C
-Message-ID: <20200321201126.GF13851@linux.intel.com>
-References: <20200319011130.8556-1-sean.j.christopherson@intel.com>
- <20200320005724.GA182892@linux.intel.com>
- <20200320232512.GF3866@linux.intel.com>
- <20200321005528.GA7166@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="5.72,295,1580803200"; 
+   d="scan'208";a="445661354"
+Received: from nspindel-mobl.ger.corp.intel.com (HELO localhost) ([10.214.214.10])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Mar 2020 20:46:36 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH 1/5] selftests/sgx: Add PHDRS to encl.lds
+Date:   Mon, 23 Mar 2020 05:46:30 +0200
+Message-Id: <20200323034634.4157-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200321005528.GA7166@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 02:55:28AM +0200, Jarkko Sakkinen wrote:
-> On Fri, Mar 20, 2020 at 04:25:12PM -0700, Sean Christopherson wrote:
-> > On Fri, Mar 20, 2020 at 02:57:24AM +0200, Jarkko Sakkinen wrote:
-> > > On Wed, Mar 18, 2020 at 06:11:22PM -0700, Sean Christopherson wrote:
-> > > > Sean Christopherson (8):
-> > > >   x86/sgx: vdso: Remove an incorrect statement the enter enclave comment
-> > > >   x86/sgx: vdso: Make the %rsp fixup on return from handler relative
-> > > >   x86/sgx: vdso: Make __vdso_sgx_enter_enclave() callable from C code
-> > > >   x86/sgx: vdso: Define a typedef for __vdso_sgx_enter_enclave
-> > > >   selftests/x86: sgx: Zero out @result before invoking vDSO sub-test
-> > > >   selftests/x86: sgx: Pass EENTER to vDSO wrapper instead of hardcoding
-> > > >   selftests/x86: sgx: Stop clobbering non-volatile registers
-> > > >   selftests/x86: Add selftest to invoke __vsgx_enter_enclave() from C
-> > > > 
-> > > >  arch/x86/entry/vdso/vsgx_enter_enclave.S      | 72 ++-----------------
-> > > >  arch/x86/include/uapi/asm/sgx.h               | 61 ++++++++++++++++
-> > > >  .../selftests/x86/sgx/encl_bootstrap.S        |  6 +-
-> > > >  tools/testing/selftests/x86/sgx/main.c        | 17 ++++-
-> > > >  tools/testing/selftests/x86/sgx/sgx_call.S    |  1 -
-> > > >  tools/testing/selftests/x86/sgx/sgx_call.h    |  2 +-
-> > > >  6 files changed, 85 insertions(+), 74 deletions(-)
-> > > > 
-> > > > -- 
-> > > > 2.24.1
-> > > > 
-> > > 
-> > > Might be a grazy idea but better to go through this anyway.
-> > > 
-> > > Given the premise that we need the carry the callback anyway in all
-> > > cases, why won't just have the callback.
-> > > 
-> > > Why we absolutely need the code path that fills exception info given
-> > > that we no matter what need to have a callback route?
-> > > 
-> > > Would simplify considerably to have only clear flow.
-> > 
-> > Invoking the callback uses a retpoline, which is non-trivial overhead.
-> > For runtimes that need an assembly wrapper for other reasons, and aren't
-> > using the untrusted stack, forcing them to implement a handler would be
-> > painful.
-> 
-> The non-callback route only exists because we did not know that we have
-> to do the callback route. It does not make sense to add something for
-> any other reason than absolute necessity.
+Improve encl.lds to create an ELF image that can be easily loaded without
+needing the conversion to a raw binary. This is achieved by adding PHDRS to
+encl.lds that describes the different segments.
 
-The non-callback route exists because it's simpler for the runtime to use
-if it already has an asm wrapper and doesn't do stack shenanigans, e.g. the
-runtime doesn't need to play games to get context information when handling
-an exit.
+With a simple Python program it is easy to see that the changes result in a
+sane memory layout [1]:
 
-And using a callback in conjunction with calling the vDSO from C is by no
-means necessary, e.g. if the runtime is happy to die on exceptions, or if
-it's doing clever clobbering, function annotation, longjump(), etc... to
-avoid consuming corrupted state on an exception.
+Flags Start              End
+rw-   0x0000000000200000 0x0000000000201000
+r-x   0x0000000000201000 0x0000000000202000
+rw-   0x0000000000202000 0x0000000000205000
 
-> Things would simplify in the vDSO implementation considerably. Now it is
-> overwhelmingly complex for no good reason.
+These are the start and end positions in the enclave ELF image for
+different enclave memory areas. Since all the sections are marked as being
+allocated, an ELF enclave loader can be solely based on p_offset, p_memsz
+and p_flags fields of struct Elf64_Phdr.
 
-No it wouldn't, it literally saves zero instructions (unless the vDSO
-wanted to crash the caller on a NULL pointer exception). It'd do nothing
-more than move this code:
+[1]
+import sys
+from elftools.elf.elffile import ELFFile
 
-	/* Invoke userspace's exit handler if one was provided. */
-.Lhandle_exit:
-	cmp	$0, 0x20(%rbp)
-	jne	.Linvoke_userspace_handler
+PAGE_SIZE = 0x1000
 
-up to the beginning of the code as
+if __name__ == '__main__':
+    flags2str = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx']
 
-	/* Return -EINVAL if there's no userspace exit handler. */
-	cmp	$0, 0x20(%rbp)
-	je	.Linvalid_input
+    if len(sys.argv) != 2:
+        sys.exit(1)
 
-and the exit handler invocation would get inlined.  Unless I'm missing some
-clever massaging of code, that's it.
+    with open(sys.argv[1], 'rb') as file:
+        file = ELFFile(file)
 
-At best the above could be dropped, but that's a whopping two instructions
-and a single uop.
+        print('{:<5} {:<18} {:<18}'.format('Flags', 'Start', 'End'))
+
+        for seg in file.iter_segments():
+            if seg['p_type'] != 'PT_LOAD':
+                continue
+
+            flags = flags2str[seg['p_flags']]
+
+            start = seg['p_offset'] & ~(PAGE_SIZE - 1)
+            end = start +
+	          (seg['p_filesz'] + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1)
+
+            print('{:<5} 0x{:0>16x} 0x{:0>16x}'.format(flags, start, end))
+
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ tools/testing/selftests/sgx/encl.lds         | 14 ++++++++++----
+ tools/testing/selftests/sgx/encl_bootstrap.S |  2 +-
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/sgx/encl.lds b/tools/testing/selftests/sgx/encl.lds
+index 9a56d3064104..0fbbda7e665e 100644
+--- a/tools/testing/selftests/sgx/encl.lds
++++ b/tools/testing/selftests/sgx/encl.lds
+@@ -1,25 +1,31 @@
+ OUTPUT_FORMAT(elf64-x86-64)
+ 
++PHDRS
++{
++	tcs PT_LOAD;
++	text PT_LOAD;
++	data PT_LOAD;
++}
++
+ SECTIONS
+ {
+ 	. = 0;
+ 	.tcs : {
+ 		*(.tcs*)
+-	}
++	} : tcs
+ 
+ 	. = ALIGN(4096);
+ 	.text : {
+ 		*(.text*)
+ 		*(.rodata*)
+-	}
++	} : text
+ 
+ 	. = ALIGN(4096);
+ 	.data : {
+ 		*(.data*)
+-	}
++	} : data
+ 
+ 	/DISCARD/ : {
+-		*(.data*)
+ 		*(.comment*)
+ 		*(.note*)
+ 		*(.debug*)
+diff --git a/tools/testing/selftests/sgx/encl_bootstrap.S b/tools/testing/selftests/sgx/encl_bootstrap.S
+index 3a1479f1cdcf..b9ea6130e422 100644
+--- a/tools/testing/selftests/sgx/encl_bootstrap.S
++++ b/tools/testing/selftests/sgx/encl_bootstrap.S
+@@ -7,7 +7,7 @@
+ 	.byte 0x0f, 0x01, 0xd7
+ 	.endm
+ 
+-	.section ".tcs", "a"
++	.section ".tcs", "aw"
+ 	.balign	4096
+ 
+ 	.fill	1, 8, 0			# STATE (set by CPU)
+-- 
+2.25.1
+
