@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D79C43331
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Mar 2020 11:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A9DC43331
+	for <linux-sgx@archiver.kernel.org>; Tue, 31 Mar 2020 11:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF35820658
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Mar 2020 11:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF4F7206DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 31 Mar 2020 11:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbgCaLon (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 31 Mar 2020 07:44:43 -0400
-Received: from mga17.intel.com ([192.55.52.151]:15944 "EHLO mga17.intel.com"
+        id S1730642AbgCaLot (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 31 Mar 2020 07:44:49 -0400
+Received: from mga07.intel.com ([134.134.136.100]:45935 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730366AbgCaLon (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:44:43 -0400
-IronPort-SDR: OSPqXFkXqTJvuiN2DZgRp4BtwEAs8c4Bm1GX7Ftf7hyOnL+oCmKmvvx69RYKoADkttbfbipAvb
- KxiNDyHwVxlg==
+        id S1730542AbgCaLot (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 31 Mar 2020 07:44:49 -0400
+IronPort-SDR: HfFVOmP3xn8ijXeOQewJ7uPFRTHuxv6GTXLIPvfl3dxDjVrdw015nc/rzMuyyFBi7ffGpD4+xr
+ Q47sfqvgEKSQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 04:44:43 -0700
-IronPort-SDR: 3eMP/DmcO1bPzc7id5tY7e4Wz9QMOVZMZMIcn615ZODyBTAWhXPPTjAQ6DpUWqhs8k7qwyDxAX
- 1FFekoogMZdA==
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 04:44:48 -0700
+IronPort-SDR: S36AzHGR9Nb+BXDuEFT3Ql9WYve7T1kjLSvwIzZ5kO+RNvMRpW/UfOBRDnJhKJeypCfdRIGlUJ
+ ZowhcH2l5k+g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
-   d="scan'208";a="272717046"
+   d="scan'208";a="272717070"
 Received: from tking1-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.59.94])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Mar 2020 04:44:40 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 31 Mar 2020 04:44:44 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     kai.svahn@intel.com, bruce.schlobohm@intel.com,
@@ -39,9 +39,9 @@ Cc:     kai.svahn@intel.com, bruce.schlobohm@intel.com,
         Casey Schaufler <casey@schaufler-ca.com>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH 1/4] x86/sgx: Remove PROT_NONE branch from sgx_encl_may_map().
-Date:   Tue, 31 Mar 2020 14:44:29 +0300
-Message-Id: <20200331114432.7593-2-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 2/4] x86/sgx: Put enclaves into anonymous files
+Date:   Tue, 31 Mar 2020 14:44:30 +0300
+Message-Id: <20200331114432.7593-3-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200331114432.7593-1-jarkko.sakkinen@linux.intel.com>
 References: <20200331114432.7593-1-jarkko.sakkinen@linux.intel.com>
@@ -52,25 +52,9 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-sgx_encl_may_map() always succeeding when PROT_NONE is given is not that
-useful behaviour as one can just well as do an anonymous mapping as
-demonstrated by the change in this patch to the test program. As a
-consequence, remove the special case.
-
-Pratically any possible way to make sure that you don't overwrite anything
-useful in the memory, should be fine. MAP_FIXED does not care what's
-underneath (if you want't it to care you ought to use
-MAP_FIXED_NO_REPLACE).
-
-After this change, the selftest run called sgx_mmap() only three times
-(TCS, text, data) instead of four.
-
-        test_sgx-1811  [002] ....   586.907585: sgx_mmap <-mmap_region
-        test_sgx-1811  [002] ....   586.911752: sgx_mmap <-mmap_region
-        test_sgx-1811  [002] ....   586.911756: sgx_mmap <-mmap_region
-
-This also gives more angles to segregate enclave building and mapping as
-the mmap()'s need to be applied only when the enclave is fully built:
+When creating an enclave attach it to an anonymous file. This prepares the
+code to have a separate interface at runtime, which can be published to the
+user space after the enclave has been fully initialized.
 
 Cc: luto@kernel.org
 Cc: Stephen Smalley <sds@tycho.nsa.gov>
@@ -79,95 +63,174 @@ Cc: Haitao Huang <haitao.huang@linux.intel.com>
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- Documentation/x86/sgx.rst          | 13 +++++--------
- arch/x86/kernel/cpu/sgx/encl.c     |  7 +------
- arch/x86/kernel/cpu/sgx/ioctl.c    |  5 -----
- tools/testing/selftests/sgx/load.c |  3 ++-
- 4 files changed, 8 insertions(+), 20 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver.c | 102 +++++++++++++++++++++----------
+ arch/x86/kernel/cpu/sgx/ioctl.c  |   3 +-
+ 2 files changed, 71 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
-index 79de1f01aa5b..9609a3409ad1 100644
---- a/Documentation/x86/sgx.rst
-+++ b/Documentation/x86/sgx.rst
-@@ -168,14 +168,11 @@ accounted to the processes of which behalf the kernel happened to be acting on.
- Access control
- ==============
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 997a7f4117c5..1c825ef957db 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -6,6 +6,7 @@
+ #include <linux/mman.h>
+ #include <linux/security.h>
+ #include <linux/suspend.h>
++#include <linux/anon_inodes.h>
+ #include <asm/traps.h>
+ #include "driver.h"
+ #include "encl.h"
+@@ -21,35 +22,7 @@ u64 sgx_attributes_reserved_mask;
+ u64 sgx_xfrm_reserved_mask = ~0x3;
+ u32 sgx_xsave_size_tbl[64];
  
--`mmap()` permissions are capped by the enclave permissions. The consequences of
--this is are:
+-static int sgx_open(struct inode *inode, struct file *file)
+-{
+-	struct sgx_encl *encl;
+-	int ret;
 -
--1. Pages for a VMA must built before `mmap()` can be applied with the
--   permissions required for running the enclave.
--2. An address range for an enclave can be reserved with a `PROT_NONE` mapping
--   (not required but usually makes sense to guarantee that the used address
--   range is available).
-+`mmap()` permissions are capped by the enclave permissions. A direct
-+consequence of this is that all the pages for an address range must be added
-+before `mmap()` can be applied. Effectively an enclave page with minimum
-+permission in the address range sets the permission cap for the mapping
-+operation.
- 
- Usage Models
- ============
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index d6a19bdd1921..e0124a2f22d5 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -288,8 +288,7 @@ static unsigned int sgx_vma_fault(struct vm_fault *vmf)
-  *
-  * Iterate through the enclave pages contained within [@start, @end) to verify
-  * the permissions requested by @vm_prot_bits do not exceed that of any enclave
-- * page to be mapped.  Page addresses that do not have an associated enclave
-- * page are interpreted to zero permissions.
-+ * page to be mapped.
-  *
-  * Return:
-  *   0 on success,
-@@ -308,10 +307,6 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
- 	if (!!(current->personality & READ_IMPLIES_EXEC))
- 		return -EACCES;
- 
--	/* PROT_NONE always succeeds. */
--	if (!vm_prot_bits)
--		return 0;
+-	encl = kzalloc(sizeof(*encl), GFP_KERNEL);
+-	if (!encl)
+-		return -ENOMEM;
 -
- 	idx_start = PFN_DOWN(start);
- 	idx_end = PFN_DOWN(end - 1);
+-	atomic_set(&encl->flags, 0);
+-	kref_init(&encl->refcount);
+-	INIT_LIST_HEAD(&encl->va_pages);
+-	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
+-	mutex_init(&encl->lock);
+-	INIT_LIST_HEAD(&encl->mm_list);
+-	spin_lock_init(&encl->mm_lock);
+-
+-	ret = init_srcu_struct(&encl->srcu);
+-	if (ret) {
+-		kfree(encl);
+-		return ret;
+-	}
+-
+-	file->private_data = encl;
+-
+-	return 0;
+-}
+-
+-static int sgx_release(struct inode *inode, struct file *file)
++static int sgx_encl_file_release(struct inode *inode, struct file *file)
+ {
+ 	struct sgx_encl *encl = file->private_data;
+ 	struct sgx_encl_mm *encl_mm;
+@@ -84,6 +57,68 @@ static int sgx_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
  
++static const struct file_operations sgx_encl_file_fops = {
++	.owner			= THIS_MODULE,
++	.release		= sgx_encl_file_release,
++};
++
++static int sgx_open(struct inode *inode, struct file *file)
++{
++	struct file *encl_file = NULL;
++	struct sgx_encl *encl = NULL;
++	int ret;
++
++	encl = kzalloc(sizeof(*encl), GFP_KERNEL);
++	if (!encl) {
++		ret = -ENOMEM;
++		goto err;
++	}
++
++	encl_file = anon_inode_getfile("[sgx]", &sgx_encl_file_fops, encl,
++				       O_RDWR);
++	if (IS_ERR(encl_file)) {
++		ret = PTR_ERR(encl_file);
++		goto err;
++	}
++
++	ret = init_srcu_struct(&encl->srcu);
++	if (ret)
++		goto err;
++
++	atomic_set(&encl->flags, 0);
++	kref_init(&encl->refcount);
++	INIT_LIST_HEAD(&encl->va_pages);
++	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
++	mutex_init(&encl->lock);
++	INIT_LIST_HEAD(&encl->mm_list);
++	spin_lock_init(&encl->mm_lock);
++
++	file->private_data = encl_file;
++
++	return 0;
++
++err:
++	if (encl_file)
++		fput(encl_file);
++
++	kfree(encl);
++	return ret;
++}
++
++static int sgx_encl_dev_release(struct inode *inode, struct file *file)
++{
++	struct file *encl_file = file->private_data;
++
++	/*
++	 * Can be NULL when the enclave file has been handed over to the
++	 * user space.
++	 */
++	if (encl_file)
++		fput(encl_file);
++
++	return 0;
++}
++
+ #ifdef CONFIG_COMPAT
+ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+ 			      unsigned long arg)
+@@ -94,7 +129,8 @@ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+ 
+ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+-	struct sgx_encl *encl = file->private_data;
++	struct file *encl_file = file->private_data;
++	struct sgx_encl *encl = encl_file->private_data;
+ 	int ret;
+ 
+ 	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end,
+@@ -128,10 +164,10 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
+ 	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
+ }
+ 
+-static const struct file_operations sgx_encl_fops = {
++static const struct file_operations sgx_encl_dev_fops = {
+ 	.owner			= THIS_MODULE,
+ 	.open			= sgx_open,
+-	.release		= sgx_release,
++	.release		= sgx_encl_dev_release,
+ 	.unlocked_ioctl		= sgx_ioctl,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl		= sgx_compat_ioctl,
+@@ -148,7 +184,7 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "enclave",
+ 	.nodename = "sgx/enclave",
+-	.fops = &sgx_encl_fops,
++	.fops = &sgx_encl_dev_fops,
+ };
+ 
+ static struct miscdevice sgx_dev_provision = {
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 12e1496f8a8b..3af0596530a8 100644
+index 3af0596530a8..891aa9395907 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -481,15 +481,10 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
-  *
-  * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
-  * 2. A TCS page: PROT_R | PROT_W.
-- * 3. No page: PROT_NONE.
-  *
-  * mmap() is not allowed to surpass the minimum of the maximum protection bits
-  * within the given address range.
-  *
-- * As stated above, a non-existent page is interpreted as a page with no
-- * permissions. In effect, this allows mmap() with PROT_NONE to be used to seek
-- * an address range for the enclave that can be then populated into SECS.
-- *
-  * If ENCLS opcode fails, that effectively means that EPC has been invalidated.
-  * When this happens the enclave is destroyed and -EIO is returned to the
-  * caller.
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 35a2d7a47dd5..53c565347e9e 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -231,7 +231,8 @@ static bool encl_map_area(struct encl *encl)
- 	size_t encl_size = encl->encl_size;
- 	void *area;
+@@ -766,7 +766,8 @@ static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
  
--	area = mmap(NULL, encl_size * 2, PROT_NONE, MAP_SHARED, encl->fd, 0);
-+	area = mmap(NULL, encl_size * 2, PROT_NONE,
-+		    MAP_SHARED | MAP_ANONYMOUS, -1, 0);
- 	if (area == MAP_FAILED) {
- 		perror("mmap");
- 		return false;
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ {
+-	struct sgx_encl *encl = filep->private_data;
++	struct file *encl_file = filep->private_data;
++	struct sgx_encl *encl = encl_file->private_data;
+ 	int ret, encl_flags;
+ 
+ 	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
 -- 
 2.25.1
 
