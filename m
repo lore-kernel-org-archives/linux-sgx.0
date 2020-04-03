@@ -2,238 +2,150 @@ Return-Path: <SRS0=nYZY=5T=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2570AC43331
-	for <linux-sgx@archiver.kernel.org>; Fri,  3 Apr 2020 09:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B4FC2BA16
+	for <linux-sgx@archiver.kernel.org>; Fri,  3 Apr 2020 14:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E404820737
-	for <linux-sgx@archiver.kernel.org>; Fri,  3 Apr 2020 09:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3380E2082F
+	for <linux-sgx@archiver.kernel.org>; Fri,  3 Apr 2020 14:35:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="R77Ljzcs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbgDCJf4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 3 Apr 2020 05:35:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:35407 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbgDCJf4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 3 Apr 2020 05:35:56 -0400
-IronPort-SDR: R9ucKx1jHruN25fP0WCUR6GbJyFdUA7kXFSxuhqw5QIgLycfWmXO67/JOkUO7T7W3wTuaPMQii
- nhWIIeGKR+LA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2020 02:35:55 -0700
-IronPort-SDR: ZxeAP+Y8NPzCf4LPsb/BfUUnpR6zJwk4On2qJzPbuOTLqS7BW2Y9lRuJCCWxqnhbD3wMjCaeEb
- HSR35py4hFmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,339,1580803200"; 
-   d="scan'208";a="449970655"
-Received: from unknown (HELO localhost) ([10.249.36.140])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Apr 2020 02:35:53 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
+        id S1728060AbgDCOfU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 3 Apr 2020 10:35:20 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:41721
+        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403865AbgDCOfU (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 3 Apr 2020 10:35:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1585924518; bh=2IAy0s6Ogeiy95zWtGLDWhRZrlQUf8RNyl8TfrtGX6I=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=R77LjzcsBLJhSSJm53hn1WLSYVHh4h3q3HTxGvbTzPWUUiKDZMUWyb+wig9Uh3zrbfksffdp16Y3V4FBG3oGOuJF1DsxFVHw7VezwewWJmxcDtkWo6Xdyj7ZlpL5ZHrj4lFdmZMzHV9xZ5I1RIYJXHp20JiDO0ZTw4t/45TilrgDkzUQzJZCTFtf4oyGliapsMVGxBuX+8Ld5MOkGrrwEsii7VIzC8sNDlFo/cF2iIaN2S/3302FPLRh7v9rI1EWBg81vZJ6oZsSfLfoYnGx7e83Ui5G9PoruTKpBz/qlYPfgPdBXVPoK2jXek9DB4VKyT6DK9/wdL2eXHRppjWGMg==
+X-YMail-OSG: 4Orft34VM1kI1Jh1WjBC45vrzeeEeprnC3boLKoyZCwojfI_8L4o3sICAhuvkk.
+ tJuTqNl_rRx8OumBzhbSPKY336dldHHOnCpnYSxdVCplFi7VoJBBW3JxQZo6oq5UNeg.E3ufQe_6
+ yTMD4T.8r5uFe7WKXQ49bFWwvJSizlVaBb23ziH1Um1tcu7QbGxp9Ec2bZJrWBaQSfnthuZYYYcN
+ wyriB3WQDV9Mw2F6WVjqwnC73TJWwYRf2_jRKRDXrD.gDbLkWch0VuUJILuEkh_OUch9T5daGIOJ
+ HxT7QtyQssX4jxaFw1rrS8XaKgVfbVU2oMOW46xkbemIiUi18bNnoeg8.gXSRC8jJW2MN47ymQcu
+ jGP3mMdfLeNdERg4Akn6d0x16rMt2Ftqodb8zhF3Yl7QvYNawo1h9oLJpoK06M9Eq1TKOG3nspJL
+ BbwwJvCoMMr.rsNQLbmvJRzOJK9SyPIG0wac.VWJg.4rZNZZjexApgJGKjvCgdW9fvM54yh5vE_W
+ bBgfxrGM_g.aopvbs0omQRZmP5BY6X.xrCw9pEI22RyFaGxUmyxLnun72nzjFdVmIkLsdO6UpkSc
+ dZmJpHknuurWLSQcM7wi4E0AOqlN6NRfgQkTCWMvEsNENSiI7qiSbW.SXqtJAwFDoiaBmasQzl_q
+ L6l5VGEy7JYBo9uptyFBsOzMhqWIvqPHeS.GIbFk_iGupxhBA6.m1arUTffbDDEY1SQbq5C8Zl8h
+ NYjWmd7aT5evOm9ut9mBhogCly3lDefDZV9TxtvCZ1tm7xShu3yNuw6JKATrOjCEVTJP0wIUC5Or
+ 47aRC1oW3ioVxv1c0gLQxbH7Kn5HqpGR2QVtUQ2fFuC60_cFlGB.zqMoUlFEuP1ZL2JfummQdi5P
+ nOsfsEYg20p7Ui4tjL6UpMH.LKVD0_pM_HnX7Klc3E_iTInv1rjHbphL4CUyJ2fVWdL5l_vEJeEp
+ y9cE8UChO1HPUd5U627O.WWqM7Diel53vMCl4lDRpduk4iwWU8MbUBIJZQFKl6cQSdecneGaVsIw
+ uHrAtJIxmphIC_5PZXGTjKKXMFqOG5wWWDIpGVKPmnuD8S17GUBmEtOhbkD348Xt7_4CaRjm.z6h
+ 0ZSbqPbnmbht_rnSE.ARswOpCKlODwxm2YkwIRfcH3xr7VRJQrTaDH.mr2nxeS7kyqicbXzSWdNh
+ 50YotS_O0ILM4J73eX2eB0M3kLi_YLjb_uI5R78ZMqMZfAnSGfCPnMxkBjSoJY8H2RmTzCINh9gp
+ 8tJTxDYg.6u38G10g9XGbXr6G6xCpRmId4P_rQM.aW.6OGTpLZe3wAaW4kFt5cqec0n1aWn.6RvG
+ xbWZ_gHR7ebfP6a68_t5C_CMxZh.o7zsx9zP6ei_1eyh0NFd8NKI7yq6nkeXNQDjadz2AzJNWsuz
+ eEk_2a5bOjYwRDjeZIyOzg2feK6jVRrm7WSVEK1O4Y04t.LcPNtY-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Fri, 3 Apr 2020 14:35:18 +0000
+Received: by smtp412.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a667f4896cb4a8a28adbcc4b9aac56c7;
+          Fri, 03 Apr 2020 14:35:17 +0000 (UTC)
+Subject: Re: [PATCH 2/4] x86/sgx: Put enclaves into anonymous files
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, casey.schaufler@intel.com
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v2] x86/sgx: Fix deadlock and race conditions between fork() and EPC reclaim
-Date:   Fri,  3 Apr 2020 12:35:50 +0300
-Message-Id: <20200403093550.104789-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+        linux-sgx@vger.kernel.org, "Svahn, Kai" <kai.svahn@intel.com>,
+        "Schlobohm, Bruce" <bruce.schlobohm@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Haitao Huang <haitao.huang@linux.intel.com>
+References: <20200331114432.7593-1-jarkko.sakkinen@linux.intel.com>
+ <20200331114432.7593-3-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXz4YK9ubCAyBLm4BjqYEK-wt1491QPLDyumJe9t0LJ2A@mail.gmail.com>
+ <20200401002443.GE4847@linux.intel.com>
+ <CALCETrW8pLFRAnQdpxuBG-CDuUN5B8T-FqN5TvAVD--ZR=78-Q@mail.gmail.com>
+ <20200403065621.GB25305@linux.intel.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <f8698536-074e-6562-05df-26145a4c43b9@schaufler-ca.com>
+Date:   Fri, 3 Apr 2020 07:35:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200403065621.GB25305@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.15585 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Drop the synchronize_srcu() from sgx_encl_mm_add() and replace it with a
-mm_list versioning concept to avoid deadlock when adding a mm during
-dup_mmap()/fork(), and to ensure copied PTEs are zapped.
+On 4/2/2020 11:56 PM, Jarkko Sakkinen wrote:
+> On Thu, Apr 02, 2020 at 02:41:39PM -0700, Andy Lutomirski wrote:
+>> On Tue, Mar 31, 2020 at 5:24 PM Sean Christopherson
+>> <sean.j.christopherson@intel.com> wrote:
+>>> On Tue, Mar 31, 2020 at 10:39:38AM -0700, Andy Lutomirski wrote:
+>>>
+>>> If EXECMEM is a sticking point, one way to dodge it would be to add a
+>>> helper to allow SELinux to detect enclave files.  It'd be ugly, but simple.
+>>> That doesn't solve the generic labeling issue though.  It also begs the
+>>> question of why hacking SELinux but not do_mmap() would be acceptable.
+>>>
+>>> If you have any ideas for fixing the noexec issue without resorting to an
+>>> anon inode, we're all ears.
+>> Hmm.  Maybe teach udev to put /dev/sgx on a different fs and
+>> bind-mount it?  Or make /dev/sgx be an actual filesystem?  Or just
+>> mount /dev with exec enabled?
+> I'm not forseeing how the last option could work out as it is distro's
+> choice.
+>
+> Casey, do you think we could use securityfs for this or do you have some
+> other recommendation? I'm just asking you because you've used securityfs
+> a lot.
 
-When dup_mmap() runs, it holds mmap_sem for write in both the old mm and
-new mm.  Invoking synchronize_srcu() while holding mmap_sem of a mm that
-is already attached to the enclave will deadlock if the reclaimer is in
-the process of walking mm_list, as the reclaimer will try to acquire
-mmap_sem (of the old mm) while holding encl->srcu for read.
+I don't know how well securityfs works when mounted in a container,
+but otherwise it would seem like a viable option. On the other hand,
+pseudo filesystems are pretty easy to write, so /sys/fs/sgxfs wouldn't
+be a bad choice, either.
 
- INFO: task ksgxswapd:181 blocked for more than 120 seconds.
- ksgxswapd       D    0   181      2 0x80004000
- Call Trace:
-  __schedule+0x2db/0x700
-  schedule+0x44/0xb0
-  rwsem_down_read_slowpath+0x370/0x470
-  down_read+0x95/0xa0
-  sgx_reclaim_pages+0x1d2/0x7d0
-  ksgxswapd+0x151/0x2e0
-  kthread+0x120/0x140
-  ret_from_fork+0x35/0x40
-
- INFO: task fork_consistenc:18824 blocked for more than 120 seconds.
- fork_consistenc D    0 18824  18786 0x00004320
- Call Trace:
-  __schedule+0x2db/0x700
-  schedule+0x44/0xb0
-  schedule_timeout+0x205/0x300
-  wait_for_completion+0xb7/0x140
-  __synchronize_srcu.part.22+0x81/0xb0
-  synchronize_srcu_expedited+0x27/0x30
-  synchronize_srcu+0x57/0xe0
-  sgx_encl_mm_add+0x12b/0x160
-  sgx_vma_open+0x22/0x40
-  dup_mm+0x521/0x580
-  copy_process+0x1a56/0x1b50
-  _do_fork+0x85/0x3a0
-  __x64_sys_clone+0x8e/0xb0
-  do_syscall_64+0x57/0x1b0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Furthermore, doing synchronize_srcu() in sgx_encl_mm_add() does not
-prevent the new mm from having stale PTEs pointing at the EPC page to be
-reclaimed.  dup_mmap() calls vm_ops->open()/sgx_encl_mm_add() _after_
-PTEs are copied to the new mm, i.e. blocking fork() until reclaim zaps
-the old mm is pointless as the stale PTEs have already been created in
-the new mm.
-
-All other flows that walk mm_list can safely race with dup_mmap() or are
-protected by a different mechanism.  Add comments to all srcu readers
-that don't check the list version to document why its ok for the flow to
-ignore the version.
-
-Note, synchronize_srcu() is still needed when removing a mm from an
-enclave, as the srcu readers must complete their walk before the mm can
-be freed.  Removing a mm is never done while holding mmap_sem.
-
-Cc: Haitao Huang <haitao.huang@linux.intel.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-v2:
-* Remove smp_wmb() as x86 does not reorder writes in the pipeline.
-* Refine comments to be more to the point and more maintainable when
-  things might change.
-* Replace the ad hoc (goto-based) loop construct with a proper loop
-  construct.
- arch/x86/kernel/cpu/sgx/encl.c    | 11 +++++++--
- arch/x86/kernel/cpu/sgx/encl.h    |  1 +
- arch/x86/kernel/cpu/sgx/reclaim.c | 39 +++++++++++++++++++++----------
- 3 files changed, 37 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index e0124a2f22d5..5b15352b3d4f 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -196,6 +196,9 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
- 	struct sgx_encl_mm *encl_mm;
- 	int ret;
- 
-+	/* mm_list can be accessed only by a single thread at a time. */
-+	lockdep_assert_held_write(&mm->mmap_sem);
-+
- 	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD)
- 		return -EINVAL;
- 
-@@ -221,12 +224,16 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
- 		return ret;
- 	}
- 
-+	/*
-+	 * The page reclaimer uses list version for synchronization instead of
-+	 * synchronize_scru() because otherwise we could conflict with
-+	 * dup_mmap().
-+	 */
- 	spin_lock(&encl->mm_lock);
- 	list_add_rcu(&encl_mm->list, &encl->mm_list);
-+	encl->mm_list_version++;
- 	spin_unlock(&encl->mm_lock);
- 
--	synchronize_srcu(&encl->srcu);
--
- 	return 0;
- }
- 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 44b353aa8866..f0f72e591244 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -74,6 +74,7 @@ struct sgx_encl {
- 	struct mutex lock;
- 	struct list_head mm_list;
- 	spinlock_t mm_lock;
-+	unsigned long mm_list_version;
- 	struct file *backing;
- 	struct kref refcount;
- 	struct srcu_struct srcu;
-diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
-index 39f0ddefbb79..5fb8bdfa6a1f 100644
---- a/arch/x86/kernel/cpu/sgx/reclaim.c
-+++ b/arch/x86/kernel/cpu/sgx/reclaim.c
-@@ -184,28 +184,38 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
- 	struct sgx_encl_page *page = epc_page->owner;
- 	unsigned long addr = SGX_ENCL_PAGE_ADDR(page);
- 	struct sgx_encl *encl = page->encl;
-+	unsigned long mm_list_version;
- 	struct sgx_encl_mm *encl_mm;
- 	struct vm_area_struct *vma;
- 	int idx, ret;
- 
--	idx = srcu_read_lock(&encl->srcu);
-+	do {
-+		mm_list_version = encl->mm_list_version;
- 
--	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
--		if (!mmget_not_zero(encl_mm->mm))
--			continue;
-+		/* Fence reads as the CPU can reorder them. This guarantees
-+		 * that we don't access old list with a new version.
-+		 */
-+		smp_rmb();
- 
--		down_read(&encl_mm->mm->mmap_sem);
-+		idx = srcu_read_lock(&encl->srcu);
- 
--		ret = sgx_encl_find(encl_mm->mm, addr, &vma);
--		if (!ret && encl == vma->vm_private_data)
--			zap_vma_ptes(vma, addr, PAGE_SIZE);
-+		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+			if (!mmget_not_zero(encl_mm->mm))
-+				continue;
- 
--		up_read(&encl_mm->mm->mmap_sem);
-+			down_read(&encl_mm->mm->mmap_sem);
- 
--		mmput_async(encl_mm->mm);
--	}
-+			ret = sgx_encl_find(encl_mm->mm, addr, &vma);
-+			if (!ret && encl == vma->vm_private_data)
-+				zap_vma_ptes(vma, addr, PAGE_SIZE);
- 
--	srcu_read_unlock(&encl->srcu, idx);
-+			up_read(&encl_mm->mm->mmap_sem);
-+
-+			mmput_async(encl_mm->mm);
-+		}
-+
-+		srcu_read_unlock(&encl->srcu, idx);
-+	} while (unlikely(encl->mm_list_version != mm_list_version));
- 
- 	mutex_lock(&encl->lock);
- 
-@@ -250,6 +260,11 @@ static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
- 	struct sgx_encl_mm *encl_mm;
- 	int idx;
- 
-+	/*
-+	 * Can race with sgx_encl_mm_add(), but ETRACK has already been
-+	 * executed, which means that the CPUs running in the new mm will enter
-+	 * into the enclave with a fresh epoch.
-+	 */
- 	cpumask_clear(cpumask);
- 
- 	idx = srcu_read_lock(&encl->srcu);
--- 
-2.25.1
-
+>
+> /Jarkko
