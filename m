@@ -1,41 +1,41 @@
-Return-Path: <SRS0=hoRE=5Y=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=ycpU=5Z=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60BBC2D0F4
-	for <linux-sgx@archiver.kernel.org>; Wed,  8 Apr 2020 21:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C69FC2BA19
+	for <linux-sgx@archiver.kernel.org>; Thu,  9 Apr 2020 18:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF2BB20771
-	for <linux-sgx@archiver.kernel.org>; Wed,  8 Apr 2020 21:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9325206F7
+	for <linux-sgx@archiver.kernel.org>; Thu,  9 Apr 2020 18:39:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbgDHV3i (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 8 Apr 2020 17:29:38 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51052 "EHLO mga07.intel.com"
+        id S1726571AbgDISjU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 9 Apr 2020 14:39:20 -0400
+Received: from mga18.intel.com ([134.134.136.126]:25550 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730426AbgDHV3i (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 8 Apr 2020 17:29:38 -0400
-IronPort-SDR: ECQm23R4tEpbmQO1mJC9UtmvRigonWA7FfTsgG0WCKNVJIXo3TKyVjkAnq81IPcVlLt2TqdfO5
- qIh5aSz+qLTQ==
+        id S1726470AbgDISjU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 9 Apr 2020 14:39:20 -0400
+IronPort-SDR: RAiM7fj7eyUtc5jiY/KlNY5W1Lp4rI/NLZoSbYxuo44mOPP02zqcKblGrWEofq3NSo/IiZYIZ4
+ +glt/DuwB7wg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2020 14:29:36 -0700
-IronPort-SDR: SrCnyy26s0mU/2cv6VLv5pPBzBKxi9WLdNUclSzX0lZ1LnYUetF1kYz9tKiG1lmMV2aZlSH2rJ
- 3mHVQrdNuZlg==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 11:39:20 -0700
+IronPort-SDR: qU33k3axnlzWfwMAMiWI2dKHzzYDMLHgdsD3wfP8f/hX4b8liIea1HrUxZN1vTzDKD2jvEWrMm
+ S8AjNz4zrp2g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,359,1580803200"; 
-   d="scan'208";a="361955390"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Apr 2020 14:29:36 -0700
-Date:   Wed, 8 Apr 2020 14:29:35 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Topi Miettinen <toiwoton@gmail.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
+X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
+   d="scan'208";a="362238029"
+Received: from abdelh1x-mobl.amr.corp.intel.com (HELO localhost) ([10.249.42.247])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Apr 2020 11:39:17 -0700
+Date:   Thu, 9 Apr 2020 21:39:16 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     Topi Miettinen <toiwoton@gmail.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Andy Lutomirski <luto@kernel.org>, casey.schaufler@intel.com,
@@ -45,7 +45,7 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         ben@decadent.org.uk
 Subject: Re: [PATCH 2/4] x86/sgx: Put enclaves into anonymous files
-Message-ID: <20200408212935.GC11322@linux.intel.com>
+Message-ID: <20200409183904.GA28876@linux.intel.com>
 References: <20200406185530.GE20105@linux.intel.com>
  <F4B63BCD-F554-4BE2-B3AE-4ADB6C2F4285@amacapital.net>
  <20200406212434.GA34134@linux.intel.com>
@@ -55,26 +55,51 @@ References: <20200406185530.GE20105@linux.intel.com>
  <20200407180410.GA17916@linux.intel.com>
  <7009f0e2-cdfc-1703-2b73-bb683a89c8d1@gmail.com>
  <20200408134049.GB4097@linux.intel.com>
- <64ee4f81-0169-e4f1-9bfb-1b369ee917c4@gmail.com>
+ <20200408145636.GD10686@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <64ee4f81-0169-e4f1-9bfb-1b369ee917c4@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200408145636.GD10686@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Apr 09, 2020 at 12:15:36AM +0300, Topi Miettinen wrote:
-> On 8.4.2020 16.40, Jarkko Sakkinen wrote:
-> >What starts to be obvious is that we don't do anything in code level
-> >in SGX particular but instead workaround something around /dev.
+On Wed, Apr 08, 2020 at 07:56:36AM -0700, Sean Christopherson wrote:
+> On Wed, Apr 08, 2020 at 04:40:49PM +0300, Jarkko Sakkinen wrote:
+> > What starts to be obvious is that we don't do anything in code level
+> > in SGX particular but instead workaround something around /dev.
 > 
-> If you take the /dev/sgx path, perhaps you could use KVM as a reference. It
-> uses a similar special device /dev/kvm, works well with noexec /dev but
-> still it can be used to do much more complex stuff than SGX.
+> Can you summarize the plan going forward?  Thanks!
 
-But userspace doesn't need to mmap() /dev/kvm with PROT_EXEC, that's the
-rub.  KVM uses anon inodes for VMs, vCPUs, etc..., but doing that on SGX
-runs afould of SELinux's PROCESS_EXECMEM, again due to mmap() PROT_EXEC.
+Sure.
+
+The summary is that the permission problem should be solved outside of
+SGX. Doing an FS is somewhat big hammer to sort out the permission
+problem. It will also make configuration more clunky i.e.  kernel
+defines some static permissions and then let say the systemd unit file
+will overwrite them with some other. It is somewhat more sound to have
+the udev db to contain the permissions.
+
+Admitting that we don't have exact solutions I think we have enough
+knowledge to say that things can be refined to work for SGX outside of
+SGX.
+
+I've been playing with the idea to add something like SB_I_DEVMMAPEXEC [1]
+to superblock flags. This would be set by devtmpfs
+(drivers/base/devtmpfs.c) initialization code. Then do_mmap_pgoff should
+check this flag from superblock and that we are mapping a device node.
+If these premises are fulfilled, then it would allow mmap().
+
+This will make exec work when mapping device nodes but does not allow
+attacker to put executable to /dev and run them in the threat scenario
+described by Topi [2].
+
+Andy also mentioned that he was going mail to udev ML but have not
+checked that at this point.
+
+[1] For explicit control of this new behavior also mnt flag is needed.
+[2] https://patchwork.kernel.org/patch/11467637/#23269417
+
+/Jarkko
