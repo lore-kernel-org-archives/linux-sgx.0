@@ -1,156 +1,104 @@
-Return-Path: <SRS0=rwFw=52=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=D2+C=54=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0E8C2BA2B
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 Apr 2020 13:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C019CC2BA2B
+	for <linux-sgx@archiver.kernel.org>; Sun, 12 Apr 2020 14:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA8F20A8B
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 Apr 2020 13:22:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96FB3206E9
+	for <linux-sgx@archiver.kernel.org>; Sun, 12 Apr 2020 14:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726009AbgDJNWs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 10 Apr 2020 09:22:48 -0400
-Received: from mga09.intel.com ([134.134.136.24]:10664 "EHLO mga09.intel.com"
+        id S1727078AbgDLOUL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 12 Apr 2020 10:20:11 -0400
+Received: from mga12.intel.com ([192.55.52.136]:38326 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbgDJNWr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 10 Apr 2020 09:22:47 -0400
-IronPort-SDR: yEcNKuvp96++8D26blt/rWAlwby5TnYvLSdebwCq6IS9rF/XNVmL6M5aVLwuEZE4PoI4uvSKe0
- NY/BUFcKe9LQ==
+        id S1726818AbgDLOUL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 12 Apr 2020 10:20:11 -0400
+IronPort-SDR: 1KsKLGKbNCFfS9KguAvIrXLJUxVGkNjVP69Gs8kTqy2di6LZJ/fiMoKs2cjTv6c73rasyZlBvY
+ jCmYj0YDlLzQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2020 06:22:47 -0700
-IronPort-SDR: V1IEw/Q4CeHrufwHm+WUND1CGlDrCN2bIg6h8oX4gNTh/7J28M0KQ5SXDoWY6haXOr2KsJbRBs
- T4i6IEsm/a4Q==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2020 07:20:11 -0700
+IronPort-SDR: WrFdd3tDpbIx4URzIMljfL+Bp9G0Ua+OjLmYPEJUPkeVP/QvlMvO9mZPnt/VD8U6zlUoOlKSOF
+ JWKDNwkDGn0g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,366,1580803200"; 
-   d="scan'208";a="242926322"
-Received: from lindsay-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.37.71])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Apr 2020 06:22:46 -0700
-Date:   Fri, 10 Apr 2020 16:22:45 +0300
+X-IronPort-AV: E=Sophos;i="5.72,374,1580803200"; 
+   d="scan'208";a="243337719"
+Received: from apresura-mobl.ger.corp.intel.com (HELO localhost) ([10.252.61.246])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Apr 2020 07:20:10 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>
-Subject: Re: [PATCH v2] x86/sgx: Fix deadlock and race conditions between
- fork() and EPC reclaim
-Message-ID: <20200410132245.GA49170@linux.intel.com>
-References: <20200403093550.104789-1-jarkko.sakkinen@linux.intel.com>
- <20200403234239.GJ2701@linux.intel.com>
- <20200404010948.GA24717@linux.intel.com>
- <20200406143638.GB21330@linux.intel.com>
- <20200406171027.GA20105@linux.intel.com>
- <20200406171556.GB20105@linux.intel.com>
- <20200409191353.GB8919@linux.intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Nikita Sobolev <Nikita.Sobolev@synopsys.com>
+Subject: [PATCH] Revert "Kernel selftests: tpm2: check for tpm support"
+Date:   Sun, 12 Apr 2020 17:20:05 +0300
+Message-Id: <20200412142005.71348-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200409191353.GB8919@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Apr 09, 2020 at 12:13:53PM -0700, Sean Christopherson wrote:
-> On Mon, Apr 06, 2020 at 08:15:56PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Apr 06, 2020 at 08:10:29PM +0300, Jarkko Sakkinen wrote:
-> > > On Mon, Apr 06, 2020 at 07:36:38AM -0700, Sean Christopherson wrote:
-> > > > On Sat, Apr 04, 2020 at 04:12:02AM +0300, Jarkko Sakkinen wrote:
-> > > > > On Fri, Apr 03, 2020 at 04:42:39PM -0700, Sean Christopherson wrote:
-> > > > > > On Fri, Apr 03, 2020 at 12:35:50PM +0300, Jarkko Sakkinen wrote:
-> > > > > > > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > > > > @@ -221,12 +224,16 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
-> > > > > > >  		return ret;
-> > > > > > >  	}
-> > > > > > >  
-> > > > > > > +	/*
-> > > > > > > +	 * The page reclaimer uses list version for synchronization instead of
-> > > > > > > +	 * synchronize_scru() because otherwise we could conflict with
-> > > > > > > +	 * dup_mmap().
-> > > > > > > +	 */
-> > > > > > >  	spin_lock(&encl->mm_lock);
-> > > > > > >  	list_add_rcu(&encl_mm->list, &encl->mm_list);
-> > > > > > 
-> > > > > > You dropped the smp_wmb().
-> > > > > 
-> > > > > As I said to you in my review x86 pipeline does not reorder writes.
-> > > > 
-> > > > And as I pointed out in this thread, smp_wmb() is a _compiler_ barrier if
-> > > > and only if CONFIG_SMP=y.  The compiler can reorder list_add_rcu() and
-> > > > mm_list_version++ because from it's perspective there is no dependency
-> > > > between the two.  And that's entirely true except for the SMP case where
-> > > > the consumer of mm_list_version is relying on the list to be updated before
-> > > > the version changes.
-> > > 
-> > > I see.
-> > > 
-> > > So why not change the variable volatile given that x86 is the only
-> > > arch that this code gets used?
-> > 
-> > Please note that I'm fully aware of
-> > 
-> > https://www.kernel.org/doc/html/latest/process/volatile-considered-harmful.html
-> > 
-> > Just wondering. Anyway, I'll add smp_wmb() back since it is safe play
-> > in terms of acceptance.
-> 
-> Because volatile is overkill and too heavy-handed for what is needed here.
-> E.g. if SMP=n, then there are no barriers needed whatsover, as a CPU can't
-> race with itself.
-> 
-> Even for SMP=y, volatile is too much as it prevents optimization that would
-> otherwise be allowed.  For the smp_wmb() it doesn't matter much, if at all,
-> since the list and version are updated inside of a critical section, i.e.
-> barriered on both sides so the compiler can't do much optimization anyways.
-> 
-> But for the smp_rmb() case, the compiler is free to cache the version in a
-> register early on in the function, it just needs to make sure that the
-> access is done before starting the list walk.  If encl->mm_list_version
-> were volatile, the compiler would not be allowed to do such an optimization
-> as it'd be required to access memory exactly when it's referenced in code.
-> 
-> This is easily visible in the compiled code, as encl->mm_list_version is
-> only read from memory once per iteration (in the unlikely case that there
-> are multiple iterations).  It takes the do-while loop, which appears to
-> read encl->mm_list_version twice per iteration:
-> 
->   do {
->         mm_list_version = encl->mm_list_version;
-> 
->         <walk list>
-> 
->   } while (unlikely(encl->mm_list_version != mm_list_version));
-> 
-> 
-> And turns it into an optimized loop that loads encl->mm_list_version the
-> minimum number of times.  If encl->mm_list_version list were volatile, the
-> compiler would not be allowed to cache it in %rax.
-> 
->         mov    0x58(%r12),%rax          // Load from encl->mm_list_version
->         lea    0x40(%r12),%rbx          // Interleaved to optimize ALU vs LD
->         and    $0xfffffffffffff000,%rbp // Interleaved to optimize ALU vs LD
->         mov    %rax,0x8(%rsp)           // mm_list_version = encl->mm_list_version
-> 
-> 
->   walk_mm_list:
->         <blah blah blah>
-> 
->         mov    0x58(%r12),%rax          // Load from encl->mm_list_version
->         cmp    0x8(%rsp),%rax           // Compare against mm_list_version
->         jne    update_mm_list_version
-> 
->         <happy path>
->         ret
-> 
->   update_mm_list_version:
->         mov    %rax,0x8(%rsp)           // mm_list_version = encl->mm_list_version
->         jmpq   0xffffffff8102e460 <walk_mm_list>
+This reverts commit b32694cd0724d4ceca2c62cc7c3d3a8d1ffa11fc.
 
-Thanks and check v4 so that I can squash it :-)
+The original comment was neither reviewed nor tested. Thus, this the
+*only* possible action to take.
 
-/Jarkko
+Cc: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ tools/testing/selftests/tpm2/test_smoke.sh | 13 ++-----------
+ tools/testing/selftests/tpm2/test_space.sh |  9 +--------
+ 2 files changed, 3 insertions(+), 19 deletions(-)
+
+diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
+index b630c7b5950a..8155c2ea7ccb 100755
+--- a/tools/testing/selftests/tpm2/test_smoke.sh
++++ b/tools/testing/selftests/tpm2/test_smoke.sh
+@@ -1,17 +1,8 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+-self.flags = flags
+ 
+-# Kselftest framework requirement - SKIP code is 4.
+-ksft_skip=4
+-
+-
+-if [ -f /dev/tpm0 ] ; then
+-	python -m unittest -v tpm2_tests.SmokeTest
+-	python -m unittest -v tpm2_tests.AsyncTest
+-else
+-	exit $ksft_skip
+-fi
++python -m unittest -v tpm2_tests.SmokeTest
++python -m unittest -v tpm2_tests.AsyncTest
+ 
+ CLEAR_CMD=$(which tpm2_clear)
+ if [ -n $CLEAR_CMD ]; then
+diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
+index 180b469c53b4..a6f5e346635e 100755
+--- a/tools/testing/selftests/tpm2/test_space.sh
++++ b/tools/testing/selftests/tpm2/test_space.sh
+@@ -1,11 +1,4 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+ 
+-# Kselftest framework requirement - SKIP code is 4.
+-ksft_skip=4
+-
+-if [ -f /dev/tpmrm0 ] ; then
+-	python -m unittest -v tpm2_tests.SpaceTest
+-else
+-	exit $ksft_skip
+-fi
++python -m unittest -v tpm2_tests.SpaceTest
+-- 
+2.25.1
+
