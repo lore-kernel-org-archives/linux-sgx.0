@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08343C54FCC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D55EC55186
 	for <linux-sgx@archiver.kernel.org>; Tue, 21 Apr 2020 21:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E057B206D9
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Apr 2020 21:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 016EE20736
+	for <linux-sgx@archiver.kernel.org>; Tue, 21 Apr 2020 21:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbgDUVyX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 21 Apr 2020 17:54:23 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30807 "EHLO mga01.intel.com"
+        id S1726420AbgDUVxm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 21 Apr 2020 17:53:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:20261 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbgDUVyT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 21 Apr 2020 17:54:19 -0400
-IronPort-SDR: +rbVDL6jOtZmPBAphhcGsXuEFufpLjAWv6WyUsa79smY/4R2BJW9XJCCgZKuTamY/4fsEoce0b
- g3UbLwnKVdRA==
+        id S1726385AbgDUVxk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 21 Apr 2020 17:53:40 -0400
+IronPort-SDR: RbGyFs/7jbOgIR20s7660khGmaYKSBE/pkJFBt0pQORzp6UgyFI5RQEdkj/IV9B0Z4wnMPoJeX
+ 2F73jVZNMvCA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 14:54:18 -0700
-IronPort-SDR: ghzpsa4AHX0Gdq48562kmLrYJwAUNBoCmbpksX3AbBQSbPZcWcW/tHI01priKuznAT+4BBNmAg
- kzeJUhdgiwIg==
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 14:53:39 -0700
+IronPort-SDR: 4K4/jwnQZNRET8VvQQQiskThnIWwFLbVnLbkZw9JizjxbfJEs4drCHZftpoMi4ewatpGVfkS2w
+ LIPBO7iCqT3Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,411,1580803200"; 
-   d="scan'208";a="456260696"
+   d="scan'208";a="456260536"
 Received: from mnchalux-mobl2.gar.corp.intel.com (HELO localhost) ([10.252.44.234])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Apr 2020 14:54:14 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 21 Apr 2020 14:53:34 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v29 10/20] mm: Introduce vm_ops->may_mprotect()
-Date:   Wed, 22 Apr 2020 00:53:06 +0300
-Message-Id: <20200421215316.56503-11-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v29 03/20] x86/cpufeatures: x86/msr: Intel SGX Launch Control hardware bits
+Date:   Wed, 22 Apr 2020 00:52:59 +0300
+Message-Id: <20200421215316.56503-4-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
 References: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
@@ -57,58 +57,73 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add vm_ops()->may_mprotect() to check additional constrains set by a
-subsystem for a mprotect() call.
+Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
+Launch Control.
+
+Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
+SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
+called enclaves, are always signed. All enclaves signed with the public key
+are unconditionally allowed to initialize. [1]
+
+Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
+whether the formentioned MSRs are writable or not. If the bit is off, the
+public key MSRs are read-only for the OS.
+
+If the MSRs are read-only, the platform must provide a launch enclave (LE).
+LE can create cryptographic tokens for other enclaves that they can pass
+together with their signature to the ENCLS(EINIT) opcode, which is used
+to initialize enclaves.
+
+Linux is unlikely to support the locked configuration because it takes away
+the control of the launch decisions from the kernel.
+
+[1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- include/linux/mm.h |  2 ++
- mm/mprotect.c      | 14 +++++++++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/include/asm/msr-index.h   | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 52269e56c514..ad08eb666e1c 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -464,6 +464,8 @@ struct vm_operations_struct {
- 	void (*close)(struct vm_area_struct * area);
- 	int (*split)(struct vm_area_struct * area, unsigned long addr);
- 	int (*mremap)(struct vm_area_struct * area);
-+	int (*may_mprotect)(struct vm_area_struct *vma, unsigned long start,
-+			    unsigned long end, unsigned long prot);
- 	vm_fault_t (*fault)(struct vm_fault *vmf);
- 	vm_fault_t (*huge_fault)(struct vm_fault *vmf,
- 			enum page_entry_size pe_size);
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 7a8e84f86831..c0cb40e23b43 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -543,13 +543,21 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 			goto out;
- 		}
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 42ae9fb06987..bc5ad93cbeb6 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -350,6 +350,7 @@
+ #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
+ #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
+ #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
++#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
  
-+		tmp = vma->vm_end;
-+		if (tmp > end)
-+			tmp = end;
-+
-+		if (vma->vm_ops && vma->vm_ops->may_mprotect) {
-+			error = vma->vm_ops->may_mprotect(vma, nstart, tmp,
-+							  prot);
-+			if (error)
-+				goto out;
-+		}
-+
- 		error = security_file_mprotect(vma, reqprot, prot);
- 		if (error)
- 			goto out;
+ /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index e190293c8923..bae17ea2c8fe 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -566,6 +566,7 @@
+ #define FEAT_CTL_LOCKED				BIT(0)
+ #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
+ #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
++#define FEAT_CTL_SGX_LC_ENABLED			BIT(17)
+ #define FEAT_CTL_SGX_ENABLED			BIT(18)
+ #define FEAT_CTL_LMCE_ENABLED			BIT(20)
  
--		tmp = vma->vm_end;
--		if (tmp > end)
--			tmp = end;
- 		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
- 		if (error)
- 			goto out;
+@@ -586,6 +587,12 @@
+ #define MSR_IA32_UCODE_WRITE		0x00000079
+ #define MSR_IA32_UCODE_REV		0x0000008b
+ 
++/* Intel SGX Launch Enclave Public Key Hash MSRs */
++#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
++#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
++#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
++#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++
+ #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
+ #define MSR_IA32_SMBASE			0x0000009e
+ 
 -- 
 2.25.1
 
