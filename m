@@ -1,121 +1,122 @@
-Return-Path: <SRS0=k8LC=6S=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=a91O=6U=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F75BC3A5A9
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 May 2020 09:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF9CC38A2A
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 May 2020 12:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85D9C206D9
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 May 2020 09:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A86C2073A
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 May 2020 12:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgEDJfD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 May 2020 05:35:03 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:42948 "EHLO wind.enjellic.com"
+        id S1727804AbgEFMQ3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 May 2020 08:16:29 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54465 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726625AbgEDJfD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 4 May 2020 05:35:03 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0449YXRD005741;
-        Mon, 4 May 2020 04:34:33 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0449YWfb005740;
-        Mon, 4 May 2020 04:34:32 -0500
-Date:   Mon, 4 May 2020 04:34:32 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
+        id S1727792AbgEFMQ3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 6 May 2020 08:16:29 -0400
+IronPort-SDR: 8Uv4s9Fdj0SGFaphJ1CbFtoEo54rTShdLOuFtgQZ72a7TjkYsAWBMB0WWhcUnsmy4tB4jl1AP8
+ HAbOA43TbygQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2020 05:16:28 -0700
+IronPort-SDR: JPc1qDvxWTtCQTa5kLHajZfavO2LC2sdMB2KoRj3adSpRVz9HEdoV9Pqvrhqm9O01NFfFPhQaw
+ bgM8i1rw/9sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,358,1583222400"; 
+   d="scan'208";a="284606158"
+Received: from ngorb-mobl1.ccr.corp.intel.com (HELO localhost) ([10.252.52.39])
+  by fmsmga004.fm.intel.com with ESMTP; 06 May 2020 05:16:21 -0700
+Date:   Wed, 6 May 2020 15:16:18 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
         nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
         andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com
 Subject: Re: [PATCH v29 00/20] Intel SGX foundations
-Message-ID: <20200504093432.GA5382@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200502230510.GA28470@wind.enjellic.com> <BD424C59-0B02-451D-8DF0-74F92292A87C@amacapital.net>
-Mime-Version: 1.0
+Message-ID: <20200506121618.GA170146@linux.intel.com>
+References: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
+ <07c1a36c-cebc-3a65-6f92-4a5498fcc369@fortanix.com>
+ <20200430034651.GB31820@linux.intel.com>
+ <a9ff7817-32d1-e048-af05-862ca9f8aa46@fortanix.com>
+ <20200430082328.GA6387@linux.intel.com>
+ <1dd3ba07-f782-3a82-ac25-83d524a2c062@fortanix.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BD424C59-0B02-451D-8DF0-74F92292A87C@amacapital.net>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 04 May 2020 04:34:33 -0500 (CDT)
+In-Reply-To: <1dd3ba07-f782-3a82-ac25-83d524a2c062@fortanix.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, May 02, 2020 at 05:48:30PM -0700, Andy Lutomirski wrote:
-
-Good morning, I hope the week is starting well for everyone.
-
-> > On May 2, 2020, at 4:05 PM, Dr. Greg <greg@enjellic.com> wrote:
-> > In a nutshell, the driver needs our patch that implements
-> > cryptographic policy management.
+On Thu, Apr 30, 2020 at 04:12:07PM +0200, Jethro Beekman wrote:
+> On 2020-04-30 10:23, Jarkko Sakkinen wrote:
+> > On Thu, Apr 30, 2020 at 09:19:48AM +0200, Jethro Beekman wrote:
+> >> On 2020-04-30 05:46, Jarkko Sakkinen wrote:
+> >>> On Wed, Apr 29, 2020 at 05:27:48PM +0200, Jethro Beekman wrote:
+> >>>> On 2020-04-21 23:52, Jarkko Sakkinen wrote:
+> >>>>> Intel(R) SGX is a set of CPU instructions that can be used by applications
+> >>>>> to set aside private regions of code and data. The code outside the enclave
+> >>>>> is disallowed to access the memory inside the enclave by the CPU access
+> >>>>> control.
+> >>>>>
+> >>>>> There is a new hardware unit in the processor called Memory Encryption
+> >>>>> Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
+> >>>>> one or many MEE regions that can hold enclave data by configuring them with
+> >>>>> PRMRR registers.
+> >>>>>
+> >>>>> The MEE automatically encrypts the data leaving the processor package to
+> >>>>> the MEE regions. The data is encrypted using a random key whose life-time
+> >>>>> is exactly one power cycle.
+> >>>>>
+> >>>>> The current implementation requires that the firmware sets
+> >>>>> IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
+> >>>>> decide what enclaves it wants run. The implementation does not create
+> >>>>> any bottlenecks to support read-only MSRs later on.
+> >>>>>
+> >>>>> You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
+> >>>>>
+> >>>>> 	cat /proc/cpuinfo  | grep sgx
+> >>>>
+> >>>> Let's merge this.
+> >>>
+> >>> So can I tag reviewed-by's?
+> >>>
+> >>
+> >> No, but you already have my tested-by's.
+> >>
+> >> If it helps I can try to review some patches, but 1) I know nothing
+> >> about kernel coding guidelines and best practices and 2) I know little
+> >> about most kernel internals, so I won't be able to review every patch.
 > > 
-> > A patch that:
+> > Ackd-by *acknowledges* that the patches work for you. I think that would
+> > be then the correct choice for the driver patch and patches before that.
 > > 
-> > 1.) Does not change the default behavior of the driver.
+> > Lets go with that if that is cool for you of course.
 > > 
-> > 2.) Implements capabilities that are consistent with what the hardware
-> > was designed to do, but only at the discretion of the platform owner.
+> > Did you run the selftest only or possibly also some internal Fortanix
+> > tests?
 > > 
-> > 3.) Has no impact on the driver architecture.
-> > 
-> > The only consumer for this driver are SGX runtimes.  To our knowledge,
-> > there exist only two complete runtime implementations, Intel's and
-> > ours.  It us unclear why our approach to the use of the technology
-> > should be discriminated against when it doesn't impact the other user
-> > community.
+> 
+> v29 patches 2 through 18:
+> 
+> Acked-by: Jethro Beekman <jethro@fortanix.com>
+> 
+> I only ran production SGX software. I didn't run the self test.
 
-> Can you clarify how exactly this patch set discriminates against
-> your stack?
+That's great to hear thank you.
 
-The driver has no provisions for implementing cryptographically based
-SGX policy management of any type.
+Updated my tree accordingly.
 
-Our stack is extremely lightweight with no external dependencies and
-is used in privacy and security sensitive applications, including
-financial services of certain types.  There is a desire in this, and
-other venues, to use cloud and edge resources with a strong guarantee
-that the platforms have only had a known set of behaviors.  The
-current DAC based controls in the driver are insufficient to provide
-those guarantees.
-
-I believe I have discussed our use of SGX previously.  In a nutshell,
-we use SGX based modeling engines to supervise kernel based behavioral
-namespaces, one enclave per namespace.  The closest equivalent work
-that we have seen may be the IPE architecture advanced by Deven Bowers
-at Microsoft but we address a number of issues that work does not,
-including non-kernel based behavioral supervision.
-
-We support the concern over hardware locked platforms and do not
-disagree with the driver not supporting those platforms.  That being
-said, there is no technical rationale for not providing cryptographic
-policy management on FLC based platforms, as I believe our patch
-demonstrates.
-
-Best wishes for a productive week.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      Artisans in autonomously
-Enjellic Systems Development, LLC     self-defensive platforms.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Can't they?
-
- A 64bit number incremented every millisecond can grow for half a
- billion years.  As far as I'm concerned, that is forever."
-                                -- Neil Brown
-                                   linux-raid
+/Jarkko
