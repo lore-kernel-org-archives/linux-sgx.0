@@ -2,208 +2,259 @@ Return-Path: <SRS0=4/gY=64=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AE6C433DF
-	for <linux-sgx@archiver.kernel.org>; Thu, 14 May 2020 06:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 040BFC433DF
+	for <linux-sgx@archiver.kernel.org>; Thu, 14 May 2020 08:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC59A206B6
-	for <linux-sgx@archiver.kernel.org>; Thu, 14 May 2020 06:31:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="QvO+mk3E"
+	by mail.kernel.org (Postfix) with ESMTP id C78C220575
+	for <linux-sgx@archiver.kernel.org>; Thu, 14 May 2020 08:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbgENGbh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 14 May 2020 02:31:37 -0400
-Received: from mail-bn7nam10on2124.outbound.protection.outlook.com ([40.107.92.124]:56544
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725818AbgENGbh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 14 May 2020 02:31:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ogYsvmdUH0FC9j8N50Py3SA5a2jfG1lzjJLQe7GpwRfW0FY/tv6PUBZh1VZQDDW6So9TzocGRoxAD4ml/goy9bVSV1XNt7mbrfb6g4JvHO8zHJ6YDpUn1iKchgZuivqXqOKOCqypIhhRq93J15ZC/L3Vlys7jdCbFXkaG37CmfYh806VnkLoTNSWOtOg7c+6ZaDab3lgbamBY2RcfzWlrYojiOa7sYvWP2q0Ft0ROD84MuS0eyNehfTKIl/WsG/yJOi9ntyQcFdgcNZsfd1bgdPF5LlPU7R34H0YWrY18ByLPJc8Xx/Lu5D7kI27L1y2vUVGObGt4JV3BkKasLKJSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wfy4LmEJJ+QmJ8Vc/2/dLeU/GfGu0Bg1WcSq2ymC+3g=;
- b=EXeuE87HsDc5K5QaZ+6+XmAt6KyDQ3/yAxJ2irze/xYF/qYLc2mxdXFbcZ83JIRLTLthRXfs4U28SUeASuu5eNqKji0t0IaBKn9k0cHK3aDfoYhDnFjqr4q4HiB0/Vpt2tC9wS5YRwA9Kej0xI1QKjHmYDqcncg1uGY7EV5gdMt3ZbEw7Rk3raJCoZFL5Zgz2+yN3lGk+WhKj1IwNU0w8vzHkIF6gWZo9dTjLBAjWRD+c/045LnjhmasiW2rUh0J2cWfj2NTSBEtZA67ujL1tVWTRIgUrWwusTG2qR+J0bDNv0gFdXE/UCdHEtoOjgZOJ00ZxAdhLyRi8cxBs4jSfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
- dkim=pass header.d=fortanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wfy4LmEJJ+QmJ8Vc/2/dLeU/GfGu0Bg1WcSq2ymC+3g=;
- b=QvO+mk3EMQyORZNkcDG2zRydzH65LkCieQeE7Hm/8wo21zkz+/BGE1Rk/vE/NJItm0sjGekVbPuyb5eTyYR0DRbps3kyYvpTyhfcKciZTOxb0hdRWcSqFLGQTJS8RVquZ1IjqF987CxB7+RuQLKS6dpRq9T9hcU8wSLEG4fcj3k=
-Authentication-Results: redhat.com; dkim=none (message not signed)
- header.d=none;redhat.com; dmarc=none action=none header.from=fortanix.com;
-Received: from BY5PR11MB4260.namprd11.prod.outlook.com (2603:10b6:a03:1ba::30)
- by BY5PR11MB4211.namprd11.prod.outlook.com (2603:10b6:a03:1ba::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.20; Thu, 14 May
- 2020 06:31:32 +0000
-Received: from BY5PR11MB4260.namprd11.prod.outlook.com
- ([fe80::48d6:af47:b6c8:fe6a]) by BY5PR11MB4260.namprd11.prod.outlook.com
- ([fe80::48d6:af47:b6c8:fe6a%7]) with mapi id 15.20.3000.022; Thu, 14 May 2020
- 06:31:31 +0000
-Subject: Re: [PATCH v29 00/20] Intel SGX foundations
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>
-References: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
- <CAOASepPFe_ucuwe7JW_-+VBQ4=+sHqyGXOdA9kUbcYA_9=v0sA@mail.gmail.com>
- <0d485f780ac9809229290762931cd591e6f8156a.camel@linux.intel.com>
-From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <a20e2eb4-1714-7975-693e-1c6aca7ea77d@fortanix.com>
-Date:   Thu, 14 May 2020 08:31:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-In-Reply-To: <0d485f780ac9809229290762931cd591e6f8156a.camel@linux.intel.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020901080807080700030501"
-X-ClientProxiedBy: AM4PR0501CA0063.eurprd05.prod.outlook.com
- (2603:10a6:200:68::31) To BY5PR11MB4260.namprd11.prod.outlook.com
- (2603:10b6:a03:1ba::30)
+        id S1727876AbgENIBv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 14 May 2020 04:01:51 -0400
+Received: from mga11.intel.com ([192.55.52.93]:5952 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbgENIBv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 14 May 2020 04:01:51 -0400
+IronPort-SDR: 4HJGKCOHGaSXwSAZxcEk+3V1LqYRJwe7JhhQ6BkHqdbbU3aPbojoDVEkj2g90tTGycsu7gTIgs
+ hWN/Lip9vwEg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 01:01:50 -0700
+IronPort-SDR: Zbpbjb/uQKCVyyS3Ddhmx4sr1vxacKPat4AUJHMxiu2meCjb54xPF0LmxLSrT2X2qpZWYWcvI3
+ dNcOcXLDCUGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,390,1583222400"; 
+   d="scan'208";a="251585456"
+Received: from aburovox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.39.145])
+  by orsmga007.jf.intel.com with ESMTP; 14 May 2020 01:01:48 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3] x86/sgx: Hack in idea for allocating from local EPC node when possible
+Date:   Thu, 14 May 2020 11:01:44 +0300
+Message-Id: <20200514080144.73733-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.4.219] (213.127.61.179) by AM4PR0501CA0063.eurprd05.prod.outlook.com (2603:10a6:200:68::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.25 via Frontend Transport; Thu, 14 May 2020 06:31:27 +0000
-X-Originating-IP: [213.127.61.179]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 69377693-0ec9-4667-00be-08d7f7d070e2
-X-MS-TrafficTypeDiagnostic: BY5PR11MB4211:
-X-Microsoft-Antispam-PRVS: <BY5PR11MB42112EACD2D7D328BEE12E2EAABC0@BY5PR11MB4211.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
-X-Forefront-PRVS: 040359335D
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4YsnSSPfVuiyncfh0GTvtGU1Y6RTcOBJ7fOYw9MKTe3l/Dh9PmQ97aqdCjbAX2H7sMGEBdRaAvcMIeuayCEx9l1K9hmN62vNHjhgHFKVQfD6OgK0Tko1P/kMRkZJ11GDxkqrIfNJB0nqNxlEu+Oi2YN1Y9GT8FL+jb1EqJIjWlGrip3kMvuusyWIc5hjcu/iqSJGbvRzr/U0nnzNQoQZ90Q9HcArntc/BTvsVI6ZDAro6oGRdMxpxVl2leql6+HgnxUHc2GEEOZM7k+vVIktTgCpu2c2CQ3OiJ+rqeQkURXmN0JGLxYrHX8Ine3bSLPua/CBJipcMzKp4KvFTze9gww95s1CpA0Sk7cQOSVbFQZwFdBhh69/GdSANHIAPnmCo/F8eTHoLKAYQji8MKXUsb8Yn8yoRaCZHcZFCoBDskBR2Lq4mNrK88ZueomULQwJIxCbs6Vz4Y/Ksc4HkWau5DOBz8Xl3qdZETe6IfE7Ft1g0wy8IN6rkcE6B8m5nftf
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4260.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(366004)(396003)(136003)(39840400004)(346002)(376002)(16526019)(6666004)(26005)(8936002)(110136005)(235185007)(16576012)(316002)(956004)(186003)(2616005)(8676002)(66556008)(54906003)(66476007)(66946007)(53546011)(564344004)(4326008)(31686004)(7416002)(6486002)(52116002)(36756003)(31696002)(2906002)(508600001)(86362001)(5660300002)(33964004)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: K0ZZ+mPpUVv734RxOaT7lR27yHOKNZWpS0kRA2lFvyaAb8UPviUpMfj4fmWnRSvAZxZCeP5TpXnCVpP33q7xNmPCX+YwTltTBwQyyBZwjm7ChD/SjrHrxIq3smwBaubfZyArI7AeON32T3f73RXjJHZ7k7nFv7T0XsXlI/T3JoY9wsbWnsNg2mFmsLuA6cCj6jMUgB0SpCTv3jte0EV5yeTlo3VYi4AMpqG4/N09sWQa0EKqJu11WX4xk8wG6v8OS05MHA76x6l4oJHi3U3S0gXfPpqOOJVJFIg8zKgBaXBaJxZ7CZ1P59CFdfPoDcx68IrQNuQrsQcd2SpPQGwiww9WpPQVwkfl3jCqpaujWCKPzBVih+GUamjjYf/8TWqokX1DZDBusSz1Opnw4Yf1bv/zOu8qf4u+G5gKDUimo6Iu3LcO08lPYUgIbxzpeRToD2i+zuCBxA2UnAQkAMcIudZkt2qmp0VCI8SVeIBO3RvuO2J9VrmnWJxfjD6O4QoT
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69377693-0ec9-4667-00be-08d7f7d070e2
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2020 06:31:31.7840
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qnkhn0dMU6kOCnQAY3XRgXFshFkFuXiip6LV+HNUY5/z1dxSQd2ko1j7vV6EXmE80qq6Eay7gjFHT2DHIQ142Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4211
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms020901080807080700030501
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-On 2020-05-14 00:14, Jarkko Sakkinen wrote:
-> General question: maybe it would be easiest that I issue a pull request=
+Allocate EPC from the local node when possible.  There is no new NUMA
+enumeration for EPC.  Because EPC is carved out of RAM on bare metal,
+the sections are naturally covered by the existing ACPI SRAT entries,
+i.e. can be found by querying the kernel's NUMA info.
 
-> once everyone feels that the series is ready to be pulled and stop send=
-ing
-> new versions of the series?
+Keep the per-section tracking to simplify iterating over all sections
+and reverse lookups given an EPC page.
 
-Sounds good
+Cc: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+v3:
+- Replace sgx_epc_numa_node_id() with a simpler sgx_pfn_to_nid()
+  function (i.e. no need to convert from pfn's to addresses).
+- Get rid of CONFIG_NUMA checks as NUMA helpers should do the
+  "right thing".
+- Rename sgx_epc_node as sgx_numa_node.
+ arch/x86/kernel/cpu/sgx/main.c    | 75 ++++++++++++++++++++++++++-----
+ arch/x86/kernel/cpu/sgx/reclaim.c |  6 +--
+ arch/x86/kernel/cpu/sgx/sgx.h     |  6 +--
+ 3 files changed, 71 insertions(+), 16 deletions(-)
 
---
-Jethro Beekman | Fortanix
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 5ce77e554676..a4affa09d130 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -11,7 +11,15 @@
+ #include "driver.h"
+ #include "encls.h"
+ 
+-struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
++struct sgx_numa_node {
++	struct sgx_epc_section sections[SGX_MAX_EPC_SECTIONS];
++	int nr_sections;
++};
++
++static struct sgx_numa_node sgx_numa_nodes[MAX_NUMNODES];
++static int sgx_nr_epc_nodes;
++
++struct sgx_epc_section *sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ int sgx_nr_epc_sections;
+ 
+ static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section)
+@@ -28,6 +36,26 @@ static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section
+ 	return page;
+ }
+ 
++static struct sgx_epc_page *sgx_try_alloc_page_node(int nid)
++{
++	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
++	struct sgx_epc_section *section;
++	struct sgx_epc_page *page;
++	int i;
++
++	for (i = 0; i < node->nr_sections; i++) {
++		section = &node->sections[i];
++		spin_lock(&section->lock);
++		page = __sgx_try_alloc_page(section);
++		spin_unlock(&section->lock);
++
++		if (page)
++			return page;
++	}
++
++	return NULL;
++}
++
+ /**
+  * sgx_try_alloc_page() - Allocate an EPC page
+  *
+@@ -39,16 +67,19 @@ static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section
+  */
+ struct sgx_epc_page *sgx_try_alloc_page(void)
+ {
+-	struct sgx_epc_section *section;
+ 	struct sgx_epc_page *page;
++	int nid = numa_node_id();
+ 	int i;
+ 
+-	for (i = 0; i < sgx_nr_epc_sections; i++) {
+-		section = &sgx_epc_sections[i];
+-		spin_lock(&section->lock);
+-		page = __sgx_try_alloc_page(section);
+-		spin_unlock(&section->lock);
++	page = sgx_try_alloc_page_node(nid);
++	if (page)
++		return page;
++
++	for (i = 0; i < sgx_nr_epc_nodes; i++) {
++		if (i == nid)
++			continue;
+ 
++		page = sgx_try_alloc_page_node(i);
+ 		if (page)
+ 			return page;
+ 	}
+@@ -192,7 +223,23 @@ static void __init sgx_page_cache_teardown(void)
+ 	int i;
+ 
+ 	for (i = 0; i < sgx_nr_epc_sections; i++)
+-		sgx_free_epc_section(&sgx_epc_sections[i]);
++		sgx_free_epc_section(sgx_epc_sections[i]);
++}
++
++static int __init sgx_pfn_to_nid(unsigned long pfn)
++{
++	pg_data_t *pgdat;
++	int nid;
++
++	for (nid = 0; nid < nr_node_ids; nid++) {
++		pgdat = NODE_DATA(nid);
++
++		if (pfn >= pgdat->node_start_pfn &&
++		    pfn < (pgdat->node_start_pfn + pgdat->node_spanned_pages))
++			return nid;
++	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -209,8 +256,9 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
+ static bool __init sgx_page_cache_init(void)
+ {
+ 	u32 eax, ebx, ecx, edx, type;
++	struct sgx_numa_node *node;
++	int i, j, nid;
+ 	u64 pa, size;
+-	int i;
+ 
+ 	for (i = 0; i <= ARRAY_SIZE(sgx_epc_sections); i++) {
+ 		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
+@@ -235,11 +283,18 @@ static bool __init sgx_page_cache_init(void)
+ 
+ 		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
+ 
+-		if (!sgx_alloc_epc_section(pa, size, i, &sgx_epc_sections[i])) {
++		nid = sgx_pfn_to_nid(PFN_DOWN(pa));
++		node = &sgx_numa_nodes[nid];
++		j = node->nr_sections++;
++
++		if (!sgx_alloc_epc_section(pa, size, i, &node->sections[j])) {
+ 			pr_err("No free memory for an EPC section\n");
++			node->nr_sections--;
+ 			break;
+ 		}
+ 
++		sgx_nr_epc_nodes = max(sgx_nr_epc_nodes, nid + 1);
++		sgx_epc_sections[i] = &node->sections[j];
+ 		sgx_nr_epc_sections++;
+ 	}
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+index fb521f314fb7..16707d6f06b2 100644
+--- a/arch/x86/kernel/cpu/sgx/reclaim.c
++++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+@@ -56,17 +56,17 @@ static int ksgxswapd(void *p)
+ 	 * on kmemexec.
+ 	 */
+ 	for (i = 0; i < sgx_nr_epc_sections; i++)
+-		sgx_sanitize_section(&sgx_epc_sections[i]);
++		sgx_sanitize_section(sgx_epc_sections[i]);
+ 
+ 	/*
+ 	 * 2nd round for the SECS pages as they cannot be removed when they
+ 	 * still hold child pages.
+ 	 */
+ 	for (i = 0; i < sgx_nr_epc_sections; i++) {
+-		sgx_sanitize_section(&sgx_epc_sections[i]);
++		sgx_sanitize_section(sgx_epc_sections[i]);
+ 
+ 		/* Should never happen. */
+-		if (!list_empty(&sgx_epc_sections[i].unsanitized_page_list))
++		if (!list_empty(&sgx_epc_sections[i]->unsanitized_page_list))
+ 			WARN(1, "EPC section %d has unsanitized pages.\n", i);
+ 	}
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 0c481e6f2c95..c0a2ccf593f5 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -55,11 +55,11 @@ enum sgx_epc_page_desc {
+ 
+ #define SGX_MAX_EPC_SECTIONS (SGX_EPC_SECTION_MASK + 1)
+ 
+-extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
++extern struct sgx_epc_section *sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ 
+ static inline struct sgx_epc_section *sgx_epc_section(struct sgx_epc_page *page)
+ {
+-	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
++	return sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
+ }
+ 
+ static inline void *sgx_epc_addr(struct sgx_epc_page *page)
+@@ -85,7 +85,7 @@ static inline unsigned long sgx_nr_free_pages(void)
+ 	int i;
+ 
+ 	for (i = 0; i < sgx_nr_epc_sections; i++)
+-		cnt += sgx_epc_sections[i].free_cnt;
++		cnt += sgx_epc_sections[i]->free_cnt;
+ 
+ 	return cnt;
+ }
+-- 
+2.25.1
 
-
---------------ms020901080807080700030501
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-C54wggVPMIIEN6ADAgECAhAFFr+cC0ZYZTtbKgQCBwyyMA0GCSqGSIb3DQEBCwUAMIGCMQsw
-CQYDVQQGEwJJVDEPMA0GA1UECAwGTWlsYW5vMQ8wDQYDVQQHDAZNaWxhbm8xIzAhBgNVBAoM
-GkFjdGFsaXMgUy5wLkEuLzAzMzU4NTIwOTY3MSwwKgYDVQQDDCNBY3RhbGlzIENsaWVudCBB
-dXRoZW50aWNhdGlvbiBDQSBHMTAeFw0xOTA5MTYwOTQ3MDlaFw0yMDA5MTYwOTQ3MDlaMB4x
-HDAaBgNVBAMME2pldGhyb0Bmb3J0YW5peC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDHWEhcRGkEl1ZnImSqBt/OXNJ4AyDZ86CejuWI9jYpWbtf/gXBQO6iaaEKBDlj
-Vffk2QxH9wcifkYsvCYfxFgD15dU9TABO7YOwvHa8NtxanWr1xomufu/P1ApI336+S7ZXfSe
-qMnookNJUMHuF3Nxw2lI69LXqZLCdcVXquM4DY1lVSV+DXIwpTMtB+pMyqOWrsgmrISMZYFw
-EUJOqVDvtU8KewhpuGAYXAQSDVLcAl2nZg7C2Mex8vT8stBoslPTkRXxAgMbslDNDUiKhy8d
-E3I78P+stNHlFAgALgoYLBiVVLZkVBUPvgr2yUApR63yosztqp+jFhqfeHbjTRlLAgMBAAGj
-ggIiMIICHjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFH5g/Phspz09166ToXkCj7N0KTv1
-MEsGCCsGAQUFBwEBBD8wPTA7BggrBgEFBQcwAoYvaHR0cDovL2NhY2VydC5hY3RhbGlzLml0
-L2NlcnRzL2FjdGFsaXMtYXV0Y2xpZzEwHgYDVR0RBBcwFYETamV0aHJvQGZvcnRhbml4LmNv
-bTBHBgNVHSAEQDA+MDwGBiuBHwEYATAyMDAGCCsGAQUFBwIBFiRodHRwczovL3d3dy5hY3Rh
-bGlzLml0L2FyZWEtZG93bmxvYWQwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMIHo
-BgNVHR8EgeAwgd0wgZuggZiggZWGgZJsZGFwOi8vbGRhcDA1LmFjdGFsaXMuaXQvY24lM2RB
-Y3RhbGlzJTIwQ2xpZW50JTIwQXV0aGVudGljYXRpb24lMjBDQSUyMEcxLG8lM2RBY3RhbGlz
-JTIwUy5wLkEuLzAzMzU4NTIwOTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0
-O2JpbmFyeTA9oDugOYY3aHR0cDovL2NybDA1LmFjdGFsaXMuaXQvUmVwb3NpdG9yeS9BVVRI
-Q0wtRzEvZ2V0TGFzdENSTDAdBgNVHQ4EFgQUAXkM7yNq6pH6j+IC/7IsDPSTMnowDgYDVR0P
-AQH/BAQDAgWgMA0GCSqGSIb3DQEBCwUAA4IBAQC8z+2tLUwep0OhTQBgMaybrxTHCxRZ4/en
-XB0zGVrry94pItE4ro4To/t86Kfcic41ZsaX8/SFVUW2NNHjEodJu94UhYqPMDUVjO6Y14s2
-jznFHyKQdXMrhIBU5lzYqyh97w6s82Z/qoMy3OuLek+8rXirwju9ATSNLsFTzt2CEoyCSRtl
-yOmR7Z9wgSvD7C7XoBdGEFVdGCXwCy1t9AT7UCIHKssnguVaMGN9vWqLPVKOVTwc4g3RAQC7
-J1Aoo6U5d6wCIX4MxEZhICxnUgAKHULxsWMGjBfQAo3QGXjJ4wDEu7O/5KCyUfn6lyhRYa+t
-YgyFAX0ZU9Upovd+aOw0MIIGRzCCBC+gAwIBAgIILNSK07EeD4kwDQYJKoZIhvcNAQELBQAw
-azELMAkGA1UEBhMCSVQxDjAMBgNVBAcMBU1pbGFuMSMwIQYDVQQKDBpBY3RhbGlzIFMucC5B
-Li8wMzM1ODUyMDk2NzEnMCUGA1UEAwweQWN0YWxpcyBBdXRoZW50aWNhdGlvbiBSb290IENB
-MB4XDTE1MDUxNDA3MTQxNVoXDTMwMDUxNDA3MTQxNVowgYIxCzAJBgNVBAYTAklUMQ8wDQYD
-VQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4v
-MDMzNTg1MjA5NjcxLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENB
-IEcxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwPzBiVbZiOL0BGW/zQk1qygp
-MP4MyvcnqxwR7oY9XeT1bES2DFczlZfeiIqNLanbkyqTxydXZ+kxoS9071qWsZ6zS+pxSqXL
-s+RTvndEaWx5hdHZcKNWGzhy5FiO4GZvGlFInFEiaY+dOEpjjWvSeXpvcDpnYw6M9AXuHo4J
-hjC3P/OK//5QFXnztTa4iU66RpLteOTgCtiRCwZNKx8EFeqqfTpYvfEb4H91E7n+Y61jm0d2
-E8fJ2wGTaSSwjc8nTI2ApXujoczukb2kHqwaGP3q5UuedWcnRZc65XUhK/Z6K32KvrQuNP32
-F/5MxkvEDnJpUnnt9iMExvEzn31zDQIDAQABo4IB1TCCAdEwQQYIKwYBBQUHAQEENTAzMDEG
-CCsGAQUFBzABhiVodHRwOi8vb2NzcDA1LmFjdGFsaXMuaXQvVkEvQVVUSC1ST09UMB0GA1Ud
-DgQWBBR+YPz4bKc9Pdeuk6F5Ao+zdCk79TAPBgNVHRMBAf8EBTADAQH/MB8GA1UdIwQYMBaA
-FFLYiDrIn3hm7YnzezhwlMkCAjbQMEUGA1UdIAQ+MDwwOgYEVR0gADAyMDAGCCsGAQUFBwIB
-FiRodHRwczovL3d3dy5hY3RhbGlzLml0L2FyZWEtZG93bmxvYWQwgeMGA1UdHwSB2zCB2DCB
-lqCBk6CBkIaBjWxkYXA6Ly9sZGFwMDUuYWN0YWxpcy5pdC9jbiUzZEFjdGFsaXMlMjBBdXRo
-ZW50aWNhdGlvbiUyMFJvb3QlMjBDQSxvJTNkQWN0YWxpcyUyMFMucC5BLiUyZjAzMzU4NTIw
-OTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTA9oDugOYY3aHR0
-cDovL2NybDA1LmFjdGFsaXMuaXQvUmVwb3NpdG9yeS9BVVRILVJPT1QvZ2V0TGFzdENSTDAO
-BgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcNAQELBQADggIBAE2TztUkvkEbShZYc19lifLZej5Y
-jLzLxA/lWxZnssFLpDPySfzMmndz3F06S51ltwDe+blTwcpdzUl3M2alKH3bOr855ku9Rr6u
-edya+HGQUT0OhqDo2K2CAE9nBcfANxifjfT8XzCoC3ctf9ux3og1WuE8WTcLZKgCMuNRBmJt
-e9C4Ug0w3iXqPzq8KuRRobNKqddPjk3EiK+QA+EFCCka1xOLh/7cPGTJMNta1/0u5oLiXaOA
-HeALt/nqeZ2kZ+lizK8oTv4in5avIf3ela3oL6vrwpTca7TZxTX90e805dZQN4qRVPdPbrBl
-WtNozH7SdLeLrcoN8l2EXO6190GAJYdynTc2E6EyrLVGcDKUX91VmCSRrqEppZ7W05TbWRLi
-6+wPjAzmTq2XSmKfajq7juTKgkkw7FFJByixa0NdSZosdQb3VkLqG8EOYOamZLqH+v7ua0+u
-lg7FOviFbeZ7YR9eRO81O8FC1uLgutlyGD2+GLjgQnsvneDsbNAWfkory+qqAxvVzX5PSaQp
-2pJ52AaIH1MN1i2/geRSP83TRMrFkwuIMzDhXxKFQvpspNc19vcTryzjtwP4xq0WNS4YWPS4
-U+9mW+U0Cgnsgx9fMiJNbLflf5qSb53j3AGHnjK/qJzPa39wFTXLXB648F3w1Qf9R7eZeTRJ
-fCQY/fJUMYID9jCCA/ICAQEwgZcwgYIxCzAJBgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8x
-DzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5Njcx
-LDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZY
-ZTtbKgQCBwyyMA0GCWCGSAFlAwQCAQUAoIICLzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMDA1MTQwNjMxMjFaMC8GCSqGSIb3DQEJBDEiBCDk5dOyRZbU
-v9sCiVovQsWJwnOgaaphgmtJiRLhlNunyTBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQB
-KjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMC
-AgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGoBgkrBgEEAYI3EAQxgZowgZcwgYIxCzAJ
-BgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwa
-QWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5NjcxLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1
-dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZYZTtbKgQCBwyyMIGqBgsqhkiG9w0BCRACCzGB
-mqCBlzCBgjELMAkGA1UEBhMCSVQxDzANBgNVBAgMBk1pbGFubzEPMA0GA1UEBwwGTWlsYW5v
-MSMwIQYDVQQKDBpBY3RhbGlzIFMucC5BLi8wMzM1ODUyMDk2NzEsMCoGA1UEAwwjQWN0YWxp
-cyBDbGllbnQgQXV0aGVudGljYXRpb24gQ0EgRzECEAUWv5wLRlhlO1sqBAIHDLIwDQYJKoZI
-hvcNAQEBBQAEggEAEnWXjrd75H07UGhbG0r5X585tOMQztpyYDrpgREj9NFeILjIR+wTSxmw
-rR6jhh4ckCj7ppvLqeNvrBcgsydq55fvl0Iy5JdiI2iAasA5Qnqt58eRvPynv3dxhWBAjUNq
-RC+lPz5jh9290gmFYDzI7LZ2tZgV0xGeqiv2nRmMCdv/fTBhSNfOiR6yoDDnCAcIzHOhZfWO
-sm54UxlkD+d5tfBNGCbTufejdc/XA8ruBCCcUcfbRVxqpVJGwbkgK3nPEKtTd23StutLbHRm
-jyM/HDS0kgRO8nX2e2KbOfB5CTpEDI/wUy0yk//Nwkzm4rFiZZP/FbpBK8k6OXid20bwhAAA
-AAAAAA==
-
---------------ms020901080807080700030501--
