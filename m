@@ -2,35 +2,35 @@ Return-Path: <SRS0=5ZAu=65=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6FCC433E0
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 May 2020 00:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FA4C433DF
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 May 2020 01:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD5D02065F
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 May 2020 00:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C45DA20709
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 May 2020 01:06:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgEOAut (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 14 May 2020 20:50:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:27699 "EHLO mga14.intel.com"
+        id S1726171AbgEOBGZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 14 May 2020 21:06:25 -0400
+Received: from mga14.intel.com ([192.55.52.115]:27885 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbgEOAus (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 14 May 2020 20:50:48 -0400
-IronPort-SDR: nPVgMD8mH0vraozpnBmelEZ4PklpknmHNB28mHSsz5lme6z3m06k/YqOUAjvRLFa+Z2YCzOtV/
- jS+dlTrryk4A==
+        id S1726216AbgEOBGZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 14 May 2020 21:06:25 -0400
+IronPort-SDR: IMsxXdUyCbKswkaceYCO+npOWuJgqMKrbYvlphtAP7NGK6q5bqOaD+60fXh3fFS/r43zHivZ7S
+ 2iYkje7ClLJA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 17:44:31 -0700
-IronPort-SDR: FhNsQ7t8Fyk5pX0ow3IwnCAYDIDMj76pletFGwK7lZbSYoAFqmputH2SszHbZvfk5PNcLs8o1l
- NG5nrtcTqxBw==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 17:46:23 -0700
+IronPort-SDR: 9XEEBvIkw4H7nb1DdKM86gkV8EFRV255M9NMQxR4pQONwPv5S13I2eSXWlC/6d3TbiVeSPCuMQ
+ dC5mXZ7AMtcg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,393,1583222400"; 
-   d="scan'208";a="464537432"
+   d="scan'208";a="253644346"
 Received: from ashadrin-mobl1.ccr.corp.intel.com (HELO localhost) ([10.249.38.112])
-  by fmsmga005.fm.intel.com with ESMTP; 14 May 2020 17:44:23 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 14 May 2020 17:46:14 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -41,591 +41,1320 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v30 00/20] Intel SGX foundations
-Date:   Fri, 15 May 2020 03:43:50 +0300
-Message-Id: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-mm@kvack.org, Jethro Beekman <jethro@fortanix.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Seth Moore <sethmo@google.com>
+Subject: [PATCH v30 12/20] x86/sgx: Add a page reclaimer
+Date:   Fri, 15 May 2020 03:44:02 +0300
+Message-Id: <20200515004410.723949-13-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
+References: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Intel(R) SGX is a set of CPU instructions that can be used by applications
-to set aside private regions of code and data. The code outside the enclave
-is disallowed to access the memory inside the enclave by the CPU access
-control.
+There is a limited amount of SGX reserved memory available. Therefore,
+some of it must be copied to the regular memory, and only subset kept in
+the SGX reserved memory. While kernel cannot directly access enclave
+memory, SGX provides ENCLS leaf functions to perform reclaiming
+functionality.
 
-There is a new hardware unit in the processor called Memory Encryption
-Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
-one or many MEE regions that can hold enclave data by configuring them with
-PRMRR registers.
+This commits implements a page reclaimer by using these leaf functions,
+which picks the victim pages in LRU fashion from all enclaves running in
+an enclave's pages back to the SGX reserved memory.
 
-The MEE automatically encrypts the data leaving the processor package to
-the MEE regions. The data is encrypted using a random key whose life-time
-is exactly one power cycle.
+The thread ksgxswapd reclaims pages on the event when the number of free
+EPC pages goes below %SGX_NR_LOW_PAGES up until it reaches
+%SGX_NR_HIGH_PAGES.
 
-The current implementation requires that the firmware sets
-IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
-decide what enclaves it wants run. The implementation does not create
-any bottlenecks to support read-only MSRs later on.
+sgx_alloc_page() can now optionally reclaim pages with @reclaim boolean
+parameter. The caller must also supply owner for each page so that the
+reclaimer can access the associated enclaves. This is needed for locking,
+as most of the ENCLS leafs cannot be executed concurrently for an enclave,
+and accessing SECS, which is required to be resident when its child pages
+are being reclaimed.
 
-You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
+Cc: linux-mm@kvack.org
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+Tested-by: Seth Moore <sethmo@google.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/driver.c  |   1 +
+ arch/x86/kernel/cpu/sgx/encl.c    | 340 +++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/encl.h    |  41 ++++
+ arch/x86/kernel/cpu/sgx/ioctl.c   |  76 +++++-
+ arch/x86/kernel/cpu/sgx/main.c    |  61 ++++-
+ arch/x86/kernel/cpu/sgx/reclaim.c | 388 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h     |  35 +++
+ 7 files changed, 934 insertions(+), 8 deletions(-)
 
-	cat /proc/cpuinfo  | grep sgx
-
-v30:
-Bunch of tags added. No actual code changes.
-
-v29:
-* The selftest has been moved to selftests/sgx. Because SGX is an execution
-  environment of its own, it really isn't a great fit with more "standard"
-  x86 tests.
-
-  The RSA key is now generated on fly and the whole signing process has
-  been made as part of the enclave loader instead of signing the enclave
-  during the compilation time.
-
-  Finally, the enclave loader loads now the test enclave directly from its
-  ELF file, which means that ELF file does not need to be coverted as raw
-  binary during the build process.
-* Version the mm_list instead of using on synchronize_mm() when adding new
-  entries. We hold the write lock for the mm_struct, and dup_mm() can thus
-  deadlock with the page reclaimer, which could hold the lock for the old
-  mm_struct.
-* Disallow mmap(PROT_NONE) from /dev/sgx. Any mapping (e.g. anonymous) can
-  be used to reserve the address range. Now /dev/sgx supports only opaque
-  mappings to the (initialized) enclave data.
-* Make the vDSO callable directly from C by preserving RBX and taking leaf
-  from RCX.
-
-v28:
-* Documented to Documentation/x86/sgx.rst how the kernel manages the
-  enclave ownership.
-* Removed non-LC flow from sgx_einit().
-* Removed struct sgx_einittoken since only the size of the corresponding
-  microarchitectural structure is used in the series ATM.
-
-v27:
-* Disallow RIE processes to use enclaves as there could a permission
-  conflict between VMA and enclave permissions.
-* In the documentation, replace "grep /proc/cpuinfo" with
-  "grep sgx /proc/cpuinfo".
-
-v26:
-* Fixed the commit author in "x86/sgx: Linux Enclave Driver", which was
-  changed in v25 by mistake.
-* Addressed a bunch of grammar mistakes in sgx.rst (thanks Randy once
-  again for such a detailed feedback).
-* Added back the MAINTAINERS update commit, which was mistakenly removed
-  in v25.
-* EREMOVE's for SECS cannot be done while sanitizing an EPC section. The
-  CPU does not allow to remove a SECS page before all of its children have
-  been removed, and a child page can be in some other section than the one
-  currently being processed. Thus, removed special SECS processing from
-  sgx_sanitize_page() and instead put sections through it twice. In the
-  2nd round the lists should only contain SECS pages.
-
-v25:
-* Fix a double-free issue when SGX_IOC_ENCLAVE_ADD_PAGES
-  fails on executing ENCLS[EADD]. The rollback path executed
-  radix_tree_delete() on the same address twice when this happened.
-* Return -EINTR instead of -ERESTARTSYS in SGX_IOC_ENCLAVE_ADD_PAGES when
-  a signal is pending.
-* As requested by Borislav, move the CPUID 0x12 features to their own word
-  in cpufeatures.
-* Sean fixed a bug from sgx_reclaimer_write() where sgx_encl_put_backing()
-  was called with an uninitialized pointer when sgx_encl_get_backing()
-  fails.
-* Migrated /dev/sgx/* to misc. This is future-proof as struct miscdevice
-  has 'groups' for setting up sysfs attributes for the device.
-* Use device_initcall instead of subsys_initcall so that misc_class is
-  initialized before SGX is initialized.
-* Return -EACCES in SGX_IOC_ENCLAVE_INIT when caller tries to select
-  enclave attributes that we the kernel does not allow it to set instead
-  of -EINVAL.
-* Unless SGX public key MSRs are writable always deny the feature from
-  Linux. Previously this was only denied from driver. How VMs should be
-  supported is not really part of initial patch set, which makes this
-  an obvious choice.
-* Cleaned up and refined documentation to be more approachable.
-
-v24:
-* Reclaim unmeasured and TCS pages (regression in v23).
-* Replace usages of GFP_HIGHUSER with GFP_KERNEL.
-* Return -EIO on when EADD or EEXTEND fails in %SGX_IOC_ENCLAVE_ADD_PAGES
-  and use the same rollback (destroy enclave). This can happen when host
-  suspends itself unknowingly to a VM running enclaves. From -EIO the user
-  space can deduce what happened.
-* Have a separate @count in struct sgx_enclave_add_pages to output number
-  of bytes processed instead of overwriting the input parameters for
-  clarity and more importantly that the API provides means for partial
-  processing (@count could be less than @length in success case).
-
-v23:
-* Replace SGX_ENCLAVE_ADD_PAGE with SGX_ENCLAVE_ADD_PAGES. Replace @mrmask
-  with %SGX_PAGE_MEASURE flag.
-* Return -EIO instead of -ECANCELED when ptrace() fails to read a TCS page.
-* In the reclaimer, pin page before ENCLS[EBLOCK] because pinning can fail
-  (because of OOM) even in legit behaviour and after EBLOCK the reclaiming
-  flow can be only reverted by killing the whole enclave.
-* Fixed SGX_ATTR_RESERVED_MASK. Bit 7 was marked as reserved while in fact
-  it should have been bit 6 (Table 37-3 in the SDM).
-* Return -EPERM from SGX_IOC_ENCLAVE_INIT when ENCLS[EINIT] returns an SGX
-  error code.
-
-v22:
-* Refined bunch commit messages and added associated SDM references as
-  many of them were too exhausting and some outdated.
-* Alignment checks have been removed from mmap() because it does not define
-  the ELRANGE. VMAs only act as windows to the enclave. The semantics
-  compare somewhat how mmap() works with regular files.
-* We now require user space addresses given to SGX_IOC_ENCLAVE_ADD_PAGE to be
-  page aligned so that we can pass the page directly to EADD and do not have
-  to do an extra copy. This was made effectively possible by removing the
-  worker thread for adding pages.
-* The selftest build files have been refined throughout of various glitches
-  and work properly in a cross compilation environment such as BuildRoot.
-  In addition, libcalls fail the build with an assertion in the linker
-  script, if they end up to the enclave binary.
-* CONFIG_INTEL_SGX_DRIVER has been removed because you cannot use SGX core
-  for anything without having the driver. This could change when KVM support
-  is added.
-* We require zero permissions in SECINFO for TCS pages because the CPU
-  overwrites SECINFO flags with zero permissions and measures the page
-  only after that. Allowing to pass TCS with non-zero permissions would
-  cause mismatching measurement between the one provided in SIGSTRUCT and
-  the one computed by the CPU.
-* Obviously lots of small fixes and clean ups (does make sense to
-  document them all).
-
-v21:
-* Check on mmap() that the VMA does cover an area that does not have
-  enclave pages. Only mapping with PROT_NONE can do that to reserve
-  initial address space for an enclave.
-* Check om mmap() and mprotect() that the VMA permissions do not
-  surpass the enclave permissions.
-* Remove two refcounts from vma_close(): mm_list and encl->refcount.
-  Enclave refcount is only need for swapper/enclave sync and we can
-  remove mm_list refcount by destroying mm_struct when the process
-  is closed. By not having vm_close() the Linux MM can merge VMAs.
-* Do not naturally align MAP_FIXED address.
-* Numerous small fixes and clean ups.
-* Use SRCU for synchronizing the list of mm_struct's.
-* Move to stack based call convention in the vDSO.
-
-v20:
-* Fine-tune Kconfig messages and spacing and remove MMU_NOTIFIER
-  dependency as MMU notifiers are no longer used in the driver.
-* Use mm_users instead of mm_count as refcount for mm_struct as mm_count
-  only protects from deleting mm_struct, not removing its contents.
-* Sanitize EPC when the reclaimer thread starts by doing EREMOVE for all
-  of them. They could be in initialized state when the kernel starts
-  because it might be spawned by kexec().
-* Documentation overhaul.
-* Use a device /dev/sgx/provision for delivering the provision token
-  instead of securityfs.
-* Create a reference to the enclave when already when opening
-  /dev/sgx/enclave.  The file is then associated with this enclave only.
-  mmap() can be done at free at any point and always get a reference to
-  the enclave. To summarize the file now represents the enclave.
-
-v19:
-* Took 3-4 months but in some sense this was more like a rewrite of most
-  of the corners of the source code. If I've forgotten to deal with some
-  feedback, please don't shout me. Make a remark and I will fix it for
-  the next version. Hopefully there won't be this big turnovers anymore.
-* Validate SECS attributes properly against CPUID given attributes and
-  against allowed attributes. SECS attributes are the ones that are
-  enforced whereas SIGSTRUCT attributes tell what is required to run
-  the enclave.
-* Add KSS (Key Sharing Support) to the enclave attributes.
-* Deny MAP_PRIVATE as an enclave is always a shared memory entity.
-* Revert back to shmem backing storage so that it can be easily shared
-  by multiple processes.
-* Split the recognization of an ENCLS leaf failure by using three
-  functions to detect it: encsl_faulted(), encls_returned_code() and
-  sgx_failed(). encls_failed() is only caused by a spurious expections that
-  should never happen. Thus, it is not defined as an inline function in
-  order to easily insert a kprobe to it.
-* Move low-level enclave management routines, page fault handler and page
-  reclaiming routines from driver to the core. These cannot be separated
-  from each other as they are heavily interdependent. The rationale is that
-  the core does not call any code from the driver.
-* Allow the driver to be compiled as a module now that it no code is using
-  its routines and it only uses exported symbols. Now the driver is
-  essentially just a thin ioctl layer.
-* Reworked the driver to maintain a list of mm_struct's. The VMA callbacks
-  add new entries to this list as the process is forked. Each entry has
-  its own refcount because they have a different life-cycle as the enclave
-  does. In effect @tgid and @mm have been removed from struct sgx_encl
-  and we allow forking by removing VM_DONTCOPY from vm flags.
-* Generate a cpu mask in the reclaimer from the cpu mask's of all
-  mm_struct's. This will kick out the hardware threads out of the enclave
-  from multiple processes. It is not a local variable because it would
-  eat too much of the stack space but instead a field in struct
-  sgx_encl.
-* Allow forking i.e. remove VM_DONTCOPY. I did not change the API
-  because the old API scaled to the workload that Andy described. The
-  codebase is now mostly API independent i.e. changing the API is a
-  small task. For me the proper trigger to chanage it is a as concrete
-  as possible workload that cannot be fulfilled. I hope you understand
-  my thinking here. I don't want to change anything w/o proper basis
-  but I'm ready to change anything if there is a proper basis. I do
-  not have any kind of attachment to any particular type of API.
-* Add Sean's vDSO ENCLS(EENTER) patches and update selftest to use the
-  new vDSO.
-
-v18:
-* Update the ioctl-number.txt.
-* Move the driver under arch/x86.
-* Add SGX features (SGX, SGX1, SGX2) to the disabled-features.h.
-* Rename the selftest as test_sgx (previously sgx-selftest).
-* In order to enable process accounting, swap EPC pages and PCMD's to a VMA
-  instead of shmem.
-* Allow only to initialize and run enclaves with a subset of
-  {DEBUG, MODE64BIT} set.
-* Add SGX_IOC_ENCLAVE_SET_ATTRIBUTE to allow an enclave to have privileged
-  attributes e.g. PROVISIONKEY.
-
-v17:
-* Add a simple selftest.
-* Fix a null pointer dereference to section->pages when its
-  allocation fails.
-* Add Sean's description of the exception handling to the documentation.
-
-v16:
-* Fixed SOB's in the commits that were a bit corrupted in v15.
-* Implemented exceptio handling properly to detect_sgx().
-* Use GENMASK() to define SGX_CPUID_SUB_LEAF_TYPE_MASK.
-* Updated the documentation to use rst definition lists.
-* Added the missing Documentation/x86/index.rst, which has a link to
-  intel_sgx.rst. Now the SGX and uapi documentation is properly generated
-  with 'make htmldocs'.
-* While enumerating EPC sections, if an undefined section is found, fail
-  the driver initialization instead of continuing the initialization.
-* Issue a warning if there are more than %SGX_MAX_EPC_SECTIONS.
-* Remove copyright notice from arch/x86/include/asm/sgx.h.
-* Migrated from ioremap_cache() to memremap().
-
-v15:
-* Split into more digestable size patches.
-* Lots of small fixes and clean ups.
-* Signal a "plain" SIGSEGV on an EPCM violation.
-
-v14:
-* Change the comment about X86_FEATURE_SGX_LC from “SGX launch
-  configuration” to “SGX launch control”.
-* Move the SGX-related CPU feature flags as part of the Linux defined
-  virtual leaf 8.
-* Add SGX_ prefix to the constants defining the ENCLS leaf functions.
-* Use GENMASK*() and BIT*() in sgx_arch.h instead of raw hex numbers.
-* Refine the long description for CONFIG_INTEL_SGX_CORE.
-* Do not use pr_*_ratelimited()  in the driver. The use of the rate limited
-  versions is legacy cruft from the prototyping phase.
-* Detect sleep with SGX_INVALID_EINIT_TOKEN instead of counting power
-  cycles.
-* Manually prefix with “sgx:” in the core SGX code instead of redefining
-  pr_fmt.
-* Report if IA32_SGXLEPUBKEYHASHx MSRs are not writable in the driver
-  instead of core because it is a driver requirement.
-* Change prompt to bool in the entry for CONFIG_INTEL_SGX_CORE because the
-  default is ‘n’.
-* Rename struct sgx_epc_bank as struct sgx_epc_section in order to match
-  the SDM.
-* Allocate struct sgx_epc_page instances one at a time.
-* Use “__iomem void *” pointers for the mapped EPC memory consistently.
-* Retry once on SGX_INVALID_TOKEN in sgx_einit() instead of counting power
-  cycles.
-* Call enclave swapping operations directly from the driver instead of
-  calling them .indirectly through struct sgx_epc_page_ops because indirect
-  calls are not required yet as the patch set does not contain the KVM
-  support.
-* Added special signal SEGV_SGXERR to notify about SGX EPCM violation
-  errors.
-
-v13:
-* Always use SGX_CPUID constant instead of a hardcoded value.
-* Simplified and documented the macros and functions for ENCLS leaves.
-* Enable sgx_free_page() to free active enclave pages on demand
-  in order to allow sgx_invalidate() to delete enclave pages.
-  It no longer performs EREMOVE if a page is in the process of
-  being reclaimed.
-* Use PM notifier per enclave so that we don't have to traverse
-  the global list of active EPC pages to find enclaves.
-* Removed unused SGX_LE_ROLLBACK constant from uapi/asm/sgx.h
-* Always use ioremap() to map EPC banks as we only support 64-bit kernel.
-* Invalidate IA32_SGXLEPUBKEYHASH cache used by sgx_einit() when going
-  to sleep.
-
-v12:
-* Split to more narrow scoped commits in order to ease the review process and
-  use co-developed-by tag for co-authors of commits instead of listing them in
-  the source files.
-* Removed cruft EXPORT_SYMBOL() declarations and converted to static variables.
-* Removed in-kernel LE i.e. this version of the SGX software stack only
-  supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
-* Refined documentation on launching enclaves, swapping and enclave
-  construction.
-* Refined sgx_arch.h to include alignment information for every struct that
-  requires it and removed structs that are not needed without an LE.
-* Got rid of SGX_CPUID.
-* SGX detection now prints log messages about firmware configuration issues.
-
-v11:
-* Polished ENCLS wrappers with refined exception handling.
-* ksgxswapd was not stopped (regression in v5) in
-  sgx_page_cache_teardown(), which causes a leaked kthread after driver
-  deinitialization.
-* Shutdown sgx_le_proxy when going to suspend because its EPC pages will be
-  invalidated when resuming, which will cause it not function properly
-  anymore.
-* Set EINITTOKEN.VALID to zero for a token that is passed when
-  SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
-  page.
-* Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
-  around the flags field, which causes a #GP. Only flags read is readable.
-* On read access memcpy() call inside sgx_vma_access() had src and dest
-  parameters in wrong order.
-* The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
-  to LE even if “KASAN_SANITIZE := false” was set in the makefile.
-* Fixed a regression in the #PF handler. If a page has
-  SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail.
-  It did not, which caused weird races when trying to change other parts of
-  swapping code.
-* EPC management has been refactored to a flat LRU cache and moved to
-  arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
-  of them. It can now swap from multiple enclaves in the same round.
-* For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINVAL
-  when an enclave is already initialized or dead instead of zero.
-
-v10:
-* Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
-  of the driver.
-* Unset the reserved flag from an enclave page if EDBGRD/WR fails
-  (regression in v6).
-* Close the anon inode when LE is stopped (regression in v9).
-* Update the documentation with a more detailed description of SGX.
-
-v9:
-* Replaced kernel-LE IPC based on pipes with an anonymous inode.
-  The driver does not require anymore new exports.
-
-v8:
-* Check that public key MSRs match the LE public key hash in the
-  driver initialization when the MSRs are read-only.
-* Fix the race in VA slot allocation by checking the fullness
-  immediately after succeesful allocation.
-* Fix the race in hash mrsigner calculation between the launch
-  enclave and user enclaves by having a separate lock for hash
-  calculation.
-
-v7:
-* Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAGE_MASK
-  when it should have been masked with ~PAGE_MASK.
-* Fixed a memory leak in sgx_ioc_enclave_create().
-* Simplified swapping code by using a pointer array for a cluster
-  instead of a linked list.
-* Squeezed struct sgx_encl_page to 32 bytes.
-* Fixed deferencing of an RSA key on OpenSSL 1.1.0.
-* Modified TC's CMAC to use kernel AES-NI. Restructured the code
-  a bit in order to better align with kernel conventions.
-
-v6:
-* Fixed semaphore underrun when accessing /dev/sgx from the launch enclave.
-* In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
-* Removed virtualization chapter from the documentation.
-* Changed the default filename for the signing key as signing_key.pem.
-* Reworked EPC management in a way that instead of a linked list of
-  struct sgx_epc_page instances there is an array of integers that
-  encodes address and bank of an EPC page (the same data as 'pa' field
-  earlier). The locking has been moved to the EPC bank level instead
-  of a global lock.
-* Relaxed locking requirements for EPC management. EPC pages can be
-  released back to the EPC bank concurrently.
-* Cleaned up ptrace() code.
-* Refined commit messages for new architectural constants.
-* Sorted includes in every source file.
-* Sorted local variable declarations according to the line length in
-  every function.
-* Style fixes based on Darren's comments to sgx_le.c.
-
-v5:
-* Described IPC between the Launch Enclave and kernel in the commit messages.
-* Fixed all relevant checkpatch.pl issues that I have forgot fix in earlier
-  versions except those that exist in the imported TinyCrypt code.
-* Fixed spelling mistakes in the documentation.
-* Forgot to check the return value of sgx_drv_subsys_init().
-* Encapsulated properly page cache init and teardown.
-* Collect epc pages to a temp list in sgx_add_epc_bank
-* Removed SGX_ENCLAVE_INIT_ARCH constant.
-
-v4:
-* Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
-* Removed __exit annotation from sgx_drv_subsys_exit().
-* Fixed a leak of a backing page in sgx_process_add_page_req() in the
-  case when vm_insert_pfn() fails.
-* Removed unused symbol exports for sgx_page_cache.c.
-* Updated sgx_alloc_page() to require encl parameter and documented the
-  behavior (Sean Christopherson).
-* Refactored a more lean API for sgx_encl_find() and documented the behavior.
-* Moved #PF handler to sgx_fault.c.
-* Replaced subsys_system_register() with plain bus_register().
-* Retry EINIT 2nd time only if MSRs are not locked.
-
-v3:
-* Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are set.
-* Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fails.
-* Use unused bits in epc_page->pa to store the bank number.
-* Removed #ifdef for WQ_NONREENTRANT.
-* If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
-* Added --remove-section=.got.plt to objcopy flags in order to prevent a
-  dummy .got.plt, which will cause an inconsistent size for the LE.
-* Documented sgx_encl_* functions.
-* Added remark about AES implementation used inside the LE.
-* Removed redundant sgx_sys_exit() from le/main.c.
-* Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
-* Validate miscselect in sgx_encl_create().
-* Fixed SSA frame size calculation to take the misc region into account.
-* Implemented consistent exception handling to __encls() and __encls_ret().
-* Implemented a proper device model in order to allow sysfs attributes
-  and in-kernel API.
-* Cleaned up various "find enclave" implementations to the unified
-  sgx_encl_find().
-* Validate that vm_pgoff is zero.
-* Discard backing pages with shmem_truncate_range() after EADD.
-* Added missing EEXTEND operations to LE signing and launch.
-* Fixed SSA size for GPRS region from 168 to 184 bytes.
-* Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
-* Check that TCS addresses are in ELRANGE and not just page aligned.
-* Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
-* Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
-
-v2:
-* get_rand_uint32() changed the value of the pointer instead of value
-  where it is pointing at.
-* Launch enclave incorrectly used sigstruct attributes-field instead of
-  enclave attributes-field.
-* Removed unused struct sgx_add_page_req from sgx_ioctl.c
-* Removed unused sgx_has_sgx2.
-* Updated arch/x86/include/asm/sgx.h so that it provides stub
-  implementations when sgx in not enabled.
-* Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
-* return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
-* removed unused global sgx_nr_pids
-* moved sgx_encl_release to sgx_encl.c
-* return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
-
-
-Jarkko Sakkinen (10):
-  x86/sgx: Add SGX microarchitectural data structures
-  x86/sgx: Add wrappers for ENCLS leaf functions
-  x86/sgx: Add functions to allocate and free EPC pages
-  x86/sgx: Linux Enclave Driver
-  x86/sgx: Add provisioning
-  x86/sgx: Add a page reclaimer
-  x86/sgx: ptrace() support for the SGX driver
-  selftests/x86: Add a selftest for SGX
-  docs: x86/sgx: Document SGX micro architecture and kernel internals
-  x86/sgx: Update MAINTAINERS
-
-Sean Christopherson (10):
-  x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
-  x86/cpufeatures: x86/msr: Intel SGX Launch Control hardware bits
-  x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
-  x86/cpu/intel: Detect SGX support
-  x86/sgx: Enumerate and track EPC sections
-  mm: Introduce vm_ops->may_mprotect()
-  x86/vdso: Add support for exception fixup in vDSO functions
-  x86/fault: Add helper function to sanitize error code
-  x86/traps: Attempt to fixup exceptions in vDSO before signaling
-  x86/vdso: Implement a vDSO for Intel SGX enclave call
-
- .../userspace-api/ioctl/ioctl-number.rst      |   1 +
- Documentation/x86/index.rst                   |   1 +
- Documentation/x86/sgx.rst                     | 206 +++++
- MAINTAINERS                                   |  11 +
- arch/x86/Kconfig                              |  14 +
- arch/x86/entry/vdso/Makefile                  |   8 +-
- arch/x86/entry/vdso/extable.c                 |  46 +
- arch/x86/entry/vdso/extable.h                 |  29 +
- arch/x86/entry/vdso/vdso-layout.lds.S         |   9 +-
- arch/x86/entry/vdso/vdso.lds.S                |   1 +
- arch/x86/entry/vdso/vdso2c.h                  |  58 +-
- arch/x86/entry/vdso/vsgx_enter_enclave.S      | 131 +++
- arch/x86/include/asm/cpufeature.h             |   5 +-
- arch/x86/include/asm/cpufeatures.h            |   8 +-
- arch/x86/include/asm/disabled-features.h      |  18 +-
- arch/x86/include/asm/enclu.h                  |   8 +
- arch/x86/include/asm/msr-index.h              |   8 +
- arch/x86/include/asm/required-features.h      |   2 +-
- arch/x86/include/asm/traps.h                  |   1 +
- arch/x86/include/asm/vdso.h                   |   5 +
- arch/x86/include/uapi/asm/sgx.h               | 175 ++++
- arch/x86/kernel/cpu/Makefile                  |   1 +
- arch/x86/kernel/cpu/common.c                  |   4 +
- arch/x86/kernel/cpu/feat_ctl.c                |  32 +-
- arch/x86/kernel/cpu/sgx/Makefile              |   6 +
- arch/x86/kernel/cpu/sgx/arch.h                | 343 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c              | 209 +++++
- arch/x86/kernel/cpu/sgx/driver.h              |  32 +
- arch/x86/kernel/cpu/sgx/encl.c                | 755 +++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h                | 128 +++
- arch/x86/kernel/cpu/sgx/encls.h               | 238 ++++++
- arch/x86/kernel/cpu/sgx/ioctl.c               | 800 ++++++++++++++++++
- arch/x86/kernel/cpu/sgx/main.c                | 280 ++++++
- arch/x86/kernel/cpu/sgx/reclaim.c             | 471 +++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h                 | 108 +++
- arch/x86/kernel/traps.c                       |  14 +
- arch/x86/mm/fault.c                           |  45 +-
- include/linux/mm.h                            |   2 +
- mm/mprotect.c                                 |  14 +-
- tools/arch/x86/include/asm/cpufeatures.h      |   7 +-
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/sgx/.gitignore        |   2 +
- tools/testing/selftests/sgx/Makefile          |  53 ++
- tools/testing/selftests/sgx/call.S            |  54 ++
- tools/testing/selftests/sgx/defines.h         |  21 +
- tools/testing/selftests/sgx/load.c            | 282 ++++++
- tools/testing/selftests/sgx/main.c            | 199 +++++
- tools/testing/selftests/sgx/main.h            |  38 +
- tools/testing/selftests/sgx/sigstruct.c       | 395 +++++++++
- tools/testing/selftests/sgx/test_encl.c       |  20 +
- tools/testing/selftests/sgx/test_encl.lds     |  40 +
- .../selftests/sgx/test_encl_bootstrap.S       |  89 ++
- 52 files changed, 5397 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/x86/sgx.rst
- create mode 100644 arch/x86/entry/vdso/extable.c
- create mode 100644 arch/x86/entry/vdso/extable.h
- create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
- create mode 100644 arch/x86/include/asm/enclu.h
- create mode 100644 arch/x86/include/uapi/asm/sgx.h
- create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
- create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
- create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
- create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
- create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
- create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
- create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
- create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
- create mode 100644 arch/x86/kernel/cpu/sgx/main.c
- create mode 100644 arch/x86/kernel/cpu/sgx/reclaim.c
- create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
- create mode 100644 tools/testing/selftests/sgx/.gitignore
- create mode 100644 tools/testing/selftests/sgx/Makefile
- create mode 100644 tools/testing/selftests/sgx/call.S
- create mode 100644 tools/testing/selftests/sgx/defines.h
- create mode 100644 tools/testing/selftests/sgx/load.c
- create mode 100644 tools/testing/selftests/sgx/main.c
- create mode 100644 tools/testing/selftests/sgx/main.h
- create mode 100644 tools/testing/selftests/sgx/sigstruct.c
- create mode 100644 tools/testing/selftests/sgx/test_encl.c
- create mode 100644 tools/testing/selftests/sgx/test_encl.lds
- create mode 100644 tools/testing/selftests/sgx/test_encl_bootstrap.S
-
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index d90114cec1c3..997a7f4117c5 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -32,6 +32,7 @@ static int sgx_open(struct inode *inode, struct file *file)
+ 
+ 	atomic_set(&encl->flags, 0);
+ 	kref_init(&encl->refcount);
++	INIT_LIST_HEAD(&encl->va_pages);
+ 	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
+ 	mutex_init(&encl->lock);
+ 	INIT_LIST_HEAD(&encl->mm_list);
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 17e44bf8fa56..fe7dbca40bb4 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -9,11 +9,86 @@
+ #include <linux/sched/mm.h>
+ #include "arch.h"
+ #include "encl.h"
++#include "encls.h"
+ #include "sgx.h"
+ 
++static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
++			   struct sgx_epc_page *epc_page,
++			   struct sgx_epc_page *secs_page)
++{
++	unsigned long va_offset = SGX_ENCL_PAGE_VA_OFFSET(encl_page);
++	struct sgx_encl *encl = encl_page->encl;
++	struct sgx_pageinfo pginfo;
++	struct sgx_backing b;
++	pgoff_t page_index;
++	int ret;
++
++	if (secs_page)
++		page_index = SGX_ENCL_PAGE_INDEX(encl_page);
++	else
++		page_index = PFN_DOWN(encl->size);
++
++	ret = sgx_encl_get_backing(encl, page_index, &b);
++	if (ret)
++		return ret;
++
++	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
++	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
++	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
++			  b.pcmd_offset;
++
++	if (secs_page)
++		pginfo.secs = (u64)sgx_epc_addr(secs_page);
++	else
++		pginfo.secs = 0;
++
++	ret = __eldu(&pginfo, sgx_epc_addr(epc_page),
++		     sgx_epc_addr(encl_page->va_page->epc_page) + va_offset);
++	if (ret) {
++		if (encls_failed(ret))
++			ENCLS_WARN(ret, "ELDU");
++
++		ret = -EFAULT;
++	}
++
++	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
++	kunmap_atomic((void *)(unsigned long)pginfo.contents);
++
++	sgx_encl_put_backing(&b, false);
++
++	return ret;
++}
++
++static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
++					  struct sgx_epc_page *secs_page)
++{
++	unsigned long va_offset = SGX_ENCL_PAGE_VA_OFFSET(encl_page);
++	struct sgx_encl *encl = encl_page->encl;
++	struct sgx_epc_page *epc_page;
++	int ret;
++
++	epc_page = sgx_alloc_page(encl_page, false);
++	if (IS_ERR(epc_page))
++		return epc_page;
++
++	ret = __sgx_encl_eldu(encl_page, epc_page, secs_page);
++	if (ret) {
++		sgx_free_page(epc_page);
++		return ERR_PTR(ret);
++	}
++
++	sgx_free_va_slot(encl_page->va_page, va_offset);
++	list_move(&encl_page->va_page->list, &encl->va_pages);
++	encl_page->desc &= ~SGX_ENCL_PAGE_VA_OFFSET_MASK;
++	encl_page->epc_page = epc_page;
++
++	return epc_page;
++}
++
+ static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+ 						unsigned long addr)
+ {
++	struct sgx_epc_page *epc_page;
+ 	struct sgx_encl_page *entry;
+ 	unsigned int flags;
+ 
+@@ -33,10 +108,27 @@ static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+ 		return ERR_PTR(-EFAULT);
+ 
+ 	/* Page is already resident in the EPC. */
+-	if (entry->epc_page)
++	if (entry->epc_page) {
++		if (entry->desc & SGX_ENCL_PAGE_RECLAIMED)
++			return ERR_PTR(-EBUSY);
++
+ 		return entry;
++	}
++
++	if (!(encl->secs.epc_page)) {
++		epc_page = sgx_encl_eldu(&encl->secs, NULL);
++		if (IS_ERR(epc_page))
++			return ERR_CAST(epc_page);
++	}
++
++	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
++	if (IS_ERR(epc_page))
++		return ERR_CAST(epc_page);
+ 
+-	return ERR_PTR(-EFAULT);
++	encl->secs_child_cnt++;
++	sgx_mark_page_reclaimable(entry->epc_page);
++
++	return entry;
+ }
+ 
+ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
+@@ -134,6 +226,9 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 
+ 	spin_lock(&encl->mm_lock);
+ 	list_add_rcu(&encl_mm->list, &encl->mm_list);
++	/* Pairs with smp_rmb() in sgx_reclaimer_block(). */
++	smp_wmb();
++	encl->mm_list_version++;
+ 	spin_unlock(&encl->mm_lock);
+ 
+ 	return 0;
+@@ -181,6 +276,8 @@ static unsigned int sgx_vma_fault(struct vm_fault *vmf)
+ 		goto out;
+ 	}
+ 
++	sgx_encl_test_and_clear_young(vma->vm_mm, entry);
++
+ out:
+ 	mutex_unlock(&encl->lock);
+ 	return ret;
+@@ -280,6 +377,7 @@ int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+  */
+ void sgx_encl_destroy(struct sgx_encl *encl)
+ {
++	struct sgx_va_page *va_page;
+ 	struct sgx_encl_page *entry;
+ 	struct radix_tree_iter iter;
+ 	void **slot;
+@@ -290,6 +388,13 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+ 		entry = *slot;
+ 
+ 		if (entry->epc_page) {
++			/*
++			 * The page and its radix tree entry cannot be freed
++			 * if the page is being held by the reclaimer.
++			 */
++			if (sgx_unmark_page_reclaimable(entry->epc_page))
++				continue;
++
+ 			sgx_free_page(entry->epc_page);
+ 			encl->secs_child_cnt--;
+ 			entry->epc_page = NULL;
+@@ -304,6 +409,19 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+ 		sgx_free_page(encl->secs.epc_page);
+ 		encl->secs.epc_page = NULL;
+ 	}
++
++	/*
++	 * The reclaimer is responsible for checking SGX_ENCL_DEAD before doing
++	 * EWB, thus it's safe to free VA pages even if the reclaimer holds a
++	 * reference to the enclave.
++	 */
++	while (!list_empty(&encl->va_pages)) {
++		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
++					   list);
++		list_del(&va_page->list);
++		sgx_free_page(va_page->epc_page);
++		kfree(va_page);
++	}
+ }
+ 
+ /**
+@@ -330,3 +448,221 @@ void sgx_encl_release(struct kref *ref)
+ 
+ 	kfree(encl);
+ }
++
++static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
++					      pgoff_t index)
++{
++	struct inode *inode = encl->backing->f_path.dentry->d_inode;
++	struct address_space *mapping = inode->i_mapping;
++	gfp_t gfpmask = mapping_gfp_mask(mapping);
++
++	return shmem_read_mapping_page_gfp(mapping, index, gfpmask);
++}
++
++/**
++ * sgx_encl_get_backing() - Pin the backing storage
++ * @encl:	an enclave
++ * @page_index:	enclave page index
++ * @backing:	data for accessing backing storage for the page
++ *
++ * Pin the backing storage pages for storing the encrypted contents and Paging
++ * Crypto MetaData (PCMD) of an enclave page.
++ *
++ * Return:
++ *   0 on success,
++ *   -errno otherwise.
++ */
++int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
++			 struct sgx_backing *backing)
++{
++	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
++	struct page *contents;
++	struct page *pcmd;
++
++	contents = sgx_encl_get_backing_page(encl, page_index);
++	if (IS_ERR(contents))
++		return PTR_ERR(contents);
++
++	pcmd = sgx_encl_get_backing_page(encl, pcmd_index);
++	if (IS_ERR(pcmd)) {
++		put_page(contents);
++		return PTR_ERR(pcmd);
++	}
++
++	backing->page_index = page_index;
++	backing->contents = contents;
++	backing->pcmd = pcmd;
++	backing->pcmd_offset =
++		(page_index & (PAGE_SIZE / sizeof(struct sgx_pcmd) - 1)) *
++		sizeof(struct sgx_pcmd);
++
++	return 0;
++}
++
++/**
++ * sgx_encl_put_backing() - Unpin the backing storage
++ * @backing:	data for accessing backing storage for the page
++ * @do_write:	mark pages dirty
++ */
++void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write)
++{
++	if (do_write) {
++		set_page_dirty(backing->pcmd);
++		set_page_dirty(backing->contents);
++	}
++
++	put_page(backing->pcmd);
++	put_page(backing->contents);
++}
++
++static int sgx_encl_test_and_clear_young_cb(pte_t *ptep, unsigned long addr,
++					    void *data)
++{
++	pte_t pte;
++	int ret;
++
++	ret = pte_young(*ptep);
++	if (ret) {
++		pte = pte_mkold(*ptep);
++		set_pte_at((struct mm_struct *)data, addr, ptep, pte);
++	}
++
++	return ret;
++}
++
++/**
++ * sgx_encl_test_and_clear_young() - Test and reset the accessed bit
++ * @mm:		mm_struct that is checked
++ * @page:	enclave page to be tested for recent access
++ *
++ * Checks the Access (A) bit from the PTE corresponding to the enclave page and
++ * clears it.
++ *
++ * Return: 1 if the page has been recently accessed and 0 if not.
++ */
++int sgx_encl_test_and_clear_young(struct mm_struct *mm,
++				  struct sgx_encl_page *page)
++{
++	unsigned long addr = SGX_ENCL_PAGE_ADDR(page);
++	struct sgx_encl *encl = page->encl;
++	struct vm_area_struct *vma;
++	int ret;
++
++	ret = sgx_encl_find(mm, addr, &vma);
++	if (ret)
++		return 0;
++
++	if (encl != vma->vm_private_data)
++		return 0;
++
++	ret = apply_to_page_range(vma->vm_mm, addr, PAGE_SIZE,
++				  sgx_encl_test_and_clear_young_cb, vma->vm_mm);
++	if (ret < 0)
++		return 0;
++
++	return ret;
++}
++
++/**
++ * sgx_encl_reserve_page() - Reserve an enclave page
++ * @encl:	an enclave
++ * @addr:	a page address
++ *
++ * Load an enclave page and lock the enclave so that the page can be used by
++ * EDBG* and EMOD*.
++ *
++ * Return:
++ *   an enclave page on success
++ *   -EFAULT	if the load fails
++ */
++struct sgx_encl_page *sgx_encl_reserve_page(struct sgx_encl *encl,
++					    unsigned long addr)
++{
++	struct sgx_encl_page *entry;
++
++	for ( ; ; ) {
++		mutex_lock(&encl->lock);
++
++		entry = sgx_encl_load_page(encl, addr);
++		if (PTR_ERR(entry) != -EBUSY)
++			break;
++
++		mutex_unlock(&encl->lock);
++	}
++
++	if (IS_ERR(entry))
++		mutex_unlock(&encl->lock);
++
++	return entry;
++}
++
++/**
++ * sgx_alloc_page - allocate a VA page
++ *
++ * Allocates an &sgx_epc_page instance and converts it to a VA page.
++ *
++ * Return:
++ *   a &struct sgx_va_page instance,
++ *   -errno otherwise
++ */
++struct sgx_epc_page *sgx_alloc_va_page(void)
++{
++	struct sgx_epc_page *epc_page;
++	int ret;
++
++	epc_page = sgx_alloc_page(NULL, true);
++	if (IS_ERR(epc_page))
++		return ERR_CAST(epc_page);
++
++	ret = __epa(sgx_epc_addr(epc_page));
++	if (ret) {
++		WARN_ONCE(1, "EPA returned %d (0x%x)", ret, ret);
++		sgx_free_page(epc_page);
++		return ERR_PTR(-EFAULT);
++	}
++
++	return epc_page;
++}
++
++/**
++ * sgx_alloc_va_slot - allocate a VA slot
++ * @va_page:	a &struct sgx_va_page instance
++ *
++ * Allocates a slot from a &struct sgx_va_page instance.
++ *
++ * Return: offset of the slot inside the VA page
++ */
++unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page)
++{
++	int slot = find_first_zero_bit(va_page->slots, SGX_VA_SLOT_COUNT);
++
++	if (slot < SGX_VA_SLOT_COUNT)
++		set_bit(slot, va_page->slots);
++
++	return slot << 3;
++}
++
++/**
++ * sgx_free_va_slot - free a VA slot
++ * @va_page:	a &struct sgx_va_page instance
++ * @offset:	offset of the slot inside the VA page
++ *
++ * Frees a slot from a &struct sgx_va_page instance.
++ */
++void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset)
++{
++	clear_bit(offset >> 3, va_page->slots);
++}
++
++/**
++ * sgx_va_page_full - is the VA page full?
++ * @va_page:	a &struct sgx_va_page instance
++ *
++ * Return: true if all slots have been taken
++ */
++bool sgx_va_page_full(struct sgx_va_page *va_page)
++{
++	int slot = find_first_zero_bit(va_page->slots, SGX_VA_SLOT_COUNT);
++
++	return slot == SGX_VA_SLOT_COUNT;
++}
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 1d1bc5d590ee..f0f72e591244 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -19,6 +19,10 @@
+ 
+ /**
+  * enum sgx_encl_page_desc - defines bits for an enclave page's descriptor
++ * %SGX_ENCL_PAGE_RECLAIMED:		The page is in the process of being
++ *					reclaimed.
++ * %SGX_ENCL_PAGE_VA_OFFSET_MASK:	Holds the offset in the Version Array
++ *					(VA) page for a swapped page.
+  * %SGX_ENCL_PAGE_ADDR_MASK:		Holds the virtual address of the page.
+  *
+  * The page address for SECS is zero and is used by the subsystem to recognize
+@@ -26,16 +30,23 @@
+  */
+ enum sgx_encl_page_desc {
+ 	/* Bits 11:3 are available when the page is not swapped. */
++	SGX_ENCL_PAGE_RECLAIMED		= BIT(3),
++	SGX_ENCL_PAGE_VA_OFFSET_MASK	= GENMASK_ULL(11, 3),
+ 	SGX_ENCL_PAGE_ADDR_MASK		= PAGE_MASK,
+ };
+ 
+ #define SGX_ENCL_PAGE_ADDR(page) \
+ 	((page)->desc & SGX_ENCL_PAGE_ADDR_MASK)
++#define SGX_ENCL_PAGE_VA_OFFSET(page) \
++	((page)->desc & SGX_ENCL_PAGE_VA_OFFSET_MASK)
++#define SGX_ENCL_PAGE_INDEX(page) \
++	PFN_DOWN((page)->desc - (page)->encl->base)
+ 
+ struct sgx_encl_page {
+ 	unsigned long desc;
+ 	unsigned long vm_max_prot_bits;
+ 	struct sgx_epc_page *epc_page;
++	struct sgx_va_page *va_page;
+ 	struct sgx_encl *encl;
+ };
+ 
+@@ -63,17 +74,27 @@ struct sgx_encl {
+ 	struct mutex lock;
+ 	struct list_head mm_list;
+ 	spinlock_t mm_lock;
++	unsigned long mm_list_version;
+ 	struct file *backing;
+ 	struct kref refcount;
+ 	struct srcu_struct srcu;
+ 	unsigned long base;
+ 	unsigned long size;
+ 	unsigned long ssaframesize;
++	struct list_head va_pages;
+ 	struct radix_tree_root page_tree;
+ 	struct sgx_encl_page secs;
+ 	cpumask_t cpumask;
+ };
+ 
++#define SGX_VA_SLOT_COUNT 512
++
++struct sgx_va_page {
++	struct sgx_epc_page *epc_page;
++	DECLARE_BITMAP(slots, SGX_VA_SLOT_COUNT);
++	struct list_head list;
++};
++
+ extern const struct vm_operations_struct sgx_vm_ops;
+ 
+ int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+@@ -84,4 +105,24 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 		     unsigned long end, unsigned long vm_prot_bits);
+ 
++struct sgx_backing {
++	pgoff_t page_index;
++	struct page *contents;
++	struct page *pcmd;
++	unsigned long pcmd_offset;
++};
++
++int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
++			 struct sgx_backing *backing);
++void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
++int sgx_encl_test_and_clear_young(struct mm_struct *mm,
++				  struct sgx_encl_page *page);
++struct sgx_encl_page *sgx_encl_reserve_page(struct sgx_encl *encl,
++					    unsigned long addr);
++
++struct sgx_epc_page *sgx_alloc_va_page(void);
++unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
++void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
++bool sgx_va_page_full(struct sgx_va_page *va_page);
++
+ #endif /* _X86_ENCL_H */
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index aea3e82a7ab9..3af0596530a8 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -19,6 +19,43 @@
+ /* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
+ static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
+ 
++static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
++{
++	struct sgx_va_page *va_page = NULL;
++	void *err;
++
++	BUILD_BUG_ON(SGX_VA_SLOT_COUNT !=
++		(SGX_ENCL_PAGE_VA_OFFSET_MASK >> 3) + 1);
++
++	if (!(encl->page_cnt % SGX_VA_SLOT_COUNT)) {
++		va_page = kzalloc(sizeof(*va_page), GFP_KERNEL);
++		if (!va_page)
++			return ERR_PTR(-ENOMEM);
++
++		va_page->epc_page = sgx_alloc_va_page();
++		if (IS_ERR(va_page->epc_page)) {
++			err = ERR_CAST(va_page->epc_page);
++			kfree(va_page);
++			return err;
++		}
++
++		WARN_ON_ONCE(encl->page_cnt % SGX_VA_SLOT_COUNT);
++	}
++	encl->page_cnt++;
++	return va_page;
++}
++
++static void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
++{
++	encl->page_cnt--;
++
++	if (va_page) {
++		sgx_free_page(va_page->epc_page);
++		list_del(&va_page->list);
++		kfree(va_page);
++	}
++}
++
+ static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
+ {
+ 	u32 size_max = PAGE_SIZE;
+@@ -114,6 +151,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ {
+ 	unsigned long encl_size = secs->size + PAGE_SIZE;
+ 	struct sgx_epc_page *secs_epc;
++	struct sgx_va_page *va_page;
+ 	unsigned long ssaframesize;
+ 	struct sgx_pageinfo pginfo;
+ 	struct sgx_secinfo secinfo;
+@@ -123,20 +161,29 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
+ 		return -EINVAL;
+ 
++	va_page = sgx_encl_grow(encl);
++	if (IS_ERR(va_page))
++		return PTR_ERR(va_page);
++	else if (va_page)
++		list_add(&va_page->list, &encl->va_pages);
++
+ 	ssaframesize = sgx_calc_ssaframesize(secs->miscselect, secs->xfrm);
+ 	if (sgx_validate_secs(secs, ssaframesize)) {
+ 		pr_debug("invalid SECS\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_out_shrink;
+ 	}
+ 
+ 	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
+ 				   VM_NORESERVE);
+-	if (IS_ERR(backing))
+-		return PTR_ERR(backing);
++	if (IS_ERR(backing)) {
++		ret = PTR_ERR(backing);
++		goto err_out_shrink;
++	}
+ 
+ 	encl->backing = backing;
+ 
+-	secs_epc = sgx_try_alloc_page();
++	secs_epc = sgx_alloc_page(&encl->secs, true);
+ 	if (IS_ERR(secs_epc)) {
+ 		ret = PTR_ERR(secs_epc);
+ 		goto err_out_backing;
+@@ -183,6 +230,9 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	fput(encl->backing);
+ 	encl->backing = NULL;
+ 
++err_out_shrink:
++	sgx_encl_shrink(encl, va_page);
++
+ 	return ret;
+ }
+ 
+@@ -319,13 +369,14 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ {
+ 	struct sgx_encl_page *encl_page;
+ 	struct sgx_epc_page *epc_page;
++	struct sgx_va_page *va_page;
+ 	int ret;
+ 
+ 	encl_page = sgx_encl_page_alloc(encl, offset, secinfo->flags);
+ 	if (IS_ERR(encl_page))
+ 		return PTR_ERR(encl_page);
+ 
+-	epc_page = sgx_try_alloc_page();
++	epc_page = sgx_alloc_page(encl_page, true);
+ 	if (IS_ERR(epc_page)) {
+ 		kfree(encl_page);
+ 		return PTR_ERR(epc_page);
+@@ -337,9 +388,22 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 		goto err_out_free;
+ 	}
+ 
++	va_page = sgx_encl_grow(encl);
++	if (IS_ERR(va_page)) {
++		ret = PTR_ERR(va_page);
++		goto err_out_free;
++	}
++
+ 	down_read(&current->mm->mmap_sem);
+ 	mutex_lock(&encl->lock);
+ 
++	/*
++	 * Adding to encl->va_pages must be done under encl->lock.  Ditto for
++	 * deleting (via sgx_encl_shrink()) in the error path.
++	 */
++	if (va_page)
++		list_add(&va_page->list, &encl->va_pages);
++
+ 	/*
+ 	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
+ 	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
+@@ -370,6 +434,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 			goto err_out;
+ 	}
+ 
++	sgx_mark_page_reclaimable(encl_page->epc_page);
+ 	mutex_unlock(&encl->lock);
+ 	up_read(&current->mm->mmap_sem);
+ 	return ret;
+@@ -379,6 +444,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 			  PFN_DOWN(encl_page->desc));
+ 
+ err_out_unlock:
++	sgx_encl_shrink(encl, va_page);
+ 	mutex_unlock(&encl->lock);
+ 	up_read(&current->mm->mmap_sem);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 842f9abba1c0..5ce77e554676 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -23,6 +23,8 @@ static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section
+ 
+ 	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
+ 	list_del_init(&page->list);
++	section->free_cnt--;
++
+ 	return page;
+ }
+ 
+@@ -54,23 +56,79 @@ struct sgx_epc_page *sgx_try_alloc_page(void)
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
++/**
++ * sgx_alloc_page() - Allocate an EPC page
++ * @owner:	the owner of the EPC page
++ * @reclaim:	reclaim pages if necessary
++ *
++ * Try to grab a page from the free EPC page list. If there is a free page
++ * available, it is returned to the caller. The @reclaim parameter hints
++ * the EPC memory manager to swap pages when required.
++ *
++ * Return:
++ *   a pointer to a &struct sgx_epc_page instance,
++ *   -errno on error
++ */
++struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
++{
++	struct sgx_epc_page *entry;
++
++	for ( ; ; ) {
++		entry = sgx_try_alloc_page();
++		if (!IS_ERR(entry)) {
++			entry->owner = owner;
++			break;
++		}
++
++		if (list_empty(&sgx_active_page_list))
++			return ERR_PTR(-ENOMEM);
++
++		if (!reclaim) {
++			entry = ERR_PTR(-EBUSY);
++			break;
++		}
++
++		if (signal_pending(current)) {
++			entry = ERR_PTR(-ERESTARTSYS);
++			break;
++		}
++
++		sgx_reclaim_pages();
++		schedule();
++	}
++
++	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
++		wake_up(&ksgxswapd_waitq);
++
++	return entry;
++}
++
+ /**
+  * sgx_free_page() - Free an EPC page
+  * @page:	pointer a previously allocated EPC page
+  *
+- * EREMOVE an EPC page and insert it back to the list of free pages.
++ * EREMOVE an EPC page and insert it back to the list of free pages. The page
++ * must not be reclaimable.
+  */
+ void sgx_free_page(struct sgx_epc_page *page)
+ {
+ 	struct sgx_epc_section *section = sgx_epc_section(page);
+ 	int ret;
+ 
++	/*
++	 * Don't take sgx_active_page_list_lock when asserting the page isn't
++	 * reclaimable, missing a WARN in the very rare case is preferable to
++	 * unnecessarily taking a global lock in the common case.
++	 */
++	WARN_ON_ONCE(page->desc & SGX_EPC_PAGE_RECLAIMABLE);
++
+ 	ret = __eremove(sgx_epc_addr(page));
+ 	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
+ 		return;
+ 
+ 	spin_lock(&section->lock);
+ 	list_add_tail(&page->list, &section->page_list);
++	section->free_cnt++;
+ 	spin_unlock(&section->lock);
+ }
+ 
+@@ -121,6 +179,7 @@ static bool __init sgx_alloc_epc_section(u64 addr, u64 size,
+ 		list_add_tail(&page->list, &section->unsanitized_page_list);
+ 	}
+ 
++	section->free_cnt = nr_pages;
+ 	return true;
+ 
+ err_out:
+diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+index 9e6d3e147aa2..fb521f314fb7 100644
+--- a/arch/x86/kernel/cpu/sgx/reclaim.c
++++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+@@ -9,10 +9,14 @@
+ #include <linux/slab.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/signal.h>
++#include "encl.h"
+ #include "encls.h"
+ #include "driver.h"
+ 
+ struct task_struct *ksgxswapd_tsk;
++DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
++LIST_HEAD(sgx_active_page_list);
++DEFINE_SPINLOCK(sgx_active_page_list_lock);
+ 
+ static void sgx_sanitize_section(struct sgx_epc_section *section)
+ {
+@@ -66,6 +70,20 @@ static int ksgxswapd(void *p)
+ 			WARN(1, "EPC section %d has unsanitized pages.\n", i);
+ 	}
+ 
++	while (!kthread_should_stop()) {
++		if (try_to_freeze())
++			continue;
++
++		wait_event_freezable(ksgxswapd_waitq,
++				     kthread_should_stop() ||
++				     sgx_should_reclaim(SGX_NR_HIGH_PAGES));
++
++		if (sgx_should_reclaim(SGX_NR_HIGH_PAGES))
++			sgx_reclaim_pages();
++
++		cond_resched();
++	}
++
+ 	return 0;
+ }
+ 
+@@ -81,3 +99,373 @@ bool __init sgx_page_reclaimer_init(void)
+ 
+ 	return true;
+ }
++
++/**
++ * sgx_mark_page_reclaimable() - Mark a page as reclaimable
++ * @page:	EPC page
++ *
++ * Mark a page as reclaimable and add it to the active page list. Pages
++ * are automatically removed from the active list when freed.
++ */
++void sgx_mark_page_reclaimable(struct sgx_epc_page *page)
++{
++	spin_lock(&sgx_active_page_list_lock);
++	page->desc |= SGX_EPC_PAGE_RECLAIMABLE;
++	list_add_tail(&page->list, &sgx_active_page_list);
++	spin_unlock(&sgx_active_page_list_lock);
++}
++
++/**
++ * sgx_unmark_page_reclaimable() - Remove a page from the reclaim list
++ * @page:	EPC page
++ *
++ * Clear the reclaimable flag and remove the page from the active page list.
++ *
++ * Return:
++ *   0 on success,
++ *   -EBUSY if the page is in the process of being reclaimed
++ */
++int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
++{
++	/*
++	 * Remove the page from the active list if necessary.  If the page
++	 * is actively being reclaimed, i.e. RECLAIMABLE is set but the
++	 * page isn't on the active list, return -EBUSY as we can't free
++	 * the page at this time since it is "owned" by the reclaimer.
++	 */
++	spin_lock(&sgx_active_page_list_lock);
++	if (page->desc & SGX_EPC_PAGE_RECLAIMABLE) {
++		if (list_empty(&page->list)) {
++			spin_unlock(&sgx_active_page_list_lock);
++			return -EBUSY;
++		}
++		list_del(&page->list);
++		page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++	}
++	spin_unlock(&sgx_active_page_list_lock);
++
++	return 0;
++}
++
++static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
++{
++	struct sgx_encl_page *page = epc_page->owner;
++	struct sgx_encl *encl = page->encl;
++	struct sgx_encl_mm *encl_mm;
++	bool ret = true;
++	int idx;
++
++	idx = srcu_read_lock(&encl->srcu);
++
++	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
++		if (!mmget_not_zero(encl_mm->mm))
++			continue;
++
++		down_read(&encl_mm->mm->mmap_sem);
++		ret = !sgx_encl_test_and_clear_young(encl_mm->mm, page);
++		up_read(&encl_mm->mm->mmap_sem);
++
++		mmput_async(encl_mm->mm);
++
++		if (!ret || (atomic_read(&encl->flags) & SGX_ENCL_DEAD))
++			break;
++	}
++
++	srcu_read_unlock(&encl->srcu, idx);
++
++	if (!ret && !(atomic_read(&encl->flags) & SGX_ENCL_DEAD))
++		return false;
++
++	return true;
++}
++
++static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
++{
++	struct sgx_encl_page *page = epc_page->owner;
++	unsigned long addr = SGX_ENCL_PAGE_ADDR(page);
++	struct sgx_encl *encl = page->encl;
++	unsigned long mm_list_version;
++	struct sgx_encl_mm *encl_mm;
++	struct vm_area_struct *vma;
++	int idx, ret;
++
++	do {
++		mm_list_version = encl->mm_list_version;
++
++		/* Pairs with smp_rmb() in sgx_encl_mm_add(). */
++		smp_rmb();
++
++		idx = srcu_read_lock(&encl->srcu);
++
++		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
++			if (!mmget_not_zero(encl_mm->mm))
++				continue;
++
++			down_read(&encl_mm->mm->mmap_sem);
++
++			ret = sgx_encl_find(encl_mm->mm, addr, &vma);
++			if (!ret && encl == vma->vm_private_data)
++				zap_vma_ptes(vma, addr, PAGE_SIZE);
++
++			up_read(&encl_mm->mm->mmap_sem);
++
++			mmput_async(encl_mm->mm);
++		}
++
++		srcu_read_unlock(&encl->srcu, idx);
++	} while (unlikely(encl->mm_list_version != mm_list_version));
++
++	mutex_lock(&encl->lock);
++
++	if (!(atomic_read(&encl->flags) & SGX_ENCL_DEAD)) {
++		ret = __eblock(sgx_epc_addr(epc_page));
++		if (encls_failed(ret))
++			ENCLS_WARN(ret, "EBLOCK");
++	}
++
++	mutex_unlock(&encl->lock);
++}
++
++static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
++			  struct sgx_backing *backing)
++{
++	struct sgx_pageinfo pginfo;
++	int ret;
++
++	pginfo.addr = 0;
++	pginfo.secs = 0;
++
++	pginfo.contents = (unsigned long)kmap_atomic(backing->contents);
++	pginfo.metadata = (unsigned long)kmap_atomic(backing->pcmd) +
++			  backing->pcmd_offset;
++
++	ret = __ewb(&pginfo, sgx_epc_addr(epc_page), va_slot);
++
++	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
++					      backing->pcmd_offset));
++	kunmap_atomic((void *)(unsigned long)pginfo.contents);
++
++	return ret;
++}
++
++static void sgx_ipi_cb(void *info)
++{
++}
++
++static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
++{
++	cpumask_t *cpumask = &encl->cpumask;
++	struct sgx_encl_mm *encl_mm;
++	int idx;
++
++	/*
++	 * Can race with sgx_encl_mm_add(), but ETRACK has already been
++	 * executed, which means that the CPUs running in the new mm will enter
++	 * into the enclave with a fresh epoch.
++	 */
++	cpumask_clear(cpumask);
++
++	idx = srcu_read_lock(&encl->srcu);
++
++	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
++		if (!mmget_not_zero(encl_mm->mm))
++			continue;
++
++		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
++
++		mmput_async(encl_mm->mm);
++	}
++
++	srcu_read_unlock(&encl->srcu, idx);
++
++	return cpumask;
++}
++
++static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
++			 struct sgx_backing *backing)
++{
++	struct sgx_encl_page *encl_page = epc_page->owner;
++	struct sgx_encl *encl = encl_page->encl;
++	struct sgx_va_page *va_page;
++	unsigned int va_offset;
++	void *va_slot;
++	int ret;
++
++	encl_page->desc &= ~SGX_ENCL_PAGE_RECLAIMED;
++
++	va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
++				   list);
++	va_offset = sgx_alloc_va_slot(va_page);
++	va_slot = sgx_epc_addr(va_page->epc_page) + va_offset;
++	if (sgx_va_page_full(va_page))
++		list_move_tail(&va_page->list, &encl->va_pages);
++
++	ret = __sgx_encl_ewb(epc_page, va_slot, backing);
++	if (ret == SGX_NOT_TRACKED) {
++		ret = __etrack(sgx_epc_addr(encl->secs.epc_page));
++		if (ret) {
++			if (encls_failed(ret))
++				ENCLS_WARN(ret, "ETRACK");
++		}
++
++		ret = __sgx_encl_ewb(epc_page, va_slot, backing);
++		if (ret == SGX_NOT_TRACKED) {
++			/*
++			 * Slow path, send IPIs to kick cpus out of the
++			 * enclave.  Note, it's imperative that the cpu
++			 * mask is generated *after* ETRACK, else we'll
++			 * miss cpus that entered the enclave between
++			 * generating the mask and incrementing epoch.
++			 */
++			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
++					 sgx_ipi_cb, NULL, 1);
++			ret = __sgx_encl_ewb(epc_page, va_slot, backing);
++		}
++	}
++
++	if (ret) {
++		if (encls_failed(ret))
++			ENCLS_WARN(ret, "EWB");
++
++		sgx_free_va_slot(va_page, va_offset);
++	} else {
++		encl_page->desc |= va_offset;
++		encl_page->va_page = va_page;
++	}
++}
++
++static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
++				struct sgx_backing *backing)
++{
++	struct sgx_encl_page *encl_page = epc_page->owner;
++	struct sgx_encl *encl = encl_page->encl;
++	struct sgx_backing secs_backing;
++	int ret;
++
++	mutex_lock(&encl->lock);
++
++	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
++		ret = __eremove(sgx_epc_addr(epc_page));
++		ENCLS_WARN(ret, "EREMOVE returned %d\n");
++	} else {
++		sgx_encl_ewb(epc_page, backing);
++	}
++
++	encl_page->epc_page = NULL;
++	encl->secs_child_cnt--;
++
++	if (!encl->secs_child_cnt) {
++		if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
++			sgx_free_page(encl->secs.epc_page);
++			encl->secs.epc_page = NULL;
++		} else if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
++			ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
++						   &secs_backing);
++			if (ret)
++				goto out;
++
++			sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
++
++			sgx_free_page(encl->secs.epc_page);
++			encl->secs.epc_page = NULL;
++
++			sgx_encl_put_backing(&secs_backing, true);
++		}
++	}
++
++out:
++	mutex_unlock(&encl->lock);
++}
++
++/**
++ * sgx_reclaim_pages() - Reclaim EPC pages from the consumers
++ *
++ * Take a fixed number of pages from the head of the active page pool and
++ * reclaim them to the enclave's private shmem files. Skip the pages, which
++ * have been accessed since the last scan. Move those pages to the tail of
++ * active page pool so that the pages get scanned in LRU like fashion.
++ */
++void sgx_reclaim_pages(void)
++{
++	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
++	struct sgx_backing backing[SGX_NR_TO_SCAN];
++	struct sgx_epc_section *section;
++	struct sgx_encl_page *encl_page;
++	struct sgx_epc_page *epc_page;
++	int cnt = 0;
++	int ret;
++	int i;
++
++	spin_lock(&sgx_active_page_list_lock);
++	for (i = 0; i < SGX_NR_TO_SCAN; i++) {
++		if (list_empty(&sgx_active_page_list))
++			break;
++
++		epc_page = list_first_entry(&sgx_active_page_list,
++					    struct sgx_epc_page, list);
++		list_del_init(&epc_page->list);
++		encl_page = epc_page->owner;
++
++		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0)
++			chunk[cnt++] = epc_page;
++		else
++			/* The owner is freeing the page. No need to add the
++			 * page back to the list of reclaimable pages.
++			 */
++			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++	}
++	spin_unlock(&sgx_active_page_list_lock);
++
++	for (i = 0; i < cnt; i++) {
++		epc_page = chunk[i];
++		encl_page = epc_page->owner;
++
++		if (!sgx_reclaimer_age(epc_page))
++			goto skip;
++
++		ret = sgx_encl_get_backing(encl_page->encl,
++					   SGX_ENCL_PAGE_INDEX(encl_page),
++					   &backing[i]);
++		if (ret)
++			goto skip;
++
++		mutex_lock(&encl_page->encl->lock);
++		encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
++		mutex_unlock(&encl_page->encl->lock);
++		continue;
++
++skip:
++		kref_put(&encl_page->encl->refcount, sgx_encl_release);
++
++		spin_lock(&sgx_active_page_list_lock);
++		list_add_tail(&epc_page->list, &sgx_active_page_list);
++		spin_unlock(&sgx_active_page_list_lock);
++
++		chunk[i] = NULL;
++	}
++
++	for (i = 0; i < cnt; i++) {
++		epc_page = chunk[i];
++		if (epc_page)
++			sgx_reclaimer_block(epc_page);
++	}
++
++	for (i = 0; i < cnt; i++) {
++		epc_page = chunk[i];
++		if (!epc_page)
++			continue;
++
++		encl_page = epc_page->owner;
++		sgx_reclaimer_write(epc_page, &backing[i]);
++		sgx_encl_put_backing(&backing[i], true);
++
++		kref_put(&encl_page->encl->refcount, sgx_encl_release);
++		epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
++
++		section = sgx_epc_section(epc_page);
++		spin_lock(&section->lock);
++		list_add_tail(&epc_page->list, &section->page_list);
++		section->free_cnt++;
++		spin_unlock(&section->lock);
++	}
++}
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index aa85f85412d8..0c481e6f2c95 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -15,6 +15,7 @@
+ 
+ struct sgx_epc_page {
+ 	unsigned long desc;
++	struct sgx_encl_page *owner;
+ 	struct list_head list;
+ };
+ 
+@@ -29,6 +30,7 @@ struct sgx_epc_page {
+ struct sgx_epc_section {
+ 	unsigned long pa;
+ 	void *va;
++	unsigned long free_cnt;
+ 	struct list_head page_list;
+ 	struct list_head unsanitized_page_list;
+ 	spinlock_t lock;
+@@ -40,9 +42,14 @@ struct sgx_epc_section {
+  *				physical memory. The existing and near-future
+  *				hardware defines at most eight sections, hence
+  *				three bits to hold a section.
++ * %SGX_EPC_PAGE_RECLAIMABLE:	The page has been been marked as reclaimable.
++ *				Pages need to be colored this way because a page
++ *				can be out of the active page list in the
++ *				process of being swapped out.
+  */
+ enum sgx_epc_page_desc {
+ 	SGX_EPC_SECTION_MASK			= GENMASK_ULL(3, 0),
++	SGX_EPC_PAGE_RECLAIMABLE		= BIT(4),
+ 	/* bits 12-63 are reserved for the physical page address of the page */
+ };
+ 
+@@ -62,12 +69,40 @@ static inline void *sgx_epc_addr(struct sgx_epc_page *page)
+ 	return section->va + (page->desc & PAGE_MASK) - section->pa;
+ }
+ 
++#define SGX_NR_TO_SCAN		16
++#define SGX_NR_LOW_PAGES	32
++#define SGX_NR_HIGH_PAGES	64
++
+ extern int sgx_nr_epc_sections;
+ extern struct task_struct *ksgxswapd_tsk;
++extern struct wait_queue_head(ksgxswapd_waitq);
++extern struct list_head sgx_active_page_list;
++extern spinlock_t sgx_active_page_list_lock;
++
++static inline unsigned long sgx_nr_free_pages(void)
++{
++	unsigned long cnt = 0;
++	int i;
++
++	for (i = 0; i < sgx_nr_epc_sections; i++)
++		cnt += sgx_epc_sections[i].free_cnt;
++
++	return cnt;
++}
++
++static inline bool sgx_should_reclaim(unsigned long watermark)
++{
++	return sgx_nr_free_pages() < watermark &&
++	       !list_empty(&sgx_active_page_list);
++}
+ 
+ bool __init sgx_page_reclaimer_init(void);
++void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
++int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
++void sgx_reclaim_pages(void);
+ 
+ struct sgx_epc_page *sgx_try_alloc_page(void);
++struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim);
+ void sgx_free_page(struct sgx_epc_page *page);
+ 
+ #endif /* _X86_SGX_H */
 -- 
 2.25.1
 
