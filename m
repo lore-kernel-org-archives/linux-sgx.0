@@ -1,83 +1,128 @@
-Return-Path: <SRS0=fW0T=7C=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=hsGO=7D=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96035C433E1
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 May 2020 21:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0446CC433DF
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 May 2020 19:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 733062075F
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 May 2020 21:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB56B20738
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 May 2020 19:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgETVEn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 May 2020 17:04:43 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60965 "EHLO mga14.intel.com"
+        id S1730163AbgEUTMn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 21 May 2020 15:12:43 -0400
+Received: from mga09.intel.com ([134.134.136.24]:54393 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbgETVEn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 May 2020 17:04:43 -0400
-IronPort-SDR: o3Bo0UT+dO6ibuBadmxuVg+z5NlkdXbUgnO/hmW0bdtyM5Gq5LqK8/vqYTd5IDeMcrzt0GT72O
- Y+9rD1fhjAwg==
+        id S1729548AbgEUTMn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 21 May 2020 15:12:43 -0400
+IronPort-SDR: WUGujn535E645ts12xvcEdV4hSqc+xtcb7TzyVFlLlsMCJwuC2K/Mj5UQLuw7GvC06tDj8g6RZ
+ PvAMdp6BJi2g==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2020 14:04:42 -0700
-IronPort-SDR: 4xYjxQw9iQNwd+UAdFu4L3s23woNlbuAhhuV1E0+mLOeQ75curoIzQvYtn3y6Xv8ueWEDlckJw
- pP6x9/dSsilg==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2020 12:12:37 -0700
+IronPort-SDR: k/gY0kMbbAgEsAcR2SVVvwo0+gbzdvmVDEPkiFO+SzsNMG8QVCti7p6M4jGEEQfa4CY2hW8/rD
+ I5GaEw5gzZ0w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,415,1583222400"; 
-   d="scan'208";a="289486103"
+X-IronPort-AV: E=Sophos;i="5.73,418,1583222400"; 
+   d="scan'208";a="466911464"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by fmsmga004.fm.intel.com with ESMTP; 20 May 2020 14:04:41 -0700
-Date:   Wed, 20 May 2020 14:04:41 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 21 May 2020 12:12:36 -0700
+Date:   Thu, 21 May 2020 12:12:36 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
         dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
         haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [PATCH v30 04/20] x86/sgx: Add SGX microarchitectural data
- structures
-Message-ID: <20200520210441.GD18102@linux.intel.com>
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Seth Moore <sethmo@google.com>
+Subject: Re: [PATCH v30 10/20] x86/sgx: Linux Enclave Driver
+Message-ID: <20200521191236.GA23043@linux.intel.com>
 References: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
- <20200515004410.723949-5-jarkko.sakkinen@linux.intel.com>
- <20200520184745.GJ1457@zn.tnic>
+ <20200515004410.723949-11-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200520184745.GJ1457@zn.tnic>
+In-Reply-To: <20200515004410.723949-11-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, May 20, 2020 at 08:47:45PM +0200, Borislav Petkov wrote:
-> On Fri, May 15, 2020 at 03:43:54AM +0300, Jarkko Sakkinen wrote:
-> > +/**
-> > + * struct sgx_sigstruct_header -  defines author of the enclave
-> > + * @header1:		constant byte string
-> > + * @vendor:		must be either 0x0000 or 0x8086
-> 
-> Out of pure curiosity: what is that about?
-> 
-> Nothing in the patchset enforces this, so hw does? If so, why?
+On Fri, May 15, 2020 at 03:44:00AM +0300, Jarkko Sakkinen wrote:
+> +long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct sgx_encl *encl = filep->private_data;
+> +	int ret, encl_flags;
+> +
+> +	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
+> +	if (encl_flags & SGX_ENCL_IOCTL)
+> +		return -EBUSY;
+> +
+> +	if (encl_flags & SGX_ENCL_DEAD)
+> +		return -EFAULT;
 
-Yes, enforced by hardware during EINIT.
+Returning immediately is wrong as it leaves SGX_ENCL_IOCTL set.  This results
+in the application seeing -EBUSY on future ioctls() instead of -EFAULT.  Can be
+fixed as below.  Do you want me to send a formal patch on linux-sgx?
 
-> Are those vendor IDs going to be assigned by someone or what's up?
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 77757a74644d..df35a79e915c 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -751,8 +751,10 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+        if (encl_flags & SGX_ENCL_IOCTL)
+                return -EBUSY;
 
-No, the field has no real meaning or value, and there is no (and never was
-any) intent to use it to create an OEM registry or anything of that nature.
+-       if (encl_flags & SGX_ENCL_DEAD)
+-               return -EFAULT;
++       if (encl_flags & SGX_ENCL_DEAD) {
++               ret = -EFAULT;
++               goto out;
++       }
 
-It's effectively a reserved-0 field that happens to allow 0x8086 because of
-legacy behavior within Intel's signing sytem.  Intel signed enclaves
-currently populate it with 0x8086, but future enclaves may change the vendor
-to 0x0 just to avoid confusion.  In short, software should ignore the field.
+        switch (cmd) {
+        case SGX_IOC_ENCLAVE_CREATE:
+@@ -772,6 +774,7 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+                break;
+        }
+
++out:
+        atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
+
+        return ret;
+
+
+> +
+> +	switch (cmd) {
+> +	case SGX_IOC_ENCLAVE_CREATE:
+> +		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
+> +		break;
+> +	case SGX_IOC_ENCLAVE_ADD_PAGES:
+> +		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
+> +		break;
+> +	case SGX_IOC_ENCLAVE_INIT:
+> +		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+> +		break;
+> +	default:
+> +		ret = -ENOIOCTLCMD;
+> +		break;
+> +	}
+> +
+> +	atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
+> +
+> +	return ret;
+> +}
