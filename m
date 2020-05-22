@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915A2C433E2
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 May 2020 06:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AE1C433E0
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 May 2020 07:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D20D2065C
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 May 2020 06:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6FE2072C
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 May 2020 07:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbgEVG6D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 22 May 2020 02:58:03 -0400
-Received: from mga03.intel.com ([134.134.136.65]:42451 "EHLO mga03.intel.com"
+        id S1728362AbgEVHPz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 22 May 2020 03:15:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:46811 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726578AbgEVG6D (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 22 May 2020 02:58:03 -0400
-IronPort-SDR: oCM9akwUFKwx6rIyt+qmXcQfF63CBXxz679A3q8tZWNPwE8ASRNL/Y73onzhPo4apWbSs2VZ3V
- 0u+mBgqeg+xg==
+        id S1728137AbgEVHPy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 22 May 2020 03:15:54 -0400
+IronPort-SDR: 7LB6WXHDPmM5eZ9wK08infduL20Nr1uKLQZyiXyjjejKYhV8/NVZA5cGiA2Cex/A64K83C3JCM
+ 8GZUUCIli0uQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2020 23:58:02 -0700
-IronPort-SDR: 8415cHuEaH0PHAeVc9B5qr4u66DcLGdB1irTEIoID0pcEQk2DOfsyVivI35zxTv/T88F9xFOII
- KmQT9wO/e2aw==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2020 00:15:54 -0700
+IronPort-SDR: KY8FM2XvlW2PX8YM2WYKJFEgZsnlmqCYvrpnrZfhR2WhTrdD09HCdYjmObussU4WB2N7Dvyhfl
+ x4YJVhq0HkFQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,420,1583222400"; 
-   d="scan'208";a="301031849"
+   d="scan'208";a="255525320"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by orsmga008.jf.intel.com with ESMTP; 21 May 2020 23:58:02 -0700
-Date:   Thu, 21 May 2020 23:58:02 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 22 May 2020 00:15:53 -0700
+Date:   Fri, 22 May 2020 00:15:53 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -46,7 +46,7 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Chunyang Hui <sanqian.hcy@antfin.com>,
         Seth Moore <sethmo@google.com>
 Subject: Re: [PATCH v30 12/20] x86/sgx: Add a page reclaimer
-Message-ID: <20200522065802.GC23459@linux.intel.com>
+Message-ID: <20200522071553.GA24377@linux.intel.com>
 References: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
  <20200515004410.723949-13-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
@@ -60,115 +60,28 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Fri, May 15, 2020 at 03:44:02AM +0300, Jarkko Sakkinen wrote:
-> +/**
-> + * sgx_reclaim_pages() - Reclaim EPC pages from the consumers
-> + *
-> + * Take a fixed number of pages from the head of the active page pool and
-> + * reclaim them to the enclave's private shmem files. Skip the pages, which
-> + * have been accessed since the last scan. Move those pages to the tail of
-> + * active page pool so that the pages get scanned in LRU like fashion.
-> + */
-> +void sgx_reclaim_pages(void)
+> +static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+> +				struct sgx_backing *backing)
 > +{
-> +	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
-> +	struct sgx_backing backing[SGX_NR_TO_SCAN];
-> +	struct sgx_epc_section *section;
-> +	struct sgx_encl_page *encl_page;
-> +	struct sgx_epc_page *epc_page;
-> +	int cnt = 0;
+> +	struct sgx_encl_page *encl_page = epc_page->owner;
+> +	struct sgx_encl *encl = encl_page->encl;
+> +	struct sgx_backing secs_backing;
 > +	int ret;
-> +	int i;
 > +
-> +	spin_lock(&sgx_active_page_list_lock);
-> +	for (i = 0; i < SGX_NR_TO_SCAN; i++) {
-> +		if (list_empty(&sgx_active_page_list))
-> +			break;
+> +	mutex_lock(&encl->lock);
 > +
-> +		epc_page = list_first_entry(&sgx_active_page_list,
-> +					    struct sgx_epc_page, list);
-> +		list_del_init(&epc_page->list);
-> +		encl_page = epc_page->owner;
-> +
-> +		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0)
-> +			chunk[cnt++] = epc_page;
-> +		else
-> +			/* The owner is freeing the page. No need to add the
-> +			 * page back to the list of reclaimable pages.
-> +			 */
-> +			epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
-> +	}
-> +	spin_unlock(&sgx_active_page_list_lock);
-> +
-> +	for (i = 0; i < cnt; i++) {
-> +		epc_page = chunk[i];
-> +		encl_page = epc_page->owner;
-> +
-> +		if (!sgx_reclaimer_age(epc_page))
-> +			goto skip;
-> +
-> +		ret = sgx_encl_get_backing(encl_page->encl,
-> +					   SGX_ENCL_PAGE_INDEX(encl_page),
-> +					   &backing[i]);
-> +		if (ret)
-> +			goto skip;
-> +
-> +		mutex_lock(&encl_page->encl->lock);
-> +		encl_page->desc |= SGX_ENCL_PAGE_RECLAIMED;
-> +		mutex_unlock(&encl_page->encl->lock);
-> +		continue;
-> +
-> +skip:
-> +		kref_put(&encl_page->encl->refcount, sgx_encl_release);
-> +
-> +		spin_lock(&sgx_active_page_list_lock);
-> +		list_add_tail(&epc_page->list, &sgx_active_page_list);
-> +		spin_unlock(&sgx_active_page_list_lock);
+> +	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD) {
+> +		ret = __eremove(sgx_epc_addr(epc_page));
+> +		ENCLS_WARN(ret, "EREMOVE returned %d\n");
 
-Ugh, this is wrong.  If the above kref_put() drops the last reference and
-releases the enclave, adding the page to the active page list will result
-in a use-after-free as the enclave will have been freed.  It also leaks the
-EPC page because sgx_encl_destroy() skips pages that are in the process of
-being reclaimed (as detected by list_empty()).
+The " returned %d\n" is unnecessary and leads to a bad message, ENCLS_WARN
+handles the message and formatting, i.e. this should simply be:
 
-The "original" code did the put() after list_add_tail(), but was moved in
-v15 to fix a bug where the put() could drop a reference to the wrong enclave
-if the page was freed and reallocated by a different CPU between
-list_add_tail() and put().  But, that particular bug only occurred because
-the code at the time was:
+		ENCLS_WARN(ret, "EREMOVE");
 
-	sgx_encl_page_put(epc_page);
-
-I.e. the backpointer in epc_page was consumed after dropping the spin lock.
-So long as epc_page->owner (well, epc_page in general) isn't dereferenced,
-I'm 99% certain this can be fixed simply by doing kref_put() after moving
-the page back to the active page list.
-
-> +
-> +		chunk[i] = NULL;
+> +	} else {
+> +		sgx_encl_ewb(epc_page, backing);
 > +	}
 > +
-> +	for (i = 0; i < cnt; i++) {
-> +		epc_page = chunk[i];
-> +		if (epc_page)
-> +			sgx_reclaimer_block(epc_page);
-> +	}
-> +
-> +	for (i = 0; i < cnt; i++) {
-> +		epc_page = chunk[i];
-> +		if (!epc_page)
-> +			continue;
-> +
-> +		encl_page = epc_page->owner;
-> +		sgx_reclaimer_write(epc_page, &backing[i]);
-> +		sgx_encl_put_backing(&backing[i], true);
-> +
-> +		kref_put(&encl_page->encl->refcount, sgx_encl_release);
-> +		epc_page->desc &= ~SGX_EPC_PAGE_RECLAIMABLE;
-> +
-> +		section = sgx_epc_section(epc_page);
-> +		spin_lock(&section->lock);
-> +		list_add_tail(&epc_page->list, &section->page_list);
-> +		section->free_cnt++;
-> +		spin_unlock(&section->lock);
-> +	}
-> +}
+> +	encl_page->epc_page = NULL;
+> +	encl->secs_child_cnt--;
