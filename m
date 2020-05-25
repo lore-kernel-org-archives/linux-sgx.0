@@ -1,108 +1,86 @@
-Return-Path: <SRS0=tK8G=7G=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=4dFz=7H=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE75EC433E0
-	for <linux-sgx@archiver.kernel.org>; Sun, 24 May 2020 21:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8E8C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 May 2020 08:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C01C207FB
-	for <linux-sgx@archiver.kernel.org>; Sun, 24 May 2020 21:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8317A2068D
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 May 2020 08:20:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="PyTo25j1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387850AbgEXV1W (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 24 May 2020 17:27:22 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:57496 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387830AbgEXV1W (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 24 May 2020 17:27:22 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id CF0E11C02AB; Sun, 24 May 2020 23:27:20 +0200 (CEST)
-Date:   Sun, 24 May 2020 23:27:19 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Dr. Greg" <greg@enjellic.com>
+        id S1731368AbgEYIUV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 25 May 2020 04:20:21 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:48542 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725849AbgEYIUU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 25 May 2020 04:20:20 -0400
+Received: from zn.tnic (p200300ec2f06f30089d08c3691e46ece.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:f300:89d0:8c36:91e4:6ece])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 512DE1EC0116;
+        Mon, 25 May 2020 10:20:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1590394819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=omRLYnyE9Ggja9M7/4gjPm4celUM+0shYhwKnAB0XUk=;
+        b=PyTo25j1KlkLw73HQWaVMKI6LnA2AOipXZqxoInK68eV9tl44jIgafJgAgy408JDdFzMiA
+        eMdVN7u7uSTX3ky65sWXX9b1fOPYDPo9nMHhxarcgPslp3TecVAYEpbJg8lv+mIt/3R7DN
+        adTtk/ZQmrIAjn1hD5NHANxI3oJmqEg=
+Date:   Mon, 25 May 2020 10:20:13 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
-        bp@alien8.de, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        puiterwijk@redhat.com
-Subject: Re: [PATCH v29 00/20] Intel SGX foundations
-Message-ID: <20200524212719.GA1192@bug>
-References: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
- <20200426165753.GA11046@wind.enjellic.com>
- <87d07gk24l.fsf@nanos.tec.linutronix.de>
- <20200508190226.GA31465@wind.enjellic.com>
- <20200508195635.GR27052@linux.intel.com>
- <20200514091637.GA25156@wind.enjellic.com>
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [PATCH v30 04/20] x86/sgx: Add SGX microarchitectural data
+ structures
+Message-ID: <20200525082013.GC25636@zn.tnic>
+References: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
+ <20200515004410.723949-5-jarkko.sakkinen@linux.intel.com>
+ <20200520184745.GJ1457@zn.tnic>
+ <20200522155405.GA8377@linux.intel.com>
+ <20200522161326.GC25128@linux.intel.com>
+ <20200522195017.GA121470@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200514091637.GA25156@wind.enjellic.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200522195017.GA121470@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi!
-
-> > > At the very least a modular form of the driver should be
-> > > considered that would allow alternate implementations.  Sean
-> > > indicated that there was a 'kludgy' approach that would allow an
-> > > alternate modular implementation alongside the in-kernel driver.
-> > > I believe that Andy has already indicated that may not be an
-> > > advisable approach.
+On Fri, May 22, 2020 at 10:50:17PM +0300, Jarkko Sakkinen wrote:
+> If other values except two are never going to be used it is more than a
+> legit point to validate this field.
 > 
-> > Modularizing the the driver does nothing for your use case.  The
-> > "driver" is a relatively lightweight wrapper, removing that is akin
-> > to making /dev/sgx/enclave inaccessible, i.e. it doesn't make the
+> It also the potential to use ~0x8086 bits to be defined later if ever
+> needed lets say for some kernel specific purpose.
 
-Well... SGX is proprietary feature of Intel. I don't see any effort for standartization
-so that other architectures could use it. Yet it provides userspace interface...
+Yah, let's cover our ass for the future. We have all seen the "this
+won't be used" but then "we're using it" change of heart. IOW, let's
+align with what the hw checks and we can always relax that in the future
+but not the other way around.
 
-You clearly want distros to enable it, but that will waste memory on non-Intel systems.
+Thx.
 
-That is not good.
-
-> Here in a nutshell is the paradox the kernel faces:
-> 
-> No one seems to be disputing the fact that the primary focus of this
-> driver will be to support the notion of 'runtime encryption' and
-> Confidential Computing.  The whole premise of the concept and economic
-> predicate of the initiative is that the owner/manager of the platform
-> has no visibility into what is being done on the platform.
-
-Well, in my eyes preventing owner of the machine from accessing all its parts is
-pretty questionable.
-
-Physics says it is impossible, many tried, and many failed. Why it should be
-different this time?
-
-> If the Linux community believes that standard platform security
-> controls can make qualitatively good judgements on what enclave based
-> execution is doing, it is effectively making the statement that the
-> very concept of runtime encryption and by extension Confidential
-> Computing is invalid.
-
-And yes, I believe that concept of Confidential Computing is invalid.. and we
-should simply not merge this support.
-
-It provides false sense of security, and I'm afraid big companies will try to force
-people to use it. "DRM, now with hardware support". "Finally advertisments you can
-not skip". "Just run this piece of code on your machine to access your bank account.
-Trust us!"
-
-:-(.
-
-									Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
