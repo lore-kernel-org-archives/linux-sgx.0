@@ -1,167 +1,175 @@
-Return-Path: <SRS0=u9ux=7I=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=yCNl=7J=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEE3C433DF
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 May 2020 12:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD24C433DF
+	for <linux-sgx@archiver.kernel.org>; Wed, 27 May 2020 03:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B7C320787
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 May 2020 12:52:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="qlSo2Zbx"
+	by mail.kernel.org (Postfix) with ESMTP id 387E220899
+	for <linux-sgx@archiver.kernel.org>; Wed, 27 May 2020 03:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbgEZMwU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 May 2020 08:52:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbgEZMwU (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 26 May 2020 08:52:20 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D1FC03E96D;
-        Tue, 26 May 2020 05:52:20 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0f910029cc1ac058818593.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:9100:29cc:1ac0:5881:8593])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CD3C51EC0118;
-        Tue, 26 May 2020 14:52:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1590497538;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZGH6cJ+EMFRFX4aplnDSD+DpMuQLo38Ps+fJV82VzCI=;
-        b=qlSo2ZbxzQoEd46ObhBqeRWPa6sLsZbdFDMdO6sqoBqhzSgPMMxW0dZvXVV9mMQ/2l//1O
-        sHyXBTNiS43qkWgA9OkgGUuAzdGy61Wu2libvEx7SeFNdr3MH860Ee7RdoT/YGbR1ryt4V
-        VUppJQiINcI6WieHJiReA+PRI0FpEB0=
-Date:   Tue, 26 May 2020 14:52:08 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        id S1727781AbgE0D4P (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 May 2020 23:56:15 -0400
+Received: from mga02.intel.com ([134.134.136.20]:8355 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbgE0D4O (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 May 2020 23:56:14 -0400
+IronPort-SDR: 0meLswPweA+fJ7t6AYDAi2CMYqOuDcup7O26jdFHwoy4rttKfYaT3vspwtfDB8A9DHuc0ojJjJ
+ XEjLjfx+2fTQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2020 20:56:14 -0700
+IronPort-SDR: pIShAQU7CxUI9esdy7kkM0IsTpmGk3+oIe95TTbLQTR/KNGLHoaxN7spIMrr806ZJG7Lz5EbbT
+ esAeXYf+04Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,439,1583222400"; 
+   d="scan'208";a="270317451"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
+  by orsmga006.jf.intel.com with ESMTP; 26 May 2020 20:56:14 -0700
+Date:   Tue, 26 May 2020 20:56:14 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        puiterwijk@redhat.com, Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [PATCH v30 08/20] x86/sgx: Add functions to allocate and free
- EPC pages
-Message-ID: <20200526125207.GE28228@zn.tnic>
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [PATCH v30 07/20] x86/sgx: Enumerate and track EPC sections
+Message-ID: <20200527035613.GH31696@linux.intel.com>
 References: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
- <20200515004410.723949-9-jarkko.sakkinen@linux.intel.com>
+ <20200515004410.723949-8-jarkko.sakkinen@linux.intel.com>
+ <20200525092304.GD25636@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200515004410.723949-9-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200525092304.GD25636@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, May 15, 2020 at 03:43:58AM +0300, Jarkko Sakkinen wrote:
-> Add functions for allocating page from Enclave Page Cache (EPC). A page is
-
-				pages
-
-> allocated by going through the EPC sections and returning the first free
-> page.
+On Mon, May 25, 2020 at 11:23:04AM +0200, Borislav Petkov wrote:
+> On Fri, May 15, 2020 at 03:43:57AM +0300, Jarkko Sakkinen wrote:
+> > +struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> > +int sgx_nr_epc_sections;
 > 
-> When a page is freed, it might have a valid state, which means that the
-> callee has assigned it to an enclave, which are protected memory ares used
+> We have become very averse against global stuff. What is going to use
+> those, only sgx code I assume...?
 
-								  areas
+Yes, only SGX code.  The reclaim/swap code needs access to the sections,
+and that code is in a different file, reclaim.c.  I don't have a super
+strong objection to sucking reclaim.c into main.c, but I'm somewhat
+indifferent on code organization as a whole.  Jarkko likely has a stronger
+opinion.
 
-although explaining what enclaves are has already happened so probably
-not needed here too.
-
-> to run code protected from outside access. The page is returned back to the
-> invalid state with ENCLS[EREMOVE] [1].
+> > +static bool __init sgx_page_cache_init(void)
+> > +{
+> > +	u32 eax, ebx, ecx, edx, type;
+> > +	u64 pa, size;
+> > +	int i;
+> > +
+> > +	for (i = 0; i <= ARRAY_SIZE(sgx_epc_sections); i++) {
+> > +		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
+> > +			    &eax, &ebx, &ecx, &edx);
+> > +
+> > +		type = eax & SGX_CPUID_SUB_LEAF_TYPE_MASK;
+> > +		if (type == SGX_CPUID_SUB_LEAF_INVALID)
+> > +			break;
+> > +
+> > +		if (type != SGX_CPUID_SUB_LEAF_EPC_SECTION) {
+> > +			pr_err_once("Unknown EPC section type: %u\n", type);
+> > +			break;
+> > +		}
+> > +
+> > +		if (i == ARRAY_SIZE(sgx_epc_sections)) {
+> > +			pr_warn("No free slot for an EPC section\n");
+> > +			break;
+> > +		}
 > 
-> [1] Intel SDM: 40.3 INTEL® SGX SYSTEM LEAF FUNCTION REFERENCE
+> This is also the loop termination: do we really need this warn or can
+> the loop simply do "i < ARRAY_SIZE" ?
+
+The warn alerts the user that there will effectively be lost/unused memory,
+so IMO it's worth keeping.
+ 
+> If the warn is needed, it can be after the loop too.
+> > +
+> > +		pa = sgx_calc_section_metric(eax, ebx);
+> > +		size = sgx_calc_section_metric(ecx, edx);
+> > +
+> > +		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
 > 
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Acked-by: Jethro Beekman <jethro@fortanix.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/main.c | 60 ++++++++++++++++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++
->  2 files changed, 63 insertions(+)
+> I'm assuming that's useful information to issue in dmesg?
+
+Yes, it's effectively the equivalent of dumping the e820 tables.  It might
+not be as useful now that the code is stable, but I suspect it will come in
+handy for debug/triage down the road.
+ 
+> > diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+> > new file mode 100644
+> > index 000000000000..215371588a25
+> > --- /dev/null
+> > +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+> > @@ -0,0 +1,82 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> > +// Copyright(c) 2016-19 Intel Corporation.
+> > +
+> > +#include <linux/freezer.h>
+> > +#include <linux/highmem.h>
+> > +#include <linux/kthread.h>
+> > +#include <linux/pagemap.h>
+> > +#include <linux/ratelimit.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/sched/mm.h>
+> > +#include <linux/sched/signal.h>
+> > +#include "encls.h"
+> > +
+> > +struct task_struct *ksgxswapd_tsk;
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 38424c1e8341..60d82e7537c8 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -13,6 +13,66 @@
->  struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
->  int sgx_nr_epc_sections;
->  
-> +static struct sgx_epc_page *__sgx_try_alloc_page(struct sgx_epc_section *section)
-> +{
-> +	struct sgx_epc_page *page;
-> +
-> +	if (list_empty(&section->page_list))
-> +		return NULL;
-> +
-> +	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
-> +	list_del_init(&page->list);
-> +	return page;
-> +}
-> +
-> +/**
-> + * sgx_try_alloc_page() - Allocate an EPC page
+> Same for this one: also shared only among sgx code?
 
-Uuh, this is confusing. Looking forward into the patchset, you guys have
+Yes, that one can definitely be buried behind a helper.
 
-sgx_alloc_page()
-sgx_alloc_va_page()
+> > +/**
+> > + * enum sgx_epc_page_desc - bits and masks for an EPC page's descriptor
+> > + * %SGX_EPC_SECTION_MASK:	SGX allows to have multiple EPC sections in the
+> > + *				physical memory. The existing and near-future
+> > + *				hardware defines at most eight sections, hence
+> > + *				three bits to hold a section.
+> > + */
+> > +enum sgx_epc_page_desc {
+> > +	SGX_EPC_SECTION_MASK			= GENMASK_ULL(3, 0),
+> 
+> If that should be three bits, then it should be (2, 0). Because now you
+> have 4 bits:
 
-and this here
+Apparently even pre-school math is hard these days.  I'm pretty sure that's
+an ongoing brain fart, I don't think we ever conciously bumped it to 4 bits.
 
-sgx_try_alloc_page()
+That being said, using 4 bits (or even 5+) isn't necessary a bad thing.  We
+aren't tight on bits and the burned memory isn't awful, e.g. <100 bytes per
+unused section.  Not having to update the kernel just to handle a system
+with more EPC sections would be nice, though we (Intel) should check on our
+end to see if nearish-future CPUs are still hard limited to eight sections.
 
-So this one here should be called sgx_alloc_epc_page() if we're going to
-differentiate *what* it is allocating.
+One idea would be to provide a Kconfig a la NR_CPUS or NODES_SHIFT.  I.e.
+carve out the bits in sgx_epc_page_desc to allow up to N sections, but let
+the user limit the number of sections to recoup the unused memory.
 
-But then looking at sgx_alloc_page():
-
-+ * sgx_alloc_page() - Allocate an EPC page
-...
-
-+ struct sgx_epc_page *sgx_alloc_page(void *owner, bool reclaim)
-
-this one returns a struct sgx_epc_page * too.
-
-The former "allocates" from the EPC cache so I'm thinking former should
-not have "alloc" in its name at all. It should be called something like
-
-sgx_get_epc_page()
-
-or so.
-
-Now, looking at sgx_alloc_page(), it does call this one -
-sgx_try_alloc_page() to get a page from the page list but it
-does not allocate anything. The actual allocation happens in
-sgx_alloc_epc_section() which actually does the k*alloc().
-
-Which sounds to me like those functions should not use "alloc" and
-"free" in their names but "get" and "put" to denote that they're simply
-getting pages from lists and returning them back to those lists.
-
-IMNSVHO.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> # arch/x86/kernel/cpu/sgx/sgx.h:56:     return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
+>         andl    $15, %edx       #, _22
+> 		^^^
+> 
+> > +	/* bits 12-63 are reserved for the physical page address of the page */
+> > +};
