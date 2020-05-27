@@ -2,41 +2,42 @@ Return-Path: <SRS0=yCNl=7J=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EE9C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 27 May 2020 19:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71734C433DF
+	for <linux-sgx@archiver.kernel.org>; Wed, 27 May 2020 20:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE5572088E
-	for <linux-sgx@archiver.kernel.org>; Wed, 27 May 2020 19:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4947020890
+	for <linux-sgx@archiver.kernel.org>; Wed, 27 May 2020 20:35:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VY75sItQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728125AbgE0Tnj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 27 May 2020 15:43:39 -0400
-Received: from mga07.intel.com ([134.134.136.100]:50991 "EHLO mga07.intel.com"
+        id S1728604AbgE0UfU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 27 May 2020 16:35:20 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50190 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbgE0Tnj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 27 May 2020 15:43:39 -0400
-IronPort-SDR: GRHZFPEodn44ButcYfPfFb+sFRWqP9BqSWzKdh1G6tHFkz3GUFqNcBRC0vm6ugRcvwN0uuU9wz
- ErRn4kTWcESw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2020 12:43:38 -0700
-IronPort-SDR: hF0sOxrU7ydoJBeclUjIZCnUA5GkejfLmzFCFF2Hx5631FpY/5rLxCejvBNaRxbsHB+vIOsqLd
- JLwP3RIYPvAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,442,1583222400"; 
-   d="scan'208";a="468836609"
-Received: from lkakolx-mobl.ger.corp.intel.com ([10.249.43.73])
-  by fmsmga005.fm.intel.com with ESMTP; 27 May 2020 12:43:29 -0700
-Message-ID: <b3a48fc26bbb680273fc744f930dcfed5e503829.camel@linux.intel.com>
-Subject: Re: [PATCH v30 04/20] x86/sgx: Add SGX microarchitectural data
- structures
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        id S1727863AbgE0UfT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 27 May 2020 16:35:19 -0400
+Received: from zn.tnic (p200300ec2f0b8700952f735680ed3731.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:8700:952f:7356:80ed:3731])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1776C1EC03C1;
+        Wed, 27 May 2020 22:35:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1590611718;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Fep83zRm+Nc7tQ6A7zu8+T4rH0ND8Zz8ls3kfkFk4SI=;
+        b=VY75sItQDw1a1hMKOoFW96sfa0194tgCd1e9izbox020MO80E8JMS8k5gbvW7b7dssu+mb
+        M+BUSh583sbLWJUTCRvLtzeYoaLl8rt9v3QBeimFM2JUQ+tx8QbFBDWIXEc5CS39edaVq4
+        qA7P188tgPOAc3ejBmjTn92VGlUUAlA=
+Date:   Wed, 27 May 2020 22:35:09 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
         dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
@@ -44,39 +45,69 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
+        Serge Ayoun <serge.ayoun@intel.com>,
         Jethro Beekman <jethro@fortanix.com>
-Date:   Wed, 27 May 2020 22:43:28 +0300
-In-Reply-To: <20200525082013.GC25636@zn.tnic>
+Subject: Re: [PATCH v30 07/20] x86/sgx: Enumerate and track EPC sections
+Message-ID: <20200527203509.GF1721@zn.tnic>
 References: <20200515004410.723949-1-jarkko.sakkinen@linux.intel.com>
-         <20200515004410.723949-5-jarkko.sakkinen@linux.intel.com>
-         <20200520184745.GJ1457@zn.tnic> <20200522155405.GA8377@linux.intel.com>
-         <20200522161326.GC25128@linux.intel.com>
-         <20200522195017.GA121470@linux.intel.com> <20200525082013.GC25636@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2-0ubuntu1 
+ <20200515004410.723949-8-jarkko.sakkinen@linux.intel.com>
+ <20200525092304.GD25636@zn.tnic>
+ <20200527035613.GH31696@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200527035613.GH31696@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2020-05-25 at 10:20 +0200, Borislav Petkov wrote:
-> On Fri, May 22, 2020 at 10:50:17PM +0300, Jarkko Sakkinen wrote:
-> > If other values except two are never going to be used it is more than a
-> > legit point to validate this field.
+On Tue, May 26, 2020 at 08:56:14PM -0700, Sean Christopherson wrote:
+> > > +		if (i == ARRAY_SIZE(sgx_epc_sections)) {
+> > > +			pr_warn("No free slot for an EPC section\n");
+> > > +			break;
+> > > +		}
 > > 
-> > It also the potential to use ~0x8086 bits to be defined later if ever
-> > needed lets say for some kernel specific purpose.
+> > This is also the loop termination: do we really need this warn or can
+> > the loop simply do "i < ARRAY_SIZE" ?
 > 
-> Yah, let's cover our ass for the future. We have all seen the "this
-> won't be used" but then "we're using it" change of heart. IOW, let's
-> align with what the hw checks and we can always relax that in the future
-> but not the other way around.
+> The warn alerts the user that there will effectively be lost/unused memory,
+> so IMO it's worth keeping.
+
+Can the user do anything about it? If not, then probably no need to say
+anything.
+
+> > > +		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
+> > 
+> > I'm assuming that's useful information to issue in dmesg?
 > 
-I fully agree with this conclusion and that is exactly how I think about
-the issue too. I'll add a check for this.
+> Yes, it's effectively the equivalent of dumping the e820 tables.  It might
+> not be as useful now that the code is stable, but I suspect it will come in
+> handy for debug/triage down the road.
 
-/Jarkko
+Ok.
 
+> > Same for this one: also shared only among sgx code?
+> 
+> Yes, that one can definitely be buried behind a helper.
+
+Shared only within sgx is fine. 
+
+<snip> 
+
+> One idea would be to provide a Kconfig a la NR_CPUS or NODES_SHIFT.  I.e.
+> carve out the bits in sgx_epc_page_desc to allow up to N sections, but let
+> the user limit the number of sections to recoup the unused memory.
+
+I'd prefer a good estimate of a highest value, say 8 bits, which should
+suffice for the foreseeable future. That's the simplest thing to do and
+our Kconfig symbols space is an abomination of gazillion symbols.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
