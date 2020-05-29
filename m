@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11659C433E0
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 03:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163DBC433DF
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 05:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC32520DD4
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 03:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7F642075A
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 05:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437141AbgE2Dir (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 28 May 2020 23:38:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60881 "EHLO mga14.intel.com"
+        id S1725777AbgE2FHx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 29 May 2020 01:07:53 -0400
+Received: from mga07.intel.com ([134.134.136.100]:49235 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436976AbgE2Dir (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 28 May 2020 23:38:47 -0400
-IronPort-SDR: RmS+NA5X7ve+mSJLULcfAxFqcIGKGVqqkYpQglUdjOdfxM9Z5Zkn2u4y98WJtVTCmcA0vBiG4n
- ryKEu5urIY4Q==
+        id S1725601AbgE2FHx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 29 May 2020 01:07:53 -0400
+IronPort-SDR: lisWPwDnly30+7nT6PvH3DEo5FVB8rgjyajNHPDHcSlMnULQAKSHGveGqMpSHRsrq503YYMScG
+ NPkcOTtw927w==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2020 20:38:46 -0700
-IronPort-SDR: srrZt4gXFrrJaj61QY8iym0VMpVidDaNCFWzex459ZE0DrikXr4RroEFkjyN5A5GkXGPp3Wzvd
- QRf9YXr1lZow==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2020 22:07:53 -0700
+IronPort-SDR: TCTtQwQ/9D/CeQcuyLzcUu01e/1fX4vn77VHCy6I355FWsre3hskqcd8ZkPJJ26ylXvtKmDPTe
+ v6rzZ7oV/GcA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,447,1583222400"; 
-   d="scan'208";a="292232848"
+   d="scan'208";a="285412395"
 Received: from pratuszn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.58.65])
-  by fmsmga004.fm.intel.com with ESMTP; 28 May 2020 20:38:37 -0700
-Date:   Fri, 29 May 2020 06:38:36 +0300
+  by orsmga002.jf.intel.com with ESMTP; 28 May 2020 22:07:43 -0700
+Date:   Fri, 29 May 2020 08:07:42 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
@@ -44,9 +44,8 @@ Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
         puiterwijk@redhat.com, Jethro Beekman <jethro@fortanix.com>
 Subject: Re: [PATCH v30 08/20] x86/sgx: Add functions to allocate and free
  EPC pages
-Message-ID: <20200529033836.GD6182@linux.intel.com>
-References: <20200526125207.GE28228@zn.tnic>
- <20200527042111.GI31696@linux.intel.com>
+Message-ID: <20200529050742.GA424225@linux.intel.com>
+References: <20200527042111.GI31696@linux.intel.com>
  <20200527204638.GG1721@zn.tnic>
  <20200528012319.GA7577@linux.intel.com>
  <20200528013617.GD25962@linux.intel.com>
@@ -55,86 +54,61 @@ References: <20200526125207.GE28228@zn.tnic>
  <20200528190718.GA2147934@linux.intel.com>
  <20200528195917.GF30353@linux.intel.com>
  <20200529032816.GC6182@linux.intel.com>
+ <20200529033716.GH30353@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200529032816.GC6182@linux.intel.com>
+In-Reply-To: <20200529033716.GH30353@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, May 29, 2020 at 06:28:28AM +0300, Jarkko Sakkinen wrote:
-> On Thu, May 28, 2020 at 12:59:17PM -0700, Sean Christopherson wrote:
-> > On Thu, May 28, 2020 at 10:07:18PM +0300, Jarkko Sakkinen wrote:
-> > > On Thu, May 28, 2020 at 07:16:35PM +0200, Borislav Petkov wrote:
-> > > > Lemme reply to all mails with one. :-)
-> > > > And except those last two. Those are allocating a page from the EPC
-> > > > sections so I'd call them:
+On Thu, May 28, 2020 at 08:37:16PM -0700, Sean Christopherson wrote:
+> On Fri, May 29, 2020 at 06:28:16AM +0300, Jarkko Sakkinen wrote:
+> > On Thu, May 28, 2020 at 12:59:17PM -0700, Sean Christopherson wrote:
+> > > On Thu, May 28, 2020 at 10:07:18PM +0300, Jarkko Sakkinen wrote:
+> > > >  * sgx_grab_page() - Grab a free EPC page
+> > > >  * @owner:	the owner of the EPC page
+> > > >  * @reclaim:	reclaim pages if necessary
+> > > >  *
+> > > >  * Iterate through EPC sections and borrow a free EPC page to the caller. When a
+> > > >  * page is no longer needed it must be released with sgx_free_page(). If
+> > > >  * @reclaim is set to true, directly reclaim pages when we are out of pages. No
+> > > >  * mm's can be locked when @reclaim is set to true.
+> > > >  *
+> > > >  * Finally, wake up ksgxswapd when the number of pages goes below the watermark
+> > > >  * before returning back to the caller.
+> > > >  *
+> > > >  * Return:
+> > > >  *   an EPC page,
+> > > >  *   -errno on error
+> > > >  */
 > > > > 
-> > > > sgx_try_alloc_page    -> sgx_alloc_epc_page_section
-> > > > __sgx_try_alloc_page  -> __sgx_alloc_epc_page_section
+> > > > I also rewrote the kdoc.
 > > > > 
-> > > > former doing the loop, latter doing the per-section list games.
+> > > > I do agree that sgx_try_grab_page() should be renamed as __sgx_grab_page().
 > > > 
-> > > sgx_alloc_epc_page_section() is a bit nasty and long name to use for
-> > > grabbing a page. And even the documentation spoke about grabbing before
-> > > this naming discussion. I think it is a great description what is going
-> > > on.  Everytime I talk about the subject I talk about grabbing.
-> > > Lets just say that your suggestion, I could not use in a conference
-> > > talk as a verb when I describe what is going on. That function > > > signature does not fit to my mouth :-) I would talk about
-> > > grabbing a page.
+> > > FWIW, I really, really dislike "grab".  The nomenclature for normal memory
+> > > and pages uses "alloc" when taking a page off a free list, and "grab" when
+> > > elevating the refcount.  I don't understand the motivation for diverging
+> > > from that.  SGX is weird enough as is, using names that don't align with
+> > > exist norms will only serve to further obfuscate the code.
 > > 
-> > "allocate an EPC page from the specified section"
-> > 
-> > It also works if/when we add NUMA awareness, e.g. sgx_alloc_epc_page_node()
-> > means "allocate an EPC page from the specified node".  Note that I'm not
-> > inventing these from scratch, simply stealing them from alloc_pages() and
-> > alloc_pages_node().  The section thing is unique to SGX, but the underlying
-> > concept is the same.
+> > OK, what would be a better name then? The semantics are not standard
+> > memory allocation semantics in the first place. And kdoc in v30 speaks
+> > about grabbing.
 > 
-> Then it should be sgx_alloc_epc_page_from_section() if you go with that.
-> Otherwise it is mixes too much with the section. I did read these mails
-> first quickly and first thought that functions were doing something with
-> sgx_epc_section and not with pages.
-> 
-> Only with a deeper look that it's the name for allocating a page.
-> 
-> I think both names are waste of screen estate. Too long.
-> 
-> > >  * sgx_grab_page() - Grab a free EPC page
-> > >  * @owner:	the owner of the EPC page
-> > >  * @reclaim:	reclaim pages if necessary
-> > >  *
-> > >  * Iterate through EPC sections and borrow a free EPC page to the caller. When a
-> > >  * page is no longer needed it must be released with sgx_free_page(). If
-> > >  * @reclaim is set to true, directly reclaim pages when we are out of pages. No
-> > >  * mm's can be locked when @reclaim is set to true.
-> > >  *
-> > >  * Finally, wake up ksgxswapd when the number of pages goes below the watermark
-> > >  * before returning back to the caller.
-> > >  *
-> > >  * Return:
-> > >  *   an EPC page,
-> > >  *   -errno on error
-> > >  */
-> > > 
-> > > I also rewrote the kdoc.
-> > > 
-> > > I do agree that sgx_try_grab_page() should be renamed as __sgx_grab_page().
-> > 
-> > FWIW, I really, really dislike "grab".  The nomenclature for normal memory
-> > and pages uses "alloc" when taking a page off a free list, and "grab" when
-> > elevating the refcount.  I don't understand the motivation for diverging
-> > from that.  SGX is weird enough as is, using names that don't align with
-> > exist norms will only serve to further obfuscate the code.
-> 
-> OK, what would be a better name then? The semantics are not standard
-> memory allocation semantics in the first place. And kdoc in v30 speaks
-> about grabbing.
+> In what way are they not standard allocation semantics?  sgx_alloc_page()
+> is an API to allocate (EPC) memory on-demand, sgx_free_page() is its partner
+> to free that memory when it is no longer needed.  There are many different
+> ways to manage and allocate memory, but the basic premise is the same for
+> all and no different than what we're doing.
 
-I can live with sgx_alloc_epc_page() or sgx_alloc_epc_page_from_section()
-although I'd prefer the shorter form.
+I'll go with sgx_alloc_epc_page(). It is more precise name.
+
+It's not as precise as sgx_alloc_epc_page_from_section but is a great
+compromise between scree estate and clarity of expression :-)
 
 /Jarkko
