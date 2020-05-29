@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5249BC433E0
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 17:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C789C433E1
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 17:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38E28206E2
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 17:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE51206E2
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 17:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgE2RyM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1727980AbgE2RyM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 29 May 2020 13:54:12 -0400
 Received: from mga14.intel.com ([192.55.52.115]:51589 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbgE2RyL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 29 May 2020 13:54:11 -0400
-IronPort-SDR: Wp0u2amyvwxwXM+sWANwiPMJdvxGXZlgTQAbbOFQIXY5qX54vJeeJoSVATz754zV/IzY6STv6z
- e/2dZ6YiUPBA==
+        id S1725913AbgE2RyM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 29 May 2020 13:54:12 -0400
+IronPort-SDR: vL8sbvTnh6QvtIZuLoVWC0MIJ+ojnNFyvFyVy419s1+VwhMOEcu1zV/ihLKWsmTmgrBgNAZ54j
+ byao1fgVa94w==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2020 10:54:08 -0700
-IronPort-SDR: Oc4SX26W9PjIkh6aX5ts6cSrZR/FrvO0tUsnzDnob2Z5MhSPJvdd4CDGSfRrMnncxFQ8pCLFdY
- 0Mcfi4MJXI+g==
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2020 10:54:09 -0700
+IronPort-SDR: u/pkWo/VrVW2mU3Zq63orkOZpFVlXjWdAmepysK+reDka1DicOvwWb0Q8fYhSeJSduwKLvOQwZ
+ e1YgzRO4gIug==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,449,1583222400"; 
-   d="scan'208";a="271292321"
+   d="scan'208";a="271292323"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.152])
   by orsmga006.jf.intel.com with ESMTP; 29 May 2020 10:54:08 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org
-Subject: [PATCH for_v31 1/6] x86/sgx: Fix inadvertant early return from sgx_ioctl()
-Date:   Fri, 29 May 2020 10:54:02 -0700
-Message-Id: <20200529175407.2109-2-sean.j.christopherson@intel.com>
+Subject: [PATCH for_v31 2/6] x86/sgx: Remove unnecessary globals after merging reclaim.c into main.c
+Date:   Fri, 29 May 2020 10:54:03 -0700
+Message-Id: <20200529175407.2109-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200529175407.2109-1-sean.j.christopherson@intel.com>
 References: <20200529175407.2109-1-sean.j.christopherson@intel.com>
@@ -47,27 +47,75 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Set 'ret' instead of returning if the enclave is dead in sgx_ioctl(),
-otherwise the goto that was added doesn't take effect.
+Make all variables that are only used in main.c static, rearranging code
+as needed.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/main.c | 16 ++++++----------
+ arch/x86/kernel/cpu/sgx/sgx.h  |  3 ---
+ 2 files changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index ec5a0f017014b..2019ee1dc0b3e 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -790,7 +790,7 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 		return -EBUSY;
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 5043d3700960b..ef7061bfa2a07 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -14,9 +14,12 @@
+ #include "encls.h"
  
- 	if (encl_flags & SGX_ENCL_DEAD) {
--		return -EFAULT;
-+		ret = -EFAULT;
- 		goto out;
+ static struct task_struct *ksgxswapd_tsk;
+-DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+-LIST_HEAD(sgx_active_page_list);
+-DEFINE_SPINLOCK(sgx_active_page_list_lock);
++static DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
++static LIST_HEAD(sgx_active_page_list);
++static DEFINE_SPINLOCK(sgx_active_page_list_lock);
++
++struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
++static int sgx_nr_epc_sections;
+ 
+ static void sgx_sanitize_section(struct sgx_epc_section *section)
+ {
+@@ -45,10 +48,6 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
  	}
+ }
  
+-extern struct task_struct *ksgxswapd_tsk;
+-extern struct wait_queue_head(ksgxswapd_waitq);
+-extern spinlock_t sgx_active_page_list_lock;
+-
+ static unsigned long sgx_nr_free_pages(void)
+ {
+ 	unsigned long cnt = 0;
+@@ -491,9 +490,6 @@ void sgx_reclaim_pages(void)
+ 	}
+ }
+ 
+-struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+-int sgx_nr_epc_sections;
+-
+ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_section *section)
+ {
+ 	struct sgx_epc_page *page;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 923028d568540..5b9dbcef981b0 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -41,14 +41,11 @@ struct sgx_epc_section {
+ #define SGX_NR_LOW_PAGES		32
+ #define SGX_NR_HIGH_PAGES		64
+ 
+-extern struct list_head sgx_active_page_list;
+-
+ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
+ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
+ void sgx_reclaim_pages(void);
+ 
+ extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+-extern int sgx_nr_epc_sections;
+ 
+ static inline struct sgx_epc_section *sgx_get_epc_section(
+ 		struct sgx_epc_page *page)
 -- 
 2.26.0
 
