@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163DBC433DF
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 05:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345B0C433DF
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 08:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7F642075A
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 05:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D918207F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 May 2020 08:13:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725777AbgE2FHx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 29 May 2020 01:07:53 -0400
-Received: from mga07.intel.com ([134.134.136.100]:49235 "EHLO mga07.intel.com"
+        id S1725961AbgE2INK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 29 May 2020 04:13:10 -0400
+Received: from mga14.intel.com ([192.55.52.115]:16098 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgE2FHx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 29 May 2020 01:07:53 -0400
-IronPort-SDR: lisWPwDnly30+7nT6PvH3DEo5FVB8rgjyajNHPDHcSlMnULQAKSHGveGqMpSHRsrq503YYMScG
- NPkcOTtw927w==
+        id S1725775AbgE2INJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 29 May 2020 04:13:09 -0400
+IronPort-SDR: g1xkrO6bRpbLZ1Zp6apXBiP/LT5fJVeGOgNSPBc0xA3g+I3Z0M/nUP0jsqoSskykGVie8DWR3l
+ j9BZqgsfB2Jg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2020 22:07:53 -0700
-IronPort-SDR: TCTtQwQ/9D/CeQcuyLzcUu01e/1fX4vn77VHCy6I355FWsre3hskqcd8ZkPJJ26ylXvtKmDPTe
- v6rzZ7oV/GcA==
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2020 01:13:09 -0700
+IronPort-SDR: OQ3PeyfgSiBJMJwnXbX3YqkirXMCRbvTz50DlIcb4rQYCBwM07L+KCAmfkSZN4nsy1BQfm2+3l
+ TB19md3n3fNQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,447,1583222400"; 
-   d="scan'208";a="285412395"
+   d="scan'208";a="376640536"
 Received: from pratuszn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.58.65])
-  by orsmga002.jf.intel.com with ESMTP; 28 May 2020 22:07:43 -0700
-Date:   Fri, 29 May 2020 08:07:42 +0300
+  by fmsmga001.fm.intel.com with ESMTP; 29 May 2020 01:13:00 -0700
+Date:   Fri, 29 May 2020 11:12:58 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
@@ -44,7 +44,7 @@ Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
         puiterwijk@redhat.com, Jethro Beekman <jethro@fortanix.com>
 Subject: Re: [PATCH v30 08/20] x86/sgx: Add functions to allocate and free
  EPC pages
-Message-ID: <20200529050742.GA424225@linux.intel.com>
+Message-ID: <20200529081258.GA1376838@linux.intel.com>
 References: <20200527042111.GI31696@linux.intel.com>
  <20200527204638.GG1721@zn.tnic>
  <20200528012319.GA7577@linux.intel.com>
@@ -106,9 +106,11 @@ On Thu, May 28, 2020 at 08:37:16PM -0700, Sean Christopherson wrote:
 > ways to manage and allocate memory, but the basic premise is the same for
 > all and no different than what we're doing.
 
-I'll go with sgx_alloc_epc_page(). It is more precise name.
+I end up to (ignoring unchanged names):
 
-It's not as precise as sgx_alloc_epc_page_from_section but is a great
-compromise between scree estate and clarity of expression :-)
+- __sgx_alloc_epc_page_from_section() (static)
+- __sgx_alloc_epc_page()
+- sgx_alloc_epc_page()
+- sgx_setup_epc_section()
 
 /Jarkko
