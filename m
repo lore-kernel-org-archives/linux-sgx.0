@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB52CC433DF
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Jun 2020 20:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA08C433DF
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Jun 2020 20:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82A54208C3
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Jun 2020 20:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EEAB208C3
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Jun 2020 20:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbgFPUKK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Jun 2020 16:10:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:13022 "EHLO mga01.intel.com"
+        id S1729167AbgFPULW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Jun 2020 16:11:22 -0400
+Received: from mga14.intel.com ([192.55.52.115]:12640 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbgFPUKK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Jun 2020 16:10:10 -0400
-IronPort-SDR: F1YhcCf1QQ2eKQstkSiOmMjJXlu1xh1/ONgSNtZ7tvJ015Inz/HLjzKiNZcWEjDvU7cKTGIppx
- nVjjEgmQUBcg==
+        id S1727962AbgFPULV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Jun 2020 16:11:21 -0400
+IronPort-SDR: wRwJQnTM8Un/BzXDf6U3L9s4Hh32ZYuvKLzz1Ao8MwahcwS4EuSJFTVxSvx6keT0SqFbT22A9H
+ 3KzQEvjzLu8g==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 13:10:09 -0700
-IronPort-SDR: 3acZQnJGhOh+XvlJm6v0GvJ3UIbJLjErxgGQr7cjJuVRIjqLzOio6mQYzTQN3AqQTDa/TFvDhK
- okf0LgpUTI3A==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 13:11:19 -0700
+IronPort-SDR: 6JJFjwx5U8zFyHHBAO0Ktk49ER0w8YSpuZZI3n9Lrv/tHz5+aLp079gdNEbH4SzOvwU2In+dqd
+ XWGm9xMZmXiw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,519,1583222400"; 
-   d="scan'208";a="291185078"
+   d="scan'208";a="449968781"
 Received: from gosinald-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.36.106])
-  by orsmga002.jf.intel.com with ESMTP; 16 Jun 2020 13:09:59 -0700
-Date:   Tue, 16 Jun 2020 23:09:58 +0300
+  by orsmga005.jf.intel.com with ESMTP; 16 Jun 2020 13:11:09 -0700
+Date:   Tue, 16 Jun 2020 23:11:07 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
@@ -43,49 +43,25 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
 Subject: Re: [PATCH v32 00/21] Intel SGX foundations
-Message-ID: <20200616200958.GC10412@linux.intel.com>
+Message-ID: <20200616201107.GD10412@linux.intel.com>
 References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
- <20200610205903.GF18790@linux.intel.com>
+ <355c8c48-3dc7-5d4e-6610-390bc9188231@fortanix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200610205903.GF18790@linux.intel.com>
+In-Reply-To: <355c8c48-3dc7-5d4e-6610-390bc9188231@fortanix.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 01:59:03PM -0700, Sean Christopherson wrote:
-> On Mon, Jun 01, 2020 at 10:51:57AM +0300, Jarkko Sakkinen wrote:
-> > v29:
-> > * The selftest has been moved to selftests/sgx. Because SGX is an execution
-> >   environment of its own, it really isn't a great fit with more "standard"
-> >   x86 tests.
-> > 
-> >   The RSA key is now generated on fly and the whole signing process has
-> >   been made as part of the enclave loader instead of signing the enclave
-> >   during the compilation time.
-> > 
-> >   Finally, the enclave loader loads now the test enclave directly from its
-> >   ELF file, which means that ELF file does not need to be coverted as raw
-> >   binary during the build process.
-> 
-> Something in the above rework broke the selftest.  I'm getting intermittent
-> EINIT failures with SGX_INVALID_SIGNATURE.  I'm guessing it's related to
-> the dynamic RSA key generation, e.g. only ~15% of runs fail.  Verified that
-> v29 selftest fails and v28 passes.  My internal tests also pass, i.e. it's
-> all but guaranteed to be a selftest issue, not a kernel issue.
-> 
-> Jarkko, I don't have bandwidth to dig into this right now, hopefully this
-> reproduces in your environment.  Let me know if that's not the case.
+On Mon, Jun 15, 2020 at 02:13:23PM +0200, Jethro Beekman wrote:
+> Looks like we missed the boat for 5.8. Can we get this ready for 5.9?
 
-I haven't experienced but I'll try to stress test it.
-
-Just to know how complex test should reproduce your issue, can you
-reproduce the issue by running the selftest sequentially in a loop or
-do I need to do something more complex than that?
+I sincerely hope so and do my best to get there.
 
 /Jarkko
