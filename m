@@ -1,121 +1,185 @@
-Return-Path: <SRS0=j7Bb=AD=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=69V/=AE=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAD8C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Jun 2020 17:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AF7C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Jun 2020 04:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC7F220732
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Jun 2020 17:37:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eoL7ELdR"
+	by mail.kernel.org (Postfix) with ESMTP id 74D98206A5
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Jun 2020 04:39:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbgFVRhV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 22 Jun 2020 13:37:21 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50654 "EHLO mail.skyhub.de"
+        id S1726359AbgFWEjk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 23 Jun 2020 00:39:40 -0400
+Received: from mga07.intel.com ([134.134.136.100]:41152 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729857AbgFVRhV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 22 Jun 2020 13:37:21 -0400
-Received: from zn.tnic (p200300ec2f0a2500329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:2500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CFBCF1EC0283;
-        Mon, 22 Jun 2020 19:37:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1592847440;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=W9f05Lxtpz3Otb1ah/vQVmeZ2BZZPOnMN3XK5Vp8OA4=;
-        b=eoL7ELdRogcOXPrnd+8O49gqKzSk6Ue0CChxRf4MVBsTdH5Bs4d9eLw/QziQ3Q6dQZR2Bk
-        GPOiBjzwVFKeOaLEVbIMnQCn+K/djNl9/leDoN3oQ1Amw7n1utV3F3B5GP1IaH5/LL6tpO
-        SPv8FdobWVeKBcq4YvFDi8fEY7oBRQE=
-Date:   Mon, 22 Jun 2020 19:37:11 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 01/21] x86/cpufeatures: x86/msr: Add Intel SGX
- hardware bits
-Message-ID: <20200622173711.GJ32200@zn.tnic>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-2-jarkko.sakkinen@linux.intel.com>
+        id S1726054AbgFWEjj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 23 Jun 2020 00:39:39 -0400
+IronPort-SDR: LA9W6Pmf0agpRXoRmmxduEjlwvS4L1+H2RiPkByfvFOFJcBfcNYjLjdJhp6oCFlJNfyheRJ4T/
+ w75uLGy9dfbQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9660"; a="209154818"
+X-IronPort-AV: E=Sophos;i="5.75,269,1589266800"; 
+   d="scan'208";a="209154818"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2020 21:39:38 -0700
+IronPort-SDR: 6WcWwqblazNjBrPLlhbKXh7kdfXRC5atlTydEX/cFmh5lA/NRrAs+9ARxnH4fDEdzVzmk+1Fls
+ YVjR2KAb6j9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,269,1589266800"; 
+   d="scan'208";a="275222562"
+Received: from jczajka-mobl.ger.corp.intel.com (HELO localhost) ([10.249.40.133])
+  by orsmga003.jf.intel.com with ESMTP; 22 Jun 2020 21:39:34 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     kai.svahn@intel.com, bruce.schlobohm@intel.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH RFC] x86/sgx: Allocate form local NUMA node first
+Date:   Tue, 23 Jun 2020 07:39:31 +0300
+Message-Id: <20200623043931.157156-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200617220844.57423-2-jarkko.sakkinen@linux.intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 01:08:23AM +0300, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> Add X86_FEATURE_SGX from CPUID.(EAX=7, ECX=1), which informs whether the
-> CPU has SGX.
-> 
-> Add X86_FEATURE_SGX1 and X86_FEATURE_SGX2 from CPUID.(EAX=12H, ECX=0),
-> which describe the level of SGX support available [1].
-> 
-> Add IA32_FEATURE_CONTROL_SGX_ENABLE. BIOS can use this bit to opt-in SGX
+Create a pointer array for each NUMA node with the references to the
+contained EPC sections. Use this in __sgx_alloc_epc_page() to knock the
+current NUMA node before the others.
 
-I'm guessing that wants to be
+Cc: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 70 ++++++++++++++++++++++++++++++----
+ 1 file changed, 63 insertions(+), 7 deletions(-)
 
-IA32_FEATURE_CONTROL.SGX_ENABLE
-
-judging by the diff and the SDM chapter.
-
-> before locking the feature control MSR [2].
-> 
-> [1] Intel SDM: 36.7.2 Intel® SGX Resource Enumeration Leaves
-> [2] Intel SDM: 36.7.1 Intel® SGX Opt-In Configuration
-> 
-> Cc: Borislav Petkov <bp@alien8.de>
-> Acked-by: Jethro Beekman <jethro@fortanix.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/include/asm/cpufeature.h        |  5 +++--
->  arch/x86/include/asm/cpufeatures.h       |  7 ++++++-
->  arch/x86/include/asm/disabled-features.h | 18 +++++++++++++++---
->  arch/x86/include/asm/msr-index.h         |  1 +
->  arch/x86/include/asm/required-features.h |  2 +-
->  arch/x86/kernel/cpu/common.c             |  4 ++++
->  tools/arch/x86/include/asm/cpufeatures.h |  7 ++++++-
-
-Also, please drop this change to tools/, see
-
-https://lkml.kernel.org/r/20200622141737.GA30611@kernel.org
-
-from today.
-
-With those addressed:
-
-Reviewed-by: Borislav Petkov <bp@suse.de>
-
-Thx.
-
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 3594d37d545f..c9b47cf87730 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -13,6 +13,13 @@
+ #include "encl.h"
+ #include "encls.h"
+ 
++struct sgx_numa_node {
++	struct sgx_epc_section *sections[SGX_MAX_EPC_SECTIONS];
++	int nr_sections;
++};
++
++static struct sgx_numa_node sgx_numa_nodes[MAX_NUMNODES];
++static int sgx_nr_numa_nodes;
+ struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ static int sgx_nr_epc_sections;
+ static struct task_struct *ksgxswapd_tsk;
+@@ -502,6 +509,27 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
+ 	return page;
+ }
+ 
++static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
++{
++	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
++	struct sgx_epc_section *section;
++	struct sgx_epc_page *page;
++	int i;
++
++	for (i = 0; i < node->nr_sections; i++) {
++		section = node->sections[i];
++		spin_lock(&section->lock);
++		page = __sgx_alloc_epc_page_from_section(section);
++		spin_unlock(&section->lock);
++
++		if (page)
++			return page;
++	}
++
++	return NULL;
++}
++
++
+ /**
+  * __sgx_alloc_epc_page() - Allocate an EPC page
+  *
+@@ -514,16 +542,19 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
+  */
+ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+ {
+-	struct sgx_epc_section *section;
+ 	struct sgx_epc_page *page;
++	int nid = numa_node_id();
+ 	int i;
+ 
+-	for (i = 0; i < sgx_nr_epc_sections; i++) {
+-		section = &sgx_epc_sections[i];
+-		spin_lock(&section->lock);
+-		page = __sgx_alloc_epc_page_from_section(section);
+-		spin_unlock(&section->lock);
++	page = __sgx_alloc_epc_page_from_node(nid);
++	if (page)
++		return page;
+ 
++	for (i = 0; i < sgx_nr_numa_nodes; i++) {
++		if (i == nid)
++			continue;
++
++		page = __sgx_alloc_epc_page_from_node(i);
+ 		if (page)
+ 			return page;
+ 	}
+@@ -684,11 +715,28 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
+ 	       ((high & GENMASK_ULL(19, 0)) << 32);
+ }
+ 
++static int __init sgx_pfn_to_nid(unsigned long pfn)
++{
++	pg_data_t *pgdat;
++	int nid;
++
++	for (nid = 0; nid < nr_node_ids; nid++) {
++		pgdat = NODE_DATA(nid);
++
++		if (pfn >= pgdat->node_start_pfn &&
++		    pfn < (pgdat->node_start_pfn + pgdat->node_spanned_pages))
++			return nid;
++	}
++
++	return 0;
++}
++
+ static bool __init sgx_page_cache_init(void)
+ {
+ 	u32 eax, ebx, ecx, edx, type;
++	struct sgx_numa_node *node;
+ 	u64 pa, size;
+-	int i;
++	int i, nid;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
+ 		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
+@@ -714,6 +762,14 @@ static bool __init sgx_page_cache_init(void)
+ 		}
+ 
+ 		sgx_nr_epc_sections++;
++
++		nid = sgx_pfn_to_nid(PFN_DOWN(pa));
++		node = &sgx_numa_nodes[nid];
++
++		node->sections[node->nr_sections] = &sgx_epc_sections[i];
++		node->nr_sections++;
++
++		sgx_nr_numa_nodes = max(sgx_nr_numa_nodes, nid + 1);
+ 	}
+ 
+ 	if (!sgx_nr_epc_sections) {
 -- 
-Regards/Gruss,
-    Boris.
+2.25.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
