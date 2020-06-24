@@ -2,96 +2,72 @@ Return-Path: <SRS0=YYkI=AF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79825C433DF
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jun 2020 14:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFB6C433E0
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jun 2020 23:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABAE20781
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jun 2020 14:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAFB22073E
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Jun 2020 23:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390033AbgFXOem (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Jun 2020 10:34:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:47171 "EHLO mga02.intel.com"
+        id S1729587AbgFXXMF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Jun 2020 19:12:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30009 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388652AbgFXOel (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Jun 2020 10:34:41 -0400
-IronPort-SDR: QvHnJUhpf6MGlim+c7lr5kYNft8VdOlpeUzp6nJSK2k/Ry/AdzvcxFSobIMrWJaX6CShXSqv6q
- bap02RU7XgVg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="132926920"
-X-IronPort-AV: E=Sophos;i="5.75,275,1589266800"; 
-   d="scan'208";a="132926920"
+        id S1728090AbgFXXME (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Jun 2020 19:12:04 -0400
+IronPort-SDR: WVnum1ZacE0u74iDOQ27x0YvjOPCIBqSY41mJGvCVbckOYVF+/W21Adlk9+rhOI3rYiDCtcsX4
+ Gp3Vzovdcalg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="124913672"
+X-IronPort-AV: E=Sophos;i="5.75,276,1589266800"; 
+   d="scan'208";a="124913672"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 07:34:41 -0700
-IronPort-SDR: MxKSfNbXtXyBPxUZ+wmqRkvtH0JapHsGgsw21Wjg04BixpcbX7MKyi3BxaWqW9Wa++XhJ5qRSi
- TZbr29+G0MZQ==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 16:12:04 -0700
+IronPort-SDR: Zmn9Y2hMtCkdpbWyDRkWlWlVM/7iG3RhIaWw9i75c56bDLvZ+2J3HRalKRdyujkkn2jo9LAxz8
+ lIVXhR+7OGvw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,275,1589266800"; 
-   d="scan'208";a="265090920"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Jun 2020 07:34:39 -0700
-Date:   Wed, 24 Jun 2020 07:34:40 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 02/21] x86/cpufeatures: x86/msr: Add Intel SGX Launch
- Control hardware bits
-Message-ID: <20200624143440.GD25092@linux.intel.com>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-3-jarkko.sakkinen@linux.intel.com>
- <20200624130434.GC8492@zn.tnic>
+X-IronPort-AV: E=Sophos;i="5.75,276,1589266800"; 
+   d="scan'208";a="293956802"
+Received: from hluxenbu-mobl.ger.corp.intel.com (HELO localhost) ([10.252.36.218])
+  by orsmga007.jf.intel.com with ESMTP; 24 Jun 2020 16:12:01 -0700
+Date:   Thu, 25 Jun 2020 02:12:00 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     kai.svahn@intel.com, bruce.schlobohm@intel.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH RFC] x86/sgx: Allocate form local NUMA node first
+Message-ID: <20200624231200.GA21758@linux.intel.com>
+References: <20200623043931.157156-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200624130434.GC8492@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200623043931.157156-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 03:04:34PM +0200, Borislav Petkov wrote:
-> On Thu, Jun 18, 2020 at 01:08:24AM +0300, Jarkko Sakkinen wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-> > Launch Control.
-> > 
-> > Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-> > SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-> > called enclaves, are always signed. All enclaves signed with the public key
-> > are unconditionally allowed to initialize. [1]
-> > 
-> > Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
+On Tue, Jun 23, 2020 at 07:39:31AM +0300, Jarkko Sakkinen wrote:
+> Create a pointer array for each NUMA node with the references to the
+> contained EPC sections. Use this in __sgx_alloc_epc_page() to knock the
+> current NUMA node before the others.
 > 
-> LE_WR or LC_ENABLED?
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-It should be FEAT_CTL_SGX_LC_ENABLED, i.e. the actual code is correct.  We
-updated the #define to use the SDM name to be consistent with the other bits
-and neglected to update the changelog.
+I took a reverse approach, i.e. have only pointer arrays in the numa
+structs.
 
-Thanks!
- 
-> With that addressed:
-> 
-> Reviewed-by: Borislav Petkov <bp@suse.de>
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+I think we should just include this. It makes the overall structure
+more legit, meaning that we do something useful with the sections.
+
+It clarifies more than dissolves so to speak...
+
+/Jarkko
