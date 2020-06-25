@@ -2,136 +2,88 @@ Return-Path: <SRS0=RM8m=AG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0D5C433DF
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 18:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FF5C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 20:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B86BA20789
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 18:53:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DPhYaS7I"
+	by mail.kernel.org (Postfix) with ESMTP id EF52E20789
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 20:12:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405897AbgFYSxh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Jun 2020 14:53:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36834 "EHLO mail.skyhub.de"
+        id S2390690AbgFYUMS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Jun 2020 16:12:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:41702 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405853AbgFYSxh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 25 Jun 2020 14:53:37 -0400
-Received: from zn.tnic (p200300ec2f0ed100359123de3d1ebdc6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:d100:3591:23de:3d1e:bdc6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 821C21EC03E4;
-        Thu, 25 Jun 2020 20:53:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1593111215;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=cq3LKrRKJepHltbyBKhbhBaUgzsdqiaXd/tjkJyN1n0=;
-        b=DPhYaS7IuP6FQrvef2Yeoymx/XJnTO2nXLvxzCWexN3YYNoNlu/FKFUW8eH2BHK4WGjTNS
-        6PRYRcQ3dZdfQuH/Xnw5oLl4jo+eFabEJg39tyzGuKM6857nX2zp/pF4W47Ug19ifoFXk3
-        7OUJTwAE66U9gqY4Kzv3U/3Mb6LtYr0=
-Date:   Thu, 25 Jun 2020 20:53:34 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S2390575AbgFYUMQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 25 Jun 2020 16:12:16 -0400
+IronPort-SDR: /KpMIHEjmyAHOTCOvbS5/Yp1Ov+t7NdXpvyIREgM9huyBHP34b3h4jYD2Kvj8bxiBv5DcalEbV
+ hngo9hoh2FhQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9663"; a="124712828"
+X-IronPort-AV: E=Sophos;i="5.75,280,1589266800"; 
+   d="scan'208";a="124712828"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2020 13:12:14 -0700
+IronPort-SDR: 3/h5lshevaYkf9k9GfMxmGa4KC/GEZ+r0sxQ5Ojx9FL0kZ60xlkU7/3/1ZSwkzqLJilXV+Pfzz
+ MbpKSRgy37Sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,280,1589266800"; 
+   d="scan'208";a="479596179"
+Received: from drews-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.49.247])
+  by fmsmga006.fm.intel.com with ESMTP; 25 Jun 2020 13:12:02 -0700
+Date:   Thu, 25 Jun 2020 23:11:56 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        Jethro Beekman <jethro@fortanix.com>,
+        Serge Ayoun <serge.ayoun@intel.com>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200625185334.GN20319@zn.tnic>
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 08/21] x86/sgx: Initialize metadata for Enclave Page
+ Cache (EPC) sections
+Message-ID: <20200625201156.GA15394@linux.intel.com>
 References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-9-jarkko.sakkinen@linux.intel.com>
+ <20200625101441.GC20319@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200625101441.GC20319@zn.tnic>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
-
-> Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-					 ^
-					 Add
-
-> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> can be used by applications to set aside private regions of code and
-> data. The code outside the SGX hosted software entity is disallowed to
-> access the memory inside the enclave enforced by the CPU. We call these
-> entities as enclaves.
-
-s/as //
-
-> This commit implements a driver that provides an ioctl API to construct
-
-s/This commit implements/Implement/
-
-> and run enclaves. Enclaves are constructed from pages residing in
-> reserved physical memory areas. The contents of these pages can only be
-> accessed when they are mapped as part of an enclave, by a hardware
-> thread running inside the enclave.
+On Thu, Jun 25, 2020 at 12:14:41PM +0200, Borislav Petkov wrote:
+> On Thu, Jun 18, 2020 at 01:08:30AM +0300, Jarkko Sakkinen wrote:
+> > +static inline struct sgx_epc_section *sgx_get_epc_section(
+> > +		struct sgx_epc_page *page)
 > 
-> The starting state of an enclave consists of a fixed measured set of
-> pages that are copied to the EPC during the construction process by
-> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
-> that defines the enclave properties.
+> Just let it stick out - breaking lines on arg opening brace are the
+> ugliest. Also:
 > 
-> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
-
-Enclaves
-
-> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
-> the EPC and EINIT check a given signed measurement and moves the enclave
-
-		   checks
-
-> into a state ready for execution.
+>   bdc48fa11e46 ("checkpatch/coding-style: deprecate 80-column warning")
 > 
-> An initialized enclave can only be accessed through special Thread Control
-> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
-> function converts a thread into enclave mode and continues the execution in
-> the offset defined by the TCS provided to EENTER. An enclave is exited
-> through syscall, exception, interrupts or by explicitly calling another
-> ENCLU leaf EEXIT.
+> Thx.
 > 
-> The permissions, which enclave page is added will set the limit for maximum
-> permissions that can be set for mmap() and mprotect().
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-I can't parse that sentence.
+OK, I put everything into one line.
 
-> This will
-> effectively allow to build different security schemes between producers and
-> consumers of enclaves. Later on we can increase granularity with LSM hooks
-> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
-> consumers)
-
-Other than that, nice explanation. I like that in a commit message.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+/Jarkko
