@@ -6,123 +6,86 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3D3C433DF
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 00:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B3EC433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 00:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1CA20706
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 00:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FFEA207DD
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 00:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388337AbgFYA0B (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Jun 2020 20:26:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:49117 "EHLO mga14.intel.com"
+        id S2388977AbgFYA5x (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Jun 2020 20:57:53 -0400
+Received: from mga03.intel.com ([134.134.136.65]:48108 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388297AbgFYA0B (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Jun 2020 20:26:01 -0400
-IronPort-SDR: UZ7mmAI5Jrx9iUdjVdTlJxCAHDy5DnyR7qHDZKnowguKvdEmXXe4pGSky0qgJxihxkhBO0KMZ1
- LrMIMVwXxG6A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="143777647"
+        id S2388679AbgFYA5x (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Jun 2020 20:57:53 -0400
+IronPort-SDR: 57NwgJggHl3T1St79kDN7Xf6EwfW6/9LzrrMZAj+NaFerOQzVMIf2ZcHjIMMeLLdwvYtdnvVCx
+ rvkzCAtEUxqw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="144749075"
 X-IronPort-AV: E=Sophos;i="5.75,277,1589266800"; 
-   d="scan'208";a="143777647"
+   d="scan'208";a="144749075"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 17:26:01 -0700
-IronPort-SDR: BEQtvTmD6wwDWELOfPA5PHyxRvdO2yX+JnHG2L+PoTdhD3UAwjB4QE21xnzOWg//zrDvmsW/tz
- tn+iLiz+XFTQ==
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 17:57:52 -0700
+IronPort-SDR: sxYBtm/0qnu1kklP6Mw1wPU69+Gl6AZooU5iwAUYGaHJpd3BvQMs7Kin6tvwT6qrhYPd5FmuYl
+ nBwSpvmivaSQ==
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,277,1589266800"; 
-   d="scan'208";a="452829364"
-Received: from suzann5x-mobl.amr.corp.intel.com (HELO [10.255.1.146]) ([10.255.1.146])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 17:26:00 -0700
-Subject: Re: [PATCH RFC] x86/sgx: Allocate form local NUMA node first
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+   d="scan'208";a="385329991"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Jun 2020 17:57:52 -0700
+Date:   Wed, 24 Jun 2020 17:57:52 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-sgx@vger.kernel.org, kai.svahn@intel.com,
         bruce.schlobohm@intel.com
+Subject: Re: [PATCH RFC] x86/sgx: Allocate form local NUMA node first
+Message-ID: <20200625005752.GI25092@linux.intel.com>
 References: <20200623043931.157156-1-jarkko.sakkinen@linux.intel.com>
  <57c83d3d-54ab-fc07-cefc-c3ebe478a8e9@intel.com>
  <20200624235406.GH25092@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <59f91e2e-56c2-0395-0ed4-df76a9d7d252@intel.com>
-Date:   Wed, 24 Jun 2020 17:25:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+ <59f91e2e-56c2-0395-0ed4-df76a9d7d252@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200624235406.GH25092@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59f91e2e-56c2-0395-0ed4-df76a9d7d252@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/24/20 4:54 PM, Sean Christopherson wrote:
->> Does this actually work?
->>
->> The node span (->node_start_pfn through start+->node_spanned_pages) only
->> contains pages which the OS is actively managing, usually RAM but
->> sometimes also persistent memory.  This has some assumption that the SGX
->> PFNs are within the node's span.  I would only _expect_ that to happen
->> if the node was built like this:
->>
->> 	| Node-X RAM | EPC | Node-X RAM |
->>
->> If the EPC was on either end:
->>
->> 	| Node-X RAM | EPC |
->> or
->> 	| EPC | Node-X RAM |
->>
->> I suspect that the pgdat span wouldn't include EPC.  EPC is, if I
->> remember correctly, a E820_RESERVED region.
-> It is indeed E820_RESERVED, but the BIOS WG for ICX states that EPC regions
-> should be enumerated in ACPI SRAT along with regular memory.
+On Wed, Jun 24, 2020 at 05:25:59PM -0700, Dave Hansen wrote:
+> On 6/24/20 4:54 PM, Sean Christopherson wrote:
+> >> Does this actually work?
+> >>
+> >> The node span (->node_start_pfn through start+->node_spanned_pages) only
+> >> contains pages which the OS is actively managing, usually RAM but
+> >> sometimes also persistent memory.  This has some assumption that the SGX
+> >> PFNs are within the node's span.  I would only _expect_ that to happen
+> >> if the node was built like this:
+> >>
+> >> 	| Node-X RAM | EPC | Node-X RAM |
+> >>
+> >> If the EPC was on either end:
+> >>
+> >> 	| Node-X RAM | EPC |
+> >> or
+> >> 	| EPC | Node-X RAM |
+> >>
+> >> I suspect that the pgdat span wouldn't include EPC.  EPC is, if I
+> >> remember correctly, a E820_RESERVED region.
+> > It is indeed E820_RESERVED, but the BIOS WG for ICX states that EPC regions
+> > should be enumerated in ACPI SRAT along with regular memory.
+> > 
+> > But, I haven't actually verified that info makes its way into the kernel's
+> > pgdata stuff.
 > 
-> But, I haven't actually verified that info makes its way into the kernel's
-> pgdata stuff.
+> Considering this, are we all agreed that this patch is in no condition
+> to be submitted upstream?
 
-Considering this, are we all agreed that this patch is in no condition
-to be submitted upstream?
+Yes, it needs to be tested first.
+
+I like the resulting code more than what we have now, but I see no reason to
+change it at this stage unless one of the maintainers actually complains.
