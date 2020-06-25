@@ -3,104 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20216C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 01:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DD5C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 02:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0086920789
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 01:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8B7A2078D
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Jun 2020 02:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388962AbgFYB2y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Jun 2020 21:28:54 -0400
-Received: from mga03.intel.com ([134.134.136.65]:51192 "EHLO mga03.intel.com"
+        id S2389478AbgFYC5m (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Jun 2020 22:57:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:21251 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388928AbgFYB2y (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Jun 2020 21:28:54 -0400
-IronPort-SDR: xeFxiMCGqjecpaiU4aU81xv5dlhwhBi2WxmNvIguZ9EqcpzpeMun6EShezOBg5zGTeF9DY7S4k
- /89whH0/1+0Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="144752680"
+        id S2388930AbgFYC5m (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Jun 2020 22:57:42 -0400
+IronPort-SDR: H3hkeDwMI0vB8DT/zKK3mmK/OXrBZxm3+4c3cNSvSlxBxfJtunUl6l8dkjuu8q4uRBNd7EaY9m
+ lg9cDySgspCA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="146218831"
 X-IronPort-AV: E=Sophos;i="5.75,277,1589266800"; 
-   d="scan'208";a="144752680"
+   d="scan'208";a="146218831"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 18:28:53 -0700
-IronPort-SDR: qx2p1oPmyFpV7qj2mftNsBMYxvFw0Uz7HJYUrO6I3sAC25ReEXk8vjRzPzaE1aNXU8cI4DfPnP
- wzqn7yAxt6VQ==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 19:57:41 -0700
+IronPort-SDR: 6agehCrkUT1sIXa1OPmFlaJvzSrV7wMbmpqIIM7xgFvTKjqiWgK1PpXjiwD+aJuXl+MLm3QLuc
+ WOwaG5cynYLg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,277,1589266800"; 
-   d="scan'208";a="275875386"
+   d="scan'208";a="479492248"
 Received: from hluxenbu-mobl.ger.corp.intel.com (HELO localhost) ([10.252.36.218])
-  by orsmga003.jf.intel.com with ESMTP; 24 Jun 2020 18:28:36 -0700
-Date:   Thu, 25 Jun 2020 04:28:32 +0300
+  by fmsmga005.fm.intel.com with ESMTP; 24 Jun 2020 19:57:39 -0700
+Date:   Thu, 25 Jun 2020 05:57:38 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 02/21] x86/cpufeatures: x86/msr: Add Intel SGX Launch
- Control hardware bits
-Message-ID: <20200625012832.GE21758@linux.intel.com>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-3-jarkko.sakkinen@linux.intel.com>
- <20200624130434.GC8492@zn.tnic>
- <20200624143440.GD25092@linux.intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kai.svahn@intel.com, bruce.schlobohm@intel.com
+Subject: Re: [PATCH RFC] x86/sgx: Allocate form local NUMA node first
+Message-ID: <20200625025738.GE270125@linux.intel.com>
+References: <20200623043931.157156-1-jarkko.sakkinen@linux.intel.com>
+ <57c83d3d-54ab-fc07-cefc-c3ebe478a8e9@intel.com>
+ <20200624235406.GH25092@linux.intel.com>
+ <59f91e2e-56c2-0395-0ed4-df76a9d7d252@intel.com>
+ <20200625005752.GI25092@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200624143440.GD25092@linux.intel.com>
+In-Reply-To: <20200625005752.GI25092@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 07:34:40AM -0700, Sean Christopherson wrote:
-> On Wed, Jun 24, 2020 at 03:04:34PM +0200, Borislav Petkov wrote:
-> > On Thu, Jun 18, 2020 at 01:08:24AM +0300, Jarkko Sakkinen wrote:
-> > > From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Wed, Jun 24, 2020 at 05:57:52PM -0700, Sean Christopherson wrote:
+> On Wed, Jun 24, 2020 at 05:25:59PM -0700, Dave Hansen wrote:
+> > On 6/24/20 4:54 PM, Sean Christopherson wrote:
+> > >> Does this actually work?
+> > >>
+> > >> The node span (->node_start_pfn through start+->node_spanned_pages) only
+> > >> contains pages which the OS is actively managing, usually RAM but
+> > >> sometimes also persistent memory.  This has some assumption that the SGX
+> > >> PFNs are within the node's span.  I would only _expect_ that to happen
+> > >> if the node was built like this:
+> > >>
+> > >> 	| Node-X RAM | EPC | Node-X RAM |
+> > >>
+> > >> If the EPC was on either end:
+> > >>
+> > >> 	| Node-X RAM | EPC |
+> > >> or
+> > >> 	| EPC | Node-X RAM |
+> > >>
+> > >> I suspect that the pgdat span wouldn't include EPC.  EPC is, if I
+> > >> remember correctly, a E820_RESERVED region.
+> > > It is indeed E820_RESERVED, but the BIOS WG for ICX states that EPC regions
+> > > should be enumerated in ACPI SRAT along with regular memory.
 > > > 
-> > > Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-> > > Launch Control.
-> > > 
-> > > Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-> > > SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-> > > called enclaves, are always signed. All enclaves signed with the public key
-> > > are unconditionally allowed to initialize. [1]
-> > > 
-> > > Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
+> > > But, I haven't actually verified that info makes its way into the kernel's
+> > > pgdata stuff.
 > > 
-> > LE_WR or LC_ENABLED?
+> > Considering this, are we all agreed that this patch is in no condition
+> > to be submitted upstream?
 > 
-> It should be FEAT_CTL_SGX_LC_ENABLED, i.e. the actual code is correct.  We
-> updated the #define to use the SDM name to be consistent with the other bits
-> and neglected to update the changelog.
+> Yes, it needs to be tested first.
 > 
-> Thanks!
->  
-> > With that addressed:
-> > 
-> > Reviewed-by: Borislav Petkov <bp@suse.de>
+> I like the resulting code more than what we have now, but I see no reason to
+> change it at this stage unless one of the maintainers actually complains.
 
-I'll update the commit according to this information.
-
-> > 
-> > -- 
-> > Regards/Gruss,
-> >     Boris.
-> > 
-> > https://people.kernel.org/tglx/notes-about-netiquette
-
-Thank you.
+I'm cool with this. I think that this patch shows that the current
+candidate patch set (v33) is in a good shape: the diff adheres very
+cleanly on what we have.
 
 /Jarkko
