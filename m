@@ -2,42 +2,45 @@ Return-Path: <SRS0=bCPb=AH=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C2CC433DF
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Jun 2020 14:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CA1C433DF
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Jun 2020 14:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E38720E65
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Jun 2020 14:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9472A2067D
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Jun 2020 14:20:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="g2x5K1KZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbgFZOT5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 26 Jun 2020 10:19:57 -0400
-Received: from mga17.intel.com ([192.55.52.151]:43793 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728489AbgFZOT5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 26 Jun 2020 10:19:57 -0400
-IronPort-SDR: 2hNThCcDOiVRxgR1oOA+ooSiKTszLnw0dNkSqsKw3hfWmKOa7vjlt5DzCvy7wOlM28yrB7RDU2
- uLJqH0oa8iXQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9663"; a="125539943"
-X-IronPort-AV: E=Sophos;i="5.75,283,1589266800"; 
-   d="scan'208";a="125539943"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2020 07:19:56 -0700
-IronPort-SDR: 7KVUSL9c3jS1SzTl7agv6L9IQ8NJCyF5vADzpoDpcQH0XLAoZqj/qLV9uL4jS/U4NvVV7P03wB
- OH3ciBZmhnwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,283,1589266800"; 
-   d="scan'208";a="479841368"
-Received: from cgheban-mobl.ger.corp.intel.com (HELO localhost) ([10.249.40.199])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Jun 2020 07:19:38 -0700
-Date:   Fri, 26 Jun 2020 17:19:36 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S1728947AbgFZOU1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 26 Jun 2020 10:20:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbgFZOU1 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 26 Jun 2020 10:20:27 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 076FAC03E979;
+        Fri, 26 Jun 2020 07:20:27 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0d1400a54547ceb629f080.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:1400:a545:47ce:b629:f080])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 20E321EC030F;
+        Fri, 26 Jun 2020 16:20:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1593181225;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=vmj+04bFDkf6c7vKbF08257n3LmOF6+ZWPH64rT2gqg=;
+        b=g2x5K1KZhGeWx7TL+fAXs7iOxbPve1ne4R+9ZE+/tGPuLXt8GcdjlvOzd35VHUkgXxmV3G
+        VhWibE2jR939faBICh3YbLwz1LDw4yITMw7pz4Wzk71PniuZD9kiUwvhkIeGuk2UEMJ6WF
+        WzVVwQ+U8dKbm9NOZ8VlXHHP3rqlO/0=
+Date:   Fri, 26 Jun 2020 16:20:19 +0200
+From:   Borislav Petkov <bp@alien8.de>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
@@ -56,55 +59,29 @@ Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
 Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200626141936.GC390691@linux.intel.com>
+Message-ID: <20200626142019.GD27151@zn.tnic>
 References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
  <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200625172319.GJ20319@zn.tnic>
- <20200625183448.GG3437@linux.intel.com>
+ <20200626091419.GB27151@zn.tnic>
+ <20200626141627.GA6583@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200625183448.GG3437@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200626141627.GA6583@linux.intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jun 25, 2020 at 11:34:48AM -0700, Sean Christopherson wrote:
-> On Thu, Jun 25, 2020 at 07:23:19PM +0200, Borislav Petkov wrote:
-> > Also, you had all patches until now split nice and logically doing one
-> > thing only.
-> > 
-> > But this one is huge. Why?
-> > 
-> > Why can't you split out the facilities which the driver uses: encl.[ch]
-> > into a patch, then ioctl.c into a separate one and then the driver into
-> > a third one? Or do they all belong together inseparably?
-> > 
-> > I guess I'll find out eventually but it would've been nice if they were
-> > split out...
-> 
-> Hmm, I think the most reasonable way to break up this beast would be to
-> incrementally introduce functionality.  E.g. four or so patches, one for
-> each ioctl() of ENCLAVE_CREATE, ENCLAVE_ADD_PAGES, ENCLAVE_INIT and
-> ENCLAVE_SET_ATTRIBUTE, in that order.
-> 
-> Splitting up by file probably wouldn't work very well.  The split is
-> pretty arbitrary, e.g. encl.[ch] isn't simply a pure representation of an
-> enclave, there is a lot of the driver details/dependencies in there, i.e.
-> the functionality between encl/ioctl/driver is all pretty intertwined.
-> 
-> But I think serially introducing each ioctl() would be fairly clean, and
-> would help readers/reviewers better understand SGX as the patches would
-> naturally document the process of building an enclave, e.g. CREATE the
-> enclave, then ADD_PAGES, then INIT the enclave.  SET_ATTRIBUTE is a bit
-> of an outlier in that it would be chronologically out of order with
-> respect to building the enclave, but I think that's ok. 
-> 
-> Jarkko, thoughts?
+On Fri, Jun 26, 2020 at 07:16:27AM -0700, Sean Christopherson wrote:
+> That being said, I agree that it would be safer to move sgx_calc_ssaframesize()
+> inside sgx_validate_secs() and only compute encl_size after the secs is
+> validated.
 
-I proposed the same before I go this email so I guess we have a
-consensus here.
+Yap, that would be the right thing to do.
 
-/Jarkko
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
