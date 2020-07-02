@@ -2,120 +2,100 @@ Return-Path: <SRS0=iBWu=AN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E38C433DF
-	for <linux-sgx@archiver.kernel.org>; Thu,  2 Jul 2020 03:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F95AC433E0
+	for <linux-sgx@archiver.kernel.org>; Thu,  2 Jul 2020 12:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F1C6207CD
-	for <linux-sgx@archiver.kernel.org>; Thu,  2 Jul 2020 03:59:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B64A20772
+	for <linux-sgx@archiver.kernel.org>; Thu,  2 Jul 2020 12:52:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s+wavn4H";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1g++i5NN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgGBD7D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 1 Jul 2020 23:59:03 -0400
-Received: from mga12.intel.com ([192.55.52.136]:26776 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726187AbgGBD7C (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 1 Jul 2020 23:59:02 -0400
-IronPort-SDR: UeVKnAbzP9rV1gTs3a2u29CPmtIRCgtjMO1UdQtvlnfFX2evOWMfjqInDK8XFLHNaxyulKhd2e
- h0JTHWwqe8TQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9669"; a="126403730"
-X-IronPort-AV: E=Sophos;i="5.75,302,1589266800"; 
-   d="scan'208";a="126403730"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2020 20:59:02 -0700
-IronPort-SDR: BVhIUUZ1L/xEqOBO26oXtglVzitgz3GWW+7g3i67tenBlNkARotauZWDCTJyDmhbtBaIFmo1cO
- c9Cf4XlxNByQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,302,1589266800"; 
-   d="scan'208";a="281818263"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by orsmga006.jf.intel.com with ESMTP; 01 Jul 2020 20:59:02 -0700
-Date:   Wed, 1 Jul 2020 20:59:02 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        id S1729047AbgGBMw3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 2 Jul 2020 08:52:29 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:49372 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbgGBMw2 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 2 Jul 2020 08:52:28 -0400
+X-Greylist: delayed 3188 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Jul 2020 08:52:27 EDT
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1593694345;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aqrdi9rxf7Tn9B3k1NE3iOQPIUnUUC4buFv5kHY3mUo=;
+        b=s+wavn4HSYxSxIKkuL4eIm/PtK8lTqB36eaX2y2TcQ/I2sdoweM/Fgs7pq00wS68Gr4dKt
+        vIObSw109eqvYfuRhM7+eC9orZVwFAXkk5GZlnhQHD5RwMA398CclKT3zd5m1miHCsxc6L
+        qCJpErW3uIB6bPkzIkvwBOOut62fDufhmslWoqKUl2Sul918wrhPBF+xQNmTwdNxa3NkUR
+        35jErUo1ta+UPNp3v/C+tIzuemUMP/0dILY//Xn7eRDwViPg7ThmMNhRoCCM9XRCTa7pxT
+        dqq6uZ37+PoWnmmTvYNNsH7iI0m4E/18gUONRABZv9Pzmqh9G4mr27sjoD5bhQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1593694345;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aqrdi9rxf7Tn9B3k1NE3iOQPIUnUUC4buFv5kHY3mUo=;
+        b=1g++i5NNy0K1Zec8OFkf4LBvyBFbhBa5uw9a9g7cIhIkrQojiaUhXljvXDUVxLoaUeN59+
+        VcEMEq3zNtSAAPCQ==
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, "Xing\, Cedric" <cedric.xing@intel.com>,
         chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200702035902.GC1819@linux.intel.com>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+        cyhanish@google.com, Dave Hansen <dave.hansen@intel.com>,
+        "Huang\, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang\, Kai" <kai.huang@intel.com>,
+        "Svahn\, Kai" <kai.svahn@intel.com>, kmoy@google.com,
+        Christian Ludloff <ludloff@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Neil Horman <nhorman@redhat.com>, npmccallum@redhat.com,
+        puiterwijk@redhat.com, David Rientjes <rientjes@google.com>,
+        yaozhangx@google.com
+Subject: Re: [PATCH v33 15/21] x86/vdso: Add support for exception fixup in vDSO functions
+In-Reply-To: <CALCETrWUHw2WSDaJrxrwVrXSGz-zR0N2R3cT06esKBCpqyoZaQ@mail.gmail.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com> <20200617220844.57423-16-jarkko.sakkinen@linux.intel.com> <20200629171022.GC32176@zn.tnic> <20200630060055.GS12312@linux.intel.com> <20200630084128.GA1093@zn.tnic> <CALCETrWUHw2WSDaJrxrwVrXSGz-zR0N2R3cT06esKBCpqyoZaQ@mail.gmail.com>
+Date:   Thu, 02 Jul 2020 14:52:25 +0200
+Message-ID: <87mu4i9j06.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
-> +static int sgx_validate_secs(const struct sgx_secs *secs,
-> +			     unsigned long ssaframesize)
-> +{
-> +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
-> +		return -EINVAL;
-> +
-> +	if (secs->base & (secs->size - 1))
-> +		return -EINVAL;
-> +
-> +	if (secs->miscselect & sgx_misc_reserved_mask ||
-> +	    secs->attributes & sgx_attributes_reserved_mask ||
-> +	    secs->xfrm & sgx_xfrm_reserved_mask)
-> +		return -EINVAL;
-> +
-> +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
-> +		if (secs->size > sgx_encl_size_max_64)
-> +			return -EINVAL;
-> +	} else if (secs->size > sgx_encl_size_max_32)
-> +		return -EINVAL;
+Andy Lutomirski <luto@amacapital.net> writes:
+> On Tue, Jun 30, 2020 at 1:41 AM Borislav Petkov <bp@alien8.de> wrote:
+>>
+>> On Mon, Jun 29, 2020 at 11:00:55PM -0700, Sean Christopherson wrote:
+>> > E.g. the vDSO function should get the fixup even if userspace screws
+>> > up mmap() and invokes __vdso_sgx_enter_enclave() without being tagged
+>> > an SGX task.
+>>
+>> I sincerely hope you don't mean this seriously.
+>>
+>> Please add a member to task_struct which denotes that a task is an
+>> sgx task, test that member where needed and forget real quickly about
+>> running *any* *fixup* for unrelated tasks.
+>
+> I don't see the problem.  If you call this magic vDSO function and get
+> a fault, it gets handled.  What's the failure mode?
 
-These should be >=, not >, the SDM uses one of those fancy ≥ ligatures.
+Handled by some definition of handled. If a random user space tasks ends
+up in that function then it will not die as it would otherwise, but I
+don't see a real issue with that either.
 
-Internal versions use more obvious pseudocode, e.g.:
+Thanks,
 
-    if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
-        (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
-    {
-        #GP(0);
-    }
-
-> +
-> +	if (!(secs->xfrm & XFEATURE_MASK_FP) ||
-> +	    !(secs->xfrm & XFEATURE_MASK_SSE) ||
-> +	    (((secs->xfrm >> XFEATURE_BNDREGS) & 1) !=
-> +	     ((secs->xfrm >> XFEATURE_BNDCSR) & 1)))
-> +		return -EINVAL;
-> +
-> +	if (!secs->ssa_frame_size || ssaframesize > secs->ssa_frame_size)
-> +		return -EINVAL;
-> +
-> +	if (memchr_inv(secs->reserved1, 0, sizeof(secs->reserved1)) ||
-> +	    memchr_inv(secs->reserved2, 0, sizeof(secs->reserved2)) ||
-> +	    memchr_inv(secs->reserved3, 0, sizeof(secs->reserved3)) ||
-> +	    memchr_inv(secs->reserved4, 0, sizeof(secs->reserved4)))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
+        tglx
