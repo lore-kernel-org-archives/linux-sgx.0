@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D992AC433E1
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Jul 2020 00:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50492C433E0
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Jul 2020 01:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA7E320739
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Jul 2020 00:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F82C20771
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Jul 2020 01:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbgGDAOS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 3 Jul 2020 20:14:18 -0400
-Received: from mga17.intel.com ([192.55.52.151]:2517 "EHLO mga17.intel.com"
+        id S1726474AbgGDBmn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 3 Jul 2020 21:42:43 -0400
+Received: from mga17.intel.com ([192.55.52.151]:27633 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726791AbgGDAOQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 3 Jul 2020 20:14:16 -0400
-IronPort-SDR: lTM1D0B/e4ZMvNQh7TblpAW4C2ByE74QpELwGlTlP92oAsGYKsAabTQIPCC9ZWa1r8ORbaakd2
- KreFC7kNyGDg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9671"; a="127298621"
+        id S1726469AbgGDBmm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 3 Jul 2020 21:42:42 -0400
+IronPort-SDR: URsA/gpr1+psg0qGkyyLypn69DRDzAwGUhoegrqJ+QOKT2P4lvbauetVkR60TiqrkvGcA4k2b9
+ uv90dBVsqPcg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9671"; a="127304430"
 X-IronPort-AV: E=Sophos;i="5.75,309,1589266800"; 
-   d="scan'208";a="127298621"
+   d="scan'208";a="127304430"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2020 17:14:12 -0700
-IronPort-SDR: eJRY+1ecntHBpMZOJLiwjmRRhQug3fIxAxxrHFfZROzbKRy3v+MCRA/X9gQ7+0QAOltKukiwEg
- N+Y8L65KMHiQ==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2020 18:42:41 -0700
+IronPort-SDR: Tlv4/bc43PDV98bFLyN78rNhcEqaX5HK7KbatAVa5KBJbcVIZD8nHXpSFk/42Hvb52Q0iJ863q
+ gaDyiTY0HOyg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,309,1589266800"; 
-   d="scan'208";a="456036891"
-Received: from ntohan-mobl.ger.corp.intel.com (HELO localhost) ([10.252.53.15])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jul 2020 17:13:57 -0700
-Date:   Sat, 4 Jul 2020 03:13:56 +0300
+   d="scan'208";a="266063928"
+Received: from itaradex-mobl.ger.corp.intel.com (HELO localhost) ([10.252.52.22])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Jul 2020 18:42:26 -0700
+Date:   Sat, 4 Jul 2020 04:42:24 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
@@ -57,221 +57,143 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
 Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200704001356.GB104749@linux.intel.com>
+Message-ID: <20200704014224.GA129411@linux.intel.com>
 References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
  <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200626153400.GE27151@zn.tnic>
+ <20200627174335.GC15585@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200626153400.GE27151@zn.tnic>
+In-Reply-To: <20200627174335.GC15585@zn.tnic>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 05:34:00PM +0200, Borislav Petkov wrote:
+On Sat, Jun 27, 2020 at 07:43:35PM +0200, Borislav Petkov wrote:
 > On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
-> 
-> ...
-> 
-> This could use some commenting along the lines of:
-> 
-> "— If the enclave developer requires measurement of the page as a
-> proof for the content, use EEXTEND to add a measurement for 256 bytes of
-> the page. Repeat this operation until the entire page is measured."
-> 
-> At least this text from the SDM maps to the 256 bytes below. Otherwise
-> it is magic.
-
-Copied with pride:
-
-/*
- * If the caller requires measurement of the page as a proof for the content,
- * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
- * operation until the entire page is measured."
- */
-
-> > +static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
-> > +			     unsigned long offset, unsigned long length,
-> > +			     struct sgx_secinfo *secinfo, unsigned long flags)
+> > +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+> > +			 void *token)
 > > +{
-> > +	struct sgx_encl_page *encl_page;
-> > +	struct sgx_epc_page *epc_page;
+> > +	u64 mrsigner[4];
 > > +	int ret;
+> > +	int i;
+> > +	int j;
 > > +
-> > +	encl_page = sgx_encl_page_alloc(encl, offset, secinfo->flags);
-> > +	if (IS_ERR(encl_page))
-> > +		return PTR_ERR(encl_page);
+> > +	/* Check that the required attributes have been authorized. */
+> > +	if (encl->secs_attributes & ~encl->allowed_attributes)
+> > +		return -EACCES;
 > > +
-> > +	epc_page = __sgx_alloc_epc_page();
-> > +	if (IS_ERR(epc_page)) {
-> > +		kfree(encl_page);
-> > +		return PTR_ERR(epc_page);
-> > +	}
+> > +	ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
+> > +	if (ret)
+> > +		return ret;
 > > +
-> > +	if (atomic_read(&encl->flags) &
-> > +	    (SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD)) {
+> > +	mutex_lock(&encl->lock);
+> > +
+> > +	if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
 > > +		ret = -EFAULT;
-> > +		goto err_out_free;
+> > +		goto err_out;
 > > +	}
 > 
-> You can do this first thing when you enter the function so that
-> you don't have to allocate needlessly in the error case, when
-> SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD is set.
+> That test should be the first thing this function or its caller does.
 
-Updated version:
-
-static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
-			     unsigned long offset, unsigned long length,
-			     struct sgx_secinfo *secinfo, unsigned long flags)
-{
-	struct sgx_encl_page *encl_page;
-	struct sgx_epc_page *epc_page;
-	struct sgx_va_page *va_page;
-	int ret;
-
-	if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED)
-		return -EFAULT;
-
-SGX_ENCL_DEAD check is unnecessary altogether as this flag cannot be
-possibly be unset inside ioctl. 'sgx_release()' will set it which is
-the release callback for the enclave file.
-
-'sgx_ioctl()' also unnecessarily has this check I just noticed (and
-removed).
-
-> "uninitialized"?
-> 
-> Where is the test for SGX_ENCL_INITIALIZED and erroring out otherwise?
-> 
-> I.e., what happens if you add pages to an initialized enclave?
-
-Because of historical reasons it is in sgx_encl_add_page(). Then we
-allowed ioctl's operate on enclave concurrently. Today we enforce
-sequential operation on a single enclave with SGX_ENCL_IOCTL flag
-because that is the only sane way to use the construction operations.
-
-Therefore the check can be moved to sgx_ioc_encl_add_pages() if you
-request so but first I have one remark to discuss.
-
-I noticed that sometimes wrong state flags turn into -EINVAL and
-sometimes into -EFAULT (like in the previous case). I'd suggest
-that when the ioctl is blocked based encl->flags and only on that,
-the ioctl would return -ENOIOCTLCMD in both cases, i.e. this
-command is not available.
-
-That would give much better aids for debugging user space code.
+Fixed.
 
 > 
-> > + * measurement with the contents of the page. The address range of pages must
-> > + * be contiguous.
+> > +	for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
+> > +		for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
 > 
-> Must? Who is enforcing this? I'm trying to find where...
+> Ew, what's that double-loop for?
+> 
+> It tries to init an enclave a bunch of times. Why does it need to init
+> more than once?
 
-Unfortunately I cannot recall what I meant when I wrote that. I removed
-that sentence. I'm not sure what I meant exactly when I used 'contiguous'
-here.
+From SDM:
 
-> > The SECINFO and measurement mask are applied to all pages.
+"Periodically, EINIT polls for certain asynchronous events. If such an
+event is detected, it completes with failure code (ZF=1 and RAX =
+SGX_UNMASKED_EVENT), and RIP is incremented to point to the next
+instruction. These events includes external interrupts, non-maskable
+interrupts, system-management interrupts, machine checks, INIT signals,
+and the VMX-preemption timer. EINIT does not fail if the pending event
+is inhibited (e.g., external interrupts could be inhibited due to
+blocking by MOV SS blocking or by STI)."
+
+Not exactly sure though why this must be polled inside the kernel though.
+
+> 
+> > +			ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
+> > +					mrsigner);
+> > +			if (ret == SGX_UNMASKED_EVENT)
+> > +				continue;
+> > +			else
+> > +				break;
+> > +		}
+> > +
+> > +		if (ret != SGX_UNMASKED_EVENT)
+> > +			break;
+> > +
+> > +		msleep_interruptible(SGX_EINIT_SLEEP_TIME);
+> > +
+> > +		if (signal_pending(current)) {
+> > +			ret = -ERESTARTSYS;
+> > +			goto err_out;
+> > +		}
+> > +	}
+> > +
+> > +	if (ret & ENCLS_FAULT_FLAG) {
+> > +		if (encls_failed(ret))
+> > +			ENCLS_WARN(ret, "EINIT");
+> > +
+> > +		sgx_encl_destroy(encl);
+> > +		ret = -EFAULT;
+> > +	} else if (ret) {
+> > +		pr_debug("EINIT returned %d\n", ret);
+> > +		ret = -EPERM;
+> > +	} else {
+> > +		atomic_or(SGX_ENCL_INITIALIZED, &encl->flags);
+> > +	}
+> > +
+> > +err_out:
+> > +	mutex_unlock(&encl->lock);
+> > +	return ret;
+> > +}
+> > +
+> > +/**
+> > + * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
 > > + *
-> > + * A SECINFO for a TCS is required to always contain zero permissions because
-> > + * CPU silently zeros them. Allowing anything else would cause a mismatch in
-> > + * the measurement.
+> > + * @filep:	open file to /dev/sgx
+> 
+> @encl:       pointer to an enclave instance (via ioctl() file pointer)
+> 
+> > + * @arg:	userspace pointer to a struct sgx_enclave_init instance
 > > + *
-> > + * mmap()'s protection bits are capped by the page permissions. For each page
-> > + * address, the maximum protection bits are computed with the following
-> > + * heuristics:
-> > + *
-> > + * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
-> > + * 2. A TCS page: PROT_R | PROT_W.
-> > + *
-> > + * mmap() is not allowed to surpass the minimum of the maximum protection bits
-> > + * within the given address range.
-> > + *
-> > + * If ENCLS opcode fails, that effectively means that EPC has been invalidated.
-> > + * When this happens the enclave is destroyed and -EIO is returned to the
-> > + * caller.
+> > + * Flush any outstanding enqueued EADD operations and perform EINIT.  The
+> > + * Launch Enclave Public Key Hash MSRs are rewritten as necessary to match
+> > + * the enclave's MRSIGNER, which is caculated from the provided sigstruct.
 > > + *
 > > + * Return:
 > > + *   0 on success,
-> > + *   -EACCES if an executable source page is located in a noexec partition,
-> > + *   -EIO if either ENCLS[EADD] or ENCLS[EEXTEND] fails
+> > + *   SGX error code on EINIT failure,
 > > + *   -errno otherwise
 > > + */
-> > +static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+> > +static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
 > > +{
-> > +	struct sgx_enclave_add_pages addp;
-> > +	struct sgx_secinfo secinfo;
-> > +	unsigned long c;
+> > +	struct sgx_sigstruct *sigstruct;
+> > +	struct sgx_enclave_init einit;
+> > +	struct page *initp_page;
+> > +	void *token;
 > > +	int ret;
 > > +
 > > +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
-> > +		return -EINVAL;
-> > +
-> > +	if (copy_from_user(&addp, arg, sizeof(addp)))
-> > +		return -EFAULT;
-> > +
-> > +	if (!IS_ALIGNED(addp.offset, PAGE_SIZE) ||
-> > +	    !IS_ALIGNED(addp.src, PAGE_SIZE))
-> > +		return -EINVAL;
-> > +
-> > +	if (!(access_ok(addp.src, PAGE_SIZE)))
-> > +		return -EFAULT;
-> > +
-> > +	if (addp.length & (PAGE_SIZE - 1))
-> > +		return -EINVAL;
 > 
-> How many pages are allowed? Unlimited? I'm hoping some limits are
-> checked somewhere...
+> Might just as well check the other flags: doing EINIT on an already
+> initialized enclave - SGX_ENCL_INITIALIZED - is perhaps a nono or
+> similarly on a SGX_ENCL_DEAD enclave.
+> 
+> And you could do similar sanity checks in the other ioctl functions.
 
-SGX_IOC_ENCLAVE_CREATE defines the address range, and thus sets the
-limit on how many pages in total can be added to the enclave.
-
-sgx_encl_size_max_64 contains the maximum size for the address range
-and is initialized as follows:
-
-cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
-sgx_encl_size_max_64 = 1ULL << ((edx >> 8) & 0xFF);
-
-[derived from sgx_drv_init()]
-
-> > +
-> > +	if (addp.offset + addp.length - PAGE_SIZE >= encl->size)
-> > +		return -EINVAL;
-> > +
-> > +	if (copy_from_user(&secinfo, (void __user *)addp.secinfo,
-> > +			   sizeof(secinfo)))
-> > +		return -EFAULT;
-> > +
-> > +	if (sgx_validate_secinfo(&secinfo))
-> > +		return -EINVAL;
-> > +
-> > +	for (c = 0 ; c < addp.length; c += PAGE_SIZE) {
-> > +		if (signal_pending(current)) {
-> > +			ret = -EINTR;
-> > +			break;
-> > +		}
-> > +
-> > +		if (need_resched())
-> > +			cond_resched();
-> > +
-> > +		ret = sgx_encl_add_page(encl, addp.src + c, addp.offset + c,
-> > +					addp.length - c, &secinfo, addp.flags);
-> > +		if (ret)
-> > +			break;
-> > +	}
-> > +
-> > +	addp.count = c;
-
-If you referred with your previous question, how to limit the number of
-pages that this ioctl can process in one run, it is already supported
-in the API with 'addp.count'.
-
-It'd be possible to add this if required:
-
-addp.length = min(addp.length, SGX_ENCLAVE_IOC_ADD_PAGES_MAX_LENGTH));
+Agreed (see my earlier response, let's continue this discussion there).
 
 /Jarkko
