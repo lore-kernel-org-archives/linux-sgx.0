@@ -2,42 +2,43 @@ Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E11FC433DF
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 04:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052EBC433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 04:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10D8820702
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 04:29:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D512320758
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 04:39:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L5Hcz9Nf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgGGE3F (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 7 Jul 2020 00:29:05 -0400
-Received: from mga17.intel.com ([192.55.52.151]:17162 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbgGGE3F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 7 Jul 2020 00:29:05 -0400
-IronPort-SDR: yiFcuQjDZgwVUD8y0GymcOEuLi4U+58jkkfH3ai97V5ZWjTJvnNY2XU+IOWrSjUKU3G6Yfi3FE
- 4hySrXVX9/cA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="127624021"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="127624021"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 21:29:04 -0700
-IronPort-SDR: vEy7KA1HNinYAO7xUdxEB5KiqWDaxM1DoqJ6bCM1wUKER80OKYK3e3sNT+23vpPDKslKXoFW3C
- pSFzAWOwehaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="283301840"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2020 21:29:04 -0700
-Date:   Mon, 6 Jul 2020 21:29:04 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, x86@kernel.org,
+        id S1726889AbgGGEjU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 7 Jul 2020 00:39:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45878 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbgGGEjU (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Jul 2020 00:39:20 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BDCC061755;
+        Mon,  6 Jul 2020 21:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=9Fn0Sg12AGqPvCet6/i3cv1zgohdxMq/STaY/sGGKBM=; b=L5Hcz9Nfo/DNgz2qozusOJmZHe
+        6yxUrH93tLHZbhy98UmvJDnpk9Y24OKFN4qqQ/Td8wKicNYtqRomjKM9dOGxzQod0nHXGvuRzvlCz
+        MIwmIylU70LmPziuuj+aRsoMlk5qRDcAjDOVW9UscpZidiktVdQFFIQgRFTnV0p7EjipJ0RONLfoW
+        yb3LvUHaViGZLc+ewmuBdz8E/NU30C+049ft+YFzTtGvpfxduQN0iz94zTXnfMgjiWkT/KvNit0Nz
+        ZD1Z9Yea+wyvH6LJDU7aAM6cFYfi/ZAZoxuUUTfTzjaPCSDEY+edAUIdBbCEa95nA0OAczWB4vVgD
+        3E4+MfRw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jsfNo-0006OJ-8J; Tue, 07 Jul 2020 04:39:04 +0000
+Date:   Tue, 7 Jul 2020 05:39:04 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-mm@kvack.org,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -57,91 +58,83 @@ Cc:     Matthew Wilcox <willy@infradead.org>, x86@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
 Subject: Re: [PATCH v34 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20200707042904.GD5208@linux.intel.com>
+Message-ID: <20200707043904.GJ25523@casper.infradead.org>
 References: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
  <20200707030204.126021-12-jarkko.sakkinen@linux.intel.com>
  <20200707033617.GF25523@casper.infradead.org>
  <20200707041151.GE143804@linux.intel.com>
+ <20200707042904.GD5208@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200707041151.GE143804@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200707042904.GD5208@linux.intel.com>
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Man, I really need to type faster.
-
-On Tue, Jul 07, 2020 at 07:11:51AM +0300, Jarkko Sakkinen wrote:
-> On Tue, Jul 07, 2020 at 04:36:17AM +0100, Matthew Wilcox wrote:
-> > What's a leaf function?  Is it like a CPU instruction?
-> 
-> Yeah, the opcode is ENCLS for ring-0 (enclave management and
-> construction) and ENCLU for ring-3 (entrance to the enclave etc).
-> The leaf function number goes to EAX.
-
-To add to Jarkko's comments, for all intents and purposes they are individual
-instructions, e.g. all of their own entries in the SDM, but are buried behind
-a single opcode that switches on EAX, e.g. ECREATE is EAX=0,  EADD is EAX=1,
-EINIT is EAX=2.  It's purely a way to save opcode space when the extra
-overhead is a non-issue, e.g. SMX/TXT's GETSEC does the same shenanigans.
-
-> > > +	atomic_set(&encl->flags, 0);
-> > > +	kref_init(&encl->refcount);
-> > > +	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
+On Mon, Jul 06, 2020 at 09:29:04PM -0700, Sean Christopherson wrote:
+> > > > +	idx_start = PFN_DOWN(start);
+> > > > +	idx_end = PFN_DOWN(end - 1);
+> > > > +
+> > > > +	for (idx = idx_start; idx <= idx_end; ++idx) {
+> > > > +		mutex_lock(&encl->lock);
+> > > > +		page = radix_tree_lookup(&encl->page_tree, idx);
+> > > > +		mutex_unlock(&encl->lock);
+> > > > +
+> > > > +		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
+> > > > +			return -EACCES;
+> > > 
+> > > You should really use an iterator here instead of repeated lookups.
+> > > xas_for_each() will probably be what you want.
 > > 
-> > Why are you using a radix tree instead of an xarray?
+> > Thank you for your remarks. I'll look into using xarray for this.
 > 
-> Because xarray did not exist in 2017 and nobody has pointed out to use
-> it. Now I know it exists (yet do not know what it is).
-
-I've followed xarrays a little, but obviously not closely enough to
-understand their advantages over radix trees.  At a glance, range-based
-iteration alone is probably justification enough to switch.
-
-> > > +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-> > > +		     unsigned long end, unsigned long vm_prot_bits)
-> > > +{
-> > > +	unsigned long idx, idx_start, idx_end;
-> > > +	struct sgx_encl_page *page;
-> > > +
-> > > +	/*
-> > > +	 * Disallow RIE tasks as their VMA permissions might conflict with the
-> > > +	 * enclave page permissions.
-> > > +	 */
-> > > +	if (!!(current->personality & READ_IMPLIES_EXEC))
-> > > +		return -EACCES;
-> > > +
-> > > +	idx_start = PFN_DOWN(start);
-> > > +	idx_end = PFN_DOWN(end - 1);
-> > > +
-> > > +	for (idx = idx_start; idx <= idx_end; ++idx) {
-> > > +		mutex_lock(&encl->lock);
-> > > +		page = radix_tree_lookup(&encl->page_tree, idx);
-> > > +		mutex_unlock(&encl->lock);
-> > > +
-> > > +		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> > > +			return -EACCES;
-> > 
-> > You should really use an iterator here instead of repeated lookups.
-> > xas_for_each() will probably be what you want.
+> Question for Matthew:
 > 
-> Thank you for your remarks. I'll look into using xarray for this.
+> To enforce the "page must be populated" rule, is there a clean way to retrieve
+> the index of the current entry?  Our entries/pages don't have information
+> about their index.  Or should we just count the number of entries and check
+> 'em at the end? E.g.
+> 
+>         xas_for_each(...) {
+>                 if (~page->vm_max_prot_bits & vm_prot_bits)
+>                         return -EACCES;
+>                 nr_entries++;
+>         }
+> 
+>         if (nr_entries != (end_index - start_index))
+>                 return -EACCES;
 
-Question for Matthew:
+Probably best just to steal the implementation from here:
 
-To enforce the "page must be populated" rule, is there a clean way to retrieve
-the index of the current entry?  Our entries/pages don't have information
-about their index.  Or should we just count the number of entries and check
-'em at the end? E.g.
+pgoff_t page_cache_next_miss(struct address_space *mapping,
+                             pgoff_t index, unsigned long max_scan)
+{
+        XA_STATE(xas, &mapping->i_pages, index);
 
-        xas_for_each(...) {
-                if (~page->vm_max_prot_bits & vm_prot_bits)
-                        return -EACCES;
-                nr_entries++;
+        while (max_scan--) {
+                void *entry = xas_next(&xas);
+                if (!entry || xa_is_value(entry))
+                        break;
+                if (xas.xa_index == 0)
+                        break;
         }
 
-        if (nr_entries != (end_index - start_index))
-                return -EACCES;
+        return xas.xa_index;
+}
+
+although I think you have a simpler task.
+
+	XA_STATE(xas, ..., start_index);
+
+	for (;;) {
+		struct page *page = xas_next(&xas);
+
+		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
+			return -EACCES;
+	}
+
+	return 0;
+
+should do the trick, I think.
