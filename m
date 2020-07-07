@@ -6,57 +6,53 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0533FC433DF
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DFFC433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D382920722
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49C3F20663
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgGGDFN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 6 Jul 2020 23:05:13 -0400
-Received: from mga14.intel.com ([192.55.52.115]:26024 "EHLO mga14.intel.com"
+        id S1727831AbgGGDF1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 6 Jul 2020 23:05:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:35863 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbgGGDFN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:05:13 -0400
-IronPort-SDR: pomjrlNj9rZHWyIYTCqAXa77tC0U6rt5tzj5pIQfp2Oe4zWL6Qkp7/oqgTt9ipD926Lh5QcpCn
- kC0MNV4UJckQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="146606620"
+        id S1726869AbgGGDF0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 6 Jul 2020 23:05:26 -0400
+IronPort-SDR: ikc1fUcfDzhhylFBA6/oMZOZe9upAvJCY7CUYVmJ66wZgBabXENKiPduDD6KEzgYKO6Ld3HgZH
+ GVQVFqqOcSAA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="145632006"
 X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="146606620"
+   d="scan'208";a="145632006"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 20:05:12 -0700
-IronPort-SDR: 43BQs122pBhqzTdThvjCgPXwU67oVGEKmYHhb76mf+8JcYoF7Q+fRZwKTxEsrVbgLMCXrdQbPS
- u23iawhu/8tQ==
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 20:05:25 -0700
+IronPort-SDR: LHqi0812G2a6+wqKMx2/fhwzgijeCdHRxhPq3Y3UJOtfvTV7UHJ5ORBEiSsNwdO19i/hMIX5w5
+ OjYjZYdQoHPA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="388368664"
+   d="scan'208";a="388368710"
 Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.178])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Jul 2020 20:04:55 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 06 Jul 2020 20:05:14 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v34 14/24] x86/sgx: Add SGX_IOC_ENCLAVE_INIT
-Date:   Tue,  7 Jul 2020 06:01:54 +0300
-Message-Id: <20200707030204.126021-15-jarkko.sakkinen@linux.intel.com>
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: [PATCH v34 15/24] x86/sgx: Allow a limited use of ATTRIBUTE.PROVISIONKEY for attestation
+Date:   Tue,  7 Jul 2020 06:01:55 +0300
+Message-Id: <20200707030204.126021-16-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
 References: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
@@ -67,263 +63,179 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add an ioctl that performs ENCLS[EINIT], which locks down the measurement
-and initializes the enclave for entrance. After this, new pages can no
-longer be added.
+Provisioning Certification Enclave (PCE), the root of trust for other
+enclaves, generates a signing key from a fused key called Provisioning
+Certification Key. PCE can then use this key to certify an attestation key
+of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
+hardware if the Intel signed PCE is used.
 
+To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
+only allowed for those who actually need it so that only the trusted
+parties can certify QE's.
+
+Obviously the attestation service should know the public key of the used
+PCE and that way detect illegit attestation, but whitelisting the legit
+users still adds an additional layer of defence.
+
+Add new device file called /dev/sgx/provision. The sole purpose of this
+file is to provide file descriptors that act as privilege tokens to allow
+to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
+SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
+
+Cc: linux-security-module@vger.kernel.org
 Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/uapi/asm/sgx.h |  11 ++
- arch/x86/kernel/cpu/sgx/ioctl.c | 188 ++++++++++++++++++++++++++++++++
- 2 files changed, 199 insertions(+)
+ arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
+ arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
+ 4 files changed, 78 insertions(+)
 
 diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index c8f199b3fb6f..5edb08ab8fd0 100644
+index 5edb08ab8fd0..57d0d30c79b3 100644
 --- a/arch/x86/include/uapi/asm/sgx.h
 +++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -23,6 +23,8 @@ enum sgx_page_flags {
- 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
- #define SGX_IOC_ENCLAVE_ADD_PAGES \
+@@ -25,6 +25,8 @@ enum sgx_page_flags {
  	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
-+#define SGX_IOC_ENCLAVE_INIT \
-+	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
  
  /**
   * struct sgx_enclave_create - parameter structure for the
-@@ -52,4 +54,13 @@ struct sgx_enclave_add_pages {
- 	__u64	count;
+@@ -63,4 +65,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
  };
  
 +/**
-+ * struct sgx_enclave_init - parameter structure for the
-+ *                           %SGX_IOC_ENCLAVE_INIT ioctl
-+ * @sigstruct:	address for the SIGSTRUCT data
++ * struct sgx_enclave_set_attribute - parameter structure for the
++ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
++ * @attribute_fd:	file handle of the attribute file in the securityfs
 + */
-+struct sgx_enclave_init {
-+	__u64 sigstruct;
++struct sgx_enclave_set_attribute {
++	__u64 attribute_fd;
 +};
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 20c3254675e9..1cebb6e9c9b7 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -139,6 +139,10 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
++
+ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "enclave",
+@@ -146,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.fops = &sgx_encl_fops,
+ };
+ 
++static struct miscdevice sgx_dev_provision = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "provision",
++	.nodename = "sgx/provision",
++	.fops = &sgx_provision_fops,
++};
++
+ int __init sgx_drv_init(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+@@ -186,5 +197,12 @@ int __init sgx_drv_init(void)
+ 		return ret;
+ 	}
+ 
++	ret = misc_register(&sgx_dev_provision);
++	if (ret) {
++		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
++		misc_deregister(&sgx_dev_enclave);
++		return ret;
++	}
++
+ 	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index e4063923115b..72747d01c046 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_xsave_size_tbl[64];
+ 
++extern const struct file_operations sgx_provision_fops;
++
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+ int sgx_drv_init(void);
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index ed7536e7cf36..b5c021147937 100644
+index b5c021147937..e4ec07a56d39 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -16,6 +16,9 @@
- #include "encl.h"
- #include "encls.h"
- 
-+/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
-+static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
-+
- static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
- {
- 	u32 size_max = PAGE_SIZE;
-@@ -486,6 +489,188 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+@@ -670,6 +670,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
  	return ret;
  }
  
-+static int __sgx_get_key_hash(struct crypto_shash *tfm, const void *modulus,
-+			      void *hash)
-+{
-+	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	shash->tfm = tfm;
-+
-+	return crypto_shash_digest(shash, modulus, SGX_MODULUS_SIZE, hash);
-+}
-+
-+static int sgx_get_key_hash(const void *modulus, void *hash)
-+{
-+	struct crypto_shash *tfm;
-+	int ret;
-+
-+	tfm = crypto_alloc_shash("sha256", 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	ret = __sgx_get_key_hash(tfm, modulus, hash);
-+
-+	crypto_free_shash(tfm);
-+	return ret;
-+}
-+
-+static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
-+{
-+	u64 *cache;
-+	int i;
-+
-+	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
-+	for (i = 0; i < 4; i++) {
-+		if (enforce || (lepubkeyhash[i] != cache[i])) {
-+			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-+			cache[i] = lepubkeyhash[i];
-+		}
-+	}
-+}
-+
-+static int sgx_einit(struct sgx_sigstruct *sigstruct, void *token,
-+		     struct sgx_epc_page *secs, u64 *lepubkeyhash)
-+{
-+	int ret;
-+
-+	preempt_disable();
-+	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
-+	ret = __einit(sigstruct, token, sgx_get_epc_addr(secs));
-+	if (ret == SGX_INVALID_EINITTOKEN) {
-+		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
-+		ret = __einit(sigstruct, token, sgx_get_epc_addr(secs));
-+	}
-+	preempt_enable();
-+	return ret;
-+}
-+
-+static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
-+			 void *token)
-+{
-+	u64 mrsigner[4];
-+	int ret;
-+	int i;
-+	int j;
-+
-+	/* Check that the required attributes have been authorized. */
-+	if (encl->secs_attributes & ~encl->allowed_attributes)
-+		return -EACCES;
-+
-+	ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&encl->lock);
-+
-+	/*
-+	 * Periodically, EINIT polls for certain asynchronous events. If such an
-+	 * event is detected, it completes with SGX_UNMSKED_EVENT.
-+	 */
-+	for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
-+		for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
-+			ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
-+					mrsigner);
-+			if (ret == SGX_UNMASKED_EVENT)
-+				continue;
-+			else
-+				break;
-+		}
-+
-+		if (ret != SGX_UNMASKED_EVENT)
-+			break;
-+
-+		msleep_interruptible(SGX_EINIT_SLEEP_TIME);
-+
-+		if (signal_pending(current)) {
-+			ret = -ERESTARTSYS;
-+			goto err_out;
-+		}
-+	}
-+
-+	if (ret & ENCLS_FAULT_FLAG) {
-+		if (encls_failed(ret))
-+			ENCLS_WARN(ret, "EINIT");
-+
-+		sgx_encl_destroy(encl);
-+		ret = -EFAULT;
-+	} else if (ret) {
-+		pr_debug("EINIT returned %d\n", ret);
-+		ret = -EPERM;
-+	} else {
-+		atomic_or(SGX_ENCL_INITIALIZED, &encl->flags);
-+	}
-+
-+err_out:
-+	mutex_unlock(&encl->lock);
-+	return ret;
-+}
-+
 +/**
-+ * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
-+ *
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
 + * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_init instance
++ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
 + *
-+ * Flush any outstanding enqueued EADD operations and perform EINIT.  The
-+ * Launch Enclave Public Key Hash MSRs are rewritten as necessary to match
-+ * the enclave's MRSIGNER, which is caculated from the provided sigstruct.
++ * Mark the enclave as being allowed to access a restricted attribute bit.
++ * The requested attribute is specified via the attribute_fd field in the
++ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
++ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
 + *
-+ * Return:
-+ *   0 on success,
-+ *   SGX error code on EINIT failure,
-+ *   -errno otherwise
++ * Failure to explicitly request access to a restricted attribute will cause
++ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
++ * is access to the PROVISION_KEY.
++ *
++ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
++ *
++ * Return: 0 on success, -errno otherwise
 + */
-+static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
++static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
++					  void __user *arg)
 +{
-+	struct sgx_sigstruct *sigstruct;
-+	struct sgx_enclave_init einit;
-+	struct page *initp_page;
-+	void *token;
++	struct sgx_enclave_set_attribute params;
++	struct file *attribute_file;
 +	int ret;
 +
-+	if ((atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) ||
-+	    !(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&einit, arg, sizeof(einit)))
++	if (copy_from_user(&params, arg, sizeof(params)))
 +		return -EFAULT;
 +
-+	initp_page = alloc_page(GFP_KERNEL);
-+	if (!initp_page)
-+		return -ENOMEM;
++	attribute_file = fget(params.attribute_fd);
++	if (!attribute_file)
++		return -EINVAL;
 +
-+	sigstruct = kmap(initp_page);
-+	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
-+	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
-+
-+	if (copy_from_user(sigstruct, (void __user *)einit.sigstruct,
-+			   sizeof(*sigstruct))) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	/*
-+	 * A legacy field used with Intel signed enclaves. These used to mean
-+	 * regular and architectural enclaves. The CPU only accepts these values
-+	 * but they do not have any other meaning.
-+	 *
-+	 * Thus, reject any other values.
-+	 */
-+	if (sigstruct->header.vendor != 0x0000 &&
-+	    sigstruct->header.vendor != 0x8086) {
++	if (attribute_file->f_op != &sgx_provision_fops) {
 +		ret = -EINVAL;
 +		goto out;
 +	}
 +
-+	ret = sgx_encl_init(encl, sigstruct, token);
++	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
++	ret = 0;
 +
 +out:
-+	kunmap(initp_page);
-+	__free_page(initp_page);
++	fput(attribute_file);
 +	return ret;
 +}
-+
-+
+ 
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
- 	struct sgx_encl *encl = filep->private_data;
-@@ -502,6 +687,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_ADD_PAGES:
- 		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
+@@ -690,6 +734,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
  		break;
-+	case SGX_IOC_ENCLAVE_INIT:
-+		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
++	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
++		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
 +		break;
  	default:
  		ret = -ENOIOCTLCMD;
