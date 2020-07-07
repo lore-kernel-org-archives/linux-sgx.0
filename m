@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 700C0C433DF
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17014C433E1
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB9420708
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:03:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0CD720708
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jul 2020 03:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgGGDDz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 6 Jul 2020 23:03:55 -0400
-Received: from mga06.intel.com ([134.134.136.31]:23227 "EHLO mga06.intel.com"
+        id S1728175AbgGGDD7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 6 Jul 2020 23:03:59 -0400
+Received: from mga09.intel.com ([134.134.136.24]:4775 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbgGGDDy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:03:54 -0400
-IronPort-SDR: EJhiep1ifXlBVtxhiGujAbcVsRSBPyjawziu75aMOq2Loog9jmLCxYF0E+ygd7Ty/+11Imef2O
- Xd0vkv2oTETQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="209053718"
+        id S1727046AbgGGDD7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 6 Jul 2020 23:03:59 -0400
+IronPort-SDR: u4JMrgRv4PGDW8e4qHZuCQG1t3H9XuqjTTVVduT73FY2NSbRFGPhOdEkxQoh7fdG1PIi9am+Pt
+ 8MA2aXu+c18w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="149042183"
 X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="209053718"
+   d="scan'208";a="149042183"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 20:03:50 -0700
-IronPort-SDR: lL5U5Ycb033YjhzGRkV/YfLAVoGa2c5S7yfJ1Dib4JnOSuXIyIggff2JINXay9Xe/xgP4JFnmQ
- OqlRJmaAzIzA==
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 20:03:59 -0700
+IronPort-SDR: sUfuuQ728/1yGJXKOYEwNpaXoEuwjj+1KnDb5muss2bntggQVKzuSIeoxy7t8ShGgevc5G4/Wd
+ A7n+xvEip8aQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="388368439"
+   d="scan'208";a="388368452"
 Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.178])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Jul 2020 20:03:41 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 06 Jul 2020 20:03:51 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
@@ -49,9 +48,9 @@ Cc:     linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v34 08/24] x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections
-Date:   Tue,  7 Jul 2020 06:01:48 +0300
-Message-Id: <20200707030204.126021-9-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v34 09/24] x86/sgx: Add __sgx_alloc_epc_page() and sgx_free_epc_page()
+Date:   Tue,  7 Jul 2020 06:01:49 +0300
+Message-Id: <20200707030204.126021-10-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
 References: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
@@ -62,362 +61,106 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-
-Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-structures necessary to track EPC pages so that they can be easily borrowed
-for different uses.
-
-Embed section index to the first eight bits of the EPC page descriptor.
-Existing client hardware supports only a single section, while upcoming
-server hardware will support at most eight sections. Thus, eight bits
-should be enough for long term needs.
+Add __sgx_alloc_epc_page(), which iterates through EPC sections and borrows
+a page structure that is not used by anyone else. When a page is no longer
+needed it must be released with sgx_free_epc_page(). This function
+implicitly calls ENCLS[EREMOVE], which will return the page to the
+uninitialized state (i.e. not required from caller part).
 
 Acked-by: Jethro Beekman <jethro@fortanix.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
-Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/Kconfig                 |  17 +++
- arch/x86/kernel/cpu/Makefile     |   1 +
- arch/x86/kernel/cpu/sgx/Makefile |   2 +
- arch/x86/kernel/cpu/sgx/main.c   | 216 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h    |  52 ++++++++
- 5 files changed, 288 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
- create mode 100644 arch/x86/kernel/cpu/sgx/main.c
- create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
+ arch/x86/kernel/cpu/sgx/main.c | 62 ++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++
+ 2 files changed, 65 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 883da0abf779..0dea7fdd7a00 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1926,6 +1926,23 @@ config X86_INTEL_TSX_MODE_AUTO
- 	  side channel attacks- equals the tsx=auto command line parameter.
- endchoice
- 
-+config INTEL_SGX
-+	bool "Intel SGX"
-+	depends on X86_64 && CPU_SUP_INTEL
-+	depends on CRYPTO=y
-+	depends on CRYPTO_SHA256=y
-+	select SRCU
-+	select MMU_NOTIFIER
-+	help
-+	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
-+	  that can be used by applications to set aside private regions of code
-+	  and data, referred to as enclaves. An enclave's private memory can
-+	  only be accessed by code running within the enclave. Accesses from
-+	  outside the enclave, including other enclaves, are disallowed by
-+	  hardware.
-+
-+	  If unsure, say N.
-+
- config EFI
- 	bool "EFI runtime service support"
- 	depends on ACPI
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index dba6a83bc349..b00f801601f3 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -49,6 +49,7 @@ obj-$(CONFIG_X86_MCE)			+= mce/
- obj-$(CONFIG_MTRR)			+= mtrr/
- obj-$(CONFIG_MICROCODE)			+= microcode/
- obj-$(CONFIG_X86_CPU_RESCTRL)		+= resctrl/
-+obj-$(CONFIG_INTEL_SGX)			+= sgx/
- 
- obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
- 
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-new file mode 100644
-index 000000000000..79510ce01b3b
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -0,0 +1,2 @@
-+obj-y += \
-+	main.o
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-new file mode 100644
-index 000000000000..c5831e3db14a
---- /dev/null
+index c5831e3db14a..97c6895fb6c9 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -0,0 +1,216 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+// Copyright(c) 2016-17 Intel Corporation.
-+
-+#include <linux/freezer.h>
-+#include <linux/highmem.h>
-+#include <linux/kthread.h>
-+#include <linux/pagemap.h>
-+#include <linux/ratelimit.h>
-+#include <linux/sched/mm.h>
-+#include <linux/sched/signal.h>
-+#include <linux/slab.h>
-+#include "encls.h"
-+
-+struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-+static int sgx_nr_epc_sections;
-+static struct task_struct *ksgxswapd_tsk;
-+
-+static void sgx_sanitize_section(struct sgx_epc_section *section)
-+{
-+	struct sgx_epc_page *page;
-+	LIST_HEAD(secs_list);
-+	int ret;
-+
-+	while (!list_empty(&section->unsanitized_page_list)) {
-+		if (kthread_should_stop())
-+			return;
-+
-+		spin_lock(&section->lock);
-+
-+		page = list_first_entry(&section->unsanitized_page_list,
-+					struct sgx_epc_page, list);
-+
-+		ret = __eremove(sgx_get_epc_addr(page));
-+		if (!ret)
-+			list_move(&page->list, &section->page_list);
-+		else
-+			list_move_tail(&page->list, &secs_list);
-+
-+		spin_unlock(&section->lock);
-+
-+		cond_resched();
-+	}
-+}
-+
-+static int ksgxswapd(void *p)
-+{
-+	int i;
-+
-+	set_freezable();
-+
-+	/*
-+	 * Reset all pages to uninitialized state. Pages could be in initialized
-+	 * on kmemexec.
-+	 */
-+	for (i = 0; i < sgx_nr_epc_sections; i++)
-+		sgx_sanitize_section(&sgx_epc_sections[i]);
-+
-+	/*
-+	 * 2nd round for the SECS pages as they cannot be removed when they
-+	 * still hold child pages.
-+	 */
-+	for (i = 0; i < sgx_nr_epc_sections; i++) {
-+		sgx_sanitize_section(&sgx_epc_sections[i]);
-+
-+		/* Should never happen. */
-+		if (!list_empty(&sgx_epc_sections[i].unsanitized_page_list))
-+			WARN(1, "EPC section %d has unsanitized pages.\n", i);
-+	}
-+
-+	return 0;
-+}
-+
-+static bool __init sgx_page_reclaimer_init(void)
-+{
-+	struct task_struct *tsk;
-+
-+	tsk = kthread_run(ksgxswapd, NULL, "ksgxswapd");
-+	if (IS_ERR(tsk))
-+		return false;
-+
-+	ksgxswapd_tsk = tsk;
-+
-+	return true;
-+}
-+
-+static void __init sgx_free_epc_section(struct sgx_epc_section *section)
+@@ -83,6 +83,68 @@ static bool __init sgx_page_reclaimer_init(void)
+ 	return true;
+ }
+ 
++static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_section *section)
 +{
 +	struct sgx_epc_page *page;
 +
-+	while (!list_empty(&section->page_list)) {
-+		page = list_first_entry(&section->page_list,
-+					struct sgx_epc_page, list);
-+		list_del(&page->list);
-+		kfree(page);
-+	}
++	if (list_empty(&section->page_list))
++		return NULL;
 +
-+	while (!list_empty(&section->unsanitized_page_list)) {
-+		page = list_first_entry(&section->unsanitized_page_list,
-+					struct sgx_epc_page, list);
-+		list_del(&page->list);
-+		kfree(page);
-+	}
++	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
++	list_del_init(&page->list);
 +
-+	memunmap(section->va);
-+}
-+
-+static bool __init sgx_setup_epc_section(u64 addr, u64 size,
-+					 unsigned long index,
-+					 struct sgx_epc_section *section)
-+{
-+	unsigned long nr_pages = size >> PAGE_SHIFT;
-+	struct sgx_epc_page *page;
-+	unsigned long i;
-+
-+	section->va = memremap(addr, size, MEMREMAP_WB);
-+	if (!section->va)
-+		return false;
-+
-+	section->pa = addr;
-+	spin_lock_init(&section->lock);
-+	INIT_LIST_HEAD(&section->page_list);
-+	INIT_LIST_HEAD(&section->unsanitized_page_list);
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		page = kzalloc(sizeof(*page), GFP_KERNEL);
-+		if (!page)
-+			goto err_out;
-+
-+		page->desc = (addr + (i << PAGE_SHIFT)) | index;
-+		list_add_tail(&page->list, &section->unsanitized_page_list);
-+	}
-+
-+	return true;
-+
-+err_out:
-+	sgx_free_epc_section(section);
-+	return false;
-+}
-+
-+static void __init sgx_page_cache_teardown(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < sgx_nr_epc_sections; i++)
-+		sgx_free_epc_section(&sgx_epc_sections[i]);
++	return page;
 +}
 +
 +/**
-+ * A section metric is concatenated in a way that @low bits 12-31 define the
-+ * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
-+ * metric.
++ * __sgx_alloc_epc_page() - Allocate an EPC page
++ *
++ * Iterate through EPC sections and borrow a free EPC page to the caller. When a
++ * page is no longer needed it must be released with sgx_free_epc_page().
++ *
++ * Return:
++ *   an EPC page,
++ *   -errno on error
 + */
-+static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
++struct sgx_epc_page *__sgx_alloc_epc_page(void)
 +{
-+	return (low & GENMASK_ULL(31, 12)) +
-+	       ((high & GENMASK_ULL(19, 0)) << 32);
-+}
-+
-+static bool __init sgx_page_cache_init(void)
-+{
-+	u32 eax, ebx, ecx, edx, type;
-+	u64 pa, size;
++	struct sgx_epc_section *section;
++	struct sgx_epc_page *page;
 +	int i;
 +
-+	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-+		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
-+			    &eax, &ebx, &ecx, &edx);
++	for (i = 0; i < sgx_nr_epc_sections; i++) {
++		section = &sgx_epc_sections[i];
++		spin_lock(&section->lock);
++		page = __sgx_alloc_epc_page_from_section(section);
++		spin_unlock(&section->lock);
 +
-+		type = eax & SGX_CPUID_SUB_LEAF_TYPE_MASK;
-+		if (type == SGX_CPUID_SUB_LEAF_INVALID)
-+			break;
-+
-+		if (type != SGX_CPUID_SUB_LEAF_EPC_SECTION) {
-+			pr_err_once("Unknown EPC section type: %u\n", type);
-+			break;
-+		}
-+
-+		pa = sgx_calc_section_metric(eax, ebx);
-+		size = sgx_calc_section_metric(ecx, edx);
-+
-+		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
-+
-+		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
-+			pr_err("No free memory for an EPC section\n");
-+			break;
-+		}
-+
-+		sgx_nr_epc_sections++;
++		if (page)
++			return page;
 +	}
 +
-+	if (!sgx_nr_epc_sections) {
-+		pr_err("There are zero EPC sections.\n");
-+		return false;
-+	}
-+
-+	return true;
++	return ERR_PTR(-ENOMEM);
 +}
 +
-+static void __init sgx_init(void)
-+{
-+	if (!boot_cpu_has(X86_FEATURE_SGX))
-+		return;
-+
-+	if (!sgx_page_cache_init())
-+		return;
-+
-+	if (!sgx_page_reclaimer_init())
-+		goto err_page_cache;
-+
-+	return;
-+
-+err_page_cache:
-+	sgx_page_cache_teardown();
-+}
-+
-+device_initcall(sgx_init);
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-new file mode 100644
-index 000000000000..dff4f5f16d09
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -0,0 +1,52 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+#ifndef _X86_SGX_H
-+#define _X86_SGX_H
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/rwsem.h>
-+#include <linux/types.h>
-+#include <asm/asm.h>
-+#include "arch.h"
-+
-+#undef pr_fmt
-+#define pr_fmt(fmt) "sgx: " fmt
-+
-+struct sgx_epc_page {
-+	unsigned long desc;
-+	struct list_head list;
-+};
-+
-+/*
-+ * The firmware can define multiple chunks of EPC to the different areas of the
-+ * physical memory e.g. for memory areas of the each node. This structure is
-+ * used to store EPC pages for one EPC section and virtual memory area where
-+ * the pages have been mapped.
++/**
++ * sgx_free_epc_page() - Free an EPC page
++ * @page:	an EPC page
++ *
++ * Call EREMOVE for an EPC page and insert it back to the list of free pages.
 + */
-+struct sgx_epc_section {
-+	unsigned long pa;
-+	void *va;
-+	struct list_head page_list;
-+	struct list_head unsanitized_page_list;
-+	spinlock_t lock;
-+};
-+
-+#define SGX_EPC_SECTION_MASK		GENMASK(7, 0)
-+#define SGX_MAX_EPC_SECTIONS		(SGX_EPC_SECTION_MASK + 1)
-+
-+extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-+
-+static inline struct sgx_epc_section *sgx_get_epc_section(struct sgx_epc_page *page)
-+{
-+	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
-+}
-+
-+static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
++void sgx_free_epc_page(struct sgx_epc_page *page)
 +{
 +	struct sgx_epc_section *section = sgx_get_epc_section(page);
++	int ret;
 +
-+	return section->va + (page->desc & PAGE_MASK) - section->pa;
++	ret = __eremove(sgx_get_epc_addr(page));
++	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
++		return;
++
++	spin_lock(&section->lock);
++	list_add_tail(&page->list, &section->page_list);
++	spin_unlock(&section->lock);
 +}
 +
-+#endif /* _X86_SGX_H */
+ static void __init sgx_free_epc_section(struct sgx_epc_section *section)
+ {
+ 	struct sgx_epc_page *page;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index dff4f5f16d09..fce756c3434b 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -49,4 +49,7 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
+ 	return section->va + (page->desc & PAGE_MASK) - section->pa;
+ }
+ 
++struct sgx_epc_page *__sgx_alloc_epc_page(void);
++void sgx_free_epc_page(struct sgx_epc_page *page);
++
+ #endif /* _X86_SGX_H */
 -- 
 2.25.1
 
