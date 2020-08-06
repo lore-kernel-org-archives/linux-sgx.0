@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB653C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EE9C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A184206C3
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CED206C3
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F9hnk0aG"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="q0LSCRXD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbgHFRjc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:39:32 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35464 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbgHFRjW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Aug 2020 13:39:22 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076DIMIR007771;
-        Thu, 6 Aug 2020 13:27:37 GMT
+        id S1728217AbgHFRlk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:41:40 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46438 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730010AbgHFRlL (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Aug 2020 13:41:11 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076D2HOa005777;
+        Thu, 6 Aug 2020 13:16:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : in-reply-to : references : date : message-id : mime-version :
  content-type; s=corp-2020-01-29;
- bh=2BinGB7+lQzYG5K9qR+HHSrCX3Nf4pK8wQY3yuXLDmY=;
- b=F9hnk0aGIjJ353o+MR+GOr9pY7si5THOUECiy1UEga7fNdxM4MVZkH7qhkdNpcEYYyGl
- VvAlIKu+7w51hsA/l7qMZSjpOdO2gGRsHwWbF4eVmB/kW52tnm6dgjxSccc7XqIjbJxn
- xYr4AWgfYH4UGyYeI8twI1kCF3zIwWXKq7OmAVOo/8uqCOg7CD1cCeU2iqMHoOWJTEXk
- ywYD+epMbJgwJz+/SMLkaVP6g0+wdaJdUrk0pNkWLefiZDHjvS0VuDrqfnAVwQk+eJ81
- qIWKl1jfFOSyZJ5NuIKu6o6Fh2jtRUZCiKDphZJR/8kzu4rbbhS6sPJuv+DjwW75hEEZ BA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 32r6ep2wdw-1
+ bh=5sE9tx5anyYdQsBRy0OTu6KXJ3coyDfCkoAgQh0zTbk=;
+ b=q0LSCRXDSxpEefZMaZ/gnUKK2xT2ilGxTe67HdD9UPP/kCdyy0VgXLs1XgXE41rxAK/F
+ 1/cg2CoxaHQrO69VwjFaU3FksSg+jowCA+PgTFPFLp/bW0eeY+/fDgTGa1ucus6pb91R
+ OexjNO6QWy+dDrVmaMGPmM2xLqMAkrGBj90xpjD+i4RQWJW4vR94paI1VjT6v/U6WPVK
+ WJod64B1WI3mkoGGIKdLGxPmOw7QlvlcvdjCRN4oQixa9Xa9d4XyM3czGWnvCGd/90I8
+ sfxW+72uo8anmBZdTBVaFb1otGnS/wDhXAWISPkIhHn16KCsLnQEdDbL34ExHxKyFrqF gA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 32r6fxjtsw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 06 Aug 2020 13:27:36 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076DJMe5031411;
-        Thu, 6 Aug 2020 13:27:36 GMT
+        Thu, 06 Aug 2020 13:16:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076CvpVk071915;
+        Thu, 6 Aug 2020 13:16:22 GMT
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 32qy8ncesp-1
+        by userp3030.oracle.com with ESMTP id 32r6cvdb77-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Aug 2020 13:27:35 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 076DRWl3006056;
-        Thu, 6 Aug 2020 13:27:32 GMT
+        Thu, 06 Aug 2020 13:16:22 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 076DGKQ6031849;
+        Thu, 6 Aug 2020 13:16:20 GMT
 Received: from starbug-mbp.localdomain (/79.97.215.145)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Aug 2020 06:27:32 -0700
+        with ESMTP ; Thu, 06 Aug 2020 06:16:19 -0700
 Received: by starbug-mbp.localdomain (Postfix, from userid 501)
-        id 0153EF04DBB; Thu,  6 Aug 2020 14:27:26 +0100 (IST)
+        id EED1DF049DA; Thu,  6 Aug 2020 14:16:14 +0100 (IST)
 From:   Darren Kenny <darren.kenny@oracle.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
@@ -68,390 +68,117 @@ Cc:     linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v36 08/24] x86/sgx: Initialize metadata for Enclave Page
- Cache (EPC) sections
-In-Reply-To: <20200716135303.276442-9-jarkko.sakkinen@linux.intel.com>
+Subject: Re: [PATCH v36 03/24] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+In-Reply-To: <20200716135303.276442-4-jarkko.sakkinen@linux.intel.com>
 References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-9-jarkko.sakkinen@linux.intel.com>
-Date:   Thu, 06 Aug 2020 14:27:26 +0100
-Message-ID: <m2sgczrjk1.fsf@oracle.com>
+ <20200716135303.276442-4-jarkko.sakkinen@linux.intel.com>
+Date:   Thu, 06 Aug 2020 14:16:14 +0100
+Message-ID: <m2364zsyn5.fsf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9704 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
- spamscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008060095
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxscore=0 bulkscore=0
+ spamscore=0 adultscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008060094
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9704 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 bulkscore=0
- malwarescore=0 clxscore=1011 mlxscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008060095
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 suspectscore=1 spamscore=0 clxscore=1015 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008060094
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thursday, 2020-07-16 at 16:52:47 +03, Jarkko Sakkinen wrote:
+On Thursday, 2020-07-16 at 16:52:42 +03, Jarkko Sakkinen wrote:
 > From: Sean Christopherson <sean.j.christopherson@intel.com>
 >
-> Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-> structures necessary to track EPC pages so that they can be easily borrowed
-> for different uses.
+> Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
+> a #PF with SGX set happens.
 >
-> Embed section index to the first eight bits of the EPC page descriptor.
-> Existing client hardware supports only a single section, while upcoming
-> server hardware will support at most eight sections. Thus, eight bits
-> should be enough for long term needs.
+> CPU throws a #PF with the SGX set in the event of Enclave Page Cache Map
+> (EPCM) conflict. The EPCM is a CPU-internal table, which describes the
+> properties for a enclave page. Enclaves are measured and signed software
+> entities, which SGX hosts. [1]
+>
+> Although the primary purpose of the EPCM conflict checks  is to prevent
+> malicious accesses to an enclave, an illegit access can happen also for
+> legit reasons.
+>
+> All SGX reserved memory, including EPCM is encrypted with a transient key
+> that does not survive from the power transition. Throwing a SIGSEGV allows
+> user space software to react when this happens (e.g. recreate the enclave,
+> which was invalidated).
+>
+> [1] Intel SDM: 36.5.1 Enclave Page Cache Map (EPCM)
 >
 > Acked-by: Jethro Beekman <jethro@fortanix.com>
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
-> Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 
 > ---
->  arch/x86/Kconfig                 |  17 +++
->  arch/x86/kernel/cpu/Makefile     |   1 +
->  arch/x86/kernel/cpu/sgx/Makefile |   2 +
->  arch/x86/kernel/cpu/sgx/main.c   | 216 +++++++++++++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/sgx.h    |  52 ++++++++
->  5 files changed, 288 insertions(+)
->  create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
->  create mode 100644 arch/x86/kernel/cpu/sgx/main.c
->  create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
+>  arch/x86/include/asm/traps.h | 14 ++++++++------
+>  arch/x86/mm/fault.c          | 13 +++++++++++++
+>  2 files changed, 21 insertions(+), 6 deletions(-)
 >
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 883da0abf779..0dea7fdd7a00 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1926,6 +1926,23 @@ config X86_INTEL_TSX_MODE_AUTO
->  	  side channel attacks- equals the tsx=auto command line parameter.
->  endchoice
+> diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+> index 714b1a30e7b0..4446f95ad997 100644
+> --- a/arch/x86/include/asm/traps.h
+> +++ b/arch/x86/include/asm/traps.h
+> @@ -44,12 +44,13 @@ void __noreturn handle_stack_overflow(const char *message,
+>  /*
+>   * Page fault error code bits:
+>   *
+> - *   bit 0 ==	 0: no page found	1: protection fault
+> - *   bit 1 ==	 0: read access		1: write access
+> - *   bit 2 ==	 0: kernel-mode access	1: user-mode access
+> - *   bit 3 ==				1: use of reserved bit detected
+> - *   bit 4 ==				1: fault was an instruction fetch
+> - *   bit 5 ==				1: protection keys block access
+> + *   bit 0  ==	 0: no page found	1: protection fault
+> + *   bit 1  ==	 0: read access		1: write access
+> + *   bit 2  ==	 0: kernel-mode access	1: user-mode access
+> + *   bit 3  ==				1: use of reserved bit detected
+> + *   bit 4  ==				1: fault was an instruction fetch
+> + *   bit 5  ==				1: protection keys block access
+> + *   bit 15 ==				1: inside SGX enclave
+>   */
+>  enum x86_pf_error_code {
+>  	X86_PF_PROT	=		1 << 0,
+> @@ -58,5 +59,6 @@ enum x86_pf_error_code {
+>  	X86_PF_RSVD	=		1 << 3,
+>  	X86_PF_INSTR	=		1 << 4,
+>  	X86_PF_PK	=		1 << 5,
+> +	X86_PF_SGX	=		1 << 15,
+>  };
+>  #endif /* _ASM_X86_TRAPS_H */
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 1ead568c0101..1db6fbd7af8e 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -1055,6 +1055,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
+>  	if (error_code & X86_PF_PK)
+>  		return 1;
 >  
-> +config INTEL_SGX
-> +	bool "Intel SGX"
-> +	depends on X86_64 && CPU_SUP_INTEL
-> +	depends on CRYPTO=y
-> +	depends on CRYPTO_SHA256=y
-> +	select SRCU
-> +	select MMU_NOTIFIER
-> +	help
-> +	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
-> +	  that can be used by applications to set aside private regions of code
-> +	  and data, referred to as enclaves. An enclave's private memory can
-> +	  only be accessed by code running within the enclave. Accesses from
-> +	  outside the enclave, including other enclaves, are disallowed by
-> +	  hardware.
-> +
-> +	  If unsure, say N.
-> +
->  config EFI
->  	bool "EFI runtime service support"
->  	depends on ACPI
-> diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-> index dba6a83bc349..b00f801601f3 100644
-> --- a/arch/x86/kernel/cpu/Makefile
-> +++ b/arch/x86/kernel/cpu/Makefile
-> @@ -49,6 +49,7 @@ obj-$(CONFIG_X86_MCE)			+= mce/
->  obj-$(CONFIG_MTRR)			+= mtrr/
->  obj-$(CONFIG_MICROCODE)			+= microcode/
->  obj-$(CONFIG_X86_CPU_RESCTRL)		+= resctrl/
-> +obj-$(CONFIG_INTEL_SGX)			+= sgx/
->  
->  obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
->  
-> diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-> new file mode 100644
-> index 000000000000..79510ce01b3b
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/sgx/Makefile
-> @@ -0,0 +1,2 @@
-> +obj-y += \
-> +	main.o
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> new file mode 100644
-> index 000000000000..c5831e3db14a
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -0,0 +1,216 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> +// Copyright(c) 2016-17 Intel Corporation.
-> +
-> +#include <linux/freezer.h>
-> +#include <linux/highmem.h>
-> +#include <linux/kthread.h>
-> +#include <linux/pagemap.h>
-> +#include <linux/ratelimit.h>
-> +#include <linux/sched/mm.h>
-> +#include <linux/sched/signal.h>
-> +#include <linux/slab.h>
-> +#include "encls.h"
-> +
-> +struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-> +static int sgx_nr_epc_sections;
-> +static struct task_struct *ksgxswapd_tsk;
-> +
-> +static void sgx_sanitize_section(struct sgx_epc_section *section)
-> +{
-> +	struct sgx_epc_page *page;
-> +	LIST_HEAD(secs_list);
-> +	int ret;
-> +
-> +	while (!list_empty(&section->unsanitized_page_list)) {
-> +		if (kthread_should_stop())
-> +			return;
-> +
-> +		spin_lock(&section->lock);
-> +
-> +		page = list_first_entry(&section->unsanitized_page_list,
-> +					struct sgx_epc_page, list);
-> +
-> +		ret = __eremove(sgx_get_epc_addr(page));
-> +		if (!ret)
-> +			list_move(&page->list, &section->page_list);
-> +		else
-> +			list_move_tail(&page->list, &secs_list);
-> +
-> +		spin_unlock(&section->lock);
-> +
-> +		cond_resched();
-> +	}
-> +}
-> +
-> +static int ksgxswapd(void *p)
-> +{
-> +	int i;
-> +
-> +	set_freezable();
-> +
 > +	/*
-> +	 * Reset all pages to uninitialized state. Pages could be in initialized
-> +	 * on kmemexec.
+> +	 * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
+> +	 * access is allowed by the PTE but not the EPCM. This usually happens
+> +	 * when the EPCM is yanked out from under us, e.g. by hardware after a
+> +	 * suspend/resume cycle. In any case, software, i.e. the kernel, can't
+> +	 * fix the source of the fault as the EPCM can't be directly modified by
+> +	 * software. Handle the fault as an access error in order to signal
+> +	 * userspace so that userspace can rebuild their enclave(s), even though
+> +	 * userspace may not have actually violated access permissions.
 > +	 */
-> +	for (i = 0; i < sgx_nr_epc_sections; i++)
-> +		sgx_sanitize_section(&sgx_epc_sections[i]);
+> +	if (unlikely(error_code & X86_PF_SGX))
+> +		return 1;
 > +
-> +	/*
-> +	 * 2nd round for the SECS pages as they cannot be removed when they
-> +	 * still hold child pages.
-> +	 */
-> +	for (i = 0; i < sgx_nr_epc_sections; i++) {
-> +		sgx_sanitize_section(&sgx_epc_sections[i]);
-> +
-> +		/* Should never happen. */
-> +		if (!list_empty(&sgx_epc_sections[i].unsanitized_page_list))
-> +			WARN(1, "EPC section %d has unsanitized pages.\n", i);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static bool __init sgx_page_reclaimer_init(void)
-> +{
-> +	struct task_struct *tsk;
-> +
-> +	tsk = kthread_run(ksgxswapd, NULL, "ksgxswapd");
-> +	if (IS_ERR(tsk))
-> +		return false;
-> +
-> +	ksgxswapd_tsk = tsk;
-> +
-> +	return true;
-> +}
-> +
-> +static void __init sgx_free_epc_section(struct sgx_epc_section *section)
-> +{
-> +	struct sgx_epc_page *page;
-> +
-> +	while (!list_empty(&section->page_list)) {
-> +		page = list_first_entry(&section->page_list,
-> +					struct sgx_epc_page, list);
-> +		list_del(&page->list);
-> +		kfree(page);
-> +	}
-> +
-> +	while (!list_empty(&section->unsanitized_page_list)) {
-> +		page = list_first_entry(&section->unsanitized_page_list,
-> +					struct sgx_epc_page, list);
-> +		list_del(&page->list);
-> +		kfree(page);
-> +	}
-> +
-> +	memunmap(section->va);
-> +}
-> +
-> +static bool __init sgx_setup_epc_section(u64 addr, u64 size,
-> +					 unsigned long index,
-> +					 struct sgx_epc_section *section)
-> +{
-> +	unsigned long nr_pages = size >> PAGE_SHIFT;
-> +	struct sgx_epc_page *page;
-> +	unsigned long i;
-> +
-> +	section->va = memremap(addr, size, MEMREMAP_WB);
-> +	if (!section->va)
-> +		return false;
-> +
-> +	section->pa = addr;
-> +	spin_lock_init(&section->lock);
-> +	INIT_LIST_HEAD(&section->page_list);
-> +	INIT_LIST_HEAD(&section->unsanitized_page_list);
-> +
-> +	for (i = 0; i < nr_pages; i++) {
-> +		page = kzalloc(sizeof(*page), GFP_KERNEL);
-> +		if (!page)
-> +			goto err_out;
-> +
-> +		page->desc = (addr + (i << PAGE_SHIFT)) | index;
-> +		list_add_tail(&page->list, &section->unsanitized_page_list);
-> +	}
-> +
-> +	return true;
-> +
-> +err_out:
-> +	sgx_free_epc_section(section);
-> +	return false;
-> +}
-> +
-> +static void __init sgx_page_cache_teardown(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < sgx_nr_epc_sections; i++)
-> +		sgx_free_epc_section(&sgx_epc_sections[i]);
-> +}
-> +
-> +/**
-> + * A section metric is concatenated in a way that @low bits 12-31 define the
-> + * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
-> + * metric.
-> + */
-> +static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
-> +{
-> +	return (low & GENMASK_ULL(31, 12)) +
-> +	       ((high & GENMASK_ULL(19, 0)) << 32);
-> +}
-> +
-> +static bool __init sgx_page_cache_init(void)
-> +{
-> +	u32 eax, ebx, ecx, edx, type;
-> +	u64 pa, size;
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-> +		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
-> +			    &eax, &ebx, &ecx, &edx);
-> +
-> +		type = eax & SGX_CPUID_SUB_LEAF_TYPE_MASK;
-> +		if (type == SGX_CPUID_SUB_LEAF_INVALID)
-> +			break;
-> +
-> +		if (type != SGX_CPUID_SUB_LEAF_EPC_SECTION) {
-> +			pr_err_once("Unknown EPC section type: %u\n", type);
-> +			break;
-> +		}
-> +
-> +		pa = sgx_calc_section_metric(eax, ebx);
-> +		size = sgx_calc_section_metric(ecx, edx);
-> +
-> +		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
-> +
-> +		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
-> +			pr_err("No free memory for an EPC section\n");
-> +			break;
-> +		}
-> +
-> +		sgx_nr_epc_sections++;
-> +	}
-> +
-> +	if (!sgx_nr_epc_sections) {
-> +		pr_err("There are zero EPC sections.\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static void __init sgx_init(void)
-> +{
-> +	if (!boot_cpu_has(X86_FEATURE_SGX))
-> +		return;
-> +
-> +	if (!sgx_page_cache_init())
-> +		return;
-> +
-> +	if (!sgx_page_reclaimer_init())
-> +		goto err_page_cache;
-> +
-> +	return;
-> +
-> +err_page_cache:
-> +	sgx_page_cache_teardown();
-> +}
-> +
-> +device_initcall(sgx_init);
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> new file mode 100644
-> index 000000000000..dff4f5f16d09
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +#ifndef _X86_SGX_H
-> +#define _X86_SGX_H
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/rwsem.h>
-> +#include <linux/types.h>
-> +#include <asm/asm.h>
-> +#include "arch.h"
-> +
-> +#undef pr_fmt
-> +#define pr_fmt(fmt) "sgx: " fmt
-> +
-> +struct sgx_epc_page {
-> +	unsigned long desc;
-> +	struct list_head list;
-> +};
-> +
-> +/*
-> + * The firmware can define multiple chunks of EPC to the different areas of the
-> + * physical memory e.g. for memory areas of the each node. This structure is
-> + * used to store EPC pages for one EPC section and virtual memory area where
-> + * the pages have been mapped.
-> + */
-> +struct sgx_epc_section {
-> +	unsigned long pa;
-> +	void *va;
-> +	struct list_head page_list;
-> +	struct list_head unsanitized_page_list;
-> +	spinlock_t lock;
-> +};
-> +
-> +#define SGX_EPC_SECTION_MASK		GENMASK(7, 0)
-> +#define SGX_MAX_EPC_SECTIONS		(SGX_EPC_SECTION_MASK + 1)
-> +
-> +extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-> +
-> +static inline struct sgx_epc_section *sgx_get_epc_section(struct sgx_epc_page *page)
-> +{
-> +	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
-> +}
-> +
-> +static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
-> +{
-> +	struct sgx_epc_section *section = sgx_get_epc_section(page);
-> +
-> +	return section->va + (page->desc & PAGE_MASK) - section->pa;
-> +}
-> +
-> +#endif /* _X86_SGX_H */
+>  	/*
+>  	 * Make sure to check the VMA so that we do not perform
+>  	 * faults just to hit a X86_PF_PK as soon as we fill in a
 > -- 
 > 2.25.1
