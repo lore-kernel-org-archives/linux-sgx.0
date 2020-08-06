@@ -2,487 +2,460 @@ Return-Path: <SRS0=kl42=BQ=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	HK_RANDOM_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5335BC433DF
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F98C433DF
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0E23206C3
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 171C5206B2
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Aug 2020 17:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W7Sqw6a9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FnYwn8Ms"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbgHFRvk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:51:40 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50150 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728414AbgHFQcI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Aug 2020 12:32:08 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076GMNsN159956;
-        Thu, 6 Aug 2020 16:31:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : in-reply-to : references : date : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=io5XVicEvApOYkGu7iPL4PHkcDMG7c3iftvJFDaHaic=;
- b=W7Sqw6a92lnINEtmsvEVtmT/xwxyzTRCLJ+pvrGYdN3euFc8IrKlV636GCGEfhqD9V1T
- g/IPpOfoFWkw4H4G9gN2wc659RFF+5U4jMezb1u4sQzT47CuMZ+8QxkHKCftttdRBdfO
- gy9m/I4gmnCAOZi66mDjfnA1MVGy/x4bEIcBu5yBfgORonUucO/Grg05Xi0SwcSqmZIx
- Ohwtpvd351GQw3Bf0RrQo27icXESZoLNT+b2oVGkDCUZDEz6GzLGqwWZPv1fleAdwtN+
- cjyICHbLzlHZ9wa+2v1Uz6m/UbMJI6SHJo0/W0KAoAru6+gMr3FMdyyX0WdneFf4wZmH 1w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 32r6fxm2v9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 06 Aug 2020 16:31:27 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076GNKSw022863;
-        Thu, 6 Aug 2020 16:29:27 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 32pdnwtuk7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Aug 2020 16:29:26 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 076GTKff031029;
-        Thu, 6 Aug 2020 16:29:20 GMT
-Received: from starbug-mbp.localdomain (/79.97.215.145)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Aug 2020 09:29:19 -0700
-Received: by starbug-mbp.localdomain (Postfix, from userid 501)
-        id A643FF0941D; Thu,  6 Aug 2020 17:29:12 +0100 (IST)
-From:   Darren Kenny <darren.kenny@oracle.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v36 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
-In-Reply-To: <20200716135303.276442-14-jarkko.sakkinen@linux.intel.com>
-References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-14-jarkko.sakkinen@linux.intel.com>
-Date:   Thu, 06 Aug 2020 17:29:12 +0100
-Message-ID: <m2d043rb53.fsf@oracle.com>
+        id S1728306AbgHFR4U (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:56:20 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:26658 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727006AbgHFQR0 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Aug 2020 12:17:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596730591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=onEWWUD1yYFf96Ib5iYdabPbRCsNrpZZ92IFVcR6Rs0=;
+        b=FnYwn8MsRFQrRZdp7IXdXnSMrLYzKKc7oSXLnM1L1BmEMs4qT6WailwHuKDe9a/Ouqp27k
+        Rsd/ERNS/2sv4w7vsOXg43+vvJyfBTFeEMP1itX/fPKRza/aWOlKeZY5xpw3Actm8X5Po+
+        qhLbSiBte35AVw0aEX6jOxEM9tkb8aM=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-486-O1c-7MmNMcSECVMWybl4YQ-1; Thu, 06 Aug 2020 10:55:55 -0400
+X-MC-Unique: O1c-7MmNMcSECVMWybl4YQ-1
+Received: by mail-il1-f199.google.com with SMTP id v13so23342431ila.20
+        for <linux-sgx@vger.kernel.org>; Thu, 06 Aug 2020 07:55:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=onEWWUD1yYFf96Ib5iYdabPbRCsNrpZZ92IFVcR6Rs0=;
+        b=hVLO8+WC9qY9kBv63EVhYy+2qKCOLKUfngq+QLSpkQx+1TwBPrlRCObvwx4PVjD0AU
+         Cy6u3gGBzGFHtXGerQyyo8bnH31yH5oeBf/mGMwyFsgW03nOgYwZFV3bBxn1PNWcb8+2
+         oRNqEwH+9ZRWcK4zE0T7m6DC+0zLDIJwUXKspbgumN0FEh4p6zBO09LS/ONPB2718PFD
+         36o0MkBccsJpbqHOL9C8SNQk5StEatjI8q/EJzx5HJ4G9OmYXo2lOxm5dGIJQtubz84B
+         IsfFXCWxh2OzfTWeTTv7YIkMToRyKK9yj8tSUcA6yOQsc3A9ka0lgcUO9ZcBfODGHXk5
+         BrbA==
+X-Gm-Message-State: AOAM531oXfAEtxpJ0eirzBHghMtjUtdD4Ed0OT5UMRcWe4aRKv6Jw5dT
+        xUXPpfMN4WcTcE3OMmIq7L5qpzAnfG3f1Rp3oJi6FRO+DKSR8h6hk9obN2ik/cyTG9VBH+zSN/B
+        BHksmmEvMXq80b060qmv5fBnrqvzksvN9DbUz
+X-Received: by 2002:a92:4b08:: with SMTP id m8mr10910217ilg.11.1596725754481;
+        Thu, 06 Aug 2020 07:55:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxuJAGOPwP7OrTmjnN3rRa8ddHgXxsPgsj1Q2/acIxvDPuw3FHxbSArh+QHe2ZDGjFvubofSLbbD2G+jWL7cf4=
+X-Received: by 2002:a92:4b08:: with SMTP id m8mr10910153ilg.11.1596725753996;
+ Thu, 06 Aug 2020 07:55:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9705 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 spamscore=0 mlxscore=0
- bulkscore=0 adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008060113
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9705 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0 adultscore=0
- bulkscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 suspectscore=5 spamscore=0 clxscore=1015 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008060113
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com> <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
+From:   Nathaniel McCallum <npmccallum@redhat.com>
+Date:   Thu, 6 Aug 2020 10:55:43 -0400
+Message-ID: <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
+Subject: Re: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Cedric Xing <cedric.xing@intel.com>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>, kai.huang@intel.com,
+        "Svahn, Kai" <kai.svahn@intel.com>, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org,
+        Neil Horman <nhorman@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=nmccallu@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thursday, 2020-07-16 at 16:52:52 +03, Jarkko Sakkinen wrote:
-> Add an ioctl, which performs ENCLS[EADD] that adds new visible page to an
-> enclave, and optionally ENCLS[EEXTEND] operations that hash the page to the
-> enclave measurement. By visible we mean a page that can be mapped to the
-> address range of an enclave.
+In a past revision of this patch, I had requested a void *misc
+parameter that could be passed through vdso_sgx_enter_enclave_t into
+sgx_enclave_exit_handler_t. This request encountered some push back
+and I dropped the issue. However, I'd like to revisit it or something
+similar.
+
+One way to create a generic interface to SGX is to pass a structure
+that captures the relevant CPU state from the handler so that it can
+be evaluated in C code before reentry. Precedent for this approach can
+be found in struct kvm_run[0]. Currently, however, there is no way to
+pass a pointer to such a structure directly into the handler.
+
+This can be done implicitly by wrapping the struct
+sgx_enclave_exception in another structure and then using techniques
+like container_of() to find another field. However, this is made more
+difficult by the fact that the sgx_enclave_exit_handler_t is not
+really using the x86_64 sysv calling convention. Therefore, the
+sgx_enclave_exit_handler_t MUST be written in assembly. This also
+implies that we can't use techniques like container_of() and must
+calculate all the offsets manually, which is tedious, error prone and
+fragile.
+
+This is further complicated by the fact that I'm using Rust (as are a
+number of other consumers), which has no native offsetof support (yes,
+there is a crate for it, but it requires a number of complex
+strategies to defeat the compiler which aren't great) and therefore no
+container_of() support.
+
+We could design a standard struct for this (similar to struct
+kvm_run). But in order to keep performance in check we'd have to
+define a limited ABI surface (to avoid things like xsave) which
+wouldn't have the full flexibility of the current approach. This would
+allow for a kernel provided vDSO function with a normal calling
+convention, however (which does have some non-trivial value). I think
+this is a trade-off we should consider (perhaps making it optional?).
+
+But at the least, allowing a pass-through void *misc would reduce the
+complexity of the assembly calculations.
+
+[0]: https://github.com/torvalds/linux/blob/master/include/uapi/linux/kvm.h#L263
+
+On Thu, Jul 16, 2020 at 9:58 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> An SGX runtime must be aware of the exceptions, which happen inside an
+> enclave. Introduce a vDSO call that wraps EENTER/ERESUME cycle and returns
+> the CPU exception back to the caller exactly when it happens.
+>
+> Kernel fixups the exception information to RDI, RSI and RDX. The SGX call
+> vDSO handler fills this information to the user provided buffer or
+> alternatively trigger user provided callback at the time of the exception.
+>
+> The calling convention is custom and does not follow System V x86-64 ABI.
+>
+> Suggested-by: Andy Lutomirski <luto@amacapital.net>
 > Acked-by: Jethro Beekman <jethro@fortanix.com>
 > Tested-by: Jethro Beekman <jethro@fortanix.com>
-> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-> Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-> Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-> Tested-by: Seth Moore <sethmo@google.com>
-
-Tested-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Co-developed-by: Cedric Xing <cedric.xing@intel.com>
+> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  arch/x86/include/uapi/asm/sgx.h |  30 ++++
->  arch/x86/kernel/cpu/sgx/ioctl.c | 291 ++++++++++++++++++++++++++++++++
->  2 files changed, 321 insertions(+)
+>  arch/x86/entry/vdso/Makefile             |   2 +
+>  arch/x86/entry/vdso/vdso.lds.S           |   1 +
+>  arch/x86/entry/vdso/vsgx_enter_enclave.S | 131 +++++++++++++++++++++++
+>  arch/x86/include/asm/enclu.h             |   8 ++
+>  arch/x86/include/uapi/asm/sgx.h          |  98 +++++++++++++++++
+>  5 files changed, 240 insertions(+)
+>  create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
+>  create mode 100644 arch/x86/include/asm/enclu.h
 >
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index ebe82b7aecda..f71ad5ebd0c4 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -29,6 +29,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)       := y
+>  vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
+>  vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
+>  vobjs32-y += vdso32/vclock_gettime.o
+> +vobjs-$(VDSO64-y)              += vsgx_enter_enclave.o
+>
+>  # files to link into kernel
+>  obj-y                          += vma.o extable.o
+> @@ -100,6 +101,7 @@ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS
+>  CFLAGS_REMOVE_vclock_gettime.o = -pg
+>  CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
+>  CFLAGS_REMOVE_vgetcpu.o = -pg
+> +CFLAGS_REMOVE_vsgx_enter_enclave.o = -pg
+>
+>  #
+>  # X32 processes use x32 vDSO to access 64bit kernel data.
+> diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
+> index 36b644e16272..4bf48462fca7 100644
+> --- a/arch/x86/entry/vdso/vdso.lds.S
+> +++ b/arch/x86/entry/vdso/vdso.lds.S
+> @@ -27,6 +27,7 @@ VERSION {
+>                 __vdso_time;
+>                 clock_getres;
+>                 __vdso_clock_getres;
+> +               __vdso_sgx_enter_enclave;
+>         local: *;
+>         };
+>  }
+> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> new file mode 100644
+> index 000000000000..be7e467e1efb
+> --- /dev/null
+> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> @@ -0,0 +1,131 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#include <linux/linkage.h>
+> +#include <asm/export.h>
+> +#include <asm/errno.h>
+> +#include <asm/enclu.h>
+> +
+> +#include "extable.h"
+> +
+> +#define EX_LEAF                0*8
+> +#define EX_TRAPNR      0*8+4
+> +#define EX_ERROR_CODE  0*8+6
+> +#define EX_ADDRESS     1*8
+> +
+> +.code64
+> +.section .text, "ax"
+> +
+> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
+> +       /* Prolog */
+> +       .cfi_startproc
+> +       push    %rbp
+> +       .cfi_adjust_cfa_offset  8
+> +       .cfi_rel_offset         %rbp, 0
+> +       mov     %rsp, %rbp
+> +       .cfi_def_cfa_register   %rbp
+> +       push    %rbx
+> +       .cfi_rel_offset         %rbx, -8
+> +
+> +       mov     %ecx, %eax
+> +.Lenter_enclave:
+> +       /* EENTER <= leaf <= ERESUME */
+> +       cmp     $EENTER, %eax
+> +       jb      .Linvalid_leaf
+> +       cmp     $ERESUME, %eax
+> +       ja      .Linvalid_leaf
+> +
+> +       /* Load TCS and AEP */
+> +       mov     0x10(%rbp), %rbx
+> +       lea     .Lasync_exit_pointer(%rip), %rcx
+> +
+> +       /* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+> +.Lasync_exit_pointer:
+> +.Lenclu_eenter_eresume:
+> +       enclu
+> +
+> +       /* EEXIT jumps here unless the enclave is doing something fancy. */
+> +       xor     %eax, %eax
+> +
+> +       /* Invoke userspace's exit handler if one was provided. */
+> +.Lhandle_exit:
+> +       cmp     $0, 0x20(%rbp)
+> +       jne     .Linvoke_userspace_handler
+> +
+> +.Lout:
+> +       pop     %rbx
+> +       leave
+> +       .cfi_def_cfa            %rsp, 8
+> +       ret
+> +
+> +       /* The out-of-line code runs with the pre-leave stack frame. */
+> +       .cfi_def_cfa            %rbp, 16
+> +
+> +.Linvalid_leaf:
+> +       mov     $(-EINVAL), %eax
+> +       jmp     .Lout
+> +
+> +.Lhandle_exception:
+> +       mov     0x18(%rbp), %rcx
+> +       test    %rcx, %rcx
+> +       je      .Lskip_exception_info
+> +
+> +       /* Fill optional exception info. */
+> +       mov     %eax, EX_LEAF(%rcx)
+> +       mov     %di,  EX_TRAPNR(%rcx)
+> +       mov     %si,  EX_ERROR_CODE(%rcx)
+> +       mov     %rdx, EX_ADDRESS(%rcx)
+> +.Lskip_exception_info:
+> +       mov     $(-EFAULT), %eax
+> +       jmp     .Lhandle_exit
+> +
+> +.Linvoke_userspace_handler:
+> +       /* Pass the untrusted RSP (at exit) to the callback via %rcx. */
+> +       mov     %rsp, %rcx
+> +
+> +       /* Save the untrusted RSP offset in %rbx (non-volatile register). */
+> +       mov     %rsp, %rbx
+> +       and     $0xf, %rbx
+> +
+> +       /*
+> +        * Align stack per x86_64 ABI. Note, %rsp needs to be 16-byte aligned
+> +        * _after_ pushing the parameters on the stack, hence the bonus push.
+> +        */
+> +       and     $-0x10, %rsp
+> +       push    %rax
+> +
+> +       /* Push @e, the "return" value and @tcs as params to the callback. */
+> +       push    0x18(%rbp)
+> +       push    %rax
+> +       push    0x10(%rbp)
+> +
+> +       /* Clear RFLAGS.DF per x86_64 ABI */
+> +       cld
+> +
+> +       /* Load the callback pointer to %rax and invoke it via retpoline. */
+> +       mov     0x20(%rbp), %rax
+> +       call    .Lretpoline
+> +
+> +       /* Undo the post-exit %rsp adjustment. */
+> +       lea     0x20(%rsp, %rbx), %rsp
+> +
+> +       /*
+> +        * If the return from callback is zero or negative, return immediately,
+> +        * else re-execute ENCLU with the postive return value interpreted as
+> +        * the requested ENCLU leaf.
+> +        */
+> +       cmp     $0, %eax
+> +       jle     .Lout
+> +       jmp     .Lenter_enclave
+> +
+> +.Lretpoline:
+> +       call    2f
+> +1:     pause
+> +       lfence
+> +       jmp     1b
+> +2:     mov     %rax, (%rsp)
+> +       ret
+> +       .cfi_endproc
+> +
+> +_ASM_VDSO_EXTABLE_HANDLE(.Lenclu_eenter_eresume, .Lhandle_exception)
+> +
+> +SYM_FUNC_END(__vdso_sgx_enter_enclave)
+> diff --git a/arch/x86/include/asm/enclu.h b/arch/x86/include/asm/enclu.h
+> new file mode 100644
+> index 000000000000..06157b3e9ede
+> --- /dev/null
+> +++ b/arch/x86/include/asm/enclu.h
+> @@ -0,0 +1,8 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_X86_ENCLU_H
+> +#define _ASM_X86_ENCLU_H
+> +
+> +#define EENTER 0x02
+> +#define ERESUME        0x03
+> +
+> +#endif /* _ASM_X86_ENCLU_H */
 > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index 3787d278e84b..c8f199b3fb6f 100644
+> index 57d0d30c79b3..3760e5d5dc0c 100644
 > --- a/arch/x86/include/uapi/asm/sgx.h
 > +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -8,10 +8,21 @@
->  #include <linux/types.h>
->  #include <linux/ioctl.h>
->  
-> +/**
-> + * enum sgx_epage_flags - page control flags
-> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-> + *			ENCLS[EEXTEND] operations.
-> + */
-> +enum sgx_page_flags {
-> +	SGX_PAGE_MEASURE	= 0x01,
-> +};
-> +
->  #define SGX_MAGIC 0xA4
->  
->  #define SGX_IOC_ENCLAVE_CREATE \
->  	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
-> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
->  
->  /**
->   * struct sgx_enclave_create - parameter structure for the
-> @@ -22,4 +33,23 @@ struct sgx_enclave_create  {
->  	__u64	src;
+> @@ -74,4 +74,102 @@ struct sgx_enclave_set_attribute {
+>         __u64 attribute_fd;
 >  };
->  
+>
 > +/**
-> + * struct sgx_enclave_add_pages - parameter structure for the
-> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> + * @src:	start address for the page data
-> + * @offset:	starting page offset
-> + * @length:	length of the data (multiple of the page size)
-> + * @secinfo:	address for the SECINFO data
-> + * @flags:	page control flags
-> + * @count:	number of bytes added (multiple of the page size)
+> + * struct sgx_enclave_exception - structure to report exceptions encountered in
+> + *                               __vdso_sgx_enter_enclave()
+> + *
+> + * @leaf:      ENCLU leaf from \%eax at time of exception
+> + * @trapnr:    exception trap number, a.k.a. fault vector
+> + * @error_code:        exception error code
+> + * @address:   exception address, e.g. CR2 on a #PF
+> + * @reserved:  reserved for future use
 > + */
-> +struct sgx_enclave_add_pages {
-> +	__u64	src;
-> +	__u64	offset;
-> +	__u64	length;
-> +	__u64	secinfo;
-> +	__u64	flags;
-> +	__u64	count;
+> +struct sgx_enclave_exception {
+> +       __u32 leaf;
+> +       __u16 trapnr;
+> +       __u16 error_code;
+> +       __u64 address;
+> +       __u64 reserved[2];
 > +};
 > +
->  #endif /* _UAPI_ASM_X86_SGX_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 7981c411b05a..c63a51362d14 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -197,6 +197,294 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
->  	return ret;
->  }
->  
-> +static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
-> +						 unsigned long offset,
-> +						 u64 secinfo_flags)
-> +{
-> +	struct sgx_encl_page *encl_page;
-> +	unsigned long prot;
-> +
-> +	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
-> +	if (!encl_page)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	encl_page->desc = encl->base + offset;
-> +	encl_page->encl = encl;
-> +
-> +	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
-> +	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
-> +	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
-> +
-> +	/*
-> +	 * TCS pages must always RW set for CPU access while the SECINFO
-> +	 * permissions are *always* zero - the CPU ignores the user provided
-> +	 * values and silently overwrites them with zero permissions.
-> +	 */
-> +	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
-> +		prot |= PROT_READ | PROT_WRITE;
-> +
-> +	/* Calculate maximum of the VM flags for the page. */
-> +	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
-> +
-> +	return encl_page;
-> +}
-> +
-> +static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
-> +{
-> +	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
-> +	u64 pt = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
-> +
-> +	if (pt != SGX_SECINFO_REG && pt != SGX_SECINFO_TCS)
-> +		return -EINVAL;
-> +
-> +	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * CPU will silently overwrite the permissions as zero, which means
-> +	 * that we need to validate it ourselves.
-> +	 */
-> +	if (pt == SGX_SECINFO_TCS && perm)
-> +		return -EINVAL;
-> +
-> +	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
-> +		return -EINVAL;
-> +
-> +	if (memchr_inv(secinfo->reserved, 0, sizeof(secinfo->reserved)))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int __sgx_encl_add_page(struct sgx_encl *encl,
-> +			       struct sgx_encl_page *encl_page,
-> +			       struct sgx_epc_page *epc_page,
-> +			       struct sgx_secinfo *secinfo, unsigned long src)
-> +{
-> +	struct sgx_pageinfo pginfo;
-> +	struct vm_area_struct *vma;
-> +	struct page *src_page;
-> +	int ret;
-> +
-> +	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
-> +	if (encl_page->vm_max_prot_bits & VM_EXEC) {
-> +		vma = find_vma(current->mm, src);
-> +		if (!vma)
-> +			return -EFAULT;
-> +
-> +		if (!(vma->vm_flags & VM_MAYEXEC))
-> +			return -EACCES;
-> +	}
-> +
-> +	ret = get_user_pages(src, 1, 0, &src_page, NULL);
-> +	if (ret < 1)
-> +		return ret;
-> +
-> +	pginfo.secs = (unsigned long)sgx_get_epc_addr(encl->secs.epc_page);
-> +	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
-> +	pginfo.metadata = (unsigned long)secinfo;
-> +	pginfo.contents = (unsigned long)kmap_atomic(src_page);
-> +
-> +	ret = __eadd(&pginfo, sgx_get_epc_addr(epc_page));
-> +
-> +	kunmap_atomic((void *)pginfo.contents);
-> +	put_page(src_page);
-> +
-> +	return ret ? -EIO : 0;
-> +}
-> +
-> +/*
-> + * If the caller requires measurement of the page as a proof for the content,
-> + * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
-> + * operation until the entire page is measured."
+> +/**
+> + * typedef sgx_enclave_exit_handler_t - Exit handler function accepted by
+> + *                                     __vdso_sgx_enter_enclave()
+> + *
+> + * @rdi:       RDI at the time of enclave exit
+> + * @rsi:       RSI at the time of enclave exit
+> + * @rdx:       RDX at the time of enclave exit
+> + * @ursp:      RSP at the time of enclave exit (untrusted stack)
+> + * @r8:                R8 at the time of enclave exit
+> + * @r9:                R9 at the time of enclave exit
+> + * @tcs:       Thread Control Structure used to enter enclave
+> + * @ret:       0 on success (EEXIT), -EFAULT on an exception
+> + * @e:         Pointer to struct sgx_enclave_exception (as provided by caller)
 > + */
-> +static int __sgx_encl_extend(struct sgx_encl *encl,
-> +			     struct sgx_epc_page *epc_page)
-> +{
-> +	int ret;
-> +	int i;
-> +
-> +	for (i = 0; i < 16; i++) {
-> +		ret = __eextend(sgx_get_epc_addr(encl->secs.epc_page),
-> +				sgx_get_epc_addr(epc_page) + (i * 0x100));
-> +		if (ret) {
-> +			if (encls_failed(ret))
-> +				ENCLS_WARN(ret, "EEXTEND");
-> +			return -EIO;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
-> +			     unsigned long offset, unsigned long length,
-> +			     struct sgx_secinfo *secinfo, unsigned long flags)
-> +{
-> +	struct sgx_encl_page *encl_page;
-> +	struct sgx_epc_page *epc_page;
-> +	int ret;
-> +
-> +	encl_page = sgx_encl_page_alloc(encl, offset, secinfo->flags);
-> +	if (IS_ERR(encl_page))
-> +		return PTR_ERR(encl_page);
-> +
-> +	epc_page = __sgx_alloc_epc_page();
-> +	if (IS_ERR(epc_page)) {
-> +		kfree(encl_page);
-> +		return PTR_ERR(epc_page);
-> +	}
-> +
-> +	mmap_read_lock(current->mm);
-> +	mutex_lock(&encl->lock);
-> +
-> +	/*
-> +	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
-> +	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
-> +	 * to userspace errors (or kernel/hardware bugs).
-> +	 */
-> +	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
-> +			encl_page, GFP_KERNEL);
-> +	if (ret)
-> +		goto err_out_unlock;
-> +
-> +	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
-> +				  src);
-> +	if (ret)
-> +		goto err_out;
-> +
-> +	/*
-> +	 * Complete the "add" before doing the "extend" so that the "add"
-> +	 * isn't in a half-baked state in the extremely unlikely scenario the
-> +	 * the enclave will be destroyed in response to EEXTEND failure.
-> +	 */
-> +	encl_page->encl = encl;
-> +	encl_page->epc_page = epc_page;
-> +	encl->secs_child_cnt++;
-> +
-> +	if (flags & SGX_PAGE_MEASURE) {
-> +		ret = __sgx_encl_extend(encl, epc_page);
-> +		if (ret)
-> +			goto err_out;
-> +	}
-> +
-> +	mutex_unlock(&encl->lock);
-> +	mmap_read_unlock(current->mm);
-> +	return ret;
-> +
-> +err_out:
-> +	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
-> +
-> +err_out_unlock:
-> +	mutex_unlock(&encl->lock);
-> +	mmap_read_unlock(current->mm);
-> +
-> +	sgx_free_epc_page(epc_page);
-> +	kfree(encl_page);
-> +
-> +	/*
-> +	 * Destroy enclave on ENCLS failure as this means that EPC has been
-> +	 * invalidated.
-> +	 */
-> +	if (ret == -EIO) {
-> +		mutex_lock(&encl->lock);
-> +		sgx_encl_destroy(encl);
-> +		mutex_unlock(&encl->lock);
-> +	}
-> +
-> +	return ret;
-> +}
+> +typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
+> +                                         long ursp, long r8, long r9,
+> +                                         void *tcs, int ret,
+> +                                         struct sgx_enclave_exception *e);
 > +
 > +/**
-> + * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
-> + * @encl:       pointer to an enclave instance (via ioctl() file pointer)
-> + * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
+> + * __vdso_sgx_enter_enclave() - Enter an SGX enclave
+> + * @rdi:       Pass-through value for RDI
+> + * @rsi:       Pass-through value for RSI
+> + * @rdx:       Pass-through value for RDX
+> + * @leaf:      ENCLU leaf, must be EENTER or ERESUME
+> + * @r8:                Pass-through value for R8
+> + * @r9:                Pass-through value for R9
+> + * @tcs:       TCS, must be non-NULL
+> + * @e:         Optional struct sgx_enclave_exception instance
+> + * @handler:   Optional enclave exit handler
 > + *
-> + * Add one or more pages to an uninitialized enclave, and optionally extend the
-> + * measurement with the contents of the page. The SECINFO and measurement mask
-> + * are applied to all pages.
+> + * NOTE: __vdso_sgx_enter_enclave() does not ensure full compliance with the
+> + * x86-64 ABI, e.g. doesn't explicitly clear EFLAGS.DF after EEXIT.  Except for
+> + * non-volatile general purpose registers, preserving/setting state in
+> + * accordance with the x86-64 ABI is the responsibility of the enclave and its
+> + * runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C code
+> + * without careful consideration by both the enclave and its runtime.
 > + *
-> + * A SECINFO for a TCS is required to always contain zero permissions because
-> + * CPU silently zeros them. Allowing anything else would cause a mismatch in
-> + * the measurement.
+> + * All general purpose registers except RAX, RBX and RCX are passed as-is to
+> + * the enclave.  RAX, RBX and RCX are consumed by EENTER and ERESUME and are
+> + * loaded with @leaf, asynchronous exit pointer, and @tcs respectively.
 > + *
-> + * mmap()'s protection bits are capped by the page permissions. For each page
-> + * address, the maximum protection bits are computed with the following
-> + * heuristics:
+> + * RBP and the stack are used to anchor __vdso_sgx_enter_enclave() to the
+> + * pre-enclave state, e.g. to retrieve @e and @handler after an enclave exit.
+> + * All other registers are available for use by the enclave and its runtime,
+> + * e.g. an enclave can push additional data onto the stack (and modify RSP) to
+> + * pass information to the optional exit handler (see below).
 > + *
-> + * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
-> + * 2. A TCS page: PROT_R | PROT_W.
+> + * Most exceptions reported on ENCLU, including those that occur within the
+> + * enclave, are fixed up and reported synchronously instead of being delivered
+> + * via a standard signal. Debug Exceptions (#DB) and Breakpoints (#BP) are
+> + * never fixed up and are always delivered via standard signals. On synchrously
+> + * reported exceptions, -EFAULT is returned and details about the exception are
+> + * recorded in @e, the optional sgx_enclave_exception struct.
+> +
+> + * If an exit handler is provided, the handler will be invoked on synchronous
+> + * exits from the enclave and for all synchronously reported exceptions. In
+> + * latter case, @e is filled prior to invoking the handler.
 > + *
-> + * mmap() is not allowed to surpass the minimum of the maximum protection bits
-> + * within the given address range.
+> + * The exit handler's return value is interpreted as follows:
+> + *  >0:                continue, restart __vdso_sgx_enter_enclave() with @ret as @leaf
+> + *   0:                success, return @ret to the caller
+> + *  <0:                error, return @ret to the caller
 > + *
-> + * If ENCLS opcode fails, that effectively means that EPC has been invalidated.
-> + * When this happens the enclave is destroyed and -EIO is returned to the
-> + * caller.
+> + * The exit handler may transfer control, e.g. via longjmp() or C++ exception,
+> + * without returning to __vdso_sgx_enter_enclave().
 > + *
 > + * Return:
-> + *   0 on success,
-> + *   -EACCES if an executable source page is located in a noexec partition,
-> + *   -EIO if either ENCLS[EADD] or ENCLS[EEXTEND] fails
-> + *   -errno otherwise
+> + *  0 on success,
+> + *  -EINVAL if ENCLU leaf is not allowed,
+> + *  -EFAULT if an exception occurs on ENCLU or within the enclave
+> + *  -errno for all other negative values returned by the userspace exit handler
 > + */
-> +static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
-> +{
-> +	struct sgx_enclave_add_pages addp;
-> +	struct sgx_secinfo secinfo;
-> +	unsigned long c;
-> +	int ret;
+> +typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
+> +                                       unsigned long rdx, unsigned int leaf,
+> +                                       unsigned long r8,  unsigned long r9,
+> +                                       void *tcs,
+> +                                       struct sgx_enclave_exception *e,
+> +                                       sgx_enclave_exit_handler_t handler);
 > +
-> +	if ((atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) ||
-> +	    !(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(&addp, arg, sizeof(addp)))
-> +		return -EFAULT;
-> +
-> +	if (!IS_ALIGNED(addp.offset, PAGE_SIZE) ||
-> +	    !IS_ALIGNED(addp.src, PAGE_SIZE))
-> +		return -EINVAL;
-> +
-> +	if (!(access_ok(addp.src, PAGE_SIZE)))
-> +		return -EFAULT;
-> +
-> +	if (addp.length & (PAGE_SIZE - 1))
-> +		return -EINVAL;
-> +
-> +	if (addp.offset + addp.length - PAGE_SIZE >= encl->size)
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(&secinfo, (void __user *)addp.secinfo,
-> +			   sizeof(secinfo)))
-> +		return -EFAULT;
-> +
-> +	if (sgx_validate_secinfo(&secinfo))
-> +		return -EINVAL;
-> +
-> +	for (c = 0 ; c < addp.length; c += PAGE_SIZE) {
-> +		if (signal_pending(current)) {
-> +			ret = -EINTR;
-> +			break;
-> +		}
-> +
-> +		if (need_resched())
-> +			cond_resched();
-> +
-> +		ret = sgx_encl_add_page(encl, addp.src + c, addp.offset + c,
-> +					addp.length - c, &secinfo, addp.flags);
-> +		if (ret)
-> +			break;
-> +	}
-> +
-> +	addp.count = c;
-> +
-> +	if (copy_to_user(arg, &addp, sizeof(addp)))
-> +		return -EFAULT;
-> +
-> +	return ret;
-> +}
-> +
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  {
->  	struct sgx_encl *encl = filep->private_data;
-> @@ -215,6 +503,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  	case SGX_IOC_ENCLAVE_CREATE:
->  		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
->  		break;
-> +	case SGX_IOC_ENCLAVE_ADD_PAGES:
-> +		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
-> +		break;
->  	default:
->  		ret = -ENOIOCTLCMD;
->  		break;
-> -- 
+>  #endif /* _UAPI_ASM_X86_SGX_H */
+> --
 > 2.25.1
+>
+
