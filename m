@@ -2,187 +2,105 @@ Return-Path: <SRS0=jFLL=BU=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA72AC433DF
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Aug 2020 22:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA29EC433DF
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Aug 2020 23:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A08A920771
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 Aug 2020 22:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93022206B2
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 Aug 2020 23:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597100941;
+	bh=KN3dKAif49xXoXcIYO2KHMhCVpVKygWXi9GX3lGZE0Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qb6xHGZ3ye5yWRkGndkErG+VGC0twOaTv+foKdnVyz8Ej94av0TCGsfhYV2ps70dS
+	 00Q9dwWZgGEqjjF55o65fF3JMCqe2g4JuMS+WX7EJR4jyDZUajSw7YvjzOUCnj5BTZ
+	 +ZEyYNP9UVCq0nxBAs/cXbx9yEP3ivMtYvBESnDo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbgHJWXT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 Aug 2020 18:23:19 -0400
-Received: from mga07.intel.com ([134.134.136.100]:40994 "EHLO mga07.intel.com"
+        id S1727084AbgHJXJB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 Aug 2020 19:09:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbgHJWXT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 10 Aug 2020 18:23:19 -0400
-IronPort-SDR: jpSUw0JUhL4fbTDqzvqaR/zcfpnsRgwBun7X8LXnrscs8QbHFJgIiWw3qjQpAi+2c0Fk9QaYJO
- 7ek2D8Kiwe4Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9709"; a="217964118"
-X-IronPort-AV: E=Sophos;i="5.75,458,1589266800"; 
-   d="scan'208";a="217964118"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2020 15:23:18 -0700
-IronPort-SDR: 7+KrvBfTIme7Zi1E3P9lVDw9BZMKSX+w/7pcZDA1CRdd45fe869813rFS4tDVFnUK3yJ0RRiJQ
- kGvfDHQ2HJHw==
-X-IronPort-AV: E=Sophos;i="5.75,458,1589266800"; 
-   d="scan'208";a="294530611"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2020 15:23:18 -0700
-Date:   Mon, 10 Aug 2020 15:23:17 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
+        id S1726722AbgHJXJA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 10 Aug 2020 19:09:00 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFB6B207DA
+        for <linux-sgx@vger.kernel.org>; Mon, 10 Aug 2020 23:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597100940;
+        bh=KN3dKAif49xXoXcIYO2KHMhCVpVKygWXi9GX3lGZE0Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Yv2lQ6JaL4P4RZ6DPgVE31ayJe5xrgq8e/gkNH27Ne/wxDKwqPT7kq7bgthZb2324
+         lEw+IH7M/ObVNPZdmg3XuvXjJHghj2lvECJhX5M0PTcJY1RU2cHyGjEAvVfdVxynFu
+         o179kJE3HAZitPXghelbc7zm8zomnZc/oNMUqjL8=
+Received: by mail-wm1-f46.google.com with SMTP id c19so930273wmd.1
+        for <linux-sgx@vger.kernel.org>; Mon, 10 Aug 2020 16:08:59 -0700 (PDT)
+X-Gm-Message-State: AOAM533u0L5iXCrLp9BIUVzstcEtaRDBYOt2lqOvIHNZZxzyys9X6FIj
+        ej1tM2AZGDX3xQj1LrHEbmEPAHvL8U8AFk7Dyc7pCQ==
+X-Google-Smtp-Source: ABdhPJxmzhiiwwbrIFHZSor9k9o7ub7q4gaPWRP1byqx4GzUeDDloP6QcQE45NlFyBvtRlFrJIX4xrjlnh1EftzntZU=
+X-Received: by 2002:a1c:4c17:: with SMTP id z23mr1361940wmf.49.1597100938325;
+ Mon, 10 Aug 2020 16:08:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+ <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com> <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
+In-Reply-To: <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 10 Aug 2020 16:08:46 -0700
+X-Gmail-Original-Message-ID: <CALCETrVch_XW-oc_-LR8Dbgat9DpSKtCYTV9YZaU7tfu61FHEw@mail.gmail.com>
+Message-ID: <CALCETrVch_XW-oc_-LR8Dbgat9DpSKtCYTV9YZaU7tfu61FHEw@mail.gmail.com>
+Subject: Re: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
 To:     Nathaniel McCallum <npmccallum@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        Cedric Xing <cedric.xing@intel.com>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        chenalexchen@google.com, Conrad Parker <conradparker@google.com>,
+        cyhanish@google.com, Dave Hansen <dave.hansen@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>, kai.huang@intel.com,
-        "Svahn, Kai" <kai.svahn@intel.com>, kmoy@google.com,
-        ludloff@google.com, luto@kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
         Neil Horman <nhorman@redhat.com>,
         Patrick Uiterwijk <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-Subject: Re: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200810222317.GG14724@linux.intel.com>
-References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Aug 06, 2020 at 10:55:43AM -0400, Nathaniel McCallum wrote:
+On Thu, Aug 6, 2020 at 7:55 AM Nathaniel McCallum <npmccallum@redhat.com> wrote:
+>
 > In a past revision of this patch, I had requested a void *misc
 > parameter that could be passed through vdso_sgx_enter_enclave_t into
 > sgx_enclave_exit_handler_t. This request encountered some push back
 > and I dropped the issue. However, I'd like to revisit it or something
 > similar.
-> 
-> One way to create a generic interface to SGX is to pass a structure
-> that captures the relevant CPU state from the handler so that it can
-> be evaluated in C code before reentry. Precedent for this approach can
-> be found in struct kvm_run[0]. Currently, however, there is no way to
-> pass a pointer to such a structure directly into the handler.
 
-The context switching aspect of kvm_run isn't a great template.  kvm_run
-allows the VMM to get/set a limited amount of vCPU state without having to
-invoke separate ioctls(), i.e. it's it's purely an optimization.  KVM also
-needs to context switch guests state regardless of the ability to get/set
-state via kvm_run, whereas this vDSO case doesn't _need_ to insert itself
-between the runtime and its enclave.
+Why do you need an exit handler at all?  IIRC way back when I
+suggested that we simply not support it at all.  If you want to
+call__vdso_sgx_enter_enclave() in a loop, call it in a loop.  If you
+want to wrap it intelligently in Rust, you don't want a callback
+anyway -- that forces you have an FFI (or non-Rust, anyway) frame on
+the stack, which interacts poorly with panic handling and prevents you
+from using await in your Rust callback handler.  If, on the other
+hand, you just call __vdso_sg_enter_enclave() in a loop, all these
+problems go away and, if you really want, you can pass in a callback
+in Rust and call the callback from Rust.
 
-The flow control and exit reporting aspect of kvm_run are relevant though.
-More thoughts on that part at the end.
-
-> This can be done implicitly by wrapping the struct
-> sgx_enclave_exception in another structure and then using techniques
-> like container_of() to find another field. However, this is made more
-> difficult by the fact that the sgx_enclave_exit_handler_t is not
-> really using the x86_64 sysv calling convention. Therefore, the
-> sgx_enclave_exit_handler_t MUST be written in assembly.
-
-What bits of the x86-64 ABI require writing the handler in assembly?  There
-are certainly restrictions on what the handler can do without needing an
-assembly trampoline, but I was under the impression that vanilla C code is
-compatible with the exit handler patch.  Is Rust more picky about calling
-convention?
-
-Side topic, the documentation for vdso_sgx_enter_enclave_t is wrong, it
-states the EFLAGS.DF is not cleared before invoking the handler, but that's
-a lie.
-
-> This also implies that we can't use techniques like container_of() and must
-> calculate all the offsets manually, which is tedious, error prone and
-> fragile.
-> 
-> This is further complicated by the fact that I'm using Rust (as are a
-> number of other consumers), which has no native offsetof support (yes,
-> there is a crate for it, but it requires a number of complex
-> strategies to defeat the compiler which aren't great) and therefore no
-> container_of() support.
-> 
-> We could design a standard struct for this (similar to struct
-> kvm_run). But in order to keep performance in check we'd have to
-> define a limited ABI surface (to avoid things like xsave) which
-> wouldn't have the full flexibility of the current approach. This would
-> allow for a kernel provided vDSO function with a normal calling
-> convention, however (which does have some non-trivial value). I think
-> this is a trade-off we should consider (perhaps making it optional?).
-> 
-> But at the least, allowing a pass-through void *misc would reduce the
-> complexity of the assembly calculations.
-
-I'm not opposed to adding a pass-through param, it's literally one line
-and an extra PUSH <mem> in the exit handler path. 
-
-Another thought would be to wrap sgx_enclave_exception in a struct to give
-room for supporting additional exit information (if such a thing ever pops
-up) and to allow the caller to opt in to select behavior, e.g. Jethro's
-request to invoke the exit handler on IRQ exits.  This is basically the
-equivalent of "struct kvm_run", minus the vCPU/enclave state.
-
-Such a struct could also be used to avoid using -EFAULT for the "fault in
-enclave" exit path, which I believe Andy isn't a fan of, by having an
-explicit "exit_reason" field with arbitrary, dedicated exit codes, and
-defining "success" as making it to ENCLU, i.e. returning '0' when there is
-no exit handler if ENCLU is attempted.
-
-E.g.:
-
-struct sgx_enter_enclave {
-        __u64 tcs;
-        __u64 flags;
-
-	__u32 exit_leaf;	/* output only */
-	__u32 exit_reason;
-
-	__u64 user_handler;
-	__u64 user_data;
-
-        union {
-                struct sgx_enclave_exception {
-                        __u16 trapnr;
-                        __u16 error_code;
-                        __u32 reserved32;
-                        __u64 address;
-                };
-
-                __u8 pad[256];  /* 100% arbitrary */
-        };
-}
-
-typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
-                                        unsigned long rdx, unsigned int leaf,
-                                        unsigned long r8,  unsigned long r9,
-                                        struct sgx_enter_enclave *e);
-
-
-The exit handler could then be:
-
-typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-                                          long ursp, long r8, long r9,
-                                          struct sgx_enter_enclave *e);
-
-or if Rust doesn't like casting user_data:
-
-typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-                                          long ursp, long r8, long r9,
-                                          struct sgx_enter_enclave *e
-					  void *user_data);
+What am I missing?  I still don't really understand why we are
+supporting this mechanism at all.  Just the asm code to invoke the
+callback seems to be about half of the entire function.
