@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B85C433E1
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 14:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B39EC433E3
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 15:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87EB12080C
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 14:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFEE220786
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 15:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbgHROwn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Aug 2020 10:52:43 -0400
-Received: from mga02.intel.com ([134.134.136.20]:12236 "EHLO mga02.intel.com"
+        id S1727013AbgHRPGu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Aug 2020 11:06:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:31048 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbgHROwm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 18 Aug 2020 10:52:42 -0400
-IronPort-SDR: +jKtLePMzRQoO2k/6dt7ZuwZ179pMSLcm1NNYOm2jkTdZPaFNzPlsjA2ohgN4nZWdkiIvLHZo7
- ckVWUsnk7JsA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="142742972"
+        id S1726890AbgHRPGq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:06:46 -0400
+IronPort-SDR: qc3U4rRDt8enX9dppp2eMUw62Q424IMEqdHo2xLO3Cedu+7A1iwNRHpluDHrXKHFChAHVlGylm
+ koRmbLRuONRg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="152551339"
 X-IronPort-AV: E=Sophos;i="5.76,327,1592895600"; 
-   d="scan'208";a="142742972"
+   d="scan'208";a="152551339"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2020 07:52:41 -0700
-IronPort-SDR: d2buaeSk2jnkNjYsMBcotUV83mieA7rCG9w4EIOwKwdWB2GHnm5IFP348wPBzeCQJ6TG+wMbQU
- v+IBc1Q2f80A==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2020 08:06:35 -0700
+IronPort-SDR: Ww7ojPoHjm4INVvKIPKcxsngbNw6jdurmN5xOs5RdoxzroApsVouVCcQt4ENYKkk41wQ8a/Bb0
+ 40jq8DjVwwbA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.76,327,1592895600"; 
-   d="scan'208";a="497394912"
+   d="scan'208";a="370918038"
 Received: from ribnhajh-mobl.ger.corp.intel.com (HELO localhost) ([10.249.47.113])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Aug 2020 07:52:35 -0700
-Date:   Tue, 18 Aug 2020 17:52:34 +0300
+  by orsmga001.jf.intel.com with ESMTP; 18 Aug 2020 08:06:28 -0700
+Date:   Tue, 18 Aug 2020 18:06:27 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Nathaniel McCallum <npmccallum@redhat.com>, x86@kernel.org,
@@ -55,48 +55,61 @@ Cc:     Nathaniel McCallum <npmccallum@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
 Subject: Re: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
-Message-ID: <20200818145234.GC132200@linux.intel.com>
+Message-ID: <20200818150627.GD132200@linux.intel.com>
 References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
  <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
  <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
  <20200810222317.GG14724@linux.intel.com>
+ <20200818145234.GC132200@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200810222317.GG14724@linux.intel.com>
+In-Reply-To: <20200818145234.GC132200@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 03:23:17PM -0700, Sean Christopherson wrote:
-> > This can be done implicitly by wrapping the struct
-> > sgx_enclave_exception in another structure and then using techniques
-> > like container_of() to find another field. However, this is made more
-> > difficult by the fact that the sgx_enclave_exit_handler_t is not
-> > really using the x86_64 sysv calling convention. Therefore, the
-> > sgx_enclave_exit_handler_t MUST be written in assembly.
+On Tue, Aug 18, 2020 at 05:52:41PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Aug 10, 2020 at 03:23:17PM -0700, Sean Christopherson wrote:
+> > > This can be done implicitly by wrapping the struct
+> > > sgx_enclave_exception in another structure and then using techniques
+> > > like container_of() to find another field. However, this is made more
+> > > difficult by the fact that the sgx_enclave_exit_handler_t is not
+> > > really using the x86_64 sysv calling convention. Therefore, the
+> > > sgx_enclave_exit_handler_t MUST be written in assembly.
+> > 
+> > What bits of the x86-64 ABI require writing the handler in assembly?  There
+> > are certainly restrictions on what the handler can do without needing an
+> > assembly trampoline, but I was under the impression that vanilla C code is
+> > compatible with the exit handler patch.  Is Rust more picky about calling
+> > convention?
+> > 
+> > Side topic, the documentation for vdso_sgx_enter_enclave_t is wrong, it
+> > states the EFLAGS.DF is not cleared before invoking the handler, but that's
+> > a lie.
 > 
-> What bits of the x86-64 ABI require writing the handler in assembly?  There
-> are certainly restrictions on what the handler can do without needing an
-> assembly trampoline, but I was under the impression that vanilla C code is
-> compatible with the exit handler patch.  Is Rust more picky about calling
-> convention?
+> If handler requires the use of setjmp/longjmp API for sudden exits, that
+> is considered bad even with C++, as it is not compatible with stack
+> unwinding. The handler has a lot of constraints for its environment, and
+> is somewhat unappealing to use.
 > 
-> Side topic, the documentation for vdso_sgx_enter_enclave_t is wrong, it
-> states the EFLAGS.DF is not cleared before invoking the handler, but that's
-> a lie.
+> That's why I started today thinking a possibility of using a bpf program
+> as a middle-man. BPF programs can be used to execute code by the kernel
+> in behalf of user in a domain defined sandbox. The execution context is
+> just a buffer passed in R1 to the BPF interpreter. It can be defined by
+> application.
 
-If handler requires the use of setjmp/longjmp API for sudden exits, that
-is considered bad even with C++, as it is not compatible with stack
-unwinding. The handler has a lot of constraints for its environment, and
-is somewhat unappealing to use.
+Something like
 
-That's why I started today thinking a possibility of using a bpf program
-as a middle-man. BPF programs can be used to execute code by the kernel
-in behalf of user in a domain defined sandbox. The execution context is
-just a buffer passed in R1 to the BPF interpreter. It can be defined by
-application.
+1. An exception is triggered.
+2. Kernel executes an eBPF program behalf of the caller, if one was
+   given.
+3. vDSO calls a fixed exit handler that based on the outcome calls
+   ERESUME/EENTER.
+
+Possibly an ioctl could be used to attach an eBPF program to an
+enclave and vDSO would only get a context struct.
 
 /Jarkko
