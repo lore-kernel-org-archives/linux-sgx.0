@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7EDC433E5
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 04:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34949C433EA
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 04:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57B822078D
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 04:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13E7020706
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 04:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbgHREYI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Aug 2020 00:24:08 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16707 "EHLO mga07.intel.com"
+        id S1726483AbgHREYK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Aug 2020 00:24:10 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16710 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbgHREYH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 18 Aug 2020 00:24:07 -0400
-IronPort-SDR: vhJGRyaXF6p3kVun5ATvfZxW9T2WkvIgvq9SH8eJQJ3aNGh0RrfkLv8vwFqH8AJ+WiOzlJb0Gb
- u09hBwQ6ioDQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="219156473"
+        id S1726145AbgHREYJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 18 Aug 2020 00:24:09 -0400
+IronPort-SDR: ey3SFvj7rn0AHffYU+G7tqGVyAsYAI4hicGvxdqoZGWzRsYkXzJuegUhASx/9/TCf2VplMGqpt
+ q79eUvJHWMGw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="219156479"
 X-IronPort-AV: E=Sophos;i="5.76,326,1592895600"; 
-   d="scan'208";a="219156473"
+   d="scan'208";a="219156479"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2020 21:24:06 -0700
-IronPort-SDR: Eqw73L5KCeigX2R3f2bYGhgglXhiTcLLSfP/SzRHPLdBJ4ruw91GQCrISdMazKQmNDm0G8b/CP
- MF+QHUsur5vQ==
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2020 21:24:07 -0700
+IronPort-SDR: FjUntzt3Z10dbmXBoWEo+xfYaIvfSbdEd+3BV02ftxh6uUHlVpGA9TmmjG/o9/P2bRFYTa112M
+ fdeCWPUJqPyg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.76,326,1592895600"; 
-   d="scan'208";a="334270264"
+   d="scan'208";a="334270273"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.160])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Aug 2020 21:24:06 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Aug 2020 21:24:07 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
@@ -42,9 +42,9 @@ Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Andy Lutomirski <luto@amacapital.net>,
         linux-sgx@vger.kernel.org
-Subject: [RFC PATCH 1/4] x86/vdso: x86/sgx: Explicitly force 8-byte CMP for detecting user handler
-Date:   Mon, 17 Aug 2020 21:24:02 -0700
-Message-Id: <20200818042405.12871-2-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 4/4] x86/vdso: x86/sgx: Allow the user to exit the vDSO loop on interrupts
+Date:   Mon, 17 Aug 2020 21:24:05 -0700
+Message-Id: <20200818042405.12871-5-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200818042405.12871-1-sean.j.christopherson@intel.com>
 References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
@@ -55,30 +55,93 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Use 'cmpq' to force an 8-byte CMP when checking for a user provided exit
-handler.  The handler is a pointer, which is guaranteed to be an 8-byte
-value since SGX is 64-bit mode only, and gcc defaults to 'cmpl' given a
-bare 'cmp', i.e. is only checking the lower 32 bits.  This could cause
-a false negative when detecting a user exit handler.
+Allow userspace to exit the vDSO on interrupts that are acknowledged
+while the enclave is active.  This allows the user's runtime to switch
+contexts at opportune times without additional overhead, e.g. when using
+an M:N threading model (where M user threads run N TCSs, with N > M).
 
+Suggested-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/entry/vdso/vsgx_enter_enclave.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/vdso/vsgx_enter_enclave.S | 27 ++++++++++++++++++++----
+ arch/x86/include/uapi/asm/sgx.h          |  3 +++
+ 2 files changed, 26 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-index be7e467e1efb3..2d88acd408d4e 100644
+index b09e87dbe9334..33428c0f94b0d 100644
 --- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
 +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-@@ -48,7 +48,7 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
+@@ -21,6 +21,9 @@
  
- 	/* Invoke userspace's exit handler if one was provided. */
- .Lhandle_exit:
--	cmp	$0, 0x20(%rbp)
-+	cmpq	$0, 0x20(%rbp)
- 	jne	.Linvoke_userspace_handler
+ #define SGX_SYNCHRONOUS_EXIT	0
+ #define SGX_EXCEPTION_EXIT	1
++#define SGX_INTERRUPT_EXIT	2
++
++#define SGX_EXIT_ON_INTERRUPTS	1
  
- .Lout:
+ /* Offsets into sgx_enter_enclave.exception. */
+ #define EX_TRAPNR	0*8
+@@ -51,12 +54,17 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
+ 
+ 	mov	RUN_OFFSET(%rbp), %rcx
+ 
+-	/* No flags are currently defined/supported. */
+-	cmpq	$0, FLAGS_OFFSET(%rcx)
+-	jne	.Linvalid_input
+-
+ 	/* Load TCS and AEP */
+ 	mov	TCS_OFFEST(%rcx), %rbx
++
++	/* Use the alternate AEP if the user wants to exit on interrupts. */
++	mov	FLAGS_OFFSET(%rcx), %rcx
++	cmpq	$SGX_EXIT_ON_INTERRUPTS, %rcx
++	je	.Lload_interrupts_aep
++
++	/* All other flags are reserved. */
++	test	%rcx, %rcx
++	jne	.Linvalid_input
+ 	lea	.Lasync_exit_pointer(%rip), %rcx
+ 
+ 	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+@@ -93,6 +101,17 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
+ 	mov	$(-EINVAL), %eax
+ 	jmp	.Lout
+ 
++.Lload_interrupts_aep:
++	lea	.Lhandle_interrupt(%rip), %rcx
++	jmp	.Lenclu_eenter_eresume
++
++.Lhandle_interrupt:
++	mov	RUN_OFFSET(%rbp), %rbx
++
++	/* Set the exit_reason and exception info. */
++	movl	$SGX_INTERRUPT_EXIT, EXIT_REASON_OFFSET(%rbx)
++	jmp	.Lhandle_exit
++
+ .Lhandle_exception:
+ 	mov	RUN_OFFSET(%rbp), %rbx
+ 
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 80a8b7a949a23..beeabfad6eb81 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -76,6 +76,7 @@ struct sgx_enclave_set_attribute {
+ 
+ #define SGX_SYNCHRONOUS_EXIT	0
+ #define SGX_EXCEPTION_EXIT	1
++#define SGX_INTERRUPT_EXIT	2
+ 
+ struct sgx_enclave_run;
+ 
+@@ -116,6 +117,8 @@ struct sgx_enclave_exception {
+ 	__u64 address;
+ };
+ 
++#define SGX_EXIT_ON_INTERRUPTS	(1ULL << 0)
++
+ /**
+  * struct sgx_enclave_run - Control structure for __vdso_sgx_enter_enclave()
+  *
 -- 
 2.28.0
 
