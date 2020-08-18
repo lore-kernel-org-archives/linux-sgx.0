@@ -2,350 +2,99 @@ Return-Path: <SRS0=y25d=B4=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB4EC433DF
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 04:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5096DC433DF
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 13:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0435F20706
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 04:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 366C620786
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 13:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbgHREYQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Aug 2020 00:24:16 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16707 "EHLO mga07.intel.com"
+        id S1726612AbgHRNay (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Aug 2020 09:30:54 -0400
+Received: from mga12.intel.com ([192.55.52.136]:30975 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbgHREYP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 18 Aug 2020 00:24:15 -0400
-IronPort-SDR: cgHGiAnmsrg1iPAC9HGrtAlJrT0l3fTYzXGJFj1XigNR9Vk7gDWqk0jv6t/U8zA+2P3IOH0V06
- T/V1K/iU2JzQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="219156475"
-X-IronPort-AV: E=Sophos;i="5.76,326,1592895600"; 
-   d="scan'208";a="219156475"
+        id S1726398AbgHRNaq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 18 Aug 2020 09:30:46 -0400
+IronPort-SDR: jNdtA3Y7TU7DSpeWm+hkBTwXujSn1HEyRfk+htIHdLshtAHxL8FfuYEqHF4ATvazDEXbR+iORW
+ OSvMhmMhTEHw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="134417565"
+X-IronPort-AV: E=Sophos;i="5.76,327,1592895600"; 
+   d="scan'208";a="134417565"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2020 21:24:06 -0700
-IronPort-SDR: PnNvu9envSEOTKJeD+4oJBgO6jQHcRuJZ076ZHBg8KYFUFwy3nMWODolUqymSAk6cxyk+mqwhN
- NbVsMhmrrC2w==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2020 06:30:44 -0700
+IronPort-SDR: jXUvZvRc+cIhhVBV2rYBhufEk84sPAFYVdOiBEwrwpRlcSSFTst3dT741J0f+18reKSDfNcmNW
+ VtGIKQJbXNxA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,326,1592895600"; 
-   d="scan'208";a="334270267"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.160])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Aug 2020 21:24:06 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
-        Cedric Xing <cedric.xing@intel.com>,
+X-IronPort-AV: E=Sophos;i="5.76,327,1592895600"; 
+   d="scan'208";a="292764503"
+Received: from ribnhajh-mobl.ger.corp.intel.com (HELO localhost) ([10.249.47.113])
+  by orsmga003.jf.intel.com with ESMTP; 18 Aug 2020 06:30:36 -0700
+Date:   Tue, 18 Aug 2020 16:30:36 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Darren Kenny <darren.kenny@oracle.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-sgx@vger.kernel.org
-Subject: [RFC PATCH 2/4] x86/vdso: x86/sgx: Rework __vdso_sgx_enter_enclave() API
-Date:   Mon, 17 Aug 2020 21:24:03 -0700
-Message-Id: <20200818042405.12871-3-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200818042405.12871-1-sean.j.christopherson@intel.com>
-References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v36 15/24] x86/sgx: Allow a limited use of
+ ATTRIBUTE.PROVISIONKEY for attestation
+Message-ID: <20200818133026.GA132200@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+ <20200716135303.276442-16-jarkko.sakkinen@linux.intel.com>
+ <m27dubr9pp.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <m27dubr9pp.fsf@oracle.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Rework __vdso_sgx_enter_enclave() to use a struct to hold the input and
-output params.  In the new struct, add an opaque "user_data" that can be
-used to pass context across the vDSO, and an explicit "exit_reason" to
-avoid overloading the return value.
+On Thu, Aug 06, 2020 at 06:00:02PM +0100, Darren Kenny wrote:
+> On Thursday, 2020-07-16 at 16:52:54 +03, Jarkko Sakkinen wrote:
+> > Provisioning Certification Enclave (PCE), the root of trust for other
+> > enclaves, generates a signing key from a fused key called Provisioning
+> > Certification Key. PCE can then use this key to certify an attestation key
+> > of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
+> > hardware if the Intel signed PCE is used.
+> >
+> > To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
+> > only allowed for those who actually need it so that only the trusted
+> > parties can certify QE's.
+> >
+> > Obviously the attestation service should know the public key of the used
+> > PCE and that way detect illegit attestation, but whitelisting the legit
+> > users still adds an additional layer of defence.
+> >
+> > Add new device file called /dev/sgx/provision. The sole purpose of this
+> > file is to provide file descriptors that act as privilege tokens to allow
+> > to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
+> > SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
+> >
+> > Cc: linux-security-module@vger.kernel.org
+> > Acked-by: Jethro Beekman <jethro@fortanix.com>
+> > Suggested-by: Andy Lutomirski <luto@kernel.org>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 
-Moving the params into a struct will also make it less painful to use
-dedicated exit reasons, and to support exiting on interrupts in future
-patches.
+Thanks, I added your tags to the corresponding commits.
 
-Cc: Nathaniel McCallum <npmccallum@redhat.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/entry/vdso/vsgx_enter_enclave.S | 72 ++++++++++++-------
- arch/x86/include/uapi/asm/sgx.h          | 90 ++++++++++++++++--------
- 2 files changed, 107 insertions(+), 55 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-index 2d88acd408d4e..aaae6d6e28ac3 100644
---- a/arch/x86/entry/vdso/vsgx_enter_enclave.S
-+++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-@@ -7,9 +7,21 @@
- 
- #include "extable.h"
- 
--#define EX_LEAF		0*8
--#define EX_TRAPNR	0*8+4
--#define EX_ERROR_CODE	0*8+6
-+/* Offset of 'struct sgx_enter_enclave' relative to %rbp. */
-+#define RUN_OFFSET	2*8
-+
-+/* Offsets into 'struct sgx_enter_enclave'. */
-+#define TCS_OFFEST		0*8
-+#define FLAGS_OFFSET		1*8
-+#define EXIT_LEAF_OFFSET	2*8
-+#define EXIT_REASON_OFFSET	2*8 + 4
-+#define USER_HANDLER_OFFSET	3*8
-+/* #define USER_DATA_OFFSET	4*8 */
-+#define EXCEPTION_OFFSET	5*8
-+
-+/* Offsets into sgx_enter_enclave.exception. */
-+#define EX_TRAPNR	0*8
-+#define EX_ERROR_CODE	0*8+2
- #define EX_ADDRESS	1*8
- 
- .code64
-@@ -30,12 +42,18 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- .Lenter_enclave:
- 	/* EENTER <= leaf <= ERESUME */
- 	cmp	$EENTER, %eax
--	jb	.Linvalid_leaf
-+	jb	.Linvalid_input
- 	cmp	$ERESUME, %eax
--	ja	.Linvalid_leaf
-+	ja	.Linvalid_input
-+
-+	mov	RUN_OFFSET(%rbp), %rcx
-+
-+	/* No flags are currently defined/supported. */
-+	cmpq	$0, FLAGS_OFFSET(%rcx)
-+	jne	.Linvalid_input
- 
- 	/* Load TCS and AEP */
--	mov	0x10(%rbp), %rbx
-+	mov	TCS_OFFEST(%rcx), %rbx
- 	lea	.Lasync_exit_pointer(%rip), %rcx
- 
- 	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
-@@ -44,13 +62,21 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- 	enclu
- 
- 	/* EEXIT jumps here unless the enclave is doing something fancy. */
--	xor	%eax, %eax
-+	mov	RUN_OFFSET(%rbp), %rbx
-+
-+	/* Set exit_reason. */
-+	movl	$0, EXIT_REASON_OFFSET(%rbx)
- 
- 	/* Invoke userspace's exit handler if one was provided. */
- .Lhandle_exit:
--	cmpq	$0, 0x20(%rbp)
-+	mov	%eax, EXIT_LEAF_OFFSET(%rbx)
-+
-+	cmpq	$0, USER_HANDLER_OFFSET(%rbx)
- 	jne	.Linvoke_userspace_handler
- 
-+	/* Success, in the sense that ENCLU was attempted. */
-+	xor	%eax, %eax
-+
- .Lout:
- 	pop	%rbx
- 	leave
-@@ -60,28 +86,28 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- 	/* The out-of-line code runs with the pre-leave stack frame. */
- 	.cfi_def_cfa		%rbp, 16
- 
--.Linvalid_leaf:
-+.Linvalid_input:
- 	mov	$(-EINVAL), %eax
- 	jmp	.Lout
- 
- .Lhandle_exception:
--	mov	0x18(%rbp), %rcx
--	test    %rcx, %rcx
--	je	.Lskip_exception_info
-+	mov	RUN_OFFSET(%rbp), %rbx
- 
--	/* Fill optional exception info. */
--	mov	%eax, EX_LEAF(%rcx)
--	mov	%di,  EX_TRAPNR(%rcx)
--	mov	%si,  EX_ERROR_CODE(%rcx)
--	mov	%rdx, EX_ADDRESS(%rcx)
--.Lskip_exception_info:
--	mov	$(-EFAULT), %eax
-+	/* Set the exit_reason and exception info. */
-+	movl	$(-EFAULT), EXIT_REASON_OFFSET(%rbx)
-+
-+	mov	%di,  (EXCEPTION_OFFSET + EX_TRAPNR)(%rbx)
-+	mov	%si,  (EXCEPTION_OFFSET + EX_ERROR_CODE)(%rbx)
-+	mov	%rdx, (EXCEPTION_OFFSET + EX_ADDRESS)(%rbx)
- 	jmp	.Lhandle_exit
- 
- .Linvoke_userspace_handler:
- 	/* Pass the untrusted RSP (at exit) to the callback via %rcx. */
- 	mov	%rsp, %rcx
- 
-+	/* Save @e, %rbx is about to be clobbered. */
-+	mov	%rbx, %rax
-+
- 	/* Save the untrusted RSP offset in %rbx (non-volatile register). */
- 	mov	%rsp, %rbx
- 	and	$0xf, %rbx
-@@ -93,20 +119,18 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- 	and	$-0x10, %rsp
- 	push	%rax
- 
--	/* Push @e, the "return" value and @tcs as params to the callback. */
--	push	0x18(%rbp)
-+	/* Push @e as a param to the callback. */
- 	push	%rax
--	push	0x10(%rbp)
- 
- 	/* Clear RFLAGS.DF per x86_64 ABI */
- 	cld
- 
- 	/* Load the callback pointer to %rax and invoke it via retpoline. */
--	mov	0x20(%rbp), %rax
-+	mov	USER_HANDLER_OFFSET(%rax), %rax
- 	call	.Lretpoline
- 
- 	/* Undo the post-exit %rsp adjustment. */
--	lea	0x20(%rsp, %rbx), %rsp
-+	lea	0x10(%rsp, %rbx), %rsp
- 
- 	/*
- 	 * If the return from callback is zero or negative, return immediately,
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 3760e5d5dc0c7..d3b107aac279d 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -74,6 +74,28 @@ struct sgx_enclave_set_attribute {
- 	__u64 attribute_fd;
- };
- 
-+struct sgx_enclave_run;
-+
-+/**
-+ * typedef sgx_enclave_exit_handler_t - Exit handler function accepted by
-+ *					__vdso_sgx_enter_enclave()
-+ *
-+ * @rdi:	RDI at the time of enclave exit
-+ * @rsi:	RSI at the time of enclave exit
-+ * @rdx:	RDX at the time of enclave exit
-+ * @ursp:	RSP at the time of enclave exit (untrusted stack)
-+ * @r8:		R8 at the time of enclave exit
-+ * @r9:		R9 at the time of enclave exit
-+ * @r:		Pointer to struct sgx_enclave_run (as provided by caller)
-+ *
-+ * Return:
-+ *  0 or negative to exit vDSO
-+ *  positive to re-enter enclave (must be EENTER or ERESUME leaf)
-+ */
-+typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-+					  long ursp, long r8, long r9,
-+					  struct sgx_enclave_run *r);
-+
- /**
-  * struct sgx_enclave_exception - structure to report exceptions encountered in
-  *				  __vdso_sgx_enter_enclave()
-@@ -85,31 +107,43 @@ struct sgx_enclave_set_attribute {
-  * @reserved:	reserved for future use
-  */
- struct sgx_enclave_exception {
--	__u32 leaf;
- 	__u16 trapnr;
- 	__u16 error_code;
-+	__u32 reserved;
- 	__u64 address;
--	__u64 reserved[2];
- };
- 
- /**
-- * typedef sgx_enclave_exit_handler_t - Exit handler function accepted by
-- *					__vdso_sgx_enter_enclave()
-+ * struct sgx_enclave_run - Control structure for __vdso_sgx_enter_enclave()
-  *
-- * @rdi:	RDI at the time of enclave exit
-- * @rsi:	RSI at the time of enclave exit
-- * @rdx:	RDX at the time of enclave exit
-- * @ursp:	RSP at the time of enclave exit (untrusted stack)
-- * @r8:		R8 at the time of enclave exit
-- * @r9:		R9 at the time of enclave exit
-- * @tcs:	Thread Control Structure used to enter enclave
-- * @ret:	0 on success (EEXIT), -EFAULT on an exception
-- * @e:		Pointer to struct sgx_enclave_exception (as provided by caller)
-+ * @tcs:		Thread Control Structure used to enter enclave
-+ * @flags:		Control flags
-+ * @exit_leaf:		ENCLU leaf from \%eax at time of exit
-+ * @exit_reason:	Cause of exit from enclave, e.g. EEXIT vs. exception
-+ * @user_handler:	User provided exit handler (optional)
-+ * @user_data:		User provided opaque value (optional)
-+ * @exception:		Valid on exit due to exception
-  */
--typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
--					  long ursp, long r8, long r9,
--					  void *tcs, int ret,
--					  struct sgx_enclave_exception *e);
-+struct sgx_enclave_run {
-+	__u64 tcs;
-+	__u64 flags;
-+
-+	__u32 exit_leaf;
-+	__u32 exit_reason;
-+
-+	union {
-+		sgx_enclave_exit_handler_t user_handler;
-+		__u64 __user_handler;
-+	};
-+	__u64 user_data;
-+
-+	union {
-+		struct sgx_enclave_exception exception;
-+
-+		/* Pad the entire struct to 256 bytes. */
-+		__u8 pad[256 - 40];
-+	};
-+};
- 
- /**
-  * __vdso_sgx_enter_enclave() - Enter an SGX enclave
-@@ -119,16 +153,14 @@ typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-  * @leaf:	ENCLU leaf, must be EENTER or ERESUME
-  * @r8:		Pass-through value for R8
-  * @r9:		Pass-through value for R9
-- * @tcs:	TCS, must be non-NULL
-- * @e:		Optional struct sgx_enclave_exception instance
-- * @handler:	Optional enclave exit handler
-+ * @r:		struct sgx_enclave_run, must be non-NULL
-  *
-  * NOTE: __vdso_sgx_enter_enclave() does not ensure full compliance with the
-- * x86-64 ABI, e.g. doesn't explicitly clear EFLAGS.DF after EEXIT.  Except for
-- * non-volatile general purpose registers, preserving/setting state in
-- * accordance with the x86-64 ABI is the responsibility of the enclave and its
-- * runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C code
-- * without careful consideration by both the enclave and its runtime.
-+ * x86-64 ABI, e.g. doesn't handle XSAVE state.  Except for non-volatile
-+ * general purpose registers, EFLAGS.DF, and RSP alignment, preserving/setting
-+ * state in accordance with the x86-64 ABI is the responsibility of the enclave
-+ * and its runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C
-+ * code without careful consideration by both the enclave and its runtime.
-  *
-  * All general purpose registers except RAX, RBX and RCX are passed as-is to
-  * the enclave.  RAX, RBX and RCX are consumed by EENTER and ERESUME and are
-@@ -160,16 +192,12 @@ typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-  * without returning to __vdso_sgx_enter_enclave().
-  *
-  * Return:
-- *  0 on success,
-+ *  0 on success (ENCLU reached),
-  *  -EINVAL if ENCLU leaf is not allowed,
-- *  -EFAULT if an exception occurs on ENCLU or within the enclave
-- *  -errno for all other negative values returned by the userspace exit handler
-  */
- typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
- 					unsigned long rdx, unsigned int leaf,
- 					unsigned long r8,  unsigned long r9,
--					void *tcs,
--					struct sgx_enclave_exception *e,
--					sgx_enclave_exit_handler_t handler);
-+					struct sgx_enclave_run *r);
- 
- #endif /* _UAPI_ASM_X86_SGX_H */
--- 
-2.28.0
-
+/Jarkko
