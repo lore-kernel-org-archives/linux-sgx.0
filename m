@@ -7,150 +7,154 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47726C433E1
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 14:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CFBC433E1
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 14:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1160B2067C
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 14:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B5C020639
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 14:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="FxHIhTfl"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="CTWaG7Bs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbgHSOBR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Aug 2020 10:01:17 -0400
-Received: from mail-dm6nam11on2123.outbound.protection.outlook.com ([40.107.223.123]:9921
+        id S1726953AbgHSOVW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Aug 2020 10:21:22 -0400
+Received: from mail-dm6nam11on2137.outbound.protection.outlook.com ([40.107.223.137]:52961
         "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726209AbgHSOBN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 19 Aug 2020 10:01:13 -0400
+        id S1726560AbgHSOVU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 19 Aug 2020 10:21:20 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Or4jSZaWPAefCmC6N6ZtbUvguVlTGGNtS3DYVWVFQV1O8UHfa50EyCs5Y0I4J4KHR7/r0cr6Ub7m71b1yJCymbgC0joeRNs5n3oldCIX9FBohztwc8Ka2MF1dahTCtueTj1CT1+uBLuAMyiIdKp64gTxFAK9g/jWe+vOVD+5/k5nz8pjgA8R0NGwDWlupK6mjND+lPADnxGo0lhWe1Fvbrf3d/eNdYQgHvrpnUXBbHzaW3C2oXcD6OqZik1/e2ENApvb49mXQnTcj+Kk2ptPUiXlK4TJ2P1i2IjqWBbojW5IUMZcET6ybGegsz0LN0lVAOzB2e2qhJdYllH+VClyAA==
+ b=T/veT09LlQcLFRe9AxF86iJ6mu7KG42ac+TK6PaDojwiJOrsXYazeFQsnwUCOzgug6C9WCqTG79XhxkextO2k/7x4tb1Ta+Er+rp5d7shpNtby9HGuIJuMhfZDu1HX0W38cdZQpFosv3VOOTx0DjFN8And0EA0+xdPulmBU1rPC3Lh6PzS+2BvH53eOX+aVv34FpI2oOtkHFkLVTyRONzS6JK2MBTVWAiIT6m0Wi6F9ppIearhRYO2dBhwmIGy7KwUbKseFlZOkOm6qbR4YUuzEpgRDi8KR9v2ZE0DkwdWfXY4hAAYgi283TJ4n453rtd/5f59Tpar92tnjudFpVBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vC2nhcbUlAsGoLz4Mgml1mT+zwBB3gH/lJlmcJfUL8g=;
- b=Y09zfdpcqxnYuCU6WN+xqdmNxMDPsw9F7ztGOd/vCAmwuK/2a8i+06lyh2rd3iBNFyjpigTpCYdficpU/sETW8dl5ldqnSWDky/kcMMbsN/5mfMwKYXUr7LkBy6AC1X+4TOedN53h0kKw6QoFAa+lvTQ+F1cpDai/QPXQ7QH6Lr6yztB7m8UzqovNFRZxY/WcPqC8Kdq+8DP8dAVb5ScG9YIc6Qb0nBqbPdw5i7FsOetO0XN36nCxIIk1VVfbLXljRjcBml81slQEzBb9DPA4IxILhfJQsQFdh6mMFscbrB1Wy9kQmumtksvv+3Vnb/m7eYG2/CZCNFW6DBUkN6WiA==
+ bh=pPz2se7jl7KpGQm9DJSwfLE3aluz0o8v/B8J6N3cO8Q=;
+ b=cCHu2KpUM04iXdcGoFkiqjoJD/i0FvRXTDTZCMDAbXnFeVeIG3jO6ttyjvtRljUnXlpLHlZhFUgn72g8Ah52SKokssc9eNuJmEOa8bGJhdC1Q6DtQ2wO9Ad3pJbz5dXOD3eBnxrgNtVeV3bf8PSCLMorBYd/OMK4goYOs1A9M6bX3sDRMkWNu81rDFK5NdRMjsYUisFxWRIvGJOTvTW1ci4vlf+tzmzEhGonq7qlYq3mFSIyCFc+rzvMGPuPSIEWvOYjp1yJGUyLdZrOVCfX1DBRfmiok+fETjRypxhHRBIzf4Hi2ZBQ+YS0/xoav0zmiZZ/qsQ2nGCMBCiDtBnQ4w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
  dkim=pass header.d=fortanix.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vC2nhcbUlAsGoLz4Mgml1mT+zwBB3gH/lJlmcJfUL8g=;
- b=FxHIhTflKNY6rxteD6n5LWX+weiL73cVuJXQ7Xkd5cWCIoJL+4Is5Vh8vHfpkM0Q1dgiU/XBxoULWSIVlA9D68MpV/mYEdczbehAKTeEXsD+AeZTRitxreL03+koKcGl4G2r0fj2V6MlHE9mBvyNN9iGWRqRoBv4cmROPYNV1sw=
-Authentication-Results: google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=none action=none header.from=fortanix.com;
+ bh=pPz2se7jl7KpGQm9DJSwfLE3aluz0o8v/B8J6N3cO8Q=;
+ b=CTWaG7BsSk+bWVzeNXAkhKYK1BS1pbaZSlpjZRtsFdEEZg9KYqJ6Z/0JPsG378N1lq4ali6P9nPO7AfuVK0yx3LWXzlutBkc+Q91GdVVx1l1vmZE3DCWbLdlTr9rENfAVZZEg6oeqMaAFg9HmJ01UjxUdaGIqw+84icy8LsdzaM=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=fortanix.com;
 Received: from BY5PR11MB4260.namprd11.prod.outlook.com (2603:10b6:a03:1ba::30)
- by BYAPR11MB3302.namprd11.prod.outlook.com (2603:10b6:a03:7b::21) with
+ by BY5PR11MB4353.namprd11.prod.outlook.com (2603:10b6:a03:1b9::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3283.20; Wed, 19 Aug
- 2020 14:01:08 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3283.23; Wed, 19 Aug
+ 2020 14:21:15 +0000
 Received: from BY5PR11MB4260.namprd11.prod.outlook.com
  ([fe80::11b2:63eb:a7db:80c5]) by BY5PR11MB4260.namprd11.prod.outlook.com
  ([fe80::11b2:63eb:a7db:80c5%6]) with mapi id 15.20.3283.028; Wed, 19 Aug 2020
- 14:01:07 +0000
-Subject: Re: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-To:     Nathaniel McCallum <npmccallum@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        chenalexchen@google.com, Conrad Parker <conradparker@google.com>,
-        cyhanish@google.com, Dave Hansen <dave.hansen@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Neil Horman <nhorman@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
- <20200810222317.GG14724@linux.intel.com>
- <20200818145234.GC132200@linux.intel.com>
- <20200818150627.GD132200@linux.intel.com>
- <CAOASepNxu0YtSPjXynLaVgyt-S0uSad8HVrNgMNWf+Z7iamPvQ@mail.gmail.com>
- <20200818164353.GH137138@linux.intel.com>
- <CAOASepMABkAxMRY7fJr4bAqadYyVrhZkb0BmB8cTcXUL_VmwQw@mail.gmail.com>
+ 14:21:15 +0000
+Subject: Re: [RFC PATCH 4/4] x86/vdso: x86/sgx: Allow the user to exit the
+ vDSO loop on interrupts
+To:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Cedric Xing <cedric.xing@intel.com>, linux-sgx@vger.kernel.org
+References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
+ <20200818042405.12871-5-sean.j.christopherson@intel.com>
+ <CALCETrVRAdzFcJOJN6oU1F7hC57zYSmFZi6y2DwhU0sd27FJjQ@mail.gmail.com>
 From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <030542d9-4fb1-15c1-0146-d27bac08024a@fortanix.com>
-Date:   Wed, 19 Aug 2020 16:00:55 +0200
+Message-ID: <6109f3e1-0579-67c6-0a02-f9b931ba1fac@fortanix.com>
+Date:   Wed, 19 Aug 2020 16:21:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
-In-Reply-To: <CAOASepMABkAxMRY7fJr4bAqadYyVrhZkb0BmB8cTcXUL_VmwQw@mail.gmail.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090108030804060303050605"
-X-ClientProxiedBy: LO2P265CA0284.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a1::32) To BY5PR11MB4260.namprd11.prod.outlook.com
+In-Reply-To: <CALCETrVRAdzFcJOJN6oU1F7hC57zYSmFZi6y2DwhU0sd27FJjQ@mail.gmail.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030603090703020505040202"
+X-ClientProxiedBy: LO2P265CA0137.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::29) To BY5PR11MB4260.namprd11.prod.outlook.com
  (2603:10b6:a03:1ba::30)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.195.0.246] (212.61.132.179) by LO2P265CA0284.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:a1::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25 via Frontend Transport; Wed, 19 Aug 2020 14:01:02 +0000
+Received: from [10.195.0.246] (212.61.132.179) by LO2P265CA0137.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:9f::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3283.15 via Frontend Transport; Wed, 19 Aug 2020 14:21:13 +0000
 X-Originating-IP: [212.61.132.179]
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ba64b3cb-b394-4081-1140-08d8444851a3
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3302:
-X-Microsoft-Antispam-PRVS: <BYAPR11MB3302ABD479C5482BA9CA4CEFAA5D0@BYAPR11MB3302.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-MS-Office365-Filtering-Correlation-Id: c5f855c2-23c0-4183-eddf-08d8444b21b6
+X-MS-TrafficTypeDiagnostic: BY5PR11MB4353:
+X-Microsoft-Antispam-PRVS: <BY5PR11MB43539A5DFD0824CD5A27950CAA5D0@BY5PR11MB4353.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4JEYw0GtYdNeHtSHVOxJhe9RUcKVnI/SNOl3y0ldsHp9WTIqPN+C5O42cXtqTHYfHIvVx/wTX8fPKC3n0i49WPsgSuE0hLneOvhy+8iXgKyyiJLwp+nkaNXrf4W6U4CbRwjA1Rw3A6/fEEHtjIT6JZQkwVGlijSkliTznJmEctq4flNIYSmMyQzrVtQXHGjSg2yFTvjWVoz7VtMVJ/pHvrdUKKb0/iTOHjF3uPguBVRVCsZe3Lisxt3RxVg2SSjCTbwNyKPUDePCs98Kmf8e6EgW6dVCmOqUDAO0bysWBFWvyTNFVrewXYKvNK6krw2/xjvcBjmOn+u6qelg1N+XCWUbW3ucDdg2sE8TiPfy2KPxQ8VmG241HRNpcJmlR5NU
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4260.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(346002)(39840400004)(396003)(366004)(26005)(54906003)(8936002)(316002)(66946007)(66556008)(36756003)(31696002)(66476007)(235185007)(53546011)(6486002)(52116002)(110136005)(5660300002)(186003)(16576012)(8676002)(2906002)(16526019)(4326008)(33964004)(7416002)(31686004)(86362001)(2616005)(956004)(478600001)(6666004)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: cGdAGx1hpXVplBn7VWZiXs4wvMdATIATgA/d/O5ajkcfuYi3IAagpnG/gLYQylX+qTHrMaAOkpGI/hhSh0c/BUyHiH0eXIzVj5fkmXYA+LFmiU5miqCYP2A/rfYWj24haexJViSvSqp0plCrN/re2npCptdz42pyUW60JLvpJtiAyxqe4J6yIrvMspVcP3EccM/1gD4fyxtpN18k9oit3qO5fNQQkdqIJhP7LCDucUBoBbgXHXqo7HOwktnyZ8oo3fvt9PxXWwW6voYt1X9ECgugf97fimapJzWLZS8VhRfRr/31D8ZnvUyHkhMAM1ry7eXEp/NkfFjOo+atsXsQ6V7pDhXEVEUDNo8DlewTdJ6l6TJ/9mc0NphqEj33LZOIsB1svbtbvCbjtigw6wrvVMtbDfSg3t5BxUNJUtAxLlhKpWztc0mTWqqd0HHcVmQ4hUykGDUBtFqqYV9vTXtSdQCTsTZEIAM1yifGd3Wl73eUfH7kCYycAkvUe5vJY2m43sP0eBWWiUnXwuYUSkshMk6ZDzFV9ymAKABiH6wCdx6QUcZpqutr/9LFgqeTumHGPBEkNOj2Ufl1xM0q5CgxgjPZAX3bKSotmkS+KBPsbOLNgyZp7dYMZJ6lZd348U6Bjsfjt3hXlYbnEZKx9rYzVw==
+X-Microsoft-Antispam-Message-Info: Wa3XwRibd1m4AhV0AOZBLByxwBXcAH1ObrwWHw5WQdl2GKR4UiI0EAR6szu9ILssA4EiJ8s07yaZQSla8UpdCjMwKwwn9WWKdlV0i6buBcHrqU9XYNVkleyoyj7Ph8Qh7poqAvzHPPQksHKF1k9XacUPxIRdnmh55jvbYVv+XT/473XsUNdGlfa4W8X2UBeYmpXRpMCtoobJBZkwKkc+D8sJ8ZGZr2nZks36Nu9a1IIle9mFLuPMSBtel8ORhZ3pHQAuDTtQhACucWZIMfMmu0rROtGC3RGPYP1mmyRU+JrRN8qd92rzwOSWOnkj0ty3n4x2N6jAp2wsZ1XKeTO1duSU5JrS2al+aBUnwXudjAcumuvnfKWtX6U4QdkqXWz1
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4260.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(366004)(6666004)(2906002)(86362001)(31686004)(110136005)(36756003)(83380400001)(16526019)(235185007)(53546011)(54906003)(5660300002)(186003)(52116002)(26005)(16576012)(33964004)(8936002)(508600001)(2616005)(31696002)(66946007)(6486002)(66476007)(66556008)(8676002)(4326008)(956004)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: VUlc0lLH1trUq0pYo94AK6/RwoF9Vkqy2PfFkgSoJx/uq+0DzdF0AUCDbKeW9EaFhfOM494wWpnqEH7CXWd3JTx+RTlCnRmDqu51iOHuKWVLnkMq070WvgqgVjYvR5mLW8ZFWBe0LUaQ6+/+s8be+h2ySneeJrd96ON5BOd9ffTehcmGpqZDFZEYTWe8AaEFVFGvxMjU6g/Kyjoaso3uf0FQw7R2kuopRdJnRY2SH4hcxHOwRSbYw80eHVsck8jqeaTmwWuBcvdW2Ph7j4gaxZfauxFUJ5czaVi4QcmwfQo7BdxcutNnrm34FutCDZNBeyM9mZwBbdhm4LZtPAysZFpENOvChCE3T2oxnbc64waHeNZO84bv6GObM3akegQ1zLDcBYnsWO2dT+7ybV8PEXfcTQO3WwAJrV/cs7hdMURcL7LoGzVl2OctXZmVSoTxXQhGo42dGHvdgmUEq7+JtwZIZR7FgRkpYG+1vG29SBnL+dhTecbyH+mqLa2T+ddtIBKYLlGG6hpbZCTaZkzN8CBGe5pWOY74+uzxC7yIhczGoEB32ySyzfwOAenNq0pAE1UfoUKycNJbdeqVcvKLIIXsi7MycUM0s2zs1dX7gYxpz7coshvPXVsWzT6Iok7/HTXqBvl2K2BmWGlhg1A7AA==
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba64b3cb-b394-4081-1140-08d8444851a3
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5f855c2-23c0-4183-eddf-08d8444b21b6
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR11MB4260.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2020 14:01:07.6877
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2020 14:21:15.4146
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B5/BCiIh2wmEnL1jYPBo/6ZRDitdaMqfefOvZKKKMhKwPXOgGloU4v8xtK3n+1JVAGV034s6SLBLAFCpexIU3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3302
+X-MS-Exchange-CrossTenant-UserPrincipalName: tE2Q8bqn8jwFsIDChxxUMyMtTEi03nZ3eL+7Tr2P+bEO5PjXcAI//6Igf2zX58/dtiO0pMlF4ybR2dJ4MDvrZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4353
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms090108030804060303050605
+--------------ms030603090703020505040202
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2020-08-19 15:33, Nathaniel McCallum wrote:
-> On Tue, Aug 18, 2020 at 12:44 PM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
+On 2020-08-18 19:15, Andy Lutomirski wrote:
+> On Mon, Aug 17, 2020 at 9:24 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
 >>
->> On Tue, Aug 18, 2020 at 11:15:32AM -0400, Nathaniel McCallum wrote:
->>> That seems like overkill to me. I'm just asking for one additional mo=
-v
->>> instruction. :)
->>
->> I started to consider eBPF since the complexity and constraints of the=
+>> Allow userspace to exit the vDSO on interrupts that are acknowledged
+>> while the enclave is active.  This allows the user's runtime to switch=
 
->> callback look like an overkill and without doubt will be a burden to
->> maintain.
+>> contexts at opportune times without additional overhead, e.g. when usi=
+ng
+>> an M:N threading model (where M user threads run N TCSs, with N > M).
 >=20
-> That feels to me like more complexity just to move the existing
-> complexity from one place to another.
->=20
+> This is IMO rather odd.  We don't support this type of notification on
+> interrupts for normal user code.  The fact user code can detect
+> interrupts during enclave execution is IMO an oddity of SGX, and I
+> have asked Intel to consider replacing the AEX mechanism with
+> something more transparent to user mode.  If this ever happens, this
+> mechanism is toast.
 
-Agreed that BPF doesn't make things better.
+Let's design the current interface for the current architecture. We can d=
+eal with a new architecture if and when Intel provides it.
+
+> Even without architecture changes, building a *reliable* M:N threading
+> mechanism on top of this will be difficult or impossible, as there is
+> no particular guarantee that a thread will get timing interrupts at> al=
+l or that these interrupts will get lucky and hit enclave code, thus
+> triggering an AEX.  We certainly don't, and probably never will,
+> support any corresponding feature for non-enclave code.
+
+There's no guarantee, but this vDSO exit mechanism is a prerequisite. Bot=
+h for context switching and aborting an enclave, userspace *must* have a =
+way to trigger exit from enclave mode *and* recover the user stack in a s=
+ane manner. Userspace *should* also be able to do this in a way that's co=
+mpatible with library use, so calling timer_create or pthread_kill to del=
+iver a signal would be ok, but installing a signal handler should be avoi=
+ded (the whole reason behind this vDSO call).
+
+> So this seems like an odd, and possibly unsupportable, feature to add.
+
+I can implement all this without the vDSO call today, so why not support =
+it? That just means not everyone is going to use the vDSO call, again res=
+ulting in potential problems when multiple libraries want to use enclaves=
+=2E
+
+> --Andy
+>=20
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms090108030804060303050605
+--------------ms030603090703020505040202
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -216,8 +220,8 @@ fCQY/fJUMYID9jCCA/ICAQEwgZcwgYIxCzAJBgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8x
 DzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5Njcx
 LDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZY
 ZTtbKgQCBwyyMA0GCWCGSAFlAwQCAQUAoIICLzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMDA4MTkxNDAwNTVaMC8GCSqGSIb3DQEJBDEiBCAVhgPhoXtm
-5++lE0s6JZ8YjQOYzLjnyEU59it7GU2p3DBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQB
+MBwGCSqGSIb3DQEJBTEPFw0yMDA4MTkxNDIxMDhaMC8GCSqGSIb3DQEJBDEiBCArlppzkowq
+NK3lc1O8IWKFMekIplLg17p3k3uzwQTmwzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQB
 KjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMC
 AgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGoBgkrBgEEAYI3EAQxgZowgZcwgYIxCzAJ
 BgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwa
@@ -226,11 +230,11 @@ dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZYZTtbKgQCBwyyMIGqBgsqhkiG9w0BCRACCzGB
 mqCBlzCBgjELMAkGA1UEBhMCSVQxDzANBgNVBAgMBk1pbGFubzEPMA0GA1UEBwwGTWlsYW5v
 MSMwIQYDVQQKDBpBY3RhbGlzIFMucC5BLi8wMzM1ODUyMDk2NzEsMCoGA1UEAwwjQWN0YWxp
 cyBDbGllbnQgQXV0aGVudGljYXRpb24gQ0EgRzECEAUWv5wLRlhlO1sqBAIHDLIwDQYJKoZI
-hvcNAQEBBQAEggEAF5kyGmPh3nfhbA+A6iHsaohlBXk2WZq85u0HiuiT9QmuDT4JPRU/Cfco
-XKRegGnLJ3pvoBMeJDBP1Tmo+TDE24KlynadPJa+LG6IgfU9Yga8K/DR70IupTNuuFZsUpjk
-p2iaBz5CUt/dKKpEm274+r2e4/tqDcYXN8J+CljsHEsigoi7RZN+JsBpJ3lGYoIqyIZnGmpd
-awdcKxekTRZdoz/7IPWlUrPnZWRCpOqkOENSSY3wnBsBbzi5CeTZtcRibcm4kGXfbceVZApv
-Bj+t2PEXO5MNUEbwUz6/AMqjiI5ppMHHbq4iBpbHqCdHaDqS0uHSglz2ZMPTuf6BQXI7awAA
+hvcNAQEBBQAEggEACwboFvF9+pUVJ9gPX5GJo2v7d8Y4+JaP8L95ArkAnbU78J4iCcL6mRqM
+EBwqQShqZ4odOHv35SIQ3t1Flyg3TZ+qD/7H24aBg2PKLv08IMwwn4CtM9jcsKw3cpIgyTpK
+kqBaljyFnOVXa0g/g7p6WkzbBWcXZHSHU1b3b2EI0HCak007RmCvgBNtH2d52n7sa3Spl5c5
+SPwqRUPATuxEUcyM10r9r0BH7ZsiPvCxFRi+YGT4so9jkJsvv+0+343Pf8ou1iyNue6YcX+k
+ztweZ7SxGtFXgz3ROLn77T6kW7kaHAMpq5I9rFk5mwM1lVRUSXz7kE75PvbW3hA1gwve4gAA
 AAAAAA==
 
---------------ms090108030804060303050605--
+--------------ms030603090703020505040202--
