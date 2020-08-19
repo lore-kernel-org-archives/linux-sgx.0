@@ -2,137 +2,129 @@ Return-Path: <SRS0=I8pg=B5=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6DBC433DF
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 15:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB27C433DF
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 20:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68C582076E
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 15:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597849386;
-	bh=DTsxGWRguc9gXJQEhpyyfMrSqpLRVbFAvw1E9BKHzlg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MZE5LPu4u6sp6VXxwyH7noae0NWnCAsqxmOvEWMF5yrPhHU5cI8+a6lFcfcr/wrS+
-	 T6AB1wU2fvMgerDt20fMpxYZ2IOAuvMs4AzXFRuRZGMAFijwMjhzJTO2K8JyHsD+xy
-	 RqZqgxQ6tIX20+MTpjREf4XBk3XQhby1vcE6ZRn0=
+	by mail.kernel.org (Postfix) with ESMTP id 307542078D
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 20:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgHSPDE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Aug 2020 11:03:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47808 "EHLO mail.kernel.org"
+        id S1726617AbgHSUzj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Aug 2020 16:55:39 -0400
+Received: from mga12.intel.com ([192.55.52.136]:28146 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbgHSPDC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 19 Aug 2020 11:03:02 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32AD520882
-        for <linux-sgx@vger.kernel.org>; Wed, 19 Aug 2020 15:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597849381;
-        bh=DTsxGWRguc9gXJQEhpyyfMrSqpLRVbFAvw1E9BKHzlg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dG3VqY2RUKWhVjzz+AyL7mUCoNfThbKRDsUQ5Hm83QrgzupiQjiyGbTJvq1EZpVwp
-         kXLQEZ6TgaoI45pSaakV4eRSrhFNfwol/tfinVXCiDAIEecNUUExPT4FU2PeR9cQtc
-         7Tk6xMHp5slRWt7weTi+qtkbKn8TQ+fpOuEIoYpc=
-Received: by mail-wm1-f41.google.com with SMTP id g8so2406176wmk.3
-        for <linux-sgx@vger.kernel.org>; Wed, 19 Aug 2020 08:03:01 -0700 (PDT)
-X-Gm-Message-State: AOAM531oFOwSJhtPy+xHJWAJ+AZy9UxWv6D0LH8g3I0lycqb/9/ukrgv
-        0XDsqsk4D9vjKreg6VtnXNdB0jl8u3uh+TU92mxtvw==
-X-Google-Smtp-Source: ABdhPJyuQPnYfajBJucVLJM5okmkc6h9Av502mcyNcjiwb5yZ3SfXtT99qJchfX6uegfzZHm8LnwEASCgc2DMOEiyEc=
-X-Received: by 2002:a1c:de86:: with SMTP id v128mr5152027wmg.36.1597849379714;
- Wed, 19 Aug 2020 08:02:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
- <20200818042405.12871-5-sean.j.christopherson@intel.com> <CALCETrVRAdzFcJOJN6oU1F7hC57zYSmFZi6y2DwhU0sd27FJjQ@mail.gmail.com>
- <6109f3e1-0579-67c6-0a02-f9b931ba1fac@fortanix.com>
-In-Reply-To: <6109f3e1-0579-67c6-0a02-f9b931ba1fac@fortanix.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 19 Aug 2020 08:02:48 -0700
-X-Gmail-Original-Message-ID: <CALCETrW94nC5jtQcn7tCMm4itrGSbpxSadtyQUJ=UcR4bFPJ4Q@mail.gmail.com>
-Message-ID: <CALCETrW94nC5jtQcn7tCMm4itrGSbpxSadtyQUJ=UcR4bFPJ4Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/4] x86/vdso: x86/sgx: Allow the user to exit the
- vDSO loop on interrupts
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+        id S1725997AbgHSUzi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 19 Aug 2020 16:55:38 -0400
+IronPort-SDR: 1NxtZjDHVXNHt01K4DtupMNYD2+odPqqu3ZtIpDQalGl3M/5iLpNF1viwrIlaiAQqE/0FM9l1I
+ gPjt1a/9N0WQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9718"; a="134716239"
+X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
+   d="scan'208";a="134716239"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2020 13:55:38 -0700
+IronPort-SDR: VlV/9OPSacazBenJZ5fFS2W24H6ukpLvH9zw/nrm8Fj6arYybrI++k4obJcKv+uyw/SNn/Bn0f
+ I/91wrw8YsEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
+   d="scan'208";a="497879070"
+Received: from abojanow-mobl4.ger.corp.intel.com (HELO localhost) ([10.252.52.107])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Aug 2020 13:55:32 -0700
+Date:   Wed, 19 Aug 2020 23:55:29 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Cedric Xing <cedric.xing@intel.com>, linux-sgx@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v36 23/24] docs: x86/sgx: Document SGX micro architecture
+ and kernel internals
+Message-ID: <20200819205529.GA9224@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+ <20200716135303.276442-24-jarkko.sakkinen@linux.intel.com>
+ <20200728213511.GB13081@duo.ucw.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200728213511.GB13081@duo.ucw.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 7:21 AM Jethro Beekman <jethro@fortanix.com> wrote:
->
-> On 2020-08-18 19:15, Andy Lutomirski wrote:
-> > On Mon, Aug 17, 2020 at 9:24 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> >>
-> >> Allow userspace to exit the vDSO on interrupts that are acknowledged
-> >> while the enclave is active.  This allows the user's runtime to switch
-> >> contexts at opportune times without additional overhead, e.g. when usi=
-ng
-> >> an M:N threading model (where M user threads run N TCSs, with N > M).
-> >
-> > This is IMO rather odd.  We don't support this type of notification on
-> > interrupts for normal user code.  The fact user code can detect
-> > interrupts during enclave execution is IMO an oddity of SGX, and I
-> > have asked Intel to consider replacing the AEX mechanism with
-> > something more transparent to user mode.  If this ever happens, this
-> > mechanism is toast.
->
-> Let's design the current interface for the current architecture. We can d=
-eal with a new architecture if and when Intel provides it.
+On Tue, Jul 28, 2020 at 11:35:11PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > +CPUs starting from Icelake use Total Memory Encryption (TME) in the place of
+> > +MEE. TME throws away the Merkle tree, which means losing integrity and
+> > +anti-replay protection but also enables variable size memory pools for EPC.
+> > +Using this attack for benefit would require an interposer on the system bus.
+> 
+> It is not exactly clear what "this attack" means.
+> 
+> (And it would be cool to explain against what SGX is protecting. I
+> thought it was malicious RAM, but apparently not on Icelake+).
 
-No.  If Intel fixes the architecture, the proposed interface will
-*stop working*.
+Icelake has the same capabilities against software attacks as
+generations before that given the same CPU access control.
 
->
-> > Even without architecture changes, building a *reliable* M:N threading
-> > mechanism on top of this will be difficult or impossible, as there is
-> > no particular guarantee that a thread will get timing interrupts at> al=
-l or that these interrupts will get lucky and hit enclave code, thus
-> > triggering an AEX.  We certainly don't, and probably never will,
-> > support any corresponding feature for non-enclave code.
->
-> There's no guarantee, but this vDSO exit mechanism is a prerequisite. Bot=
-h for context switching and aborting an enclave, userspace *must* have a wa=
-y to trigger exit from enclave mode *and* recover the user stack in a sane =
-manner. Userspace *should* also be able to do this in a way that's compatib=
-le with library use, so calling timer_create or pthread_kill to deliver a s=
-ignal would be ok, but installing a signal handler should be avoided (the w=
-hole reason behind this vDSO call).
+A custom interposer on a bus could use replay for the data coming out of
+the CPU package. In pre-Icelake (i.e. MEE), this is prevented with a
+Merkle tree.
 
-If you want to abort an enclave, abort it the same way you abort any
-other user code -- send a signal or something.  If something is wrong
-with signal handling in the proposed vDSO interface, then by all
-means, let's fix it.  If we need better library signal support, let's
-add such a thing.  If you really want to abort an enclave *cleanly*
-without any chance of garbage left around, stick it in a subprocess.
-We are not playing the game where someone sets a flag, crosses their
-fingers, and waits for an interrupt.
+However, DMA is still blocked by the PRMRR to the EPC memory even on
+Icelake (SDM section 41.10), which adds some cost to do so (e.g. a
+malicous peripheral).
 
->
-> > So this seems like an odd, and possibly unsupportable, feature to add.
->
-> I can implement all this without the vDSO call today, so why not support =
-it? That just means not everyone is going to use the vDSO call, again resul=
-ting in potential problems when multiple libraries want to use enclaves.
+Memory is of course encrypted in both architectures.
 
-No offense, but if you want to write garbage software with entirely
-user code, I can't stop you, but the kernel is not going to give this
-anything resembling a stamp of approval.  When you inevitably discover
-that it has broken for one reason or another and your software stack
-stops making forward progress, I don't want anyone playing the "ABI
-stability" card and asking the upstream kernel to work around the
-breakage.
+Agreed that the current paragraph looks confusing. I'll refine it based
+on what I just wrote. I want to make it as transparent as possible but
+it cannot be achieved without appropriate feedback.
 
-Now maybe I'm wrong and there's an actual legitimate use case for this
-trick, in which case I'd like to be enlightened.  But M:N threading
-and enclave aborting don't sound like legitimate use cases.
+> 
+> > +Backing storage
+> > +===============
+> > +
+> > +Backing storage is shared and not accounted. It is implemented as a private
+> > +shmem file. Providing a backing storage in some form from user space is not
+> > +possible - accounting would go to invalid state as reclaimed pages would get
+> > +accounted to the processes of which behalf the kernel happened to be acting on.
+> 
+> "of which behalf" -- I can't parse that?
+
+Executing in a process context.
+
+> 
+> > +Access control
+> > +==============
+> > +
+> > +`mmap()` permissions are capped by the enclave permissions. A direct
+> > +consequence of this is that all the pages for an address range must be added
+> > +before `mmap()` can be applied. Effectively an enclave page with minimum
+> > +permission in the address range sets the permission cap for the mapping
+>    ~~~~~~~~~~
+>     permissions?
+
+Thanks, I'll fix that one.
+
+> 									Pavel
+
+Sorry for the late response. I came last week back from vacation and
+have been purging the piled up stacks of email (looking at your domain
+I have to add that I was in Brno, Czech).
+
+/Jarkko
