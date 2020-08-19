@@ -1,119 +1,116 @@
-Return-Path: <SRS0=y25d=B4=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=I8pg=B5=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21313C433E3
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 19:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20246C433E1
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 13:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F380420772
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Aug 2020 19:05:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C76208B3
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Aug 2020 13:34:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="lpuiljhh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FB4REDJR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbgHRTFG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Aug 2020 15:05:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726435AbgHRTFE (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Aug 2020 15:05:04 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6881C061389
-        for <linux-sgx@vger.kernel.org>; Tue, 18 Aug 2020 12:05:04 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id y10so8090841plr.11
-        for <linux-sgx@vger.kernel.org>; Tue, 18 Aug 2020 12:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=iJEogTWaQQgJpwgjOtv0l5zlRP2LWGmQZ1fuFNbF9jo=;
-        b=lpuiljhhgfY+//KXDeGeM354jsiqtqo6FoDJqudVsi/5jS6wgfleD9Hu6euyeDdVKA
-         zkEZ3JRDVmn/TKEurmggf0UcAJ6nApkaGzO09Kflf0Ru+AI5ZWhQsfcGtSjEwlQAZVgj
-         /bJtNlyBXh6v24bmW5H17rc36Hv/Qi1ejqHjaQgQgUhg+L6J9kh2V/vaDjJ0SZiHJcDi
-         hKoB6T7MZXousGZyb3wM5T5jM0LRq3h97LJTf7riWtizYYV3jx0uKE7vFxt/ZPqFIAxu
-         WXFlgd5qOhaEq6Ni4dvUYGWr0Hg0bYiagfXUXoKZM8qSM7AawCfq2J/QamkWDzFAL6or
-         ydaw==
+        id S1728175AbgHSNeV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Aug 2020 09:34:21 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28256 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728597AbgHSNeA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Aug 2020 09:34:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597844038;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1A3YVzHwJmiHNz1WhEQhMZMMatTxl2bdR9e5Zus2ktM=;
+        b=FB4REDJRLTLSWsOhnrXL/eVmelpVfXKCTkc21NLtVpChBOjwMyarNJfGYnW6oOVo++eFMi
+        /hq/+RtGvsaP8NaoiinmErr9fREV4inQPknJtb83O1TZfnOtHWFfDHJPkCs2cXnYxQplVy
+        F/fAaAjNbDYcock6lhpEQ6El9NhCfHQ=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-162-QjAunj-aMS6O6mbdt8V1rw-1; Wed, 19 Aug 2020 09:33:57 -0400
+X-MC-Unique: QjAunj-aMS6O6mbdt8V1rw-1
+Received: by mail-oo1-f72.google.com with SMTP id z2so11455547ooi.18
+        for <linux-sgx@vger.kernel.org>; Wed, 19 Aug 2020 06:33:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=iJEogTWaQQgJpwgjOtv0l5zlRP2LWGmQZ1fuFNbF9jo=;
-        b=fyg0mf7msSNLc1BVTgpcJQ9VapkB4nOtLZhWnT7R6mlNYE5gtHPk0TgfC6ysy/9RKi
-         MV0e2yLOhtbEG9F9LdLQnXPBuLnfQ1zzzPYSCCFq+JIJev/GAmiy4goIXRLX/7RwRBbu
-         5fCpgnpyFrusUeMzILE6F4sHXcurBjla/olqkJUtxTMPUo2vbkP3GxlDUuovZ0ySPrCC
-         xuYguPIOnG9r+athLP+bJyVcSYRfbM8yeAm8iuzsyjC1FaD0DXMo0EqDBnvPtNEpmioa
-         8pMGnd2WcaUYtRQs4TVAe2vWZqEWPtzH46OKRLUBr10FduxQWLsgDIBizYI292zyaK8t
-         2L4w==
-X-Gm-Message-State: AOAM533GfKGBrTz+t6LtqnLYsRSmA5GrtNGXXI1g85iF7YulEt1jvd3V
-        ALhle0Qme5tDfoBimgkLImnsjoQBZNWfwg==
-X-Google-Smtp-Source: ABdhPJz3DNK+F0F7q4OeUcIi7qcWgaVJVlwKv1TKEBM3yvnDozZCAWqyW132tS7c/R3mbhCWcy97SQ==
-X-Received: by 2002:a17:902:8543:: with SMTP id d3mr16101106plo.244.1597777503829;
-        Tue, 18 Aug 2020 12:05:03 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b013:d6bb:3d6c:5d2:3731:26ff? ([2600:1010:b013:d6bb:3d6c:5d2:3731:26ff])
-        by smtp.gmail.com with ESMTPSA id c27sm22037811pgn.86.2020.08.18.12.05.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Aug 2020 12:05:02 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 4/4] x86/vdso: x86/sgx: Allow the user to exit the vDSO loop on interrupts
-Date:   Tue, 18 Aug 2020 12:05:00 -0700
-Message-Id: <31D20204-057E-4A08-8DB3-B3CC8E123D24@amacapital.net>
-References: <20200818173154.GH15390@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1A3YVzHwJmiHNz1WhEQhMZMMatTxl2bdR9e5Zus2ktM=;
+        b=YxT5jxgmZBOeo0NQZLuXyrZ72nrUP5N05uP90FJR0/xbovGOskzxjNMbYOlNYby04H
+         TEgK5KZTxk9RbJSJ1MhEiIBx8faJXqUbvcOUm7TeTJpK7FIBBLszz+89w5SN07tPVVG8
+         4NynQO7XjPCZSZeYttrvxIknzuvFVhl3JlB3BDxsOT7Qi22XOtnj7LfAJ3arTSejNHoj
+         89FskpT1oLJWZG5sygnaGhY89mA4r4hzns+FgvF3XNWLUYEsFiOxNX5SDyslcAnOJF1/
+         C1hreznPxZ0rArMkXIOywFpniGmp9oBVlccYNieevixOZxWQJoHbdbZr9l4CHysEPYF0
+         hUaQ==
+X-Gm-Message-State: AOAM530SCDxwRD/lQkcnAf/xvCXH/n310Q3LGbnKZcxzBFBbxtjJr0xa
+        cMXrunyYatDxxLi7bexav6okVyr38njLxGIY6o40J7kkQ3mXZ0sdlpN+d4OzY7zzE20b2gszw5j
+        o1SVlDozAmb7tpkh1ZwgKCEct4xPMZtRtcARk
+X-Received: by 2002:a9d:6e1:: with SMTP id 88mr18165961otx.178.1597844036069;
+        Wed, 19 Aug 2020 06:33:56 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxDK4ZmVu++rFkaYtt43Tpk3Yf8PlFZGZT7z4I0jOccmzf4KD2leJPmhiIIUxoTN+497qRQJkjMR8MX0o9jLYk=
+X-Received: by 2002:a9d:6e1:: with SMTP id 88mr18165944otx.178.1597844035864;
+ Wed, 19 Aug 2020 06:33:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+ <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
+ <CAOASepOqRfUafSv_qjUv-jW_6n8G7kZ9yh-2z_Z9sjL_2zqNCg@mail.gmail.com>
+ <20200810222317.GG14724@linux.intel.com> <20200818145234.GC132200@linux.intel.com>
+ <20200818150627.GD132200@linux.intel.com> <CAOASepNxu0YtSPjXynLaVgyt-S0uSad8HVrNgMNWf+Z7iamPvQ@mail.gmail.com>
+ <20200818164353.GH137138@linux.intel.com>
+In-Reply-To: <20200818164353.GH137138@linux.intel.com>
+From:   Nathaniel McCallum <npmccallum@redhat.com>
+Date:   Wed, 19 Aug 2020 09:33:45 -0400
+Message-ID: <CAOASepMABkAxMRY7fJr4bAqadYyVrhZkb0BmB8cTcXUL_VmwQw@mail.gmail.com>
+Subject: Re: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
         Cedric Xing <cedric.xing@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>, linux-sgx@vger.kernel.org
-In-Reply-To: <20200818173154.GH15390@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-X-Mailer: iPhone Mail (17G68)
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        chenalexchen@google.com, Conrad Parker <conradparker@google.com>,
+        cyhanish@google.com, Dave Hansen <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Neil Horman <nhorman@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=nmccallu@redhat.com
+X-Mimecast-Spam-Score: 0.001
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On Tue, Aug 18, 2020 at 12:44 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Tue, Aug 18, 2020 at 11:15:32AM -0400, Nathaniel McCallum wrote:
+> > That seems like overkill to me. I'm just asking for one additional mov
+> > instruction. :)
+>
+> I started to consider eBPF since the complexity and constraints of the
+> callback look like an overkill and without doubt will be a burden to
+> maintain.
 
-> On Aug 18, 2020, at 10:31 AM, Sean Christopherson <sean.j.christopherson@i=
-ntel.com> wrote:
->=20
-> =EF=BB=BFOn Tue, Aug 18, 2020 at 10:15:49AM -0700, Andy Lutomirski wrote:
->>> On Mon, Aug 17, 2020 at 9:24 PM Sean Christopherson
->>> <sean.j.christopherson@intel.com> wrote:
->>>=20
->>> Allow userspace to exit the vDSO on interrupts that are acknowledged
->>> while the enclave is active.  This allows the user's runtime to switch
->>> contexts at opportune times without additional overhead, e.g. when using=
+That feels to me like more complexity just to move the existing
+complexity from one place to another.
 
->>> an M:N threading model (where M user threads run N TCSs, with N > M).
->>=20
->> This is IMO rather odd.  We don't support this type of notification on
->> interrupts for normal user code.  The fact user code can detect
->> interrupts during enclave execution is IMO an oddity of SGX, and I
->> have asked Intel to consider replacing the AEX mechanism with
->> something more transparent to user mode.  If this ever happens, this
->> mechanism is toast.
->>=20
->> Even without architecture changes, building a *reliable* M:N threading
->> mechanism on top of this will be difficult or impossible, as there is
->> no particular guarantee that a thread will get timing interrupts at
->> all or that these interrupts will get lucky and hit enclave code, thus
->> triggering an AEX.  We certainly don't, and probably never will,
->> support any corresponding feature for non-enclave code.
->>=20
->> So this seems like an odd, and possibly unsupportable, feature to add.
->=20
-> I 100% agree that allowing the user to act on interrupts is weird/fragile.=
-
-> I'll happily kill this off if there's an "official" NAK, but I wanted to
-> force the issue so that we're not stuck in limbo wondering whether or not
-> this should be supported.
-
-If you would like an official NAK, here you go: NAK!
-
-If users want M:N and SIGALRM isn=E2=80=99t good enough, add something bette=
-r. Please don=E2=80=99t rely on an architectural wart as an alternative.=
