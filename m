@@ -2,92 +2,132 @@ Return-Path: <SRS0=/5Ao=CE=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44967C433DF
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Aug 2020 20:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735C9C433DF
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Aug 2020 23:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12FF22078A
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Aug 2020 20:56:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="dnx5NXi4"
+	by mail.kernel.org (Postfix) with ESMTP id 43AD120791
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Aug 2020 23:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgHZU4D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 26 Aug 2020 16:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbgHZU4C (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Aug 2020 16:56:02 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3CC9C061574
-        for <linux-sgx@vger.kernel.org>; Wed, 26 Aug 2020 13:56:00 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id p11so1693116pfn.11
-        for <linux-sgx@vger.kernel.org>; Wed, 26 Aug 2020 13:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=y5azs/YmL64kbtJ2uI/p4/UB7DUuLQrfTEFUiv2VACI=;
-        b=dnx5NXi4QiobUejlHephFfBlrUf9G1jBPzI+iRTMACGxWBP/ktQrOnwGHg9Navyvlp
-         f8KcKNd8V6wkRbQF37q+jHkh4hmiPSg0Q9c5lBXIomLHZ2Qa2J0py0klH26KTdz3o32a
-         UfGOPoGCpPyMSNpPtgK4Rt9lbTWdfisc+Rn6w2T6UZw6n7N5FIL8IPng5DBKrG6uem7U
-         5GJ+JAOjAQ9ykp4oWzqZRpz9uI7+BYcgu7H9IWb7n9Sy/61wdR26ybXQkBeIUSRFjPCW
-         TVGgfKzJPM5K6NoG2CA92+O2OIUfi/aR3a4FIn3TFsWg/rjPvuhtlPju9FKssPd9b8vn
-         XjPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=y5azs/YmL64kbtJ2uI/p4/UB7DUuLQrfTEFUiv2VACI=;
-        b=A1Pu/t6eKRizvv4PeT7UMOB4Mmj4Osddjw0i/UC7TJWOhf6N3SfkFvPYZLxsM880r3
-         D/xaq/0vXjTc75FvRkg35+UKU0wSaHYm0tanmW4bTBBMTzRiAO0j1+LMXegGlxWxWbHX
-         2XpbgvtkfC5NWxiQLSSxYdf7gd45BG0KKLRz+MkAYa2bMyvYN4+QPIt71Rk1fn3EDeWT
-         dLus7qGHz6MovSjveD0z+XaDArcoKnpFQ6c/5xHVq5TNCw2thSGwRMK4BW3G8iSWDNKL
-         wFfB1TErRgYf3r10QUr7FlFqj3IR4YkBkoVd0Z9z5fkUnysfhV+T6H1hbIWcUFmUMOFF
-         auYQ==
-X-Gm-Message-State: AOAM530TyjS1y+PtYolp24lzEJTRY3g/Axe1oNG+m8Yc9tIO39k0mict
-        25RCsqKawXeymlPrusNM3LX8hg==
-X-Google-Smtp-Source: ABdhPJyESd49N3s4iECkT/QTYhdOKNjPMBAba13cjOidYxQg7ahmPxIDXtut9PayL/NCJEO8aJqMZA==
-X-Received: by 2002:a62:8387:: with SMTP id h129mr13615533pfe.142.1598475360479;
-        Wed, 26 Aug 2020 13:56:00 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:d5cb:47c1:6fcb:aad4? ([2601:646:c200:1ef2:d5cb:47c1:6fcb:aad4])
-        by smtp.gmail.com with ESMTPSA id t25sm2959752pgl.60.2020.08.26.13.55.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Aug 2020 13:55:59 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 2/4] x86/vdso: x86/sgx: Rework __vdso_sgx_enter_enclave() API
-Date:   Wed, 26 Aug 2020 13:55:55 -0700
-Message-Id: <ED79461A-86DC-4D00-970B-481AE2E04C5D@amacapital.net>
-References: <20200826202029.GD21459@sjchrist-ice>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>, linux-sgx@vger.kernel.org
-In-Reply-To: <20200826202029.GD21459@sjchrist-ice>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-X-Mailer: iPhone Mail (17G80)
+        id S1726128AbgHZX0P (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 Aug 2020 19:26:15 -0400
+Received: from mga04.intel.com ([192.55.52.120]:49135 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbgHZX0O (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 26 Aug 2020 19:26:14 -0400
+IronPort-SDR: vEWhV/yPmgf+kk+/jePXTHRgkpcQbkBhlYpJnktufiwWh8DQPWn/BnZF62q8y2C75btE76FGcg
+ vlV1jaWtiahg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9725"; a="153818012"
+X-IronPort-AV: E=Sophos;i="5.76,357,1592895600"; 
+   d="scan'208";a="153818012"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2020 16:26:12 -0700
+IronPort-SDR: LSnH9D6tdJmWtUIPlQEOzaWnBLPEfAnnVUzmiQwDcoo4Moxde5UMugNE3L/cQot//EdgS4WmK5
+ JU6ULHg3yRQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,357,1592895600"; 
+   d="scan'208";a="281941080"
+Received: from bxing-mobl.amr.corp.intel.com (HELO [10.213.166.37]) ([10.213.166.37])
+  by fmsmga008.fm.intel.com with ESMTP; 26 Aug 2020 16:26:12 -0700
+Subject: Re: [RFC PATCH 2/4] x86/vdso: x86/sgx: Rework
+ __vdso_sgx_enter_enclave() API
+To:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
+ <20200818042405.12871-3-sean.j.christopherson@intel.com>
+ <2ddc5a5b-0929-b99f-41a0-06b3b53fcc8f@intel.com>
+ <20200826201511.GB21459@sjchrist-ice>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <a4ccd8e1-0c0f-8664-b0c2-d7a30bd5c31a@intel.com>
+Date:   Wed, 26 Aug 2020 16:26:11 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20200826201511.GB21459@sjchrist-ice>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On 8/26/2020 1:15 PM, Sean Christopherson wrote:
+> On Wed, Aug 26, 2020 at 12:27:54PM -0700, Xing, Cedric wrote:
+>> On 8/17/2020 9:24 PM, Sean Christopherson wrote:
+>>> Rework __vdso_sgx_enter_enclave() to use a struct to hold the input and
+>>> output params.  In the new struct, add an opaque "user_data" that can be
+>>> used to pass context across the vDSO, and an explicit "exit_reason" to
+>>> avoid overloading the return value.
+>>> In order to pass additional parameters to the exit handler, the exinfo
+>> structure could be embedded in a user-defined structure while the handler
+>> could pick it up using "container_of" macro. IMO the original interface was
+>> neat and suffcient, and we are over-engineering it.
+> 
+> container_of/offsetof shenanigans were my original suggestion as well.
+> Nathaniel's argument is that using such tricks is less than pleasent in a
+> Rust environment.
+> 
+> https://lkml.kernel.org/r/CAOASepOFh-vOrNZEVDFrDSuHs+9GEzzpXUTG-fZMuyjWAkpRWw@mail.gmail.com
+> 
+I don't know much about rust but there seem to be offsetof/container_of 
+solutions in rust. Here's one: 
+https://gist.github.com/resilar/baefbfbf0d733c69d70970d829938875.
 
-> On Aug 26, 2020, at 1:20 PM, Sean Christopherson <sean.j.christopherson@in=
-tel.com> wrote:
->=20
-> =EF=BB=BFAndy,
->=20
-> Any thoughts on using a struct versus a plethora of params?  If you don't
-> have a strong opinion, I'd like to push for the struct option as it fixes
-> the -EFAULT weirdness, satisfies Nathaniel's request, and gives some
-> flexibility for the future.  The code impact, both to the vDSO and to the
-> caller, is largely a lateral move, i.e. it's different but in the end
-> doesn't require any more or less work.
+After countless discussions along this upstream journey, I thought we 
+had agreed that simplicity was the priority. And for simplicity we were 
+even willing to give up compliance to x86_64 ABI. Then how do you 
+justify treating rust better than other programming languages? This 
+looks a hard sell to me.
 
-I have no preference.
+>>> Moving the params into a struct will also make it less painful to use
+>>> dedicated exit reasons, and to support exiting on interrupts in future
+>>> patches.
+>>>
+>> My apology for not following discussion lately. What did you mean by
+>> "dedicated exit reasons" and why was it "painful"? According to another
+>> thread, I guess we wouldn't have "exiting on interrupts".
+> 
+> Currently the vDSO returns -EFAULT if the enclave encounters an exception,
+> which is kludgy for two reasons:
+> 
+>   1. EFAULT traditionally means "bad address", whereas an exception could be
+>      a #UD in the enclave.
+> 
+>   2. Returning -EFAULT provides weird semantics as it implies the vDSO call
+>      failed, which is not the case.  The vDSO itself was successful, i.e. it
+>      did the requested EENTER/ERESUME operation, and should really return '0'.
+> 
+EFAULT is descriptive enough for me. And more importantly 
+detailed/specific info is always available in exinfo.
 
+IMO, the purpose of return code is for the caller/handler to branch on. 
+If 2 cases share the same execution path, then there's no need to 
+distinguish them. In the case of SGX, most (if not all) exceptions are 
+handled in the same way - nested EENTER, then what's point of 
+distinguishing them? Please note that detailed info is always available 
+in exinfo to cover corner cases.
+
+Moreover, even the vDSO API itself cannot tell between faults at 
+EENTER/ERESUME (the vDSO itself failes) vs. faults inside the enclave 
+(vDSO succeeded but the enclave fails). I don't think you can be 
+accurate without complicating the code significantly.
+
+> The proposed solution for #1 is to define arbitrary return values to
+> differentiate between synchronous (EEXIT) exits and asynchronous exits due
+> to exceptions.  But that doesn't address #2, and gets especially awkward when
+> dealing with the call back return, which is also overloaded to use positive
+> return values for ENCLU leafs.
+> 
+> Passing a "run" struct makes it trivially easy to different the return value
+> of the vDSO function from the enclave exit reason, and to avoid collisions
+> with the return value from the userspace callback.
+> 
+When a callback is configured, the vDSO NEVER returns to caller directly 
+- i.e. all return codes must be from the callback but NOT the vDSO. I 
+don't see any collisions here.
