@@ -2,170 +2,160 @@ Return-Path: <SRS0=BSu2=CF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FF0C433E1
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Aug 2020 14:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3649C433E1
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 Aug 2020 15:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2F0122B4E
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Aug 2020 14:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A83032087D
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 Aug 2020 15:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbgH0Ovq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 27 Aug 2020 10:51:46 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42293 "EHLO mga04.intel.com"
+        id S1728070AbgH0PVE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 27 Aug 2020 11:21:04 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16015 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727838AbgH0N1e (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 27 Aug 2020 09:27:34 -0400
-IronPort-SDR: P0z2pDtIWxxFq38bvNzr4kQqYjLagW4ExrFnRyLR3+iWMiwvmMA8zlmlDSfCmnvYVShHmDzYWu
- WxBzv+it4M/Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9725"; a="153895895"
+        id S1728234AbgH0PUz (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 27 Aug 2020 11:20:55 -0400
+IronPort-SDR: 55Yqlb798kOgvMHQZhnXcBcTdeo+Xo1dt6DAcqiTTA9gJTKHgeL2bFtI+NYg5rfBB8jtOfPZiU
+ TBxlyZhVzsTw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9726"; a="241320086"
 X-IronPort-AV: E=Sophos;i="5.76,359,1592895600"; 
-   d="scan'208";a="153895895"
+   d="scan'208";a="241320086"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2020 06:24:50 -0700
-IronPort-SDR: Ke2l8t9YhErArjp+te+yH/vIPFO56rsQI3/DhOc+Xg4yTzOeKSk3G0u9JyOR4VVUSOGnOS1shn
- azdhMXNXazYQ==
-X-ExtLoop1: 1
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2020 08:20:53 -0700
+IronPort-SDR: 2ftvRexz4LzBoob2AWoL+hj30qCYj3C4kUREAoXxllKNIiFmgRvAhAGhznSW/hfX99yOfY3vov
+ 1w/1LiuwvBTg==
 X-IronPort-AV: E=Sophos;i="5.76,359,1592895600"; 
-   d="scan'208";a="323592489"
-Received: from tbeaumon-mobl3.ger.corp.intel.com (HELO localhost) ([10.252.55.254])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Aug 2020 06:24:43 -0700
-Date:   Thu, 27 Aug 2020 16:24:36 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v36 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
-Message-ID: <20200827132436.GA4674@linux.intel.com>
+   d="scan'208";a="337196893"
+Received: from sjchrist-ice.jf.intel.com (HELO sjchrist-ice) ([10.54.31.34])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2020 08:20:52 -0700
+Date:   Thu, 27 Aug 2020 08:20:51 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Neil Horman <nhorman@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+Subject: Re: [PATCH v36 22/24] selftests/x86: Add a selftest for SGX
+Message-ID: <20200827152051.GB22351@sjchrist-ice>
 References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-13-jarkko.sakkinen@linux.intel.com>
- <20200826145239.GC22390@zn.tnic>
+ <20200716135303.276442-23-jarkko.sakkinen@linux.intel.com>
+ <CAOASepO-DuQW88hxtAJv5Ki4GNYnkGNz5qK_dTEK_y8roMdPkg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200826145239.GC22390@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOASepO-DuQW88hxtAJv5Ki4GNYnkGNz5qK_dTEK_y8roMdPkg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 04:52:39PM +0200, Borislav Petkov wrote:
-> On Thu, Jul 16, 2020 at 04:52:51PM +0300, Jarkko Sakkinen wrote:
-> > diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > index 59472cd6a11d..35f713e3a267 100644
-> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > @@ -323,6 +323,7 @@ Code  Seq#    Include File                                           Comments
-> >                                                                       <mailto:tlewis@mindspring.com>
-> >  0xA3  90-9F  linux/dtlk.h
-> >  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
-> > +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+On Thu, Aug 27, 2020 at 12:47:04AM -0400, Nathaniel McCallum wrote:
+> > +int main(int argc, char *argv[], char *envp[])
+> > +{
+> > +       struct sgx_enclave_exception exception;
+> > +       struct vdso_symtab symtab;
+> > +       Elf64_Sym *eenter_sym;
+> > +       uint64_t result = 0;
+> > +       struct encl encl;
+> > +       unsigned int i;
+> > +       void *addr;
+> > +
+> > +       if (!encl_load("test_encl.elf", &encl))
+> > +               goto err;
+> > +
+> > +       if (!encl_measure(&encl))
+> > +               goto err;
+> > +
+> > +       if (!encl_build(&encl))
+> > +               goto err;
+> > +
+> > +       /*
+> > +        * An enclave consumer only must do this.
+> > +        */
+> > +       for (i = 0; i < encl.nr_segments; i++) {
+> > +               struct encl_segment *seg = &encl.segment_tbl[i];
+> > +
+> > +               addr = mmap((void *)encl.encl_base + seg->offset, seg->size,
+> > +                           seg->prot, MAP_SHARED | MAP_FIXED, encl.fd, 0);
 > 
-> Again, maybe add <mailto:linux-sgx@vger.kernel.org> ?
+> My patch version is a bit behind (v32), but I suspect this still
+> applies. I discovered the following by accident.
 > 
-> This is from a previous review - please be more careful when addressing
-> review comments - either do them or object to them but silently ignoring
-> them is not cool.
+> In the Enarx code base, this invocation succeeds:
+> mmap(0x200000000000, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED |
+> MAP_FIXED, sgxfd, 0)
 > 
-> >  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
-> >  0xAB  00-1F  linux/nbd.h
-> >  0xAC  00-1F  linux/raw.h
-> > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> > new file mode 100644
-> > index 000000000000..3787d278e84b
-> > --- /dev/null
-> > +++ b/arch/x86/include/uapi/asm/sgx.h
-> > @@ -0,0 +1,25 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
+> However, this one fails with -EINVAL:
+> mmap(0x200000000000, 0x1000, PROT_READ | PROT_WRITE,
+> MAP_SHARED_VALIDATE | MAP_FIXED, sgxfd, 0)
 > 
-> checkpatch is not happy about something:
+> From man mmap:
 > 
-> WARNING: 'SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */' is not supported in LICENSES/...
-> #79: FILE: arch/x86/include/uapi/asm/sgx.h:1:
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
+>        MAP_SHARED_VALIDATE (since Linux 4.15)
+>               This flag provides the same behavior as MAP_SHARED
+> except that MAP_SHARED mappings ignore unknown
+>               flags in flags.  By contrast, when creating a mapping
+> using MAP_SHARED_VALIDATE, the kernel veri‐
+>               fies  all  passed  flags  are  known  and fails the
+> mapping with the error EOPNOTSUPP for unknown
+>               flags.  This mapping type is also required to be able to
+> use some mapping flags (e.g., MAP_SYNC).
+> 
+> I can try again on a newer patch set tomorrow if need be. But the
+> documentation of mmap() doesn't match the behavior I'm seeing. A brief
+> look through the patch set didn't turn up anything obvious that could
+> be causing this.
 
-I don't know what has gone in my head when I wrote that but it looks
-plain wrong even without running checkpatch.pl
+This is a bug in sgx_get_unmapped_area().  EPC must be mapped SHARED, and
+so MAP_PRIVATE is disallowed.  The current check is:
 
-The line should express the dijunction of "GPL-2.0+ WITH
-Linux-syscall-note" and "BSD-3-Clause".
+  if (flags & MAP_PRIVATE)
+          return -EINVAL;
 
-Grepping the kernel tree, I can find 34 instances of these in uapi
-files:
+and the base "flags" are:
 
-  /* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR BSD-3-Clause) */
+  #define MAP_SHARED      0x01            /* Share changes */
+  #define MAP_PRIVATE     0x02            /* Changes are private */
+  #define MAP_SHARED_VALIDATE 0x03        /* share + validate extension flags */
 
-I have not checked if this passes checkpatch.pl yet, but I would
-be surprised if that did not pass (obviously I'll check that).
+which causes the SGX check to interpret MAP_SHARED_VALIDATE as MAP_PRIVATE.
+The types are just that, types, not flag modifiers.  So the SGX code needs
+to be:
 
-> 
-> ...
-> 
-> > +/**
-> > + * sgx_ioc_enclave_create - handler for %SGX_IOC_ENCLAVE_CREATE
-> > + * @filep:	open file to /dev/sgx
-> 
-> Also from a previous review:
-> 
-> "That's
-> 
-> @encl: enclave pointer
-> 
-> or so."
+  if ((flags & MAP_TYPE) == MAP_PRIVATE)
+          return -EINVAL;
 
-Yes, for sure. Thanks.
+or
 
-> > + * @arg:	userspace pointer to a struct sgx_enclave_create instance
-> > + *
-> > + * Allocate kernel data structures for a new enclave and execute ECREATE after
-> > + * verifying the correctness of the provided SECS.
-> > + *
-> > + * Note, enforcement of restricted and disallowed attributes is deferred until
-> > + * sgx_ioc_enclave_init(), only the architectural correctness of the SECS is
-> > + * checked by sgx_ioc_enclave_create().
-> 
-> From that same review:
-> 
-> "Well, I don't see that checking. Where is it?"
-> 
-> Ok, I'm going to stop here. Please go over v33's review and either
-> address *all* feedback or incorporate it into your patches if you agree
-> with it but do not silently ignore it. One of the things I very strongly
-> detest is ignored review comments.
+  unsigned long map_type = (flags & MAP_TYPE);
 
-I'm sorry about that. This was not intentional. I'll revisit them by
-going through all your responses from here:
+  if (map_type != MAP_SHARED && map_type != MAP_SHARED_VALIDATE)
+          return -EINVAL;
 
-  https://patchwork.kernel.org/patch/11581715/
 
-v34 had the splitting of the big driver patch into multiple patches.
-
-During that process I've obviously failed to address these.
-
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-
-/Jarkko
+Side topic, there is at least one existing bug of this nature, in mm/nommu.c.
+I'll send a patch for that and look for any other instances of the bad
+pattern.
