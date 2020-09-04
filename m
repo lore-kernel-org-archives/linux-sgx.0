@@ -2,49 +2,51 @@ Return-Path: <SRS0=DCUR=CN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41241C43461
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 11:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51E6C28E83
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 12:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17E1D214F1
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 11:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF632098B
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 12:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbgIDL4G (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Sep 2020 07:56:06 -0400
-Received: from mga17.intel.com ([192.55.52.151]:18862 "EHLO mga17.intel.com"
+        id S1730142AbgIDMCZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Sep 2020 08:02:25 -0400
+Received: from mga06.intel.com ([134.134.136.31]:7973 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbgIDL4E (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 4 Sep 2020 07:56:04 -0400
-IronPort-SDR: r6ms9fWef2U8iWfk3BrffXJwFKXqIfe9nGuuwsGWJSNoOkJ8NrIWURlOvQbE0bLrSUHcJS2NWw
- sNF7zEUJfy4g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9733"; a="137780964"
+        id S1730114AbgIDMBv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 4 Sep 2020 08:01:51 -0400
+IronPort-SDR: 1I8Rtwh4GWOdeWX7J7eIEpl+QU7QjKZ9Egp+qCty8QrPl9PLcuDF5Vunz+D2G0TgvPl1hv2yM1
+ YSFOXsT3oDgQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9733"; a="219283543"
 X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
-   d="scan'208";a="137780964"
+   d="scan'208";a="219283543"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 04:56:02 -0700
-IronPort-SDR: aZCKaJZwpyuOqsS9X/Mx39D0LYJ3IwvfBtppRR/RFrVVBbkRkbL4nWxh594vXYRhMGw1xocQwn
- rCgAj8bZXOQA==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 05:01:34 -0700
+IronPort-SDR: JBhmnVDQJvbdd61JWWR8kZUG+owj8Bw5jHT4ua8fCs3yJvwjj2wBZCZEB0ACc/MeYpvQb5GIuI
+ Z1Fx+DDEHNdg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
-   d="scan'208";a="334861195"
+   d="scan'208";a="478460799"
 Received: from pipper-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.56.104])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Sep 2020 04:55:56 -0700
-Date:   Fri, 4 Sep 2020 14:55:55 +0300
+  by orsmga005.jf.intel.com with ESMTP; 04 Sep 2020 05:01:27 -0700
+Date:   Fri, 4 Sep 2020 15:01:26 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
         Chunyang Hui <sanqian.hcy@antfin.com>,
         Jordan Hand <jorhand@linux.microsoft.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
         Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
         Suresh Siddha <suresh.b.siddha@intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
@@ -54,205 +56,99 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
         puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
         yaozhangx@google.com
-Subject: Re: [PATCH v36 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
-Message-ID: <20200904115555.GA39023@linux.intel.com>
-References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-13-jarkko.sakkinen@linux.intel.com>
- <op.0p9xohs2wjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200904120126.GB39023@linux.intel.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200702035902.GC1819@linux.intel.com>
+ <20200704033025.GA144756@linux.intel.com>
+ <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <op.0p9xohs2wjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 01, 2020 at 11:41:14AM -0500, Haitao Huang wrote:
-> On Thu, 16 Jul 2020 08:52:51 -0500, Jarkko Sakkinen
+On Tue, Sep 01, 2020 at 10:06:32PM -0500, Haitao Huang wrote:
+> On Fri, 03 Jul 2020 22:31:10 -0500, Jarkko Sakkinen
 > <jarkko.sakkinen@linux.intel.com> wrote:
 > 
-> > Add an ioctl that performs ENCLS[ECREATE], which creates SGX Enclave
-> > Control Structure for the enclave. SECS contains attributes about the
-> > enclave that are used by the hardware and cannot be directly accessed by
-> > software, as SECS resides in the EPC.
+> > On Wed, Jul 01, 2020 at 08:59:02PM -0700, Sean Christopherson wrote:
+> > > On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+> > > > +static int sgx_validate_secs(const struct sgx_secs *secs,
+> > > > +			     unsigned long ssaframesize)
+> > > > +{
+> > > > +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (secs->base & (secs->size - 1))
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (secs->miscselect & sgx_misc_reserved_mask ||
+> > > > +	    secs->attributes & sgx_attributes_reserved_mask ||
+> > > > +	    secs->xfrm & sgx_xfrm_reserved_mask)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
+> > > > +		if (secs->size > sgx_encl_size_max_64)
+> > > > +			return -EINVAL;
+> > > > +	} else if (secs->size > sgx_encl_size_max_32)
+> > > > +		return -EINVAL;
+> > > 
+> > > These should be >=, not >, the SDM uses one of those fancy ≥ ligatures.
+> > > 
+> > > Internal versions use more obvious pseudocode, e.g.:
+> > > 
+> > >     if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
+> > >         (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
+> > >     {
+> > >         #GP(0);
 > > 
-> > One essential field in SECS is a field that stores the SHA256 of the
-> > measured enclave pages. This field, MRENCLAVE, is initialized by the
-> > ECREATE instruction and updated by every EADD and EEXTEND operation.
-> > Finally, EINIT locks down the value.
+> > Updated as:
 > > 
-> > Acked-by: Jethro Beekman <jethro@fortanix.com>
-> > Tested-by: Jethro Beekman <jethro@fortanix.com>
-> > Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> > Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-> > Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-> > Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-> > Tested-by: Seth Moore <sethmo@google.com>
-> > Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> > Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
-> >  arch/x86/include/uapi/asm/sgx.h               |  25 ++
-> >  arch/x86/kernel/cpu/sgx/Makefile              |   1 +
-> >  arch/x86/kernel/cpu/sgx/driver.c              |  12 +
-> >  arch/x86/kernel/cpu/sgx/driver.h              |   1 +
-> >  arch/x86/kernel/cpu/sgx/ioctl.c               | 226 ++++++++++++++++++
-> >  6 files changed, 266 insertions(+)
-> >  create mode 100644 arch/x86/include/uapi/asm/sgx.h
-> >  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
+> > static int sgx_validate_secs(const struct sgx_secs *secs)
+> > {
+> > 	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
+> > 		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
 > > 
-> > diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > index 59472cd6a11d..35f713e3a267 100644
-> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > @@ -323,6 +323,7 @@ Code  Seq#    Include File
-> > Comments
-> >                                                                       <mailto:tlewis@mindspring.com>
-> >  0xA3  90-9F  linux/dtlk.h
-> >  0xA4  00-1F  uapi/linux/tee.h
-> > Generic TEE subsystem
-> > +0xA4  00-1F  uapi/asm/sgx.h
-> > Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
-> >  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
-> >  0xAB  00-1F  linux/nbd.h
-> >  0xAC  00-1F  linux/raw.h
-> > diff --git a/arch/x86/include/uapi/asm/sgx.h
-> > b/arch/x86/include/uapi/asm/sgx.h
-> > new file mode 100644
-> > index 000000000000..3787d278e84b
-> > --- /dev/null
-> > +++ b/arch/x86/include/uapi/asm/sgx.h
-> > @@ -0,0 +1,25 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH
-> > Linux-syscall-note */
-> > +/*
-> > + * Copyright(c) 2016-19 Intel Corporation.
-> > + */
-> > +#ifndef _UAPI_ASM_X86_SGX_H
-> > +#define _UAPI_ASM_X86_SGX_H
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/ioctl.h>
-> > +
-> > +#define SGX_MAGIC 0xA4
-> > +
-> > +#define SGX_IOC_ENCLAVE_CREATE \
-> > +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-> > +
-> > +/**
-> > + * struct sgx_enclave_create - parameter structure for the
-> > + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
-> > + * @src:	address for the SECS page data
-> > + */
-> > +struct sgx_enclave_create  {
-> > +	__u64	src;
-> > +};
-> > +
-> > +#endif /* _UAPI_ASM_X86_SGX_H */
-> > diff --git a/arch/x86/kernel/cpu/sgx/Makefile
-> > b/arch/x86/kernel/cpu/sgx/Makefile
-> > index 3fc451120735..91d3dc784a29 100644
-> > --- a/arch/x86/kernel/cpu/sgx/Makefile
-> > +++ b/arch/x86/kernel/cpu/sgx/Makefile
-> > @@ -1,4 +1,5 @@
-> >  obj-y += \
-> >  	driver.o \
-> >  	encl.o \
-> > +	ioctl.o \
-> >  	main.o
-> > diff --git a/arch/x86/kernel/cpu/sgx/driver.c
-> > b/arch/x86/kernel/cpu/sgx/driver.c
-> > index b52520407f5b..5559bc18de41 100644
-> > --- a/arch/x86/kernel/cpu/sgx/driver.c
-> > +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> > @@ -118,10 +118,22 @@ static unsigned long sgx_get_unmapped_area(struct
-> > file *file,
-> >  	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-> >  }
-> > +#ifdef CONFIG_COMPAT
-> > +static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
-> > +			      unsigned long arg)
-> > +{
-> > +	return sgx_ioctl(filep, cmd, arg);
-> > +}
-> > +#endif
-> > +
-> >  static const struct file_operations sgx_encl_fops = {
-> >  	.owner			= THIS_MODULE,
-> >  	.open			= sgx_open,
-> >  	.release		= sgx_release,
-> > +	.unlocked_ioctl		= sgx_ioctl,
-> > +#ifdef CONFIG_COMPAT
-> > +	.compat_ioctl		= sgx_compat_ioctl,
-> > +#endif
-> >  	.mmap			= sgx_mmap,
-> >  	.get_unmapped_area	= sgx_get_unmapped_area,
-> >  };
-> > diff --git a/arch/x86/kernel/cpu/sgx/driver.h
-> > b/arch/x86/kernel/cpu/sgx/driver.h
-> > index f7ce40dedc91..e4063923115b 100644
-> > --- a/arch/x86/kernel/cpu/sgx/driver.h
-> > +++ b/arch/x86/kernel/cpu/sgx/driver.h
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/rwsem.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/workqueue.h>
-> > +#include <uapi/asm/sgx.h>
-> >  #include "sgx.h"
-> > #define SGX_EINIT_SPIN_COUNT	20
-> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > new file mode 100644
-> > index 000000000000..7981c411b05a
-> > --- /dev/null
-> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > @@ -0,0 +1,226 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> > +// Copyright(c) 2016-19 Intel Corporation.
-> > +
-> > +#include <asm/mman.h>
-> > +#include <linux/mman.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/file.h>
-> > +#include <linux/hashtable.h>
-> > +#include <linux/highmem.h>
-> > +#include <linux/ratelimit.h>
-> > +#include <linux/sched/signal.h>
-> > +#include <linux/shmem_fs.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/suspend.h>
-> > +#include "driver.h"
-> > +#include "encl.h"
-> > +#include "encls.h"
-> > +
-> > +static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
-> > +{
-> > +	u32 size_max = PAGE_SIZE;
-> > +	u32 size;
-> > +	int i;
-> > +
-> > +	for (i = 2; i < 64; i++) {
-> > +		if (!((1 << i) & xfrm))
-> > +			continue;
-> > +
+> > 	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> > 		return -EINVAL;
+> > 
+> > 	if (secs->base & (secs->size - 1))
+> > 		return -EINVAL;
+> > 
+> > 	if (secs->miscselect & sgx_misc_reserved_mask ||
+> > 	    secs->attributes & sgx_attributes_reserved_mask ||
+> > 	    secs->xfrm & sgx_xfrm_reserved_mask)
+> > 		return -EINVAL;
+> > 
+> > 	if (secs->size >= max_size)
+> > 		return -EINVAL;
+> > 
 > 
-> Potential overflow for signed integer shift. Originally spotted and fixed in
-> OOT from Colin I. K.: https://github.com/intel/linux-sgx-driver/pull/16
+> This should be > not >=. Issue raised and fixed by Fábio Silva for ported
+> patches for OOT SGX support:
+> https://github.com/intel/SGXDataCenterAttestationPrimitives/pull/123
+> 
+> I tested and verified with Intel arch, the comparison indeed should be >.
 > 
 > Thanks
 > Haitao
 
-Thank you. It is true that this also applies to the mainline SGX.
+Thans a lot!
 
-I fixed this and added this entry to v37 changelog:
+I added this changelog entry to the v37 log:
 
-* Fixed signed integer shift overflow.
-  https://github.com/intel/linux-sgx-driver/pull/16/commits/d27ca6071b2b28e2e789d265eda796dd9fc65a64
+* Fixed off-by-one error in a size calculation:
+  https://github.com/intel/SGXDataCenterAttestationPrimitives/commit/e44cc238becf584cc079aef40b557c6af9a03f38
+
+Given the Boris' earlier feedback I xref every changelog
+entry in v37 changelog. Then it is also less time consuming
+to spot if something is missing.
 
 /Jarkko
