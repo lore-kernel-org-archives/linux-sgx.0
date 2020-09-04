@@ -1,152 +1,141 @@
-Return-Path: <SRS0=bSI5=CL=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=DCUR=CN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BED7C433E7
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Sep 2020 18:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3E4C43461
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 09:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24FD820C56
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Sep 2020 18:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB411207EA
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 09:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgIBSkz convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Sep 2020 14:40:55 -0400
-Received: from mga07.intel.com ([134.134.136.100]:17072 "EHLO mga07.intel.com"
+        id S1729628AbgIDJw1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Sep 2020 05:52:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:59191 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbgIBSky (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 2 Sep 2020 14:40:54 -0400
-IronPort-SDR: tKAYgg1zYv4AUuuI/LWak6KL/a4DCSATuhu1aXx/v2EX2FyzYWFPPoS2BQfzB/7AFmitdb0V5a
- dEiz4fCJvdMg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9732"; a="221674238"
-X-IronPort-AV: E=Sophos;i="5.76,383,1592895600"; 
-   d="scan'208";a="221674238"
+        id S1726171AbgIDJw0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 4 Sep 2020 05:52:26 -0400
+IronPort-SDR: uhPkgWeOenhZt43vVMvhdU3Oj5tS4UgDmPWRnlezcN2FZkCJV+lW9U8+UE2esnhL5IA2S0QlPC
+ ZqnETaNJMBYw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9733"; a="137238795"
+X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
+   d="scan'208";a="137238795"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2020 11:40:52 -0700
-IronPort-SDR: P4YeBPN8mp1qKmIrafAtjmZm4807Q/A2J7qZUuipcGX0UCptRPoHbegSotuQlM/6nSqA5dL+kN
- EMMI3WIakq6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,383,1592895600"; 
-   d="scan'208";a="502231194"
-Received: from hhuan26-mobl1.amr.corp.intel.com ([10.255.38.180])
-  by fmsmga006.fm.intel.com with ESMTP; 02 Sep 2020 11:40:48 -0700
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
-To:     "Sean Christopherson" <sean.j.christopherson@intel.com>
-Cc:     "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Jethro Beekman" <jethro@fortanix.com>,
-        "Chunyang Hui" <sanqian.hcy@antfin.com>,
-        "Jordan Hand" <jorhand@linux.microsoft.com>,
-        "Nathaniel McCallum" <npmccallum@redhat.com>,
-        "Seth Moore" <sethmo@google.com>,
-        "Suresh Siddha" <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, josh@joshtriplett.org,
-        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
-        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200702035902.GC1819@linux.intel.com>
- <20200704033025.GA144756@linux.intel.com>
- <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
- <20200902161012.GD11695@sjchrist-ice>
-Date:   Wed, 02 Sep 2020 13:40:47 -0500
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 02:52:26 -0700
+IronPort-SDR: 2ybPULVKtlKqg8SipJXoa3G+4y085o7XPcRqzKUsYiBzQptlkR7jLLPEVaTz8lxuRdwwIBHNKT
+ JqNzVdsdZGWA==
+X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
+   d="scan'208";a="302549851"
+Received: from sjchrist-ice.jf.intel.com (HELO sjchrist-ice) ([10.54.31.34])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 02:52:26 -0700
+Date:   Fri, 4 Sep 2020 02:52:24 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/4] x86/vdso: x86/sgx: Rework
+ __vdso_sgx_enter_enclave() API
+Message-ID: <20200904095223.GA7844@sjchrist-ice>
+References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
+ <20200818042405.12871-3-sean.j.christopherson@intel.com>
+ <2ddc5a5b-0929-b99f-41a0-06b3b53fcc8f@intel.com>
+ <20200826201511.GB21459@sjchrist-ice>
+ <a4ccd8e1-0c0f-8664-b0c2-d7a30bd5c31a@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.0qbx59v2wjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-In-Reply-To: <20200902161012.GD11695@sjchrist-ice>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4ccd8e1-0c0f-8664-b0c2-d7a30bd5c31a@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 02 Sep 2020 11:10:12 -0500, Sean Christopherson  
-<sean.j.christopherson@intel.com> wrote:
+On Wed, Aug 26, 2020 at 04:26:11PM -0700, Xing, Cedric wrote:
+> After countless discussions along this upstream journey, I thought we had
+> agreed that simplicity was the priority. And for simplicity we were even
+> willing to give up compliance to x86_64 ABI. Then how do you justify
+> treating rust better than other programming languages? This looks a hard
+> sell to me.
 
-> On Tue, Sep 01, 2020 at 10:06:32PM -0500, Haitao Huang wrote:
->> On Fri, 03 Jul 2020 22:31:10 -0500, Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->>
->> > On Wed, Jul 01, 2020 at 08:59:02PM -0700, Sean Christopherson wrote:
->> > > On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
->> > > > +static int sgx_validate_secs(const struct sgx_secs *secs,
->> > > > +			     unsigned long ssaframesize)
->> > > > +{
->> > > > +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
->> > > > +		return -EINVAL;
->> > > > +
->> > > > +	if (secs->base & (secs->size - 1))
->> > > > +		return -EINVAL;
->> > > > +
->> > > > +	if (secs->miscselect & sgx_misc_reserved_mask ||
->> > > > +	    secs->attributes & sgx_attributes_reserved_mask ||
->> > > > +	    secs->xfrm & sgx_xfrm_reserved_mask)
->> > > > +		return -EINVAL;
->> > > > +
->> > > > +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
->> > > > +		if (secs->size > sgx_encl_size_max_64)
->> > > > +			return -EINVAL;
->> > > > +	} else if (secs->size > sgx_encl_size_max_32)
->> > > > +		return -EINVAL;
->> > >
->> > > These should be >=, not >, the SDM uses one of those fancy ≥  
->> ligatures.
->> > >
->> > > Internal versions use more obvious pseudocode, e.g.:
->> > >
->> > >     if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
->> > >         (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
->> > >     {
->> > >         #GP(0);
->> >
->> > Updated as:
->> >
->> > static int sgx_validate_secs(const struct sgx_secs *secs)
->> > {
->> > 	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
->> > 		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
->> >
->> > 	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
->> > 		return -EINVAL;
->> >
->> > 	if (secs->base & (secs->size - 1))
->> > 		return -EINVAL;
->> >
->> > 	if (secs->miscselect & sgx_misc_reserved_mask ||
->> > 	    secs->attributes & sgx_attributes_reserved_mask ||
->> > 	    secs->xfrm & sgx_xfrm_reserved_mask)
->> > 		return -EINVAL;
->> >
->> > 	if (secs->size >= max_size)
->> > 		return -EINVAL;
->> >
->>
->> This should be > not >=. Issue raised and fixed by Fábio Silva for  
->> ported
->> patches for OOT SGX support:
->> https://github.com/intel/SGXDataCenterAttestationPrimitives/pull/123
->>
->> I tested and verified with Intel arch, the comparison indeed should be  
->> >.
+If you view using a struct instead of a multiple params as a separate cost,
+adding a pass-through param to throw a bone to Rust adds zero complexity.
+The flags field has nothing to do with Rust whatsoever.
+
+As for the struct itself, I suppose you could argue it's gratuitous, but
+I don't buy that it adds complexity.  The impact on the vDSO is something
+like four extra instructions, two of which are a CMP+Jcc to enforce the
+flags, and the others are the additional moves need to chase pointers through
+the struct.
+
+Unless someone really dislikes structs, there is no added complexity to the
+caller, it's just slightly different code, e.g. the selftest update for the
+struct variant actually removed code.
+
+> > > > Moving the params into a struct will also make it less painful to use
+> > > > dedicated exit reasons, and to support exiting on interrupts in future
+> > > > patches.
+> > > > 
+> > > My apology for not following discussion lately. What did you mean by
+> > > "dedicated exit reasons" and why was it "painful"? According to another
+> > > thread, I guess we wouldn't have "exiting on interrupts".
+> > 
+> > Currently the vDSO returns -EFAULT if the enclave encounters an exception,
+> > which is kludgy for two reasons:
+> > 
+> >   1. EFAULT traditionally means "bad address", whereas an exception could be
+> >      a #UD in the enclave.
+> > 
+> >   2. Returning -EFAULT provides weird semantics as it implies the vDSO call
+> >      failed, which is not the case.  The vDSO itself was successful, i.e. it
+> >      did the requested EENTER/ERESUME operation, and should really return '0'.
+> > 
+> EFAULT is descriptive enough for me. And more importantly detailed/specific
+> info is always available in exinfo.
 >
-> And this is a confirmed SDM bug, correct?
+> IMO, the purpose of return code is for the caller/handler to branch on. If 2
+> cases share the same execution path, then there's no need to distinguish
+> them. In the case of SGX, most (if not all) exceptions are handled in the
+> same way - nested EENTER, then what's point of distinguishing them? Please
+> note that detailed info is always available in exinfo to cover corner cases.
 
-yes, the pseudo code for ECREATE is inaccurate and inconsistent with the  
-CPUID spec. The latter is correct.
-Haitao
+The primary motiviation is to adhere to the general rules of the kernel,
+specifically that -EFAULT isn't intended as a catchall for exceptions. 
+
+> Moreover, even the vDSO API itself cannot tell between faults at
+> EENTER/ERESUME (the vDSO itself failes) vs. faults inside the enclave (vDSO
+> succeeded but the enclave fails). I don't think you can be accurate without
+> complicating the code significantly.
+
+And I didn't even try.  The proposed documentation explicitly states that
+"success" is defined as attempting ENCLU.
+
+> > The proposed solution for #1 is to define arbitrary return values to
+> > differentiate between synchronous (EEXIT) exits and asynchronous exits due
+> > to exceptions.  But that doesn't address #2, and gets especially awkward when
+> > dealing with the call back return, which is also overloaded to use positive
+> > return values for ENCLU leafs.
+> > 
+> > Passing a "run" struct makes it trivially easy to different the return value
+> > of the vDSO function from the enclave exit reason, and to avoid collisions
+> > with the return value from the userspace callback.
+> > 
+> When a callback is configured, the vDSO NEVER returns to caller directly -
+> i.e. all return codes must be from the callback but NOT the vDSO. I don't
+> see any collisions here.
+
+Unless the user provides a bad leaf, in which case -EINVAL is returned.
+
+But that wasn't what I was talking about.  If we want to use arbitrary values
+instead of hijacking -EFAULT (and possibly -EINTR), then we run into problems
+with choosing an arbitrary value that won't collide with the value returned
+from the callback to the _vDSO_.  The callback essentially gets dibs on all
+negative values and 0 is off limits.  That leaves positive values, but those
+are interpreted as the new ENCLU leaf by the vDSO.  That means the vDSO can
+"return" a value to the callback that the callback can't safely reflect back
+to the vDSO.  Using an exit reason side steps that by virtue of it not being
+the return value in either direction.
