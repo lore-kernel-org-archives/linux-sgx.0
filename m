@@ -2,128 +2,88 @@ Return-Path: <SRS0=DCUR=CN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8034C2BB84
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 14:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DC8C433E2
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 15:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2BBD20797
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 14:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59542074D
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Sep 2020 15:38:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbgIDOU6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Sep 2020 10:20:58 -0400
-Received: from mga04.intel.com ([192.55.52.120]:37294 "EHLO mga04.intel.com"
+        id S1726032AbgIDPid (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Sep 2020 11:38:33 -0400
+Received: from mga05.intel.com ([192.55.52.43]:18695 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbgIDNlv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 4 Sep 2020 09:41:51 -0400
-IronPort-SDR: ZMr0laXeKv6TWp0btkhqLze6fgsdmtPHuddj8U/pt33VeKhDYUgiKdYmsLiTJMjUJd/TjWYlHM
- cbd8LNJFVG9A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9733"; a="155137877"
+        id S1725984AbgIDPic (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 4 Sep 2020 11:38:32 -0400
+IronPort-SDR: HunqAupkhOQJs8eBdpXYX5hiwDqsElrLDfS2LAa829TjT14v1s5BWe2nj8sYlq1q/wrM6gU4cO
+ pHx6gL2UrnzQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9734"; a="242581981"
 X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
-   d="scan'208";a="155137877"
+   d="scan'208";a="242581981"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 06:36:34 -0700
-IronPort-SDR: bcssFqzUVWAXIZyLlScBFzednbOeNAy0afgrU9T3rhi2I1OC7iT+ibHB/5Fd0ZwNGfrPtaELw+
- rnIZG21yY7Bg==
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 08:38:31 -0700
+IronPort-SDR: lhzYd8BGWDjZj5jOy9zaU/PxJ2uWXRJknEQ/dVh32iPBCMviGEKSXSCmESynskoY/JJkqm1ugs
+ Wi/COMJjlb0g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
-   d="scan'208";a="302628319"
-Received: from pipper-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.56.104])
-  by orsmga006.jf.intel.com with ESMTP; 04 Sep 2020 06:36:32 -0700
-Date:   Fri, 4 Sep 2020 16:36:31 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-sgx@vger.kernel.org
-Subject: Re: [RFC PATCH 2/4] x86/vdso: x86/sgx: Rework
- __vdso_sgx_enter_enclave() API
-Message-ID: <20200904133631.GF39023@linux.intel.com>
-References: <20200818042405.12871-1-sean.j.christopherson@intel.com>
- <20200818042405.12871-3-sean.j.christopherson@intel.com>
- <74e185a6-909a-af54-9a09-e8f9c8809703@fortanix.com>
- <20200824194941.GC7391@linux.intel.com>
- <20200904102507.GA8435@sjchrist-ice>
+X-IronPort-AV: E=Sophos;i="5.76,390,1592895600"; 
+   d="scan'208";a="302668532"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.160])
+  by orsmga006.jf.intel.com with ESMTP; 04 Sep 2020 08:38:17 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org
+Subject: [PATCH for_v37] x86/sgx: Properly describe vdso_sgx_enter_enclave_t to fix kdoc warning
+Date:   Fri,  4 Sep 2020 08:38:16 -0700
+Message-Id: <20200904153816.1281-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200904102507.GA8435@sjchrist-ice>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Sep 04, 2020 at 03:25:07AM -0700, Sean Christopherson wrote:
-> On Mon, Aug 24, 2020 at 10:49:41PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Aug 24, 2020 at 03:36:11PM +0200, Jethro Beekman wrote:
-> > > On 2020-08-18 06:24, Sean Christopherson wrote:
-> > > >  /**
-> > > >   * __vdso_sgx_enter_enclave() - Enter an SGX enclave
-> > > > @@ -119,16 +153,14 @@ typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-> > > >   * @leaf:	ENCLU leaf, must be EENTER or ERESUME
-> > > >   * @r8:		Pass-through value for R8
-> > > >   * @r9:		Pass-through value for R9
-> > > > - * @tcs:	TCS, must be non-NULL
-> > > > - * @e:		Optional struct sgx_enclave_exception instance
-> > > > - * @handler:	Optional enclave exit handler
-> > > > + * @r:		struct sgx_enclave_run, must be non-NULL
-> > > >   *
-> > > >   * NOTE: __vdso_sgx_enter_enclave() does not ensure full compliance with the
-> > > > - * x86-64 ABI, e.g. doesn't explicitly clear EFLAGS.DF after EEXIT.  Except for
-> > > > - * non-volatile general purpose registers, preserving/setting state in
-> > > > - * accordance with the x86-64 ABI is the responsibility of the enclave and its
-> > > > - * runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C code
-> > > > - * without careful consideration by both the enclave and its runtime.
-> > > > + * x86-64 ABI, e.g. doesn't handle XSAVE state.  Except for non-volatile
-> > > > + * general purpose registers, EFLAGS.DF, and RSP alignment, preserving/setting
-> > > > + * state in accordance with the x86-64 ABI is the responsibility of the enclave
-> > > > + * and its runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C
-> > > > + * code without careful consideration by both the enclave and its runtime.
-> > > >   *
-> > > >   * All general purpose registers except RAX, RBX and RCX are passed as-is to
-> > > >   * the enclave.  RAX, RBX and RCX are consumed by EENTER and ERESUME and are
-> > > > @@ -160,16 +192,12 @@ typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-> > > >   * without returning to __vdso_sgx_enter_enclave().
-> > > >   *
-> > > >   * Return:
-> > > > - *  0 on success,
-> > > > + *  0 on success (ENCLU reached),
-> > > >   *  -EINVAL if ENCLU leaf is not allowed,
-> > > > - *  -EFAULT if an exception occurs on ENCLU or within the enclave
-> > > > - *  -errno for all other negative values returned by the userspace exit handler
-> > > >   */
-> > > >  typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
-> > > >  					unsigned long rdx, unsigned int leaf,
-> > > >  					unsigned long r8,  unsigned long r9,
-> > > > -					void *tcs,
-> > > > -					struct sgx_enclave_exception *e,
-> > > > -					sgx_enclave_exit_handler_t handler);
-> > > > +					struct sgx_enclave_run *r);
-> > > >  
-> > > >  #endif /* _UAPI_ASM_X86_SGX_H */
-> > > > 
-> > > 
-> > > I think this should return void now, not int? Then, the “return”
-> > > section of the documentation is also no longer correct.
-> > 
-> > This documentation should be moved to Documentation/x86/sgx.rst.
-> > 
-> > It is easier to read from there and then it will be included by kdoc
-> > to the kernel documentation. In here it is not addressed by kdoc and
-> > it is unnecessarily hard to read.
-> 
-> I'm confused, this is all picked up by kernel-doc.  What am I missing?
+Describe the vdso_sgx_enter_enclave_t typedef instead of the backing
+__vdso_sgx_enter_enclave() in the kernel-doc comment for the typedef to
+fix a kernel-doc warning.
 
-Right of course, it is in the .h file now. Sorry, it is me being blind.
+Opportunistically add a missing asterisk to fix a second warning.
 
-Was it before in the .S file?
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-/Jarkko
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index b1d63f90ad64..b3d5ccf5b976 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -145,7 +145,9 @@ struct sgx_enclave_run {
+ };
+ 
+ /**
+- * __vdso_sgx_enter_enclave() - Enter an SGX enclave
++ * typedef vdso_sgx_enter_enclave_t - Prototype for __vdso_sgx_enter_enclave(),
++ *				      a vDSO function to enter an SGX enclave.
++ *
+  * @rdi:	Pass-through value for RDI
+  * @rsi:	Pass-through value for RSI
+  * @rdx:	Pass-through value for RDX
+@@ -177,7 +179,7 @@ struct sgx_enclave_run {
+  * never fixed up and are always delivered via standard signals. On synchrously
+  * reported exceptions, -EFAULT is returned and details about the exception are
+  * recorded in @e, the optional sgx_enclave_exception struct.
+-
++ *
+  * If an exit handler is provided, the handler will be invoked on synchronous
+  * exits from the enclave and for all synchronously reported exceptions. In
+  * latter case, @e is filled prior to invoking the handler.
+-- 
+2.28.0
+
