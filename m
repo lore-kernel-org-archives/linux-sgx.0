@@ -2,62 +2,92 @@ Return-Path: <SRS0=P/MF=CS=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30893C433E2
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Sep 2020 05:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC31DC43461
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Sep 2020 09:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE3142068D
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Sep 2020 05:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70B59207DE
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Sep 2020 09:56:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DkXPn3vV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725948AbgIIFag (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Sep 2020 01:30:36 -0400
-Received: from mga07.intel.com ([134.134.136.100]:5731 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbgIIFag (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 9 Sep 2020 01:30:36 -0400
-IronPort-SDR: dCwewEANKsAb5zO8ZIFURtlsAQ0crOGKJsdgmVDQhEhhbfQysRTPnasaMS6d8n7OKe8ihgaebv
- a9KXYt598BYQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9738"; a="222477587"
-X-IronPort-AV: E=Sophos;i="5.76,408,1592895600"; 
-   d="scan'208";a="222477587"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2020 22:30:35 -0700
-IronPort-SDR: jEcaw3tk4vO+wFFnJKSYIlzL1mOcw9v6leHMqCHVk+3R/j+0SkppC5KlAmALgEMMVXIJLXrr32
- qHCmoEbneItw==
-X-IronPort-AV: E=Sophos;i="5.76,408,1592895600"; 
-   d="scan'208";a="505329641"
-Received: from sjchrist-ice.jf.intel.com (HELO sjchrist-ice) ([10.54.31.34])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2020 22:30:34 -0700
-Date:   Tue, 8 Sep 2020 22:30:33 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Borislav Petkov <bp@suse.de>
+        id S1727113AbgIIJ4Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 9 Sep 2020 05:56:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36694 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbgIIJ4M (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 9 Sep 2020 05:56:12 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0899sdcc105246;
+        Wed, 9 Sep 2020 09:56:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=cWr4fsJ3cUouor9+S1PGF/0q4IMawHo7uuemCdRxs/g=;
+ b=DkXPn3vVdRTFXrgmr3DHGN0t/F6QJosjDkNHJVTqSCsx1qvxtOc61BJQIXeANEZwykC+
+ iwSWsey9bD91GWQ2Hgo6e3N9O5hzDUDxRT37DwIbxzml8hoQGLGCuw3tFWeUOOxJFTdE
+ ZBhKjGIhlBly2WXhcPq9HcvRrAgCoQmKe6SbdVu6MXXW0Jomkf3KayyjNtxqTZ5zzInv
+ 8ORaQZlE+sRoenhiujgXqKhc0Fj8OKaXGdIGbb2o5EvruUochLYH0M0gKNbk7dZp90rr
+ 5MPKMmhpjAVTKYngb6bM25b4UgYzqABTpO6BtJ93DHVxKuDFrZeoMX9oz8N9wPngmN+Q 6Q== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 33c2mm0qed-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 09 Sep 2020 09:56:03 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0899oMKu001988;
+        Wed, 9 Sep 2020 09:56:03 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 33cmkxg1dq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Sep 2020 09:56:03 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0899u1Ru006571;
+        Wed, 9 Sep 2020 09:56:01 GMT
+Received: from starbug-mbp.localdomain (/79.97.215.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 09 Sep 2020 02:56:01 -0700
+Received: by starbug-mbp.localdomain (Postfix, from userid 501)
+        id 25942142B311; Wed,  9 Sep 2020 10:55:58 +0100 (IST)
+From:   Darren Kenny <darren.kenny@oracle.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@suse.de>
 Subject: Re: [PATCH] x86/sgx: Roof the number of pages process in
  SGX_IOC_ENCLAVE_ADD_PAGES
-Message-ID: <20200909053033.GC9987@sjchrist-ice>
-References: <20200908190042.24895-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20200908190042.24895-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200908190042.24895-1-jarkko.sakkinen@linux.intel.com>
+Date:   Wed, 09 Sep 2020 10:55:58 +0100
+Message-ID: <m2k0x346kx.fsf@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 suspectscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2009090087
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
+ phishscore=0 adultscore=0 bulkscore=0 clxscore=1011 mlxlogscore=999
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009090088
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 08, 2020 at 10:00:42PM +0300, Jarkko Sakkinen wrote:
+On Tuesday, 2020-09-08 at 22:00:42 +03, Jarkko Sakkinen wrote:
 > Remove 'count' from struct sgx_enclave_add_pages and return number of
 > pages processed as a positive return as there is no reasonable use for
 > -EINTR for the caller. Then, roof the processing with a fixed constant
 > and break out the loop also when this value is surpassed.
-> 
+>
 > Link: https://lore.kernel.org/linux-sgx/20200626153400.GE27151@zn.tnic/
 > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 > Cc: Borislav Petkov <bp@suse.de>
@@ -67,7 +97,7 @@ On Tue, Sep 08, 2020 at 10:00:42PM +0300, Jarkko Sakkinen wrote:
 >  arch/x86/kernel/cpu/sgx/ioctl.c | 10 ++++------
 >  arch/x86/kernel/cpu/sgx/sgx.h   |  1 +
 >  3 files changed, 5 insertions(+), 8 deletions(-)
-> 
+>
 > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
 > index b3d5ccf5b976..1564d7f88597 100644
 > --- a/arch/x86/include/uapi/asm/sgx.h
@@ -108,25 +138,19 @@ On Tue, Sep 08, 2020 at 10:00:42PM +0300, Jarkko Sakkinen wrote:
 > -		if (signal_pending(current)) {
 > -			ret = -EINTR;
 > +		if (c == SGX_MAX_ADD_PAGES_LENGTH || signal_pending(current)) {
+
+I know that SGX_MAX_ADD_PAGES_LENGTH may be a multiple of PAGE_SIZE, but
+to be sure that nothing breaks here in the future, I think it would be
+better to use '>=' as the comparison rather than just '=='.
+
+Also, the indentation seems off here w.r.t. using TABs when the break
+below is using spaces - would be good to have them the same at least.
+
+Thanks,
+
+Darren.
+
 > +			ret = c;
-
-I don't have an opinion on returning count vs. EINTR, but I don't see the
-point in arbitrarily capping the number of pages that can be added in a
-single ioctl().  It doesn't provide any real protection, e.g. userspace
-can simply restart the ioctl() with updated offsets and continue spamming
-EADDs.  We are relying on other limits, e.g. memcg, rlimits, etc... to
-reign in malicious/broken userspace.
-
-There is nothing inherently dangerous about spending time in the kernel so
-long as appropriate checks are made, e.g. for a pending signel and resched.
-If we're missing checks, adding an arbitrary limit won't fix the underlying
-problem, at least not in a deterministic way.
-
-If we really want a limit of some form, adding a knob to control the max
-size of an enclave seems like the way to go.  But even that is of dubious
-value as I'd rather rely on existing limits for virtual and physical memory,
-and add a proper EPC cgroup to account and limit EPC memory.
-
 >  			break;
 >  		}
 >  
@@ -158,4 +182,3 @@ and add a proper EPC cgroup to account and limit EPC memory.
 >  #define SGX_NR_HIGH_PAGES		64
 > -- 
 > 2.25.1
-> 
