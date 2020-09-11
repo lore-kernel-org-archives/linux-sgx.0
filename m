@@ -7,57 +7,50 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5DBC43461
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Sep 2020 12:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E0AC433E2
+	for <linux-sgx@archiver.kernel.org>; Fri, 11 Sep 2020 12:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4919822208
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Sep 2020 12:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF84F20575
+	for <linux-sgx@archiver.kernel.org>; Fri, 11 Sep 2020 12:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbgIKMom (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 11 Sep 2020 08:44:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60910 "EHLO mga02.intel.com"
+        id S1725808AbgIKMth (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 11 Sep 2020 08:49:37 -0400
+Received: from mga12.intel.com ([192.55.52.136]:22783 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbgIKMnl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 11 Sep 2020 08:43:41 -0400
-IronPort-SDR: tI++tMklK4xKhoE5aRLd8Tue/LGbjHhjNQMftE02HqBCe5eU1mIhrrELZqUViAYXIpbClRTg5c
- 2/nlKONxQzvg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9740"; a="146436589"
+        id S1725958AbgIKMss (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 11 Sep 2020 08:48:48 -0400
+IronPort-SDR: y1ETna1DXP89RkmEsXwuqlxMZmAVEGHGIMexfzw1Dfusf/ZBdzo1zH3BGat76z3i40TwXXvc1H
+ +LUHDXrzc5kA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9740"; a="138262313"
 X-IronPort-AV: E=Sophos;i="5.76,415,1592895600"; 
-   d="scan'208";a="146436589"
+   d="scan'208";a="138262313"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:43:40 -0700
-IronPort-SDR: 3b17H6iqHf4Vh0Xu1wkGI5bB4X9kxbTaLDi7zPOWotRAmRxidQJ8X/IdnAyw7YvmrvM4g8/yZP
- lz0PEHYotCnQ==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:45:32 -0700
+IronPort-SDR: qt+8dQq45LlzbEqSOT1InL5mKdeBLBLj8/mgXZ2s50Ar9VQYXAlgNqCbonGXdxnwAamq5a0c/9
+ ynMFQTPFkk+g==
 X-IronPort-AV: E=Sophos;i="5.76,415,1592895600"; 
-   d="scan'208";a="408148295"
+   d="scan'208";a="286885816"
 Received: from amaksymi-mobl.ger.corp.intel.com (HELO localhost) ([10.252.60.247])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:43:27 -0700
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:45:20 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
         cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v37 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
-Date:   Fri, 11 Sep 2020 15:40:07 +0300
-Message-Id: <20200911124019.42178-13-jarkko.sakkinen@linux.intel.com>
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v37 19/24] x86/fault: Add helper function to sanitize error code
+Date:   Fri, 11 Sep 2020 15:40:14 +0300
+Message-Id: <20200911124019.42178-20-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200911124019.42178-1-jarkko.sakkinen@linux.intel.com>
 References: <20200911124019.42178-1-jarkko.sakkinen@linux.intel.com>
@@ -68,359 +61,75 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add an ioctl that performs ENCLS[ECREATE], which creates SGX Enclave
-Control Structure for the enclave. SECS contains attributes about the
-enclave that are used by the hardware and cannot be directly accessed by
-software, as SECS resides in the EPC.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-One essential field in SECS is a field that stores the SHA256 of the
-measured enclave pages. This field, MRENCLAVE, is initialized by the
-ECREATE instruction and updated by every EADD and EEXTEND operation.
-Finally, EINIT locks down the value.
+Add helper function to sanitize error code to prepare for vDSO exception
+fixup, which will expose the error code to userspace and runs before
+set_signal_archinfo(), i.e. suppresses the signal when fixup is successful.
 
 Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Tested-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- .../userspace-api/ioctl/ioctl-number.rst      |   1 +
- arch/x86/include/uapi/asm/sgx.h               |  25 ++
- arch/x86/kernel/cpu/sgx/Makefile              |   1 +
- arch/x86/kernel/cpu/sgx/driver.c              |  12 +
- arch/x86/kernel/cpu/sgx/driver.h              |   1 +
- arch/x86/kernel/cpu/sgx/ioctl.c               | 220 ++++++++++++++++++
- 6 files changed, 260 insertions(+)
- create mode 100644 arch/x86/include/uapi/asm/sgx.h
- create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
+ arch/x86/mm/fault.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 2a198838fca9..a89e1c46a25a 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -323,6 +323,7 @@ Code  Seq#    Include File                                           Comments
-                                                                      <mailto:tlewis@mindspring.com>
- 0xA3  90-9F  linux/dtlk.h
- 0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
-+0xA4  00-1F  uapi/asm/sgx.h                                          <mailto:linux-sgx@vger.kernel.org>
- 0xAA  00-3F  linux/uapi/linux/userfaultfd.h
- 0xAB  00-1F  linux/nbd.h
- 0xAC  00-1F  linux/raw.h
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-new file mode 100644
-index 000000000000..c75b375f3770
---- /dev/null
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/*
-+ * Copyright(c) 2016-19 Intel Corporation.
-+ */
-+#ifndef _UAPI_ASM_X86_SGX_H
-+#define _UAPI_ASM_X86_SGX_H
-+
-+#include <linux/types.h>
-+#include <linux/ioctl.h>
-+
-+#define SGX_MAGIC 0xA4
-+
-+#define SGX_IOC_ENCLAVE_CREATE \
-+	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-+
-+/**
-+ * struct sgx_enclave_create - parameter structure for the
-+ *                             %SGX_IOC_ENCLAVE_CREATE ioctl
-+ * @src:	address for the SECS page data
-+ */
-+struct sgx_enclave_create  {
-+	__u64	src;
-+};
-+
-+#endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-index 3fc451120735..91d3dc784a29 100644
---- a/arch/x86/kernel/cpu/sgx/Makefile
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -1,4 +1,5 @@
- obj-y += \
- 	driver.o \
- 	encl.o \
-+	ioctl.o \
- 	main.o
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index f54da5f19c2b..7bdb49dfcca6 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -114,10 +114,22 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
- 	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 1a7cc6d3281a..9e5ec861aba0 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -555,6 +555,18 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
+ 	oops_end(flags, regs, sig);
  }
  
-+#ifdef CONFIG_COMPAT
-+static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
-+			      unsigned long arg)
++static void sanitize_error_code(unsigned long address,
++				unsigned long *error_code)
 +{
-+	return sgx_ioctl(filep, cmd, arg);
-+}
-+#endif
-+
- static const struct file_operations sgx_encl_fops = {
- 	.owner			= THIS_MODULE,
- 	.open			= sgx_open,
- 	.release		= sgx_release,
-+	.unlocked_ioctl		= sgx_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl		= sgx_compat_ioctl,
-+#endif
- 	.mmap			= sgx_mmap,
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index f7ce40dedc91..e4063923115b 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -9,6 +9,7 @@
- #include <linux/rwsem.h>
- #include <linux/sched.h>
- #include <linux/workqueue.h>
-+#include <uapi/asm/sgx.h>
- #include "sgx.h"
- 
- #define SGX_EINIT_SPIN_COUNT	20
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-new file mode 100644
-index 000000000000..352a3c461812
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+// Copyright(c) 2016-19 Intel Corporation.
-+
-+#include <asm/mman.h>
-+#include <linux/mman.h>
-+#include <linux/delay.h>
-+#include <linux/file.h>
-+#include <linux/hashtable.h>
-+#include <linux/highmem.h>
-+#include <linux/ratelimit.h>
-+#include <linux/sched/signal.h>
-+#include <linux/shmem_fs.h>
-+#include <linux/slab.h>
-+#include <linux/suspend.h>
-+#include "driver.h"
-+#include "encl.h"
-+#include "encls.h"
-+
-+static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
-+{
-+	u32 size_max = PAGE_SIZE;
-+	u32 size;
-+	int i;
-+
-+	for (i = 2; i < 64; i++) {
-+		if (!((1 << i) & xfrm))
-+			continue;
-+
-+		size = SGX_SSA_GPRS_SIZE + sgx_xsave_size_tbl[i];
-+
-+		if (miscselect & SGX_MISC_EXINFO)
-+			size += SGX_SSA_MISC_EXINFO_SIZE;
-+
-+		if (size > size_max)
-+			size_max = size;
-+	}
-+
-+	return PFN_UP(size_max);
-+}
-+
-+static int sgx_validate_secs(const struct sgx_secs *secs)
-+{
-+	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
-+		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
-+
-+	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
-+		return -EINVAL;
-+
-+	if (secs->base & (secs->size - 1))
-+		return -EINVAL;
-+
-+	if (secs->miscselect & sgx_misc_reserved_mask ||
-+	    secs->attributes & sgx_attributes_reserved_mask ||
-+	    secs->xfrm & sgx_xfrm_reserved_mask)
-+		return -EINVAL;
-+
-+	if (secs->size > max_size)
-+		return -EINVAL;
-+
-+	if (!(secs->xfrm & XFEATURE_MASK_FP) ||
-+	    !(secs->xfrm & XFEATURE_MASK_SSE) ||
-+	    (((secs->xfrm >> XFEATURE_BNDREGS) & 1) !=
-+	     ((secs->xfrm >> XFEATURE_BNDCSR) & 1)))
-+		return -EINVAL;
-+
-+	if (!secs->ssa_frame_size)
-+		return -EINVAL;
-+
-+	if (sgx_calc_ssa_frame_size(secs->miscselect, secs->xfrm) >
-+	    secs->ssa_frame_size)
-+		return -EINVAL;
-+
-+	if (memchr_inv(secs->reserved1, 0, sizeof(secs->reserved1)) ||
-+	    memchr_inv(secs->reserved2, 0, sizeof(secs->reserved2)) ||
-+	    memchr_inv(secs->reserved3, 0, sizeof(secs->reserved3)) ||
-+	    memchr_inv(secs->reserved4, 0, sizeof(secs->reserved4)))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
-+{
-+	unsigned long encl_size = secs->size + PAGE_SIZE;
-+	struct sgx_epc_page *secs_epc;
-+	struct sgx_pageinfo pginfo;
-+	struct sgx_secinfo secinfo;
-+	struct file *backing;
-+	long ret;
-+
-+	if (sgx_validate_secs(secs)) {
-+		pr_debug("invalid SECS\n");
-+		return -EINVAL;
-+	}
-+
-+	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
-+				   VM_NORESERVE);
-+	if (IS_ERR(backing))
-+		return PTR_ERR(backing);
-+
-+	encl->backing = backing;
-+
-+	secs_epc = __sgx_alloc_epc_page();
-+	if (IS_ERR(secs_epc)) {
-+		ret = PTR_ERR(secs_epc);
-+		goto err_out_backing;
-+	}
-+
-+	encl->secs.epc_page = secs_epc;
-+
-+	pginfo.addr = 0;
-+	pginfo.contents = (unsigned long)secs;
-+	pginfo.metadata = (unsigned long)&secinfo;
-+	pginfo.secs = 0;
-+	memset(&secinfo, 0, sizeof(secinfo));
-+
-+	ret = __ecreate((void *)&pginfo, sgx_get_epc_addr(secs_epc));
-+	if (ret) {
-+		pr_debug("ECREATE returned %ld\n", ret);
-+		goto err_out;
-+	}
-+
-+	if (secs->attributes & SGX_ATTR_DEBUG)
-+		atomic_or(SGX_ENCL_DEBUG, &encl->flags);
-+
-+	encl->secs.encl = encl;
-+	encl->base = secs->base;
-+	encl->size = secs->size;
-+	encl->ssaframesize = secs->ssa_frame_size;
-+
 +	/*
-+	 * Set SGX_ENCL_CREATED only after the enclave is fully prepped.  This
-+	 * allows setting and checking enclave creation without having to take
-+	 * encl->lock.
++	 * To avoid leaking information about the kernel page
++	 * table layout, pretend that user-mode accesses to
++	 * kernel addresses are always protection faults.
 +	 */
-+	atomic_or(SGX_ENCL_CREATED, &encl->flags);
-+
-+	return 0;
-+
-+err_out:
-+	sgx_free_epc_page(encl->secs.epc_page);
-+	encl->secs.epc_page = NULL;
-+
-+err_out_backing:
-+	fput(encl->backing);
-+	encl->backing = NULL;
-+
-+	return ret;
++	if (address >= TASK_SIZE_MAX)
++		*error_code |= X86_PF_PROT;
 +}
 +
-+/**
-+ * sgx_ioc_enclave_create - handler for %SGX_IOC_ENCLAVE_CREATE
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_create instance
-+ *
-+ * Allocate kernel data structures for a new enclave and execute ECREATE after
-+ * verifying the correctness of the provided SECS.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -errno otherwise
-+ */
-+static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
-+{
-+	struct sgx_enclave_create ecreate;
-+	struct page *secs_page;
-+	struct sgx_secs *secs;
-+	int ret;
+ static void set_signal_archinfo(unsigned long address,
+ 				unsigned long error_code)
+ {
+@@ -611,6 +623,8 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 		 * faulting through the emulate_vsyscall() logic.
+ 		 */
+ 		if (current->thread.sig_on_uaccess_err && signal) {
++			sanitize_error_code(address, &error_code);
 +
-+	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
-+		return -EINVAL;
+ 			set_signal_archinfo(address, error_code);
+ 
+ 			/* XXX: hwpoison faults will set the wrong code. */
+@@ -759,13 +773,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ 		if (is_errata100(regs, address))
+ 			return;
+ 
+-		/*
+-		 * To avoid leaking information about the kernel page table
+-		 * layout, pretend that user-mode accesses to kernel addresses
+-		 * are always protection faults.
+-		 */
+-		if (address >= TASK_SIZE_MAX)
+-			error_code |= X86_PF_PROT;
++		sanitize_error_code(address, &error_code);
+ 
+ 		if (likely(show_unhandled_signals))
+ 			show_signal_msg(regs, error_code, address, tsk);
+@@ -884,6 +892,8 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+ 	if (is_prefetch(regs, error_code, address))
+ 		return;
+ 
++	sanitize_error_code(address, &error_code);
 +
-+	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
-+		return -EFAULT;
-+
-+	secs_page = alloc_page(GFP_KERNEL);
-+	if (!secs_page)
-+		return -ENOMEM;
-+
-+	secs = kmap(secs_page);
-+	if (copy_from_user(secs, (void __user *)ecreate.src, sizeof(*secs))) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	ret = sgx_encl_create(encl, secs);
-+
-+out:
-+	kunmap(secs_page);
-+	__free_page(secs_page);
-+	return ret;
-+}
-+
-+long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
-+{
-+	struct sgx_encl *encl = filep->private_data;
-+	int ret, encl_flags;
-+
-+	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
-+	if (encl_flags & SGX_ENCL_IOCTL)
-+		return -EBUSY;
-+
-+	if (encl_flags & SGX_ENCL_DEAD) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	switch (cmd) {
-+	case SGX_IOC_ENCLAVE_CREATE:
-+		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
-+		break;
-+	default:
-+		ret = -ENOIOCTLCMD;
-+		break;
-+	}
-+
-+out:
-+	atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
-+	return ret;
-+}
+ 	set_signal_archinfo(address, error_code);
+ 
+ #ifdef CONFIG_MEMORY_FAILURE
 -- 
 2.25.1
 
