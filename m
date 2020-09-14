@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8380C433E2
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA7BC43461
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F299217BA
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02F620719
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:56:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbgINQtg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 14 Sep 2020 12:49:36 -0400
-Received: from mga03.intel.com ([134.134.136.65]:32085 "EHLO mga03.intel.com"
+        id S1726131AbgINQzr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Sep 2020 12:55:47 -0400
+Received: from mga09.intel.com ([134.134.136.24]:56663 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgINQss (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 14 Sep 2020 12:48:48 -0400
-IronPort-SDR: xF8PDkDLtmTDS93vmYvKGYWHMChrLZxW6yvb3jAxcChAXEVWSJX5/WuHZq0gnIwSpX6qcKaw+T
- 3dALmbhZQfSw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="159152722"
+        id S1726142AbgINQsl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 14 Sep 2020 12:48:41 -0400
+IronPort-SDR: 08k3SYL/WK59UR63CrI02biJImv7W0OwbVQ7ekpfBJrOrPHWTW/9bOV3Xyu8RzXfPcKAlr8wQA
+ V8xpVf0DQXEg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="160042313"
 X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
-   d="scan'208";a="159152722"
+   d="scan'208";a="160042313"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:48:43 -0700
-IronPort-SDR: kDHukqaL6LWboEvt6nEuR33BsFePmgMNsR+Hh9EYTIja/azfG66jWIXyelpQAW9aMsAWai2Duh
- NTQc4zi82s5w==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:48:16 -0700
+IronPort-SDR: XdL0NgjpLuufygeHgWNjWxVEI9Ld4lKwibNbZn7UJirEi6s6XRp0No/DC038c6d4t5Ig2Dgo1H
+ XbhlFDoOOoIQ==
 X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
-   d="scan'208";a="482418134"
-Received: from schreifr-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.38.230])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:48:30 -0700
+   d="scan'208";a="287677312"
+Received: from daser-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.230])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:48:09 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v37 08/24] x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections
-Date:   Mon, 14 Sep 2020 19:48:24 +0300
-Message-Id: <20200914164824.6304-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v37 01/24] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
+Date:   Mon, 14 Sep 2020 19:48:05 +0300
+Message-Id: <20200914164805.6167-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -63,361 +64,189 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-structures necessary to track EPC pages so that they can be easily borrowed
-for different uses.
+Add X86_FEATURE_SGX from CPUID.(EAX=7, ECX=1), which informs whether the
+CPU has SGX.
 
-Embed section index to the first eight bits of the EPC page descriptor.
-Existing client hardware supports only a single section, while upcoming
-server hardware will support at most eight sections. Thus, eight bits
-should be enough for long term needs.
+Add X86_FEATURE_SGX1 and X86_FEATURE_SGX2 from CPUID.(EAX=12H, ECX=0),
+which describe the level of SGX support available [1].
 
+Add IA32_FEATURE_CONTROL.SGX_ENABLE. BIOS can use this bit to opt-in SGX
+before locking the feature control MSR [2].
+
+[1] Intel SDM: 36.7.2 Intel® SGX Resource Enumeration Leaves
+[2] Intel SDM: 36.7.1 Intel® SGX Opt-In Configuration
+
+Reviewed-by: Borislav Petkov <bp@alien8.de>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
-Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
 Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/Kconfig                 |  17 +++
- arch/x86/kernel/cpu/Makefile     |   1 +
- arch/x86/kernel/cpu/sgx/Makefile |   2 +
- arch/x86/kernel/cpu/sgx/main.c   | 216 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h    |  52 ++++++++
- 5 files changed, 288 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
- create mode 100644 arch/x86/kernel/cpu/sgx/main.c
- create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
+ arch/x86/include/asm/cpufeature.h        |  5 +++--
+ arch/x86/include/asm/cpufeatures.h       |  7 ++++++-
+ arch/x86/include/asm/disabled-features.h | 18 +++++++++++++++---
+ arch/x86/include/asm/msr-index.h         |  1 +
+ arch/x86/include/asm/required-features.h |  2 +-
+ arch/x86/kernel/cpu/common.c             |  4 ++++
+ 6 files changed, 30 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 7101ac64bb20..90fe47577dd7 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1927,6 +1927,23 @@ config X86_INTEL_TSX_MODE_AUTO
- 	  side channel attacks- equals the tsx=auto command line parameter.
- endchoice
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 59bf91c57aa8..efbdba5170a3 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -30,6 +30,7 @@ enum cpuid_leafs
+ 	CPUID_7_ECX,
+ 	CPUID_8000_0007_EBX,
+ 	CPUID_7_EDX,
++	CPUID_12_EAX,
+ };
  
-+config INTEL_SGX
-+	bool "Intel SGX"
-+	depends on X86_64 && CPU_SUP_INTEL
-+	depends on CRYPTO=y
-+	depends on CRYPTO_SHA256=y
-+	select SRCU
-+	select MMU_NOTIFIER
-+	help
-+	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
-+	  that can be used by applications to set aside private regions of code
-+	  and data, referred to as enclaves. An enclave's private memory can
-+	  only be accessed by code running within the enclave. Accesses from
-+	  outside the enclave, including other enclaves, are disallowed by
-+	  hardware.
-+
-+	  If unsure, say N.
-+
- config EFI
- 	bool "EFI runtime service support"
- 	depends on ACPI
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 93792b457b81..c80d804fd02b 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -48,6 +48,7 @@ obj-$(CONFIG_X86_MCE)			+= mce/
- obj-$(CONFIG_MTRR)			+= mtrr/
- obj-$(CONFIG_MICROCODE)			+= microcode/
- obj-$(CONFIG_X86_CPU_RESCTRL)		+= resctrl/
-+obj-$(CONFIG_INTEL_SGX)			+= sgx/
+ #ifdef CONFIG_X86_FEATURE_NAMES
+@@ -89,7 +90,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
+ 	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
  
- obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
+ #define DISABLED_MASK_BIT_SET(feature_bit)				\
+ 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+@@ -112,7 +113,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+ 	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
  
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-new file mode 100644
-index 000000000000..79510ce01b3b
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -0,0 +1,2 @@
-+obj-y += \
-+	main.o
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-new file mode 100644
-index 000000000000..c5831e3db14a
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -0,0 +1,216 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+// Copyright(c) 2016-17 Intel Corporation.
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 2901d5df4366..159b635159c0 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -13,7 +13,7 @@
+ /*
+  * Defines x86 CPU feature bits
+  */
+-#define NCAPINTS			19	   /* N 32-bit words worth of info */
++#define NCAPINTS			20	   /* N 32-bit words worth of info */
+ #define NBUGINTS			1	   /* N 32-bit bug flags */
+ 
+ /*
+@@ -240,6 +240,7 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+ #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+ #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
++#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
+ #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
+ #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
+ #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
+@@ -377,6 +378,10 @@
+ #define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
+ #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+ 
++/* Intel-defined SGX features, CPUID level 0x00000012:0 (EAX), word 19 */
++#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
++#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
 +
-+#include <linux/freezer.h>
-+#include <linux/highmem.h>
-+#include <linux/kthread.h>
-+#include <linux/pagemap.h>
-+#include <linux/ratelimit.h>
-+#include <linux/sched/mm.h>
-+#include <linux/sched/signal.h>
-+#include <linux/slab.h>
-+#include "encls.h"
+ /*
+  * BUG word(s)
+  */
+diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+index 4ea8584682f9..dbe534d5153f 100644
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -28,13 +28,18 @@
+ # define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
+ # define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
+ # define DISABLE_PCID		0
++# define DISABLE_SGX1		0
++# define DISABLE_SGX2		0
+ #else
+ # define DISABLE_VME		0
+ # define DISABLE_K6_MTRR	0
+ # define DISABLE_CYRIX_ARR	0
+ # define DISABLE_CENTAUR_MCR	0
+ # define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
+-#endif /* CONFIG_X86_64 */
++# define DISABLE_SGX1		(1<<(X86_FEATURE_SGX1 & 31))
++# define DISABLE_SGX2		(1<<(X86_FEATURE_SGX2 & 31))
++ #endif /* CONFIG_X86_64 */
 +
-+struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-+static int sgx_nr_epc_sections;
-+static struct task_struct *ksgxswapd_tsk;
+ 
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ # define DISABLE_PKU		0
+@@ -56,6 +61,12 @@
+ # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
+ #endif
+ 
++#ifdef CONFIG_INTEL_SGX
++# define DISABLE_SGX	0
++#else
++# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
++#endif
 +
-+static void sgx_sanitize_section(struct sgx_epc_section *section)
-+{
-+	struct sgx_epc_page *page;
-+	LIST_HEAD(secs_list);
-+	int ret;
+ /*
+  * Make sure to add features to the correct mask
+  */
+@@ -68,7 +79,7 @@
+ #define DISABLED_MASK6	0
+ #define DISABLED_MASK7	(DISABLE_PTI)
+ #define DISABLED_MASK8	0
+-#define DISABLED_MASK9	(DISABLE_SMAP)
++#define DISABLED_MASK9	(DISABLE_SMAP|DISABLE_SGX)
+ #define DISABLED_MASK10	0
+ #define DISABLED_MASK11	0
+ #define DISABLED_MASK12	0
+@@ -78,6 +89,7 @@
+ #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
+ #define DISABLED_MASK17	0
+ #define DISABLED_MASK18	0
+-#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
++#define DISABLED_MASK19	(DISABLE_SGX1|DISABLE_SGX2)
++#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
+ 
+ #endif /* _ASM_X86_DISABLED_FEATURES_H */
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 2859ee4f39a8..c0b04f020162 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -602,6 +602,7 @@
+ #define FEAT_CTL_LOCKED				BIT(0)
+ #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
+ #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
++#define FEAT_CTL_SGX_ENABLED			BIT(18)
+ #define FEAT_CTL_LMCE_ENABLED			BIT(20)
+ 
+ #define MSR_IA32_TSC_ADJUST             0x0000003b
+diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
+index 6847d85400a8..039e58be2fe6 100644
+--- a/arch/x86/include/asm/required-features.h
++++ b/arch/x86/include/asm/required-features.h
+@@ -101,6 +101,6 @@
+ #define REQUIRED_MASK16	0
+ #define REQUIRED_MASK17	0
+ #define REQUIRED_MASK18	0
+-#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
++#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
+ 
+ #endif /* _ASM_X86_REQUIRED_FEATURES_H */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index c5d6f17d9b9d..ccd9a11d5d1a 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -931,6 +931,10 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_D_1_EAX] = eax;
+ 	}
+ 
++	/* Additional Intel-defined SGX flags: level 0x00000012 */
++	if (c->cpuid_level >= 0x00000012)
++		c->x86_capability[CPUID_12_EAX] = cpuid_eax(0x00000012);
 +
-+	while (!list_empty(&section->unsanitized_page_list)) {
-+		if (kthread_should_stop())
-+			return;
-+
-+		spin_lock(&section->lock);
-+
-+		page = list_first_entry(&section->unsanitized_page_list,
-+					struct sgx_epc_page, list);
-+
-+		ret = __eremove(sgx_get_epc_addr(page));
-+		if (!ret)
-+			list_move(&page->list, &section->page_list);
-+		else
-+			list_move_tail(&page->list, &secs_list);
-+
-+		spin_unlock(&section->lock);
-+
-+		cond_resched();
-+	}
-+}
-+
-+static int ksgxswapd(void *p)
-+{
-+	int i;
-+
-+	set_freezable();
-+
-+	/*
-+	 * Reset all pages to uninitialized state. Pages could be in initialized
-+	 * on kmemexec.
-+	 */
-+	for (i = 0; i < sgx_nr_epc_sections; i++)
-+		sgx_sanitize_section(&sgx_epc_sections[i]);
-+
-+	/*
-+	 * 2nd round for the SECS pages as they cannot be removed when they
-+	 * still hold child pages.
-+	 */
-+	for (i = 0; i < sgx_nr_epc_sections; i++) {
-+		sgx_sanitize_section(&sgx_epc_sections[i]);
-+
-+		/* Should never happen. */
-+		if (!list_empty(&sgx_epc_sections[i].unsanitized_page_list))
-+			WARN(1, "EPC section %d has unsanitized pages.\n", i);
-+	}
-+
-+	return 0;
-+}
-+
-+static bool __init sgx_page_reclaimer_init(void)
-+{
-+	struct task_struct *tsk;
-+
-+	tsk = kthread_run(ksgxswapd, NULL, "ksgxswapd");
-+	if (IS_ERR(tsk))
-+		return false;
-+
-+	ksgxswapd_tsk = tsk;
-+
-+	return true;
-+}
-+
-+static void __init sgx_free_epc_section(struct sgx_epc_section *section)
-+{
-+	struct sgx_epc_page *page;
-+
-+	while (!list_empty(&section->page_list)) {
-+		page = list_first_entry(&section->page_list,
-+					struct sgx_epc_page, list);
-+		list_del(&page->list);
-+		kfree(page);
-+	}
-+
-+	while (!list_empty(&section->unsanitized_page_list)) {
-+		page = list_first_entry(&section->unsanitized_page_list,
-+					struct sgx_epc_page, list);
-+		list_del(&page->list);
-+		kfree(page);
-+	}
-+
-+	memunmap(section->va);
-+}
-+
-+static bool __init sgx_setup_epc_section(u64 addr, u64 size,
-+					 unsigned long index,
-+					 struct sgx_epc_section *section)
-+{
-+	unsigned long nr_pages = size >> PAGE_SHIFT;
-+	struct sgx_epc_page *page;
-+	unsigned long i;
-+
-+	section->va = memremap(addr, size, MEMREMAP_WB);
-+	if (!section->va)
-+		return false;
-+
-+	section->pa = addr;
-+	spin_lock_init(&section->lock);
-+	INIT_LIST_HEAD(&section->page_list);
-+	INIT_LIST_HEAD(&section->unsanitized_page_list);
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		page = kzalloc(sizeof(*page), GFP_KERNEL);
-+		if (!page)
-+			goto err_out;
-+
-+		page->desc = (addr + (i << PAGE_SHIFT)) | index;
-+		list_add_tail(&page->list, &section->unsanitized_page_list);
-+	}
-+
-+	return true;
-+
-+err_out:
-+	sgx_free_epc_section(section);
-+	return false;
-+}
-+
-+static void __init sgx_page_cache_teardown(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < sgx_nr_epc_sections; i++)
-+		sgx_free_epc_section(&sgx_epc_sections[i]);
-+}
-+
-+/**
-+ * A section metric is concatenated in a way that @low bits 12-31 define the
-+ * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
-+ * metric.
-+ */
-+static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
-+{
-+	return (low & GENMASK_ULL(31, 12)) +
-+	       ((high & GENMASK_ULL(19, 0)) << 32);
-+}
-+
-+static bool __init sgx_page_cache_init(void)
-+{
-+	u32 eax, ebx, ecx, edx, type;
-+	u64 pa, size;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-+		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
-+			    &eax, &ebx, &ecx, &edx);
-+
-+		type = eax & SGX_CPUID_SUB_LEAF_TYPE_MASK;
-+		if (type == SGX_CPUID_SUB_LEAF_INVALID)
-+			break;
-+
-+		if (type != SGX_CPUID_SUB_LEAF_EPC_SECTION) {
-+			pr_err_once("Unknown EPC section type: %u\n", type);
-+			break;
-+		}
-+
-+		pa = sgx_calc_section_metric(eax, ebx);
-+		size = sgx_calc_section_metric(ecx, edx);
-+
-+		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
-+
-+		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
-+			pr_err("No free memory for an EPC section\n");
-+			break;
-+		}
-+
-+		sgx_nr_epc_sections++;
-+	}
-+
-+	if (!sgx_nr_epc_sections) {
-+		pr_err("There are zero EPC sections.\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static void __init sgx_init(void)
-+{
-+	if (!boot_cpu_has(X86_FEATURE_SGX))
-+		return;
-+
-+	if (!sgx_page_cache_init())
-+		return;
-+
-+	if (!sgx_page_reclaimer_init())
-+		goto err_page_cache;
-+
-+	return;
-+
-+err_page_cache:
-+	sgx_page_cache_teardown();
-+}
-+
-+device_initcall(sgx_init);
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-new file mode 100644
-index 000000000000..dff4f5f16d09
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -0,0 +1,52 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+#ifndef _X86_SGX_H
-+#define _X86_SGX_H
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/rwsem.h>
-+#include <linux/types.h>
-+#include <asm/asm.h>
-+#include "arch.h"
-+
-+#undef pr_fmt
-+#define pr_fmt(fmt) "sgx: " fmt
-+
-+struct sgx_epc_page {
-+	unsigned long desc;
-+	struct list_head list;
-+};
-+
-+/*
-+ * The firmware can define multiple chunks of EPC to the different areas of the
-+ * physical memory e.g. for memory areas of the each node. This structure is
-+ * used to store EPC pages for one EPC section and virtual memory area where
-+ * the pages have been mapped.
-+ */
-+struct sgx_epc_section {
-+	unsigned long pa;
-+	void *va;
-+	struct list_head page_list;
-+	struct list_head unsanitized_page_list;
-+	spinlock_t lock;
-+};
-+
-+#define SGX_EPC_SECTION_MASK		GENMASK(7, 0)
-+#define SGX_MAX_EPC_SECTIONS		(SGX_EPC_SECTION_MASK + 1)
-+
-+extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-+
-+static inline struct sgx_epc_section *sgx_get_epc_section(struct sgx_epc_page *page)
-+{
-+	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
-+}
-+
-+static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
-+{
-+	struct sgx_epc_section *section = sgx_get_epc_section(page);
-+
-+	return section->va + (page->desc & PAGE_MASK) - section->pa;
-+}
-+
-+#endif /* _X86_SGX_H */
+ 	/* AMD-defined flags: level 0x80000001 */
+ 	eax = cpuid_eax(0x80000000);
+ 	c->extended_cpuid_level = eax;
 -- 
 2.25.1
 
