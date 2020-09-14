@@ -2,85 +2,175 @@ Return-Path: <SRS0=Mf4r=CX=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5462C433E2
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DCDC433E2
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAD421974
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0072C20829
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:49:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbgINQPq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 14 Sep 2020 12:15:46 -0400
-Received: from mga14.intel.com ([192.55.52.115]:13774 "EHLO mga14.intel.com"
+        id S1726055AbgINQtT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Sep 2020 12:49:19 -0400
+Received: from mga05.intel.com ([192.55.52.43]:1205 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbgINQOC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 14 Sep 2020 12:14:02 -0400
-IronPort-SDR: EYHKivvfr7FKJ6ln9K+ec9JGrtaIvxiKpWVepSBrRR6eytE3d99R5vgeMs4PKClhHwHYhaLPHJ
- cYLHGEoERF9Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="158387388"
+        id S1725999AbgINQtN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 14 Sep 2020 12:49:13 -0400
+IronPort-SDR: J17kJ9PV7a6B7ZCBi4+TSvSL3CTrmt2Yf5x5gPdZ0B327NQfmQ4j4SLENyOTZav7jdmyDf55oy
+ YLV49dJUaGQg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="243943445"
 X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
-   d="scan'208";a="158387388"
+   d="scan'208";a="243943445"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:13:59 -0700
-IronPort-SDR: lPs5notI7pfW/v0x2bYMRlv4zYfXJWQn/fMh5NeEuRHmI6/6xLT9OJRccG7/FGoUXm6gEJqnhk
- o0FcHVw77frg==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:49:11 -0700
+IronPort-SDR: 09cRRwKArsvcBxrjjWRJ/J2HN8kjvBqVl576i5IoVev7npTBQJkJhymBOHyTaZsQXJUZ/ksZAA
+ /mdxEOJpmmFw==
 X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
-   d="scan'208";a="450937896"
-Received: from sjchrist-ice.jf.intel.com (HELO sjchrist-ice) ([10.54.31.34])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:13:59 -0700
-Date:   Mon, 14 Sep 2020 09:13:57 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>,
+   d="scan'208";a="287677623"
+Received: from daser-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.230])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:49:05 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v37 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch
- Control hardware bits
-Message-ID: <20200914161357.GG6855@sjchrist-ice>
-References: <20200911124019.42178-1-jarkko.sakkinen@linux.intel.com>
- <20200911124019.42178-3-jarkko.sakkinen@linux.intel.com>
- <20200914151816.u6camicid4bd5lgo@treble>
- <20200914153812.c6uh3spqmcy2ft3d@treble>
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v37 17/24] x86/sgx: ptrace() support for the SGX driver
+Date:   Mon, 14 Sep 2020 19:49:01 +0300
+Message-Id: <20200914164901.6503-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200914153812.c6uh3spqmcy2ft3d@treble>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 10:38:12AM -0500, Josh Poimboeuf wrote:
-> On Mon, Sep 14, 2020 at 10:18:16AM -0500, Josh Poimboeuf wrote:
-> > Hi Jarko,
-> > 
-> > It looks like some of the patches weren't delivered to the lists.
-> > Patches 0, 1, 8, 9, and 17 seem to be missing.
-> > 
-> > Lore agrees with me:
-> > 
-> >   https://lore.kernel.org/linux-sgx/20200911124019.42178-1-jarkko.sakkinen@linux.intel.com/
-> 
-> And my first email to you bounced, similar to an email I tried sending
-> to Kristen a few weeks ago.  Something weird going on with Intel mail
-> servers?
+Add VMA callbacks for ptrace() that can be used with debug enclaves.
+With debug enclaves data can be read and write the memory word at a time
+by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
 
-Probably.  Our exchange servers got upgraded and many of the endpoints got
-changed in the process.  It wouldn't surprise me in the least if there are
-gremlins in the new setup.
+Acked-by: Jethro Beekman <jethro@fortanix.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 87 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 11ec2df59b54..7f8df2c8ef35 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -333,10 +333,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
+ 	return mprotect_fixup(vma, pprev, start, end, newflags);
+ }
+ 
++static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
++		      unsigned long addr, void *data)
++{
++	unsigned long offset = addr & ~PAGE_MASK;
++	int ret;
++
++
++	ret = __edbgrd(sgx_get_epc_addr(page->epc_page) + offset, data);
++	if (ret)
++		return -EIO;
++
++	return 0;
++}
++
++static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
++		      unsigned long addr, void *data)
++{
++	unsigned long offset = addr & ~PAGE_MASK;
++	int ret;
++
++	ret = __edbgwr(sgx_get_epc_addr(page->epc_page) + offset, data);
++	if (ret)
++		return -EIO;
++
++	return 0;
++}
++
++static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
++			  void *buf, int len, int write)
++{
++	struct sgx_encl *encl = vma->vm_private_data;
++	struct sgx_encl_page *entry = NULL;
++	char data[sizeof(unsigned long)];
++	unsigned long align;
++	unsigned int flags;
++	int offset;
++	int cnt;
++	int ret = 0;
++	int i;
++
++	/* If process was forked, VMA is still there but vm_private_data is set
++	 * to NULL.
++	 */
++	if (!encl)
++		return -EFAULT;
++
++	flags = atomic_read(&encl->flags);
++
++	if (!(flags & SGX_ENCL_DEBUG) || !(flags & SGX_ENCL_INITIALIZED) ||
++	    (flags & SGX_ENCL_DEAD))
++		return -EFAULT;
++
++	for (i = 0; i < len; i += cnt) {
++		entry = sgx_encl_reserve_page(encl, (addr + i) & PAGE_MASK);
++		if (IS_ERR(entry)) {
++			ret = PTR_ERR(entry);
++			break;
++		}
++
++		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
++		offset = (addr + i) & (sizeof(unsigned long) - 1);
++		cnt = sizeof(unsigned long) - offset;
++		cnt = min(cnt, len - i);
++
++		ret = sgx_edbgrd(encl, entry, align, data);
++		if (ret)
++			goto out;
++
++		if (write) {
++			memcpy(data + offset, buf + i, cnt);
++			ret = sgx_edbgwr(encl, entry, align, data);
++			if (ret)
++				goto out;
++		} else
++			memcpy(buf + i, data + offset, cnt);
++
++out:
++		mutex_unlock(&encl->lock);
++
++		if (ret)
++			break;
++	}
++
++	return ret < 0 ? ret : i;
++}
++
+ const struct vm_operations_struct sgx_vm_ops = {
+ 	.open = sgx_vma_open,
+ 	.fault = sgx_vma_fault,
+ 	.mprotect = sgx_vma_mprotect,
++	.access = sgx_vma_access,
+ };
+ 
+ /**
+-- 
+2.25.1
+
