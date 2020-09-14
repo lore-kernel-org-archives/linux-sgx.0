@@ -2,52 +2,42 @@ Return-Path: <SRS0=Mf4r=CX=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E58BC43461
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 15:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5462C433E2
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2944A208DB
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 15:39:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkafuasL"
+	by mail.kernel.org (Postfix) with ESMTP id 8DAD421974
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Sep 2020 16:16:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbgINPje (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 14 Sep 2020 11:39:34 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36140 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726349AbgINPik (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Sep 2020 11:38:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600097917;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OR1/eIYGZZvLMmu+vbBsRmOl+sNgRAjamn/gYhzlyVw=;
-        b=WkafuasLFWnjaUyxH4dg3aOfIdJGuE38pmX7FaVfdw7mnZvPwyg5k7tFamH3BtbW0pZSX7
-        WgivpklpA60dZJA6vDKERh2E7HHwHMvvB3RuNLYziYeO6B9fVQdq7mnnUMfvBzMaSanbIB
-        +GtfRIcaC/EfNFgH82T/XGhSM0/temY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-355-7RRGZ5r0MjGx9LbAHOJTHA-1; Mon, 14 Sep 2020 11:38:30 -0400
-X-MC-Unique: 7RRGZ5r0MjGx9LbAHOJTHA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5AFF81CAF8;
-        Mon, 14 Sep 2020 15:38:26 +0000 (UTC)
-Received: from treble (ovpn-115-26.rdu2.redhat.com [10.10.115.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D4F8260C0F;
-        Mon, 14 Sep 2020 15:38:14 +0000 (UTC)
-Date:   Mon, 14 Sep 2020 10:38:12 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        id S1726375AbgINQPq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Sep 2020 12:15:46 -0400
+Received: from mga14.intel.com ([192.55.52.115]:13774 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726327AbgINQOC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 14 Sep 2020 12:14:02 -0400
+IronPort-SDR: EYHKivvfr7FKJ6ln9K+ec9JGrtaIvxiKpWVepSBrRR6eytE3d99R5vgeMs4PKClhHwHYhaLPHJ
+ cYLHGEoERF9Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="158387388"
+X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
+   d="scan'208";a="158387388"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:13:59 -0700
+IronPort-SDR: lPs5notI7pfW/v0x2bYMRlv4zYfXJWQn/fMh5NeEuRHmI6/6xLT9OJRccG7/FGoUXm6gEJqnhk
+ o0FcHVw77frg==
+X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
+   d="scan'208";a="450937896"
+Received: from sjchrist-ice.jf.intel.com (HELO sjchrist-ice) ([10.54.31.34])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 09:13:59 -0700
+Date:   Mon, 14 Sep 2020 09:13:57 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Borislav Petkov <bp@alien8.de>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
@@ -61,34 +51,36 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
 Subject: Re: [PATCH v37 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch
  Control hardware bits
-Message-ID: <20200914153812.c6uh3spqmcy2ft3d@treble>
+Message-ID: <20200914161357.GG6855@sjchrist-ice>
 References: <20200911124019.42178-1-jarkko.sakkinen@linux.intel.com>
  <20200911124019.42178-3-jarkko.sakkinen@linux.intel.com>
  <20200914151816.u6camicid4bd5lgo@treble>
+ <20200914153812.c6uh3spqmcy2ft3d@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200914151816.u6camicid4bd5lgo@treble>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20200914153812.c6uh3spqmcy2ft3d@treble>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 10:18:16AM -0500, Josh Poimboeuf wrote:
-> Hi Jarko,
+On Mon, Sep 14, 2020 at 10:38:12AM -0500, Josh Poimboeuf wrote:
+> On Mon, Sep 14, 2020 at 10:18:16AM -0500, Josh Poimboeuf wrote:
+> > Hi Jarko,
+> > 
+> > It looks like some of the patches weren't delivered to the lists.
+> > Patches 0, 1, 8, 9, and 17 seem to be missing.
+> > 
+> > Lore agrees with me:
+> > 
+> >   https://lore.kernel.org/linux-sgx/20200911124019.42178-1-jarkko.sakkinen@linux.intel.com/
 > 
-> It looks like some of the patches weren't delivered to the lists.
-> Patches 0, 1, 8, 9, and 17 seem to be missing.
-> 
-> Lore agrees with me:
-> 
->   https://lore.kernel.org/linux-sgx/20200911124019.42178-1-jarkko.sakkinen@linux.intel.com/
+> And my first email to you bounced, similar to an email I tried sending
+> to Kristen a few weeks ago.  Something weird going on with Intel mail
+> servers?
 
-And my first email to you bounced, similar to an email I tried sending
-to Kristen a few weeks ago.  Something weird going on with Intel mail
-servers?
-
--- 
-Josh
-
+Probably.  Our exchange servers got upgraded and many of the endpoints got
+changed in the process.  It wouldn't surprise me in the least if there are
+gremlins in the new setup.
