@@ -5,48 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A680C43461
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6924C433E2
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 056D22076B
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C612207DE
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:48:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="a1DwroSu"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="TYnuXUfW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbgIOMhz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Sep 2020 08:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36472 "EHLO
+        id S1726304AbgIPAsT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Sep 2020 20:48:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgIOLm1 (ORCPT
+        with ESMTP id S1726441AbgIOLm1 (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:42:27 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A830CC06178A;
-        Tue, 15 Sep 2020 04:42:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D0D5C061355;
+        Tue, 15 Sep 2020 04:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=6oVqFguTY88nx046qRZZUVk5BI6qMTS+nDtw4NJb1Rs=; b=a1DwroSunHWDZGQaucAk5G7svo
-        gcgI41+ptEoCPjaGZOSqpTBAAukEXjdV2gXr90nhxmJMiDab5aNoVMW0yxDVjyWepwCsSlvasI5sU
-        h5SXIvnppE4SAOBINz1YNMCanOfsOQvdgY1Y06lDL4NkjHZ12PGu4GJyO3eaxTgXdvO8M8ciu/EmL
-        R6HGyHryXm2PjxE4ofSENu5W37w09HYBE1HKqHSqoreLAeHNkt0Zg3DnjkriZrTF0Po1FqZ2seI2y
-        VvH2JwDqxPjbNR8Di2h3aeJ+Qse0RBwY1dlXZJTtrsw36frP8BEDTojUOaDih/1o6ITMXOrJpq6Co
-        cqGw4s0Q==;
+        bh=VQfxU9etoAX9NoRDjTZJvNO+0WR8I6R02xxEqCNX2jQ=; b=TYnuXUfWzBNVLURQrzQ4lK+ETl
+        I4ACWixky0SnpkOUNl73/byCpB+Rig7ecHuROjeifjq1F/baQ8kjVXY3FNHy3j1DEzUIeHArTuJlO
+        jllru1SjhIQru5bRjRg9LRrk2CZfV3s22+jcgz1veSP8g6P6nPUB3v5v9touZ/IfwLErys9fo8HJu
+        Cc+1wBzHJgIR3Njl47L6LRPzln2o0+wB1knMAkFLIgrYDJ/Z5ILHnpVowEuGiwS40PVzcasky4ZWB
+        Wj3iMIMiSO0xluFHwIYw+BjGKWVBzCiJxLGhhcFr4s65kiW+vLT8jiEXEOTY/yYFRUgABKWacFasT
+        pgg7GoTQ==;
 Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <jarkko.sakkinen@linux.intel.com>)
-        id 1kI8mA-0005tz-Eb; Tue, 15 Sep 2020 14:05:30 +0300
+        id 1kI8mB-0005vH-Ap; Tue, 15 Sep 2020 14:05:31 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
@@ -55,9 +56,9 @@ Cc:     linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v38 07/24] x86/cpu/intel: Add nosgx kernel parameter
-Date:   Tue, 15 Sep 2020 14:05:05 +0300
-Message-Id: <20200915110522.893152-8-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v38 09/24] x86/sgx: Add __sgx_alloc_epc_page() and sgx_free_epc_page()
+Date:   Tue, 15 Sep 2020 14:05:07 +0300
+Message-Id: <20200915110522.893152-10-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 References: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
@@ -71,50 +72,107 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add kernel parameter to disable Intel SGX kernel support.
+Add __sgx_alloc_epc_page(), which iterates through EPC sections and borrows
+a page structure that is not used by anyone else. When a page is no longer
+needed it must be released with sgx_free_epc_page(). This function
+implicitly calls ENCLS[EREMOVE], which will return the page to the
+uninitialized state (i.e. not required from caller part).
 
-Tested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Jethro Beekman <jethro@fortanix.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 2 ++
- arch/x86/kernel/cpu/feat_ctl.c                  | 9 +++++++++
- 2 files changed, 11 insertions(+)
+ arch/x86/kernel/cpu/sgx/main.c | 62 ++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++
+ 2 files changed, 65 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a1068742a6df..e53448716567 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3339,6 +3339,8 @@
- 
- 	nosep		[BUGS=X86-32] Disables x86 SYSENTER/SYSEXIT support.
- 
-+	nosgx		[X86-64,SGX] Disables Intel SGX kernel support.
-+
- 	nosmp		[SMP] Tells an SMP kernel to act as a UP kernel,
- 			and disable the IO APIC.  legacy for "maxcpus=0".
- 
-diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index c3afcd2e4342..1837df39527f 100644
---- a/arch/x86/kernel/cpu/feat_ctl.c
-+++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -101,6 +101,15 @@ static void clear_sgx_caps(void)
- 	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index c5831e3db14a..97c6895fb6c9 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -83,6 +83,68 @@ static bool __init sgx_page_reclaimer_init(void)
+ 	return true;
  }
  
-+static int __init nosgx(char *str)
++static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_section *section)
 +{
-+	clear_sgx_caps();
++	struct sgx_epc_page *page;
 +
-+	return 0;
++	if (list_empty(&section->page_list))
++		return NULL;
++
++	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
++	list_del_init(&page->list);
++
++	return page;
 +}
 +
-+early_param("nosgx", nosgx);
++/**
++ * __sgx_alloc_epc_page() - Allocate an EPC page
++ *
++ * Iterate through EPC sections and borrow a free EPC page to the caller. When a
++ * page is no longer needed it must be released with sgx_free_epc_page().
++ *
++ * Return:
++ *   an EPC page,
++ *   -errno on error
++ */
++struct sgx_epc_page *__sgx_alloc_epc_page(void)
++{
++	struct sgx_epc_section *section;
++	struct sgx_epc_page *page;
++	int i;
 +
- void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
++	for (i = 0; i < sgx_nr_epc_sections; i++) {
++		section = &sgx_epc_sections[i];
++		spin_lock(&section->lock);
++		page = __sgx_alloc_epc_page_from_section(section);
++		spin_unlock(&section->lock);
++
++		if (page)
++			return page;
++	}
++
++	return ERR_PTR(-ENOMEM);
++}
++
++/**
++ * sgx_free_epc_page() - Free an EPC page
++ * @page:	an EPC page
++ *
++ * Call EREMOVE for an EPC page and insert it back to the list of free pages.
++ */
++void sgx_free_epc_page(struct sgx_epc_page *page)
++{
++	struct sgx_epc_section *section = sgx_get_epc_section(page);
++	int ret;
++
++	ret = __eremove(sgx_get_epc_addr(page));
++	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
++		return;
++
++	spin_lock(&section->lock);
++	list_add_tail(&page->list, &section->page_list);
++	spin_unlock(&section->lock);
++}
++
+ static void __init sgx_free_epc_section(struct sgx_epc_section *section)
  {
- 	bool tboot = tboot_enabled();
+ 	struct sgx_epc_page *page;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index dff4f5f16d09..fce756c3434b 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -49,4 +49,7 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
+ 	return section->va + (page->desc & PAGE_MASK) - section->pa;
+ }
+ 
++struct sgx_epc_page *__sgx_alloc_epc_page(void);
++void sgx_free_epc_page(struct sgx_epc_page *page);
++
+ #endif /* _X86_SGX_H */
 -- 
 2.25.1
 
