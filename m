@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B08C43461
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Sep 2020 11:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2E6C433E2
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Sep 2020 11:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E41A320684
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Sep 2020 11:42:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 562B0208E4
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Sep 2020 11:42:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="gDvTnwIw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="vJ38b8G2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgIOLm0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Sep 2020 07:42:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36352 "EHLO
+        id S1726448AbgIOLm1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Sep 2020 07:42:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbgIOLlg (ORCPT
+        with ESMTP id S1726426AbgIOLlg (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:41:36 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0275CC06178A;
-        Tue, 15 Sep 2020 04:41:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31883C061797;
+        Tue, 15 Sep 2020 04:41:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=QE1Xi/YD6acZw3ExWtlutd0OjFac+kcZ6vKNXWFskhs=; b=gDvTnwIwShaz9tUxICLhlhcoW1
-        lediCIZiWpGdq8nMOqrwmuFOQu3ujFAUBVPwnhKM6eWr/+825zNSk+3RAyKZ8hn3zzBA73nSsYizb
-        +JW3s4h2xJkLK6k4o5PC2Zgh2inMf8ohE3hqhi5IyDkUedEWdp3nYK0sZGu22efmFdcMj8grSP6GS
-        cLjm5LOGjRmC6tpvB2fvm/4dQyDdcg5YICBtL7yEPDUlDuIUIMI+AuxTdLYtv3BHchjS0IkcNg2Di
-        +QP9mQUBQpLyUef5s+qDQuzeXDBRfMsTX87Sk0Z6KK9lUGsPXvVFtLRI5n3SAS37d/pyDKyVpmNKl
-        ahS5UC5w==;
+        bh=mIGNkr7YLJvuc9HU9qgPn4JuimfEtgNbRju4P/SOvEA=; b=vJ38b8G24CU/rddNtZDJMcI7vL
+        SgsiSIjqZ9xnKaZBNIiv6vh1tq39CzbShDX7zCI+f4oZpDG6+cLH977CuMNGC78V2qx8RexooaUEx
+        EQFKQsnO0+RBqtHVoMX9SaH6K4nyZ3knCAQ0zcm39ncgWfiF+nqweV+rFTt+VU98IhiyAngtyTwdI
+        Pk3C/7a8xCpe81/PKApc3+CwYdulLhFd+CY9VAjxRwc/I6H83nwtDDBx+TaxOIinL8hNUhuOOsX3x
+        z3543hMnUkaxTg7t7OOOMyG8Z8/4PC0CCuLTYbBHk3p9ujSLA3SxmfFZvPaQ6XPqOjgUKZbEqQIm+
+        nB3ESDcw==;
 Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <jarkko.sakkinen@linux.intel.com>)
-        id 1kI8mE-0005xs-7L; Tue, 15 Sep 2020 14:05:34 +0300
+        id 1kI8m9-0005th-Iy; Tue, 15 Sep 2020 14:05:29 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote attestation
-Date:   Tue, 15 Sep 2020 14:05:13 +0300
-Message-Id: <20200915110522.893152-16-jarkko.sakkinen@linux.intel.com>
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v38 05/24] x86/sgx: Add wrappers for ENCLS leaf functions
+Date:   Tue, 15 Sep 2020 14:05:03 +0300
+Message-Id: <20200915110522.893152-6-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 References: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 83.245.197.237
 X-SA-Exim-Mail-From: jarkko.sakkinen@linux.intel.com
@@ -74,184 +73,276 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Provisioning Certification Enclave (PCE), the root of trust for other
-enclaves, generates a signing key from a fused key called Provisioning
-Certification Key. PCE can then use this key to certify an attestation key
-of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
-hardware if the Intel signed PCE is used.
+ENCLS is a ring 0 instruction, which contains a set of leaf functions for
+managing an enclave. Enclaves are measured and signed software entities,
+which are protected by asserting the outside memory accesses and memory
+encryption.
 
-To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
-only allowed for those who actually need it so that only the trusted
-parties can certify QE's.
+Add a two-layer macro system along with an encoding scheme to allow
+wrappers to return trap numbers along ENCLS-specific error codes. The
+bottom layer of the macro system splits between the leafs that return an
+error code and those that do not. The second layer generates the correct
+input/output annotations based on the number of operands for each leaf
+function.
 
-Obviously the attestation service should know the public key of the used
-PCE and that way detect illegit attestation, but whitelisting the legit
-users still adds an additional layer of defence.
+ENCLS leaf functions are documented in
 
-Add new device file called /dev/sgx/provision. The sole purpose of this
-file is to provide file descriptors that act as privilege tokens to allow
-to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
-SGX_IOC_ENCLAVE_PROVISION is used to assign this token to an enclave.
+  Intel SDM: 36.6 ENCLAVE INSTRUCTIONS AND INTEL®
 
-Cc: linux-security-module@vger.kernel.org
 Acked-by: Jethro Beekman <jethro@fortanix.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+Tested-by: Darren Kenny <darren.kenny@oracle.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 78 insertions(+)
+ arch/x86/kernel/cpu/sgx/encls.h | 238 ++++++++++++++++++++++++++++++++
+ 1 file changed, 238 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 7729730d8580..d0916fb9629e 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_PROVISION \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -61,4 +63,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+new file mode 100644
+index 000000000000..a87f15ea5cca
+--- /dev/null
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -0,0 +1,238 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
++#ifndef _X86_ENCLS_H
++#define _X86_ENCLS_H
++
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/rwsem.h>
++#include <linux/types.h>
++#include <asm/asm.h>
++#include <asm/traps.h>
++#include "sgx.h"
++
++enum sgx_encls_leaf {
++	ECREATE	= 0x00,
++	EADD	= 0x01,
++	EINIT	= 0x02,
++	EREMOVE	= 0x03,
++	EDGBRD	= 0x04,
++	EDGBWR	= 0x05,
++	EEXTEND	= 0x06,
++	ELDU	= 0x08,
++	EBLOCK	= 0x09,
++	EPA	= 0x0A,
++	EWB	= 0x0B,
++	ETRACK	= 0x0C,
++};
++
 +/**
-+ * struct sgx_enclave_provision - parameter structure for the
-+ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
++ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
++ *
++ * ENCLS has its own (positive value) error codes and also generates
++ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
++ * with system error codes as everything percolates back up the stack.
++ * Unfortunately (for us), we need to precisely identify each unique
++ * error code, e.g. the action taken if EWB fails varies based on the
++ * type of fault and on the exact SGX error code, i.e. we can't simply
++ * convert all faults to -EFAULT.
++ *
++ * To make all three error types coexist, we set bit 30 to identify an
++ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
++ * between positive (faults and SGX error codes) and negative (system
++ * error codes) values.
 + */
-+struct sgx_enclave_provision {
-+	__u64 attribute_fd;
-+};
++#define ENCLS_FAULT_FLAG 0x40000000
 +
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 7bdb49dfcca6..d01b28f7ce4a 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -134,6 +134,10 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
++/* Retrieve the encoded trapnr from the specified return code. */
++#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
 +
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "enclave",
-@@ -141,6 +145,13 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "provision",
-+	.nodename = "sgx/provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
- 		return ret;
- 	}
- 
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e4063923115b..72747d01c046 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index de2ed4f35ffb..4227bca7b477 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -673,6 +673,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_provision.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
-+					  void __user *arg)
-+{
-+	struct sgx_enclave_provision params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->attributes |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
++/* Issue a WARN() about an ENCLS leaf. */
++#define ENCLS_WARN(r, name) {						  \
++	do {								  \
++		int _r = (r);						  \
++		WARN_ONCE(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
++	} while (0);							  \
 +}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -698,6 +742,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_PROVISION:
-+		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
++
++/**
++ * encls_failed() - Check if an ENCLS leaf function failed
++ * @ret:	the return value of an ENCLS leaf function call
++ *
++ * Check if an ENCLS leaf function failed. This happens when the leaf function
++ * causes a fault that is not caused by an EPCM conflict or when the leaf
++ * function returns a non-zero value.
++ */
++static inline bool encls_failed(int ret)
++{
++	int epcm_trapnr;
++
++	if (boot_cpu_has(X86_FEATURE_SGX2))
++		epcm_trapnr = X86_TRAP_PF;
++	else
++		epcm_trapnr = X86_TRAP_GP;
++
++	if (ret & ENCLS_FAULT_FLAG)
++		return ENCLS_TRAPNR(ret) != epcm_trapnr;
++
++	return !!ret;
++}
++
++/**
++ * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
++ * @rax:	leaf number
++ * @inputs:	asm inputs for the leaf
++ *
++ * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
++ * And because SGX isn't complex enough as it is, leafs that return an error
++ * code also modify flags.
++ *
++ * Return:
++ *	0 on success,
++ *	SGX error code on failure
++ */
++#define __encls_ret_N(rax, inputs...)				\
++	({							\
++	int ret;						\
++	asm volatile(						\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
++	"2:\n"							\
++	".section .fixup,\"ax\"\n"				\
++	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
++	"   jmp 2b\n"						\
++	".previous\n"						\
++	_ASM_EXTABLE_FAULT(1b, 3b)				\
++	: "=a"(ret)						\
++	: "a"(rax), inputs					\
++	: "memory", "cc");					\
++	ret;							\
++	})
++
++#define __encls_ret_1(rax, rcx)		\
++	({				\
++	__encls_ret_N(rax, "c"(rcx));	\
++	})
++
++#define __encls_ret_2(rax, rbx, rcx)		\
++	({					\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
++	})
++
++#define __encls_ret_3(rax, rbx, rcx, rdx)			\
++	({							\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
++	})
++
++/**
++ * __encls_N - encode an ENCLS leaf that doesn't return an error code
++ * @rax:	leaf number
++ * @rbx_out:	optional output variable
++ * @inputs:	asm inputs for the leaf
++ *
++ * Emit assembly for an ENCLS leaf that does not return an error code,
++ * e.g. ECREATE.  Leaves without error codes either succeed or fault.
++ * @rbx_out is an optional parameter for use by EDGBRD, which returns
++ * the requested value in RBX.
++ *
++ * Return:
++ *   0 on success,
++ *   trapnr with ENCLS_FAULT_FLAG set on fault
++ */
++#define __encls_N(rax, rbx_out, inputs...)			\
++	({							\
++	int ret;						\
++	asm volatile(						\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
++	"   xor %%eax,%%eax;\n"					\
++	"2:\n"							\
++	".section .fixup,\"ax\"\n"				\
++	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
++	"   jmp 2b\n"						\
++	".previous\n"						\
++	_ASM_EXTABLE_FAULT(1b, 3b)				\
++	: "=a"(ret), "=b"(rbx_out)				\
++	: "a"(rax), inputs					\
++	: "memory");						\
++	ret;							\
++	})
++
++#define __encls_2(rax, rbx, rcx)				\
++	({							\
++	unsigned long ign_rbx_out;				\
++	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
++	})
++
++#define __encls_1_1(rax, data, rcx)			\
++	({						\
++	unsigned long rbx_out;				\
++	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
++	if (!ret)					\
++		data = rbx_out;				\
++	ret;						\
++	})
++
++static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
++{
++	return __encls_2(ECREATE, pginfo, secs);
++}
++
++static inline int __eextend(void *secs, void *addr)
++{
++	return __encls_2(EEXTEND, secs, addr);
++}
++
++static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
++{
++	return __encls_2(EADD, pginfo, addr);
++}
++
++static inline int __einit(void *sigstruct, void *token, void *secs)
++{
++	return __encls_ret_3(EINIT, sigstruct, secs, token);
++}
++
++static inline int __eremove(void *addr)
++{
++	return __encls_ret_1(EREMOVE, addr);
++}
++
++static inline int __edbgwr(void *addr, unsigned long *data)
++{
++	return __encls_2(EDGBWR, *data, addr);
++}
++
++static inline int __edbgrd(void *addr, unsigned long *data)
++{
++	return __encls_1_1(EDGBRD, *data, addr);
++}
++
++static inline int __etrack(void *addr)
++{
++	return __encls_ret_1(ETRACK, addr);
++}
++
++static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
++			 void *va)
++{
++	return __encls_ret_3(ELDU, pginfo, addr, va);
++}
++
++static inline int __eblock(void *addr)
++{
++	return __encls_ret_1(EBLOCK, addr);
++}
++
++static inline int __epa(void *addr)
++{
++	unsigned long rbx = SGX_PAGE_TYPE_VA;
++
++	return __encls_2(EPA, rbx, addr);
++}
++
++static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
++			void *va)
++{
++	return __encls_ret_3(EWB, pginfo, addr, va);
++}
++
++#endif /* _X86_ENCLS_H */
 -- 
 2.25.1
 
