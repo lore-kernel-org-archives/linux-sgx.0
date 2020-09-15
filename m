@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FE8C31E51
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2ADC43461
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53F1F2076B
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9B9020770
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="lRk5nd4C"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="ltlqTHS/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbgIOLkr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Sep 2020 07:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36176 "EHLO
+        id S1726524AbgIPAvI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Sep 2020 20:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbgIOLk2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:40:28 -0400
+        with ESMTP id S1726369AbgIOLkS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:40:18 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD24C06178B;
-        Tue, 15 Sep 2020 04:40:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC535C06174A;
+        Tue, 15 Sep 2020 04:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=RIo1uxBRJGUliCzaGKs20IM6zffLDBV9WzMq+37czYg=; b=lRk5nd4CdmJVIU2zMzvC2XFqI5
-        B1ImXTUYYyHvB9UIGpY+JX2qt2t6FXyH6RaXrr8hHl+lQaVMSWzlX59T62KqpIAIv3lt8DwnbFnlO
-        pMbEoMKwp/rMow9lTDEmpz792y5/DrZGNa7M9tjlrT1h2yo24294CTCe2JTFWEzfhHwFL/z8wLF4N
-        dhqPEo97FS7svXDM8e48huPq80f2D8fpgyddBt9ZktjsMB8S7cQRjX9vgl4xOYyuR/gi9Wqmd+8J+
-        mhg7p4FuQ+2V93ioA3gg6ma8fgrvUFUMiqNkUo6bk+rIAagrTxWVadwY6ZxHqAmm2OMreOCWtudk/
-        Krwu9LGQ==;
+        bh=taVBKLqyOb5P/R3fpJMpSUuqAwgnK4zccP+tJKiq4Qs=; b=ltlqTHS/cpz+FBsMXWt/TDOY6W
+        zeJZ/aLXQ7WO9BHKwHg2W4/tHoVg/o3trNL3YgpFjjeM+Jw+zHGhdSUUVqhXIHSixYCiJrD+NhcOW
+        XPMam3UKmJRtwFMlvtiLtiisOgzoCJSeSttB0vZ1mGilHRIviaEtnFT6zRNjse/5eWaFXpYKGVCwm
+        rxMox0pNPrkZahmgVNhUQyuKWHdYsTOLijlEul4t16u8EqIVvQWqeQAK0kxPzQAnw5wKz9iLt4SW6
+        zQ6+7OZubXfwZqqcJJ6K/u6Se5SatPzidDKUSwOHHVC5TIST0QJWIBfnK7qXAzXCPc9zp4ViGuydQ
+        Ae0LyNTA==;
 Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <jarkko.sakkinen@linux.intel.com>)
-        id 1kI8m9-0005tN-5H; Tue, 15 Sep 2020 14:05:29 +0300
+        id 1kI8mA-0005v6-Ri; Tue, 15 Sep 2020 14:05:30 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
@@ -54,16 +56,14 @@ Cc:     linux-kernel@vger.kernel.org,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v38 04/24] x86/sgx: Add SGX microarchitectural data structures
-Date:   Tue, 15 Sep 2020 14:05:02 +0300
-Message-Id: <20200915110522.893152-5-jarkko.sakkinen@linux.intel.com>
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v38 08/24] x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections
+Date:   Tue, 15 Sep 2020 14:05:06 +0300
+Message-Id: <20200915110522.893152-9-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 References: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 83.245.197.237
 X-SA-Exim-Mail-From: jarkko.sakkinen@linux.intel.com
@@ -73,369 +73,363 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Define the SGX microarchitectural data structures used by various SGX
-opcodes. This is not an exhaustive representation of all SGX data
-structures but only those needed by the kernel.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-The data structures are described in:
+Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
+structures necessary to track EPC pages so that they can be easily borrowed
+for different uses.
 
-  Intel SDM: 37.6 INTEL® SGX DATA STRUCTURES OVERVIEW
+Embed section index to the first eight bits of the EPC page descriptor.
+Existing client hardware supports only a single section, while upcoming
+server hardware will support at most eight sections. Thus, eight bits
+should be enough for long term needs.
 
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
+Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/arch.h | 341 +++++++++++++++++++++++++++++++++
- 1 file changed, 341 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
+ arch/x86/Kconfig                 |  17 +++
+ arch/x86/kernel/cpu/Makefile     |   1 +
+ arch/x86/kernel/cpu/sgx/Makefile |   2 +
+ arch/x86/kernel/cpu/sgx/main.c   | 216 +++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h    |  52 ++++++++
+ 5 files changed, 288 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
+ create mode 100644 arch/x86/kernel/cpu/sgx/main.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
 
-diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 7101ac64bb20..90fe47577dd7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1927,6 +1927,23 @@ config X86_INTEL_TSX_MODE_AUTO
+ 	  side channel attacks- equals the tsx=auto command line parameter.
+ endchoice
+ 
++config INTEL_SGX
++	bool "Intel SGX"
++	depends on X86_64 && CPU_SUP_INTEL
++	depends on CRYPTO=y
++	depends on CRYPTO_SHA256=y
++	select SRCU
++	select MMU_NOTIFIER
++	help
++	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
++	  that can be used by applications to set aside private regions of code
++	  and data, referred to as enclaves. An enclave's private memory can
++	  only be accessed by code running within the enclave. Accesses from
++	  outside the enclave, including other enclaves, are disallowed by
++	  hardware.
++
++	  If unsure, say N.
++
+ config EFI
+ 	bool "EFI runtime service support"
+ 	depends on ACPI
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 93792b457b81..c80d804fd02b 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -48,6 +48,7 @@ obj-$(CONFIG_X86_MCE)			+= mce/
+ obj-$(CONFIG_MTRR)			+= mtrr/
+ obj-$(CONFIG_MICROCODE)			+= microcode/
+ obj-$(CONFIG_X86_CPU_RESCTRL)		+= resctrl/
++obj-$(CONFIG_INTEL_SGX)			+= sgx/
+ 
+ obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
 new file mode 100644
-index 000000000000..ccecc39728dc
+index 000000000000..79510ce01b3b
 --- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/arch.h
-@@ -0,0 +1,341 @@
++++ b/arch/x86/kernel/cpu/sgx/Makefile
+@@ -0,0 +1,2 @@
++obj-y += \
++	main.o
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+new file mode 100644
+index 000000000000..c5831e3db14a
+--- /dev/null
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -0,0 +1,216 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-17 Intel Corporation.
++
++#include <linux/freezer.h>
++#include <linux/highmem.h>
++#include <linux/kthread.h>
++#include <linux/pagemap.h>
++#include <linux/ratelimit.h>
++#include <linux/sched/mm.h>
++#include <linux/sched/signal.h>
++#include <linux/slab.h>
++#include "encls.h"
++
++struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
++static int sgx_nr_epc_sections;
++static struct task_struct *ksgxswapd_tsk;
++
++static void sgx_sanitize_section(struct sgx_epc_section *section)
++{
++	struct sgx_epc_page *page;
++	LIST_HEAD(secs_list);
++	int ret;
++
++	while (!list_empty(&section->unsanitized_page_list)) {
++		if (kthread_should_stop())
++			return;
++
++		spin_lock(&section->lock);
++
++		page = list_first_entry(&section->unsanitized_page_list,
++					struct sgx_epc_page, list);
++
++		ret = __eremove(sgx_get_epc_addr(page));
++		if (!ret)
++			list_move(&page->list, &section->page_list);
++		else
++			list_move_tail(&page->list, &secs_list);
++
++		spin_unlock(&section->lock);
++
++		cond_resched();
++	}
++}
++
++static int ksgxswapd(void *p)
++{
++	int i;
++
++	set_freezable();
++
++	/*
++	 * Reset all pages to uninitialized state. Pages could be in initialized
++	 * on kmemexec.
++	 */
++	for (i = 0; i < sgx_nr_epc_sections; i++)
++		sgx_sanitize_section(&sgx_epc_sections[i]);
++
++	/*
++	 * 2nd round for the SECS pages as they cannot be removed when they
++	 * still hold child pages.
++	 */
++	for (i = 0; i < sgx_nr_epc_sections; i++) {
++		sgx_sanitize_section(&sgx_epc_sections[i]);
++
++		/* Should never happen. */
++		if (!list_empty(&sgx_epc_sections[i].unsanitized_page_list))
++			WARN(1, "EPC section %d has unsanitized pages.\n", i);
++	}
++
++	return 0;
++}
++
++static bool __init sgx_page_reclaimer_init(void)
++{
++	struct task_struct *tsk;
++
++	tsk = kthread_run(ksgxswapd, NULL, "ksgxswapd");
++	if (IS_ERR(tsk))
++		return false;
++
++	ksgxswapd_tsk = tsk;
++
++	return true;
++}
++
++static void __init sgx_free_epc_section(struct sgx_epc_section *section)
++{
++	struct sgx_epc_page *page;
++
++	while (!list_empty(&section->page_list)) {
++		page = list_first_entry(&section->page_list,
++					struct sgx_epc_page, list);
++		list_del(&page->list);
++		kfree(page);
++	}
++
++	while (!list_empty(&section->unsanitized_page_list)) {
++		page = list_first_entry(&section->unsanitized_page_list,
++					struct sgx_epc_page, list);
++		list_del(&page->list);
++		kfree(page);
++	}
++
++	memunmap(section->va);
++}
++
++static bool __init sgx_setup_epc_section(u64 addr, u64 size,
++					 unsigned long index,
++					 struct sgx_epc_section *section)
++{
++	unsigned long nr_pages = size >> PAGE_SHIFT;
++	struct sgx_epc_page *page;
++	unsigned long i;
++
++	section->va = memremap(addr, size, MEMREMAP_WB);
++	if (!section->va)
++		return false;
++
++	section->pa = addr;
++	spin_lock_init(&section->lock);
++	INIT_LIST_HEAD(&section->page_list);
++	INIT_LIST_HEAD(&section->unsanitized_page_list);
++
++	for (i = 0; i < nr_pages; i++) {
++		page = kzalloc(sizeof(*page), GFP_KERNEL);
++		if (!page)
++			goto err_out;
++
++		page->desc = (addr + (i << PAGE_SHIFT)) | index;
++		list_add_tail(&page->list, &section->unsanitized_page_list);
++	}
++
++	return true;
++
++err_out:
++	sgx_free_epc_section(section);
++	return false;
++}
++
++static void __init sgx_page_cache_teardown(void)
++{
++	int i;
++
++	for (i = 0; i < sgx_nr_epc_sections; i++)
++		sgx_free_epc_section(&sgx_epc_sections[i]);
++}
++
++/**
++ * A section metric is concatenated in a way that @low bits 12-31 define the
++ * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
++ * metric.
++ */
++static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
++{
++	return (low & GENMASK_ULL(31, 12)) +
++	       ((high & GENMASK_ULL(19, 0)) << 32);
++}
++
++static bool __init sgx_page_cache_init(void)
++{
++	u32 eax, ebx, ecx, edx, type;
++	u64 pa, size;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
++		cpuid_count(SGX_CPUID, i + SGX_CPUID_FIRST_VARIABLE_SUB_LEAF,
++			    &eax, &ebx, &ecx, &edx);
++
++		type = eax & SGX_CPUID_SUB_LEAF_TYPE_MASK;
++		if (type == SGX_CPUID_SUB_LEAF_INVALID)
++			break;
++
++		if (type != SGX_CPUID_SUB_LEAF_EPC_SECTION) {
++			pr_err_once("Unknown EPC section type: %u\n", type);
++			break;
++		}
++
++		pa = sgx_calc_section_metric(eax, ebx);
++		size = sgx_calc_section_metric(ecx, edx);
++
++		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
++
++		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
++			pr_err("No free memory for an EPC section\n");
++			break;
++		}
++
++		sgx_nr_epc_sections++;
++	}
++
++	if (!sgx_nr_epc_sections) {
++		pr_err("There are zero EPC sections.\n");
++		return false;
++	}
++
++	return true;
++}
++
++static void __init sgx_init(void)
++{
++	if (!boot_cpu_has(X86_FEATURE_SGX))
++		return;
++
++	if (!sgx_page_cache_init())
++		return;
++
++	if (!sgx_page_reclaimer_init())
++		goto err_page_cache;
++
++	return;
++
++err_page_cache:
++	sgx_page_cache_teardown();
++}
++
++device_initcall(sgx_init);
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+new file mode 100644
+index 000000000000..dff4f5f16d09
+--- /dev/null
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -0,0 +1,52 @@
 +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+/**
-+ * Copyright(c) 2016-18 Intel Corporation.
-+ *
-+ * Contains data structures defined by the SGX architecture.  Data structures
-+ * defined by the Linux software stack should not be placed here.
-+ */
-+#ifndef _ASM_X86_SGX_ARCH_H
-+#define _ASM_X86_SGX_ARCH_H
++#ifndef _X86_SGX_H
++#define _X86_SGX_H
 +
-+#include <linux/bits.h>
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/rwsem.h>
 +#include <linux/types.h>
++#include <asm/asm.h>
++#include "arch.h"
 +
-+#define SGX_CPUID				0x12
-+#define SGX_CPUID_FIRST_VARIABLE_SUB_LEAF	2
++#undef pr_fmt
++#define pr_fmt(fmt) "sgx: " fmt
 +
-+/**
-+ * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
-+ * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
-+ *				been completed yet.
-+ * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-+ *				public key does not match IA32_SGXLEPUBKEYHASH.
-+ * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-+ */
-+enum sgx_return_code {
-+	SGX_NOT_TRACKED			= 11,
-+	SGX_INVALID_EINITTOKEN		= 16,
-+	SGX_UNMASKED_EVENT		= 128,
++struct sgx_epc_page {
++	unsigned long desc;
++	struct list_head list;
 +};
 +
-+/**
-+ * enum sgx_sub_leaf_types - SGX CPUID variable sub-leaf types
-+ * %SGX_CPUID_SUB_LEAF_INVALID:		Indicates this sub-leaf is invalid.
-+ * %SGX_CPUID_SUB_LEAF_EPC_SECTION:	Sub-leaf enumerates an EPC section.
++/*
++ * The firmware can define multiple chunks of EPC to the different areas of the
++ * physical memory e.g. for memory areas of the each node. This structure is
++ * used to store EPC pages for one EPC section and virtual memory area where
++ * the pages have been mapped.
 + */
-+enum sgx_sub_leaf_types {
-+	SGX_CPUID_SUB_LEAF_INVALID	= 0x0,
-+	SGX_CPUID_SUB_LEAF_EPC_SECTION	= 0x1,
++struct sgx_epc_section {
++	unsigned long pa;
++	void *va;
++	struct list_head page_list;
++	struct list_head unsanitized_page_list;
++	spinlock_t lock;
 +};
 +
-+#define SGX_CPUID_SUB_LEAF_TYPE_MASK	GENMASK(3, 0)
++#define SGX_EPC_SECTION_MASK		GENMASK(7, 0)
++#define SGX_MAX_EPC_SECTIONS		(SGX_EPC_SECTION_MASK + 1)
 +
-+#define SGX_MODULUS_SIZE 384
++extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
 +
-+/**
-+ * enum sgx_miscselect - additional information to an SSA frame
-+ * %SGX_MISC_EXINFO:	Report #PF or #GP to the SSA frame.
-+ *
-+ * Save State Area (SSA) is a stack inside the enclave used to store processor
-+ * state when an exception or interrupt occurs. This enum defines additional
-+ * information stored to an SSA frame.
-+ */
-+enum sgx_miscselect {
-+	SGX_MISC_EXINFO		= BIT(0),
-+};
++static inline struct sgx_epc_section *sgx_get_epc_section(struct sgx_epc_page *page)
++{
++	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
++}
 +
-+#define SGX_MISC_RESERVED_MASK	GENMASK_ULL(63, 1)
++static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
++{
++	struct sgx_epc_section *section = sgx_get_epc_section(page);
 +
-+#define SGX_SSA_GPRS_SIZE		184
-+#define SGX_SSA_MISC_EXINFO_SIZE	16
++	return section->va + (page->desc & PAGE_MASK) - section->pa;
++}
 +
-+/**
-+ * enum sgx_attributes - the attributes field in &struct sgx_secs
-+ * %SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-+ * %SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
-+ * %SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-+ * %SGX_ATTR_PROVISIONKEY:      Allow to use provisioning keys for remote
-+ *				attestation.
-+ * %SGX_ATTR_KSS:		Allow to use key separation and sharing (KSS).
-+ * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-+ *				sign cryptographic tokens that can be passed to
-+ *				EINIT as an authorization to run an enclave.
-+ */
-+enum sgx_attribute {
-+	SGX_ATTR_INIT		= BIT(0),
-+	SGX_ATTR_DEBUG		= BIT(1),
-+	SGX_ATTR_MODE64BIT	= BIT(2),
-+	SGX_ATTR_PROVISIONKEY	= BIT(4),
-+	SGX_ATTR_EINITTOKENKEY	= BIT(5),
-+	SGX_ATTR_KSS		= BIT(7),
-+};
-+
-+#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(6) | GENMASK_ULL(63, 8))
-+
-+/**
-+ * struct sgx_secs - SGX Enclave Control Structure (SECS)
-+ * @size:		size of the address space
-+ * @base:		base address of the  address space
-+ * @ssa_frame_size:	size of an SSA frame
-+ * @miscselect:		additional information stored to an SSA frame
-+ * @attributes:		attributes for enclave
-+ * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-+ * @mrenclave:		SHA256-hash of the enclave contents
-+ * @mrsigner:		SHA256-hash of the public key used to sign the SIGSTRUCT
-+ * @config_id:		a user-defined value that is used in key derivation
-+ * @isv_prod_id:	a user-defined value that is used in key derivation
-+ * @isv_svn:		a user-defined value that is used in key derivation
-+ * @config_svn:		a user-defined value that is used in key derivation
-+ *
-+ * SGX Enclave Control Structure (SECS) is a special enclave page that is not
-+ * visible in the address space. In fact, this structure defines the address
-+ * range and other global attributes for the enclave and it is the first EPC
-+ * page created for any enclave. It is moved from a temporary buffer to an EPC
-+ * by the means of ENCLS(ECREATE) leaf.
-+ */
-+struct sgx_secs {
-+	u64 size;
-+	u64 base;
-+	u32 ssa_frame_size;
-+	u32 miscselect;
-+	u8  reserved1[24];
-+	u64 attributes;
-+	u64 xfrm;
-+	u32 mrenclave[8];
-+	u8  reserved2[32];
-+	u32 mrsigner[8];
-+	u8  reserved3[32];
-+	u32 config_id[16];
-+	u16 isv_prod_id;
-+	u16 isv_svn;
-+	u16 config_svn;
-+	u8  reserved4[3834];
-+} __packed;
-+
-+/**
-+ * enum sgx_tcs_flags - execution flags for TCS
-+ * %SGX_TCS_DBGOPTIN:	If enabled allows single-stepping and breakpoints
-+ *			inside an enclave. It is cleared by EADD but can
-+ *			be set later with EDBGWR.
-+ */
-+enum sgx_tcs_flags {
-+	SGX_TCS_DBGOPTIN	= 0x01,
-+};
-+
-+#define SGX_TCS_RESERVED_MASK	GENMASK_ULL(63, 1)
-+#define SGX_TCS_RESERVED_SIZE	4024
-+
-+/**
-+ * struct sgx_tcs - Thread Control Structure (TCS)
-+ * @state:		used to mark an entered TCS
-+ * @flags:		execution flags (cleared by EADD)
-+ * @ssa_offset:		SSA stack offset relative to the enclave base
-+ * @ssa_index:		the current SSA frame index (cleard by EADD)
-+ * @nr_ssa_frames:	the number of frame in the SSA stack
-+ * @entry_offset:	entry point offset relative to the enclave base
-+ * @exit_addr:		address outside the enclave to exit on an exception or
-+ *			interrupt
-+ * @fs_offset:		offset relative to the enclave base to become FS
-+ *			segment inside the enclave
-+ * @gs_offset:		offset relative to the enclave base to become GS
-+ *			segment inside the enclave
-+ * @fs_limit:		size to become a new FS-limit (only 32-bit enclaves)
-+ * @gs_limit:		size to become a new GS-limit (only 32-bit enclaves)
-+ *
-+ * Thread Control Structure (TCS) is an enclave page visible in its address
-+ * space that defines an entry point inside the enclave. A thread enters inside
-+ * an enclave by supplying address of TCS to ENCLU(EENTER). A TCS can be entered
-+ * by only one thread at a time.
-+ */
-+struct sgx_tcs {
-+	u64 state;
-+	u64 flags;
-+	u64 ssa_offset;
-+	u32 ssa_index;
-+	u32 nr_ssa_frames;
-+	u64 entry_offset;
-+	u64 exit_addr;
-+	u64 fs_offset;
-+	u64 gs_offset;
-+	u32 fs_limit;
-+	u32 gs_limit;
-+	u8  reserved[SGX_TCS_RESERVED_SIZE];
-+} __packed;
-+
-+/**
-+ * struct sgx_pageinfo - an enclave page descriptor
-+ * @addr:	address of the enclave page
-+ * @contents:	pointer to the page contents
-+ * @metadata:	pointer either to a SECINFO or PCMD instance
-+ * @secs:	address of the SECS page
-+ */
-+struct sgx_pageinfo {
-+	u64 addr;
-+	u64 contents;
-+	u64 metadata;
-+	u64 secs;
-+} __packed __aligned(32);
-+
-+
-+/**
-+ * enum sgx_page_type - bits in the SECINFO flags defining the page type
-+ * %SGX_PAGE_TYPE_SECS:	a SECS page
-+ * %SGX_PAGE_TYPE_TCS:	a TCS page
-+ * %SGX_PAGE_TYPE_REG:	a regular page
-+ * %SGX_PAGE_TYPE_VA:	a VA page
-+ * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
-+ */
-+enum sgx_page_type {
-+	SGX_PAGE_TYPE_SECS,
-+	SGX_PAGE_TYPE_TCS,
-+	SGX_PAGE_TYPE_REG,
-+	SGX_PAGE_TYPE_VA,
-+	SGX_PAGE_TYPE_TRIM,
-+};
-+
-+#define SGX_NR_PAGE_TYPES	5
-+#define SGX_PAGE_TYPE_MASK	GENMASK(7, 0)
-+
-+/**
-+ * enum sgx_secinfo_flags - the flags field in &struct sgx_secinfo
-+ * %SGX_SECINFO_R:	allow read
-+ * %SGX_SECINFO_W:	allow write
-+ * %SGX_SECINFO_X:	allow execution
-+ * %SGX_SECINFO_SECS:	a SECS page
-+ * %SGX_SECINFO_TCS:	a TCS page
-+ * %SGX_SECINFO_REG:	a regular page
-+ * %SGX_SECINFO_VA:	a VA page
-+ * %SGX_SECINFO_TRIM:	a page in trimmed state
-+ */
-+enum sgx_secinfo_flags {
-+	SGX_SECINFO_R			= BIT(0),
-+	SGX_SECINFO_W			= BIT(1),
-+	SGX_SECINFO_X			= BIT(2),
-+	SGX_SECINFO_SECS		= (SGX_PAGE_TYPE_SECS << 8),
-+	SGX_SECINFO_TCS			= (SGX_PAGE_TYPE_TCS << 8),
-+	SGX_SECINFO_REG			= (SGX_PAGE_TYPE_REG << 8),
-+	SGX_SECINFO_VA			= (SGX_PAGE_TYPE_VA << 8),
-+	SGX_SECINFO_TRIM		= (SGX_PAGE_TYPE_TRIM << 8),
-+};
-+
-+#define SGX_SECINFO_PERMISSION_MASK	GENMASK_ULL(2, 0)
-+#define SGX_SECINFO_PAGE_TYPE_MASK	(SGX_PAGE_TYPE_MASK << 8)
-+#define SGX_SECINFO_RESERVED_MASK	~(SGX_SECINFO_PERMISSION_MASK | \
-+					  SGX_SECINFO_PAGE_TYPE_MASK)
-+
-+/**
-+ * struct sgx_secinfo - describes attributes of an EPC page
-+ * @flags:	permissions and type
-+ *
-+ * Used together with ENCLS leaves that add or modify an EPC page to an
-+ * enclave to define page permissions and type.
-+ */
-+struct sgx_secinfo {
-+	u64 flags;
-+	u8  reserved[56];
-+} __packed __aligned(64);
-+
-+#define SGX_PCMD_RESERVED_SIZE 40
-+
-+/**
-+ * struct sgx_pcmd - Paging Crypto Metadata (PCMD)
-+ * @enclave_id:	enclave identifier
-+ * @mac:	MAC over PCMD, page contents and isvsvn
-+ *
-+ * PCMD is stored for every swapped page to the regular memory. When ELDU loads
-+ * the page back it recalculates the MAC by using a isvsvn number stored in a
-+ * VA page. Together these two structures bring integrity and rollback
-+ * protection.
-+ */
-+struct sgx_pcmd {
-+	struct sgx_secinfo secinfo;
-+	u64 enclave_id;
-+	u8  reserved[SGX_PCMD_RESERVED_SIZE];
-+	u8  mac[16];
-+} __packed __aligned(128);
-+
-+#define SGX_SIGSTRUCT_RESERVED1_SIZE 84
-+#define SGX_SIGSTRUCT_RESERVED2_SIZE 20
-+#define SGX_SIGSTRUCT_RESERVED3_SIZE 32
-+#define SGX_SIGSTRUCT_RESERVED4_SIZE 12
-+
-+/**
-+ * struct sgx_sigstruct_header -  defines author of the enclave
-+ * @header1:		constant byte string
-+ * @vendor:		must be either 0x0000 or 0x8086
-+ * @date:		YYYYMMDD in BCD
-+ * @header2:		costant byte string
-+ * @swdefined:		software defined value
-+ */
-+struct sgx_sigstruct_header {
-+	u64 header1[2];
-+	u32 vendor;
-+	u32 date;
-+	u64 header2[2];
-+	u32 swdefined;
-+	u8  reserved1[84];
-+} __packed;
-+
-+/**
-+ * struct sgx_sigstruct_body - defines contents of the enclave
-+ * @miscselect:		additional information stored to an SSA frame
-+ * @misc_mask:		required miscselect in SECS
-+ * @attributes:		attributes for enclave
-+ * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-+ * @attributes_mask:	required attributes in SECS
-+ * @xfrm_mask:		required XFRM in SECS
-+ * @mrenclave:		SHA256-hash of the enclave contents
-+ * @isvprodid:		a user-defined value that is used in key derivation
-+ * @isvsvn:		a user-defined value that is used in key derivation
-+ */
-+struct sgx_sigstruct_body {
-+	u32 miscselect;
-+	u32 misc_mask;
-+	u8  reserved2[20];
-+	u64 attributes;
-+	u64 xfrm;
-+	u64 attributes_mask;
-+	u64 xfrm_mask;
-+	u8  mrenclave[32];
-+	u8  reserved3[32];
-+	u16 isvprodid;
-+	u16 isvsvn;
-+} __packed;
-+
-+/**
-+ * struct sgx_sigstruct - an enclave signature
-+ * @header:		defines author of the enclave
-+ * @modulus:		the modulus of the public key
-+ * @exponent:		the exponent of the public key
-+ * @signature:		the signature calculated over the fields except modulus,
-+ * @body:		defines contents of the enclave
-+ * @q1:			a value used in RSA signature verification
-+ * @q2:			a value used in RSA signature verification
-+ *
-+ * Header and body are the parts that are actual signed. The remaining fields
-+ * define the signature of the enclave.
-+ */
-+struct sgx_sigstruct {
-+	struct sgx_sigstruct_header header;
-+	u8  modulus[SGX_MODULUS_SIZE];
-+	u32 exponent;
-+	u8  signature[SGX_MODULUS_SIZE];
-+	struct sgx_sigstruct_body body;
-+	u8  reserved4[12];
-+	u8  q1[SGX_MODULUS_SIZE];
-+	u8  q2[SGX_MODULUS_SIZE];
-+} __packed;
-+
-+#define SGX_LAUNCH_TOKEN_SIZE 304
-+
-+#endif /* _ASM_X86_SGX_ARCH_H */
++#endif /* _X86_SGX_H */
 -- 
 2.25.1
 
