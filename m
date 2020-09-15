@@ -7,64 +7,68 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8867C43461
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30F0C43461
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E30A20BED
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E6F521973
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="bWzU5/hB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="AvngLgy1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbgIPAyW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Sep 2020 20:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34720 "EHLO
+        id S1726366AbgIPAyV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Sep 2020 20:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbgIOLbo (ORCPT
+        with ESMTP id S1726327AbgIOLbo (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:31:44 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCB6AC061354;
-        Tue, 15 Sep 2020 04:28:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A01D5C06121E;
+        Tue, 15 Sep 2020 04:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=vIDM5X3AAdRgsucIX/pJUeoJwvH3lewsE9/ba+6I4wo=; b=bWzU5/hBou1fiIUTk/r6TwVKpL
-        vJAWDhF+pwIINO3feliUiMfE1tfpw5GA+B5F8vv6zHmZzV+5L6pvYtLROPUPqs0cqUs+MCPYZKX2V
-        4I8V+WkIQ3JlIcMWv9w8o3pX9RAzFY+rBCBPM48AfjINhpMrT9/7110tOIEX8hoCSdB4EfysfK8rW
-        G7G/cwDZ1wu0jrMNns7ddY7b1ixM7fKdsGjJupaWBFmXvCmWgWylgOOF63kirrDsy1YtsHPpCNc5p
-        RWWOc7VG710onWzDmcMJrySdbcdXdbw6yuCs0NBoEUdQ0tIo4FWnyG9gthpNpN7BOS5LzIY1kAutA
-        XlCDiHiw==;
+        bh=ZZamp/uEIEY7drpx0ygqtbjBvvSNam3P3WlYhDpVemc=; b=AvngLgy12GenOaulHUj3EVHW1j
+        402nX4PioyD+eCkMIqOOFT3xoZGS3XEL64qwd+eziTKOOxD4aP/Fiymgx78//NgwE1sL425wffmHf
+        pnZ6Ee2Ad7RiOobjzM3PUkuwxEE460ezs9W8BcZ05DIO7Z0dz0eyoi4vF9KwvcSFj1uGVwnuyr5MI
+        NNQjxv4WZsdTdPYcAy20Ix81laJa82kGdQw4Z4CkJGHAl+UFDBOYxLFaB9A/i+Grprn3Ax3LoPAcB
+        o2a0LSk+o7pJgq5tWh8/Dwaoj911WyIrXk0LOjTq4mziQlfNvqDXn1bKiLTI7/uoSfv+7DeN3dO0i
+        IRciWkag==;
 Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <jjs@kapsi.fi>)
-        id 1kI98g-0000hW-8W; Tue, 15 Sep 2020 14:28:46 +0300
+        id 1kI98l-0000kd-GZ; Tue, 15 Sep 2020 14:28:51 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v38 01/24] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
-Date:   Tue, 15 Sep 2020 14:28:19 +0300
-Message-Id: <20200915112842.897265-2-jarkko.sakkinen@linux.intel.com>
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v38 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
+Date:   Tue, 15 Sep 2020 14:28:31 +0300
+Message-Id: <20200915112842.897265-14-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 83.245.197.237
 X-SA-Exim-Mail-From: jjs@kapsi.fi
@@ -74,191 +78,403 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Add an ioctl, which performs ENCLS[EADD] that adds new visible page to an
+enclave, and optionally ENCLS[EEXTEND] operations that hash the page to the
+enclave measurement. By visible we mean a page that can be mapped to the
+address range of an enclave.
 
-Add X86_FEATURE_SGX from CPUID.(EAX=7, ECX=1), which informs whether the
-CPU has SGX.
-
-Add X86_FEATURE_SGX1 and X86_FEATURE_SGX2 from CPUID.(EAX=12H, ECX=0),
-which describe the level of SGX support available [1].
-
-Add IA32_FEATURE_CONTROL.SGX_ENABLE. BIOS can use this bit to opt-in SGX
-before locking the feature control MSR [2].
-
-[1] Intel SDM: 36.7.2 Intel® SGX Resource Enumeration Leaves
-[2] Intel SDM: 36.7.1 Intel® SGX Opt-In Configuration
-
-Reviewed-by: Borislav Petkov <bp@alien8.de>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+Tested-by: Seth Moore <sethmo@google.com>
+Tested-by: Darren Kenny <darren.kenny@oracle.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/cpufeature.h        |  5 +++--
- arch/x86/include/asm/cpufeatures.h       |  7 ++++++-
- arch/x86/include/asm/disabled-features.h | 18 +++++++++++++++---
- arch/x86/include/asm/msr-index.h         |  1 +
- arch/x86/include/asm/required-features.h |  2 +-
- arch/x86/kernel/cpu/common.c             |  4 ++++
- 6 files changed, 30 insertions(+), 7 deletions(-)
+ arch/x86/include/uapi/asm/sgx.h |  28 +++
+ arch/x86/kernel/cpu/sgx/ioctl.c | 294 ++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h   |   1 +
+ 3 files changed, 323 insertions(+)
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 59bf91c57aa8..efbdba5170a3 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -30,6 +30,7 @@ enum cpuid_leafs
- 	CPUID_7_ECX,
- 	CPUID_8000_0007_EBX,
- 	CPUID_7_EDX,
-+	CPUID_12_EAX,
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index c75b375f3770..c42a2ad3ca0b 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -8,10 +8,21 @@
+ #include <linux/types.h>
+ #include <linux/ioctl.h>
+ 
++/**
++ * enum sgx_epage_flags - page control flags
++ * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
++ *			ENCLS[EEXTEND] operations.
++ */
++enum sgx_page_flags {
++	SGX_PAGE_MEASURE	= 0x01,
++};
++
+ #define SGX_MAGIC 0xA4
+ 
+ #define SGX_IOC_ENCLAVE_CREATE \
+ 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
++#define SGX_IOC_ENCLAVE_ADD_PAGES \
++	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ 
+ /**
+  * struct sgx_enclave_create - parameter structure for the
+@@ -22,4 +33,21 @@ struct sgx_enclave_create  {
+ 	__u64	src;
  };
  
- #ifdef CONFIG_X86_FEATURE_NAMES
-@@ -89,7 +90,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
- 	   REQUIRED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
-+	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
- 
- #define DISABLED_MASK_BIT_SET(feature_bit)				\
- 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
-@@ -112,7 +113,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
- 	   DISABLED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
-+	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
- 
- #define cpu_has(c, bit)							\
- 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 2901d5df4366..159b635159c0 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -13,7 +13,7 @@
- /*
-  * Defines x86 CPU feature bits
-  */
--#define NCAPINTS			19	   /* N 32-bit words worth of info */
-+#define NCAPINTS			20	   /* N 32-bit words worth of info */
- #define NBUGINTS			1	   /* N 32-bit bug flags */
- 
- /*
-@@ -240,6 +240,7 @@
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
- #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
- #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
-+#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
- #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
- #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
- #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-@@ -377,6 +378,10 @@
- #define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
- 
-+/* Intel-defined SGX features, CPUID level 0x00000012:0 (EAX), word 19 */
-+#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
-+#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
++/**
++ * struct sgx_enclave_add_pages - parameter structure for the
++ *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
++ * @src:	start address for the page data
++ * @offset:	starting page offset
++ * @length:	length of the data (multiple of the page size)
++ * @secinfo:	address for the SECINFO data
++ * @flags:	page control flags
++ */
++struct sgx_enclave_add_pages {
++	__u64	src;
++	__u64	offset;
++	__u64	length;
++	__u64	secinfo;
++	__u64	flags;
++};
 +
- /*
-  * BUG word(s)
-  */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 4ea8584682f9..dbe534d5153f 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -28,13 +28,18 @@
- # define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
- # define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
- # define DISABLE_PCID		0
-+# define DISABLE_SGX1		0
-+# define DISABLE_SGX2		0
- #else
- # define DISABLE_VME		0
- # define DISABLE_K6_MTRR	0
- # define DISABLE_CYRIX_ARR	0
- # define DISABLE_CENTAUR_MCR	0
- # define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
--#endif /* CONFIG_X86_64 */
-+# define DISABLE_SGX1		(1<<(X86_FEATURE_SGX1 & 31))
-+# define DISABLE_SGX2		(1<<(X86_FEATURE_SGX2 & 31))
-+ #endif /* CONFIG_X86_64 */
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 352a3c461812..202680a06c17 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -191,6 +191,297 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
++static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
++						 unsigned long offset,
++						 u64 secinfo_flags)
++{
++	struct sgx_encl_page *encl_page;
++	unsigned long prot;
 +
- 
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- # define DISABLE_PKU		0
-@@ -56,6 +61,12 @@
- # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
- #endif
- 
-+#ifdef CONFIG_INTEL_SGX
-+# define DISABLE_SGX	0
-+#else
-+# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
-+#endif
++	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
++	if (!encl_page)
++		return ERR_PTR(-ENOMEM);
 +
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -68,7 +79,7 @@
- #define DISABLED_MASK6	0
- #define DISABLED_MASK7	(DISABLE_PTI)
- #define DISABLED_MASK8	0
--#define DISABLED_MASK9	(DISABLE_SMAP)
-+#define DISABLED_MASK9	(DISABLE_SMAP|DISABLE_SGX)
- #define DISABLED_MASK10	0
- #define DISABLED_MASK11	0
- #define DISABLED_MASK12	0
-@@ -78,6 +89,7 @@
- #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-+#define DISABLED_MASK19	(DISABLE_SGX1|DISABLE_SGX2)
-+#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
- 
- #endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 2859ee4f39a8..c0b04f020162 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -602,6 +602,7 @@
- #define FEAT_CTL_LOCKED				BIT(0)
- #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
- #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
-+#define FEAT_CTL_SGX_ENABLED			BIT(18)
- #define FEAT_CTL_LMCE_ENABLED			BIT(20)
- 
- #define MSR_IA32_TSC_ADJUST             0x0000003b
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-index 6847d85400a8..039e58be2fe6 100644
---- a/arch/x86/include/asm/required-features.h
-+++ b/arch/x86/include/asm/required-features.h
-@@ -101,6 +101,6 @@
- #define REQUIRED_MASK16	0
- #define REQUIRED_MASK17	0
- #define REQUIRED_MASK18	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-+#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
- 
- #endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index c5d6f17d9b9d..ccd9a11d5d1a 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -931,6 +931,10 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_D_1_EAX] = eax;
- 	}
- 
-+	/* Additional Intel-defined SGX flags: level 0x00000012 */
-+	if (c->cpuid_level >= 0x00000012)
-+		c->x86_capability[CPUID_12_EAX] = cpuid_eax(0x00000012);
++	encl_page->desc = encl->base + offset;
++	encl_page->encl = encl;
 +
- 	/* AMD-defined flags: level 0x80000001 */
- 	eax = cpuid_eax(0x80000000);
- 	c->extended_cpuid_level = eax;
++	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
++	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
++	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
++
++	/*
++	 * TCS pages must always RW set for CPU access while the SECINFO
++	 * permissions are *always* zero - the CPU ignores the user provided
++	 * values and silently overwrites them with zero permissions.
++	 */
++	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
++		prot |= PROT_READ | PROT_WRITE;
++
++	/* Calculate maximum of the VM flags for the page. */
++	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
++
++	return encl_page;
++}
++
++static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
++{
++	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
++	u64 pt = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
++
++	if (pt != SGX_SECINFO_REG && pt != SGX_SECINFO_TCS)
++		return -EINVAL;
++
++	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
++		return -EINVAL;
++
++	/*
++	 * CPU will silently overwrite the permissions as zero, which means
++	 * that we need to validate it ourselves.
++	 */
++	if (pt == SGX_SECINFO_TCS && perm)
++		return -EINVAL;
++
++	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
++		return -EINVAL;
++
++	if (memchr_inv(secinfo->reserved, 0, sizeof(secinfo->reserved)))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int __sgx_encl_add_page(struct sgx_encl *encl,
++			       struct sgx_encl_page *encl_page,
++			       struct sgx_epc_page *epc_page,
++			       struct sgx_secinfo *secinfo, unsigned long src)
++{
++	struct sgx_pageinfo pginfo;
++	struct vm_area_struct *vma;
++	struct page *src_page;
++	int ret;
++
++	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
++	if (encl_page->vm_max_prot_bits & VM_EXEC) {
++		vma = find_vma(current->mm, src);
++		if (!vma)
++			return -EFAULT;
++
++		if (!(vma->vm_flags & VM_MAYEXEC))
++			return -EACCES;
++	}
++
++	ret = get_user_pages(src, 1, 0, &src_page, NULL);
++	if (ret < 1)
++		return ret;
++
++	pginfo.secs = (unsigned long)sgx_get_epc_addr(encl->secs.epc_page);
++	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
++	pginfo.metadata = (unsigned long)secinfo;
++	pginfo.contents = (unsigned long)kmap_atomic(src_page);
++
++	ret = __eadd(&pginfo, sgx_get_epc_addr(epc_page));
++
++	kunmap_atomic((void *)pginfo.contents);
++	put_page(src_page);
++
++	return ret ? -EIO : 0;
++}
++
++/*
++ * If the caller requires measurement of the page as a proof for the content,
++ * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
++ * operation until the entire page is measured."
++ */
++static int __sgx_encl_extend(struct sgx_encl *encl,
++			     struct sgx_epc_page *epc_page)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < 16; i++) {
++		ret = __eextend(sgx_get_epc_addr(encl->secs.epc_page),
++				sgx_get_epc_addr(epc_page) + (i * 0x100));
++		if (ret) {
++			if (encls_failed(ret))
++				ENCLS_WARN(ret, "EEXTEND");
++			return -EIO;
++		}
++	}
++
++	return 0;
++}
++
++static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
++			     unsigned long offset, struct sgx_secinfo *secinfo,
++			     unsigned long flags)
++{
++	struct sgx_encl_page *encl_page;
++	struct sgx_epc_page *epc_page;
++	int ret;
++
++	encl_page = sgx_encl_page_alloc(encl, offset, secinfo->flags);
++	if (IS_ERR(encl_page))
++		return PTR_ERR(encl_page);
++
++	epc_page = __sgx_alloc_epc_page();
++	if (IS_ERR(epc_page)) {
++		kfree(encl_page);
++		return PTR_ERR(epc_page);
++	}
++
++	mmap_read_lock(current->mm);
++	mutex_lock(&encl->lock);
++
++	/*
++	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
++	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
++	 * to userspace errors (or kernel/hardware bugs).
++	 */
++	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
++			encl_page, GFP_KERNEL);
++	if (ret)
++		goto err_out_unlock;
++
++	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
++				  src);
++	if (ret)
++		goto err_out;
++
++	/*
++	 * Complete the "add" before doing the "extend" so that the "add"
++	 * isn't in a half-baked state in the extremely unlikely scenario
++	 * the enclave will be destroyed in response to EEXTEND failure.
++	 */
++	encl_page->encl = encl;
++	encl_page->epc_page = epc_page;
++	encl->secs_child_cnt++;
++
++	if (flags & SGX_PAGE_MEASURE) {
++		ret = __sgx_encl_extend(encl, epc_page);
++		if (ret)
++			goto err_out;
++	}
++
++	mutex_unlock(&encl->lock);
++	mmap_read_unlock(current->mm);
++	return ret;
++
++err_out:
++	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
++
++err_out_unlock:
++	mutex_unlock(&encl->lock);
++	mmap_read_unlock(current->mm);
++
++	sgx_free_epc_page(epc_page);
++	kfree(encl_page);
++
++	/*
++	 * Destroy enclave on ENCLS failure as this means that EPC has been
++	 * invalidated.
++	 */
++	if (ret == -EIO) {
++		mutex_lock(&encl->lock);
++		sgx_encl_destroy(encl);
++		mutex_unlock(&encl->lock);
++	}
++
++	return ret;
++}
++
++/**
++ * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
++ * @encl:       an enclave pointer
++ * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
++ *
++ * Add one or more pages to an uninitialized enclave, and optionally extend the
++ * measurement with the contents of the page. The SECINFO and measurement mask
++ * are applied to all pages.
++ *
++ * A SECINFO for a TCS is required to always contain zero permissions because
++ * CPU silently zeros them. Allowing anything else would cause a mismatch in
++ * the measurement.
++ *
++ * mmap()'s protection bits are capped by the page permissions. For each page
++ * address, the maximum protection bits are computed with the following
++ * heuristics:
++ *
++ * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
++ * 2. A TCS page: PROT_R | PROT_W.
++ *
++ * mmap() is not allowed to surpass the minimum of the maximum protection bits
++ * within the given address range.
++ *
++ * If ENCLS opcode fails, that effectively means that EPC has been invalidated.
++ * When this happens the enclave is destroyed and -EIO is returned to the
++ * caller.
++ *
++ * Return:
++ *   length of the data processed on success,
++ *   -EACCES if an executable source page is located in a noexec partition,
++ *   -EIO if either ENCLS[EADD] or ENCLS[EEXTEND] fails
++ *   -errno otherwise
++ */
++static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
++{
++	struct sgx_enclave_add_pages addp;
++	struct sgx_secinfo secinfo;
++	unsigned long c;
++	int ret;
++
++	if ((atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) ||
++	    !(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
++		return -EINVAL;
++
++	if (copy_from_user(&addp, arg, sizeof(addp)))
++		return -EFAULT;
++
++	if (!IS_ALIGNED(addp.offset, PAGE_SIZE) ||
++	    !IS_ALIGNED(addp.src, PAGE_SIZE))
++		return -EINVAL;
++
++	if (!(access_ok(addp.src, PAGE_SIZE)))
++		return -EFAULT;
++
++	if (addp.length & (PAGE_SIZE - 1))
++		return -EINVAL;
++
++	if (addp.offset + addp.length - PAGE_SIZE >= encl->size)
++		return -EINVAL;
++
++	if (copy_from_user(&secinfo, (void __user *)addp.secinfo,
++			   sizeof(secinfo)))
++		return -EFAULT;
++
++	if (sgx_validate_secinfo(&secinfo))
++		return -EINVAL;
++
++	for (c = 0 ; c < addp.length; c += PAGE_SIZE) {
++		if (signal_pending(current)) {
++			if (!c)
++				ret = -EINTR;
++
++			break;
++		}
++
++		if (c == SGX_MAX_ADD_PAGES_LENGTH)
++			break;
++
++		if (need_resched())
++			cond_resched();
++
++		ret = sgx_encl_add_page(encl, addp.src + c, addp.offset + c,
++					&secinfo, addp.flags);
++		if (ret)
++			break;
++	}
++
++	if (ret)
++		return ret;
++
++	return c;
++}
++
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ {
+ 	struct sgx_encl *encl = filep->private_data;
+@@ -209,6 +500,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_CREATE:
+ 		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
+ 		break;
++	case SGX_IOC_ENCLAVE_ADD_PAGES:
++		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
++		break;
+ 	default:
+ 		ret = -ENOIOCTLCMD;
+ 		break;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index fce756c3434b..8d126070db1e 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -34,6 +34,7 @@ struct sgx_epc_section {
+ 
+ #define SGX_EPC_SECTION_MASK		GENMASK(7, 0)
+ #define SGX_MAX_EPC_SECTIONS		(SGX_EPC_SECTION_MASK + 1)
++#define SGX_MAX_ADD_PAGES_LENGTH	0x100000
+ 
+ extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ 
 -- 
 2.25.1
 
