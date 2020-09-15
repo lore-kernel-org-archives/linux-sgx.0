@@ -5,65 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0034AC433E2
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608F3C31E49
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF05220738
+	by mail.kernel.org (Postfix) with ESMTP id 301FD21973
 	for <linux-sgx@archiver.kernel.org>; Wed, 16 Sep 2020 00:50:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="rwNMM2yG"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="SfZUyFvQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbgIPAu7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Sep 2020 20:50:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        id S1726367AbgIOLkw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Sep 2020 07:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbgIOLkq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:40:46 -0400
+        with ESMTP id S1726382AbgIOLk1 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Sep 2020 07:40:27 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF50EC061797;
-        Tue, 15 Sep 2020 04:40:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C233C061788;
+        Tue, 15 Sep 2020 04:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=Dw0RXYIryfkngJ4OEuc3gpztJP0jIMz1MlJhMluSPdE=; b=rwNMM2yGWf96Z9H5K7tFNa/44J
-        KMSbuF0mGreAxCwOa3YbNFCd44cR/fEJWPTwqOSejcvVXvUaWXYlHTQgn8oONbv83vlFVWrYQ0bqq
-        UZjss7pPl9qcRrTDXxG3+90tJimd5tbEA00XtnE3GM7hkVCrMTXzU4iS4JK6jchRHfosjkNYt5xR4
-        IRPoTIFfhuvSs9KaZ0Trag2JIu586Enm+b5H1U/M7vJLHLjikRyhSPlwoobmOIh1YjiCO/Vhnljgb
-        kn4SjPl3C1fegpMyTLjOTyEhFwNY39SZMjqSOY18W/kbxh3wJiifDjFnhpSgcCmPLyg/QL8MDXAXk
-        timqRhoA==;
+        bh=EHCcbWW/9NZLs7B7FT6bJY/uakWPooVxDA/Ahw92K7Y=; b=SfZUyFvQM/YPO53Jquf1ki6VNo
+        TmQdo4FLf5I3darBXSY11rw7K+HxeG3WTLRDpBzTmYW0BFrnvGQlB/z2rMglDFURDqeZkqGo7+X/d
+        kzPAx7qxZOHFEpvLKcA0yu54OM9fPXA4/MhWidd0YflS/2UmYbOOLW1euvubxPouihdpnBCayE1xN
+        8LyMizjoHyvvrpGhAcTj5uya0AFnGL7qRPTFuodsKNkDVorWYGGn3vEeIHN+3ufnK1m5En50Pmgmj
+        bA8roIdb7LMi6xP423/NPrKBnIHB50dt8xTJwklaGQx5pMWFwyZQ9isG0QXPTez4Yv7jjWldK6ReM
+        mj/Z9HEQ==;
 Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <jarkko.sakkinen@linux.intel.com>)
-        id 1kI8m8-0005sg-7I; Tue, 15 Sep 2020 14:05:28 +0300
+        id 1kI8mI-000616-AP; Tue, 15 Sep 2020 14:05:38 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-doc@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v38 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch Control hardware bits
-Date:   Tue, 15 Sep 2020 14:05:00 +0300
-Message-Id: <20200915110522.893152-3-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v38 23/24] docs: x86/sgx: Document SGX micro architecture and kernel internals
+Date:   Tue, 15 Sep 2020 14:05:21 +0300
+Message-Id: <20200915110522.893152-24-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 References: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 83.245.197.237
 X-SA-Exim-Mail-From: jarkko.sakkinen@linux.intel.com
@@ -73,78 +72,235 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Document the Intel SGX kernel architecture. The fine-grained micro
+architecture details can be looked up from Intel SDM Volume 3D.
 
-Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-Launch Control.
-
-Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-called enclaves, are always signed. All enclaves signed with the public key
-are unconditionally allowed to initialize. [1]
-
-Add FEAT_CTL_SGX_LC_ENABLED, which informs whether the aformentioned MSRs
-are writable or not. If the bit is off, the public key MSRs are read-only
-for the OS.
-
-If the MSRs are read-only, the platform must provide a launch enclave (LE).
-LE can create cryptographic tokens for other enclaves that they can pass
-together with their signature to the ENCLS(EINIT) opcode, which is used
-to initialize enclaves.
-
-Linux is unlikely to support the locked configuration because it takes away
-the control of the launch decisions from the kernel.
-
-[1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
-
-Reviewed-by: Borislav Petkov <bp@alien8.de>
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Cc: linux-doc@vger.kernel.org
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/include/asm/msr-index.h   | 7 +++++++
- 2 files changed, 8 insertions(+)
+ Documentation/x86/index.rst |   1 +
+ Documentation/x86/sgx.rst   | 200 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 201 insertions(+)
+ create mode 100644 Documentation/x86/sgx.rst
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 159b635159c0..398e4f19c3d7 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -354,6 +354,7 @@
- #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
- #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
- #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
-+#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
- 
- /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
- #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index c0b04f020162..e574b4bb5aad 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -602,6 +602,7 @@
- #define FEAT_CTL_LOCKED				BIT(0)
- #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
- #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
-+#define FEAT_CTL_SGX_LC_ENABLED			BIT(17)
- #define FEAT_CTL_SGX_ENABLED			BIT(18)
- #define FEAT_CTL_LMCE_ENABLED			BIT(20)
- 
-@@ -622,6 +623,12 @@
- #define MSR_IA32_UCODE_WRITE		0x00000079
- #define MSR_IA32_UCODE_REV		0x0000008b
- 
-+/* Intel SGX Launch Enclave Public Key Hash MSRs */
-+#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
-+#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-+#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
-+#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
+diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
+index 265d9e9a093b..807290bf357c 100644
+--- a/Documentation/x86/index.rst
++++ b/Documentation/x86/index.rst
+@@ -30,3 +30,4 @@ x86-specific Documentation
+    usb-legacy-support
+    i386/index
+    x86_64/index
++   sgx
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+new file mode 100644
+index 000000000000..706a846ae353
+--- /dev/null
++++ b/Documentation/x86/sgx.rst
+@@ -0,0 +1,200 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
- #define MSR_IA32_SMBASE			0x0000009e
- 
++============
++Architecture
++============
++
++*Software Guard eXtensions (SGX)* is a set of instructions that enable ring-3
++applications to set aside private regions of code and data. These regions are
++called enclaves. An enclave can be entered to a fixed set of entry points. Only
++a CPU running inside the enclave can access its code and data.
++
++The support can be determined by
++
++	``grep sgx /proc/cpuinfo``
++
++Enclave Page Cache
++==================
++
++SGX utilizes an *Enclave Page Cache (EPC)* to store pages that are associated
++with an enclave. It is contained in a BIOS reserved region of physical memory.
++Unlike pages used for regular memory, pages can only be accessed outside the
++enclave for different purposes with the instructions **ENCLS**, **ENCLV** and
++**ENCLU**.
++
++Direct memory accesses to an enclave can be only done by a CPU executing inside
++the enclave. An enclave can be entered with **ENCLU[EENTER]** to a fixed set of
++entry points. However, a CPU executing inside the enclave can do outside memory
++accesses.
++
++Page Types
++----------
++
++**SGX Enclave Control Structure (SECS)**
++   Enclave's address range, attributes and other global data are defined
++   by this structure.
++
++**Regular (REG)**
++   Regular EPC pages contain the code and data of an enclave.
++
++**Thread Control Structure (TCS)**
++   Thread Control Structure pages define the entry points to an enclave and
++   track the execution state of an enclave thread.
++
++**Version Array (VA)**
++   Version Array pages contain 512 slots, each of which can contain a version
++   number for a page evicted from the EPC.
++
++Enclave Page Cache Map
++----------------------
++
++The processor tracks EPC pages via the *Enclave Page Cache Map (EPCM)*.  EPCM
++contains an entry for each EPC page, which describes the owning enclave, access
++rights and page type among the other things.
++
++The permissions from EPCM is consulted if and only if walking the kernel page
++tables succeeds. The total permissions are thus a conjunction between page table
++and EPCM permissions.
++
++For all intents and purposes the SGX architecture allows the processor to
++invalidate all EPCM entries at will, i.e. requires that software be prepared to
++handle an EPCM fault at any time. The contents of EPC are encrypted with an
++ephemeral key, which is lost on power transitions.
++
++EPC management
++==============
++
++EPC pages do not have ``struct page`` instances. They are IO memory from kernel
++perspective. The consequence is that they are always mapped as shared memory.
++Kernel defines ``/dev/sgx/enclave`` that can be mapped as ``MAP_SHARED`` to
++define the address range for an enclave.
++
++EPC Over-subscription
++=====================
++
++When the amount of free EPC pages goes below a low watermark the swapping thread
++starts reclaiming pages. The pages that do not have the **A** bit set are
++selected as victim pages.
++
++Launch Control
++==============
++
++SGX provides a launch control mechanism. After all enclave pages have been
++copied, kernel executes **ENCLS[EINIT]**, which initializes the enclave. Only
++after this the CPU can execute inside the enclave.
++
++This leaf function takes an RSA-3072 signature of the enclave measurement and an
++optional cryptographic token. Linux does not take advantage of launch tokens.
++The instruction checks that the signature is signed with the key defined in
++**IA32_SGXLEPUBKEYHASH?** MSRs and the measurement is correct. If so, the
++enclave is allowed to be executed.
++
++MSRs can be configured by the BIOS to be either readable or writable. Linux
++supports only writable configuration in order to give full control to the kernel
++on launch control policy. Readable configuration requires the use of previously
++mentioned launch tokens.
++
++The current kernel implementation supports only writable MSRs. The launch is
++performed by setting the MSRs to the hash of the enclave signer's public key.
++The alternative would be to have *a launch enclave* that would be signed with
++the key set into MSRs, which would then generate launch tokens for other
++enclaves. This would only make sense with read-only MSRs, and thus the option
++has been discarded.
++
++Attestation
++===========
++
++Local Attestation
++-----------------
++
++In local attestation an enclave creates a **REPORT** data structure with
++**ENCLS[EREPORT]**, which describes the origin of an enclave. In particular, it
++contains a AES-CMAC of the enclave contents signed with a report key unique to
++each processor. All enclaves have access to this key.
++
++This mechanism can also be used in addition as a communication channel as the
++**REPORT** data structure includes a 64-byte field for variable information.
++
++Remote Attestation
++------------------
++
++Provisioning Certification Enclave (PCE), the root of trust for other enclaves,
++generates a signing key from a fused key called Provisioning Certification Key.
++PCE can then use this key to certify an attestation key of a Quoting Enclave
++(QE), e.g. we get the chain of trust down to the hardware if the Intel signed
++PCE is used.
++
++To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be only
++allowed for those who actually need it so that only the trusted parties can
++certify QE's.
++
++A device file called /dev/sgx/provision exists to provide file descriptors that
++act as privilege tokens for building provisioning enclaves. These can be
++associated with enclaves with the ioctl SGX_IOC_ENCLAVE_SET_ATTRIBUTE.
++
++Encryption engines
++==================
++
++In order to conceal the enclave data while it is out of the CPU package,
++memory controller has to be extended with an encryption engine. MC can then
++route incoming requests coming from CPU cores running in enclave mode to the
++encryption engine.
++
++In CPUs prior to Icelake, Memory Encryption Engine (MEE) is used to
++encrypt pages leaving the CPU caches. MEE uses a n-ary Merkle tree with root in
++SRAM to maintain integrity of the encrypted data. This provides integrity and
++anti-replay protection but does not scale to large memory sizes because the time
++required to update the Merkle tree grows logarithmically in relation to the
++memory size.
++
++CPUs starting from Icelake use Total Memory Encryption (TME) in the place of
++MEE. SGX using TME does not have an integrity Merkle tree, which means losing HW
++protections from integrity and replay-attacks, but includes additional changes
++to prevent cipher text from being return and SW memory aliases from being
++created. DMA remains blocked by the PRMRR to the EPC memory even systems that
++use TME (SDM section 41.10).
++
++Backing storage
++===============
++
++Backing storage is shared and not accounted. It is implemented as a private
++shmem file. Providing a backing storage in some form from user space is not
++possible - accounting would go to invalid state as reclaimed pages would get
++accounted to the processes of which behalf the kernel happened to be acting on.
++
++Access control
++==============
++
++`mmap()` permissions are capped by the enclave permissions. A direct
++consequence of this is that all the pages for an address range must be added
++before `mmap()` can be applied. Effectively an enclave page with minimum
++permissions in the address range sets the permission cap for the mapping
++operation.
++
++Usage Models
++============
++
++Shared Library
++--------------
++
++Sensitive data and the code that acts on it is partitioned from the application
++into a separate library. The library is then linked as a DSO which can be loaded
++into an enclave. The application can then make individual function calls into
++the enclave through special SGX instructions. A run-time within the enclave is
++configured to marshal function parameters into and out of the enclave and to
++call the correct library function.
++
++Application Container
++---------------------
++
++An application may be loaded into a container enclave which is specially
++configured with a library OS and run-time which permits the application to run.
++The enclave run-time and library OS work together to execute the application
++when a thread enters the enclave.
++
++References
++==========
++
++"Supporting Third Party Attestation for Intel® SGX with Intel® Data Center
++Attestation Primitives"
++   https://software.intel.com/sites/default/files/managed/f1/b8/intel-sgx-support-for-third-party-attestation.pdf
 -- 
 2.25.1
 
