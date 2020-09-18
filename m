@@ -2,57 +2,40 @@ Return-Path: <SRS0=PIOK=C3=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C168C43463
-	for <linux-sgx@archiver.kernel.org>; Fri, 18 Sep 2020 15:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B6CC43464
+	for <linux-sgx@archiver.kernel.org>; Fri, 18 Sep 2020 23:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAABD239D1
-	for <linux-sgx@archiver.kernel.org>; Fri, 18 Sep 2020 15:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600441760;
-	bh=IkOqknM/pgGLyHstRYRh+yvQ8FdTpYzJtOj13eKOQoo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=m0rfCcnShVnN7CRHq9I1+o0WnWaUa4pT5ODIMcGDi7VPRC2D4bywJDg7AwuLXxyVQ
-	 qgL8y95hoPwiTs5hcsiG/Yfr5kba273j9/tX9DrVt7aaNaMF6U8HMonkcZZj9+5RIN
-	 sVEqjjauFi42WppMCabCkifgVZeRGtezPPKIZXnY=
+	by mail.kernel.org (Postfix) with ESMTP id 007CB21734
+	for <linux-sgx@archiver.kernel.org>; Fri, 18 Sep 2020 23:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbgIRPJT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 18 Sep 2020 11:09:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58804 "EHLO mail.kernel.org"
+        id S1726022AbgIRXZU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 18 Sep 2020 19:25:20 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32638 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbgIRPJS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 18 Sep 2020 11:09:18 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F136B23998
-        for <linux-sgx@vger.kernel.org>; Fri, 18 Sep 2020 15:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600441758;
-        bh=IkOqknM/pgGLyHstRYRh+yvQ8FdTpYzJtOj13eKOQoo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wQ81rRBmz55lhQkw2ePr88cuYBKO/mwDLRArD0Dl8vrCF5JXRSXioBz0uBj1vbe70
-         7ubHe+MaHqxq7vYXgkIa4718PY9E1caLN8k+OyQ/4Lw3jA7BY/kHAtCbuaiqUdqiDw
-         K0rCTSxm+b5VRI6PUTZSoBTMiyAMIGCPrMWMoFt4=
-Received: by mail-wr1-f43.google.com with SMTP id z1so6002763wrt.3
-        for <linux-sgx@vger.kernel.org>; Fri, 18 Sep 2020 08:09:17 -0700 (PDT)
-X-Gm-Message-State: AOAM533OE0f67qEJMCYxcBmpVHfylv7EVm7WhqSu4uC38MdbdcIVRmpG
-        m8pgkmTdtkDl6hXmgn28cYXqARN/TsMXBck7FQWeaQ==
-X-Google-Smtp-Source: ABdhPJxGmXBOztEznChCx1zDcy87QF70YtkyM1AXgQnapl+jEklF6uBqSKjj6yAkDzuf8mO6n3/eki81+OiGt2xlp30=
-X-Received: by 2002:a5d:5111:: with SMTP id s17mr37934142wrt.70.1600441756359;
- Fri, 18 Sep 2020 08:09:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com> <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 18 Sep 2020 08:09:04 -0700
-X-Gmail-Original-Message-ID: <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
-Message-ID: <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S1726009AbgIRXZU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 18 Sep 2020 19:25:20 -0400
+IronPort-SDR: qSksG/9yLCgvd3Gxdw3DYCD0lXRxcUr/6e3YTtxTc0PCsio/6p2MgxiSALV5BcPtgKmizDSMLP
+ 4NhzbzI/CRnA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9748"; a="157444944"
+X-IronPort-AV: E=Sophos;i="5.77,276,1596524400"; 
+   d="scan'208";a="157444944"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2020 16:25:09 -0700
+IronPort-SDR: bwQl4yFHMgKEVeADmPLf3YddIA9jvYk9OyDQiQiin4hc6P/CFDEWDJIJlPKkoifvB7h/HuS3xt
+ xZ7bK1/tc/YA==
+X-IronPort-AV: E=Sophos;i="5.77,276,1596524400"; 
+   d="scan'208";a="484421587"
+Received: from pbaltus-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.234])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2020 16:25:02 -0700
+Date:   Sat, 19 Sep 2020 02:24:58 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
 Cc:     X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -71,36 +54,55 @@ Cc:     X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
         "Huang, Kai" <kai.huang@intel.com>,
         "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
         Christian Ludloff <ludloff@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
         Neil Horman <nhorman@redhat.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
         Patrick Uiterwijk <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()'
+Message-ID: <20200918232458.GA6175@linux.intel.com>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
+ <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 4:28 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Add vm_ops()->mprotect() for additional constraints for a VMA.
->
-> Intel Software Guard eXtensions (SGX) will use this callback to add two
-> constraints:
->
-> 1. Verify that the address range does not have holes: each page address
->    must be filled with an enclave page.
-> 2. Verify that VMA permissions won't surpass the permissions of any enclave
->    page within the address range. Enclave cryptographically sealed
->    permissions for each page address that set the upper limit for possible
->    VMA permissions. Not respecting this can cause #GP's to be emitted.
+On Fri, Sep 18, 2020 at 08:09:04AM -0700, Andy Lutomirski wrote:
+> On Tue, Sep 15, 2020 at 4:28 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> >
+> > Add vm_ops()->mprotect() for additional constraints for a VMA.
+> >
+> > Intel Software Guard eXtensions (SGX) will use this callback to add two
+> > constraints:
+> >
+> > 1. Verify that the address range does not have holes: each page address
+> >    must be filled with an enclave page.
+> > 2. Verify that VMA permissions won't surpass the permissions of any enclave
+> >    page within the address range. Enclave cryptographically sealed
+> >    permissions for each page address that set the upper limit for possible
+> >    VMA permissions. Not respecting this can cause #GP's to be emitted.
+> 
+> It's been awhile since I looked at this.  Can you remind us: is this
+> just preventing userspace from shooting itself in the foot or is this
+> something more important?
+> 
+> --Andy
 
-It's been awhile since I looked at this.  Can you remind us: is this
-just preventing userspace from shooting itself in the foot or is this
-something more important?
+Haitao found this:
 
---Andy
+https://patchwork.kernel.org/patch/10978327/
+
+The way I understand it, for an LSM hook it makes sense that the
+mprotect() can deduce a single permission for an enclave address range.
+With those constraints it is possible.
+
+/Jarkko
