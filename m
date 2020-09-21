@@ -2,88 +2,111 @@ Return-Path: <SRS0=03YQ=C6=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28DAC43464
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 13:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1B9C43465
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 13:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD1A921789
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 13:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02E8A20866
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 13:51:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="aPrbgGc5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbgIUNOy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Sep 2020 09:14:54 -0400
-Received: from mga18.intel.com ([134.134.136.126]:47378 "EHLO mga18.intel.com"
+        id S1726846AbgIUNvQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Sep 2020 09:51:16 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:37254 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727089AbgIUNOy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Sep 2020 09:14:54 -0400
-IronPort-SDR: 7cMvF3iCWzT9akZcCaF6X3TZJtMFPF3H91sg997TOjxH2WomdEepnG2noYD4wCQ8mHHZNjqhqG
- 4QrluXMBSTdw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9750"; a="148123616"
-X-IronPort-AV: E=Sophos;i="5.77,286,1596524400"; 
-   d="scan'208";a="148123616"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 06:14:52 -0700
-IronPort-SDR: yTB72ZLr9G/DRITzyy0cQGQbSwlMIDLmP4xpwO0go8Ttu2h+/xM+IfQqM7WM9vRiftbgDbLO1z
- M/dbLPHldI/A==
-X-IronPort-AV: E=Sophos;i="5.77,286,1596524400"; 
-   d="scan'208";a="485452734"
-Received: from clairemo-mobl.ger.corp.intel.com (HELO localhost) ([10.252.43.50])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 06:14:45 -0700
-Date:   Mon, 21 Sep 2020 16:14:43 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Neil Horman <nhorman@redhat.com>,
+        id S1726456AbgIUNvQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Sep 2020 09:51:16 -0400
+X-Greylist: delayed 13631 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 09:51:16 EDT
+Received: from zn.tnic (p200300ec2f07e300be7bcf3e7fc25083.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:e300:be7b:cf3e:7fc2:5083])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 68D571EC0350;
+        Mon, 21 Sep 2020 15:51:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1600696274;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=TXGxYzaYTYZyuhzUi0yldlks/2ZvxroQx1yLqik1Vw4=;
+        b=aPrbgGc5TcixC6fhqyg4myfOG3zNKOi74WHnEnWwB17ooWGZ4vzVrFCADKqOGe7dalPlQq
+        Z1IE1r2JlaeumW5tMGfj27CHaXUlGB6ZDw2zBAqPKn97Bl5bvrkI0FETrbFHs5kzARS4IB
+        a+5IXIlaq4K8d8PsFuDMoQcZb4tK3KI=
+Date:   Mon, 21 Sep 2020 15:51:07 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-Message-ID: <20200921131443.GH6038@linux.intel.com>
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v38 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
+Message-ID: <20200921135107.GG5901@zn.tnic>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
- <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
- <20200918235337.GA21189@sjchrist-ice>
- <20200921124946.GF6038@linux.intel.com>
+ <20200915112842.897265-13-jarkko.sakkinen@linux.intel.com>
+ <20200921100356.GB5901@zn.tnic>
+ <20200921122823.GE6038@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200921124946.GF6038@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200921122823.GE6038@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 21, 2020 at 03:49:56PM +0300, Jarkko Sakkinen wrote:
-> The 2nd part of the answer is the answer to the question: why we want to
-> feed LSM hooks enclaves exactly in this state.
+On Mon, Sep 21, 2020 at 03:28:23PM +0300, Jarkko Sakkinen wrote:
+> Is this appropriate:
+> 
+> 	/* The extra page in swap space goes to SECS. */
+> 	encl_size = secs->size + PAGE_SIZE;
+> 
+> 	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
+> 				   VM_NORESERVE);
+> 	if (IS_ERR(backing)) {
+> 		ret = PTR_ERR(backing);
+> 		goto err_out_shrink;
+> 	}
+>
 
-The question can be further refined as why: why this is the best
-possible set of substates to filter in?
+Yap, thanks.
 
-"no holes" part is obvious as the consequence of not surpassing
-permissions of any of the pages in range, as you could otherwise
-break the state with ioctl(SGX_ENCLAVE_ADD_PAGES) with permssions
-that are below the mmap permissions.
+> I agree with this but I also think it would make sense to rephrase
+> "verifying the correctness of the provided SECS" with something more
+> informative.
+> 
+> I would rephrase as:
+> 
+> "... after checking that the provided data for SECS meets the expectations
+> of ENCLS[ECREATE] for an unitialized enclave and size of the address
+> space does not surpass the platform expectations. This validation is
+> executed by sgx_validate_secs()."
 
-/Jarkko
+s/executed/done/
+
+> Is this sufficient for you, or do you have further suggestions?
+
+Yes, no further suggestions.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
