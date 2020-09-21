@@ -2,147 +2,114 @@ Return-Path: <SRS0=03YQ=C6=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69558C4363A
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 18:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0944EC4363C
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 18:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA7D520888
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 18:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eoxk8SCF"
+	by mail.kernel.org (Postfix) with ESMTP id A70F921D91
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 18:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbgIUSHf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Sep 2020 14:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbgIUSHf (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 21 Sep 2020 14:07:35 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17A4CC061755;
-        Mon, 21 Sep 2020 11:07:35 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f07e300fdce2fa8e8fa3e27.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:e300:fdce:2fa8:e8fa:3e27])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 351A11EC0281;
-        Mon, 21 Sep 2020 20:07:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1600711653;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=wahZCqLRHJ6s4gwTioPt1wQsyT0dIRsptngyIn/tpk8=;
-        b=eoxk8SCFiSF0PVOxe4Kep/f7Zv7V4qI6hJkoqIw1+iKcnx/6Q4qDUCgdhR1U1x5VZOprF5
-        2syiaYZ0QLo/GkwRweS/1UEQD2n2u/EUoFynlz7J8Kb46ckMlMhKGrNAzvrkfWVO23sday
-        86VJIaDzBvJHfvIzYM3WkoHJ0MNaukQ=
-Date:   Mon, 21 Sep 2020 20:07:28 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        id S1726456AbgIUSKe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Sep 2020 14:10:34 -0400
+Received: from mga18.intel.com ([134.134.136.126]:10434 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726436AbgIUSKe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Sep 2020 14:10:34 -0400
+IronPort-SDR: coZfDMUQZWYD0aFZbk6fcu+YjUsR3SYwSOzhXjJ/rY/PbEWUiGlfHCQYdcWf75wDdCPBEehmwY
+ WhXwvnwKQvPQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="148207084"
+X-IronPort-AV: E=Sophos;i="5.77,287,1596524400"; 
+   d="scan'208";a="148207084"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 11:10:23 -0700
+IronPort-SDR: mpDMERO1472sfD/4J47NZq8BnQx2HCiGrr4acojo+GMCebeKiuwmaWlEv35AfvufSHZ3jXk2yd
+ ADRtpBp0zvsA==
+X-IronPort-AV: E=Sophos;i="5.77,287,1596524400"; 
+   d="scan'208";a="485597119"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 11:10:22 -0700
+Date:   Mon, 21 Sep 2020 11:10:21 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        cedric.xing@intel.com, chenalexchen@google.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: Re: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote
- attestation
-Message-ID: <20200921180728.GJ5901@zn.tnic>
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v38 14/24] x86/sgx: Add SGX_IOC_ENCLAVE_INIT
+Message-ID: <20200921181021.GA24481@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-15-jarkko.sakkinen@linux.intel.com>
+ <20200921173514.GI5901@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200921173514.GI5901@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 02:28:33PM +0300, Jarkko Sakkinen wrote:
-> @@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
->  		return ret;
->  	}
->  
-> +	ret = misc_register(&sgx_dev_provision);
-> +	if (ret) {
-> +		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-> +		misc_deregister(&sgx_dev_enclave);
+On Mon, Sep 21, 2020 at 07:35:14PM +0200, Borislav Petkov wrote:
+> On Tue, Sep 15, 2020 at 02:28:32PM +0300, Jarkko Sakkinen wrote:
+> > +static int sgx_einit(struct sgx_sigstruct *sigstruct, void *token,
+> > +		     struct sgx_epc_page *secs, u64 *lepubkeyhash)
+> > +{
+> > +	int ret;
+> > +
+> > +	preempt_disable();
+> > +	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
+> 
+> So this will update the cached copies *and* the MSRs itself if what's
+> cached is stale...
+> 
+> > +	ret = __einit(sigstruct, token, sgx_get_epc_addr(secs));
+> > +	if (ret == SGX_INVALID_EINITTOKEN) {
+> 
+> ... so why would it return this error here?
+> 
+> Definition of this error says:
+> 
+>  * %SGX_INVALID_EINITTOKEN:     EINITTOKEN is invalid and enclave signer's
+>  *                              public key does not match IA32_SGXLEPUBKEYHASH.
+> 
+> when you just updated them?!
+> 
+> > +		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
+> 
+> So why force a second time?
 
-The comment over misc_deregister() says:
+The LE pubkey hash MSRs are special snowflakes.  They get reset to Intel's
+default key on any loss of EPC, e.g. if the system does a suspend/resume
+cycle.  The approach we took (obviously) is to assume the kernel's cache can
+be stale at any given time.  The alternative would be to try and track loss
+of EPC conditions and emulate the reset, but that's a bit dicey on bare
+metal as any missed case would hose SGX, and in a VM it's theoretically
+impossible to handle as a particularly unhelpful VMM could emulate loss of
+EPC at will.
 
- *      Unregister a miscellaneous device that was previously
- *      successfully registered with misc_register().
+Yes, this need a big fat comment.
 
-but this is not a successful registration here, in the if (ret) case...
-
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-> index e4063923115b..72747d01c046 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.h
-> +++ b/arch/x86/kernel/cpu/sgx/driver.h
-> @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
->  extern u64 sgx_xfrm_reserved_mask;
->  extern u32 sgx_xsave_size_tbl[64];
->  
-> +extern const struct file_operations sgx_provision_fops;
-> +
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
->  
->  int sgx_drv_init(void);
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index de2ed4f35ffb..4227bca7b477 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -673,6 +673,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
->  	return ret;
->  }
->  
-> +/**
-> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
-> + * @filep:	open file to /dev/sgx
-       ^^^^^^
-
-Can you guess what my comment to that would be...?
-
-> + * @arg:	userspace pointer to a struct sgx_enclave_provision instance
-> + *
-> + * Mark the enclave as being allowed to access a restricted attribute bit.
-> + * The requested attribute is specified via the attribute_fd field in the
-> + * provided struct sgx_enclave_provision.  The attribute_fd must be a
-> + * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
-> + *
-> + * Failure to explicitly request access to a restricted attribute will cause
-> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> + * is access to the PROVISION_KEY.
-> + *
-> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-> + *
-> + * Return: 0 on success, -errno otherwise
-> + */
-> +static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
-> +					  void __user *arg)
-
-No need for the line break: both function args can fit on the same line.
-
-...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> > +		ret = __einit(sigstruct, token, sgx_get_epc_addr(secs));
+> > +	}
+> > +	preempt_enable();
+> > +	return ret;
+> > +}
