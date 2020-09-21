@@ -6,122 +6,90 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0F0C4363C
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 21:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ED3C4363C
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 21:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 731AB2067D
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 21:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D544123A5F
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 21:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbgIUVYW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Sep 2020 17:24:22 -0400
-Received: from mga06.intel.com ([134.134.136.31]:52847 "EHLO mga06.intel.com"
+        id S1727474AbgIUV0r (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Sep 2020 17:26:47 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27497 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbgIUVYW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Sep 2020 17:24:22 -0400
-IronPort-SDR: enBVXb72rg0cCaKEEUev2xtVR/qW5Zl38YVvHTHI33RAM+ZkvSpG5aYf8xyqkqgosoOhYhhhxW
- joRABVnQoCOw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="222074833"
+        id S1726497AbgIUV0r (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Sep 2020 17:26:47 -0400
+IronPort-SDR: td84sAxeDzTxHcb/38PT2hEV4d94fiOp5+NT3mLkqFn8kiFzwddddwNN+bJdy8t0RnK9td0haI
+ IX/Lt0fCT8WA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="148236530"
 X-IronPort-AV: E=Sophos;i="5.77,288,1596524400"; 
-   d="scan'208";a="222074833"
+   d="scan'208";a="148236530"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 14:24:18 -0700
-IronPort-SDR: Mu53t/hr4+7eQyFerhhyMDJw8xLDreqUkRL1IgOVN3T8NuLWHw1Vl6T7wkEQ8t5cSOM6qkXMrW
- Lxp51BX4XFbA==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 14:26:46 -0700
+IronPort-SDR: 8hTzxnHAWYHcALgtM6rYikOTI+yHRcM5M8fwXePA/kS0QmDiDwK/qbnrk83Lzd2gwyKPbLEKdp
+ VkZTjrJzvgXQ==
 X-IronPort-AV: E=Sophos;i="5.77,288,1596524400"; 
-   d="scan'208";a="485671246"
+   d="scan'208";a="485671677"
 Received: from kofels-mobl.ger.corp.intel.com (HELO localhost) ([10.249.45.179])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 14:24:11 -0700
-Date:   Tue, 22 Sep 2020 00:24:08 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 14:26:40 -0700
+Date:   Tue, 22 Sep 2020 00:26:38 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
-Message-ID: <20200921212408.GA59547@linux.intel.com>
-References: <op.0q3pw0stwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
- <20200918020940.GA14678@sjchrist-ice>
- <20200918122029.GA27028@linux.intel.com>
- <20200918123932.GB27028@linux.intel.com>
- <20200919000918.GB21189@sjchrist-ice>
- <20200921114104.GB6038@linux.intel.com>
- <20200921164647.GC23989@linux.intel.com>
- <20200921184948.GA49586@linux.intel.com>
- <20200921194419.GA56547@linux.intel.com>
- <20200921195738.GB25005@linux.intel.com>
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote
+ attestation
+Message-ID: <20200921212638.GB59547@linux.intel.com>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
+ <20200921180728.GJ5901@zn.tnic>
+ <20200921192706.GD53597@linux.intel.com>
+ <20200921194156.GM5901@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200921195738.GB25005@linux.intel.com>
+In-Reply-To: <20200921194156.GM5901@zn.tnic>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 21, 2020 at 12:57:39PM -0700, Sean Christopherson wrote:
-> On Mon, Sep 21, 2020 at 10:44:19PM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Sep 21, 2020 at 09:49:48PM +0300, Jarkko Sakkinen wrote:
-> > > To have understandable semantics you have to map error codes to
-> > > conditions rather than opcodes. -EIO means loss of enclave in the event
-> > > of EPC gone invalid. Enclave is already lost, that is the reason why we
-> > > deinitialize the kernel data structures.
-> > > 
-> > > EADD must have a different error code because nothing is actually lost
-> > > but the failure conditions are triggered outside. -EFAULT would be
-> > > probably the most reasonable choice for that.
-> > 
-> > Now that I did all the changes discussed and then I remember why EADD
-> > and EEXTEND had a common error code, and common behaviour. Obviously EADD
-> > can also fail because of EPC reset because it depends on a valid SECS
-> > page.
-> > 
-> > If we cannot distinct from EADD caused by EPC loss and EADD caused by
-> > problems with the source, it should have the same error code, and also
-> > the enclave should be deinitialized, whenver this happens.
+On Mon, Sep 21, 2020 at 09:41:56PM +0200, Borislav Petkov wrote:
+> On Mon, Sep 21, 2020 at 10:27:06PM +0300, Jarkko Sakkinen wrote:
+> > 'sgx_dev_enclave' is successfully register whenever that happens. Am I
+> > missing something here?
 > 
-> Hmm, on SGX2 hardware the kernel can precisely and accurately identify loss
-> of EPC, or at least "problem with the EPCM", as such a condition will be a
-> page fault with PFEC.SGX=1.
+> No, I was missing the fact that you have *two* misc devices and you're
+> deregistering the first one in the error path of the second.
+> 
+> Forget what I said. ;-\
 
-True.
+Ok, great.
 
-> But getting that info back to the ENCLS invocation would require adding a
-> new exception fixup handler in order to "return" the error code.  Given that
-> this is the only case where that level of precision makes a difference, I
-> think it's ok to just kill the enclave on any EADD failure.  Practically
-> speaking I highly doubt the overzealous killing will impact userspace, I
-> would imagine any SGX runtime would treat -EFAULT as fatal anyways.
+BTW, probably would make sense to rewrite the short summary as:
 
-This is true. We could do this if wanted. Most of the time bad source
-address would require either badly behaving run-time or doing it on
-purpose. For the former case, since it is badly behaving by definition,
-this granularity would not improve situation. For the latter case, we do
-not want to do any active support.
+"x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION"
 
-I guess I'll still have to correct the documentation just a bit.
+for the sake of consistency with the three precursoring patches.
 
-> Side topic, this does invalidate my argument for not killing the enclave on
-> EADD failure.  If EADD fails due to loss of EPC, it's theoretically possible
-> userspace could get stuck in an infinite loop if it does a naive retry on
-> -EIO or whatever.
-
-I don't think we care about that unless it renders out any legit
-correctly working feature for a run-time.
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
 /Jarkko
