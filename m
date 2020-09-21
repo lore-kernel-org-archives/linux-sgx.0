@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717AEC43464
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 12:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28DAC43464
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 13:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 317E320EDD
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 12:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD1A921789
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 13:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbgIUMv2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Sep 2020 08:51:28 -0400
-Received: from mga01.intel.com ([192.55.52.88]:39063 "EHLO mga01.intel.com"
+        id S1727099AbgIUNOy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Sep 2020 09:14:54 -0400
+Received: from mga18.intel.com ([134.134.136.126]:47378 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbgIUMv1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Sep 2020 08:51:27 -0400
-IronPort-SDR: 6q+7jjxn5fSutTc1m8J30EwZlpEpgB31kPw6fTeCY/jeYXe13UUQgR5FlooquOn8s7Bj8za0dR
- napvzPhhx6EQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9750"; a="178440425"
+        id S1727089AbgIUNOy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Sep 2020 09:14:54 -0400
+IronPort-SDR: 7cMvF3iCWzT9akZcCaF6X3TZJtMFPF3H91sg997TOjxH2WomdEepnG2noYD4wCQ8mHHZNjqhqG
+ 4QrluXMBSTdw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9750"; a="148123616"
 X-IronPort-AV: E=Sophos;i="5.77,286,1596524400"; 
-   d="scan'208";a="178440425"
+   d="scan'208";a="148123616"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 05:51:27 -0700
-IronPort-SDR: RjRM4gJiXRdgoJN3d1WKPnh/tUFEQm31NNI2RI2m5nZEjc05peTpx6LodzU6hhR9iWJ7qlOlIK
- M3W8AppvEMxg==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 06:14:52 -0700
+IronPort-SDR: yTB72ZLr9G/DRITzyy0cQGQbSwlMIDLmP4xpwO0go8Ttu2h+/xM+IfQqM7WM9vRiftbgDbLO1z
+ M/dbLPHldI/A==
 X-IronPort-AV: E=Sophos;i="5.77,286,1596524400"; 
-   d="scan'208";a="510675980"
+   d="scan'208";a="485452734"
 Received: from clairemo-mobl.ger.corp.intel.com (HELO localhost) ([10.252.43.50])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 05:51:20 -0700
-Date:   Mon, 21 Sep 2020 15:51:17 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 06:14:45 -0700
+Date:   Mon, 21 Sep 2020 16:14:43 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
@@ -59,7 +59,7 @@ Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
 Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-Message-ID: <20200921125117.GG6038@linux.intel.com>
+Message-ID: <20200921131443.GH6038@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
  <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
  <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
@@ -75,8 +75,15 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Mon, Sep 21, 2020 at 03:49:56PM +0300, Jarkko Sakkinen wrote:
-> What really should be documented is to answer why we consider an enclave
-                                      ~~
-				      the (editing mistake)
+> The 2nd part of the answer is the answer to the question: why we want to
+> feed LSM hooks enclaves exactly in this state.
+
+The question can be further refined as why: why this is the best
+possible set of substates to filter in?
+
+"no holes" part is obvious as the consequence of not surpassing
+permissions of any of the pages in range, as you could otherwise
+break the state with ioctl(SGX_ENCLAVE_ADD_PAGES) with permssions
+that are below the mmap permissions.
 
 /Jarkko
