@@ -2,114 +2,124 @@ Return-Path: <SRS0=03YQ=C6=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C15EC4727E
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 19:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45136C4363C
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 21:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B108222BB
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 19:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F327C23A61
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Sep 2020 21:07:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbgIUT6e (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Sep 2020 15:58:34 -0400
-Received: from mga09.intel.com ([134.134.136.24]:6567 "EHLO mga09.intel.com"
+        id S1726471AbgIUVHq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Sep 2020 17:07:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:24800 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbgIUT6b (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Sep 2020 15:58:31 -0400
-IronPort-SDR: lSsMAJfz9GNJcYE0NFmcHXpJwQGAAu12gG1N/XBhMyr++zV6clBjPL6fA90SzXqCF4+rsXo6um
- 9rG8nYk7jWGQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="161391879"
-X-IronPort-AV: E=Sophos;i="5.77,287,1596524400"; 
-   d="scan'208";a="161391879"
+        id S1726441AbgIUVHq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Sep 2020 17:07:46 -0400
+IronPort-SDR: /rjg3tyco10PAXPI5GY/M5pKCq3ic3yszBtSfL1bmGMrpXdl9vdxj5gCYUwcgt6ZlExQL+rn6p
+ vv/ruLn5MQCg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="139964485"
+X-IronPort-AV: E=Sophos;i="5.77,288,1596524400"; 
+   d="scan'208";a="139964485"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 12:58:30 -0700
-IronPort-SDR: rAEqZ+YlzVG9mAhqVrqnE3X93fmpOiEzu0W+Q11CidGTPAHHF3PI4Yf1ELoMf4L5q51aAEUrYS
- uku4r5JKn0VA==
-X-IronPort-AV: E=Sophos;i="5.77,287,1596524400"; 
-   d="scan'208";a="485647966"
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 14:07:45 -0700
+IronPort-SDR: wNwnTNAM5ERduoiu28YwFRd0UBOnm3SIUU5AD4goCxAsx3sByaFOizwkhBI1qP/CQGQq0rFEag
+ 1T4MmGFQFDJA==
+X-IronPort-AV: E=Sophos;i="5.77,288,1596524400"; 
+   d="scan'208";a="485667937"
 Received: from kofels-mobl.ger.corp.intel.com (HELO localhost) ([10.249.45.179])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 12:58:23 -0700
-Date:   Mon, 21 Sep 2020 22:58:22 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2020 14:07:38 -0700
+Date:   Tue, 22 Sep 2020 00:07:36 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
-Message-ID: <20200921195822.GA58176@linux.intel.com>
-References: <20200917160206.GF8530@linux.intel.com>
- <op.0q3pw0stwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
- <20200918020940.GA14678@sjchrist-ice>
- <20200918122029.GA27028@linux.intel.com>
- <20200918123932.GB27028@linux.intel.com>
- <20200919000918.GB21189@sjchrist-ice>
- <20200921114104.GB6038@linux.intel.com>
- <20200921164647.GC23989@linux.intel.com>
- <20200921184948.GA49586@linux.intel.com>
- <20200921194419.GA56547@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+Message-ID: <20200921210736.GB58176@linux.intel.com>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
+ <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
+ <20200918235337.GA21189@sjchrist-ice>
+ <20200921124946.GF6038@linux.intel.com>
+ <20200921165758.GA24156@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200921194419.GA56547@linux.intel.com>
+In-Reply-To: <20200921165758.GA24156@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 21, 2020 at 10:44:19PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Sep 21, 2020 at 09:49:48PM +0300, Jarkko Sakkinen wrote:
-> > To have understandable semantics you have to map error codes to
-> > conditions rather than opcodes. -EIO means loss of enclave in the event
-> > of EPC gone invalid. Enclave is already lost, that is the reason why we
-> > deinitialize the kernel data structures.
+On Mon, Sep 21, 2020 at 09:57:58AM -0700, Sean Christopherson wrote:
+> On Mon, Sep 21, 2020 at 03:49:46PM +0300, Jarkko Sakkinen wrote:
+> > On Fri, Sep 18, 2020 at 04:53:37PM -0700, Sean Christopherson wrote:
+> > > a noexec filesystem by loading code into an enclave, and to give the kernel the
+> > > option of adding enclave specific LSM policies in the future.
+> > > 
+> > > The source file (if one exists) for the enclave is long gone when the enclave
+> > > is actually mmap()'d and mprotect()'d.  To enforce noexec, the requested
+> > > permissions for a given page are snapshotted when the page is added to the
+> > > enclave, i.e. when the enclave is built.  Enclave pages that will be executable
+> > > must originate from an a MAYEXEC VMA, e.g. the source page can't come from a
+> > > noexec file system.
 > > 
-> > EADD must have a different error code because nothing is actually lost
-> > but the failure conditions are triggered outside. -EFAULT would be
-> > probably the most reasonable choice for that.
+> > noexec check is done in __sgx_encl_add_page(), not in this callback.
+> > sgx_vma_mprotect() calls sgx_encl_may_map(), which iterates the
+> > addresses, checks that permissions are not surpassed and there are
+> > no holes.
 > 
-> Now that I did all the changes discussed and then I remember why EADD
-> and EEXTEND had a common error code, and common behaviour. Obviously EADD
-> can also fail because of EPC reset because it depends on a valid SECS
-> page.
-> 
-> If we cannot distinct from EADD caused by EPC loss and EADD caused by
-> problems with the source, it should have the same error code, and also
-> the enclave should be deinitialized, whenver this happens.
-> 
-> So I would just revert to v38 behaviour, keeping of course the whole
-> check more visible in sgx_ioc_enclave_add_pages(), and just refine
-> the documentation better describe the whole situation.
+> Yes, that's what I said.
 
-So now the behaviour is reverted back to same as it was before [*] and
-I refined the documenation as:
+sgx_encl_add_page() will remove such page. The callback does not
+interact with this process as such pages never get to the enclave.
 
-"
- * The function deinitializes kernel data structures for enclave and returns
- * -EIO in any of the following conditions:
- *
- * - Enclave Page Cache (EPC), the physical memory holding enclaves, has
- *   been invalidated. This will cause EADD and EEXTEND to fail.
- * - If the source address is corrupted somehow when executing EADD.
-"
+> I would copy-paste the part of the response that was snipped...
 
-[*] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git/tree/arch/x86/kernel/cpu/sgx/ioctl.c
+I do agree with the main conclusions but it contains also things that I
+do not see relating that much, like noexec partitions. It goes too far
+in detail what will LSM's end up doing. I absolutely do not want to
+forecast too far how LSM hooks would work.
+
+Since we do not have ioctl's for EMODPE and such, I see EMODPE as the
+only reason for doing this right now. Otherwise, we are in trouble with
+any possible LSM callbacks. For any sort of access control decision,
+things decided must stick.
+
+I would add something like this to the commit message largely based on
+your text:
+
+"SGX stores the permissions for each page when they are first added, and
+will implement this callback to check that mmap() or mprotect() does not
+surpass these permissions in the requested address range.
+
+This is done to prevent using EMODPE upgrading permissions of a page
+after mmap() or mprotect() has been done, which would prevent any sort
+of LSM callbacks to be implemented later on because the access control
+decision could deprecate."
 
 /Jarkko
