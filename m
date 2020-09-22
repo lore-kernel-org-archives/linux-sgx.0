@@ -2,197 +2,126 @@ Return-Path: <SRS0=HNuV=C7=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C33C4363D
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Sep 2020 15:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AD3C4363D
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Sep 2020 16:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C07F2388B
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Sep 2020 15:44:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ot2mqXZ8"
+	by mail.kernel.org (Postfix) with ESMTP id 92DAD239D2
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Sep 2020 16:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbgIVPob (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Sep 2020 11:44:31 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45438 "EHLO mail.skyhub.de"
+        id S1726614AbgIVQYn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Sep 2020 12:24:43 -0400
+Received: from mga11.intel.com ([192.55.52.93]:37808 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbgIVPob (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 22 Sep 2020 11:44:31 -0400
-Received: from zn.tnic (p200300ec2f0bfb00281bee649a1894f0.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:fb00:281b:ee64:9a18:94f0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AB6641EC00EC;
-        Tue, 22 Sep 2020 17:44:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1600789469;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ofmUrseAbycCQWoSGsPSBEr7sPcQODqh36PCqwBgOQE=;
-        b=ot2mqXZ8ahJI5pqNoMHX56jTHjhYaeu3jczmnUSz7PsVyifLgzuVMFY0/aPFwYQAevE0NF
-        9OPHMeuCl227HhPaIdM9Uy0g/9tNSlMM+oadQBgE/9f4/8ycLpwpoNUc7DaEyOuRRGbDjp
-        vN5YXLlyCyVVspH2kmvDVKR+oWCnT94=
-Date:   Tue, 22 Sep 2020 17:44:24 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        id S1726563AbgIVQYn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 22 Sep 2020 12:24:43 -0400
+IronPort-SDR: 7hTIauPfYvYv5uYEyD8OPqvEnLlWxm+mz4R/bfQe8tFBYFw0Fpyeb79PTS9Isw53jubTfugVFd
+ lj7X7STKK+bg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9752"; a="158024839"
+X-IronPort-AV: E=Sophos;i="5.77,291,1596524400"; 
+   d="scan'208";a="158024839"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 09:24:40 -0700
+IronPort-SDR: wuqh49QQJio1BVTpfU/c7hE0z70Jgl7uxuSoosblsld/K3Pa7LM/WNKsClx4w1yR5Mktgys9zW
+ BQH7r5068EnA==
+X-IronPort-AV: E=Sophos;i="5.77,291,1596524400"; 
+   d="scan'208";a="335081762"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 09:24:39 -0700
+Date:   Tue, 22 Sep 2020 09:24:38 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jethro Beekman <jethro@fortanix.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Seth Moore <sethmo@google.com>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com,
         josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 17/24] x86/sgx: ptrace() support for the SGX driver
-Message-ID: <20200922154424.GL22660@zn.tnic>
+Subject: Re: [PATCH v38 16/24] x86/sgx: Add a page reclaimer
+Message-ID: <20200922162437.GA30827@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-18-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-17-jarkko.sakkinen@linux.intel.com>
+ <20200922104538.GE22660@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915112842.897265-18-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200922104538.GE22660@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-
-> Subject: Re: [PATCH v38 17/24] x86/sgx: ptrace() support for the SGX driver
-			     ... x86/sgx: Add ptrace() support...
-
-subject needs a verb.
-
-On Tue, Sep 15, 2020 at 02:28:35PM +0300, Jarkko Sakkinen wrote:
-> Add VMA callbacks for ptrace() that can be used with debug enclaves.
-> With debug enclaves data can be read and write the memory word at a time
-
-I think you wanna say here
-
-"... data can be read and/or written a memory word at a time by using..."
-
-> by using ENCLS(EDBGRD) and ENCLS(EDBGWR) leaf instructions.
+On Tue, Sep 22, 2020 at 12:45:38PM +0200, Borislav Petkov wrote:
+> On Tue, Sep 15, 2020 at 02:28:34PM +0300, Jarkko Sakkinen wrote:
+> > + * %SGX_ENCL_PAGE_VA_OFFSET_MASK:	Holds the offset in the Version Array
+> > + *					(VA) page for a swapped page.
+> >   * %SGX_ENCL_PAGE_ADDR_MASK:		Holds the virtual address of the page.
+> >   *
+> >   * The page address for SECS is zero and is used by the subsystem to recognize
 > 
-> Acked-by: Jethro Beekman <jethro@fortanix.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 87 ++++++++++++++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
+> ...
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 11ec2df59b54..7f8df2c8ef35 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -333,10 +333,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
->  	return mprotect_fixup(vma, pprev, start, end, newflags);
->  }
->  
-> +static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
-> +		      unsigned long addr, void *data)
-> +{
-> +	unsigned long offset = addr & ~PAGE_MASK;
-> +	int ret;
-> +
-> +
-> +	ret = __edbgrd(sgx_get_epc_addr(page->epc_page) + offset, data);
-> +	if (ret)
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
-> +static int sgx_edbgwr(struct sgx_encl *encl, struct sgx_encl_page *page,
-> +		      unsigned long addr, void *data)
-> +{
-> +	unsigned long offset = addr & ~PAGE_MASK;
-> +	int ret;
-> +
-> +	ret = __edbgwr(sgx_get_epc_addr(page->epc_page) + offset, data);
-> +	if (ret)
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
+> > @@ -86,24 +123,34 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+> >  {
+> >  	unsigned long encl_size = secs->size + PAGE_SIZE;
+> >  	struct sgx_epc_page *secs_epc;
+> > +	struct sgx_va_page *va_page;
+> >  	struct sgx_pageinfo pginfo;
+> >  	struct sgx_secinfo secinfo;
+> >  	struct file *backing;
+> >  	long ret;
+> >  
+> > +	va_page = sgx_encl_grow(encl);
+> > +	if (IS_ERR(va_page))
+> > +		return PTR_ERR(va_page);
+> > +	else if (va_page)
+> 
+> Not "else" simply?
+> 
+> AFAICT, sgx_encl_grow() would either return an ERR_PTR or the actual
+> page...
+> 
 
-I know those are supposed to correspond to the ENCLS leafs but the
-function names are totally unreadable. I guess you could name them
+The "else if" is correct.  Version Array (VA) pages have 512 slots that hold
+metadata for evicted EPC pages, i.e. swapping a page out of the EPC requires
+a VA slot.  For simplicity (LOL), the approach we are taking for initial
+support is to reserve a VA slot when adding a page to the enclave[*].  In most
+cases, reserving a slot does not require allocating a new VA page, e.g. to
+reserve slots 1-511 of the "current" VA page.   The if-elif is handling the
+case where the current VA page is fully reserved and a new one needs to be
+allocated. The if handles the error, the elif handles success, i.e.
 
-sgx_encl_dbg_read
-sgx_encl_dbg_write
+	if (IS_ERR(va_page)) <- needed a new VA page, allocation failed
+		return PTR_ERR(va_page);
+	else if (va_page)    <- needed a new VA page, allocation succeeded
+		list_add(&va_page->list, &encl->va_pages);
+	else
+		             <- reused the current VA page
 
-and leave the lowlevel helpers like the insn names.
+When reusing a VA page, we obviously don't want to readd the page to the list
+of va_pages, and the error handling path also shouldn't free the VA page.
 
-> +static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-> +			  void *buf, int len, int write)
-> +{
-> +	struct sgx_encl *encl = vma->vm_private_data;
-> +	struct sgx_encl_page *entry = NULL;
-> +	char data[sizeof(unsigned long)];
-> +	unsigned long align;
-> +	unsigned int flags;
-> +	int offset;
-> +	int cnt;
-> +	int ret = 0;
-> +	int i;
-> +
-> +	/* If process was forked, VMA is still there but vm_private_data is set
-> +	 * to NULL.
-> +	 */
-
-Kernel comments style is:
-
-	/*
-	 * A sentence ending with a full-stop.
-	 * Another sentence. ...
-	 * More sentences. ...
-	 */
-
-> +	if (!encl)
-> +		return -EFAULT;
-> +
-> +	flags = atomic_read(&encl->flags);
-> +
-> +	if (!(flags & SGX_ENCL_DEBUG) || !(flags & SGX_ENCL_INITIALIZED) ||
-> +	    (flags & SGX_ENCL_DEAD))
-> +		return -EFAULT;
-> +
-> +	for (i = 0; i < len; i += cnt) {
-> +		entry = sgx_encl_reserve_page(encl, (addr + i) & PAGE_MASK);
-> +		if (IS_ERR(entry)) {
-> +			ret = PTR_ERR(entry);
-> +			break;
-> +		}
-> +
-> +		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-> +		offset = (addr + i) & (sizeof(unsigned long) - 1);
-> +		cnt = sizeof(unsigned long) - offset;
-> +		cnt = min(cnt, len - i);
-> +
-> +		ret = sgx_edbgrd(encl, entry, align, data);
-> +		if (ret)
-> +			goto out;
-> +
-> +		if (write) {
-> +			memcpy(data + offset, buf + i, cnt);
-> +			ret = sgx_edbgwr(encl, entry, align, data);
-> +			if (ret)
-> +				goto out;
-> +		} else
-
-		} else {
-
-> +			memcpy(buf + i, data + offset, cnt);
-
-		}
-
-Put the else branch in {} too.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> Also, should the growing happen *after* the SECS validation?
+> 
+> > +		list_add(&va_page->list, &encl->va_pages);
+> > +
+> >  	if (sgx_validate_secs(secs)) {
+> >  		pr_debug("invalid SECS\n");
+> > -		return -EINVAL;
+> > +		ret = -EINVAL;
+> > +		goto err_out_shrink;
+> >  	}
