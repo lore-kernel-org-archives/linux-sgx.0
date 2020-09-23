@@ -2,243 +2,145 @@ Return-Path: <SRS0=YjYT=DA=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607F7C4727E
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Sep 2020 13:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED9BC4727F
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Sep 2020 13:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB9AF21BE5
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Sep 2020 13:50:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="TEMPDJLk"
+	by mail.kernel.org (Postfix) with ESMTP id C8DD620B1F
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Sep 2020 13:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgIWNuS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Sep 2020 09:50:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgIWNuO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Sep 2020 09:50:14 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC12CC0613CE;
-        Wed, 23 Sep 2020 06:50:14 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0d13003cb05fb00c1da4a2.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:1300:3cb0:5fb0:c1d:a4a2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 934761EC0409;
-        Wed, 23 Sep 2020 15:50:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1600869012;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=0fGvnIQVdKsMqeTksW4QaaQdYOv2dMjo3K5+QpVLLC8=;
-        b=TEMPDJLks9CJno66rpFCZKPTRy9PbYXCVYKioWfHID1hEW9su1NnCiPiF7C9/aZ7WlciEb
-        QybTPddDIiIPJ55Q21MtaXLgesdq2zN81lzt8IY+cw1TKVj91JUbo5IXEJ7G2en8LgcrK+
-        l9AwkaJl9Dk6AIQLdy4WEK56UyZeFtA=
-Date:   Wed, 23 Sep 2020 15:50:05 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 23/24] docs: x86/sgx: Document SGX micro architecture
- and kernel internals
-Message-ID: <20200923135005.GI28545@zn.tnic>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-24-jarkko.sakkinen@linux.intel.com>
+        id S1726572AbgIWNvF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Sep 2020 09:51:05 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62998 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbgIWNvF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 23 Sep 2020 09:51:05 -0400
+IronPort-SDR: lSAHiCfFNzhPKvM8qnnn6LOXfxv7bQ0UHiCZ5IFy+63d4Ab/hL30TpJ9OXHWK19Dr2nQ9MT7DP
+ qQKWlWca3Mdg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9752"; a="222463449"
+X-IronPort-AV: E=Sophos;i="5.77,293,1596524400"; 
+   d="scan'208";a="222463449"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2020 06:51:04 -0700
+IronPort-SDR: yyNGo+n6ctyRaFxB91JG+y8VaBIUUeE4ZFEi3f24Rip0ALlmEn95aL6vGuzTzKadwpxjdssfQ6
+ c0Ei3m90a9EA==
+X-IronPort-AV: E=Sophos;i="5.77,293,1596524400"; 
+   d="scan'208";a="511654204"
+Received: from ichiojdo-mobl.ger.corp.intel.com (HELO localhost) ([10.252.51.82])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2020 06:50:58 -0700
+Date:   Wed, 23 Sep 2020 16:50:56 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+Message-ID: <20200923135056.GD5160@linux.intel.com>
+References: <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
+ <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
+ <20200918235337.GA21189@sjchrist-ice>
+ <20200921124946.GF6038@linux.intel.com>
+ <20200921165758.GA24156@linux.intel.com>
+ <20200921210736.GB58176@linux.intel.com>
+ <20200921211849.GA25403@linux.intel.com>
+ <20200922052957.GA97272@linux.intel.com>
+ <20200922053515.GA97687@linux.intel.com>
+ <20200922164301.GB30874@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915112842.897265-24-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200922164301.GB30874@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This patch must come first in the set so that other reviewers can read
-what all this jazz is about first, before exposing them to the gory
-details later.
+On Tue, Sep 22, 2020 at 09:43:02AM -0700, Sean Christopherson wrote:
+> On Tue, Sep 22, 2020 at 08:35:15AM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Sep 22, 2020 at 08:30:06AM +0300, Jarkko Sakkinen wrote:
+> > > On Mon, Sep 21, 2020 at 02:18:49PM -0700, Sean Christopherson wrote:
+> > > > Userspace can add the page without EXEC permissions in the EPCM, and thus
+> > > > avoid the noexec/VM_MAYEXEC check.  The enclave can then do EMODPE to gain
+> > > > EXEC permissions in the EPMC.  Without the ->mprotect() hook, we wouldn't
+> > > > be able to detect/prevent such shenanigans.
+> > > 
+> > > Right, the VM_MAYEXEC in the code is nested under VM_EXEC check.
+> > > 
+> > > I'm only wondering why not block noexec completely with any permissions,
+> > > i.e. why not just have unconditional VM_MAYEXEC check?
+> > 
+> > I.e. why not this:
+> > 
+> > static int __sgx_encl_add_page(struct sgx_encl *encl,
+> > 			       struct sgx_encl_page *encl_page,
+> > 			       struct sgx_epc_page *epc_page,
+> > 			       struct sgx_secinfo *secinfo, unsigned long src)
+> > {
+> > 	struct sgx_pageinfo pginfo;
+> > 	struct vm_area_struct *vma;
+> > 	struct page *src_page;
+> > 	int ret;
+> > 
+> > 	vma = find_vma(current->mm, src);
+> > 	if (!vma)
+> > 		return -EFAULT;
+> > 
+> > 	if (!(vma->vm_flags & VM_MAYEXEC))
+> > 		return -EACCES;
+> > 
+> > I'm not seeing the reason for "partial support" for noexec partitions.
+> > 
+> > If there is a good reason, fine, let's just then document it.
+> 
+> There are scenarios I can contrive, e.g. loading an enclave from a noexec
+> filesystem without having to copy the entire enclave to anon memory, or
+> loading a data payload from a noexec FS.
+> 
+> They're definitely contrived scenarios, but given that we also want the
+> ->mprotect() hook/behavior for potential LSM interaction, supporting said
+> contrived scenarios costs is "free".
 
-On Tue, Sep 15, 2020 at 02:28:41PM +0300, Jarkko Sakkinen wrote:
-> diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
-> new file mode 100644
-> index 000000000000..706a846ae353
-> --- /dev/null
-> +++ b/Documentation/x86/sgx.rst
-> @@ -0,0 +1,200 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +============
-> +Architecture
-> +============
+For me this has caused months of confusion and misunderstanding of this
+feature. I only recently realized that "oh, right, we invented this".
 
-Only the title of the document should be sandwiched between two lines of
+They are contrived scenarios enough that they should be considered when
+the workloads hit.
 
-============
+Either we fully support noexec or not at all. Any "partial" thing is a
+two edged sword: it can bring some robustness with the price of
+complexity and possible unknown uknown scenarios where they might become
+API issue.
 
-as that is what appears in the documentation TOC. As it is right now,it says
-"Architecture" but it should say "Software Guard eXtensions (SGX)"
+I rather think later on how to extend API in some way to enable such
+contrivid scenarios rather than worrying about how this could be abused.
 
-Architecture should follow only with a bottom line as a section name:
+The whole SGX is complex beast already so lets not add any extra when
+there is no a hard requirement to do so.
 
-Architecture
-============
+I'll categorically deny noexec in the next patch set version.
 
-> +
-> +*Software Guard eXtensions (SGX)* is a set of instructions that enable ring-3
-> +applications to set aside private regions of code and data. These regions are
-> +called enclaves. An enclave can be entered to a fixed set of entry points. Only
-
-s / to / at /
-
-> +a CPU running inside the enclave can access its code and data.
-> +
-> +The support can be determined by
-> +
-> +	``grep sgx /proc/cpuinfo``
-> +
-> +Enclave Page Cache
-> +==================
-> +
-> +SGX utilizes an *Enclave Page Cache (EPC)* to store pages that are associated
-> +with an enclave. It is contained in a BIOS reserved region of physical memory.
-
-BIOS-reserved
-
-> +Unlike pages used for regular memory, pages can only be accessed outside the
-> +enclave for different purposes with the instructions **ENCLS**, **ENCLV** and
-> +**ENCLU**.
-> +
-> +Direct memory accesses to an enclave can be only done by a CPU executing inside
-> +the enclave. An enclave can be entered with **ENCLU[EENTER]** to a fixed set of
-
-s / to / at /
-
-> +entry points. However, a CPU executing inside the enclave can do outside memory
-> +accesses.
-> +
-> +Page Types
-> +----------
-> +
-> +**SGX Enclave Control Structure (SECS)**
-> +   Enclave's address range, attributes and other global data are defined
-> +   by this structure.
-> +
-> +**Regular (REG)**
-> +   Regular EPC pages contain the code and data of an enclave.
-> +
-> +**Thread Control Structure (TCS)**
-> +   Thread Control Structure pages define the entry points to an enclave and
-> +   track the execution state of an enclave thread.
-> +
-> +**Version Array (VA)**
-> +   Version Array pages contain 512 slots, each of which can contain a version
-> +   number for a page evicted from the EPC.
-> +
-> +Enclave Page Cache Map
-> +----------------------
-> +
-> +The processor tracks EPC pages via the *Enclave Page Cache Map (EPCM)*.  EPCM
-> +contains an entry for each EPC page, which describes the owning enclave, access
-> +rights and page type among the other things.
-> +
-> +The permissions from EPCM is consulted if and only if walking the kernel page
-
-s/ is / are /
-
-> +tables succeeds. The total permissions are thus a conjunction between page table
-> +and EPCM permissions.
-> +
-> +For all intents and purposes the SGX architecture allows the processor to
-			       ^
-			       ,
-
-> +invalidate all EPCM entries at will, i.e. requires that software be prepared to
-> +handle an EPCM fault at any time. The contents of EPC are encrypted with an
-> +ephemeral key, which is lost on power transitions.
-> +
-> +EPC management
-> +==============
-> +
-> +EPC pages do not have ``struct page`` instances. They are IO memory from kernel
-> +perspective. The consequence is that they are always mapped as shared memory.
-> +Kernel defines ``/dev/sgx/enclave`` that can be mapped as ``MAP_SHARED`` to
-> +define the address range for an enclave.
-> +
-> +EPC Over-subscription
-> +=====================
-> +
-> +When the amount of free EPC pages goes below a low watermark the swapping thread
-> +starts reclaiming pages. The pages that do not have the **A** bit set are
-> +selected as victim pages.
-> +
-> +Launch Control
-> +==============
-> +
-> +SGX provides a launch control mechanism. After all enclave pages have been
-> +copied, kernel executes **ENCLS[EINIT]**, which initializes the enclave. Only
-> +after this the CPU can execute inside the enclave.
-> +
-> +This leaf function takes an RSA-3072 signature of the enclave measurement and an
-> +optional cryptographic token. Linux does not take advantage of launch tokens.
-> +The instruction checks that the signature is signed with the key defined in
-> +**IA32_SGXLEPUBKEYHASH?** MSRs and the measurement is correct. If so, the
-
-That '?' wants to be '[0123]' perhaps?
-
-> +enclave is allowed to be executed.
-> +
-> +MSRs can be configured by the BIOS to be either readable or writable. Linux
-
-"Those MSRs..."
-
-> +supports only writable configuration in order to give full control to the kernel
-> +on launch control policy. Readable configuration requires the use of previously
-> +mentioned launch tokens.
-> +
-> +The current kernel implementation supports only writable MSRs.
-
-This sentence is repeated a couple of lines above.
-
-> The launch is
-> +performed by setting the MSRs to the hash of the enclave signer's public key.
-> +The alternative would be to have *a launch enclave* that would be signed with
-> +the key set into MSRs, which would then generate launch tokens for other
-> +enclaves. This would only make sense with read-only MSRs, and thus the option
-> +has been discarded.
-> +
-> +Attestation
-> +===========
-> +
-> +Local Attestation
-> +-----------------
-> +
-> +In local attestation an enclave creates a **REPORT** data structure with
-		       ^
-		       ,
-
-> +**ENCLS[EREPORT]**, which describes the origin of an enclave. In particular, it
-> +contains a AES-CMAC of the enclave contents signed with a report key unique to
-> +each processor. All enclaves have access to this key.
-> +
-> +This mechanism can also be used in addition as a communication channel as the
-> +**REPORT** data structure includes a 64-byte field for variable information.
-
-...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+/Jarkko
