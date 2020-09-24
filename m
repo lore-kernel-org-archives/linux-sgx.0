@@ -2,103 +2,160 @@ Return-Path: <SRS0=9T+I=DB=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61194C4363D
-	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 20:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEF9C4363D
+	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 20:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7FA21D91
-	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 20:40:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4589B221EB
+	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 20:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbgIXUkb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 24 Sep 2020 16:40:31 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25817 "EHLO mga07.intel.com"
+        id S1726626AbgIXUy3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 24 Sep 2020 16:54:29 -0400
+Received: from mga02.intel.com ([134.134.136.20]:32990 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725208AbgIXUkb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 24 Sep 2020 16:40:31 -0400
-IronPort-SDR: F5NqhzqKfocXtUwAssTqgSwAASDyx6qUmcxOi/JnqqRgQip9n58Q15JfI4ihnRU6Pb+9fAN4cg
- jfysVq/QnMkw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9754"; a="225476625"
+        id S1726242AbgIXUy2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 24 Sep 2020 16:54:28 -0400
+IronPort-SDR: PUDwTVxlA6/VZz7h4A2EW44zLNbzSr9AAL1WuNSDlJspmFA6ZkIXYmeIEbXGxnWkEpAPIBUvPM
+ RxA9AOnq5zUg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9754"; a="149001151"
 X-IronPort-AV: E=Sophos;i="5.77,299,1596524400"; 
-   d="scan'208";a="225476625"
+   d="scan'208";a="149001151"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 13:40:31 -0700
-IronPort-SDR: Ncq7pUS/J7GeyXjQY9EWCGqsA6GvmdU92K2DdO4C3cY+fqn2nPWLihlMvCyyazpG8iDqDMtylT
- M/IOqx6DyFbg==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 13:54:13 -0700
+IronPort-SDR: 3kQXzppf/+QXio/EcoVKWPNnv7ZQ8SQuqXjQA2MLcHfZi2bztFE/kxVXJ1waIp2jcaCyHrUKF0
+ G6LHd7OzI5Cw==
 X-IronPort-AV: E=Sophos;i="5.77,299,1596524400"; 
-   d="scan'208";a="487093551"
-Received: from deepamin-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.44.18])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 13:40:24 -0700
-Date:   Thu, 24 Sep 2020 23:40:22 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 17/24] x86/sgx: ptrace() support for the SGX driver'
-Message-ID: <20200924204022.GE108958@linux.intel.com>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-18-jarkko.sakkinen@linux.intel.com>
- <20200922154424.GL22660@zn.tnic>
- <20200923132037.GA5160@linux.intel.com>
- <20200923161733.GP28545@zn.tnic>
- <20200924115119.GD56811@linux.intel.com>
- <20200924155751.GJ5030@zn.tnic>
- <20200924203859.GD108958@linux.intel.com>
+   d="scan'208";a="487100000"
+Received: from ejarlos-mobl.amr.corp.intel.com (HELO [10.212.15.103]) ([10.212.15.103])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 13:54:10 -0700
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+References: <20200921211849.GA25403@linux.intel.com>
+ <20200922052957.GA97272@linux.intel.com>
+ <20200922053515.GA97687@linux.intel.com>
+ <20200922164301.GB30874@linux.intel.com>
+ <20200923135056.GD5160@linux.intel.com>
+ <op.0rgp5h0hwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+ <20200924192853.GA18826@linux.intel.com>
+ <c680f7bd-2d82-6477-707f-cd03aae4b4aa@intel.com>
+ <20200924200156.GA19127@linux.intel.com>
+ <e4bcb25f-581a-da93-502b-b8f73e28286a@intel.com>
+ <20200924202549.GB19127@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <e25bfeaa-afb4-3928-eb80-50d90815eabb@intel.com>
+Date:   Thu, 24 Sep 2020 13:54:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200924203859.GD108958@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200924202549.GB19127@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 11:39:07PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Sep 24, 2020 at 05:57:51PM +0200, Borislav Petkov wrote:
-> > On Thu, Sep 24, 2020 at 02:51:28PM +0300, Jarkko Sakkinen wrote:
-> > > On Wed, Sep 23, 2020 at 06:17:33PM +0200, Borislav Petkov wrote:
-> > > > > Add 'access' implementation to vm_ops with the help of these functions.
-> > > > 
-> > > > "Add an ->access virtual MM function for accessing the enclave's memory... "
-> > > 
-> > > Thank you. I wrote the last paragraph like this:
-> > > 
-> > > "Add an '->access' virtual function for accessing the enclave's memory
-> > > to vm_ops by using these functions. This allows to use ptrace() with
-> > 
-> > "to vm_ops" must come after "function".
-> > 
-> > But lemme ask what is "vm_ops"?
+On 9/24/20 1:25 PM, Sean Christopherson wrote:
+...
+>> Why don't we just declare enclave memory as "out of scope for noexec" in
+>> the same way that anonymous memory is, and just discard this patch?
+>> That doesn't seem too much of a stretch.
 > 
-> I assume this is a rethorical question and I notice what I suggested
-> looks as bad as my earlier commit message :-)
-> 
-> So, I gave it some thought that and decided to "open code" the paragraph
-> as
-> 
-> "Add sgx_vma_access() function that implements 'access' virtual function
-> of struct vm_operations_struct. Use formentioned leaf instructions to
-> achieve read and write primitives for the enclave memory."
-> 
-> I think this starts to have the right balance and is understandable.
-> 
-> Still open for futher suggestion of course.
+> Because we lose line of sight to LSM support.  Without enforcing "declare perms
+> at load time" in the initial series, we would create an ABI where userspace
+> could load an enclave page with only READ permissions and then map the enclave
+> with whatever permissions it wants, without any convenient way for SGX to call
+> into the LSM.
 
-I'm not sure if I said it already but I also added cc to linux-mm (same
-CC's in the patch as with mprotect callback commit). This should also
-have mm ack I think.
+This argument holds no water for me.  LSMs are all about taking what
+would otherwise be perfectly acceptable behavior and breaking them in
+the name of security.  They fundamentally break applications that used
+to work just fine and also did totally sane things.
 
-/Jarkko
+> Retroactively enforcing permissions at load time would break the ABI, or at
+> least yield different behavior based on the mere existence of LSMs, e.g. if
+> LSMs are supported, suddenly the ADD_PAGES w/ READ -> mmap(RWX) flow breaks,
+> even if there is no LSM policy denying that behavior.
+
+I'm a security dummy.  All I know is that when I see something like this:
+
+	if (security_vm_enough_memory_mm(mm, grow))
+		...
+
+I know to ignore it because I like my systems to boot and I'm not using
+those hooks.  :)
+
+How could the mere presence of an LSM change the behavior of one of
+these hooks?  Don't they have to actually hook into the specific place
+and actively go trying to change the behavior at that site?
