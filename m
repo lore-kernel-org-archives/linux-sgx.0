@@ -1,48 +1,45 @@
-Return-Path: <SRS0=YjYT=DA=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=9T+I=DB=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91760C4363D
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Sep 2020 22:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423FEC4363D
+	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 11:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 113002176B
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Sep 2020 22:07:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="XTa5xvpj"
+	by mail.kernel.org (Postfix) with ESMTP id E3578239D4
+	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 11:28:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbgIWWHV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Sep 2020 18:07:21 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49254 "EHLO mail.skyhub.de"
+        id S1726715AbgIXL2L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 24 Sep 2020 07:28:11 -0400
+Received: from mga14.intel.com ([192.55.52.115]:16373 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbgIWWHV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 23 Sep 2020 18:07:21 -0400
-Received: from zn.tnic (p200300ec2f0d13008640eb80b0e83752.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:1300:8640:eb80:b0e8:3752])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 091F41EC046C;
-        Thu, 24 Sep 2020 00:07:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1600898840;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=E8svIU7KxoHoNsxMynX+D6tK+ukLxgLJ7PA+tbcM/pA=;
-        b=XTa5xvpjcZqfro9vhdKzIrO/99egWdlfL8iZu34ovpVv8XE/8L5dRXuYZS6bgJSIGdlOHj
-        CiplYR26U7zc9s3EnvUyIgcKyBjmJM6LSj2qlYp+YDLmV6n122YooGvh/bZeuLIGt82zQi
-        O/emwBzB2PIm3HqK8AqxKRff3VjZ0u0=
-Date:   Thu, 24 Sep 2020 00:07:12 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S1726652AbgIXL2L (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 24 Sep 2020 07:28:11 -0400
+IronPort-SDR: 190nK8jV78sjHnGgbbyr00u9Q3Tb/c37ZPFYUIxjXaAuPPLz6nsbiV3O+DIrtLrGN6J69MmFnz
+ 4uaBXN8NsLNg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9753"; a="160457571"
+X-IronPort-AV: E=Sophos;i="5.77,297,1596524400"; 
+   d="scan'208";a="160457571"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 04:28:10 -0700
+IronPort-SDR: 6AaJWL+W/8naSncd7ds/TQNBCRDBKYoSc7qLYzcsk3/4fkbG3+WX2R+VyamwX13Q2vJU66ZQUv
+ BZCJFIs+FjRg==
+X-IronPort-AV: E=Sophos;i="5.77,297,1596524400"; 
+   d="scan'208";a="486866581"
+Received: from ekoteln-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.45.129])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 04:28:04 -0700
+Date:   Thu, 24 Sep 2020 14:28:01 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
@@ -51,83 +48,37 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 18/24] x86/vdso: Add support for exception fixup in
- vDSO functions
-Message-ID: <20200923220712.GU28545@zn.tnic>
+Subject: Re: [PATCH v38 23/24] docs: x86/sgx: Document SGX micro architecture
+ and kernel internals
+Message-ID: <20200924112801.GC56811@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-19-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-24-jarkko.sakkinen@linux.intel.com>
+ <20200923135005.GI28545@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915112842.897265-19-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200923135005.GI28545@zn.tnic>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 02:28:36PM +0300, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Wed, Sep 23, 2020 at 03:50:05PM +0200, Borislav Petkov wrote:
+> > +This leaf function takes an RSA-3072 signature of the enclave measurement and an
+> > +optional cryptographic token. Linux does not take advantage of launch tokens.
+> > +The instruction checks that the signature is signed with the key defined in
+> > +**IA32_SGXLEPUBKEYHASH?** MSRs and the measurement is correct. If so, the
 > 
-> The basic concept and implementation is very similar to the kernel's
-> exception fixup mechanism.  The key differences are that the kernel
-> handler is hardcoded and the fixup entry addresses are relative to
-> the overall table as opposed to individual entries.
+> That '?' wants to be '[0123]' perhaps?
 
-...
+What do you think of this:
 
-This gist of this commit message should be also in
-Documentation/x86/sgx.rst
+"The leaf instruction checks that the measurement is correct and
+signature is signed with the key hashed to the four
++**IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}** MSRs representing the SHA256 of a
+public key."
 
-And I already said the same thing during v33 review:
+I though that little more detail would make sense here (i.e. what do the
+MSRs represent).
 
-"That is a very good explanation and I would prefer if it would be in a
-sgx-specific README or so instead of it getting lost in git..."
-
-...
-
-> diff --git a/arch/x86/entry/vdso/extable.h b/arch/x86/entry/vdso/extable.h
-> new file mode 100644
-> index 000000000000..aafdac396948
-> --- /dev/null
-> +++ b/arch/x86/entry/vdso/extable.h
-> @@ -0,0 +1,29 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_EXTABLE_H
-> +#define __VDSO_EXTABLE_H
-> +
-> +/*
-> + * Inject exception fixup for vDSO code.  Unlike normal exception fixup,
-> + * vDSO uses a dedicated handler the addresses are relative to the overall
-> + * exception table, not each individual entry.
-> + */
-> +#ifdef __ASSEMBLY__
-> +#define _ASM_VDSO_EXTABLE_HANDLE(from, to)	\
-> +	ASM_VDSO_EXTABLE_HANDLE from to
-> +
-> +.macro ASM_VDSO_EXTABLE_HANDLE from:req to:req
-> +	.pushsection __ex_table, "a"
-> +	.long (\from) - __ex_table
-> +	.long (\to) - __ex_table
-> +	.popsection
-> +.endm
-> +#else
-> +#define _ASM_VDSO_EXTABLE_HANDLE(from, to)	\
-> +	".pushsection __ex_table, \"a\"\n"      \
-> +	".long (" #from ") - __ex_table\n"      \
-> +	".long (" #to ") - __ex_table\n"        \
-> +	".popsection\n"
-> +#endif
-> +
-> +#endif /* __VDSO_EXTABLE_H */
-> +
-
-Also from last time:
-
-.git/rebase-apply/patch:122: new blank line at EOF.
-+
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+/Jarkko
