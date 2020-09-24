@@ -2,338 +2,162 @@ Return-Path: <SRS0=9T+I=DB=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A04AC4727E
-	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 18:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB87DC4363D
+	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 19:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3E023A1B
-	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 18:04:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ghnvvmHb"
+	by mail.kernel.org (Postfix) with ESMTP id 9053C23899
+	for <linux-sgx@archiver.kernel.org>; Thu, 24 Sep 2020 19:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgIXSEP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 24 Sep 2020 14:04:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbgIXSEP (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 24 Sep 2020 14:04:15 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE45C0613CE;
-        Thu, 24 Sep 2020 11:04:15 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0c9500731208bb5d5e764a.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:9500:7312:8bb:5d5e:764a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6C3011EC0469;
-        Thu, 24 Sep 2020 20:04:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1600970653;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=It9rlc5sVix4pjKVVw39oLeJp/FQSNPC7xyDIl5o26w=;
-        b=ghnvvmHbeujiciiN/AuP/y1mtmT4KHUvD1z0UAhyHG1x8zSxpPE3FpoQq21tI/mt78UCKN
-        3WyVZupQwcz85t8Rt/zn7sNraue7fuSNXZksKtFwtpxKjxIvme0DZtZEhjQwYbuAMpJ3QH
-        3YvIy2XM8KaI1/tGepQ6qseORHi6Lzc=
-Date:   Thu, 24 Sep 2020 20:04:07 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Cedric Xing <cedric.xing@intel.com>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200924180407.GO5030@zn.tnic>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
+        id S1726841AbgIXTLn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 24 Sep 2020 15:11:43 -0400
+Received: from mga18.intel.com ([134.134.136.126]:28980 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726681AbgIXTLn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 24 Sep 2020 15:11:43 -0400
+IronPort-SDR: +DOaxVDot9i31auQxIrCUSaQzy/yAgcmOQht8xCjEh3GzZSXkv9x6Rc6qh7Mpx+iEAPpBGzHoy
+ wAAqBtG/wNJg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9754"; a="149070772"
+X-IronPort-AV: E=Sophos;i="5.77,299,1596524400"; 
+   d="scan'208";a="149070772"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 12:11:42 -0700
+IronPort-SDR: sFdNQ1YJfAhFcCUIcNn3YWrQppDxlEjDrQeC88L+/oTBth18HPw7a3y4nX43Zl1CSgKcxHTHJN
+ rMr8YuC0HoRQ==
+X-IronPort-AV: E=Sophos;i="5.77,299,1596524400"; 
+   d="scan'208";a="487051231"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO mqcpg7oapc828.gar.corp.intel.com) ([10.255.37.118])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 24 Sep 2020 12:11:38 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc:     "Andy Lutomirski" <luto@kernel.org>, "X86 ML" <x86@kernel.org>,
+        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        "Jethro Beekman" <jethro@fortanix.com>,
+        "Darren Kenny" <darren.kenny@oracle.com>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, "Borislav Petkov" <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        "Conrad Parker" <conradparker@google.com>, cyhanish@google.com,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Josh Triplett" <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>,
+        "Keith Moyer" <kmoy@google.com>,
+        "Christian Ludloff" <ludloff@google.com>,
+        "Neil Horman" <nhorman@redhat.com>,
+        "Nathaniel McCallum" <npmccallum@redhat.com>,
+        "Patrick Uiterwijk" <puiterwijk@redhat.com>,
+        "David Rientjes" <rientjes@google.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>, yaozhangx@google.com
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+References: <20200915112842.897265-11-jarkko.sakkinen@linux.intel.com>
+ <CALCETrX9T1ZUug=M5ba9g4H5B7kV=yL5RzuTaeAEdy3uAieN_A@mail.gmail.com>
+ <20200918235337.GA21189@sjchrist-ice> <20200921124946.GF6038@linux.intel.com>
+ <20200921165758.GA24156@linux.intel.com>
+ <20200921210736.GB58176@linux.intel.com>
+ <20200921211849.GA25403@linux.intel.com>
+ <20200922052957.GA97272@linux.intel.com>
+ <20200922053515.GA97687@linux.intel.com>
+ <20200922164301.GB30874@linux.intel.com>
+ <20200923135056.GD5160@linux.intel.com>
+Date:   Thu, 24 Sep 2020 14:11:37 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.0rgp5h0hwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+In-Reply-To: <20200923135056.GD5160@linux.intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 02:28:39PM +0300, Jarkko Sakkinen wrote:
-> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> new file mode 100644
-> index 000000000000..adbd59d41517
-> --- /dev/null
-> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+On Wed, 23 Sep 2020 08:50:56 -0500, Jarkko Sakkinen  
+<jarkko.sakkinen@linux.intel.com> wrote:
 
-Why not simply
+> On Tue, Sep 22, 2020 at 09:43:02AM -0700, Sean Christopherson wrote:
+>> On Tue, Sep 22, 2020 at 08:35:15AM +0300, Jarkko Sakkinen wrote:
+>> > On Tue, Sep 22, 2020 at 08:30:06AM +0300, Jarkko Sakkinen wrote:
+>> > > On Mon, Sep 21, 2020 at 02:18:49PM -0700, Sean Christopherson wrote:
+>> > > > Userspace can add the page without EXEC permissions in the EPCM,  
+>> and thus
+>> > > > avoid the noexec/VM_MAYEXEC check.  The enclave can then do  
+>> EMODPE to gain
+>> > > > EXEC permissions in the EPMC.  Without the ->mprotect() hook, we  
+>> wouldn't
+>> > > > be able to detect/prevent such shenanigans.
+>> > >
+>> > > Right, the VM_MAYEXEC in the code is nested under VM_EXEC check.
+>> > >
+>> > > I'm only wondering why not block noexec completely with any  
+>> permissions,
+>> > > i.e. why not just have unconditional VM_MAYEXEC check?
+>> >
+>> > I.e. why not this:
+>> >
+>> > static int __sgx_encl_add_page(struct sgx_encl *encl,
+>> > 			       struct sgx_encl_page *encl_page,
+>> > 			       struct sgx_epc_page *epc_page,
+>> > 			       struct sgx_secinfo *secinfo, unsigned long src)
+>> > {
+>> > 	struct sgx_pageinfo pginfo;
+>> > 	struct vm_area_struct *vma;
+>> > 	struct page *src_page;
+>> > 	int ret;
+>> >
+>> > 	vma = find_vma(current->mm, src);
+>> > 	if (!vma)
+>> > 		return -EFAULT;
+>> >
+>> > 	if (!(vma->vm_flags & VM_MAYEXEC))
+>> > 		return -EACCES;
+>> >
+>> > I'm not seeing the reason for "partial support" for noexec partitions.
+>> >
+>> > If there is a good reason, fine, let's just then document it.
+>>
+>> There are scenarios I can contrive, e.g. loading an enclave from a  
+>> noexec
+>> filesystem without having to copy the entire enclave to anon memory, or
+>> loading a data payload from a noexec FS.
+>>
+>> They're definitely contrived scenarios, but given that we also want the
+>> ->mprotect() hook/behavior for potential LSM interaction, supporting  
+>> said
+>> contrived scenarios costs is "free".
+>
+> For me this has caused months of confusion and misunderstanding of this
+> feature. I only recently realized that "oh, right, we invented this".
+>
+> They are contrived scenarios enough that they should be considered when
+> the workloads hit.
+>
+> Either we fully support noexec or not at all. Any "partial" thing is a
+> two edged sword: it can bring some robustness with the price of
+> complexity and possible unknown uknown scenarios where they might become
+> API issue.
+>
+> I rather think later on how to extend API in some way to enable such
+> contrivid scenarios rather than worrying about how this could be abused.
+>
+> The whole SGX is complex beast already so lets not add any extra when
+> there is no a hard requirement to do so.
+>
+> I'll categorically deny noexec in the next patch set version.
+>
+> /Jarkko
 
-arch/x86/entry/vdso/sgx.S
-
-?
-
-> @@ -0,0 +1,157 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/export.h>
-> +#include <asm/errno.h>
-> +#include <asm/enclu.h>
-> +
-> +#include "extable.h"
-> +
-> +/* Offset of 'struct sgx_enclave_run' relative to %rbp. */
-> +#define SGX_ENCLAVE_RUN_PTR	2*8
-> +
-> +/* Offsets into 'struct sgx_enclave_run'. */
-> +#define SGX_ENCLAVE_RUN_TSC		0*8
-> +#define SGX_ENCLAVE_RUN_FLAGS		1*8
-> +#define SGX_ENCLAVE_RUN_EXIT_REASON	1*8 + 4
-> +#define SGX_ENCLAVE_RUN_USER_HANDLER	2*8
-> +/* #define SGX_ENCLAVE_RUN_USER_DATA	3*8 */
-
-What's with that guy? Left here as documentation showing what's at 3*8
-offset?
-
-> +#define SGX_ENCLAVE_RUN_EXCEPTION	4*8
-> +
-> +#define SGX_SYNCHRONOUS_EXIT		0
-> +#define SGX_EXCEPTION_EXIT		1
-
-Those are in ...uapi/asm/sgx.h too. Unify?
-
-> +
-> +/* Offsets into sgx_enter_enclave.exception. */
-> +#define SGX_EX_LEAF			0*8
-> +#define SGX_EX_TRAPNR			0*8+4
-> +#define SGX_EX_ERROR_CODE		0*8+6
-> +#define SGX_EX_ADDRESS			1*8
-> +
-> +.code64
-> +.section .text, "ax"
-> +
-> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> +	/* Prolog */
-> +	.cfi_startproc
-
-Are the CFI annotations for userspace?
-
-> +	push	%rbp
-> +	.cfi_adjust_cfa_offset	8
-> +	.cfi_rel_offset		%rbp, 0
-> +	mov	%rsp, %rbp
-> +	.cfi_def_cfa_register	%rbp
-> +	push	%rbx
-> +	.cfi_rel_offset		%rbx, -8
-> +
-> +	mov	%ecx, %eax
-> +.Lenter_enclave:
-> +	/* EENTER <= leaf <= ERESUME */
-> +	cmp	$EENTER, %eax
-> +	jb	.Linvalid_input
-> +	cmp	$ERESUME, %eax
-> +	ja	.Linvalid_input
-> +
-> +	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rcx
-> +
-> +	/* No flags are currently defined/supported. */
-> +	cmpl	$0, SGX_ENCLAVE_RUN_FLAGS(%rcx)
-> +	jne	.Linvalid_input
-> +
-> +	/* Load TCS and AEP */
-
-		TSC
-
-I can see why you would write "TCS" though - there's a thread control
-structure thing too in that patch.
-
-> +	mov	SGX_ENCLAVE_RUN_TSC(%rcx), %rbx
-> +	lea	.Lasync_exit_pointer(%rip), %rcx
-> +
-> +	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
-> +.Lasync_exit_pointer:
-> +.Lenclu_eenter_eresume:
-> +	enclu
-> +
-> +	/* EEXIT jumps here unless the enclave is doing something fancy. */
-> +	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rbx
-> +
-> +	/* Set exit_reason. */
-> +	movl	$SGX_SYNCHRONOUS_EXIT, SGX_ENCLAVE_RUN_EXIT_REASON(%rbx)
-> +
-> +	/* Invoke userspace's exit handler if one was provided. */
-> +.Lhandle_exit:
-> +	cmpq	$0, SGX_ENCLAVE_RUN_USER_HANDLER(%rbx)
-> +	jne	.Linvoke_userspace_handler
-> +
-> +	/* Success, in the sense that ENCLU was attempted. */
-> +	xor	%eax, %eax
-> +
-> +.Lout:
-> +	pop	%rbx
-> +	leave
-> +	.cfi_def_cfa		%rsp, 8
-> +	ret
-> +
-> +	/* The out-of-line code runs with the pre-leave stack frame. */
-> +	.cfi_def_cfa		%rbp, 16
-> +
-> +.Linvalid_input:
-> +	mov	$(-EINVAL), %eax
-> +	jmp	.Lout
-> +
-> +.Lhandle_exception:
-> +	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rbx
-> +
-> +	/* Set the exit_reason and exception info. */
-> +	movl	$SGX_EXCEPTION_EXIT, SGX_ENCLAVE_RUN_EXIT_REASON(%rbx)
-> +
-> +	mov	%eax, (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_LEAF)(%rbx)
-> +	mov	%di,  (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_TRAPNR)(%rbx)
-> +	mov	%si,  (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_ERROR_CODE)(%rbx)
-> +	mov	%rdx, (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_ADDRESS)(%rbx)
-> +	jmp	.Lhandle_exit
-> +
-> +.Linvoke_userspace_handler:
-> +	/* Pass the untrusted RSP (at exit) to the callback via %rcx. */
-> +	mov	%rsp, %rcx
-> +
-> +	/* Save @e, %rbx is about to be clobbered. */
-
-I've been wondering what that "@e" thing is and I believe I've found it at the
-end: "... @e, the optional sgx_enclave_exception struct"
-
-Yes?
-
-Please rewrite what that "e" is here - I think you wanna say "struct
-sgx_enclave_run.exception" instead to clarify.
-
-...
-
-> diff --git a/arch/x86/include/asm/enclu.h b/arch/x86/include/asm/enclu.h
-> new file mode 100644
-> index 000000000000..06157b3e9ede
-> --- /dev/null
-> +++ b/arch/x86/include/asm/enclu.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_ENCLU_H
-> +#define _ASM_X86_ENCLU_H
-> +
-> +#define EENTER	0x02
-> +#define ERESUME	0x03
-> +
-> +#endif /* _ASM_X86_ENCLU_H */
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index d0916fb9629e..1564d7f88597 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-
-Are all those defines being added to the uapi header, also actually
-needed by userspace?
-
-> @@ -72,4 +72,132 @@ struct sgx_enclave_provision {
->  	__u64 attribute_fd;
->  };
->  
-> +#define SGX_SYNCHRONOUS_EXIT	0
-> +#define SGX_EXCEPTION_EXIT	1
-> +
-> +struct sgx_enclave_run;
-> +
-> +/**
-> + * typedef sgx_enclave_exit_handler_t - Exit handler function accepted by
-> + *					__vdso_sgx_enter_enclave()
-> + *
-> + * @rdi:	RDI at the time of enclave exit
-> + * @rsi:	RSI at the time of enclave exit
-> + * @rdx:	RDX at the time of enclave exit
-> + * @ursp:	RSP at the time of enclave exit (untrusted stack)
-> + * @r8:		R8 at the time of enclave exit
-> + * @r9:		R9 at the time of enclave exit
-
-I'm sure you can avoid that "at the time of enclave exit" repetition.
-
-...
-
-> +/**
-> + * typedef vdso_sgx_enter_enclave_t - Prototype for __vdso_sgx_enter_enclave(),
-> + *				      a vDSO function to enter an SGX enclave.
-> + *
-> + * @rdi:	Pass-through value for RDI
-> + * @rsi:	Pass-through value for RSI
-> + * @rdx:	Pass-through value for RDX
-> + * @leaf:	ENCLU leaf, must be EENTER or ERESUME
-> + * @r8:		Pass-through value for R8
-> + * @r9:		Pass-through value for R9
-> + * @r:		struct sgx_enclave_run, must be non-NULL
-> + *
-> + * NOTE: __vdso_sgx_enter_enclave() does not ensure full compliance with the
-> + * x86-64 ABI, e.g. doesn't handle XSAVE state.  Except for non-volatile
-> + * general purpose registers, EFLAGS.DF, and RSP alignment, preserving/setting
-> + * state in accordance with the x86-64 ABI is the responsibility of the enclave
-> + * and its runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C
-> + * code without careful consideration by both the enclave and its runtime.
-> + *
-> + * All general purpose registers except RAX, RBX and RCX are passed as-is to
-> + * the enclave.  RAX, RBX and RCX are consumed by EENTER and ERESUME and are
-> + * loaded with @leaf, asynchronous exit pointer, and @tcs respectively.
-
-That tcs is probably struct sgx_enclave_run.tcs?
-
-> + * RBP and the stack are used to anchor __vdso_sgx_enter_enclave() to the
-> + * pre-enclave state, e.g. to retrieve @e and @handler after an enclave exit.
-
-Expand @e and do you mean "@user_handler" with "@handler"?
-
-> + * All other registers are available for use by the enclave and its runtime,
-> + * e.g. an enclave can push additional data onto the stack (and modify RSP) to
-> + * pass information to the optional exit handler (see below).
-> + *
-> + * Most exceptions reported on ENCLU, including those that occur within the
-> + * enclave, are fixed up and reported synchronously instead of being delivered
-> + * via a standard signal. Debug Exceptions (#DB) and Breakpoints (#BP) are
-> + * never fixed up and are always delivered via standard signals. On synchrously
-> + * reported exceptions, -EFAULT is returned and details about the exception are
-> + * recorded in @e, the optional sgx_enclave_exception struct.
-> + *
-> + * If an exit handler is provided, the handler will be invoked on synchronous
-> + * exits from the enclave and for all synchronously reported exceptions. In
-> + * latter case, @e is filled prior to invoking the handler.
-> + *
-> + * The exit handler's return value is interpreted as follows:
-> + *  >0:		continue, restart __vdso_sgx_enter_enclave() with @ret as @leaf
-> + *   0:		success, return @ret to the caller
-> + *  <0:		error, return @ret to the caller
-> + *
-> + * The exit handler may transfer control, e.g. via longjmp() or C++ exception,
-> + * without returning to __vdso_sgx_enter_enclave().
-> + *
-> + * Return:
-> + *  0 on success (ENCLU reached),
-> + *  -EINVAL if ENCLU leaf is not allowed,
-> + *  -errno for all other negative values returned by the userspace exit handler
-> + */
-> +typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
-> +					unsigned long rdx, unsigned int leaf,
-> +					unsigned long r8,  unsigned long r9,
-> +					struct sgx_enclave_run *r);
-> +
->  #endif /* _UAPI_ASM_X86_SGX_H */
-> -- 
-> 2.25.1
-> 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+There are use cases supported currently in which enclave binary is  
+received via IPC/RPC and held in buffers before EADD. Denying noexec  
+altogether would break those, right?
+ 
