@@ -2,149 +2,204 @@ Return-Path: <SRS0=dOd4=DC=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F1CC4727F
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Sep 2020 20:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AE1C4727E
+	for <linux-sgx@archiver.kernel.org>; Fri, 25 Sep 2020 22:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D344520708
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Sep 2020 20:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C5602087D
+	for <linux-sgx@archiver.kernel.org>; Fri, 25 Sep 2020 22:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbgIYUpo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 25 Sep 2020 16:45:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13954 "EHLO mga06.intel.com"
+        id S1729088AbgIYW3m (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 25 Sep 2020 18:29:42 -0400
+Received: from mga05.intel.com ([192.55.52.43]:48559 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727700AbgIYUpl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 25 Sep 2020 16:45:41 -0400
-IronPort-SDR: Z19aS+rSkNm31qC41tGWCergBYAAeEDI+OunkHYGCIcTtTYmZJwiW8m+gtdoLipY9vgP9NPN+9
- H6GU5Z25EigA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9755"; a="223221353"
+        id S1729035AbgIYW3m (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 25 Sep 2020 18:29:42 -0400
+IronPort-SDR: migZr3Hjx89bQ+7TkT5LEWu5OD4+02GsXeoDjLVAaLW19mKIyZj2YCkp58274997NoClJOhak7
+ 6s2ZefOhBNWg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9755"; a="246438936"
 X-IronPort-AV: E=Sophos;i="5.77,303,1596524400"; 
-   d="scan'208";a="223221353"
+   d="scan'208";a="246438936"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2020 12:53:39 -0700
-IronPort-SDR: gTkE6hQY0YJIndng2DIGEcKGlhUYFgph1srR1Bvr7DQmWkfsR46L5Vz5jN97Kr6QqPM9/oNZBg
- ajy7lCdj55bg==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2020 15:29:41 -0700
+IronPort-SDR: 1I8kzUkRAAmMjTskZILJrbswoafdRzLxrxgt/NQHuSZ5VBDIpm7a2xS3SQ1TQgVv1zh0SAIKrz
+ AGK9FUvGfTuQ==
 X-IronPort-AV: E=Sophos;i="5.77,303,1596524400"; 
-   d="scan'208";a="339623947"
-Received: from khansen1-mobl.amr.corp.intel.com (HELO [10.209.154.38]) ([10.209.154.38])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2020 12:53:36 -0700
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
+   d="scan'208";a="512407840"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2020 15:29:41 -0700
+Date:   Fri, 25 Sep 2020 15:29:39 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
         Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Neil Horman <nhorman@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-References: <20200924192853.GA18826@linux.intel.com>
- <c680f7bd-2d82-6477-707f-cd03aae4b4aa@intel.com>
- <20200924200156.GA19127@linux.intel.com>
- <e4bcb25f-581a-da93-502b-b8f73e28286a@intel.com>
- <20200924202549.GB19127@linux.intel.com>
- <e25bfeaa-afb4-3928-eb80-50d90815eabb@intel.com>
- <20200924230501.GA20095@linux.intel.com>
- <b737fcab-bfde-90e1-1101-82d646a6f5b7@intel.com>
- <20200925000052.GA20333@linux.intel.com>
- <32fc9df4-d4aa-6768-aa06-0035427b7535@intel.com>
- <20200925194304.GE31528@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <230ce6da-7820-976f-f036-a261841d626f@intel.com>
-Date:   Fri, 25 Sep 2020 12:53:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Cedric Xing <cedric.xing@intel.com>, linux-sgx@vger.kernel.org
+Subject: Re: Can we credibly make vdso_sgx_enter_enclave() pleasant to use?
+Message-ID: <20200925222938.GI31528@linux.intel.com>
+References: <CALCETrUhQjQQa-BqNHPgdDfD9GDJZXJWSQ_M0tDF_ri5RfyTsw@mail.gmail.com>
+ <20200925190915.GD31528@linux.intel.com>
+ <CALCETrWDgb_mVPDmKy_7oFg03cOxO-GAUS8kOFrfGiPp9RjboA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200925194304.GE31528@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWDgb_mVPDmKy_7oFg03cOxO-GAUS8kOFrfGiPp9RjboA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/25/20 12:43 PM, Sean Christopherson wrote:
->> That means that the intent argument (SGX_PROT_*) is currently unused.
-> No, the intent argument is used (eventually) by SGX's ->mprotect()
-> implementation, i.e. sgx_mprotect() enforces that the actual protections are a
-> subset of the declared/intended protections.
+On Fri, Sep 25, 2020 at 01:20:03PM -0700, Andy Lutomirski wrote:
+> On Fri, Sep 25, 2020 at 12:09 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> > But where would the vDSO get memory for that little data structure?  It can't
+> > be percpu because the current task can get preempted.  It can't be per instance
+> > of the vDSO because a single mm/process can have multiple tasks entering an
+> > enclave.  Per task might work, but how would the vDSO get that info?  E.g.
+> > via a syscall, which seems like complete overkill?
 > 
-> If ->mprotect() is not merged, then it yes, it will be unused.
+> The stack.
 
-OK, I think I've got it.
+Duh.
 
-I think I'm OK with adding ->mprotect().  As long as folks buy into the
-argument that intent needs to be checked at mmap() time, they obviously
-need to be checked at mprotect() too.
+> The vDSO could, logically, do:
+> 
+> struct sgx_entry_state {
+>   unsigned long real_rbp;
+>   unsigned long real_rsp;
+>   unsigned long orig_fsbase;
+> };
+> 
+> ...
+> 
+>   struct sgx_entry_state state;
+>   state.rbp = rbp;  [ hey, this is pseudocode.  the real code would be in asm.]
+>   state.rsp = rsp;
+>   state.fsbase = __rdfsbase();
+>   rbp = arg->rbp;
+> 
+>   /* set up all other regs */
+>   wrfsbase %rsp
+>   movq enclave_rsp(%rsp), %rsp
 
-Jarkko, if you want to try and rewrite the changelog, capturing the
-discussion here and reply, I think I can ack the resulting patch.  I
-don't know if that will satisfy the request from Boris from an ack from
-a "mm person", but we can at least start there. :)
+I think this is where there's a disconnect with what is being requested by the
+folks writing run times.  IIUC, they want to use the untrusted runtime's stack
+to pass params because it doesn't require additional memory allocations and
+automagically grows as necessary (obviously to a certain limit).  I.e. forcing
+the caller to provide an alternative "stack" defeats the purpose of using the
+untrusted stack.
 
-Please be judicious in what you include in the changelog.  There's been
-a lot of detritus in them.  Let's keep it as short, sweet, simple and on
-topic as we can.
+>   enclu
+>   rdfsbase %rsp
+>
+> Expressing this abomination using DWARF is surely entirely impossible,
+> so instead we would want to make sure that user code simply cannot
+> observe the state between the wrfsbase and the rdfsbase.  This would
+> require three exception hooks, which is more than we have now but is
+> not actually unmanageable.  And it would be possible to write a test
+> case to make sure we got it right.  A downside is that single-stepping
+> this mess would probably not work in any sensible way.
+> 
+> This could also be handled more slowly by introducing an actual
+> syscall so the kernel could help out.  This would also be pretty ugly.
+> 
+> On the other hand, if we had some confidence that the existing corpus
+> of enclaves plays games with RSP but not RBP, we could handle this
+> much more straightforwardly and even likely perserve DWARF support,
+> although we'd still have strange artifacts if we got a signal in the
+> wrong place.
+
+Heh, I had exactly that typed out, then I reread this paragraph :-)
+
+We do have this confidence, because it's required by the current version
+of the VDSO.
+
+> (If we have CET, we could do truly unspeakable things involving saving
+> our state on the shadow stack.  Don't think too hard about this.)
+> 
+> >
+> > So, no?
+> >
+> > If we truly want to provide a "better" vDSO, my vote would be to disallow using
+> > the runtime's stack from within the enclave.  But I'm guessing that would cause
+> > more than a few aneurysms for the folks that are cc'd :-)
+> 
+> Indeed.
+> 
+> My real problem with the callback is that it forces the untrusted
+> runtime to use a C-like stack model and to keep the vDSO entry on the
+> stack while handling the OCALL or whatever you want to call it.
+
+But the callback is optional...  It's effectively mandatory if you want to
+invoke the vDSO from anything but assembly, but it's not required.
+
+> This is fine for those of us who exclusively program in C, aren't doing
+> anything fancy, and want to think of enclaves as just more C code.  But
+> enclaves aren't just more C code -- they're more-or-less-immutable blobs, and
+> they can't easily evolve with the untrusted code that invokes them.  And the
+> world is slowly but surely moving toward languages that aren't quite as
+> C-like as C.  In a language with stackless coroutines or async/await or
+> continuations or goroutines, this could all get quite awkward.  Sure, a
+> really nice Rust or Go SGX untrusted runtime could just declare that it won't
+> support enclaves that touch the stack, but that's a bit of an unfortunate
+> restriction given that removing stack access from an existing enclave will
+> inevitably change MRENCLAVE.
+
+But if these use cases come along (using a modern runtime to run existing
+enclaves that do stupid things), and we didn't want to foist the effort of
+writing an assembly wrapper onto the runtimes, couldn't we simply add a flag to
+opt into saving non-volatile registers and/or loading an alternative RSP?  E.g.
+
+test	$1,	SGX_ENCLAVE_RUN_FLAGS(%rcx)
+	jz	.Lload_tsc
+	mov	%rsp, SGX_SAVED_RSP(%rbp)
+	mov	SGX_ENCLAVE_RUN_RSP(%rcx), %rsp
+
+	/* Load TCS and AEP */
+.Lload_tsc:
+	mov	SGX_ENCLAVE_RUN_TCS(%rcx), %rbx
+	lea	.Lasync_exit_pointer(%rip), %rcx
+
+	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
+.Lasync_exit_pointer:
+.Lenclu_eenter_eresume:
+	enclu
+
+	/* EEXIT jumps here unless the enclave is doing something fancy. */
+	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rbx
+	test	$1, SGX_ENCLAVE_RUN_FLAGS(%rbx)
+	jz	.Lblahblahblah
+
+	mov	%rsp, SGX_ENCLAVE_RUN_RSP(%rbx)
+	mov	SGX_SAVED_RSP(%rbp), %rsp
+
+.Lblahblahblah:
+
+> If I thought there was a straightforward way to support all existing
+> enclaves without callbacks in the vDSO, I would be all for it.  I'm
+> wondering if doing so even unstraightforwardly would still be
+> worthwhile.
+
+Hmm, so IIUC, your pie in the sky goal is providing a vDSO that:
+
+  a) is callable from C
+  b) supports all existing enclaves
+  c) doesn't require a callback
+
+The problem is (c) conflicts the aforementioned desire to use the runtime's 
+_stack_, not simply whatever SSA.RSP points at.  We can play games to allow
+using the stack as is without a callback, but that would add some non-trivial
+nastiness in the caller to avoid clobbering the "enclave's" stack, especially
+for runtimes/enclaves that are reentrant.
+
+> If everyone wants to tell me that what we have now (plus .cfi
+> annotations and perhaps a CET fix) is good enough, then so be it.  But
+> I figured I'd ask.
