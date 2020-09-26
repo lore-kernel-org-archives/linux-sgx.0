@@ -1,42 +1,71 @@
-Return-Path: <SRS0=dOd4=DC=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=fqiI=DD=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E89BC4727E
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Sep 2020 22:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FCDC47426
+	for <linux-sgx@archiver.kernel.org>; Sat, 26 Sep 2020 04:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECF712087D
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Sep 2020 22:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE7D72080A
+	for <linux-sgx@archiver.kernel.org>; Sat, 26 Sep 2020 04:15:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="BWnMfRXU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgIYWpH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 25 Sep 2020 18:45:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:53529 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbgIYWpH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 25 Sep 2020 18:45:07 -0400
-IronPort-SDR: 8oNG5lL73a2zMqeLrCsFY6iKaE/OT1r/tyY4b6g4qcPuTl5MTds+L3QWJpuA4JAJQErvTJ8mSB
- P+5ukRk6gE0w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9755"; a="159019383"
-X-IronPort-AV: E=Sophos;i="5.77,303,1596524400"; 
-   d="scan'208";a="159019383"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2020 12:43:06 -0700
-IronPort-SDR: 0cmbbxIOq+DRBwDZXU8oN+OtguZDJAfmZzzlqB5HURVs+a31qryQUHYiY8WcGsB/JaPgA3UctT
- bNXULHS8KJnA==
-X-IronPort-AV: E=Sophos;i="5.77,303,1596524400"; 
-   d="scan'208";a="291893055"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2020 12:43:05 -0700
-Date:   Fri, 25 Sep 2020 12:43:04 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
+        id S1730003AbgIZEPY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 26 Sep 2020 00:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730001AbgIZEPX (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 26 Sep 2020 00:15:23 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059D5C0613CE
+        for <linux-sgx@vger.kernel.org>; Fri, 25 Sep 2020 21:15:23 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id b17so484777pji.1
+        for <linux-sgx@vger.kernel.org>; Fri, 25 Sep 2020 21:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=KUTsQ4cRgo7tcvKxTzbTra/DQ+skBopOu8YgTTZQp+o=;
+        b=BWnMfRXUFKWpwia+E3QCxxaGzaHx+nORFT5Orpdeojhqss9dXtuYypFi6XTnsJ3WjW
+         WEkjoK65wFyrvC73Uj4kbseBI6mjY8eI00R1vA7WhobCZE/0rP0GNtVPhFli7UV8Dl/h
+         byjFxzHO9ScP+K55Ql6Rk8wrBGTASEGmQ12Kb9PNQ7J90+N7zvbXrlNrBQFcJJV8S2rn
+         xUTWlqa18psooaWuTDDBTjmNpwjnO0T8EU6JYdLZpmN++wFoU6QFG7eeYK1CWTGKq17K
+         RP1E8gLbK+aIf5TJRRCKDWGWep7Saozz5gdF6pyCSCrIAFp0gSKBE91tdnp4Y5Np7IuE
+         b1rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=KUTsQ4cRgo7tcvKxTzbTra/DQ+skBopOu8YgTTZQp+o=;
+        b=HfnPtFObugIlPGmZdhn9R3+JvpQmey6E3KcjKdqINXtDr63vLbDSKCjFiDdrfl2eGo
+         G4/+6g6KvYZ2/vUwiu2cMHWaxSVdgfOuGF77HZ8UCXQSSIbbnVJQr0nkWylDvU4AbRvK
+         a0TEcFNyvLU5YMhOPX8TVt7XnRMY5+mz3UO1dI1l4GC8BT0E26WHGp1s4ZOH/fmBh4uo
+         PR0/6zkP2vpou/Gun/YHFoRXqBvCUZ2f49OptQ6O9EHYZqvRXQ65DTmTgjtqhi5DQSfZ
+         4HDJOCCH4RiaipFRsTIXIkxRjja548jqaWyjhdhpDIhkwMGHNFJAiCqMg5p79WFi0nB1
+         to4A==
+X-Gm-Message-State: AOAM531GGFHeF0eR29yRzOsUn7551hdLtRzo2bftryfEafCFtqKzFZuQ
+        PZ2S2HivTdOcD+emt5sKqWKBWA==
+X-Google-Smtp-Source: ABdhPJzsb5zohq/TAtZ5fioaotDPmq8e15jJlMaKFeemNTlWPQEVFAiwftJs/1T1diVswdmRcQu08g==
+X-Received: by 2002:a17:902:b18f:b029:d2:1ec0:4161 with SMTP id s15-20020a170902b18fb02900d21ec04161mr2444866plr.58.1601093722526;
+        Fri, 25 Sep 2020 21:15:22 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:c200:1ef2:65a8:3322:5d17:ae5b])
+        by smtp.gmail.com with ESMTPSA id gg19sm505756pjb.49.2020.09.25.21.15.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Sep 2020 21:15:21 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+Date:   Fri, 25 Sep 2020 21:15:19 -0700
+Message-Id: <2321E653-F629-44D7-91C3-F42F42AF4EF6@amacapital.net>
+References: <230ce6da-7820-976f-f036-a261841d626f@intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
         linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
@@ -59,118 +88,45 @@ Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         Patrick Uiterwijk <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-Message-ID: <20200925194304.GE31528@linux.intel.com>
-References: <20200924192853.GA18826@linux.intel.com>
- <c680f7bd-2d82-6477-707f-cd03aae4b4aa@intel.com>
- <20200924200156.GA19127@linux.intel.com>
- <e4bcb25f-581a-da93-502b-b8f73e28286a@intel.com>
- <20200924202549.GB19127@linux.intel.com>
- <e25bfeaa-afb4-3928-eb80-50d90815eabb@intel.com>
- <20200924230501.GA20095@linux.intel.com>
- <b737fcab-bfde-90e1-1101-82d646a6f5b7@intel.com>
- <20200925000052.GA20333@linux.intel.com>
- <32fc9df4-d4aa-6768-aa06-0035427b7535@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32fc9df4-d4aa-6768-aa06-0035427b7535@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <230ce6da-7820-976f-f036-a261841d626f@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+X-Mailer: iPhone Mail (18A373)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Sep 25, 2020 at 10:18:28AM -0700, Dave Hansen wrote:
-> Thanks for the walkthrough.  The thing that clicked for me seeing those
-> examples was how the earlier ioctl(ADD_PAGE) is "bound" to later
-> enforcement actions at enclave PTE creation time.
-> 
-> On 9/24/20 5:00 PM, Sean Christopherson wrote:
-> > My concern is that if we merge this
-> > 
-> >         ioctl(sgx_fd, ENCLAVE_ADD_PAGE, SGX_PROT_READ | SGX_PROT_EXEC, ptr, size);
-> > 
-> > without ->mprotect(), we can't actually enforce the declared protections.  And
-> > if we drop the field altogether:
-> > 
-> >         ioctl(sgx_fd, ENCLAVE_ADD_PAGE, ptr, size);
-> > 
-> > then we can't implement security_enclave_load().
-> 
-> To me, it's perfectly OK to have parts of the ABI which are unused.  It
-> sure makes them harder to test if there are no actual users in the code,
-> but if it solves a real problem with the ABI, I'm fine with it.
-> 
-> Let's see if I can put all the pieces together.
-> 
-> Background:
-> 
-> 1. SGX enclave pages are populated with data by copying data to them
->    from normal memory via: ioctl(sgx_fd, ENCLAVE_ADD_PAGE, src_ptr...);
-> 2. We want to be able to restrict those normal memory data sources.  For
->    instance, before copying data to an executable enclave page, we might
->    ensure that the source is executable.
-> 3. Enclave page permissions are dynamic just like normal permissions and
->    can be adjusted at runtime with mprotect() (along with a
->    corresponding special instruction inside the enclave)
-> 4. The original data source may have have long since vanished at the
->    time when enclave page permission are established (mmap() or
->    mprotect())
-> 
-> Solution:
-> 
-> The solution is to force enclaves creators to declare their intent up
-> front to ioctl(ENCLAVE_ADD_PAGE).  This intent can me immediately
-> compared to the source data mapping (and rejected if necessary).  It is
-> also stashed off and then later compared with enclave PTEs to ensure
-> that any future mmap()/mprotect() operations performed by the enclave
-> creator or the enclave itself are consistent with the earlier declared
-> permissions.
-> 
-> Essentially, this means that whenever the kernel is asked to change an
-> enclave PTE, it needs to ensure the change is consistent with that
-> stashed intent.  There is an existing vm_ops->mmap() hook which allows
-> SGX to do that for mmap().  However, there is no ->mprotect() hook.  Add
-> a vm_ops->mprotect() hook so that mprotect() operations which are
-> inconsistent with any page's stashed intent can be rejected by the driver.
 
-Yes to all of the above.
+> On Sep 25, 2020, at 12:53 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+>=20
+> =EF=BB=BFOn 9/25/20 12:43 PM, Sean Christopherson wrote:
+>>> That means that the intent argument (SGX_PROT_*) is currently unused.
+>> No, the intent argument is used (eventually) by SGX's ->mprotect()
+>> implementation, i.e. sgx_mprotect() enforces that the actual protections a=
+re a
+>> subset of the declared/intended protections.
+>>=20
+>> If ->mprotect() is not merged, then it yes, it will be unused.
+>=20
+> OK, I think I've got it.
+>=20
+> I think I'm OK with adding ->mprotect().  As long as folks buy into the
+> argument that intent needs to be checked at mmap() time, they obviously
+> need to be checked at mprotect() too.
+>=20
+> Jarkko, if you want to try and rewrite the changelog, capturing the
+> discussion here and reply, I think I can ack the resulting patch.  I
+> don't know if that will satisfy the request from Boris from an ack from
+> a "mm person", but we can at least start there. :)
 
-> Implications:
-> 
-> However, there is currently no implementation of the intent checks at
-> the time of ioctl(ENCLAVE_ADD_PAGE).
+I think I agree. ->mprotect seems reasonable to me.
 
-Correct.
+FWIW, I don=E2=80=99t think I should ack this particular thing =E2=80=94 it w=
+as, to a decent extent, my suggestion in the first place, so I=E2=80=99m bia=
+sed. I think it turned into something reasonable, and the ->mprotect mechani=
+sm seems easily supportable and plausibly useful for other purposes down the=
+ road.
 
-> That means that the intent argument (SGX_PROT_*) is currently unused.
-
-No, the intent argument is used (eventually) by SGX's ->mprotect()
-implementation, i.e. sgx_mprotect() enforces that the actual protections are a
-subset of the declared/intended protections.
-
-If ->mprotect() is not merged, then it yes, it will be unused.  And therein
-lies the problem as the kernel can't start using/enforcing the intent without
-breaking userspace.  E.g. an enclave loaded with SGX_PROT_READ but mprotect()'d
-with PROT_READ | PROT_EXEC would break if sgx_mprotect() came along.
-
-One way to avoid introducing ->mprotect() would be to require all enclaves to
-declare all pages with READ|WRITE|EXEC.  Then we could drop sgx_mprotect()
-since the mprotect() permissions are guaranteed to be a subset of the declared
-permissions.  That would have the added bonus of eliminating the per-page
-checks in sgx_mmap()/sgx_mprotect(), though I've no idea if that is a
-meaningful optmization or it's lost in the noise.
-
-The big downside of requiring READ|WRITE|EXEC is that it will make life hell
-for a LSM policy owner if they ever want to apply EXECMEM or EXECMOD style
-restritions on enclaves, i.e. if SELinux folks want to add
-security_enclave_load().
-
-I find that I'm more or less ok with that approach, in no small part because
-introducing security_enclave_load() might be a pretty big "if", e.g. security
-folks may decide that they'd rather allow/deny enclaves based on the
-measurement or signer of the enclave and eschew per-page checks entirely.
-
-> --
-> 
-> Is that all correct?  Did I miss anything?
+>=20
+> Please be judicious in what you include in the changelog.  There's been
+> a lot of detritus in them.  Let's keep it as short, sweet, simple and on
+> topic as we can.
