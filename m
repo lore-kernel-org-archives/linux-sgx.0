@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926D5C2D0A8
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 21:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD94DC2D0A8
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 21:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 586782083B
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 21:36:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9603D208FE
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 21:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbgI1Vgf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Sep 2020 17:36:35 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62822 "EHLO mga02.intel.com"
+        id S1726582AbgI1VlP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Sep 2020 17:41:15 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35328 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbgI1Vge (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 28 Sep 2020 17:36:34 -0400
-IronPort-SDR: qQqHZTuE+Mh8J5CZiLIolE1apfst99fEJvZYTHcRNoZ9Fg7OknZritWrmZ1r9pB4BsydVdCELQ
- 69FWBiJTjEGA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="149726779"
+        id S1726393AbgI1VlP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 28 Sep 2020 17:41:15 -0400
+IronPort-SDR: oX4oF4+CrrUyFzG1ZyRmRKcGI8LLr1Z9uLtj0HLneRecYUJ4SD1ueIW7qbzXNpw9B6xOYa+DxD
+ JZUa5jyMygGQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="142085671"
 X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
-   d="scan'208";a="149726779"
+   d="scan'208";a="142085671"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 14:36:34 -0700
-IronPort-SDR: QixY2KCI8RuTaNZ15Zir8oirwhfamYYRxgCHUV/j7rw7sixYiquZlnGAPyr/EaVxinU2Cw6/Aq
- eMx/bicyDm6w==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 14:41:14 -0700
+IronPort-SDR: OTd+iPriw87D2GLviynEY38Vem1m+YTu3mEbExIyscXq0e9DAgdajkULvqSVYb8toZqZ7/2PP5
+ 6NFWt47eW7gw==
 X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
-   d="scan'208";a="457000991"
+   d="scan'208";a="488772542"
 Received: from jlasecki-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.49.78])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 14:36:27 -0700
-Date:   Tue, 29 Sep 2020 00:36:25 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 14:41:07 -0700
+Date:   Tue, 29 Sep 2020 00:41:05 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     "H.J. Lu" <hjl.tools@gmail.com>
-Cc:     "Yu, Yu-cheng" <yu-cheng.yu@intel.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
+Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
         the arch/x86 maintainers <x86@kernel.org>,
         linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -54,69 +53,95 @@ Cc:     "Yu, Yu-cheng" <yu-cheng.yu@intel.com>,
         Christian Ludloff <ludloff@google.com>,
         Andy Lutomirski <luto@kernel.org>, nhorman@redhat.com,
         npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
 Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
-Message-ID: <20200928213625.GC2705@linux.intel.com>
+Message-ID: <20200928214105.GD2705@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
  <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
  <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com>
- <c1b0019d-d3cb-cc62-f47f-90c2550c22a4@intel.com>
- <CAMe9rOrVhQr9ad_4en2D5GTTqDsJGXqszBmscgenn_87mDxvUA@mail.gmail.com>
+ <20200928005842.GC6704@linux.intel.com>
+ <85bc15d5-93cd-e332-ae9a-1e1e66e1181d@citrix.com>
+ <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMe9rOrVhQr9ad_4en2D5GTTqDsJGXqszBmscgenn_87mDxvUA@mail.gmail.com>
+In-Reply-To: <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 08:54:01AM -0700, H.J. Lu wrote:
-> On Mon, Sep 28, 2020 at 8:43 AM Yu, Yu-cheng <yu-cheng.yu@intel.com> wrote:
+On Mon, Sep 28, 2020 at 11:07:47AM -0700, H.J. Lu wrote:
+> On Mon, Sep 28, 2020 at 9:44 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
 > >
-> > On 9/25/2020 11:23 AM, Andrew Cooper wrote:
-> > > On 15/09/2020 12:28, Jarkko Sakkinen wrote:
-> > >> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> > >> new file mode 100644
-> > >> index 000000000000..adbd59d41517
-> > >> --- /dev/null
-> > >> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> > >> @@ -0,0 +1,157 @@
-> > >> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> > >> <snip>
-> > >> +.Lretpoline:
-> > >> +    call    2f
-> > >> +1:  pause
-> > >> +    lfence
-> > >> +    jmp     1b
-> > >> +2:  mov     %rax, (%rsp)
-> > >> +    ret
-> > >
-> > > I hate to throw further spanners in the work, but this is not compatible
-> > > with CET, and the user shadow stack work in progress.
+> > On 28/09/2020 01:58, Jarkko Sakkinen wrote:
+> > > On Fri, Sep 25, 2020 at 07:23:59PM +0100, Andrew Cooper wrote:
+> > >> On 15/09/2020 12:28, Jarkko Sakkinen wrote:
+> > >>> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> > >>> new file mode 100644
+> > >>> index 000000000000..adbd59d41517
+> > >>> --- /dev/null
+> > >>> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> > >>> @@ -0,0 +1,157 @@
+> > >>> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
+> > >>> <snip>
+> > >>> +.Lretpoline:
+> > >>> +   call    2f
+> > >>> +1: pause
+> > >>> +   lfence
+> > >>> +   jmp     1b
+> > >>> +2: mov     %rax, (%rsp)
+> > >>> +   ret
+> > >> I hate to throw further spanners in the work, but this is not compatible
+> > >> with CET, and the user shadow stack work in progress.
+> > > CET goes beyond my expertise. Can you describe, at least rudimentary,
+> > > how this code is not compatible?
 > >
-> > Hi Jarkko,
+> > CET Shadow Stacks detect attacks which modify the return address on the
+> > stack.
 > >
-> > These 1: and 2: targets are reached only from these few lines?  If they
-> > are direct call/jmp targets, I think it is OK in terms of CET.  If they
-> > are reached from an instruction like "jmp *%rax", then we need to put in
-> > an "endbr64".
+> > Retpoline *is* a ROP gadget.  It really does modify the return address
+> > on the stack, even if its purpose is defensive (vs Spectre v2) rather
+> > than malicious.
+> >
+> > >> Whichever of these two large series lands first is going to inflict
+> > >> fixing this problem on the other.
+> > >>
+> > >> As the vdso text is global (to a first approximation), it must not be a
+> > >> retpoline if any other process is liable to want to use CET-SS.
+> > > Why is that?
+> >
+> > Because when CET-SS is enabled, the ret will suffer a #CP exception
+> > (return address on the stack not matching the one recorded in the shadow
+> > stack), which I presume/hope is wired into SIGSEGV.
 > >
 > 
-> This also isn't compatible with shadow stack.
+> Here is the CET compatible retpoline:
 > 
-> -- 
-> H.J.
+> endbr64
+> /* Check if shadow stack is in use.  NB: R11 is the only usable
+>    scratch register for function calls.  */
+> xorl %r11d, %r11d
+> rdsspq %r11
+> testq %r11, %r11
+> jnz 3f
+> call 2f
+> 1:
+> pause
+> lfence
+> jmp 1b
+> 2:
+> mov %rax, (%rsp)
+> ret
+> 3:
+> /* Shadow stack is in use.  Make the indirect call.  */
+> call *%rax
+> ret
 
-I have the now full picture of the problem thanks to Andrew's response
-[1]. And Dave Hansen just explained me in detail the context and
-background with [2]. So I'd guess this will get sorted out soon.
+Right, so I have actually two alternatives: this and boot time patching:
 
-If you don't mind I'll CC you to this commit when I send the next
-version?
-
-[1] https://lkml.org/lkml/2020/9/28/1153
-[2] https://lkml.org/lkml/2020/9/25/1122
+https://lkml.org/lkml/2020/9/25/1122
 
 /Jarkko
