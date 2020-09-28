@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C64C2D0A8
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 18:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E115BC2D0A8
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 19:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0016D206C3
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 18:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C4BC2076A
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 19:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbgI1SRu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Sep 2020 14:17:50 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32149 "EHLO mga09.intel.com"
+        id S1726562AbgI1Tpa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Sep 2020 15:45:30 -0400
+Received: from mga06.intel.com ([134.134.136.31]:57156 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbgI1SRs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 28 Sep 2020 14:17:48 -0400
-IronPort-SDR: P3jNpCPg+gVOlwAhvjnAon0H58FfJnFyzpo2doGWnOoZbhzvRgeV/kJ9U2zSiSGGlb2XdIAGG5
- rGEb+5/wFHAw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="162921573"
-X-IronPort-AV: E=Sophos;i="5.77,313,1596524400"; 
-   d="scan'208";a="162921573"
+        id S1726409AbgI1Tpa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 28 Sep 2020 15:45:30 -0400
+IronPort-SDR: gvTKsE+X3uAsC2KF1fGEHk+kCbAogkDJLV+KGA923G+5wQkHilwSMSw4SomOUd9+W21ReOXjmq
+ /yCRbEEBKjoA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="223644153"
+X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
+   d="scan'208";a="223644153"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 11:17:42 -0700
-IronPort-SDR: h0bbZ12eT/m3PugEY/pQeX0rEviuiSEDliOQFE+dHsGsvgecpJoL7WLRv+nvOmKCZNVqOefuK5
- Ub4C6QUYQdPg==
-X-IronPort-AV: E=Sophos;i="5.77,313,1596524400"; 
-   d="scan'208";a="293967404"
-Received: from rcalvo1-mobl1.amr.corp.intel.com (HELO [10.209.56.88]) ([10.209.56.88])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 11:17:40 -0700
-Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-To:     Andy Lutomirski <luto@kernel.org>, "H.J. Lu" <hjl.tools@gmail.com>
-Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 12:45:29 -0700
+IronPort-SDR: GCjS53FKxMzlLhO+tCmpcyzhz5I6+f1dn1lKXSxL5/YkyjkpqxXdMxGRj4Ctt5pNremjilfvwz
+ glxNcrKuFgxQ==
+X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
+   d="scan'208";a="514392347"
+Received: from romeroro-mobl.amr.corp.intel.com (HELO [10.209.119.91]) ([10.209.119.91])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 12:45:27 -0700
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
         linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Cedric Xing <cedric.xing@intel.com>,
+        Linux-MM <linux-mm@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        chenalexchen@google.com, Conrad Parker <conradparker@google.com>,
-        cyhanish@google.com, "Huang, Haitao" <haitao.huang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
@@ -56,15 +57,18 @@ Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
         Patrick Uiterwijk <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
- <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com>
- <20200928005842.GC6704@linux.intel.com>
- <85bc15d5-93cd-e332-ae9a-1e1e66e1181d@citrix.com>
- <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
- <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com>
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+References: <20200924230501.GA20095@linux.intel.com>
+ <b737fcab-bfde-90e1-1101-82d646a6f5b7@intel.com>
+ <20200925000052.GA20333@linux.intel.com>
+ <32fc9df4-d4aa-6768-aa06-0035427b7535@intel.com>
+ <20200925194304.GE31528@linux.intel.com>
+ <230ce6da-7820-976f-f036-a261841d626f@intel.com>
+ <20200928005347.GB6704@linux.intel.com>
+ <6eca8490-d27d-25b8-da7c-df4f9a802e87@intel.com>
+ <20200928161954.GB92669@linux.intel.com>
+ <c29a662e-90ff-4862-8c82-06b43b81fb4d@intel.com>
+ <20200928193229.GA125819@linux.intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -109,12 +113,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <0edfbf96-32db-3565-0d07-7d4a4118dbe6@intel.com>
-Date:   Mon, 28 Sep 2020 11:17:42 -0700
+Message-ID: <283800a0-8f97-e21e-2ff1-253ae621747e@intel.com>
+Date:   Mon, 28 Sep 2020 12:45:27 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com>
+In-Reply-To: <20200928193229.GA125819@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -122,30 +126,12 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/28/20 11:12 AM, Andy Lutomirski wrote:
->> endbr64
->> /* Check if shadow stack is in use.  NB: R11 is the only usable
->>    scratch register for function calls.  */
->> xorl %r11d, %r11d
->> rdsspq %r11
->> testq %r11, %r11
->> jnz 3f
->> call 2f
->> 1:
->> pause
->> lfence
->> jmp 1b
->> 2:
->> mov %rax, (%rsp)
->> ret
->> 3:
->> /* Shadow stack is in use.  Make the indirect call.  */
->> call *%rax
->> ret
-> What do we expect user programs to do on CET systems?  It would be
-> nice if we could instead ALTERNATIVE this out if X86_FEATURE_SHSTK.
+On 9/28/20 12:32 PM, Jarkko Sakkinen wrote:
+> My problem is that I fully agree what you say in your description but
+> disagree on that EMODPE should not be mentioned.
 
-Shouldn't we just be able to use X86_FEATURE_RETPOLINE?
+I'll just be very clear: I'm not willing to ack any patch with a
+changelog that has more than a passing mention of EMODPE.
 
-We probably need a mechanism to force X86_FEATURE_SHSTK and
-X86_FEATURE_RETPOLINE to be mutually exclusive if we don't have one already.
+Do what you think is best, but if sticking to your guns may deplete the
+pool of folks willing to ack your patch.
