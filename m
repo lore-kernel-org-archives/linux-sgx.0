@@ -2,124 +2,179 @@ Return-Path: <SRS0=em/l=DF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E73C2D0A8
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 15:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A155CC2D0A8
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 16:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBAEF21548
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 15:54:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ssx9hM2O"
+	by mail.kernel.org (Postfix) with ESMTP id 6D9252065D
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 16:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgI1Pyi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Sep 2020 11:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgI1Pyi (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Sep 2020 11:54:38 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3902FC061755;
-        Mon, 28 Sep 2020 08:54:38 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id h2so1728678ilo.12;
-        Mon, 28 Sep 2020 08:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wVGPSPUovgc0Y23DJShhn11Uz/FVeEYO+SSSJn1LJ3o=;
-        b=Ssx9hM2ObzgBkZv/NTryYKHFTVD0EaOXq2rFryyfgxQJSsu44+gMlEl3enPTKDucrV
-         B3dBgmd62wss8RyxXD+goGRHFm4U0WT/a22l+4uEnw1Qn855+1StCY7YUvaWD+c/UWEn
-         poM+GYoBbO90chF+z0q6kzvMlcaAGp5oIF6wqPWXIVQMFD0RoRF5+VT/36X63+hlnOm9
-         NsfzRRfAmqrC5DfC05tHNVqL+NCpZm8LgdUKsWNnBOoYUX65mReVtAfdlZFgAVTKbJEU
-         biPfnvTUF1JjwjpvS6WsehAiYdmr9zU6Bz3sYbVRKFdo6U1H6RNh8kU6xhPdV+ydi+lo
-         PxKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wVGPSPUovgc0Y23DJShhn11Uz/FVeEYO+SSSJn1LJ3o=;
-        b=itvMuNePMTQt4k3JQHDQxFpr5sl0qViL6qE3mQBkhI22s2K52BwZn6w6FTmdDQASSy
-         bugSpLo7uIrfBusKnRgPaEpmo1nPsJJD9xitUx6AKSdqVopMUJPVure1406jBhDPTFCa
-         Z6l1WSj5gRvUzGJUQULZUeXlBYh0LwXaa6lnqwCHq9wudwHqr6bTKuxRJMgDPdYJ3+xK
-         QsLrk7y3TYKAwGPfrT7phxuAzLJJg3pkP+uBEeN8sH/JS7DI5SQ5rGWzevVy9ubBNc4j
-         m5NoDhcjrcZ5sxBJuNm8nnVZdl8+QDlEfqTY6ivpZF8YGCCt83UqYDfEPaw94rdb/+02
-         AaAg==
-X-Gm-Message-State: AOAM530Fc65QdlxVei+viRY8OvIM+hRxDmhl7kSO2UZLnLGTFs6bF4Ca
-        OCIBa1SQu5zqQoPMbpdlq3RgczUOPonYTg8TY9U=
-X-Google-Smtp-Source: ABdhPJzBbYtkYsjjz2crHkvXucIQCF2Lv8kuXTp2BGrwoD5/FzL7ABH+JNxVVB2Cif6HZbIt1e+pbs0C1wtTcVe4TG8=
-X-Received: by 2002:a05:6e02:d06:: with SMTP id g6mr1716472ilj.151.1601308477565;
- Mon, 28 Sep 2020 08:54:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
- <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com> <c1b0019d-d3cb-cc62-f47f-90c2550c22a4@intel.com>
-In-Reply-To: <c1b0019d-d3cb-cc62-f47f-90c2550c22a4@intel.com>
-From:   "H.J. Lu" <hjl.tools@gmail.com>
-Date:   Mon, 28 Sep 2020 08:54:01 -0700
-Message-ID: <CAMe9rOrVhQr9ad_4en2D5GTTqDsJGXqszBmscgenn_87mDxvUA@mail.gmail.com>
-Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-To:     "Yu, Yu-cheng" <yu-cheng.yu@intel.com>
-Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
+        id S1726461AbgI1QUG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Sep 2020 12:20:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48309 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbgI1QUG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 28 Sep 2020 12:20:06 -0400
+IronPort-SDR: ebBylnUyEkKRx6ZMHgDu7vBQmQ/RrIHCESBCEUaILo1EK2OPdJ/KdJq8BpRzpuwoIPumBA9MMl
+ MC0kWrvtj+Ng==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="159362211"
+X-IronPort-AV: E=Sophos;i="5.77,313,1596524400"; 
+   d="scan'208";a="159362211"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 09:20:03 -0700
+IronPort-SDR: 6TZJ7Ehu/ELhw6vm2VOLjkupaHMzkSF96p16WXD+Pyxf8TnKh2UvfUtj/SAjsteIHkGVm6TJLD
+ ViathMlqBWzA==
+X-IronPort-AV: E=Sophos;i="5.77,313,1596524400"; 
+   d="scan'208";a="488641778"
+Received: from gboudouk-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.33.127])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 09:19:56 -0700
+Date:   Mon, 28 Sep 2020 19:19:54 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
         linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Cedric Xing <cedric.xing@intel.com>,
+        Linux-MM <linux-mm@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        Borislav Petkov <bp@alien8.de>, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>, josh@joshtriplett.org,
-        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
         Christian Ludloff <ludloff@google.com>,
-        Andy Lutomirski <luto@kernel.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+Message-ID: <20200928161954.GB92669@linux.intel.com>
+References: <20200924202549.GB19127@linux.intel.com>
+ <e25bfeaa-afb4-3928-eb80-50d90815eabb@intel.com>
+ <20200924230501.GA20095@linux.intel.com>
+ <b737fcab-bfde-90e1-1101-82d646a6f5b7@intel.com>
+ <20200925000052.GA20333@linux.intel.com>
+ <32fc9df4-d4aa-6768-aa06-0035427b7535@intel.com>
+ <20200925194304.GE31528@linux.intel.com>
+ <230ce6da-7820-976f-f036-a261841d626f@intel.com>
+ <20200928005347.GB6704@linux.intel.com>
+ <6eca8490-d27d-25b8-da7c-df4f9a802e87@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6eca8490-d27d-25b8-da7c-df4f9a802e87@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 8:43 AM Yu, Yu-cheng <yu-cheng.yu@intel.com> wrote:
->
-> On 9/25/2020 11:23 AM, Andrew Cooper wrote:
-> > On 15/09/2020 12:28, Jarkko Sakkinen wrote:
-> >> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> >> new file mode 100644
-> >> index 000000000000..adbd59d41517
-> >> --- /dev/null
-> >> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> >> @@ -0,0 +1,157 @@
-> >> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> >> <snip>
-> >> +.Lretpoline:
-> >> +    call    2f
-> >> +1:  pause
-> >> +    lfence
-> >> +    jmp     1b
-> >> +2:  mov     %rax, (%rsp)
-> >> +    ret
-> >
-> > I hate to throw further spanners in the work, but this is not compatible
-> > with CET, and the user shadow stack work in progress.
->
-> Hi Jarkko,
->
-> These 1: and 2: targets are reached only from these few lines?  If they
-> are direct call/jmp targets, I think it is OK in terms of CET.  If they
-> are reached from an instruction like "jmp *%rax", then we need to put in
-> an "endbr64".
->
+On Mon, Sep 28, 2020 at 07:04:38AM -0700, Dave Hansen wrote:
+> On 9/27/20 5:53 PM, Jarkko Sakkinen wrote:
+> > On Fri, Sep 25, 2020 at 12:53:35PM -0700, Dave Hansen wrote:
+> >> On 9/25/20 12:43 PM, Sean Christopherson wrote:
+> >>>> That means that the intent argument (SGX_PROT_*) is currently unused.
+> >>> No, the intent argument is used (eventually) by SGX's ->mprotect()
+> >>> implementation, i.e. sgx_mprotect() enforces that the actual protections are a
+> >>> subset of the declared/intended protections.
+> >>>
+> >>> If ->mprotect() is not merged, then it yes, it will be unused.
+> >>
+> >> OK, I think I've got it.
+> >>
+> >> I think I'm OK with adding ->mprotect().  As long as folks buy into the
+> >> argument that intent needs to be checked at mmap() time, they obviously
+> >> need to be checked at mprotect() too.
+> >>
+> >> Jarkko, if you want to try and rewrite the changelog, capturing the
+> >> discussion here and reply, I think I can ack the resulting patch.  I
+> >> don't know if that will satisfy the request from Boris from an ack from
+> >> a "mm person", but we can at least start there. :)
+> > 
+> > I think what it needs, based on what I've read, is the step by step
+> > description of the EMODPE scenarion without this callback and with it.
+> 
+> EMODPE is virtually irrelevant for this whole thing.  The x86 PTE
+> permissions still specify the most restrictive permissions, which is
+> what matters the most.
+> 
+> We care about the _worst_ the enclave can do, not what it imposes on
+> itself on top of that.
 
-This also isn't compatible with shadow stack.
+AFAIK it is not, or what we are protecting against with this anyway
+then?
 
--- 
-H.J.
+Let say an LSM makes decision for the permissions based on origin. If we
+do not have this you can:
+
+1. EMODPE
+2. mprotect
+
+I.e. whatever LSM decides, won't matter.
+
+The other case, noexec, is now unconditionally denied.
+
+> > I think other important thing to underline is that an LSM or any other
+> > security measure can only do a sane decision when the enclave is loaded.
+> > At that point we know the source (vm_file).
+> 
+> Right, you know the source, but it can be anonymous or a file.
+
+They are both origin, the point being that you know what you're dealing
+with when you build the enclave, not when you map it.
+
+This is my current rewrite of the commit message in my master branch:
+
+"
+    mm: Add 'mprotect' callback to vm_ops
+    
+    Intel Sofware Guard eXtensions (SGX) allows creation of blobs called
+    enclaves, for which page permissions are defined when the enclave is first
+    loaded. Once an enclave is loaded and initialized, it can be mapped to the
+    process address space.
+    
+    There is no standard file format for enclaves. They are dynamically built
+    and the ways how enclaves are deployed differ greatly. For an app you might
+    want to have a simple static binary, but on the other hand for a container
+    you might want to dynamically create the whole thing at run-time. Also, the
+    existing ecosystem for SGX is already large, which would make the task very
+    hard.
+    
+    Finally, even if there was a standard format, one would still want a
+    dynamic way to add pages to the enclave. One big reason for this is that
+    enclaves have load time defined pages that represent entry points to the
+    enclave. Each entry point can service one hardware thread at a time and
+    you might want to run-time parametrize this depending on your environment.
+    
+    The consequence is that enclaves are best created with an ioctl API and the
+    access control can be based only to the origin of the source file for the
+    enclave data, i.e. on VMA file pointer and page permissions. For example,
+    this could be done with LSM hooks that are triggered in the appropriate
+    ioctl's and they could make the access control decision based on this
+    information.
+    
+    Unfortunately, there is ENCLS[EMODPE] that a running enclave can use to
+    upgrade its permissions. If we do not limit mmap() and mprotect(), enclave
+    could upgrade its permissions by using EMODPE followed by an appropriate
+    mprotect() call. This would be completely hidden from the kernel.
+    
+    Add 'mprotect' hook to vm_ops, so that a callback can be implemeted for SGX
+    that will ensure that {mmap, mprotect}() permissions do not surpass any of
+    the original page permissions. This feature allows to maintain and refine
+    sane access control for enclaves.
+"
+
+I'm mostly happy with this but am open for change suggestions.
+
+/Jarkko
