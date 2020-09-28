@@ -2,44 +2,73 @@ Return-Path: <SRS0=em/l=DF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFC1C2D0A8
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 23:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD98C4727C
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 23:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A0A7206D9
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 23:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03B82206D9
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 23:23:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGsezYmo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbgI1XV0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Sep 2020 19:21:26 -0400
-Received: from mga09.intel.com ([134.134.136.24]:56722 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726369AbgI1XV0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 28 Sep 2020 19:21:26 -0400
-IronPort-SDR: R6ZyytEYsP6S6/akTX2Y4y0SBJFCfXukB8H7SA6wu5m50R3ERIct5kTLqJLm/4gZvEuX6ZWUdY
- Pk/aUycKZAug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="162952863"
-X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
-   d="scan'208";a="162952863"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 15:18:12 -0700
-IronPort-SDR: qMOj+X5nKrspAh+/14/4wV7RfusnOHDvdembNrqsSWtTGVzM7UeswoCSugYKDxCHxuboFyF4Nv
- oVkt6Z2CdjpA==
-X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
-   d="scan'208";a="514437969"
-Received: from romeroro-mobl.amr.corp.intel.com (HELO [10.209.119.91]) ([10.209.119.91])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 15:18:10 -0700
+        id S1726518AbgI1XXm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Sep 2020 19:23:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38092 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbgI1XXm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Sep 2020 19:23:42 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4EAC0613DA;
+        Mon, 28 Sep 2020 15:07:12 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id g7so2754270iov.13;
+        Mon, 28 Sep 2020 15:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YMvcxqdogjlVh457rV2UNx34JbjoAtCNJHUjcDLmp2o=;
+        b=VGsezYmoblzEdqCchJ65YZpzkvFe0Jv1je9CfBpdejzupJU3crK1K/vGHB+lkgkQ0/
+         tu2p9N6Si0qmFpNqAvuWL9vlvHcKOCXJbereIjUzRakmDoea/a5NQj1QWXcYvke9zOcQ
+         nOP99BGEAKqj3LRIPCn59CCITRXmhkiqrJs1g4iCVPWR4n9gc3rNzVgh7KAi5vrPJY+O
+         kSUD7+9RsNtHIBc33aYpBRuGTEKuzQPi6N7uFlv1k+nnoQEM/15Vy1RCzWQkEV+ki0Fz
+         VS5nOWD/RjEVPqtT7LIxROgZFfC8Yr3v7WTdcLyxtAx0UAo3DstBmf4mL5CfT491GB1z
+         caCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YMvcxqdogjlVh457rV2UNx34JbjoAtCNJHUjcDLmp2o=;
+        b=jrlHqy6kCcZpE4KyJTyUsroeH7HRrfVZhxXdqpGd/CRdjFfa0BDW0BM9BCQoQHdKIw
+         uMq2aaBz7q7Wxa+TesAO9mlQjTFt7LU9Q6XmO6NzVPyGq4c+/XMRVFbI1TBG6dDOIJMf
+         bTco7xfkGeaGJn/D20/EQyZs5k1NOjA4FrD0z6TI0ffKA4JUzj1JI2dKdVQ+9mZTPKNJ
+         eAd/2fekJUBp/ToOv8W0ZONltDNPSRmy0ezk4+Yk14rrJFk0QhtshxrsQcaK61VMiHac
+         +HjMkZd/lHpShM3B1Z68Y/kSwi3awslwTHXSUva0XssVQf3t7yZ/etJrzozdsGBAmoGu
+         tcwA==
+X-Gm-Message-State: AOAM531j4wwI+HhqZ0iYjeyJ1I8jprLZeflXCCoeni5ZFefUbq8lERPG
+        fnGk77qVqTVu+bGSVu1HNO+IaoxIgFcU2zsixlY=
+X-Google-Smtp-Source: ABdhPJxTqZhfaCfG0PnKWDjdVdb7i/EfSJqUSk5y3W09ngOrh4E9sg+PC2VRgsA8n0DdVJTw9qhezXJaHL7TVWIy1dc=
+X-Received: by 2002:a02:6607:: with SMTP id k7mr603123jac.91.1601330831661;
+ Mon, 28 Sep 2020 15:07:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
+ <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com> <20200928005842.GC6704@linux.intel.com>
+ <85bc15d5-93cd-e332-ae9a-1e1e66e1181d@citrix.com> <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
+ <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com> <20200928215635.GF2705@linux.intel.com>
+In-Reply-To: <20200928215635.GF2705@linux.intel.com>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Mon, 28 Sep 2020 15:06:35 -0700
+Message-ID: <CAMe9rOoyxtf_kUCdb-TN+NmZsQNmFY8NLMObSdCB5bBVq1x+cQ@mail.gmail.com>
 Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
-To:     "H.J. Lu" <hjl.tools@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Andrew Cooper <andrew.cooper3@citrix.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
         linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
@@ -48,7 +77,8 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         asapek@google.com, Borislav Petkov <bp@alien8.de>,
         chenalexchen@google.com, Conrad Parker <conradparker@google.com>,
-        cyhanish@google.com, "Huang, Haitao" <haitao.huang@intel.com>,
+        cyhanish@google.com, Dave Hansen <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
@@ -59,92 +89,97 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
         Yu-cheng Yu <yu-cheng.yu@intel.com>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
- <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com>
- <20200928005842.GC6704@linux.intel.com>
- <85bc15d5-93cd-e332-ae9a-1e1e66e1181d@citrix.com>
- <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
- <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com>
- <20200928215635.GF2705@linux.intel.com>
- <CAMe9rOoyxtf_kUCdb-TN+NmZsQNmFY8NLMObSdCB5bBVq1x+cQ@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <24b9f250-0f75-1a7d-688d-787ca53b388c@intel.com>
-Date:   Mon, 28 Sep 2020 15:18:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAMe9rOoyxtf_kUCdb-TN+NmZsQNmFY8NLMObSdCB5bBVq1x+cQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/28/20 3:06 PM, H.J. Lu wrote:
->> I'm open to do either solution. My thinking was to initially do things
->> vsgx.S local (i.e. consider ALTERNATIVE post upstreaming) and use the
->> above solution but I'm also fine doing ALTERNATIVE. Dave kindly briefed
->> on details how that thing works and it should be perfectly usable for
->> our use case.
->>
-> Since SHSTK and IBT are enabled per process, not the whole machine,
-> are you going to patch vDSO on a per-process basis?
+On Mon, Sep 28, 2020 at 2:56 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Mon, Sep 28, 2020 at 11:12:08AM -0700, Andy Lutomirski wrote:
+> > On Mon, Sep 28, 2020 at 11:08 AM H.J. Lu <hjl.tools@gmail.com> wrote:
+> > >
+> > > On Mon, Sep 28, 2020 at 9:44 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> > > >
+> > > > On 28/09/2020 01:58, Jarkko Sakkinen wrote:
+> > > > > On Fri, Sep 25, 2020 at 07:23:59PM +0100, Andrew Cooper wrote:
+> > > > >> On 15/09/2020 12:28, Jarkko Sakkinen wrote:
+> > > > >>> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> > > > >>> new file mode 100644
+> > > > >>> index 000000000000..adbd59d41517
+> > > > >>> --- /dev/null
+> > > > >>> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> > > > >>> @@ -0,0 +1,157 @@
+> > > > >>> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
+> > > > >>> <snip>
+> > > > >>> +.Lretpoline:
+> > > > >>> +   call    2f
+> > > > >>> +1: pause
+> > > > >>> +   lfence
+> > > > >>> +   jmp     1b
+> > > > >>> +2: mov     %rax, (%rsp)
+> > > > >>> +   ret
+> > > > >> I hate to throw further spanners in the work, but this is not compatible
+> > > > >> with CET, and the user shadow stack work in progress.
+> > > > > CET goes beyond my expertise. Can you describe, at least rudimentary,
+> > > > > how this code is not compatible?
+> > > >
+> > > > CET Shadow Stacks detect attacks which modify the return address on the
+> > > > stack.
+> > > >
+> > > > Retpoline *is* a ROP gadget.  It really does modify the return address
+> > > > on the stack, even if its purpose is defensive (vs Spectre v2) rather
+> > > > than malicious.
+> > > >
+> > > > >> Whichever of these two large series lands first is going to inflict
+> > > > >> fixing this problem on the other.
+> > > > >>
+> > > > >> As the vdso text is global (to a first approximation), it must not be a
+> > > > >> retpoline if any other process is liable to want to use CET-SS.
+> > > > > Why is that?
+> > > >
+> > > > Because when CET-SS is enabled, the ret will suffer a #CP exception
+> > > > (return address on the stack not matching the one recorded in the shadow
+> > > > stack), which I presume/hope is wired into SIGSEGV.
+> > > >
+> > >
+> > > Here is the CET compatible retpoline:
+> > >
+> > > endbr64
+> > > /* Check if shadow stack is in use.  NB: R11 is the only usable
+> > >    scratch register for function calls.  */
+> > > xorl %r11d, %r11d
+> > > rdsspq %r11
+> > > testq %r11, %r11
+> > > jnz 3f
+> > > call 2f
+> > > 1:
+> > > pause
+> > > lfence
+> > > jmp 1b
+> > > 2:
+> > > mov %rax, (%rsp)
+> > > ret
+> > > 3:
+> > > /* Shadow stack is in use.  Make the indirect call.  */
+> > > call *%rax
+> > > ret
+> >
+> > What do we expect user programs to do on CET systems?  It would be
+> > nice if we could instead ALTERNATIVE this out if X86_FEATURE_SHSTK.
+> >
+> > --Andy
+>
+> I'm open to do either solution. My thinking was to initially do things
+> vsgx.S local (i.e. consider ALTERNATIVE post upstreaming) and use the
+> above solution but I'm also fine doing ALTERNATIVE. Dave kindly briefed
+> on details how that thing works and it should be perfectly usable for
+> our use case.
+>
 
-No.
+Since SHSTK and IBT are enabled per process, not the whole machine,
+are you going to patch vDSO on a per-process basis?
 
-Retpolines mitigate Spectre v2 attacks.  If you're not vulnerable to
-Spectre v2, you don't need retpolines.
-
-All processors which support CET *also* have hardware mitigations
-against Spectre v2 and don't need retpolines.  Here's all of the
-possibilities:
-
-CET=y, BUG_SPECTRE_V2=y: does not exist
-CET=n, BUG_SPECTRE_V2=y: vulnerable, use retpoline
-CET=y, BUG_SPECTRE_V2=n: no retpoline, not vulnerable
-CET=n, BUG_SPECTRE_V2=n: no retpoline, not vulnerable
+-- 
+H.J.
