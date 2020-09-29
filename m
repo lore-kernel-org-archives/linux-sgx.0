@@ -2,200 +2,170 @@ Return-Path: <SRS0=LTc5=DG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F287C4727D
-	for <linux-sgx@archiver.kernel.org>; Tue, 29 Sep 2020 14:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C222C4727C
+	for <linux-sgx@archiver.kernel.org>; Tue, 29 Sep 2020 15:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D942520702
-	for <linux-sgx@archiver.kernel.org>; Tue, 29 Sep 2020 14:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE10B207F7
+	for <linux-sgx@archiver.kernel.org>; Tue, 29 Sep 2020 15:02:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="TsSA7kCU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbgI2OY1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 29 Sep 2020 10:24:27 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50898 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728696AbgI2OY0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 29 Sep 2020 10:24:26 -0400
-IronPort-SDR: C8Tm5MyfGSFG/SHq9HSQbfBflSJ5MxDgZ0Js9KKYY0TAOuUgPZAO2fJTy8MrcUaMIdd8a46/UP
- 4BBvHa6a7Kug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="246933757"
-X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
-   d="scan'208";a="246933757"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 07:24:26 -0700
-IronPort-SDR: bsz4KTLlJ0AoLUD9EJWic3WY2MGKrHtWC4/SLXSwPr4s3AlMNrWtWghfWqJmaRiyxFGGeXfkp1
- h27me8bmOhRA==
-X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
-   d="scan'208";a="324687376"
-Received: from balumahx-mobl.amr.corp.intel.com (HELO [10.212.138.118]) ([10.212.138.118])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 07:24:24 -0700
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        id S1728810AbgI2PCI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 29 Sep 2020 11:02:08 -0400
+Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:4421 "EHLO
+        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728630AbgI2PCI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 29 Sep 2020 11:02:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1601391728;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=XBRFpyrJEpRvy0QyVLarqAoZTQbT30+k+3nuuWCz/Iw=;
+  b=TsSA7kCUK0NptaTiWDOFaYIPvaRzcfj6Nvzv+Gh2v/nu77sgQF/v0Fed
+   7p8ukE+XIf2Ov7+3207i6uxAQTWHHolLFA02aYwsmw/anK7Y2NaW+96Cx
+   h90vTrllf/5batjFwp0AHLMLuVhjuBksEyJgbxqEoO++H9ijKfCQCaFHR
+   0=;
+Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none
+IronPort-SDR: Jd2HVx8w/fgPfAhKp7DcsnFnYm5g5DfeQLHIgzBcGvwx0QI2eNU4djtRAcdl400sod5qVJgps0
+ Dksi2wWFfnImnrnR/AmZpYUpauh19L7tSHN2ST/P0EClIymfVPNcV4QnaeQ7Vftre3Fj/QDHyB
+ sCGGLudIhmEqsGcqC1d9VRpZE5aNdS/NdoU/GP8yFNjGC8zlmeDv0P+CMPwOTEsNd0oD6qCzvu
+ 71oZ0ntIwwNgz59YTyuMAd7UK6ko0zzyz6LwHlwoPPTecAeDBLMDgU2d7pjYf/jIwGhFkgTNBk
+ PJ0=
+X-SBRS: None
+X-MesageID: 27846890
+X-Ironport-Server: esa3.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.77,319,1596513600"; 
+   d="scan'208";a="27846890"
+Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+CC:     "H.J. Lu" <hjl.tools@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        <linux-sgx@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        "Huang, Haitao" <haitao.huang@intel.com>,
+        <asapek@google.com>, Borislav Petkov <bp@alien8.de>,
+        <chenalexchen@google.com>, Conrad Parker <conradparker@google.com>,
+        <cyhanish@google.com>, "Huang, Haitao" <haitao.huang@intel.com>,
         Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
         Christian Ludloff <ludloff@google.com>,
         Neil Horman <nhorman@redhat.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        "Patrick Uiterwijk" <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-References: <20200928201959.GA3856@linux.intel.com>
- <E16AF0FA-3017-4323-BDD9-56DCA33CED74@amacapital.net>
- <20200929040521.GC301037@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <1b1bd1f8-210d-486a-b038-2d6eea9d35cd@intel.com>
-Date:   Tue, 29 Sep 2020 07:24:24 -0700
+        Thomas Gleixner <tglx@linutronix.de>, <yaozhangx@google.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
+ <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com>
+ <20200928005842.GC6704@linux.intel.com>
+ <85bc15d5-93cd-e332-ae9a-1e1e66e1181d@citrix.com>
+ <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
+ <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com>
+ <20200928215635.GF2705@linux.intel.com>
+ <CAMe9rOoyxtf_kUCdb-TN+NmZsQNmFY8NLMObSdCB5bBVq1x+cQ@mail.gmail.com>
+ <24b9f250-0f75-1a7d-688d-787ca53b388c@intel.com>
+ <CALCETrViotikw5HcDnvuY8nm28bAcdMQjcVs88kXVf8sjb0C_w@mail.gmail.com>
+ <761f457d-bbb0-4b8f-e472-6705bc1d3cd1@citrix.com>
+ <f8a3826b-8e19-12a3-3280-21ba59616df8@intel.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Message-ID: <ac70e206-5ef8-b6c3-9a37-0e34b7c2f35d@citrix.com>
+Date:   Tue, 29 Sep 2020 16:01:54 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200929040521.GC301037@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <f8a3826b-8e19-12a3-3280-21ba59616df8@intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ FTLPEX02CL05.citrite.net (10.13.108.178)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/28/20 9:05 PM, Jarkko Sakkinen wrote:
-> On Mon, Sep 28, 2020 at 06:37:54PM -0700, Andy Lutomirski wrote:
->> I don’t personally care that much about EMODPE but, you could probably
->> get the point across with something like:
+On 29/09/2020 15:10, Dave Hansen wrote:
+> On 9/28/20 4:38 PM, Andrew Cooper wrote:
+>>>> CET=y, BUG_SPECTRE_V2=y: does not exist
+>>>> CET=n, BUG_SPECTRE_V2=y: vulnerable, use retpoline
+>>>> CET=y, BUG_SPECTRE_V2=n: no retpoline, not vulnerable
+>>>> CET=n, BUG_SPECTRE_V2=n: no retpoline, not vulnerable
+>>> Just to confirm: does this mean that the CPU mitigates against user
+>>> code mistraining the branch predictors for CPL0?
+>> If (and only if) you have eIBRS enabled.
 >>
->> SGX’s EPCM permission bits do not obviate the need to enforce these
->> rules in the PTEs because enclaves can freely modify the EPCM
->> permissions using EMODPE.
->>
->> IOW, EMODPE is not really special here; rather, EMODPE’s existence
->> demonstrates that EADD / EEXTEND are not special.
-> 
-> So I did "disagree and commit" with this one. I'm not actually
-> diagreeing on anything what Dave wrote, on the contrary it is an
-> understandable high level description. I just thought that it would not
-> hurt to remark that the ISA contains such peculiarities as EMODPE.
-> 
-> I did only very rudimentary clean up for the text (e.g. fix the ioctl
-> name, add shortt summary and not much else).
-> 
-> Does not make sense to waste more time to this. I'll move on to
-> implement the missing boot time patching for the vDSO so that we
-> get the next version out.
-> 
-> "
-> mm: Add 'mprotect' hook to struct vm_operations_struct
-> 
-> Background
-> ==========
-> 
-> 1. SGX enclave pages are populated with data by copying data to them
->    from normal memory via ioctl(fd, SGX_IOC_ENCLAVE_ADD_PAGES).
-> 2. We want to be able to restrict those normal memory data sources.  For
->    instance, before copying data to an executable enclave page, we might
->    ensure that the source is executable.
+>> eIBRS should be available on all CET-capable hardware, and Linux ought
+>> to use it by default.
+> You're totally right, of course.  I was (wrongly) thinking about this
+> VDSO retpoline as kernel code.
+>
+> There's another wrinkle here.  Let's say we're vulnerable to a
+> Spectre-v2-style attack and we want to mitigate it on CET hardware that
+> has enhanced IBRS.  I'm not sure how reliable of a mitigation retpolines
+> are on enhanced IBRS hardware.  Intel has recommended _against_ using
+> them in some cases:
+>
+>> https://software.intel.com/security-software-guidance/api-app/sites/default/files/Retpoline-A-Branch-Target-Injection-Mitigation.pdf
+> "On processors that support enhanced IBRS, it should be used for
+> mitigation instead of retpoline."
+> I actually authored that bit of the whitepaper, and I recall that this
+> was not simply a recommendation based on performance advantages of using
+> enhanced IBRS.  I can dig through some old email if we decide that we
+> want to explore using a retpoline on enhanced IBRS hardware.
 
-I know I wrote that.  I suck, and I wrote it in a changelog-unacceptable
-way.  Folks dislike the use of "we" in these things.  Here's a better
-version:
+If only life were simple.
 
-  2. It is desirable to be able to restrict those normal memory data
-     sources.  For instance, the kernel can ensure that the source is
-     executable, before copying data to an executable enclave page.
+In light of https://arxiv.org/abs/2008.02307 which managed to
+demonstrate that the original KAISER was actually a speculative attack
+and nothing to do with the prefetch instruction, a discussion about
+same-mode training happened.
 
-> 3. Enclave page permissions are dynamic just like normal permissions and
->    can be adjusted at runtime with mprotect() (along with a
->    corresponding special instruction inside the enclave).
-> 4. The original data source may have have long since vanished at the
->    time when enclave page permission are established (mmap() or
->    mprotect()).
-> 
-> Solution
-> ========
-> 
-> The solution is to force enclaves creators to declare their intent up front
-> to ioctl(fd, SGX_IOC_ENCLAVE_ADD_PAGES).  This intent can me immediately
-> compared to the source data mapping (and rejected if necessary).  It is
-> also stashed off and then later compared with enclave PTEs to ensure that
-> any future mmap()/mprotect() operations performed by the enclave creator or
-> the enclave itself are consistent with the earlier declared permissions.
+The updated recommendation given was to continue using retpoline as well
+as eIBRS to prevent same-mode training of the syscall indirect branch. 
+Josh (CC'd) has been doing a lot of work to find and fix other
+speculative leaks in this area.
 
-Let's also say "... or *requested* by the enclave itself ...", since the
-enclave itself can't directly make syscalls.
+For Skylake uarch and later, even if an RSB underflow leads to a BTB
+lookup, it still requires an interrupt/NMI to hit one of two instruction
+boundaries to empty the RSB, and an attacker with that level of control
+probably has more interesting things to be trying to do.
 
-> Essentially, this means that whenever the kernel is asked to change an
-> enclave PTE, it needs to ensure the change is consistent with that stashed
-> intent.  There is an existing vm_ops->mmap() hook which allows SGX to do
-> that for mmap().  However, there is no ->mprotect() hook.  Add a
-> vm_ops->mprotect() hook so that mprotect() operations which are
-> inconsistent with any page's stashed intent can be rejected by the driver.
-> 
-> Implications
-> ============
-> 
-> However, there is currently no implementation of the intent checks at the
-> time of ioctl(fd, SGX_IOC_ENCLAVE_ADD_PAGES).  That means that the intent
-> argument (SGX_PROT_*) is currently unused.
+Without retpoline (or something even more expensive such as IRET-ing
+around), an attacker can still create speculative type confusion between
+different system calls, when eIBRS is active.
 
-This was incorrect to say.  Sean corrected me on this point.  Could you
-look through the thread and incorporate that?
+Once you mix CET-SS in, this breaks, unless you're prepared to update
+the retpoline gadget to include a WRSS to modify the shadow stack
+alongside the regular stack.  Add this to the large pile of fun for
+whomever has the privileg^W chore of implementing supervisor CET support.
+
+>
+> But, let's take a step back.  The changelog for this patch needs to at
+> least have:
+>
+> 1. What is the attack being mitigated by the retpoline?
+> 2. Do we actually want to mitigate it?
+> 3. What options are there to mitigate it?
+> 4. Which option does this patch use and why?
+>
+> Right now, there's not even a comment about this.
+
+I agree.  The reason for using a retpoline here in the first place is
+unclear.
+
+~Andrew
