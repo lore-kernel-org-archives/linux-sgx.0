@@ -1,161 +1,119 @@
-Return-Path: <SRS0=em/l=DF=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=LTc5=DG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F2DC2D0A8
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 23:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87217C2D0A8
+	for <linux-sgx@archiver.kernel.org>; Tue, 29 Sep 2020 01:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 010D620825
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Sep 2020 23:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4586C2083B
+	for <linux-sgx@archiver.kernel.org>; Tue, 29 Sep 2020 01:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgI1X76 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Sep 2020 19:59:58 -0400
-Received: from mga06.intel.com ([134.134.136.31]:12718 "EHLO mga06.intel.com"
+        id S1727026AbgI2BOn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Sep 2020 21:14:43 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4324 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726952AbgI1X76 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 28 Sep 2020 19:59:58 -0400
-IronPort-SDR: nyRcAbQY9U+v13UtthCqBK0eruFjXoMIUqtkCqxNe1aWwKJ5v39E7pN3QubbyQgvVEiX+eRLox
- PyQy8gGvTAiQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="223660966"
-X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
-   d="scan'208";a="223660966"
+        id S1726698AbgI2BOm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 28 Sep 2020 21:14:42 -0400
+IronPort-SDR: 0VE6I+L1Fol83jxI6sTKxNeLjPrXI1miDj1xhAL+C+pXsUpiXHqhc4vxEFERovQhtoWZgKt20w
+ uL3BNOWoGHqQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="149867893"
+X-IronPort-AV: E=Sophos;i="5.77,316,1596524400"; 
+   d="scan'208";a="149867893"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 14:56:44 -0700
-IronPort-SDR: 3TWj+h2LPhdtBpEZ+uEDq8JR3Pkv5DjbrTY5pg8oVvTeweUZJ6ev/zSPMtjbBShluKnNJVlCkM
- ItrbFVtNgLDQ==
-X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
-   d="scan'208";a="457008323"
-Received: from jlasecki-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.49.78])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 14:56:37 -0700
-Date:   Tue, 29 Sep 2020 00:56:35 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        chenalexchen@google.com, Conrad Parker <conradparker@google.com>,
-        cyhanish@google.com, Dave Hansen <dave.hansen@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Neil Horman <nhorman@redhat.com>,
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 18:14:42 -0700
+IronPort-SDR: pgtpNA+jtuvGoogfUXxiqFnRu841hblJguoLlGbttUi+kgiYHcNtBAOTadUTHJP2gwNzlDQWAZ
+ MIKAy04r32Pw==
+X-IronPort-AV: E=Sophos;i="5.77,316,1596524400"; 
+   d="scan'208";a="513656253"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 18:14:41 -0700
+Date:   Mon, 28 Sep 2020 18:14:39 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jethro Beekman <jethro@fortanix.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH v38 21/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200928215635.GF2705@linux.intel.com>
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Seth Moore <sethmo@google.com>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v38 16/24] x86/sgx: Add a page reclaimer
+Message-ID: <20200929011438.GA31167@linux.intel.com>
 References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-22-jarkko.sakkinen@linux.intel.com>
- <721ca14e-21df-3df1-7bef-0b00d0ff90c3@citrix.com>
- <20200928005842.GC6704@linux.intel.com>
- <85bc15d5-93cd-e332-ae9a-1e1e66e1181d@citrix.com>
- <CAMe9rOpzXW0cSD=9E7drGEHH=pcm_NqvPiaR0pBJzYLeAt0_3g@mail.gmail.com>
- <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com>
+ <20200915112842.897265-17-jarkko.sakkinen@linux.intel.com>
+ <20200922104538.GE22660@zn.tnic>
+ <20200922140314.GA164527@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrU4Rhc0fwzzKLSUgan2YmSovxVFYOZEmFnBHC4DbZ5RfQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200922140314.GA164527@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 11:12:08AM -0700, Andy Lutomirski wrote:
-> On Mon, Sep 28, 2020 at 11:08 AM H.J. Lu <hjl.tools@gmail.com> wrote:
-> >
-> > On Mon, Sep 28, 2020 at 9:44 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> > >
-> > > On 28/09/2020 01:58, Jarkko Sakkinen wrote:
-> > > > On Fri, Sep 25, 2020 at 07:23:59PM +0100, Andrew Cooper wrote:
-> > > >> On 15/09/2020 12:28, Jarkko Sakkinen wrote:
-> > > >>> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> > > >>> new file mode 100644
-> > > >>> index 000000000000..adbd59d41517
-> > > >>> --- /dev/null
-> > > >>> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
-> > > >>> @@ -0,0 +1,157 @@
-> > > >>> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> > > >>> <snip>
-> > > >>> +.Lretpoline:
-> > > >>> +   call    2f
-> > > >>> +1: pause
-> > > >>> +   lfence
-> > > >>> +   jmp     1b
-> > > >>> +2: mov     %rax, (%rsp)
-> > > >>> +   ret
-> > > >> I hate to throw further spanners in the work, but this is not compatible
-> > > >> with CET, and the user shadow stack work in progress.
-> > > > CET goes beyond my expertise. Can you describe, at least rudimentary,
-> > > > how this code is not compatible?
-> > >
-> > > CET Shadow Stacks detect attacks which modify the return address on the
-> > > stack.
-> > >
-> > > Retpoline *is* a ROP gadget.  It really does modify the return address
-> > > on the stack, even if its purpose is defensive (vs Spectre v2) rather
-> > > than malicious.
-> > >
-> > > >> Whichever of these two large series lands first is going to inflict
-> > > >> fixing this problem on the other.
-> > > >>
-> > > >> As the vdso text is global (to a first approximation), it must not be a
-> > > >> retpoline if any other process is liable to want to use CET-SS.
-> > > > Why is that?
-> > >
-> > > Because when CET-SS is enabled, the ret will suffer a #CP exception
-> > > (return address on the stack not matching the one recorded in the shadow
-> > > stack), which I presume/hope is wired into SIGSEGV.
-> > >
-> >
-> > Here is the CET compatible retpoline:
-> >
-> > endbr64
-> > /* Check if shadow stack is in use.  NB: R11 is the only usable
-> >    scratch register for function calls.  */
-> > xorl %r11d, %r11d
-> > rdsspq %r11
-> > testq %r11, %r11
-> > jnz 3f
-> > call 2f
-> > 1:
-> > pause
-> > lfence
-> > jmp 1b
-> > 2:
-> > mov %rax, (%rsp)
-> > ret
-> > 3:
-> > /* Shadow stack is in use.  Make the indirect call.  */
-> > call *%rax
-> > ret
-> 
-> What do we expect user programs to do on CET systems?  It would be
-> nice if we could instead ALTERNATIVE this out if X86_FEATURE_SHSTK.
-> 
-> --Andy
+On Tue, Sep 22, 2020 at 05:03:23PM +0300, Jarkko Sakkinen wrote:
+> On Tue, Sep 22, 2020 at 12:45:38PM +0200, Borislav Petkov wrote:
+> > > +	spin_lock(&sgx_active_page_list_lock);
+> > > +	for (i = 0; i < SGX_NR_TO_SCAN; i++) {
+> > > +		if (list_empty(&sgx_active_page_list))
+> > 
+> > Isn't it enough to do this once, i.e., not in the loop? You're holding
+> > sgx_active_page_list_lock...
 
-I'm open to do either solution. My thinking was to initially do things
-vsgx.S local (i.e. consider ALTERNATIVE post upstreaming) and use the
-above solution but I'm also fine doing ALTERNATIVE. Dave kindly briefed
-on details how that thing works and it should be perfectly usable for
-our use case.
+Argh, I missed this until I looked at Jarkko's updated tree.
 
-/Jarkko
+The reason for checking list_empty() on every iteration is that the loop is
+greedy, i.e. it tries to grab and reclaim up to 16 (SGX_NR_TO_SCAN) EPC pages
+at a time.
+
+> I think that would make sense. Distantly analogous to the EINIT
+> discussion. Too complex code for yet to be known problem workloads I'd
+> say.
+
+Nooooo.  Please no.
+
+This will most definitely impact workloads running a single large enclave, or a
+process running multiple enclaves, as we'll lose the batching of ETRACK and IPIs.
+ETRACK isn't a big deal, but the IPIs are painful and could thrash the system.
+E.g. in the current code, reclaiming 10 pages from an enclave with actively
+running threads will generate one round of IPIs to CPUs associated with the
+enclave (based on the mm struct).  Going to per-page reclaim will likely result
+in 10 rounds of IPIs as threads will reenter the enclave immediately after each
+IPI wave.
+
+Having to grab the section spinlock for every page is also (very) problematic.
+Reclaiming one page at a time makes it nigh impossible for the reclaimer to
+keep up as every allocation attempt acquires the spinlock.  I.e. the reclaimer
+has to contend with every CPU that is faulting in an EPC page or is adding a
+page to the enclave.  In my experiments with the EPC cgroup, even batching 16
+pages may be insufficient to make "forward progress".  That's not an apples to
+apples comparison, but it's a rough equivalent of what will happen with the
+reclaim thread versus EPC page faults.  We can (and should) play with scaling
+the number of reclaim threads, but at this stage, that's an exercise best left
+to post-upstreaming.
+
+I can't do A/B testing to provide numbers, because the changes in Jarkko's tree
+break basic reclaim.  Which is a nice segue into my last point: this is by far
+the most subtle code in the SGX code base; I really, really don't want to be
+making last minute changes in this area unless they are absolutely necessary or
+obviously benign.  Even if/when we get the basic reclaim functional again, and
+assuming it doesn't have performance issues, I wouldn't be comfortable merging
+the code without hammering it with the EPC cgroup tests for multiple days (on
+top of the 1+ days to rebased the EPC cgroup).  Past testing with the cgroup
+found multiple bugs with races between CPUs that required hitting a window that
+was open for less than 10 instructions.
