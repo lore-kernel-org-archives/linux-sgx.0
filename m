@@ -2,124 +2,102 @@ Return-Path: <SRS0=ssgJ=DH=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF6FC4727E
-	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 14:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C3D3C4727E
+	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 14:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7618520789
-	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 14:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C17D820789
+	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 14:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbgI3OJB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 30 Sep 2020 10:09:01 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48360 "EHLO mga01.intel.com"
+        id S1730519AbgI3OUX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 30 Sep 2020 10:20:23 -0400
+Received: from mga07.intel.com ([134.134.136.100]:7600 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730236AbgI3OJB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 30 Sep 2020 10:09:01 -0400
-IronPort-SDR: RIZ1lM2vr1eJMw4fSv+i1H9BslruR9IDvd1SGH4ZWfWjVodSEovy0u9xKH3rYHP9zDylWRU9fr
- znoI0OZxpyww==
-X-IronPort-AV: E=McAfee;i="6000,8403,9759"; a="180616550"
+        id S1730483AbgI3OUX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 30 Sep 2020 10:20:23 -0400
+IronPort-SDR: KIgm6UQmupe3Qv69+lxENMukT4cQ9oqhBYoQX5I2R48kuPsf8HJt9uWmxXLkIxEjCaAe77XOCX
+ Gmta5gHumjZA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9759"; a="226603812"
 X-IronPort-AV: E=Sophos;i="5.77,322,1596524400"; 
-   d="scan'208";a="180616550"
+   d="scan'208";a="226603812"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 07:09:00 -0700
-IronPort-SDR: mDPxbLBS90cmErxO09y84RuqJAH0tc8hbaMMI/iFbeUQ7N1dN+tbPQQ0bonsEFIKvh9n+BWY24
- eNOZad8nk1MQ==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 07:20:23 -0700
+IronPort-SDR: J96EtW2FG0A9rJZLfOopN5pOeqG7gL0dISlieEMwC/ZkIvxp4RUQNHiArgL1oHD63PCw4SOqgY
+ 7vgSCXrVxICg==
 X-IronPort-AV: E=Sophos;i="5.77,322,1596524400"; 
-   d="scan'208";a="308169981"
-Received: from mdioury-mobl.amr.corp.intel.com (HELO [10.213.184.164]) ([10.213.184.164])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 07:08:59 -0700
-Subject: Re: [PATCH] x86/vdso: Remove retpoline from SGX vDSO call
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-sgx@vger.kernel.org
-Cc:     x86@kernel.org, Haitao Huang <haitao.huang@linux.intel.com>,
+   d="scan'208";a="497738180"
+Received: from geigerri-mobl.ger.corp.intel.com (HELO localhost) ([10.249.35.47])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 07:20:20 -0700
+Date:   Wed, 30 Sep 2020 17:20:17 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org, x86@kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Andrew Cooper <andrew.cooper3@citrix.com>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Andy Lutomirski <luto@amacapital.net>,
         Cedric Xing <cedric.xing@intel.com>
+Subject: Re: [PATCH] x86/vdso: Remove retpoline from SGX vDSO call
+Message-ID: <20200930142017.GA49393@linux.intel.com>
 References: <20200930140108.48075-1-jarkko.sakkinen@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <92578646-83a4-606c-b251-4d80cb62399c@intel.com>
-Date:   Wed, 30 Sep 2020 07:08:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <92578646-83a4-606c-b251-4d80cb62399c@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200930140108.48075-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92578646-83a4-606c-b251-4d80cb62399c@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/30/20 7:01 AM, Jarkko Sakkinen wrote:
-> The user handler, which can be optionally used to handle enclave
-> exceptions, is always the same global handler provided by the SGX
-> runtime, who wants to use such a handler instead returning on exception.
+On Wed, Sep 30, 2020 at 07:08:58AM -0700, Dave Hansen wrote:
+> On 9/30/20 7:01 AM, Jarkko Sakkinen wrote:
+> > The user handler, which can be optionally used to handle enclave
+> > exceptions, is always the same global handler provided by the SGX
+> > runtime, who wants to use such a handler instead returning on exception.
+> > 
+> > Thus, there is no any non-deterministic branch prediction happening.
+> > The code path is always the same and never change. Obviously, you could
+> > change it all the time purposely but for any sane real-world use that
+> > would not make any sense.
 > 
-> Thus, there is no any non-deterministic branch prediction happening.
-> The code path is always the same and never change. Obviously, you could
-> change it all the time purposely but for any sane real-world use that
-> would not make any sense.
+> The fundamental problem mitigated by retpolines is that indirect branch
+>  instructions themselves are non-deterministic (speculatively).
+> 
+> This:
+> 
+> > +	call	*%rax
+> 
+> is an indirect branch instruction.  That leaves me a bit confused since
+> the changelog doesn't really match the code.
+> 
+> Do we care about mitigating Spectre-v2-style attacks for the VDSO's
+> indirect calls?
 
-The fundamental problem mitigated by retpolines is that indirect branch
- instructions themselves are non-deterministic (speculatively).
+It is yes, my wording was just extremely bad. What I meant to say is
+that there is branch prediction happening but it is, given how runtime
+will use the handler, leading always unconditionally to the same
+destination.
 
-This:
+I asked does this have any bad mitigations yesterday:
 
-> +	call	*%rax
+https://lkml.org/lkml/2020/9/29/2505
 
-is an indirect branch instruction.  That leaves me a bit confused since
-the changelog doesn't really match the code.
+I'm not expert on Spectre, or any sort of security researcher, but I've
+read a few papers about and understand the general concept. With the
+constraints how the callback is used in practice, I'd *guess* it is
+fine to drop retpoline but I really need some feedback on this from
+people who understand these attacks better.
 
-Do we care about mitigating Spectre-v2-style attacks for the VDSO's
-indirect calls?
+I'll submit a patch with boot time patching (aka using ALTERNATE) if
+this does not get the buy-in. Just have to evaluate the both options
+before making any decisions.
+
+/Jarkko
