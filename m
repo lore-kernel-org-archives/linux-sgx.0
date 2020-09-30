@@ -2,41 +2,42 @@ Return-Path: <SRS0=ssgJ=DH=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF50C4363D
-	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 21:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B854AC4363D
+	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 23:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6DF20888
-	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 21:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A2B220B1F
+	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 23:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730528AbgI3VqV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 30 Sep 2020 17:46:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:19702 "EHLO mga17.intel.com"
+        id S1731302AbgI3Xl7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 30 Sep 2020 19:41:59 -0400
+Received: from mga06.intel.com ([134.134.136.31]:11519 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730457AbgI3VqV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 30 Sep 2020 17:46:21 -0400
-IronPort-SDR: 1UPR7OfRVN3ViNW0sWrywvIOJHFNjTC918V9s/NZiySaWJdy43D6StNfKWmSXAcV1xvlr6dm4+
- asWoyT+AImng==
-X-IronPort-AV: E=McAfee;i="6000,8403,9760"; a="142563083"
+        id S1731217AbgI3Xl4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 30 Sep 2020 19:41:56 -0400
+IronPort-SDR: P6SI+z/xWWdVo03GCPcKwX3BH0lNW4/RaYgMXuBGyW6Qsi4OOnQabcCzrxELzqaFIhtQZAxohf
+ ZAmoNxV3YOBQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9760"; a="224180296"
 X-IronPort-AV: E=Sophos;i="5.77,322,1596524400"; 
-   d="scan'208";a="142563083"
+   d="scan'208";a="224180296"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 14:46:14 -0700
-IronPort-SDR: rK77uUd/tl/xJdpPhHLKjlLC1dbfJn7inMgNnpi3ijlyMUnn3MNTCy/DQ+v+e/PahxGejxvPoA
- mxBEzri+uuQA==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 16:41:52 -0700
+IronPort-SDR: CH64TP6DhihJDVCQ6Sf7j6/B5H8vyNUNVVYXitrKTLiapADgHiEwED0cfCVT4x7VSET3xHtSXe
+ L9+PNKf77fyg==
 X-IronPort-AV: E=Sophos;i="5.77,322,1596524400"; 
-   d="scan'208";a="457825117"
-Received: from mdioury-mobl.amr.corp.intel.com (HELO [10.213.184.164]) ([10.213.184.164])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 14:46:12 -0700
-Subject: Re: [PATCH] x86/vdso: Remove retpoline from SGX vDSO call
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
+   d="scan'208";a="500139467"
+Received: from mmarkova-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.62])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 16:41:48 -0700
+Date:   Thu, 1 Oct 2020 02:41:45 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         linux-sgx@vger.kernel.org, x86@kernel.org,
@@ -44,9 +45,9 @@ Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Andy Lutomirski <luto@amacapital.net>
-References: <20200930142017.GA49393@linux.intel.com>
- <112ad81e-16ab-d6e0-09e7-3658874434f7@intel.com>
- <20200930152806.GA52739@linux.intel.com>
+Subject: Re: [PATCH] x86/vdso: Remove retpoline from SGX vDSO call
+Message-ID: <20200930234145.GA71808@linux.intel.com>
+References: <20200930152806.GA52739@linux.intel.com>
  <20200930154349.GB32672@linux.intel.com>
  <17231664-3735-2d57-fbfa-9af838e224ab@intel.com>
  <f5021328-2fab-a404-108f-e28e26e6996c@fortanix.com>
@@ -55,78 +56,58 @@ References: <20200930142017.GA49393@linux.intel.com>
  <741b45d0-3833-4e5d-5974-81634d1b55eb@intel.com>
  <20200930212214.GD65339@linux.intel.com>
  <20200930213625.GA66129@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bc09f081-d0e8-20dc-350e-c7dbdf077a52@intel.com>
-Date:   Wed, 30 Sep 2020 14:46:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <bc09f081-d0e8-20dc-350e-c7dbdf077a52@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200930213625.GA66129@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc09f081-d0e8-20dc-350e-c7dbdf077a52@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/30/20 2:36 PM, Jarkko Sakkinen wrote:
-> 1. Full reptoline is the safest alternative and we have it done already.
+On Wed, Sep 30, 2020 at 02:46:05PM -0700, Dave Hansen wrote:
+> On 9/30/20 2:36 PM, Jarkko Sakkinen wrote:
+> > 1. Full reptoline is the safest alternative and we have it done already.
+> 
+> I wouldn't feel _quite_ comfortable saying this.
+> 
+> LFENCEs have architecturally defined behavior.  Retpolines have zero
+> future guarantees in the architecture.  I'll take an LFENCE that (versus
+> a retpoline) is:
+> 
+> 1. Less code
+> 2. Never has to be patched
+> 3. Never causes functional problems (like with CET)
+> 4. Has architectural semantics
+> 
+> The only advantage retpolines offer is that they have a well-defined
+> mitigations on existing microarchitectures.
+> 
+> To me, an LFENCE is waaaaaaay "safer".
 
-I wouldn't feel _quite_ comfortable saying this.
+This is a buy-in argument for me.
 
-LFENCEs have architecturally defined behavior.  Retpolines have zero
-future guarantees in the architecture.  I'll take an LFENCE that (versus
-a retpoline) is:
+We know that CET-SS breaks RETPOLINE, which can be solved by applying
+boot time patching. However, there could be however many other features
+that could conflict with it in yet non-existing microarchitectures,
+which would make the patching process tedious to manage over time.
 
-1. Less code
-2. Never has to be patched
-3. Never causes functional problems (like with CET)
-4. Has architectural semantics
+Essentially, we will end up maintaining the backward and forward
+compatibility forever in software. That does not sound too motivating,
+agreed.
 
-The only advantage retpolines offer is that they have a well-defined
-mitigations on existing microarchitectures.
+"Plain" LFENCE does not possess this issue as it is fully contained to
+the microarchitecture. Thus, software does not have to do anything to
+maintain backward and forward compatibility, which means that the SGX
+vDSO continues to functionally work even in the old kernel images to
+forseeable future.
 
-To me, an LFENCE is waaaaaaay "safer".
+To summarize, we will use LFENCE as it has overally the best
+characteristics for the vDSO when balancing between security and keeping
+things functionally working.
+
+Do I have the correct understanding of your argument? Just sanity
+checking before I change any part of the code or documentation.
+
+/Jarkko
