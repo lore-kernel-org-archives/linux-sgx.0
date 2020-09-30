@@ -2,72 +2,226 @@ Return-Path: <SRS0=ssgJ=DH=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9C2C47423
-	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 01:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CAFC2D0A8
+	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 07:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A39A820C09
-	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 01:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D59542076E
+	for <linux-sgx@archiver.kernel.org>; Wed, 30 Sep 2020 07:12:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="B0sTykRE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729617AbgI3BQ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 29 Sep 2020 21:16:56 -0400
-Received: from mga07.intel.com ([134.134.136.100]:5988 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729540AbgI3BQ4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 29 Sep 2020 21:16:56 -0400
-IronPort-SDR: Y0cNd5rkzhnASdeI0O9C4ZeFbGN8I+LaxNch2o7ZknV2yNJ9mc/FL0ub2VSfhAQyuURwLLo6Uh
- onKs9vASJzdg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9759"; a="226485007"
-X-IronPort-AV: E=Sophos;i="5.77,320,1596524400"; 
-   d="scan'208";a="226485007"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 18:16:54 -0700
-IronPort-SDR: wEmqOVbaRlPNKWD2UMh23DolzntZSztGrX+rZGZnfMITKonlLbWaNI4vKlFoyTPX0rKx+fewuM
- rrRSPc1IYQ1A==
-X-IronPort-AV: E=Sophos;i="5.77,320,1596524400"; 
-   d="scan'208";a="457475255"
-Received: from jwilliam-mobl.ger.corp.intel.com (HELO localhost) ([10.252.47.189])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 18:16:53 -0700
-Date:   Wed, 30 Sep 2020 04:16:50 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+        id S1727657AbgI3HMV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 30 Sep 2020 03:12:21 -0400
+Received: from mail-dm6nam12on2094.outbound.protection.outlook.com ([40.107.243.94]:49457
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725535AbgI3HMV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 30 Sep 2020 03:12:21 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GGEw00QsZvAoA/NPUBUCD0iqXzb3PI6JYOT+zaTImwVi/t/xbc4EK8rVZplPePQwlN6VDxWfmmDGjGDB5vnu+g5e8ZWGMveWgwIxryRebekWNm88cVAZ/ogXUWVvTkiXFU6Utp+5WP9IG2mhnounip6TXJEC3nXHZOf/mumznzMd0bMWamHclI5d/qsaphpRPwNnfHc7k75WaXqb4I6Qqvuj2Y7P9OBsxCb4lwFSYiV0OzQoZ9OeetNK0XMFX+BDVb4ppPGq8GtbrQV/0NUTVYRDPL9P12FP0DT2A2BPcparY+ZzMRVHZD7rl4Ruy1CVD0PI5TXtRj401YZihY6YqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=56OVRdLbUHAuloHlZMf0K1+/GbkXcQGyAhmq7IFWZIA=;
+ b=iAWrreh39hTK88vBgRk9xPjIzLi5WB6S3HvMnWpCa4MSW8Uv4xREZTqHhSRbhkvJRjL1I4ofdXJ7jUxTnt1rH4t7HiusNJ0mMJWjmhtegm/uzfAFOjvrmaiLbByAXUxJWKFNF0LqtcECLvBmTplqJvSvoVngCMBHmHuSKsa2wu+tWxmyqio53NsdeCRSyEGbMyElwlKFNzYH3rfRndQxhFbQmSnANlXekR9ko8he/FUP+IdJ4Du4eBhB+jKH51hxY5vTvJ7INATqg0B/DccL+Bp0apD1dtz2JVNLpKJLcvyVz6c7zsVb9cthBY9VlQ0137WpmQ+JEYZlmlEUANAyVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
+ dkim=pass header.d=fortanix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=56OVRdLbUHAuloHlZMf0K1+/GbkXcQGyAhmq7IFWZIA=;
+ b=B0sTykREAtsWdgkXRIzToZKY+SG9W8ZLXruA84efX06fDwbqrySMf7CkZ0D7ooAY/S8qorN6n/od/V6QMnAtg4bd4CVU1n3bDdZKNArBmMehHFhb4PB4MToPpZWWvathAL+kYq9EmjPVooi8qa89WC3UlKp5La6SS0I+HnJjSHk=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=fortanix.com;
+Received: from BY5PR11MB4260.namprd11.prod.outlook.com (2603:10b6:a03:1ba::30)
+ by BYAPR11MB3718.namprd11.prod.outlook.com (2603:10b6:a03:fd::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.35; Wed, 30 Sep
+ 2020 07:12:15 +0000
+Received: from BY5PR11MB4260.namprd11.prod.outlook.com
+ ([fe80::11b2:63eb:a7db:80c5]) by BY5PR11MB4260.namprd11.prod.outlook.com
+ ([fe80::11b2:63eb:a7db:80c5%6]) with mapi id 15.20.3433.032; Wed, 30 Sep 2020
+ 07:12:15 +0000
 Subject: Re: Unable to load large enclave
-Message-ID: <20200930011650.GA808399@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
 References: <9393934c-e390-a7df-2e74-08f16d4f48d4@fortanix.com>
+ <20200930011650.GA808399@linux.intel.com>
+From:   Jethro Beekman <jethro@fortanix.com>
+Message-ID: <81e38a1b-c9a7-209e-76f5-e2c91f49c1e3@fortanix.com>
+Date:   Wed, 30 Sep 2020 09:12:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <20200930011650.GA808399@linux.intel.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060008090705060708010409"
+X-Originating-IP: [213.127.14.5]
+X-ClientProxiedBy: AM4PR0701CA0029.eurprd07.prod.outlook.com
+ (2603:10a6:200:42::39) To BY5PR11MB4260.namprd11.prod.outlook.com
+ (2603:10b6:a03:1ba::30)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9393934c-e390-a7df-2e74-08f16d4f48d4@fortanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.4.219] (213.127.14.5) by AM4PR0701CA0029.eurprd07.prod.outlook.com (2603:10a6:200:42::39) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.14 via Frontend Transport; Wed, 30 Sep 2020 07:12:14 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7c607e8a-24a3-4206-1926-08d8651028ba
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3718:
+X-Microsoft-Antispam-PRVS: <BYAPR11MB3718769A15CBEF3F4D209DB2AA330@BYAPR11MB3718.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NnBjcuPWH3+M84l/2+VYIg1xFl9zgExNr9F2auI1iAhm0adU9DPOuRjX62CLzK3m8vGsTN0Gk902N/5uAUS9HKSwRTUINtVrrg+U3Xc0/mPu06gG84qBVPs/GmSA0tu7zBjPT/vYzXrrdpgbjyT3QBWBJMNhIubMMgN9QSomEzaS8yczYXONIJ8BKKDK5gCQuod9P7cPtRzyHms3AI+hHTebuKJCiT811Du41SESnNDgRsUDCjf3HiPZnrrKQIUjM9C8/GMuFElDyQaVSy2JlzPGuxsMmgFnC3vZ17AX+1ZfL9uG0keYlw2SG38ZDZDyGFVhfLVK9XgOSm4+rAbHTqfamuKzdHRC8dnOIq/K9ObrzSclonobxgZSthqSpPDU8NhNwsX+Zo2IGuCi2GG4aqy9M+SKefY0xgiRsa39bTRcWMZGwJVgMmGY5U8egwGaj2c7lEkm+rSSI5wg/jGS+g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4260.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(346002)(396003)(366004)(376002)(39840400004)(86362001)(53546011)(6666004)(2616005)(956004)(966005)(6916009)(36756003)(6486002)(26005)(5660300002)(83080400001)(31686004)(235185007)(478600001)(16526019)(52116002)(316002)(186003)(31696002)(16576012)(66946007)(8676002)(66556008)(66476007)(8936002)(4326008)(2906002)(33964004)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: aYM5Lxzm4oOKxKQ61YUwANWQ779PWA6xqB0osDkifYj9HWB9W6JK8/aw7+5xtv/otCBSFdl//KrO6LA/MrGbJdl4FVK7IZzJjDJhDpBKyy6eBBTXKT2cBIQrWgO3l90yPjnmnk3jT2ymxSfgMH+XOKHxtdb9c9iTHm1/UhRsALJvH+Y9dc8piG3EaYWrpHUaFldI8TQRwQ21Xzw8GQe8sYpoy5Uqdp7lfl3MLc5tQupk2bnw4ITmCbAaIY/WRs2lltDVSssj8OkSKNMJFpbgMck0nfYv6HSNMODOdMHPWVkfsyqD10xJspY/JpvGysCNWmwek5I7IZLEOlxq2A+9XK+Bln8Xdk8KITZ9ywvW1QznC6KItaVqYhvVD2E9GONz0omyvt8FjoWMypgdj/hAWGN7TwOPF4r7LamOsHwKNqY1C46dKfJeAKwzjzf818By34227iZhixyxnZSClQBaNcFCpsT1cZMqyXXcNZgJz9LrJ/k5AiikdtEL2ZFbhDMeJHF6VSAmxEK1GgOJav71g3VJ52BLW3SGVViNqsGvZ3DZWdKsszK2M7sfrPCW5hnNq5wLNbMt9B4lhPpbmJ4FlBUUC4+QSmu5fnPZK6mVSP/Fi0iq01wKS5UY2S/kPCKbvPXD0w7av89+dgXQBly8uQ==
+X-OriginatorOrg: fortanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c607e8a-24a3-4206-1926-08d8651028ba
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR11MB4260.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2020 07:12:15.3669
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oeVjWln6s1l97yoscrAti/0FyLyRBwFiSSEioASSSer9uKxSpL44Jso/3XsRzi6p3/oGo5kvrL3aVZHRlaS5ow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3718
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 05:52:48PM +0200, Jethro Beekman wrote:
-> Since the latest API changes, I'm unable to load a large enclave. The
-> test program at
-> https://github.com/fortanix/rust-sgx/blob/sgx-load-large-enclave-test/src/main.rs
-> always fails with ENOMEM after loading 0xffd6 pages.
-> 
-> I've tested this with v36, if there's reason to believe it has been
-> fixed I'd be happy to try it out on a newer patch set.
+--------------ms060008090705060708010409
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-I recommend using v39-rc1 tag that I created for testing because API is
-reverted back to be compatible with v36.
+On 2020-09-30 03:16, Jarkko Sakkinen wrote:
+> On Tue, Sep 29, 2020 at 05:52:48PM +0200, Jethro Beekman wrote:
+>> Since the latest API changes, I'm unable to load a large enclave. The
+>> test program at
+>> https://github.com/fortanix/rust-sgx/blob/sgx-load-large-enclave-test/=
+src/main.rs
+>> always fails with ENOMEM after loading 0xffd6 pages.
+>>
+>> I've tested this with v36, if there's reason to believe it has been
+>> fixed I'd be happy to try it out on a newer patch set.
+>=20
+> I recommend using v39-rc1 tag that I created for testing because API is=
 
-The repository has now also a new location:
+> reverted back to be compatible with v36.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git
+Not sure what you're saying. I tested with v36. You're saying v39-rc1 wil=
+l be the same? Or did you fix the issue since v36?
 
-> 
-> -- 
-> Jethro Beekman | Fortanix
-> 
+--
+Jethro Beekman | Fortanix
 
-/Jarkko
+>=20
+> The repository has now also a new location:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git
+>=20
+>>
+>> --=20
+>> Jethro Beekman | Fortanix
+>>
+>=20
+> /Jarkko
+>=20
+
+
+--------------ms060008090705060708010409
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+JTNkQWN0YWxpcyUyMFMucC5BLiUyZjAzMzU4NTIwOTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJl
+dm9jYXRpb25MaXN0O2JpbmFyeTA9oDugOYY3aHR0cDovL2NybDA1LmFjdGFsaXMuaXQvUmVw
+b3NpdG9yeS9BVVRILVJPT1QvZ2V0TGFzdENSTDAdBgNVHQ4EFgQUvpepqoS/gL8QU30JMvnh
+LjIbz3cwDgYDVR0PAQH/BAQDAgEGMA0GCSqGSIb3DQEBCwUAA4ICAQAmm+cbWQ10sxID6edV
+94SAhc1CwzthHFfHpuYS30gisWUfWpgp43Dg1XzG2in3VGV7XrzCCGZh4JM/XQWp+4oxmyV4
+2Qjz9vc8GRksgo6X2nYObPYZzQjda9wxsCB38i4G3H33w8lf9sFvl0xm4ZXZ2s2bF/PdqvrK
+0ZgvF51+MoIPnli/wJBw3p72xbk5Sb1MneSO3tZ293WFzDmz7tuGU0PfytYUkG7O6annGqbU
+1I6CA6QVKUqeFLPodSODAFqJ3pimKD0vX9MuuSa0QinH7CkiPtZMD0mpwwzIsnSs3qOOl60t
+IZQOTc0I6lCe1LLhrz7Q75J6nNL9N5zVwZ1I3o2Lb8Dt7BA13VFuZvZIzapUGV83R7pmSVaj
+1Bik1nJ/R393e6mwppsT140KDVLh4Oenywmp2VpBDuEj9RgICAO0sibv8n379LbO7ARa0kw9
+y9pggFzN2PAX25b7w0n9m78kpv3z3vW65rs6wl7E8VEHNfv8+cnb81dxN3C51KElz+l31zch
+FTurD5HFEpyEhzO/fMS5AkweRJIzwozxNs7OL/S/SVTpJLJL1ukZ1lnHHX0d3xCzRy/5HqfK
+3uiG22LPB5+RjNDobPAjAz2BKMfkF/+v0pzn8mqqkopQaJzEAbLbMpgQYHRCjvrUxxwjJyUF
+b2Z+40UNtMF4MTK7zTGCA/MwggPvAgEBMIGWMIGBMQswCQYDVQQGEwJJVDEQMA4GA1UECAwH
+QmVyZ2FtbzEZMBcGA1UEBwwQUG9udGUgU2FuIFBpZXRybzEXMBUGA1UECgwOQWN0YWxpcyBT
+LnAuQS4xLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEczAhBu
+kmvE8GLB9+EYd88699DiMA0GCWCGSAFlAwQCAQUAoIICLTAYBgkqhkiG9w0BCQMxCwYJKoZI
+hvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDA5MzAwNzEyMDdaMC8GCSqGSIb3DQEJBDEiBCAW
+aR6HcnETrrfBBREpNtNSGqSQy2gRD7L2UizO7EkIlzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCG
+SAFlAwQBKjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqG
+SIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGnBgkrBgEEAYI3EAQxgZkwgZYw
+gYExCzAJBgNVBAYTAklUMRAwDgYDVQQIDAdCZXJnYW1vMRkwFwYDVQQHDBBQb250ZSBTYW4g
+UGlldHJvMRcwFQYDVQQKDA5BY3RhbGlzIFMucC5BLjEsMCoGA1UEAwwjQWN0YWxpcyBDbGll
+bnQgQXV0aGVudGljYXRpb24gQ0EgRzMCEG6Sa8TwYsH34Rh3zzr30OIwgakGCyqGSIb3DQEJ
+EAILMYGZoIGWMIGBMQswCQYDVQQGEwJJVDEQMA4GA1UECAwHQmVyZ2FtbzEZMBcGA1UEBwwQ
+UG9udGUgU2FuIFBpZXRybzEXMBUGA1UECgwOQWN0YWxpcyBTLnAuQS4xLDAqBgNVBAMMI0Fj
+dGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEczAhBukmvE8GLB9+EYd88699DiMA0G
+CSqGSIb3DQEBAQUABIIBAH8d987XS/qIvU2JGHoXnAO5KF2YVMpDoqpPY3xhnCUAsBYm8LC6
+1ooE3xpp/4+l7bxacedMeejPjRtHqx3UhyTJ0aIrla4MRJeelznkSRHG+ZX1584blrLq2cNi
+3KTqMMF42Na/ZxNXLZvRXcpZ63GqTqgQEUkGcasIkKVdqEqGvj03ROJCmFlo8UP2jLS9meP3
+8I5EoQ/5IqIcrrVU7r2vRYPUMwOuIWHZ13cFeQh/wHC9Igs212AQ9vSrNne6XmKsPk/1IO3b
+rdUDwa3HLQGpK2VKtrPRA3h3d/4nNTPcoADVsqcsD4uHYf2cI/4Dqn6YisUF1Zz2qTBs7CFS
+BS0AAAAAAAA=
+
+--------------ms060008090705060708010409--
