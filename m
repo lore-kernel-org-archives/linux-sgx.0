@@ -6,128 +6,118 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D587FC4727E
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Oct 2020 16:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9A1C4741F
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Oct 2020 17:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5C22075F
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Oct 2020 16:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 273CB20872
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Oct 2020 17:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732507AbgJAQwE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Oct 2020 12:52:04 -0400
-Received: from mga17.intel.com ([192.55.52.151]:19980 "EHLO mga17.intel.com"
+        id S1732835AbgJARRF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Oct 2020 13:17:05 -0400
+Received: from mga01.intel.com ([192.55.52.88]:62435 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732016AbgJAQwE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 1 Oct 2020 12:52:04 -0400
-IronPort-SDR: PQC+TsAA+HHbwyDXNSn5Do+gO+pvwIFdALxNIFYbFFpqV2R7qDux6Y4TWjL8gHTB/xHv7auKOZ
- EB8W/gR3FDTQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9761"; a="142784799"
-X-IronPort-AV: E=Sophos;i="5.77,323,1596524400"; 
-   d="scan'208";a="142784799"
+        id S1732096AbgJARRF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 1 Oct 2020 13:17:05 -0400
+IronPort-SDR: 3U9/b3DvuAGqiaQMQMk9u7v+y2W9Og0vQzkAkWCI+erwzE5b6kPkbBqp2njil281XjRfhq5Ddc
+ emQyp91yVevA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9761"; a="180940018"
+X-IronPort-AV: E=Sophos;i="5.77,324,1596524400"; 
+   d="scan'208";a="180940018"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 09:51:53 -0700
-IronPort-SDR: vnZjwnEBsaNrEHNt6FL6oX7KB+gFgegXm9v/pi+DG8BukIgPwz9owuBxxwj3lxYh9EIkkueDXF
- q0ZVnutnB45w==
-X-IronPort-AV: E=Sophos;i="5.77,323,1596524400"; 
-   d="scan'208";a="346148681"
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 10:17:03 -0700
+IronPort-SDR: Qy9H7dXPMlyX8yx4rYKPmXJHd5qx2SPvXIFOuT2LtXocqtLi77HqI0gWkomHGvMFJhLIJaSdXP
+ mu0UKvndlfqw==
+X-IronPort-AV: E=Sophos;i="5.77,324,1596524400"; 
+   d="scan'208";a="346154578"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 09:51:52 -0700
-Date:   Thu, 1 Oct 2020 09:51:51 -0700
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 10:17:02 -0700
+Date:   Thu, 1 Oct 2020 10:17:01 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cedric Xing <cedric.xing@intel.com>
-Subject: Re: [PATCH] x86/vdso: Flatten and clean up struct sgx_enclave_run
-Message-ID: <20201001165151.GE7474@linux.intel.com>
-References: <20201001161642.10500-1-jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote
+ attestation
+Message-ID: <20201001171701.GF7474@linux.intel.com>
+References: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
+ <20200915110522.893152-16-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201001161642.10500-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200915110522.893152-16-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Can you split this into a proper series?  There are many different things
-going on here, reviewing everything at once is difficult.
+On Tue, Sep 15, 2020 at 02:05:13PM +0300, Jarkko Sakkinen wrote:
+> +/**
+> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
+> + * @filep:	open file to /dev/sgx
+> + * @arg:	userspace pointer to a struct sgx_enclave_provision instance
+> + *
+> + * Mark the enclave as being allowed to access a restricted attribute bit.
+> + * The requested attribute is specified via the attribute_fd field in the
+> + * provided struct sgx_enclave_provision.  The attribute_fd must be a
+> + * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
+> + *
+> + * Failure to explicitly request access to a restricted attribute will cause
+> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
+> + * is access to the PROVISION_KEY.
+> + *
+> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
+> + *
+> + * Return: 0 on success, -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
+> +					  void __user *arg)
+> +{
+> +	struct sgx_enclave_provision params;
+> +	struct file *attribute_file;
+> +	int ret;
+> +
+> +	if (copy_from_user(&params, arg, sizeof(params)))
+> +		return -EFAULT;
+> +
+> +	attribute_file = fget(params.attribute_fd);
+> +	if (!attribute_file)
+> +		return -EINVAL;
+> +
+> +	if (attribute_file->f_op != &sgx_provision_fops) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	encl->attributes |= SGX_ATTR_PROVISIONKEY;
 
-On Thu, Oct 01, 2020 at 07:16:42PM +0300, Jarkko Sakkinen wrote:
-> Reduce the struct size to 64 bytes. It makes sense to have a naturally
-> aligning struct size and it leaves 24 bytes of spare space for possible
-> future expansion. Having 256 bytes is over the top without any reasonable
-> explanation, which does not exist in the commit for the SGX vDSO.
+This is wrong, it needs to be
 
-I'm all for dropping the padding, but we should drop reserved fields
-altogether and instead reserve space for future features by keeping 'flags',
-enforcing it to be zero, and conditioning consumption of future fields on
-opt-in flags being set.
- 
-> Drop struct sgx_exception. It does not serve any semantic purpose in the
-> context of this vDSO. Doing this is also consistent with user_handler and
+	encl->attributes_mask |= SGX_ATTR_PROVISION;
 
-IMO it does serve a purpose, it helps convey that it's a package deal, i.e.
-either all fields are valid or none are valid.
+else sgx_encl_init() will fail this check
 
-> user_data fields, as neither are they encapsulated in an embedded data
-> structure.
-> 
-> Drop 'flags' from sgx_enclave_run as it is an unused value.'vsgx.S'
-> literally states this in an inline comment.
+	if (encl->attributes & ~encl->attributes_mask)
+		return -EACCES;
 
-It's not unused, it's reserved to zero.
+This obviously needs a selftest...
 
-> Pick more reasonable names for the four fields of the exception. For
-> example, 'trapnr' should rather be just 'number' because in practice we
-> deliver only trap and the rest are faults.
-
-No, in Intel terminology both faults and traps are delivered.  E.g. #DBs
-are traps (except for code breakpoints and INT1), #PF and #GP are faults.
-
-That being said, I'm all for changing the 'trapnr' name.  I grabbed it from
-from the kernel's exception fixup, it wasn't deliberately chosen to imply
-that only trap-like exceptions are reported to userspace.
-
-> Also 'vector' would be an
-> adequate name for this field. Document the fields properly in order to
-> better explain the values that they have inherited.
-
-My vote is for 'vector'.
-
-> Remove 'exit_reason' as it is really a redundant field to save some space.
-> Instead, have just a field called 'leaf' that tells the last seen ENCLU.
-
-This justification contradicts the removal of flags.  If you want to shave
-bytes, keep flags and enforce that flags is zero so that you don't need to
-have reserved bytes at the end of the struct.
-
-IMO, having a separate exit reason provides saner code for userspace, e.g. 
-
-  if (run->exit_reason == SGX_EXCEPTION_EXIT)
-	<do exception stuff>
-
-versus
-
-  if (run->leaf == EENTER || run->leaf == ERESUME)
-        <do exception stuff>
-
-I would prefer to be explicit about why the vDSO is transferring control to
-the caller or its handler.  It also gives us line of sight to supporting
-exit types other than EEXIT and exceptions.  Maybe we never end up with
-another type, but IMO shaving 4 bytes and a MOV isn't worth the risk of
-ending up with a mess of an API if another exit reason comes along.
-
-> The documentation, selftest and the kernel source code use the terms "user
-> handler" and "exit handler" in somewhat inconsistent manner. Start using
-> "AEX handler" consistently as this is the term that Intel SDM volume D uses
-> for these events.
-
-No, AEX is specifically for "asynchronus" exits.  In this context, that is
-limited to the exception path.  The vDSO invokes the user handler for EEXIT,
-i.e. the synchrous path, which is not an AEX.
+> +	ret = 0;
+> +
+> +out:
+> +	fput(attribute_file);
+> +	return ret;
+> +}
