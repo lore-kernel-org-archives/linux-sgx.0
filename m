@@ -4,417 +4,415 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017E0C47420
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F45CC4363D
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA2E1235F9
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E88462311D
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725845AbgJCEvW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Oct 2020 00:51:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49024 "EHLO mail.kernel.org"
+        id S1725928AbgJCEvw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Oct 2020 00:51:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbgJCEvO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 3 Oct 2020 00:51:14 -0400
+        id S1725896AbgJCEve (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 3 Oct 2020 00:51:34 -0400
 Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 532CC21D24;
-        Sat,  3 Oct 2020 04:51:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 842B1235F7;
+        Sat,  3 Oct 2020 04:51:31 +0000 (UTC)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
         cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
         ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v39 04/24] x86/sgx: Add SGX microarchitectural data structures
-Date:   Sat,  3 Oct 2020 07:50:39 +0300
-Message-Id: <20201003045059.665934-5-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v39 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
+Date:   Sat,  3 Oct 2020 07:50:47 +0300
+Message-Id: <20201003045059.665934-13-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Define the SGX microarchitectural data structures used by various SGX
-opcodes. This is not an exhaustive representation of all SGX data
-structures but only those needed by the kernel.
+Add an ioctl that performs ENCLS[ECREATE], which creates SGX Enclave
+Control Structure for the enclave. SECS contains attributes about the
+enclave that are used by the hardware and cannot be directly accessed by
+software, as SECS resides in the EPC.
 
-The data structures are described in:
-
-  Intel SDM: 37.6 INTEL® SGX DATA STRUCTURES OVERVIEW
+One essential field in SECS is a field that stores the SHA256 of the
+measured enclave pages. This field, MRENCLAVE, is initialized by the
+ECREATE instruction and updated by every EADD and EEXTEND operation.
+Finally, EINIT locks down the value.
 
 Acked-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+Tested-by: Seth Moore <sethmo@google.com>
+Tested-by: Darren Kenny <darren.kenny@oracle.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/arch.h | 341 +++++++++++++++++++++++++++++++++
- 1 file changed, 341 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ arch/x86/include/uapi/asm/sgx.h               |  25 ++
+ arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c              |  12 +
+ arch/x86/kernel/cpu/sgx/driver.h              |   1 +
+ arch/x86/kernel/cpu/sgx/ioctl.c               | 223 ++++++++++++++++++
+ 6 files changed, 263 insertions(+)
+ create mode 100644 arch/x86/include/uapi/asm/sgx.h
+ create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
 
-diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index 2a198838fca9..a89e1c46a25a 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -323,6 +323,7 @@ Code  Seq#    Include File                                           Comments
+                                                                      <mailto:tlewis@mindspring.com>
+ 0xA3  90-9F  linux/dtlk.h
+ 0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
++0xA4  00-1F  uapi/asm/sgx.h                                          <mailto:linux-sgx@vger.kernel.org>
+ 0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+ 0xAB  00-1F  linux/nbd.h
+ 0xAC  00-1F  linux/raw.h
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
 new file mode 100644
-index 000000000000..ccecc39728dc
+index 000000000000..c75b375f3770
 --- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/arch.h
-@@ -0,0 +1,341 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+/**
-+ * Copyright(c) 2016-18 Intel Corporation.
-+ *
-+ * Contains data structures defined by the SGX architecture.  Data structures
-+ * defined by the Linux software stack should not be placed here.
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR BSD-3-Clause) */
++/*
++ * Copyright(c) 2016-19 Intel Corporation.
 + */
-+#ifndef _ASM_X86_SGX_ARCH_H
-+#define _ASM_X86_SGX_ARCH_H
++#ifndef _UAPI_ASM_X86_SGX_H
++#define _UAPI_ASM_X86_SGX_H
 +
-+#include <linux/bits.h>
 +#include <linux/types.h>
++#include <linux/ioctl.h>
 +
-+#define SGX_CPUID				0x12
-+#define SGX_CPUID_FIRST_VARIABLE_SUB_LEAF	2
++#define SGX_MAGIC 0xA4
++
++#define SGX_IOC_ENCLAVE_CREATE \
++	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
 +
 +/**
-+ * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
-+ * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
-+ *				been completed yet.
-+ * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-+ *				public key does not match IA32_SGXLEPUBKEYHASH.
-+ * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
++ * struct sgx_enclave_create - parameter structure for the
++ *                             %SGX_IOC_ENCLAVE_CREATE ioctl
++ * @src:	address for the SECS page data
 + */
-+enum sgx_return_code {
-+	SGX_NOT_TRACKED			= 11,
-+	SGX_INVALID_EINITTOKEN		= 16,
-+	SGX_UNMASKED_EVENT		= 128,
++struct sgx_enclave_create  {
++	__u64	src;
 +};
 +
-+/**
-+ * enum sgx_sub_leaf_types - SGX CPUID variable sub-leaf types
-+ * %SGX_CPUID_SUB_LEAF_INVALID:		Indicates this sub-leaf is invalid.
-+ * %SGX_CPUID_SUB_LEAF_EPC_SECTION:	Sub-leaf enumerates an EPC section.
-+ */
-+enum sgx_sub_leaf_types {
-+	SGX_CPUID_SUB_LEAF_INVALID	= 0x0,
-+	SGX_CPUID_SUB_LEAF_EPC_SECTION	= 0x1,
-+};
++#endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+index 3fc451120735..91d3dc784a29 100644
+--- a/arch/x86/kernel/cpu/sgx/Makefile
++++ b/arch/x86/kernel/cpu/sgx/Makefile
+@@ -1,4 +1,5 @@
+ obj-y += \
+ 	driver.o \
+ 	encl.o \
++	ioctl.o \
+ 	main.o
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index f54da5f19c2b..7bdb49dfcca6 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -114,10 +114,22 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
+ 	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
+ }
+ 
++#ifdef CONFIG_COMPAT
++static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
++			      unsigned long arg)
++{
++	return sgx_ioctl(filep, cmd, arg);
++}
++#endif
 +
-+#define SGX_CPUID_SUB_LEAF_TYPE_MASK	GENMASK(3, 0)
+ static const struct file_operations sgx_encl_fops = {
+ 	.owner			= THIS_MODULE,
+ 	.open			= sgx_open,
+ 	.release		= sgx_release,
++	.unlocked_ioctl		= sgx_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl		= sgx_compat_ioctl,
++#endif
+ 	.mmap			= sgx_mmap,
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index f7ce40dedc91..e4063923115b 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -9,6 +9,7 @@
+ #include <linux/rwsem.h>
+ #include <linux/sched.h>
+ #include <linux/workqueue.h>
++#include <uapi/asm/sgx.h>
+ #include "sgx.h"
+ 
+ #define SGX_EINIT_SPIN_COUNT	20
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+new file mode 100644
+index 000000000000..9bb4694e57c1
+--- /dev/null
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -0,0 +1,223 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-19 Intel Corporation.
 +
-+#define SGX_MODULUS_SIZE 384
++#include <asm/mman.h>
++#include <linux/mman.h>
++#include <linux/delay.h>
++#include <linux/file.h>
++#include <linux/hashtable.h>
++#include <linux/highmem.h>
++#include <linux/ratelimit.h>
++#include <linux/sched/signal.h>
++#include <linux/shmem_fs.h>
++#include <linux/slab.h>
++#include <linux/suspend.h>
++#include "driver.h"
++#include "encl.h"
++#include "encls.h"
 +
-+/**
-+ * enum sgx_miscselect - additional information to an SSA frame
-+ * %SGX_MISC_EXINFO:	Report #PF or #GP to the SSA frame.
-+ *
-+ * Save State Area (SSA) is a stack inside the enclave used to store processor
-+ * state when an exception or interrupt occurs. This enum defines additional
-+ * information stored to an SSA frame.
-+ */
-+enum sgx_miscselect {
-+	SGX_MISC_EXINFO		= BIT(0),
-+};
++static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
++{
++	u32 size_max = PAGE_SIZE;
++	u32 size;
++	int i;
 +
-+#define SGX_MISC_RESERVED_MASK	GENMASK_ULL(63, 1)
++	for (i = 2; i < 64; i++) {
++		if (!((1 << i) & xfrm))
++			continue;
 +
-+#define SGX_SSA_GPRS_SIZE		184
-+#define SGX_SSA_MISC_EXINFO_SIZE	16
++		size = SGX_SSA_GPRS_SIZE + sgx_xsave_size_tbl[i];
 +
-+/**
-+ * enum sgx_attributes - the attributes field in &struct sgx_secs
-+ * %SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-+ * %SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
-+ * %SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-+ * %SGX_ATTR_PROVISIONKEY:      Allow to use provisioning keys for remote
-+ *				attestation.
-+ * %SGX_ATTR_KSS:		Allow to use key separation and sharing (KSS).
-+ * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-+ *				sign cryptographic tokens that can be passed to
-+ *				EINIT as an authorization to run an enclave.
-+ */
-+enum sgx_attribute {
-+	SGX_ATTR_INIT		= BIT(0),
-+	SGX_ATTR_DEBUG		= BIT(1),
-+	SGX_ATTR_MODE64BIT	= BIT(2),
-+	SGX_ATTR_PROVISIONKEY	= BIT(4),
-+	SGX_ATTR_EINITTOKENKEY	= BIT(5),
-+	SGX_ATTR_KSS		= BIT(7),
-+};
++		if (miscselect & SGX_MISC_EXINFO)
++			size += SGX_SSA_MISC_EXINFO_SIZE;
 +
-+#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(6) | GENMASK_ULL(63, 8))
++		if (size > size_max)
++			size_max = size;
++	}
 +
-+/**
-+ * struct sgx_secs - SGX Enclave Control Structure (SECS)
-+ * @size:		size of the address space
-+ * @base:		base address of the  address space
-+ * @ssa_frame_size:	size of an SSA frame
-+ * @miscselect:		additional information stored to an SSA frame
-+ * @attributes:		attributes for enclave
-+ * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-+ * @mrenclave:		SHA256-hash of the enclave contents
-+ * @mrsigner:		SHA256-hash of the public key used to sign the SIGSTRUCT
-+ * @config_id:		a user-defined value that is used in key derivation
-+ * @isv_prod_id:	a user-defined value that is used in key derivation
-+ * @isv_svn:		a user-defined value that is used in key derivation
-+ * @config_svn:		a user-defined value that is used in key derivation
-+ *
-+ * SGX Enclave Control Structure (SECS) is a special enclave page that is not
-+ * visible in the address space. In fact, this structure defines the address
-+ * range and other global attributes for the enclave and it is the first EPC
-+ * page created for any enclave. It is moved from a temporary buffer to an EPC
-+ * by the means of ENCLS(ECREATE) leaf.
-+ */
-+struct sgx_secs {
-+	u64 size;
-+	u64 base;
-+	u32 ssa_frame_size;
-+	u32 miscselect;
-+	u8  reserved1[24];
-+	u64 attributes;
-+	u64 xfrm;
-+	u32 mrenclave[8];
-+	u8  reserved2[32];
-+	u32 mrsigner[8];
-+	u8  reserved3[32];
-+	u32 config_id[16];
-+	u16 isv_prod_id;
-+	u16 isv_svn;
-+	u16 config_svn;
-+	u8  reserved4[3834];
-+} __packed;
++	return PFN_UP(size_max);
++}
 +
-+/**
-+ * enum sgx_tcs_flags - execution flags for TCS
-+ * %SGX_TCS_DBGOPTIN:	If enabled allows single-stepping and breakpoints
-+ *			inside an enclave. It is cleared by EADD but can
-+ *			be set later with EDBGWR.
-+ */
-+enum sgx_tcs_flags {
-+	SGX_TCS_DBGOPTIN	= 0x01,
-+};
++static int sgx_validate_secs(const struct sgx_secs *secs)
++{
++	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
++		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
 +
-+#define SGX_TCS_RESERVED_MASK	GENMASK_ULL(63, 1)
-+#define SGX_TCS_RESERVED_SIZE	4024
++	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
++		return -EINVAL;
 +
-+/**
-+ * struct sgx_tcs - Thread Control Structure (TCS)
-+ * @state:		used to mark an entered TCS
-+ * @flags:		execution flags (cleared by EADD)
-+ * @ssa_offset:		SSA stack offset relative to the enclave base
-+ * @ssa_index:		the current SSA frame index (cleard by EADD)
-+ * @nr_ssa_frames:	the number of frame in the SSA stack
-+ * @entry_offset:	entry point offset relative to the enclave base
-+ * @exit_addr:		address outside the enclave to exit on an exception or
-+ *			interrupt
-+ * @fs_offset:		offset relative to the enclave base to become FS
-+ *			segment inside the enclave
-+ * @gs_offset:		offset relative to the enclave base to become GS
-+ *			segment inside the enclave
-+ * @fs_limit:		size to become a new FS-limit (only 32-bit enclaves)
-+ * @gs_limit:		size to become a new GS-limit (only 32-bit enclaves)
-+ *
-+ * Thread Control Structure (TCS) is an enclave page visible in its address
-+ * space that defines an entry point inside the enclave. A thread enters inside
-+ * an enclave by supplying address of TCS to ENCLU(EENTER). A TCS can be entered
-+ * by only one thread at a time.
-+ */
-+struct sgx_tcs {
-+	u64 state;
-+	u64 flags;
-+	u64 ssa_offset;
-+	u32 ssa_index;
-+	u32 nr_ssa_frames;
-+	u64 entry_offset;
-+	u64 exit_addr;
-+	u64 fs_offset;
-+	u64 gs_offset;
-+	u32 fs_limit;
-+	u32 gs_limit;
-+	u8  reserved[SGX_TCS_RESERVED_SIZE];
-+} __packed;
++	if (secs->base & (secs->size - 1))
++		return -EINVAL;
 +
-+/**
-+ * struct sgx_pageinfo - an enclave page descriptor
-+ * @addr:	address of the enclave page
-+ * @contents:	pointer to the page contents
-+ * @metadata:	pointer either to a SECINFO or PCMD instance
-+ * @secs:	address of the SECS page
-+ */
-+struct sgx_pageinfo {
-+	u64 addr;
-+	u64 contents;
-+	u64 metadata;
-+	u64 secs;
-+} __packed __aligned(32);
++	if (secs->miscselect & sgx_misc_reserved_mask ||
++	    secs->attributes & sgx_attributes_reserved_mask ||
++	    secs->xfrm & sgx_xfrm_reserved_mask)
++		return -EINVAL;
 +
++	if (secs->size > max_size)
++		return -EINVAL;
 +
-+/**
-+ * enum sgx_page_type - bits in the SECINFO flags defining the page type
-+ * %SGX_PAGE_TYPE_SECS:	a SECS page
-+ * %SGX_PAGE_TYPE_TCS:	a TCS page
-+ * %SGX_PAGE_TYPE_REG:	a regular page
-+ * %SGX_PAGE_TYPE_VA:	a VA page
-+ * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
-+ */
-+enum sgx_page_type {
-+	SGX_PAGE_TYPE_SECS,
-+	SGX_PAGE_TYPE_TCS,
-+	SGX_PAGE_TYPE_REG,
-+	SGX_PAGE_TYPE_VA,
-+	SGX_PAGE_TYPE_TRIM,
-+};
++	if (!(secs->xfrm & XFEATURE_MASK_FP) ||
++	    !(secs->xfrm & XFEATURE_MASK_SSE) ||
++	    (((secs->xfrm >> XFEATURE_BNDREGS) & 1) != ((secs->xfrm >> XFEATURE_BNDCSR) & 1)))
++		return -EINVAL;
 +
-+#define SGX_NR_PAGE_TYPES	5
-+#define SGX_PAGE_TYPE_MASK	GENMASK(7, 0)
++	if (!secs->ssa_frame_size)
++		return -EINVAL;
 +
-+/**
-+ * enum sgx_secinfo_flags - the flags field in &struct sgx_secinfo
-+ * %SGX_SECINFO_R:	allow read
-+ * %SGX_SECINFO_W:	allow write
-+ * %SGX_SECINFO_X:	allow execution
-+ * %SGX_SECINFO_SECS:	a SECS page
-+ * %SGX_SECINFO_TCS:	a TCS page
-+ * %SGX_SECINFO_REG:	a regular page
-+ * %SGX_SECINFO_VA:	a VA page
-+ * %SGX_SECINFO_TRIM:	a page in trimmed state
-+ */
-+enum sgx_secinfo_flags {
-+	SGX_SECINFO_R			= BIT(0),
-+	SGX_SECINFO_W			= BIT(1),
-+	SGX_SECINFO_X			= BIT(2),
-+	SGX_SECINFO_SECS		= (SGX_PAGE_TYPE_SECS << 8),
-+	SGX_SECINFO_TCS			= (SGX_PAGE_TYPE_TCS << 8),
-+	SGX_SECINFO_REG			= (SGX_PAGE_TYPE_REG << 8),
-+	SGX_SECINFO_VA			= (SGX_PAGE_TYPE_VA << 8),
-+	SGX_SECINFO_TRIM		= (SGX_PAGE_TYPE_TRIM << 8),
-+};
++	if (sgx_calc_ssa_frame_size(secs->miscselect, secs->xfrm) > secs->ssa_frame_size)
++		return -EINVAL;
 +
-+#define SGX_SECINFO_PERMISSION_MASK	GENMASK_ULL(2, 0)
-+#define SGX_SECINFO_PAGE_TYPE_MASK	(SGX_PAGE_TYPE_MASK << 8)
-+#define SGX_SECINFO_RESERVED_MASK	~(SGX_SECINFO_PERMISSION_MASK | \
-+					  SGX_SECINFO_PAGE_TYPE_MASK)
++	if (memchr_inv(secs->reserved1, 0, sizeof(secs->reserved1)) ||
++	    memchr_inv(secs->reserved2, 0, sizeof(secs->reserved2)) ||
++	    memchr_inv(secs->reserved3, 0, sizeof(secs->reserved3)) ||
++	    memchr_inv(secs->reserved4, 0, sizeof(secs->reserved4)))
++		return -EINVAL;
 +
-+/**
-+ * struct sgx_secinfo - describes attributes of an EPC page
-+ * @flags:	permissions and type
-+ *
-+ * Used together with ENCLS leaves that add or modify an EPC page to an
-+ * enclave to define page permissions and type.
-+ */
-+struct sgx_secinfo {
-+	u64 flags;
-+	u8  reserved[56];
-+} __packed __aligned(64);
++	return 0;
++}
 +
-+#define SGX_PCMD_RESERVED_SIZE 40
-+
-+/**
-+ * struct sgx_pcmd - Paging Crypto Metadata (PCMD)
-+ * @enclave_id:	enclave identifier
-+ * @mac:	MAC over PCMD, page contents and isvsvn
-+ *
-+ * PCMD is stored for every swapped page to the regular memory. When ELDU loads
-+ * the page back it recalculates the MAC by using a isvsvn number stored in a
-+ * VA page. Together these two structures bring integrity and rollback
-+ * protection.
-+ */
-+struct sgx_pcmd {
++static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
++{
++	struct sgx_epc_page *secs_epc;
++	struct sgx_pageinfo pginfo;
 +	struct sgx_secinfo secinfo;
-+	u64 enclave_id;
-+	u8  reserved[SGX_PCMD_RESERVED_SIZE];
-+	u8  mac[16];
-+} __packed __aligned(128);
++	unsigned long encl_size;
++	struct file *backing;
++	long ret;
 +
-+#define SGX_SIGSTRUCT_RESERVED1_SIZE 84
-+#define SGX_SIGSTRUCT_RESERVED2_SIZE 20
-+#define SGX_SIGSTRUCT_RESERVED3_SIZE 32
-+#define SGX_SIGSTRUCT_RESERVED4_SIZE 12
++	if (sgx_validate_secs(secs)) {
++		pr_debug("invalid SECS\n");
++		return -EINVAL;
++	}
++
++	/* The extra page goes to SECS. */
++	encl_size = secs->size + PAGE_SIZE;
++
++	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
++				   VM_NORESERVE);
++	if (IS_ERR(backing))
++		return PTR_ERR(backing);
++
++	encl->backing = backing;
++
++	secs_epc = __sgx_alloc_epc_page();
++	if (IS_ERR(secs_epc)) {
++		ret = PTR_ERR(secs_epc);
++		goto err_out_backing;
++	}
++
++	encl->secs.epc_page = secs_epc;
++
++	pginfo.addr = 0;
++	pginfo.contents = (unsigned long)secs;
++	pginfo.metadata = (unsigned long)&secinfo;
++	pginfo.secs = 0;
++	memset(&secinfo, 0, sizeof(secinfo));
++
++	ret = __ecreate((void *)&pginfo, sgx_get_epc_addr(secs_epc));
++	if (ret) {
++		pr_debug("ECREATE returned %ld\n", ret);
++		goto err_out;
++	}
++
++	if (secs->attributes & SGX_ATTR_DEBUG)
++		atomic_or(SGX_ENCL_DEBUG, &encl->flags);
++
++	encl->secs.encl = encl;
++	encl->base = secs->base;
++	encl->size = secs->size;
++	encl->ssaframesize = secs->ssa_frame_size;
++
++	/*
++	 * Set SGX_ENCL_CREATED only after the enclave is fully prepped.  This
++	 * allows setting and checking enclave creation without having to take
++	 * encl->lock.
++	 */
++	atomic_or(SGX_ENCL_CREATED, &encl->flags);
++
++	return 0;
++
++err_out:
++	sgx_free_epc_page(encl->secs.epc_page);
++	encl->secs.epc_page = NULL;
++
++err_out_backing:
++	fput(encl->backing);
++	encl->backing = NULL;
++
++	return ret;
++}
 +
 +/**
-+ * struct sgx_sigstruct_header -  defines author of the enclave
-+ * @header1:		constant byte string
-+ * @vendor:		must be either 0x0000 or 0x8086
-+ * @date:		YYYYMMDD in BCD
-+ * @header2:		costant byte string
-+ * @swdefined:		software defined value
-+ */
-+struct sgx_sigstruct_header {
-+	u64 header1[2];
-+	u32 vendor;
-+	u32 date;
-+	u64 header2[2];
-+	u32 swdefined;
-+	u8  reserved1[84];
-+} __packed;
-+
-+/**
-+ * struct sgx_sigstruct_body - defines contents of the enclave
-+ * @miscselect:		additional information stored to an SSA frame
-+ * @misc_mask:		required miscselect in SECS
-+ * @attributes:		attributes for enclave
-+ * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-+ * @attributes_mask:	required attributes in SECS
-+ * @xfrm_mask:		required XFRM in SECS
-+ * @mrenclave:		SHA256-hash of the enclave contents
-+ * @isvprodid:		a user-defined value that is used in key derivation
-+ * @isvsvn:		a user-defined value that is used in key derivation
-+ */
-+struct sgx_sigstruct_body {
-+	u32 miscselect;
-+	u32 misc_mask;
-+	u8  reserved2[20];
-+	u64 attributes;
-+	u64 xfrm;
-+	u64 attributes_mask;
-+	u64 xfrm_mask;
-+	u8  mrenclave[32];
-+	u8  reserved3[32];
-+	u16 isvprodid;
-+	u16 isvsvn;
-+} __packed;
-+
-+/**
-+ * struct sgx_sigstruct - an enclave signature
-+ * @header:		defines author of the enclave
-+ * @modulus:		the modulus of the public key
-+ * @exponent:		the exponent of the public key
-+ * @signature:		the signature calculated over the fields except modulus,
-+ * @body:		defines contents of the enclave
-+ * @q1:			a value used in RSA signature verification
-+ * @q2:			a value used in RSA signature verification
++ * sgx_ioc_enclave_create - handler for %SGX_IOC_ENCLAVE_CREATE
++ * @encl:	an enclave pointer
++ * @arg:	userspace pointer to a struct sgx_enclave_create instance
 + *
-+ * Header and body are the parts that are actual signed. The remaining fields
-+ * define the signature of the enclave.
++ * Allocate kernel data structures for a new enclave and execute ECREATE after
++ * checking that the provided data for SECS meets the expectations of ECREATE
++ * for an uninitialized enclave and size of the address space does not surpass the
++ * platform expectations. This validation is done by sgx_validate_secs().
++ *
++ * Return:
++ *   0 on success,
++ *   -errno otherwise
 + */
-+struct sgx_sigstruct {
-+	struct sgx_sigstruct_header header;
-+	u8  modulus[SGX_MODULUS_SIZE];
-+	u32 exponent;
-+	u8  signature[SGX_MODULUS_SIZE];
-+	struct sgx_sigstruct_body body;
-+	u8  reserved4[12];
-+	u8  q1[SGX_MODULUS_SIZE];
-+	u8  q2[SGX_MODULUS_SIZE];
-+} __packed;
++static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
++{
++	struct sgx_enclave_create ecreate;
++	struct page *secs_page;
++	struct sgx_secs *secs;
++	int ret;
 +
-+#define SGX_LAUNCH_TOKEN_SIZE 304
++	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
++		return -EINVAL;
 +
-+#endif /* _ASM_X86_SGX_ARCH_H */
++	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
++		return -EFAULT;
++
++	secs_page = alloc_page(GFP_KERNEL);
++	if (!secs_page)
++		return -ENOMEM;
++
++	secs = kmap(secs_page);
++	if (copy_from_user(secs, (void __user *)ecreate.src, sizeof(*secs))) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	ret = sgx_encl_create(encl, secs);
++
++out:
++	kunmap(secs_page);
++	__free_page(secs_page);
++	return ret;
++}
++
++long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
++{
++	struct sgx_encl *encl = filep->private_data;
++	int ret, encl_flags;
++
++	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
++	if (encl_flags & SGX_ENCL_IOCTL)
++		return -EBUSY;
++
++	if (encl_flags & SGX_ENCL_DEAD) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	switch (cmd) {
++	case SGX_IOC_ENCLAVE_CREATE:
++		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
++		break;
++	default:
++		ret = -ENOIOCTLCMD;
++		break;
++	}
++
++out:
++	atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
++	return ret;
++}
 -- 
 2.25.1
 
