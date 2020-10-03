@@ -1,431 +1,301 @@
-Return-Path: <SRS0=00MA=DJ=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=MzOG=DK=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CB7C4363D
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Oct 2020 21:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C4AC4363C
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 00:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D33A1206DD
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Oct 2020 21:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4746206E3
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 00:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725379AbgJBVMT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 2 Oct 2020 17:12:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34496 "EHLO mail.kernel.org"
+        id S1725550AbgJCAYC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 2 Oct 2020 20:24:02 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25767 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbgJBVMT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 2 Oct 2020 17:12:19 -0400
-Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11E71206DB;
-        Fri,  2 Oct 2020 21:12:17 +0000 (UTC)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cedric Xing <cedric.xing@intel.com>
-Subject: [PATCH v2] x86/vdso: Flatten and clean up struct sgx_enclave_run
-Date:   Sat,  3 Oct 2020 00:12:12 +0300
-Message-Id: <20201002211212.620059-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+        id S1725379AbgJCAYC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 2 Oct 2020 20:24:02 -0400
+IronPort-SDR: dFpyDUpIK6b1V+KMf8Q3H7LBbX31h0N54kf/VQQNXVnRBdxM/P4VJcGWOfZnRX+kC/N0qXGsEH
+ yZtqXZUo0eUg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9762"; a="160432096"
+X-IronPort-AV: E=Sophos;i="5.77,329,1596524400"; 
+   d="scan'208";a="160432096"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2020 17:24:01 -0700
+IronPort-SDR: +Z8AAU6YVx9vKo+Tb0ICijBJlC7rCixZj6CQqE4Ej3NlwfzgyeFuh7ceIEraqQutXjaj+6tLVV
+ GyxM+MrVohQQ==
+X-IronPort-AV: E=Sophos;i="5.77,329,1596524400"; 
+   d="scan'208";a="511263071"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO mqcpg7oapc828.gar.corp.intel.com) ([10.255.33.58])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 02 Oct 2020 17:23:57 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Jethro Beekman" <jethro@fortanix.com>,
+        "Chunyang Hui" <sanqian.hcy@antfin.com>,
+        "Jordan Hand" <jorhand@linux.microsoft.com>,
+        "Nathaniel McCallum" <npmccallum@redhat.com>,
+        "Seth Moore" <sethmo@google.com>,
+        "Darren Kenny" <darren.kenny@oracle.com>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        "Suresh Siddha" <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v38 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-13-jarkko.sakkinen@linux.intel.com>
+Date:   Fri, 02 Oct 2020 19:23:55 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.0rvxzr02wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+In-Reply-To: <20200915112842.897265-13-jarkko.sakkinen@linux.intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Reduce the struct size to 64 bytes. It makes sense to have a naturally
-aligning struct size and it leaves 24 bytes of spare space for possible
-future expansion. Having 256 bytes is over the top without any reasonable
-explanation, which does not exist in the commit for the SGX vDSO.
+On Tue, 15 Sep 2020 06:28:30 -0500, Jarkko Sakkinen  
+<jarkko.sakkinen@linux.intel.com> wrote:
 
-Drop struct sgx_exception. It does not serve any semantic purpose in the
-context of this vDSO. Doing this is also consistent with user_handler and
-user_data fields, as neither are they encapsulated in an embedded data
-structure. Use exception_vector, exception_error_code and exception_addr
-as the variables that store vDSO exception fixup provided information.
+> Add an ioctl that performs ENCLS[ECREATE], which creates SGX Enclave
+> Control Structure for the enclave. SECS contains attributes about the
+> enclave that are used by the hardware and cannot be directly accessed by
+> software, as SECS resides in the EPC.
+>
+> One essential field in SECS is a field that stores the SHA256 of the
+> measured enclave pages. This field, MRENCLAVE, is initialized by the
+> ECREATE instruction and updated by every EADD and EEXTEND operation.
+> Finally, EINIT locks down the value.
+>
+> Acked-by: Jethro Beekman <jethro@fortanix.com>
+> Tested-by: Jethro Beekman <jethro@fortanix.com>
+> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+> Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+> Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+> Tested-by: Seth Moore <sethmo@google.com>
+> Tested-by: Darren Kenny <darren.kenny@oracle.com>
+> Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  arch/x86/include/uapi/asm/sgx.h               |  25 ++
+>  arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+>  arch/x86/kernel/cpu/sgx/driver.c              |  12 +
+>  arch/x86/kernel/cpu/sgx/driver.h              |   1 +
+>  arch/x86/kernel/cpu/sgx/ioctl.c               | 220 ++++++++++++++++++
+>  6 files changed, 260 insertions(+)
+>  create mode 100644 arch/x86/include/uapi/asm/sgx.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
+>
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst  
+> b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 2a198838fca9..a89e1c46a25a 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -323,6 +323,7 @@ Code  Seq#    Include  
+> File                                           Comments
+>                                                                       <mailto:tlewis@mindspring.com>
+>  0xA3  90-9F  linux/dtlk.h
+>  0xA4  00-1F  uapi/linux/tee.h                                         
+> Generic TEE subsystem
+> +0xA4  00-1F  uapi/asm/sgx.h                                           
+> <mailto:linux-sgx@vger.kernel.org>
+>  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+>  0xAB  00-1F  linux/nbd.h
+>  0xAC  00-1F  linux/raw.h
+> diff --git a/arch/x86/include/uapi/asm/sgx.h  
+> b/arch/x86/include/uapi/asm/sgx.h
+> new file mode 100644
+> index 000000000000..c75b375f3770
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR  
+> BSD-3-Clause) */
+> +/*
+> + * Copyright(c) 2016-19 Intel Corporation.
+> + */
+> +#ifndef _UAPI_ASM_X86_SGX_H
+> +#define _UAPI_ASM_X86_SGX_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +#define SGX_MAGIC 0xA4
+> +
+> +#define SGX_IOC_ENCLAVE_CREATE \
+> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+> +
+> +/**
+> + * struct sgx_enclave_create - parameter structure for the
+> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
+> + * @src:	address for the SECS page data
+> + */
+> +struct sgx_enclave_create  {
+> +	__u64	src;
+> +};
+> +
+> +#endif /* _UAPI_ASM_X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/Makefile  
+> b/arch/x86/kernel/cpu/sgx/Makefile
+> index 3fc451120735..91d3dc784a29 100644
+> --- a/arch/x86/kernel/cpu/sgx/Makefile
+> +++ b/arch/x86/kernel/cpu/sgx/Makefile
+> @@ -1,4 +1,5 @@
+>  obj-y += \
+>  	driver.o \
+>  	encl.o \
+> +	ioctl.o \
+>  	main.o
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c  
+> b/arch/x86/kernel/cpu/sgx/driver.c
+> index f54da5f19c2b..7bdb49dfcca6 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -114,10 +114,22 @@ static unsigned long sgx_get_unmapped_area(struct  
+> file *file,
+>  	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
+>  }
+> +#ifdef CONFIG_COMPAT
+> +static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+> +			      unsigned long arg)
+> +{
+> +	return sgx_ioctl(filep, cmd, arg);
+> +}
+> +#endif
+> +
+>  static const struct file_operations sgx_encl_fops = {
+>  	.owner			= THIS_MODULE,
+>  	.open			= sgx_open,
+>  	.release		= sgx_release,
+> +	.unlocked_ioctl		= sgx_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +	.compat_ioctl		= sgx_compat_ioctl,
+> +#endif
+>  	.mmap			= sgx_mmap,
+>  	.get_unmapped_area	= sgx_get_unmapped_area,
+>  };
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.h  
+> b/arch/x86/kernel/cpu/sgx/driver.h
+> index f7ce40dedc91..e4063923115b 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.h
+> +++ b/arch/x86/kernel/cpu/sgx/driver.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/sched.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/asm/sgx.h>
+>  #include "sgx.h"
+> #define SGX_EINIT_SPIN_COUNT	20
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c  
+> b/arch/x86/kernel/cpu/sgx/ioctl.c
+> new file mode 100644
+> index 000000000000..352a3c461812
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -0,0 +1,220 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-19 Intel Corporation.
+> +
+> +#include <asm/mman.h>
+> +#include <linux/mman.h>
+> +#include <linux/delay.h>
+> +#include <linux/file.h>
+> +#include <linux/hashtable.h>
+> +#include <linux/highmem.h>
+> +#include <linux/ratelimit.h>
+> +#include <linux/sched/signal.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/slab.h>
+> +#include <linux/suspend.h>
+> +#include "driver.h"
+> +#include "encl.h"
+> +#include "encls.h"
+> +
+> +static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
+> +{
+> +	u32 size_max = PAGE_SIZE;
+> +	u32 size;
+> +	int i;
+> +
+> +	for (i = 2; i < 64; i++) {
+> +		if (!((1 << i) & xfrm))
+> +			continue;
+> +
+> +		size = SGX_SSA_GPRS_SIZE + sgx_xsave_size_tbl[i];
+> +
+> +		if (miscselect & SGX_MISC_EXINFO)
+> +			size += SGX_SSA_MISC_EXINFO_SIZE;
+> +
+> +		if (size > size_max)
+> +			size_max = size;
+> +	}
+> +
+> +	return PFN_UP(size_max);
+> +}
+> +
+> +static int sgx_validate_secs(const struct sgx_secs *secs)
+> +{
+> +	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
+> +		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
+> +
+> +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> +		return -EINVAL;
+> +
+> +	if (secs->base & (secs->size - 1))
+> +		return -EINVAL;
+> +
+> +	if (secs->miscselect & sgx_misc_reserved_mask ||
+> +	    secs->attributes & sgx_attributes_reserved_mask ||
+> +	    secs->xfrm & sgx_xfrm_reserved_mask)
+> +		return -EINVAL;
+> +
 
-The documentation, selftest and the kernel source code use the terms "user
-handler" and "exit handler" in somewhat inconsistent manner. Use "user
-handler" everywhere as the callback is a caller provided, and thus we
-don't know what it is doing.
+Attributes should not be enforced against what's available on platform but  
+checked and enforced against the mask for enforcement in sigstruct. For  
+example an enclave could opt to sign with AVX bit in xfrm, but still be  
+loadable on a platform without it if the sigstruct->body.attributes_mask  
+does not turn that bit on.
 
-Remove 'exit_reason' as it is a redundant field. Instead, have just a
-field called 'leaf' that tells the last seen ENCLU.
+Suggest to remove the above check,and do following during EINIt in  
+sgx_encl_init:
 
-Validate the whole reserved (aka padding) area that it contains only
-zero bytes. It is an unsafe practice to not validate the full data
-structure. As a side-effect, 'flags' can be removed because it can
-be added later as one can assume that the reserved area does not
-contain random bytes, but instead is always filled with zeros.
+-       /* Check that the required attributes have been authorized. */
++       /* Check that the requested attributes have been authorized. */
+         if (encl->secs_attributes & ~encl->allowed_attributes)
+                 return -EACCES;
 
-Cc: Nathaniel McCallum <npmccallum@redhat.com>
-Cc: Haitao Huang <haitao.huang@linux.intel.com>
-CC: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Cedric Xing <cedric.xing@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-* Rename aex_handler as user handler.
-* Refine exception_* naming a just a bit more in struct sgx_enclave_run.
-* Add zero validation for the reserved area, as it helps to protect among
-  other things, from kernel bugs. This was already experienced with the
-  self-test while developing this patch version. This fully removes the
-  need to have the 'flags' field in the structure, as formally it had the
-  same semantics as just checking the first 4 bytes.
-* Fix memory offsets in vsgx.S. There were some mistakes in the previous
-  version. This bug was catched by the aformentioned memory validation
-  when running the self-test.
-* Refine check_result() in the selftest to report all issues before
-  returning. Rename it as report_results() and make it a boolean function,
-  as the POSIX error code is not used for anything.
- arch/x86/entry/vdso/vsgx.S         | 67 ++++++++++++++++--------------
- arch/x86/include/asm/enclu.h       |  1 +
- arch/x86/include/uapi/asm/sgx.h    | 62 ++++++++++-----------------
- tools/testing/selftests/sgx/main.c | 49 +++++++++++++---------
- 4 files changed, 87 insertions(+), 92 deletions(-)
++       /* Check that mandatory features are supported. */
++       if (sigstruct->body.attributes & sigstruct->body.attributes_mask &
++           sgx_attributes_reserved_mask)
++               return -EINVAL;
++       if (sigstruct->body.miscselect & sigstruct->body.misc_mask &
++           sgx_misc_reserved_mask)
++               return -EINVAL;
++       if (sigstruct->body.xfrm & sigstruct->body.xfrm_mask &
++           sgx_xfrm_reserved_mask)
++               return -EINVAL;
++
+         ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
 
-diff --git a/arch/x86/entry/vdso/vsgx.S b/arch/x86/entry/vdso/vsgx.S
-index 8f8190ab9ed5..23d110aac432 100644
---- a/arch/x86/entry/vdso/vsgx.S
-+++ b/arch/x86/entry/vdso/vsgx.S
-@@ -7,25 +7,19 @@
- 
- #include "extable.h"
- 
--/* Offset of 'struct sgx_enclave_run' relative to %rbp. */
--#define SGX_ENCLAVE_RUN_PTR	2*8
--
--/* Offsets into 'struct sgx_enclave_run'. */
--#define SGX_ENCLAVE_RUN_TCS		0*8
--#define SGX_ENCLAVE_RUN_FLAGS		1*8
--#define SGX_ENCLAVE_RUN_EXIT_REASON	1*8 + 4
--#define SGX_ENCLAVE_RUN_USER_HANDLER	2*8
--/* #define SGX_ENCLAVE_RUN_USER_DATA	3*8 */
--#define SGX_ENCLAVE_RUN_EXCEPTION	4*8
--
--#define SGX_SYNCHRONOUS_EXIT		0
--#define SGX_EXCEPTION_EXIT		1
--
--/* Offsets into sgx_enter_enclave.exception. */
--#define SGX_EX_LEAF			0*8
--#define SGX_EX_TRAPNR			0*8+4
--#define SGX_EX_ERROR_CODE		0*8+6
--#define SGX_EX_ADDRESS			1*8
-+/* Relative to %rbp. */
-+#define SGX_ENCLAVE_OFFSET_OF_RUN		16
-+
-+/* The offsets relative to struct sgx_enclave_run. */
-+#define SGX_ENCLAVE_RUN_TCS			0
-+#define SGX_ENCLAVE_RUN_USER_HANDLER		8
-+#define SGX_ENCLAVE_RUN_USER_DATA		16 /* unused */
-+#define SGX_ENCLAVE_RUN_LEAF			24
-+#define SGX_ENCLAVE_RUN_EXCEPTION_VECTOR	28
-+#define SGX_ENCLAVE_RUN_EXCEPTION_ERROR_CODE	30
-+#define SGX_ENCLAVE_RUN_EXCEPTION_ADDR		32
-+#define SGX_ENCLAVE_RUN_RESERVED_START		40
-+#define SGX_ENCLAVE_RUN_RESERVED_END		64
- 
- .code64
- .section .text, "ax"
-@@ -49,12 +43,23 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- 	cmp	$ERESUME, %eax
- 	ja	.Linvalid_input
- 
--	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rcx
-+	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rcx
- 
--	/* No flags are currently defined/supported. */
--	cmpl	$0, SGX_ENCLAVE_RUN_FLAGS(%rcx)
-+	/* Validate that the reserved area contains only zeros. */
-+	push	%rax
-+	push	%rbx
-+	mov	$SGX_ENCLAVE_RUN_RESERVED_START, %rbx
-+1:
-+	mov	(%rcx, %rbx), %rax
-+	cmpq	$0, %rax
- 	jne	.Linvalid_input
- 
-+	add	$8, %rbx
-+	cmpq	$SGX_ENCLAVE_RUN_RESERVED_END, %rbx
-+	jne	1b
-+	pop	%rbx
-+	pop	%rax
-+
- 	/* Load TCS and AEP */
- 	mov	SGX_ENCLAVE_RUN_TCS(%rcx), %rbx
- 	lea	.Lasync_exit_pointer(%rip), %rcx
-@@ -65,10 +70,10 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- 	enclu
- 
- 	/* EEXIT jumps here unless the enclave is doing something fancy. */
--	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rbx
-+	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rbx
- 
- 	/* Set exit_reason. */
--	movl	$SGX_SYNCHRONOUS_EXIT, SGX_ENCLAVE_RUN_EXIT_REASON(%rbx)
-+	movl	$EEXIT, SGX_ENCLAVE_RUN_LEAF(%rbx)
- 
- 	/* Invoke userspace's exit handler if one was provided. */
- .Lhandle_exit:
-@@ -92,15 +97,13 @@ SYM_FUNC_START(__vdso_sgx_enter_enclave)
- 	jmp	.Lout
- 
- .Lhandle_exception:
--	mov	SGX_ENCLAVE_RUN_PTR(%rbp), %rbx
--
--	/* Set the exit_reason and exception info. */
--	movl	$SGX_EXCEPTION_EXIT, SGX_ENCLAVE_RUN_EXIT_REASON(%rbx)
-+	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rbx
- 
--	mov	%eax, (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_LEAF)(%rbx)
--	mov	%di,  (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_TRAPNR)(%rbx)
--	mov	%si,  (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_ERROR_CODE)(%rbx)
--	mov	%rdx, (SGX_ENCLAVE_RUN_EXCEPTION + SGX_EX_ADDRESS)(%rbx)
-+	/* Set the exception info. */
-+	mov	%eax, (SGX_ENCLAVE_RUN_LEAF)(%rbx)
-+	mov	%di,  (SGX_ENCLAVE_RUN_EXCEPTION_VECTOR)(%rbx)
-+	mov	%si,  (SGX_ENCLAVE_RUN_EXCEPTION_ERROR_CODE)(%rbx)
-+	mov	%rdx, (SGX_ENCLAVE_RUN_EXCEPTION_ADDR)(%rbx)
- 	jmp	.Lhandle_exit
- 
- .Linvoke_userspace_handler:
-diff --git a/arch/x86/include/asm/enclu.h b/arch/x86/include/asm/enclu.h
-index 06157b3e9ede..b1314e41a744 100644
---- a/arch/x86/include/asm/enclu.h
-+++ b/arch/x86/include/asm/enclu.h
-@@ -4,5 +4,6 @@
- 
- #define EENTER	0x02
- #define ERESUME	0x03
-+#define EEXIT	0x04
- 
- #endif /* _ASM_X86_ENCLU_H */
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 236dd7190431..3dd2df44d569 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -74,13 +74,10 @@ struct sgx_enclave_provision {
- 	__u64 attribute_fd;
- };
- 
--#define SGX_SYNCHRONOUS_EXIT	0
--#define SGX_EXCEPTION_EXIT	1
--
- struct sgx_enclave_run;
- 
- /**
-- * typedef sgx_enclave_exit_handler_t - Exit handler function accepted by
-+ * typedef sgx_enclave_user_handler_t - Exit handler function accepted by
-  *					__vdso_sgx_enter_enclave()
-  * @run:	Pointer to the caller provided struct sgx_enclave_run
-  *
-@@ -91,47 +88,30 @@ struct sgx_enclave_run;
-  *  0 or negative to exit vDSO
-  *  positive to re-enter enclave (must be EENTER or ERESUME leaf)
-  */
--typedef int (*sgx_enclave_exit_handler_t)(long rdi, long rsi, long rdx,
-+typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx,
- 					  long rsp, long r8, long r9,
- 					  struct sgx_enclave_run *run);
- 
- /**
-- * struct sgx_enclave_exception - structure to report exceptions encountered in
-- *				  __vdso_sgx_enter_enclave()
-- * @leaf:	ENCLU leaf from \%eax at time of exception
-- * @trapnr:	exception trap number, a.k.a. fault vector
-- * @error_code:	exception error code
-- * @address:	exception address, e.g. CR2 on a #PF
-- */
--struct sgx_enclave_exception {
--	__u32 leaf;
--	__u16 trapnr;
--	__u16 error_code;
--	__u64 address;
--};
--
--/**
-- * struct sgx_enclave_run - Control structure for __vdso_sgx_enter_enclave()
-- * @tcs:		Thread Control Structure used to enter enclave
-- * @flags:		Control flags
-- * @exit_reason:	Cause of exit from enclave, e.g. EEXIT vs. exception
-- * @user_handler:	User provided exit handler (optional)
-- * @user_data:		User provided opaque value (optional)
-- * @exception:		Valid on exit due to exception
-+ * struct sgx_enclave_run - the execution context of __vdso_sgx_enter_enclave()
-+ * @tcs:			TCS used to enter the enclave
-+ * @user_handler:		User provided callback run on exception
-+ * @user_data:			Data passed to the user handler
-+ * @leaf:			The ENCLU leaf we were at (EENTER/ERESUME/EEXIT)
-+ * @exception_vector:		The interrupt vector of the exception
-+ * @exception_error_code:	The exception error code pulled out of the stack
-+ * @exception_addr:		The address that triggered the exception
-+ * @reserved			Reserved for possible future use
-  */
- struct sgx_enclave_run {
- 	__u64 tcs;
--	__u32 flags;
--	__u32 exit_reason;
- 	__u64 user_handler;
- 	__u64 user_data;
--
--	union {
--		struct sgx_enclave_exception exception;
--
--		/* Pad the entire struct to 256 bytes. */
--		__u8 pad[256 - 32];
--	};
-+	__u32 leaf;
-+	__u16 exception_vector;
-+	__u16 exception_error_code;
-+	__u64 exception_addr;
-+	__u8  reserved[24];
- };
- 
- /**
-@@ -160,7 +140,7 @@ struct sgx_enclave_run {
-  * pre-enclave state, e.g. to retrieve @run.exception and @run.user_handler
-  * after an enclave exit.  All other registers are available for use by the
-  * enclave and its runtime, e.g. an enclave can push additional data onto the
-- * stack (and modify RSP) to pass information to the optional exit handler (see
-+ * stack (and modify RSP) to pass information to the optional user handler (see
-  * below).
-  *
-  * Most exceptions reported on ENCLU, including those that occur within the
-@@ -170,22 +150,22 @@ struct sgx_enclave_run {
-  * reported exceptions, -EFAULT is returned and details about the exception are
-  * recorded in @run.exception, the optional sgx_enclave_exception struct.
-  *
-- * If an exit handler is provided, the handler will be invoked on synchronous
-+ * If a user handler is provided, the handler will be invoked on synchronous
-  * exits from the enclave and for all synchronously reported exceptions. In
-  * latter case, @run.exception is filled prior to invoking the handler.
-  *
-- * The exit handler's return value is interpreted as follows:
-+ * The user handler's return value is interpreted as follows:
-  *  >0:		continue, restart __vdso_sgx_enter_enclave() with @ret as @leaf
-  *   0:		success, return @ret to the caller
-  *  <0:		error, return @ret to the caller
-  *
-- * The exit handler may transfer control, e.g. via longjmp() or C++ exception,
-+ * The user handler may transfer control, e.g. via longjmp() or C++ exception,
-  * without returning to __vdso_sgx_enter_enclave().
-  *
-  * Return:
-  *  0 on success (ENCLU reached),
-  *  -EINVAL if ENCLU leaf is not allowed,
-- *  -errno for all other negative values returned by the userspace exit handler
-+ *  -errno for all other negative values returned by the userspace user handler
-  */
- typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
- 					unsigned long rdx, unsigned int leaf,
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 0316701d6bbd..26e00f176535 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -123,29 +123,38 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
- 	return NULL;
- }
- 
--int check_result(struct sgx_enclave_run *run, int ret, uint64_t result,
--		 const char *test)
-+bool report_results(struct sgx_enclave_run *run, int ret, uint64_t result,
-+		  const char *test)
- {
-+	bool valid = true;
-+
- 	if (ret) {
- 		printf("FAIL: %s() returned: %d\n", test, ret);
--		return ret;
--	} else if (run->exit_reason != SGX_SYNCHRONOUS_EXIT) {
--		printf("FAIL: %s() exit reason, expected: %u, got: %u\n",
--		       test, SGX_SYNCHRONOUS_EXIT, run->exit_reason);
--		return -EIO;
--	} else if (result != MAGIC) {
--		printf("FAIL: %s(), expected: 0x%lx, got: 0x%lx\n",
--		       test, MAGIC, result);
--		return -EIO;
--	} else if (run->user_data) {
-+		valid = false;
-+	}
-+
-+	if (run->leaf != EEXIT) {
-+		printf("FAIL: %s() leaf, expected: %u, got: %u\n", test, EEXIT,
-+		       run->leaf);
-+		valid = false;
-+	}
-+
-+	if (result != MAGIC) {
-+		printf("FAIL: %s(), expected: 0x%lx, got: 0x%lx\n", test, MAGIC,
-+		       result);
-+		valid = false;
-+	}
-+
-+	if (run->user_data) {
- 		printf("FAIL: %s() user data, expected: 0x0, got: 0x%llx\n",
- 		       test, run->user_data);
--		return -EIO;
-+		valid = false;
- 	}
--	return 0;
-+
-+	return valid;
- }
- 
--static int exit_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r9,
-+static int user_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r9,
- 			struct sgx_enclave_run *run)
- {
- 	run->user_data = 0;
-@@ -163,6 +172,8 @@ int main(int argc, char *argv[], char *envp[])
- 	void *addr;
- 	int ret;
- 
-+	memset(&run, 0, sizeof(run));
-+
- 	if (!encl_load("test_encl.elf", &encl))
- 		goto err;
- 
-@@ -203,7 +214,7 @@ int main(int argc, char *argv[], char *envp[])
- 	eenter = addr + eenter_sym->st_value;
- 
- 	ret = sgx_call_vdso((void *)&MAGIC, &result, 0, EENTER, NULL, NULL, &run);
--	if (check_result(&run, ret, result, "sgx_call_vdso"))
-+	if (!report_results(&run, ret, result, "sgx_call_vdso"))
- 		goto err;
- 
- 
-@@ -211,15 +222,15 @@ int main(int argc, char *argv[], char *envp[])
- 	result = 0;
- 	ret = eenter((unsigned long)&MAGIC, (unsigned long)&result, 0, EENTER,
- 		     0, 0, &run);
--	if (check_result(&run, ret, result, "eenter"))
-+	if (!report_results(&run, ret, result, "eenter"))
- 		goto err;
- 
- 	/* And with an exit handler. */
--	run.user_handler = (__u64)exit_handler;
-+	run.user_handler = (__u64)user_handler;
- 	run.user_data = 0xdeadbeef;
- 	ret = eenter((unsigned long)&MAGIC, (unsigned long)&result, 0, EENTER,
- 		     0, 0, &run);
--	if (check_result(&run, ret, result, "exit_handler"))
-+	if (!report_results(&run, ret, result, "user_handler"))
- 		goto err;
- 
- 	printf("SUCCESS\n");
--- 
-2.25.1
-
+Haitao
