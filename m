@@ -4,45 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305B9C4363D
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A294C46466
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3C2F21D82
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34E9821D80
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725819AbgJCEvM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Oct 2020 00:51:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48506 "EHLO mail.kernel.org"
+        id S1725836AbgJCEvV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Oct 2020 00:51:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbgJCEvJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 3 Oct 2020 00:51:09 -0400
+        id S1725791AbgJCEvU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 3 Oct 2020 00:51:20 -0400
 Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A40F421481;
-        Sat,  3 Oct 2020 04:51:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F5322193E;
+        Sat,  3 Oct 2020 04:51:19 +0000 (UTC)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v39 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch Control hardware bits
-Date:   Sat,  3 Oct 2020 07:50:37 +0300
-Message-Id: <20201003045059.665934-3-jarkko.sakkinen@linux.intel.com>
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: [PATCH v39 07/24] x86/cpu/intel: Add nosgx kernel parameter
+Date:   Sat,  3 Oct 2020 07:50:42 +0300
+Message-Id: <20201003045059.665934-8-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
@@ -52,78 +50,50 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Add kernel parameter to disable Intel SGX kernel support.
 
-Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-Launch Control.
-
-Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-called enclaves, are always signed. All enclaves signed with the public key
-are unconditionally allowed to initialize. [1]
-
-Add FEAT_CTL_SGX_LC_ENABLED, which informs whether the aformentioned MSRs
-are writable or not. If the bit is off, the public key MSRs are read-only
-for the OS.
-
-If the MSRs are read-only, the platform must provide a launch enclave (LE).
-LE can create cryptographic tokens for other enclaves that they can pass
-together with their signature to the ENCLS(EINIT) opcode, which is used
-to initialize enclaves.
-
-Linux is unlikely to support the locked configuration because it takes away
-the control of the launch decisions from the kernel.
-
-[1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
-
-Reviewed-by: Borislav Petkov <bp@alien8.de>
-Acked-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/include/asm/msr-index.h   | 7 +++++++
- 2 files changed, 8 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt | 2 ++
+ arch/x86/kernel/cpu/feat_ctl.c                  | 9 +++++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 7150001d5232..62b58cda034a 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -357,6 +357,7 @@
- #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
- #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
- #define X86_FEATURE_ENQCMD		(16*32+29) /* ENQCMD and ENQCMDS instructions */
-+#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 115c50f4e927..7ff2b35a1b8e 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3356,6 +3356,8 @@
  
- /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
- #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 258d555d22f2..d0c6cfff5b55 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -609,6 +609,7 @@
- #define FEAT_CTL_LOCKED				BIT(0)
- #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
- #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
-+#define FEAT_CTL_SGX_LC_ENABLED			BIT(17)
- #define FEAT_CTL_SGX_ENABLED			BIT(18)
- #define FEAT_CTL_LMCE_ENABLED			BIT(20)
+ 	nosep		[BUGS=X86-32] Disables x86 SYSENTER/SYSEXIT support.
  
-@@ -629,6 +630,12 @@
- #define MSR_IA32_UCODE_WRITE		0x00000079
- #define MSR_IA32_UCODE_REV		0x0000008b
- 
-+/* Intel SGX Launch Enclave Public Key Hash MSRs */
-+#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
-+#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-+#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
-+#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++	nosgx		[X86-64,SGX] Disables Intel SGX kernel support.
 +
- #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
- #define MSR_IA32_SMBASE			0x0000009e
+ 	nosmp		[SMP] Tells an SMP kernel to act as a UP kernel,
+ 			and disable the IO APIC.  legacy for "maxcpus=0".
  
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index c3afcd2e4342..1837df39527f 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -101,6 +101,15 @@ static void clear_sgx_caps(void)
+ 	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+ }
+ 
++static int __init nosgx(char *str)
++{
++	clear_sgx_caps();
++
++	return 0;
++}
++
++early_param("nosgx", nosgx);
++
+ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ {
+ 	bool tboot = tboot_enabled();
 -- 
 2.25.1
 
