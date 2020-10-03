@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5677C47420
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4AEC4363D
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F80322211
-	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB88F235FA
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725919AbgJCEvl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 3 Oct 2020 00:51:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50158 "EHLO mail.kernel.org"
+        id S1725849AbgJCEvW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Oct 2020 00:51:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbgJCEvZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 3 Oct 2020 00:51:25 -0400
+        id S1725811AbgJCEvR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 3 Oct 2020 00:51:17 -0400
 Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39F5B21D92;
-        Sat,  3 Oct 2020 04:51:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 209D8208A9;
+        Sat,  3 Oct 2020 04:51:17 +0000 (UTC)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
@@ -39,9 +39,9 @@ Cc:     linux-kernel@vger.kernel.org,
         ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
         npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v39 09/24] x86/sgx: Add __sgx_alloc_epc_page() and sgx_free_epc_page()
-Date:   Sat,  3 Oct 2020 07:50:44 +0300
-Message-Id: <20201003045059.665934-10-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v39 06/24] x86/cpu/intel: Detect SGX support
+Date:   Sat,  3 Oct 2020 07:50:41 +0300
+Message-Id: <20201003045059.665934-7-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
@@ -51,107 +51,110 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add __sgx_alloc_epc_page(), which iterates through EPC sections and borrows
-a page structure that is not used by anyone else. When a page is no longer
-needed it must be released with sgx_free_epc_page(). This function
-implicitly calls ENCLS[EREMOVE], which will return the page to the
-uninitialized state (i.e. not required from caller part).
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+
+Configure SGX as part of feature control MSR initialization and update
+the associated X86_FEATURE flags accordingly.  Because the kernel will
+require the LE hash MSRs to be writable when running native enclaves,
+disable X86_FEATURE_SGX (and all derivatives) if SGX Launch Control is
+not (or cannot) be fully enabled via feature control MSR.
+
+The check is done for every CPU, not just BSP, in order to verify that
+MSR_IA32_FEATURE_CONTROL is correctly configured on all CPUs. The other
+parts of the kernel, like the enclave driver, expect the same
+configuration from all CPUs.
+
+Note, unlike VMX, clear the X86_FEATURE_SGX* flags for all CPUs if any
+CPU lacks SGX support as the kernel expects SGX to be available on all
+CPUs.  X86_FEATURE_VMX is intentionally cleared only for the current CPU
+so that KVM can provide additional information if KVM fails to load,
+e.g. print which CPU doesn't support VMX.  KVM/VMX requires additional
+per-CPU enabling, e.g. to set CR4.VMXE and do VMXON, and so already has
+the necessary infrastructure to do per-CPU checks.  SGX on the other
+hand doesn't require additional enabling, so clearing the feature flags
+on all CPUs means the SGX subsystem doesn't need to manually do support
+checks on a per-CPU basis.
 
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 62 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++
- 2 files changed, 65 insertions(+)
+ arch/x86/kernel/cpu/feat_ctl.c | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index c5831e3db14a..97c6895fb6c9 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -83,6 +83,68 @@ static bool __init sgx_page_reclaimer_init(void)
- 	return true;
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 29a3bedabd06..c3afcd2e4342 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -93,16 +93,35 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
  }
+ #endif /* CONFIG_X86_VMX_FEATURE_NAMES */
  
-+static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_section *section)
++static void clear_sgx_caps(void)
 +{
-+	struct sgx_epc_page *page;
-+
-+	if (list_empty(&section->page_list))
-+		return NULL;
-+
-+	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
-+	list_del_init(&page->list);
-+
-+	return page;
++	setup_clear_cpu_cap(X86_FEATURE_SGX);
++	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
++	setup_clear_cpu_cap(X86_FEATURE_SGX1);
++	setup_clear_cpu_cap(X86_FEATURE_SGX2);
 +}
 +
-+/**
-+ * __sgx_alloc_epc_page() - Allocate an EPC page
-+ *
-+ * Iterate through EPC sections and borrow a free EPC page to the caller. When a
-+ * page is no longer needed it must be released with sgx_free_epc_page().
-+ *
-+ * Return:
-+ *   an EPC page,
-+ *   -errno on error
-+ */
-+struct sgx_epc_page *__sgx_alloc_epc_page(void)
-+{
-+	struct sgx_epc_section *section;
-+	struct sgx_epc_page *page;
-+	int i;
-+
-+	for (i = 0; i < sgx_nr_epc_sections; i++) {
-+		section = &sgx_epc_sections[i];
-+		spin_lock(&section->lock);
-+		page = __sgx_alloc_epc_page_from_section(section);
-+		spin_unlock(&section->lock);
-+
-+		if (page)
-+			return page;
-+	}
-+
-+	return ERR_PTR(-ENOMEM);
-+}
-+
-+/**
-+ * sgx_free_epc_page() - Free an EPC page
-+ * @page:	an EPC page
-+ *
-+ * Call EREMOVE for an EPC page and insert it back to the list of free pages.
-+ */
-+void sgx_free_epc_page(struct sgx_epc_page *page)
-+{
-+	struct sgx_epc_section *section = sgx_get_epc_section(page);
-+	int ret;
-+
-+	ret = __eremove(sgx_get_epc_addr(page));
-+	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
-+		return;
-+
-+	spin_lock(&section->lock);
-+	list_add_tail(&page->list, &section->page_list);
-+	spin_unlock(&section->lock);
-+}
-+
- static void __init sgx_free_epc_section(struct sgx_epc_section *section)
+ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
  {
- 	struct sgx_epc_page *page;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index dff4f5f16d09..fce756c3434b 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -49,4 +49,7 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
- 	return section->va + (page->desc & PAGE_MASK) - section->pa;
- }
+ 	bool tboot = tboot_enabled();
++	bool enable_sgx;
+ 	u64 msr;
  
-+struct sgx_epc_page *__sgx_alloc_epc_page(void);
-+void sgx_free_epc_page(struct sgx_epc_page *page);
+ 	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+ 		clear_cpu_cap(c, X86_FEATURE_VMX);
++		clear_sgx_caps();
+ 		return;
+ 	}
+ 
++	/*
++	 * Enable SGX if and only if the kernel supports SGX and Launch Control
++	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
++	 */
++	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
++		     cpu_has(c, X86_FEATURE_SGX1) &&
++		     cpu_has(c, X86_FEATURE_SGX_LC) &&
++		     IS_ENABLED(CONFIG_INTEL_SGX);
 +
- #endif /* _X86_SGX_H */
+ 	if (msr & FEAT_CTL_LOCKED)
+ 		goto update_caps;
+ 
+@@ -124,13 +143,16 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
+ 	}
+ 
++	if (enable_sgx)
++		msr |= FEAT_CTL_SGX_ENABLED | FEAT_CTL_SGX_LC_ENABLED;
++
+ 	wrmsrl(MSR_IA32_FEAT_CTL, msr);
+ 
+ update_caps:
+ 	set_cpu_cap(c, X86_FEATURE_MSR_IA32_FEAT_CTL);
+ 
+ 	if (!cpu_has(c, X86_FEATURE_VMX))
+-		return;
++		goto update_sgx;
+ 
+ 	if ( (tboot && !(msr & FEAT_CTL_VMX_ENABLED_INSIDE_SMX)) ||
+ 	    (!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))) {
+@@ -143,4 +165,12 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 		init_vmx_capabilities(c);
+ #endif
+ 	}
++
++update_sgx:
++	if (!(msr & FEAT_CTL_SGX_ENABLED) ||
++	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
++		if (enable_sgx)
++			pr_err_once("SGX disabled by BIOS\n");
++		clear_sgx_caps();
++	}
+ }
 -- 
 2.25.1
 
