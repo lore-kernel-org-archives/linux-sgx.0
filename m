@@ -1,178 +1,107 @@
-Return-Path: <SRS0=pKip=DL=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=E1/z=DM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A39C4363C
-	for <linux-sgx@archiver.kernel.org>; Sun,  4 Oct 2020 23:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04904C4363C
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 00:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7657D206A1
-	for <linux-sgx@archiver.kernel.org>; Sun,  4 Oct 2020 23:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE472206C1
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 00:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbgJDXmJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 4 Oct 2020 19:42:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20869 "EHLO mga07.intel.com"
+        id S1725845AbgJEAlc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 4 Oct 2020 20:41:32 -0400
+Received: from mga12.intel.com ([192.55.52.136]:39508 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbgJDXmJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 4 Oct 2020 19:42:09 -0400
-IronPort-SDR: R5Zpscd5C8uGdYaWjIKupHhcGZJb0yjG2oKenRgYERg7mJ9ON4q5XsMW21q11og/W0xTXM0ej8
- LG+9/7zWSfcQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="227448155"
+        id S1725836AbgJEAlc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 4 Oct 2020 20:41:32 -0400
+IronPort-SDR: GGY+Znj6438G4RjoJAguO4+oRuzBGg29t9GEGcahKhiqzOo9bbuaxfQLVXadMbcGqheCQp1qxu
+ hwQyL3sVgDXQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="142705328"
 X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="227448155"
+   d="scan'208";a="142705328"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 16:42:07 -0700
-IronPort-SDR: seGpSuZbW+Slv1I+Z7lk0E2yUnPxGWRnioLNMY1aTZKPNE2VrS6ifA2Nh788vAzGFJ/MqBgfmE
- NgF6YJL73RIw==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 17:41:32 -0700
+IronPort-SDR: 1+Zcd7yORTbqb4IB93D8PyDE00WgJZ/f1FBmxwn2vgmj+oAA+qiYCGtdNUDvlt/qCOgCudDJgO
+ h61b/MYl8KgQ==
 X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="522376134"
+   d="scan'208";a="522608310"
 Received: from avahldie-mobl.amr.corp.intel.com (HELO localhost) ([10.249.32.74])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 16:41:55 -0700
-Date:   Mon, 5 Oct 2020 02:41:53 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 17:41:29 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jethro Beekman <jethro@fortanix.com>,
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
-        mikko.ylinen@intel.com
-Subject: Re: [PATCH v39 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20201004234153.GA49415@linux.intel.com>
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-12-jarkko.sakkinen@linux.intel.com>
- <20201003195440.GD20115@casper.infradead.org>
- <20201004215049.GA43926@linux.intel.com>
- <20201004222750.GI20115@casper.infradead.org>
+        Jethro Beekman <jethro@fortanix.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH] x86/sgx: Fix sgx_encl_may_map locking
+Date:   Mon,  5 Oct 2020 03:41:20 +0300
+Message-Id: <20201005004120.105849-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201004222750.GI20115@casper.infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Oct 04, 2020 at 11:27:50PM +0100, Matthew Wilcox wrote:
-> On Mon, Oct 05, 2020 at 12:50:49AM +0300, Jarkko Sakkinen wrote:
-> > What is shoukd take is encl->lock.
-> > 
-> > The loop was pre-v36 like:
-> > 
-> > 	idx_start = PFN_DOWN(start);
-> > 	idx_end = PFN_DOWN(end - 1);
-> > 
-> > 	for (idx = idx_start; idx <= idx_end; ++idx) {
-> > 		mutex_lock(&encl->lock);
-> > 		page = radix_tree_lookup(&encl->page_tree, idx);
-> > 		mutex_unlock(&encl->lock);
-> > 
-> > 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> > 			return -EACCES;
-> > 	}
-> > 
-> > Looking at xarray.h and filemap.c, I'm thinking something along the
-> > lines of:
-> > 
-> > 	for (idx = idx_start; idx <= idx_end; ++idx) {
-> > 		mutex_lock(&encl->lock);
-> > 		page = xas_find(&xas, idx + 1);
-> > 		mutex_unlock(&encl->lock);
-> > 
-> > 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> > 			return -EACCES;
-> > 	}
-> > 
-> > Does this look about right?
-> 
-> Not really ...
-> 
-> 	int ret = 0;
-> 
-> 	mutex_lock(&encl->lock);
-> 	rcu_read_lock();
+Fix the issue further discussed in:
 
-Right, so xa_*() take RCU lock implicitly and xas_* do not.
+1. https://lore.kernel.org/linux-sgx/op.0rwbv916wjvjmi@mqcpg7oapc828.gar.corp.intel.com/
+2. https://lore.kernel.org/linux-sgx/20201003195440.GD20115@casper.infradead.org/
 
-> 	while (xas.index < idx_end) {
-> 		page = xas_next(&xas);
+Reported-by: Haitao Huang <haitao.huang@linux.intel.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Jethro Beekman <jethro@fortanix.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-It should iterate through every possible page index within the range,
-even the ones that do not have an entry, i.e. this loop also checks
-that there are no empty slots.
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index ae45f8f0951e..a225e96c7a39 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -304,11 +304,10 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 		     unsigned long end, unsigned long vm_flags)
+ {
+ 	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
+-	unsigned long idx_start = PFN_DOWN(start);
+-	unsigned long idx_end = PFN_DOWN(end - 1);
++	unsigned long start_i = PFN_DOWN(start);
++	unsigned long end_i = PFN_DOWN(end - 1);
+ 	struct sgx_encl_page *page;
+-
+-	XA_STATE(xas, &encl->page_array, idx_start);
++	int i;
+ 
+ 	/*
+ 	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
+@@ -317,9 +316,14 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 	if (current->personality & READ_IMPLIES_EXEC)
+ 		return -EACCES;
+ 
+-	xas_for_each(&xas, page, idx_end)
++	for (i = start_i; i <= end_i; i++) {
++		mutex_lock(&encl->lock);
++		page = xa_load(&encl->page_array, i);
++		mutex_unlock(&encl->lock);
++
+ 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
+ 			return -EACCES;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
-Does xas_next() go through every possible index, or skip the non-empty
-ones?
-
-> 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> 			ret = -EACCESS;
-> 			break;
-> 		}
-> 	}
-> 	rcu_read_unlock();
-> 	mutex_unlock(&encl->lock);
-
-In my Geminilake NUC the maximum size of the address space is 64GB for
-an enclave, and it is not fixed but can grow in microarchitectures
-beyond that.
-
-That means that in (*artificial*) worst case the locks would be kept for
-64*1024*1024*1024/4096 = 16777216 iterations.
-
-I just realized that in sgx_encl_load_page ([1], the encl->lock is
-acquired by the caller) I have used xa_load(), which more or less would
-be compatible with the old radix_tree pattern, i.e.
-
-for (idx = idx_start; idx <= idx_end; ++idx) {
-	mutex_lock(&encl->lock);
-	page = xas_load(&encl->page_array, idx);
-	mutex_unlock(&encl->lock);
-
-	if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-		return -EACCES;
-}
-
-To make things stable again, I'll go with this for the immediate future.
-
-> 	return ret;
-> 
-> ... or you could rework to use the xa_lock instead of encl->lock.
-> I don't know how feasible that is for you.
-
-encl->lock is used to protect enclave state but it is true that
-page->vm_max_prort_bits is not modified through concurrent access, once
-the page is added (e.g. by the reclaimer, which gets pages through
-sgx_activate_page_list, not through xarray).
-
-It's an interesting idea, but before even considering it I want to fix
-the bug, even if the fix ought to be somehow unoptimal in terms of
-performance.
-
-Thanks for helping with this. xarray is still somewhat alien to me and
-most of the code I see just use the iterator macros excep mm/*, but
-I'm slowly adapting the concepts.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git/tree/arch/x86/kernel/cpu/sgx/encl.c
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git/tree/arch/x86/kernel/cpu/sgx/main.c
-
-/Jarkko
