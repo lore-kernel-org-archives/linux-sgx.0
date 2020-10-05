@@ -6,87 +6,89 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D8AC4363A
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 19:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21375C4363A
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 19:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 939A6207BC
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 19:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE60207BC
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 19:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbgJETRr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Oct 2020 15:17:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58367 "EHLO mga07.intel.com"
+        id S1725864AbgJETVe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Oct 2020 15:21:34 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58919 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbgJETRr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 5 Oct 2020 15:17:47 -0400
-IronPort-SDR: CD8/Tlonob0Yym5j7mq8Ss2FlQQ5EnG2lT1ujvMb+49SyQFsj9zf7w2Fm/BRm4HuxgsZ0c3bW4
- 5etovzGwtRcQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="228001285"
+        id S1725785AbgJETVd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Oct 2020 15:21:33 -0400
+IronPort-SDR: OU2Cltemb6meryAzUaw6367XonTEC5gdxTWAw25q0tWabCgX4d1Jryyw9AlarM7drbcrRx5pBG
+ 3o3x6DELP5ug==
+X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="228007461"
 X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="228001285"
+   d="scan'208";a="228007461"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP; 05 Oct 2020 12:10:36 -0700
-IronPort-SDR: LITxgw8lrohVlmLwxcPRbEX/X+bqPJcMB1lS3PJBuqJw0whbar/wdhxGV0VF1+pEgtDER57DGf
- fvSADB079sPA==
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 12:12:55 -0700
+IronPort-SDR: XazBjcgRw8zTNuOCn2KN1FdYcATpJZqIOGgvXwj1bHQB7XSHrENXIERlalgnu/2QR6Eje/KyzA
+ 16ERkSNu3xiw==
 X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="526507730"
+   d="scan'208";a="526523050"
 Received: from unknown (HELO localhost) ([10.249.32.156])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 10:28:38 -0700
-Date:   Mon, 5 Oct 2020 20:28:16 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 10:41:37 -0700
+Date:   Mon, 5 Oct 2020 20:41:08 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     linux-sgx@vger.kernel.org,
         Haitao Huang <haitao.huang@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
 Subject: Re: [PATCH v3] x86/sgx: Fix sgx_encl_may_map locking
-Message-ID: <20201005172816.GA13168@linux.intel.com>
+Message-ID: <20201005174108.GA13602@linux.intel.com>
 References: <20201005141119.5395-1-jarkko.sakkinen@linux.intel.com>
- <20201005141254.GL20115@casper.infradead.org>
- <20201005172514.GA12358@linux.intel.com>
+ <20201005155519.GB11938@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201005172514.GA12358@linux.intel.com>
+In-Reply-To: <20201005155519.GB11938@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Oct 05, 2020 at 08:25:39PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 05, 2020 at 03:12:54PM +0100, Matthew Wilcox wrote:
-> > On Mon, Oct 05, 2020 at 05:11:19PM +0300, Jarkko Sakkinen wrote:
-> > > Fix the issue further discussed in:
-> > 
-> > No, this is still utter crap.  Just use the version I sent.
+On Mon, Oct 05, 2020 at 08:55:19AM -0700, Sean Christopherson wrote:
+> On Mon, Oct 05, 2020 at 05:11:19PM +0300, Jarkko Sakkinen wrote:
+> > @@ -317,11 +319,30 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> >  	if (current->personality & READ_IMPLIES_EXEC)
+> >  		return -EACCES;
+> >  
+> > -	xas_for_each(&xas, page, idx_end)
+> > -		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
+> > -			return -EACCES;
+> > +	/*
+> > +	 * No need to hold encl->lock:
+> > +	 * 1. None of the page->* get written.
+> > +	 * 2. page->vm_max_prot_bits is set in sgx_encl_page_alloc(). This
+> > +	 *    is before calling xa_insert(). After that it is never modified.
+> > +	 */
 > 
-> OK, just a quick recap to fully understand it.
+> You forgot to cover racing with insertion, e.g. below is the snippet from my
+> original patch[*], which did the lookup without protection from encl->lock.`
 > 
-> Here's your response from the original thread:
+> +		/*
+> +		 * No need to take encl->lock, vm_prot_bits is set prior to
+> +		 * insertion and never changes, and racing with adding pages is
+> +		 * a userspace bug.
+> +		 */
+> +		rcu_read_lock();
+> +		page = radix_tree_lookup(&encl->page_tree, idx);
+> +		rcu_read_unlock();
 > 
-> https://lore.kernel.org/linux-sgx/20201005013053.GJ20115@casper.infradead.org/
 > 
-> And here's your snippet from v2:
-> 
-> https://lore.kernel.org/linux-sgx/20201005111139.GK20115@casper.infradead.org/
-> 
-> This is what confused me.
-> 
-> Compared to (v3) patch and your version, the differences I spot are:
-> 
-> A. 'count' is checked first.
-> B. Both this and the snippet from the original thread (i.e.
->    page-writeback.c) use the same loop construct.
-> 
-> Right, and snippet from page-writeback.c is not compatible with this
-> because looking at documentation xas_find() continued with
-> xas_next_entry() sequence will jump through the existing entries and
-> skip the holes? On the other hand, xas_next() does not.
-> 
-> Of the A part I'm not sure how the order there semantically matter.
+> [*]https://patchwork.kernel.org/patch/11005431/
 
-Right, how blind I was with B. Read Dave's response.
+I'm not sure why that was merged as it was but it probably was not
+because of that snippet. It had encl->lock before, so it was by all
+practical means covered then. I would have replaced encl->lock with that
+if I ever had received a patch with just that, i.e. that particular
+snippet gone to noise. That's why it was not broken before v36.
 
 /Jarkko
