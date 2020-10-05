@@ -2,108 +2,106 @@ Return-Path: <SRS0=E1/z=DM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1F2C4363A
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB283C4363D
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 414D020776
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:38:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986D120757
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725931AbgJELis (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Oct 2020 07:38:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:20302 "EHLO mga17.intel.com"
+        id S1725930AbgJELnD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Oct 2020 07:43:03 -0400
+Received: from mga12.intel.com ([192.55.52.136]:61919 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbgJELis (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 5 Oct 2020 07:38:48 -0400
-IronPort-SDR: zjrILCOfJkHUVCp77+N97fAWbsvScFV31w1ooACrT92QeYFS+D6pdAnppliREk8WyrGmura8kO
- QzAPT4ySKzSQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="143374885"
+        id S1725891AbgJELnD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Oct 2020 07:43:03 -0400
+IronPort-SDR: jBPAHEFpqM9OQdwJ01UoeWgBqcttLy+m4glL0WddQFS4YhGA8sjuFNFCh+FZjeCURevsrF3+Wz
+ uPdixApzgOfA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="142779237"
 X-IronPort-AV: E=Sophos;i="5.77,338,1596524400"; 
-   d="scan'208";a="143374885"
+   d="scan'208";a="142779237"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 04:38:44 -0700
-IronPort-SDR: GDKV1gVhUA+6T9RvJSznhWIQ1Fzrpd8MoksLjUHgTrq9PG2WL44DurrEOl2JS4oPvAbam5QedQ
- C1RXHqYeBF5A==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 04:43:01 -0700
+IronPort-SDR: VDNSVHaXebCyecFKJNH0q24ztWK1mpo2jx7buzjkD5BF/lc4fl1TSxSDAr3xtwP9EQqSTOBx0J
+ bJnnJgEFkMWg==
 X-IronPort-AV: E=Sophos;i="5.77,338,1596524400"; 
-   d="scan'208";a="525214400"
+   d="scan'208";a="459464201"
 Received: from bclindho-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.32.27])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 04:38:42 -0700
-Date:   Mon, 5 Oct 2020 14:38:40 +0300
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 04:42:52 -0700
+Date:   Mon, 5 Oct 2020 14:42:50 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] x86/sgx: Remove checks for platform limits from
- sgx_validate_secs()
-Message-ID: <20201005113840.GA181338@linux.intel.com>
-References: <20201005020819.124724-1-jarkko.sakkinen@linux.intel.com>
- <op.0rzxe2jtwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v39 11/24] x86/sgx: Add SGX enclave driver
+Message-ID: <20201005114250.GB181338@linux.intel.com>
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-12-jarkko.sakkinen@linux.intel.com>
+ <20201003143925.GB800720@kroah.com>
+ <20201005084554.GA3403@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.0rzxe2jtwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+In-Reply-To: <20201005084554.GA3403@infradead.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Oct 04, 2020 at 11:00:28PM -0500, Haitao Huang wrote:
-> On Sun, 04 Oct 2020 21:08:19 -0500, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
+On Mon, Oct 05, 2020 at 09:45:54AM +0100, Christoph Hellwig wrote:
+> On Sat, Oct 03, 2020 at 04:39:25PM +0200, Greg KH wrote:
+> > > @@ -0,0 +1,173 @@
+> > > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> > 
+> > You use gpl-only header files in this file, so how in the world can it
+> > be bsd-3 licensed?
+> > 
+> > Please get your legal department to agree with this, after you explain
+> > to them how you are mixing gpl2-only code in with this file.
+> > 
+> > > +// Copyright(c) 2016-18 Intel Corporation.
+> > 
+> > Dates are hard to get right :(
 > 
-> > Remove from sgx_validate_secs():
-> > 
-> > 	if (secs->miscselect & sgx_misc_reserved_mask ||
-> > 	    secs->attributes & sgx_attributes_reserved_mask ||
-> > 	    secs->xfrm & sgx_xfrm_reserved_mask)
-> > 		return -EINVAL;
-> > 
-> > SECS can surpass the platform limits because it's the SIGSTRUCT that
-> > defines the limits that are used at run-time.
-> > 
-> > What SECS does is that it defines the overall limits that must apply for
-> > any platform, i.e.  SECS limits and platform limits are orthogonal. They
-> > are not dependent.
-> > 
-> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Cc: Jethro Beekman <jethro@fortanix.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Suggested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  arch/x86/kernel/cpu/sgx/ioctl.c | 5 -----
-> >  1 file changed, 5 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > index 6b3cc8483008..008752cb54f0 100644
-> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > @@ -86,11 +86,6 @@ static int sgx_validate_secs(const struct sgx_secs
-> > *secs)
-> >  	if (secs->base & (secs->size - 1))
-> >  		return -EINVAL;
-> > -	if (secs->miscselect & sgx_misc_reserved_mask ||
-> > -	    secs->attributes & sgx_attributes_reserved_mask ||
-> > -	    secs->xfrm & sgx_xfrm_reserved_mask)
-> > -		return -EINVAL;
-> > -
-> >  	if (secs->size > max_size)
-> >  		return -EINVAL;
-> > 
-> 
-> Looks good to me.
-> Thanks
-> Haitao
+> As is comment formatting apparently.  Don't use // comments for anything
+> but the SPDX header, please.
 
-Thanks, I'll merge it then.
+I'll bring some context to this.
 
-/JArkko
+When I moved into using SPDX, I took the example from places where I saw
+also the copyright using "//". That's the reason for the choice.
+
+I.e.
+
+$ git grep "// Copyright" | wc -l
+2123
+
+I don't care, which one to use, just wondering is it done in the wrong
+way in all these sites?
+
+/Jarkko
