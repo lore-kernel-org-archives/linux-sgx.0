@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313B4C4363D
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 03:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606FAC4363D
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 03:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE9552072D
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 03:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE5D2072D
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 03:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbgJEDSG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 4 Oct 2020 23:18:06 -0400
-Received: from mga02.intel.com ([134.134.136.20]:8421 "EHLO mga02.intel.com"
+        id S1725852AbgJEDUC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 4 Oct 2020 23:20:02 -0400
+Received: from mga09.intel.com ([134.134.136.24]:9180 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbgJEDSG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 4 Oct 2020 23:18:06 -0400
-IronPort-SDR: rnhvI03zDP9dvVSp3ktqM2+LcU6GtvyfHZx3mt9m8Nb9i4QvsLd6wKZOE+p3eOfIQhj4YKnXVF
- urdmu86aBWjA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="150949678"
+        id S1725845AbgJEDUC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 4 Oct 2020 23:20:02 -0400
+IronPort-SDR: 2VombcV56z2vWIYOSLC/oOcInG5++iNr1zQ+Zru3YFVnhuru/nCj9ZTid8gQw+GCMRl1Ggekbo
+ ivX6s8pYPo+w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="164171623"
 X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="150949678"
+   d="scan'208";a="164171623"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 20:18:05 -0700
-IronPort-SDR: Mhc0Z3sCOmXODtNC/n86qwcWoMK9gqAvX3u+6XHzvrkqBhUYfrt1GH9xhgZurIJqKLNuCb9XPs
- PBHLb8+6gXjQ==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 20:20:01 -0700
+IronPort-SDR: IcOkf4v5NgI2Mv6Wc86tkrocUmAWq9UjrlfziOuBpt1xVeydhKCAKz69WjmMM5oIK6ys8b2t9Q
+ YWSucD5G94zA==
 X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="523257765"
+   d="scan'208";a="459314594"
 Received: from sidorovd-mobl1.ccr.corp.intel.com (HELO localhost) ([10.252.48.68])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 20:18:03 -0700
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 20:19:59 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -42,15 +42,17 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v2] Fix the issue further discussed in:
-Date:   Mon,  5 Oct 2020 06:17:59 +0300
-Message-Id: <20201005031759.143544-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v2] x86/sgx: Fix sgx_encl_may_map locking
+Date:   Mon,  5 Oct 2020 06:19:54 +0300
+Message-Id: <20201005031954.144239-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
+
+Fix the issue further discussed in:
 
 1. https://lore.kernel.org/linux-sgx/op.0rwbv916wjvjmi@mqcpg7oapc828.gar.corp.intel.com/
 2. https://lore.kernel.org/linux-sgx/20201003195440.GD20115@casper.infradead.org/
