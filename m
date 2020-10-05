@@ -2,96 +2,108 @@ Return-Path: <SRS0=E1/z=DM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB230C4363A
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1F2C4363A
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 742C9206CB
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:11:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FR7dfmGQ"
+	by mail.kernel.org (Postfix) with ESMTP id 414D020776
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Oct 2020 11:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725930AbgJELLn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Oct 2020 07:11:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbgJELLn (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 5 Oct 2020 07:11:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F79C0613CE
-        for <linux-sgx@vger.kernel.org>; Mon,  5 Oct 2020 04:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=F1ZThjlgYLYCDTOB9pq09VqvMHTtdRkQ3vfaoG5T4TA=; b=FR7dfmGQVtvd/RkjSW32Yt0e4u
-        4RRHZVyxvvEzjZzLDfQD8fEQ+qHie3npko8h+hOCA8c8k/FmeAp6wFu82UIoDkGzn5EsBYyZjg5GO
-        IrIlrqXQv0KzM7kcdLChRhDjGDrxI6AyFu7kwXgxvS49ek/IVK+o3mFaqjWKUeI9s+tqaofOa9v+U
-        cdBd5vMgCO7ohU8W+JCkx8Q7JKbsb+Ob0YQB5ZWF0Bz6vVml5nxQxgzntPkFXj68HUr8DgAESS1JY
-        vZYORFxGS6Z0RgMl17dvJNeKyyewVGngroLuHbB6mna889ixBDiByF31R3e0qdZWM94NoheVut4ql
-        Y3NSKOvQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kPOP5-0002Kt-WD; Mon, 05 Oct 2020 11:11:40 +0000
-Date:   Mon, 5 Oct 2020 12:11:39 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S1725931AbgJELis (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Oct 2020 07:38:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:20302 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725891AbgJELis (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Oct 2020 07:38:48 -0400
+IronPort-SDR: zjrILCOfJkHUVCp77+N97fAWbsvScFV31w1ooACrT92QeYFS+D6pdAnppliREk8WyrGmura8kO
+ QzAPT4ySKzSQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="143374885"
+X-IronPort-AV: E=Sophos;i="5.77,338,1596524400"; 
+   d="scan'208";a="143374885"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 04:38:44 -0700
+IronPort-SDR: GDKV1gVhUA+6T9RvJSznhWIQ1Fzrpd8MoksLjUHgTrq9PG2WL44DurrEOl2JS4oPvAbam5QedQ
+ C1RXHqYeBF5A==
+X-IronPort-AV: E=Sophos;i="5.77,338,1596524400"; 
+   d="scan'208";a="525214400"
+Received: from bclindho-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.32.27])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 04:38:42 -0700
+Date:   Mon, 5 Oct 2020 14:38:40 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
 Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v2] Fix the issue further discussed in:
-Message-ID: <20201005111139.GK20115@casper.infradead.org>
-References: <20201005031759.143544-1-jarkko.sakkinen@linux.intel.com>
+Subject: Re: [PATCH] x86/sgx: Remove checks for platform limits from
+ sgx_validate_secs()
+Message-ID: <20201005113840.GA181338@linux.intel.com>
+References: <20201005020819.124724-1-jarkko.sakkinen@linux.intel.com>
+ <op.0rzxe2jtwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201005031759.143544-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <op.0rzxe2jtwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Oct 05, 2020 at 06:17:59AM +0300, Jarkko Sakkinen wrote:
-> @@ -317,10 +318,31 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
->  	if (current->personality & READ_IMPLIES_EXEC)
->  		return -EACCES;
->  
-> -	xas_for_each(&xas, page, idx_end)
-> +	/*
-> +	 * No need to hold encl->lock:
-> +	 * 1. None of the page->* get written.
-> +	 * 2. page->vm_max_prot_bits is set in sgx_encl_page_alloc(). This
-> +	 *    is before calling xa_insert(). After that it is never modified.
-> +	 */
-> +	xas_lock(&xas);
-> +	xas_for_each(&xas, page, idx_end) {
-> +		if (++count % XA_CHECK_SCHED)
-> +			continue;
+On Sun, Oct 04, 2020 at 11:00:28PM -0500, Haitao Huang wrote:
+> On Sun, 04 Oct 2020 21:08:19 -0500, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> 
+> > Remove from sgx_validate_secs():
+> > 
+> > 	if (secs->miscselect & sgx_misc_reserved_mask ||
+> > 	    secs->attributes & sgx_attributes_reserved_mask ||
+> > 	    secs->xfrm & sgx_xfrm_reserved_mask)
+> > 		return -EINVAL;
+> > 
+> > SECS can surpass the platform limits because it's the SIGSTRUCT that
+> > defines the limits that are used at run-time.
+> > 
+> > What SECS does is that it defines the overall limits that must apply for
+> > any platform, i.e.  SECS limits and platform limits are orthogonal. They
+> > are not dependent.
+> > 
+> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Cc: Jethro Beekman <jethro@fortanix.com>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Suggested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/ioctl.c | 5 -----
+> >  1 file changed, 5 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > index 6b3cc8483008..008752cb54f0 100644
+> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > @@ -86,11 +86,6 @@ static int sgx_validate_secs(const struct sgx_secs
+> > *secs)
+> >  	if (secs->base & (secs->size - 1))
+> >  		return -EINVAL;
+> > -	if (secs->miscselect & sgx_misc_reserved_mask ||
+> > -	    secs->attributes & sgx_attributes_reserved_mask ||
+> > -	    secs->xfrm & sgx_xfrm_reserved_mask)
+> > -		return -EINVAL;
+> > -
+> >  	if (secs->size > max_size)
+> >  		return -EINVAL;
+> > 
+> 
+> Looks good to me.
+> Thanks
+> Haitao
 
-This really doesn't do what you think it does.
+Thanks, I'll merge it then.
 
-	int ret = 0;
-	int count = 0;
-
-	xas_lock(&xas);
-	while (xas.index < idx_end) {
-		struct sgx_page *page = xas_next(&xas);
-
-		if (!page || (~page->vm_max_prot_bits & vm_prot_bits)) {
-			ret = -EACCESS;
-			break;
-		}
-
-		if (++count % XA_CHECK_SCHED)
-			continue;
-		xas_pause(&xas);
-		xas_unlock(&xas);
-		cond_resched();
-		xas_lock(&xas);
-	}
-	xas_unlock(&xas);
-
-	return ret;
+/JArkko
