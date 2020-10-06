@@ -2,43 +2,42 @@ Return-Path: <SRS0=YsX3=DN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9778AC41604
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Oct 2020 15:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E34C41604
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Oct 2020 17:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58B3F206D4
-	for <linux-sgx@archiver.kernel.org>; Tue,  6 Oct 2020 15:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1592220674
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Oct 2020 17:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbgJFP4L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 6 Oct 2020 11:56:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:32012 "EHLO mga18.intel.com"
+        id S1725947AbgJFR2k (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 6 Oct 2020 13:28:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:13774 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbgJFP4L (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 6 Oct 2020 11:56:11 -0400
-IronPort-SDR: qwi6T/PSRV0myrGFzO+7k4o7cTy/lafjmEsKK8grHuk87fA/epeRERsCSZJ+nRyGOzIxkwlVOi
- vFWsT9yVDQfg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="152314945"
+        id S1725946AbgJFR2k (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 6 Oct 2020 13:28:40 -0400
+IronPort-SDR: ht2XY8ORkQN7pTz06QQjfGPGZxLy7lpHTroFqekyqFNh5QI4SiNtRIYpl/E0QScyHTl/UrvjZ/
+ cWJZrrh72q+g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="144503239"
 X-IronPort-AV: E=Sophos;i="5.77,343,1596524400"; 
-   d="scan'208";a="152314945"
+   d="scan'208";a="144503239"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 08:49:23 -0700
-IronPort-SDR: uTuShdZoDAQiz9ZeZclugbz7v7M1rBWVL7iq7A7CzeddsqJ07SwpS8cn+JzabB5zIflSQo6x5s
- pfPMxJSLsk6g==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 10:28:32 -0700
+IronPort-SDR: gny4smbUyRrvUpDUcAsr72YK0XvbiHMtGYtthfWbb7Y5LhHl9yv5JWGGosj6KAGxC4GwMbR+Lj
+ i4bN0ankIRow==
 X-IronPort-AV: E=Sophos;i="5.77,343,1596524400"; 
-   d="scan'208";a="527410835"
+   d="scan'208";a="527462681"
 Received: from thijsmet-mobl.ger.corp.intel.com (HELO localhost) ([10.249.34.36])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 08:49:17 -0700
-Date:   Tue, 6 Oct 2020 18:49:10 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 10:28:25 -0700
+Date:   Tue, 6 Oct 2020 20:28:19 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>,
         Cedric Xing <cedric.xing@intel.com>, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
@@ -50,108 +49,62 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH v39 21/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
-Message-ID: <20201006154910.GD109815@linux.intel.com>
+Message-ID: <20201006172819.GA114208@linux.intel.com>
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
  <20201003045059.665934-22-jarkko.sakkinen@linux.intel.com>
  <20201006025703.GG15803@linux.intel.com>
  <453c2d9b-0fd0-0d63-2bb9-096f255a6ff4@fortanix.com>
+ <20201006151532.GA17610@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <453c2d9b-0fd0-0d63-2bb9-096f255a6ff4@fortanix.com>
+In-Reply-To: <20201006151532.GA17610@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 10:30:16AM +0200, Jethro Beekman wrote:
-> On 2020-10-06 04:57, Sean Christopherson wrote:
-> > On Sat, Oct 03, 2020 at 07:50:56AM +0300, Jarkko Sakkinen wrote:
-> >> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> >> +	/* Validate that the reserved area contains only zeros. */
-> >> +	push	%rax
-> >> +	push	%rbx
-> >> +	mov	$SGX_ENCLAVE_RUN_RESERVED_START, %rbx
-> >> +1:
-> >> +	mov	(%rcx, %rbx), %rax
-> >> +	cmpq	$0, %rax
-> >> +	jne	.Linvalid_input
-> >> +
-> >> +	add	$8, %rbx
-> >> +	cmpq	$SGX_ENCLAVE_RUN_RESERVED_END, %rbx
-> >> +	jne	1b
-> >> +	pop	%rbx
-> >> +	pop	%rax
-> > 
-> > This can more succinctly be (untested):
-> > 
-> > 	movq	SGX_ENCLAVE_RUN_RESERVED_1(%rbp), %rbx	
-> > 	orq	SGX_ENCLAVE_RUN_RESERVED_2(%rbp), %rbx	
-> > 	orq	SGX_ENCLAVE_RUN_RESERVED_3(%rbp), %rbx	
-> > 	jnz	.Linvalid_input
-> > 
-> > Note, %rbx is getting clobbered anyways, no need to save/restore it.
-> > 
-> >> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> >> index b6ba036a9b82..3dd2df44d569 100644
-> >> --- a/arch/x86/include/uapi/asm/sgx.h
-> >> +++ b/arch/x86/include/uapi/asm/sgx.h
-> >> @@ -74,4 +74,102 @@ struct sgx_enclave_provision {
-> >>  	__u64 attribute_fd;
-> >>  };
-> >>  
-> >> +struct sgx_enclave_run;
-> >> +
-> >> +/**
-> >> + * typedef sgx_enclave_user_handler_t - Exit handler function accepted by
-> >> + *					__vdso_sgx_enter_enclave()
-> >> + * @run:	Pointer to the caller provided struct sgx_enclave_run
-> >> + *
-> >> + * The register parameters contain the snapshot of their values at enclave
-> >> + * exit
-> >> + *
-> >> + * Return:
-> >> + *  0 or negative to exit vDSO
-> >> + *  positive to re-enter enclave (must be EENTER or ERESUME leaf)
-> >> + */
-> >> +typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx,
-> >> +					  long rsp, long r8, long r9,
-> >> +					  struct sgx_enclave_run *run);
-> >> +
-> >> +/**
-> >> + * struct sgx_enclave_run - the execution context of __vdso_sgx_enter_enclave()
-> >> + * @tcs:			TCS used to enter the enclave
-> >> + * @user_handler:		User provided callback run on exception
-> >> + * @user_data:			Data passed to the user handler
-> >> + * @leaf:			The ENCLU leaf we were at (EENTER/ERESUME/EEXIT)
-> >> + * @exception_vector:		The interrupt vector of the exception
-> >> + * @exception_error_code:	The exception error code pulled out of the stack
-> >> + * @exception_addr:		The address that triggered the exception
-> >> + * @reserved			Reserved for possible future use
-> >> + */
-> >> +struct sgx_enclave_run {
-> >> +	__u64 tcs;
-> >> +	__u64 user_handler;
-> >> +	__u64 user_data;
-> >> +	__u32 leaf;
-> > 
-> > I am still very strongly opposed to omitting exit_reason.  It is not at all
-> > difficult to imagine scenarios where 'leaf' alone is insufficient for the
-> > caller or its handler to deduce why the CPU exited the enclave.  E.g. see
-> > Jethro's request for intercepting interrupts.
+On Tue, Oct 06, 2020 at 08:15:32AM -0700, Sean Christopherson wrote:
+> On Tue, Oct 06, 2020 at 10:30:16AM +0200, Jethro Beekman wrote:
+> > On 2020-10-06 04:57, Sean Christopherson wrote:
+> > > On Sat, Oct 03, 2020 at 07:50:56AM +0300, Jarkko Sakkinen wrote:
+> > >> +struct sgx_enclave_run {
+> > >> +  __u64 tcs;
+> > >> +  __u64 user_handler;
+> > >> +  __u64 user_data;
+> > >> +  __u32 leaf;
+> > >
+> > > I am still very strongly opposed to omitting exit_reason.  It is not at all
+> > > difficult to imagine scenarios where 'leaf' alone is insufficient for the
+> > > caller or its handler to deduce why the CPU exited the enclave.  E.g. see
+> > > Jethro's request for intercepting interrupts.
+> >
+> > Not entirely sure what this has to do with my request, I just expect to see
+> > leaf=ERESUME in this case, I think? E.g. as you would see in EAX when calling
+> > ENCLU.
 > 
-> Not entirely sure what this has to do with my request, I just expect
-> to see leaf=ERESUME in this case, I think? E.g. as you would see in
-> EAX when calling ENCLU.
+> But how would you differentiate from the case that an exception occured in
+> the enclave?  That will also transfer control with leaf=ERESUME.  If there
+> was a prior exception and userspace didn't zero out the struct, there would
+> be "valid" data in the exception fields.
+> 
+> An exit_reason also would allow retrofitting the exception fields into a
+> union, i.e. the fields are valid if and only if exit_reason is exception.
 
-The documentation needs to be fixed but the answer is yes.
+Let's purge this a bit. Please remark where my logic goes wrong. I'm
+just explaining how I've deduced the whole thing.
 
-I.e.
+The information was encoded in v38 version of the vDSO was exactly this:
 
-- Leaf will contain ERESUME on interrupt.
-- Leaf will contain EEXIT on normal exit.
+- On normal EEXIT, it got the value 0.
+- Otherwise, it got the value 1.
 
-Maybe I should rename it as exit_leaf and rewrite the description to
-improve clarity?
+The leaf, then embdded to struct sgx_exception but essentially the same
+field got the value from EAX, and the value that EAX had was only
+written on exception path.
+
+Thus, I deduced that if you write $EEXIT to leaf on synchrous exit you
+get the same information content, nothing gets overwritten. I.e. you
+can make same conclusions as you would with those two struct fields.
 
 /Jarkko
