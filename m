@@ -2,40 +2,40 @@ Return-Path: <SRS0=a0UF=DO=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8A3C3279D
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 03:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116DBC4363C
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 04:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58D2120838
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 03:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C889F208C7
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 04:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbgJGDOS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 6 Oct 2020 23:14:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28714 "EHLO mga06.intel.com"
+        id S1726181AbgJGEeV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Oct 2020 00:34:21 -0400
+Received: from mga17.intel.com ([192.55.52.151]:43840 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbgJGDOS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 6 Oct 2020 23:14:18 -0400
-IronPort-SDR: 6aeZgFcSRSrb20Zp7W5z+r9Yp5EXulGRIevzmzvkUOt2cpR9YYVyaIjhaqtOiKGdO2arH+bFLw
- PGrRgnVXqz5A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9766"; a="226390184"
+        id S1726100AbgJGEeV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Oct 2020 00:34:21 -0400
+IronPort-SDR: ayZmLje5qVjr545e5CZ13prx++7aQig2nfpjMFgb/KbeoK/VNS/j52AnNTidMI99S48XjNeqCs
+ TOttiqUAiVDw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9766"; a="144729908"
 X-IronPort-AV: E=Sophos;i="5.77,345,1596524400"; 
-   d="scan'208";a="226390184"
+   d="scan'208";a="144729908"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 20:14:17 -0700
-IronPort-SDR: NgVF+tTLndj2QAjGanEhiOhL4IjZVyNy1JrwQVgLoc21jF3aF2wBPMthKk5jeSsU1LNUugQjAP
- Ru3UFEEtEvwQ==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 21:34:21 -0700
+IronPort-SDR: gcG3t4tfDqTzJe7zhMWVGhRu+DJwbxdocUDxR3WOxlWfuQE4zHbYYAh8TrgvO6Bi4LH7NV/HdU
+ 1EaHfOEjdP3g==
 X-IronPort-AV: E=Sophos;i="5.77,345,1596524400"; 
-   d="scan'208";a="527744627"
-Received: from thijsmet-mobl.ger.corp.intel.com (HELO localhost) ([10.249.34.36])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 20:14:10 -0700
-Date:   Wed, 7 Oct 2020 06:14:02 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+   d="scan'208";a="311578880"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 21:34:20 -0700
+Date:   Tue, 6 Oct 2020 21:34:19 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Jethro Beekman <jethro@fortanix.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>,
@@ -49,7 +49,7 @@ Cc:     Jethro Beekman <jethro@fortanix.com>, x86@kernel.org,
         tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH v39 21/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
-Message-ID: <20201007031402.GA143690@linux.intel.com>
+Message-ID: <20201007043418.GG28981@linux.intel.com>
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
  <20201003045059.665934-22-jarkko.sakkinen@linux.intel.com>
  <20201006025703.GG15803@linux.intel.com>
@@ -59,79 +59,109 @@ References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
  <20201006232129.GB28981@linux.intel.com>
  <20201007002236.GA139112@linux.intel.com>
  <20201007011738.GE28981@linux.intel.com>
+ <20201007031402.GA143690@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201007011738.GE28981@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20201007031402.GA143690@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 06:17:38PM -0700, Sean Christopherson wrote:
-> On Wed, Oct 07, 2020 at 03:22:36AM +0300, Jarkko Sakkinen wrote:
-> > On Tue, Oct 06, 2020 at 04:21:29PM -0700, Sean Christopherson wrote:
-> > > On Tue, Oct 06, 2020 at 08:28:19PM +0300, Jarkko Sakkinen wrote:
-> > > > On Tue, Oct 06, 2020 at 08:15:32AM -0700, Sean Christopherson wrote:
-> > > > > On Tue, Oct 06, 2020 at 10:30:16AM +0200, Jethro Beekman wrote:
-> > > > > > On 2020-10-06 04:57, Sean Christopherson wrote:
-> > > > > > > On Sat, Oct 03, 2020 at 07:50:56AM +0300, Jarkko Sakkinen wrote:
-> > > > > > >> +struct sgx_enclave_run {
-> > > > > > >> +  __u64 tcs;
-> > > > > > >> +  __u64 user_handler;
-> > > > > > >> +  __u64 user_data;
-> > > > > > >> +  __u32 leaf;
-> > > > > > >
-> > > > > > > I am still very strongly opposed to omitting exit_reason.  It is not at all
-> > > > > > > difficult to imagine scenarios where 'leaf' alone is insufficient for the
-> > > > > > > caller or its handler to deduce why the CPU exited the enclave.  E.g. see
-> > > > > > > Jethro's request for intercepting interrupts.
-> > > > > >
-> > > > > > Not entirely sure what this has to do with my request, I just expect to see
-> > > > > > leaf=ERESUME in this case, I think? E.g. as you would see in EAX when calling
-> > > > > > ENCLU.
-> > > > > 
-> > > > > But how would you differentiate from the case that an exception occured in
-> > > > > the enclave?  That will also transfer control with leaf=ERESUME.  If there
-> > > > > was a prior exception and userspace didn't zero out the struct, there would
-> > > > > be "valid" data in the exception fields.
-> > > > > 
-> > > > > An exit_reason also would allow retrofitting the exception fields into a
-> > > > > union, i.e. the fields are valid if and only if exit_reason is exception.
-> > > > 
-> > > > Let's purge this a bit. Please remark where my logic goes wrong. I'm
-> > > > just explaining how I've deduced the whole thing.
-> > > > 
-> > > > The information was encoded in v38 version of the vDSO was exactly this:
-> > > > 
-> > > > - On normal EEXIT, it got the value 0.
-> > > > - Otherwise, it got the value 1.
-> > > > 
-> > > > The leaf, then embdded to struct sgx_exception but essentially the same
-> > > > field got the value from EAX, and the value that EAX had was only
-> > > > written on exception path.
-> > > > 
-> > > > Thus, I deduced that if you write $EEXIT to leaf on synchrous exit you
-> > > > get the same information content, nothing gets overwritten. I.e. you
-> > > > can make same conclusions as you would with those two struct fields.
+On Wed, Oct 07, 2020 at 06:14:02AM +0300, Jarkko Sakkinen wrote:
+> On Tue, Oct 06, 2020 at 06:17:38PM -0700, Sean Christopherson wrote:
+> > On Wed, Oct 07, 2020 at 03:22:36AM +0300, Jarkko Sakkinen wrote:
+> > > > And then a third flavor comes along, e.g. Jethro's request interrupt case,
+> > > > and exit_reason can also return '2'.  How do you handle that with only the
+> > > > leaf?
 > > > 
-> > > And then a third flavor comes along, e.g. Jethro's request interrupt case,
-> > > and exit_reason can also return '2'.  How do you handle that with only the
-> > > leaf?
+> > > I'm listening. How was that handled before? I saw only '0' and '1'.  Can
+> > > you bring some context on that? I did read the emails that were swapped
+> > > when the run structure was added but I'm not sure what is the exact
+> > > differentiator. Maybe I'm missing something.
 > > 
-> > I'm listening. How was that handled before? I saw only '0' and '1'.  Can
-> > you bring some context on that? I did read the emails that were swapped
-> > when the run structure was added but I'm not sure what is the exact
-> > differentiator. Maybe I'm missing something.
+> > https://patchwork.kernel.org/patch/11719889/
 > 
-> https://patchwork.kernel.org/patch/11719889/
+> Thank you.
+> 
+> There's aboslutely nothing that is blocking adding such support for such
+> AEP handling in the current implementation. SGX_SYNCHRONOUS_EXIT is just
+> another name for EEXIT.
 
-Thank you.
+Sure.  And SGX_EXCEPTION_EXIT is just another name for EENTER|ERESUME.
 
-There's aboslutely nothing that is blocking adding such support for such
-AEP handling in the current implementation. SGX_SYNCHRONOUS_EXIT is just
-another name for EEXIT. Even if that was in place, you'd need to
-separate normal and interrupt. Tristate is useless here. As far as I'm
-concerned, no bottlenecks have been created.
+> Even if that was in place, you'd need to separate normal and interrupt.
+> Tristate is useless here. 
 
-/Jarkko
+Huh?  You mean like adding SGX_INTERRUPT_EXIT and SGX_EXCEPTION_EXIT?
+
+> As far as I'm concerned, no bottlenecks have been created.
+
+There's no bottleneck, just an inflexible and kludgy API for userspace.
+
+	if (run->leaf == EEXIT)
+		return handle_eexit();
+
+	if (run->leaf == EENTER || run->leaf == ERESUME)
+	        return handle_exception(run->leaf);
+
+	return -EIO;
+
+Let's say we come up with a clever opt-in scheme that allows exception fixup
+to inform the vDSO that the enclave was invalid, even on SGX1.  Now we're in
+a scenario where we want to tell userspace that the enclave is lost, but
+userspace assumes any exit EENTER or ERESUME is an exception.
+
+	if (run->leaf == EEXIT)
+		return handle_eexit();
+
+	if (run->leaf == EENTER || run->leaf == ERESUME)
+		return handle_invalid_enclave_or_maybe_exception();
+
+	return -EIO;
+
+We could add a new exit reason, but we'd still need to ensure EENTER|ERESUME
+means "exception" for old userspace.  Or we could add exit_reason now and end
+up with (IMO) a sane and extensible interface.
+
+	if (run->exit_reason == SGX_ENCLAVE_INVALID)
+		return handle_invalid_enclave();
+
+	if (run->exit_reason == SGX_SYNCHRONOUS_EXIT)
+		return handle_eexit();
+
+	if (run->exit_reason == SGX_EXCEPTION)
+		return handle_exception();
+
+	return -EIO;
+
+And maybe we get really clever and figure out a way to (deterministically)
+redirect SIGALRM to the vDSO.  Then we'd want:
+
+	if (run->exit_reason == SGX_ENCLAVE_INVALID)
+		return handle_invalid_enclave();
+
+	if (run->exit_reason == SGX_SYNCHRONOUS_EXIT)
+		return handle_eexit();
+
+	if (run->exit_reason == SGX_ALARM)
+		return handle_reschedule();
+
+	if (run->exit_reason == SGX_EXCEPTION)
+		return handle_exception();
+
+	return -EIO;
+
+Even more hypothetical would be if Andy gets one of his wishes, and EENTER2
+comes along that doesn't allow the enclave to dictate the exit point,
+"returns" an error code on enclave failure, and allows the kernel to
+auto-restart the enclave on IRQs/NMIs.  That (very hypothetical) scenario
+fits nicely into the exit_reason handling.
+
+I'm not arguing that any of the above is even remotely likely.  I just don't
+understand why we'd want an API that at best requires heuristics in userspace
+to determine why the enclave stopped running, and at worst will saddle us with
+an ugly mess in the future.  All to save 4 bytes that no one cares about (they
+literally cost nothing), and a single MOV in a flow that is hundreds, if not
+thousands, of cycles.
