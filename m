@@ -2,154 +2,108 @@ Return-Path: <SRS0=a0UF=DO=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D16C41604
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 17:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3ACC41604
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 17:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FFFF2173E
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 17:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D3682168B
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Oct 2020 17:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgJGRVF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Oct 2020 13:21:05 -0400
-Received: from mga07.intel.com ([134.134.136.100]:3040 "EHLO mga07.intel.com"
+        id S1728389AbgJGR1G (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Oct 2020 13:27:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:65154 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727891AbgJGRVF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Oct 2020 13:21:05 -0400
-IronPort-SDR: CC0gP24WxnrXGc/qOcbPyueGY08EuhLU82CZ7VxsLxe2VNON+kFcuNWfbjCL/gWUhDFvatqpbj
- qd7lusSqDgJA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9767"; a="229185307"
+        id S1726348AbgJGR1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 7 Oct 2020 13:27:05 -0400
+IronPort-SDR: 4pLhHfNa/D5HQTuPPhBLz9MsQOiBhuGBcDURjqqkDHVdULDOtcrLEM35cP2/jYD6IXDu5cdukp
+ cihGbpZOWZcw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9767"; a="152821023"
 X-IronPort-AV: E=Sophos;i="5.77,347,1596524400"; 
-   d="scan'208";a="229185307"
+   d="scan'208";a="152821023"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 10:21:04 -0700
-IronPort-SDR: bTozWrYkpt4AV1/0taoHgTUfaztcrylrOwTCsichN2yDZuDn6gzyTZ9iV85EivgDAkDRCgGFJA
- jh8PKWGx9K7A==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 10:26:08 -0700
+IronPort-SDR: YQKUNORNy8VrI5cpc8I3z1JS+pfk6A7ydbG3DSW5FaMtMCcLFgcmFOJsE8Kjnmudm1WFnYtFQl
+ 7N5jQsYVh2cQ==
 X-IronPort-AV: E=Sophos;i="5.77,347,1596524400"; 
-   d="scan'208";a="528062272"
+   d="scan'208";a="461416722"
 Received: from dumser-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.100])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 10:21:02 -0700
-Date:   Wed, 7 Oct 2020 20:20:58 +0300
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 10:25:55 -0700
+Date:   Wed, 7 Oct 2020 20:25:51 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-Subject: Re: Unable to load large enclave
-Message-ID: <20201007172058.GD3885@linux.intel.com>
-References: <9393934c-e390-a7df-2e74-08f16d4f48d4@fortanix.com>
- <20200930011650.GA808399@linux.intel.com>
- <81e38a1b-c9a7-209e-76f5-e2c91f49c1e3@fortanix.com>
- <20200930114554.GA7612@linux.intel.com>
- <20201005225652.GD15803@linux.intel.com>
- <20201006151328.GA109815@linux.intel.com>
- <20201007154938.GA19072@linux.intel.com>
- <f362318e-2d14-c82d-82a8-35c35842f84c@fortanix.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com, willy@infradead.org
+Subject: Re: [PATCH v39 16/24] x86/sgx: Add a page reclaimer
+Message-ID: <20201007172551.GA4792@linux.intel.com>
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-17-jarkko.sakkinen@linux.intel.com>
+ <op.0rwbv916wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+ <20201003133245.GA6074@linux.intel.com>
+ <op.0rxb1z06wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+ <20201004223921.GA48517@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f362318e-2d14-c82d-82a8-35c35842f84c@fortanix.com>
+In-Reply-To: <20201004223921.GA48517@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 06:13:49PM +0200, Jethro Beekman wrote:
-> On 2020-10-07 17:49, Jarkko Sakkinen wrote:
-> > On Tue, Oct 06, 2020 at 06:13:28PM +0300, Jarkko Sakkinen wrote:
-> >> On Mon, Oct 05, 2020 at 03:56:52PM -0700, Sean Christopherson wrote:
-> >>> On Wed, Sep 30, 2020 at 02:45:54PM +0300, Jarkko Sakkinen wrote:
-> >>>> On Wed, Sep 30, 2020 at 09:12:06AM +0200, Jethro Beekman wrote:
-> >>>>> On 2020-09-30 03:16, Jarkko Sakkinen wrote:
-> >>>>>> On Tue, Sep 29, 2020 at 05:52:48PM +0200, Jethro Beekman wrote:
-> >>>>>>> Since the latest API changes, I'm unable to load a large enclave. The
-> >>>>>>> test program at
-> >>>>>>> https://github.com/fortanix/rust-sgx/blob/sgx-load-large-enclave-test/src/main.rs
-> >>>>>>> always fails with ENOMEM after loading 0xffd6 pages.
-> >>>>>>>
-> >>>>>>> I've tested this with v36, if there's reason to believe it has been
-> >>>>>>> fixed I'd be happy to try it out on a newer patch set.
-> >>>>>>
-> >>>>>> I recommend using v39-rc1 tag that I created for testing because API is
-> >>>>>> reverted back to be compatible with v36.
-> >>>>>
-> >>>>> Not sure what you're saying. I tested with v36. You're saying v39-rc1
-> >>>>> will be the same? Or did you fix the issue since v36?
-> >>>>
-> >>>> v37 and v38 has an API change that is reverted in v39:
-> >>>>
-> >>>> https://lore.kernel.org/linux-sgx/20200921195822.GA58176@linux.intel.com/
-> >>>>
-> >>>> I'm not sure of the root cause yet but you asked to try to out a newer
-> >>>> patch set and v39-rc1 is the best option.
-> >>>>
-> >>>> There was off-by-one error in enclave maximum size calculation fixed in
-> >>>> v37 (it was actually a bug in SDM inherited to the code) but that should
-> >>>> not result the situation you just described.
-> >>>
-> >>> My money is on the XArray changes, that's the most notable change in v36 and
-> >>> IIRC the only thing that touched EPC/memory management.
-> >>
-> >> Yeah, that's what we've been speculating for some days now. That's
-> >> somewhat deprecated email. It all started to enroll when I asked
-> >> Haitao to turn CONFIG_PROVE_LOCKING on, and we got the information
-> >> required to root cause the bug.
+On Mon, Oct 05, 2020 at 01:39:21AM +0300, Jarkko Sakkinen wrote:
+> On Sat, Oct 03, 2020 at 01:23:49PM -0500, Haitao Huang wrote:
+> > On Sat, 03 Oct 2020 08:32:45 -0500, Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
 > > 
-> > I run the failing test and filtered SGX mmap's and ioctl's with this
-> > eBPF script:
+> > > On Sat, Oct 03, 2020 at 12:22:47AM -0500, Haitao Huang wrote:
+> > > > When I turn on CONFIG_PROVE_LOCKING, kernel reports following
+> > > > suspicious RCU
+> > > > usages. Not sure if it is an issue. Just reporting here:
+> > > 
+> > > I'm glad to hear that my tip helped you to get us the data.
+> > > 
+> > > This does not look like an issue in the page reclaimer, which was not
+> > > obvious for me before. That's a good thing. I was really worried about
+> > > that because it has been very stable for a long period now. The last
+> > > bug fix for the reclaimer was done in June in v31 version of the patch
+> > > set and after that it has been unchanged (except possibly some renames
+> > > requested by Boris).
+> > > 
+> > > I wildly guess I have a bad usage pattern for xarray. I migrated to it
+> > > in v36, and it is entirely possible that I've misused it. It was the
+> > > first time that I ever used it. Before xarray we had radix_tree but
+> > > based Matthew Wilcox feedback I did a migration to xarray.
+> > > 
+> > > What I'd ask you to do next is to, if by any means possible, to try to
+> > > run the same test with v35 so we can verify this. That one still has
+> > > the radix tree.
+> > > 
 > > 
-> > kretprobe:sgx_ioctl /retval != 0/
-> > {
-> >         printf("sgx_ioctl: %d\n", retval)
-> > }
 > > 
-> > kretprobe:sgx_mmap /retval != 0/
-> > {
-> >         printf("sgx_mmap: %d\n", retval)
-> > }
-> > 
-> > This results zero positives, i.e. empty output, when run with bpftrace.
-> > 
-> > I'd go instead after RLIMIT_AS [*].
-> > 
-> > With these conclusions, I'm done with this bug.
-> > 
+> > v35 does not cause any such warning messages from kernel
 > 
-> How can it be RLIMIT_AS? With the current flow, you mmap the whole range before mmaping the individual pages over it?
-> 
-> Also, I can easily load a 1GB enclave with the old driver.
-> 
-> Also:
-> 
-> $ ulimit -v
-> unlimited
+> Thank you. Looks like Matthew already located the issue, a fix will
+> land soon.
 
-➜  ~ (master) ✔ sudo bpftrace sgx_ret.bt
-Attaching 3 probes...
-ksys_mmap_pgoff: -12
-^C
-
-~ (master) ✔ cat sgx_ret.bt
-kretprobe:sgx_ioctl /retval != 0/
-{
-        printf("sgx_ioctl: %d\n", retval)
-}
-
-kretprobe:sgx_mmap /retval != 0/
-{
-        printf("sgx_mmap: %d\n", retval)
-}
-
-kretprobe:ksys_mmap_pgoff /retval == (uint64)-12/
-{
-        printf("ksys_mmap_pgoff: %d\n", retval)
-}
-
-This shows that it fails before reaching sgx_mmap().
+Just acknowledging that this should be fixed in my master branch now.
 
 /Jarkko
