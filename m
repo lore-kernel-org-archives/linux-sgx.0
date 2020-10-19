@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C47AC433DF
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Oct 2020 13:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4DAC433DF
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Oct 2020 14:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF3EF222BA
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Oct 2020 13:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB410222D9
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Oct 2020 14:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgJSNkh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 19 Oct 2020 09:40:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22802 "EHLO mga12.intel.com"
+        id S1729168AbgJSOLA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 19 Oct 2020 10:11:00 -0400
+Received: from mga11.intel.com ([192.55.52.93]:4803 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbgJSNkg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 19 Oct 2020 09:40:36 -0400
-IronPort-SDR: rA1ZFieciEYwJ4Pce9Gr2xFNcjnJwruCWopXC+Z0UR72ION7DGxdhcwu2e5Q7V/45BbcjbNaAj
- rmOxDEsKfqeQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9778"; a="146326075"
+        id S1729075AbgJSOLA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 19 Oct 2020 10:11:00 -0400
+IronPort-SDR: M0t+o8jobJZvPNdaXHFM3atbg8Qh3zHYUqlozJIbXP5uP9e7DLQ/27g3H/k63oQLCIMk9Txb/f
+ dCupxAoSf2iQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9778"; a="163548911"
 X-IronPort-AV: E=Sophos;i="5.77,394,1596524400"; 
-   d="scan'208";a="146326075"
+   d="scan'208";a="163548911"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2020 06:40:35 -0700
-IronPort-SDR: npG9+iRyZIj6XQbQ0DCadUWqYUO7CDilKyUvCA2YU4ExEnVWMZc918p8kC6d7WczqWVWdUJAha
- TLktJRO78WcQ==
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2020 07:10:59 -0700
+IronPort-SDR: X8Ny3SrsMcrSy6TGeFuAi5f5o4o5rdo3H8N3KtGgeRG2VIebZqk8AiyXt43RUnLVZI9dA6p8BN
+ VAaK5116X52g==
 X-IronPort-AV: E=Sophos;i="5.77,394,1596524400"; 
-   d="scan'208";a="522003864"
+   d="scan'208";a="522012647"
 Received: from haixinlu-mobl1.amr.corp.intel.com (HELO [10.212.84.56]) ([10.212.84.56])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2020 06:40:34 -0700
-Subject: Re: [PATCH v39 08/24] x86/sgx: Initialize metadata for Enclave Page
- Cache (EPC) sections
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2020 07:10:58 -0700
+Subject: Re: [PATCH v39 01/24] x86/cpufeatures: x86/msr: Add Intel SGX
+ hardware bits
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Serge Ayoun <serge.ayoun@intel.com>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
@@ -52,8 +51,7 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
         mikko.ylinen@intel.com
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-9-jarkko.sakkinen@linux.intel.com>
- <20201019084558.GA1155569@kapsi.fi>
+ <20201003045059.665934-2-jarkko.sakkinen@linux.intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -98,12 +96,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <271c12d9-1a01-b7f4-82c1-b0ce8f86b2b7@intel.com>
-Date:   Mon, 19 Oct 2020 06:40:34 -0700
+Message-ID: <fb556734-6347-31ba-3595-67a25f4ebf0d@intel.com>
+Date:   Mon, 19 Oct 2020 07:10:58 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201019084558.GA1155569@kapsi.fi>
+In-Reply-To: <20201003045059.665934-2-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -111,20 +109,29 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 10/19/20 1:45 AM, Jarkko Sakkinen wrote:
-> On Sat, Oct 03, 2020 at 07:50:43AM +0300, Jarkko Sakkinen wrote:
->> +config INTEL_SGX
-> Since the directory for this was renamed some iterations ago from
-> arch/x86/kernel/cpu/sgx to intel_sgx given the feedback from Boris,
-> I'm wondering should this also be renamed as X86_SGX?
+On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
+> 
+> Add X86_FEATURE_SGX1 and X86_FEATURE_SGX2 from CPUID.(EAX=12H, ECX=0),
+> which describe the level of SGX support available [1].
 
-I say yes for two reasons:
+The SDM says there are 6 leaf functions added with SGX2 (SDM Vol 3D
+Table 36-2):
 
-We're recently adding a prohibition against vendors adding
-VENDOR_FEATURE, preferring "FEATURE" instead.  But, I seriously doubt
-anyone else is going to to to the effort that Intel did here.
+ENCLS[EAUG]
+ENCLS[EMODPR]
+ENCLS[EMODT]
+ENCLU[EACCEPT]
+ENCLU[EMODPE]
+ENCLU[EACCEPTCOPY]
 
-Also "SGX" is short enough that I can imagine someone else plausibly
-wanting to do CONFIG_SGX for something else.
+But I don't see *ANY* of those in use in this patch set.  I know we
+added a bunch of infrastructure around mitigating if EMODPE got *used*,
+but does the kernel need to change its behavior if SGX1 vs. SGX2 is
+supported?
 
-So, I'm OK with keeping "INTEL_SGX", but I'd also be fine with "X86_SGX".
+BTW, the SG2 bit is defined:
+
+	Bit 01: SGX2. If 1, Indicates Intel SGX supports the collection
+	of SGX2 leaf functions.
+
+which makes me think it's for leaf functions only.
