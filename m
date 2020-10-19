@@ -1,160 +1,123 @@
-Return-Path: <SRS0=sUAi=DZ=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=Kf/c=D2=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74110C433DF
-	for <linux-sgx@archiver.kernel.org>; Sun, 18 Oct 2020 09:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AA8C433DF
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Oct 2020 07:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA52208FE
-	for <linux-sgx@archiver.kernel.org>; Sun, 18 Oct 2020 09:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2DEF22240
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Oct 2020 07:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603091026;
+	bh=ybPoRLwk9gRRObCHrDxH1kw1JCNmskeqI4YCYwMypEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KVvqdN5ikFeewBeUckRMWxWwum1ySeDvyB5Qzrz0VorTmegAiDGRDgD1fp/qJo5+f
+	 kDD4CXup8y4jTei3m7yEeh7Tb/oXRA2tCZlQ5wH8b/VQr+MJOTra99ryCJ77uA4HwU
+	 z1jecGtFnUEqNXcpYWsKgX32XGRhw8hn00xEkmAY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725320AbgJRJEu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 18 Oct 2020 05:04:50 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:57294 "EHLO wind.enjellic.com"
+        id S1727271AbgJSHDq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 19 Oct 2020 03:03:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725298AbgJRJEt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 18 Oct 2020 05:04:49 -0400
-X-Greylist: delayed 865 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Oct 2020 05:04:49 EDT
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 09I8nM6G019472;
-        Sun, 18 Oct 2020 03:49:22 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 09I8nK1x019471;
-        Sun, 18 Oct 2020 03:49:20 -0500
-Date:   Sun, 18 Oct 2020 03:49:20 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        id S1727269AbgJSHDq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 19 Oct 2020 03:03:46 -0400
+Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 009BF22203;
+        Mon, 19 Oct 2020 07:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603091025;
+        bh=ybPoRLwk9gRRObCHrDxH1kw1JCNmskeqI4YCYwMypEA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zga4ZuU/cKcUHl6owOPPlnthLPPS+62m6z6xAdPtPFnS1IziCk2q7yXRJyHgWwglo
+         Jtj2gdMIxvJDtCYLHMxC5v2iVN7MRzWgggdKixdKgTGU+HurVLAAhWaZZml4k1vpIg
+         nfXoTyRbcai2sAPKOmeFEUl4CBZRw/8ImQ2KB3OY=
+Date:   Mon, 19 Oct 2020 10:03:43 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Neil Horman <nhorman@redhat.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-Message-ID: <20201018084920.GA19255@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200924202549.GB19127@linux.intel.com> <e25bfeaa-afb4-3928-eb80-50d90815eabb@intel.com> <20200924230501.GA20095@linux.intel.com> <b737fcab-bfde-90e1-1101-82d646a6f5b7@intel.com> <20200925000052.GA20333@linux.intel.com> <32fc9df4-d4aa-6768-aa06-0035427b7535@intel.com> <20200925194304.GE31528@linux.intel.com> <230ce6da-7820-976f-f036-a261841d626f@intel.com> <20200928005347.GB6704@linux.intel.com> <6eca8490-d27d-25b8-da7c-df4f9a802e87@intel.com>
-Mime-Version: 1.0
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v39 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
+Message-ID: <20201019070343.GA1141388@kapsi.fi>
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-14-jarkko.sakkinen@linux.intel.com>
+ <1739984e-0010-2031-1561-809a0b6380bb@intel.com>
+ <20201018050311.GK68722@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6eca8490-d27d-25b8-da7c-df4f9a802e87@intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 18 Oct 2020 03:49:22 -0500 (CDT)
+In-Reply-To: <20201018050311.GK68722@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 07:04:38AM -0700, Dave Hansen wrote:
-
-Good morning, I hope the weekend is going well for everyone.
-
-> On 9/27/20 5:53 PM, Jarkko Sakkinen wrote:
-> > On Fri, Sep 25, 2020 at 12:53:35PM -0700, Dave Hansen wrote:
-> >> On 9/25/20 12:43 PM, Sean Christopherson wrote:
-> >>>> That means that the intent argument (SGX_PROT_*) is currently unused.
-> >>> No, the intent argument is used (eventually) by SGX's ->mprotect()
-> >>> implementation, i.e. sgx_mprotect() enforces that the actual protections are a
-> >>> subset of the declared/intended protections.
-> >>>
-> >>> If ->mprotect() is not merged, then it yes, it will be unused.
-> >>
-> >> OK, I think I've got it.
-> >>
-> >> I think I'm OK with adding ->mprotect().  As long as folks buy into the
-> >> argument that intent needs to be checked at mmap() time, they obviously
-> >> need to be checked at mprotect() too.
-> >>
-> >> Jarkko, if you want to try and rewrite the changelog, capturing the
-> >> discussion here and reply, I think I can ack the resulting patch.  I
-> >> don't know if that will satisfy the request from Boris from an ack from
-> >> a "mm person", but we can at least start there. :)
+On Sun, Oct 18, 2020 at 08:03:11AM +0300, Jarkko Sakkinen wrote:
+> > > +	mmap_read_lock(current->mm);
+> > > +	mutex_lock(&encl->lock);
+> > > +
+> > > +	/*
+> > > +	 * Insert prior to EADD in case of OOM.
 > > 
-> > I think what it needs, based on what I've read, is the step by step
-> > description of the EMODPE scenarion without this callback and with it.
+> > I wouldn't say OOM.  Maybe:
+> > 
+> > 	xa_insert() and EADD can both fail.  But xa_insert() is easier
+> > 	to unwind so do it first.
+> > 
+> > >                                              EADD modifies MRENCLAVE, i.e.
+> > 
+> > What is MRENCLAVE?
 > 
-> EMODPE is virtually irrelevant for this whole thing.  The x86 PTE
-> permissions still specify the most restrictive permissions, which is
-> what matters the most.
+> The measurement stored in SECS. I'm wondering  with xarray, is it
+> possible to preallocate entry without inserting anything?
 > 
-> We care about the _worst_ the enclave can do, not what it imposes on
-> itself on top of that.
-> 
-> > I think other important thing to underline is that an LSM or any other
-> > security measure can only do a sane decision when the enclave is loaded.
-> > At that point we know the source (vm_file).
-> 
-> Right, you know the source, but it can be anonymous or a file.
+> Then we could get rid of this unwind and also would not need to
+> take encl->lock in sgx_encl_may_map().
 
-Or it could be loaded over the network in encrypted form by the
-enclave itself.
+I'm still a bit confused with the unfamiliar Xarray API but I think I
+got it:
 
-Sean, admirably, wants to peer into the future and set the driver up
-from an architectural perspective, to future proof it for the
-imposition of security controls.  So it would seem helpful to peer a
-bit.
+1. xa_insert() with a NULL entry reserves index and more importantly
+   does the memory allocation.
+2. xa_cmpxchg() with the enclave page, if EADD and EEXTEND's succceed.
+3. xa_release() otherwise.
 
-If I can paraphrase/simplify the discussion to date; the best the
-kernel can do with respect to SGX is to impose controls, via mprotect,
-that limit the maximum permissions of an enclave page to whatever was
-specified when the enclave was loaded/initialized.
+This way sgx_encl_may_map() will never see a stale enclave page when it
+does the permission check, even if encl->lock is not taken.
 
-So here is the question that would seem to need answering:
+I mean right now I have to take both xas lock and enclave lock, which
+is terrible but this will take care of it.
 
-Is this even a relevant control if we cede the notion of dynamically
-loadable enclave code, which is the objective of SGX2 hardware, which
-will in all likelihood be the only relevant hardware implementation in
-the future?
+I will rewrite the comment to something more reasonable, once I've done
+this code change.
 
-The answer to this could very well be yes if the objective is to
-provide a method for a platform owner to explicitly block dynamically
-loadable enclave code.  Since there seems to be a desire for immense
-clarity in the changelogs surrounding all of this, framing the
-discussion in something practical like this may be of assistance.
+The reason for doing insert first is that, if we get -ENOMEM after
+successful EADD and EEXTEND's we have a legit microarchitectural state
+but you cannot rollback a hash (MRENCLAVE), so game is anyway over
+because your data structures are not in sync.
 
-One of the desires of the SGX user community is to not allow
-visibility into enclave code, this is one of the notions/objectives of
-confidential computing.  The Protected Code Loader that was added by
-Intel to their PSW is an acknowledgement of this fact.  EDMM and
-dynamically loadable code makes doing this much more efficient so that
-would seem to be the face of the future.
+If -ENOMEM comes before, everything is still in sync and we don't have
+invalidate the enclave.
 
-My apologies for 'delaying' the driver even more.  I was accused of
-that about a year ago but it appears I didn't do too much
-damage... :-)
-
-Best wishes for a productive week.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
-Enjellic Systems Development, LLC     IOT platforms and edge devices.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"If you get to thinkin' you're a person of some influence, try
- orderin' somebody else's dog around."
-                                -- Cowboy Wisdom
+/Jarkko
