@@ -6,86 +6,119 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717ADC388F9
-	for <linux-sgx@archiver.kernel.org>; Fri, 23 Oct 2020 09:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CF4C388F9
+	for <linux-sgx@archiver.kernel.org>; Fri, 23 Oct 2020 10:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1616521D43
-	for <linux-sgx@archiver.kernel.org>; Fri, 23 Oct 2020 09:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94845221F9
+	for <linux-sgx@archiver.kernel.org>; Fri, 23 Oct 2020 10:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S460985AbgJWJDW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 23 Oct 2020 05:03:22 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52491 "EHLO mga05.intel.com"
+        id S461924AbgJWKMG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 23 Oct 2020 06:12:06 -0400
+Received: from mga17.intel.com ([192.55.52.151]:46184 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S460906AbgJWJDW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 23 Oct 2020 05:03:22 -0400
-IronPort-SDR: 1pYa2J2h8iXQKIRgCSK7rjuwRvXup+AB2YxkJxjYiHR146xOablPEgkj2eGqq0wzg7Af8lOanq
- eo8mhPZirDSw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9782"; a="252346678"
+        id S461902AbgJWKMF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 23 Oct 2020 06:12:05 -0400
+IronPort-SDR: 4fU/Woo3wmfkc5Pk3qimhBVE01hqnJRwAn3eLIJ8m9b3k2LJzA6obYmqrh6C5zhxXaydZDFQDj
+ 7VuZ1pPnoaUA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9782"; a="147513133"
 X-IronPort-AV: E=Sophos;i="5.77,407,1596524400"; 
-   d="scan'208";a="252346678"
+   d="scan'208";a="147513133"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 02:03:14 -0700
-IronPort-SDR: Ncx9ht++ornms4l9FHuaFAcqsd4HIiulbAn0UbVs8ikhdUcMEz3NuTafWw7ZebG94yI5SwyUmp
- 8D6eJa0Vu0KA==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 03:11:59 -0700
+IronPort-SDR: LSKuDUDfpwS2jQem0DjiV2xOl3oOGjpv/J4wOGYEJ9lcXgMvZn9siwQDe+1XtTE/0JD8p9mo2E
+ iYMGhBGYBt8Q==
 X-IronPort-AV: E=Sophos;i="5.77,407,1596524400"; 
-   d="scan'208";a="302612344"
+   d="scan'208";a="534346115"
 Received: from spiccard-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.41.38])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 02:03:02 -0700
-Date:   Fri, 23 Oct 2020 12:03:01 +0300
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 03:11:44 -0700
+Date:   Fri, 23 Oct 2020 13:11:44 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Serge Ayoun <serge.ayoun@intel.com>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
         mikko.ylinen@intel.com
-Subject: Re: [PATCH v39 08/24] x86/sgx: Initialize metadata for Enclave Page
- Cache (EPC) sections
-Message-ID: <20201023090301.GB168477@linux.intel.com>
+Subject: Re: [PATCH v39 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
+Message-ID: <20201023101144.GE168477@linux.intel.com>
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-9-jarkko.sakkinen@linux.intel.com>
- <20201019084558.GA1155569@kapsi.fi>
- <271c12d9-1a01-b7f4-82c1-b0ce8f86b2b7@intel.com>
+ <20201003045059.665934-14-jarkko.sakkinen@linux.intel.com>
+ <1739984e-0010-2031-1561-809a0b6380bb@intel.com>
+ <20201018050311.GK68722@linux.intel.com>
+ <516a1b7a-38cc-adde-833b-b661cbee97f2@intel.com>
+ <20201019211525.GC23072@linux.intel.com>
+ <564152e4-2334-2c82-1a12-4c980b08a944@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <271c12d9-1a01-b7f4-82c1-b0ce8f86b2b7@intel.com>
+In-Reply-To: <564152e4-2334-2c82-1a12-4c980b08a944@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Oct 19, 2020 at 06:40:34AM -0700, Dave Hansen wrote:
-> On 10/19/20 1:45 AM, Jarkko Sakkinen wrote:
-> > On Sat, Oct 03, 2020 at 07:50:43AM +0300, Jarkko Sakkinen wrote:
-> >> +config INTEL_SGX
-> > Since the directory for this was renamed some iterations ago from
-> > arch/x86/kernel/cpu/sgx to intel_sgx given the feedback from Boris,
-> > I'm wondering should this also be renamed as X86_SGX?
+On Mon, Oct 19, 2020 at 02:44:19PM -0700, Dave Hansen wrote:
+> On 10/19/20 2:15 PM, Sean Christopherson wrote:
+> >>>> Yeah...  Don't we need to do another access_ok() check here, if we
+> >>>> needed one above since we are moving away from addrp.src?
+> >>> I don't think so because the page is pinned with get_user_pages().
+> >> No, get_user_pages() is orthogonal.
+> >>
+> >> Looking at this again, you _might_ be OK since you validated addp.length
+> >> against encl->size.  But, it's all very convoluted and doesn't look very
+> >> organized or obviously right.
+> > The easiest fix would be to have the existing access_ok() check the entire
+> > range, no?  Or am I missing something obvious?
 > 
-> I say yes for two reasons:
+> In general, I want the actual userspace access to be as close as
+> possible and 1:1 with the access_ok() checks.  That way, it's blatantly
+> obvious that the pointers have been checked.
 > 
-> We're recently adding a prohibition against vendors adding
-> VENDOR_FEATURE, preferring "FEATURE" instead.  But, I seriously doubt
-> anyone else is going to to to the effort that Intel did here.
+> *But* get_user_pages() has access_ok() checks inside of its
+> implementation, which makes sense.  *But*, that begs the question of
+> what the top-level one was doing in the first place.  Maybe it was just
+> superfluous.
 > 
-> Also "SGX" is short enough that I can imagine someone else plausibly
-> wanting to do CONFIG_SGX for something else.
-> 
-> So, I'm OK with keeping "INTEL_SGX", but I'd also be fine with "X86_SGX".
+> Either way, it still doesn't explain what this is doing:
 
-I'll rename it to X86_SGX, given that we changed the directory earlier
-(based on feedback) from "intel_sgx" to "sgx".
+I guess it is just history. Used to be one page ioctl.
+
+> > +       ret = get_user_pages(src, 1, 0, &src_page, NULL);
+> > +       if (ret < 1)
+> > +               return -EFAULT;
+> > +
+> > +       pginfo.secs = (unsigned long)sgx_get_epc_addr(encl->secs.epc_page);
+> > +       pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
+> > +       pginfo.metadata = (unsigned long)secinfo;
+> > +       pginfo.contents = (unsigned long)kmap_atomic(src_page);
+> > +
+> > +       ret = __eadd(&pginfo, sgx_get_epc_addr(epc_page));
+> > +
+> > +       kunmap_atomic((void *)pginfo.contents);
+> 
+> I think the point is to create a stable kernel alias address for
+> 'src_page' so that any mucking with the userspace mapping doesn't screw
+> up the __eadd() and any failures aren't due to reclaim or MADV_DONTNEED.
+> 
+> If this isn't even touching the userspace mapping, it didn't need
+> access_ok() in the first place.
+
+The whole access_ok() check is just evolutionary cruft. I will remove
+it.
 
 /Jarkko
