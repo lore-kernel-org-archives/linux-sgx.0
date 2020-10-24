@@ -2,85 +2,74 @@ Return-Path: <SRS0=IGRU=D7=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 302D8C2D0A3
-	for <linux-sgx@archiver.kernel.org>; Sat, 24 Oct 2020 15:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB438C2D0A3
+	for <linux-sgx@archiver.kernel.org>; Sat, 24 Oct 2020 15:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D92C4214F1
-	for <linux-sgx@archiver.kernel.org>; Sat, 24 Oct 2020 15:33:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="dnxfuBjw"
+	by mail.kernel.org (Postfix) with ESMTP id 66244222BA
+	for <linux-sgx@archiver.kernel.org>; Sat, 24 Oct 2020 15:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603554463;
+	bh=WmBbNWhHP6TeR2O/n2ZYBhpmL2kj6x0530LgA41pBKw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=T5CpehnVO2G/apA8GluJDPYCPOlJfyMNCCImHCDUt3rqdi24fj/l6MnzdHoG7B9rz
+	 KxrqRN9zit2ZcA2FJeOVPALwrJOweftfFrNlzkwddgiTw0T5cQxuzRfqVkTSAWWqyk
+	 FgJ2KckiLyev9SNDDVx0cYjmcsxBDZMYNUrn8pug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1761731AbgJXPd1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 24 Oct 2020 11:33:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35004 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761723AbgJXPd0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 24 Oct 2020 11:33:26 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F99AC0613D2
-        for <linux-sgx@vger.kernel.org>; Sat, 24 Oct 2020 08:33:25 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id bh6so2551809plb.5
-        for <linux-sgx@vger.kernel.org>; Sat, 24 Oct 2020 08:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=ib38EIy6KqLbCzhDsFX9vIfwgtD2o848KUSoNeoy71c=;
-        b=dnxfuBjwv5FMkjO6AewL+ulzI0aF/VKrEXZJMr5COvNpsmDT169bdMvM7NAFMy0AIP
-         0cezUlAz0CdahUo02n5yI84ygZcW1WzrfudsjVjy2QhGQDcYEBHYMUEA4XX45C+72HZZ
-         IX2k9rwBSrfDIkWxLLEnSgidw4Dn7VrnIUQmJOJFx3ZzrYyJ5teVXBFatRNCLdBFwPYD
-         v3Gg8TmHdCOkTiD1waFy2JeJ3ybGwd8THrbi5b7w4f3pW731xWrvSHtV101NC/4hXHti
-         C/OwfdP+LB+qYDi3Smw4SRTYyH35q5L6ZUX28af4OWofwyLnsPXNJMySEhXS3stk3u4X
-         Dajg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=ib38EIy6KqLbCzhDsFX9vIfwgtD2o848KUSoNeoy71c=;
-        b=VG1o9DLIp2sopY6osVZFA6UKiHVKdXc34rZhmku38rvHhIyDUacx0Dxn9FYCTG901d
-         D74BohesIru1kknAApPNvDBRw2jQIjpuNDEtAVtoyP7Ab0L2nJe0dIhpaBk9WVFjlCIv
-         0kJb571YNqITKEIlym1Ha+b+OzCPGZUw8vUHH8tqokABqYUUvzNqZJUO3XZOzdKzmb1Q
-         64GpuypU45LzZb92p1phmV71jNCiwO6Y3NNxMSzXxa9EPFkuk20FL9GRvRuSP9kWCPkO
-         aVVv/puTUL9mZuKlxQgn+jeDQ0wGZeC8nZObz5k1b3rCZyykxd207Hx9VKzx3bIzMDlj
-         EZpg==
-X-Gm-Message-State: AOAM531rO3nzXhcXewJyuLPaQs6M9sIodqmDARgmHCmni8Zcmq2R4Y4I
-        s73OxZI6lrRax6IyJmEACOETrg==
-X-Google-Smtp-Source: ABdhPJxBA1OZyZqcMV9ibL2S2g7SlFm4DL6rpdLSEd4A7N/ilAKtfPy3sv5WE+u1iBrACANzMleOVw==
-X-Received: by 2002:a17:90a:191b:: with SMTP id 27mr9285727pjg.115.1603553604710;
-        Sat, 24 Oct 2020 08:33:24 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:21c5:78e1:e2a4:4021? ([2601:646:c200:1ef2:21c5:78e1:e2a4:4021])
-        by smtp.gmail.com with ESMTPSA id 8sm6351973pfn.54.2020.10.24.08.33.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Oct 2020 08:33:23 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
-Date:   Sat, 24 Oct 2020 08:33:21 -0700
-Message-Id: <3655FF47-15D7-4433-81B7-FC070E32B541@amacapital.net>
-References: <20201024143744.GA17727@wind.enjellic.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
+        id S1760500AbgJXPrn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 24 Oct 2020 11:47:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760495AbgJXPrm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 24 Oct 2020 11:47:42 -0400
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872C724654
+        for <linux-sgx@vger.kernel.org>; Sat, 24 Oct 2020 15:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603554461;
+        bh=WmBbNWhHP6TeR2O/n2ZYBhpmL2kj6x0530LgA41pBKw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=keAX3JyrVGeWCh4O0UK3bqb/02ZgWb21rzgkBm430SkpsQ2O8zl4wdJdGLIR3HEaH
+         1XgNNgR+6gyngZnwg0bsYTUwUpaGInHS4aCdKwQxElrqVeSf9fT/F9+zZXIuAg8RrA
+         1ozsKiWmezEyo6wt30lhB9MF8yTV9oJuVHxiNT0o=
+Received: by mail-wm1-f53.google.com with SMTP id a72so5561954wme.5
+        for <linux-sgx@vger.kernel.org>; Sat, 24 Oct 2020 08:47:41 -0700 (PDT)
+X-Gm-Message-State: AOAM530PiByilOPSjga+z1z/3Rcsx+l/OlyfY1RFJScZD+5A/tBjWGY0
+        FHI8y/6KRK77VpCd9/RjqirFXcGFc2eSIXQeAMwL8g==
+X-Google-Smtp-Source: ABdhPJx3gfZuk8J+485eHiKQKMeyXKMTChdcl4yaJniTwMIJ9YG/WwrAwXc3p7BhtWAh9QyxeWRFcpmCPDNx/HpgFWQ=
+X-Received: by 2002:a05:600c:2241:: with SMTP id a1mr7968642wmm.49.1603554460057;
+ Sat, 24 Oct 2020 08:47:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
+ <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com> <20201023101736.GG168477@linux.intel.com>
+ <f2ff64e6-8fe1-55ee-ae7c-f19d7907d60e@intel.com> <20201024113403.GA29427@kernel.org>
+In-Reply-To: <20201024113403.GA29427@kernel.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 24 Oct 2020 08:47:28 -0700
+X-Gmail-Original-Message-ID: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
+Message-ID: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
+Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
+To:     Jarkko Sakkinen <kernel.org@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         asapek@google.com, Borislav Petkov <bp@alien8.de>,
         "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
         Conrad Parker <conradparker@google.com>, cyhanish@google.com,
         "Huang, Haitao" <haitao.huang@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
         Christian Ludloff <ludloff@google.com>,
@@ -88,63 +77,71 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
         Patrick Uiterwijk <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
-In-Reply-To: <20201024143744.GA17727@wind.enjellic.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-X-Mailer: iPhone Mail (18A393)
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
+        Mikko Ylinen <mikko.ylinen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On Sat, Oct 24, 2020 at 4:34 AM Jarkko Sakkinen <kernel.org@kernel.org> wrote:
+>
+> On Fri, Oct 23, 2020 at 07:19:05AM -0700, Dave Hansen wrote:
+> > On 10/23/20 3:17 AM, Jarkko Sakkinen wrote:
+> > > On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
+> > >> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
+> > >>> + * Failure to explicitly request access to a restricted attribute will cause
+> > >>> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
+> > >>> + * is access to the PROVISION_KEY.
+> > >> Could we also justify why access is restricted, please?  Maybe:
+> > >>
+> > >>    Access is restricted because PROVISION_KEY is burned uniquely
+> > >>    into each each processor, making it a perfect unique identifier
+> > >>    with privacy and fingerprinting implications.
+> > >>
+> > >> Are there any other reasons for doing it this way?
+> > > AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
+> > > PROVISION_SEALING_KEY also have random salt added, i.e. they change
+> > > every boot cycle.
+> > >
+> > > There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
+> > > 3D :-)
+> >
+> > Does that mean there are no privacy implications from access to the
+> > provisioning keys?  If that's true, why do we need a separate permission
+> > framework for creating provisioning enclaves?
+>
+> As I've understood it, the key material for those keys is not even
+> required in the current SGX architecture, it was used in the legacy EPID
+> scheme, but the attribute itself is useful.
+>
+> Let's assume that we have some sort of quoting enclave Q, which guards a
+> public key pair, which signs quotes of other enclaves. Let's assume we
+> have an attestation server A, which will enable some capabilities [*],
+> if it receives a quote signed with that public key pair.
+>
+> 1. E gets the report key with EGETKEY.
+> 2. E constructs REPORTDATA (37.16) and TARGETINFO (37.17) structures.
+>    The former describes the enclaves contents and attributes and latter
+>    the target, i.e. Q in this artitificial example.
+> 3. E calls EREPORT to generate a structure called REPORT MAC'd with the
+>    *targets* report key. It knows, which key to usue from REPORTDATA.
+> 4. The runtime will then pass this to Q.
+> 5. Q will check if ATTRIBUTE.PROVISION_KEY is set. If it is, Q will
+>    know that the enclave is allowed to get attested. Then it will
+>    sign the report with the guarded public key pair and send it to
+>    the attestation server.
 
+I think you have this a little bit off.  AIUI E won't have
+ATTRIBUTE.PROVISION_KEY set -- Q will.  Q uses the provisioning key to
+convince an Intel server that it's running on a genuine Intel CPU, and
+the Intel server will return a signed certificate that Q can chain off
+of to generate attestations for E.
 
-> On Oct 24, 2020, at 7:38 AM, Dr. Greg <greg@enjellic.com> wrote:
->=20
+Dave, I would rephrase what you're saying a bit.  The PROVISION_KEY
+attribute allows enclaves to access keys that are unique to a
+processor and unchangeable.  Unlike other SGX keys, these keys are not
+affected by OWNER_EPOCH changes and therefore cannot be reset.
 
->=20
-> I can't bring myself to believe that LSM's are going to be written
-> that will be making enclave security decisions on a page by page
-> basis.  Given what I have written above, I think all of this comes
-> down to giving platform administrators one of three decisions, in
-> order of most to least secure:
->=20
-> 1.) Block dynamic code loading and execution.
->=20
-
-I don=E2=80=99t understand what you=E2=80=99re trying to say. Unless we=E2=80=
-=99re going to split enclaves into multiple VMAs with different permissions,=
- how do you expect to block dynamic code loading unless you have separate RW=
- and RX pages?  That would be =E2=80=9Cpage-by-page=E2=80=9D, right?
-
-> 2.) Block access to RWX pages.
->=20
-> 3.) The wild west - no restrictions on enclave page protection manipulatio=
-n.
->=20
-> =46rom a security perspective I would argue for the wisdom of making
-> option 1 unconditional via a kernel command-line parameter.
->=20
-> It may be that ->mprotect is the right mechanism to implement this.
-> If that is the case, frame the discussion and documentation so that it
-> reflects the actual security threat and the consideration and means
-> for dealing with it.
->=20
-> Hopefully all of this is useful to the stakeholders in this
-> technology.
->=20
-> Have a good weekend.
->=20
-> Dr. Greg
->=20
-> As always,
-> Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
-> Enjellic Systems Development, LLC     IOT platforms and edge devices.
-> 4206 19th Ave. N.
-> Fargo, ND  58102
-> PH: 701-281-1686                      EMAIL: greg@enjellic.com
-> --------------------------------------------------------------------------=
-----
-> "Politics is the business of getting power and privilege without possessin=
-g
-> merit."
->                                -- P.J. O'Rourke
+--Andy
