@@ -2,141 +2,150 @@ Return-Path: <SRS0=89p6=EB=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08DFC4363A
-	for <linux-sgx@archiver.kernel.org>; Mon, 26 Oct 2020 21:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE2FC4363A
+	for <linux-sgx@archiver.kernel.org>; Mon, 26 Oct 2020 22:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 633042084C
-	for <linux-sgx@archiver.kernel.org>; Mon, 26 Oct 2020 21:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36C2920878
+	for <linux-sgx@archiver.kernel.org>; Mon, 26 Oct 2020 22:59:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="KHfHv2Di"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732746AbgJZV0Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 26 Oct 2020 17:26:16 -0400
-Received: from mga18.intel.com ([134.134.136.126]:58049 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732700AbgJZV0Q (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 26 Oct 2020 17:26:16 -0400
-IronPort-SDR: X/nM1Fqr+fjdN6oFkONwEyW4x0xi53zOwdvbEfCUyC0hp84t5Uiw/zrlaKQxJ5UcaUM8O7hg4y
- r7E/rA2bBLJQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9786"; a="155769559"
-X-IronPort-AV: E=Sophos;i="5.77,421,1596524400"; 
-   d="scan'208";a="155769559"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2020 14:26:15 -0700
-IronPort-SDR: xRvsdXKraI4Nkmo7X0VbG4g/S6uNhdEMXtdpiGhBUhQqa2kTnel/ztQjknzXaTLt3gOiWbKTKv
- Zow6vKU6SN0A==
-X-IronPort-AV: E=Sophos;i="5.77,421,1596524400"; 
-   d="scan'208";a="535519159"
-Received: from milopez-mobl3.amr.corp.intel.com (HELO [10.251.25.55]) ([10.251.25.55])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2020 14:26:14 -0700
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-To:     Borislav Petkov <bp@alien8.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        haitao.huang@intel.com, josh@joshtriplett.org, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200626153400.GE27151@zn.tnic>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <1ada871a-2350-1007-c625-a00bdb0d439b@intel.com>
-Date:   Mon, 26 Oct 2020 14:26:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200626153400.GE27151@zn.tnic>
+        id S2394935AbgJZW7k (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 26 Oct 2020 18:59:40 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:33795 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394904AbgJZW7j (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 26 Oct 2020 18:59:39 -0400
+Received: by mail-pj1-f68.google.com with SMTP id b6so2182352pju.1
+        for <linux-sgx@vger.kernel.org>; Mon, 26 Oct 2020 15:59:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=2rK/Of0WiuHYD9FFK0xFIIBHXzWWKf/GF6CaoAKhi7k=;
+        b=KHfHv2Di0sGKLZSKyaTjvWAM7dc8mzSm7Coa/rUW/4AN1SMnO1ZHiW4hp01+GkQV+S
+         ISgKfXjDv+y1MrC7lmY3fyAt1e1GHXjHYaeaHZgDjHB4eDsW1AAztlH70o3vVJW24seI
+         HzdAr3RmlKOSi3KqOdWs4gpIjSPpOg1XpyTQlNqpNrYgF7m0laP1Apg08scR4wfKxjAR
+         DhjBAlpqiSUYhVwgfWMqTriaEWqixF/foByxWbLTCVSKpXvvDOcPO70d01wQUV1bEEVf
+         TzfvArhrKfxQY5DwmEJ73jFflGxTNjZIPusFHBSdciK10UdUe4JebN5kvEnva/DxhO+n
+         shzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=2rK/Of0WiuHYD9FFK0xFIIBHXzWWKf/GF6CaoAKhi7k=;
+        b=KAej73d+EvZh77YG8Vha6QUAKiS7zW+qk29zh71pp4Rn4wr1+8AmWkXB5UvI0tivrY
+         scBTk30u8In4ArfV0YofV72d8dkuZQD1uhsNxpwUxCCeFvGXEO5w/KRoBVDjhl8butLs
+         f9/nMkanKgjkxnzD+7V3w2LVr5EQ512LfMvV0dIXLKffqnBhuVeMWJlWMUlrxraZsXFq
+         ohGZ1SUtu/16ZEGCbeoLu+/s0lkjXscRTjAaDogz0XEhAPamJZstdp+6Kpbv0dI6QIQh
+         ITTW92EPKMXfrc6MnFkb7BEouWSDvcLKz1UZGYvV+r6KAO2YX57D693ofZzZzt297t3X
+         VDjA==
+X-Gm-Message-State: AOAM531pRI/47QTp1i74IhEy5GN4cvpWUWAj+N4gFY4vhWzGyq9O7ZQb
+        laWHM4NqbJeCLsKruV72/H3VJg==
+X-Google-Smtp-Source: ABdhPJxdZ9ahVkNLc4s51Ze8FYwPnT3P4jHeIwL+eCMOHBC5VdKZAK9mDF+XHItA3wLxaM3PYuSaJg==
+X-Received: by 2002:a17:90a:dc85:: with SMTP id j5mr18214212pjv.38.1603753179292;
+        Mon, 26 Oct 2020 15:59:39 -0700 (PDT)
+Received: from ?IPv6:2600:1012:b062:b558:54e1:d677:9f91:a6a4? ([2600:1012:b062:b558:54e1:d677:9f91:a6a4])
+        by smtp.gmail.com with ESMTPSA id y124sm12776291pfy.28.2020.10.26.15.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Oct 2020 15:59:38 -0700 (PDT)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+Date:   Mon, 26 Oct 2020 15:59:35 -0700
+Message-Id: <4B39703F-280C-4AED-B4BB-047BD216B792@amacapital.net>
+References: <20201026105128.GA30004@wind.enjellic.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+In-Reply-To: <20201026105128.GA30004@wind.enjellic.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+X-Mailer: iPhone Mail (18A393)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/26/20 8:34 AM, Borislav Petkov wrote:
->> +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
->> +		return -EINVAL;
->> +
->> +	if (copy_from_user(&addp, arg, sizeof(addp)))
->> +		return -EFAULT;
->> +
->> +	if (!IS_ALIGNED(addp.offset, PAGE_SIZE) ||
->> +	    !IS_ALIGNED(addp.src, PAGE_SIZE))
->> +		return -EINVAL;
->> +
->> +	if (!(access_ok(addp.src, PAGE_SIZE)))
->> +		return -EFAULT;
->> +
->> +	if (addp.length & (PAGE_SIZE - 1))
->> +		return -EINVAL;
-> How many pages are allowed? Unlimited? I'm hoping some limits are
-> checked somewhere...
 
-What were you concerned about here?  Was it how long the syscall could
-take, or that one user could exhaust all the enclave memory in one call?
+> On Oct 26, 2020, at 3:51 AM, Dr. Greg <greg@enjellic.com> wrote:
+>=20
+> =EF=BB=BFOn Sat, Oct 24, 2020 at 08:33:21AM -0700, Andy Lutomirski wrote:
+>=20
+> The easiest way to generically block dynamic code loading is to not
+> allow the ENCLS[EAUG] instruction to be executed, the purpose of which
+> is to augment a defined but sparse ELRANGE with additional physical
+> pages from the EPC.  It doesn't require ->mprotect or anything else,
+> just a physical decision by the OS to not allow execution of that
+> instruction.
 
-Some later versions of this patch have a 1MB limit per to reduce how
-long each SGX_IOC_ENCLAVE_ADD_PAGES call spends in the kernel.  But, I'm
-not _sure_ that's what you were intending.
+I=E2=80=99m pretty sure that one can dynamically load code without EAUG. It
+would require preallocation, but I can=E2=80=99t see why EAUG changes anythi=
+ng from a security policy perspective.
 
+>=20
+> All of which is consistent with my recomendation for a global disable
+> knob on the kernel command-line for sites that do not want to tolerate
+> completely anonymous code execution.
+>=20
+> Since this driver does not yet support EDMM, the most immediate
+> situation that we are dealing with are the potential security
+> implications of SGX2 ENCLU instructions being executed inside of an
+> enclave.  The most principal issue is the ENCLU[EMODPE] instruction
+> that allows a running enclave to extend the current permissions of a
+> page.
+>=20
+> I've been assuming that Sean's desire for ->mprotect is to block the
+> ability of an initialized enclave, on a non-EDMM enabled driver, to
+> collaborate with its untrusted component to self-modify its page
+> permissions and thus allow execution of code that the operating system
+> has no visibility into.  That would make far more sense then the
+> notion of someone trying to create an LSM that makes page by page
+> security decisions.
+
+If you remove every mention of EDMM from that description, and you realize t=
+hat the ability for LSMs to implement this sort of policy is basically the s=
+ame as for the core SGX code to do so, then I agree.
+
+The addition of EDMM will not change anything here per se, except that we=E2=
+=80=99re a lot more likely to encounter enclaves doing interesting things wi=
+th EMODPE once EDMM is enabled.
+
+>=20
+> The open question in all of this is that the EDMM paper, as well as
+> the SDM, indicate the effects of an ENCLU[EMODPE] are immediate inside
+> of a running enclave.  I'm assuming that this does NOT mean that once
+> a context of execution is running in enclave mode it would be capable
+> of evading standard page protections but the 'immediate' is somewhat
+> disquieting and probably deserves clarification, despite Dave Hansen's
+> adament concerns about discussing the instruction... :-)
+
+If EMODPE writes an entry into the TLB that violates PTE permissions, then w=
+e have a real problem. I would be very surprised if this were to be the case=
+.
