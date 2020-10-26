@@ -1,59 +1,49 @@
-Return-Path: <SRS0=IGRU=D7=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=89p6=EB=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70C5C4363A
-	for <linux-sgx@archiver.kernel.org>; Sat, 24 Oct 2020 20:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B42C55178
+	for <linux-sgx@archiver.kernel.org>; Mon, 26 Oct 2020 10:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73340222BA
-	for <linux-sgx@archiver.kernel.org>; Sat, 24 Oct 2020 20:23:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603570995;
-	bh=OUUHQchNeaZSA5Ychtwc5x6Ol2ZEQdBNnz0+GXVGGS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZiinUW0twAkU3Ey3DzMpVjQBJ8rW//7LndEjSoRztWB/hm8UHcasbGJK1l5eYZZeH
-	 SB5jhno21QmsuMb9iAXZaS6UVNH+27onS7SyA2RhX236gglXm7kldlH50tEraAQ9AK
-	 tXWM2PXfxUM+zsLNQJeZ5Vj/tD04WSH3wd9MUc7I=
+	by mail.kernel.org (Postfix) with ESMTP id 0BD8522403
+	for <linux-sgx@archiver.kernel.org>; Mon, 26 Oct 2020 10:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1764371AbgJXUXP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 24 Oct 2020 16:23:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58174 "EHLO mail.kernel.org"
+        id S1771846AbgJZKwT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 26 Oct 2020 06:52:19 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:58370 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1764296AbgJXUXO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 24 Oct 2020 16:23:14 -0400
-Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B73A22276;
-        Sat, 24 Oct 2020 20:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603570993;
-        bh=OUUHQchNeaZSA5Ychtwc5x6Ol2ZEQdBNnz0+GXVGGS0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dBz//X92mG9QZRUy9A35CcTIz07Nwas4kA/0nBtU44U/fd57I9Nz9z4IKa9DauvXd
-         9QwlqNsQ+bAsl29Yz18wrX3M26yL/BtOrXbiT9krW6WYt8LZkYdK9FqpUAgbBlDLyo
-         a5ScUowMy9DKq7jv52hfWgTj3ZY7TSIJnkOCaxVk=
-Date:   Sat, 24 Oct 2020 23:23:11 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
+        id S1771748AbgJZKwT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 26 Oct 2020 06:52:19 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 09QApT06030457;
+        Mon, 26 Oct 2020 05:51:30 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 09QApSXE030456;
+        Mon, 26 Oct 2020 05:51:28 -0500
+Date:   Mon, 26 Oct 2020 05:51:28 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         asapek@google.com, Borislav Petkov <bp@alien8.de>,
         "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
         Conrad Parker <conradparker@google.com>, cyhanish@google.com,
         "Huang, Haitao" <haitao.huang@intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
         Christian Ludloff <ludloff@google.com>,
@@ -61,108 +51,138 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Nathaniel McCallum <npmccallum@redhat.com>,
         Patrick Uiterwijk <puiterwijk@redhat.com>,
         David Rientjes <rientjes@google.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
-        Mikko Ylinen <mikko.ylinen@intel.com>
-Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-Message-ID: <20201024194632.GA3642@kernel.org>
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
- <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com>
- <20201023101736.GG168477@linux.intel.com>
- <f2ff64e6-8fe1-55ee-ae7c-f19d7907d60e@intel.com>
- <20201024113403.GA29427@kernel.org>
- <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
-MIME-Version: 1.0
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com
+Subject: Re: [PATCH v38 10/24] mm: Add vm_ops->mprotect()
+Message-ID: <20201026105128.GA30004@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20201024143744.GA17727@wind.enjellic.com> <3655FF47-15D7-4433-81B7-FC070E32B541@amacapital.net>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
+In-Reply-To: <3655FF47-15D7-4433-81B7-FC070E32B541@amacapital.net>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 26 Oct 2020 05:51:30 -0500 (CDT)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Oct 24, 2020 at 08:47:28AM -0700, Andy Lutomirski wrote:
-> On Sat, Oct 24, 2020 at 4:34 AM Jarkko Sakkinen <kernel.org@kernel.org> wrote:
-> >
-> > On Fri, Oct 23, 2020 at 07:19:05AM -0700, Dave Hansen wrote:
-> > > On 10/23/20 3:17 AM, Jarkko Sakkinen wrote:
-> > > > On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
-> > > >> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
-> > > >>> + * Failure to explicitly request access to a restricted attribute will cause
-> > > >>> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> > > >>> + * is access to the PROVISION_KEY.
-> > > >> Could we also justify why access is restricted, please?  Maybe:
-> > > >>
-> > > >>    Access is restricted because PROVISION_KEY is burned uniquely
-> > > >>    into each each processor, making it a perfect unique identifier
-> > > >>    with privacy and fingerprinting implications.
-> > > >>
-> > > >> Are there any other reasons for doing it this way?
-> > > > AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
-> > > > PROVISION_SEALING_KEY also have random salt added, i.e. they change
-> > > > every boot cycle.
-> > > >
-> > > > There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
-> > > > 3D :-)
-> > >
-> > > Does that mean there are no privacy implications from access to the
-> > > provisioning keys?  If that's true, why do we need a separate permission
-> > > framework for creating provisioning enclaves?
-> >
-> > As I've understood it, the key material for those keys is not even
-> > required in the current SGX architecture, it was used in the legacy EPID
-> > scheme, but the attribute itself is useful.
-> >
-> > Let's assume that we have some sort of quoting enclave Q, which guards a
-> > public key pair, which signs quotes of other enclaves. Let's assume we
-> > have an attestation server A, which will enable some capabilities [*],
-> > if it receives a quote signed with that public key pair.
-> >
-> > 1. E gets the report key with EGETKEY.
-> > 2. E constructs REPORTDATA (37.16) and TARGETINFO (37.17) structures.
-> >    The former describes the enclaves contents and attributes and latter
-> >    the target, i.e. Q in this artitificial example.
-> > 3. E calls EREPORT to generate a structure called REPORT MAC'd with the
-> >    *targets* report key. It knows, which key to usue from REPORTDATA.
-> > 4. The runtime will then pass this to Q.
-> > 5. Q will check if ATTRIBUTE.PROVISION_KEY is set. If it is, Q will
-> >    know that the enclave is allowed to get attested. Then it will
-> >    sign the report with the guarded public key pair and send it to
-> >    the attestation server.
-> 
-> I think you have this a little bit off.  AIUI E won't have
-> ATTRIBUTE.PROVISION_KEY set -- Q will.  Q uses the provisioning key to
-> convince an Intel server that it's running on a genuine Intel CPU, and
-> the Intel server will return a signed certificate that Q can chain off
-> of to generate attestations for E.
+On Sat, Oct 24, 2020 at 08:33:21AM -0700, Andy Lutomirski wrote:
 
-Right, I was confused by that RAND column, until Jethro corrected me.
+Good morning, I hope the week is starting well for everyone.
 
-Actually, quoting enclave (QE) authorizes itself with a provisioning
-certification enclave (PCE), which holds certificates and revocation
-lists for provisioning secrets unique to a CPU. And the sequence that I
-described happens between PCE and QE. It accepts requests from enclaves
-with ATTRIBUTES.PROVISION key bits set to 1 according to:
+> > On Oct 24, 2020, at 7:38 AM, Dr. Greg <greg@enjellic.com> wrote:
+> > I can't bring myself to believe that LSM's are going to be written
+> > that will be making enclave security decisions on a page by page
+> > basis.  Given what I have written above, I think all of this comes
+> > down to giving platform administrators one of three decisions, in
+> > order of most to least secure:
+> > 
+> > 1.) Block dynamic code loading and execution.
 
-  https://software.intel.com/content/dam/develop/external/us/en/documents/intel-sgx-support-for-third-party-attestation-801017.pdf
+> I don't understand what you're trying to say. Unless we're going to
+> split enclaves into multiple VMAs with different permissions, how do
+> you expect to block dynamic code loading unless you have separate RW
+> and RX pages?  That would be ???page-by-page???, right?
 
-The source code for the reference  is available here:
+I believe that there are multiple knobs that can be manipulated to
+achieve the effects that are desired.  I am advocating that we have a
+clear and reasoned understanding, with appropriate documentation, as
+to what we are doing and why we are doing it.
 
-  https://github.com/intel/SGXDataCenterAttestationPrimitives
+To advance this understanding, I would advocate that anyone interested
+in these issues review the papers that describe the design and use of
+the SGX2 architecture instructions.  Fore convenience we have them
+available on our FTP server via the following links:
 
-And binaries are here:
+ftp://ftp.enjellic.com/pub/sgx/docs/hasp4.pdf
 
-  https://01.org/intel-softwareguard-extensions/downloads/intel-sgx-dcap-1.6-release
+ftp://ftp.enjellic.com/pub/sgx/docs/hasp5.pdf
 
-They are provided for the inevitable reason that, it is the way bind to
-the hardware, i.e. proof that you are running on a genuine CPU.
+They are both from HASP 2016 and are readily available elsewhere as
+well.
 
-The network part is that PCE and QE can certify to an application, if an
-enclave running in a different computer is an enclave.
+The first paper discusses the SGX2 architecture instructions and why
+they were implemented.  The second paper discusses how Enclave Dynamic
+Memory Management (EDMM) can be implemented from the OS perspective
+using these instructions.
 
-> Dave, I would rephrase what you're saying a bit.  The PROVISION_KEY
-> attribute allows enclaves to access keys that are unique to a
-> processor and unchangeable.  Unlike other SGX keys, these keys are not
-> affected by OWNER_EPOCH changes and therefore cannot be reset.
+Full disclosure, I've had the opportunity to have direct exchanges
+with a number of the authors on those papers.
 
-/Jarkko
+The design of all this was heavily influenced by Marcus Peinado's
+group at Microsoft.  They did the first implementation of an SGX
+library OS (Haven) and in the process addressed the issue of dynamic
+memory and code loading.  Their work also resulted in the
+documentation of a number of errata in the SGX silicon implementation.
+
+Like the company or not, I don't think the case can be made that they
+don't understand operating system design and theory.  It would thus
+seem prudent to understand the prior art that went into the design of
+all this.
+
+To summarize at a high level, EDMM requires a rather intricate
+choreography between enclave code and the device driver, the latter of
+which needs to execute ring-0 privileged instructions in order to
+expand the virtual address space of an enclave.
+
+The easiest way to generically block dynamic code loading is to not
+allow the ENCLS[EAUG] instruction to be executed, the purpose of which
+is to augment a defined but sparse ELRANGE with additional physical
+pages from the EPC.  It doesn't require ->mprotect or anything else,
+just a physical decision by the OS to not allow execution of that
+instruction.
+
+All of which is consistent with my recomendation for a global disable
+knob on the kernel command-line for sites that do not want to tolerate
+completely anonymous code execution.
+
+Since this driver does not yet support EDMM, the most immediate
+situation that we are dealing with are the potential security
+implications of SGX2 ENCLU instructions being executed inside of an
+enclave.  The most principal issue is the ENCLU[EMODPE] instruction
+that allows a running enclave to extend the current permissions of a
+page.
+
+I've been assuming that Sean's desire for ->mprotect is to block the
+ability of an initialized enclave, on a non-EDMM enabled driver, to
+collaborate with its untrusted component to self-modify its page
+permissions and thus allow execution of code that the operating system
+has no visibility into.  That would make far more sense then the
+notion of someone trying to create an LSM that makes page by page
+security decisions.
+
+The open question in all of this is that the EDMM paper, as well as
+the SDM, indicate the effects of an ENCLU[EMODPE] are immediate inside
+of a running enclave.  I'm assuming that this does NOT mean that once
+a context of execution is running in enclave mode it would be capable
+of evading standard page protections but the 'immediate' is somewhat
+disquieting and probably deserves clarification, despite Dave Hansen's
+adament concerns about discussing the instruction... :-)
+
+At the risk of being widely unpopular, it may be worth calling the
+question if we shouldn't bite the bullet and implement full SGX2
+support in the driver.  Given the trajectory that SGX is on it is what
+everyone wants and will be using.  We are currently in somewhat of a
+bad place since we have to be cognizant of the implications of SGX2
+hardware, which is going to be the only relevant platform for this
+driver, without actually addressing all of the issues it brings to the
+table.
+
+Hopefully all of the above helps advance an understanding of the
+issues at hand.
+
+Have a good day.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: dg@enjellic.com
+------------------------------------------------------------------------------
+"Five year projections, are you kidding me.  We don't know what we are
+ supposed to be doing at the 4 o'clock meeting this afternoon."
+                                -- Terry Wieland
+                                   Resurrection
