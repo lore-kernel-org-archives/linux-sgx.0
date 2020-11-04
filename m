@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E59C2D0A3
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EC0C4742C
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2EB22075E
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D7D920867
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730133AbgKDOzG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 Nov 2020 09:55:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48796 "EHLO mail.kernel.org"
+        id S1730367AbgKDOzM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 4 Nov 2020 09:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730367AbgKDOzD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 4 Nov 2020 09:55:03 -0500
+        id S1730245AbgKDOzK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 4 Nov 2020 09:55:10 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 755D9221FA;
-        Wed,  4 Nov 2020 14:54:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87F132240C;
+        Wed,  4 Nov 2020 14:55:03 +0000 (UTC)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -40,9 +40,9 @@ Cc:     linux-kernel@vger.kernel.org,
         luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
         puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v40 04/24] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
-Date:   Wed,  4 Nov 2020 16:54:10 +0200
-Message-Id: <20201104145430.300542-5-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v40 05/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch Control hardware bits
+Date:   Wed,  4 Nov 2020 16:54:11 +0200
+Message-Id: <20201104145430.300542-6-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
 References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
@@ -54,14 +54,36 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Populate X86_FEATURE_SGX feature from CPUID and tie it to the Kconfig
-option with disabled-features.h.
+The SGX Launch Control hardware helps restrict which enclaves the
+hardware will run.  Launch control is intended to restrict what software
+can run with enclave protections, which helps protect the overall system
+from bad enclaves.
 
-IA32_FEATURE_CONTROL.SGX_ENABLE must be examined in addition to the CPUID
-bits to enable full SGX support.  The BIOS must both set this bit and lock
-IA32_FEATURE_CONTROL for SGX to be supported (Intel SDM section 36.7.1).
-The setting or clearing of this bit has no impact on the CPUID bits above,
-which is why it needs to be detected separately.
+For the kernel's purposes, there are effectively two modes in which the
+launch control hardware can operate: rigid and flexible. In its rigid
+mode, an entity other than the kernel has ultimate authority over which
+enclaves can be run (firmware, Intel, etc...). In its flexible mode, the
+kernel has ultimate authority over which enclaves can run.
+
+Enable X86_FEATURE_SGX_LC to enumerate when the CPU supports SGX Launch
+Control in general.
+
+Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
+SHA256 hash of a 3072-bit RSA public key. The hardware allows SGX enclaves
+signed with this public key to initialize and run [*]. Enclaves not signed
+with this key can not initialize and run.
+
+Add FEAT_CTL_SGX_LC_ENABLED, which informs whether the SGXLEPUBKEYHASH MSRs
+can be written by the kernel.
+
+If the MSRs do not exist or are read-only, the launch control hardware is
+operating in rigid mode. Linux does not and will not support creating
+enclaves when hardware is configured in rigid mode because it takes away
+the authority for launch decisions from the kernel. Note, this does not
+preclude KVM from virtualizing/exposing SGX to a KVM guest when launch
+control hardware is operating in rigid mode.
+
+[*] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
 
 Reviewed-by: Borislav Petkov <bp@alien8.de>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
@@ -70,67 +92,47 @@ Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-Changes from v39:
-* Remove X86_FEATURE_SGX{1, 2}. They were only mistakenly being used for
-  model-specific errata detection.  Further, the errata does not occur
-  on any processors that this implementation supports.  Later patches
-  ignore the errata, so remove the CPUID bits.
-
- arch/x86/include/asm/cpufeatures.h       | 1 +
- arch/x86/include/asm/disabled-features.h | 8 +++++++-
- arch/x86/include/asm/msr-index.h         | 1 +
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/include/asm/msr-index.h   | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
 diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index dad350d42ecf..1181f5c7bbef 100644
+index 1181f5c7bbef..f5ef2d5b9231 100644
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
-@@ -241,6 +241,7 @@
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
- #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
- #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
-+#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
- #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
- #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
- #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 5861d34f9771..7947cb1782da 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -62,6 +62,12 @@
- # define DISABLE_ENQCMD (1 << (X86_FEATURE_ENQCMD & 31))
- #endif
+@@ -357,6 +357,7 @@
+ #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
+ #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
+ #define X86_FEATURE_ENQCMD		(16*32+29) /* ENQCMD and ENQCMDS instructions */
++#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
  
-+#ifdef CONFIG_X86_SGX
-+# define DISABLE_SGX	0
-+#else
-+# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
-+#endif
-+
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -74,7 +80,7 @@
- #define DISABLED_MASK6	0
- #define DISABLED_MASK7	(DISABLE_PTI)
- #define DISABLED_MASK8	0
--#define DISABLED_MASK9	(DISABLE_SMAP)
-+#define DISABLED_MASK9	(DISABLE_SMAP|DISABLE_SGX)
- #define DISABLED_MASK10	0
- #define DISABLED_MASK11	0
- #define DISABLED_MASK12	0
+ /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 972a34d93505..258d555d22f2 100644
+index 258d555d22f2..d0c6cfff5b55 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
 @@ -609,6 +609,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
-+#define FEAT_CTL_SGX_ENABLED			BIT(18)
++#define FEAT_CTL_SGX_LC_ENABLED			BIT(17)
+ #define FEAT_CTL_SGX_ENABLED			BIT(18)
  #define FEAT_CTL_LMCE_ENABLED			BIT(20)
  
- #define MSR_IA32_TSC_ADJUST             0x0000003b
+@@ -629,6 +630,12 @@
+ #define MSR_IA32_UCODE_WRITE		0x00000079
+ #define MSR_IA32_UCODE_REV		0x0000008b
+ 
++/* Intel SGX Launch Enclave Public Key Hash MSRs */
++#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
++#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
++#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
++#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++
+ #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
+ #define MSR_IA32_SMBASE			0x0000009e
+ 
 -- 
 2.27.0
 
