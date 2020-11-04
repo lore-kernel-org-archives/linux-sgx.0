@@ -4,33 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334C7C388F9
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AF5C2D0A3
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7C4F221E2
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7938B221E2
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbgKDOzS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 Nov 2020 09:55:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49034 "EHLO mail.kernel.org"
+        id S1730386AbgKDOzY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 4 Nov 2020 09:55:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730245AbgKDOzP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 4 Nov 2020 09:55:15 -0500
+        id S1730245AbgKDOzX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 4 Nov 2020 09:55:23 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91A98221F8;
-        Wed,  4 Nov 2020 14:55:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC62222228;
+        Wed,  4 Nov 2020 14:55:15 +0000 (UTC)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Borislav Petkov <bp@suse.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
         asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
@@ -40,13 +39,14 @@ Cc:     linux-kernel@vger.kernel.org,
         ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
         npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v40 06/24] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
-Date:   Wed,  4 Nov 2020 16:54:12 +0200
-Message-Id: <20201104145430.300542-7-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v40 07/24] x86/cpu/intel: Detect SGX support
+Date:   Wed,  4 Nov 2020 16:54:13 +0200
+Message-Id: <20201104145430.300542-8-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
 References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -54,76 +54,104 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-The x86 architecture has a set of page fault error codes.  These indicate
-things like whether the fault occurred from a write, or whether it
-originated in userspace.
+Kernel support for SGX is ultimately decided by the state of the launch
+control bits in the feature control MSR (MSR_IA32_FEAT_CTL).  If the
+hardware supports SGX, but neglects to support flexible launch control, the
+kernel will not enable SGX.
 
-The SGX hardware architecture has its own per-page memory management
-metadata (EPCM) [*] and hardware which is separate from the normal x86 MMU.
-The architecture has a new page fault error code: PF_SGX.  This new error
-code bit is set whenever a page fault occurs as the result of the SGX MMU.
+Enable SGX at feature control MSR initialization and update the associated
+X86_FEATURE flags accordingly.  Disable X86_FEATURE_SGX (and all
+derivatives) if the kernel is not able to establish itself as the authority
+over SGX Launch Control.
 
-These faults occur for a variety of reasons.  For instance, an access
-attempt to enclave memory from outside the enclave causes a PF_SGX fault.
-PF_SGX would also be set for permission conflicts, such as if a write to an
-enclave page occurs and the page is marked read-write in the x86 page
-tables but is read-only in the EPCM.
+All checks are performed for each logical CPU (not just boot CPU) in order
+to verify that MSR_IA32_FEATURE_CONTROL is correctly configured on all
+CPUs. All SGX code in this series expects the same configuration from all
+CPUs.
 
-These faults do not always indicate errors, though.  SGX pages are
-encrypted with a key that is destroyed at hardware reset, including
-suspend. Throwing a SIGSEGV allows user space software to react and recover
-when these events occur.
-
-Include PF_SGX in the PF error codes list and throw SIGSEGV when it is
-encountered.
-
-[*] Intel SDM: 36.5.1 Enclave Page Cache Map (EPCM)
+This differs from VMX where X86_FEATURE_VMX is intentionally cleared only
+for the current CPU so that KVM can provide additional information if KVM
+fails to load like which CPU doesn't support VMX.  There’s not much the
+kernel or an administrator can do to fix the situation, so SGX neglects to
+convey additional details about these kinds of failures if they occur.
 
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/trap_pf.h |  1 +
- arch/x86/mm/fault.c            | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+ arch/x86/kernel/cpu/feat_ctl.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/trap_pf.h b/arch/x86/include/asm/trap_pf.h
-index 305bc1214aef..1794777b2a85 100644
---- a/arch/x86/include/asm/trap_pf.h
-+++ b/arch/x86/include/asm/trap_pf.h
-@@ -19,6 +19,7 @@ enum x86_pf_error_code {
- 	X86_PF_RSVD	=		1 << 3,
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
-+	X86_PF_SGX	=		1 << 15,
- };
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 29a3bedabd06..d38e97325018 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -93,16 +93,32 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
+ }
+ #endif /* CONFIG_X86_VMX_FEATURE_NAMES */
  
- #endif /* _ASM_X86_TRAP_PF_H */
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 82bf37a5c9ec..9339fee83784 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1101,6 +1101,18 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
- 	if (error_code & X86_PF_PK)
- 		return 1;
++static void clear_sgx_caps(void)
++{
++	setup_clear_cpu_cap(X86_FEATURE_SGX);
++	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
++}
++
+ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ {
+ 	bool tboot = tboot_enabled();
++	bool enable_sgx;
+ 	u64 msr;
+ 
+ 	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+ 		clear_cpu_cap(c, X86_FEATURE_VMX);
++		clear_sgx_caps();
+ 		return;
+ 	}
  
 +	/*
-+	 * SGX hardware blocked the access.  This usually happens
-+	 * when the enclave memory contents have been destroyed, like
-+	 * after a suspend/resume cycle. In any case, the kernel can't
-+	 * fix the cause of the fault.  Handle the fault as an access
-+	 * error even in cases where no actual access violation
-+	 * occurred.  This allows userspace to rebuild the enclave in
-+	 * response to the signal.
++	 * Enable SGX if and only if the kernel supports SGX and Launch Control
++	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
 +	 */
-+	if (unlikely(error_code & X86_PF_SGX))
-+		return 1;
++	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
++		     cpu_has(c, X86_FEATURE_SGX_LC) &&
++		     IS_ENABLED(CONFIG_X86_SGX);
 +
- 	/*
- 	 * Make sure to check the VMA so that we do not perform
- 	 * faults just to hit a X86_PF_PK as soon as we fill in a
+ 	if (msr & FEAT_CTL_LOCKED)
+ 		goto update_caps;
+ 
+@@ -124,13 +140,16 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
+ 	}
+ 
++	if (enable_sgx)
++		msr |= FEAT_CTL_SGX_ENABLED | FEAT_CTL_SGX_LC_ENABLED;
++
+ 	wrmsrl(MSR_IA32_FEAT_CTL, msr);
+ 
+ update_caps:
+ 	set_cpu_cap(c, X86_FEATURE_MSR_IA32_FEAT_CTL);
+ 
+ 	if (!cpu_has(c, X86_FEATURE_VMX))
+-		return;
++		goto update_sgx;
+ 
+ 	if ( (tboot && !(msr & FEAT_CTL_VMX_ENABLED_INSIDE_SMX)) ||
+ 	    (!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))) {
+@@ -143,4 +162,12 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 		init_vmx_capabilities(c);
+ #endif
+ 	}
++
++update_sgx:
++	if (!(msr & FEAT_CTL_SGX_ENABLED) ||
++	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
++		if (enable_sgx)
++			pr_err_once("SGX disabled by BIOS\n");
++		clear_sgx_caps();
++	}
+ }
 -- 
 2.27.0
 
