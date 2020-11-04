@@ -2,44 +2,46 @@ Return-Path: <SRS0=W5EA=EK=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94989C2D0A3
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 18:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E16C2D0A3
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 19:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED7E20732
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 18:21:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="kgRCcN5i"
+	by mail.kernel.org (Postfix) with ESMTP id 502E22083B
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 19:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604516694;
+	bh=fyUM4moJMRF9g5/7ofZBd/q6w2cVQ6ALWSxN7yCG0yI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LTHWskgpUOpEW2uU1V+/9DdRVkk8QeB7IplYCZsDH/onaEFzTIgHQD4uCDREbs3+Z
+	 irRWh/fQ5Ee6TkFdIHMp0aGEPFFv7JO/YZq7+i5fl1CJv+Ssr0RR3MdYOJaqBsZvih
+	 mZvsCflWwarE2noYEeBQiOT1JGkybcp2hvuFXks8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbgKDSVn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 Nov 2020 13:21:43 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37342 "EHLO mail.skyhub.de"
+        id S1727851AbgKDTEy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:04:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729488AbgKDSVn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 4 Nov 2020 13:21:43 -0500
-Received: from zn.tnic (p200300ec2f0ef400317dde2deb3fed11.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:f400:317d:de2d:eb3f:ed11])
+        id S1727098AbgKDTEy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 4 Nov 2020 14:04:54 -0500
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1F1851EC0324;
-        Wed,  4 Nov 2020 19:21:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1604514101;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GpmWgyEf2ElSP4jnHUhAmP7K3AwEb5iwpZy9KQW/2fw=;
-        b=kgRCcN5iQL3yrVMpe6J1MvxgIOk9zsQZFQiqVmReeUAGRwwAnG4vqDRlGiEqCMeo1lJipj
-        dixIQSc9mXOEaflMExAQZXZNDYV2TjGgpOTFYYnK8UNUD3j10wl0C1gdAfaiO69Ml3exMJ
-        Dm7jhq/kwNbSTKXohglMkmVI3UVS48A=
-Date:   Wed, 4 Nov 2020 19:21:29 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        by mail.kernel.org (Postfix) with ESMTPSA id E1F71206D9;
+        Wed,  4 Nov 2020 19:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604516692;
+        bh=fyUM4moJMRF9g5/7ofZBd/q6w2cVQ6ALWSxN7yCG0yI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KsRiZ5o/+GRPMFkvMxbe8KgqmtDlnz3kagsNjQ5/fA89FCjg0AoTX8p6KuHXcEQRd
+         3M3J0wMjgzNPnREWUZa6x9n4VPaVopCcy4Sx66wYUGhkGjMLXqH804isPMNcQEAJTX
+         1yrc4waLOpV7//9Xpy4PElK1JpZLmFKPTNIO6WDQ=
+Date:   Wed, 4 Nov 2020 21:04:43 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
@@ -54,58 +56,111 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH v40 03/24] x86/sgx: Initialize metadata for Enclave Page
  Cache (EPC) sections
-Message-ID: <20201104182129.GD23298@zn.tnic>
+Message-ID: <20201104190443.GA318315@kernel.org>
 References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
  <20201104145430.300542-4-jarkko.sakkinen@linux.intel.com>
+ <20201104182129.GD23298@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201104145430.300542-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20201104182129.GD23298@zn.tnic>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 04:54:09PM +0200, Jarkko Sakkinen wrote:
-> +static void __init sgx_init(void)
-> +{
-> +	int i;
-> +
-> +	if (!boot_cpu_has(X86_FEATURE_SGX))
+On Wed, Nov 04, 2020 at 07:21:29PM +0100, Borislav Petkov wrote:
+> On Wed, Nov 04, 2020 at 04:54:09PM +0200, Jarkko Sakkinen wrote:
+> > +static void __init sgx_init(void)
+> > +{
+> > +	int i;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX))
+> 
+> Guys, you need to build-test *every* *single* patch - otherwise we break
+> bisectability and that is a no-no:
 
-Guys, you need to build-test *every* *single* patch - otherwise we break
-bisectability and that is a no-no:
+I've done it quite a few times (every time I've rebased my tree).  I did
+today too before sending but forgot to redo git format-patch again (was
+the very last thing). In my tree the order is:
 
-arch/x86/kernel/cpu/sgx/main.c: In function ‘sgx_init’:
-arch/x86/kernel/cpu/sgx/main.c:172:20: error: ‘X86_FEATURE_SGX’ undeclared (first use in this function); did you mean ‘X86_FEATURE_SMX’?
-  172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
-      |                    ^~~~~~~~~~~~~~~
-./arch/x86/include/asm/cpufeature.h:118:24: note: in definition of macro ‘cpu_has’
-  118 |  (__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 : \
-      |                        ^~~
-arch/x86/kernel/cpu/sgx/main.c:172:7: note: in expansion of macro ‘boot_cpu_has’
-  172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
-      |       ^~~~~~~~~~~~
-arch/x86/kernel/cpu/sgx/main.c:172:20: note: each undeclared identifier is reported only once for each function it appears in
-  172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
-      |                    ^~~~~~~~~~~~~~~
-./arch/x86/include/asm/cpufeature.h:118:24: note: in definition of macro ‘cpu_has’
-  118 |  (__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 : \
-      |                        ^~~
-arch/x86/kernel/cpu/sgx/main.c:172:7: note: in expansion of macro ‘boot_cpu_has’
-  172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
-      |       ^~~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:283: arch/x86/kernel/cpu/sgx/main.o] Error 1
-make[3]: *** [scripts/Makefile.build:500: arch/x86/kernel/cpu/sgx] Error 2
-make[2]: *** [scripts/Makefile.build:500: arch/x86/kernel/cpu] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [scripts/Makefile.build:500: arch/x86/kernel] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1799: arch/x86] Error 2
-make: *** Waiting for unfinished jobs....
+e987eb0c95dd (HEAD -> master, origin/master, origin/HEAD) x86/sgx: Update MAINTAINERS
+90dc0ee37f44 docs: x86/sgx: Document SGX kernel architecture
+1c2e9bdab128 x86/sgx: Add ptrace() support for the SGX driver
+05ce4345fb5f x86/sgx: Add a page reclaimer
+94c1f778fa09 selftests/x86: Add a selftest for SGX
+741b631d197b x86/vdso: Implement a vDSO for Intel SGX enclave call
+5744b02641ff x86/traps: Attempt to fixup exceptions in vDSO before signaling
+e957c7e79dd0 x86/fault: Add helper function to sanitize error code
+96cc520b2bc9 x86/vdso: Add support for exception fixup in vDSO functions
+4aff9d81b2fe x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
+ea9bc917c469 x86/sgx: Add SGX_IOC_ENCLAVE_INIT
+6e61e843291d x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
+4235ce22235e x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
+681299401c91 x86/sgx: Add SGX misc driver interface
+fbd69fd9acf4 mm: Add 'mprotect' hook to struct vm_operations_struct
+93b27a8908aa x86/sgx: Add SGX page allocator functions
+5984a2ca130c x86/cpu/intel: Add nosgx kernel parameter
+e131efe5ba06 x86/cpu/intel: Detect SGX support
+b0bacb54d36c x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+0c64b4c07298 x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections
+358d17098c4c x86/cpufeatures: x86/msr: Add Intel SGX Launch Control hardware bits
+8f7ab60e5458 x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
+0fb18ca935cf x86/sgx: Add wrappers for ENCLS functions
+3dbc95582baf x86/sgx: Add SGX architectural data structures
 
--- 
-Regards/Gruss,
-    Boris.
+I always do this before I send the patch set (or rebase my tree):
 
-https://people.kernel.org/tglx/notes-about-netiquette
+for x in {23..0}
+do
+git checkout master~$x
+git clean -f -d -x
+make tinyconfig && cat >> .config <<EOF
+CONFIG_64BIT=y   
+CONFIG_CRYPTO=y
+CONFIG_CRYPTO_SHA256=y
+CONFIG_X86_SGX=y
+CONFIG_DEBUG_INFO=y
+EOF
+yes '' | make oldconfig && make CC="ccache gcc" -j$(nproc) || break
+git --no-pager log --oneline -1 >> success.txt
+done
+
+The order is the only difference between the patch set and my tree (i.e.
+diff's do not conflict between the orderings).
+
+> arch/x86/kernel/cpu/sgx/main.c: In function ‘sgx_init’:
+> arch/x86/kernel/cpu/sgx/main.c:172:20: error: ‘X86_FEATURE_SGX’ undeclared (first use in this function); did you mean ‘X86_FEATURE_SMX’?
+>   172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
+>       |                    ^~~~~~~~~~~~~~~
+> ./arch/x86/include/asm/cpufeature.h:118:24: note: in definition of macro ‘cpu_has’
+>   118 |  (__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 : \
+>       |                        ^~~
+> arch/x86/kernel/cpu/sgx/main.c:172:7: note: in expansion of macro ‘boot_cpu_has’
+>   172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
+>       |       ^~~~~~~~~~~~
+> arch/x86/kernel/cpu/sgx/main.c:172:20: note: each undeclared identifier is reported only once for each function it appears in
+>   172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
+>       |                    ^~~~~~~~~~~~~~~
+> ./arch/x86/include/asm/cpufeature.h:118:24: note: in definition of macro ‘cpu_has’
+>   118 |  (__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 : \
+>       |                        ^~~
+> arch/x86/kernel/cpu/sgx/main.c:172:7: note: in expansion of macro ‘boot_cpu_has’
+>   172 |  if (!boot_cpu_has(X86_FEATURE_SGX))
+>       |       ^~~~~~~~~~~~
+> make[4]: *** [scripts/Makefile.build:283: arch/x86/kernel/cpu/sgx/main.o] Error 1
+> make[3]: *** [scripts/Makefile.build:500: arch/x86/kernel/cpu/sgx] Error 2
+> make[2]: *** [scripts/Makefile.build:500: arch/x86/kernel/cpu] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [scripts/Makefile.build:500: arch/x86/kernel] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:1799: arch/x86] Error 2
+> make: *** Waiting for unfinished jobs....
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
+
+/Jarkko
