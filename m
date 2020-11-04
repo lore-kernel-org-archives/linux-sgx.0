@@ -7,47 +7,42 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109F5C2D0A3
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE17BC4741F
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0652236F
-	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 872EE20729
+	for <linux-sgx@archiver.kernel.org>; Wed,  4 Nov 2020 14:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgKDO4E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 Nov 2020 09:56:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49840 "EHLO mail.kernel.org"
+        id S1730484AbgKDO4R (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 4 Nov 2020 09:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730391AbgKDO4D (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 4 Nov 2020 09:56:03 -0500
+        id S1730510AbgKDO4Q (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 4 Nov 2020 09:56:16 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8F5B223C7;
-        Wed,  4 Nov 2020 14:55:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D490C223AB;
+        Wed,  4 Nov 2020 14:56:08 +0000 (UTC)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
-        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
-        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v40 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
-Date:   Wed,  4 Nov 2020 16:54:19 +0200
-Message-Id: <20201104145430.300542-14-jarkko.sakkinen@linux.intel.com>
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: [PATCH v40 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
+Date:   Wed,  4 Nov 2020 16:54:21 +0200
+Message-Id: <20201104145430.300542-16-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
 References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
@@ -58,414 +53,206 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX enclave pages are inaccessible to normal software.  They must be
-populated with data by copying from normal memory with the help of the EADD
-and EEXTEND functions of the ENCLS instruction.
+The whole point of SGX is to create a hardware protected place to do
+“stuff”.  But, before someone is willing to hand the keys to the castle
+over, an enclave must often prove that it is running on an SGX-protected
+processor.  Provisioning enclaves play a key role in providing proof.
 
-Add an ioctl() which performs EADD that adds new data to an enclave, and
-optionally EEXTEND functions that hash the page contents and use the hash
-as part of enclave “measurement” to ensure enclave integrity.
+There are actually three different enclaves in play in order to make this
+happen:
 
-The enclave author gets to decide which pages will be included in the
-enclave measurement with EEXTEND.  Measurement is very slow and has
-sometimes has very little value.  For instance, an enclave _could_ measure
-every page of data and code, but would be slow to initialize.  Or, it might
-just measure its code and then trust that code to initialize the bulk of
-its data after it starts running.
+1. The application enclave.  The familiar one we know and love that runs
+   the actual code that’s doing real work.  There can be many of these on
+   a single system, or even in a single application.
+2. The quoting enclave  (QE).  The QE is mentioned in lots of silly
+   whitepapers, but, for the purposes of kernel enabling, just pretend they
+   do not exist.
+3. The provisioning enclave.  There is typically only one of these
+   enclaves per system.  Provisioning enclaves have access to a special
+   hardware key.
 
+   They can use this key to help to generate certificates which serve as
+   proof that enclaves are running on trusted SGX hardware.  These
+   certificates can be passed around without revealing the special key.
+
+Any user which can create a provisioning enclave can access the
+processor-unique Provisioning Certificate Key which has privacy and
+fingerprinting implications.  Even if a user is permitted to create normal
+application enclaves (via /dev/sgx_enclave), they should not be able to
+create provisioning enclaves.  That means a separate permissions scheme is
+needed to control provisioning enclave privileges.
+
+Implement a separate device file (/dev/sgx_provision) which permits
+creating provisioning enclaves.  This device will typically have more
+strict permissions than the plain enclave device.
+
+The actual device “driver” is an empty stub.  Open file descriptors for
+this device will represent a token which allows provisioning enclave duty.
+This file descriptor can be passed around and ultimately given as an
+argument to the /dev/sgx_enclave driver ioctl().
+
+Cc: linux-security-module@vger.kernel.org
 Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Tested-by: Darren Kenny <darren.kenny@oracle.com>
 Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
 Changes from v39:
-* Remove unneeded access_ok(). It is taken care of by get_user_pages().
-* Define SGX_EEXTEND_BLOCK_SIZE to capture the block size used with
-  EEXTEND.
-* When EADD or EEXTEND fail, just return -EIO. Leave the enclave cleanup
-  as the duty of VFS and the page reclaimer.
-* Remove SGX_MAX_ADD_PAGES_LENGTH, as the ioctl can be interrupted
-  anyway.
+* Rename /dev/sgx/provision as /dev/sgx_provision.
 
- arch/x86/include/uapi/asm/sgx.h |  30 ++++
- arch/x86/kernel/cpu/sgx/ioctl.c | 284 ++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h   |   1 +
- 3 files changed, 315 insertions(+)
+ arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 24 ++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 37 ++++++++++++++++++++++++++++++++
+ 4 files changed, 73 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index f31bb17e27c3..835f7e588f0d 100644
+index 66f2d32cb4d7..c32210235bf5 100644
 --- a/arch/x86/include/uapi/asm/sgx.h
 +++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -8,10 +8,21 @@
- #include <linux/types.h>
- #include <linux/ioctl.h>
- 
-+/**
-+ * enum sgx_epage_flags - page control flags
-+ * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-+ *			ENCLS[EEXTEND] operations.
-+ */
-+enum sgx_page_flags {
-+	SGX_PAGE_MEASURE	= 0x01,
-+};
-+
- #define SGX_MAGIC 0xA4
- 
- #define SGX_IOC_ENCLAVE_CREATE \
- 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-+#define SGX_IOC_ENCLAVE_ADD_PAGES \
-+	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+@@ -25,6 +25,8 @@ enum sgx_page_flags {
+ 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_PROVISION \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
  
  /**
   * struct sgx_enclave_create - parameter structure for the
-@@ -22,4 +33,23 @@ struct sgx_enclave_create  {
- 	__u64	src;
+@@ -63,4 +65,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
  };
  
 +/**
-+ * struct sgx_enclave_add_pages - parameter structure for the
-+ *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-+ * @src:	start address for the page data
-+ * @offset:	starting page offset
-+ * @length:	length of the data (multiple of the page size)
-+ * @secinfo:	address for the SECINFO data
-+ * @flags:	page control flags
-+ * @count:	number of bytes added (multiple of the page size)
++ * struct sgx_enclave_provision - parameter structure for the
++ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
++ * @fd:		file handle of /dev/sgx_provision
 + */
-+struct sgx_enclave_add_pages {
-+	__u64 src;
-+	__u64 offset;
-+	__u64 length;
-+	__u64 secinfo;
-+	__u64 flags;
-+	__u64 count;
++struct sgx_enclave_provision {
++	__u64 fd;
 +};
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index ef14abbb67e1..f618a04c4224 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -112,6 +112,10 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
++
+ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "sgx_enclave",
+@@ -119,11 +123,19 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.fops = &sgx_encl_fops,
+ };
+ 
++static struct miscdevice sgx_dev_provision = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "sgx_provision",
++	.nodename = "sgx_provision",
++	.fops = &sgx_provision_fops,
++};
++
+ int __init sgx_drv_init(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+ 	u64 attr_mask;
+ 	u64 xfrm_mask;
++	int ret;
+ 
+ 	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
+ 		return -ENODEV;
+@@ -147,5 +159,15 @@ int __init sgx_drv_init(void)
+ 		sgx_xfrm_reserved_mask = ~xfrm_mask;
+ 	}
+ 
+-	return misc_register(&sgx_dev_enclave);
++	ret = misc_register(&sgx_dev_enclave);
++	if (ret)
++		return ret;
++
++	ret = misc_register(&sgx_dev_provision);
++	if (ret) {
++		misc_deregister(&sgx_dev_enclave);
++		return ret;
++	}
++
++	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index 6b0063221659..4eddb4d571ef 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -20,6 +20,8 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_misc_reserved_mask;
+ 
++extern const struct file_operations sgx_provision_fops;
++
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+ int sgx_drv_init(void);
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 1355490843d1..82acff7bda60 100644
+index e036819ea5c1..0ba0e670e2f0 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -101,6 +101,287 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+@@ -569,6 +569,40 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
  	return ret;
  }
  
-+static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
-+						 unsigned long offset,
-+						 u64 secinfo_flags)
-+{
-+	struct sgx_encl_page *encl_page;
-+	unsigned long prot;
-+
-+	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
-+	if (!encl_page)
-+		return ERR_PTR(-ENOMEM);
-+
-+	encl_page->desc = encl->base + offset;
-+	encl_page->encl = encl;
-+
-+	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
-+	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
-+	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
-+
-+	/*
-+	 * TCS pages must always RW set for CPU access while the SECINFO
-+	 * permissions are *always* zero - the CPU ignores the user provided
-+	 * values and silently overwrites them with zero permissions.
-+	 */
-+	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
-+		prot |= PROT_READ | PROT_WRITE;
-+
-+	/* Calculate maximum of the VM flags for the page. */
-+	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
-+
-+	return encl_page;
-+}
-+
-+static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
-+{
-+	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
-+	u64 pt   = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
-+
-+	if (pt != SGX_SECINFO_REG && pt != SGX_SECINFO_TCS)
-+		return -EINVAL;
-+
-+	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
-+		return -EINVAL;
-+
-+	/*
-+	 * CPU will silently overwrite the permissions as zero, which means
-+	 * that we need to validate it ourselves.
-+	 */
-+	if (pt == SGX_SECINFO_TCS && perm)
-+		return -EINVAL;
-+
-+	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
-+		return -EINVAL;
-+
-+	if (memchr_inv(secinfo->reserved, 0, sizeof(secinfo->reserved)))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int __sgx_encl_add_page(struct sgx_encl *encl,
-+			       struct sgx_encl_page *encl_page,
-+			       struct sgx_epc_page *epc_page,
-+			       struct sgx_secinfo *secinfo, unsigned long src)
-+{
-+	struct sgx_pageinfo pginfo;
-+	struct vm_area_struct *vma;
-+	struct page *src_page;
-+	int ret;
-+
-+	/* Deny noexec. */
-+	vma = find_vma(current->mm, src);
-+	if (!vma)
-+		return -EFAULT;
-+
-+	if (!(vma->vm_flags & VM_MAYEXEC))
-+		return -EACCES;
-+
-+	ret = get_user_pages(src, 1, 0, &src_page, NULL);
-+	if (ret < 1)
-+		return -EFAULT;
-+
-+	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
-+	pginfo.addr = encl_page->desc & PAGE_MASK;
-+	pginfo.metadata = (unsigned long)secinfo;
-+	pginfo.contents = (unsigned long)kmap_atomic(src_page);
-+
-+	ret = __eadd(&pginfo, sgx_get_epc_virt_addr(epc_page));
-+
-+	kunmap_atomic((void *)pginfo.contents);
-+	put_page(src_page);
-+
-+	return ret ? -EIO : 0;
-+}
-+
-+/*
-+ * If the caller requires measurement of the page as a proof for the content,
-+ * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
-+ * operation until the entire page is measured."
-+ */
-+static int __sgx_encl_extend(struct sgx_encl *encl,
-+			     struct sgx_epc_page *epc_page)
-+{
-+	unsigned long offset;
-+	int ret;
-+
-+	for (offset = 0; offset < PAGE_SIZE; offset += SGX_EEXTEND_BLOCK_SIZE) {
-+		ret = __eextend(sgx_get_epc_virt_addr(encl->secs.epc_page),
-+				sgx_get_epc_virt_addr(epc_page) + offset);
-+		if (ret) {
-+			if (encls_failed(ret))
-+				ENCLS_WARN(ret, "EEXTEND");
-+
-+			return -EIO;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
-+			     unsigned long offset, struct sgx_secinfo *secinfo,
-+			     unsigned long flags)
-+{
-+	struct sgx_encl_page *encl_page;
-+	struct sgx_epc_page *epc_page;
-+	int ret;
-+
-+	encl_page = sgx_encl_page_alloc(encl, offset, secinfo->flags);
-+	if (IS_ERR(encl_page))
-+		return PTR_ERR(encl_page);
-+
-+	epc_page = __sgx_alloc_epc_page();
-+	if (IS_ERR(epc_page)) {
-+		kfree(encl_page);
-+		return PTR_ERR(epc_page);
-+	}
-+
-+	mmap_read_lock(current->mm);
-+	mutex_lock(&encl->lock);
-+
-+	/*
-+	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
-+	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
-+	 * to userspace errors (or kernel/hardware bugs).
-+	 */
-+	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
-+			encl_page, GFP_KERNEL);
-+	if (ret)
-+		goto err_out_unlock;
-+
-+	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
-+				  src);
-+	if (ret)
-+		goto err_out;
-+
-+	/*
-+	 * Complete the "add" before doing the "extend" so that the "add"
-+	 * isn't in a half-baked state in the extremely unlikely scenario
-+	 * the enclave will be destroyed in response to EEXTEND failure.
-+	 */
-+	encl_page->encl = encl;
-+	encl_page->epc_page = epc_page;
-+	encl->secs_child_cnt++;
-+
-+	if (flags & SGX_PAGE_MEASURE) {
-+		ret = __sgx_encl_extend(encl, epc_page);
-+		if (ret)
-+			goto err_out;
-+	}
-+
-+	mutex_unlock(&encl->lock);
-+	mmap_read_unlock(current->mm);
-+	return ret;
-+
-+err_out:
-+	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
-+
-+err_out_unlock:
-+	mutex_unlock(&encl->lock);
-+	mmap_read_unlock(current->mm);
-+
-+	sgx_free_epc_page(epc_page);
-+	kfree(encl_page);
-+
-+	return ret;
-+}
-+
 +/**
-+ * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
-+ * @encl:       an enclave pointer
-+ * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
++ * sgx_ioc_enclave_provision() - handler for %SGX_IOC_ENCLAVE_PROVISION
++ * @enclave:	an enclave pointer
++ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
 + *
-+ * Add one or more pages to an uninitialized enclave, and optionally extend the
-+ * measurement with the contents of the page. The SECINFO and measurement mask
-+ * are applied to all pages.
-+ *
-+ * A SECINFO for a TCS is required to always contain zero permissions because
-+ * CPU silently zeros them. Allowing anything else would cause a mismatch in
-+ * the measurement.
-+ *
-+ * mmap()'s protection bits are capped by the page permissions. For each page
-+ * address, the maximum protection bits are computed with the following
-+ * heuristics:
-+ *
-+ * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
-+ * 2. A TCS page: PROT_R | PROT_W.
-+ *
-+ * mmap() is not allowed to surpass the minimum of the maximum protection bits
-+ * within the given address range.
-+ *
-+ * The function deinitializes kernel data structures for enclave and returns
-+ * -EIO in any of the following conditions:
-+ *
-+ * - Enclave Page Cache (EPC), the physical memory holding enclaves, has
-+ *   been invalidated. This will cause EADD and EEXTEND to fail.
-+ * - If the source address is corrupted somehow when executing EADD.
++ * Allow ATTRIBUTE.PROVISION_KEY for an enclave by providing a file handle to
++ * /dev/sgx_provision.
 + *
 + * Return:
 + * - 0:		Success.
-+ * - -EACCES:	The source page is located in a noexec partition.
-+ * - -ENOMEM:	Out of EPC pages.
-+ * - -EINTR:	The call was interrupted before data was processed.
-+ * - -EIO:	Either EADD or EEXTEND failed because invalid source address
-+ *		or power cycle.
-+ * - -errno:	POSIX error.
++ * - -errno:	Otherwise.
 + */
-+static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
++static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
 +{
-+	struct sgx_enclave_add_pages add_arg;
-+	struct sgx_secinfo secinfo;
-+	unsigned long c;
-+	int ret;
++	struct sgx_enclave_provision params;
++	struct file *file;
 +
-+	if (!test_bit(SGX_ENCL_CREATED, &encl->flags))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&add_arg, arg, sizeof(add_arg)))
++	if (copy_from_user(&params, arg, sizeof(params)))
 +		return -EFAULT;
 +
-+	if (!IS_ALIGNED(add_arg.offset, PAGE_SIZE) ||
-+	    !IS_ALIGNED(add_arg.src, PAGE_SIZE))
++	file = fget(params.fd);
++	if (!file)
 +		return -EINVAL;
 +
-+	if (add_arg.length & (PAGE_SIZE - 1))
++	if (file->f_op != &sgx_provision_fops) {
++		fput(file);
 +		return -EINVAL;
-+
-+	if (add_arg.offset + add_arg.length - PAGE_SIZE >= encl->size)
-+		return -EINVAL;
-+
-+	if (copy_from_user(&secinfo, (void __user *)add_arg.secinfo,
-+			   sizeof(secinfo)))
-+		return -EFAULT;
-+
-+	if (sgx_validate_secinfo(&secinfo))
-+		return -EINVAL;
-+
-+	for (c = 0 ; c < add_arg.length; c += PAGE_SIZE) {
-+		if (signal_pending(current)) {
-+			if (!c)
-+				ret = -EINTR;
-+
-+			break;
-+		}
-+
-+		if (need_resched())
-+			cond_resched();
-+
-+		ret = sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
-+					&secinfo, add_arg.flags);
-+		if (ret)
-+			break;
 +	}
 +
-+	add_arg.count = c;
++	encl->attributes_mask |= SGX_ATTR_PROVISIONKEY;
 +
-+	if (copy_to_user(arg, &add_arg, sizeof(add_arg)))
-+		return -EFAULT;
-+
-+	return ret;
++	fput(file);
++	return 0;
 +}
-+
+ 
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
- 	struct sgx_encl *encl = filep->private_data;
-@@ -113,6 +394,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_CREATE:
- 		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
+@@ -588,6 +622,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
  		break;
-+	case SGX_IOC_ENCLAVE_ADD_PAGES:
-+		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
++	case SGX_IOC_ENCLAVE_PROVISION:
++		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
 +		break;
  	default:
  		ret = -ENOIOCTLCMD;
  		break;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index bd9dcb1ffcfa..91234f425b89 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -14,6 +14,7 @@
- #define pr_fmt(fmt) "sgx: " fmt
- 
- #define SGX_MAX_EPC_SECTIONS		8
-+#define SGX_EEXTEND_BLOCK_SIZE		256
- 
- struct sgx_epc_page {
- 	unsigned int section;
 -- 
 2.27.0
 
