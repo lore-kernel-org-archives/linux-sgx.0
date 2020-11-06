@@ -2,118 +2,167 @@ Return-Path: <SRS0=0h1F=EM=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E52BC388F2
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Nov 2020 17:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5120DC2D0A3
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Nov 2020 17:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89FF82151B
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Nov 2020 17:09:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Jr00Am4j"
+	by mail.kernel.org (Postfix) with ESMTP id EF980217A0
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Nov 2020 17:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbgKFRJg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 6 Nov 2020 12:09:36 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:51778 "EHLO mail.skyhub.de"
+        id S1726075AbgKFRow (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 6 Nov 2020 12:44:52 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:59792 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgKFRJg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 6 Nov 2020 12:09:36 -0500
-Received: from zn.tnic (p200300ec2f0d1f00ad832f6a7d59b60b.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:1f00:ad83:2f6a:7d59:b60b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7D23F1EC026E;
-        Fri,  6 Nov 2020 18:09:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1604682574;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=FzGOHxgdFFeHelsaYOqNWJeYXANMgxE7EbJYo4EdMas=;
-        b=Jr00Am4jjEYCfvPjeuttXSa9t8ii+WUvKkBarHZ3oGbFn484LXogzBd/RIK7s+dCsZ6dij
-        8LE1ZMvj/dCTH170wk/IuYwOTuKvltfls4p7vPrrePSLzqzzfO4QwmrZs3aKMrhD0Qrf9z
-        pq1/XNFGhI3+ry7Z2mxKsi+4zaXKn1I=
-Date:   Fri, 6 Nov 2020 18:09:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1726034AbgKFRow (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 6 Nov 2020 12:44:52 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0A6Hi0HP024602;
+        Fri, 6 Nov 2020 11:44:00 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0A6HhxkZ024601;
+        Fri, 6 Nov 2020 11:43:59 -0600
+Date:   Fri, 6 Nov 2020 11:43:59 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
         cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
         kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
-        mikko.ylinen@intel.com
-Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
-Message-ID: <20201106170920.GF14914@zn.tnic>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
- <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
- <20201105011043.GA700495@kernel.org>
- <20201105011615.GA701257@kernel.org>
- <20201105160559.GD25636@zn.tnic>
- <20201105175745.GA15463@kernel.org>
- <20201105181047.GH25636@zn.tnic>
- <20201106160742.GA46523@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct vm_operations_struct
+Message-ID: <20201106174359.GA24109@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201106160742.GA46523@kernel.org>
+In-Reply-To: <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 06 Nov 2020 11:44:00 -0600 (CST)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 06:07:42PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 05, 2020 at 07:10:47PM +0100, Borislav Petkov wrote:
-> > On Thu, Nov 05, 2020 at 07:57:45PM +0200, Jarkko Sakkinen wrote:
-> > > I'll rather send a full patch set if required.
-> > 
-> > Why if the changes all belong to this patch and why should I take a
-> > patch which clearly needs improving?
-> > 
-> > Just send the fixed version of this and I can take it now.
-> > 
-> > Thx.
+On Wed, Nov 04, 2020 at 04:54:16PM +0200, Jarkko Sakkinen wrote:
+
+Good morning, I hope the week has gone well for everyone.
+
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> Here's an update patch. I kept the name as sgx_encl_find() so and output
-> argument instead of return value, so that the change is localized. I
-> think this is good enough, i.e. the semantically obsolete stuff has been
-> wiped off.
+> Background
+> ==========
+> 
+> 1. SGX enclave pages are populated with data by copying from normal memory
+>    via ioctl() (SGX_IOC_ENCLAVE_ADD_PAGES), which will be added later in
+>    this series.
+> 2. It is desirable to be able to restrict those normal memory data sources.
+>    For instance, to ensure that the source data is executable before
+>    copying data to an executable enclave page.
+> 3. Enclave page permissions are dynamic (just like normal permissions) and
+>    can be adjusted at runtime with mprotect().
 
-Thanks.
+Only relevant on SGX2 hardware, see discussion below.
 
-> Tested-by: Jethro Beekman <jethro@fortanix.com>
-> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-> Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-> Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-> Tested-by: Seth Moore <sethmo@google.com>
-> Tested-by: Darren Kenny <darren.kenny@oracle.com>
+> This creates a problem because the original data source may have
+> long since vanished at the time when enclave page permissions are
+> established (mmap() or mprotect()).
+>
+> The solution (elsewhere in this series) is to force enclaves
 
-Btw, you do know that when you change the patch, those tested-by's don't
-hold true anymore, right?
+I don't believe that enclaves should be plural in this context.
 
-The Reviewed-by's too, actually.
+> creators to declare their paging permission *intent* up front to the
+> ioctl().  This intent can me immediately compared to the source
 
-I'll zap them.
+The 'me' should be 'be' in the above line.
 
--- 
-Regards/Gruss,
-    Boris.
+> data???s mapping and rejected if necessary.
+>
+> The ???intent??? is also stashed off for later comparison with
+> enclave PTEs. This ensures that any future mmap()/mprotect()
+> operations performed by the enclave creator or done on behalf of the
+> enclave can be compared with the earlier declared permissions.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Just some further clarifications that should, arguably, be included in
+the kernel documentation given their security implications.
+
+The 900 pound primate in the room, that no one is acknowledging, is
+that this technology was designed to not allow the operating system to
+have any control over what it is doing.  In the mindset of kernel
+developers, the operating system is the absolute authority on
+security, so we find ourselves in a situation where the kernel needs
+to try and work around this fact so any solutions will be imperfect at
+best.
+
+As I've noted before, this is actually a primary objective of enclave
+authors, since one of the desires for 'Confidential Computing' is to
+hide things like proprietary algorithms from the platform owners.  I
+think the driver needs to acknowledge this fact and equip platform
+owners with the simplest and most effective security solutions that
+are available.
+
+The only reason that mprotect protections are needed in this driver
+are to close a security loophole on SGX2 hardware, ie. hardware that
+supports the ENCLU[EMODPE] instruction.  This instruction allows an
+enclave to modify page permissions that are encoded in the Enclave
+Page Cache Metadata (EPCM) at initialization time.  In all likelihood,
+this is going to be the only relevant hardware that this driver runs
+on.
+
+On SGX2 hardware, enclave based code can conspire with its untrusted
+runtime to allow executable regions to have write permissions.  This
+would allow the enclave to load and execute whatever code that it
+pleases and that the operating system would have no visibility into
+whatsoever.
+
+The non-SGX2 platforms don't need mprotect protections since even if
+they were to modify at the OS level their page permissions, any
+attempts to access a page with modified permissions would be trapped
+by the EPCM protections that are unmodifiable after the enclave has
+been initialized.
+
+In light of this, given the decision by the driver authors to not
+fully equip the driver with EDMM support, the mprotect protection
+requirements are straight forward and minimalistic.  All that is
+needed is a binary valued variable, set on the command-line, that
+either allows or denies anonymous code execution by an enclave,
+ie. access to page protection changes after initialization.
+
+The enclave page mapping callback is elegant but has little use if the
+objective of all this is to allow the driver to enforce SGX1 semantics
+on a platform that has SGX2 instruction support.  Save the elegant
+solution until a reasoned arguement can be made as to what anyone
+would actually be able to do with the per page permissions checks,
+even on an EDMM capable driver.
+
+I could go into detail on that issue as well but I hesitate to be an
+insufferable bore.
+
+I hope all of this is helpful.
+
+Have a good weekend.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"In the future, company names will be a 32-character hex string."
+                                -- Bruce Schneier
