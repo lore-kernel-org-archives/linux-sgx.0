@@ -1,91 +1,120 @@
-Return-Path: <SRS0=0h1F=EM=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=duYL=EN=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A13C55178
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Nov 2020 22:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832C1C55178
+	for <linux-sgx@archiver.kernel.org>; Sat,  7 Nov 2020 15:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6194B20B1F
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Nov 2020 22:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="b4kFv/PZ"
+	by mail.kernel.org (Postfix) with ESMTP id 583EC20719
+	for <linux-sgx@archiver.kernel.org>; Sat,  7 Nov 2020 15:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbgKFWb5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 6 Nov 2020 17:31:57 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:39506 "EHLO mail.skyhub.de"
+        id S1726092AbgKGPKI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 7 Nov 2020 10:10:08 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:59880 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728408AbgKFWb4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 6 Nov 2020 17:31:56 -0500
-Received: from zn.tnic (p200300ec2f0d1f00529236684d2ef4f5.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:1f00:5292:3668:4d2e:f4f5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CADC91EC03EA;
-        Fri,  6 Nov 2020 23:31:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1604701914;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=1ewQXOpmYrN/0tH7P80+/z4oiDvprGu+iw89oMgvclQ=;
-        b=b4kFv/PZq26+dH9DG3Nl2f/WhNzizR5qtcOpwZyJU5r/jYTdT/Ik/ThU0msT3RGI+cOwCi
-        p2F78yrerTsnXvH42TGZy+quNCCFOIEVmi/85fGYylsCD2cFm3ombFt7jDYTKIytfv9jqV
-        IhhS1cyGCzGOjErpYtQ2MUpQ8p0ny6U=
-Date:   Fri, 6 Nov 2020 23:31:39 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        id S1726053AbgKGPKI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 7 Nov 2020 10:10:08 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0A7F9XsO029629;
+        Sat, 7 Nov 2020 09:09:33 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0A7F9UVw029628;
+        Sat, 7 Nov 2020 09:09:30 -0600
+Date:   Sat, 7 Nov 2020 09:09:30 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
         Darren Kenny <darren.kenny@oracle.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
         cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct
- vm_operations_struct
-Message-ID: <20201106223139.GO14914@zn.tnic>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
- <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com>
- <20201106100409.GD3371@techsingularity.net>
- <20201106165107.GA52595@kernel.org>
- <20201106203725.GK14914@zn.tnic>
- <20201106220402.GB55146@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct vm_operations_struct
+Message-ID: <20201107150930.GA29530@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com> <20201106174359.GA24109@wind.enjellic.com> <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201106220402.GB55146@kernel.org>
+In-Reply-To: <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 07 Nov 2020 09:09:33 -0600 (CST)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Nov 07, 2020 at 12:04:02AM +0200, Jarkko Sakkinen wrote:
-> There has been a change request to update callback that made perfect
-> sense to me. Is there something else that I might have missed? Just
-> checking.
+On Fri, Nov 06, 2020 at 09:54:19AM -0800, Dave Hansen wrote:
 
-With "change requests" I mean the usual going through the replies to a
-patchset and working in the changes people requested. Nothing special -
-just the usual working in review feedback, that's it.
+Good morning, I hope the weekend is going well for everyone, beautiful
+weather out here in West-Cental Minnesota.
 
-Thx.
+> On 11/6/20 9:43 AM, Dr. Greg wrote:
+> > In light of this, given the decision by the driver authors to not
+> > fully equip the driver with EDMM support, the mprotect protection
+> > requirements are straight forward and minimalistic.  All that is
+> > needed is a binary valued variable, set on the command-line, that
+> > either allows or denies anonymous code execution by an enclave,
+> > ie. access to page protection changes after initialization.
 
--- 
-Regards/Gruss,
-    Boris.
+> To that, I say NAK.  We need more flexibility than a boot-time-fixed,
+> system-wide switch.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+To be clear, I wasn't referring to a global yes/no option in the code
+that implements the mprotect callout method in the
+vm_operations_struct.  I was referring to the implementation of the
+hook in the SGX driver code.
+
+In all of these discussions there hasn't been a refutation of my point
+that the only reason this hook is needed is to stop the potential for
+anonymous code execution on SGX2 capable hardware.  So we will assume,
+that while unspoken, this is the rationale for the hook.
+
+If you are NAK'ing a global enable/disable in the driver code, I think
+there needs to be a discussion of why the driver, in its current
+state, needs anything other then a yes/no decision on mprotect after
+enclave initialization is complete.
+
+At this point in time the driver has no intention of supporting EDMM,
+so the simple belt-and-suspenders approach is to deny mprotect on
+enclave virtual memory after initialization.  Absent mprotect, the
+hardware is perfectly capable of enforcing page permissions that are
+only consistent with the initial mapping of the enclave.
+
+If and when EDMM is implemented there might be a rationale for per
+page mprotect interrogation.  I won't waste people's time here but I
+believe a cogent arguement can be made that there is little utility,
+even under EDMM, of making per page permission decisions rather then a
+'yes/no' decision by the platform owner as to whether or not they want
+to allow anonymous code execution.
+
+Hopefully all of this is a useful clarification.
+
+Have a good weekend.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"If you ever teach a yodeling class, probably the hardest thing is to
+ keep the students from just trying to yodel right off. You see, we build
+ to that."
+                                -- Jack Handey
+                                   Deep Thoughts
