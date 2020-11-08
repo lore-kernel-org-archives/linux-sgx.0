@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EB4C388F9
-	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071F8C388F9
+	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 964B020731
-	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F7902076E
+	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:30:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbgKHU0L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 8 Nov 2020 15:26:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:54394 "EHLO mga01.intel.com"
+        id S1728006AbgKHUa3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 8 Nov 2020 15:30:29 -0500
+Received: from mga04.intel.com ([192.55.52.120]:33059 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbgKHU0K (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 8 Nov 2020 15:26:10 -0500
-IronPort-SDR: OO9yiOJHARPb+j7HHrl965y0sMPydzdZ/ZWBUKcpBfZ7Zs4gYU79NAWDK7kVs+UFrpnBjG6VRf
- zBZrbFgaMmFA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9799"; a="187666902"
+        id S1727570AbgKHUa2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 8 Nov 2020 15:30:28 -0500
+IronPort-SDR: S1eMWgimevmfk2LihBoBg79nB02QtfExot71ZMC2AGtbc1ut6ZAes9Mfj4yd0GpdYZ3xHWHC2J
+ fneyjtW1X9mA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9799"; a="167137537"
 X-IronPort-AV: E=Sophos;i="5.77,462,1596524400"; 
-   d="scan'208";a="187666902"
+   d="scan'208";a="167137537"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2020 12:26:10 -0800
-IronPort-SDR: M4MU2q7rLHq3pOm2zAD5wyTvSqmTbTI6hmiclfjfICb+JOg1cyQBJJQ8gACWSqhpdKeMgPDZ+E
- gVeDB4i6fldQ==
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2020 12:30:28 -0800
+IronPort-SDR: ve5+GFZHdDgxdRWsDx5GCjvwDixxZmYT9pXzPavdgPnOTXriGVxmZo6QxJC7IEdn8DJdOJbcE/
+ nfVGkCrveLAQ==
 X-IronPort-AV: E=Sophos;i="5.77,462,1596524400"; 
-   d="scan'208";a="327034107"
+   d="scan'208";a="327034761"
 Received: from mraj1-mobl2.amr.corp.intel.com (HELO [10.212.176.125]) ([10.212.176.125])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2020 12:26:09 -0800
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2020 12:30:27 -0800
 Subject: Re: [PATCH v40 19/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
 To:     Jethro Beekman <jethro@fortanix.com>,
@@ -51,7 +51,7 @@ Cc:     linux-kernel@vger.kernel.org,
         yaozhangx@google.com, mikko.ylinen@intel.com
 References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
  <20201104145430.300542-20-jarkko.sakkinen@linux.intel.com>
- <aa60d492-b902-5ff2-38a0-306a31b0eaf5@fortanix.com>
+ <c62851f0-c4fe-cc61-4e97-8e614b72e47d@fortanix.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -96,12 +96,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <81ef069f-fdbc-a804-350a-19df672b2136@intel.com>
-Date:   Sun, 8 Nov 2020 12:26:08 -0800
+Message-ID: <0b9efcd5-c4e4-f795-820e-f07474289206@intel.com>
+Date:   Sun, 8 Nov 2020 12:30:27 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <aa60d492-b902-5ff2-38a0-306a31b0eaf5@fortanix.com>
+In-Reply-To: <c62851f0-c4fe-cc61-4e97-8e614b72e47d@fortanix.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -109,17 +109,22 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/8/20 12:08 PM, Jethro Beekman wrote:
->> + * Most exceptions reported on ENCLU, including those that occur within the
->> + * enclave, are fixed up and reported synchronously instead of being delivered
->> + * via a standard signal. Debug Exceptions (#DB) and Breakpoints (#BP) are
->> + * never fixed up and are always delivered via standard signals. On synchrously
+On 11/8/20 12:20 PM, Jethro Beekman wrote:
+>> The vDSO function calling convention uses the standard RDI RSI, RDX, RCX,
+>> R8 and R9 registers.  This makes it possible to declare the vDSO as a C
+>> prototype, but other than that there is no specific support for SystemV
+>> ABI. Things like storing XSAVE are the responsibility of the enclave and
+>> the runtime.
+> I suppose this may be covered under "no specific support for SystemV
+> ABI" but with sgx_enclave_run.user_handler=NULL, R12~R15 *will* get
+> clobbered when __vdso_sgx_enter_enclave returns from an SGX AEX. IMO
+> this makes the whole "try to be like System V ABI" rather useless,
+> but I suppose it doesn't matter too much.
 
-Jarrko, do you see the synchronously typo?                           ^	
+What?
 
+It *says*: "there is no specific support for SystemV ABI."  That's the
+point.  It's a tiny *PART* of the ABI, used to "make it possible to
+declare the vDSO as a C prototype".
 
->> + * reported exceptions, -EFAULT is returned
-> This part about EFAULT is also bogus.
-
-Do you have any suggestions to improve it?  What should it say instead?
-
+That's far from useless.
