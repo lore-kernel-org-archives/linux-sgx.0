@@ -2,52 +2,52 @@ Return-Path: <SRS0=Aco+=EO=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85AAC388F9
-	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14445C388F9
+	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7431420731
-	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB45220731
+	for <linux-sgx@archiver.kernel.org>; Sun,  8 Nov 2020 20:20:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="FTFsiHXU"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="S9HKyrCr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgKHUIz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 8 Nov 2020 15:08:55 -0500
-Received: from mail-bn8nam08on2121.outbound.protection.outlook.com ([40.107.100.121]:13728
-        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
+        id S1728006AbgKHUUu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 8 Nov 2020 15:20:50 -0500
+Received: from mail-dm6nam12on2131.outbound.protection.outlook.com ([40.107.243.131]:11905
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728006AbgKHUIz (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 8 Nov 2020 15:08:55 -0500
+        id S1727570AbgKHUUu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 8 Nov 2020 15:20:50 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NXejhx3CybKI4/y1c7tDimM5hSsBcY4WtZ260q1q4yuEqLcnvyH+Px1B/7L1FqLmsdG1L0xg0oF1EVss0xDd/klWnrprP0zMh00Tc7+/VLXnHtTn7oPatFovJZUchPTcbUt83ydIY342xq3+RyQHydGHLlWyQMKeZFT59ehkzRSVfPG1KMpqCZeX7tXvWDUv93PHthAliZLIhwyh/JUQsmPr6iZi+NfVJvy1PX8eF2dqQXJ+PYKyEGP9Hg7elk57NgF2E0FXuoEfhrffrNsSto4MQGwiGr2nToUDieRYAeVg6do8Ok+hYKngmnGGlf030SKScLW7d2g38vSELupRng==
+ b=DJMcMII5RqEa2JVoEkpLLR7rIvnUFDNw4HR4qZ9/dvA1UvscoraJh8FrORc+PZFaEhP0NFkgtFEHlJPAQ+Qb5vJ9t6wrJVUlvmZ1Q0mvhBCo5Q2l7B+JwUcTT/Dbixvjpr5gHel8XG4QKSBzexPMzB0Y8TDUSiJde/3f9pSeb/N69lnSzU6+34suj379BrHIgFTjBYQopNEI4BzotASNvGZ4jBU49rENPBdYGcqShLOfBa4k+bGL0F88ukj77k73u7Cec9G6+wg/1SR5/Y/Nczd36GlyYMJdkRvvjkQj4OPW3085Ql6MJPjp2hZPTqzWbYFbN7PP3E0r8EfBQWdxog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mRk1flmRCaW2nS5gDE4Scm5RAvqDB7YG0i3Gt3+At7E=;
- b=OlvDOpMjo55QgDFVxxfguNpcso5ImD/VJpHjqrt2fUdBe/CQ0WVNeIYjTozHAoohDNDFLhSONGabVwqLeU1dBE53DF18cKj1jC75HPNdxO/ub7OQaKhyVTZL8Z7bTXWzF3QTnrgZy/qOLMxCdvF6CUs4x5ASdJNBDl1ml5aMUX5evm9rPoroiX1lenZvI+ZEf2bHlOY/a1AWAIZw7K/NnXwGFIlJOBCezketqeTwv89Hw0ZBk9dP24W2pfc2QGQHiRXKV+WWrdNM1wgrPTu/nPiy0U3zh0Y65UaA78XWrxkBvAKLzoWT3225FzGTtVRMIZQ5RSi5V88dKONPUtOsbg==
+ bh=35njGz+MPNWb3vB2nlan+jdTcdhf1TW8aO/cijr26gY=;
+ b=a12vn77tZZamI7BOohj5ekuTxHgFtWc6JaX551qe/EULNrJVO9SI0/odAl40AHoqqzgD+K0j2nvWaWwqho5l1MIBMMcxzQbXpzCXE+ukYr7duw+gDwknuadYkUNdfNMAiqs6GZrIXTTvp7akwz17pnT/XKQWhzjRuAxk7fTWwCwDgbB20eSC63hItz5QxDc+17sU/3vwFvWAtT2MTvhOOrMSZS9DjYq3cUveQQ37l9jH2tzyJzAC417SrF4SZ+PjE+xG2JlmiEDi+7xg5mEh6s7RR1gVKv6jmzvjaS9hscNcjaTGsikLjDmSxp5pDuqDNX4V1TYP+HLiMYJeqvjlSQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
  dkim=pass header.d=fortanix.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mRk1flmRCaW2nS5gDE4Scm5RAvqDB7YG0i3Gt3+At7E=;
- b=FTFsiHXUsoRhsryx0nvBBxS6FzXc9Ry6N+tKjr/kQUkEcn3SLLV4XF5zTf7mIIq50z2e92YzK5irHNxoZkznP/8opphiwRbkyR2K4QXh8dvWHU9yjGnQpyMS2OGHkGeJMgA167AYnC63auFfzOFD+HmyXh454Rv8ST3lveRlnI0=
+ bh=35njGz+MPNWb3vB2nlan+jdTcdhf1TW8aO/cijr26gY=;
+ b=S9HKyrCrMgxwNrqr7q/7L+PrpumhapAHgM1xMDGVZOKqPWw/fBbDtL353ofYdBJqh14+BPYaoAY0MYRmwyo3nWZ1WO2/nESWjjowzgZsfHBp5tj1i4p4TTFbU+ntzwRosyOlQ2r85q4JxYfKSGe6NP6+Ps+wKyg9Y+ZIZbFPmLg=
 Authentication-Results: intel.com; dkim=none (message not signed)
  header.d=none;intel.com; dmarc=none action=none header.from=fortanix.com;
 Received: from CH2PR11MB4262.namprd11.prod.outlook.com (2603:10b6:610:42::13)
- by CH2PR11MB4341.namprd11.prod.outlook.com (2603:10b6:610:3c::19) with
+ by CH2PR11MB4343.namprd11.prod.outlook.com (2603:10b6:610:3e::25) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21; Sun, 8 Nov
- 2020 20:08:49 +0000
+ 2020 20:20:45 +0000
 Received: from CH2PR11MB4262.namprd11.prod.outlook.com
  ([fe80::c4d:afdf:4dfe:2706]) by CH2PR11MB4262.namprd11.prod.outlook.com
  ([fe80::c4d:afdf:4dfe:2706%4]) with mapi id 15.20.3499.032; Sun, 8 Nov 2020
- 20:08:49 +0000
+ 20:20:45 +0000
 Subject: Re: [PATCH v40 19/24] x86/vdso: Implement a vDSO for Intel SGX
  enclave call
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
@@ -66,45 +66,44 @@ Cc:     linux-kernel@vger.kernel.org,
 References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
  <20201104145430.300542-20-jarkko.sakkinen@linux.intel.com>
 From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <aa60d492-b902-5ff2-38a0-306a31b0eaf5@fortanix.com>
-Date:   Sun, 8 Nov 2020 21:08:41 +0100
+Message-ID: <c62851f0-c4fe-cc61-4e97-8e614b72e47d@fortanix.com>
+Date:   Sun, 8 Nov 2020 21:20:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 In-Reply-To: <20201104145430.300542-20-jarkko.sakkinen@linux.intel.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms070202020800020606060102"
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020202050902090705010100"
 X-Originating-IP: [213.127.125.17]
-X-ClientProxiedBy: AM4PR0302CA0002.eurprd03.prod.outlook.com
- (2603:10a6:205:2::15) To CH2PR11MB4262.namprd11.prod.outlook.com
- (2603:10b6:610:42::13)
+X-ClientProxiedBy: AM0PR03CA0047.eurprd03.prod.outlook.com (2603:10a6:208::24)
+ To CH2PR11MB4262.namprd11.prod.outlook.com (2603:10b6:610:42::13)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.4.219] (213.127.125.17) by AM4PR0302CA0002.eurprd03.prod.outlook.com (2603:10a6:205:2::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21 via Frontend Transport; Sun, 8 Nov 2020 20:08:45 +0000
+Received: from [192.168.4.219] (213.127.125.17) by AM0PR03CA0047.eurprd03.prod.outlook.com (2603:10a6:208::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21 via Frontend Transport; Sun, 8 Nov 2020 20:20:41 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fc0e83b7-a368-42b4-b9b3-08d884221aac
-X-MS-TrafficTypeDiagnostic: CH2PR11MB4341:
-X-Microsoft-Antispam-PRVS: <CH2PR11MB434114537D22DF5A6C0DDCBFAAEB0@CH2PR11MB4341.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Office365-Filtering-Correlation-Id: de758f28-0e2c-4467-6463-08d88423c606
+X-MS-TrafficTypeDiagnostic: CH2PR11MB4343:
+X-Microsoft-Antispam-PRVS: <CH2PR11MB4343298F08060392F3A0B978AAEB0@CH2PR11MB4343.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LUmL/1AX9LU6SR5rQGrf/pCn+86IjRrjX34WgBKNSNZm2c89WibC+VPLk10z8dMBKQGsojyKUMRi+g4qmrKI2l9fnVCwNUSSn1T8p7JV0ZHrD7MNMpOVkJPCY4KPDQqnKtZN6pVgwK8zDwjwXC3/f1aAOwL4J+4RkCjYUKsCUMF/4NypkZGpRcZ2tv71ThwphjySt7RQVucvGNXB0INARXdelF91ljdyDAqfqCr0sn+wc91LzaYbDeYAqC3GHPzA2yLbYgfuKCyKHZTGFeWggW0qGYzbDFdvKjbw8nBBwvrAQf7+YmeRPKXl8eDqTYHha7tBvt+M/mibKBJo7b4qO35ZoO76iJhC0A3Cp+2EA332vFZPCelc6qUlv9zhoFcQ
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR11MB4262.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(396003)(346002)(366004)(39830400003)(2616005)(8936002)(26005)(6486002)(86362001)(52116002)(66476007)(478600001)(66946007)(6666004)(66556008)(31686004)(2906002)(4326008)(31696002)(186003)(16526019)(33964004)(36756003)(16576012)(83380400001)(7416002)(53546011)(54906003)(8676002)(235185007)(316002)(30864003)(5660300002)(956004)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: r/jNaeFBQDu/ErBpIpMGbDfzJ0PAbGRPWWGF90E+dFb7YFLNWdt/VdYbacDm39i/d0XGV1x5MgZmxi6vr2OvS6u7Q2lXASn+MOoruosy11LFSQ/TOnNtgAeKpmYNSjYFleWvwzR53Kk8KuNlLszpv0oO0sWCBbZbxKD5fGPXUJHNmTJj2Ll9nDWJU3553EPHdxDOnsOpr4Gzk+/R7cxWHFQj848uwLipTscveh3M4ylW+/s8BpZyijUwoErai3o9Ywh0H2PZxrb0hea8aWsxummsu0ZqnYxjthrGPHucUpQEiJEykmAuADivTpSMkU7Ca+cjXa3BNbX+dgbrDtOVVluu/iajQttczNdmxVeu1jebWvQinFeV0WglEmRMK7pUVhWGvyRdlatG5MskM92pm5pfGNC7bIvI7h0NpnzAXsvZ9OCfBufdFT4QzSA6C9Jn5LwH9MzTDhNoeaf6lRH/bWZaYH4gjLOnQPCQvBBUW/eVaFR/Sc7/U4DhBlmFt7uq0LpcoLIy3SRjaG4kfI6aa+uIKhEEr5ou2x/Cl/QAJEm8VhiySjS7l/XhLAw2O0ffe/OcYO7QhIiRajYcebIrDQxR1mHRJhoTJ/JjU882jIzfwJ3JsXisiepuFqY4CV0uEB/xUrSbAPluo9qJgBeCDg==
+X-Microsoft-Antispam-Message-Info: 3/SKiK86LbS+0C3YNHI8jrS6PmwZhf5kyEBAPkUQFmZvHog/2UQ97An3OjeSBVO4QWGknbdyChrQJGv5uWIDiQ2xwGELKKnUxJw2Al2pYka4tYCEo+YMSWbplyneqltJl4Oc4hq/4/ibuc3G5zSF8jRdWBroOogMyOBzcyOL98HhLdBqAahpPNVLXQc00KIiJtoEaPHhNLddUqPbr8egiqQUmLyHhVJ+RHVSqBEf62/L/ee0kicEP3vqhDQcOiznP52YOdGc4FRs9Uye8bzmuZiV6c0SQO6y84YOpyl/2wWqWdNhATVkwQeLQsw6B30PWQdVyOdu1BwBVpQrnxg1uhziqC3EEDHrGk+hd6YG6Efo0xx5amW6ma88iyexnj+R
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR11MB4262.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(396003)(39830400003)(346002)(136003)(366004)(956004)(6486002)(8936002)(5660300002)(8676002)(2906002)(83380400001)(66946007)(66556008)(7416002)(235185007)(33964004)(52116002)(2616005)(66476007)(478600001)(6666004)(31696002)(186003)(86362001)(26005)(36756003)(4326008)(53546011)(31686004)(316002)(16576012)(54906003)(16526019)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: o7kN+3bWEhHGQxWxzSgg4ISTf0g7BnrHfS9Qv0uX9aDktmfWBCT+FqifdxVKzrKnU1lWsgdXnH49MJaFbjdbTv4srdbUXEYtcuc5qz6rDXO3T63ELDDi0R8VtA6ZGa7xD4Bp8Ld+P9TEcKeUDK/Bd2K12NnQTty3gZh78qXK2IIpoBstcXCZ8aTrwgzE4RmOrt02izpQ+SiIGEaUdP0CIozb5pPztaRZD4DcvWZPxbzWXVNJE9/Vw9lmHhZs2fcuiimC4montpnj9BvQmEYKN+oChx5KyJhclGUwWrrf9aM2+ZD3qcXP28M9eO9cNNkmHjJkSDVPCdEkF5JGUwYzIU3YChT8JVEpudIvhmQ2WwfLDoIF2laPjKXvahJvttB6ig2uC+OjRv3FtxWsJGtGMaUsrkZ5fpFbYbUMqfhB2PMmjaus2qyCgSJYbgIe8XUYlm18gzOSJ04VTC80A3D2IR3SaiOQMqU0a//lOdzusFfmXh9NUfBsh9oXtZH+g0eerB7gWMhT5Gxfv5Nzhz5vJ6ETATi3sRpFAp0yBvEe02+hejFKV+/b6aXQPu0WbNBgfd+66hmTSY6+Yd2wCIcebvjtNTXChv2X60OY29eouY0zyUti9HpRrOVDdElwVjxAH9ug1gIma7T+IHqOQkHQ+Q==
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc0e83b7-a368-42b4-b9b3-08d884221aac
+X-MS-Exchange-CrossTenant-Network-Message-Id: de758f28-0e2c-4467-6463-08d88423c606
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR11MB4262.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2020 20:08:48.9993
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2020 20:20:45.5823
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lkt7J8FO8JwOluHAuoWkmivOkkgAzx3qsVu+ntw7iMNDjG+XyNAnFumRwoan1a0WG1jyKoRXC+lmZOvsbxYYuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR11MB4341
+X-MS-Exchange-CrossTenant-UserPrincipalName: YixjljXA4K+i5cpDMnEJVMI0t99bHZ+gum6L74zOmgNHwBBhljrN29y4mE8cO1+8q1olAltgcnZjveZXhiAmvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR11MB4343
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
---------------ms070202020800020606060102
+--------------ms020202050902090705010100
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
@@ -152,376 +151,18 @@ X,
 > ABI. Things like storing XSAVE are the responsibility of the enclave an=
 d
 > the runtime.
->=20
-> Suggested-by: Andy Lutomirski <luto@amacapital.net>
-> Acked-by: Jethro Beekman <jethro@fortanix.com>
-> Tested-by: Jethro Beekman <jethro@fortanix.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Cedric Xing <cedric.xing@intel.com>
-> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> Changes from v39:
-> * Relayout out the user handler documentation: return values are descri=
-bed
->   in sgx_enclave_user_handler_t keneldoc and broad description is given=
 
->   in struct sgx_enclave_run kerneldoc.
-> * Rename @leaf as @function, given that we want to speak consistently
->   about ENCLS and ENCLU functions.
-> * Reorder user_handler and user_data as the last fields in
->   sgx_enclave_run, as they are an extension to the basic functionality.=
-
->=20
->  arch/x86/entry/vdso/Makefile    |   2 +
->  arch/x86/entry/vdso/vdso.lds.S  |   1 +
->  arch/x86/entry/vdso/vsgx.S      | 151 ++++++++++++++++++++++++++++++++=
-
->  arch/x86/include/asm/enclu.h    |   9 ++
->  arch/x86/include/uapi/asm/sgx.h |  91 +++++++++++++++++++
->  5 files changed, 254 insertions(+)
->  create mode 100644 arch/x86/entry/vdso/vsgx.S
->  create mode 100644 arch/x86/include/asm/enclu.h
->=20
-> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefil=
-e
-> index 2ad757fb3c23..9915fbd34264 100644
-> --- a/arch/x86/entry/vdso/Makefile
-> +++ b/arch/x86/entry/vdso/Makefile
-> @@ -27,6 +27,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:=3D y
->  vobjs-y :=3D vdso-note.o vclock_gettime.o vgetcpu.o
->  vobjs32-y :=3D vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
->  vobjs32-y +=3D vdso32/vclock_gettime.o
-> +vobjs-$(VDSO64-y)		+=3D vsgx.o
-> =20
->  # files to link into kernel
->  obj-y				+=3D vma.o extable.o
-> @@ -98,6 +99,7 @@ $(vobjs): KBUILD_CFLAGS :=3D $(filter-out $(GCC_PLUGI=
-NS_CFLAGS) $(RETPOLINE_CFLAGS
->  CFLAGS_REMOVE_vclock_gettime.o =3D -pg
->  CFLAGS_REMOVE_vdso32/vclock_gettime.o =3D -pg
->  CFLAGS_REMOVE_vgetcpu.o =3D -pg
-> +CFLAGS_REMOVE_vsgx.o =3D -pg
-> =20
->  #
->  # X32 processes use x32 vDSO to access 64bit kernel data.
-> diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.=
-lds.S
-> index 36b644e16272..4bf48462fca7 100644
-> --- a/arch/x86/entry/vdso/vdso.lds.S
-> +++ b/arch/x86/entry/vdso/vdso.lds.S
-> @@ -27,6 +27,7 @@ VERSION {
->  		__vdso_time;
->  		clock_getres;
->  		__vdso_clock_getres;
-> +		__vdso_sgx_enter_enclave;
->  	local: *;
->  	};
->  }
-> diff --git a/arch/x86/entry/vdso/vsgx.S b/arch/x86/entry/vdso/vsgx.S
-> new file mode 100644
-> index 000000000000..86a0e94f68df
-> --- /dev/null
-> +++ b/arch/x86/entry/vdso/vsgx.S
-> @@ -0,0 +1,151 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/export.h>
-> +#include <asm/errno.h>
-> +#include <asm/enclu.h>
-> +
-> +#include "extable.h"
-> +
-> +/* Relative to %rbp. */
-> +#define SGX_ENCLAVE_OFFSET_OF_RUN		16
-> +
-> +/* The offsets relative to struct sgx_enclave_run. */
-> +#define SGX_ENCLAVE_RUN_TCS			0
-> +#define SGX_ENCLAVE_RUN_LEAF			8
-> +#define SGX_ENCLAVE_RUN_EXCEPTION_VECTOR	12
-> +#define SGX_ENCLAVE_RUN_EXCEPTION_ERROR_CODE	14
-> +#define SGX_ENCLAVE_RUN_EXCEPTION_ADDR		16
-> +#define SGX_ENCLAVE_RUN_USER_HANDLER		24
-> +#define SGX_ENCLAVE_RUN_USER_DATA		32	/* not used */
-> +#define SGX_ENCLAVE_RUN_RESERVED_START		40
-> +#define SGX_ENCLAVE_RUN_RESERVED_END		256
-> +
-> +.code64
-> +.section .text, "ax"
-> +
-> +SYM_FUNC_START(__vdso_sgx_enter_enclave)
-> +	/* Prolog */
-> +	.cfi_startproc
-> +	push	%rbp
-> +	.cfi_adjust_cfa_offset	8
-> +	.cfi_rel_offset		%rbp, 0
-> +	mov	%rsp, %rbp
-> +	.cfi_def_cfa_register	%rbp
-> +	push	%rbx
-> +	.cfi_rel_offset		%rbx, -8
-> +
-> +	mov	%ecx, %eax
-> +.Lenter_enclave:
-> +	/* EENTER <=3D function <=3D ERESUME */
-> +	cmp	$EENTER, %eax
-> +	jb	.Linvalid_input
-> +	cmp	$ERESUME, %eax
-> +	ja	.Linvalid_input
-> +
-> +	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rcx
-> +
-> +	/* Validate that the reserved area contains only zeros. */
-> +	mov	$SGX_ENCLAVE_RUN_RESERVED_START, %rbx
-> +1:
-> +	cmpq	$0, (%rcx, %rbx)
-> +	jne	.Linvalid_input
-> +	add	$8, %rbx
-> +	cmpq	$SGX_ENCLAVE_RUN_RESERVED_END, %rbx
-> +	jne	1b
-> +
-> +	/* Load TCS and AEP */
-> +	mov	SGX_ENCLAVE_RUN_TCS(%rcx), %rbx
-> +	lea	.Lasync_exit_pointer(%rip), %rcx
-> +
-> +	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
-> +.Lasync_exit_pointer:
-> +.Lenclu_eenter_eresume:
-> +	enclu
-> +
-> +	/* EEXIT jumps here unless the enclave is doing something fancy. */
-> +	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rbx
-> +
-> +	/* Set exit_reason. */
-> +	movl	$EEXIT, SGX_ENCLAVE_RUN_LEAF(%rbx)
-> +
-> +	/* Invoke userspace's exit handler if one was provided. */
-> +.Lhandle_exit:
-> +	cmpq	$0, SGX_ENCLAVE_RUN_USER_HANDLER(%rbx)
-> +	jne	.Linvoke_userspace_handler
-> +
-> +	/* Success, in the sense that ENCLU was attempted. */
-> +	xor	%eax, %eax
-> +
-> +.Lout:
-> +	pop	%rbx
-> +	leave
-> +	.cfi_def_cfa		%rsp, 8
-> +	ret
-> +
-> +	/* The out-of-line code runs with the pre-leave stack frame. */
-> +	.cfi_def_cfa		%rbp, 16
-> +
-> +.Linvalid_input:
-> +	mov	$(-EINVAL), %eax
-> +	jmp	.Lout
-> +
-> +.Lhandle_exception:
-> +	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rbx
-> +
-> +	/* Set the exception info. */
-> +	mov	%eax, (SGX_ENCLAVE_RUN_LEAF)(%rbx)
-> +	mov	%di,  (SGX_ENCLAVE_RUN_EXCEPTION_VECTOR)(%rbx)
-> +	mov	%si,  (SGX_ENCLAVE_RUN_EXCEPTION_ERROR_CODE)(%rbx)
-> +	mov	%rdx, (SGX_ENCLAVE_RUN_EXCEPTION_ADDR)(%rbx)
-> +	jmp	.Lhandle_exit
-> +
-> +.Linvoke_userspace_handler:
-> +	/* Pass the untrusted RSP (at exit) to the callback via %rcx. */
-> +	mov	%rsp, %rcx
-> +
-> +	/* Save struct sgx_enclave_exception %rbx is about to be clobbered. *=
-/
-> +	mov	%rbx, %rax
-> +
-> +	/* Save the untrusted RSP offset in %rbx (non-volatile register). */
-> +	mov	%rsp, %rbx
-> +	and	$0xf, %rbx
-> +
-> +	/*
-> +	 * Align stack per x86_64 ABI. Note, %rsp needs to be 16-byte aligned=
-
-> +	 * _after_ pushing the parameters on the stack, hence the bonus push.=
-
-> +	 */
-> +	and	$-0x10, %rsp
-> +	push	%rax
-> +
-> +	/* Push struct sgx_enclave_exception as a param to the callback. */
-> +	push	%rax
-> +
-> +	/* Clear RFLAGS.DF per x86_64 ABI */
-> +	cld
-> +
-> +	/*
-> +	 * Load the callback pointer to %rax and lfence for LVI (load value
-> +	 * injection) protection before making the call.
-> +	 */
-> +	mov	SGX_ENCLAVE_RUN_USER_HANDLER(%rax), %rax
-> +	lfence
-> +	call	*%rax
-> +
-> +	/* Undo the post-exit %rsp adjustment. */
-> +	lea	0x10(%rsp, %rbx), %rsp
-> +
-> +	/*
-> +	 * If the return from callback is zero or negative, return immediatel=
-y,
-> +	 * else re-execute ENCLU with the postive return value interpreted as=
-
-> +	 * the requested ENCLU function.
-> +	 */
-> +	cmp	$0, %eax
-> +	jle	.Lout
-> +	jmp	.Lenter_enclave
-> +
-> +	.cfi_endproc
-> +
-> +_ASM_VDSO_EXTABLE_HANDLE(.Lenclu_eenter_eresume, .Lhandle_exception)
-> +
-> +SYM_FUNC_END(__vdso_sgx_enter_enclave)
-> diff --git a/arch/x86/include/asm/enclu.h b/arch/x86/include/asm/enclu.=
-h
-> new file mode 100644
-> index 000000000000..b1314e41a744
-> --- /dev/null
-> +++ b/arch/x86/include/asm/enclu.h
-> @@ -0,0 +1,9 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_ENCLU_H
-> +#define _ASM_X86_ENCLU_H
-> +
-> +#define EENTER	0x02
-> +#define ERESUME	0x03
-> +#define EEXIT	0x04
-> +
-> +#endif /* _ASM_X86_ENCLU_H */
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/as=
-m/sgx.h
-> index c32210235bf5..791e45334a4a 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -74,4 +74,95 @@ struct sgx_enclave_provision {
->  	__u64 fd;
->  };
-> =20
-> +struct sgx_enclave_run;
-> +
-> +/**
-> + * typedef sgx_enclave_user_handler_t - Exit handler function accepted=
- by
-> + *					__vdso_sgx_enter_enclave()
-> + * @run:	The run instance given by the caller
-> + *
-> + * The register parameters contain the snapshot of their values at enc=
-lave
-> + * exit. An invalid ENCLU function number will cause -EINVAL to be ret=
-urned
-> + * to the caller.
-> + *
-> + * Return:
-> + * - <=3D 0:	The given value is returned back to the caller.
-> + * - > 0:	ENCLU function to invoke, either EENTER or ERESUME.
-> + */
-> +typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx=
-,
-> +					  long rsp, long r8, long r9,
-> +					  struct sgx_enclave_run *run);
-> +
-> +/**
-> + * struct sgx_enclave_run - the execution context of __vdso_sgx_enter_=
-enclave()
-> + * @tcs:			TCS used to enter the enclave
-> + * @function:			The last seen ENCLU function (EENTER, ERESUME or EEXIT=
-)
-> + * @exception_vector:		The interrupt vector of the exception
-> + * @exception_error_code:	The exception error code pulled out of the s=
-tack
-> + * @exception_addr:		The address that triggered the exception
-> + * @user_handler:		User provided callback run on exception
-> + * @user_data:			Data passed to the user handler
-> + * @reserved			Reserved for future extensions
-> + *
-> + * If @user_handler is provided, the handler will be invoked on all re=
-turn paths
-> + * of the normal flow.  The user handler may transfer control, e.g. vi=
-a a
-> + * longjmp() call or a C++ exception, without returning to
-> + * __vdso_sgx_enter_enclave().
-> + */
-> +struct sgx_enclave_run {
-> +	__u64 tcs;
-> +	__u32 function;
-> +	__u16 exception_vector;
-> +	__u16 exception_error_code;
-> +	__u64 exception_addr;
-> +	__u64 user_handler;
-> +	__u64 user_data;
-> +	__u8  reserved[216];
-> +};
-> +
-> +/**
-> + * typedef vdso_sgx_enter_enclave_t - Prototype for __vdso_sgx_enter_e=
-nclave(),
-> + *				      a vDSO function to enter an SGX enclave.
-> + * @rdi:	Pass-through value for RDI
-> + * @rsi:	Pass-through value for RSI
-> + * @rdx:	Pass-through value for RDX
-> + * @function:	ENCLU function, must be EENTER or ERESUME
-> + * @r8:		Pass-through value for R8
-> + * @r9:		Pass-through value for R9
-> + * @run:	struct sgx_enclave_run, must be non-NULL
-> + *
-> + * NOTE: __vdso_sgx_enter_enclave() does not ensure full compliance wi=
-th the
-> + * x86-64 ABI, e.g. doesn't handle XSAVE state.  Except for non-volati=
-le
-> + * general purpose registers, EFLAGS.DF, and RSP alignment, preserving=
-/setting
-> + * state in accordance with the x86-64 ABI is the responsibility of th=
-e enclave
-> + * and its runtime, i.e. __vdso_sgx_enter_enclave() cannot be called f=
-rom C
-> + * code without careful consideration by both the enclave and its runt=
-ime.
-> + *
-> + * All general purpose registers except RAX, RBX and RCX are passed as=
--is to the
-> + * enclave.  RAX, RBX and RCX are consumed by EENTER and ERESUME and a=
-re loaded
-> + * with @function, asynchronous exit pointer, and @run.tcs respectivel=
-y.
-> + *
-> + * RBP and the stack are used to anchor __vdso_sgx_enter_enclave() to =
-the
-> + * pre-enclave state, e.g. to retrieve @run.exception and @run.user_ha=
-ndler
-> + * after an enclave exit.  All other registers are available for use b=
-y the
-> + * enclave and its runtime, e.g. an enclave can push additional data o=
-nto the
-> + * stack (and modify RSP) to pass information to the optional user han=
-dler (see
-> + * below).
-> + *
-> + * Most exceptions reported on ENCLU, including those that occur withi=
-n the
-> + * enclave, are fixed up and reported synchronously instead of being d=
-elivered
-> + * via a standard signal. Debug Exceptions (#DB) and Breakpoints (#BP)=
- are
-> + * never fixed up and are always delivered via standard signals. On sy=
-nchrously
-> + * reported exceptions, -EFAULT is returned
-
-This part about EFAULT is also bogus.
+I suppose this may be covered under "no specific support for SystemV ABI"=
+ but with sgx_enclave_run.user_handler=3DNULL, R12~R15 *will* get clobber=
+ed when __vdso_sgx_enter_enclave returns from an SGX AEX. IMO this makes =
+the whole "try to be like System V ABI" rather useless, but I suppose it =
+doesn't matter too much.
 
 --
 Jethro Beekman | Fortanix
 
 
---------------ms070202020800020606060102
+--------------ms020202050902090705010100
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -595,8 +236,8 @@ b2Z+40UNtMF4MTK7zTGCA/MwggPvAgEBMIGWMIGBMQswCQYDVQQGEwJJVDEQMA4GA1UECAwH
 QmVyZ2FtbzEZMBcGA1UEBwwQUG9udGUgU2FuIFBpZXRybzEXMBUGA1UECgwOQWN0YWxpcyBT
 LnAuQS4xLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEczAhBu
 kmvE8GLB9+EYd88699DiMA0GCWCGSAFlAwQCAQUAoIICLTAYBgkqhkiG9w0BCQMxCwYJKoZI
-hvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDExMDgyMDA4NDFaMC8GCSqGSIb3DQEJBDEiBCDo
-VJGZcoONmOeAA90GLdwY5z26x6JEd8MK3eIp02QdtzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCG
+hvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDExMDgyMDIwMzdaMC8GCSqGSIb3DQEJBDEiBCAU
+XRNrVFQTYj2LEE/n2yz+coJjsfcJypjJwAS47PiVTzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCG
 SAFlAwQBKjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqG
 SIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGnBgkrBgEEAYI3EAQxgZkwgZYw
 gYExCzAJBgNVBAYTAklUMRAwDgYDVQQIDAdCZXJnYW1vMRkwFwYDVQQHDBBQb250ZSBTYW4g
@@ -605,11 +246,11 @@ bnQgQXV0aGVudGljYXRpb24gQ0EgRzMCEG6Sa8TwYsH34Rh3zzr30OIwgakGCyqGSIb3DQEJ
 EAILMYGZoIGWMIGBMQswCQYDVQQGEwJJVDEQMA4GA1UECAwHQmVyZ2FtbzEZMBcGA1UEBwwQ
 UG9udGUgU2FuIFBpZXRybzEXMBUGA1UECgwOQWN0YWxpcyBTLnAuQS4xLDAqBgNVBAMMI0Fj
 dGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEczAhBukmvE8GLB9+EYd88699DiMA0G
-CSqGSIb3DQEBAQUABIIBAIVR11nooTqWEaCumvQI4ENthjIrl9pKi5Xrvldb2cK21A3Dosi+
-BmkmLYQZhoBNTNhj6hKbhb+jrhdYgZ11hM5FHnTVwII6d22wcdwe4SYB5z6xjuGQ2Ile2rDr
-jsR0kj/b6gMh9RiM0lRG1ZAL824YKwYBQgxtcwr1GtoTrXLd+0fFvkePth5STywgaOEfzV9h
-VYHO8tkg7a/bP2tZbqX/z41raL/wfx2VJx+X4z9dSHIX8A2NBhbjN7AqrYE2JrabbgLvCUSw
-YYgpFjRcrWe6Sa6CQ4FuLle0u+a21Nj3DsPujbeDUUdKiKbjbvS4mdy/sFwNVo4CTm8prTMQ
-9AwAAAAAAAA=
+CSqGSIb3DQEBAQUABIIBAGenVb6v8tYEi9Dh4hAbRrBis0ag9SZJD0GfNk229a6pCPIEHYlc
+Bi4lMoWArSvL85clTR+l+4pdIZFZ983wDTki4l3jVfjkIVixHjiAZqHj3lqXYc4DnBSgGGQe
+/9sXgr/HEJPTTevybrnqf2dtNDgYpdpLdRHJvoVAGCVQDH0m5pxO8+Y60DvqgYT0nbvkjVB7
+0XRpLyELHAqmhHyyjVL2pdkkxbFTbrpwbDWn7W6E69wLfYXFp++2Hc7RsBS9d/C+R3r9JpnN
+mg5sgYoKxK7euUDV9sPkXFrRDny/XNZSzN7qZ1h7+v7nT1/r65sAm3FrQlHPUjKy8w/dvc7i
+76cAAAAAAAA=
 
---------------ms070202020800020606060102--
+--------------ms020202050902090705010100--
