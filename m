@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F0EC388F7
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4F1C388F7
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C48522227
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E357E22227
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xsFIWfXb"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0r4WBX9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgKLWDn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:03:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52052 "EHLO mail.kernel.org"
+        id S1727828AbgKLWDt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Nov 2020 17:03:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727554AbgKLWDm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Nov 2020 17:03:42 -0500
+        id S1727554AbgKLWDt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Nov 2020 17:03:49 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7418822201;
-        Thu, 12 Nov 2020 22:03:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FEE022246;
+        Thu, 12 Nov 2020 22:03:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605218621;
-        bh=lLJtR/mdQCowNqyjs2YNNv1DQVf9RP/EXQXZ1D9VcIk=;
+        s=default; t=1605218627;
+        bh=gC6g9+xqelSAfv4MR4556VT7IU8Bmu5wsRm9z6FXalM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xsFIWfXbERY7UtUK5bJJT0cPArkrboG02Jj+9VztyFzI9XBLXjuLCTzuk1TY4kuXz
-         2dzae4rxXi/ImWvmzTV1qXB9dwRU8VrK/Sfe1jeqY53K+F9w52FkQ58+uu9XkNIZkW
-         2lkfMIau/4B4jdj/QbCn7nYw5YpKvOZwK9U08qEM=
+        b=F0r4WBX9rAh4Je4cQAxYPFaFkFfWZjFBXr3Ho3ZLy51zrBn46IVIpE655HU8oXg1/
+         VxuGBIgiuNmx21wfouVxcpZZFE3jsb2kbp9rg7rIatmGWfaGTfVxj85/p7n7Bn2TqC
+         ImQF7HB8yRxu6qlpkwol5yxOqM9ShLVmdJOwz4gA=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Andy Lutomirski <luto@amacapital.net>,
         Jethro Beekman <jethro@fortanix.com>,
+        Cedric Xing <cedric.xing@intel.com>,
         Jarkko Sakkinen <jarkko@kernel.org>, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v41 18/24] x86/traps: Attempt to fixup exceptions in vDSO before signaling
-Date:   Fri, 13 Nov 2020 00:01:29 +0200
-Message-Id: <20201112220135.165028-19-jarkko@kernel.org>
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: [PATCH v41 19/24] x86/vdso: Implement a vDSO for Intel SGX enclave call
+Date:   Fri, 13 Nov 2020 00:01:30 +0200
+Message-Id: <20201112220135.165028-20-jarkko@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201112220135.165028-1-jarkko@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -62,110 +63,365 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-vDSO functions can now leverage an exception fixup mechanism similar to
-kernel exception fixup.  For vDSO exception fixup, the initial user is
-Intel's Software Guard Extensions (SGX), which will wrap the low-level
-transitions to/from the enclave, i.e. EENTER and ERESUME instructions,
-in a vDSO function and leverage fixup to intercept exceptions that would
-otherwise generate a signal.  This allows the vDSO wrapper to return the
-fault information directly to its caller, obviating the need for SGX
-applications and libraries to juggle signal handlers.
+Enclaves encounter exceptions for lots of reasons: everything from enclave
+page faults to NULL pointer dereferences, to system calls that must be
+“proxied” to the kernel from outside the enclave.
 
-Attempt to fixup vDSO exceptions immediately prior to populating and
-sending signal information.  Except for the delivery mechanism, an
-exception in a vDSO function should be treated like any other exception
-in userspace, e.g. any fault that is successfully handled by the kernel
-should not be directly visible to userspace.
+In addition to the code contained inside an enclave, there is also
+supporting code outside the enclave called an “SGX runtime”, which is
+virtually always implemented inside a shared library.  The runtime helps
+build the enclave and handles things like *re*building the enclave if it
+got destroyed by something like a suspend/resume cycle.
 
-Although it's debatable whether or not all exceptions are of interest to
-enclaves, defer to the vDSO fixup to decide whether to do fixup or
-generate a signal.  Future users of vDSO fixup, if there ever are any,
-will undoubtedly have different requirements than SGX enclaves, e.g. the
-fixup vs. signal logic can be made function specific if/when necessary.
+The rebuilding has traditionally been handled in SIGSEGV handlers,
+registered by the library.  But, being process-wide, shared state, signal
+handling and shared libraries do not mix well.
+
+Introduce a vDSO function call that wraps the enclave entry functions
+(EENTER/ERESUME functions of the ENCLU instruciton) and returns information
+about any exceptions to the caller in the SGX runtime.
+
+Instead of generating a signal, the kernel places exception information in
+RDI, RSI and RDX. The kernel-provided userspace portion of the vDSO handler
+will place this information in a user-provided buffer or trigger a
+user-provided callback at the time of the exception.
+
+The vDSO function calling convention uses the standard RDI RSI, RDX, RCX,
+R8 and R9 registers.  This makes it possible to declare the vDSO as a C
+prototype, but other than that there is no specific support for SystemV
+ABI. Things like storing XSAVE are the responsibility of the enclave and
+the runtime.
 
 Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
+Tested-by: Jethro Beekman <jethro@fortanix.com> # v40
 # Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Cedric Xing <cedric.xing@intel.com>
+Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/kernel/traps.c | 10 ++++++++++
- arch/x86/mm/fault.c     |  7 +++++++
- 2 files changed, 17 insertions(+)
+Changes from v39:
+* Relaid out the user handler documentation: return values are described
+  in sgx_enclave_user_handler_t keneldoc and broad description is given in
+  struct sgx_enclave_run kerneldoc.
+* Renamed @leaf as @function, given that we want to speak consistently
+  about ENCLS and ENCLU functions.
+* Reorder user_handler and user_data as the last fields in
+  sgx_enclave_run, as they are an extension to the basic functionality.
 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index e1b78829d909..fb55981f2a0d 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -60,6 +60,7 @@
- #include <asm/umip.h>
- #include <asm/insn.h>
- #include <asm/insn-eval.h>
-+#include <asm/vdso.h>
+ arch/x86/entry/vdso/Makefile    |   2 +
+ arch/x86/entry/vdso/vdso.lds.S  |   1 +
+ arch/x86/entry/vdso/vsgx.S      | 151 ++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/enclu.h    |   9 ++
+ arch/x86/include/uapi/asm/sgx.h |  91 +++++++++++++++++++
+ 5 files changed, 254 insertions(+)
+ create mode 100644 arch/x86/entry/vdso/vsgx.S
+ create mode 100644 arch/x86/include/asm/enclu.h
+
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 2ad757fb3c23..9915fbd34264 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -27,6 +27,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
+ vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
+ vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
+ vobjs32-y += vdso32/vclock_gettime.o
++vobjs-$(VDSO64-y)		+= vsgx.o
  
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -117,6 +118,9 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
- 		tsk->thread.error_code = error_code;
- 		tsk->thread.trap_nr = trapnr;
- 		die(str, regs, error_code);
-+	} else {
-+		if (fixup_vdso_exception(regs, trapnr, error_code, 0))
-+			return 0;
- 	}
+ # files to link into kernel
+ obj-y				+= vma.o extable.o
+@@ -98,6 +99,7 @@ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS
+ CFLAGS_REMOVE_vclock_gettime.o = -pg
+ CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
+ CFLAGS_REMOVE_vgetcpu.o = -pg
++CFLAGS_REMOVE_vsgx.o = -pg
  
- 	/*
-@@ -550,6 +554,9 @@ DEFINE_IDTENTRY_ERRORCODE(exc_general_protection)
- 		tsk->thread.error_code = error_code;
- 		tsk->thread.trap_nr = X86_TRAP_GP;
- 
-+		if (fixup_vdso_exception(regs, X86_TRAP_GP, error_code, 0))
-+			return;
+ #
+ # X32 processes use x32 vDSO to access 64bit kernel data.
+diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
+index 36b644e16272..4bf48462fca7 100644
+--- a/arch/x86/entry/vdso/vdso.lds.S
++++ b/arch/x86/entry/vdso/vdso.lds.S
+@@ -27,6 +27,7 @@ VERSION {
+ 		__vdso_time;
+ 		clock_getres;
+ 		__vdso_clock_getres;
++		__vdso_sgx_enter_enclave;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/x86/entry/vdso/vsgx.S b/arch/x86/entry/vdso/vsgx.S
+new file mode 100644
+index 000000000000..86a0e94f68df
+--- /dev/null
++++ b/arch/x86/entry/vdso/vsgx.S
+@@ -0,0 +1,151 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
- 		show_signal(tsk, SIGSEGV, "", desc, regs, error_code);
- 		force_sig(SIGSEGV);
- 		goto exit;
-@@ -1049,6 +1056,9 @@ static void math_error(struct pt_regs *regs, int trapnr)
- 	if (!si_code)
- 		goto exit;
- 
-+	if (fixup_vdso_exception(regs, trapnr, 0, 0))
-+		return;
++#include <linux/linkage.h>
++#include <asm/export.h>
++#include <asm/errno.h>
++#include <asm/enclu.h>
 +
- 	force_sig_fault(SIGFPE, si_code,
- 			(void __user *)uprobe_get_trap_addr(regs));
- exit:
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 0161d4acf3ad..f1f1b5a0956a 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -30,6 +30,7 @@
- #include <asm/cpu_entry_area.h>		/* exception stack		*/
- #include <asm/pgtable_areas.h>		/* VMALLOC_START, ...		*/
- #include <asm/kvm_para.h>		/* kvm_handle_async_pf		*/
-+#include <asm/vdso.h>			/* fixup_vdso_exception()	*/
- 
- #define CREATE_TRACE_POINTS
- #include <asm/trace/exceptions.h>
-@@ -814,6 +815,9 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
- 
- 		sanitize_error_code(address, &error_code);
- 
-+		if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-+			return;
++#include "extable.h"
 +
- 		if (likely(show_unhandled_signals))
- 			show_signal_msg(regs, error_code, address, tsk);
- 
-@@ -933,6 +937,9 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
- 
- 	sanitize_error_code(address, &error_code);
- 
-+	if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-+		return;
++/* Relative to %rbp. */
++#define SGX_ENCLAVE_OFFSET_OF_RUN		16
 +
- 	set_signal_archinfo(address, error_code);
++/* The offsets relative to struct sgx_enclave_run. */
++#define SGX_ENCLAVE_RUN_TCS			0
++#define SGX_ENCLAVE_RUN_LEAF			8
++#define SGX_ENCLAVE_RUN_EXCEPTION_VECTOR	12
++#define SGX_ENCLAVE_RUN_EXCEPTION_ERROR_CODE	14
++#define SGX_ENCLAVE_RUN_EXCEPTION_ADDR		16
++#define SGX_ENCLAVE_RUN_USER_HANDLER		24
++#define SGX_ENCLAVE_RUN_USER_DATA		32	/* not used */
++#define SGX_ENCLAVE_RUN_RESERVED_START		40
++#define SGX_ENCLAVE_RUN_RESERVED_END		256
++
++.code64
++.section .text, "ax"
++
++SYM_FUNC_START(__vdso_sgx_enter_enclave)
++	/* Prolog */
++	.cfi_startproc
++	push	%rbp
++	.cfi_adjust_cfa_offset	8
++	.cfi_rel_offset		%rbp, 0
++	mov	%rsp, %rbp
++	.cfi_def_cfa_register	%rbp
++	push	%rbx
++	.cfi_rel_offset		%rbx, -8
++
++	mov	%ecx, %eax
++.Lenter_enclave:
++	/* EENTER <= function <= ERESUME */
++	cmp	$EENTER, %eax
++	jb	.Linvalid_input
++	cmp	$ERESUME, %eax
++	ja	.Linvalid_input
++
++	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rcx
++
++	/* Validate that the reserved area contains only zeros. */
++	mov	$SGX_ENCLAVE_RUN_RESERVED_START, %rbx
++1:
++	cmpq	$0, (%rcx, %rbx)
++	jne	.Linvalid_input
++	add	$8, %rbx
++	cmpq	$SGX_ENCLAVE_RUN_RESERVED_END, %rbx
++	jne	1b
++
++	/* Load TCS and AEP */
++	mov	SGX_ENCLAVE_RUN_TCS(%rcx), %rbx
++	lea	.Lasync_exit_pointer(%rip), %rcx
++
++	/* Single ENCLU serving as both EENTER and AEP (ERESUME) */
++.Lasync_exit_pointer:
++.Lenclu_eenter_eresume:
++	enclu
++
++	/* EEXIT jumps here unless the enclave is doing something fancy. */
++	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rbx
++
++	/* Set exit_reason. */
++	movl	$EEXIT, SGX_ENCLAVE_RUN_LEAF(%rbx)
++
++	/* Invoke userspace's exit handler if one was provided. */
++.Lhandle_exit:
++	cmpq	$0, SGX_ENCLAVE_RUN_USER_HANDLER(%rbx)
++	jne	.Linvoke_userspace_handler
++
++	/* Success, in the sense that ENCLU was attempted. */
++	xor	%eax, %eax
++
++.Lout:
++	pop	%rbx
++	leave
++	.cfi_def_cfa		%rsp, 8
++	ret
++
++	/* The out-of-line code runs with the pre-leave stack frame. */
++	.cfi_def_cfa		%rbp, 16
++
++.Linvalid_input:
++	mov	$(-EINVAL), %eax
++	jmp	.Lout
++
++.Lhandle_exception:
++	mov	SGX_ENCLAVE_OFFSET_OF_RUN(%rbp), %rbx
++
++	/* Set the exception info. */
++	mov	%eax, (SGX_ENCLAVE_RUN_LEAF)(%rbx)
++	mov	%di,  (SGX_ENCLAVE_RUN_EXCEPTION_VECTOR)(%rbx)
++	mov	%si,  (SGX_ENCLAVE_RUN_EXCEPTION_ERROR_CODE)(%rbx)
++	mov	%rdx, (SGX_ENCLAVE_RUN_EXCEPTION_ADDR)(%rbx)
++	jmp	.Lhandle_exit
++
++.Linvoke_userspace_handler:
++	/* Pass the untrusted RSP (at exit) to the callback via %rcx. */
++	mov	%rsp, %rcx
++
++	/* Save struct sgx_enclave_exception %rbx is about to be clobbered. */
++	mov	%rbx, %rax
++
++	/* Save the untrusted RSP offset in %rbx (non-volatile register). */
++	mov	%rsp, %rbx
++	and	$0xf, %rbx
++
++	/*
++	 * Align stack per x86_64 ABI. Note, %rsp needs to be 16-byte aligned
++	 * _after_ pushing the parameters on the stack, hence the bonus push.
++	 */
++	and	$-0x10, %rsp
++	push	%rax
++
++	/* Push struct sgx_enclave_exception as a param to the callback. */
++	push	%rax
++
++	/* Clear RFLAGS.DF per x86_64 ABI */
++	cld
++
++	/*
++	 * Load the callback pointer to %rax and lfence for LVI (load value
++	 * injection) protection before making the call.
++	 */
++	mov	SGX_ENCLAVE_RUN_USER_HANDLER(%rax), %rax
++	lfence
++	call	*%rax
++
++	/* Undo the post-exit %rsp adjustment. */
++	lea	0x10(%rsp, %rbx), %rsp
++
++	/*
++	 * If the return from callback is zero or negative, return immediately,
++	 * else re-execute ENCLU with the postive return value interpreted as
++	 * the requested ENCLU function.
++	 */
++	cmp	$0, %eax
++	jle	.Lout
++	jmp	.Lenter_enclave
++
++	.cfi_endproc
++
++_ASM_VDSO_EXTABLE_HANDLE(.Lenclu_eenter_eresume, .Lhandle_exception)
++
++SYM_FUNC_END(__vdso_sgx_enter_enclave)
+diff --git a/arch/x86/include/asm/enclu.h b/arch/x86/include/asm/enclu.h
+new file mode 100644
+index 000000000000..b1314e41a744
+--- /dev/null
++++ b/arch/x86/include/asm/enclu.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_ENCLU_H
++#define _ASM_X86_ENCLU_H
++
++#define EENTER	0x02
++#define ERESUME	0x03
++#define EEXIT	0x04
++
++#endif /* _ASM_X86_ENCLU_H */
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index c32210235bf5..791e45334a4a 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -74,4 +74,95 @@ struct sgx_enclave_provision {
+ 	__u64 fd;
+ };
  
- #ifdef CONFIG_MEMORY_FAILURE
++struct sgx_enclave_run;
++
++/**
++ * typedef sgx_enclave_user_handler_t - Exit handler function accepted by
++ *					__vdso_sgx_enter_enclave()
++ * @run:	The run instance given by the caller
++ *
++ * The register parameters contain the snapshot of their values at enclave
++ * exit. An invalid ENCLU function number will cause -EINVAL to be returned
++ * to the caller.
++ *
++ * Return:
++ * - <= 0:	The given value is returned back to the caller.
++ * - > 0:	ENCLU function to invoke, either EENTER or ERESUME.
++ */
++typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx,
++					  long rsp, long r8, long r9,
++					  struct sgx_enclave_run *run);
++
++/**
++ * struct sgx_enclave_run - the execution context of __vdso_sgx_enter_enclave()
++ * @tcs:			TCS used to enter the enclave
++ * @function:			The last seen ENCLU function (EENTER, ERESUME or EEXIT)
++ * @exception_vector:		The interrupt vector of the exception
++ * @exception_error_code:	The exception error code pulled out of the stack
++ * @exception_addr:		The address that triggered the exception
++ * @user_handler:		User provided callback run on exception
++ * @user_data:			Data passed to the user handler
++ * @reserved			Reserved for future extensions
++ *
++ * If @user_handler is provided, the handler will be invoked on all return paths
++ * of the normal flow.  The user handler may transfer control, e.g. via a
++ * longjmp() call or a C++ exception, without returning to
++ * __vdso_sgx_enter_enclave().
++ */
++struct sgx_enclave_run {
++	__u64 tcs;
++	__u32 function;
++	__u16 exception_vector;
++	__u16 exception_error_code;
++	__u64 exception_addr;
++	__u64 user_handler;
++	__u64 user_data;
++	__u8  reserved[216];
++};
++
++/**
++ * typedef vdso_sgx_enter_enclave_t - Prototype for __vdso_sgx_enter_enclave(),
++ *				      a vDSO function to enter an SGX enclave.
++ * @rdi:	Pass-through value for RDI
++ * @rsi:	Pass-through value for RSI
++ * @rdx:	Pass-through value for RDX
++ * @function:	ENCLU function, must be EENTER or ERESUME
++ * @r8:		Pass-through value for R8
++ * @r9:		Pass-through value for R9
++ * @run:	struct sgx_enclave_run, must be non-NULL
++ *
++ * NOTE: __vdso_sgx_enter_enclave() does not ensure full compliance with the
++ * x86-64 ABI, e.g. doesn't handle XSAVE state.  Except for non-volatile
++ * general purpose registers, EFLAGS.DF, and RSP alignment, preserving/setting
++ * state in accordance with the x86-64 ABI is the responsibility of the enclave
++ * and its runtime, i.e. __vdso_sgx_enter_enclave() cannot be called from C
++ * code without careful consideration by both the enclave and its runtime.
++ *
++ * All general purpose registers except RAX, RBX and RCX are passed as-is to the
++ * enclave.  RAX, RBX and RCX are consumed by EENTER and ERESUME and are loaded
++ * with @function, asynchronous exit pointer, and @run.tcs respectively.
++ *
++ * RBP and the stack are used to anchor __vdso_sgx_enter_enclave() to the
++ * pre-enclave state, e.g. to retrieve @run.exception and @run.user_handler
++ * after an enclave exit.  All other registers are available for use by the
++ * enclave and its runtime, e.g. an enclave can push additional data onto the
++ * stack (and modify RSP) to pass information to the optional user handler (see
++ * below).
++ *
++ * Most exceptions reported on ENCLU, including those that occur within the
++ * enclave, are fixed up and reported synchronously instead of being delivered
++ * via a standard signal. Debug Exceptions (#DB) and Breakpoints (#BP) are
++ * never fixed up and are always delivered via standard signals. On synchrously
++ * reported exceptions, -EFAULT is returned and details about the exception are
++ * recorded in @run.exception, the optional sgx_enclave_exception struct.
++ *
++ * Return:
++ * - 0:		ENCLU function was successfully executed.
++ * - -EINVAL:	Invalid ENCL number (neither EENTER nor ERESUME).
++ */
++typedef int (*vdso_sgx_enter_enclave_t)(unsigned long rdi, unsigned long rsi,
++					unsigned long rdx, unsigned int function,
++					unsigned long r8,  unsigned long r9,
++					struct sgx_enclave_run *run);
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
 -- 
 2.27.0
 
