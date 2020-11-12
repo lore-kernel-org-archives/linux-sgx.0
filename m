@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1479C2D0E4
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9D6C2D0E4
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD3C2222F
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71E732223F
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKxd7ejf"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoP3VzyT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbgKLWDZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:03:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51722 "EHLO mail.kernel.org"
+        id S1727781AbgKLWDb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Nov 2020 17:03:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727736AbgKLWDX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Nov 2020 17:03:23 -0500
+        id S1727778AbgKLWDa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Nov 2020 17:03:30 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E08D322246;
-        Thu, 12 Nov 2020 22:03:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2B9B22201;
+        Thu, 12 Nov 2020 22:03:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605218602;
-        bh=Bi4QfkXjBDOdgaWCQU/fAvGSk3toJ8Fb2yNcpnwhkmI=;
+        s=default; t=1605218608;
+        bh=PlgrMu8KNE1LK/nbN6CBCeWwn5etw88Ddbrkdd9IBhU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rKxd7ejfP3R/yz6966PdQivUQMWkwGW/pHpRD4eik1FXaHtKeO7VRtD5h8P5siJvM
-         eoN0TV8IJYY5WOk3/uiugqsrzO78C5aFiJDhnk98BI/JtgjsBeQqoKbFS7rqURmp0X
-         xHDOJ6XDQLF5OIaGrr5UIwqn23J80lK6JrjUDAno=
+        b=NoP3VzyTxxiLR7xt51UccSPerCXBGrBlFVI9W13zgmVXytLEqd0qmyAUT8Lpy145Y
+         GyctJheitmqwMKFi5H0vMiy00e/fJxJaIXl2/+7W7C2LWJQw5vvCcXNKxUMdzRnC8s
+         /zvN8lTeiM2USoOENKfO/Pbn63pLoLQtIfkemPWY=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+Cc:     linux-kernel@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
         cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
         kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v41 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-Date:   Fri, 13 Nov 2020 00:01:26 +0200
-Message-Id: <20201112220135.165028-16-jarkko@kernel.org>
+        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: [PATCH v41 16/24] x86/vdso: Add support for exception fixup in vDSO functions
+Date:   Fri, 13 Nov 2020 00:01:27 +0200
+Message-Id: <20201112220135.165028-17-jarkko@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201112220135.165028-1-jarkko@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
@@ -59,204 +61,314 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The whole point of SGX is to create a hardware protected place to do
-“stuff”.  But, before someone is willing to hand the keys to the castle
-over, an enclave must often prove that it is running on an SGX-protected
-processor.  Provisioning enclaves play a key role in providing proof.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-There are actually three different enclaves in play in order to make this
-happen:
+Signals are a horrid little mechanism.  They are especially nasty in
+multi-threaded environments because signal state like handlers is global
+across the entire process.  But, signals are basically the only way that
+userspace can “gracefully” handle and recover from exceptions.
 
-1. The application enclave.  The familiar one we know and love that runs
-   the actual code that’s doing real work.  There can be many of these on
-   a single system, or even in a single application.
-2. The quoting enclave  (QE).  The QE is mentioned in lots of silly
-   whitepapers, but, for the purposes of kernel enabling, just pretend they
-   do not exist.
-3. The provisioning enclave.  There is typically only one of these
-   enclaves per system.  Provisioning enclaves have access to a special
-   hardware key.
+The kernel generally does not like exceptions to occur during execution.
+But, exceptions are a fact of life and must be handled in some
+circumstances.  The kernel handles them by keeping a list of individual
+instructions which may cause exceptions.  Instead of truly handling the
+exception and returning to the instruction that caused it, the kernel
+instead restarts execution at a *different* instruction.  This makes it
+obvious to that thread of execution that the exception occurred and lets
+*that* code handle the exception instead of the handler.
 
-   They can use this key to help to generate certificates which serve as
-   proof that enclaves are running on trusted SGX hardware.  These
-   certificates can be passed around without revealing the special key.
+This is not dissimilar to the try/catch exceptions mechanisms that some
+programming languages have, but applied *very* surgically to single
+instructions.  It effectively changes the visible architecture of the
+instruction.
 
-Any user which can create a provisioning enclave can access the
-processor-unique Provisioning Certificate Key which has privacy and
-fingerprinting implications.  Even if a user is permitted to create normal
-application enclaves (via /dev/sgx_enclave), they should not be able to
-create provisioning enclaves.  That means a separate permissions scheme is
-needed to control provisioning enclave privileges.
+Problem
+=======
 
-Implement a separate device file (/dev/sgx_provision) which permits
-creating provisioning enclaves.  This device will typically have more
-strict permissions than the plain enclave device.
+SGX generates a lot of signals, and the code to enter and exit enclaves and
+muck with signal handling is truly horrid.  At the same time, an approach
+like kernel exception fixup can not be easily applied to userspace
+instructions because it changes the visible instruction architecture.
 
-The actual device “driver” is an empty stub.  Open file descriptors for
-this device will represent a token which allows provisioning enclave duty.
-This file descriptor can be passed around and ultimately given as an
-argument to the /dev/sgx_enclave driver ioctl().
+Solution
+========
 
-Cc: linux-security-module@vger.kernel.org
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+The vDSO is a special page of kernel-provided instructions that run in
+userspace.  Any userspace calling into the vDSO knows that it is special.
+This allows the kernel a place to legitimately rewrite the user/kernel
+contract and change instruction behavior.
+
+Add support for fixing up exceptions that occur while executing in the
+vDSO.  This replaces what could traditionally only be done with signal
+handling.
+
+This new mechanism will be used to replace previously direct use of SGX
+instructions by userspace.
+
+Just introduce the vDSO infrastructure.  Later patches will actually
+replace signal generation with vDSO exception fixup.
+
+Suggested-by: Andy Lutomirski <luto@amacapital.net>
+Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
+# Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
-Changes from v39:
-* Rename /dev/sgx/provision as /dev/sgx_provision.
+ arch/x86/entry/vdso/Makefile          |  6 ++--
+ arch/x86/entry/vdso/extable.c         | 46 ++++++++++++++++++++++++
+ arch/x86/entry/vdso/extable.h         | 28 +++++++++++++++
+ arch/x86/entry/vdso/vdso-layout.lds.S |  9 ++++-
+ arch/x86/entry/vdso/vdso2c.h          | 50 ++++++++++++++++++++++++++-
+ arch/x86/include/asm/vdso.h           |  5 +++
+ 6 files changed, 139 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/entry/vdso/extable.c
+ create mode 100644 arch/x86/entry/vdso/extable.h
 
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 24 ++++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 37 ++++++++++++++++++++++++++++++++
- 4 files changed, 73 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 66f2d32cb4d7..c32210235bf5 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_PROVISION \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 21243747965d..2ad757fb3c23 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -29,7 +29,7 @@ vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
+ vobjs32-y += vdso32/vclock_gettime.o
  
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
+ # files to link into kernel
+-obj-y				+= vma.o
++obj-y				+= vma.o extable.o
+ KASAN_SANITIZE_vma.o		:= y
+ UBSAN_SANITIZE_vma.o		:= y
+ KCSAN_SANITIZE_vma.o		:= y
+@@ -128,8 +128,8 @@ $(obj)/%-x32.o: $(obj)/%.o FORCE
  
-+/**
-+ * struct sgx_enclave_provision - parameter structure for the
-+ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
-+ * @fd:		file handle of /dev/sgx_provision
+ targets += vdsox32.lds $(vobjx32s-y)
+ 
+-$(obj)/%.so: OBJCOPYFLAGS := -S
+-$(obj)/%.so: $(obj)/%.so.dbg FORCE
++$(obj)/%.so: OBJCOPYFLAGS := -S --remove-section __ex_table
++$(obj)/%.so: $(obj)/%.so.dbg
+ 	$(call if_changed,objcopy)
+ 
+ $(obj)/vdsox32.so.dbg: $(obj)/vdsox32.lds $(vobjx32s) FORCE
+diff --git a/arch/x86/entry/vdso/extable.c b/arch/x86/entry/vdso/extable.c
+new file mode 100644
+index 000000000000..afcf5b65beef
+--- /dev/null
++++ b/arch/x86/entry/vdso/extable.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/err.h>
++#include <linux/mm.h>
++#include <asm/current.h>
++#include <asm/traps.h>
++#include <asm/vdso.h>
++
++struct vdso_exception_table_entry {
++	int insn, fixup;
++};
++
++bool fixup_vdso_exception(struct pt_regs *regs, int trapnr,
++			  unsigned long error_code, unsigned long fault_addr)
++{
++	const struct vdso_image *image = current->mm->context.vdso_image;
++	const struct vdso_exception_table_entry *extable;
++	unsigned int nr_entries, i;
++	unsigned long base;
++
++	/*
++	 * Do not attempt to fixup #DB or #BP.  It's impossible to identify
++	 * whether or not a #DB/#BP originated from within an SGX enclave and
++	 * SGX enclaves are currently the only use case for vDSO fixup.
++	 */
++	if (trapnr == X86_TRAP_DB || trapnr == X86_TRAP_BP)
++		return false;
++
++	if (!current->mm->context.vdso)
++		return false;
++
++	base =  (unsigned long)current->mm->context.vdso + image->extable_base;
++	nr_entries = image->extable_len / (sizeof(*extable));
++	extable = image->extable;
++
++	for (i = 0; i < nr_entries; i++) {
++		if (regs->ip == base + extable[i].insn) {
++			regs->ip = base + extable[i].fixup;
++			regs->di = trapnr;
++			regs->si = error_code;
++			regs->dx = fault_addr;
++			return true;
++		}
++	}
++
++	return false;
++}
+diff --git a/arch/x86/entry/vdso/extable.h b/arch/x86/entry/vdso/extable.h
+new file mode 100644
+index 000000000000..b56f6b012941
+--- /dev/null
++++ b/arch/x86/entry/vdso/extable.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __VDSO_EXTABLE_H
++#define __VDSO_EXTABLE_H
++
++/*
++ * Inject exception fixup for vDSO code.  Unlike normal exception fixup,
++ * vDSO uses a dedicated handler the addresses are relative to the overall
++ * exception table, not each individual entry.
 + */
-+struct sgx_enclave_provision {
-+	__u64 fd;
-+};
++#ifdef __ASSEMBLY__
++#define _ASM_VDSO_EXTABLE_HANDLE(from, to)	\
++	ASM_VDSO_EXTABLE_HANDLE from to
 +
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index ef14abbb67e1..f618a04c4224 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -112,6 +112,10 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
++.macro ASM_VDSO_EXTABLE_HANDLE from:req to:req
++	.pushsection __ex_table, "a"
++	.long (\from) - __ex_table
++	.long (\to) - __ex_table
++	.popsection
++.endm
++#else
++#define _ASM_VDSO_EXTABLE_HANDLE(from, to)	\
++	".pushsection __ex_table, \"a\"\n"      \
++	".long (" #from ") - __ex_table\n"      \
++	".long (" #to ") - __ex_table\n"        \
++	".popsection\n"
++#endif
 +
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "sgx_enclave",
-@@ -119,11 +123,19 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
++#endif /* __VDSO_EXTABLE_H */
+diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
+index 4d152933547d..dc8da7695859 100644
+--- a/arch/x86/entry/vdso/vdso-layout.lds.S
++++ b/arch/x86/entry/vdso/vdso-layout.lds.S
+@@ -75,11 +75,18 @@ SECTIONS
+ 	 * stuff that isn't used at runtime in between.
+ 	 */
  
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "sgx_provision",
-+	.nodename = "sgx_provision",
-+	.fops = &sgx_provision_fops,
-+};
+-	.text		: { *(.text*) }			:text	=0x90909090,
++	.text		: {
++		*(.text*)
++		*(.fixup)
++	}						:text	=0x90909090,
 +
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
- 	u64 attr_mask;
- 	u64 xfrm_mask;
-+	int ret;
++
  
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
- 		return -ENODEV;
-@@ -147,5 +159,15 @@ int __init sgx_drv_init(void)
- 		sgx_xfrm_reserved_mask = ~xfrm_mask;
+ 	.altinstructions	: { *(.altinstructions) }	:text
+ 	.altinstr_replacement	: { *(.altinstr_replacement) }	:text
+ 
++	__ex_table		: { *(__ex_table) }		:text
++
+ 	/DISCARD/ : {
+ 		*(.discard)
+ 		*(.discard.*)
+diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
+index 6f46e11ce539..1c7cfac7e64a 100644
+--- a/arch/x86/entry/vdso/vdso2c.h
++++ b/arch/x86/entry/vdso/vdso2c.h
+@@ -5,6 +5,41 @@
+  * are built for 32-bit userspace.
+  */
+ 
++static void BITSFUNC(copy)(FILE *outfile, const unsigned char *data, size_t len)
++{
++	size_t i;
++
++	for (i = 0; i < len; i++) {
++		if (i % 10 == 0)
++			fprintf(outfile, "\n\t");
++		fprintf(outfile, "0x%02X, ", (int)(data)[i]);
++	}
++}
++
++
++/*
++ * Extract a section from the input data into a standalone blob.  Used to
++ * capture kernel-only data that needs to persist indefinitely, e.g. the
++ * exception fixup tables, but only in the kernel, i.e. the section can
++ * be stripped from the final vDSO image.
++ */
++static void BITSFUNC(extract)(const unsigned char *data, size_t data_len,
++			      FILE *outfile, ELF(Shdr) *sec, const char *name)
++{
++	unsigned long offset;
++	size_t len;
++
++	offset = (unsigned long)GET_LE(&sec->sh_offset);
++	len = (size_t)GET_LE(&sec->sh_size);
++
++	if (offset + len > data_len)
++		fail("section to extract overruns input data");
++
++	fprintf(outfile, "static const unsigned char %s[%lu] = {", name, len);
++	BITSFUNC(copy)(outfile, data + offset, len);
++	fprintf(outfile, "\n};\n\n");
++}
++
+ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 			 void *stripped_addr, size_t stripped_len,
+ 			 FILE *outfile, const char *image_name)
+@@ -15,7 +50,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	ELF(Ehdr) *hdr = (ELF(Ehdr) *)raw_addr;
+ 	unsigned long i, syms_nr;
+ 	ELF(Shdr) *symtab_hdr = NULL, *strtab_hdr, *secstrings_hdr,
+-		*alt_sec = NULL;
++		*alt_sec = NULL, *extable_sec = NULL;
+ 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
+ 	const char *secstrings;
+ 	INT_BITS syms[NSYMS] = {};
+@@ -77,6 +112,8 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 		if (!strcmp(secstrings + GET_LE(&sh->sh_name),
+ 			    ".altinstructions"))
+ 			alt_sec = sh;
++		if (!strcmp(secstrings + GET_LE(&sh->sh_name), "__ex_table"))
++			extable_sec = sh;
  	}
  
--	return misc_register(&sgx_dev_enclave);
-+	ret = misc_register(&sgx_dev_enclave);
-+	if (ret)
-+		return ret;
-+
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
+ 	if (!symtab_hdr)
+@@ -155,6 +192,9 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 			(int)((unsigned char *)stripped_addr)[i]);
+ 	}
+ 	fprintf(outfile, "\n};\n\n");
++	if (extable_sec)
++		BITSFUNC(extract)(raw_addr, raw_len, outfile,
++				  extable_sec, "extable");
+ 
+ 	fprintf(outfile, "const struct vdso_image %s = {\n", image_name);
+ 	fprintf(outfile, "\t.data = raw_data,\n");
+@@ -165,6 +205,14 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 		fprintf(outfile, "\t.alt_len = %lu,\n",
+ 			(unsigned long)GET_LE(&alt_sec->sh_size));
+ 	}
++	if (extable_sec) {
++		fprintf(outfile, "\t.extable_base = %lu,\n",
++			(unsigned long)GET_LE(&extable_sec->sh_offset));
++		fprintf(outfile, "\t.extable_len = %lu,\n",
++			(unsigned long)GET_LE(&extable_sec->sh_size));
++		fprintf(outfile, "\t.extable = extable,\n");
 +	}
 +
-+	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index 6b0063221659..4eddb4d571ef 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -20,6 +20,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_misc_reserved_mask;
+ 	for (i = 0; i < NSYMS; i++) {
+ 		if (required_syms[i].export && syms[i])
+ 			fprintf(outfile, "\t.sym_%s = %" PRIi64 ",\n",
+diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
+index bbcdc7b8f963..b5d23470f56b 100644
+--- a/arch/x86/include/asm/vdso.h
++++ b/arch/x86/include/asm/vdso.h
+@@ -15,6 +15,8 @@ struct vdso_image {
+ 	unsigned long size;   /* Always a multiple of PAGE_SIZE */
  
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 	unsigned long alt, alt_len;
++	unsigned long extable_base, extable_len;
++	const void *extable;
  
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index e036819ea5c1..0ba0e670e2f0 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -569,6 +569,40 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
+ 	long sym_vvar_start;  /* Negative offset to the vvar area */
  
-+/**
-+ * sgx_ioc_enclave_provision() - handler for %SGX_IOC_ENCLAVE_PROVISION
-+ * @enclave:	an enclave pointer
-+ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
-+ *
-+ * Allow ATTRIBUTE.PROVISION_KEY for an enclave by providing a file handle to
-+ * /dev/sgx_provision.
-+ *
-+ * Return:
-+ * - 0:		Success.
-+ * - -errno:	Otherwise.
-+ */
-+static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
-+{
-+	struct sgx_enclave_provision params;
-+	struct file *file;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	file = fget(params.fd);
-+	if (!file)
-+		return -EINVAL;
-+
-+	if (file->f_op != &sgx_provision_fops) {
-+		fput(file);
-+		return -EINVAL;
-+	}
-+
-+	encl->attributes_mask |= SGX_ATTR_PROVISIONKEY;
-+
-+	fput(file);
-+	return 0;
-+}
+@@ -45,6 +47,9 @@ extern void __init init_vdso_image(const struct vdso_image *image);
  
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -588,6 +622,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_PROVISION:
-+		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
+ extern int map_vdso_once(const struct vdso_image *image, unsigned long addr);
+ 
++extern bool fixup_vdso_exception(struct pt_regs *regs, int trapnr,
++				 unsigned long error_code,
++				 unsigned long fault_addr);
+ #endif /* __ASSEMBLER__ */
+ 
+ #endif /* _ASM_X86_VDSO_H */
 -- 
 2.27.0
 
