@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9B7C388F7
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C252CC388F7
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4185722201
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5719E22241
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:02:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wauzPgUW"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/jf5fsw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbgKLWCD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:02:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48784 "EHLO mail.kernel.org"
+        id S1727464AbgKLWCG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Nov 2020 17:02:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbgKLWB7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Nov 2020 17:01:59 -0500
+        id S1727438AbgKLWCE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Nov 2020 17:02:04 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EC4922241;
-        Thu, 12 Nov 2020 22:01:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B63C2224B;
+        Thu, 12 Nov 2020 22:01:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605218516;
-        bh=wifdaOwX5NVLArN8MGTh/7kuNajui9NdGVy7WZ6v1Lo=;
+        s=default; t=1605218522;
+        bh=yXcEhTOBEGu2iTxbA0uKGs9ZublDFPYF4sxjBIhNJvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wauzPgUWtCpBx+xkQCmD5tpdClGHA3+pMMYibC8wmSrR/waGfcPZ/oUHXBhrHnJ5l
-         vHrcFjyQ0n7C74GLxGSWqPyupYqy9/shW83mfDc3d6tr1rlfWcJAxaC7QIByNEfV2O
-         CIpzPdnESnBbsYDcHOwuAxOrCeNbUGojakLJhhnA=
+        b=h/jf5fswVxHYvstcBmUexp3dgBbW5ZkBKK2q2IuAU6abTN1CDJNXV8NQIbCCu+9sc
+         elwk1LsgSRueQDNp/AiwWQjrR87qfVGwX/dXn9uoeP9Te+ZEGSopd3lA1O+p9V2cPx
+         9WUyAm9O80VXi7Um/py/W6hKk64ZnG60HbQxXrcs=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
@@ -46,378 +46,276 @@ Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
         npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         sean.j.christopherson@intel.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v41 01/24] x86/sgx: Add SGX architectural data structures
-Date:   Fri, 13 Nov 2020 00:01:12 +0200
-Message-Id: <20201112220135.165028-2-jarkko@kernel.org>
+Subject: [PATCH v41 02/24] x86/sgx: Add wrappers for ENCLS functions
+Date:   Fri, 13 Nov 2020 00:01:13 +0200
+Message-Id: <20201112220135.165028-3-jarkko@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201112220135.165028-1-jarkko@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Define the SGX architectural data structures used by various SGX
-functions. This is not an exhaustive representation of all SGX data
-structures but only those needed by the kernel.
+ENCLS is the userspace instruction which wraps virtually all
+unprivileged SGX functionality for managing enclaves.  It is essentially
+the ioctl() of instructions with each function implementing different
+SGX-related functionality.
 
-The goal is to sequester hardware structures in "sgx/arch.h" and keep
-them separate from kernel-internal or uapi structures.
+Add macros to wrap the ENCLS functionality. There are two main groups,
+one for functions which do not return error codes and a “ret_” set for
+those that do.
 
-The data structures are described in Intel SDM section 37.6.
+ENCLS functions are documented in Intel SDM section 36.6.
 
 Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
+# Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+# Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/kernel/cpu/sgx/arch.h | 338 +++++++++++++++++++++++++++++++++
- 1 file changed, 338 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
+ arch/x86/kernel/cpu/sgx/encls.h | 231 ++++++++++++++++++++++++++++++++
+ 1 file changed, 231 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/sgx/encls.h
 
-diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
 new file mode 100644
-index 000000000000..dd7602c44c72
+index 000000000000..443188fe7e70
 --- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/arch.h
-@@ -0,0 +1,338 @@
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -0,0 +1,231 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+/**
-+ * Copyright(c) 2016-20 Intel Corporation.
-+ *
-+ * Contains data structures defined by the SGX architecture.  Data structures
-+ * defined by the Linux software stack should not be placed here.
-+ */
-+#ifndef _ASM_X86_SGX_ARCH_H
-+#define _ASM_X86_SGX_ARCH_H
++#ifndef _X86_ENCLS_H
++#define _X86_ENCLS_H
 +
-+#include <linux/bits.h>
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/rwsem.h>
 +#include <linux/types.h>
++#include <asm/asm.h>
++#include <asm/traps.h>
++#include "sgx.h"
 +
-+/* The SGX specific CPUID function. */
-+#define SGX_CPUID		0x12
-+/* EPC enumeration. */
-+#define SGX_CPUID_EPC		2
-+/* An invalid EPC section, i.e. the end marker. */
-+#define SGX_CPUID_EPC_INVALID	0x0
-+/* A valid EPC section. */
-+#define SGX_CPUID_EPC_SECTION	0x1
-+/* The bitmask for the EPC section type. */
-+#define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
-+
-+/**
-+ * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
-+ * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
-+ *				been completed yet.
-+ * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-+ *				public key does not match IA32_SGXLEPUBKEYHASH.
-+ * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-+ */
-+enum sgx_return_code {
-+	SGX_NOT_TRACKED			= 11,
-+	SGX_INVALID_EINITTOKEN		= 16,
-+	SGX_UNMASKED_EVENT		= 128,
++enum sgx_encls_function {
++	ECREATE	= 0x00,
++	EADD	= 0x01,
++	EINIT	= 0x02,
++	EREMOVE	= 0x03,
++	EDGBRD	= 0x04,
++	EDGBWR	= 0x05,
++	EEXTEND	= 0x06,
++	ELDU	= 0x08,
++	EBLOCK	= 0x09,
++	EPA	= 0x0A,
++	EWB	= 0x0B,
++	ETRACK	= 0x0C,
 +};
 +
-+/* The modulus size for 3072-bit RSA keys. */
-+#define SGX_MODULUS_SIZE 384
-+
 +/**
-+ * enum sgx_miscselect - additional information to an SSA frame
-+ * %SGX_MISC_EXINFO:	Report #PF or #GP to the SSA frame.
++ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
 + *
-+ * Save State Area (SSA) is a stack inside the enclave used to store processor
-+ * state when an exception or interrupt occurs. This enum defines additional
-+ * information stored to an SSA frame.
-+ */
-+enum sgx_miscselect {
-+	SGX_MISC_EXINFO		= BIT(0),
-+};
-+
-+#define SGX_MISC_RESERVED_MASK	GENMASK_ULL(63, 1)
-+
-+#define SGX_SSA_GPRS_SIZE		184
-+#define SGX_SSA_MISC_EXINFO_SIZE	16
-+
-+/**
-+ * enum sgx_attributes - the attributes field in &struct sgx_secs
-+ * %SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-+ * %SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
-+ * %SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-+ * %SGX_ATTR_PROVISIONKEY:      Allow to use provisioning keys for remote
-+ *				attestation.
-+ * %SGX_ATTR_KSS:		Allow to use key separation and sharing (KSS).
-+ * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-+ *				sign cryptographic tokens that can be passed to
-+ *				EINIT as an authorization to run an enclave.
-+ */
-+enum sgx_attribute {
-+	SGX_ATTR_INIT		= BIT(0),
-+	SGX_ATTR_DEBUG		= BIT(1),
-+	SGX_ATTR_MODE64BIT	= BIT(2),
-+	SGX_ATTR_PROVISIONKEY	= BIT(4),
-+	SGX_ATTR_EINITTOKENKEY	= BIT(5),
-+	SGX_ATTR_KSS		= BIT(7),
-+};
-+
-+#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(6) | GENMASK_ULL(63, 8))
-+
-+/**
-+ * struct sgx_secs - SGX Enclave Control Structure (SECS)
-+ * @size:		size of the address space
-+ * @base:		base address of the  address space
-+ * @ssa_frame_size:	size of an SSA frame
-+ * @miscselect:		additional information stored to an SSA frame
-+ * @attributes:		attributes for enclave
-+ * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-+ * @mrenclave:		SHA256-hash of the enclave contents
-+ * @mrsigner:		SHA256-hash of the public key used to sign the SIGSTRUCT
-+ * @config_id:		a user-defined value that is used in key derivation
-+ * @isv_prod_id:	a user-defined value that is used in key derivation
-+ * @isv_svn:		a user-defined value that is used in key derivation
-+ * @config_svn:		a user-defined value that is used in key derivation
++ * ENCLS has its own (positive value) error codes and also generates
++ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
++ * with system error codes as everything percolates back up the stack.
++ * Unfortunately (for us), we need to precisely identify each unique
++ * error code, e.g. the action taken if EWB fails varies based on the
++ * type of fault and on the exact SGX error code, i.e. we can't simply
++ * convert all faults to -EFAULT.
 + *
-+ * SGX Enclave Control Structure (SECS) is a special enclave page that is not
-+ * visible in the address space. In fact, this structure defines the address
-+ * range and other global attributes for the enclave and it is the first EPC
-+ * page created for any enclave. It is moved from a temporary buffer to an EPC
-+ * by the means of ENCLS[ECREATE] function.
++ * To make all three error types coexist, we set bit 30 to identify an
++ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
++ * between positive (faults and SGX error codes) and negative (system
++ * error codes) values.
 + */
-+struct sgx_secs {
-+	u64 size;
-+	u64 base;
-+	u32 ssa_frame_size;
-+	u32 miscselect;
-+	u8  reserved1[24];
-+	u64 attributes;
-+	u64 xfrm;
-+	u32 mrenclave[8];
-+	u8  reserved2[32];
-+	u32 mrsigner[8];
-+	u8  reserved3[32];
-+	u32 config_id[16];
-+	u16 isv_prod_id;
-+	u16 isv_svn;
-+	u16 config_svn;
-+	u8  reserved4[3834];
-+} __packed;
++#define ENCLS_FAULT_FLAG 0x40000000
++
++/* Retrieve the encoded trapnr from the specified return code. */
++#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
++
++/* Issue a WARN() about an ENCLS function. */
++#define ENCLS_WARN(r, name) {						  \
++	do {								  \
++		int _r = (r);						  \
++		WARN_ONCE(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
++	} while (0);							  \
++}
 +
 +/**
-+ * enum sgx_tcs_flags - execution flags for TCS
-+ * %SGX_TCS_DBGOPTIN:	If enabled allows single-stepping and breakpoints
-+ *			inside an enclave. It is cleared by EADD but can
-+ *			be set later with EDBGWR.
-+ */
-+enum sgx_tcs_flags {
-+	SGX_TCS_DBGOPTIN	= 0x01,
-+};
-+
-+#define SGX_TCS_RESERVED_MASK	GENMASK_ULL(63, 1)
-+#define SGX_TCS_RESERVED_SIZE	4024
-+
-+/**
-+ * struct sgx_tcs - Thread Control Structure (TCS)
-+ * @state:		used to mark an entered TCS
-+ * @flags:		execution flags (cleared by EADD)
-+ * @ssa_offset:		SSA stack offset relative to the enclave base
-+ * @ssa_index:		the current SSA frame index (cleard by EADD)
-+ * @nr_ssa_frames:	the number of frame in the SSA stack
-+ * @entry_offset:	entry point offset relative to the enclave base
-+ * @exit_addr:		address outside the enclave to exit on an exception or
-+ *			interrupt
-+ * @fs_offset:		offset relative to the enclave base to become FS
-+ *			segment inside the enclave
-+ * @gs_offset:		offset relative to the enclave base to become GS
-+ *			segment inside the enclave
-+ * @fs_limit:		size to become a new FS-limit (only 32-bit enclaves)
-+ * @gs_limit:		size to become a new GS-limit (only 32-bit enclaves)
++ * encls_failed() - Check if an ENCLS function failed
++ * @ret:	the return value of an ENCLS function call
 + *
-+ * Thread Control Structure (TCS) is an enclave page visible in its address
-+ * space that defines an entry point inside the enclave. A thread enters inside
-+ * an enclave by supplying address of TCS to ENCLU(EENTER). A TCS can be entered
-+ * by only one thread at a time.
++ * Check if an ENCLS function failed. This happens when the function causes a
++ * fault that is not caused by an EPCM conflict or when the function returns a
++ * non-zero value.
 + */
-+struct sgx_tcs {
-+	u64 state;
-+	u64 flags;
-+	u64 ssa_offset;
-+	u32 ssa_index;
-+	u32 nr_ssa_frames;
-+	u64 entry_offset;
-+	u64 exit_addr;
-+	u64 fs_offset;
-+	u64 gs_offset;
-+	u32 fs_limit;
-+	u32 gs_limit;
-+	u8  reserved[SGX_TCS_RESERVED_SIZE];
-+} __packed;
++static inline bool encls_failed(int ret)
++{
++	if (ret & ENCLS_FAULT_FLAG)
++		return ENCLS_TRAPNR(ret) != X86_TRAP_PF;
++
++	return !!ret;
++}
 +
 +/**
-+ * struct sgx_pageinfo - an enclave page descriptor
-+ * @addr:	address of the enclave page
-+ * @contents:	pointer to the page contents
-+ * @metadata:	pointer either to a SECINFO or PCMD instance
-+ * @secs:	address of the SECS page
-+ */
-+struct sgx_pageinfo {
-+	u64 addr;
-+	u64 contents;
-+	u64 metadata;
-+	u64 secs;
-+} __packed __aligned(32);
-+
-+
-+/**
-+ * enum sgx_page_type - bits in the SECINFO flags defining the page type
-+ * %SGX_PAGE_TYPE_SECS:	a SECS page
-+ * %SGX_PAGE_TYPE_TCS:	a TCS page
-+ * %SGX_PAGE_TYPE_REG:	a regular page
-+ * %SGX_PAGE_TYPE_VA:	a VA page
-+ * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
-+ */
-+enum sgx_page_type {
-+	SGX_PAGE_TYPE_SECS,
-+	SGX_PAGE_TYPE_TCS,
-+	SGX_PAGE_TYPE_REG,
-+	SGX_PAGE_TYPE_VA,
-+	SGX_PAGE_TYPE_TRIM,
-+};
-+
-+#define SGX_NR_PAGE_TYPES	5
-+#define SGX_PAGE_TYPE_MASK	GENMASK(7, 0)
-+
-+/**
-+ * enum sgx_secinfo_flags - the flags field in &struct sgx_secinfo
-+ * %SGX_SECINFO_R:	allow read
-+ * %SGX_SECINFO_W:	allow write
-+ * %SGX_SECINFO_X:	allow execution
-+ * %SGX_SECINFO_SECS:	a SECS page
-+ * %SGX_SECINFO_TCS:	a TCS page
-+ * %SGX_SECINFO_REG:	a regular page
-+ * %SGX_SECINFO_VA:	a VA page
-+ * %SGX_SECINFO_TRIM:	a page in trimmed state
-+ */
-+enum sgx_secinfo_flags {
-+	SGX_SECINFO_R			= BIT(0),
-+	SGX_SECINFO_W			= BIT(1),
-+	SGX_SECINFO_X			= BIT(2),
-+	SGX_SECINFO_SECS		= (SGX_PAGE_TYPE_SECS << 8),
-+	SGX_SECINFO_TCS			= (SGX_PAGE_TYPE_TCS << 8),
-+	SGX_SECINFO_REG			= (SGX_PAGE_TYPE_REG << 8),
-+	SGX_SECINFO_VA			= (SGX_PAGE_TYPE_VA << 8),
-+	SGX_SECINFO_TRIM		= (SGX_PAGE_TYPE_TRIM << 8),
-+};
-+
-+#define SGX_SECINFO_PERMISSION_MASK	GENMASK_ULL(2, 0)
-+#define SGX_SECINFO_PAGE_TYPE_MASK	(SGX_PAGE_TYPE_MASK << 8)
-+#define SGX_SECINFO_RESERVED_MASK	~(SGX_SECINFO_PERMISSION_MASK | \
-+					  SGX_SECINFO_PAGE_TYPE_MASK)
-+
-+/**
-+ * struct sgx_secinfo - describes attributes of an EPC page
-+ * @flags:	permissions and type
++ * __encls_ret_N - encode an ENCLS function that returns an error code in EAX
++ * @rax:	function number
++ * @inputs:	asm inputs for the function
 + *
-+ * Used together with ENCLS leaves that add or modify an EPC page to an
-+ * enclave to define page permissions and type.
-+ */
-+struct sgx_secinfo {
-+	u64 flags;
-+	u8  reserved[56];
-+} __packed __aligned(64);
-+
-+#define SGX_PCMD_RESERVED_SIZE 40
-+
-+/**
-+ * struct sgx_pcmd - Paging Crypto Metadata (PCMD)
-+ * @enclave_id:	enclave identifier
-+ * @mac:	MAC over PCMD, page contents and isvsvn
++ * Emit assembly for an ENCLS function that returns an error code, e.g. EREMOVE.
++ * And because SGX isn't complex enough as it is, function that return an error
++ * code also modify flags.
 + *
-+ * PCMD is stored for every swapped page to the regular memory. When ELDU loads
-+ * the page back it recalculates the MAC by using a isvsvn number stored in a
-+ * VA page. Together these two structures bring integrity and rollback
-+ * protection.
++ * Return:
++ *	0 on success,
++ *	SGX error code on failure
 + */
-+struct sgx_pcmd {
-+	struct sgx_secinfo secinfo;
-+	u64 enclave_id;
-+	u8  reserved[SGX_PCMD_RESERVED_SIZE];
-+	u8  mac[16];
-+} __packed __aligned(128);
++#define __encls_ret_N(rax, inputs...)				\
++	({							\
++	int ret;						\
++	asm volatile(						\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
++	"2:\n"							\
++	".section .fixup,\"ax\"\n"				\
++	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
++	"   jmp 2b\n"						\
++	".previous\n"						\
++	_ASM_EXTABLE_FAULT(1b, 3b)				\
++	: "=a"(ret)						\
++	: "a"(rax), inputs					\
++	: "memory", "cc");					\
++	ret;							\
++	})
 +
-+#define SGX_SIGSTRUCT_RESERVED1_SIZE 84
-+#define SGX_SIGSTRUCT_RESERVED2_SIZE 20
-+#define SGX_SIGSTRUCT_RESERVED3_SIZE 32
-+#define SGX_SIGSTRUCT_RESERVED4_SIZE 12
++#define __encls_ret_1(rax, rcx)		\
++	({				\
++	__encls_ret_N(rax, "c"(rcx));	\
++	})
++
++#define __encls_ret_2(rax, rbx, rcx)		\
++	({					\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
++	})
++
++#define __encls_ret_3(rax, rbx, rcx, rdx)			\
++	({							\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
++	})
 +
 +/**
-+ * struct sgx_sigstruct_header -  defines author of the enclave
-+ * @header1:		constant byte string
-+ * @vendor:		must be either 0x0000 or 0x8086
-+ * @date:		YYYYMMDD in BCD
-+ * @header2:		costant byte string
-+ * @swdefined:		software defined value
-+ */
-+struct sgx_sigstruct_header {
-+	u64 header1[2];
-+	u32 vendor;
-+	u32 date;
-+	u64 header2[2];
-+	u32 swdefined;
-+	u8  reserved1[84];
-+} __packed;
-+
-+/**
-+ * struct sgx_sigstruct_body - defines contents of the enclave
-+ * @miscselect:		additional information stored to an SSA frame
-+ * @misc_mask:		required miscselect in SECS
-+ * @attributes:		attributes for enclave
-+ * @xfrm:		XSave-Feature Request Mask (subset of XCR0)
-+ * @attributes_mask:	required attributes in SECS
-+ * @xfrm_mask:		required XFRM in SECS
-+ * @mrenclave:		SHA256-hash of the enclave contents
-+ * @isvprodid:		a user-defined value that is used in key derivation
-+ * @isvsvn:		a user-defined value that is used in key derivation
-+ */
-+struct sgx_sigstruct_body {
-+	u32 miscselect;
-+	u32 misc_mask;
-+	u8  reserved2[20];
-+	u64 attributes;
-+	u64 xfrm;
-+	u64 attributes_mask;
-+	u64 xfrm_mask;
-+	u8  mrenclave[32];
-+	u8  reserved3[32];
-+	u16 isvprodid;
-+	u16 isvsvn;
-+} __packed;
-+
-+/**
-+ * struct sgx_sigstruct - an enclave signature
-+ * @header:		defines author of the enclave
-+ * @modulus:		the modulus of the public key
-+ * @exponent:		the exponent of the public key
-+ * @signature:		the signature calculated over the fields except modulus,
-+ * @body:		defines contents of the enclave
-+ * @q1:			a value used in RSA signature verification
-+ * @q2:			a value used in RSA signature verification
++ * __encls_N - encode an ENCLS function that doesn't return an error code
++ * @rax:	function number
++ * @rbx_out:	optional output variable
++ * @inputs:	asm inputs for the function
 + *
-+ * Header and body are the parts that are actual signed. The remaining fields
-+ * define the signature of the enclave.
++ * Emit assembly for an ENCLS function that does not return an error code, e.g.
++ * ECREATE.  Leaves without error codes either succeed or fault.  @rbx_out is an
++ * optional parameter for use by EDGBRD, which returns the requested value in
++ * RBX.
++ *
++ * Return:
++ *   0 on success,
++ *   trapnr with ENCLS_FAULT_FLAG set on fault
 + */
-+struct sgx_sigstruct {
-+	struct sgx_sigstruct_header header;
-+	u8  modulus[SGX_MODULUS_SIZE];
-+	u32 exponent;
-+	u8  signature[SGX_MODULUS_SIZE];
-+	struct sgx_sigstruct_body body;
-+	u8  reserved4[12];
-+	u8  q1[SGX_MODULUS_SIZE];
-+	u8  q2[SGX_MODULUS_SIZE];
-+} __packed;
++#define __encls_N(rax, rbx_out, inputs...)			\
++	({							\
++	int ret;						\
++	asm volatile(						\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
++	"   xor %%eax,%%eax;\n"					\
++	"2:\n"							\
++	".section .fixup,\"ax\"\n"				\
++	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
++	"   jmp 2b\n"						\
++	".previous\n"						\
++	_ASM_EXTABLE_FAULT(1b, 3b)				\
++	: "=a"(ret), "=b"(rbx_out)				\
++	: "a"(rax), inputs					\
++	: "memory");						\
++	ret;							\
++	})
 +
-+#define SGX_LAUNCH_TOKEN_SIZE 304
++#define __encls_2(rax, rbx, rcx)				\
++	({							\
++	unsigned long ign_rbx_out;				\
++	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
++	})
 +
-+#endif /* _ASM_X86_SGX_ARCH_H */
++#define __encls_1_1(rax, data, rcx)			\
++	({						\
++	unsigned long rbx_out;				\
++	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
++	if (!ret)					\
++		data = rbx_out;				\
++	ret;						\
++	})
++
++static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
++{
++	return __encls_2(ECREATE, pginfo, secs);
++}
++
++static inline int __eextend(void *secs, void *addr)
++{
++	return __encls_2(EEXTEND, secs, addr);
++}
++
++static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
++{
++	return __encls_2(EADD, pginfo, addr);
++}
++
++static inline int __einit(void *sigstruct, void *token, void *secs)
++{
++	return __encls_ret_3(EINIT, sigstruct, secs, token);
++}
++
++static inline int __eremove(void *addr)
++{
++	return __encls_ret_1(EREMOVE, addr);
++}
++
++static inline int __edbgwr(void *addr, unsigned long *data)
++{
++	return __encls_2(EDGBWR, *data, addr);
++}
++
++static inline int __edbgrd(void *addr, unsigned long *data)
++{
++	return __encls_1_1(EDGBRD, *data, addr);
++}
++
++static inline int __etrack(void *addr)
++{
++	return __encls_ret_1(ETRACK, addr);
++}
++
++static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
++			 void *va)
++{
++	return __encls_ret_3(ELDU, pginfo, addr, va);
++}
++
++static inline int __eblock(void *addr)
++{
++	return __encls_ret_1(EBLOCK, addr);
++}
++
++static inline int __epa(void *addr)
++{
++	unsigned long rbx = SGX_PAGE_TYPE_VA;
++
++	return __encls_2(EPA, rbx, addr);
++}
++
++static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
++			void *va)
++{
++	return __encls_ret_3(EWB, pginfo, addr, va);
++}
++
++#endif /* _X86_ENCLS_H */
 -- 
 2.27.0
 
