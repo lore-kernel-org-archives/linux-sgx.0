@@ -2,32 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FB6C2D0E4
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 20:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A01C2D0E4
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 21:31:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54548216FD
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 20:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFED221D91
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 21:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgKLU7L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Nov 2020 15:59:11 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:60382 "EHLO wind.enjellic.com"
+        id S1727145AbgKLVbW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Nov 2020 16:31:22 -0500
+Received: from mga12.intel.com ([192.55.52.136]:1424 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726893AbgKLU7K (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Nov 2020 15:59:10 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0ACKwLc3009502;
-        Thu, 12 Nov 2020 14:58:21 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0ACKwJdN009501;
-        Thu, 12 Nov 2020 14:58:19 -0600
-Date:   Thu, 12 Nov 2020 14:58:19 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Dave Hansen <dave.hansen@intel.com>
+        id S1726337AbgKLVbV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Nov 2020 16:31:21 -0500
+IronPort-SDR: K1af76DPRjiZ4HCOhLFwRNcx2r5oTWM0QcnxDwl+T2APY1lG33x2Ze1SRMbrydlmJp8GqiIVrA
+ 5/gHJh/MjASA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9803"; a="149654946"
+X-IronPort-AV: E=Sophos;i="5.77,473,1596524400"; 
+   d="scan'208";a="149654946"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2020 13:31:21 -0800
+IronPort-SDR: xaU7fMlsK8TvKpZRLPGi93pw32e7/IVP4Ex1VTtb7XzbnhxkQEuqQOYxgnlhCHsZL/c/VE1qdK
+ nOl9FTV9hEGQ==
+X-IronPort-AV: E=Sophos;i="5.77,473,1596524400"; 
+   d="scan'208";a="542409097"
+Received: from pcathanx-mobl.amr.corp.intel.com (HELO [10.212.226.118]) ([10.212.226.118])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2020 13:31:20 -0800
+Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct
+ vm_operations_struct
+To:     "Dr. Greg" <greg@enjellic.com>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -43,178 +51,87 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
         mikko.ylinen@intel.com
-Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct vm_operations_struct
-Message-ID: <20201112205819.GA9172@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com> <20201106174359.GA24109@wind.enjellic.com> <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com> <20201107150930.GA29530@wind.enjellic.com> <c7157bc6-8a65-11f4-e961-17163730df5d@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7157bc6-8a65-11f4-e961-17163730df5d@intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 12 Nov 2020 14:58:21 -0600 (CST)
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+ <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com>
+ <20201106174359.GA24109@wind.enjellic.com>
+ <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com>
+ <20201107150930.GA29530@wind.enjellic.com>
+ <c7157bc6-8a65-11f4-e961-17163730df5d@intel.com>
+ <20201112205819.GA9172@wind.enjellic.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <5c22300c-0956-48ed-578d-00cf62cb5c09@intel.com>
+Date:   Thu, 12 Nov 2020 13:31:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201112205819.GA9172@wind.enjellic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Nov 07, 2020 at 11:16:25AM -0800, Dave Hansen wrote:
+On 11/12/20 12:58 PM, Dr. Greg wrote:
+> @@ -270,11 +270,10 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
+>  			    struct vm_area_struct **pprev, unsigned long start,
+>  			    unsigned long end, unsigned long newflags)
+>  {
+> -	int ret;
+> +	struct sgx_encl *encl = vma->vm_private_data;
+>  
+> -	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
+> -	if (ret)
+> -		return ret;
+> +	if ( test_bit(SGX_ENCL_INITIALIZED, &encl->flags) )
+> +		return -EACCES;
+>  
+>  	return mprotect_fixup(vma, pprev, start, end, newflags);
+>  }
 
-Good afternoon, I hope the week is going well for everyone.
-
-> On 11/7/20 7:09 AM, Dr. Greg wrote:
-> > In all of these discussions there hasn't been a refutation of my point
-> > that the only reason this hook is needed is to stop the potential for
-> > anonymous code execution on SGX2 capable hardware.  So we will assume,
-> > that while unspoken, this is the rationale for the hook.
-
-> Unspoken?  See from the cover letter:
-
-The complexity of the issues involved and the almost complete lack of
-understanding of the technology in the Linux user community would
-suggest that everyone would benefit from a more detailed explanation
-of the issues at hand.
-
-> > 3. Enclave page permissions are dynamic (just like normal permissions) and
-> >    can be adjusted at runtime with mprotect().
-
-> I explicitly chose not to name the instructions, nor the exact
-> version of the SGX ISA that introduces them.  They're supported in
-> the series, and that's all that matters.
-
-When it comes to security issues and risk assessment it always seems
-that more information is better, but of course opinions vary, wildly
-it would seem in the case of this technology.
-
-I've been told countless times in my career: "What happens if you get
-hit by a bus".  I've tried to address those issues by generating
-copious amounts of documentation on everything I do.  Having the
-relevant issues with respect to the security considerations and
-implications of this technology clearly documented would seem to
-address the 'hit by a bus' issue for other developers that may need to
-look at and understand the code down the road.
-
-> If you want to advocate for something different to be done, patches
-> are accepted.
-
-I'm including a patch below that addresses the mprotect vulnerability
-as simplistically as I believe it can be addressed and provides some
-background information on the issues at hand.  I will let people more
-wise then I am decide whether or not the world at large is worse off
-for having the information available.
-
-I tested this with our runtime, which is of a significantly different
-design then Intel's.  After testing multiple adversarial approaches to
-changing page permissions, I'm left struggling to understand what the
-page walking code accomplishes, even in the case of mmap.
-
-The ultimate decision with respect to allowed page permissions is
-cryptographically encoded in the enclave measurement.  The enclave
-won't initialize if changes are made to the desired EPCM permissions.
-If an attempt is made to use mmap to alter those permissions at the OS
-level they will be inhibited by the EPCM permission verifications.
-
-If one reads the EDMM papers by the Intel engineering team that
-designed the technology, they were very concerned about an enclave
-having to agree to any virtual memory changes, hence the need for
-ENCLU[EACCEPT] and ENCLU[EACCEPTCOPY].  In that respect the behavior
-of ENCLU[EMODPE] is somewhat interesting in that it gives untrusted
-userspace the ability to thwart the intentions of enclave code.
-
-They may not, however, have had any other choice given that SGX was
-designed as a virtual memory play in order to make it an 'easy'
-add-on.
-
-Given all of this, it seems to be the case that the only thing needed
-to block anonymous code execution is to block mprotect on an
-initialized enclave, which the attached patch does.  If and when the
-driver supports EDMM there is, I believe, a very open question as to
-what type of introspection capability the kernel should have.
-
-More on that in a subsequent post/patch.
-
-Have a good evening.
-
-Dr. Greg
-
-Cut here. -----------------------------------------------------------------
-From 68cba86b0cb3c5917e8c42d83edd5220e2890bb1 Mon Sep 17 00:00:00 2001
-From: "Dr. Greg" <greg@enjellic.com>
-Date: Thu, 12 Nov 2020 04:48:57 -0600
-Subject: [PATCH] Unconditionally block mprotect of enclave memory.
-
-In SGX there are two levels of memory protection, the classic
-page table mechanism and SGX hardware based page protections
-that are codified in the Enclave Page Cache Metadata.  A
-successful memory access requires that both mechanisms agree
-that the access is permitted.
-
-In the initial implementation of SGX (SGX1), the page permissions
-are immutable after the enclave is initialized.  Even if classic
-page protections are modified via mprotect, any attempt to access
-enclave memory with alternative permissions will be blocked.
-
-One of the architectural changes implemented in the second
-generation of SGX (SGX2) is the ability for page access
-permissions to be dynamically manipulated after the enclave is
-initialized.  This requires coordination between trusted code
-running in the enclave and untrusted code using mprotect and
-special ring-0 instructions.
-
-One of the security threats associated with SGX2 hardware is that
-enclave based code can conspire with its untrusted runtime to make
-executable enclave memory writable.  This provides the opportunity for
-completely anonymous code execution that the operating system has no
-visibility into.
-
-All that is needed to, simply, close this vulnerability is to
-eliminate the ability to call mprotect against the virtual memory
-range of an enclave after it is initialized.  Any mprotect changes
-made prior to initialization that are inconsistent with the
-permissions codified in the enclave will cause initialization and/or
-access to fail.
-
-Tested-by: Dr. Greg <greg@enjellic.com>
-Signed-off-by: Dr. Greg <greg@enjellic.com>
----
- arch/x86/kernel/cpu/sgx/encl.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 139f8c398685..c613482ebb56 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -270,11 +270,10 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
- 			    struct vm_area_struct **pprev, unsigned long start,
- 			    unsigned long end, unsigned long newflags)
- {
--	int ret;
-+	struct sgx_encl *encl = vma->vm_private_data;
- 
--	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
--	if (ret)
--		return ret;
-+	if ( test_bit(SGX_ENCL_INITIALIZED, &encl->flags) )
-+		return -EACCES;
- 
- 	return mprotect_fixup(vma, pprev, start, end, newflags);
- }
--- 
-2.19.2
-
-
-And here (demonstrating my age). ------------------------------------------
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
-Enjellic Systems Development, LLC     IOT platforms and edge devices.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Umm.. the developers behind Flame were able to hijack Windows update,
- gain access to a Microsoft code signing and website signing key while
- staying undetected in the wild for at least 2+ years.
-
- But System Restore 2.0 is going to stop them?  Your average piece of
- malware can survive a system restore..."
-                                -- Slashdot
+This rules out mprotect() on running enclaves.  Does that break any
+expectations from enclave authors, or take away capabilities that folks
+need?
