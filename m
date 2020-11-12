@@ -7,210 +7,298 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D781CC2D0E4
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E5EC388F7
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8929921D7F
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94DD822227
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:04:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCDUh9uZ"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cl8GfkOT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgKLWEJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:04:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52382 "EHLO mail.kernel.org"
+        id S1727431AbgKLWEP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Nov 2020 17:04:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbgKLWEH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Nov 2020 17:04:07 -0500
+        id S1727268AbgKLWEO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Nov 2020 17:04:14 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24C072224A;
-        Thu, 12 Nov 2020 22:04:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D3F82224F;
+        Thu, 12 Nov 2020 22:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605218647;
-        bh=3uE1EWWgmHyhxsMrlxMO0pitcKAQZZowQalmf1U/uhQ=;
+        s=default; t=1605218653;
+        bh=MlJclM1DXBZCSDFFGh8Kn2eTG3SOsamSFwv/jM+ETZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CCDUh9uZxRU9CDY8IukXlxMH6jlh1+xh8Kr03XmvLubN0b6kXGpf1mUr0CQaERU8b
-         1jBZHUUbRU1OPaJmdkvAj/0niyprFTxvWNHarA7ujNDemOJdTwgmpaMOvfz+gbq1NS
-         iX8RvRPS1YtFFpBVEmiURT6aA7DTEhQnfdD1J92I=
+        b=Cl8GfkOTfhSe2CJKD7tXBqWGAO3w/btinb8/zacFRZ4lPID2MgIuyGe+OmN/qln07
+         ID9+VHA2/LkYWTvF7sqs91KhfShSuonxq2PbL86VC7Wl8OHgIGM1qGy8T43Va3sNBC
+         ubeXwK+9ocsYqwBRurNLavLiWMfFIBunfEo2NuLc=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
+        linux-doc@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         sean.j.christopherson@intel.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v41 22/24] x86/sgx: Add ptrace() support for the SGX driver
-Date:   Fri, 13 Nov 2020 00:01:33 +0200
-Message-Id: <20201112220135.165028-23-jarkko@kernel.org>
+Subject: [PATCH v41 23/24] docs: x86/sgx: Document SGX kernel architecture
+Date:   Fri, 13 Nov 2020 00:01:34 +0200
+Message-Id: <20201112220135.165028-24-jarkko@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201112220135.165028-1-jarkko@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Enclave memory is normally inaccessible from outside the enclave.  This
-makes enclaves hard to debug.  However, enclaves can be put in a debug mode
-when they are being built. In debug enclaves data *can* be read and/or
-written by using the ENCLS[EDBGRD] and ENCLS[EDBGWR] functions.
+Document the Intel SGX kernel architecture. The fine-grained architecture
+details can be looked up from Intel SDM Volume 3D.
 
-This is obviously only for debugging and destroys all the protections
-afforded to normal enclaves.  But, enclaves know their own debug status and
-can adjust their behavior appropriately.
-
-Add a vm_ops->access() implementation which can be used to read and write
-memory inside debug enclaves.  This is typically used via ptrace() APIs.
-
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Tested-by: Jethro Beekman <jethro@fortanix.com> # v40
+Cc: linux-doc@vger.kernel.org
+Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
+# Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+# Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
-Changes from v39:
-* Check only for SGX_ENCL_DEBUG in sgx_vma_access(), so that a debug
-  enclave's memory can read and written at any phase of its life-cycle.
+ Documentation/x86/index.rst |   1 +
+ Documentation/x86/sgx.rst   | 211 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 212 insertions(+)
+ create mode 100644 Documentation/x86/sgx.rst
 
- arch/x86/kernel/cpu/sgx/encl.c | 111 +++++++++++++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 141424657718..94e7e41e6adf 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -272,10 +272,121 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
- 	return sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
- }
- 
-+static int sgx_encl_debug_read(struct sgx_encl *encl, struct sgx_encl_page *page,
-+			       unsigned long addr, void *data)
-+{
-+	unsigned long offset = addr & ~PAGE_MASK;
-+	int ret;
+diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
+index 9c6ebf355f81..e7eb84484ddc 100644
+--- a/Documentation/x86/index.rst
++++ b/Documentation/x86/index.rst
+@@ -33,3 +33,4 @@ x86-specific Documentation
+    i386/index
+    x86_64/index
+    sva
++   sgx
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+new file mode 100644
+index 000000000000..eaee1368b4fd
+--- /dev/null
++++ b/Documentation/x86/sgx.rst
+@@ -0,0 +1,211 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
++===============================
++Software Guard eXtensions (SGX)
++===============================
 +
-+	ret = __edbgrd(sgx_get_epc_virt_addr(page->epc_page) + offset, data);
-+	if (ret)
-+		return -EIO;
++Overview
++========
 +
-+	return 0;
-+}
++Software Guard eXtensions (SGX) hardware enables for user space applications
++to set aside private memory regions of code and data:
 +
-+static int sgx_encl_debug_write(struct sgx_encl *encl, struct sgx_encl_page *page,
-+				unsigned long addr, void *data)
-+{
-+	unsigned long offset = addr & ~PAGE_MASK;
-+	int ret;
++* Privileged (ring-0) ENCLS functions orchestrate the construction of the.
++  regions.
++* Unprivileged (ring-3) ENCLU functions allow an application to enter and
++  execute inside the regions.
 +
-+	ret = __edbgwr(sgx_get_epc_virt_addr(page->epc_page) + offset, data);
-+	if (ret)
-+		return -EIO;
++These memory regions are called enclaves. An enclave can be only entered at a
++fixed set of entry points. Each entry point can hold a single hardware thread
++at a time.  While the enclave is loaded from a regular binary file by using
++ENCLS functions, only the threads inside the enclave can access its memory. The
++region is denied from outside access by the CPU, and encrypted before it leaves
++from LLC.
 +
-+	return 0;
-+}
++The support can be determined by
 +
-+/*
-+ * Load an enclave page to EPC if required, and take encl->lock.
-+ */
-+static struct sgx_encl_page *sgx_encl_reserve_page(struct sgx_encl *encl,
-+						   unsigned long addr,
-+						   unsigned long vm_flags)
-+{
-+	struct sgx_encl_page *entry;
++	``grep sgx /proc/cpuinfo``
 +
-+	for ( ; ; ) {
-+		mutex_lock(&encl->lock);
++SGX must both be supported in the processor and enabled by the BIOS.  If SGX
++appears to be unsupported on a system which has hardware support, ensure
++support is enabled in the BIOS.  If a BIOS presents a choice between "Enabled"
++and "Software Enabled" modes for SGX, choose "Enabled".
 +
-+		entry = sgx_encl_load_page(encl, addr, vm_flags);
-+		if (PTR_ERR(entry) != -EBUSY)
-+			break;
++Enclave Page Cache
++==================
 +
-+		mutex_unlock(&encl->lock);
-+	}
++SGX utilizes an *Enclave Page Cache (EPC)* to store pages that are associated
++with an enclave. It is contained in a BIOS-reserved region of physical memory.
++Unlike pages used for regular memory, pages can only be accessed from outside of
++the enclave during enclave construction with special, limited SGX instructions.
 +
-+	if (IS_ERR(entry))
-+		mutex_unlock(&encl->lock);
++Only a CPU executing inside an enclave can directly access enclave memory.
++However, a CPU executing inside an enclave may access normal memory outside the
++enclave.
 +
-+	return entry;
-+}
++The kernel manages enclave memory similar to how it treats device memory.
 +
-+static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
-+			  void *buf, int len, int write)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry = NULL;
-+	char data[sizeof(unsigned long)];
-+	unsigned long align;
-+	int offset;
-+	int cnt;
-+	int ret = 0;
-+	int i;
++Enclave Page Types
++------------------
 +
-+	/*
-+	 * If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return -EFAULT;
++**SGX Enclave Control Structure (SECS)**
++   Enclave's address range, attributes and other global data are defined
++   by this structure.
 +
-+	if (!test_bit(SGX_ENCL_DEBUG, &encl->flags))
-+		return -EFAULT;
++**Regular (REG)**
++   Regular EPC pages contain the code and data of an enclave.
 +
-+	for (i = 0; i < len; i += cnt) {
-+		entry = sgx_encl_reserve_page(encl, (addr + i) & PAGE_MASK,
-+					      vma->vm_flags);
-+		if (IS_ERR(entry)) {
-+			ret = PTR_ERR(entry);
-+			break;
-+		}
++**Thread Control Structure (TCS)**
++   Thread Control Structure pages define the entry points to an enclave and
++   track the execution state of an enclave thread.
 +
-+		align = ALIGN_DOWN(addr + i, sizeof(unsigned long));
-+		offset = (addr + i) & (sizeof(unsigned long) - 1);
-+		cnt = sizeof(unsigned long) - offset;
-+		cnt = min(cnt, len - i);
++**Version Array (VA)**
++   Version Array pages contain 512 slots, each of which can contain a version
++   number for a page evicted from the EPC.
 +
-+		ret = sgx_encl_debug_read(encl, entry, align, data);
-+		if (ret)
-+			goto out;
++Enclave Page Cache Map
++----------------------
 +
-+		if (write) {
-+			memcpy(data + offset, buf + i, cnt);
-+			ret = sgx_encl_debug_write(encl, entry, align, data);
-+			if (ret)
-+				goto out;
-+		} else {
-+			memcpy(buf + i, data + offset, cnt);
-+		}
++The processor tracks EPC pages in a hardware metadata structure called the
++*Enclave Page Cache Map (EPCM)*.  The EPCM contains an entry for each EPC page
++which describes the owning enclave, access rights and page type among the other
++things.
 +
-+out:
-+		mutex_unlock(&encl->lock);
++EPCM permissions are separate from the normal page tables.  This prevents the
++kernel from, for instance, allowing writes to data which an enclave wishes to
++remain read-only.  EPCM permissions may only impose additional restrictions on
++top of normal x86 page permissions.
 +
-+		if (ret)
-+			break;
-+	}
++For all intents and purposes, the SGX architecture allows the processor to
++invalidate all EPCM entries at will.  This requires that software be prepared to
++handle an EPCM fault at any time.  In practice, this can happen on events like
++power transitions when the ephemeral key that encrypts enclave memory is lost.
 +
-+	return ret < 0 ? ret : i;
-+}
++Application interface
++=====================
 +
- const struct vm_operations_struct sgx_vm_ops = {
- 	.fault = sgx_vma_fault,
- 	.mprotect = sgx_vma_mprotect,
- 	.open = sgx_vma_open,
-+	.access = sgx_vma_access,
- };
- 
- /**
++Enclave build functions
++-----------------------
++
++In addition to the traditional compiler and linker build process, SGX has a
++separate enclave “build” process.  Enclaves must be built before they can be
++executed (entered). The first step in building an enclave is opening the
++**/dev/sgx_enclave** device.  Since enclave memory is protected from direct
++access, special privileged instructions are Then used to copy data into enclave
++pages and establish enclave page permissions.
++
++.. kernel-doc:: arch/x86/kernel/cpu/sgx/ioctl.c
++   :functions: sgx_ioc_enclave_create
++               sgx_ioc_enclave_add_pages
++               sgx_ioc_enclave_init
++               sgx_ioc_enclave_provision
++
++Enclave vDSO
++------------
++
++Entering an enclave can only be done through SGX-specific EENTER and ERESUME
++functions, and is a non-trivial process.  Because of the complexity of
++transitioning to and from an enclave, enclaves typically utilize a library to
++handle the actual transitions.  This is roughly analogous to how glibc
++implementations are used by most applications to wrap system calls.
++
++Another crucial characteristic of enclaves is that they can generate exceptions
++as part of their normal operation that need to be handled in the enclave or are
++unique to SGX.
++
++Instead of the traditional signal mechanism to handle these exceptions, SGX
++can leverage special exception fixup provided by the vDSO.  The kernel-provided
++vDSO function wraps low-level transitions to/from the enclave like EENTER and
++ERESUME.  The vDSO function intercepts exceptions that would otherwise generate
++a signal and return the fault information directly to its caller.  This avoids
++the need to juggle signal handlers.
++
++.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
++   :functions: vdso_sgx_enter_enclave_t
++
++ksgxd
++=====
++
++SGX support includes a kernel thread called *ksgxwapd*.
++
++EPC sanitization
++----------------
++
++ksgxd is started when SGX initializes.  Enclave memory is typically ready
++For use when the processor powers on or resets.  However, if SGX has been in
++use since the reset, enclave pages may be in an inconsistent state.  This might
++occur after a crash and kexec() cycle, for instance.  At boot, ksgxd
++reinitializes all enclave pages so that they can be allocated and re-used.
++
++The sanitization is done by going through EPC address space and applying the
++EREMOVE function to each physical page. Some enclave pages like SECS pages have
++hardware dependencies on other pages which prevents EREMOVE from functioning.
++Executing two EREMOVE passes removes the dependencies.
++
++Page reclaimer
++--------------
++
++Similar to the core kswapd, ksgxd, is responsible for managing the
++overcommitment of enclave memory.  If the system runs out of enclave memory,
++*ksgxwapd* “swaps” enclave memory to normal memory.
++
++Launch Control
++==============
++
++SGX provides a launch control mechanism. After all enclave pages have been
++copied, kernel executes EINIT function, which initializes the enclave. Only after
++this the CPU can execute inside the enclave.
++
++ENIT function takes an RSA-3072 signature of the enclave measurement.  The function
++checks that the measurement is correct and signature is signed with the key
++hashed to the four **IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}** MSRs representing the
++SHA256 of a public key.
++
++Those MSRs can be configured by the BIOS to be either readable or writable.
++Linux supports only writable configuration in order to give full control to the
++kernel on launch control policy. Before calling EINIT function, the driver sets
++the MSRs to match the enclave's signing key.
++
++Encryption engines
++==================
++
++In order to conceal the enclave data while it is out of the CPU package, the
++memory controller has an encryption engine to transparently encrypt and decrypt
++enclave memory.
++
++In CPUs prior to Ice Lake, the Memory Encryption Engine (MEE) is used to
++encrypt pages leaving the CPU caches. MEE uses a n-ary Merkle tree with root in
++SRAM to maintain integrity of the encrypted data. This provides integrity and
++anti-replay protection but does not scale to large memory sizes because the time
++required to update the Merkle tree grows logarithmically in relation to the
++memory size.
++
++CPUs starting from Icelake use Total Memory Encryption (TME) in the place of
++MEE. TME-based SGX implementations do not have an integrity Merkle tree, which
++means integrity and replay-attacks are not mitigated.  B, it includes
++additional changes to prevent cipher text from being returned and SW memory
++aliases from being Created.
++
++DMA to enclave memory is blocked by range registers on both MEE and TME systems
++(SDM section 41.10).
++
++Usage Models
++============
++
++Shared Library
++--------------
++
++Sensitive data and the code that acts on it is partitioned from the application
++into a separate library. The library is then linked as a DSO which can be loaded
++into an enclave. The application can then make individual function calls into
++the enclave through special SGX instructions. A run-time within the enclave is
++configured to marshal function parameters into and out of the enclave and to
++call the correct library function.
++
++Application Container
++---------------------
++
++An application may be loaded into a container enclave which is specially
++configured with a library OS and run-time which permits the application to run.
++The enclave run-time and library OS work together to execute the application
++when a thread enters the enclave.
 -- 
 2.27.0
 
