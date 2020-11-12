@@ -7,37 +7,36 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9D6C2D0E4
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB83C388F7
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71E732223F
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3045F22246
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoP3VzyT"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBMixRKE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgKLWDb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:03:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51820 "EHLO mail.kernel.org"
+        id S1727804AbgKLWDg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Nov 2020 17:03:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727778AbgKLWDa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Nov 2020 17:03:30 -0500
+        id S1727801AbgKLWDg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Nov 2020 17:03:36 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2B9B22201;
-        Thu, 12 Nov 2020 22:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A9EF21D7F;
+        Thu, 12 Nov 2020 22:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605218608;
-        bh=PlgrMu8KNE1LK/nbN6CBCeWwn5etw88Ddbrkdd9IBhU=;
+        s=default; t=1605218615;
+        bh=uqpHLcPZino2yEMltWpyaGARZTu7pMUqeIRcIUZbI4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NoP3VzyTxxiLR7xt51UccSPerCXBGrBlFVI9W13zgmVXytLEqd0qmyAUT8Lpy145Y
-         GyctJheitmqwMKFi5H0vMiy00e/fJxJaIXl2/+7W7C2LWJQw5vvCcXNKxUMdzRnC8s
-         /zvN8lTeiM2USoOENKfO/Pbn63pLoLQtIfkemPWY=
+        b=XBMixRKEVvcAe38v2xjKbIKwiYwdg0GtIBO5EnjWnvneSiqzwnobg0cCYlG/NdkzU
+         sig5MFWbokoL4ro2mGeqz/l8QZG3wgyTq4O5kCg4NYI4K1k806LX33bB4FBo0DlGmK
+         QAvke+LEVTgaTwQ8PPTOQnPHQlBQeazwoCkKpUXM=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
         Jethro Beekman <jethro@fortanix.com>,
         Jarkko Sakkinen <jarkko@kernel.org>, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
@@ -48,14 +47,13 @@ Cc:     linux-kernel@vger.kernel.org,
         luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
         puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v41 16/24] x86/vdso: Add support for exception fixup in vDSO functions
-Date:   Fri, 13 Nov 2020 00:01:27 +0200
-Message-Id: <20201112220135.165028-17-jarkko@kernel.org>
+Subject: [PATCH v41 17/24] x86/fault: Add helper function to sanitize error code
+Date:   Fri, 13 Nov 2020 00:01:28 +0200
+Message-Id: <20201112220135.165028-18-jarkko@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201112220135.165028-1-jarkko@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -63,312 +61,99 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Signals are a horrid little mechanism.  They are especially nasty in
-multi-threaded environments because signal state like handlers is global
-across the entire process.  But, signals are basically the only way that
-userspace can “gracefully” handle and recover from exceptions.
+vDSO exception fixup is a replacement for signals in limited situations.
+Signals and vDSO exception fixup need to provide similar information to
+userspace, including the hardware error code.
 
-The kernel generally does not like exceptions to occur during execution.
-But, exceptions are a fact of life and must be handled in some
-circumstances.  The kernel handles them by keeping a list of individual
-instructions which may cause exceptions.  Instead of truly handling the
-exception and returning to the instruction that caused it, the kernel
-instead restarts execution at a *different* instruction.  This makes it
-obvious to that thread of execution that the exception occurred and lets
-*that* code handle the exception instead of the handler.
+That hardware error code needs to be sanitized.  For instance, if userspace
+accesses a kernel address, the error code could indicate to userspace
+whether the address had a Present=1 PTE.  That can leak information about
+the kernel layout to userspace, which is bad.
 
-This is not dissimilar to the try/catch exceptions mechanisms that some
-programming languages have, but applied *very* surgically to single
-instructions.  It effectively changes the visible architecture of the
-instruction.
+The existing signal code does this sanitization, but fairly late in the
+signal process.  The vDSO exception code runs before the sanitization
+happens.
 
-Problem
-=======
+Move error code sanitization out of the signal code and into a helper.
+Call the helper in the signal code.
 
-SGX generates a lot of signals, and the code to enter and exit enclaves and
-muck with signal handling is truly horrid.  At the same time, an approach
-like kernel exception fixup can not be easily applied to userspace
-instructions because it changes the visible instruction architecture.
-
-Solution
-========
-
-The vDSO is a special page of kernel-provided instructions that run in
-userspace.  Any userspace calling into the vDSO knows that it is special.
-This allows the kernel a place to legitimately rewrite the user/kernel
-contract and change instruction behavior.
-
-Add support for fixing up exceptions that occur while executing in the
-vDSO.  This replaces what could traditionally only be done with signal
-handling.
-
-This new mechanism will be used to replace previously direct use of SGX
-instructions by userspace.
-
-Just introduce the vDSO infrastructure.  Later patches will actually
-replace signal generation with vDSO exception fixup.
-
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
 Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
 # Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/entry/vdso/Makefile          |  6 ++--
- arch/x86/entry/vdso/extable.c         | 46 ++++++++++++++++++++++++
- arch/x86/entry/vdso/extable.h         | 28 +++++++++++++++
- arch/x86/entry/vdso/vdso-layout.lds.S |  9 ++++-
- arch/x86/entry/vdso/vdso2c.h          | 50 ++++++++++++++++++++++++++-
- arch/x86/include/asm/vdso.h           |  5 +++
- 6 files changed, 139 insertions(+), 5 deletions(-)
- create mode 100644 arch/x86/entry/vdso/extable.c
- create mode 100644 arch/x86/entry/vdso/extable.h
+Changes from v39:
+* Add the missing change to the set_signal_archinfo() that removes the
+  snippet contained in sanitize_error_code().
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 21243747965d..2ad757fb3c23 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -29,7 +29,7 @@ vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
- vobjs32-y += vdso32/vclock_gettime.o
+ arch/x86/mm/fault.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 9339fee83784..0161d4acf3ad 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -602,11 +602,9 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
+ 	oops_end(flags, regs, sig);
+ }
  
- # files to link into kernel
--obj-y				+= vma.o
-+obj-y				+= vma.o extable.o
- KASAN_SANITIZE_vma.o		:= y
- UBSAN_SANITIZE_vma.o		:= y
- KCSAN_SANITIZE_vma.o		:= y
-@@ -128,8 +128,8 @@ $(obj)/%-x32.o: $(obj)/%.o FORCE
- 
- targets += vdsox32.lds $(vobjx32s-y)
- 
--$(obj)/%.so: OBJCOPYFLAGS := -S
--$(obj)/%.so: $(obj)/%.so.dbg FORCE
-+$(obj)/%.so: OBJCOPYFLAGS := -S --remove-section __ex_table
-+$(obj)/%.so: $(obj)/%.so.dbg
- 	$(call if_changed,objcopy)
- 
- $(obj)/vdsox32.so.dbg: $(obj)/vdsox32.lds $(vobjx32s) FORCE
-diff --git a/arch/x86/entry/vdso/extable.c b/arch/x86/entry/vdso/extable.c
-new file mode 100644
-index 000000000000..afcf5b65beef
---- /dev/null
-+++ b/arch/x86/entry/vdso/extable.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/err.h>
-+#include <linux/mm.h>
-+#include <asm/current.h>
-+#include <asm/traps.h>
-+#include <asm/vdso.h>
-+
-+struct vdso_exception_table_entry {
-+	int insn, fixup;
-+};
-+
-+bool fixup_vdso_exception(struct pt_regs *regs, int trapnr,
-+			  unsigned long error_code, unsigned long fault_addr)
-+{
-+	const struct vdso_image *image = current->mm->context.vdso_image;
-+	const struct vdso_exception_table_entry *extable;
-+	unsigned int nr_entries, i;
-+	unsigned long base;
-+
-+	/*
-+	 * Do not attempt to fixup #DB or #BP.  It's impossible to identify
-+	 * whether or not a #DB/#BP originated from within an SGX enclave and
-+	 * SGX enclaves are currently the only use case for vDSO fixup.
-+	 */
-+	if (trapnr == X86_TRAP_DB || trapnr == X86_TRAP_BP)
-+		return false;
-+
-+	if (!current->mm->context.vdso)
-+		return false;
-+
-+	base =  (unsigned long)current->mm->context.vdso + image->extable_base;
-+	nr_entries = image->extable_len / (sizeof(*extable));
-+	extable = image->extable;
-+
-+	for (i = 0; i < nr_entries; i++) {
-+		if (regs->ip == base + extable[i].insn) {
-+			regs->ip = base + extable[i].fixup;
-+			regs->di = trapnr;
-+			regs->si = error_code;
-+			regs->dx = fault_addr;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-diff --git a/arch/x86/entry/vdso/extable.h b/arch/x86/entry/vdso/extable.h
-new file mode 100644
-index 000000000000..b56f6b012941
---- /dev/null
-+++ b/arch/x86/entry/vdso/extable.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __VDSO_EXTABLE_H
-+#define __VDSO_EXTABLE_H
-+
-+/*
-+ * Inject exception fixup for vDSO code.  Unlike normal exception fixup,
-+ * vDSO uses a dedicated handler the addresses are relative to the overall
-+ * exception table, not each individual entry.
-+ */
-+#ifdef __ASSEMBLY__
-+#define _ASM_VDSO_EXTABLE_HANDLE(from, to)	\
-+	ASM_VDSO_EXTABLE_HANDLE from to
-+
-+.macro ASM_VDSO_EXTABLE_HANDLE from:req to:req
-+	.pushsection __ex_table, "a"
-+	.long (\from) - __ex_table
-+	.long (\to) - __ex_table
-+	.popsection
-+.endm
-+#else
-+#define _ASM_VDSO_EXTABLE_HANDLE(from, to)	\
-+	".pushsection __ex_table, \"a\"\n"      \
-+	".long (" #from ") - __ex_table\n"      \
-+	".long (" #to ") - __ex_table\n"        \
-+	".popsection\n"
-+#endif
-+
-+#endif /* __VDSO_EXTABLE_H */
-diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-index 4d152933547d..dc8da7695859 100644
---- a/arch/x86/entry/vdso/vdso-layout.lds.S
-+++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-@@ -75,11 +75,18 @@ SECTIONS
- 	 * stuff that isn't used at runtime in between.
+-static void set_signal_archinfo(unsigned long address,
+-				unsigned long error_code)
++static void sanitize_error_code(unsigned long address,
++				unsigned long *error_code)
+ {
+-	struct task_struct *tsk = current;
+-
+ 	/*
+ 	 * To avoid leaking information about the kernel page
+ 	 * table layout, pretend that user-mode accesses to
+@@ -617,7 +615,13 @@ static void set_signal_archinfo(unsigned long address,
+ 	 * information and does not appear to cause any problems.
  	 */
- 
--	.text		: { *(.text*) }			:text	=0x90909090,
-+	.text		: {
-+		*(.text*)
-+		*(.fixup)
-+	}						:text	=0x90909090,
-+
-+
- 
- 	.altinstructions	: { *(.altinstructions) }	:text
- 	.altinstr_replacement	: { *(.altinstr_replacement) }	:text
- 
-+	__ex_table		: { *(__ex_table) }		:text
-+
- 	/DISCARD/ : {
- 		*(.discard)
- 		*(.discard.*)
-diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
-index 6f46e11ce539..1c7cfac7e64a 100644
---- a/arch/x86/entry/vdso/vdso2c.h
-+++ b/arch/x86/entry/vdso/vdso2c.h
-@@ -5,6 +5,41 @@
-  * are built for 32-bit userspace.
-  */
- 
-+static void BITSFUNC(copy)(FILE *outfile, const unsigned char *data, size_t len)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < len; i++) {
-+		if (i % 10 == 0)
-+			fprintf(outfile, "\n\t");
-+		fprintf(outfile, "0x%02X, ", (int)(data)[i]);
-+	}
+ 	if (address >= TASK_SIZE_MAX)
+-		error_code |= X86_PF_PROT;
++		*error_code |= X86_PF_PROT;
 +}
 +
-+
-+/*
-+ * Extract a section from the input data into a standalone blob.  Used to
-+ * capture kernel-only data that needs to persist indefinitely, e.g. the
-+ * exception fixup tables, but only in the kernel, i.e. the section can
-+ * be stripped from the final vDSO image.
-+ */
-+static void BITSFUNC(extract)(const unsigned char *data, size_t data_len,
-+			      FILE *outfile, ELF(Shdr) *sec, const char *name)
++static void set_signal_archinfo(unsigned long address,
++				unsigned long error_code)
 +{
-+	unsigned long offset;
-+	size_t len;
++	struct task_struct *tsk = current;
+ 
+ 	tsk->thread.trap_nr = X86_TRAP_PF;
+ 	tsk->thread.error_code = error_code | X86_PF_USER;
+@@ -658,6 +662,8 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 		 * faulting through the emulate_vsyscall() logic.
+ 		 */
+ 		if (current->thread.sig_on_uaccess_err && signal) {
++			sanitize_error_code(address, &error_code);
 +
-+	offset = (unsigned long)GET_LE(&sec->sh_offset);
-+	len = (size_t)GET_LE(&sec->sh_size);
+ 			set_signal_archinfo(address, error_code);
+ 
+ 			/* XXX: hwpoison faults will set the wrong code. */
+@@ -806,13 +812,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ 		if (is_errata100(regs, address))
+ 			return;
+ 
+-		/*
+-		 * To avoid leaking information about the kernel page table
+-		 * layout, pretend that user-mode accesses to kernel addresses
+-		 * are always protection faults.
+-		 */
+-		if (address >= TASK_SIZE_MAX)
+-			error_code |= X86_PF_PROT;
++		sanitize_error_code(address, &error_code);
+ 
+ 		if (likely(show_unhandled_signals))
+ 			show_signal_msg(regs, error_code, address, tsk);
+@@ -931,6 +931,8 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+ 	if (is_prefetch(regs, error_code, address))
+ 		return;
+ 
++	sanitize_error_code(address, &error_code);
 +
-+	if (offset + len > data_len)
-+		fail("section to extract overruns input data");
-+
-+	fprintf(outfile, "static const unsigned char %s[%lu] = {", name, len);
-+	BITSFUNC(copy)(outfile, data + offset, len);
-+	fprintf(outfile, "\n};\n\n");
-+}
-+
- static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 			 void *stripped_addr, size_t stripped_len,
- 			 FILE *outfile, const char *image_name)
-@@ -15,7 +50,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 	ELF(Ehdr) *hdr = (ELF(Ehdr) *)raw_addr;
- 	unsigned long i, syms_nr;
- 	ELF(Shdr) *symtab_hdr = NULL, *strtab_hdr, *secstrings_hdr,
--		*alt_sec = NULL;
-+		*alt_sec = NULL, *extable_sec = NULL;
- 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
- 	const char *secstrings;
- 	INT_BITS syms[NSYMS] = {};
-@@ -77,6 +112,8 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 		if (!strcmp(secstrings + GET_LE(&sh->sh_name),
- 			    ".altinstructions"))
- 			alt_sec = sh;
-+		if (!strcmp(secstrings + GET_LE(&sh->sh_name), "__ex_table"))
-+			extable_sec = sh;
- 	}
+ 	set_signal_archinfo(address, error_code);
  
- 	if (!symtab_hdr)
-@@ -155,6 +192,9 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 			(int)((unsigned char *)stripped_addr)[i]);
- 	}
- 	fprintf(outfile, "\n};\n\n");
-+	if (extable_sec)
-+		BITSFUNC(extract)(raw_addr, raw_len, outfile,
-+				  extable_sec, "extable");
- 
- 	fprintf(outfile, "const struct vdso_image %s = {\n", image_name);
- 	fprintf(outfile, "\t.data = raw_data,\n");
-@@ -165,6 +205,14 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 		fprintf(outfile, "\t.alt_len = %lu,\n",
- 			(unsigned long)GET_LE(&alt_sec->sh_size));
- 	}
-+	if (extable_sec) {
-+		fprintf(outfile, "\t.extable_base = %lu,\n",
-+			(unsigned long)GET_LE(&extable_sec->sh_offset));
-+		fprintf(outfile, "\t.extable_len = %lu,\n",
-+			(unsigned long)GET_LE(&extable_sec->sh_size));
-+		fprintf(outfile, "\t.extable = extable,\n");
-+	}
-+
- 	for (i = 0; i < NSYMS; i++) {
- 		if (required_syms[i].export && syms[i])
- 			fprintf(outfile, "\t.sym_%s = %" PRIi64 ",\n",
-diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
-index bbcdc7b8f963..b5d23470f56b 100644
---- a/arch/x86/include/asm/vdso.h
-+++ b/arch/x86/include/asm/vdso.h
-@@ -15,6 +15,8 @@ struct vdso_image {
- 	unsigned long size;   /* Always a multiple of PAGE_SIZE */
- 
- 	unsigned long alt, alt_len;
-+	unsigned long extable_base, extable_len;
-+	const void *extable;
- 
- 	long sym_vvar_start;  /* Negative offset to the vvar area */
- 
-@@ -45,6 +47,9 @@ extern void __init init_vdso_image(const struct vdso_image *image);
- 
- extern int map_vdso_once(const struct vdso_image *image, unsigned long addr);
- 
-+extern bool fixup_vdso_exception(struct pt_regs *regs, int trapnr,
-+				 unsigned long error_code,
-+				 unsigned long fault_addr);
- #endif /* __ASSEMBLER__ */
- 
- #endif /* _ASM_X86_VDSO_H */
+ #ifdef CONFIG_MEMORY_FAILURE
 -- 
 2.27.0
 
