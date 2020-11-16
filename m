@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF3DC2D0E4
-	for <linux-sgx@archiver.kernel.org>; Sun, 15 Nov 2020 19:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCF6C4742C
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 10:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF80A2225B
-	for <linux-sgx@archiver.kernel.org>; Sun, 15 Nov 2020 19:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97C5F2068D
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 10:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgKOTAi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 15 Nov 2020 14:00:38 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:60690 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbgKOTAi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 15 Nov 2020 14:00:38 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0AFIxqvw026709;
-        Sun, 15 Nov 2020 12:59:52 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0AFIxoc0026708;
-        Sun, 15 Nov 2020 12:59:50 -0600
-Date:   Sun, 15 Nov 2020 12:59:50 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
+        id S1728672AbgKPKKD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Nov 2020 05:10:03 -0500
+Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:48211 "EHLO
+        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728663AbgKPKKD (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 16 Nov 2020 05:10:03 -0500
+Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
+        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 744F81C432F
+        for <linux-sgx@vger.kernel.org>; Mon, 16 Nov 2020 10:10:01 +0000 (GMT)
+Received: (qmail 19025 invoked from network); 16 Nov 2020 10:10:01 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.22.4])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 16 Nov 2020 10:10:00 -0000
+Date:   Mon, 16 Nov 2020 10:09:57 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
         Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
         cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
@@ -42,86 +41,54 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
         mikko.ylinen@intel.com
-Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct vm_operations_struct
-Message-ID: <20201115185950.GA26542@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com> <20201106174359.GA24109@wind.enjellic.com> <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com> <20201107150930.GA29530@wind.enjellic.com> <c7157bc6-8a65-11f4-e961-17163730df5d@intel.com> <20201112205819.GA9172@wind.enjellic.com> <5c22300c-0956-48ed-578d-00cf62cb5c09@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: Re: [PATCH v41 10/24] mm: Add 'mprotect' hook to struct
+ vm_operations_struct
+Message-ID: <20201116100957.GM3371@techsingularity.net>
+References: <20201112220135.165028-1-jarkko@kernel.org>
+ <20201112220135.165028-11-jarkko@kernel.org>
+ <20201115173208.GR17076@casper.infradead.org>
+ <96318679-3320-8d7c-d178-7fa34ed11fdf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <5c22300c-0956-48ed-578d-00cf62cb5c09@intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 15 Nov 2020 12:59:53 -0600 (CST)
+In-Reply-To: <96318679-3320-8d7c-d178-7fa34ed11fdf@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 01:31:19PM -0800, Dave Hansen wrote:
+On Sun, Nov 15, 2020 at 10:36:51AM -0800, Dave Hansen wrote:
+> On 11/15/20 9:32 AM, Matthew Wilcox wrote:
+> > On Fri, Nov 13, 2020 at 12:01:21AM +0200, Jarkko Sakkinen wrote:
+> >> +++ b/include/linux/mm.h
+> >> @@ -559,6 +559,13 @@ struct vm_operations_struct {
+> >>  	void (*close)(struct vm_area_struct * area);
+> >>  	int (*split)(struct vm_area_struct * area, unsigned long addr);
+> >>  	int (*mremap)(struct vm_area_struct * area);
+> >> +	/*
+> >> +	 * Called by mprotect() to make driver-specific permission
+> >> +	 * checks before mprotect() is finalised.   The VMA must not
+> >> +	 * be modified.  Returns 0 if eprotect() can proceed.
+> >> +	 */
+> > 
+> > This is the wrong place for this documentation, and it's absurdly
+> > specific to your implementation.  It should be in
+> > Documentation/filesystems/locking.rst.
+> 
+> I'll let you and Mel duke that one out:
+> 
 
-Good afternoon to everyone.
+I suggested placing the comment there to make it clear what the expected
+semantics of the hook was to reduce the chances of abuse or surprises. The
+hook does not affect locking so Documentation/filesystems/locking.rst
+didn't appear appropriate other than maybe adding a note there
+that it doesn't affect locks. The hook also is not expecting any
+filesystems-specific action that I aware of but a note could be added to
+the effect that filesystems should not need to take special action for it.
+Protections on the filesystem level are for the inode, I can't imagine what
+a filesystem would do with a protection change on the page table level
+but maybe I'm not particularly imaginative today.
 
-> On 11/12/20 12:58 PM, Dr. Greg wrote:
-> > @@ -270,11 +270,10 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
-> >  			    struct vm_area_struct **pprev, unsigned long start,
-> >  			    unsigned long end, unsigned long newflags)
-> >  {
-> > -	int ret;
-> > +	struct sgx_encl *encl = vma->vm_private_data;
-> >  
-> > -	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
-> > -	if (ret)
-> > -		return ret;
-> > +	if ( test_bit(SGX_ENCL_INITIALIZED, &encl->flags) )
-> > +		return -EACCES;
-> >  
-> >  	return mprotect_fixup(vma, pprev, start, end, newflags);
-> >  }
-
-> This rules out mprotect() on running enclaves.  Does that break any
-> expectations from enclave authors, or take away capabilities that
-> folks need?
-
-As I mentioned an hour or so ago when I posted our updated patch, Sean
-and Jarkko have specifically indicated that there is no intention to
-support Enclave Dynamic Memory Management (EDMM) at this stage of the
-driver.  I believe the intent is to open that can of worms after the
-driver is mainlined.
-
-Since the stated intent of the driver is to only implement SGX1
-semantics there is no need to allow page permission changes of any
-type after the enclave is initialized.  If mmap/mprotect are taken off
-the table for an initialized enclave, there is no need to walk the
-enclave page permissions since the hardware itself will enforce those
-intents.
-
-Runtime support is critical to implementing EDMM.  It seems premature
-to place code into the kernel until there is agreement from the
-runtime developers as to how page permission intent should be
-communicated into the kernel.  Current EDMM implementations simply
-allocate a sparse aperture which can be further extended, for example,
-to increase heap space or the number of Task Control Structures.
-
-As I've stated previously, there is an open question at this point as
-to how useful a mainline driver will be without EDMM support, unless
-the distributions or cloud providers are going to patch it in on top
-of the mainline driver.  Those players have been copied on all of
-these e-mails so I would assume they could/would pipe up with comments
-on what type of security architecture should be implemented.
-
-As I've stated before, I believe in the final analysis that the only
-relevant question is yes or no with respect to dynamic enclaves.
-
-Have a good remainder of the weekend.
-
-Dr. Greg
-
-As always,
-Greg Wettstein, Ph.D, Worker          Autonomously self-defensive
-Enjellic Systems Development, LLC     IOT platforms and edge devices.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"If you think nobody cares if you're alive, try missing a couple of car
- payments."
-                                -- Earl Wilson
+-- 
+Mel Gorman
+SUSE Labs
