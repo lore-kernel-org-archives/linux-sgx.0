@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C1AC64E75
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 18:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6F8C63697
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 21:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3098D207BC
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 18:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 983DE20897
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 21:12:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgKPSd1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Nov 2020 13:33:27 -0500
-Received: from mga07.intel.com ([134.134.136.100]:2501 "EHLO mga07.intel.com"
+        id S1733194AbgKPVMF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Nov 2020 16:12:05 -0500
+Received: from mga06.intel.com ([134.134.136.31]:35285 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732901AbgKPSd0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Nov 2020 13:33:26 -0500
-IronPort-SDR: VuIu9B5BcaJplmARvlJJ5EJZJALZj5BrcMbqRX04vUfq2HNPXcy2aCmT3/lSK6d0NWSr4MmvWj
- Z2FVM5e/vZig==
-X-IronPort-AV: E=McAfee;i="6000,8403,9807"; a="234946276"
+        id S1732587AbgKPVME (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 16 Nov 2020 16:12:04 -0500
+IronPort-SDR: Z6/J+Z+SZmViscc3u3y6MWJ+PPHNAxtPkCzqT0blA/Sxu/gjmmwpdu1PPSbavt8O65dtnjW5Vz
+ 1YeqdhtKBw7Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9807"; a="232433247"
 X-IronPort-AV: E=Sophos;i="5.77,483,1596524400"; 
-   d="scan'208";a="234946276"
+   d="scan'208";a="232433247"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 10:33:25 -0800
-IronPort-SDR: nNU0Y2JXTx2hhFNc/ONqjRo+sDHSf0le5k7suiST+i7vOlzqaa9gnFBHT0Ci2kpRorL5jSXnZG
- XpdVZOrUqPYA==
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 13:11:49 -0800
+IronPort-SDR: 7VmUM/HRphTjyH7UIMaySS1aIjrnRaQq9vDWBEOZXI30IdGCXp7vjXxyjLmtb/NnBiITk54M74
+ Iz9W7JVIb7xA==
 X-IronPort-AV: E=Sophos;i="5.77,483,1596524400"; 
-   d="scan'208";a="358564036"
+   d="scan'208";a="358611967"
 Received: from pgao1-mobl1.amr.corp.intel.com (HELO [10.212.6.211]) ([10.212.6.211])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 10:33:24 -0800
-Subject: Re: [PATCH v41 05/24] x86/sgx: Initialize metadata for Enclave Page
- Cache (EPC) sections
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 13:11:49 -0800
+Subject: Re: [PATCH v41 11/24] x86/sgx: Add SGX misc driver interface
 To:     Hillf Danton <hdanton@sina.com>,
         Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
@@ -43,7 +42,7 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
         Serge Ayoun <serge.ayoun@intel.com>, akpm@linux-foundation.org
 References: <20201112220135.165028-1-jarkko@kernel.org>
- <20201114084211.5284-1-hdanton@sina.com>
+ <20201115040127.7804-1-hdanton@sina.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -88,12 +87,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <0a96ecb7-50cc-634d-2f94-09e547be7b44@intel.com>
-Date:   Mon, 16 Nov 2020 10:33:24 -0800
+Message-ID: <c7f6f916-3855-f7ad-fa4d-153b80797cc3@intel.com>
+Date:   Mon, 16 Nov 2020 13:11:48 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201114084211.5284-1-hdanton@sina.com>
+In-Reply-To: <20201115040127.7804-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,62 +100,30 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/14/20 12:42 AM, Hillf Danton wrote:
-> On Fri, 13 Nov 2020 00:01:16 +0200 Jarkko Sakkinen wrote:
->> + */
->> +static void sgx_sanitize_section(struct sgx_epc_section *section)
->> +{
->> +	struct sgx_epc_page *page;
->> +	LIST_HEAD(dirty);
->> +	int ret;
->> +
->> +	while (!list_empty(&section->laundry_list)) {
->> +		if (kthread_should_stop())
->> +			return;
->> +
->> +		spin_lock(&section->lock);
->> +
->> +		page = list_first_entry(&section->laundry_list,
->> +					struct sgx_epc_page, list);
->> +
->> +		ret = __eremove(sgx_get_epc_virt_addr(page));
->> +		if (!ret)
->> +			list_move(&page->list, &section->page_list);
->> +		else
->> +			list_move_tail(&page->list, &dirty);
->> +
->> +		spin_unlock(&section->lock);
->> +
->> +		cond_resched();
->> +	}
->> +
->> +	list_splice(&dirty, &section->laundry_list);
-> 
-> Move list splice into the section under section->lock.
+On 11/14/20 8:01 PM, Hillf Danton wrote:
+> On Fri, 13 Nov 2020 00:01:22 +0200 Jarkko Sakkinen wrote:
+> +
+> +static unsigned long sgx_get_unmapped_area(struct file *file,
+> +					   unsigned long addr,
+> +					   unsigned long len,
+> +					   unsigned long pgoff,
+> +					   unsigned long flags)
+> +{
+> +	if ((flags & MAP_TYPE) == MAP_PRIVATE)
+> +		return -EINVAL;
+> +
+> +	if (flags & MAP_FIXED)
+> +		return addr;
+> +
+> MAP_FIXED is checked in arch_get_unmapped_area() along with others,
+> so better to check it always there.
 
-The naming, commenting and changelogs could be better here.  But, I
-think the code is correct.
+In the whole tangle of get_unmapped_area() functions, it wasn't patently
+obvious to me that MAP_FIXED functionality is guaranteed to be present
+in the higher-level functions.
 
-section->lock actually only protects ->page_list.
-
-->laundry_list is initialized in core code, but after that is only used
-by ksgxd and is effectively a thread-local structure.
-
-I can think of a few other ways of doing this so that, for instance,
-laundry_list was a thread-local structure in ksgxd that is freed after
-initialization and sanitizing.  But, this is pretty simple, although
-under-documented, and wastes a list_head worth of space per section at
-runtime.
-
->> +}
-> [...]
-> 
->> +struct sgx_epc_page {
->> +	unsigned int section;
-> 
-> To make the sgx page naturally packed, add a small pad to match both
-> sizeof(struct list_head) and X86_64. Feel free to turn back on the
-> pad OTOH to save memory.
-
-You make a good point: it's pretty obvious that the current code is
-space-optimized.  That doesn't seem like a bad thing to me, though.
+There are also a fair number of these fops->get_unmapped_area()
+instances that have the same MAP_FIXED line.  Are in need of fixups too?
+ Or are you suggesting that since SGX is x86-only, it can depend on the
+x86 arch_get_unmapped_area() code to continue to have this MAP_FIXED
+functionality?
