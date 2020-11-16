@@ -2,301 +2,187 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A7DC2D0A3
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 18:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BF0C63697
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 18:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1BF320731
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 18:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25016222EC
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 Nov 2020 18:19:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KlB9P3/w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732785AbgKPSBd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Nov 2020 13:01:33 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:60792 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731501AbgKPSBd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 16 Nov 2020 13:01:33 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0AGI0Pib001075;
-        Mon, 16 Nov 2020 12:00:25 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0AGI0NEQ001074;
-        Mon, 16 Nov 2020 12:00:23 -0600
-Date:   Mon, 16 Nov 2020 12:00:23 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        id S1731607AbgKPSTQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Nov 2020 13:19:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732150AbgKPSTP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 16 Nov 2020 13:19:15 -0500
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D62C0613D1
+        for <linux-sgx@vger.kernel.org>; Mon, 16 Nov 2020 10:19:15 -0800 (PST)
+Received: by mail-io1-xd43.google.com with SMTP id u21so18381858iol.12
+        for <linux-sgx@vger.kernel.org>; Mon, 16 Nov 2020 10:19:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mawIBEbmW13Wb93jlGPkuc98PSBX2ThA8W0B4AdhO8g=;
+        b=KlB9P3/w9K+RCwyqEbjeTcuBUAQy+k60v5qyhMubOZfbiNTk/uxjgojdaB7WCrAGVq
+         7876+2ZanbDRnrRRZBHBPxq2HF4R9HnLASaWx0xTaih/l7fQogC527LvquFkYrwqLaTy
+         Px9fuEymvKasfnnH51cQgwdbTrEiAap48x+0o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mawIBEbmW13Wb93jlGPkuc98PSBX2ThA8W0B4AdhO8g=;
+        b=i2tpQo6369HH622mjluohpMAaRfPgaVYApGbTKuJc3BuqTFGoIumQo6JcMYInTOjsf
+         mF7OMZEEWxw99UPBgQrUCXb+UzuF0KZa8sS1QA6rIuAY6G/B6HSqUPg7QVxJEsexZvwH
+         LopUCWHnx5YlWfMfWacUeZGUSWJCajqV0gyCy5bICVuqaqFNkeAuEnRT0mUOgntcECbk
+         JhFL2tooh8LCT5GSlZ6xif59fLRUstnbOmf77zNU5Z7Zu/VLGDOjbFfpEy//LzIJQ4Kb
+         ca43AKPBH+GYFZcYMtHSKcns7cDAl3SCYhk4Cz2yL25GSdVkLXmk8AEKi5U0h2G4ANxT
+         jtXw==
+X-Gm-Message-State: AOAM533cBC7qTUEv9nhZ6ScoAz//7iHiTaFqlal6Th+i/WRWrHRuUDv8
+        CGLeoEtLS/E+wb06AXgSHOWDKg==
+X-Google-Smtp-Source: ABdhPJywHMSsOjVB9f2b0CDslzlQYg3TaRoqp6gqm43EXgaf4HqklNg6d1T6TDYDdPV62kd3fcW26A==
+X-Received: by 2002:a5d:8ada:: with SMTP id e26mr4573701iot.15.1605550754601;
+        Mon, 16 Nov 2020 10:19:14 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id 9sm12159541ila.61.2020.11.16.10.19.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Nov 2020 10:19:13 -0800 (PST)
+Subject: Re: [PATCH v41 20/24] selftests/x86: Add a selftest for SGX
+To:     Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Neil Horman <nhorman@redhat.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
-        Mikko Ylinen <mikko.ylinen@intel.com>
-Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct vm_operations_struct
-Message-ID: <20201116180023.GA32481@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com> <20201106174359.GA24109@wind.enjellic.com> <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com> <20201107150930.GA29530@wind.enjellic.com> <c7157bc6-8a65-11f4-e961-17163730df5d@intel.com> <20201112205819.GA9172@wind.enjellic.com> <5c22300c-0956-48ed-578d-00cf62cb5c09@intel.com> <CALCETrWaUDO1eG7PE_bpA2C_OVeNZ7VbEVaznkg2U7Qx=X=oEw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWaUDO1eG7PE_bpA2C_OVeNZ7VbEVaznkg2U7Qx=X=oEw@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 16 Nov 2020 12:00:25 -0600 (CST)
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+References: <20201112220135.165028-1-jarkko@kernel.org>
+ <20201112220135.165028-21-jarkko@kernel.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <e58ee564-597a-336e-53dc-7c4d172d51f5@linuxfoundation.org>
+Date:   Mon, 16 Nov 2020 11:19:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.2
+MIME-Version: 1.0
+In-Reply-To: <20201112220135.165028-21-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 02:41:00PM -0800, Andy Lutomirski wrote:
-
-Good morning, I hope the week is starting well for everyone.
-
-> On Thu, Nov 12, 2020 at 1:31 PM Dave Hansen <dave.hansen@intel.com> wrote:
-> >
-> > On 11/12/20 12:58 PM, Dr. Greg wrote:
-> > > @@ -270,11 +270,10 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
-> > >                           struct vm_area_struct **pprev, unsigned long start,
-> > >                           unsigned long end, unsigned long newflags)
-> > >  {
-> > > -     int ret;
-> > > +     struct sgx_encl *encl = vma->vm_private_data;
-> > >
-> > > -     ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
-> > > -     if (ret)
-> > > -             return ret;
-> > > +     if ( test_bit(SGX_ENCL_INITIALIZED, &encl->flags) )
-> > > +             return -EACCES;
-> > >
-> > >       return mprotect_fixup(vma, pprev, start, end, newflags);
-> > >  }
-> >
-> > This rules out mprotect() on running enclaves.  Does that break any
-> > expectations from enclave authors, or take away capabilities that folks
-> > need?
-
-> It certainly prevents any scheme in which an enclave coordinates
-> with the outside world to do W-and-then-X JIT inside.  I'm also not
-> convinced it has any real effect at all unless there's some magic I
-> missed to prevent someone from using mmap(2) to effectively change
-> permissions.
-
-The patch that I posted yesterday addresses the security issue for
-both mmap and mprotect by trapping the permission change request at
-the level of the sgx_encl_may_map() function.
-
-With respect to the W-and-then-X JIT issue, the stated purpose of the
-driver is to implement basic SGX functionality, which is SGX1
-semantics, it has been stated formally for a year by the developers
-themselves that they are not entertaining a driver that addresses any
-of the issues associated with non-static memory permissions.
-
-As I've noted previously, the hardware itself is capable of enforcing
-that after initialization, if mmap/mprotect is blocked on hardware
-that supports SGX2 instructions.
-
-> Everyone, IMO this SGX1 - vs - SGX2 - vs - EDMM discussion is
-> entirely missing the point and is a waste of everyone's time.  Let's
-> pretend we're building a system that has nothing to do with SGX and
-> requires no special hardware support at all.  It works like this:
-
-I don't doubt there is a potential bigger vision here, quite frankly
-it is probably an open question whether or not SGX is going to be a
-part of this future, for a variety of reasons.  I also do not doubt
-that you have the skills to define that vision.
-
-Right now, however, the issue is not about pretending but rather one
-of getting a driver into the kernel that provides a framework for
-building whatever future SGX may have.  Given GKH's comments on LWN
-last week in response to the RAPL vulnerability, I'm not sure if it is
-a politically done deal that the driver will go in.
-
-SGX has specific hardware characteristics that impact the driver, I
-don't see how fitting it into a generic trusted execution model
-advances the agenda immediately at hand.  Particularly given the fact
-that I'm not even sure people understand the questions that need to be
-answered about such a generic model.
-
-> A user program opens /dev/xyz and gets back an fd that represents 16
-> MB of memory.  The user program copies some data from disk (or
-> network or whatever) into fd (using write(2) or ioctl(2) or mmap(2)
-> and memcpy) and then mmaps some of the fd as R and some as RW and
-> some as RX, and then the user program jumps into the RX mapping.
-
-This is basically the SGX model in the new driver.  The important
-defining characteristic of the driver, that we can't wave away, is
-that the hardware requires a specific set of initial page permissions
-to be implemented in order for initialization of the memory range
-(enclave) to succeed.
-
-This is inherent to the way SGX hardware was designed to work.  The
-only difference between SGX1 and SGX2 is that the latter offers a
-small number of additional instructions that allow the page
-permissions to be dynamically manipulated after initialization is
-complete.
-
-From a security perspective, the issue at hand is that the executable
-material is not going to come in through the fd, it is going to be
-loaded by the enclave over the network.  This isn't fear mongering, it
-is the stated intent of what people want to do with the technology as
-a integral part of confidential computing.
-
-I've had the opportunity to brief DOD and other entities concerned
-with intelligence issues, about these type of potential capabilities.
-It isn't hard to envision scenarios of where having potentially
-sensitive code and data only ever handled and executed by a trusted
-entity, in an environment that is inherently ephemeral with respect to
-its persistence, is an important design characteristic.  Thermite has
-also been known to play a role in some of these designs prior to the
-greater elegance of trusted execution environments.
-
-Ultimately, if you believe the Confidential Computing Consortium, it
-is also what people want for their sensitive cloud workloads.  Absent
-the thermite of course.
-
-> If we replace /dev/xyz with /dev/zero, then this simply does not work
-> under a reasonably strict W^X policy -- a lot of people think it's
-> quite reasonable for an OS to prevent a user program from obtaining an
-> X mapping containing anything other than a mapping from a file on
-> disk.  To solve this, we can do one of at least three things:
+On 11/12/20 3:01 PM, Jarkko Sakkinen wrote:
+> Add a selftest for SGX. It is a trivial test where a simple enclave copies
+> one 64-bit word of memory between two memory locations, but ensures that
+> all SGX hardware and software infrastructure is functioning.
 > 
-> a) You can't use /dev/xyz unless you have permission to create WX
-> memory or to at least create W memory and then change it to X.
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-kselftest@vger.kernel.org
+> Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+> Changes from v40:
+> * Remove $(OUTPUT)/test_encl.elf from TEST_CUSTOM_PROGS, as otherwise
+>    run_tests tries to execute it. Add it as a build dependency.
+> * Use the correct device path, /dev/sgx_enclave, instead of
+>    /dev/sgx/enclave.
+> * Return kselftest framework expected return codes.
 > 
-> b) You can do whatever you want with /dev/xyz, and LSM policies are
-> blatantly violated as a result.
+>   tools/testing/selftests/Makefile              |   1 +
+>   tools/testing/selftests/sgx/.gitignore        |   2 +
+>   tools/testing/selftests/sgx/Makefile          |  53 +++
+>   tools/testing/selftests/sgx/call.S            |  44 ++
+>   tools/testing/selftests/sgx/defines.h         |  21 +
+>   tools/testing/selftests/sgx/load.c            | 277 +++++++++++++
+>   tools/testing/selftests/sgx/main.c            | 246 +++++++++++
+>   tools/testing/selftests/sgx/main.h            |  38 ++
+>   tools/testing/selftests/sgx/sigstruct.c       | 391 ++++++++++++++++++
+>   tools/testing/selftests/sgx/test_encl.c       |  20 +
+>   tools/testing/selftests/sgx/test_encl.lds     |  40 ++
+>   .../selftests/sgx/test_encl_bootstrap.S       |  89 ++++
+>   12 files changed, 1222 insertions(+)
+>   create mode 100644 tools/testing/selftests/sgx/.gitignore
+>   create mode 100644 tools/testing/selftests/sgx/Makefile
+>   create mode 100644 tools/testing/selftests/sgx/call.S
+>   create mode 100644 tools/testing/selftests/sgx/defines.h
+>   create mode 100644 tools/testing/selftests/sgx/load.c
+>   create mode 100644 tools/testing/selftests/sgx/main.c
+>   create mode 100644 tools/testing/selftests/sgx/main.h
+>   create mode 100644 tools/testing/selftests/sgx/sigstruct.c
+>   create mode 100644 tools/testing/selftests/sgx/test_encl.c
+>   create mode 100644 tools/testing/selftests/sgx/test_encl.lds
+>   create mode 100644 tools/testing/selftests/sgx/test_encl_bootstrap.S
+> 
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index d9c283503159..aa06e3ea0250 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -68,6 +68,7 @@ TARGETS += user
+>   TARGETS += vm
+>   TARGETS += x86
+>   TARGETS += zram
+> +TARGETS += sgx
+>   #Please keep the TARGETS list alphabetically sorted
 
-I think the important issue at hand is that classic LSM policies
-simply are not relevant with respect to how this technology was
-designed to operate, and perhaps more importantly, how people want to
-use it.
+Please keep the list sorted alphabetically as stated
+in the comment above.
 
-That is why I have consistently stated that I think the only relevant
-knob is a binary decision as to whether or not a platform owner wants
-to entertain completely anonymous code execution.
 
-> c) The /dev/xyz API is clever and tracks, page-by-page, whether the
-> user intends to ever write and/or execute that page, and behaves
-> accordingly.
->
-> This patchset takes the approach (c).  The actual clever policy
-> isn't here yet, and we don't really know whether it will ever
-> appear, but the API is set up to enable such a policy to be written.
-> This appears to be a win for everyone, since the code is pretty
-> clean and the API is straightforward.
+> +}
+> +
+> +int main(int argc, char *argv[], char *envp[])
+> +{
+> +	struct sgx_enclave_run run;
+> +	struct vdso_symtab symtab;
+> +	Elf64_Sym *eenter_sym;
+> +	uint64_t result = 0;
+> +	struct encl encl;
+> +	unsigned int i;
+> +	void *addr;
+> +	int ret;
+> +
+> +	memset(&run, 0, sizeof(run));
+> +
+> +	if (!encl_load("test_encl.elf", &encl)) {
+> +		encl_delete(&encl);
+> +		ksft_exit_skip("cannot load enclaves\n");
+> +	}
+> +
+> +	if (!encl_measure(&encl))
+> +		goto err;
+> +
+> +	if (!encl_build(&encl))
+> +		goto err;
+> +
+> +	/*
+> +	 * An enclave consumer only must do this.
+> +	 */
+> +	for (i = 0; i < encl.nr_segments; i++) {
+> +		struct encl_segment *seg = &encl.segment_tbl[i];
+> +
+> +		addr = mmap((void *)encl.encl_base + seg->offset, seg->size,
+> +			    seg->prot, MAP_SHARED | MAP_FIXED, encl.fd, 0);
+> +		if (addr == MAP_FAILED) {
+> +			fprintf(stderr, "mmap() failed, errno=%d.\n", errno);
+> +			exit(1);
 
-I believe I have been clear in stating that I have never doubted the
-cleverness of the approach or its potential utility for the future.
+This should be KSFT_FAIL.
 
-The issue at hand is that it simply isn't relevant at this stage of
-the driver.  Getting this new vision right is something that would
-benefit from a lot of conversations between runtime and kernel
-developers.  Arguably, the case can be made that it should have a
-second type of implementation to ensure that the approach is generic,
-extensible and most importantly secure.
-
-The 'cleverness' of the policy needs to be evaluated in the context of
-what does it mean with respect to the risk arbitration decisions that
-we are trying to support.  The open question comes down to, in
-essence, asking ourselves whether or not we believe that it makes
-sense to say that 15 pages of RWX memory is a security threat but 5
-are not.
-
-> Now, back to SGX.  There are only two things that are remotely
-> SGX-specific here.  First, SGX requires this unusual memory model in
-> which there is an executable mapping of (part of) a device node. [0]
-> Second, early SGX hardware had this oddity that the kernel could set
-> a per-backing-page (as opposed to per-PTE) bit to permanently
-> disable X on a given /dev/sgx page.  Building a security model
-> around that would have been a hack, and it DOES NOT WORK on new
-> hardware.  So can we please stop discussing it?  None of the actual
-> interesting parts of this have much to do with SGX per se and have
-> nothing whatsoever to do with EDMM or any other Intel buzzword.
-
-Just a clarification for everyone sitting in their recliners eating
-popcorn and following along at home.
-
-As I've stated before, I don't argue the potential utility of some new
-model, SGX however, has hardware characteristics that cannot be waved
-away in this discussion.  The technology was designed to have a
-cryptographic measurement that controls whether or not the memory
-image is suitable for execution.  The description of that image is
-defined by the enclave author when the enclave is signed.
-
-This is why the current EDMM implementation requires that a maximum
-aperture range be defined for dynamic memory regions.  Since the
-linear address of each page address in the enclave is encoded into the
-measurement, enclave initialization will fail unless the loaded memory
-image is consistent with the wishes of the enclave signer.  Having 40
-pages of potential heap memory when the author called for 39 would be
-considered an initialization defect that would be enforced by the
-hardware.
-
-The desired page permissions are also encoded into the enclave
-measurement.  Since the current implementation takes the maximum
-scoped permissions from the security information encoded in the
-enclave, it would require that the enclave encode for RWX permissions
-if the intent was to dynmically load executable or JIT code after the
-enclave was initialized.  If I understand your above analysis
-correctly, this would be problematic for current security
-models/practices.
-
-Obviously an API could be proposed that allowed this permissable
-memory map to be defined independently from the enclave.  This notion,
-based on my read of the security risk considerations that went into
-the design of SGX, would be problematic, since it would allow an
-untrusted party to modify the characteristics that were desired by the
-enclave author for the executable image.
-
-> Heck, if anyone actually cared to do so, something with essentially
-> the same semantics could probably be built using SEV hardware
-> instead of SGX, and it would have exactly the same issue if we
-> wanted it to work for tasks that didn't have access to /dev/kvm.
-
-As I noted above, perhaps whatever this driver may become in the
-future would benefit from the community creating something like this
-as a second reference to build an API on top of.
-
-> [0] SGX doesn't *really* require this.  We could set things up so that
-> you do mmap(..., MAP_ANONYMOUS, fd, ...) and then somehow introduce
-> that mapping to SGX.  I think the result would be too disgusting to
-> seriously consider.
-
-Let me be clear, I certainly would not advocate doing anything too
-disgusting to consider.
-
-Hopefully our proposal for simplifying the security model for the
-driver, while still allowing the framework for a still unspecified
-future pathway, doesn't fit this description.
-
-Best wishes for a productive week to everyone.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
-Enjellic Systems Development, LLC     IOT platforms and edge devices.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Boy, it must not take much to make a phone work.  Looking at
- everthing else here it must be the same way with the INTERNET."
-                                -- Francis 'Fritz' Wettstein
+thanks,
+-- Shuah
