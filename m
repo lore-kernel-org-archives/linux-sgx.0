@@ -2,37 +2,37 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCA1C2D0E4
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 21:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C7FC2D0E4
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 21:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF59024248
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 21:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C1D524656
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 21:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjNfi9gW"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuU3kTJm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725779AbgKQV1w (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Nov 2020 16:27:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54114 "EHLO mail.kernel.org"
+        id S1725823AbgKQViw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Nov 2020 16:38:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbgKQV1w (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Nov 2020 16:27:52 -0500
+        id S1725779AbgKQViv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Nov 2020 16:38:51 -0500
 Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A99C124181;
-        Tue, 17 Nov 2020 21:27:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C093221F9;
+        Tue, 17 Nov 2020 21:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605648471;
-        bh=Br1SsRJzgO6llnbpsU/IxDn9+9vmyDHOXOPwMU6gD0w=;
+        s=default; t=1605649131;
+        bh=4EQ+dSvnoPSG/5zOUmQnMxe4qQZrdgQ5y2+5szjbJJg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EjNfi9gWVLIVV32eZmFw+zfznS4OhiNaTNYzCZQvUM4yojTq9JfdMs5CFssLAiBL7
-         Lt5aRdXnA01yT3An4LbiOZdOePdglVCUPn8Gg+5Erw1yL36TdEre3RECkx1AWvD/+2
-         IuX9ASiDNsJSBwOcd9RK/WCq73L6KaXJzrkEbZaQ=
-Date:   Tue, 17 Nov 2020 23:27:42 +0200
+        b=JuU3kTJmWloxSxZogLHlf/225VsPNmnG82ex9NOm9XWPsx/aFltg4zaDkIvxdcLH6
+         2eDrQGkbY+FcsRzz25cd4FSmfBzkNXCH9ZZmxf7po2FDuUP3XMlmw9geSioMsgmJTV
+         RaWQDhtCkstkFCJ57EGQqGuD+fL2AaN+eyz0F68M=
+Date:   Tue, 17 Nov 2020 23:38:41 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
@@ -49,13 +49,14 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         sean.j.christopherson@intel.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH v41 20/24] selftests/x86: Add a selftest for SGX
-Message-ID: <20201117212742.GA14833@kernel.org>
+Message-ID: <20201117213841.GB14833@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
  <20201112220135.165028-21-jarkko@kernel.org>
  <20201117172650.GI5719@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <20201117172650.GI5719@zn.tnic>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -168,23 +169,33 @@ On Tue, Nov 17, 2020 at 06:26:50PM +0100, Borislav Petkov wrote:
 > encl_load: encl_size: 140737488355328, src_size: 140588159402384
 > encl_map_area: encl_size: 140737488355328
 > mmap: Cannot allocate memory
-> 
-> src_size is computed by adding the offset and size of the last segment
-> which is at index 2.
 
-src_size does not look right. I'll debug.
+In my machine, with the current version:
 
-> The loop computes encl_size to 0x0000800000000000 then and mmap tries to
-> map double that in encl_map_area(). Looks like too much to me too.
+➜  sgx (master) ✗ ./test_sgx
+0x0000000000000000 0x0000000000002000 0x03
+0x0000000000002000 0x0000000000001000 0x05
+0x0000000000003000 0x0000000000003000 0x03
+SUCCESS
 
-The enclave base must be naturally aligned in relative to its size.
+This the bug, src_offset initialization:
 
-> What's up?
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index 07988de6b767..9d43b75aaa55 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -185,7 +185,7 @@ bool encl_load(const char *path, struct encl *encl)
+                }
+ 
+                if (j == 0) {
+-                       src_offset = (phdr->p_offset & PAGE_MASK) - src_offset;
++                       src_offset = phdr->p_offset & PAGE_MASK;
+ 
+                        seg->prot = PROT_READ | PROT_WRITE;
+                        seg->flags = SGX_PAGE_TYPE_TCS << 8;
+
+This was introduced when moving from converting elf to bin to load
+directly from elf. In my case 'src_offset' happened to be zero and
+I have not thus noticed this before.
 
 /Jarkko
