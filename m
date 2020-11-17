@@ -2,78 +2,83 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999E5C64E8A
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 13:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355BCC64E75
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 14:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2301020781
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 13:22:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7C332083E
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 14:02:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="XQ8/EgQs"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="P3gBbiSS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731189AbgKQNWp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Nov 2020 08:22:45 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33638 "EHLO mail.skyhub.de"
+        id S1730020AbgKQNOL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Nov 2020 08:14:11 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:60094 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731181AbgKQNWm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Nov 2020 08:22:42 -0500
+        id S1730014AbgKQNOJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Nov 2020 08:14:09 -0500
 Received: from zn.tnic (p200300ec2f101300ba25257689a011f5.dip0.t-ipconnect.de [IPv6:2003:ec:2f10:1300:ba25:2576:89a0:11f5])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 90B8B1EC03CE;
-        Tue, 17 Nov 2020 14:22:41 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 391221EC03CE;
+        Tue, 17 Nov 2020 14:14:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1605619361;
+        t=1605618847;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=20A+JSZTq0uSGOoQCxJWr5HNHVawruXZylnMqKk1XtY=;
-        b=XQ8/EgQsrFEBFXODTFwizejrV6cmkUB4O9w3QoB2B8+AuClH7cWIrwjLeV8PagcEIdLsOY
-        LNIu2V/rAV3/7H87f7a4YFJq5x2+OjkG16LWCDLuHDcNhyCZldxBKmxmx8cf55Hu8gBGbC
-        uixEsZG7WCjsAJZ4t+3YSm5zgCWYNZk=
-Date:   Tue, 17 Nov 2020 14:22:41 +0100
+        bh=NZRrHH8K2bEHEC4a+tB6N/fq8gG+I38ysLFz2AOgP60=;
+        b=P3gBbiSSrXE9y0CZO80SkiKExytqj+588g+/N4mZLLRjyWaKBGnaPDQihqm1uznAEIMsip
+        0OdpSRCD3AqRAKTdptQfrZliOls4g7v7kCCsIVDt0uGMfg0Zhpc8sX79DS3XtfAQbCozLh
+        dY/F9hAlqzUV8icvIlPInw5S3CALVXE=
+Date:   Tue, 17 Nov 2020 14:14:02 +0100
 From:   Borislav Petkov <bp@alien8.de>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
         Jethro Beekman <jethro@fortanix.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: Re: [PATCH v41 20/24] selftests/x86: Add a selftest for SGX
-Message-ID: <20201117132241.GE5719@zn.tnic>
+        Cedric Xing <cedric.xing@intel.com>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH v41 19/24] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+Message-ID: <20201117131402.GD5719@zn.tnic>
 References: <20201112220135.165028-1-jarkko@kernel.org>
- <20201112220135.165028-21-jarkko@kernel.org>
- <e58ee564-597a-336e-53dc-7c4d172d51f5@linuxfoundation.org>
+ <20201112220135.165028-20-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e58ee564-597a-336e-53dc-7c4d172d51f5@linuxfoundation.org>
+In-Reply-To: <20201112220135.165028-20-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 11:19:12AM -0700, Shuah Khan wrote:
-> Please keep the list sorted alphabetically as stated
-> in the comment above.
+On Fri, Nov 13, 2020 at 12:01:30AM +0200, Jarkko Sakkinen wrote:
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index 2ad757fb3c23..9915fbd34264 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -27,6 +27,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
+>  vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
+>  vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
+>  vobjs32-y += vdso32/vclock_gettime.o
+> +vobjs-$(VDSO64-y)		+= vsgx.o
 
-Done.
+Why?
 
-> This should be KSFT_FAIL.
-
-and done.
-
-Thx.
+This needs to be CONFIG_X86_SGX as you need this vdso functionality only
+when SGX is enabled.
 
 -- 
 Regards/Gruss,
