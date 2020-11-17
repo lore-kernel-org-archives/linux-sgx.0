@@ -2,89 +2,167 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDA8C64E75
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 19:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E01C63798
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 19:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF65524631
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 19:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC6FB2222E
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Nov 2020 19:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMKqsgsB"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vmvo0oLI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbgKQTl1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Nov 2020 14:41:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54010 "EHLO mail.kernel.org"
+        id S1730707AbgKQTm3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Nov 2020 14:42:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbgKQTl1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 17 Nov 2020 14:41:27 -0500
+        id S1728060AbgKQTm3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 17 Nov 2020 14:42:29 -0500
 Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C3D820888;
-        Tue, 17 Nov 2020 19:41:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2B622463D;
+        Tue, 17 Nov 2020 19:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605642086;
-        bh=xeIePTaKBoDlMkpkc1YVny+UD79ipIwa6haKrulQGeA=;
+        s=default; t=1605642147;
+        bh=WfH7BFVzUSEZv+f6jZxK9ydp1lynvYQ2oovxy7EJVXg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gMKqsgsBm+aPbwxvhQZmyG5Yx62VJYs+C4oWgAwTonBU/D/UPmfJSrzSabtzrYL9Z
-         GGY1lnwQNPecH3bkOWwZLsdJPVegjNF/CQ24Gsi6uu9Al7OwFnu2EJvEkZXlPPS+kK
-         +fbcJHvELzwHKlp9ESZClPYhY+BinZ+RnhIdst1U=
-Date:   Tue, 17 Nov 2020 21:41:18 +0200
+        b=vmvo0oLI2+zUSZRhwq0NiGDjYhcKWJZyY+Ph8A1MJPfxjbJH0Zol91ECmkxg91DyH
+         NXWk7uQXJtd/v1xuxdNQ/GI5Ed040w/C7hrjjZBRrgfQy+sNkrZpD48Pz8cg82N6po
+         cl4QXLIN7mw/CndOK2P3ZytLUp2cBUGrSWYQ5kVI=
+Date:   Tue, 17 Nov 2020 21:42:17 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
+To:     Shuah Khan <skhan@linuxfoundation.org>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org,
         Jethro Beekman <jethro@fortanix.com>,
-        Cedric Xing <cedric.xing@intel.com>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
         chenalexchen@google.com, conradparker@google.com,
         cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
         kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
         ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
         npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: Re: [PATCH v41 19/24] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20201117194118.GF10393@kernel.org>
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH v41 20/24] selftests/x86: Add a selftest for SGX
+Message-ID: <20201117194217.GG10393@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
- <20201112220135.165028-20-jarkko@kernel.org>
- <20201117131402.GD5719@zn.tnic>
+ <20201112220135.165028-21-jarkko@kernel.org>
+ <e58ee564-597a-336e-53dc-7c4d172d51f5@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201117131402.GD5719@zn.tnic>
+In-Reply-To: <e58ee564-597a-336e-53dc-7c4d172d51f5@linuxfoundation.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 02:14:02PM +0100, Borislav Petkov wrote:
-> On Fri, Nov 13, 2020 at 12:01:30AM +0200, Jarkko Sakkinen wrote:
-> > diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-> > index 2ad757fb3c23..9915fbd34264 100644
-> > --- a/arch/x86/entry/vdso/Makefile
-> > +++ b/arch/x86/entry/vdso/Makefile
-> > @@ -27,6 +27,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
-> >  vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
-> >  vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
-> >  vobjs32-y += vdso32/vclock_gettime.o
-> > +vobjs-$(VDSO64-y)		+= vsgx.o
+On Mon, Nov 16, 2020 at 11:19:12AM -0700, Shuah Khan wrote:
+> On 11/12/20 3:01 PM, Jarkko Sakkinen wrote:
+> > Add a selftest for SGX. It is a trivial test where a simple enclave copies
+> > one 64-bit word of memory between two memory locations, but ensures that
+> > all SGX hardware and software infrastructure is functioning.
+> > 
+> > Cc: Shuah Khan <shuah@kernel.org>
+> > Cc: linux-kselftest@vger.kernel.org
+> > Acked-by: Jethro Beekman <jethro@fortanix.com> # v40
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > Changes from v40:
+> > * Remove $(OUTPUT)/test_encl.elf from TEST_CUSTOM_PROGS, as otherwise
+> >    run_tests tries to execute it. Add it as a build dependency.
+> > * Use the correct device path, /dev/sgx_enclave, instead of
+> >    /dev/sgx/enclave.
+> > * Return kselftest framework expected return codes.
+> > 
+> >   tools/testing/selftests/Makefile              |   1 +
+> >   tools/testing/selftests/sgx/.gitignore        |   2 +
+> >   tools/testing/selftests/sgx/Makefile          |  53 +++
+> >   tools/testing/selftests/sgx/call.S            |  44 ++
+> >   tools/testing/selftests/sgx/defines.h         |  21 +
+> >   tools/testing/selftests/sgx/load.c            | 277 +++++++++++++
+> >   tools/testing/selftests/sgx/main.c            | 246 +++++++++++
+> >   tools/testing/selftests/sgx/main.h            |  38 ++
+> >   tools/testing/selftests/sgx/sigstruct.c       | 391 ++++++++++++++++++
+> >   tools/testing/selftests/sgx/test_encl.c       |  20 +
+> >   tools/testing/selftests/sgx/test_encl.lds     |  40 ++
+> >   .../selftests/sgx/test_encl_bootstrap.S       |  89 ++++
+> >   12 files changed, 1222 insertions(+)
+> >   create mode 100644 tools/testing/selftests/sgx/.gitignore
+> >   create mode 100644 tools/testing/selftests/sgx/Makefile
+> >   create mode 100644 tools/testing/selftests/sgx/call.S
+> >   create mode 100644 tools/testing/selftests/sgx/defines.h
+> >   create mode 100644 tools/testing/selftests/sgx/load.c
+> >   create mode 100644 tools/testing/selftests/sgx/main.c
+> >   create mode 100644 tools/testing/selftests/sgx/main.h
+> >   create mode 100644 tools/testing/selftests/sgx/sigstruct.c
+> >   create mode 100644 tools/testing/selftests/sgx/test_encl.c
+> >   create mode 100644 tools/testing/selftests/sgx/test_encl.lds
+> >   create mode 100644 tools/testing/selftests/sgx/test_encl_bootstrap.S
+> > 
+> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> > index d9c283503159..aa06e3ea0250 100644
+> > --- a/tools/testing/selftests/Makefile
+> > +++ b/tools/testing/selftests/Makefile
+> > @@ -68,6 +68,7 @@ TARGETS += user
+> >   TARGETS += vm
+> >   TARGETS += x86
+> >   TARGETS += zram
+> > +TARGETS += sgx
+> >   #Please keep the TARGETS list alphabetically sorted
 > 
-> Why?
+> Please keep the list sorted alphabetically as stated
+> in the comment above.
 > 
-> This needs to be CONFIG_X86_SGX as you need this vdso functionality only
-> when SGX is enabled.
+> 
+> > +}
+> > +
+> > +int main(int argc, char *argv[], char *envp[])
+> > +{
+> > +	struct sgx_enclave_run run;
+> > +	struct vdso_symtab symtab;
+> > +	Elf64_Sym *eenter_sym;
+> > +	uint64_t result = 0;
+> > +	struct encl encl;
+> > +	unsigned int i;
+> > +	void *addr;
+> > +	int ret;
+> > +
+> > +	memset(&run, 0, sizeof(run));
+> > +
+> > +	if (!encl_load("test_encl.elf", &encl)) {
+> > +		encl_delete(&encl);
+> > +		ksft_exit_skip("cannot load enclaves\n");
+> > +	}
+> > +
+> > +	if (!encl_measure(&encl))
+> > +		goto err;
+> > +
+> > +	if (!encl_build(&encl))
+> > +		goto err;
+> > +
+> > +	/*
+> > +	 * An enclave consumer only must do this.
+> > +	 */
+> > +	for (i = 0; i < encl.nr_segments; i++) {
+> > +		struct encl_segment *seg = &encl.segment_tbl[i];
+> > +
+> > +		addr = mmap((void *)encl.encl_base + seg->offset, seg->size,
+> > +			    seg->prot, MAP_SHARED | MAP_FIXED, encl.fd, 0);
+> > +		if (addr == MAP_FAILED) {
+> > +			fprintf(stderr, "mmap() failed, errno=%d.\n", errno);
+> > +			exit(1);
+> 
+> This should be KSFT_FAIL.
+> 
+> thanks,
+> -- Shuah
 
-Agreed.
-
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+Thanks.
 
 /Jarkko
