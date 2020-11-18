@@ -2,82 +2,78 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD37C5519F
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7EFC5519F
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E30B1246C0
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93B42246CA
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:39:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbQS0LDD"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sp4QPKyp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbgKRViF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Nov 2020 16:38:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37092 "EHLO mail.kernel.org"
+        id S1726163AbgKRVjl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Nov 2020 16:39:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726666AbgKRViF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Nov 2020 16:38:05 -0500
-Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726110AbgKRVjl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Nov 2020 16:39:41 -0500
+Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6995420715;
-        Wed, 18 Nov 2020 21:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12F2A20715;
+        Wed, 18 Nov 2020 21:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605735484;
-        bh=1GNhQS9oJ1VMOeVJZd7DckTPUAzaUGj3VELjqx9eCrk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WbQS0LDDaR73lYUBkITbwgJU+F0yk29fgfF2xGCCuLCf2SRPda8grCiFvwGyzDW9X
-         EQXsom1Y4GhNk5hMPuDI+pj/Kui9XHyTUgsd4lxMWaAkn/JfAauH7isg7UM5pyr5/f
-         JqLyxcDXOGeSScCDOmQ4XZKKIBsiM21WOzsXE+f4=
-Date:   Wed, 18 Nov 2020 23:37:55 +0200
+        s=default; t=1605735580;
+        bh=umegQYErp2st+VH/zI7Qly+1wRwpRZskx/7MtcSTiX0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Sp4QPKypmYQedNinpqN92jnWttyBpBm3ARBLlSEv/ZofSOb3QJWgS6RzVCkKcX58a
+         cFmPFAT3ZyIt7TrwfJs6yj6L2OpOrD64hWzzYrR4XG0FHaG8uTz0TvCKVTqEkZWsyA
+         1xzAG1M8zLvTMLmCoMEVMEP0hxUAbi3Iy9akyXyo=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
-Message-ID: <20201118213755.GA62979@kernel.org>
-References: <20201117223630.17355-1-jarkko@kernel.org>
- <20201118171900.GJ7472@zn.tnic>
- <20201118175850.GA42022@kernel.org>
- <20201118180450.GL7472@zn.tnic>
+To:     x86@kernel.org
+Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH,RESEND] x86/sgx: Return -ERESTARTSYS in sgx_ioc_enclave_add_pages()
+Date:   Wed, 18 Nov 2020 23:39:32 +0200
+Message-Id: <20201118213932.63341-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201118180450.GL7472@zn.tnic>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 07:04:50PM +0100, Borislav Petkov wrote:
-> On Wed, Nov 18, 2020 at 07:58:50PM +0200, Jarkko Sakkinen wrote:
-> > Duh, I sent the fix for the selftest before seeing this.
-> 
-> All, good - your static key fix is queued now too. The only thing that's
-> needs work now is the anon inode thing but that can come later.
+Return -ERESTARTSYS instead of -EINTR in sgx_ioc_enclave_add_pages()
+when interrupted before any pages have been processed. At this point
+ioctl can be obviously safely restarted.
 
-Just checking that I got this right: you want me to port my anon inode
-changes from March to be applied on top of tip and send them?
+Reported-by: Haitao Huang <haitao.huang@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Thank you, I'll separately clone tip and test it.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 6d37117ac8a0..30aefc93a31d 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -444,7 +444,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 	for (c = 0 ; c < add_arg.length; c += PAGE_SIZE) {
+ 		if (signal_pending(current)) {
+ 			if (!c)
+-				ret = -EINTR;
++				ret = -ERESTARTSYS;
+ 
+ 			break;
+ 		}
+-- 
+2.27.0
 
-/Jarkko
