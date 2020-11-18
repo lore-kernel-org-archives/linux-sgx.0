@@ -2,78 +2,95 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7EFC5519F
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34487C5519F
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93B42246CA
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:39:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EBE0246D0
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:55:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sp4QPKyp"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lalXrumF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgKRVjl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Nov 2020 16:39:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbgKRVjl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Nov 2020 16:39:41 -0500
-Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726184AbgKRVy4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Nov 2020 16:54:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51732 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgKRVyz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 18 Nov 2020 16:54:55 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1AAFC0613D4;
+        Wed, 18 Nov 2020 13:54:55 -0800 (PST)
+Received: from zn.tnic (p200300ec2f0caf003ca6ed11c9851040.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:af00:3ca6:ed11:c985:1040])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12F2A20715;
-        Wed, 18 Nov 2020 21:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605735580;
-        bh=umegQYErp2st+VH/zI7Qly+1wRwpRZskx/7MtcSTiX0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Sp4QPKypmYQedNinpqN92jnWttyBpBm3ARBLlSEv/ZofSOb3QJWgS6RzVCkKcX58a
-         cFmPFAT3ZyIt7TrwfJs6yj6L2OpOrD64hWzzYrR4XG0FHaG8uTz0TvCKVTqEkZWsyA
-         1xzAG1M8zLvTMLmCoMEVMEP0hxUAbi3Iy9akyXyo=
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     x86@kernel.org
-Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH,RESEND] x86/sgx: Return -ERESTARTSYS in sgx_ioc_enclave_add_pages()
-Date:   Wed, 18 Nov 2020 23:39:32 +0200
-Message-Id: <20201118213932.63341-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC2EC1EC0473;
+        Wed, 18 Nov 2020 22:54:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1605736494;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=qu7sO3SWRkR9r2p9MxyB1cJnvWyynyu47YjDGRHH5wA=;
+        b=lalXrumFBqfPyuxmcjvpqPEr3vZcZ1/QXHIT2Ig1gR0vwB2bEMK4XFoMJ3QEI0V+iVSQgq
+        yzRsquUMuvIcfqVt9OfTeIvqUeYMFaHQwjs9mnOZO5sZk2yEjtg9bc2gWNFrpHdHX6xKmi
+        Jl4YDLwaJ5kF9hiiBvnVhIwThcxu1TI=
+Date:   Wed, 18 Nov 2020 22:54:46 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
+Message-ID: <20201118215446.GO7472@zn.tnic>
+References: <20201117223630.17355-1-jarkko@kernel.org>
+ <20201118171900.GJ7472@zn.tnic>
+ <20201118175850.GA42022@kernel.org>
+ <20201118180450.GL7472@zn.tnic>
+ <20201118213755.GA62979@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201118213755.GA62979@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Return -ERESTARTSYS instead of -EINTR in sgx_ioc_enclave_add_pages()
-when interrupted before any pages have been processed. At this point
-ioctl can be obviously safely restarted.
+On Wed, Nov 18, 2020 at 11:37:55PM +0200, Jarkko Sakkinen wrote:
+> Just checking that I got this right: you want me to port my anon inode
+> changes from March to be applied on top of tip and send them?
 
-Reported-by: Haitao Huang <haitao.huang@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well, we need to somehow address the issue when some distros map /dev
+noexec and that is conflicting with SGX due to it needing to mmap with
+executable permissions but /dev/sgx_enclave is noexec...
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 6d37117ac8a0..30aefc93a31d 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -444,7 +444,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
- 	for (c = 0 ; c < add_arg.length; c += PAGE_SIZE) {
- 		if (signal_pending(current)) {
- 			if (!c)
--				ret = -EINTR;
-+				ret = -ERESTARTSYS;
- 
- 			break;
- 		}
+I guess the first thing that needs figuring out is why are some distros
+mounting /dev noexec.
+
+I mean, you can always do the easiest thing: somewhere in the SGX
+docs say that one of the steps towards running SGX enclaves on such
+distros is for the admin to map /dev exec. However, does that have other
+security implications which would make such exec mounting a security
+hazard?
+
+If so, then the SGX code would need changing...
+
+Questions like those.
+
+HTH.
+
 -- 
-2.27.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
