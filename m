@@ -2,77 +2,78 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAB5C3E8C5
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 18:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5DDC6379D
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 20:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5C720872
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 18:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB00246D0
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 20:38:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DDcw5W3q"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcxFdKdi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbgKRSE7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Nov 2020 13:04:59 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37268 "EHLO mail.skyhub.de"
+        id S1725710AbgKRUig (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Nov 2020 15:38:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbgKRSE7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Nov 2020 13:04:59 -0500
-Received: from zn.tnic (p200300ec2f0caf00cee835374c0b640d.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:af00:cee8:3537:4c0b:640d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727272AbgKRUie (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Nov 2020 15:38:34 -0500
+Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A3AD01EC04B9;
-        Wed, 18 Nov 2020 19:04:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1605722697;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JaQw+o5CPDUvhtL42lypkEsjqenpsUoTRUYLzM4aOYc=;
-        b=DDcw5W3qVpxwcMqkTS4dXYhYosiBkSsUbvu67bCZi4wzE+bEwdmMOYncNV9rJ6ujcnvMhJ
-        wujvTTDimzQ4awRlu5suG/v2jAWfL+31Z/D56zBkRF1UTDk3R5do02WceNt596hdmXY96G
-        nMZDXLmiLK+dburzRBPwyIU1XYKyCWQ=
-Date:   Wed, 18 Nov 2020 19:04:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
-Message-ID: <20201118180450.GL7472@zn.tnic>
-References: <20201117223630.17355-1-jarkko@kernel.org>
- <20201118171900.GJ7472@zn.tnic>
- <20201118175850.GA42022@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id E260C246C7;
+        Wed, 18 Nov 2020 20:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605731914;
+        bh=umegQYErp2st+VH/zI7Qly+1wRwpRZskx/7MtcSTiX0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WcxFdKdi+m5L6IY1TK948aiwmkAOpVun357NuMR1klEdcvAFQa0xgMjbK3eKpbzKg
+         C/fTq+8Z8Zi5xOiSupyjkd4bzXXDuULxpRCCtTNg482wc9W3cqYm1r/HcbVB5X7Ko6
+         5YThP3do3BvzeK8vqTJLPMIqWHt5JroZa/zbMYTk=
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-x86@vger.kernel.org
+Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH] x86/sgx: Return -ERESTARTSYS in sgx_ioc_enclave_add_pages()
+Date:   Wed, 18 Nov 2020 22:38:20 +0200
+Message-Id: <20201118203820.61469-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201118175850.GA42022@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 07:58:50PM +0200, Jarkko Sakkinen wrote:
-> Duh, I sent the fix for the selftest before seeing this.
+Return -ERESTARTSYS instead of -EINTR in sgx_ioc_enclave_add_pages()
+when interrupted before any pages have been processed. At this point
+ioctl can be obviously safely restarted.
 
-All, good - your static key fix is queued now too. The only thing that's
-needs work now is the anon inode thing but that can come later.
+Reported-by: Haitao Huang <haitao.huang@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Thank you, I'll separately clone tip and test it.
-
-Thx.
-
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 6d37117ac8a0..30aefc93a31d 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -444,7 +444,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 	for (c = 0 ; c < add_arg.length; c += PAGE_SIZE) {
+ 		if (signal_pending(current)) {
+ 			if (!c)
+-				ret = -EINTR;
++				ret = -ERESTARTSYS;
+ 
+ 			break;
+ 		}
 -- 
-Regards/Gruss,
-    Boris.
+2.27.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
