@@ -2,43 +2,46 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC39C6369E
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 17:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D471C63798
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 17:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B891F21D7E
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 17:10:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E87248AD
+	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 17:19:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIcbGcZE"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="X0vDhShH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbgKRRKB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Nov 2020 12:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45090 "EHLO mail.kernel.org"
+        id S1728298AbgKRRTI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Nov 2020 12:19:08 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:58644 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgKRRKB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 18 Nov 2020 12:10:01 -0500
-Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        id S1728144AbgKRRTH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Nov 2020 12:19:07 -0500
+Received: from zn.tnic (p200300ec2f0caf000d6b904974eb4436.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:af00:d6b:9049:74eb:4436])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFF63221F1;
-        Wed, 18 Nov 2020 17:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605719400;
-        bh=c8Mnehbf32C+bHvE+4NC0fVU9q1Lyqk/yGWhTVt2OgE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DIcbGcZE7SZwAB0Ef+ybFlbmsttbA8KH8VjB+ReGtlbO75FMVb9aA7Jo7U6TFu+8U
-         I6FZPrBQN3vo8gMFStZbPKnCYK+biT39u5RwPiOQRlx53NeLqJrvn2izYEiAn2lEiG
-         oR9b3NaDgCUcJZzmV/8dcC9N5m+JCiACwwCCvGNc=
-Date:   Wed, 18 Nov 2020 19:09:51 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-sgx@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2982F1EC043F;
+        Wed, 18 Nov 2020 18:19:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1605719946;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=i0gWrz5IPeQ3BVJ7uGNVkvqrsGQF5t90eEcSwZTrGOc=;
+        b=X0vDhShHUffzercvHvcGuHBLTDRaVJD1lNmCwIKQH7eBtm0mbaJS3Z837awbWI7Mipz3cM
+        w2/OdnnU08vJGLjML6zWrxstTQfTRU47reTnddV4ahYixhCqMpyuIkp3v9/qBFlEd19LrF
+        KiVoxrBo7C2cYe+vSfE+taZcs6OmWiA=
+Date:   Wed, 18 Nov 2020 18:19:00 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
         kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
@@ -47,65 +50,54 @@ Cc:     Borislav Petkov <bp@alien8.de>, linux-sgx@vger.kernel.org,
         sean.j.christopherson@intel.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
-Message-ID: <20201118170951.GA39857@kernel.org>
+Message-ID: <20201118171900.GJ7472@zn.tnic>
 References: <20201117223630.17355-1-jarkko@kernel.org>
- <20201118111123.GA7472@zn.tnic>
- <554ac441-6b48-1296-3149-e3e385b6110d@fortanix.com>
- <20201118114444.GC7472@zn.tnic>
- <0d2b3af9-eb19-b5ad-aa82-f85ba2a3ee4b@fortanix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0d2b3af9-eb19-b5ad-aa82-f85ba2a3ee4b@fortanix.com>
+In-Reply-To: <20201117223630.17355-1-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 01:00:30PM +0100, Jethro Beekman wrote:
-> On 2020-11-18 12:44, Borislav Petkov wrote:
-> > On Wed, Nov 18, 2020 at 12:18:00PM +0100, Jethro Beekman wrote:
-> >> Just to double check, since you didn't show the /dev mount line: that
-> >> is also not mounted noexec?
-> > 
-> > Yes:
-> > 
-> > udev on /dev type devtmpfs (rw,nosuid,noexec,relatime,size=8021332k,nr_inodes=2005333,mode=755,inode64)
-> > 
-> > but this is how udev mounts it by default. Now I did:
+On Wed, Nov 18, 2020 at 12:36:30AM +0200, Jarkko Sakkinen wrote:
+> Assign src_offset just to the p_offset, when first initialized.
+> This has been probably copy-pasting accident (at least looks like
+> it).
 > 
-> On some distros, unfortunately, yes, and this breaks SGX. See https://www.spinics.net/lists/linux-sgx/msg02562.html and https://www.spinics.net/lists/linux-sgx/msg02617.html
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-kselftest@vger.kernel.org
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>  tools/testing/selftests/sgx/load.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > 
-> > # mount /dev -o remount,exec
-> > 
-> > and I got
-> > 
-> > udev on /dev type devtmpfs (rw,nosuid,relatime,size=8021332k,nr_inodes=2005333,mode=755,inode64)
-> > 
-> > and now it fails differently:
-> > 
-> > 0x0000000000000000 0x0000000000002000 0x03
-> > 0x0000000000002000 0x0000000000001000 0x05
-> > 0x0000000000003000 0x0000000000003000 0x03
-> > encl_load: encl->nr_segments: 3
-> > encl_load: seg2 offset: 0x3000, seg2 size: 12288
-> > encl_load: encl_size: 32768, src_size: 24576
-> > encl_map_area: encl_size: 32768
-> > encl_map_area: area: 0x0x7feae0db2000
-> > encl_map_area: encl_base: 0x7feae0db8000
-> > SGX_IOC_ENCLAVE_INIT failed: errno=1
-> > 
-> 
-> I think that means SGX_INVALID_SIG_STRUCT, which is a very odd error
-> to get. It basically means the file header is wrong. Maybe some
-> concurrency/fflush issue in the test?
+> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+> index 07988de6b767..64976f266bae 100644
+> --- a/tools/testing/selftests/sgx/load.c
+> +++ b/tools/testing/selftests/sgx/load.c
+> @@ -185,7 +185,7 @@ bool encl_load(const char *path, struct encl *encl)
+>  		}
+>  
+>  		if (j == 0) {
+> -			src_offset = (phdr->p_offset & PAGE_MASK) - src_offset;
+> +			src_offset = (phdr->p_offset & PAGE_MASK);
+>  
+>  			seg->prot = PROT_READ | PROT_WRITE;
+>  			seg->flags = SGX_PAGE_TYPE_TCS << 8;
+> -- 
 
-Sent a fix:
+Folded in after removing the brackets and pushed the whole thing out.
+Phew, finally!
 
-https://lore.kernel.org/linux-sgx/20201118170640.39629-1-jarkko@kernel.org/T/#u
+From now on, only fixes ontop pls and testing tip:x86/sgx would be of
+great help.
 
-> --
-> Jethro Beekman | Fortanix
-> 
+Thx.
 
-/Jarkko
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
