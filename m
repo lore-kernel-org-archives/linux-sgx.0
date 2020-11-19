@@ -6,72 +6,125 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FA4C6369E
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 16:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2944CC63697
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 16:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA05246CA
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 16:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA7CF2220B
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 16:42:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1AoTqe9"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKI9kb3S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgKSQR0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 19 Nov 2020 11:17:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
+        id S1728264AbgKSQly (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 19 Nov 2020 11:41:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727269AbgKSQRZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 19 Nov 2020 11:17:25 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728134AbgKSQlx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 19 Nov 2020 11:41:53 -0500
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D89ED246AD
-        for <linux-sgx@vger.kernel.org>; Thu, 19 Nov 2020 16:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADC0622264;
+        Thu, 19 Nov 2020 16:41:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605802645;
-        bh=F5yOB0sHtQnLJ+NSs4Zd8ZtoTYl7kru0uDQUP+184TY=;
-        h=From:Date:Subject:To:From;
-        b=a1AoTqe9vplo1OWoTpbEHtBpGp7NOkHonrThzEJS5p/jU1zJTz9Su9vTKNaV7CmfH
-         kXmJkJxbWzhA9Rbc1bePpuhzSeUIy2HgAsZLeXOvrEzGUd3Hjyqwdz5fdz2Sewk/f2
-         /S97G8sJR8DaUghkFN47JMhmXL8frK1zQt8tcHW4=
-Received: by mail-wm1-f50.google.com with SMTP id a186so4939264wme.1
-        for <linux-sgx@vger.kernel.org>; Thu, 19 Nov 2020 08:17:24 -0800 (PST)
-X-Gm-Message-State: AOAM5315nns6FrjaHZJPOm2ub66I1cJpnRtwtezqt2+aVK9Y8ZAredha
-        wlixOJtKWoiWr6Z1UQh+oL/pv/Fuh7FaGiA8Uw8zVw==
-X-Google-Smtp-Source: ABdhPJwSngghiuPwizDjdQ4dcFBHvtxi8VSnf5s5+0FSAlFkN04RleHetq0bZUbm15M2sFTqbziKyO+BEgzBvuxpn14=
-X-Received: by 2002:a1c:7e87:: with SMTP id z129mr5313951wmc.176.1605802643292;
- Thu, 19 Nov 2020 08:17:23 -0800 (PST)
+        s=default; t=1605804112;
+        bh=a8DNh3KKaUy/3Z0QZ4V7Dwx43lhtI1TlCwUDoL5hZeI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vKI9kb3ScOMKv2/vXY82ULiPASQ+9D3ThWZhtEfMbp5r6XCSu5ZmUj6YaXxMixlMu
+         Nn5OYo7Y/7FVaz6CWjYYndq0gHQ35zz++ZkRppGSdBrFkKrEA19e0lm96YYHBv0uak
+         x26WBeckLvnRyJGb9M09KY0tX/CTngPuz5x+YPSE=
+Date:   Thu, 19 Nov 2020 18:41:44 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
+Message-ID: <20201119164144.GA77509@kernel.org>
+References: <20201117223630.17355-1-jarkko@kernel.org>
+ <20201118171900.GJ7472@zn.tnic>
+ <20201118175850.GA42022@kernel.org>
+ <20201118180450.GL7472@zn.tnic>
+ <20201118213755.GA62979@kernel.org>
+ <20201118215446.GO7472@zn.tnic>
 MIME-Version: 1.0
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 19 Nov 2020 08:17:08 -0800
-X-Gmail-Original-Message-ID: <CALCETrWM2rGPRudtaQ=mn9MRsrbQqFfZDkOGsBbVMsk6mMw_+A@mail.gmail.com>
-Message-ID: <CALCETrWM2rGPRudtaQ=mn9MRsrbQqFfZDkOGsBbVMsk6mMw_+A@mail.gmail.com>
-Subject: Creating executable device nodes in /dev?
-To:     linux-hotplug@vger.kernel.org,
-        systemd Mailing List <systemd-devel@lists.freedesktop.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-sgx@vger.kernel.org, "Svahn, Kai" <kai.svahn@intel.com>,
-        "Schlobohm, Bruce" <bruce.schlobohm@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201118215446.GO7472@zn.tnic>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi udev people-
+On Wed, Nov 18, 2020 at 10:54:46PM +0100, Borislav Petkov wrote:
+> On Wed, Nov 18, 2020 at 11:37:55PM +0200, Jarkko Sakkinen wrote:
+> > Just checking that I got this right: you want me to port my anon inode
+> > changes from March to be applied on top of tip and send them?
+> 
+> Well, we need to somehow address the issue when some distros map /dev
+> noexec and that is conflicting with SGX due to it needing to mmap with
+> executable permissions but /dev/sgx_enclave is noexec...
+> 
+> I guess the first thing that needs figuring out is why are some distros
+> mounting /dev noexec.
+> 
+> I mean, you can always do the easiest thing: somewhere in the SGX
+> docs say that one of the steps towards running SGX enclaves on such
+> distros is for the admin to map /dev exec. However, does that have other
+> security implications which would make such exec mounting a security
+> hazard?
+> 
+> If so, then the SGX code would need changing...
+> 
+> Questions like those.
+> 
+> HTH.
 
-The upcoming Linux SGX driver has a device node /dev/sgx.  User code
-opens it, does various setup things, mmaps it, and needs to be able to
-create PROT_EXEC mappings.  This gets quite awkward if /dev is mounted
-noexec.
+OK I did re-read the whole thing:
 
-Can udev arrange to make a device node executable on distros that make
-/dev noexec?  This could be done by bind-mounting from an exec tmpfs.
-Alternatively, the kernel could probably learn to ignore noexec on
-/dev/sgx, but that seems a little bit evil.
+https://lore.kernel.org/linux-sgx/20200331114432.7593-1-jarkko.sakkinen@linux.intel.com/
 
-Thanks,
-Andy
+As Topi (the Debian developer who did this change) stated in the thread,
+the threat scenario is that someone could create executable files to
+/dev if it isn't noexec. It's not about the permissions of device files
+per se.
+
+The problem with anonymous inode is that LSM's cannot label it easily
+like you can a non-anonymous inode.
+
+There's a patch set for secure anonymous inodes but it hasn't landed yet
+and I think it would make the whole security model somewhat more
+complicated [1]. What I mean is that secure anonymous inodes would make
+sense in a context where anonymous inodes are used for other reasons to
+begin with.
+
+The route of using sgxfs was discarded because it results static
+permissions and is also quite big hammer for the purpose [2].
+
+In that thread there were two valid routes to move forward:
+
+1. You can always create a separate tmpfs and create enclave nodes
+   and even bind mount them (proposed by Andy) to /dev.
+2. It would be possible (given how Topi described the threat scenario)
+   implement "noexec_dev" mount option that would allow 'x' for dev's
+   but not for anything else (proposed by me).
+
+To summarize, I would not change the SGX code for this but apply either
+(1) and (2) when deploying SGX.
+
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
+
+[1] https://lore.kernel.org/linux-security-module/20201011082936.4131726-1-lokeshgidra@google.com/
+[2] https://lore.kernel.org/linux-sgx/CALCETrWkaUS2RU61_4KoNhn3RkW-J+SWiCQTZ623wu4b7snJ0w@mail.gmail.com/
+
+/Jarkko
