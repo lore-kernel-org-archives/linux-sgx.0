@@ -2,119 +2,141 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA096C5519F
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 01:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1AAC63697
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 01:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7892C22260
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 01:17:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="M/eizIq7"
+	by mail.kernel.org (Postfix) with ESMTP id B0AD5246DC
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 01:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbgKSBQ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Nov 2020 20:16:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54808 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbgKSBQ4 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 18 Nov 2020 20:16:56 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691B8C0613D4
-        for <linux-sgx@vger.kernel.org>; Wed, 18 Nov 2020 17:16:56 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id 62so2666088pgg.12
-        for <linux-sgx@vger.kernel.org>; Wed, 18 Nov 2020 17:16:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=2GHzrJxMvHukv63GTTgJprc5vAmkA5WKHyRpGOGWTdU=;
-        b=M/eizIq78tHHcr/fPSSMuYNF76N4b4f/jTBVGLOJFnDM+DBrxXPjRXioI5H8amRggT
-         LUAPFaU6eleFFFsq3Qf76QVMuSdYteN4NS2cv3fl41TO0ttOBdaCvpwXOcIDiDy1U2et
-         /xmD1WLdnM4NEnvdDAFONlfvanKZ+Ii6aAHzwmAj44wp4w9wJlUlJjaMKunjtDgd8yPk
-         b4vd6VY6w6n6k9Aph3yv0kejgt1JkFelGG9Y/0ILlLeqK85No4zWqId5TCLWLirJweiD
-         GYVPA/uVVJ1uPY0bfCY3KXu7Izw8NnKbdkuHO9QhwYZYDOnklGPYcjWL3q5nkfoB6fsk
-         owAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=2GHzrJxMvHukv63GTTgJprc5vAmkA5WKHyRpGOGWTdU=;
-        b=l5Qv4YX4/VpaI7x0ioUCV2IlyiiCSTTQBdlE3n66YG4AlLwiYAnT8LxWDEcJJnhHWl
-         RiKmUwU14xZEBfVMisHBS3vku/UIO8VDbzWvFjIPLOSViRAWBh/3OC9h/YzQOMwnDMc8
-         1rSkj0+PZIKb8+Rf06NsOde4Z6kA0LvQBdQCfNazma/7H6nC6APTul52wNko+y5B9l5K
-         3OXHBII22C1qNe5BsbqBxZSTj/dW7JgqhIIrIE5vgE6LCQ9ButxTY/PfwgL/IGFSN1R/
-         d05hASTlOM89ooNYm4rc34zvbDQEOe1G5pqxVG6lXgUNfkHqBHnvcFjTTqrzFxx1e365
-         JZbw==
-X-Gm-Message-State: AOAM532rp1dP+PvjMdzN1IWV2cEOM3npKZSqblddwmCl+n+xSg9lEzqt
-        mkRyMIY9qqLj+Ic9Ien9+G1Yig==
-X-Google-Smtp-Source: ABdhPJy8tlcVF8aiTOgLbctszIcuUOPba2z9JdZ26ff1reBPfahlfEpJ0NtKcHHR6hswWwA20OMMwQ==
-X-Received: by 2002:a17:90b:344c:: with SMTP id lj12mr222201pjb.115.1605748616014;
-        Wed, 18 Nov 2020 17:16:56 -0800 (PST)
-Received: from [192.168.0.122] (c-67-180-165-146.hsd1.ca.comcast.net. [67.180.165.146])
-        by smtp.gmail.com with ESMTPSA id m18sm19868739pfk.10.2020.11.18.17.16.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2020 17:16:55 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
-Date:   Wed, 18 Nov 2020 17:16:53 -0800
-Message-Id: <AA92701F-05C7-4551-9C26-39946CC55B0A@amacapital.net>
-References: <20201118215446.GO7472@zn.tnic>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-In-Reply-To: <20201118215446.GO7472@zn.tnic>
-To:     Borislav Petkov <bp@alien8.de>
-X-Mailer: iPhone Mail (18B92)
+        id S1726468AbgKSBjz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Nov 2020 20:39:55 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61942 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbgKSBjy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Nov 2020 20:39:54 -0500
+IronPort-SDR: c8MIROG6OgH54s0WkOffaYy4is7DqUbMSn8tPKC1ZZqi4oMTQbrRb6yYHn+0y/c9JU+OXCTITB
+ nLewoFoJWvbg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9809"; a="158248755"
+X-IronPort-AV: E=Sophos;i="5.77,489,1596524400"; 
+   d="scan'208";a="158248755"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2020 17:39:54 -0800
+IronPort-SDR: FyWagM392snwNLeLy57jhT52y7risszr7gvIqKkdnUCQ2fCR+7Ug/PTQ97Pn3kQzGqz3CsCMqK
+ 4bAGK705/1Uw==
+X-IronPort-AV: E=Sophos;i="5.77,489,1596524400"; 
+   d="scan'208";a="357214172"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO fgctuval.land.test) ([10.209.121.50])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 18 Nov 2020 17:39:51 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Andy Lutomirski" <luto@kernel.org>, "Dr. Greg" <greg@enjellic.com>
+Cc:     "Dave Hansen" <dave.hansen@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
+        "X86 ML" <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        "Jethro Beekman" <jethro@fortanix.com>,
+        "Darren Kenny" <darren.kenny@oracle.com>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, "Borislav Petkov" <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        "Conrad Parker" <conradparker@google.com>, cyhanish@google.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>,
+        "Keith Moyer" <kmoy@google.com>,
+        "Christian Ludloff" <ludloff@google.com>,
+        "Neil Horman" <nhorman@redhat.com>,
+        "Nathaniel McCallum" <npmccallum@redhat.com>,
+        "Patrick Uiterwijk" <puiterwijk@redhat.com>,
+        "David Rientjes" <rientjes@google.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>, yaozhangx@google.com,
+        "Mikko Ylinen" <mikko.ylinen@intel.com>
+Subject: Re: [PATCH v40 10/24] mm: Add 'mprotect' hook to struct
+ vm_operations_struct
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+ <20201104145430.300542-11-jarkko.sakkinen@linux.intel.com>
+ <20201106174359.GA24109@wind.enjellic.com>
+ <e70c9e92-0bd4-59a4-21b1-bccf8621c6bb@intel.com>
+ <20201107150930.GA29530@wind.enjellic.com>
+ <c7157bc6-8a65-11f4-e961-17163730df5d@intel.com>
+ <20201112205819.GA9172@wind.enjellic.com>
+ <5c22300c-0956-48ed-578d-00cf62cb5c09@intel.com>
+ <CALCETrWaUDO1eG7PE_bpA2C_OVeNZ7VbEVaznkg2U7Qx=X=oEw@mail.gmail.com>
+ <20201116180023.GA32481@wind.enjellic.com>
+Date:   Wed, 18 Nov 2020 19:39:50 -0600
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.0ua2t306wjvjmi@fgctuval.land.test>
+In-Reply-To: <20201116180023.GA32481@wind.enjellic.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On Mon, 16 Nov 2020 12:00:23 -0600, Dr. Greg <greg@enjellic.com> wrote:
 
+> On Thu, Nov 12, 2020 at 02:41:00PM -0800, Andy Lutomirski wrote:
+>
+> Good morning, I hope the week is starting well for everyone.
+>
+>> On Thu, Nov 12, 2020 at 1:31 PM Dave Hansen <dave.hansen@intel.com>  
+>> wrote:
+>> >
+>> > On 11/12/20 12:58 PM, Dr. Greg wrote:
+>> > > @@ -270,11 +270,10 @@ static int sgx_vma_mprotect(struct  
+>> vm_area_struct *vma,
+>> > >                           struct vm_area_struct **pprev, unsigned  
+>> long start,
+>> > >                           unsigned long end, unsigned long newflags)
+>> > >  {
+>> > > -     int ret;
+>> > > +     struct sgx_encl *encl = vma->vm_private_data;
+>> > >
+>> > > -     ret = sgx_encl_may_map(vma->vm_private_data, start, end,  
+>> newflags);
+>> > > -     if (ret)
+>> > > -             return ret;
+>> > > +     if ( test_bit(SGX_ENCL_INITIALIZED, &encl->flags) )
+>> > > +             return -EACCES;
+>> > >
+>> > >       return mprotect_fixup(vma, pprev, start, end, newflags);
+>> > >  }
+>> >
+>> > This rules out mprotect() on running enclaves.  Does that break any
+>> > expectations from enclave authors, or take away capabilities that  
+>> folks
+>> > need?
+>
+>> It certainly prevents any scheme in which an enclave coordinates
+>> with the outside world to do W-and-then-X JIT inside.  I'm also not
+>> convinced it has any real effect at all unless there's some magic I
+>> missed to prevent someone from using mmap(2) to effectively change
+>> permissions.
+>
+> The patch that I posted yesterday addresses the security issue for
+> both mmap and mprotect by trapping the permission change request at
+> the level of the sgx_encl_may_map() function.
+>
+> With respect to the W-and-then-X JIT issue, the stated purpose of the
+> driver is to implement basic SGX functionality, which is SGX1
+> semantics, it has been stated formally for a year by the developers
+> themselves that they are not entertaining a driver that addresses any
+> of the issues associated with non-static memory permissions.
+>
 
-> On Nov 18, 2020, at 1:54 PM, Borislav Petkov <bp@alien8.de> wrote:
->=20
-> =EF=BB=BFOn Wed, Nov 18, 2020 at 11:37:55PM +0200, Jarkko Sakkinen wrote:
->> Just checking that I got this right: you want me to port my anon inode
->> changes from March to be applied on top of tip and send them?
->=20
-> Well, we need to somehow address the issue when some distros map /dev
-> noexec and that is conflicting with SGX due to it needing to mmap with
-> executable permissions but /dev/sgx_enclave is noexec...
->=20
-> I guess the first thing that needs figuring out is why are some distros
-> mounting /dev noexec.
->=20
-> I mean, you can always do the easiest thing: somewhere in the SGX
-> docs say that one of the steps towards running SGX enclaves on such
-> distros is for the admin to map /dev exec. However, does that have other
-> security implications which would make such exec mounting a security
-> hazard?
->=20
-> If so, then the SGX code would need changing...
->=20
-> Questions like those.
+The JIT issue is applicable even to SGX1 platforms. We can do EADD with  
+EPCM.RWX in sec_info and with PTE.RW, EINIT, then mprotect to set PTE.RX  
+when JIT is done.
 
-I thought we had determined that this was solvable entirely in userspace.  U=
-dev can handle this, no?
-
->=20
-> HTH.
->=20
-> --=20
-> Regards/Gruss,
->    Boris.
->=20
-> https://people.kernel.org/tglx/notes-about-netiquette
+Haitao
