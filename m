@@ -2,72 +2,105 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7904CC6379D
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 17:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B090EC56201
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 18:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A26D2467A
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 17:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45133246CA
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 18:05:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="itdzlzZt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbgKSRGc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 19 Nov 2020 12:06:32 -0500
-Received: from kawka.in.waw.pl ([178.62.225.244]:51121 "EHLO kawka.in.waw.pl"
+        id S1728262AbgKSSFF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 19 Nov 2020 13:05:05 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48276 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbgKSRGb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 19 Nov 2020 12:06:31 -0500
-X-Greylist: delayed 1891 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Nov 2020 12:06:30 EST
-Received: from zbyszek by kawka.in.waw.pl with local (Exim 4.84_2)
-        (envelope-from <zbyszek@in.waw.pl>)
-        id 1kfmrV-0006wT-O5; Thu, 19 Nov 2020 16:32:45 +0000
-Date:   Thu, 19 Nov 2020 16:32:45 +0000
-From:   Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     linux-hotplug@vger.kernel.org,
-        systemd Mailing List <systemd-devel@lists.freedesktop.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-sgx@vger.kernel.org, "Svahn, Kai" <kai.svahn@intel.com>,
-        "Schlobohm, Bruce" <bruce.schlobohm@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: Creating executable device nodes in /dev?
-Message-ID: <20201119163245.GN7348@in.waw.pl>
-References: <CALCETrWM2rGPRudtaQ=mn9MRsrbQqFfZDkOGsBbVMsk6mMw_+A@mail.gmail.com>
+        id S1727923AbgKSSFF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 19 Nov 2020 13:05:05 -0500
+Received: from zn.tnic (p200300ec2f0caf00499206e3ae50e028.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:af00:4992:6e3:ae50:e028])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 303751EC04D3;
+        Thu, 19 Nov 2020 19:05:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1605809104;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=vq5t1Uz17dCgETjKB9ITKMfAU/o1Sa0SYb9IbQFQGrQ=;
+        b=itdzlzZtMV5Gr657sdXwsZqjymbg7B6uFERbDRCdg+arNWsIsYMV9KzqLjFHAPd1YVLLeW
+        Mgfu6sLcoyLH+9GMaUvNRqSHTW5SCjXGyk8rgn1JcvrszAV3DX9xqveDS9C0H1zoisjZpm
+        61eRCQJMG5YcDET0xLk9HOTV4Iff+LU=
+Date:   Thu, 19 Nov 2020 19:04:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
+Message-ID: <20201119180459.GF3769@zn.tnic>
+References: <20201117223630.17355-1-jarkko@kernel.org>
+ <20201118171900.GJ7472@zn.tnic>
+ <20201118175850.GA42022@kernel.org>
+ <20201118180450.GL7472@zn.tnic>
+ <20201118213755.GA62979@kernel.org>
+ <20201118215446.GO7472@zn.tnic>
+ <20201119164144.GA77509@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CALCETrWM2rGPRudtaQ=mn9MRsrbQqFfZDkOGsBbVMsk6mMw_+A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20201119164144.GA77509@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 08:17:08AM -0800, Andy Lutomirski wrote:
-> Hi udev people-
+On Thu, Nov 19, 2020 at 06:41:44PM +0200, Jarkko Sakkinen wrote:
+> As Topi (the Debian developer who did this change) stated in the thread,
+> the threat scenario is that someone could create executable files to
+> /dev if it isn't noexec. It's not about the permissions of device files
+> per se.
+
+Aha, makes sense.
+
+> The problem with anonymous inode is that LSM's cannot label it easily
+> like you can a non-anonymous inode.
 > 
-> The upcoming Linux SGX driver has a device node /dev/sgx.  User code
-> opens it, does various setup things, mmaps it, and needs to be able to
-> create PROT_EXEC mappings.  This gets quite awkward if /dev is mounted
-> noexec.
+> There's a patch set for secure anonymous inodes but it hasn't landed yet
+> and I think it would make the whole security model somewhat more
+> complicated [1].
+
+More complicated is never good.
+
+> 1. You can always create a separate tmpfs and create enclave nodes
+>    and even bind mount them (proposed by Andy) to /dev.
+> 2. It would be possible (given how Topi described the threat scenario)
+>    implement "noexec_dev" mount option that would allow 'x' for dev's
+>    but not for anything else (proposed by me).
 > 
-> Can udev arrange to make a device node executable on distros that make
-> /dev noexec?  This could be done by bind-mounting from an exec tmpfs.
-> Alternatively, the kernel could probably learn to ignore noexec on
-> /dev/sgx, but that seems a little bit evil.
+> To summarize, I would not change the SGX code for this but apply either
+> (1) and (2) when deploying SGX.
 
-I'd be inclined to simply drop noexec from /dev by default.
-We don't do noexec on either /tmp or /dev/shm (because that causes immediate
-problems with stuff like Java and cffi). And if you have those two at your
-disposal anyway, having noexec on /dev doesn't seem important.
+Both sound ok to me, especially 1 since you can do that now, without any
+changes needed.
 
-Afaik, the kernel would refuse execve() on a character or block device
-anyway. Thus noexec on /dev matters only for actual binaries copied to
-/dev, which requires root privileges in the first place.
+Anything else means adding more code which for distros and people using
+older kernels means, more backporting and more verif.
 
-Zbyszek
+But WTH do I know...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
