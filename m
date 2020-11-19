@@ -2,48 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34487C5519F
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45359C5519F
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 01:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBE0246D0
-	for <linux-sgx@archiver.kernel.org>; Wed, 18 Nov 2020 21:55:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lalXrumF"
+	by mail.kernel.org (Postfix) with ESMTP id F37B122363
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 Nov 2020 01:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbgKRVy4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 Nov 2020 16:54:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgKRVyz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 18 Nov 2020 16:54:55 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1AAFC0613D4;
-        Wed, 18 Nov 2020 13:54:55 -0800 (PST)
-Received: from zn.tnic (p200300ec2f0caf003ca6ed11c9851040.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:af00:3ca6:ed11:c985:1040])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC2EC1EC0473;
-        Wed, 18 Nov 2020 22:54:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1605736494;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=qu7sO3SWRkR9r2p9MxyB1cJnvWyynyu47YjDGRHH5wA=;
-        b=lalXrumFBqfPyuxmcjvpqPEr3vZcZ1/QXHIT2Ig1gR0vwB2bEMK4XFoMJ3QEI0V+iVSQgq
-        yzRsquUMuvIcfqVt9OfTeIvqUeYMFaHQwjs9mnOZO5sZk2yEjtg9bc2gWNFrpHdHX6xKmi
-        Jl4YDLwaJ5kF9hiiBvnVhIwThcxu1TI=
-Date:   Wed, 18 Nov 2020 22:54:46 +0100
-From:   Borislav Petkov <bp@alien8.de>
+        id S1727074AbgKSBG1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 Nov 2020 20:06:27 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:32900 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726837AbgKSBG1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 18 Nov 2020 20:06:27 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0AJ15ZD9019428;
+        Wed, 18 Nov 2020 19:05:35 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0AJ15XOG019427;
+        Wed, 18 Nov 2020 19:05:33 -0600
+Date:   Wed, 18 Nov 2020 19:05:33 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        cedric.xing@intel.com, chenalexchen@google.com,
+Cc:     Borislav Petkov <bp@alien8.de>, linux-sgx@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
         kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
@@ -52,45 +39,62 @@ Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
         sean.j.christopherson@intel.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH] selftests/x86: Fix malformed src_offset initialization
-Message-ID: <20201118215446.GO7472@zn.tnic>
-References: <20201117223630.17355-1-jarkko@kernel.org>
- <20201118171900.GJ7472@zn.tnic>
- <20201118175850.GA42022@kernel.org>
- <20201118180450.GL7472@zn.tnic>
- <20201118213755.GA62979@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Message-ID: <20201119010533.GA19402@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20201117223630.17355-1-jarkko@kernel.org> <20201118171900.GJ7472@zn.tnic> <20201118175850.GA42022@kernel.org> <20201118180450.GL7472@zn.tnic> <20201118213755.GA62979@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20201118213755.GA62979@kernel.org>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 18 Nov 2020 19:05:36 -0600 (CST)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Wed, Nov 18, 2020 at 11:37:55PM +0200, Jarkko Sakkinen wrote:
-> Just checking that I got this right: you want me to port my anon inode
-> changes from March to be applied on top of tip and send them?
 
-Well, we need to somehow address the issue when some distros map /dev
-noexec and that is conflicting with SGX due to it needing to mmap with
-executable permissions but /dev/sgx_enclave is noexec...
+Good evening, I hope the week is going well for everyone.
 
-I guess the first thing that needs figuring out is why are some distros
-mounting /dev noexec.
+> On Wed, Nov 18, 2020 at 07:04:50PM +0100, Borislav Petkov wrote:
+> > On Wed, Nov 18, 2020 at 07:58:50PM +0200, Jarkko Sakkinen wrote:
+> > > Duh, I sent the fix for the selftest before seeing this.
+> > 
+> > All, good - your static key fix is queued now too. The only thing that's
+> > needs work now is the anon inode thing but that can come later.
 
-I mean, you can always do the easiest thing: somewhere in the SGX
-docs say that one of the steps towards running SGX enclaves on such
-distros is for the admin to map /dev exec. However, does that have other
-security implications which would make such exec mounting a security
-hazard?
+> Just checking that I got this right: you want me to port my anon
+> inode changes from March to be applied on top of tip and send them?
 
-If so, then the SGX code would need changing...
+Given this issue, I would submit that you also need to consider the
+patch that I sent over the weekend that unconditionally blocks
+mmap/mprotect on an initialized enclave.
 
-Questions like those.
+The issue with a noexec /dev filesystem goes on to confirm that the
+page permission callback architecture, while certainly elegant, won't
+work given the current architecture of the driver and the SGX hardware
+itself.
 
-HTH.
+The stashed page permissions are derived from the enclave permissions
+set by the enclave author.  To be useful for the JIT model that Andy
+described, the 'maximal' permissions would need to include WX.
 
--- 
-Regards/Gruss,
-    Boris.
+Setting these types of permissions is problematic, not only from the
+perspective of a noexec filesystem, which will presumably get fixed by
+the anonymous inode, but it also triggers the very LSM issues that
+started the re-design of all this a year ago.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> /Jarkko
+
+Have a good evening.
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Opportunity is missed by most people because it is dressed in overalls
+ and looks like work."
+                                -- Thomas Edison
