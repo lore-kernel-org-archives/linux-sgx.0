@@ -2,127 +2,156 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3E9C388F9
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Nov 2020 16:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 374C7C5519F
+	for <linux-sgx@archiver.kernel.org>; Sat, 21 Nov 2020 18:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F097C22226
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Nov 2020 16:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0028B22206
+	for <linux-sgx@archiver.kernel.org>; Sat, 21 Nov 2020 18:37:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4NAE/tE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgKUQZ0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 21 Nov 2020 11:25:26 -0500
-Received: from mga07.intel.com ([134.134.136.100]:60104 "EHLO mga07.intel.com"
+        id S1728217AbgKUShS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 21 Nov 2020 13:37:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbgKUQZZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 21 Nov 2020 11:25:25 -0500
-IronPort-SDR: b9KTDjpuEqbz/AYCLQndYThLOQQQE3+6DrSzMrc8XTZywhMU9ePbYwIyAneFm/3EDwn3z/r4rW
- 8EZQjKPHPdAA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9812"; a="235744555"
-X-IronPort-AV: E=Sophos;i="5.78,359,1599548400"; 
-   d="scan'208";a="235744555"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2020 08:25:25 -0800
-IronPort-SDR: +27ZHzQwkB2oCTZZOyqtZet+eiuKzK+aHmOZHux7knxxZUX2eLzoKynQ+Mj0w2CHyn/xOLa2RV
- snyDXV/6+uGw==
-X-IronPort-AV: E=Sophos;i="5.78,359,1599548400"; 
-   d="scan'208";a="545854498"
-Received: from ichengtu-mobl1.amr.corp.intel.com (HELO [10.252.131.162]) ([10.252.131.162])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2020 08:25:24 -0800
-Subject: Re: [PATCH v40 00/24] Intel SGX foundations
-To:     "Dr. Greg" <greg@enjellic.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
- <20201121151259.GA3948@wind.enjellic.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <5ac4eccb-fcf9-eed3-fcec-b8b6bf56bb39@intel.com>
-Date:   Sat, 21 Nov 2020 08:25:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728201AbgKUShR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 21 Nov 2020 13:37:17 -0500
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C2822269
+        for <linux-sgx@vger.kernel.org>; Sat, 21 Nov 2020 18:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605983836;
+        bh=k4bb1XSryjOjrKpxNZH2F9eH58+fbIVd+aoQp0laXe4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Y4NAE/tEqUg/gNMrQ7inrCvPTLXMwTuIj3xOAWqsXeKJ+KzxTBJwDo9ThXWitboWn
+         DcLN36fXAWIljW5O/B76tftncEDlzr9WVJZs5/K56Edt42vSlCydm8qtp7i75IQ4es
+         9z1GViBGnY+3/drXDznTvhLlCyIiqi59OB1O/rXI=
+Received: by mail-wm1-f54.google.com with SMTP id x13so4991550wmj.1
+        for <linux-sgx@vger.kernel.org>; Sat, 21 Nov 2020 10:37:16 -0800 (PST)
+X-Gm-Message-State: AOAM531aOwcb0fYzXwCKBTG2hXRX3G6Inqlhz2qAKqc5uYeCqJVjG6vp
+        6HV1OCjiI0o524Lo4ozH4VwFaGLTdOkj0Dkx2uW5rw==
+X-Google-Smtp-Source: ABdhPJyT+5j8rFsBwyu797OsJDl+WuTD1EdSAaQGjTptGYVDhPFIXviNZWOffcBNlGT7AqKtPnhaNScW8JUX+5hc0PY=
+X-Received: by 2002:a7b:c92a:: with SMTP id h10mr15913375wml.138.1605983835075;
+ Sat, 21 Nov 2020 10:37:15 -0800 (PST)
 MIME-Version: 1.0
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201121151259.GA3948@wind.enjellic.com>
 In-Reply-To: <20201121151259.GA3948@wind.enjellic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 21 Nov 2020 10:36:58 -0800
+X-Gmail-Original-Message-ID: <CALCETrXTjZSg-ccDKF7yX8y+vCCrcn9C_m6ZCGNdWHq73aUHQQ@mail.gmail.com>
+Message-ID: <CALCETrXTjZSg-ccDKF7yX8y+vCCrcn9C_m6ZCGNdWHq73aUHQQ@mail.gmail.com>
+Subject: Re: [PATCH v40 00/24] Intel SGX foundations
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
+        Mikko Ylinen <mikko.ylinen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/21/20 7:12 AM, Dr. Greg wrote:
->> Important Kernel Touch Points
->> =============================
->>
->> This implementation is picky and will decline to work on hardware which
->> is locked to Intel's root of trust.
+Dr. Greg, I know you like sending these emails, but they're not really
+helpful for Linux kernel development.  Please see below.
+
+On Sat, Nov 21, 2020 at 7:13 AM Dr. Greg <greg@enjellic.com> wrote:
+>
+> On Wed, Nov 04, 2020 at 04:54:06PM +0200, Jarkko Sakkinen wrote:
+>
+> Good morning, I hope the weekend is going well for everyone.
+>
+> > Important Kernel Touch Points
+> > =============================
+> >
+> > This implementation is picky and will decline to work on hardware which
+> > is locked to Intel's root of trust.
+>
 > Given that this driver is no longer locked to the Intel trust root, by
 > virtue of being restricted to run only on platforms which support
 > Flexible Launch Control, there is no longer any legitimate technical
 > reason to not expose all of the functionality of the hardware.
 
-I honestly can't understand what the point of this is, and I mean that
-on multiple levels.
+I read this three times, and I can't tell what functionality you're
+referring to.
 
-First of all, there's not a coherent description of the problem you're
-solving with ~700 lines of code and the treatise you wrote here instead
-of a changelog.
+>
+> The patch that I am including below implements signature based policy
+> controls for enclave initialization.  It does so in a manner that is
+> completely transparent to the default behavior of the driver, which is
+> to initialize any enclave passed to it with the exception of enclaves
+> that set the PROVISION_KEY attribute bit.
 
-Second, is the point here to distract folks from testing the branch in
-the tip tree?  Or, is it to show appreciation to maintainers by giving
-them more of the thing they love: code to review?
+It's completely unreviewable.  It's an ABI patch, and it does not
+document what it does, nor does it document why it does it.  It's just
+a bunch of code.  NAK.
+
+To be crystal clear, I will not review, and I will NAK outright, any
+patches of this sort, until ALL of the following conditions are met:
+
+a) Either a functioning SGX driver lands in a -rc kernel or there is
+an excellent justification for why a change of this sort is needed
+prior to a release.  Dr. Greg, you seem to be interested in SGX
+actually landing upstream, but these patches are just causing delays.
+Please stop.
+
+b) The patch needs to explain what problem it solves and why it is a
+good solution to that problem.
+
+c) The patch needs to explain, either in a changelog or in a text file
+in the patch, *exactly* what it does.  Imagine MSDN-like documentation
+in the good old days.  The documentation needs to be sufficiently
+clear that a userspace programmer could use your mechanism without
+reference to your implementation and that a kernel programmer could,
+in principle, re-implement your code from the description.
+
+Unless all three of these are met, your patch is going nowhere, and I
+think no one should waste their time trying to read it.
+
+>
+> Secondary to the discussions that have been ongoing regarding the
+> restriction of mmap/mprotect, this patch has been extended to
+> implement signature based controls on dynamic enclaves.  The default
+> behavior of the driver under this patch is to reject mmap/mprotect on
+> initialized enclaves, unless the platform owner has elected to allow
+> the enclave signer the option to implement 'dynamic' enclaves,
+> ie. enclaves that are allowed to modify their page permissions after
+> initialization.
+
+You have sent this change repeatedly, and now for some reason you're
+sending it mixed in with unrelated changes.  Please stop.  At no point
+have you explained why this approach is better than anything else.  It
+has the obnoxious side effect that you can't usefully SCM_RIGHTS an
+enclave to a different process with your patch applied, which is at
+least a minor disadvantage.  You have not explained any advantage to
+your patch at all.
+
+Dr Greg, before you hit send on further emails about SGX, could you
+kindly try to imagine you're a kernel maintainer, read your own email,
+and consider whether how to make it add something useful to the
+discussion?
+
+Thanks,
+Andy
