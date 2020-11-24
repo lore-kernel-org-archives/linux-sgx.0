@@ -2,156 +2,182 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374C7C5519F
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Nov 2020 18:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDFFC2D0E4
+	for <linux-sgx@archiver.kernel.org>; Tue, 24 Nov 2020 10:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0028B22206
-	for <linux-sgx@archiver.kernel.org>; Sat, 21 Nov 2020 18:37:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4NAE/tE"
+	by mail.kernel.org (Postfix) with ESMTP id A718A2076E
+	for <linux-sgx@archiver.kernel.org>; Tue, 24 Nov 2020 10:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbgKUShS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 21 Nov 2020 13:37:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48234 "EHLO mail.kernel.org"
+        id S1726771AbgKXK4f (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 24 Nov 2020 05:56:35 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:33422 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbgKUShR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 21 Nov 2020 13:37:17 -0500
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C2822269
-        for <linux-sgx@vger.kernel.org>; Sat, 21 Nov 2020 18:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605983836;
-        bh=k4bb1XSryjOjrKpxNZH2F9eH58+fbIVd+aoQp0laXe4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Y4NAE/tEqUg/gNMrQ7inrCvPTLXMwTuIj3xOAWqsXeKJ+KzxTBJwDo9ThXWitboWn
-         DcLN36fXAWIljW5O/B76tftncEDlzr9WVJZs5/K56Edt42vSlCydm8qtp7i75IQ4es
-         9z1GViBGnY+3/drXDznTvhLlCyIiqi59OB1O/rXI=
-Received: by mail-wm1-f54.google.com with SMTP id x13so4991550wmj.1
-        for <linux-sgx@vger.kernel.org>; Sat, 21 Nov 2020 10:37:16 -0800 (PST)
-X-Gm-Message-State: AOAM531aOwcb0fYzXwCKBTG2hXRX3G6Inqlhz2qAKqc5uYeCqJVjG6vp
-        6HV1OCjiI0o524Lo4ozH4VwFaGLTdOkj0Dkx2uW5rw==
-X-Google-Smtp-Source: ABdhPJyT+5j8rFsBwyu797OsJDl+WuTD1EdSAaQGjTptGYVDhPFIXviNZWOffcBNlGT7AqKtPnhaNScW8JUX+5hc0PY=
-X-Received: by 2002:a7b:c92a:: with SMTP id h10mr15913375wml.138.1605983835075;
- Sat, 21 Nov 2020 10:37:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201121151259.GA3948@wind.enjellic.com>
-In-Reply-To: <20201121151259.GA3948@wind.enjellic.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 21 Nov 2020 10:36:58 -0800
-X-Gmail-Original-Message-ID: <CALCETrXTjZSg-ccDKF7yX8y+vCCrcn9C_m6ZCGNdWHq73aUHQQ@mail.gmail.com>
-Message-ID: <CALCETrXTjZSg-ccDKF7yX8y+vCCrcn9C_m6ZCGNdWHq73aUHQQ@mail.gmail.com>
+        id S1725786AbgKXK4e (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 24 Nov 2020 05:56:34 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 0AOAtmjV020691;
+        Tue, 24 Nov 2020 04:55:48 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 0AOAtlwf020690;
+        Tue, 24 Nov 2020 04:55:47 -0600
+Date:   Tue, 24 Nov 2020 04:55:47 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH v40 00/24] Intel SGX foundations
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Neil Horman <nhorman@redhat.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
-        Mikko Ylinen <mikko.ylinen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20201124105547.GA19930@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com> <20201121151259.GA3948@wind.enjellic.com> <5ac4eccb-fcf9-eed3-fcec-b8b6bf56bb39@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ac4eccb-fcf9-eed3-fcec-b8b6bf56bb39@intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 24 Nov 2020 04:55:48 -0600 (CST)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Dr. Greg, I know you like sending these emails, but they're not really
-helpful for Linux kernel development.  Please see below.
+On Sat, Nov 21, 2020 at 08:25:23AM -0800, Dave Hansen wrote:
 
-On Sat, Nov 21, 2020 at 7:13 AM Dr. Greg <greg@enjellic.com> wrote:
->
-> On Wed, Nov 04, 2020 at 04:54:06PM +0200, Jarkko Sakkinen wrote:
->
-> Good morning, I hope the weekend is going well for everyone.
->
-> > Important Kernel Touch Points
-> > =============================
-> >
-> > This implementation is picky and will decline to work on hardware which
-> > is locked to Intel's root of trust.
->
-> Given that this driver is no longer locked to the Intel trust root, by
-> virtue of being restricted to run only on platforms which support
-> Flexible Launch Control, there is no longer any legitimate technical
-> reason to not expose all of the functionality of the hardware.
+Good morning, I hope the week has started well for everyone.
 
-I read this three times, and I can't tell what functionality you're
-referring to.
+> On 11/21/20 7:12 AM, Dr. Greg wrote:
+> >> Important Kernel Touch Points
+> >> =============================
+> >>
+> >> This implementation is picky and will decline to work on hardware which
+> >> is locked to Intel's root of trust.
 
->
-> The patch that I am including below implements signature based policy
-> controls for enclave initialization.  It does so in a manner that is
-> completely transparent to the default behavior of the driver, which is
-> to initialize any enclave passed to it with the exception of enclaves
-> that set the PROVISION_KEY attribute bit.
+> > Given that this driver is no longer locked to the Intel trust root, by
+> > virtue of being restricted to run only on platforms which support
+> > Flexible Launch Control, there is no longer any legitimate technical
+> > reason to not expose all of the functionality of the hardware.
 
-It's completely unreviewable.  It's an ABI patch, and it does not
-document what it does, nor does it document why it does it.  It's just
-a bunch of code.  NAK.
+> I honestly can't understand what the point of this is, and I mean
+> that on multiple levels.
 
-To be crystal clear, I will not review, and I will NAK outright, any
-patches of this sort, until ALL of the following conditions are met:
+I'm sorry the issue is elusive to you but that doesn't mean it isn't
+technically relevant or grounded.
 
-a) Either a functioning SGX driver lands in a -rc kernel or there is
-an excellent justification for why a change of this sort is needed
-prior to a release.  Dr. Greg, you seem to be interested in SGX
-actually landing upstream, but these patches are just causing delays.
-Please stop.
+It also doesn't mean this issue isn't relevant to the kernel community
+at large.  I have been active in Linux since late 1991 and my
+perception was that technical honesty was always the imperative, hence
+my last e-mail on this subject.
 
-b) The patch needs to explain what problem it solves and why it is a
-good solution to that problem.
+> First of all, there's not a coherent description of the problem
+> you're solving with ~700 lines of code and the treatise you wrote
+> here instead of a changelog.
 
-c) The patch needs to explain, either in a changelog or in a text file
-in the patch, *exactly* what it does.  Imagine MSDN-like documentation
-in the good old days.  The documentation needs to be sufficiently
-clear that a userspace programmer could use your mechanism without
-reference to your implementation and that a kernel programmer could,
-in principle, re-implement your code from the description.
+A number of points.
 
-Unless all three of these are met, your patch is going nowhere, and I
-think no one should waste their time trying to read it.
+While I'm flattered, I cannot ethically accept the fact that the
+e-mail I wrote amounted to a treatise.  To do so would do injustice to
+the likes of Euclid[0], Descartes[1] and Newton[2] among notable
+others.  From a literary metric perspective it wouldn't rise to the
+level of a monograph let alone an essay on the subject.
 
->
-> Secondary to the discussions that have been ongoing regarding the
-> restriction of mmap/mprotect, this patch has been extended to
-> implement signature based controls on dynamic enclaves.  The default
-> behavior of the driver under this patch is to reject mmap/mprotect on
-> initialized enclaves, unless the platform owner has elected to allow
-> the enclave signer the option to implement 'dynamic' enclaves,
-> ie. enclaves that are allowed to modify their page permissions after
-> initialization.
+With that behind us.
 
-You have sent this change repeatedly, and now for some reason you're
-sending it mixed in with unrelated changes.  Please stop.  At no point
-have you explained why this approach is better than anything else.  It
-has the obnoxious side effect that you can't usefully SCM_RIGHTS an
-enclave to a different process with your patch applied, which is at
-least a minor disadvantage.  You have not explained any advantage to
-your patch at all.
+There was a full changelog with the patch, the e-mail essentially
+wrapped the changelog and patch with a cover letter that was directed
+at being responsive to the issue of including the SGX driver in the
+kernel.
 
-Dr Greg, before you hit send on further emails about SGX, could you
-kindly try to imagine you're a kernel maintainer, read your own email,
-and consider whether how to make it add something useful to the
-discussion?
+If you would have clicked on the link that I provided, which I will
+replicate below:
 
-Thanks,
-Andy
+ftp://ftp.enjellic.com/pub/sgx/kernel/SFLC-v41.patch
+
+You will get a fully 'git am' compliant patch, including a changelog.
+
+The changelog was written in a parlance consistent with someone who
+would have a basic understanding of the technology under review.  If
+this entire review and vetting process is being done absent that kind
+of understanding, then the case can be made that the kernel
+development process has larger issues on its hands.
+
+Lets be honest though, that is not the case here, we have been talking
+about this issue for over a year, everyone involved with this
+technology knows what the problem is.
+
+Since LKML is copied, the basic issue is as follows:
+
+1.) SGX as a technology is designed to execute code and operate on
+data in a manner that is confidential to inspection and impervious to
+modification and control by the kernel.
+
+2.) The mindset of the driver developers is that the kernel should be
+the ultimate authority on what SGX is allowed to do.
+
+The two world views are inherently and technically incompatible and
+lead to a potential security dilemma for the kernel.  We simply
+advocate for an additional level of cryptographic security that
+supplements, not replaces, kernel controls to address this issue.
+
+Issue #1 isn't theoretical.  The Linux Foundation feels there is
+commercial value to this concept, as do the primary signatories
+(Intel, GOOGLE, Microsoft, IBM/RedHat, Alibaba, ARM, Huawei) to the
+Confidential Computing Consortium, all of which have a desire to
+economically exploit the notion of a generic Trusted Execution
+Environment such as SGX.
+
+So this is either a legitimate technical issue that needs to be
+addressed or these companies and their customers are on a fools
+errand.
+
+> Second, is the point here to distract folks from testing the branch
+> in the tip tree?  Or, is it to show appreciation to maintainers by
+> giving them more of the thing they love: code to review?
+
+Overall, given the extremely small number of people that understand
+this technology end to end, let alone who can effectively test it, our
+involvement was driven by:
+
+Quis custodiet ipsos custodes?
+
+With respect to the maintainers, I'm sure it is a thankless job.
+
+However, if you are getting paid to review and maintain kernel code
+then one needs to review kernel code or find a different job if it is
+too thankless.  I have plenty of thankless things to do in my job but
+I do them since it is my job.
+
+Our patch has two external functions of around 30 lines (~1 screen)
+each that impact the driver.  The bulk of the 700 lines, all in one
+file, is boilerplate code, largely replicated for each instance,
+needed to read/write sysfs files and maintain four, nearly identical,
+linked lists.  If this is an insurmountable review burden then the
+kernel development process has larger problems on its hands.
+
+Have a good day.
+
+Dr. Greg
+
+[0]: The Elements
+[1]: Discourse on the Method
+[2]: Opticks
+
+As always,
+Greg Wettstein, Ph.D, Worker          Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"I can only provide the information, I can't make you hear it."
+                                -- Shelley Bainter
