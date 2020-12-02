@@ -2,62 +2,69 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B52C83019
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 16:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6498FC64E7C
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 17:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 840DE21D81
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 16:25:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E51C121D42
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 17:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbgLBQZY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Dec 2020 11:25:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47650 "EHLO mail.kernel.org"
+        id S1726221AbgLBRS2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Dec 2020 12:18:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbgLBQZY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 2 Dec 2020 11:25:24 -0500
-Date:   Wed, 2 Dec 2020 18:24:37 +0200
+        id S1726003AbgLBRS2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 2 Dec 2020 12:18:28 -0500
+Date:   Wed, 2 Dec 2020 19:17:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606926283;
-        bh=IR2QsgOFqOIz1Qx4n7Emw+Gxybf+6uQBeV594hWetgU=;
+        s=default; t=1606929467;
+        bh=9L7Q5Dc/uFNE5f6PQrIoTOiUeyxMC4QMBLekFFllGHc=;
         h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nVtO0NncsX9v5OONsuj0Dw2Pr5VNTe1nQy64bNQXcEjF3PkDFwLlviuriB5OKH30r
-         rUWw5GFn2nMbbcyaOd0iJhZoPRTF9xRJSRx3J8Fhsb9dv4Ee3zdI3I0/hiW8rExwhm
-         mmXaJDvrh3LPSxHc3SHxJTXeHof8MFuATVges/tg=
+        b=offS4uZmPDFTgRCcAILaT1h51+7soDU5mZ9c70qQDHrZV2axfY4goT5cZKx/lm2jb
+         VAyO1a3X/NrY7dDhR2MDOtkREGbIP4U82TLman9qhpWVzHjEvOnwn3evGwgDeoJPrK
+         cyzDommH/tUR2pguq1xSUxcQB8uugnFxkTGzhauw=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH 1/2] asm: sgx.h: fix a typo on a kernel-doc markup
-Message-ID: <20201202162437.GA89637@kernel.org>
-References: <cover.1606897462.git.mchehab+huawei@kernel.org>
- <ca11a4540d981cbd5f026b6cbc8931aa55654e00.1606897462.git.mchehab+huawei@kernel.org>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     linux-man <linux-man@vger.kernel.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [PATCH] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+Message-ID: <20201202171742.GA91954@kernel.org>
+References: <20201202071543.74866-1-jarkko@kernel.org>
+ <CAKgNAkhROLJMmfAUiDCQhW0LCck08sF8jnYVJhSircxA059wXg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca11a4540d981cbd5f026b6cbc8931aa55654e00.1606897462.git.mchehab+huawei@kernel.org>
+In-Reply-To: <CAKgNAkhROLJMmfAUiDCQhW0LCck08sF8jnYVJhSircxA059wXg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 09:27:14AM +0100, Mauro Carvalho Chehab wrote:
-> As warned by kernel-doc:
-> 	arch/x86/include/uapi/asm/sgx.h:19: warning: expecting prototype for enum sgx_epage_flags. Prototype was for enum sgx_page_flags instead
+On Wed, Dec 02, 2020 at 11:37:01AM +0100, Michael Kerrisk (man-pages) wrote:
+> Hi Jarkko,
 > 
-> There is a typo at the kernel-doc markup:
-> 
-> 	sgx_epage_flags -> sgx_page_flags
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Thanks for the page. I'll have some more comments later, most likely.
+> But to begin with, are there any other manual pages that should be
+> listed in a SEE ALSO section for this manual page, and are there any
+> pages in man-pages that you think should refer to this page in their
+> SEE ALSO sections?
 
-Thank you.
+Thanks for quick response.
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+SGX does not declare any syscalls but it does have an ioctl API and
+a vDSO.
+
+I think one thing that the man page is missing is SIGSEGV handling.
+When user space directly invokes ENCLU[EENTER], then the exceptions
+inside are recognized through SIGSEV. This should be probably added,
+and then "SEE ALSO" should point out to sigaction().
+
+> Cheers,
+> 
+> Michael
 
 /Jarkko
