@@ -2,144 +2,145 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448A9C64E90
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 12:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC70DC64E7B
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 14:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E671A22206
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 12:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AF3C221EB
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Dec 2020 14:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbgLBMGN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Dec 2020 07:06:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbgLBMGM (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Dec 2020 07:06:12 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49AB6C0613CF;
-        Wed,  2 Dec 2020 04:05:32 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id a16so3821585ejj.5;
-        Wed, 02 Dec 2020 04:05:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8LOqrpEWFYD7xxm8QVITMguMi/oKIgU6hejK3ig82XQ=;
-        b=l5roT7Qpet6sIO2Kl73ftKavn4FpZGZAIndVzEoCnHADDt4Ruqa7RwbpvRLlWdryN4
-         CJttYlG3KIPwg+e3cpbmrapqfPIfCiyMGs89jBINouRkLoBq+OfEdiN2E3tU4XUMi+bR
-         DFkL/JXVMyuiYIyF+T0H4VXUKX42DnJa5rtNWI7fejge3t9Sl8BmJmvlSP5xwqoO8+W6
-         8KkGypc3vS98oy4Vwz4jyMV5G1tW3VmoOjSG4pGKAvYpV+nao4XaQzw9g1LZd9/tcxvE
-         eN1gKIxNItHg4QdDam+W3ko0ZAcxa1MMM/mVR8JTXxizoiMU/Hwb+BCc7wsnRkjD2lM5
-         SwQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8LOqrpEWFYD7xxm8QVITMguMi/oKIgU6hejK3ig82XQ=;
-        b=c6uIBRxBx7uU8HaqfXmlZskq5qCVSSLrDdw7JqqPmgg/vLL7g3pAVURRmchjXWCALG
-         4/qYfO2BLFkFS5iDiMPn+g6nwZyiy2UiTkCKLWlrxlgkJRMuHoMywO3zS76rt3Jkz231
-         BtwIwDQSlKFKzlngZNsd+9rqffdFy2F/2wmfi/FrGGwFSe8bGhYqsgQoTuDlMTlmB81J
-         41f1vuA1l6GMt3omK3uzrkF6rpOhgC6CPXnr111EcqgvaNSWdLtbKvZ/DpAsn8Stvpeq
-         /cR+A6ClevlrNCpXz+FCCt7n34obuGrQgEYCmNwAaYvO0w/M9nMhWRZANcxuP4h+K7wX
-         cwMg==
-X-Gm-Message-State: AOAM531PwPn+bx7OsKWspqRoDG3eSOZAzV361AgzpKXL+NIdIMktHGaP
-        ZfTrpypgZGHbC4ddWdTSEBA=
-X-Google-Smtp-Source: ABdhPJy4jUDxuNjjLQsTqSfUL/GfkBGO6Jo2IEN4GCBb6EMvnxeWVlMw4PQz9S7RJbZ4K2JWHe9yYQ==
-X-Received: by 2002:a17:906:358e:: with SMTP id o14mr1901513ejb.526.1606910730942;
-        Wed, 02 Dec 2020 04:05:30 -0800 (PST)
-Received: from ?IPv6:2001:a61:3aad:c501:15d9:d9fb:bc21:cb92? ([2001:a61:3aad:c501:15d9:d9fb:bc21:cb92])
-        by smtp.gmail.com with ESMTPSA id e19sm1019668edr.61.2020.12.02.04.05.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Dec 2020 04:05:30 -0800 (PST)
-Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
-        x86@kernel.org,
-        "G. Branden Robinson" <g.branden.robinson@gmail.com>
-Subject: Re: [PATCH] sgx.7: New page with overview of Software Guard
- eXtensions (SGX)
-To:     "Alejandro Colomar (mailing lists, readonly)" 
-        <alx.mailinglists@gmail.com>, Jarkko Sakkinen <jarkko@kernel.org>
-References: <20201202071543.74866-1-jarkko@kernel.org>
- <f6eb74cf-0cb6-0549-9ed3-3e3b2af23ad1@gmail.com>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <979b146b-d5ce-f7a9-9e6f-e723b62bbaed@gmail.com>
-Date:   Wed, 2 Dec 2020 13:05:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1727060AbgLBOPR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Dec 2020 09:15:17 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:37752 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbgLBOPQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Dec 2020 09:15:16 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B2E5feC107885;
+        Wed, 2 Dec 2020 14:14:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=goeAealbfR1Oo0ug61ERN0EJRJMVeeEamvq4Wv945cA=;
+ b=jM2hXyHhK2aoVyzJbEUxqGzc+WcAsfpTXae5A/RRICZOBkmHWKwlIS/bKWQJHkCBlU79
+ djmcEkscNd5+I01vessZGb1zZKKQ5qv67195P+Y6jWlaqlQ9O01ACBtSxom5JXmjUNC5
+ XUxwtAQcjLF4iaXHsOHMqSQ8UT9T2pk656yrXI30djn7/hPD80av686xHOhMUDcl0yHo
+ FmjC+bqI3w/NDY7U7R1NHpZS/VJTDtGJWKUPB0qJFYYEwEVhdB5+NRRBYelJ5TWexOwm
+ lskMOYcEZn0gwnWdbcqrRRL2XOLm2jjFdKhEF9w/xuYDc8sXgM45hTnmPAUXTHcPDrFg EQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 353egkre5a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 02 Dec 2020 14:14:33 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B2E5Pr5064462;
+        Wed, 2 Dec 2020 14:14:33 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 3540fysuyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Dec 2020 14:14:32 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0B2EEWmX011010;
+        Wed, 2 Dec 2020 14:14:32 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Dec 2020 06:14:31 -0800
+Date:   Wed, 2 Dec 2020 17:14:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     jarkko@kernel.org
+Cc:     linux-sgx@vger.kernel.org
+Subject: [bug report] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
+Message-ID: <X8ehQssnslm194ld@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <f6eb74cf-0cb6-0549-9ed3-3e3b2af23ad1@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=3
+ phishscore=0 mlxlogscore=847 adultscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012020086
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=3
+ phishscore=0 mlxlogscore=861 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012020086
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/2/20 12:50 PM, Alejandro Colomar (mailing lists; readonly) wrote:
-> Hi Jarkko,
-> 
-> Thanks for the page.
-> 
-> Adding to Michael's comment,
-> here are a few things to fix (see below).
-> 
-> Michael, there's also a question for you (grep mtk).
-> 
-> Thanks,
-> 
-> Alex
-> 
-> On 12/2/20 8:15 AM, Jarkko Sakkinen wrote:
->> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->> ---
->>  man7/sgx.7 | 198 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 198 insertions(+)
->>  create mode 100644 man7/sgx.7
->>
->> diff --git a/man7/sgx.7 b/man7/sgx.7
->> new file mode 100644
->> index 000000000..429c9b64d
->> --- /dev/null
->> +++ b/man7/sgx.7
->> @@ -0,0 +1,198 @@
+Hello Jarkko Sakkinen,
 
-[...]
+The patch c6d26d370767: "x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES" from
+Nov 13, 2020, leads to the following static checker warning:
 
->> +support, ensure that SGX is enabled in the BIOS.
->> +If a BIOS presents a choice between \[lq]Enabled\[rq] and \[lq]Software
-> 
-> s/\\[lq]/\\(dq/g
-> s/\\[rq]/\\(dq/g
-> 
-> Basically, we use \(dq for any double quotes, and we don't care about
-> left or right.
+	arch/x86/kernel/cpu/sgx/ioctl.c:466 sgx_ioc_enclave_add_pages()
+	error: uninitialized symbol 'ret'.
 
-(Yes.)
+arch/x86/kernel/cpu/sgx/ioctl.c
+   413  static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+   414  {
+   415          struct sgx_enclave_add_pages add_arg;
+   416          struct sgx_secinfo secinfo;
+   417          unsigned long c;
+   418          int ret;
+   419  
+   420          if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
+   421              test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+   422                  return -EINVAL;
+   423  
+   424          if (copy_from_user(&add_arg, arg, sizeof(add_arg)))
+   425                  return -EFAULT;
+   426  
+   427          if (!IS_ALIGNED(add_arg.offset, PAGE_SIZE) ||
+   428              !IS_ALIGNED(add_arg.src, PAGE_SIZE))
+   429                  return -EINVAL;
+   430  
+   431          if (add_arg.length & (PAGE_SIZE - 1))
+   432                  return -EINVAL;
+   433  
+   434          if (add_arg.offset + add_arg.length - PAGE_SIZE >= encl->size)
+   435                  return -EINVAL;
+   436  
+   437          if (copy_from_user(&secinfo, (void __user *)add_arg.secinfo,
+   438                             sizeof(secinfo)))
+   439                  return -EFAULT;
+   440  
+   441          if (sgx_validate_secinfo(&secinfo))
+   442                  return -EINVAL;
+   443  
+   444          for (c = 0 ; c < add_arg.length; c += PAGE_SIZE) {
 
-> Michael (mtk):
-> 
-> I was searching to see if it was documented in man-pages(7),
-> but I didn't find it.
-> Should we add something under man-pages(7)::STYLE GUIDE::Generating
-> optimal glyphs?
+If the user passes in an "add_arg.length" value of zero then "ret" isn't
+initialized.
 
-I'm not sure. (I worry about overloading the page with too much
-detail.) I think I'll just duck this question for now.
+   445                  if (signal_pending(current)) {
+   446                          if (!c)
+   447                                  ret = -ERESTARTSYS;
+   448  
+   449                          break;
+   450                  }
+   451  
+   452                  if (need_resched())
+   453                          cond_resched();
+   454  
+   455                  ret = sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
+   456                                          &secinfo, add_arg.flags);
+   457                  if (ret)
+   458                          break;
+   459          }
+   460  
+   461          add_arg.count = c;
+   462  
+   463          if (copy_to_user(arg, &add_arg, sizeof(add_arg)))
+   464                  return -EFAULT;
+   465  
+   466          return ret;
+                ^^^^^^^^^^
 
-[...]
+   467  }
 
-Thanks,
-
-Michael
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+regards,
+dan carpenter
