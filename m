@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35882C433FE
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Dec 2020 00:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4006C4361B
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Dec 2020 00:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 016B723A79
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Dec 2020 00:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76C2723B7F
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Dec 2020 00:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730574AbgLIAEI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 8 Dec 2020 19:04:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40190 "EHLO mail.kernel.org"
+        id S1725906AbgLIAQK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Dec 2020 19:16:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730769AbgLIAEH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 8 Dec 2020 19:04:07 -0500
-Date:   Wed, 9 Dec 2020 02:03:21 +0200
+        id S1730815AbgLIAQI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 8 Dec 2020 19:16:08 -0500
+Date:   Wed, 9 Dec 2020 02:15:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607472206;
-        bh=6ZtoiGbm9LTLDc88yn4VKW01doz9ouuyDAQaXV0/ShM=;
+        s=k20201202; t=1607472927;
+        bh=j6WciaYJSxFop1XjtpqdiDWZepE71ebSKm7Oexe8ZU4=;
         h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ot+CjBOGH2ZDcSelwhl/klt+T+d/BhOJw/CQNROu7X0MVE8gMmRxB2i8HefOCPYNH
-         L9pQRTJpMzqP0WKPQWEHQOdp6RDoWTpaqKIp33Wk2byx4sKB82VNaMGXgBpjepEOFa
-         RRmZtTyacN+z84RqAjtmNyC+zfpRNYG+nNPEOgIqe1E+lDoRkkV3nzkP3pzwXSUlh+
-         Xbp7NBMa+VSE2I8XY+yVlKATgeuN17UsH12gNLnAp4xw+RG5mJuA6wJdYIelww+5uJ
-         CuxIl+0Kvoiel76y1Zf0oREc9YGwe2f2sL3IiKRayK9EXQvjuVM2dZh8UBzXHwGgp3
-         UcjaWJQOAhxeg==
+        b=on9EdAShKMtTxcQgLmb3NGsl84E64a41+JRkrOKkpIj4ZLNbp1EX8rIWWcNJa8hsq
+         f3mlNJFzJF44/OYmBiaWFygq6Cf8kWbbGhBElaUSjxzXtxnhbCazsMT5knvFGSEmtu
+         JBllY49lYwOZnWpF1+dwtflZrxYNwqo2rFcH3EBuAZo2cfk36hhRTR7Vg30bo4LRDT
+         De64eaWlCaFx0vI3grIvMnQOaC5iPA54Hnig+qVdhtlxg0y40cWd6GF4OTh9/CqyRV
+         nfCKWktq+eHcq14QpWZgNTyuyh3d6Y4w0xV44gQng2QiXexsy0Tyxq+g6o73//GF11
+         eiOUZ5y/bo3Fg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Topi Miettinen <toiwoton@gmail.com>,
+To:     Topi Miettinen <toiwoton@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
         Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
         linux-hotplug@vger.kernel.org,
         systemd Mailing List <systemd-devel@lists.freedesktop.org>,
@@ -44,64 +45,43 @@ Cc:     Topi Miettinen <toiwoton@gmail.com>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Ben Hutchings <ben@decadent.org.uk>
 Subject: Re: Creating executable device nodes in /dev?
-Message-ID: <20201209000321.GA62845@kernel.org>
-References: <CALCETrWM2rGPRudtaQ=mn9MRsrbQqFfZDkOGsBbVMsk6mMw_+A@mail.gmail.com>
- <20201119163245.GN7348@in.waw.pl>
- <ff9aaf77-add3-dbeb-d05e-aedd93d41df0@gmail.com>
- <CALCETrW7JUquNf_KaA0UK9VEcswQZ+QMqFEQD_8G=c3JyH1xsQ@mail.gmail.com>
+Message-ID: <20201209001521.GA64007@kernel.org>
+References: <0f17eade-5e99-be29-fd09-2d0a1949ac7f@gmail.com>
+ <9DF5C88B-5156-455A-BA3F-EB19CAA0411B@amacapital.net>
+ <bbdedcfd-cc24-1616-7f87-3c7f62571b22@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrW7JUquNf_KaA0UK9VEcswQZ+QMqFEQD_8G=c3JyH1xsQ@mail.gmail.com>
+In-Reply-To: <bbdedcfd-cc24-1616-7f87-3c7f62571b22@gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 10:07:17AM -0800, Andy Lutomirski wrote:
-> On Thu, Nov 19, 2020 at 10:05 AM Topi Miettinen <toiwoton@gmail.com> wrote:
-> >
-> > On 19.11.2020 18.32, Zbigniew Jędrzejewski-Szmek wrote:
-> > > On Thu, Nov 19, 2020 at 08:17:08AM -0800, Andy Lutomirski wrote:
-> > >> Hi udev people-
-> > >>
-> > >> The upcoming Linux SGX driver has a device node /dev/sgx.  User code
-> > >> opens it, does various setup things, mmaps it, and needs to be able to
-> > >> create PROT_EXEC mappings.  This gets quite awkward if /dev is mounted
-> > >> noexec.
-> > >>
-> > >> Can udev arrange to make a device node executable on distros that make
-> > >> /dev noexec?  This could be done by bind-mounting from an exec tmpfs.
-> > >> Alternatively, the kernel could probably learn to ignore noexec on
-> > >> /dev/sgx, but that seems a little bit evil.
-> > >
-> > > I'd be inclined to simply drop noexec from /dev by default.
-> > > We don't do noexec on either /tmp or /dev/shm (because that causes immediate
-> > > problems with stuff like Java and cffi). And if you have those two at your
-> > > disposal anyway, having noexec on /dev doesn't seem important.
-> >
-> > I'd propose to not enable exec globally, but if a service needs SGX, it
-> > could use something like MountOptions=/dev:exec only in those cases
-> > where it's needed. That way it's possible to disallow writable and
-> > executable file systems for most services (which typically don't need
-> > /tmp or /dev/shm either). Of course the opposite
-> > (MountOptions=/dev:noexec) would be also possible, but I'd expect that
-> > this would be needed to be used more often.
-> >
+On Wed, Dec 09, 2020 at 01:15:27AM +0200, Topi Miettinen wrote:
+> > > > As  a further argument, I just did this on a Fedora system:
+> > > > $ find /dev -perm /ugo+x -a \! -type d -a \! -type l
+> > > > No results.  So making /dev noexec doesn't seem to have any benefit.
+> > > 
+> > > It's no surprise that there aren't any executables in /dev since
+> > > removing MAKEDEV ages ago. That's not the issue, which is that
+> > > /dev is a writable directory (for UID=0 but no capabilities are
+> > > needed) and thus a potential location for constructing unapproved
+> > > executables if it is also mounted exec (W^X).
+> > 
+> > UID 0 can just change mount options, though, unless SELinux or similar is used. And SELinux can protect /dev just fine without noexec.
 > 
-> I imagine the opposite would be more sensible.  It seems odd to me
-> that we would want any SGX-using service to require both special mount
-> options and regular ACL permissions.
+> Well, mounting would need CAP_SYS_ADMIN in addition to UID 0. Also SELinux
+> is not universal and the policies might not contain all users or services.
 > 
-> As  a further argument, I just did this on a Fedora system:
-> 
-> $ find /dev -perm /ugo+x -a \! -type d -a \! -type l
-> 
-> No results.  So making /dev noexec doesn't seem to have any benefit.
+> -Topi
 
-Neither does my Ubuntu installation with '-xdev' added (because of
-/dev/shm mount).
+What's the data that supports having noexec /dev anyway? With root
+access I can then just use something else like /dev/shm mount.
 
-find /dev -xdev -perm /ugo+x -a \! -type d -a \! -type l
+Has there been out in the wild real world cases that noexec mount
+of would have prevented?
+
+For me this sounds a lot just something that "feels more secure"
+without any measurable benefit. Can you prove me wrong?
 
 /Jarkko
