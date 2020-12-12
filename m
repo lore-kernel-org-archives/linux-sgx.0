@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FD8C433FE
-	for <linux-sgx@archiver.kernel.org>; Sat, 12 Dec 2020 11:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F23DC433FE
+	for <linux-sgx@archiver.kernel.org>; Sat, 12 Dec 2020 12:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7CEC22CF8
-	for <linux-sgx@archiver.kernel.org>; Sat, 12 Dec 2020 11:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 202ED207C5
+	for <linux-sgx@archiver.kernel.org>; Sat, 12 Dec 2020 12:32:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438784AbgLLLwc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 12 Dec 2020 06:52:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54768 "EHLO
+        id S2438832AbgLLMcw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 12 Dec 2020 07:32:52 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55466 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438731AbgLLLwc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 12 Dec 2020 06:52:32 -0500
+        with ESMTP id S2438829AbgLLMcw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 12 Dec 2020 07:32:52 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ko3R6-00045D-6m; Sat, 12 Dec 2020 11:51:40 +0000
-Date:   Sat, 12 Dec 2020 12:51:39 +0100
+        id 1ko449-0006l2-59; Sat, 12 Dec 2020 12:32:01 +0000
+Date:   Sat, 12 Dec 2020 13:32:00 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Greg KH <greg@kroah.com>
 Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
@@ -40,7 +40,7 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         "Svahn, Kai" <kai.svahn@intel.com>,
         Stephen Smalley <sds@tycho.nsa.gov>, linux-sgx@vger.kernel.org
 Subject: Re: [systemd-devel] Creating executable device nodes in /dev?
-Message-ID: <20201212115139.tnelg2oys24a7xy2@wittgenstein>
+Message-ID: <20201212123200.dg47ez7zxg7nj46m@wittgenstein>
 References: <0f17eade-5e99-be29-fd09-2d0a1949ac7f@gmail.com>
  <9DF5C88B-5156-455A-BA3F-EB19CAA0411B@amacapital.net>
  <bbdedcfd-cc24-1616-7f87-3c7f62571b22@gmail.com>
@@ -100,6 +100,8 @@ On Fri, Dec 11, 2020 at 12:29:31PM +0100, Greg KH wrote:
 > > for character devices (S_IFCHR).
 > 
 > Oh please no.
+
+(Once more because my I was subscribed with an old email address.)
 
 Greg's right. That's very obviously a horrible hack so this is an
 instant nak from my side.
