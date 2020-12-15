@@ -5,26 +5,26 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,FROM_EXCESS_BASE64,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C3BC4361B
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 05:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2263C4361B
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 05:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59519222B6
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 05:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58B732229C
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 05:34:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725843AbgLOFcy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Dec 2020 00:32:54 -0500
-Received: from out0-147.mail.aliyun.com ([140.205.0.147]:45598 "EHLO
-        out0-147.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbgLOFcx (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Dec 2020 00:32:53 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047187;MF=sanqian.hcy@antgroup.com;NM=1;PH=DS;RN=27;SR=0;TI=SMTPD_---.J7DzSFJ_1608010139;
-Received: from sanqian-occlum-dev-ubuntu(mailfrom:sanqian.hcy@antgroup.com fp:SMTPD_---.J7DzSFJ_1608010139)
+        id S1725775AbgLOFem (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Dec 2020 00:34:42 -0500
+Received: from out0-156.mail.aliyun.com ([140.205.0.156]:33685 "EHLO
+        out0-156.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgLOFem (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Dec 2020 00:34:42 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047193;MF=sanqian.hcy@antgroup.com;NM=1;PH=DS;RN=26;SR=0;TI=SMTPD_---.J7GiJTp_1608010421;
+Received: from sanqian-occlum-dev-ubuntu(mailfrom:sanqian.hcy@antgroup.com fp:SMTPD_---.J7GiJTp_1608010421)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Dec 2020 13:29:04 +0800
-Date:   Tue, 15 Dec 2020 13:38:40 +0800
+          Tue, 15 Dec 2020 13:33:46 +0800
+Date:   Tue, 15 Dec 2020 13:43:22 +0800
 From:   "=?UTF-8?B?SHVpLCBDaHVueWFuZw==?=" <sanqian.hcy@antgroup.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
@@ -35,11 +35,10 @@ Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
         kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
         luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
         yaozhangx@google.com, mikko.ylinen@intel.com
 Subject: Re: [PATCH v41 00/24] Intel SGX foundations
-Message-ID: <20201215053833.GA522918@sanqian-occlum-dev-ubuntu>
+Message-ID: <20201215054313.GA522982@sanqian-occlum-dev-ubuntu>
 References: <20201112220135.165028-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -121,8 +120,8 @@ On Fri, Nov 13, 2020 at 12:01:11AM +0200, Jarkko Sakkinen wrote:
 
 Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
 
-Occlum project (https://occlum.io/) is a libOS built on top of Intel SGX
-feature. We ran Occlum tests using v5.10 kernel with SGX patch v41 on
+The Occlum project (https://occlum.io/) is a libOS built on top of Intel
+SGX feature. We ran Occlum tests using v5.10 kernel with SGX patch v41 on
 SGX hardware with the Flexible Launch Control (FLC) feature and didn't
 find any problems. As Occlum core developers, we would like these patches
 to be merged.
