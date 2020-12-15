@@ -2,122 +2,135 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD24C4361B
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Dec 2020 19:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C944C4361B
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 04:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24EB222581
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Dec 2020 19:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08FA820795
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 04:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440684AbgLNTCj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 14 Dec 2020 14:02:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59178 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441011AbgLNTCU (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Dec 2020 14:02:20 -0500
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45AB0C0613D3
-        for <linux-sgx@vger.kernel.org>; Mon, 14 Dec 2020 11:01:40 -0800 (PST)
-Received: by mail-pj1-x1042.google.com with SMTP id b5so7193013pjl.0
-        for <linux-sgx@vger.kernel.org>; Mon, 14 Dec 2020 11:01:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=1kWGK0RczIOp+iVj83yQa4txxLqHCI2JyPCYLhw6aOc=;
-        b=IW+b3fPAjrIiAyPxL8E1L3EkTc/tR/a3T8Sy0RT3363v51GzUV5oPr1UI8+DnrlBxq
-         St9/drNjy7O9xsFp5+qK1zNcY7x8yjrhajfAVpVVgf6jW8Zlr5LVW4zTSNwnQBOk2IB0
-         LF3pMIr5Iyt5KPecOQKlpx0tQF2nNA3e6Np16Pv91yeTs+BqPcvjW1p7QedlUe8s4+XK
-         VtLxe+luT8Rls5RmhxvpteD0wFKihWdi4WTRsmVZvIlBiUjk72RQEbxU3hp9klM3TghG
-         H6ZsA+oFqQnPb2oI2gRKpyC15lGjpR9+e3CBsQvlxDQD5imXYENxb3MBiynJOa+aVZpV
-         Srfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1kWGK0RczIOp+iVj83yQa4txxLqHCI2JyPCYLhw6aOc=;
-        b=cj2OziVlHy6+0FrDIS3dox8ts4B4b0+0r7omsCRmChO70EQHxDrwvKjZHfvGYaTTZw
-         MX+TKrKc1J5FafDmZbbjeObcGhLY9Wez2jTW+MqYRR1WC/ZobXmzAGltAhofP+AOYzrl
-         FoY3Ao9eHRrfIo8IIdjIdFKaf7rY6UFX+lCkLo/E17Gu56kFuyZFfxJoQJ4HRGCUXnId
-         8DxuzPAondbocq/snFlokhHzsh1Y2c/C7rmWQK+C4059Bq8t8+7vL1I4QadxbeGO97wG
-         izpeT8sRWDilDTaQyfSAqvu8EeRrc47qzqDVMgqZ13SZUC2e5WzB6PWDNWYb3oeOwrKA
-         yi/Q==
-X-Gm-Message-State: AOAM533Ajn3TIXjjlws5mcMyKuSlMjGuw0MIZYfljgkXjoUdnXmL1Di0
-        MMppEcMQRC2of/Nk25LAz09Pew==
-X-Google-Smtp-Source: ABdhPJzraNIBSIy+w0M5cqMA9btGHAYdNbSsyVAmIQl/cbkk91bRRZyEK/1b//gmtkxzZwpCP8NQFw==
-X-Received: by 2002:a17:90a:d307:: with SMTP id p7mr26891434pju.214.1607972499565;
-        Mon, 14 Dec 2020 11:01:39 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id b13sm4727079pfi.162.2020.12.14.11.01.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Dec 2020 11:01:38 -0800 (PST)
-Date:   Mon, 14 Dec 2020 11:01:32 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] x86/sgx: Synchronize encl->srcu in sgx_encl_release().
-Message-ID: <X9e2jOWz1hfXVpQ5@google.com>
-References: <20201211113230.28909-1-jarkko@kernel.org>
+        id S1726072AbgLOETu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Dec 2020 23:19:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725306AbgLOETu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 14 Dec 2020 23:19:50 -0500
+Date:   Tue, 15 Dec 2020 06:19:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608005949;
+        bh=agcw3MttJM/ieGdt8Bkd35TZZ2QtYl5fJeclOVQr9zQ=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kxZtnpWOi8KCkCvhw4GWCQ6zTNTQLl8H5HbaIQSRkFkkznc9F4NEKpoVtXhfMQbVS
+         AxjloBmVL2QyMkf8FcVbOxhusdM89LVXEq7TbLMaf5HPTp+e1YgBMdXJDZDajknhEa
+         Lq7ZiaqQjbpX2JugwwtWC31v5EX3sZ7vEOyVefRvBhABPr4gV5Mt4L6h+FtMmp8tuA
+         Hj1ptaxlHu2kSzv74CHF0J0okWPl4DOPn9ACn+f9lzj+Ck9bbjwRAJb0BXn2yQg0J9
+         HKwKuXMhEOTy68m1gM9GXMklsFtljygTAUedAt1MGrpDlfpk2iWyDR9cQP9y4+9PSi
+         WHD2VQyGrwDpA==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ulrich Windl <Ulrich.Windl@rz.uni-regensburg.de>
+Cc:     toiwoton@gmail.com, luto@amacapital.net,
+        Ben Hutchings <ben@decadent.org.uk>, jethro@fortanix.com,
+        bruce.schlobohm@intel.com, kai.svahn@intel.com, luto@kernel.org,
+        haitao.huang@linux.intel.com, jarkko.sakkinen@linux.intel.com,
+        "systemd-devel@lists.freedesktop.org" 
+        <systemd-devel@lists.freedesktop.org>, casey@schaufler-ca.com,
+        sds@tycho.nsa.gov, linux-hotplug@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Subject: Re: Antw: [EXT] Re: [systemd-devel] Creating executable device nodes
+ in /dev?
+Message-ID: <20201215041903.GA21875@kernel.org>
+References: <0f17eade-5e99-be29-fd09-2d0a1949ac7f@gmail.com>
+ <9DF5C88B-5156-455A-BA3F-EB19CAA0411B@amacapital.net>
+ <bbdedcfd-cc24-1616-7f87-3c7f62571b22@gmail.com>
+ <20201209001521.GA64007@kernel.org>
+ <b1cf9503-0c1c-ab9e-3cc4-ef2b7611b280@gmail.com>
+ <20201211104635.GD12091@kernel.org>
+ <27796c04-249e-6cf0-c3e1-0fd657a82f9c@gmail.com>
+ <5FD7137E020000A10003D81B@gwsmtp.uni-regensburg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201211113230.28909-1-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5FD7137E020000A10003D81B@gwsmtp.uni-regensburg.de>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Dec 11, 2020, Jarkko Sakkinen wrote:
-> Each sgx_mmun_notifier_release() starts a grace period, which means that
-
-Should be sgx_mmu_notifier_release(), here and in the comment.
-
-> one extra synchronize_rcu() in sgx_encl_release(). Add it there.
+On Mon, Dec 14, 2020 at 08:25:50AM +0100, Ulrich Windl wrote:
+> >>> Topi Miettinen <toiwoton@gmail.com> schrieb am 11.12.2020 um 12:46 in
+> Nachricht
+> <27796c04-249e-6cf0-c3e1-0fd657a82f9c@gmail.com>:
+> > On 11.12.2020 12.46, Jarkko Sakkinen wrote:
+> >> On Wed, Dec 09, 2020 at 10:35:21AM +0200, Topi Miettinen wrote:
+> >>> On 9.12.2020 2.15, Jarkko Sakkinen wrote:
+> >>>> On Wed, Dec 09, 2020 at 01:15:27AM +0200, Topi Miettinen wrote:
+> >>>>>>>> As  a further argument, I just did this on a Fedora system:
+> >>>>>>>> $ find /dev ‑perm /ugo+x ‑a \! ‑type d ‑a \! ‑type l
+> >>>>>>>> No results.  So making /dev noexec doesn't seem to have any benefit.
+> >>>>>>>
+> >>>>>>> It's no surprise that there aren't any executables in /dev since
+> >>>>>>> removing MAKEDEV ages ago. That's not the issue, which is that
+> >>>>>>> /dev is a writable directory (for UID=0 but no capabilities are
+> >>>>>>> needed) and thus a potential location for constructing unapproved
+> >>>>>>> executables if it is also mounted exec (W^X).
+> >>>>>>
+> >>>>>> UID 0 can just change mount options, though, unless SELinux or similar
+> is 
+> > used. And SELinux can protect /dev just fine without noexec.
+> >>>>>
+> >>>>> Well, mounting would need CAP_SYS_ADMIN in addition to UID 0. Also
+> SELinux
+> >>>>> is not universal and the policies might not contain all users or
+> services.
+> >>>>>
+> >>>>> ‑Topi
+> >>>>
+> >>>> What's the data that supports having noexec /dev anyway? With root
+> >>>> access I can then just use something else like /dev/shm mount.
+> >>>>
+> >>>> Has there been out in the wild real world cases that noexec mount
+> >>>> of would have prevented?
+> >>>>
+> >>>> For me this sounds a lot just something that "feels more secure"
+> >>>> without any measurable benefit. Can you prove me wrong?
+> >>>
+> >>> I don't think security works that way. An attacker has various methods to
+> >>> choose from, some are more interesting than others. The case where
+> rw,exec
+> >>> /dev would be interesting would imply that easier or more common avenues
+> >>> would be blocked, for example rw,exec /dev/shm, /tmp, /var/tmp, or
+> >>> /run/user/$UID/ for user. Also fileless malware with pure ROP/JOP
+> approach
+> >>> with no need for any file system access is getting more common. It does
+> not
+> >>> mean that it would not be prudent to block the relatively easy approaches
+> >>> too, including /dev.
+> >> 
+> >> What if we add a new mount option "chrexec", which allows exec
+> >> for character devices (S_IFCHR).
+> > 
+> > I think devices are a bad match for SGX because devices haven't been 
+> > executable and SGX is actually an operation for memory. So something 
+> > like memfd_create(, MFD_SGX) or mmap(,, PROT_READ|PROT_EXEC|PROT_SGX) 
+> > would be much more natural. Even better would be something that 
+> > conceptully also works for AMD version (either with the same flags or 
+> > MFD_SGX / MFD_whatever_the_AMD_version_is).
 > 
-> sgx_release() has the loop that drains the list but with bad luck the
-> entry is already gone from the list before that loop processes it.
+> +1
 
-Why not include the actual analysis that "proves" the bug?  The splat that
-Haitao reported would also be useful info.
+SGX reserved memory from kernel's point of view is IO memory.
 
-> Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Reported-by: Sean Christopherson <seanjc@google.com>
+Mapping SGX to memfd would not be a great idea, as it does not map
+into concept of anonymous file backed by regular memory.
 
-Haitao reported the bug, and for all intents and purposes provided the fix.  I
-just did the analysis to verify that there was a legitimate bug and that the
-synchronization in sgx_encl_release() was indeed necessary.
+A device file is very natural match actually. We have ioctl API for
+uploading enclave pages during the build procedure to the enclave and
+custom #PF handler. Conceptually it's a lot like video memory or such
+special device specific memory area.
 
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index ee50a5010277..48539a6ee315 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -438,6 +438,13 @@ void sgx_encl_release(struct kref *ref)
->  	if (encl->backing)
->  		fput(encl->backing);
->  
-> +	/*
-> +	 * Each sgx_mmun_notifier_release() starts a grace period. Thus one
-> +	 * "extra" synchronize_rcu() is required here. This can go undetected by
-> +	 * sgx_release() when it drains the mm list.
-> +	 */
-> +	synchronize_srcu(&encl->srcu);
-> +
->  	cleanup_srcu_struct(&encl->srcu);
->  
->  	WARN_ON_ONCE(!list_empty(&encl->mm_list));
-> -- 
-> 2.27.0
-> 
+There's no AMD equivalent of this technology.
+
+/Jarkko
