@@ -2,93 +2,161 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F5CC4361B
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 22:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D831C4361B
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Dec 2020 10:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49B7222D2B
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Dec 2020 22:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C495A2313B
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Dec 2020 10:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbgLOWFV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Dec 2020 17:05:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729467AbgLOWE7 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Dec 2020 17:04:59 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E690C0613D6
-        for <linux-sgx@vger.kernel.org>; Tue, 15 Dec 2020 14:04:18 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id i7so4483368pgc.8
-        for <linux-sgx@vger.kernel.org>; Tue, 15 Dec 2020 14:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=syHwQU1H+sMHPHpfstRHv+eAt3C5whQf9ZSlLwH7JxU=;
-        b=oX11CLnoAq++KQ7G4SymkguARAazqb67nDAy2gjvtAYi9uTGod9FcokqnGEAwfZSDN
-         W9fgOp5cW/a+8cMp9SHnVyIzL+f0QxN//Qc9+/AHft7zEmaJq2+rr44B0dn82sK/nJsV
-         pm0WbkmbWuWvIJzEC5DVJyrQzKKHno9f6oaTGMGOXka/cbsXSQhJNZ+tbT7QgIbnCD83
-         JbASkxLIHrGlMisZXjG3FA9qBWJ+eV1VQYSTueGZGXuxso6fyl33LbkLtOhSes2bOosz
-         uXS2bb6YRQ6HOUcqjLVtrPMhLiCBldRo+7FiYiHYirObKkRJXQhOUTOpVD7hEEm6nDN1
-         IHJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=syHwQU1H+sMHPHpfstRHv+eAt3C5whQf9ZSlLwH7JxU=;
-        b=oi2iSzkzzuuUxuCYziLE4Co2dq6ZRtWZQrqJMnpEvte539MGA5E2nfrNhGWGGrLYE3
-         PpqRuW1NWqiybFOOstq1Rq/HGV2/tGdBc33M8efF6gLvughAJF4E0ZBU40j/ZnkHR1zq
-         VvSUBXDXqe4NczdiI2eZRBz75bHuEXa9ek/ciACjMa/o1YJ+PBK04/oxSJe9fbcPHact
-         3pGhInED3UM/mfEf7SJR7JCIYwjBeVnC7LawGXwTtoZhhTKaN/6bWWzesgZmY5Ak0uI7
-         FtsjghiHjqlp5zNFLxbB+MSY4VYqbR+MdAkP3kfx72oNd0P5kVKmon2A/l6uKlNmmc1N
-         9gMw==
-X-Gm-Message-State: AOAM533by/RjarsobNv1YMgWux/NN0WJUrI5qTkDuvgX4psamArlflXT
-        yXjftFqNtlqPrE9sYCb+bvmASWpsuT4MZw==
-X-Google-Smtp-Source: ABdhPJwVg6fGCwFbSZdMD5V+YrVt3Ug2/gYblGulFInW2CamLlD603kpf2piGiJVLBLbRPFEF8KNVg==
-X-Received: by 2002:aa7:9d81:0:b029:19d:ca64:3c62 with SMTP id f1-20020aa79d810000b029019dca643c62mr29969751pfq.16.1608069857667;
-        Tue, 15 Dec 2020 14:04:17 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id y1sm92868pff.17.2020.12.15.14.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Dec 2020 14:04:16 -0800 (PST)
-Date:   Tue, 15 Dec 2020 14:04:10 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] x86/sgx: Synchronize encl->srcu in sgx_encl_release().
-Message-ID: <X9ky2n7VcGEGmODx@google.com>
-References: <20201211113230.28909-1-jarkko@kernel.org>
- <X9e2jOWz1hfXVpQ5@google.com>
- <20201215055556.GA28278@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1726187AbgLPKEo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 16 Dec 2020 05:04:44 -0500
+Received: from mx2.uni-regensburg.de ([194.94.157.147]:56958 "EHLO
+        mx2.uni-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbgLPKEo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Dec 2020 05:04:44 -0500
+Received: from mx2.uni-regensburg.de (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id 529A1600004D;
+        Wed, 16 Dec 2020 11:04:00 +0100 (CET)
+Received: from gwsmtp.uni-regensburg.de (gwsmtp1.uni-regensburg.de [132.199.5.51])
+        by mx2.uni-regensburg.de (Postfix) with ESMTP id 2935F6000057;
+        Wed, 16 Dec 2020 11:04:00 +0100 (CET)
+Received: from uni-regensburg-smtp1-MTA by gwsmtp.uni-regensburg.de
+        with Novell_GroupWise; Wed, 16 Dec 2020 11:03:59 +0100
+Message-Id: <5FD9DB8D020000A10003D8DC@gwsmtp.uni-regensburg.de>
+X-Mailer: Novell GroupWise Internet Agent 18.3.0 
+Date:   Wed, 16 Dec 2020 11:03:57 +0100
+From:   "Ulrich Windl" <Ulrich.Windl@rz.uni-regensburg.de>
+To:     <jarkko@kernel.org>
+Cc:     <luto@amacapital.net>, "Ben Hutchings" <ben@decadent.org.uk>,
+        <jethro@fortanix.com>, <toiwoton@gmail.com>,
+        <bruce.schlobohm@intel.com>, <kai.svahn@intel.com>,
+        <luto@kernel.org>, <haitao.huang@linux.intel.com>,
+        <jarkko.sakkinen@linux.intel.com>,
+        "systemd-devel@lists.freedesktop.org" 
+        <systemd-devel@lists.freedesktop.org>, <casey@schaufler-ca.com>,
+        <sds@tycho.nsa.gov>, <linux-hotplug@vger.kernel.org>,
+        <linux-sgx@vger.kernel.org>
+Subject: Re: Antw: [EXT] Re: [systemd-devel] Creating executable device
+ nodes in /dev?
+References: <0f17eade-5e99-be29-fd09-2d0a1949ac7f@gmail.com>
+ <9DF5C88B-5156-455A-BA3F-EB19CAA0411B@amacapital.net>
+ <bbdedcfd-cc24-1616-7f87-3c7f62571b22@gmail.com>
+ <20201209001521.GA64007@kernel.org>
+ <b1cf9503-0c1c-ab9e-3cc4-ef2b7611b280@gmail.com>
+ <20201211104635.GD12091@kernel.org>
+ <27796c04-249e-6cf0-c3e1-0fd657a82f9c@gmail.com>
+ <5FD7137E020000A10003D81B@gwsmtp.uni-regensburg.de>
+ <20201215041903.GA21875@kernel.org>
+In-Reply-To: <20201215041903.GA21875@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <20201215055556.GA28278@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Dec 15, 2020, Jarkko Sakkinen wrote:
-> On Mon, Dec 14, 2020 at 11:01:32AM -0800, Sean Christopherson wrote:
-> > Haitao reported the bug, and for all intents and purposes provided the fix.  I
-> > just did the analysis to verify that there was a legitimate bug and that the
-> > synchronization in sgx_encl_release() was indeed necessary.
+>>> Jarkko Sakkinen <jarkko@kernel.org> schrieb am 15.12.2020 um 05:19 in
+Nachricht
+<20201215041903.GA21875@kernel.org>:
+> On Mon, Dec 14, 2020 at 08:25:50AM +0100, Ulrich Windl wrote:
+>> >>> Topi Miettinen <toiwoton@gmail.com> schrieb am 11.12.2020 um 12:46 in
+>> Nachricht
+>> <27796c04-249e-6cf0-c3e1-0fd657a82f9c@gmail.com>:
+>> > On 11.12.2020 12.46, Jarkko Sakkinen wrote:
+>> >> On Wed, Dec 09, 2020 at 10:35:21AM +0200, Topi Miettinen wrote:
+>> >>> On 9.12.2020 2.15, Jarkko Sakkinen wrote:
+>> >>>> On Wed, Dec 09, 2020 at 01:15:27AM +0200, Topi Miettinen wrote:
+>> >>>>>>>> As  a further argument, I just did this on a Fedora system:
+>> >>>>>>>> $ find /dev ‑perm /ugo+x ‑a \! ‑type d ‑a \! ‑type l
+>> >>>>>>>> No results.  So making /dev noexec doesn't seem to have any
+benefit.
+>> >>>>>>>
+>> >>>>>>> It's no surprise that there aren't any executables in /dev since
+>> >>>>>>> removing MAKEDEV ages ago. That's not the issue, which is that
+>> >>>>>>> /dev is a writable directory (for UID=0 but no capabilities are
+>> >>>>>>> needed) and thus a potential location for constructing unapproved
+>> >>>>>>> executables if it is also mounted exec (W^X).
+>> >>>>>>
+>> >>>>>> UID 0 can just change mount options, though, unless SELinux or
+similar
+>> is 
+>> > used. And SELinux can protect /dev just fine without noexec.
+>> >>>>>
+>> >>>>> Well, mounting would need CAP_SYS_ADMIN in addition to UID 0. Also
+>> SELinux
+>> >>>>> is not universal and the policies might not contain all users or
+>> services.
+>> >>>>>
+>> >>>>> ‑Topi
+>> >>>>
+>> >>>> What's the data that supports having noexec /dev anyway? With root
+>> >>>> access I can then just use something else like /dev/shm mount.
+>> >>>>
+>> >>>> Has there been out in the wild real world cases that noexec mount
+>> >>>> of would have prevented?
+>> >>>>
+>> >>>> For me this sounds a lot just something that "feels more secure"
+>> >>>> without any measurable benefit. Can you prove me wrong?
+>> >>>
+>> >>> I don't think security works that way. An attacker has various methods
+to
+>> >>> choose from, some are more interesting than others. The case where
+>> rw,exec
+>> >>> /dev would be interesting would imply that easier or more common
+avenues
+>> >>> would be blocked, for example rw,exec /dev/shm, /tmp, /var/tmp, or
+>> >>> /run/user/$UID/ for user. Also fileless malware with pure ROP/JOP
+>> approach
+>> >>> with no need for any file system access is getting more common. It
+does
+>> not
+>> >>> mean that it would not be prudent to block the relatively easy
+approaches
+>> >>> too, including /dev.
+>> >> 
+>> >> What if we add a new mount option "chrexec", which allows exec
+>> >> for character devices (S_IFCHR).
+>> > 
+>> > I think devices are a bad match for SGX because devices haven't been 
+>> > executable and SGX is actually an operation for memory. So something 
+>> > like memfd_create(, MFD_SGX) or mmap(,, PROT_READ|PROT_EXEC|PROT_SGX) 
+>> > would be much more natural. Even better would be something that 
+>> > conceptully also works for AMD version (either with the same flags or 
+>> > MFD_SGX / MFD_whatever_the_AMD_version_is).
+>> 
+>> +1
 > 
-> Good and valid point. The way I see it, the tags should be:
+> SGX reserved memory from kernel's point of view is IO memory.
 > 
-> Reported-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Mapping SGX to memfd would not be a great idea, as it does not map
+> into concept of anonymous file backed by regular memory.
 > 
-> Haitao pointed out the bug but from your analysis I could resolve that
-> this is the fix to implement, and was able to write the long
-> description for the commit.
+> A device file is very natural match actually. We have ioctl API for
+> uploading enclave pages during the build procedure to the enclave and
+> custom #PF handler. Conceptually it's a lot like video memory or such
+> special device specific memory area.
 > 
-> Does this make sense to you?
+> There's no AMD equivalent of this technology.
 
-Yep, works for me.
+Hi!
+
+Back to "noexec": AFAIR the execute bit does not make sense for device files,
+and the purpose probably was to avoid execution of non-device files (e.g.
+regular executables) from inside /dev (where they should not be). So in this
+view "noexec" makes sense.
+There were similar arguments for not allowing device files in user
+directories.
+
+Regards,
+Ulrich
+
+> 
+> /Jarkko
+
+
+
