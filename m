@@ -2,164 +2,113 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF5DC4361B
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Dec 2020 13:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F40C2BBD4
+	for <linux-sgx@archiver.kernel.org>; Fri, 18 Dec 2020 10:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF8B23109
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Dec 2020 13:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C38323A82
+	for <linux-sgx@archiver.kernel.org>; Fri, 18 Dec 2020 10:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbgLPNv0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 16 Dec 2020 08:51:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbgLPNv0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 16 Dec 2020 08:51:26 -0500
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Kosina <trivial@kernel.org>
-Subject: [PATCH RFC] x86/sgx: Add trivial NUMA allocation
-Date:   Wed, 16 Dec 2020 15:50:31 +0200
-Message-Id: <20201216135031.21518-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        id S1733189AbgLRKZV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 18 Dec 2020 05:25:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733170AbgLRKZV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 18 Dec 2020 05:25:21 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2529C0617A7;
+        Fri, 18 Dec 2020 02:24:40 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id r3so1577340wrt.2;
+        Fri, 18 Dec 2020 02:24:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=I721Wdnvwksuqw3K5og33s4pzD1mKIxh7yc5XDDcYgQ=;
+        b=leFMo5ELVTopkZJJSfQst0JTKy4sksaEpxqmHJGhvaQeXSmhFkwLqw112tnNZ5t0Wx
+         kBnFwklMGSqcUCmHJHEwI1r5T9LCaU2ZcgrnBUdgTWVlo2N3LZQwoqMHy1skl7NnMtSi
+         MfYFepmE3o1EHuQrqlo+Y88TpZAvY64ZShUL1GAKCZiVfA9Voc7mINRhTUUylouISFl0
+         4vdQXyhJz/8vKw9h2w3iz3F/8bVGxVxINpzGxMxqB2xZTS3JZlkb76o2q51pssANK9DA
+         d/GBCRK8CLq2zngfNvS8iTLB1bWaDTf/esd2UBzI5pmnDgNMc+w+8TyZFaP6zHs/mCwm
+         Pqqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I721Wdnvwksuqw3K5og33s4pzD1mKIxh7yc5XDDcYgQ=;
+        b=DZ3e1qZL67YLd2skSRaEEO0LEiamGQTjjs8LH3rTZ0/MuzYGnibXduef4dmnaPkcqO
+         39hzU8SxvoKWfN5tmC5zsI568Dxk2f6MZmxAeurc1sxVGGIBK3WsKxk3EeMcNVYVHwSC
+         BUqGS2Ddwu7DqvRb9zDFITGaHy7d6qOXoQPvYDBGxkaBD2Guyrk9HVkfVZd7SIobKc2b
+         aDq17eGY6QxN/FO7DGWLh9jCnOJxYgDR+0r2pdm5LulrC8mfEJ34EspX0CiJxVOAwHz2
+         +8B23gwTWaErZvYrGwZgDIpyXnH0GPJsNRa1CwWVd73t+kDX11O8dWBbWudisIplOh18
+         J5aA==
+X-Gm-Message-State: AOAM532uY9XoW0u42DP/Oymop+26LbfdqCnXMMaLIxChm/D37KLGqbxk
+        QrQfFio1wYNMo2ACM0GMeR/RrohUItI=
+X-Google-Smtp-Source: ABdhPJyDbVa87hQrc5wws3+KhvnOrqDBA177KYd42VX6oecjGbydnzDBc86Ra6RuyrxaYRVTbUojng==
+X-Received: by 2002:adf:e802:: with SMTP id o2mr3649613wrm.251.1608287079541;
+        Fri, 18 Dec 2020 02:24:39 -0800 (PST)
+Received: from [192.168.1.143] ([170.253.51.130])
+        by smtp.gmail.com with ESMTPSA id r15sm12678202wrq.1.2020.12.18.02.24.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Dec 2020 02:24:39 -0800 (PST)
+Subject: Re: [PATCH] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-man@vger.kernel.org,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
+        x86@kernel.org
+References: <20201202071543.74866-1-jarkko@kernel.org>
+ <f6eb74cf-0cb6-0549-9ed3-3e3b2af23ad1@gmail.com>
+ <c698b115-2daa-c92b-da92-abe261a37222@gmail.com>
+ <b57aa7d7-b4d0-6358-258c-45fa69e40df8@gmail.com>
+ <1b818d58-4a82-4192-ab01-16a5ff2d7cfa@gmail.com>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Message-ID: <678536be-b0a2-af9d-2f41-5f3ff7ee9669@gmail.com>
+Date:   Fri, 18 Dec 2020 11:24:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1b818d58-4a82-4192-ab01-16a5ff2d7cfa@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Create a pointer array for each NUMA node with the references to the
-contained EPC sections. Use this in __sgx_alloc_epc_page() to knock the
-current NUMA node before the others.
+Hi Jarkko,
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/main.c | 66 +++++++++++++++++++++++++++++++---
- 1 file changed, 61 insertions(+), 5 deletions(-)
+Linux 5.10 has been recently released.
+Do you have any updates for this patch?
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index c519fc5f6948..0da510763c47 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -13,6 +13,13 @@
- #include "encl.h"
- #include "encls.h"
- 
-+struct sgx_numa_node {
-+	struct sgx_epc_section *sections[SGX_MAX_EPC_SECTIONS];
-+	int nr_sections;
-+};
-+
-+static struct sgx_numa_node sgx_numa_nodes[MAX_NUMNODES];
-+static int sgx_nr_numa_nodes;
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
- static int sgx_nr_epc_sections;
- static struct task_struct *ksgxd_tsk;
-@@ -473,6 +480,25 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
- 	return page;
- }
- 
-+static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
-+{
-+	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
-+	struct sgx_epc_section *section;
-+	struct sgx_epc_page *page;
-+	int i;
-+
-+	for (i = 0; i < node->nr_sections; i++) {
-+		section = node->sections[i];
-+
-+		page = __sgx_alloc_epc_page_from_section(section);
-+		if (page)
-+			return page;
-+	}
-+
-+	return NULL;
-+}
-+
-+
- /**
-  * __sgx_alloc_epc_page() - Allocate an EPC page
-  *
-@@ -485,14 +511,19 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
-  */
- struct sgx_epc_page *__sgx_alloc_epc_page(void)
- {
--	struct sgx_epc_section *section;
- 	struct sgx_epc_page *page;
-+	int nid = numa_node_id();
- 	int i;
- 
--	for (i = 0; i < sgx_nr_epc_sections; i++) {
--		section = &sgx_epc_sections[i];
-+	page = __sgx_alloc_epc_page_from_node(nid);
-+	if (page)
-+		return page;
- 
--		page = __sgx_alloc_epc_page_from_section(section);
-+	for (i = 0; i < sgx_nr_numa_nodes; i++) {
-+		if (i == nid)
-+			continue;
-+
-+		page = __sgx_alloc_epc_page_from_node(i);
- 		if (page)
- 			return page;
- 	}
-@@ -661,11 +692,28 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
- 	       ((high & GENMASK_ULL(19, 0)) << 32);
- }
- 
-+static int __init sgx_pfn_to_nid(unsigned long pfn)
-+{
-+	pg_data_t *pgdat;
-+	int nid;
-+
-+	for (nid = 0; nid < nr_node_ids; nid++) {
-+		pgdat = NODE_DATA(nid);
-+
-+		if (pfn >= pgdat->node_start_pfn &&
-+		    pfn < (pgdat->node_start_pfn + pgdat->node_spanned_pages))
-+			return nid;
-+	}
-+
-+	return 0;
-+}
-+
- static bool __init sgx_page_cache_init(void)
- {
- 	u32 eax, ebx, ecx, edx, type;
-+	struct sgx_numa_node *node;
- 	u64 pa, size;
--	int i;
-+	int i, nid;
- 
- 	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
- 		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, &ebx, &ecx, &edx);
-@@ -690,6 +738,14 @@ static bool __init sgx_page_cache_init(void)
- 		}
- 
- 		sgx_nr_epc_sections++;
-+
-+		nid = sgx_pfn_to_nid(PFN_DOWN(pa));
-+		node = &sgx_numa_nodes[nid];
-+
-+		node->sections[node->nr_sections] = &sgx_epc_sections[i];
-+		node->nr_sections++;
-+
-+		sgx_nr_numa_nodes = max(sgx_nr_numa_nodes, nid + 1);
- 	}
- 
- 	if (!sgx_nr_epc_sections) {
+Thanks,
+
+Alex
+
+On 12/2/20 3:47 PM, Michael Kerrisk (man-pages) wrote:
+> On 12/2/20 3:45 PM, Alejandro Colomar (man-pages) wrote:
+>>
+>>
+>> On 12/2/20 3:20 PM, Michael Kerrisk (man-pages) wrote:
+>>>>> +There is also a hardware constrain that the size must be a power of two,
+>>>
+>>> s/constrain/constrain/
+>>
+>> ?
+> 
+> Oops. s/constrian/constraint/
+> 
+> 
+> 
+
 -- 
-2.27.0
-
+Alejandro Colomar
+Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
+http://www.alejandro-colomar.es/
