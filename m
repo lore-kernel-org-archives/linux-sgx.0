@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FC9C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 17:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499F3C433E0
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 18:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DBBD22EBD
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 17:08:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17F652312A
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 18:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbhAFRH5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 6 Jan 2021 12:07:57 -0500
-Received: from mga14.intel.com ([192.55.52.115]:42859 "EHLO mga14.intel.com"
+        id S1725822AbhAFS3i (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 Jan 2021 13:29:38 -0500
+Received: from mga06.intel.com ([134.134.136.31]:2208 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727855AbhAFRH4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 6 Jan 2021 12:07:56 -0500
-IronPort-SDR: KJWLzT4G4egqitajn4jcy2aSWLEa8mo5F+tkypFTMalZrpgrkPGZu/1w/5qezL/Y/TfwFtFgvV
- LCkBioBJA6ng==
-X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="176527682"
+        id S1725789AbhAFS3i (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 6 Jan 2021 13:29:38 -0500
+IronPort-SDR: 4Gsuhjy3wHsiaCMof9Fo9KbLn9V/DTRnLjQW6XIXbEaUwRTQ4cJKNOtlGcCldxhvVSjigVYxhD
+ Cdvt0o+4W13A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="238865982"
 X-IronPort-AV: E=Sophos;i="5.79,327,1602572400"; 
-   d="scan'208";a="176527682"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 09:07:15 -0800
-IronPort-SDR: apMhbfGjSW5CxbwMvbcurVwRs2QdrAI34uNOkcZwe47pQN5li7thLGtQ4oANM1NpKdNgQSoAiv
- tjlBva4soTWg==
+   d="scan'208";a="238865982"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 10:28:57 -0800
+IronPort-SDR: Na7B4blBWW/+7ZdhM5YtU7vcGUWcZ2RnceYkJrVXwu96boOIh+BmGVBgaEtF6IO9wf9T1qr2Wn
+ w3w5ofFjX1Pg==
 X-IronPort-AV: E=Sophos;i="5.79,327,1602572400"; 
-   d="scan'208";a="565878061"
-Received: from ansukerk-mobl1.amr.corp.intel.com (HELO [10.209.131.99]) ([10.209.131.99])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 09:07:14 -0800
-Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
+   d="scan'208";a="422260322"
+Received: from jmonroe1-mobl2.amr.corp.intel.com (HELO [10.212.12.85]) ([10.212.12.85])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 10:28:56 -0800
+Subject: Re: [RFC PATCH 02/23] x86/sgx: Add enum for SGX_CHILD_PRESENT error
+ code
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de, mattson@google.com,
-        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
-        corbet@lwn.net
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 References: <cover.1609890536.git.kai.huang@intel.com>
+ <2a41e15dfda722dd1e34feeda34ce864cd82361b.1609890536.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +84,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <1772bbf4-54bd-e43f-a71f-d72f9a6a9bad@intel.com>
-Date:   Wed, 6 Jan 2021 09:07:13 -0800
+Message-ID: <05f6945b-418a-b4eb-406a-0f0a23cb939f@intel.com>
+Date:   Wed, 6 Jan 2021 10:28:55 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1609890536.git.kai.huang@intel.com>
+In-Reply-To: <2a41e15dfda722dd1e34feeda34ce864cd82361b.1609890536.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,138 +98,10 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 1/5/21 5:55 PM, Kai Huang wrote:
-> - Virtual EPC
-> 
-> "Virtual EPC" is the EPC section exposed by KVM to guest so SGX software in
-> guest can discover it and use it to create SGX enclaves. KVM exposes SGX to 
-> guest via CPUID, and exposes one or more "virtual EPC" sections for guest.
-> The size of "virtual EPC" is passed as Qemu parameter when creating the
-> guest, and the base address is calcualted internally according to guest's
+> Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
+> failures are expected, but only due to SGX_CHILD_PRESENT.
 
-				^ calculated
+This dances around the fact that this is an architectural error-code.
+Could that be explicit?  Maybe the subject should be:
 
-> configuration.
-
-This is not a great first paragraph to introduce me to this feature.
-
-Please remind us what EPC *is*, then you can go and talk about why we
-have to virtualize it, and how "virtual EPC" is different from normal
-EPC.  For instance:
-
-SGX enclave memory is special and is reserved specifically for enclave
-use.  In bare-metal SGX enclaves, the kernel allocates enclave pages,
-copies data into the pages with privileged instructions, then allows the
-enclave to start.  In this scenario, only initialized pages already
-assigned to an enclave are mapped to userspace.
-
-In virtualized environments, the hypervisor still needs to do the
-physical enclave page allocation.  The guest kernel is responsible for
-the data copying (among other things).  This means that the job of
-starting an enclave is now split between hypervisor and guest.
-
-This series introduces a new misc device: /dev/sgx_virt_epc.  This
-device allows the host to map *uninitialized* enclave memory into
-userspace, which can then be passed into a guest.
-
-While it might be *possible* to start a host-side enclave with
-/dev/sgx_enclave and pass its memory into a guest, it would be wasteful
-and convoluted.
-
-> core/driver to allow userspace (Qemu) to allocate "raw" EPC, and use it as
-> "virtual EPC" for guest. Obviously, unlike EPC allocated for host SGX driver,
-> virtual EPC allocated via /dev/sgx_virt_epc doesn't have enclave associated,
-> and how virtual EPC is used by guest is compeletely controlled by guest's SGX
-
-					   ^ completely
-
-Please run a spell checker on this thing.
-
-> software.
-> 
-> Implement the "raw" EPC allocation in the x86 core-SGX subsystem via
-> /dev/sgx_virt_epc rather than in KVM. Doing so has two major advantages:
-> 
->   - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
->     just another memory backend for guests.
-> 
->   - EPC management is wholly contained in the SGX subsystem, e.g. SGX
->     does not have to export any symbols, changes to reclaim flows don't
->     need to be routed through KVM, SGX's dirty laundry doesn't have to
->     get aired out for the world to see, and so on and so forth.
-> 
-> The virtual EPC allocated to guests is currently not reclaimable, due to
-> reclaiming EPC from KVM guests is not currently supported. Due to the
-> complications of handling reclaim conflicts between guest and host, KVM
-> EPC oversubscription, which allows total virtual EPC size greater than
-> physical EPC by being able to reclaiming guests' EPC, is significantly more
-> complex than basic support for SGX virtualization.
-
-It would also help here to remind the reader that enclave pages have a
-special reclaim mechanism separtae from normal page reclaim, and that
-mechanism is disabled for these pages.
-
-Does the *ABI* here preclude doing oversubscription in the future?
-
-> - Support SGX virtualization without SGX Launch Control unlocked mode
-> 
-> Although SGX driver requires SGX Launch Control unlocked mode to work, SGX
-
-Although the bare-metal SGX driver requires...
-
-Also, didn't we call this "Flexible Launch Control"?
-
-> virtualization doesn't, since how enclave is created is completely controlled
-> by guest SGX software, which is not necessarily linux. Therefore, this series
-> allows KVM to expose SGX to guest even SGX Launch Control is in locked mode,
-
-... "expose SGX to guests even if" ...
-
-> or is not present at all. The reason is the goal of SGX virtualization, or
-> virtualization in general, is to expose hardware feature to guest, but not to
-> make assumption how guest will use it. Therefore, KVM should support SGX guest
-> as long as hardware is able to, to have chance to support more potential use
-> cases in cloud environment.
-
-This is kinda long-winded and misses a lot of important context.  How about:
-
-SGX hardware supports two "launch control" modes to limit which enclaves
-can run.  In the "locked" mode, the hardware prevents enclaves from
-running unless they are blessed by a third party.  In the unlocked mode,
-the kernel is in full control of which enclaves can run.  The bare-metal
-SGX code refuses to launch enclaves unless it is in the unlocked mode.
-
-This sgx_virt_epc driver does not have such a restriction.  This allows
-guests which are OK with the locked mode to use SGX, even if the host
-kernel refuses to.
-
-> - Support exposing SGX2
-> 
-> Due to the same reason above, SGX2 feature detection is added to core SGX code
-> to allow KVM to expose SGX2 to guest, even currently SGX driver doesn't support
-> SGX2, because SGX2 can work just fine in guest w/o any interaction to host SGX
-> driver.
-> 
-> - Restricit SGX guest access to provisioning key
-> 
-> To grant guest being able to fully use SGX, guest needs to be able to create
-> provisioning enclave.
-
-"enclave" or "enclaves"?
-
-> However provisioning key is sensitive and is restricted by
-
-	^ the
-
-> /dev/sgx_provision in host SGX driver, therefore KVM SGX virtualization follows
-> the same role: a new KVM_CAP_SGX_ATTRIBUTE is added to KVM uAPI, and only file
-> descriptor of /dev/sgx_provision is passed to that CAP by usersppace hypervisor
-> (Qemu) when creating the guest, it can access provisioning bit. This is done by
-> making KVM trape ECREATE instruction from guest, and check the provisioning bit
-
-		^ trap
-
-> in ECREATE's attribute.
-
-The grammar in that paragraph is really off to me.  Can you give it
-another go?
-
+	Add SGX_CHILD_PRESENT hardware error code
