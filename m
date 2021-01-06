@@ -2,82 +2,69 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE57C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 22:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC6FC433E0
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 22:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01EAA2313A
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 22:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B21E82313A
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jan 2021 22:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbhAFWMw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 6 Jan 2021 17:12:52 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39507 "EHLO mga01.intel.com"
+        id S1726684AbhAFWQN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 Jan 2021 17:16:13 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36148 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbhAFWMw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 6 Jan 2021 17:12:52 -0500
-IronPort-SDR: SkZi+whbm6SJnzO1N3xsp11iC+dpiXmsS7UiGef8yS+6mFTEQ0o503Ugtoc41vOXgQUNgQuwGz
- Yhb0C4TYaIbg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="195894393"
-X-IronPort-AV: E=Sophos;i="5.79,328,1602572400"; 
-   d="scan'208";a="195894393"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 14:12:12 -0800
-IronPort-SDR: 4Yo+n2zROsvNYYwuuMK5dewuSVtcH4TMRpLdY76u8WrqqBkvg0XldDl2aeCBrdC3ndpn4V3opi
- nS9ZAQZbWd9w==
-X-IronPort-AV: E=Sophos;i="5.79,328,1602572400"; 
-   d="scan'208";a="351018269"
-Received: from vastrong-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.230.243])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 14:12:08 -0800
-Date:   Thu, 7 Jan 2021 11:12:06 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <x86@kernel.org>, <seanjc@google.com>, <jarkko@kernel.org>,
-        <luto@kernel.org>, <haitao.huang@intel.com>, <pbonzini@redhat.com>,
-        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>
-Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
-Message-Id: <20210107111206.c8207e64540a8361c04259b7@intel.com>
-In-Reply-To: <6d28e858-a5c0-6ce8-8c0d-2fdfbea3734b@intel.com>
+        id S1726379AbhAFWQN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 6 Jan 2021 17:16:13 -0500
+Received: from zn.tnic (p200300ec2f0969000c9608407819d21e.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:6900:c96:840:7819:d21e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E7BE61EC04EE;
+        Wed,  6 Jan 2021 23:15:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1609971331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=W0U8usJzih0juiazb3M3hkDhk8oDReLRTV2GpTPwlqY=;
+        b=mSjUdvtEqVO0xwIdI15W6h3jM7e1+VdOfIf85LXiNceOiJcJ4UO9Dg5151nFCshAcpU2co
+        j+DFn1PshSMtiqKL90n1yA5YHjCnCKtrdetH0iHb+gNmXcau2HUQn5syHCPJPy13vd/8H2
+        tahYneKaA6BZtHv0sn9TE+x5RIiaICs=
+Date:   Wed, 6 Jan 2021 23:15:27 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+Message-ID: <20210106221527.GB24607@zn.tnic>
 References: <cover.1609890536.git.kai.huang@intel.com>
-        <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
-        <6d28e858-a5c0-6ce8-8c0d-2fdfbea3734b@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 6 Jan 2021 11:39:46 -0800 Dave Hansen wrote:
-> On 1/5/21 5:55 PM, Kai Huang wrote:
-> > --- a/arch/x86/kernel/cpu/feat_ctl.c
-> > +++ b/arch/x86/kernel/cpu/feat_ctl.c
-> > @@ -97,6 +97,8 @@ static void clear_sgx_caps(void)
-> >  {
-> >  	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> >  	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> > +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> > +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> >  }
-> 
-> Logically, I think you want this *after* the "Allow SGX virtualization
-> without Launch Control support" patch.  As it stands, this will totally
-> disable SGX (including virtualization) if launch control is unavailable.
+On Wed, Jan 06, 2021 at 02:55:21PM +1300, Kai Huang wrote:
+> +/* Intel-defined SGX features, CPUID level 0x00000012:0 (EAX), word 19 */
+> +#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
+> +#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
 
-To me it is better to be here, since clear_sgx_caps(), which disables SGX
-totally, should logically clear all SGX feature bits, no matter later patch's
-behavior. So when new SGX bits are introduced, clear_sgx_caps() should clear
-them too. Otherwise the logic of this patch (adding new SGX feature bits) is
-not complete IMHO.
+Is anything else from that leaf going to be added later? Bit 5 is
+"supports ENCLV instruction leaves", 6 is ENCLS insn leaves... are those
+going to be used in the kernel too eventually?
 
-And actually in later patch "Allow SGX virtualization without Launch Control
-support", a new clear_sgx_lc() is added, and is called when LC is not
-available but SGX virtualization is enabled, to make sure only SGX_LC bit is
-cleared in this case. I don't quite understand why we need to clear SGX1 and
-SGX2 in clear_sgx_caps() after the later patch.
+Rest of them is reserved in the SDM which probably means internal only
+for now.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
