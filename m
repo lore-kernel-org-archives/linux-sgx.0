@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D600C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 00:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45674C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 00:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E96D823118
-	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 00:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1496123120
+	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 00:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbhAGAtl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 6 Jan 2021 19:49:41 -0500
-Received: from mga14.intel.com ([192.55.52.115]:8486 "EHLO mga14.intel.com"
+        id S1726119AbhAGAxY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 Jan 2021 19:53:24 -0500
+Received: from mga06.intel.com ([134.134.136.31]:4799 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbhAGAtl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 6 Jan 2021 19:49:41 -0500
-IronPort-SDR: /sK50LeWqUVDUld/MQmAwAaRKNwCenuZ4iEhFJgv8NLP2fLikBT5fCmhvuNoJJ/DN25ZA3GMlo
- ZrH037fiY8vA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="176577074"
+        id S1725860AbhAGAxY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 6 Jan 2021 19:53:24 -0500
+IronPort-SDR: yIYDUmnHlITDy/mwQMemoglFbwzAquU2tw7blfKkttb8TIoXxeNjOnp8j6X/CJxweVhjKC7kCY
+ DHV8OQbI3Heg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="238903775"
 X-IronPort-AV: E=Sophos;i="5.79,328,1602572400"; 
-   d="scan'208";a="176577074"
+   d="scan'208";a="238903775"
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 16:49:00 -0800
-IronPort-SDR: O/tAIoH/e6wzBN/hJ/53Wn3/uI+Nfdqkj/oN8SUrOKEq6kdWIm3gYVWnVAS2vwXq2RCnIOTF4c
- KNakaqe9f6Fg==
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 16:52:50 -0800
+IronPort-SDR: 5H+DcWD20BKP5VU1cmuCFTruUihbdrkmxMRuZYlpNkjABM7bNtZpcjPSe9DQ44UO6IcoFzt+wH
+ xsTY+oG3XpdQ==
 X-IronPort-AV: E=Sophos;i="5.79,328,1602572400"; 
-   d="scan'208";a="422378664"
+   d="scan'208";a="422379432"
 Received: from jmonroe1-mobl2.amr.corp.intel.com (HELO [10.212.12.85]) ([10.212.12.85])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 16:48:59 -0800
-Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
-To:     Kai Huang <kai.huang@intel.com>
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 16:52:49 -0800
+Subject: Re: [RFC PATCH 03/23] x86/sgx: Introduce virtual EPC for use by KVM
+ guests
+To:     Kai Huang <kai.huang@intel.com>,
+        Sean Christopherson <seanjc@google.com>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
-        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
-        corbet@lwn.net
+        jarkko@kernel.org, luto@kernel.org, haitao.huang@intel.com,
+        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
 References: <cover.1609890536.git.kai.huang@intel.com>
- <1772bbf4-54bd-e43f-a71f-d72f9a6a9bad@intel.com>
- <20210107133441.0983ca20f7909186b8ff8fa1@intel.com>
+ <ace9d4cb10318370f6145aaced0cfa73dda36477.1609890536.git.kai.huang@intel.com>
+ <2e424ff3-51cb-d6ed-6c5f-190e1d4fe21a@intel.com>
+ <X/YfE28guNBxcpui@google.com>
+ <20210107134758.ba0b5d950282973eaefe1ded@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -87,12 +88,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <d586730e-d02f-8059-0a81-cbfd762deacf@intel.com>
-Date:   Wed, 6 Jan 2021 16:48:58 -0800
+Message-ID: <33d9bec8-9427-b9cd-a9fb-ca5c44e4d2fe@intel.com>
+Date:   Wed, 6 Jan 2021 16:52:49 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210107133441.0983ca20f7909186b8ff8fa1@intel.com>
+In-Reply-To: <20210107134758.ba0b5d950282973eaefe1ded@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -100,87 +101,35 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/6/21 4:34 PM, Kai Huang wrote:
-> On Wed, 6 Jan 2021 09:07:13 -0800 Dave Hansen wrote:
->> Does the *ABI* here preclude doing oversubscription in the future?
-> 
-> I am Sorry what *ABI* do you mean?
-
-Oh boy.
-
-https://en.wikipedia.org/wiki/Application_binary_interface
-
-In your patch set that you are posting, /dev/sgx_virt_epc is a new
-interface: a new ABI.  If we accept your contribution, programs will be
-build around and expect Linux to support this ABI.  An ABI is a contract
-between software written to use it and the kernel.  The kernel tries
-*really* hard to never break its contracts with applications.
-
-OK, now that we have that out of the way, I'll ask my question in
-another way:
-
-Your series adds some new interfaces, including /dev/sgx_virt_epc.  If
-the kernel wants to add oversubscription in the future, will old binary
-application users of /dev/sgx_virt_epc be able to support
-oversubscription?  Or, would users of /dev/sgx_virt_epc need to change
-to support oversubscription?
-
->> Also, didn't we call this "Flexible Launch Control"?
-> 
-> I am actually a little bit confused about all those terms here. I don't think
-> from spec's perspective, there's such thing "Flexible Launch Control", but I
-> think everyone knows what does it mean. But I am not sure whether it is
-> commonly used by community. 
-> 
-> I think using FLC is fine if we only want to mention unlocked mode. But if you
-> want to mention both, IMHO it would be better to specifically use LC locked
-> mode and unlocked mode, since technically there's third case that LC is not
-> present at all.
-
-Could you go over the changelogs from Jarkko's patches and at least make
-these consistent with those?
-
-
->>> or is not present at all. The reason is the goal of SGX virtualization, or
->>> virtualization in general, is to expose hardware feature to guest, but not to
->>> make assumption how guest will use it. Therefore, KVM should support SGX guest
->>> as long as hardware is able to, to have chance to support more potential use
->>> cases in cloud environment.
->>
->> This is kinda long-winded and misses a lot of important context.  How about:
->>
->> SGX hardware supports two "launch control" modes to limit which enclaves
->> can run.  In the "locked" mode, the hardware prevents enclaves from
->> running unless they are blessed by a third party. 
-> 
-> or "by Intel".
-
-From what I understand, Intel had to bless the enclaves but the
-architecture itself doesn't say "Intel must bless them".  But, yeah, in
-practice, it had to be Intel.
-
->>> - Support exposing SGX2
+On 1/6/21 4:47 PM, Kai Huang wrote:
+>>>> +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
+>>>> +	if (ret) {
+>>>> +		/*
+>>>> +		 * Only SGX_CHILD_PRESENT is expected, which is because of
+>>>> +		 * EREMOVE-ing an SECS still with child, in which case it can
+>>>> +		 * be handled by EREMOVE-ing the SECS again after all pages in
+>>>> +		 * virtual EPC have been EREMOVE-ed. See comments in below in
+>>>> +		 * sgx_virt_epc_release().
+>>>> +		 */
+>>>> +		WARN_ON_ONCE(ret != SGX_CHILD_PRESENT);
+>>>> +		return ret;
+>>>> +	}
+>>> I find myself wondering what errors could cause the WARN_ON_ONCE() to be
+>>> hit.  The SDM indicates that it's only:
 >>>
->>> Due to the same reason above, SGX2 feature detection is added to core SGX code
->>> to allow KVM to expose SGX2 to guest, even currently SGX driver doesn't support
->>> SGX2, because SGX2 can work just fine in guest w/o any interaction to host SGX
->>> driver.
+>>> 	SGX_ENCLAVE_ACT If there are still logical processors executing
+>>> 			inside the enclave.
 >>>
->>> - Restricit SGX guest access to provisioning key
->>>
->>> To grant guest being able to fully use SGX, guest needs to be able to create
->>> provisioning enclave.
->>
->> "enclave" or "enclaves"?
-> 
-> I think should be "enclave", inside one VM, there should only be one
-> provisioning enclave.
+>>> Should that be mentioned in the comment?
+>> And faults, which are also spliced into the return value by the ENCLS macros.
+>> I do remember hitting this WARN when I broke things, though I can't remember
+>> whether it was a fault or the SGX_ENCLAVE_ACT scenario.  Probably the latter?
+> I'll add a comment saying that there should be no active logical processor
+> still running inside guest's enclave. We cannot handle SGX_ENCLAVE_ACT here
+> anyway.
 
-This is where the language becomes important.  Is the provisioning
-enclave a one-shot deal?  You create one per guest and can never create
-another?  Or, can you restart it?  Can you architecturally have more
-than one active at once?  Or, can you only create one once the first one
-dies?
+One more thing...
 
-You'll write that sentence differently based on the answers.
-
+Could we dump out the *actual* error code with a WARN(), please?  If we
+see a warning, I'd rather not have to disassemble the instructions and
+check against register values to see whether the error code was sane.
