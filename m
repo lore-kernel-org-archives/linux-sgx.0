@@ -2,116 +2,70 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URG_BIZ autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB0CC433E6
-	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 05:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B226EC433E0
+	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 06:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E300E20702
-	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 05:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6376B22EBF
+	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 06:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbhAGFDg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 7 Jan 2021 00:03:36 -0500
-Received: from mga17.intel.com ([192.55.52.151]:10836 "EHLO mga17.intel.com"
+        id S1726616AbhAGGmE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 7 Jan 2021 01:42:04 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55376 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726099AbhAGFDg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 7 Jan 2021 00:03:36 -0500
-IronPort-SDR: fpMxqaeS0L/CCJbOMdgtTPazRjHIpKWpQ7AIOVV7RylGeebqSpMPMn2O8W288IfCgwm+AV9AtS
- wDpx4nzxLI7A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="157157523"
-X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="157157523"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 21:02:55 -0800
-IronPort-SDR: nfZMMDBDowd23VBcIpR+GjehUDmPrVKGCUALcRShWjaeUTee0iIc9XN1BbqtHfOlBMV52XjV0h
- /ljICI+MzqEg==
-X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="422440143"
-Received: from jmonroe1-mobl2.amr.corp.intel.com (HELO [10.212.12.85]) ([10.212.12.85])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2021 21:02:54 -0800
-Subject: Re: [RFC PATCH 03/23] x86/sgx: Introduce virtual EPC for use by KVM
- guests
+        id S1725959AbhAGGmE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 7 Jan 2021 01:42:04 -0500
+Received: from zn.tnic (p200300ec2f0e340040aa7c2c4e2416a1.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:3400:40aa:7c2c:4e24:16a1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2E9161EC0505;
+        Thu,  7 Jan 2021 07:41:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1610001683;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=XB4JFyczu3lcx+8DZsoZDDq3Pa2F9TJKHzaTfdAUuJ8=;
+        b=JNzzUQ9YudD5b9FeXAs+q0vSDKWGhITM+LNk+bEWwRiluFvIv3XNFDu2s4xxmRH0tGuWN0
+        w9K2WlMbB7pJMNmaygYc29bo0CfODGiMaJPCMBVHOWst1ggAL1t6MjYdZrDTFdu+f3JYZ2
+        GoxE9iKybtoHK9f4LzVz7+BL6pBwdJs=
+Date:   Thu, 7 Jan 2021 07:41:25 +0100
+From:   Borislav Petkov <bp@alien8.de>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+Message-ID: <20210107064125.GB14697@zn.tnic>
 References: <cover.1609890536.git.kai.huang@intel.com>
- <ace9d4cb10318370f6145aaced0cfa73dda36477.1609890536.git.kai.huang@intel.com>
- <2e424ff3-51cb-d6ed-6c5f-190e1d4fe21a@intel.com>
- <20210107144203.589d4b2a7a2d2b53c4af7560@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bd0ff2d8-3425-2f69-5fa7-8da701d55e42@intel.com>
-Date:   Wed, 6 Jan 2021 21:02:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+ <20210106221527.GB24607@zn.tnic>
+ <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20210107144203.589d4b2a7a2d2b53c4af7560@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/6/21 5:42 PM, Kai Huang wrote:
->> I understand why this made sense for regular enclaves, but I'm having a
->> harder time here.  If you mmap(fd, MAP_SHARED), fork(), and then pass
->> that mapping through to two different guests, you get to hold the
->> pieces, just like if you did the same with normal memory.
->>
->> Why does the kernel need to enforce this policy?
-> Does Sean's reply in another email satisfy you?
+On Thu, Jan 07, 2021 at 12:09:46PM +1300, Kai Huang wrote:
+> There's no urgent request to support them for now (and given basic SGX
+> virtualization is not in upstream), but I don't know whether they need to be
+> supported in the future.
 
-I'm not totally convinced.
+If that is the case, then wasting a whole leaf for two bits doesn't make
+too much sense. And it looks like the kvm reverse lookup can be taught
+to deal with composing that leaf dynamically when needed instead.
 
-Please give it a go in the changelog for the next one and try to
-convince me that this is a good idea.  Focus on what the downsides will
-be if the kernel does not enforce this policy.  What will break, and why
-will it be bad?  Why is the kernel in the best position to thwart the
-badness?
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
