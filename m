@@ -2,88 +2,94 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7336C433E0
-	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 08:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 523CBC433E9
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 09:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9810323447
-	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 08:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A3B23372
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 09:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbhAHIOB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 8 Jan 2021 03:14:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbhAHIOB (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 8 Jan 2021 03:14:01 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D914AC0612F4;
-        Fri,  8 Jan 2021 00:13:19 -0800 (PST)
-Received: from zn.tnic (p200300ec2f0a3100d005afb8b8ef6dfd.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:3100:d005:afb8:b8ef:6dfd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 131F01EC0423;
-        Fri,  8 Jan 2021 09:13:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1610093597;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=3MGxjmDQiegHjp974jsS8YIgdrpV3uPYV+6Tq9+wzZQ=;
-        b=kFwA7zeMemymCm5rT8NUFEeb8dwhUV894/LiHn1rL+6DNXArSytJwzjrF426RiLzo6DACH
-        W3V/yuqb9vv1aIt5HGPQQuWzZcYg24wbzgwFneMfCGRQZC/QRb1OxQUw6DmrCSZewPp7mU
-        1Fb5PA9Yws22lPEdU4cdtsrGaKVHIis=
-Date:   Fri, 8 Jan 2021 09:13:14 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kai Huang <kai.huang@intel.com>
+        id S1727931AbhAHJAr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 8 Jan 2021 04:00:47 -0500
+Received: from mga02.intel.com ([134.134.136.20]:11197 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727286AbhAHJAq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 8 Jan 2021 04:00:46 -0500
+IronPort-SDR: awTrkyWPiNliTxyG4l6j9lcln72LUiyv1kHDwy8KjPeUk+ggo/4zGmTcguRgkJgGgl/WJxzqdL
+ rQHjpOyxVdkQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="164642387"
+X-IronPort-AV: E=Sophos;i="5.79,330,1602572400"; 
+   d="scan'208";a="164642387"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 01:00:05 -0800
+IronPort-SDR: 78ypFUMbKI5A6TjcTXMrkErNJSQ1WY9D9IEvANbvCktQAAljBYTXtVnEfty/AUZbNbb9XjCGdH
+ u/Ubf6A2uysA==
+X-IronPort-AV: E=Sophos;i="5.79,330,1602572400"; 
+   d="scan'208";a="362278507"
+Received: from sspraker-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.3.60])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 01:00:02 -0800
+Date:   Fri, 8 Jan 2021 22:00:00 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
 Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
         jarkko@kernel.org, luto@kernel.org, haitao.huang@intel.com,
         pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
         hpa@zytor.com
-Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-Message-ID: <20210108081314.GC4042@zn.tnic>
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2
+ sub-features
+Message-Id: <20210108220000.e321c2cbb1faeac610722274@intel.com>
+In-Reply-To: <20210108081314.GC4042@zn.tnic>
 References: <cover.1609890536.git.kai.huang@intel.com>
- <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
- <20210106221527.GB24607@zn.tnic>
- <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
- <20210107064125.GB14697@zn.tnic>
- <20210108150018.7a8c2e2fb442c9c68b0aa624@intel.com>
- <a0f75623-b0ce-bf19-4678-0f3e94a3a828@intel.com>
- <20210108200350.7ba93b8cd19978fe27da74af@intel.com>
- <20210108071722.GA4042@zn.tnic>
- <20210108210647.40ecb8233f0387578cb0d45a@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210108210647.40ecb8233f0387578cb0d45a@intel.com>
+        <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+        <20210106221527.GB24607@zn.tnic>
+        <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
+        <20210107064125.GB14697@zn.tnic>
+        <20210108150018.7a8c2e2fb442c9c68b0aa624@intel.com>
+        <a0f75623-b0ce-bf19-4678-0f3e94a3a828@intel.com>
+        <20210108200350.7ba93b8cd19978fe27da74af@intel.com>
+        <20210108071722.GA4042@zn.tnic>
+        <20210108210647.40ecb8233f0387578cb0d45a@intel.com>
+        <20210108081314.GC4042@zn.tnic>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jan 08, 2021 at 09:06:47PM +1300, Kai Huang wrote:
-> No offence, but using synthetic bits is a little bit hack to me,given
-> they are actually hardware feature bits.
+On Fri, 8 Jan 2021 09:13:14 +0100 Borislav Petkov wrote:
+> On Fri, Jan 08, 2021 at 09:06:47PM +1300, Kai Huang wrote:
+> > No offence, but using synthetic bits is a little bit hack to me,given
+> > they are actually hardware feature bits.
+> 
+> Why?
+> 
+> Perhaps you need to have a look at Documentation/x86/cpuinfo.rst first.
 
-Why?
+Will take a look. Thanks.
 
-Perhaps you need to have a look at Documentation/x86/cpuinfo.rst first.
+> 
+> > And using synthetic leaf in reverse lookup is against current KVM
+> > code.
+> 
+> You know how the kernel gets improved each day and old limitations are
+> not valid anymore?
+> 
+> > I'll try my own  way in next version, but thank you for the insight! :)
+> 
+> Feel free but remember to keep it simple. You can use mine too, if you
+> want to, as long as you attribute it with a Suggested-by or so.
 
-> And using synthetic leaf in reverse lookup is against current KVM
-> code.
+OK. Thanks. 
 
-You know how the kernel gets improved each day and old limitations are
-not valid anymore?
-
-> I'll try my own  way in next version, but thank you for the insight! :)
-
-Feel free but remember to keep it simple. You can use mine too, if you
-want to, as long as you attribute it with a Suggested-by or so.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
