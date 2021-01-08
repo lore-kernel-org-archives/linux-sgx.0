@@ -2,116 +2,93 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URG_BIZ,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E605DC433E0
-	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 16:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412F3C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 02:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCE6322EBF
-	for <linux-sgx@archiver.kernel.org>; Thu,  7 Jan 2021 16:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9B3C23601
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 02:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbhAGQPd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 7 Jan 2021 11:15:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbhAGQPd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 7 Jan 2021 11:15:33 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C195C0612F4
-        for <linux-sgx@vger.kernel.org>; Thu,  7 Jan 2021 08:14:53 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id x18so3784417pln.6
-        for <linux-sgx@vger.kernel.org>; Thu, 07 Jan 2021 08:14:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=W62GPObuSspyqepoTzpoKCHe3nBT3U/1Tl6FDSSq1IE=;
-        b=sQBiLrHIuKyGZPYxBGjU9Ad1iuDDL+k+vbgDfgamd2P0mhQkWqRXTp2j+WoWHA7oEx
-         WM+Bi1RskpQsx10Xyuy3VJjGQ34+gKj54/wh5fv9CTiC2VKQO0g5NB8i4ON65QNhzMDF
-         oQ7ar3UbHWjLl/XFefAuKUOxnmEOrNbz1mxDcHW/2tN93HqC9rl26MVQnVopk76SHk7p
-         T1qMbD43Iyt/HbGZM6MLymsBbJwwF9BN9gDWG/iMDYnP1FgxQBhI1BzhUrwxVjmHEwvX
-         toUqQu5MO5jvBTGnmEXCwhzOk+uOp7DjhTpUDjnSUsreC4m5oNUIZRuraKWCIP2i9CGj
-         ixag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=W62GPObuSspyqepoTzpoKCHe3nBT3U/1Tl6FDSSq1IE=;
-        b=QaRbk2zeCnbMb7Q6kMvjgz1ldrziq7bPrrvziia2bI2pycU+LM65FMbLsXjt7Lk9vS
-         aCAgzBKE5G0rXd1qO6KzkyPKFFt5cdLCdiDWO/X2xp6p7eKelqYVeDJhMdDzmnhCNfy9
-         /qdkiUuIKvpiGHF9h01asfZa2psRIU/ggbTk11/ST3FveLqhZvSmoGAPrd+16kdwMv/g
-         PE4UFLyCs86Xxz3Dw0L6pwAR5GTxnQHel6rvS4AYK5RkQXuQgHroddF5e9aHQNaH8BNv
-         DKv3nDy9zCtSjor/Yaw+fVNYHioKHgtKvzqblFLbM0TgcOx4r7K8ltrRIdDERdbetuCd
-         DsQg==
-X-Gm-Message-State: AOAM532tRo1Vg5xHkT4Mtqe/QvtydiVIE8WtVlXNrgeewNSJ9yf3oBUx
-        XxFpN1JYbWH31amSPh99lBchRksMR7roZg==
-X-Google-Smtp-Source: ABdhPJz51zDspEWiB7pI8+5FJizRvdTQzK6MijqTd2Vxhe8+47XTaaZaNzonGoJMalagg25tjQK61A==
-X-Received: by 2002:a17:90a:3d4e:: with SMTP id o14mr9772493pjf.44.1610036092470;
-        Thu, 07 Jan 2021 08:14:52 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id u25sm5993150pfn.101.2021.01.07.08.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jan 2021 08:14:51 -0800 (PST)
-Date:   Thu, 7 Jan 2021 08:14:44 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
-        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
-        corbet@lwn.net
-Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
-Message-ID: <X/czdL6TmbuBdZ/b@google.com>
+        id S1727011AbhAHCBG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 7 Jan 2021 21:01:06 -0500
+Received: from mga03.intel.com ([134.134.136.65]:32730 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726720AbhAHCBG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 7 Jan 2021 21:01:06 -0500
+IronPort-SDR: ue4iHAPFdj3m8K1igI30hUiPluCw2qqc6UT0mJ9ffcuQMNyXM7mwu3UE3W9NOi6Oukq3zdnaqM
+ EcciZ/nV8xbA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="177626024"
+X-IronPort-AV: E=Sophos;i="5.79,330,1602572400"; 
+   d="scan'208";a="177626024"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 18:00:24 -0800
+IronPort-SDR: yp0q0nJyozzexDhi3krb63g6yCfKK9B9HugTtW5xLheeReFFR3cc1nhMvNyV5CigUWELyhRUw5
+ caZcCVr/0fiw==
+X-IronPort-AV: E=Sophos;i="5.79,330,1602572400"; 
+   d="scan'208";a="396160826"
+Received: from culloa-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.116.170])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 18:00:21 -0800
+Date:   Fri, 8 Jan 2021 15:00:18 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2
+ sub-features
+Message-Id: <20210108150018.7a8c2e2fb442c9c68b0aa624@intel.com>
+In-Reply-To: <20210107064125.GB14697@zn.tnic>
 References: <cover.1609890536.git.kai.huang@intel.com>
- <1772bbf4-54bd-e43f-a71f-d72f9a6a9bad@intel.com>
- <20210107133441.0983ca20f7909186b8ff8fa1@intel.com>
- <d586730e-d02f-8059-0a81-cbfd762deacf@intel.com>
- <20210107145026.a8f593323ab9ae34874250ed@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210107145026.a8f593323ab9ae34874250ed@intel.com>
+        <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+        <20210106221527.GB24607@zn.tnic>
+        <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
+        <20210107064125.GB14697@zn.tnic>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 07, 2021, Kai Huang wrote:
-> On Wed, 6 Jan 2021 16:48:58 -0800 Dave Hansen wrote:
-> > Your series adds some new interfaces, including /dev/sgx_virt_epc.  If
-> > the kernel wants to add oversubscription in the future, will old binary
-> > application users of /dev/sgx_virt_epc be able to support
-> > oversubscription?  Or, would users of /dev/sgx_virt_epc need to change
-> > to support oversubscription?
+On Thu, 7 Jan 2021 07:41:25 +0100 Borislav Petkov wrote:
+> On Thu, Jan 07, 2021 at 12:09:46PM +1300, Kai Huang wrote:
+> > There's no urgent request to support them for now (and given basic SGX
+> > virtualization is not in upstream), but I don't know whether they need to be
+> > supported in the future.
 > 
-> Oversubscription will be completely done in kernel/kvm, and will be
-> transparent to userspace, so it will not impact ABI.
+> If that is the case, then wasting a whole leaf for two bits doesn't make
+> too much sense. And it looks like the kvm reverse lookup can be taught
+> to deal with composing that leaf dynamically when needed instead.
 
-It's not transparent to userpsace, odds are very good that userspace would want
-to opt in/out of EPC reclaim for its VMs.  E.g. for cases where it would be
-preferable to fail to launch a VM than degrade performance.
+I am not sure changing reverse lookup to handle dynamic would be acceptable. To
+me it is ugly, and I don't have a first glance on how to do it. KVM can query
+host CPUID when dealing with SGX w/o X86_FEATURE_SGX1/2, but it is not as
+straightforward as having X86_FEATURE_SGX1/2.
 
-That being said, there are no anticipated /dev/sgx_virt_epc ABI changes to
-support reclaim, as the ABI changes will be in KVM.  In the KVM oversubscription
-POC, I added a KVM ioctl to allow enabling EPC reclaim/oversubscription.  That
-ioctl took a fd for a /dev/sgx_virt_epc instance.
+And as Sean pointed out, SGX1 bit is also needed by both SGX driver and
+init_ia32_feat_ctl():
 
-The reason for routing through KVM was to solve two dependencies issues:
+	https://www.spinics.net/lists/kvm/msg231973.html
 
-  - KVM needs a reference to the virt_epc instance to handle SGX_CONFLICT VM-Exits
+So having it would make things easier.
 
-  - The SGX subsystem needs to be able to translate GPAs to HVAs to retrieve the
-    SECS for a page it is reclaiming.  That requires a KVM instance and helper
-    function.
+And regarding to other bits of this leaf, to me: 1) we cannot rule out
+possibility that bit 5 and bit 6 will be supported in the future; 2) I cannot
+talk more but we cannot rule out the possibility that there will be other bits
+introduced in the future.
 
-Routing the ioctl through KVM allows KVM to hand over a pointer of itself along
-with a GPA->HVA helper, and the SGX subsystem in turn can hand back the virt_epc
-instance resolved from the fd.
+Sean, what do you think?
 
-It would be possible to invert the flow, e.g. pass in a KVM fd to a new
-/dev/sgx_virt_epc ioctl, but I suspect that would be kludgier, and in any case
-it would be a new ioctl and so would not break existing users.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
