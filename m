@@ -2,116 +2,137 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-4.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URG_BIZ,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65767C433DB
-	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 02:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC181C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 05:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1700523715
-	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 02:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB6A23383
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jan 2021 05:11:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbhAHCRe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 7 Jan 2021 21:17:34 -0500
-Received: from mga05.intel.com ([192.55.52.43]:57504 "EHLO mga05.intel.com"
+        id S1725777AbhAHFLQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 8 Jan 2021 00:11:16 -0500
+Received: from mga01.intel.com ([192.55.52.88]:8742 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbhAHCRe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 7 Jan 2021 21:17:34 -0500
-IronPort-SDR: QJ2XLaQrQAT961+MQQHQWJDLB79hnxXVEu8QreA1hbRz87CRQE6l3x6cEzOmB4R91QF3riKRVn
- DDybi9ZYXnLA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="262297479"
+        id S1725497AbhAHFLP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 8 Jan 2021 00:11:15 -0500
+IronPort-SDR: rW300gp3Akjn7vT4TWNZ8aAlMh4Sy9RENqc/Y/oWL8omhwH+qqpHKnxP61wu+Xeev5wKKGIP8v
+ eDjCLnunydmg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="196108300"
 X-IronPort-AV: E=Sophos;i="5.79,330,1602572400"; 
-   d="scan'208";a="262297479"
+   d="scan'208";a="196108300"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 18:16:53 -0800
-IronPort-SDR: ukq5hlBitu+SmXtFhvEK2oUtSmQFVc3omu+a810T1BH4juqQfktiFw6qgz5mtmjFoEUTpzWRUX
- 9rrqqKZgSAWA==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 21:10:32 -0800
+IronPort-SDR: p2NjvzA/RTWlY3TAHOGttpIyRXMFFmCXj3L4GrSOO6rJvEW3Z7CjD+sGsCMJsAI8pYSgiYiL/X
+ +2tCUlZ6aKfA==
 X-IronPort-AV: E=Sophos;i="5.79,330,1602572400"; 
-   d="scan'208";a="362180462"
-Received: from culloa-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.116.170])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 18:16:47 -0800
-Date:   Fri, 8 Jan 2021 15:16:45 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
-        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
-        corbet@lwn.net
-Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
-Message-Id: <20210108151645.6c1d624f6bf383c7de0d526a@intel.com>
-In-Reply-To: <X/czdL6TmbuBdZ/b@google.com>
+   d="scan'208";a="362219731"
+Received: from abartsch-mobl.amr.corp.intel.com (HELO [10.212.21.94]) ([10.212.21.94])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 21:10:30 -0800
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+To:     Kai Huang <kai.huang@intel.com>, Borislav Petkov <bp@alien8.de>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
 References: <cover.1609890536.git.kai.huang@intel.com>
-        <1772bbf4-54bd-e43f-a71f-d72f9a6a9bad@intel.com>
-        <20210107133441.0983ca20f7909186b8ff8fa1@intel.com>
-        <d586730e-d02f-8059-0a81-cbfd762deacf@intel.com>
-        <20210107145026.a8f593323ab9ae34874250ed@intel.com>
-        <X/czdL6TmbuBdZ/b@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+ <20210106221527.GB24607@zn.tnic>
+ <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
+ <20210107064125.GB14697@zn.tnic>
+ <20210108150018.7a8c2e2fb442c9c68b0aa624@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <a0f75623-b0ce-bf19-4678-0f3e94a3a828@intel.com>
+Date:   Thu, 7 Jan 2021 21:10:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20210108150018.7a8c2e2fb442c9c68b0aa624@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 7 Jan 2021 08:14:44 -0800 Sean Christopherson wrote:
-> On Thu, Jan 07, 2021, Kai Huang wrote:
-> > On Wed, 6 Jan 2021 16:48:58 -0800 Dave Hansen wrote:
-> > > Your series adds some new interfaces, including /dev/sgx_virt_epc.  If
-> > > the kernel wants to add oversubscription in the future, will old binary
-> > > application users of /dev/sgx_virt_epc be able to support
-> > > oversubscription?  Or, would users of /dev/sgx_virt_epc need to change
-> > > to support oversubscription?
-> > 
-> > Oversubscription will be completely done in kernel/kvm, and will be
-> > transparent to userspace, so it will not impact ABI.
+On 1/7/21 6:00 PM, Kai Huang wrote:
+> On Thu, 7 Jan 2021 07:41:25 +0100 Borislav Petkov wrote:
+>> On Thu, Jan 07, 2021 at 12:09:46PM +1300, Kai Huang wrote:
+>>> There's no urgent request to support them for now (and given basic SGX
+>>> virtualization is not in upstream), but I don't know whether they need to be
+>>> supported in the future.
+>>
+>> If that is the case, then wasting a whole leaf for two bits doesn't make
+>> too much sense. And it looks like the kvm reverse lookup can be taught
+>> to deal with composing that leaf dynamically when needed instead.
 > 
-> It's not transparent to userpsace, odds are very good that userspace would want
-> to opt in/out of EPC reclaim for its VMs.  E.g. for cases where it would be
-> preferable to fail to launch a VM than degrade performance.
+> I am not sure changing reverse lookup to handle dynamic would be acceptable. To
+> me it is ugly, and I don't have a first glance on how to do it. KVM can query
+> host CPUID when dealing with SGX w/o X86_FEATURE_SGX1/2, but it is not as
+> straightforward as having X86_FEATURE_SGX1/2.
 
-It seems reasonable use case, but I don't have immediate picture how it
-requires new ABI related to virtualization. For instance, SGX driver should
-expose sysfs saying how frequent the EPC swapping is (with KVM
-oversubscription, host SGX code should provide such info in whole I think),
-and cloud admin can determine whether to launch new VM.
+So, Boris was pretty direct here.  Could you please go spend a bit of
+time to see what it would take to make these dynamic?  You can check
+what our (Intel) plans are for this leaf, but if it's going to remain
+sparsely-used, we need to look into making the leaves a bit more dynamic.
 
-Another argument is, theoretically, cloud admin may not know how EPC will be
-used in guest, so potentially guest will only use very little EPC, thus
-creating new VM won't hurt a lot, so I am not sure that, if we want to
-upstream KVM oversubscription one day, do we need to consider such case.
- 
-> 
-> That being said, there are no anticipated /dev/sgx_virt_epc ABI changes to
-> support reclaim, as the ABI changes will be in KVM.  In the KVM oversubscription
-> POC, I added a KVM ioctl to allow enabling EPC reclaim/oversubscription.  That
-> ioctl took a fd for a /dev/sgx_virt_epc instance.
+> And regarding to other bits of this leaf, to me: 1) we cannot rule out
+> possibility that bit 5 and bit 6 will be supported in the future; 2) I cannot
+> talk more but we cannot rule out the possibility that there will be other bits
+> introduced in the future.
 
-Adding IOCTL to enable/disable oversubscription for particular VM seems
-user-case dependent, and I am not sure whether we need to support that if we
-want to upstream oversubscription one day. To me, it makes sense to upstream
-*basic* oversubscription (which just supports reclaiming EPC from VM) first,
-and then we can extend if needed according to use cases.
+From the Intel side, let's go look at the features that are coming.  We
+have a list of CPUID bits that have been dedicated to future CPU
+features.  Let's look if 1 of these bits or 30 is coming.  I don't think
+it's exactly a state secret approximately how many CPUID bits we *think*
+will get used in this leaf.
 
-Anyway, oversubscription won't break existing ABI as you mentioned. 
-
-> 
-> The reason for routing through KVM was to solve two dependencies issues:
-> 
->   - KVM needs a reference to the virt_epc instance to handle SGX_CONFLICT VM-Exits
-> 
->   - The SGX subsystem needs to be able to translate GPAs to HVAs to retrieve the
->     SECS for a page it is reclaiming.  That requires a KVM instance and helper
->     function.
-> 
-> Routing the ioctl through KVM allows KVM to hand over a pointer of itself along
-> with a GPA->HVA helper, and the SGX subsystem in turn can hand back the virt_epc
-> instance resolved from the fd.
-> 
-> It would be possible to invert the flow, e.g. pass in a KVM fd to a new
-> /dev/sgx_virt_epc ioctl, but I suspect that would be kludgier, and in any case
-> it would be a new ioctl and so would not break existing users.
+We can't exactly put together a roadmap of bits, microarchitectures and
+chip release dates.  But, we can at least say, "we have immediate plans
+for most of the leaf" or "we don't plan to fill up the leaf any time soon."
