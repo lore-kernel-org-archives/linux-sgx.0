@@ -7,60 +7,63 @@ X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6DEC43603
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4518C4361B
 	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66DE422D5A
+	by mail.kernel.org (Postfix) with ESMTP id AB6E022D57
 	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403798AbhALA0E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 11 Jan 2021 19:26:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34990 "EHLO mail.kernel.org"
+        id S2403774AbhALA0D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 11 Jan 2021 19:26:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404156AbhAKXk2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 11 Jan 2021 18:40:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F4DC22BED;
-        Mon, 11 Jan 2021 23:39:45 +0000 (UTC)
+        id S2404135AbhAKXdG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Jan 2021 18:33:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 05E6C207A3;
+        Mon, 11 Jan 2021 23:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610408388;
-        bh=dNmrDsC5PxO7bdfSFOWNbTzoFbFJ4ZZfac8V0oRay0w=;
+        s=k20201202; t=1610407945;
+        bh=LczhwW+N+iznK3dnwTahPQBroL4IYxoj+IRa6zKVDSM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ovIAK6O0yaI6dm9zEn0OrxPSJ2dFXgOlC1k+XOzaiwNMsHogWwomRYKyPb+MhScqI
-         upKDpZsxBuyeRzNskDCkX5jVfjQFPtrzIRjleLkBm8jjpFJjerDaZMxxJLrC9GtzZl
-         ToUBe1nEb0wbrFrdzgXj7q+PueL8Vku/zkm+3ImOFqr/QVenhAYVPUxZa62k2JBeXE
-         DMPbNMmh4+syoKr8mVlBs5ROsGaA2Upy5rhC+2V7BLzSHFfpPpV5dodvlwgbtEF32P
-         2H8zEW8vO9M3mvuqYlYspK+97eR2jMzlqL4vWA1eFEvNrprhSs8uoj6utqMgHfFoME
-         CMGkWW6PIfeTw==
-Date:   Tue, 12 Jan 2021 01:39:42 +0200
+        b=iVviXlREZf/12tTlp0fpybzFaKm1Uga4Xf97sh1jpQLA3Ug9ZW36DEp2Kvu2EV77h
+         rssQrLTIMkPVs6V5j4ezgKF5RMVrPL1vciseFdjnGE5KXEw4z+MOl6qLlokqsjPv2+
+         jgJ2qmnqscLrxWQrGNi+ThyT87wDuUM3SeW2y2zQ4JMbtLLQF+LQGssBmlCWQheyWs
+         hiofYtyj9qj21Nbun8j8JqXHQ4mOPTz0x08/nanJB4OGXeXH84msPx0PnekDlII0rG
+         yGWbCttpR0HUuAkY+X0BkRC77SbRgBJBfmyq+Uq9DKDIf9Oy4TzYnpmoYqT+QRro7u
+         ZAvgRa0Tdlk2w==
+Date:   Tue, 12 Jan 2021 01:32:19 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-Message-ID: <X/zhvoSlx1IL5wb/@kernel.org>
+Subject: Re: [RFC PATCH 02/23] x86/sgx: Add enum for SGX_CHILD_PRESENT error
+ code
+Message-ID: <X/zgA1F+o4jXYDM/@kernel.org>
 References: <cover.1609890536.git.kai.huang@intel.com>
- <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+ <2a41e15dfda722dd1e34feeda34ce864cd82361b.1609890536.git.kai.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
+In-Reply-To: <2a41e15dfda722dd1e34feeda34ce864cd82361b.1609890536.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 06, 2021 at 02:55:21PM +1300, Kai Huang wrote:
+On Wed, Jan 06, 2021 at 02:55:19PM +1300, Kai Huang wrote:
 > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> Add a feature word to hold SGX features enumerated via CPUID.0x12.0x0,
-> along with flags for SGX1 and SGX2. As part of virtualizing SGX, KVM
-> needs to expose the SGX CPUID leafs to its guest. SGX1 and SGX2 need to
-> be in a dedicated feature word so that they can be queried via KVM's
-> reverse CPUID lookup to properly emulate the expected guest behavior.
+> SGX virtualization requires to allocate "raw" EPC and use it as "virtual
+> EPC" for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
+> track how EPC pages are used in VM, e.g. (de)construction of enclaves,
+> so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
+> knowledge of which pages are SECS with non-zero child counts.
+> 
+> Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
+> failures are expected, but only due to SGX_CHILD_PRESENT.
 > 
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->  [Kai: Also clear SGX1 and SGX2 bits in clear_sgx_caps().]
 > Signed-off-by: Kai Huang <kai.huang@intel.com>
 
 Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
