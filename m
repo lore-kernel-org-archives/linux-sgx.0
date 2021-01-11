@@ -2,81 +2,106 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8354C43331
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5A9C4360C
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEDD222D5A
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A8C122D58
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404023AbhALA0E convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
+        id S2403828AbhALA0E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 11 Jan 2021 19:26:04 -0500
-Received: from mga12.intel.com ([192.55.52.136]:62818 "EHLO mga12.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:35558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404265AbhALAU3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 11 Jan 2021 19:20:29 -0500
-IronPort-SDR: DwR2lQaDFogLqE8ijp8sI3PNfS5jvXGUHNYhsEq5/a5Xvbaoftjtm++xaBIOWjtb66oaL3madS
- JoZSpU57DAoQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9861"; a="157137541"
-X-IronPort-AV: E=Sophos;i="5.79,339,1602572400"; 
-   d="scan'208";a="157137541"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 16:19:48 -0800
-IronPort-SDR: aqdBNyn52akoW8rjvnjp++hTANTqiRH7IXlyDIrYsT4y7Jq/9nx53iDsD2wTG0am1aiwYYx1+B
- CDOD6AZ4xOEQ==
-X-IronPort-AV: E=Sophos;i="5.79,339,1602572400"; 
-   d="scan'208";a="567336276"
-Received: from edelafu-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.142.150])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 16:19:45 -0800
-Date:   Tue, 12 Jan 2021 13:19:44 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH 01/23] x86/sgx: Split out adding EPC page to free
- list to separate helper
-Message-Id: <20210112131944.9d69bb30cf4b94b6f6f25e7b@intel.com>
-In-Reply-To: <31681b840aac59a8d8dcb05f2356d25cf09e1f11.camel@kernel.org>
-References: <cover.1609890536.git.kai.huang@intel.com>
-        <3d50c2614ff8a46b44062a398fd8644bcda92132.1609890536.git.kai.huang@intel.com>
-        <31681b840aac59a8d8dcb05f2356d25cf09e1f11.camel@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        id S2404178AbhAKXmN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Jan 2021 18:42:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D5C0322BED;
+        Mon, 11 Jan 2021 23:41:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610408492;
+        bh=5/p7Jy6DV+XZMeDbn3LFI3ulwrZgNlzWs2MdfW159v4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AzaYOT0TFF7zFt2X0i7pJD344pmC8+Sl6MxlnW9Lxpzow0ehD2x3NngnFm4sNXfOU
+         +Sm6yZtzF0peC3YCxlUkkXtwMthLGre2/afEDlakFCYzVJOgfnRLX60W8Ntj3VYdgi
+         cW3NZWbH6T/JyWLWaFdEyfu4Trw2JzNTTkH8YuZX58hSb/+fVZZKF6YV70Mr5Rp/pI
+         hggKk008Pm4x9VLuPRj+iHRmzX7SmOTWrgdczUMTKa+NlJgH9bRNgFGMvGWzdWwyBh
+         JE/pFW97pzweHHcraQPdRN8eGhPT/0LCsYpI6qwB//5AA5uf0Lu/0SChuuVAca9W+u
+         +kveSghxVdlvA==
+Date:   Tue, 12 Jan 2021 01:41:27 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [PATCH v3] x86/sgx: Synchronize encl->srcu in sgx_encl_release().
+Message-ID: <X/ziJ9a7sRIeNRWr@kernel.org>
+References: <20201216134920.21161-1-jarkko@kernel.org>
+ <op.0wppi8q8wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <op.0wppi8q8wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 12 Jan 2021 00:38:40 +0200 Jarkko Sakkinen wrote:
-> On Wed, 2021-01-06 at 14:55 +1300, Kai Huang wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > SGX virtualization requires to allocate "raw" EPC and use it as virtual
-> > EPC for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
-> > track how EPC pages are used in VM, e.g. (de)construction of enclaves,
-> > so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
-> > knowledge of which pages are SECS with non-zero child counts.
-> > 
-> > Split sgx_free_page() into two parts so that the "add to free list"
-> > part can be used by virtual EPC without having to modify the EREMOVE
-> > logic in sgx_free_page().
-> > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+On Mon, Jan 04, 2021 at 02:22:05PM -0600, Haitao Huang wrote:
+> On Wed, 16 Dec 2020 07:49:20 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
 > 
-> I have a better idea with the same outcome for KVM.
+> > Add synchronize_srcu_expedited() to sgx_encl_release() to catch a grace
+> > period initiated by sgx_mmu_notifier_release().
+> > 
+> > A trivial example of a failing sequence with tasks A and B:
+> > 
+> > 1. A: -> sgx_release()
+> > 2. B: -> sgx_mmu_notifier_release()
+> > 3. B: -> list_del_rcu()
+> > 3. A: -> sgx_encl_release()
+> > 4. A: -> cleanup_srcu_struct()
+> > 
+> > The loop in sgx_release() observes an empty list because B has removed
+> > its
+> > entry in the middle, and calls cleanup_srcu_struct() before B has a
+> > chance
+> > to calls synchronize_srcu().
+> > 
+> > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Suggested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v3: Fine-tuned tags, and added missing change log for v2.
+> > v2: Switch to synchronize_srcu_expedited().
+> >  arch/x86/kernel/cpu/sgx/encl.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c
+> > b/arch/x86/kernel/cpu/sgx/encl.c
+> > index ee50a5010277..fe7256db6e73 100644
+> > --- a/arch/x86/kernel/cpu/sgx/encl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> > @@ -438,6 +438,12 @@ void sgx_encl_release(struct kref *ref)
+> >  	if (encl->backing)
+> >  		fput(encl->backing);
+> > +	/*
+> > +	 * Each sgx_mmu_notifier_release() starts a grace period. Therefore, an
+> > +	 * additional sync is required here.
+> > +	 */
+> > +	synchronize_srcu_expedited(&encl->srcu);
+> > +
+> >  	cleanup_srcu_struct(&encl->srcu);
+> > 	WARN_ON_ONCE(!list_empty(&encl->mm_list));
 > 
-> https://lore.kernel.org/linux-sgx/20210111223610.62261-1-jarkko@kernel.org/T/#t
+> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
 
-I agree with your patch this one can be replaced. I'll include your patch in
-next version, and once it is upstreamed, it can be removed in my series.
+Thanks.
 
-Sean, please let me know if you have objection.
+/Jarkko
