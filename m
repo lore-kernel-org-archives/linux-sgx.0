@@ -2,106 +2,67 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5A9C4360C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6DEC43603
 	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8C122D58
+	by mail.kernel.org (Postfix) with ESMTP id 66DE422D5A
 	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403828AbhALA0E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S2403798AbhALA0E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 11 Jan 2021 19:26:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35558 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404178AbhAKXmN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 11 Jan 2021 18:42:13 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D5C0322BED;
-        Mon, 11 Jan 2021 23:41:30 +0000 (UTC)
+        id S2404156AbhAKXk2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Jan 2021 18:40:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F4DC22BED;
+        Mon, 11 Jan 2021 23:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610408492;
-        bh=5/p7Jy6DV+XZMeDbn3LFI3ulwrZgNlzWs2MdfW159v4=;
+        s=k20201202; t=1610408388;
+        bh=dNmrDsC5PxO7bdfSFOWNbTzoFbFJ4ZZfac8V0oRay0w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AzaYOT0TFF7zFt2X0i7pJD344pmC8+Sl6MxlnW9Lxpzow0ehD2x3NngnFm4sNXfOU
-         +Sm6yZtzF0peC3YCxlUkkXtwMthLGre2/afEDlakFCYzVJOgfnRLX60W8Ntj3VYdgi
-         cW3NZWbH6T/JyWLWaFdEyfu4Trw2JzNTTkH8YuZX58hSb/+fVZZKF6YV70Mr5Rp/pI
-         hggKk008Pm4x9VLuPRj+iHRmzX7SmOTWrgdczUMTKa+NlJgH9bRNgFGMvGWzdWwyBh
-         JE/pFW97pzweHHcraQPdRN8eGhPT/0LCsYpI6qwB//5AA5uf0Lu/0SChuuVAca9W+u
-         +kveSghxVdlvA==
-Date:   Tue, 12 Jan 2021 01:41:27 +0200
+        b=ovIAK6O0yaI6dm9zEn0OrxPSJ2dFXgOlC1k+XOzaiwNMsHogWwomRYKyPb+MhScqI
+         upKDpZsxBuyeRzNskDCkX5jVfjQFPtrzIRjleLkBm8jjpFJjerDaZMxxJLrC9GtzZl
+         ToUBe1nEb0wbrFrdzgXj7q+PueL8Vku/zkm+3ImOFqr/QVenhAYVPUxZa62k2JBeXE
+         DMPbNMmh4+syoKr8mVlBs5ROsGaA2Upy5rhC+2V7BLzSHFfpPpV5dodvlwgbtEF32P
+         2H8zEW8vO9M3mvuqYlYspK+97eR2jMzlqL4vWA1eFEvNrprhSs8uoj6utqMgHfFoME
+         CMGkWW6PIfeTw==
+Date:   Tue, 12 Jan 2021 01:39:42 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [PATCH v3] x86/sgx: Synchronize encl->srcu in sgx_encl_release().
-Message-ID: <X/ziJ9a7sRIeNRWr@kernel.org>
-References: <20201216134920.21161-1-jarkko@kernel.org>
- <op.0wppi8q8wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+Message-ID: <X/zhvoSlx1IL5wb/@kernel.org>
+References: <cover.1609890536.git.kai.huang@intel.com>
+ <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.0wppi8q8wjvjmi@mqcpg7oapc828.gar.corp.intel.com>
+In-Reply-To: <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 02:22:05PM -0600, Haitao Huang wrote:
-> On Wed, 16 Dec 2020 07:49:20 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-> wrote:
+On Wed, Jan 06, 2021 at 02:55:21PM +1300, Kai Huang wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> > Add synchronize_srcu_expedited() to sgx_encl_release() to catch a grace
-> > period initiated by sgx_mmu_notifier_release().
-> > 
-> > A trivial example of a failing sequence with tasks A and B:
-> > 
-> > 1. A: -> sgx_release()
-> > 2. B: -> sgx_mmu_notifier_release()
-> > 3. B: -> list_del_rcu()
-> > 3. A: -> sgx_encl_release()
-> > 4. A: -> cleanup_srcu_struct()
-> > 
-> > The loop in sgx_release() observes an empty list because B has removed
-> > its
-> > entry in the middle, and calls cleanup_srcu_struct() before B has a
-> > chance
-> > to calls synchronize_srcu().
-> > 
-> > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-> > Suggested-by: Sean Christopherson <seanjc@google.com>
-> > Suggested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v3: Fine-tuned tags, and added missing change log for v2.
-> > v2: Switch to synchronize_srcu_expedited().
-> >  arch/x86/kernel/cpu/sgx/encl.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c
-> > b/arch/x86/kernel/cpu/sgx/encl.c
-> > index ee50a5010277..fe7256db6e73 100644
-> > --- a/arch/x86/kernel/cpu/sgx/encl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> > @@ -438,6 +438,12 @@ void sgx_encl_release(struct kref *ref)
-> >  	if (encl->backing)
-> >  		fput(encl->backing);
-> > +	/*
-> > +	 * Each sgx_mmu_notifier_release() starts a grace period. Therefore, an
-> > +	 * additional sync is required here.
-> > +	 */
-> > +	synchronize_srcu_expedited(&encl->srcu);
-> > +
-> >  	cleanup_srcu_struct(&encl->srcu);
-> > 	WARN_ON_ONCE(!list_empty(&encl->mm_list));
+> Add a feature word to hold SGX features enumerated via CPUID.0x12.0x0,
+> along with flags for SGX1 and SGX2. As part of virtualizing SGX, KVM
+> needs to expose the SGX CPUID leafs to its guest. SGX1 and SGX2 need to
+> be in a dedicated feature word so that they can be queried via KVM's
+> reverse CPUID lookup to properly emulate the expected guest behavior.
 > 
-> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>  [Kai: Also clear SGX1 and SGX2 bits in clear_sgx_caps().]
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
 
-Thanks.
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 /Jarkko
