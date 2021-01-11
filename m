@@ -2,140 +2,206 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91BFC433E0
-	for <linux-sgx@archiver.kernel.org>; Sat,  9 Jan 2021 01:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDF5C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 11 Jan 2021 17:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99D5023AAA
-	for <linux-sgx@archiver.kernel.org>; Sat,  9 Jan 2021 01:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCAF2229CA
+	for <linux-sgx@archiver.kernel.org>; Mon, 11 Jan 2021 17:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725817AbhAIBUW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 8 Jan 2021 20:20:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbhAIBUW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 8 Jan 2021 20:20:22 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE871C061573;
-        Fri,  8 Jan 2021 17:19:41 -0800 (PST)
-Received: from zn.tnic (p200300ec2f0a31002d28d593016b8c5a.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:3100:2d28:d593:16b:8c5a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5A9361EC04CC;
-        Sat,  9 Jan 2021 02:19:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1610155180;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=CFrCvmLh0QxnlTvwTjbIqnbyBw3zF45rv41UWBEPge4=;
-        b=CHOdcpFV+4hQLdWlyX8mGglWpXyY1OIll7sXvcqTg/5IcMGJYFgGP7ZbA+104ipzhSilLu
-        tO52tDZqZrP0NmD6CBY/1vccbu6EhOZfDxGONVTbNxOZ0lqjWDNb1ftw4YLtTqKZ+AKpp5
-        xCaDqCs4za1JDhVLQqlmkmiP6YGENP8=
-Date:   Sat, 9 Jan 2021 02:19:39 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Kai Huang <kai.huang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-Message-ID: <20210109011939.GL4042@zn.tnic>
+        id S2388286AbhAKRwK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 11 Jan 2021 12:52:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732707AbhAKRwK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Jan 2021 12:52:10 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BFBEB20738;
+        Mon, 11 Jan 2021 17:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610387489;
+        bh=8E4duo7rAAD3EKJEt5iXgLikA/b0GqHzaYL97VVfMlc=;
+        h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+        b=WJ3DICcg5+ffpar6Pt9zsLZwuUq1L6rmx/zJYA+PxUzgJ4wlAWP9yAiaejc1HtUQu
+         g+zR7lXRO6A8W87XnnZ+HPuSxWFak0PSuotpwKstgJWmo2IfOl/UJl+rIMjKDr5Toq
+         q5XFmVVDjZs6h8rDI4sPboNpRjM3CcQvrJIJHk1u9DiUFWPx0KUTDHg3Zq+7JJeVNc
+         /1Sdsq0Oo0QAwyUy1BwrRFsyHNjw0sTfhaYqHCwca37s0kaSyUJkMMua45Sg9IX691
+         5EWqBqqMNgxSevKtKFOrmioNY+2C5yZVglEzxNmAo3uC/luK8/5ZLHMFb5KlbYRix+
+         s96CLT+s3951A==
+Message-ID: <2422737f6b0cddf6ff1be9cf90e287dd00d6a6a3.camel@kernel.org>
+Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de, mattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+In-Reply-To: <cover.1609890536.git.kai.huang@intel.com>
 References: <cover.1609890536.git.kai.huang@intel.com>
- <381b25a0dc0ed3e4579d50efb3634329132a2c02.1609890536.git.kai.huang@intel.com>
- <20210106221527.GB24607@zn.tnic>
- <20210107120946.ef5bae4961d0be91eff56d6b@intel.com>
- <20210107064125.GB14697@zn.tnic>
- <20210108150018.7a8c2e2fb442c9c68b0aa624@intel.com>
- <a0f75623-b0ce-bf19-4678-0f3e94a3a828@intel.com>
- <20210108200350.7ba93b8cd19978fe27da74af@intel.com>
- <20210108071722.GA4042@zn.tnic>
- <X/jxCOLG+HUO4QlZ@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Mon, 11 Jan 2021 19:20:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <X/jxCOLG+HUO4QlZ@google.com>
+User-Agent: Evolution 3.38.3 (by Flathub.org) 
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jan 08, 2021 at 03:55:52PM -0800, Sean Christopherson wrote:
-> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> index dc921d76e42e..21f92d81d5a5 100644
-> --- a/arch/x86/kvm/cpuid.h
-> +++ b/arch/x86/kvm/cpuid.h
-> @@ -7,7 +7,25 @@
->  #include <asm/processor.h>
->  #include <uapi/asm/kvm_para.h>
+On Wed, 2021-01-06 at 14:55 +1300, Kai Huang wrote:
+> --- Disclaimer ---
 > 
-> -extern u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
-> +/*
-> + * Hardware-defined CPUID leafs that are scattered in the kernel, but need to
-> + * be directly by KVM.  Note, these word values conflict with the kernel's
-> + * "bug" caps, but KVM doesn't use those.
+> These patches were originally written by Sean Christopherson while at Intel.
+> Now that Sean has left Intel, I (Kai) have taken over getting them upstream.
+> This series needs more review before it can be merged.  It is being posted
+> publicly and under RFC so Sean and others can review it. Maintainers are safe
+> ignoring it for now.
+> 
+> ------------------
+> 
+> Hi all,
+> 
+> This series adds KVM SGX virtualization support. The first 12 patches starting
+> with x86/sgx or x86/cpu.. are necessary changes to x86 and SGX core/driver to
+> support KVM SGX virtualization, while the rest are patches to KVM subsystem.
+> 
+> Please help to review this series. Also I'd like to hear what is the proper
+> way to merge this series, since it contains change to both x86/SGX and KVM
+> subsystem. Any feedback is highly appreciated. And please let me know if I
+> forgot to CC anyone, or anyone wants to be removed from CC. Thanks in advance!
+> 
+> This series is based against latest tip tree's x86/sgx branch. You can also get
+> the code from tip branch of kvm-sgx repo on github:
+> 
+>         https://github.com/intel/kvm-sgx.git tip
+> 
+> It also requires Qemu changes to create VM with SGX support. You can find Qemu
+> repo here:
+> 
+>         https://github.com/intel/qemu-sgx.git next
+> 
+> Please refer to README.md of above qemu-sgx repo for detail on how to create
+> guest with SGX support. At meantime, for your quick reference you can use below
+> command to create SGX guest:
+> 
+>         #qemu-system-x86_64 -smp 4 -m 2G -drive file=<your_vm_image>,if=virtio \
+>                 -cpu host,+sgx_provisionkey \
+>                 -sgx-epc id=epc1,memdev=mem1 \
+>                 -object memory-backend-epc,id=mem1,size=64M,prealloc
+> 
+> Please note that the SGX relevant part is:
+> 
+>                 -cpu host,+sgx_provisionkey \
+>                 -sgx-epc id=epc1,memdev=mem1 \
+>                 -object memory-backend-epc,id=mem1,size=64M,prealloc
+> 
+> And you can change other parameters of your qemu command based on your needs.
 
-This feels like another conflict waiting to happen if KVM decides to use
-them at some point...
+Thanks a lot documenting these snippets to the cover letter. I dig these
+up from lore once my environment is working.
 
-So let me get this straight: KVM wants to use X86_FEATURE_* which
-means, those numbers must map to the respective words in its CPUID caps
-representation kvm_cpu_caps, AFAICT.
+I'm setting up Arch based test environment with the eye on this patch set
+and generic Linux keyring patches:
 
-Then, it wants the leafs to correspond to the hardware leafs layout so
-that it can do:
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/arch.git/
 
-	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
+Still have some minor bits to adjust before I can start deploying it for SGX
+testing. For this patch set I'll use two instances of it.
 
-which comes straight from CPUID.
+> =========
+> KVM SGX virtualization Overview
+> 
+> - Virtual EPC
+> 
+> "Virtual EPC" is the EPC section exposed by KVM to guest so SGX software in
+> guest can discover it and use it to create SGX enclaves. KVM exposes SGX to 
 
-So lemme look at one word:
+Virtual EPC is a representation of an EPC section. And there is no "the".
 
-        kvm_cpu_cap_mask(CPUID_1_EDX,
-                F(FPU) | F(VME) | F(DE) | F(PSE) |
-                F(TSC) | F(MSR) | F(PAE) | F(MCE) |
-		...
+> guest via CPUID, and exposes one or more "virtual EPC" sections for guest.
+> The size of "virtual EPC" is passed as Qemu parameter when creating the
+> guest, and the base address is calcualted internally according to guest's
+> configuration.
+> 
+> To support virtual EPC, add a new misc device /dev/sgx_virt_epc to SGX
+> core/driver to allow userspace (Qemu) to allocate "raw" EPC, and use it as
+> "virtual EPC" for guest. Obviously, unlike EPC allocated for host SGX driver,
+> virtual EPC allocated via /dev/sgx_virt_epc doesn't have enclave associated,
+> and how virtual EPC is used by guest is compeletely controlled by guest's SGX
+> software.
+
+I think that /dev/sgx_vepc would be a clear enough name for the device. This
+text has now a bit confusing "terminology" related to this.
+
+In some places virtual EPC is quotes, and in other places it is not. I think
+that you could consistently an abbervation vEPC (without quotations):
+
+"
+vEPC
+====
+
+Virtual EPC, shortened as vEPC, is a representation of ...
+"
+
+> Implement the "raw" EPC allocation in the x86 core-SGX subsystem via
+> /dev/sgx_virt_epc rather than in KVM. Doing so has two major advantages:
+
+Maybe you could remove "raw" from the text.
+
+>   - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
+>     just another memory backend for guests.
+
+Why this an advantage? No objection, just a question.
+
+>   - EPC management is wholly contained in the SGX subsystem, e.g. SGX
+>     does not have to export any symbols, changes to reclaim flows don't
+>     need to be routed through KVM, SGX's dirty laundry doesn't have to
+>     get aired out for the world to see, and so on and so forth.
+
+No comments to this before understanding code changes better.
+
+> The virtual EPC allocated to guests is currently not reclaimable, due to
+> reclaiming EPC from KVM guests is not currently supported. Due to the
+> complications of handling reclaim conflicts between guest and host, KVM
+> EPC oversubscription, which allows total virtual EPC size greater than
+> physical EPC by being able to reclaiming guests' EPC, is significantly more
+> complex than basic support for SGX virtualization.
+
+I think it should be really in the center of the patch set description that
+this patch set implements segmentation of EPC, not oversubscription. It should
+be clear immediately. It's a core part of knowing "what I'm looking at".
+
+> - Support SGX virtualization without SGX Launch Control unlocked mode
+> 
+> Although SGX driver requires SGX Launch Control unlocked mode to work, SGX
+> virtualization doesn't, since how enclave is created is completely controlled
+> by guest SGX software, which is not necessarily linux. Therefore, this series
+> allows KVM to expose SGX to guest even SGX Launch Control is in locked mode,
+> or is not present at all. The reason is the goal of SGX virtualization, or
+> virtualization in general, is to expose hardware feature to guest, but not to
+> make assumption how guest will use it. Therefore, KVM should support SGX guest
+> as long as hardware is able to, to have chance to support more potential use
+> cases in cloud environment.
+
+AFAIK the convergence point with the FLC was, and is that Linux never enables
+SGX with locked MSRs.
+
+And I don't understand, if it is not fine to allow locked SGX for a *process*,
+why is it fine for a *virtual machine*? They have a lot same.
+
+I cannot remember out of top of my head, could the Intel SHA256 be read when
+booted with unlocked MSRs. If that is the case, then you can still support
+guests with that configuration.
+
+Context-dependent guidelines tend to also trash code big time. Also, for the
+sake of a sane kernel code base, I would consider only supporting unlocked
+MSRs.
+
+/Jarkko
 
 
-it would build the bitmask of the CPUID leaf using X86_FEATURE_* bits
-and then mask it out with the hardware leaf read from CPUID.
-
-But why?
-
-Why doesn't it simply build those leafs in kvm_cpu_caps from the leafs
-we've already queried?
-
-Oh it does so a bit earlier:
-
-        memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
-               sizeof(kvm_cpu_caps));
-
-and that kvm_cpu_cap_mask() call is to clear some bits in kvm_cpu_caps
-which is kvm-specific thing (not supported stuff etc).
-
-But then why does kvm_cpu_cap_mask() does cpuid_count()? Didn't it just
-read the bits from boot_cpu_data.x86_capability? And those bits we do
-query and massage extensively during boot. So why does KVM needs to
-query CPUID again instead of using what we've already queried?
-
-Maybe I'm missing something kvm-specific.
-
-In any case, this feels somewhat weird: you have *_cpu_has() on
-baremetal abstracting almost completely from CPUID by collecting all
-feature bits it needs into its own structure - x86_capability[] along
-with accessors for it - and then you want to "abstract back" to CPUID
-leafs from that interface. I wonder why.
-
-Anyway, more questions tomorrow.
-
-Gnight and good luck. :)
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
