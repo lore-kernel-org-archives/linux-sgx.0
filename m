@@ -2,50 +2,51 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB500C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DB9C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 01:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBF822D07
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 00:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF592250F
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 01:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbhALA5k (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 11 Jan 2021 19:57:40 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62294 "EHLO mga04.intel.com"
+        id S1727261AbhALBPQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 11 Jan 2021 20:15:16 -0500
+Received: from mga18.intel.com ([134.134.136.126]:22280 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728166AbhALA5k (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 11 Jan 2021 19:57:40 -0500
-IronPort-SDR: UdFBU14S/Id60MVQx0ZIsIlw2g3x19LfUGvvJzBWc1TohDJlD6TeW2Stc9504WMMtyjZdKa3LR
- XQaIGG58Bb4Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9861"; a="175381690"
+        id S1727431AbhALBPQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Jan 2021 20:15:16 -0500
+IronPort-SDR: VeaCzDZySdGri6bDiBoYwyu+Gq63u3HsHp6jQtZTTkXSNl80PFuq+tlgDar3OjsOx+I4AW9VZ+
+ m2lwHTtAoSBQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9861"; a="165643373"
 X-IronPort-AV: E=Sophos;i="5.79,340,1602572400"; 
-   d="scan'208";a="175381690"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 16:56:59 -0800
-IronPort-SDR: e/xbPHUah56apRUwmVV7TT2nwgeQf+bu3ZE1WnFNtXd8zkyRXYq+gOGadHy0Vf14gGDz7oIQCv
- Bbh4L6YMedXw==
+   d="scan'208";a="165643373"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 17:14:35 -0800
+IronPort-SDR: gcTdPTAenSfBS4t+vy9UlozmWALYIvh6z2EK9947afF2LKcge31cgqrAmwj1r/LOBOglMrWDaE
+ ziTlz4rgGcAg==
 X-IronPort-AV: E=Sophos;i="5.79,340,1602572400"; 
-   d="scan'208";a="351726882"
+   d="scan'208";a="397207362"
 Received: from tpotnis-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.76.146])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 16:56:56 -0800
-Date:   Tue, 12 Jan 2021 13:56:54 +1300
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 17:14:30 -0800
+Date:   Tue, 12 Jan 2021 14:14:28 +1300
 From:   Kai Huang <kai.huang@intel.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH 03/23] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-Id: <20210112135654.8fbefebd82fa6c57dc2d3bef@intel.com>
-In-Reply-To: <X/zhbyoWBnV1ESQx@kernel.org>
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de, mattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
+Message-Id: <20210112141428.038533b6cd5f674c906a3c43@intel.com>
+In-Reply-To: <2422737f6b0cddf6ff1be9cf90e287dd00d6a6a3.camel@kernel.org>
 References: <cover.1609890536.git.kai.huang@intel.com>
-        <ace9d4cb10318370f6145aaced0cfa73dda36477.1609890536.git.kai.huang@intel.com>
-        <X/zhbyoWBnV1ESQx@kernel.org>
+        <2422737f6b0cddf6ff1be9cf90e287dd00d6a6a3.camel@kernel.org>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -54,429 +55,97 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 12 Jan 2021 01:38:23 +0200 Jarkko Sakkinen wrote:
-> On Wed, Jan 06, 2021 at 02:55:20PM +1300, Kai Huang wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Mon, 11 Jan 2021 19:20:48 +0200 Jarkko Sakkinen wrote:
+> On Wed, 2021-01-06 at 14:55 +1300, Kai Huang wrote:
+> > --- Disclaimer ---
 > > 
-> > Add a misc device /dev/sgx_virt_epc to allow userspace to allocate "raw"
-> > EPC without an associated enclave.  The intended and only known use case
-> > for raw EPC allocation is to expose EPC to a KVM guest, hence the
-> > virt_epc moniker, virt.{c,h} files and X86_SGX_VIRTUALIZATION Kconfig.
+> > These patches were originally written by Sean Christopherson while at Intel.
+> > Now that Sean has left Intel, I (Kai) have taken over getting them upstream.
+> > This series needs more review before it can be merged.  It is being posted
+> > publicly and under RFC so Sean and others can review it. Maintainers are safe
+> > ignoring it for now.
 > > 
-> > Modify sgx_init() to always try to initialize virtual EPC driver, even
-> > when SGX driver is disabled due to SGX Launch Control is in locked mode,
-> > or not present at all, since SGX virtualization allows to expose SGX to
-> > guests that support non-LC configurations.
+> > ------------------
 > > 
-> > Implement the "raw" EPC allocation in the x86 core-SGX subsystem via
-> > /dev/sgx_virt_epc rather than in KVM. Doing so has two major advantages:
+> > Hi all,
 > > 
-> >   - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
-> >     just another memory backend for guests.
+> > This series adds KVM SGX virtualization support. The first 12 patches starting
+> > with x86/sgx or x86/cpu.. are necessary changes to x86 and SGX core/driver to
+> > support KVM SGX virtualization, while the rest are patches to KVM subsystem.
 > > 
-> >   - EPC management is wholly contained in the SGX subsystem, e.g. SGX
-> >     does not have to export any symbols, changes to reclaim flows don't
-> >     need to be routed through KVM, SGX's dirty laundry doesn't have to
-> >     get aired out for the world to see, and so on and so forth.
+> > Please help to review this series. Also I'd like to hear what is the proper
+> > way to merge this series, since it contains change to both x86/SGX and KVM
+> > subsystem. Any feedback is highly appreciated. And please let me know if I
+> > forgot to CC anyone, or anyone wants to be removed from CC. Thanks in advance!
 > > 
-> > The virtual EPC allocated to guests is currently not reclaimable, due to
-> > oversubscription of EPC for KVM guests is not currently supported. Due
-> > to the complications of handling reclaim conflicts between guest and
-> > host, KVM EPC oversubscription is significantly more complex than basic
-> > support for SGX virtualization.
+> > This series is based against latest tip tree's x86/sgx branch. You can also get
+> > the code from tip branch of kvm-sgx repo on github:
 > > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Co-developed-by: Kai Huang <kai.huang@intel.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> >         https://github.com/intel/kvm-sgx.git tip
+> > 
+> > It also requires Qemu changes to create VM with SGX support. You can find Qemu
+> > repo here:
+> > 
+> >         https://github.com/intel/qemu-sgx.git next
+> > 
+> > Please refer to README.md of above qemu-sgx repo for detail on how to create
+> > guest with SGX support. At meantime, for your quick reference you can use below
+> > command to create SGX guest:
+> > 
+> >         #qemu-system-x86_64 -smp 4 -m 2G -drive file=<your_vm_image>,if=virtio \
+> >                 -cpu host,+sgx_provisionkey \
+> >                 -sgx-epc id=epc1,memdev=mem1 \
+> >                 -object memory-backend-epc,id=mem1,size=64M,prealloc
+> > 
+> > Please note that the SGX relevant part is:
+> > 
+> >                 -cpu host,+sgx_provisionkey \
+> >                 -sgx-epc id=epc1,memdev=mem1 \
+> >                 -object memory-backend-epc,id=mem1,size=64M,prealloc
+> > 
+> > And you can change other parameters of your qemu command based on your needs.
 > 
-> The commit message does not describe the code changes. It should
-> have an understandable explanation of fops. There is nothing about
-> the implementation right now.
+> Thanks a lot documenting these snippets to the cover letter. I dig these
+> up from lore once my environment is working.
+> 
+> I'm setting up Arch based test environment with the eye on this patch set
+> and generic Linux keyring patches:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/arch.git/
+> 
+> Still have some minor bits to adjust before I can start deploying it for SGX
+> testing. For this patch set I'll use two instances of it.
 
-Thanks for feedback. Does "understabdable explanation of fops" mean I
-should add one sentence to say, for instance: "userspace hypervisor should open
-the /dev/sgx_virt_epc, use mmap() to get a valid address range, and then use
-that address range to create KVM memory region"?
-
-Or should I include an example of how to use /dev/sgx_virt_epc in userspace, for
-instance, below?
-
-	fd = open("/dev/sgx_virt_epc", O_RDWR);
-	void *addr = mmap(NULL, size, ..., fd);
-	/* userspace hypervisor uses addr, size to create KVM memory slot */
-	...
-
-I dug the SGX driver side to understand what should I add, but in below commit I
-don't see description of fops either:
-
-	commit 3fe0778edac8628637e2fd23835996523b1a3372
-	Author: Jarkko Sakkinen <jarkko@kernel.org>
-	Date:   Fri Nov 13 00:01:22 2020 +0200
-
-    	    x86/sgx: Add an SGX misc driver interface
-
+Thanks. Please let me know if you need anything more.
 
 > 
-> /Jarkko
+> > =========
+> > KVM SGX virtualization Overview
+> > 
+> > - Virtual EPC
+> > 
+> > "Virtual EPC" is the EPC section exposed by KVM to guest so SGX software in
+> > guest can discover it and use it to create SGX enclaves. KVM exposes SGX to 
 > 
-> > ---
-> >  arch/x86/Kconfig                 |  12 ++
-> >  arch/x86/kernel/cpu/sgx/Makefile |   1 +
-> >  arch/x86/kernel/cpu/sgx/main.c   |   5 +-
-> >  arch/x86/kernel/cpu/sgx/virt.c   | 263 +++++++++++++++++++++++++++++++
-> >  arch/x86/kernel/cpu/sgx/virt.h   |  14 ++
-> >  5 files changed, 294 insertions(+), 1 deletion(-)
-> >  create mode 100644 arch/x86/kernel/cpu/sgx/virt.c
-> >  create mode 100644 arch/x86/kernel/cpu/sgx/virt.h
+> Virtual EPC is a representation of an EPC section. And there is no "the".
+> 
+> > guest via CPUID, and exposes one or more "virtual EPC" sections for guest.
+> > The size of "virtual EPC" is passed as Qemu parameter when creating the
+> > guest, and the base address is calcualted internally according to guest's
+> > configuration.
 > > 
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index 618d1aabccb8..a7318175509b 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -1947,6 +1947,18 @@ config X86_SGX
-> >  
-> >  	  If unsure, say N.
-> >  
-> > +config X86_SGX_VIRTUALIZATION
-> > +	bool "Software Guard eXtensions (SGX) Virtualization"
-> > +	depends on X86_SGX && KVM_INTEL
-> > +	help
-> > +
-> > +	  Enables KVM guests to create SGX enclaves.
-> > +
-> > +	  This includes support to expose "raw" unreclaimable enclave memory to
-> > +	  guests via a device node, e.g. /dev/sgx_virt_epc.
-> > +
-> > +	  If unsure, say N.
-> > +
-> >  config EFI
-> >  	bool "EFI runtime service support"
-> >  	depends on ACPI
-> > diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-> > index 91d3dc784a29..7a25bf63adfb 100644
-> > --- a/arch/x86/kernel/cpu/sgx/Makefile
-> > +++ b/arch/x86/kernel/cpu/sgx/Makefile
-> > @@ -3,3 +3,4 @@ obj-y += \
-> >  	encl.o \
-> >  	ioctl.o \
-> >  	main.o
-> > +obj-$(CONFIG_X86_SGX_VIRTUALIZATION)	+= virt.o
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index 95aad183bb65..02993a327a1f 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -9,9 +9,11 @@
-> >  #include <linux/sched/mm.h>
-> >  #include <linux/sched/signal.h>
-> >  #include <linux/slab.h>
-> > +#include "arch.h"
-> >  #include "driver.h"
-> >  #include "encl.h"
-> >  #include "encls.h"
-> > +#include "virt.h"
-> >  
-> >  struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-> >  static int sgx_nr_epc_sections;
-> > @@ -726,7 +728,8 @@ static void __init sgx_init(void)
-> >  	if (!sgx_page_reclaimer_init())
-> >  		goto err_page_cache;
-> >  
-> > -	ret = sgx_drv_init();
-> > +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
-> > +	ret = !!sgx_drv_init() & !!sgx_virt_epc_init();
-> >  	if (ret)
-> >  		goto err_kthread;
-> >  
-> > diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-> > new file mode 100644
-> > index 000000000000..d625551ccf25
-> > --- /dev/null
-> > +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> > @@ -0,0 +1,263 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*  Copyright(c) 2016-20 Intel Corporation. */
-> > +
-> > +#include <linux/miscdevice.h>
-> > +#include <linux/mm.h>
-> > +#include <linux/mman.h>
-> > +#include <linux/sched/mm.h>
-> > +#include <linux/sched/signal.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/xarray.h>
-> > +#include <asm/sgx.h>
-> > +#include <uapi/asm/sgx.h>
-> > +
-> > +#include "encls.h"
-> > +#include "sgx.h"
-> > +#include "virt.h"
-> > +
-> > +struct sgx_virt_epc {
-> > +	struct xarray page_array;
-> > +	struct mutex lock;
-> > +	struct mm_struct *mm;
-> > +};
-> > +
-> > +static struct mutex virt_epc_lock;
-> > +static struct list_head virt_epc_zombie_pages;
-> > +
-> > +static int __sgx_virt_epc_fault(struct sgx_virt_epc *epc,
-> > +				struct vm_area_struct *vma, unsigned long addr)
-> > +{
-> > +	struct sgx_epc_page *epc_page;
-> > +	unsigned long index, pfn;
-> > +	int ret;
-> > +
-> > +	/* epc->lock must already have been hold */
-> > +
-> > +	/* Calculate index of EPC page in virtual EPC's page_array */
-> > +	index = vma->vm_pgoff + PFN_DOWN(addr - vma->vm_start);
-> > +
-> > +	epc_page = xa_load(&epc->page_array, index);
-> > +	if (epc_page)
-> > +		return 0;
-> > +
-> > +	epc_page = sgx_alloc_epc_page(epc, false);
-> > +	if (IS_ERR(epc_page))
-> > +		return PTR_ERR(epc_page);
-> > +
-> > +	ret = xa_err(xa_store(&epc->page_array, index, epc_page, GFP_KERNEL));
-> > +	if (ret)
-> > +		goto err_free;
-> > +
-> > +	pfn = PFN_DOWN(sgx_get_epc_phys_addr(epc_page));
-> > +
-> > +	ret = vmf_insert_pfn(vma, addr, pfn);
-> > +	if (ret != VM_FAULT_NOPAGE) {
-> > +		ret = -EFAULT;
-> > +		goto err_delete;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +err_delete:
-> > +	xa_erase(&epc->page_array, index);
-> > +err_free:
-> > +	sgx_free_epc_page(epc_page);
-> > +	return ret;
-> > +}
-> > +
-> > +static vm_fault_t sgx_virt_epc_fault(struct vm_fault *vmf)
-> > +{
-> > +	struct vm_area_struct *vma = vmf->vma;
-> > +	struct sgx_virt_epc *epc = vma->vm_private_data;
-> > +	int ret;
-> > +
-> > +	mutex_lock(&epc->lock);
-> > +	ret = __sgx_virt_epc_fault(epc, vma, vmf->address);
-> > +	mutex_unlock(&epc->lock);
-> > +
-> > +	if (!ret)
-> > +		return VM_FAULT_NOPAGE;
-> > +
-> > +	if (ret == -EBUSY && (vmf->flags & FAULT_FLAG_ALLOW_RETRY)) {
-> > +		mmap_read_unlock(vma->vm_mm);
-> > +		return VM_FAULT_RETRY;
-> > +	}
-> > +
-> > +	return VM_FAULT_SIGBUS;
-> > +}
-> > +
-> > +const struct vm_operations_struct sgx_virt_epc_vm_ops = {
-> > +	.fault = sgx_virt_epc_fault,
-> > +};
-> > +
-> > +static int sgx_virt_epc_mmap(struct file *file, struct vm_area_struct *vma)
-> > +{
-> > +	struct sgx_virt_epc *epc = file->private_data;
-> > +
-> > +	if (!(vma->vm_flags & VM_SHARED))
-> > +		return -EINVAL;
-> > +
-> > +	/*
-> > +	 * Don't allow mmap() from child after fork(), since child and parent
-> > +	 * cannot map to the same EPC.
-> > +	 */
-> > +	if (vma->vm_mm != epc->mm)
-> > +		return -EINVAL;
-> > +
-> > +	vma->vm_ops = &sgx_virt_epc_vm_ops;
-> > +	/* Don't copy VMA in fork() */
-> > +	vma->vm_flags |= VM_PFNMAP | VM_IO | VM_DONTDUMP | VM_DONTCOPY;
-> > +	vma->vm_private_data = file->private_data;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int sgx_virt_epc_free_page(struct sgx_epc_page *epc_page)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!epc_page)
-> > +		return 0;
-> > +
-> > +	/*
-> > +	 * Explicitly EREMOVE virtual EPC page. Virtual EPC is only used by
-> > +	 * guest, and in normal condition guest should have done EREMOVE for
-> > +	 * all EPC pages before they are freed here. But it's possible guest
-> > +	 * is killed or crashed unnormally in which case EREMOVE has not been
-> > +	 * done. Do EREMOVE unconditionally here to cover both cases, because
-> > +	 * it's not possible to tell whether guest has done EREMOVE, since
-> > +	 * virtual EPC page status is not tracked. And it is fine to EREMOVE
-> > +	 * EPC page multiple times.
-> > +	 */
-> > +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-> > +	if (ret) {
-> > +		/*
-> > +		 * Only SGX_CHILD_PRESENT is expected, which is because of
-> > +		 * EREMOVE-ing an SECS still with child, in which case it can
-> > +		 * be handled by EREMOVE-ing the SECS again after all pages in
-> > +		 * virtual EPC have been EREMOVE-ed. See comments in below in
-> > +		 * sgx_virt_epc_release().
-> > +		 */
-> > +		WARN_ON_ONCE(ret != SGX_CHILD_PRESENT);
-> > +		return ret;
-> > +	}
-> > +
-> > +	__sgx_free_epc_page(epc_page);
-> > +	return 0;
-> > +}
-> > +
-> > +static int sgx_virt_epc_release(struct inode *inode, struct file *file)
-> > +{
-> > +	struct sgx_virt_epc *epc = file->private_data;
-> > +	struct sgx_epc_page *epc_page, *tmp, *entry;
-> > +	unsigned long index;
-> > +
-> > +	LIST_HEAD(secs_pages);
-> > +
-> > +	mmdrop(epc->mm);
-> > +
-> > +	xa_for_each(&epc->page_array, index, entry) {
-> > +		/*
-> > +		 * Virtual EPC pages are not tracked, so it's possible for
-> > +		 * EREMOVE to fail due to, e.g. a SECS page still has children
-> > +		 * if guest was shutdown unexpectedly. If it is the case, leave
-> > +		 * it in the xarray and retry EREMOVE below later.
-> > +		 */
-> > +		if (sgx_virt_epc_free_page(entry))
-> > +			continue;
-> > +
-> > +		xa_erase(&epc->page_array, index);
-> > +	}
-> > +
-> > +	/*
-> > +	 * Retry all failed pages after iterating through the entire tree, at
-> > +	 * which point all children should be removed and the SECS pages can be
-> > +	 * nuked as well...unless userspace has exposed multiple instance of
-> > +	 * virtual EPC to a single VM.
-> > +	 */
-> > +	xa_for_each(&epc->page_array, index, entry) {
-> > +		epc_page = entry;
-> > +		/*
-> > +		 * Error here means that EREMOVE failed due to a SECS page
-> > +		 * still has child on *another* EPC instance.  Put it to a
-> > +		 * temporary SECS list which will be spliced to 'zombie page
-> > +		 * list' and will be EREMOVE-ed again when freeing another
-> > +		 * virtual EPC instance.
-> > +		 */
-> > +		if (sgx_virt_epc_free_page(epc_page))
-> > +			list_add_tail(&epc_page->list, &secs_pages);
-> > +
-> > +		xa_erase(&epc->page_array, index);
-> > +	}
-> > +
-> > +	/*
-> > +	 * Third time's a charm.  Try to EREMOVE zombie SECS pages from virtual
-> > +	 * EPC instances that were previously released, i.e. free SECS pages
-> > +	 * that were in limbo due to having children in *this* EPC instance.
-> > +	 */
-> > +	mutex_lock(&virt_epc_lock);
-> > +	list_for_each_entry_safe(epc_page, tmp, &virt_epc_zombie_pages, list) {
-> > +		/*
-> > +		 * Speculatively remove the page from the list of zombies, if
-> > +		 * the page is successfully EREMOVE it will be added to the
-> > +		 * list of free pages.  If EREMOVE fails, throw the page on the
-> > +		 * local list, which will be spliced on at the end.
-> > +		 */
-> > +		list_del(&epc_page->list);
-> > +
-> > +		if (sgx_virt_epc_free_page(epc_page))
-> > +			list_add_tail(&epc_page->list, &secs_pages);
-> > +	}
-> > +
-> > +	if (!list_empty(&secs_pages))
-> > +		list_splice_tail(&secs_pages, &virt_epc_zombie_pages);
-> > +	mutex_unlock(&virt_epc_lock);
-> > +
-> > +	kfree(epc);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int sgx_virt_epc_open(struct inode *inode, struct file *file)
-> > +{
-> > +	struct sgx_virt_epc *epc;
-> > +
-> > +	epc = kzalloc(sizeof(struct sgx_virt_epc), GFP_KERNEL);
-> > +	if (!epc)
-> > +		return -ENOMEM;
-> > +	/*
-> > +	 * Keep the current->mm to virtual EPC. It will be checked in
-> > +	 * sgx_virt_epc_mmap() to prevent, in case of fork, child being
-> > +	 * able to mmap() to the same virtual EPC pages.
-> > +	 */
-> > +	mmgrab(current->mm);
-> > +	epc->mm = current->mm;
-> > +	mutex_init(&epc->lock);
-> > +	xa_init(&epc->page_array);
-> > +
-> > +	file->private_data = epc;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct file_operations sgx_virt_epc_fops = {
-> > +	.owner			= THIS_MODULE,
-> > +	.open			= sgx_virt_epc_open,
-> > +	.release		= sgx_virt_epc_release,
-> > +	.mmap			= sgx_virt_epc_mmap,
-> > +};
-> > +
-> > +static struct miscdevice sgx_virt_epc_dev = {
-> > +	.minor = MISC_DYNAMIC_MINOR,
-> > +	.name = "sgx_virt_epc",
-> > +	.nodename = "sgx_virt_epc",
-> > +	.fops = &sgx_virt_epc_fops,
-> > +};
-> > +
-> > +int __init sgx_virt_epc_init(void)
-> > +{
-> > +	INIT_LIST_HEAD(&virt_epc_zombie_pages);
-> > +	mutex_init(&virt_epc_lock);
-> > +
-> > +	return misc_register(&sgx_virt_epc_dev);
-> > +}
-> > diff --git a/arch/x86/kernel/cpu/sgx/virt.h b/arch/x86/kernel/cpu/sgx/virt.h
-> > new file mode 100644
-> > index 000000000000..e5434541a122
-> > --- /dev/null
-> > +++ b/arch/x86/kernel/cpu/sgx/virt.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> > +#ifndef _ASM_X86_SGX_VIRT_H
-> > +#define _ASM_X86_SGX_VIRT_H
-> > +
-> > +#ifdef CONFIG_X86_SGX_VIRTUALIZATION
-> > +int __init sgx_virt_epc_init(void);
-> > +#else
-> > +static inline int __init sgx_virt_epc_init(void)
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > +#endif
-> > +
-> > +#endif /* _ASM_X86_SGX_VIRT_H */
-> > -- 
-> > 2.29.2
-> > 
-> > 
+> > To support virtual EPC, add a new misc device /dev/sgx_virt_epc to SGX
+> > core/driver to allow userspace (Qemu) to allocate "raw" EPC, and use it as
+> > "virtual EPC" for guest. Obviously, unlike EPC allocated for host SGX driver,
+> > virtual EPC allocated via /dev/sgx_virt_epc doesn't have enclave associated,
+> > and how virtual EPC is used by guest is compeletely controlled by guest's SGX
+> > software.
+> 
+> I think that /dev/sgx_vepc would be a clear enough name for the device. This
+> text has now a bit confusing "terminology" related to this.
+
+/dev/sgx_virt_epc may be clearer from userspace's perspective, for instance,
+if people see /dev/sgx_vepc, they may have to think about what it is,
+while /dev/sgx_virt_epc they may not.
+
+But I don't have strong objection here. Does anyone has anything to say here?
