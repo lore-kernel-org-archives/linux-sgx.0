@@ -2,125 +2,129 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB34C43142
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 21:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF293C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 23:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE88423123
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 21:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C679623130
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Jan 2021 23:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbhALVqa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 12 Jan 2021 16:46:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46920 "EHLO
+        id S1733211AbhALXSJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 12 Jan 2021 18:18:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388398AbhALVqM (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 12 Jan 2021 16:46:12 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE9FDC061575
-        for <linux-sgx@vger.kernel.org>; Tue, 12 Jan 2021 13:45:32 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id 11so2220061pfu.4
-        for <linux-sgx@vger.kernel.org>; Tue, 12 Jan 2021 13:45:32 -0800 (PST)
+        with ESMTP id S1728427AbhALXSJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 12 Jan 2021 18:18:09 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 434A2C061794
+        for <linux-sgx@vger.kernel.org>; Tue, 12 Jan 2021 15:17:23 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id b5so2701852pjl.0
+        for <linux-sgx@vger.kernel.org>; Tue, 12 Jan 2021 15:17:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=vFJ/rFa4+Sg1hSl8x3O3B/ZIA0gEVYoqC8NmFooiOm0=;
-        b=wCA645tOz/mMX8wP55qrAguMJS197Qs3wIkh0y4st7n/0CHiK/UwPZwyCO+n4vY8s5
-         ZrTjQw4LZbhAN6v5s9I8MGW4bdXeceGByJNmlzbYr8pIV0DzKGAidchlmrg3hP/AvTj2
-         WcUcvrxiLt0C32T/oG2C7RGVw9VMEP7/agFvlioqjyNWZc6SXScABdHRvib1HrZhZbwq
-         apHaqKGIkz+N9oD1C7pwvss4yzcpQikEEfTSxKeqz7sbw3OSm85JN4yfBi18BPuHiuI5
-         ygMJg5XjcGYUSYg1Vwn5nuVxOsp8AF1WiEQtloclykGZrQDt7ryFwfP81LzyZaKl3VrE
-         Mldw==
+         :content-disposition:in-reply-to;
+        bh=Yi311W2mEPcoUeeXQ6K1FVZjGfDJ1DzLXppBk3GV5Ss=;
+        b=RuG09I9iqag6FBvfI3cDukXJCSjkxHc4/RpZXp3kCvFZdEE3wMzml3SKx4vNREH1Hv
+         VPFbCoOG8Sn7WTeX6ncDzSqu/Lb6ZWuA33CROIA51tQOKh10JfJy/Y6W3UXPY763wEKk
+         sgd28dr4GIDeTdBWhEK8c2e2WSmtzJxnJP2hlEt7LFNmcd9XlMBNZd50c2rfEPSxupV2
+         YLHwtjXcIhMLnC8G/QU3KyAxQJzbOlH6Og0p8sM5XBJacz4BA2g4GANxuM1MYHm34x0F
+         WtgFAMiFHlCK2A0wYooEmJvIH3fcSHg8X4OXX+UzYlVWMI+4+0aHyY3DpfDH7Gy2OKy1
+         acjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=vFJ/rFa4+Sg1hSl8x3O3B/ZIA0gEVYoqC8NmFooiOm0=;
-        b=G85MQinxp53IWow7EVcWlOJ7gSr7kb+QJCbQ1BHnynGix7UvQ9S+/tbINtWV9EJzeA
-         X9iyo2QWjQiW9+aMvJJpT/z5uob5HbXiDIosUQWc76pJKD4ypTvKwxGZw5Bi2FZ5Y1ck
-         kyN72BX+ReFNx6XZ97wMtim1/acRkmW5o018fBC42NHnm7O6CvsO77m2d52Ca8BrxGiv
-         NJCz+OoEFxghJw05qm8Oef/GXadCMmMtwGwZYDojEDdVsFrY1gg4GU5imjtUV+p3IVMK
-         vkDSbdbkz2RQmfsU9SzQIj6oFkI4nr8PaHbQoZZWNLemhX4tifCOKQ0GrLmDr55dl9We
-         KMfw==
-X-Gm-Message-State: AOAM5331aa4PIXHvlL8ldHKnKUbQBT5lrx1dWCGxGsgch/w4ZAPKNVng
-        QdsGQLACEEq2jcBKrcq9BusCbg==
-X-Google-Smtp-Source: ABdhPJzUiHLIf6SN0zRWzersJQF2wrvUwAL6nSwXwPhNQPaix2oiqFI7jyJ+ueOK+QoT0VqFHLQ3Qw==
-X-Received: by 2002:a63:cf06:: with SMTP id j6mr1049819pgg.195.1610487931868;
-        Tue, 12 Jan 2021 13:45:31 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to;
+        bh=Yi311W2mEPcoUeeXQ6K1FVZjGfDJ1DzLXppBk3GV5Ss=;
+        b=pgiPIhi6Xr3+rJveUgWa82IseydUfM6189js9vCyGBPEkdiBi+jKF+FH2/6WS83a+r
+         cYOXvw7A2RVNCMDjAL61TrM3g64IsvQwu1fWCukUWRzXAs1RCCEpsNU9Yq7nnokd5kg0
+         ilXcVammhYdSewwmS0eoFaZ9W/Er/rwZ083+p15JAeZibJmMoWD+sRSQApgCSPkAAyjL
+         haWRMTpuFjCk+o41uiauScqTTRxnbLjZoFefIjhfAkp3sXF9gqvpianyNNThuTbGyFlu
+         XQpuTKNF4IgqErTTRF/hWXERPXwkB1zRoPr08C0HRsxq1+2FPHZlXr4LAdqSY621f5i5
+         oROw==
+X-Gm-Message-State: AOAM531HnylNJF7QTD5F9Ptx9TzgfK4I/+BbKNOKeBGqytXNxs160w2s
+        bsOoozdwn725evrhCbrFrT4PDA==
+X-Google-Smtp-Source: ABdhPJwap99ShubOOWt2zGEZ0I85k5Xp/UWL4WuRCBPZj/Skqhv8Wf85O//1dP4RTFWZFU2e82bSqw==
+X-Received: by 2002:a17:902:9896:b029:dc:3306:8aa7 with SMTP id s22-20020a1709029896b02900dc33068aa7mr1478741plp.6.1610493442542;
+        Tue, 12 Jan 2021 15:17:22 -0800 (PST)
 Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id k3sm4272752pgm.94.2021.01.12.13.45.30
+        by smtp.gmail.com with ESMTPSA id f9sm190920pfa.41.2021.01.12.15.17.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 13:45:31 -0800 (PST)
-Date:   Tue, 12 Jan 2021 13:45:24 -0800
+        Tue, 12 Jan 2021 15:17:21 -0800 (PST)
+Date:   Tue, 12 Jan 2021 15:17:15 -0800
 From:   Sean Christopherson <seanjc@google.com>
 To:     Kai Huang <kai.huang@intel.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH 01/23] x86/sgx: Split out adding EPC page to free
- list to separate helper
-Message-ID: <X/4YdCN9LwZGompH@google.com>
-References: <cover.1609890536.git.kai.huang@intel.com>
- <3d50c2614ff8a46b44062a398fd8644bcda92132.1609890536.git.kai.huang@intel.com>
- <31681b840aac59a8d8dcb05f2356d25cf09e1f11.camel@kernel.org>
- <20210112131944.9d69bb30cf4b94b6f6f25e7b@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
+        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH 04/23] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+Message-ID: <X/4t+6JcyTGVEG2e@google.com>
+References: <20210108071722.GA4042@zn.tnic>
+ <X/jxCOLG+HUO4QlZ@google.com>
+ <20210109011939.GL4042@zn.tnic>
+ <X/yQyUx4+veuSO0e@google.com>
+ <20210111190901.GG25645@zn.tnic>
+ <X/yk6zcJTLXJwIrJ@google.com>
+ <20210112121359.GC13086@zn.tnic>
+ <X/3ZSKDWoPcCsV/w@google.com>
+ <20210112175102.GJ13086@zn.tnic>
+ <dea875ea60cdef68fa8fe5b8f8cf3e8ed6a5df2e.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210112131944.9d69bb30cf4b94b6f6f25e7b@intel.com>
+In-Reply-To: <dea875ea60cdef68fa8fe5b8f8cf3e8ed6a5df2e.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jan 12, 2021, Kai Huang wrote:
-> On Tue, 12 Jan 2021 00:38:40 +0200 Jarkko Sakkinen wrote:
-> > On Wed, 2021-01-06 at 14:55 +1300, Kai Huang wrote:
-> > > From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Wed, Jan 13, 2021, Kai Huang wrote:
+> On Tue, 2021-01-12 at 18:51 +0100, Borislav Petkov wrote:
+> > On Tue, Jan 12, 2021 at 09:15:52AM -0800, Sean Christopherson wrote:
+> > > We want the boot_cpu_data.x86_capability memcpy() so that KVM doesn't advertise
+> > > support for features that are intentionally disabled in the kernel, e.g. via
+> > > kernel params.  Except for a few special cases, e.g. LA57, KVM doesn't enable
+> > > features in the guest if they're disabled in the host, even if the features are
+> > > supported in hardware.
 > > > 
-> > > SGX virtualization requires to allocate "raw" EPC and use it as virtual
-> > > EPC for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
-> > > track how EPC pages are used in VM, e.g. (de)construction of enclaves,
-> > > so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
-> > > knowledge of which pages are SECS with non-zero child counts.
-> > > 
-> > > Split sgx_free_page() into two parts so that the "add to free list"
-> > > part can be used by virtual EPC without having to modify the EREMOVE
-> > > logic in sgx_free_page().
-> > > 
-> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > > For some features, e.g. SMEP and SMAP, honoring boot_cpu_data is mostly about
+> > > respecting the kernel's wishes, i.e. barring hardware bugs, enabling such
+> > > features in the guest won't break anything.  But for other features, e.g. XSAVE
+> > > based features, enabling them in the guest without proper support in the host
+> > > will corrupt guest and/or host state.
 > > 
-> > I have a better idea with the same outcome for KVM.
+> > Ah ok, that is an important point.
 > > 
-> > https://lore.kernel.org/linux-sgx/20210111223610.62261-1-jarkko@kernel.org/T/#t
+> > > So it's really the CPUID read that is (mostly) superfluous.
+> > 
+> > Yeah, but that is cheap, as we established.
+> > 
+> > Ok then, I don't see anything that might be a problem and I guess we can
+> > try that handling of scattered bits in kvm and see how far we'll get.
 > 
-> I agree with your patch this one can be replaced. I'll include your patch in
-> next version, and once it is upstreamed, it can be removed in my series.
+> Hi Sean, Boris,
 > 
-> Sean, please let me know if you have objection.
+> Thanks for all  your feedback.
+> 
+> Sean,
+> 
+> Do you want to send me your patch (so that with your SoB), or do you want me to copy
+> & paste the code you posted in this series, plus Suggested-by you? Or how do you want
+> to proceed?
+> 
+> Also to me it is better to separate X86_FEATURE_SGX1/2 with rest of KVM changes?
 
-6 of one, half dozen of the other.  I liked not having to modify the existing
-call sites, but it's your code.
+Hmm, I'll split the changes into two proper patches and send them to you off list.
 
-Though on that topic, this snippet is wrong:
+> And do you think adding a dedicated, i.e. kvm_scattered_cpu_caps[], instead of using
+> existing kvm_cpu_cap[NCAPINTS] would be helpful to solve the problem caused by adding
+> new leaf to x86 core (see my another reply in this thread)?
 
-@@ -431,7 +443,8 @@ void sgx_encl_release(struct kref *ref)
- 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
- 					   list);
- 		list_del(&va_page->list);
--		sgx_free_epc_page(va_page->epc_page);
-+		sgx_reset_epc_page(entry->epc_page);
-+		sgx_free_epc_page(entry->epc_page);
-
-s/entry/va_page in the new code.
-
-P.S. I apparently hadn't been subscribed linux-sgx and so didn't see those
-     patches.  I'm now subscribed and can chime-in as needed.
+Probably not, because then we'd have to add new helpers to deal with the new
+array, or change all the helpers to take the array as a pointer.  Blasting past
+NCAPINTS is a little evil, but it does slot in nicely to the existing code.
