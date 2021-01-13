@@ -2,62 +2,60 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9202AC433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 13 Jan 2021 01:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1C5C433DB
+	for <linux-sgx@archiver.kernel.org>; Wed, 13 Jan 2021 17:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3D92311B
-	for <linux-sgx@archiver.kernel.org>; Wed, 13 Jan 2021 01:16:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E90A623120
+	for <linux-sgx@archiver.kernel.org>; Wed, 13 Jan 2021 17:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbhAMBQn convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 12 Jan 2021 20:16:43 -0500
-Received: from mga11.intel.com ([192.55.52.93]:41221 "EHLO mga11.intel.com"
+        id S1727822AbhAMRG2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 13 Jan 2021 12:06:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbhAMBQn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 12 Jan 2021 20:16:43 -0500
-IronPort-SDR: 5dA1V977T/EoUbIZ1+UuvPOdGKQVJM6f+dAmvLgstgy5fzqssFLBWBYIzUDDOZh7VFD9mIlg3H
- NDB8ptZpPaMw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9862"; a="174624869"
-X-IronPort-AV: E=Sophos;i="5.79,343,1602572400"; 
-   d="scan'208";a="174624869"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2021 17:15:58 -0800
-IronPort-SDR: p48fnh44ysKcN358GzCcAtXmQZxWJHipkmlxpO7Hkc7nvb9o/QmxE+JQXS/ziJvJ34Z9dbp1DI
- XMkKaR1arTZA==
-X-IronPort-AV: E=Sophos;i="5.79,343,1602572400"; 
-   d="scan'208";a="381649432"
-Received: from rjchin-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.18.242])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2021 17:15:55 -0800
-Date:   Wed, 13 Jan 2021 14:15:54 +1300
-From:   Kai Huang <kai.huang@intel.com>
+        id S1727804AbhAMRG2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 13 Jan 2021 12:06:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A848F23120;
+        Wed, 13 Jan 2021 17:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610557547;
+        bh=MUd7S7rtCsqUrMn87R8c6uIReg2ioYigpK0BF2vWWoA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CZbKdp40hlLoK0OhpFJsVTGu9Ql7WX3ZCgSzKbd4+18tGtrpoqH2e4IVttRcOjZw4
+         UAPu3iA+BEPBxhTpoyQTIxW0vWGOAuZIXDzX+akO2+4hPbZAcd7SOKLRvayHqPCRYe
+         U0pj02hjwOiqeDQDKLham0ZjDjxHeMKvcSae/WyLUW8Js97ZN86AFuzgH+QwtTVwuR
+         6iZROd0GHkHOYr6+nD4eUZyoNRbrOUQgsxgnay2ZwAjuf03FYUQZNxYlvjkQiyJ2JI
+         ZASxtxQy7zIAbx0shn6c67Sj7+4ngKJOnd64hmQJzqhCemT9n/xQPENAJkhO6+AZJl
+         06qTAPsXUVoMA==
+Date:   Wed, 13 Jan 2021 19:05:40 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Sean Christopherson <seanjc@google.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
         bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 Subject: Re: [RFC PATCH 01/23] x86/sgx: Split out adding EPC page to free
  list to separate helper
-Message-Id: <20210113141554.52aa72520a056232459b4cba@intel.com>
-In-Reply-To: <X/4YdCN9LwZGompH@google.com>
+Message-ID: <X/8oZKCStrqF7DxQ@kernel.org>
 References: <cover.1609890536.git.kai.huang@intel.com>
-        <3d50c2614ff8a46b44062a398fd8644bcda92132.1609890536.git.kai.huang@intel.com>
-        <31681b840aac59a8d8dcb05f2356d25cf09e1f11.camel@kernel.org>
-        <20210112131944.9d69bb30cf4b94b6f6f25e7b@intel.com>
-        <X/4YdCN9LwZGompH@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+ <3d50c2614ff8a46b44062a398fd8644bcda92132.1609890536.git.kai.huang@intel.com>
+ <31681b840aac59a8d8dcb05f2356d25cf09e1f11.camel@kernel.org>
+ <20210112131944.9d69bb30cf4b94b6f6f25e7b@intel.com>
+ <X/4YdCN9LwZGompH@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <X/4YdCN9LwZGompH@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 12 Jan 2021 13:45:24 -0800 Sean Christopherson wrote:
+On Tue, Jan 12, 2021 at 01:45:24PM -0800, Sean Christopherson wrote:
 > On Tue, Jan 12, 2021, Kai Huang wrote:
 > > On Tue, 12 Jan 2021 00:38:40 +0200 Jarkko Sakkinen wrote:
 > > > On Wed, 2021-01-06 at 14:55 +1300, Kai Huang wrote:
@@ -87,7 +85,10 @@ On Tue, 12 Jan 2021 13:45:24 -0800 Sean Christopherson wrote:
 > 
 > 6 of one, half dozen of the other.  I liked not having to modify the existing
 > call sites, but it's your code.
-> 
+
+Only the call sites contained sgx_encl_release() require a call to
+sgx_reset_epc_page(). That's three in total.
+
 > Though on that topic, this snippet is wrong:
 > 
 > @@ -431,7 +443,8 @@ void sgx_encl_release(struct kref *ref)
@@ -97,16 +98,17 @@ On Tue, 12 Jan 2021 13:45:24 -0800 Sean Christopherson wrote:
 > -		sgx_free_epc_page(va_page->epc_page);
 > +		sgx_reset_epc_page(entry->epc_page);
 > +		sgx_free_epc_page(entry->epc_page);
-> 
+
+Thanks for the remark.
+
+I checked why I did not see this when running test_sgx. I had not specified
+local tree for BuildRoot (LINUX_OVERRIDE_SRCDIR) when building test image.
+
 > s/entry/va_page in the new code.
 > 
 > P.S. I apparently hadn't been subscribed linux-sgx and so didn't see those
 >      patches.  I'm now subscribed and can chime-in as needed.
 
-Thanks. I also have replied to Jarkko's v2 patch, and I think you can see it
-now.
+OK, great, I can also CC directly to the next version.
 
-I think if Jarkko's patch is eventually merged to upstream, we can drop
-this patch. So please help to comment if Jarkko's patch is reasonable, since I
-don't have history with SGX driver and cannot immediately tell if it is
-reasonable.
+/Jarkko
