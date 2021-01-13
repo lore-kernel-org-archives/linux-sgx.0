@@ -2,133 +2,130 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2A2C43333
-	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 02:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE87C43333
+	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 02:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4565023447
-	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 02:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 065E0235F8
+	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 02:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbhAMXYt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 13 Jan 2021 18:24:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39640 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729468AbhAMXX7 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Jan 2021 18:23:59 -0500
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB3DC0617A2
-        for <linux-sgx@vger.kernel.org>; Wed, 13 Jan 2021 15:23:17 -0800 (PST)
-Received: by mail-qk1-x74a.google.com with SMTP id b206so2822540qkc.14
-        for <linux-sgx@vger.kernel.org>; Wed, 13 Jan 2021 15:23:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=+JBIHMuyJa70cpP25bahuDTCZUqK7yPMk6L/NTONdrc=;
-        b=WK7/YZmWauXQBMvF3DEQhqmFUulJLNOqcpKOk4tfHxfaUVhbULIVMKaAl9L2Yml4x3
-         auriP5WCr26oHIUVUlkKy4//us9oh/dNC5ZaKJY/0HD5H3v24W2g7NaCluqEW+gSHUa0
-         L2K8sK6CIjU1oSeS1JKQQwXXF6XCpjJyvZBBunCY4Gmq0yRRXXhqKwpn40KnJxzb8Sub
-         K/Ev4FO7TzM+vJy8dcGvQJd0yeDFbog9oB9LIB4JP4o5jggD++I7ocwWpS/8remUNTh8
-         9C8gaFssGUhZpKYBh6lpRtGh28QsNvHbo8YZ1fmfW641uQTpd7K5+EcC7apNuzY78DBW
-         AVJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=+JBIHMuyJa70cpP25bahuDTCZUqK7yPMk6L/NTONdrc=;
-        b=jhk6e83V1I2sjB3G2nhVpZvbcQZ8ApwmFd/hnIbntkTTenRcAF+4ZOTaREIgkZYIKY
-         Ms46seisEnBg7t8CH1Q3g6CU0C6p4yarfA+iKW/r6u78fKg+l2xOTgcJLIlpkpQNbL2n
-         6rT3+dY9t73rUA6zo3Ng+qCEZiKGK5r2IhS/2rEn1CpS/p+fIcTUYM3Lp4iJTFtMsCJ4
-         /RR79HZGey0b+pMItvZcT4wZeLstdYLnypsfOEmhXNWVQHwFEfAmGb2FL1mQbedbO0V/
-         PcZ/Jpm3oE5XhcE0v2pho3frW6m6/vlbRjqcnVTzO2EJyeG9We4qkVQXlp4hI4+ZnMU7
-         2/Bg==
-X-Gm-Message-State: AOAM532uCaBvRb0Aa3TRbpHkHMR0AEQOhB/KERZH3zxjh5Le3+XW11HK
-        FiXfhquZPXIIMMcLtbom2jo1DnO8ykY6Ii5z6MU=
-X-Google-Smtp-Source: ABdhPJyIkaD32QDGg8k13TV80+wcKGD1DkjvoNfE7I+Pa86q1qu2viSbSzgxNX9rEUQfxZK/TNEnVW2mq+oe3JW2J7g=
-Sender: "samitolvanen via sendgmr" 
-        <samitolvanen@samitolvanen1.mtv.corp.google.com>
-X-Received: from samitolvanen1.mtv.corp.google.com ([2620:15c:201:2:f693:9fff:fef4:1b6d])
- (user=samitolvanen job=sendgmr) by 2002:a05:6902:6cc:: with SMTP id
- m12mr6127100ybt.56.1610580196048; Wed, 13 Jan 2021 15:23:16 -0800 (PST)
-Date:   Wed, 13 Jan 2021 15:23:11 -0800
-Message-Id: <20210113232311.277302-1-samitolvanen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
-Subject: [PATCH] x86/sgx: fix the return type of sgx_init
-From:   Sami Tolvanen <samitolvanen@google.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
+        id S1728456AbhANCN1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 13 Jan 2021 21:13:27 -0500
+Received: from mga09.intel.com ([134.134.136.24]:42325 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbhAMVla (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 13 Jan 2021 16:41:30 -0500
+IronPort-SDR: yCCwq/m62RxHu5z7gaHapea9Zeim2yhf3JO6y7qsx0xfrqLH+i9xHB3GKJKML4wHT6+tlOktEN
+ vf0jXSZC2ajg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9863"; a="178418939"
+X-IronPort-AV: E=Sophos;i="5.79,345,1602572400"; 
+   d="scan'208";a="178418939"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 13:40:48 -0800
+IronPort-SDR: YhmcSYgmEv3hHsbQRBUyCYGDH+pFa9/6rKgFh6wWWACkG+ZYjGh3nvnT9ILavJfIEvQnQhMbsv
+ WWSVfgShw8xQ==
+X-IronPort-AV: E=Sophos;i="5.79,345,1602572400"; 
+   d="scan'208";a="353636065"
+Received: from cyalaman-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.5.162])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 13:40:45 -0800
+Date:   Thu, 14 Jan 2021 10:40:42 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 2/2] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+Message-Id: <20210114104042.95da8258b2e3f9063ae79aba@intel.com>
+In-Reply-To: <X/9hONWr8c9XLB14@kernel.org>
+References: <20210112233351.68678-1-jarkko@kernel.org>
+        <20210112233351.68678-3-jarkko@kernel.org>
+        <20210113140917.d02dd73185604bc5d2f1501e@intel.com>
+        <X/9hONWr8c9XLB14@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-device_initcall() expects a function of type initcall_t, which returns
-an integer. Change the signature of sgx_init() to match.
+On Wed, 13 Jan 2021 23:08:08 +0200 Jarkko Sakkinen wrote:
+> On Wed, Jan 13, 2021 at 02:09:17PM +1300, Kai Huang wrote:
+> > On Wed, 13 Jan 2021 01:33:51 +0200 jarkko@kernel.org wrote:
+> > > From: "jarkko@kernel.org" <jarkko@kernel.org>
+> > > 
+> > > Encapsulate the snippet in sgx_free_epc_page() concerning EREMOVE to
+> > > sgx_reset_epc_page(), which is a static helper function for
+> > > sgx_encl_release(). It's the only function existing, which deals with
+> > > initialized pages.
+> > > 
+> > > Signed-off-by: jarkko@kernel.org <jarkko@kernel.org>
+> > > ---
+> > > v2: Fixed a compilation error s/page/epc_page/ change not amended
+> > >     to the patches.
+> > >  arch/x86/kernel/cpu/sgx/encl.c | 15 ++++++++++++++-
+> > >  arch/x86/kernel/cpu/sgx/main.c | 10 ++++------
+> > >  2 files changed, 18 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> > > index fe7256db6e73..511f4bc70699 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/encl.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> > > @@ -389,6 +389,16 @@ const struct vm_operations_struct sgx_vm_ops = {
+> > >  	.access = sgx_vma_access,
+> > >  };
+> > >  
+> > > +
+> > > +static void sgx_reset_epc_page(struct sgx_epc_page *epc_page)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
+> > > +	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
+> > > +		return;
+> > > +}
+> > > +
+> > >  /**
+> > >   * sgx_encl_release - Destroy an enclave instance
+> > >   * @kref:	address of a kref inside &sgx_encl
+> > > @@ -412,6 +422,7 @@ void sgx_encl_release(struct kref *ref)
+> > >  			if (sgx_unmark_page_reclaimable(entry->epc_page))
+> > >  				continue;
+> > >  
+> > > +			sgx_reset_epc_page(entry->epc_page);
+> > >  			sgx_free_epc_page(entry->epc_page);
+> > >  			encl->secs_child_cnt--;
+> > >  			entry->epc_page = NULL;
+> > > @@ -423,6 +434,7 @@ void sgx_encl_release(struct kref *ref)
+> > >  	xa_destroy(&encl->page_array);
+> > >  
+> > >  	if (!encl->secs_child_cnt && encl->secs.epc_page) {
+> > > +		sgx_reset_epc_page(encl->secs.epc_page);
+> > >  		sgx_free_epc_page(encl->secs.epc_page);
+> > >  		encl->secs.epc_page = NULL;
+> > >  	}
+> > > @@ -431,7 +443,8 @@ void sgx_encl_release(struct kref *ref)
+> > >  		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+> > >  					   list);
+> > >  		list_del(&va_page->list);
+> > > -		sgx_free_epc_page(va_page->epc_page);
+> > > +		sgx_reset_epc_page(entry->epc_page);
+> > > +		sgx_free_epc_page(entry->epc_page);
+> > 
+> > Reply so that Sean can see, since he just subscribed to linux-sgx list.
+> > 
+> > As Sean pointed out in KVM SGX virtualization thread, entry should be va_page.
+> 
+> Thank, noticed, and responded. I'm sending v3. I think it would be best to
+> then include that version to KVM patch set, as there is no such a rush to
+> get my patches to upstream. I already dropped them from my bleeding edge
+> numa branch.
 
-Fixes: e7e0545299d8c ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index c519fc5f6948..8df81a3ed945 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -700,25 +700,27 @@ static bool __init sgx_page_cache_init(void)
- 	return true;
- }
- 
--static void __init sgx_init(void)
-+static int __init sgx_init(void)
- {
- 	int ret;
- 	int i;
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX))
--		return;
-+		return -ENODEV;
- 
- 	if (!sgx_page_cache_init())
--		return;
-+		return -ENOMEM;
- 
--	if (!sgx_page_reclaimer_init())
-+	if (!sgx_page_reclaimer_init()) {
-+		ret = -ENOMEM;
- 		goto err_page_cache;
-+	}
- 
- 	ret = sgx_drv_init();
- 	if (ret)
- 		goto err_kthread;
- 
--	return;
-+	return 0;
- 
- err_kthread:
- 	kthread_stop(ksgxd_tsk);
-@@ -728,6 +730,8 @@ static void __init sgx_init(void)
- 		vfree(sgx_epc_sections[i].pages);
- 		memunmap(sgx_epc_sections[i].virt_addr);
- 	}
-+
-+	return ret;
- }
- 
- device_initcall(sgx_init);
-
-base-commit: 65f0d2414b7079556fbbcc070b3d1c9f9587606d
--- 
-2.30.0.284.gd98b1dd5eaa7-goog
+Sure. I'll take your patch once I see it. Thanks Jarkko.
 
