@@ -2,180 +2,147 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9995C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 04:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7414AC433DB
+	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 12:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4239238E7
-	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 04:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F33D23A52
+	for <linux-sgx@archiver.kernel.org>; Thu, 14 Jan 2021 12:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725897AbhANEoE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 13 Jan 2021 23:44:04 -0500
-Received: from mga01.intel.com ([192.55.52.88]:36935 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbhANEoD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 13 Jan 2021 23:44:03 -0500
-IronPort-SDR: ym6HEfYrDiKpoHzjWHeIuwiDqMOjVUjtESiztHbqTefM1xQMo6sWzF1ls+8OFnJ0+Bu9sOjZwf
- SiGPWPJxrLjw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9863"; a="196958135"
-X-IronPort-AV: E=Sophos;i="5.79,346,1602572400"; 
-   d="scan'208";a="196958135"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 20:42:14 -0800
-IronPort-SDR: wY/2orm4QfpyMhI+d+4ZM0i2QSFDFSkwXI4dsTWPSNjZXyh1ZPkcaJgFB6pCBy/7XPKH4VCJ84
- kmUDtgk+AlBg==
-X-IronPort-AV: E=Sophos;i="5.79,346,1602572400"; 
-   d="scan'208";a="353759711"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO mqcpg7oapc828.gar.corp.intel.com) ([10.251.157.39])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 13 Jan 2021 20:42:13 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Borislav Petkov" <bp@alien8.de>,
-        "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org,
-        "Sean Christopherson" <seanjc@google.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Jethro Beekman" <jethro@fortanix.com>
-Subject: Re: [PATCH v3] x86/sgx: Synchronize encl->srcu in sgx_encl_release().
-References: <20201216134920.21161-1-jarkko@kernel.org>
- <20210105145749.GF28649@zn.tnic> <X/zoarV7gd/LNo4A@kernel.org>
-Date:   Wed, 13 Jan 2021 22:42:12 -0600
+        id S1727216AbhANMNR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 14 Jan 2021 07:13:17 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:52680 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbhANMNR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 14 Jan 2021 07:13:17 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10ECAAQp153199;
+        Thu, 14 Jan 2021 12:12:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=w9+dNPCu+MdawUc3ua+vPpypVjNaP2LE91fqALsojHU=;
+ b=v8l5N5tsQ8hxgO+7sQn0E+GP24QKWejwxI8DBKu4LnM+vDnsasBL8UOa+yGUUH8TRrzr
+ l9rL6hhklVo+X+UN4zuoAoOblPbH3C7U5mB8Ldserk4gdTPBbtpbfdhVvn47TSc5sO+L
+ 1PUwN/F57ZZfTRZEezJpHa4rgy0F9dhnlHgNGwVx7krJcvHJ8zSSnZTj9Z59nlSQmBBa
+ PAMRHI3vzrVPyTdl8Re1k20caNIxP0P6Qojdc0z436eVpjNE+uhkN/yoPQlVJWdmoYVE
+ dXjDYUds6zb1aB9gCXxjX8ZTXift0E9Je5/oKDtKde6CC6Ir2OMG3y3kl0Yy+AXkeohQ ng== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 360kg1yyv8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jan 2021 12:12:18 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10EC6DQX078979;
+        Thu, 14 Jan 2021 12:12:17 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 360kf24maa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jan 2021 12:12:17 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10ECCEuM013458;
+        Thu, 14 Jan 2021 12:12:15 GMT
+Received: from starbug-mbp.localdomain (/79.97.215.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jan 2021 04:12:14 -0800
+Received: by starbug-mbp.localdomain (Postfix, from userid 501)
+        id A3F982DC3650; Thu, 14 Jan 2021 12:12:12 +0000 (GMT)
+From:   Darren Kenny <darren.kenny@oracle.com>
+To:     Sami Tolvanen <samitolvanen@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Sean Christopherson <seanjc@google.com>
+Cc:     Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: [PATCH] x86/sgx: fix the return type of sgx_init
+In-Reply-To: <20210113232311.277302-1-samitolvanen@google.com>
+References: <20210113232311.277302-1-samitolvanen@google.com>
+Date:   Thu, 14 Jan 2021 12:12:12 +0000
+Message-ID: <m2zh1bvhsz.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.0w60mzepwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
-In-Reply-To: <X/zoarV7gd/LNo4A@kernel.org>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9863 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101140072
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9863 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ clxscore=1011 impostorscore=0 spamscore=0 priorityscore=1501 mlxscore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101140072
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 11 Jan 2021 18:08:10 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
+On Wednesday, 2021-01-13 at 15:23:11 -08, Sami Tolvanen wrote:
+> device_initcall() expects a function of type initcall_t, which returns
+> an integer. Change the signature of sgx_init() to match.
+>
+> Fixes: e7e0545299d8c ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 
-> On Tue, Jan 05, 2021 at 03:57:49PM +0100, Borislav Petkov wrote:
->> On Wed, Dec 16, 2020 at 03:49:20PM +0200, Jarkko Sakkinen wrote:
->> > Add synchronize_srcu_expedited() to sgx_encl_release() to catch a  
->> grace
->> > period initiated by sgx_mmu_notifier_release().
->> >
->> > A trivial example of a failing sequence with tasks A and B:
->> >
->> > 1. A: -> sgx_release()
->> > 2. B: -> sgx_mmu_notifier_release()
->> > 3. B: -> list_del_rcu()
->> > 3. A: -> sgx_encl_release()
->> > 4. A: -> cleanup_srcu_struct()
->> >
->> > The loop in sgx_release() observes an empty list because B has  
->> removed its
->> > entry in the middle, and calls cleanup_srcu_struct() before B has a  
->> chance
->> > to calls synchronize_srcu().
->>
->> Leading to what? NULL ptr?
->>
->> https://lkml.kernel.org/r/X9e2jOWz1hfXVpQ5@google.com
->>
->> already suggested that you should explain the bug better and add the
->> splat but I'm still missing that explanation.
->
-> OK, I'll try to explain it how I understand the issue.
->
-> Consider this loop in the VFS release hook (sgx_release):
->
-> 	/*
-> 	 * Drain the remaining mm_list entries. At this point the list contains
-> 	 * entries for processes, which have closed the enclave file but have
-> 	 * not exited yet. The processes, which have exited, are gone from the
-> 	 * list by sgx_mmu_notifier_release().
-> 	 */
-> 	for ( ; ; )  {
-> 		spin_lock(&encl->mm_lock);
->
-> 		if (list_empty(&encl->mm_list)) {
-> 			encl_mm = NULL;
-> 		} else {
-> 			encl_mm = list_first_entry(&encl->mm_list,
-> 						   struct sgx_encl_mm, list);
-> 			list_del_rcu(&encl_mm->list);
-> 		}
->
-> 		spin_unlock(&encl->mm_lock);
->
-> 		/* The enclave is no longer mapped by any mm. */
-> 		if (!encl_mm)
-> 			break;
->
-> 		synchronize_srcu(&encl->srcu);
-> 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
-> 		kfree(encl_mm);
-> 	}
->
->
-> At this point all processes have closed the enclave file, but that  
-> doesn't
-> mean that they all have exited yet.
->
-> Now, let's imagine that there is exactly one entry in the encl->mm_list.
-> and sgx_release() execution gets scheduled right after returning from
-> synchronize_srcu().
->
-> With some bad luck, some process comes and removes that last entry befoe
-> sgx_release() acquires mm_lock. The loop in sgx_release() just leaves
->
-> 		/* The enclave is no longer mapped by any mm. */
-> 		if (!encl_mm)
-> 			break;
->
-> No synchronize_srcu().
->
-> After writing this, I think that the placement for synchronize_srcu()
-> in this patch is not best possible. It should be rather that the
-> above loop would also call synchronize_srcu() when leaving.
->
-> I.e. the code change would result:
->
-> 	for ( ; ; )  {
-> 		spin_lock(&encl->mm_lock);
->
-> 		if (list_empty(&encl->mm_list)) {
-> 			encl_mm = NULL;
-> 		} else {
-> 			encl_mm = list_first_entry(&encl->mm_list,
-> 						   struct sgx_encl_mm, list);
-> 			list_del_rcu(&encl_mm->list);
-> 		}
->
-> 		spin_unlock(&encl->mm_lock);
->
->                 /*
->                  * synchronize_srcu() is mandatory *even* when the list  
-> was
->                  * empty, in order make sure that grace periods stays in
->                  * sync even when another task took away the last entry
->                  * (i.e. exiting process when it deletes its mm_list).
->                  */
-> 		synchronize_srcu(&encl->srcu);
->
-> 		/* The enclave is no longer mapped by any mm. */
-> 		if (!encl_mm)
-> 			break;
->
-> 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
-> 		kfree(encl_mm);
-> 	}
->
-> What do you think? Does this start to make more sense now?
-> I don't have logs for this but the bug can be also reasoned.
->
-> /Jarkko
+Makes sense.
 
-I did this experiment just now and find it runs much much slower than both  
-original code and code with synchronize_srcu_expedited fix in this patch.
-Haitao
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index c519fc5f6948..8df81a3ed945 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -700,25 +700,27 @@ static bool __init sgx_page_cache_init(void)
+>  	return true;
+>  }
+>  
+> -static void __init sgx_init(void)
+> +static int __init sgx_init(void)
+>  {
+>  	int ret;
+>  	int i;
+>  
+>  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
+> -		return;
+> +		return -ENODEV;
+>  
+>  	if (!sgx_page_cache_init())
+> -		return;
+> +		return -ENOMEM;
+>  
+> -	if (!sgx_page_reclaimer_init())
+> +	if (!sgx_page_reclaimer_init()) {
+> +		ret = -ENOMEM;
+>  		goto err_page_cache;
+> +	}
+>  
+>  	ret = sgx_drv_init();
+>  	if (ret)
+>  		goto err_kthread;
+>  
+> -	return;
+> +	return 0;
+>  
+>  err_kthread:
+>  	kthread_stop(ksgxd_tsk);
+> @@ -728,6 +730,8 @@ static void __init sgx_init(void)
+>  		vfree(sgx_epc_sections[i].pages);
+>  		memunmap(sgx_epc_sections[i].virt_addr);
+>  	}
+> +
+> +	return ret;
+>  }
+>  
+>  device_initcall(sgx_init);
+>
+> base-commit: 65f0d2414b7079556fbbcc070b3d1c9f9587606d
+> -- 
+> 2.30.0.284.gd98b1dd5eaa7-goog
