@@ -3,96 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411ABC433DB
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 14:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59C5C433E0
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 14:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 100AF2389B
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 14:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A288C23359
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 14:44:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732420AbhAOOH7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 15 Jan 2021 09:07:59 -0500
-Received: from mga14.intel.com ([192.55.52.115]:46895 "EHLO mga14.intel.com"
+        id S1731315AbhAOOoG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 15 Jan 2021 09:44:06 -0500
+Received: from mga01.intel.com ([192.55.52.88]:37443 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731567AbhAOOH7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 15 Jan 2021 09:07:59 -0500
-IronPort-SDR: aFALSTDMBRzXpTMYLPafW/B0qGYGH52jcnb4DoDXUBz9Lc6H/fD0u7G83LzopicoRIhtNR4L/8
- guXOsmS68MjA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9864"; a="177772750"
+        id S1725910AbhAOOoG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 15 Jan 2021 09:44:06 -0500
+IronPort-SDR: mnoeSRfLYLv5wvn1xXwNqE7pcPg4ae+o0bNrMhH2Fu/goX/7WPsPmxmvfT0SrmFfP6AD9AnW27
+ 1vH1/4BrEJFA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9864"; a="197222870"
 X-IronPort-AV: E=Sophos;i="5.79,349,1602572400"; 
-   d="scan'208";a="177772750"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2021 06:07:19 -0800
-IronPort-SDR: kAs2L9iORNiqfjpFscSideVFaBAexitrqRVwt5w2lMRs2zIxztsDBqZbHZ8wqfZ/ODiOPcT/s1
- ME+0EmvZMF3Q==
+   d="scan'208";a="197222870"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2021 06:43:25 -0800
+IronPort-SDR: eflR4KatMJrsfWwRaQOCwkoZCwYrX+93asKiciwWpSso1xfx+z3lRCaE8IB+4Ji1CBSw9cDgvi
+ jX3ApRf5S63Q==
 X-IronPort-AV: E=Sophos;i="5.79,349,1602572400"; 
-   d="scan'208";a="354314866"
-Received: from sanjanar-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.19.188])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2021 06:07:16 -0800
-Date:   Sat, 16 Jan 2021 03:07:13 +1300
+   d="scan'208";a="499939478"
+Received: from sanjanar-mobl.amr.corp.intel.com ([10.251.19.188])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2021 06:43:21 -0800
+Message-ID: <a522e6bd7bc588775eab889896dadac5e52eb717.camel@intel.com>
+Subject: Re: [RFC PATCH 00/23] KVM SGX virtualization support
 From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <x86@kernel.org>, <seanjc@google.com>, <jarkko@kernel.org>,
-        <luto@kernel.org>, <haitao.huang@intel.com>, <pbonzini@redhat.com>,
-        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>
-Subject: Re: [RFC PATCH 03/23] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-Id: <20210116030713.276e48c023330172cded174c@intel.com>
-In-Reply-To: <bd0ff2d8-3425-2f69-5fa7-8da701d55e42@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+Date:   Sat, 16 Jan 2021 03:43:18 +1300
+In-Reply-To: <20210112150756.f3fb039ac1bb176262da5e52@intel.com>
 References: <cover.1609890536.git.kai.huang@intel.com>
-        <ace9d4cb10318370f6145aaced0cfa73dda36477.1609890536.git.kai.huang@intel.com>
-        <2e424ff3-51cb-d6ed-6c5f-190e1d4fe21a@intel.com>
-        <20210107144203.589d4b2a7a2d2b53c4af7560@intel.com>
-        <bd0ff2d8-3425-2f69-5fa7-8da701d55e42@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+         <2422737f6b0cddf6ff1be9cf90e287dd00d6a6a3.camel@kernel.org>
+         <20210112141428.038533b6cd5f674c906a3c43@intel.com>
+         <X/0DRMx7FC5ssg0p@kernel.org>
+         <20210112150756.f3fb039ac1bb176262da5e52@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 6 Jan 2021 21:02:54 -0800 Dave Hansen wrote:
-> On 1/6/21 5:42 PM, Kai Huang wrote:
-> >> I understand why this made sense for regular enclaves, but I'm having a
-> >> harder time here.  If you mmap(fd, MAP_SHARED), fork(), and then pass
-> >> that mapping through to two different guests, you get to hold the
-> >> pieces, just like if you did the same with normal memory.
-> >>
-> >> Why does the kernel need to enforce this policy?
-> > Does Sean's reply in another email satisfy you?
+On Tue, 2021-01-12 at 15:07 +1300, Kai Huang wrote:
+> > > > > 
+> > > > > To support virtual EPC, add a new misc device /dev/sgx_virt_epc to SGX
+> > > > > core/driver to allow userspace (Qemu) to allocate "raw" EPC, and use it as
+> > > > > "virtual EPC" for guest. Obviously, unlike EPC allocated for host SGX
+> > > > > driver,
+> > > > > virtual EPC allocated via /dev/sgx_virt_epc doesn't have enclave
+> > > > > associated,
+> > > > > and how virtual EPC is used by guest is compeletely controlled by guest's
+> > > > > SGX
+> > > > > software.
+> > > > 
+> > > > I think that /dev/sgx_vepc would be a clear enough name for the device. This
+> > > > text has now a bit confusing "terminology" related to this.
+> > > 
+> > > /dev/sgx_virt_epc may be clearer from userspace's perspective, for instance,
+> > > if people see /dev/sgx_vepc, they may have to think about what it is,
+> > > while /dev/sgx_virt_epc they may not.
+> > > 
+> > > But I don't have strong objection here. Does anyone has anything to say here?
+> > 
+> > It's already an abberevation to start with, why leave it halfways?
+> > 
+> > Especially when three remaining words have been shrunk to single
+> > characters ('E', 'P' and 'C').
+> > 
 > 
-> I'm not totally convinced.
-> 
-> Please give it a go in the changelog for the next one and try to
-> convince me that this is a good idea.  Focus on what the downsides will
-> be if the kernel does not enforce this policy.  What will break, and why
-> will it be bad?  Why is the kernel in the best position to thwart the
-> badness?
+> I have expressed my opinion above. And as I said I don't have strong objection
+> here. I'll change to /dev/sgx_vepc if no one opposes.
 
-Hi Dave, Sean,
+Hi Jarkko,
 
-Sorry for late reply of this. I feel I should try again to get consensus here.
+I am reluctant to change to /dev/sgx_vepc now, because there are lots of
+'sgx_virt_epc' in the code.  For instance, 'struct sgx_virt_epc', and function names
+in sgx/virt.c are all sgx_virt_epc_xxx(), which has 'sgx_virt_epc' as prefix. I feel
+changing to /dev/sgx_vepc only is kinda incomplete, but I really don't want to change
+so many 'sgx_virt_epc' to 'sgx_vepc'. 
 
-From virtual EPC's perspective, if we don't force this in kernel, then
-*theoretically*, userspace can use fork() to make multiple VMs map to the
-same physical EPC, which will potentially cause enclaves in all VMs to behave
-abnormally. So to me, from this perspective, it's better to enforce in kernel
-so that only first VM can use this virtual EPC instance, because EPC by
-architectural design cannot be shared.
+(Plus I still think  'virt_epc' is more obvious than 'vepc' from userspace's
+perspective.)
 
-But as Sean said, KVM doesn't support VM across multiple mm structs. And if I
-read code correctly, KVM doesn't support userspace to use fork() to create new
-VM. For instance, when creating VM, KVM grabs current->mm and keeps it in
-'struct kvm' for bookkeeping, and kvm_vcpu_ioctl() and kvm_device_ioctl() will
-refuse to work if kvm->mm doesn't equal to current->mm. So in practice, I
-believe w/o enforcing this in kernel, we should also have no problem here.
+Does it make sense?
 
-Sean, please correct me if I am wrong.
 
-Dave, if above stands, do you think it is reasonable to keep current->mm in
-epc->mm and enforce in sgx_virt_epc_mmap()?
