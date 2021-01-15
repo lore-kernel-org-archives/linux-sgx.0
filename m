@@ -2,126 +2,189 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D4CC4332D
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 07:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7695CC433DB
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 09:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2ECEB22D50
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 07:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3377C235F9
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Jan 2021 09:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbhAOHS6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 15 Jan 2021 02:18:58 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45254 "EHLO mail.skyhub.de"
+        id S1726852AbhAOJ73 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 15 Jan 2021 04:59:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726494AbhAOHS5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 15 Jan 2021 02:18:57 -0500
-Received: from zn.tnic (p200300ec2f0acf000311429e1bff10f2.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:cf00:311:429e:1bff:10f2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF65E1EC0494;
-        Fri, 15 Jan 2021 08:18:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1610695095;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=xz7ofcGKLmGhRc+thA4HBQzKkytDaQUoDAqW780BAFI=;
-        b=QvT1qX82T2WeF6qqozMXOyPi8GU99oAugRIXZNB+VY7F52SDNcZoHCQloHq8wrcW2ZTMOf
-        RYRUnwHGkSp95PGkRGlMbsDKOIkVtSpc2IvMixlfEftdxMdHGpwcTdSugn16y3kV+ILtvK
-        KGKNK7eElcsIFlvKcchxiVcSwGr/EI0=
-Date:   Fri, 15 Jan 2021 08:18:09 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     jarkko@kernel.org
-Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        kai.huang@intel.com, haitao.huang@intel.com, seanjc@google.com,
-        stable@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
+        id S1726439AbhAOJ72 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 15 Jan 2021 04:59:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9290923888;
+        Fri, 15 Jan 2021 09:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610704717;
+        bh=9sIfGYn+CB58kDNMQLw6lzQnvI29J9O0n7ueauxjWrQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oEeboGETw7lhuzTEW7iyXZDwW3hKbrpRHa4qkMlTbXdlmG07uYA1Sk4sPNXKSMP/f
+         UfSLu9aymgt8t8wS1UmPPqNyp526rogbzVHgccdAx/B/73JilQy04U1We4ji7Bo43E
+         kYGPvq1JnL45CzegKCrUeSRQGeYOXXvR6w/W/ux9opCB3bpwm50wY7C1zTSU47xAky
+         p1yPuMwGPgPqrCaBGxdWewyA6SXOqEAfGXTchx7ZMO871Wiuc6I/IItWVVINinH2+9
+         s2QtUmcqmCK7hQz5l1iSq1mDauB6DrRj+s4/mlCzTcbych047lCTWwlS5THluqfAsU
+         DrCJJ3+pN8rXQ==
+Date:   Fri, 15 Jan 2021 11:58:32 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Sean Christopherson <seanjc@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
- sgx_release()
-Message-ID: <20210115071809.GA9138@zn.tnic>
-References: <20210115014638.15037-1-jarkko@kernel.org>
+Subject: Re: [PATCH v3] x86/sgx: Synchronize encl->srcu in sgx_encl_release().
+Message-ID: <YAFnSGmjYR4ms+p6@kernel.org>
+References: <20201216134920.21161-1-jarkko@kernel.org>
+ <20210105145749.GF28649@zn.tnic>
+ <X/zoarV7gd/LNo4A@kernel.org>
+ <op.0w60mzepwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210115014638.15037-1-jarkko@kernel.org>
+In-Reply-To: <op.0w60mzepwjvjmi@mqcpg7oapc828.gar.corp.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 03:46:38AM +0200, jarkko@kernel.org wrote:
-> From: Jarkko Sakkinen <jarkko@kernel.org>
+On Wed, Jan 13, 2021 at 10:42:12PM -0600, Haitao Huang wrote:
+> On Mon, 11 Jan 2021 18:08:10 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
 > 
-> The most trivial example of a race condition can be demonstrated with this
-> example where mm_list contains just one entry:
+> > On Tue, Jan 05, 2021 at 03:57:49PM +0100, Borislav Petkov wrote:
+> > > On Wed, Dec 16, 2020 at 03:49:20PM +0200, Jarkko Sakkinen wrote:
+> > > > Add synchronize_srcu_expedited() to sgx_encl_release() to catch a
+> > > grace
+> > > > period initiated by sgx_mmu_notifier_release().
+> > > >
+> > > > A trivial example of a failing sequence with tasks A and B:
+> > > >
+> > > > 1. A: -> sgx_release()
+> > > > 2. B: -> sgx_mmu_notifier_release()
+> > > > 3. B: -> list_del_rcu()
+> > > > 3. A: -> sgx_encl_release()
+> > > > 4. A: -> cleanup_srcu_struct()
+> > > >
+> > > > The loop in sgx_release() observes an empty list because B has
+> > > removed its
+> > > > entry in the middle, and calls cleanup_srcu_struct() before B has
+> > > a chance
+> > > > to calls synchronize_srcu().
+> > > 
+> > > Leading to what? NULL ptr?
+> > > 
+> > > https://lkml.kernel.org/r/X9e2jOWz1hfXVpQ5@google.com
+> > > 
+> > > already suggested that you should explain the bug better and add the
+> > > splat but I'm still missing that explanation.
+> > 
+> > OK, I'll try to explain it how I understand the issue.
+> > 
+> > Consider this loop in the VFS release hook (sgx_release):
+> > 
+> > 	/*
+> > 	 * Drain the remaining mm_list entries. At this point the list contains
+> > 	 * entries for processes, which have closed the enclave file but have
+> > 	 * not exited yet. The processes, which have exited, are gone from the
+> > 	 * list by sgx_mmu_notifier_release().
+> > 	 */
+> > 	for ( ; ; )  {
+> > 		spin_lock(&encl->mm_lock);
+> > 
+> > 		if (list_empty(&encl->mm_list)) {
+> > 			encl_mm = NULL;
+> > 		} else {
+> > 			encl_mm = list_first_entry(&encl->mm_list,
+> > 						   struct sgx_encl_mm, list);
+> > 			list_del_rcu(&encl_mm->list);
+> > 		}
+> > 
+> > 		spin_unlock(&encl->mm_lock);
+> > 
+> > 		/* The enclave is no longer mapped by any mm. */
+> > 		if (!encl_mm)
+> > 			break;
+> > 
+> > 		synchronize_srcu(&encl->srcu);
+> > 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
+> > 		kfree(encl_mm);
+> > 	}
+> > 
+> > 
+> > At this point all processes have closed the enclave file, but that
+> > doesn't
+> > mean that they all have exited yet.
+> > 
+> > Now, let's imagine that there is exactly one entry in the encl->mm_list.
+> > and sgx_release() execution gets scheduled right after returning from
+> > synchronize_srcu().
+> > 
+> > With some bad luck, some process comes and removes that last entry befoe
+> > sgx_release() acquires mm_lock. The loop in sgx_release() just leaves
+> > 
+> > 		/* The enclave is no longer mapped by any mm. */
+> > 		if (!encl_mm)
+> > 			break;
+> > 
+> > No synchronize_srcu().
+> > 
+> > After writing this, I think that the placement for synchronize_srcu()
+> > in this patch is not best possible. It should be rather that the
+> > above loop would also call synchronize_srcu() when leaving.
+> > 
+> > I.e. the code change would result:
+> > 
+> > 	for ( ; ; )  {
+> > 		spin_lock(&encl->mm_lock);
+> > 
+> > 		if (list_empty(&encl->mm_list)) {
+> > 			encl_mm = NULL;
+> > 		} else {
+> > 			encl_mm = list_first_entry(&encl->mm_list,
+> > 						   struct sgx_encl_mm, list);
+> > 			list_del_rcu(&encl_mm->list);
+> > 		}
+> > 
+> > 		spin_unlock(&encl->mm_lock);
+> > 
+> >                 /*
+> >                  * synchronize_srcu() is mandatory *even* when the list
+> > was
+> >                  * empty, in order make sure that grace periods stays in
+> >                  * sync even when another task took away the last entry
+> >                  * (i.e. exiting process when it deletes its mm_list).
+> >                  */
+> > 		synchronize_srcu(&encl->srcu);
+> > 
+> > 		/* The enclave is no longer mapped by any mm. */
+> > 		if (!encl_mm)
+> > 			break;
+> > 
+> > 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
+> > 		kfree(encl_mm);
+> > 	}
+> > 
+> > What do you think? Does this start to make more sense now?
+> > I don't have logs for this but the bug can be also reasoned.
+> > 
+> > /Jarkko
 > 
-> CPU A                   CPU B
-> sgx_release()
->                         sgx_mmu_notifier_release()
->                         list_del_rcu()
-> sgx_encl_release()
->                         synchronize_srcu()
-> cleanup_srcu_struct()
-> 
-> To fix this, call synchronize_srcu() before checking whether mm_list is
-> empty in sgx_release().
+> I did this experiment just now and find it runs much much slower than both
+> original code and code with synchronize_srcu_expedited fix in this patch.
+> Haitao
 
-To fix what?
+Yeah, but using expedited is not really in the scope of a bug fix.
 
-Lemme explain one more time: a commit message for a race condition
-fix needs to explain in *detail* what the race condition is. And that
-explanation needs to be understandable months and years from now.
+It's a change that needs to be considered separately.
 
-You have the function call order above, now you have to explain what can
-happen. Just how you did here:
+And it's more complicated than that. It also needs data to back it
+up. How we can test and compare?
 
-https://lkml.kernel.org/r/X/zoarV7gd/LNo4A@kernel.org
-
-> Cc: stable@vger.kernel.org
-> Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Suggested-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
-> v4:
-> - Rewrite the commit message.
-> - Just change the call order. *_expedited() is out of scope for this
->   bug fix.
-> v3: Fine-tuned tags, and added missing change log for v2.
-> v2: Switch to synchronize_srcu_expedited().
->  arch/x86/kernel/cpu/sgx/driver.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-> index f2eac41bb4ff..53056345f5f8 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -65,11 +65,16 @@ static int sgx_release(struct inode *inode, struct file *file)
->  
->  		spin_unlock(&encl->mm_lock);
->  
-> +		/*
-> +		 * The call is need even if the list empty, because sgx_encl_mmu_notifier_release()
-
-"The call is need"?
-
-
-$ git grep sgx_encl_mmu_notifier_release
-$
-
-WTF?
-
-Please be more careful.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+/Jarkko
