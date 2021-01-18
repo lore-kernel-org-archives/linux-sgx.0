@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDFAC433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 13:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761CFC433E9
+	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 14:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF3522B47
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 13:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 388F322B49
+	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 14:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392417AbhARNvX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 18 Jan 2021 08:51:23 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:40318 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392291AbhARNeH (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 18 Jan 2021 08:34:07 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0UM8540F_1610976790;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UM8540F_1610976790)
+        id S2392214AbhARNvO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 18 Jan 2021 08:51:14 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:50848 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392307AbhARNee (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 18 Jan 2021 08:34:34 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R471e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0UM8ExKs_1610976815;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UM8ExKs_1610976815)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 18 Jan 2021 21:33:10 +0800
+          Mon, 18 Jan 2021 21:33:35 +0800
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -35,9 +35,9 @@ To:     Jarkko Sakkinen <jarkko@kernel.org>,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
 Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH] mm: Optimizing error condition detection in do_mprotect_pkey()
-Date:   Mon, 18 Jan 2021 21:33:10 +0800
-Message-Id: <20210118133310.98375-1-tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH] x86/sgx: Allows ioctl PROVISION to execute before CREATE
+Date:   Mon, 18 Jan 2021 21:33:35 +0800
+Message-Id: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.3.ge56e4f7
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,35 +45,32 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Obviously, the error variable detection of the if statement is
-for the mprotect callback function, so it is also put into the
-scope of calling callbck.
+In function sgx_encl_create(), the logic of directly assigning
+value to attributes_mask determines that the call to
+SGX_IOC_ENCLAVE_PROVISION must be after the command of
+SGX_IOC_ENCLAVE_CREATE. If change this assignment statement to
+or operation, the PROVISION command can be executed earlier and
+more flexibly.
 
 Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 ---
- mm/mprotect.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index ab709023e9aa..94188df1ee55 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -617,10 +617,11 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 		if (tmp > end)
- 			tmp = end;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index f45957c05f69..0ca3fc238bc2 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -108,7 +108,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	encl->base = secs->base;
+ 	encl->size = secs->size;
+ 	encl->attributes = secs->attributes;
+-	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
++	encl->attributes_mask |= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
  
--		if (vma->vm_ops && vma->vm_ops->mprotect)
-+		if (vma->vm_ops && vma->vm_ops->mprotect) {
- 			error = vma->vm_ops->mprotect(vma, nstart, tmp, newflags);
--		if (error)
--			goto out;
-+			if (error)
-+				goto out;
-+		}
- 
- 		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
- 		if (error)
+ 	/* Set only after completion, as encl->lock has not been taken. */
+ 	set_bit(SGX_ENCL_CREATED, &encl->flags);
 -- 
 2.19.1.3.ge56e4f7
 
