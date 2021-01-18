@@ -7,41 +7,43 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9921FC433DB
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 03:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA25C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 03:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67500224B1
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 03:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C732224B1
+	for <linux-sgx@archiver.kernel.org>; Mon, 18 Jan 2021 03:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731669AbhARDbE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 17 Jan 2021 22:31:04 -0500
-Received: from mga12.intel.com ([192.55.52.136]:16949 "EHLO mga12.intel.com"
+        id S1729804AbhARDbL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 17 Jan 2021 22:31:11 -0500
+Received: from mga06.intel.com ([134.134.136.31]:32175 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731720AbhARDa3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 17 Jan 2021 22:30:29 -0500
-IronPort-SDR: 7eW2o/DA6EkQj+QDdA1tn8/V37Wcd43ustY1LssjkqnCGTur4QtHxBm81/u6wrQFeEWRRUlIvV
- Bo8tBWxqfVvA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9867"; a="157933940"
+        id S1731684AbhARDaj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 17 Jan 2021 22:30:39 -0500
+IronPort-SDR: 0ztt5x5C0VYbzcyKfv9xgFSL9eav7U6nxjxExjf30BMgFEPJ0ae/vbud48RY3DGVFBXEnef9hg
+ Y6QgyaPX9VsQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9867"; a="240296018"
 X-IronPort-AV: E=Sophos;i="5.79,355,1602572400"; 
-   d="scan'208";a="157933940"
+   d="scan'208";a="240296018"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2021 19:29:25 -0800
-IronPort-SDR: 5c9O/iFQFusZi5tQdoeI4+IrjwnLTbYCYpmLIAQESJv3cdiEAQw84uwLlRrwV42wgNHulMKOD5
- NhqDNDlVb0Zw==
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2021 19:29:46 -0800
+IronPort-SDR: eZDC2/tBbSV1eEWujzwEu2OaQ2Mbu6RQekVjsjCrWDm9qzu5tTTqC3TCwM1ZmEfN/kyB1skkuO
+ yV8kNrbnvlEA==
 X-IronPort-AV: E=Sophos;i="5.79,355,1602572400"; 
-   d="scan'208";a="573151188"
+   d="scan'208";a="573151251"
 Received: from amrahman-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.142.253])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2021 19:29:21 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2021 19:29:42 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
         bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v2 23/26] KVM: VMX: Add emulation of SGX Launch Control LE hash MSRs
-Date:   Mon, 18 Jan 2021 16:28:34 +1300
-Message-Id: <5a8dbad4c5a7ba7b17ac4bf4239a50be7acc1805.1610935432.git.kai.huang@intel.com>
+        wanpengli@tencent.com, corbet@lwn.net,
+        Andy Lutomirski <luto@amacapital.net>,
+        Kai Huang <kai.huang@intel.com>
+Subject: [RFC PATCH v2 26/26] KVM: x86: Add capability to grant VM access to privileged SGX attribute
+Date:   Mon, 18 Jan 2021 16:29:35 +1300
+Message-Id: <94ac3c0bfbb5b7fe59a3cf3a30699c2f6dce8869.1610935432.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1610935432.git.kai.huang@intel.com>
 References: <cover.1610935432.git.kai.huang@intel.com>
@@ -53,173 +55,135 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Emulate the four Launch Enclave public key hash MSRs (LE hash MSRs) that
-exist on CPUs that support SGX Launch Control (LC).  SGX LC modifies the
-behavior of ENCLS[EINIT] to use the LE hash MSRs when verifying the key
-used to sign an enclave.  On CPUs without LC support, the LE hash is
-hardwired into the CPU to an Intel controlled key (the Intel key is also
-the reset value of the LE hash MSRs). Track the guest's desired hash so
-that a future patch can stuff the hash into the hardware MSRs when
-executing EINIT on behalf of the guest, when those MSRs are writable in
-host.
+Add a capability, KVM_CAP_SGX_ATTRIBUTE, that can be used by userspace
+to grant a VM access to a priveleged attribute, with args[0] holding a
+file handle to a valid SGX attribute file.
 
-Note, KVM allows writes to the LE hash MSRs if IA32_FEATURE_CONTROL is
-unlocked.  This is technically not architectural behavior, but it's
-roughly equivalent to the arch behavior of the MSRs being writable prior
-to activating SGX[1].  Emulating SGX activation is feasible, but adds no
-tangible benefits and would just create extra work for KVM and guest
-firmware.
+The SGX subsystem restricts access to a subset of enclave attributes to
+provide additional security for an uncompromised kernel, e.g. to prevent
+malware from using the PROVISIONKEY to ensure its nodes are running
+inside a geniune SGX enclave and/or to obtain a stable fingerprint.
 
-[1] SGX related bits in IA32_FEATURE_CONTROL cannot be set until SGX
-    is activated, e.g. by firmware.  SGX activation is triggered by
-    setting bit 0 in MSR 0x7a.  Until SGX is activated, the LE hash
-    MSRs are writable, e.g. to allow firmware to lock down the LE
-    root key with a non-Intel value.
+To prevent userspace from circumventing such restrictions by running an
+enclave in a VM, KVM restricts guest access to privileged attributes by
+default.
 
+Cc: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Kai Huang <kai.huang@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kvm/vmx/sgx.c | 35 +++++++++++++++++++++++++++++++++++
- arch/x86/kvm/vmx/sgx.h |  6 ++++++
- arch/x86/kvm/vmx/vmx.c | 20 ++++++++++++++++++++
- arch/x86/kvm/vmx/vmx.h |  2 ++
- 4 files changed, 63 insertions(+)
+ Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
+ arch/x86/kvm/cpuid.c           |  2 +-
+ arch/x86/kvm/x86.c             | 22 ++++++++++++++++++++++
+ include/uapi/linux/kvm.h       |  1 +
+ 4 files changed, 47 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
-index 4281045318ac..6ad6a24c4e93 100644
---- a/arch/x86/kvm/vmx/sgx.c
-+++ b/arch/x86/kvm/vmx/sgx.c
-@@ -12,6 +12,9 @@
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index c136e254b496..47c7c7c33025 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -6037,6 +6037,29 @@ KVM_EXIT_X86_RDMSR and KVM_EXIT_X86_WRMSR exit notifications which user space
+ can then handle to implement model specific MSR handling and/or user notifications
+ to inform a user that an MSR was not handled.
  
- bool __read_mostly enable_sgx;
++7.22 KVM_CAP_SGX_ATTRIBUTE
++----------------------
++
++:Architectures: x86
++:Target: VM
++:Parameters: args[0] is a file handle of a SGX attribute file in securityfs
++:Returns: 0 on success, -EINVAL if the file handle is invalid or if a requested
++          attribute is not supported by KVM.
++
++KVM_CAP_SGX_ATTRIBUTE enables a userspace VMM to grant a VM access to one or
++more priveleged enclave attributes.  args[0] must hold a file handle to a valid
++SGX attribute file corresponding to an attribute that is supported/restricted
++by KVM (currently only PROVISIONKEY).
++
++The SGX subsystem restricts access to a subset of enclave attributes to provide
++additional security for an uncompromised kernel, e.g. use of the PROVISIONKEY
++is restricted to deter malware from using the PROVISIONKEY to obtain a stable
++system fingerprint.  To prevent userspace from circumventing such restrictions
++by running an enclave in a VM, KVM prevents access to privileged attributes by
++default.
++
++See Documentation/x86/sgx/2.Kernel-internals.rst for more details.
++
+ 8. Other capabilities.
+ ======================
  
-+/* Initial value of guest's virtual SGX_LEPUBKEYHASHn MSRs */
-+static u64 sgx_pubkey_hash[4] __ro_after_init;
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 04b2f5de2d7b..ad00a1af1545 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -833,7 +833,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		 * expected to derive it from supported XCR0.
+ 		 */
+ 		entry->eax &= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
+-			      /* PROVISIONKEY | */ SGX_ATTR_EINITTOKENKEY |
++			      SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINITTOKENKEY |
+ 			      SGX_ATTR_KSS;
+ 		entry->ebx &= 0;
+ 		break;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 5ca7b181a3ae..b4409b0edecc 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -74,6 +74,8 @@
+ #include <asm/tlbflush.h>
+ #include <asm/intel_pt.h>
+ #include <asm/emulate_prefix.h>
++#include <asm/sgx.h>
++#include <asm/sgx_arch.h>
+ #include <clocksource/hyperv_timer.h>
+ 
+ #define CREATE_TRACE_POINTS
+@@ -3767,6 +3769,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_X86_USER_SPACE_MSR:
+ 	case KVM_CAP_X86_MSR_FILTER:
+ 	case KVM_CAP_ENFORCE_PV_FEATURE_CPUID:
++#ifdef CONFIG_X86_SGX_VIRTUALIZATION
++	case KVM_CAP_SGX_ATTRIBUTE:
++#endif
+ 		r = 1;
+ 		break;
+ 	case KVM_CAP_SYNC_REGS:
+@@ -5295,6 +5300,23 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 		kvm->arch.user_space_msr_mask = cap->args[0];
+ 		r = 0;
+ 		break;
++#ifdef CONFIG_X86_SGX_VIRTUALIZATION
++	case KVM_CAP_SGX_ATTRIBUTE: {
++		unsigned long allowed_attributes = 0;
 +
- /*
-  * ENCLS's memory operands use a fixed segment (DS) and a fixed
-  * address size based on the mode.  Related prefixes are ignored.
-@@ -292,3 +295,35 @@ int handle_encls(struct kvm_vcpu *vcpu)
- 	}
- 	return 1;
- }
++		r = sgx_set_attribute(&allowed_attributes, cap->args[0]);
++		if (r)
++			break;
 +
-+void setup_default_sgx_lepubkeyhash(void)
-+{
-+	/*
-+	 * Use Intel's default value for Skylake hardware if Launch Control is
-+	 * not supported, i.e. Intel's hash is hardcoded into silicon, or if
-+	 * Launch Control is supported and enabled, i.e. mimic the reset value
-+	 * and let the guest write the MSRs at will.  If Launch Control is
-+	 * supported but disabled, then use the current MSR values as the hash
-+	 * MSRs exist but are read-only (locked and not writable).
-+	 */
-+	if (!enable_sgx || !boot_cpu_has(X86_FEATURE_SGX_LC) ||
-+	    rdmsrl_safe(MSR_IA32_SGXLEPUBKEYHASH0, &sgx_pubkey_hash[0])) {
-+		sgx_pubkey_hash[0] = 0xa6053e051270b7acULL;
-+		sgx_pubkey_hash[1] = 0x6cfbe8ba8b3b413dULL;
-+		sgx_pubkey_hash[2] = 0xc4916d99f2b3735dULL;
-+		sgx_pubkey_hash[3] = 0xd4f8c05909f9bb3bULL;
-+	} else {
-+		/* MSR_IA32_SGXLEPUBKEYHASH0 is read above */
-+		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH1, sgx_pubkey_hash[1]);
-+		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH2, sgx_pubkey_hash[2]);
-+		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH3, sgx_pubkey_hash[3]);
++		/* KVM only supports the PROVISIONKEY privileged attribute. */
++		if ((allowed_attributes & SGX_ATTR_PROVISIONKEY) &&
++		    !(allowed_attributes & ~SGX_ATTR_PROVISIONKEY))
++			kvm->arch.sgx_provisioning_allowed = true;
++		else
++			r = -EINVAL;
++		break;
 +	}
-+}
-+
-+void vcpu_setup_sgx_lepubkeyhash(struct kvm_vcpu *vcpu)
-+{
-+	struct vcpu_vmx *vmx = to_vmx(vcpu);
-+
-+	memcpy(vmx->msr_ia32_sgxlepubkeyhash, sgx_pubkey_hash,
-+	       sizeof(sgx_pubkey_hash));
-+}
-diff --git a/arch/x86/kvm/vmx/sgx.h b/arch/x86/kvm/vmx/sgx.h
-index 647afc7546bf..05d774f62b7f 100644
---- a/arch/x86/kvm/vmx/sgx.h
-+++ b/arch/x86/kvm/vmx/sgx.h
-@@ -8,8 +8,14 @@
- extern bool __read_mostly enable_sgx;
- 
- int handle_encls(struct kvm_vcpu *vcpu);
-+
-+void setup_default_sgx_lepubkeyhash(void);
-+void vcpu_setup_sgx_lepubkeyhash(struct kvm_vcpu *vcpu);
- #else
- #define enable_sgx 0
-+
-+static inline void setup_default_sgx_lepubkeyhash(void) { }
-+static inline void vcpu_setup_sgx_lepubkeyhash(struct kvm_vcpu *vcpu) { }
- #endif
- 
- #endif /* __KVM_X86_SGX_H */
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 149f472ac9df..a3372f6c557d 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1888,6 +1888,13 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_IA32_FEAT_CTL:
- 		msr_info->data = vmx->msr_ia32_feature_control;
++#endif
+ 	default:
+ 		r = -EINVAL;
  		break;
-+	case MSR_IA32_SGXLEPUBKEYHASH0 ... MSR_IA32_SGXLEPUBKEYHASH3:
-+		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_SGX_LC))
-+			return 1;
-+		msr_info->data = to_vmx(vcpu)->msr_ia32_sgxlepubkeyhash
-+			[msr_info->index - MSR_IA32_SGXLEPUBKEYHASH0];
-+		break;
- 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
- 		if (!nested_vmx_allowed(vcpu))
- 			return 1;
-@@ -2154,6 +2161,15 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		if (msr_info->host_initiated && data == 0)
- 			vmx_leave_nested(vcpu);
- 		break;
-+	case MSR_IA32_SGXLEPUBKEYHASH0 ... MSR_IA32_SGXLEPUBKEYHASH3:
-+		if (!msr_info->host_initiated &&
-+		    (!guest_cpuid_has(vcpu, X86_FEATURE_SGX_LC) ||
-+		    ((vmx->msr_ia32_feature_control & FEAT_CTL_LOCKED) &&
-+		    !(vmx->msr_ia32_feature_control & FEAT_CTL_SGX_LC_ENABLED))))
-+			return 1;
-+		vmx->msr_ia32_sgxlepubkeyhash
-+			[msr_index - MSR_IA32_SGXLEPUBKEYHASH0] = data;
-+		break;
- 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
- 		if (!msr_info->host_initiated)
- 			return 1; /* they are read-only */
-@@ -6957,6 +6973,8 @@ static int vmx_create_vcpu(struct kvm_vcpu *vcpu)
- 	else
- 		memset(&vmx->nested.msrs, 0, sizeof(vmx->nested.msrs));
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 374c67875cdb..e17bda18a9b4 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -1058,6 +1058,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_ENFORCE_PV_FEATURE_CPUID 190
+ #define KVM_CAP_SYS_HYPERV_CPUID 191
+ #define KVM_CAP_DIRTY_LOG_RING 192
++#define KVM_CAP_SGX_ATTRIBUTE 200
  
-+	vcpu_setup_sgx_lepubkeyhash(vcpu);
-+
- 	vmx->nested.posted_intr_nv = -1;
- 	vmx->nested.current_vmptr = -1ull;
+ #ifdef KVM_CAP_IRQ_ROUTING
  
-@@ -7907,6 +7925,8 @@ static __init int hardware_setup(void)
- 	if (!enable_ept || !cpu_has_vmx_intel_pt())
- 		pt_mode = PT_MODE_SYSTEM;
- 
-+	setup_default_sgx_lepubkeyhash();
-+
- 	if (nested) {
- 		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
- 					   vmx_capability.ept);
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 903f246b5abd..af4bced6c84b 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -299,6 +299,8 @@ struct vcpu_vmx {
- 	 */
- 	u64 msr_ia32_feature_control;
- 	u64 msr_ia32_feature_control_valid_bits;
-+	/* SGX Launch Control public key hash */
-+	u64 msr_ia32_sgxlepubkeyhash[4];
- 	u64 ept_pointer;
- 
- 	struct pt_desc pt_desc;
 -- 
 2.29.2
 
