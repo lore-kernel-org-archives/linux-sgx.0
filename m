@@ -2,103 +2,113 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE63C433E6
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 18:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AEEC4332B
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 20:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEB2423104
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 18:49:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12DEA23107
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 20:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387973AbhASStL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 19 Jan 2021 13:49:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42510 "EHLO
+        id S1729533AbhASUHl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 19 Jan 2021 15:07:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390961AbhASSEC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 19 Jan 2021 13:04:02 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D912C061574
-        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 10:03:22 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id b3so12748334pft.3
-        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 10:03:22 -0800 (PST)
+        with ESMTP id S2392227AbhASUGP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 19 Jan 2021 15:06:15 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93FB7C061573
+        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 12:05:35 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id w14so3926764pfi.2
+        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 12:05:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=v6Cc6phhfBsgyLf8+xyS43H+OQ51FWLRN6lfb6Q8ovM=;
-        b=aLIWjMflFoQyuawhdmxoalCHnIknslDW1bgG9bYBifymBMTGMpV8sRRBs3fL7Z2bYa
-         LzjWQlWOfPGOYbERaLoAE5rcgPJxXfFD+ck3EF3GFdQz04Y/0OAIEIyr0u6+gP5fwE1v
-         IpZxGzBT6/NtDsni4J1QaP6osdwd0MG6lpKGh3K0LJg6xCyh1ic1JVpvrwFNaaIwwUBY
-         kczFAjJTcUM959+HivOPMqEvOJw0+dnGZRSnUEQE0KXJ+7o0qOHJiqibGvDmt6LA41gw
-         cUWv6MYZKl8EZOGJKhfdMJTweo/nPce8TcCEqvOyf4jGM9p8Cn24q+CMYO3ip5UbrLjV
-         IUxw==
+        bh=dEsHTOhzjzO6o9rD2N5DWat/JJ7Q/inxXOWFBgJvDTI=;
+        b=K+bN7LxeDH9XpNlaRCisKxW2aaVCwJe4CNdTG6tvSMlY1NKYzVqi/c0D296XP5aKcQ
+         vUnMolIDkQbec9Fxty0H5C7DMbnEja+e8mtAWtjuIXBlC69TJ+lZ2jBFF0EUm3YF4y4+
+         mscHktxp4ZgF386MBk+ktfaMNkksLFDDCZPRSOlxx5FvNGZWrtkyH/zYAi+8i0kUhjHe
+         6avmHs3Ff9t4FL8Mc3UN62O8S71aW3FfzgZEP2LTpvtvC4PL/6cQ7eI+u+8CsLOkNf4w
+         zAwWWTe55Wff5axBTrbbA7IsfG91LIvnbel6MIKkmqYhg3Q1NbbsuvTpn2lpi71QiCCd
+         qZIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=v6Cc6phhfBsgyLf8+xyS43H+OQ51FWLRN6lfb6Q8ovM=;
-        b=qmVCTKvoH56QoM03Z1ANDKrTGLu8issOW5FwY+W/R/HZJY+5u3MrzzmaHugkNVycCq
-         7XE+FlK0w7ZKLOxahbCzg0Z/wUNK3R+AbqKkIw0AbjDDAzB4g3iCkTMFf5Im8sbdwWdx
-         6R/8etfulg0Ie0A9OpJmMGo1jJnSganxwN4Cbw0c4vig/vO0ntpZYHloFPlDj7Cp2t6I
-         jEeLI8YeXAZm9U1K2pYvXE+yqjpDmfvlT11mBORZBE3l0J+khYDw9OkPiLpDDjDB/jYQ
-         gwI4Pwae2lstbkYK9gKHtzms7HkObOptqEDII7FWKBJsLvYUw8qwm+OKrev5f55XEU4F
-         ppRA==
-X-Gm-Message-State: AOAM531R5ZZ3oAgziMFwP5WqWa2ReDifp44X67uIVm5fXOBHRnJkjlXV
-        OEOlVGppdMJJpxhvKK/zvQwSrw==
-X-Google-Smtp-Source: ABdhPJzQQf5xl4oyoV+n4TOdJD/nLHTXZuyEtbWz5VXTrNXH0br4vzS/T+YHSd9mZjIKdkACeRW0Hw==
-X-Received: by 2002:a05:6a00:2286:b029:1ae:6c7f:31ce with SMTP id f6-20020a056a002286b02901ae6c7f31cemr5099392pfe.6.1611079401581;
-        Tue, 19 Jan 2021 10:03:21 -0800 (PST)
+        bh=dEsHTOhzjzO6o9rD2N5DWat/JJ7Q/inxXOWFBgJvDTI=;
+        b=GBIskSLgF6Xw+s4YChs4rlk75OTMzuIhveyOZ97hVHiadFE+fDpVUWPpeYjv0kOkTy
+         /lUiMaBqQS1RKtiTHv7HayidyYNxSNVqkNldYkDyaO9VhpsFYjT+47LxIZ1Mb1h9B5IN
+         iCzX7bInrStrFifpmiwSe6ACgqg3AcYJOJuEMnGBSlKmZnJE1RWBCM0OHweDY1p+GzCf
+         qb08UFPIjLB+K4xHWQmS55NqGtxaIDZFdeCxZ87KgDGZyv9220LukTpf6xIlrqe8UIfb
+         KpZGotf1yv+Vm4ILReJXJOAz9lVDyEVKlEdWlUus8V4jp31L4ER4IX5jDZqOBj63yf+C
+         WP+g==
+X-Gm-Message-State: AOAM533YRPOt17Wy8L3cKiDtc0/8R1VwuwPjCmD6KaDg1KWuTIi+FzAL
+        /B5v33ZZG9hSe63bzgVRuZgtPg==
+X-Google-Smtp-Source: ABdhPJxmIAjwqUXjXQNHFrRcsGx95boV03xzh9T8vnt0imRm6wf7NGD39Q/j7y43K/NTXLpdtIKPXw==
+X-Received: by 2002:a62:a508:0:b029:1ba:621:ff29 with SMTP id v8-20020a62a5080000b02901ba0621ff29mr2692033pfm.44.1611086734975;
+        Tue, 19 Jan 2021 12:05:34 -0800 (PST)
 Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id t206sm18718982pgb.84.2021.01.19.10.03.19
+        by smtp.gmail.com with ESMTPSA id a9sm19613789pfn.178.2021.01.19.12.05.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 10:03:20 -0800 (PST)
-Date:   Tue, 19 Jan 2021 10:03:14 -0800
+        Tue, 19 Jan 2021 12:05:34 -0800 (PST)
+Date:   Tue, 19 Jan 2021 12:05:27 -0800
 From:   Sean Christopherson <seanjc@google.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, dave.hansen@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com
-Subject: Re: [RFC PATCH v2 01/26] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
-Message-ID: <YAce4r4QhGzJqd4y@google.com>
-References: <cover.1610935432.git.kai.huang@intel.com>
- <87385f646120a3b5b34dc20480dbce77b8005acd.1610935432.git.kai.huang@intel.com>
- <20210119161925.GN27433@zn.tnic>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, haitao.huang@intel.com,
+        Kai Huang <kai.huang@intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH] x86/sgx: Allows ioctl PROVISION to execute before CREATE
+Message-ID: <YAc7h3zQR06eWPhZ@google.com>
+References: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210119161925.GN27433@zn.tnic>
+In-Reply-To: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jan 19, 2021, Borislav Petkov wrote:
-> On Mon, Jan 18, 2021 at 04:26:49PM +1300, Kai Huang wrote:
-> > diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-> > index 3b1b01f2b248..7937a315f8cf 100644
-> > --- a/arch/x86/kernel/cpu/feat_ctl.c
-> > +++ b/arch/x86/kernel/cpu/feat_ctl.c
-> > @@ -96,7 +96,6 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
-> >  static void clear_sgx_caps(void)
-> >  {
-> >  	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> > -	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+On Mon, Jan 18, 2021, Tianjia Zhang wrote:
+> In function sgx_encl_create(), the logic of directly assigning
+> value to attributes_mask determines that the call to
+> SGX_IOC_ENCLAVE_PROVISION must be after the command of
+> SGX_IOC_ENCLAVE_CREATE. If change this assignment statement to
+> or operation, the PROVISION command can be executed earlier and
+> more flexibly.
 > 
-> Why is that line being removed here?
+> Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Shouldn't this add SGX1 and SGX2 here instead as this function is
-> supposed to, well, *clear* sgx caps on feat_ctl setup failures or
-> "nosgx" cmdline?
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index f45957c05f69..0ca3fc238bc2 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -108,7 +108,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+>  	encl->base = secs->base;
+>  	encl->size = secs->size;
+>  	encl->attributes = secs->attributes;
+> -	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+> +	encl->attributes_mask |= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
 
-Doesn't adding making the SGX sub-features depend on X86_FEATURE_SGX have the
-same net effect?  Or am I misreading do_clear_cpu_cap()?
+Alternatively, move the existing code to sgx_open()?  Initializing the field
+when the encl object is allocated feels more correct.
 
-Though if we use the cpuid_deps table, I'd vote to get rid of clear_sgx_caps()
-and call setup_clear_cpu_cap(X86_FEATURE_SGX) directly.  And probably change the
-existing SGX_LC behavior and drop clear_sgx_caps() in a separate patch instead
-of squeezing it into this one.
+>  	/* Set only after completion, as encl->lock has not been taken. */
+>  	set_bit(SGX_ENCL_CREATED, &encl->flags);
+> -- 
+> 2.19.1.3.ge56e4f7
+> 
