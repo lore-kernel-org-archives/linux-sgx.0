@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AEEC4332B
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 20:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57501C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 20:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12DEA23107
-	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 20:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4FD2310B
+	for <linux-sgx@archiver.kernel.org>; Tue, 19 Jan 2021 20:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729533AbhASUHl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 19 Jan 2021 15:07:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
+        id S1727348AbhASU0z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 19 Jan 2021 15:26:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392227AbhASUGP (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 19 Jan 2021 15:06:15 -0500
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93FB7C061573
-        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 12:05:35 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id w14so3926764pfi.2
-        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 12:05:35 -0800 (PST)
+        with ESMTP id S1727393AbhASUZ0 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 19 Jan 2021 15:25:26 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E623C061574
+        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 12:24:44 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id r4so11178819pls.11
+        for <linux-sgx@vger.kernel.org>; Tue, 19 Jan 2021 12:24:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=dEsHTOhzjzO6o9rD2N5DWat/JJ7Q/inxXOWFBgJvDTI=;
-        b=K+bN7LxeDH9XpNlaRCisKxW2aaVCwJe4CNdTG6tvSMlY1NKYzVqi/c0D296XP5aKcQ
-         vUnMolIDkQbec9Fxty0H5C7DMbnEja+e8mtAWtjuIXBlC69TJ+lZ2jBFF0EUm3YF4y4+
-         mscHktxp4ZgF386MBk+ktfaMNkksLFDDCZPRSOlxx5FvNGZWrtkyH/zYAi+8i0kUhjHe
-         6avmHs3Ff9t4FL8Mc3UN62O8S71aW3FfzgZEP2LTpvtvC4PL/6cQ7eI+u+8CsLOkNf4w
-         zAwWWTe55Wff5axBTrbbA7IsfG91LIvnbel6MIKkmqYhg3Q1NbbsuvTpn2lpi71QiCCd
-         qZIg==
+        bh=PIgo1AoKq/QNkl9sdqmNCwvTTcuChuuT7IVQW1TPqHU=;
+        b=XCX8haXoigSPZNeJRbH+qv688CZq5/UyppWpQdrMjVLWBGmHTsUeojs9xqrJ1UNRpX
+         adChEPtxT3v/RpLbyp917BxfRPL+B1TYS/Y3Pt8Ebcci9kYo6v2EdKMKFn+h7YPDafnz
+         oDyUWlBwkA/fA7yJt95Ie9bWRd54658cyCiBrZCb6iEgwvMTasedX/K2+Y0sR01Mmhwr
+         Sy1pvX2oSngUSICr2xWyi8eTo8569NE0hqQVTv6AnXeaim8qXH8357Ftx8uCizocqHuk
+         qU+8xm8eKvcfhEYLl59Ki5r7YfA8nC88FbzRbakerXFWtnRSaUuXIfk9RAddEQICmORl
+         DPqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=dEsHTOhzjzO6o9rD2N5DWat/JJ7Q/inxXOWFBgJvDTI=;
-        b=GBIskSLgF6Xw+s4YChs4rlk75OTMzuIhveyOZ97hVHiadFE+fDpVUWPpeYjv0kOkTy
-         /lUiMaBqQS1RKtiTHv7HayidyYNxSNVqkNldYkDyaO9VhpsFYjT+47LxIZ1Mb1h9B5IN
-         iCzX7bInrStrFifpmiwSe6ACgqg3AcYJOJuEMnGBSlKmZnJE1RWBCM0OHweDY1p+GzCf
-         qb08UFPIjLB+K4xHWQmS55NqGtxaIDZFdeCxZ87KgDGZyv9220LukTpf6xIlrqe8UIfb
-         KpZGotf1yv+Vm4ILReJXJOAz9lVDyEVKlEdWlUus8V4jp31L4ER4IX5jDZqOBj63yf+C
-         WP+g==
-X-Gm-Message-State: AOAM533YRPOt17Wy8L3cKiDtc0/8R1VwuwPjCmD6KaDg1KWuTIi+FzAL
-        /B5v33ZZG9hSe63bzgVRuZgtPg==
-X-Google-Smtp-Source: ABdhPJxmIAjwqUXjXQNHFrRcsGx95boV03xzh9T8vnt0imRm6wf7NGD39Q/j7y43K/NTXLpdtIKPXw==
-X-Received: by 2002:a62:a508:0:b029:1ba:621:ff29 with SMTP id v8-20020a62a5080000b02901ba0621ff29mr2692033pfm.44.1611086734975;
-        Tue, 19 Jan 2021 12:05:34 -0800 (PST)
+        bh=PIgo1AoKq/QNkl9sdqmNCwvTTcuChuuT7IVQW1TPqHU=;
+        b=mB4ORo2BY/cWFI7Rb0xlGPVfMUGQLoh0nK5SU/m0lpBQ6HvPdpX9fm1l5bvigaFk+Q
+         BR2xRG4yscwch9yIjEyq7NjiaFQXN4tYf2lf2jvb+Z75+GVSkSWGBg1kU7KCyPRtaik5
+         IUtj6Ai1/wLHlw/w9L60XhesX8Alxyfhs+tpM5l+Zk0PCbIiUSqDRhYbEKuwtFPanBJk
+         8y7shNMtit65epybjG49P6WmRkYzoL8827RFQRcdb0GbyUogGnJIQOjQY+2/0DIKTshY
+         OuTe1KpYzv0NOz0rCVUYgo0VZf0ywODMBu9q2HWzLN7/VgUr19SAvxDNuXKPjatb+Mp9
+         oUDg==
+X-Gm-Message-State: AOAM531WKi063g2vSTrQsFZM8OpoUHQl5r0f0RDeCmre24D8q9cCVDED
+        uGW2UTWb5U0VOezSVzlZSJ1NUw==
+X-Google-Smtp-Source: ABdhPJxJHsccxJIQ/ZXXRzDM/ux4QViH9HBl44g/0iJToKDtBxr3CY4v45NE2/X87p2CEuXItieFRQ==
+X-Received: by 2002:a17:902:ce81:b029:de:6b3c:fcd2 with SMTP id f1-20020a170902ce81b02900de6b3cfcd2mr6433539plg.67.1611087883265;
+        Tue, 19 Jan 2021 12:24:43 -0800 (PST)
 Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id a9sm19613789pfn.178.2021.01.19.12.05.32
+        by smtp.gmail.com with ESMTPSA id p15sm19706701pgl.19.2021.01.19.12.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 12:05:34 -0800 (PST)
-Date:   Tue, 19 Jan 2021 12:05:27 -0800
+        Tue, 19 Jan 2021 12:24:42 -0800 (PST)
+Date:   Tue, 19 Jan 2021 12:24:35 -0800
 From:   Sean Christopherson <seanjc@google.com>
 To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
@@ -68,47 +68,68 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH] x86/sgx: Allows ioctl PROVISION to execute before CREATE
-Message-ID: <YAc7h3zQR06eWPhZ@google.com>
-References: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
+Subject: Re: [PATCH] x86/sgx: Fix free_cnt counting logic in epc section
+Message-ID: <YAdAA6k7ZjqikE0R@google.com>
+References: <20210118133347.99158-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20210118133347.99158-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Mon, Jan 18, 2021, Tianjia Zhang wrote:
-> In function sgx_encl_create(), the logic of directly assigning
-> value to attributes_mask determines that the call to
-> SGX_IOC_ENCLAVE_PROVISION must be after the command of
-> SGX_IOC_ENCLAVE_CREATE. If change this assignment statement to
-> or operation, the PROVISION command can be executed earlier and
-> more flexibly.
+> Increase `section->free_cnt` in sgx_sanitize_section() is
+> more reasonable, which is called in ksgxd kernel thread,
+> instead of assigning it to epc section pages number at
+> initialization. Although this is unlikely to fail, these
+> pages cannot be allocated after initialization, and which
+> need to be reset by ksgxd.
 > 
 > Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+
+Reviewed-by: Sean Christopherson <seanjc@google.com> 
+
 > ---
->  arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/x86/kernel/cpu/sgx/main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index f45957c05f69..0ca3fc238bc2 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -108,7 +108,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
->  	encl->base = secs->base;
->  	encl->size = secs->size;
->  	encl->attributes = secs->attributes;
-> -	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
-> +	encl->attributes_mask |= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index c519fc5f6948..9e9a3cf7c00b 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -48,9 +48,10 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
+>  					struct sgx_epc_page, list);
+>  
+>  		ret = __eremove(sgx_get_epc_virt_addr(page));
+> -		if (!ret)
+> +		if (!ret) {
+>  			list_move(&page->list, &section->page_list);
+> -		else
+> +			section->free_cnt += 1;
+> +		} else
 
-Alternatively, move the existing code to sgx_open()?  Initializing the field
-when the encl object is allocated feels more correct.
+Nit: the the "else" should also have curly braces.
 
->  	/* Set only after completion, as encl->lock has not been taken. */
->  	set_bit(SGX_ENCL_CREATED, &encl->flags);
+>  			list_move_tail(&page->list, &dirty);
+>  
+>  		spin_unlock(&section->lock);
+
+FWIW, taking section->lock could be moved inside the !ret flow so that EREMOVE
+is done without holding the lock.  I've no idea if that'd actually change
+anything in practice, but it's theoretically possible that ksgxd hasn't finished
+sanitizing the EPC when userspace starts creating enclaves.
+
+> @@ -646,7 +647,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+>  		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
+>  	}
+>  
+> -	section->free_cnt = nr_pages;
+>  	return true;
+>  }
+>  
 > -- 
 > 2.19.1.3.ge56e4f7
 > 
