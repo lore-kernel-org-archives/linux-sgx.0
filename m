@@ -4,87 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3647C433E6
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 13:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3485FC433E9
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 14:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B500D23340
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 13:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0441623329
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 14:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbhATM5a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 07:57:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
+        id S2390059AbhATOaY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 09:30:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbhATMAl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 07:00:41 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8B92D2313A;
-        Wed, 20 Jan 2021 11:59:55 +0000 (UTC)
+        id S2389307AbhATOaG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 09:30:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8685E23329;
+        Wed, 20 Jan 2021 14:29:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611143998;
-        bh=jFY1srvy9E/vvrifzb+sgdAyyNBynMvdw61RNBimw+o=;
+        s=k20201202; t=1611152966;
+        bh=JHHd5XKXRsuaWfamSWN2tPvthY11GXk7QS21FxFrvdg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CvUp3uEhKi6EIX8QwPEM3l6yyGZwkaWPhzNu/Q0A7XN4bBDhkG29bJSSSwxmi81YS
-         py7kf42ZimT/5s+gOo2kO5YwsC1CfSvX84ALX+pEMd3PoxOPdZbcSZNTi/ZoTsQZYa
-         PdOWJzPy6FZ1ph+zd0z1R88kePYy0md1EGgxwmUkoem5ps0gijuxkp9h9c+/Na2kcy
-         wR1K5cXxUu3pgULtnpWXr62p6A1ydeqVXgpb1nQpie7tJIygfDMZq1BLqlW6rdFQrq
-         SlEQKFNGDnrk3ijpzyzscPbCE+pr2H2OmRlIN2Of8PylyCXUElJ+U8p3SoJzBQExrh
-         /ccbn++nhgAFA==
-Date:   Wed, 20 Jan 2021 13:59:52 +0200
+        b=qztC3BI2X5X6WkB/wDGbA0u3PZ8r4+j+741azXlQHQxOIjUV8Tfv/1HuSuSw/rSXh
+         LzkyEsv2Mkals4Xn8UpHYsAm7yZd27wk/nb1NEadNdBGSj/NxOj2SajfYS1IauzIGd
+         TW2bIZR37X1v0OI7pekCjusxa2mC4cyMKwJo42+eEdCuKWsCJeE68RlIlF1n2cwz1r
+         R5SswsxU3pXQ6h515wzphxcNZqRnO/UJe03Vdhtndx87n04bf2P7IpoQer88QbC4dr
+         czZwgSMU1pHMU0qTvIw2qK9kYvDAzSieTa+hicKWmiVQwt1XNzigzsE40KKVX5Cenz
+         2OJ1dYFFLe6Kw==
+Date:   Wed, 20 Jan 2021 16:29:20 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 10/26] x86/sgx: Add SGX2 ENCLS leaf definitions
- (EAUG, EMODPR and EMODT)
-Message-ID: <YAgbOGpKAj7SHobO@kernel.org>
-References: <cover.1610935432.git.kai.huang@intel.com>
- <23b8becce4117d4661121b4136d439e89e9b3b01.1610935432.git.kai.huang@intel.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, haitao.huang@intel.com,
+        Kai Huang <kai.huang@intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH] mm: Optimizing error condition detection in
+ do_mprotect_pkey()
+Message-ID: <YAg+QHhczqtTZt4Z@kernel.org>
+References: <20210118133310.98375-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23b8becce4117d4661121b4136d439e89e9b3b01.1610935432.git.kai.huang@intel.com>
+In-Reply-To: <20210118133310.98375-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 04:28:03PM +1300, Kai Huang wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> Define the ENCLS leafs that are available with SGX2, also referred to as
-> Enclave Dynamic Memory Management (EDMM).  The leafs will be used by KVM
-> to conditionally expose SGX2 capabilities to guests.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+On Mon, Jan 18, 2021 at 09:33:10PM +0800, Tianjia Zhang wrote:
+> Obviously, the error variable detection of the if statement is
+> for the mprotect callback function, so it is also put into the
+> scope of calling callbck.
+> 
+> Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+
+No fixes tag, no description what this commit does. Nothing
+makes sense to me.
 
 /Jarkko
 
 > ---
->  arch/x86/include/asm/sgx_arch.h | 3 +++
->  1 file changed, 3 insertions(+)
+>  mm/mprotect.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
-> index 38ef7ce3d3c7..2323ded379d6 100644
-> --- a/arch/x86/include/asm/sgx_arch.h
-> +++ b/arch/x86/include/asm/sgx_arch.h
-> @@ -35,6 +35,9 @@ enum sgx_encls_function {
->  	EPA	= 0x0A,
->  	EWB	= 0x0B,
->  	ETRACK	= 0x0C,
-> +	EAUG	= 0x0D,
-> +	EMODPR	= 0x0E,
-> +	EMODT	= 0x0F,
->  };
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index ab709023e9aa..94188df1ee55 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -617,10 +617,11 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+>  		if (tmp > end)
+>  			tmp = end;
 >  
->  /**
+> -		if (vma->vm_ops && vma->vm_ops->mprotect)
+> +		if (vma->vm_ops && vma->vm_ops->mprotect) {
+>  			error = vma->vm_ops->mprotect(vma, nstart, tmp, newflags);
+> -		if (error)
+> -			goto out;
+> +			if (error)
+> +				goto out;
+> +		}
+>  
+>  		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
+>  		if (error)
 > -- 
-> 2.29.2
+> 2.19.1.3.ge56e4f7
 > 
 > 
