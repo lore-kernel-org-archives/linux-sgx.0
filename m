@@ -2,107 +2,138 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693B2C433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 14:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCDCC433DB
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B69323382
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 14:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9863233EA
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733204AbhATOsE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 09:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730706AbhATOUF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 09:20:05 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 645F02080D;
-        Wed, 20 Jan 2021 14:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611152364;
-        bh=9TPjieyQlLFEySF60ma2VnmvODCssS7zoUtLVRHv/no=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WHm5iTa0ow9eeommwyY6Lfafy2G9VMmJEl8rlyfKbDqG7FIsYUpb/MtLmoMqeBZF3
-         sxxcsjX5VugmEAJF9Mkpnm/c5myNWuzIw2LQoa+9RclATYQbhGqDK7hyJkOVs7Qdpt
-         vEupWsY6n49Ze+u8JXdZfZkCl81cKqh3ISKX9RWmc9QmcgagxXMXa2KnwUW/3sFOSz
-         hrveggvZVxKjPNXtB9qVlsWjDwwP/MN9QiF2I8dE8wIQkCerX9WuMdhrAR2p4fIxlS
-         tF18UcemcOUVWWO3yAEhR1Rde/aBoCFYPRNEy0lt11BzAyAJMrWSfNnzbUBEiFuIzL
-         UXuVm5NIBxflg==
-Date:   Wed, 20 Jan 2021 16:19:18 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com
-Subject: Re: [RFC PATCH v2 16/26] KVM: x86: Export
- kvm_mmu_gva_to_gpa_{read,write}() for SGX (VMX)
-Message-ID: <YAg75hHsWm0j/pnJ@kernel.org>
-References: <cover.1610935432.git.kai.huang@intel.com>
- <347d84df280cc326ebdb097ab3a30aed2818ae8c.1610935432.git.kai.huang@intel.com>
+        id S2389342AbhATQWs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 11:22:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403872AbhATQVN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 20 Jan 2021 11:21:13 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A796C061575
+        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:20:33 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id n10so15492449pgl.10
+        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:20:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MBqThV9Olupan+r++p/11MWGguLV0PkDywP+wSQi6Ys=;
+        b=uHr2OtDySDWynGYYVHmG0ZLx5k0Xy3+cFC6x79NNNa1TrWBKQOCABpQ2bdlD2NfWMi
+         +/GIjyJLmUCsaXB/23nUzfp1zu2SliNMi8A6LgxHad+C/2ZVK5kZFAW+jOYUu/xSZk1z
+         EeUJsxPMVvRK6t87oEbGkUYD9HUWh+/eZHJk0qPLpKgo5PyjgsRk7/fUTcvhL2CkJFXs
+         KqzPtAqvrzSyUY9ug0lU74cZsa3LZPrDUIO4XYFHc92PGnpclqfTtS9yQcUmZyxRCM/d
+         IMe3GOyNJNRshNj9B5TpSjLH3tG7KBOic6wfjWmCytNxziT4f9tJX+9TY7otjNedyENs
+         zVHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MBqThV9Olupan+r++p/11MWGguLV0PkDywP+wSQi6Ys=;
+        b=WwTfotpXNnpaZv3JlXPEHtk6u8d9XpUpUBpR+Nbf6gH/B7Fh68sUV1j9YuhoY8lmnw
+         LUM2XP6/gW3MZfi2TXaVTaee5dQLsDdeP1wXnvJtShz5PESeF6I4aRdJ9/oO3Z3NTghf
+         SONM7EtKE9O0bQ9/KqSD92wjABC0nO+IyKt2I31LVbhl/ryNp0vpOAULpQzIF/T+s3ot
+         n+SfMpOjRRMi+ZUsJF6jVq8JSh+R4UPQ8s8E9eajZqWef/BObADqbRoy8qPfdGrq+L75
+         zwpNwcwzABxBH4Nr6wCwygLVdp6LCDL6uO7ly4lV38RefZz3AD6sc/XvD2slIzN97hbE
+         LrQg==
+X-Gm-Message-State: AOAM532FY8fx2ViBL3W5Zr9diV6q+pzek6Om7ykgSe4q3pQWEQeL1KmR
+        HbMB6dTe/aOWdpFqM4crvDiEvw==
+X-Google-Smtp-Source: ABdhPJwXLSuAW3fgaBQRD1DO4EwQ6ZcDffSH9Tq2hezveyi9uLHs9gN6QuMVUx0nykOdqHLOYMS/7A==
+X-Received: by 2002:a63:e40e:: with SMTP id a14mr10073281pgi.345.1611159632434;
+        Wed, 20 Jan 2021 08:20:32 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
+        by smtp.gmail.com with ESMTPSA id h6sm3049073pfr.47.2021.01.20.08.20.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jan 2021 08:20:31 -0800 (PST)
+Date:   Wed, 20 Jan 2021 08:20:25 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH v2] x86/sgx: Allows ioctl PROVISION to execute before
+ CREATE
+Message-ID: <YAhYSdpIr60EUnRI@google.com>
+References: <20210120035309.19545-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <347d84df280cc326ebdb097ab3a30aed2818ae8c.1610935432.git.kai.huang@intel.com>
+In-Reply-To: <20210120035309.19545-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 04:28:27PM +1300, Kai Huang wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> Export the gva_to_gpa() helpers for use by SGX virtualization when
-> executing ENCLS[ECREATE] and ENCLS[EINIT] on behalf of the guest.
-> To execute ECREATE and EINIT, KVM must obtain the GPA of the target
-> Secure Enclave Control Structure (SECS) in order to get its
-> corresponding HVA.
-> 
-> Because the SECS must reside in the Enclave Page Cache (EPC), copying
-> the SECS's data to a host-controlled buffer via existing exported
-> helpers is not a viable option as the EPC is not readable or writable
-> by the kernel.
-> 
-> SGX virtualization will also use gva_to_gpa() to obtain HVAs for
-> non-EPC pages in order to pass user pointers directly to ECREATE and
-> EINIT, which avoids having to copy pages worth of data into the kernel.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+On Wed, Jan 20, 2021, Tianjia Zhang wrote:
+> In function sgx_encl_create(), the logic of directly assigning
+> value to attributes_mask determines that the call to
+> SGX_IOC_ENCLAVE_PROVISION must be after the command of
+> SGX_IOC_ENCLAVE_CREATE. If move this assignment statement to
+> function sgx_open(), the PROVISION command can be executed
+> earlier and more flexibly.
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Use imperative mood to describe what you're doing, e.g. the "if" leaves the
+reader wonder whether it's a suggestion or what the patch is actually doing.
 
-/Jarkko
+E.g. something like
 
+  Move the initialization of an enclave's allowed attributes_mask to
+  sgx_open() to allow the ENCLAVE_PROVISION ioctl() to be invoked before
+  ENCLAVE_CREATE.
+
+> Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 > ---
->  arch/x86/kvm/x86.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/x86/kernel/cpu/sgx/driver.c | 3 +++
+>  arch/x86/kernel/cpu/sgx/ioctl.c  | 1 -
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 9a8969a6dd06..5ca7b181a3ae 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -5891,6 +5891,7 @@ gpa_t kvm_mmu_gva_to_gpa_read(struct kvm_vcpu *vcpu, gva_t gva,
->  	u32 access = (kvm_x86_ops.get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
->  	return vcpu->arch.walk_mmu->gva_to_gpa(vcpu, gva, access, exception);
->  }
-> +EXPORT_SYMBOL_GPL(kvm_mmu_gva_to_gpa_read);
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> index f2eac41bb4ff..8766580194ae 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -36,6 +36,9 @@ static int sgx_open(struct inode *inode, struct file *file)
+>  		return ret;
+>  	}
 >  
->   gpa_t kvm_mmu_gva_to_gpa_fetch(struct kvm_vcpu *vcpu, gva_t gva,
->  				struct x86_exception *exception)
-> @@ -5907,6 +5908,7 @@ gpa_t kvm_mmu_gva_to_gpa_write(struct kvm_vcpu *vcpu, gva_t gva,
->  	access |= PFERR_WRITE_MASK;
->  	return vcpu->arch.walk_mmu->gva_to_gpa(vcpu, gva, access, exception);
->  }
-> +EXPORT_SYMBOL_GPL(kvm_mmu_gva_to_gpa_write);
+> +	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
+> +				SGX_ATTR_KSS;
+
+Probably don't need a newline before SGX_ATTR_KSS.  In fact, I wouldn't be
+surprised if Boris explicitly requested letting the original code go past 80
+chars to improve readability.  Either way, with a cleaned up changelog:
+
+Reviewed-by: Sean Christopherson <seanjc@google.com> 
+
+> +
+>  	file->private_data = encl;
 >  
->  /* uses this to access any guest's mapped memory without checking CPL */
->  gpa_t kvm_mmu_gva_to_gpa_system(struct kvm_vcpu *vcpu, gva_t gva,
+>  	return 0;
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 90a5caf76939..1c6ecf9fbeff 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -109,7 +109,6 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+>  	encl->base = secs->base;
+>  	encl->size = secs->size;
+>  	encl->attributes = secs->attributes;
+> -	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+>  
+>  	/* Set only after completion, as encl->lock has not been taken. */
+>  	set_bit(SGX_ENCL_CREATED, &encl->flags);
 > -- 
-> 2.29.2
-> 
+> 2.19.1.3.ge56e4f7
 > 
