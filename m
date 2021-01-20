@@ -2,143 +2,89 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3072BC433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55DDC43381
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02633233F7
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A01ED233E2
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:56:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732478AbhATQn6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 11:43:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
+        id S2403791AbhATQ4D (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 11:56:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391610AbhATQkQ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 20 Jan 2021 11:40:16 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A686C061757
-        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:39:34 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id b8so12786940plh.12
-        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:39:34 -0800 (PST)
+        with ESMTP id S2388514AbhATQgX (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 20 Jan 2021 11:36:23 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DDEC061575
+        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:35:42 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id kx7so2493680pjb.2
+        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:35:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=nuK0zgKpAn8bzQ1mtmeXEwK3kY3X8JH630/Yem/GinQ=;
-        b=gIXzr+069d/0fSiLThZbkPQeXmsQRTA6DjfqW/10j2gExSlk9huiiDDtiCOiN/Tu5M
-         rns0U/Wr07wrfCqvQZOFkv/zvBv93JdbzykMYcYj+pGumuLDlMG1Q0/lWcdEMCS9f2Q2
-         uotpqsKxh+CgYeYzZbcM3pugbyYc3Yl/RERF71wHJziT0kzZFIr4zKzjEGrR0srj2hTW
-         mWjIxXPdSACvzeroplr2kVvNz0m7+btstdaOKt8VT78blNBNQNl3+RaCyYAuK5PXzCqW
-         P66oyaxTK8OVJrDEeUQtWv9p3V1sIXxxtiI35cOZWF6o87ParWHAVYwYct6on+Dt3qhR
-         nSmQ==
+        bh=JlixcYoHW4Z0fDOypVjt+k/RzFyLIGGaYIsPPyEDmtA=;
+        b=kiUbWi2Y/tw5HB/SPzF8PCMPP4iwKt9x6KHIDxh2jc0Kr+A7L7jlKuSOXONu0APQAn
+         t7nD5ylrF/seaYBSZPEl+pA2OK7ZlsHDGwPQv8l+QzTf1VAVPHnyZxs+CFKTUui6c7N2
+         Tf8IMWQemacCb7UNQs3wWXZYhiwNjE6vi44Lsi23Ywqk4Z9x/QnowUm5qdzfbTzrG0b1
+         iMiT/Wxnbe3Tq61yESgxXv03KDjmfT6gYMyCKBvOwzXyrvA1Huonk/Qb8hhxhDf73OpA
+         nMJQMWqkNvA3YdB8gF6ACqrm339J4Gffn4VlJI3t+Uyj+ZJ+HoZORc+6C5C+OVja9YRG
+         fiGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=nuK0zgKpAn8bzQ1mtmeXEwK3kY3X8JH630/Yem/GinQ=;
-        b=ldJFGuNV4nWTpYubDuDb5D28uM4CbD6PAA202+JvRk3/X9yHs12t+zXzcReXKJFiGl
-         ro27PLnNOoB7ngKW5/dLtA+DfZ82+GU9v4ca46bzmZP8nrUvynmOU8QH50YrnL74qQpb
-         J/wdyPsi2BrPwySkOBMMjKV67xL5lXGr12ZHXDogiM5xcveIox7/3X+eulq8odWx75nU
-         dggjfL28o0HqTVEGSZtQ2Op+ewDFLdY+YznDHscph+5Py5VhLo0+dL7G86zSYCctVOWJ
-         yI8LtcFYi5H8VN2f5kkdwzyRN/fE8nX/P43yKAVUP5pzCKRkVGbN6y8hxPLVzHwePXft
-         38Rw==
-X-Gm-Message-State: AOAM5312DHsTPpsWxTLpoZVsv6mi5KfTb0+eE2Pi49kwJG0PXyLdhbgd
-        sU3WwgfGBBBWuPblklNMrE+xyg==
-X-Google-Smtp-Source: ABdhPJxDnTAJfxEaIlpQNTYS5GtZPsaetfRE5nmAw+H2XkASTdS3RyZDqs+FHwbl9QlVipCd8xoYEw==
-X-Received: by 2002:a17:902:9a03:b029:dc:31af:8dc2 with SMTP id v3-20020a1709029a03b02900dc31af8dc2mr10774139plp.39.1611160773822;
-        Wed, 20 Jan 2021 08:39:33 -0800 (PST)
+        bh=JlixcYoHW4Z0fDOypVjt+k/RzFyLIGGaYIsPPyEDmtA=;
+        b=iqfqcUjHxm17p8YSmTZEzhxiHJlijzkXrdYndLvqvfq8z0MUeu/Hf8juLHXZuxM41f
+         ZU4TNTTZwhpyuy4UhF1ZZAK4p77cIdYr4nzJ9B5F3Q/Mt9DcpEkzWYBHvsCWjpzPvFMR
+         6LirRU5n1lNGCd7D/pWKdhkU6YDTCF234cg2rQhNg/14g26UGiid8dgc4AA7fVqrq1Iy
+         okvPEAhHC4duvytwyu+oWzAQqtE2fo7POW5alJ5N3CFCt4sqvRBkfPuvQksaRH73DaDF
+         zDWJum1r/qDV37f44iZ5Tm8o3VYuMCExIB0JNJBth0P5aEQFhsQaBVLuPc5zNzv3uPOZ
+         9koA==
+X-Gm-Message-State: AOAM530uqw5qMaB3hEnaEU1FU50G5usJxezBje9zJ+R45885s9RNqtjw
+        /qocdEi+wIgqFGrv4zp7zVGxLQ==
+X-Google-Smtp-Source: ABdhPJzZbs1JiU9eeCn0Q6AG2mfq6aHzox/28oq3WFdAQIFNbYAaNMpTggajWXVCHeJn/3AKL5ePRg==
+X-Received: by 2002:a17:902:d891:b029:de:369c:6bc7 with SMTP id b17-20020a170902d891b02900de369c6bc7mr10756044plz.31.1611160542240;
+        Wed, 20 Jan 2021 08:35:42 -0800 (PST)
 Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id fv19sm2926134pjb.20.2021.01.20.08.39.31
+        by smtp.gmail.com with ESMTPSA id j6sm2882089pfg.159.2021.01.20.08.35.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 08:39:33 -0800 (PST)
-Date:   Wed, 20 Jan 2021 08:39:26 -0800
+        Wed, 20 Jan 2021 08:35:41 -0800 (PST)
+Date:   Wed, 20 Jan 2021 08:35:34 -0800
 From:   Sean Christopherson <seanjc@google.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
         bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com
-Subject: Re: [RFC PATCH v2 15/26] KVM: VMX: Convert vcpu_vmx.exit_reason to a
- union
-Message-ID: <YAhcvqXNxq0ALCyO@google.com>
+        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+Subject: Re: [RFC PATCH v2 00/26] KVM SGX virtualization support
+Message-ID: <YAhb1mYB3ajc2/n9@google.com>
 References: <cover.1610935432.git.kai.huang@intel.com>
- <72e2f0e0fb28af55cb11f259eb5bc9e034fb705c.1610935432.git.kai.huang@intel.com>
- <YAg7vzevfw5iL9kN@kernel.org>
+ <YAaW5FIkRrLGncT5@kernel.org>
+ <0adf45fae5207ed3d788bbb7260425f8da7aff43.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YAg7vzevfw5iL9kN@kernel.org>
+In-Reply-To: <0adf45fae5207ed3d788bbb7260425f8da7aff43.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 20, 2021, Jarkko Sakkinen wrote:
-> On Mon, Jan 18, 2021 at 04:28:26PM +1300, Kai Huang wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > Convert vcpu_vmx.exit_reason from a u32 to a union (of size u32).  The
-> > full VM_EXIT_REASON field is comprised of a 16-bit basic exit reason in
-> > bits 15:0, and single-bit modifiers in bits 31:16.
-> > 
-> > Historically, KVM has only had to worry about handling the "failed
-> > VM-Entry" modifier, which could only be set in very specific flows and
-> > required dedicated handling.  I.e. manually stripping the FAILED_VMENTRY
-> > bit was a somewhat viable approach.  But even with only a single bit to
-> > worry about, KVM has had several bugs related to comparing a basic exit
-> > reason against the full exit reason store in vcpu_vmx.
-> > 
-> > Upcoming Intel features, e.g. SGX, will add new modifier bits that can
-> > be set on more or less any VM-Exit, as opposed to the significantly more
-> > restricted FAILED_VMENTRY, i.e. correctly handling everything in one-off
-> > flows isn't scalable.  Tracking exit reason in a union forces code to
-> > explicitly choose between consuming the full exit reason and the basic
-> > exit, and is a convenient way to document and access the modifiers.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> >  arch/x86/kvm/vmx/nested.c | 42 +++++++++++++++---------
-> >  arch/x86/kvm/vmx/vmx.c    | 68 ++++++++++++++++++++-------------------
-> >  arch/x86/kvm/vmx/vmx.h    | 25 +++++++++++++-
-> >  3 files changed, 86 insertions(+), 49 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> > index 0fbb46990dfc..f112c2482887 100644
-> > --- a/arch/x86/kvm/vmx/nested.c
-> > +++ b/arch/x86/kvm/vmx/nested.c
-> > @@ -3311,7 +3311,11 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
-> >  	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-> >  	enum vm_entry_failure_code entry_failure_code;
-> >  	bool evaluate_pending_interrupts;
-> > -	u32 exit_reason, failed_index;
-> > +	u32 failed_index;
-> > +	union vmx_exit_reason exit_reason = {
-> > +		.basic = -1,
-> > +		.failed_vmentry = 1,
-> > +	};
-> 
-> Instead, put this declaration to the correct place, following the
-> reverse christmas tree ordering:
-> 
->         union vmx_exit_reason exit_reason = {};
-> 
-> And after declarations:
-> 
->         exit_reason.basic = -1;
->         exit_reason.failed_vmentry = 1;
-> 
-> More pleasing for the eye.
+On Wed, Jan 20, 2021, Kai Huang wrote:
+> I'd like to take this chance to ask: when this series is ready to be merged, what is
+> the properly way to merge? This series has x86 non-sgx (cpufeature, feat_ctl) and sgx
+> changes, and it obviously has KVM changes too. So instance, who should be the one to
+> take this series? And which tree and branch should I rebase to in next version?
 
-I disagree (obviously, since I wrote the patch).  Initializing the fields to
-their respective values is a critical, but subtle, aspect of this code.  Making
-the code stand out via explicit initialization is a good thing, and we really
-don't want any possibility of code touching exit_reason before it is initialized.
+The path of least resistance is likely to get acks for the x86 and sgx changes,
+and let Paolo take it through the KVM tree.  The KVM changes are much more
+likely to have non-trivial conflicts, e.g. making exit_reason a union touches a
+ton of code; getting and carrying acked-by for those will be tough sledding.
