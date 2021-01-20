@@ -2,76 +2,99 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38644C43333
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8491C43217
 	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2CAB23719
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 777152389F
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390802AbhAUAMP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:12:15 -0500
-Received: from mga04.intel.com ([192.55.52.120]:64353 "EHLO mga04.intel.com"
+        id S1730252AbhAUALI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 19:11:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404055AbhATXX6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 18:23:58 -0500
-IronPort-SDR: ifgVO9Ic9E6IqS1mATzLF/aym3n35qrVyMV1ZlhWLXmpz5hSLX8XjlgPOwGgoD19H7DX6eBSyZ
- hnCiPt+mv0UQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="176619738"
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="176619738"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:23:14 -0800
-IronPort-SDR: t34X6Og3oAmwrF1m/oEYbcdZQdrj4DDZUxEHOTb5bV7EnY5btKb0r1/slD57DyPDNwBPWYBooT
- ubDfab+FGLJw==
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="391720531"
-Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:23:11 -0800
-Date:   Thu, 21 Jan 2021 12:23:08 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 01/26] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
-Message-Id: <20210121122308.8d920c9d652f58824fe87f3e@intel.com>
-In-Reply-To: <YAgY9OfYaGj7og/b@kernel.org>
-References: <cover.1610935432.git.kai.huang@intel.com>
-        <87385f646120a3b5b34dc20480dbce77b8005acd.1610935432.git.kai.huang@intel.com>
-        <YAgY9OfYaGj7og/b@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388151AbhATWfb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 17:35:31 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B1B12220B;
+        Wed, 20 Jan 2021 22:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611182089;
+        bh=2C82eInXgK2XP3lkS3yelUgVXzNNZFQQWo02fjG+A70=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aKrcqVFk4tx3fqxndo4w3WVFUgE3tAHmDHisYKPZaOuc14wUi1g2ZdK912FZpJ8B4
+         cy3QdbZu7OqDNzg9k8AbdEVyxQbJVLEn2DMgL+LAOtm7cS611cUb3JPWzBUBzxJnV5
+         0bVoPRnizOAyyHRfd5nb8kDYUrn5QF3Nqerg0dEn/QGOBQIVHaUs16fIqX5dthLYF5
+         mhutvMvn6tZrTupydxSWesA6mihWF4/iiVTHMIc+rqc/drT7O47g4ycOGnyUyBPABx
+         duiJfyYq+wNDOzhMRURdsVwsyA5tBR9Y5QIlb/OUXNVVwAogvz94Yd61Z5ogPjZUc9
+         GlXSut2CHkrDw==
+Date:   Thu, 21 Jan 2021 00:34:43 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, haitao.huang@intel.com,
+        Kai Huang <kai.huang@intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH] x86/sgx: Allows ioctl PROVISION to execute before CREATE
+Message-ID: <YAiwA/oQkOVuTO+7@kernel.org>
+References: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
+ <YAc7h3zQR06eWPhZ@google.com>
+ <5037ee56-0211-f16c-3ea0-86cf8146b7f8@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5037ee56-0211-f16c-3ea0-86cf8146b7f8@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 20 Jan 2021 13:50:12 +0200 Jarkko Sakkinen wrote:
-> On Mon, Jan 18, 2021 at 04:26:49PM +1300, Kai Huang wrote:
-> > From: Sean Christopherson <seanjc@google.com>
+On Wed, Jan 20, 2021 at 11:57:18AM +0800, Tianjia Zhang wrote:
+> Hi,
+> 
+> On 1/20/21 4:05 AM, Sean Christopherson wrote:
+> > On Mon, Jan 18, 2021, Tianjia Zhang wrote:
+> > > In function sgx_encl_create(), the logic of directly assigning
+> > > value to attributes_mask determines that the call to
+> > > SGX_IOC_ENCLAVE_PROVISION must be after the command of
+> > > SGX_IOC_ENCLAVE_CREATE. If change this assignment statement to
+> > > or operation, the PROVISION command can be executed earlier and
+> > > more flexibly.
+> > > 
+> > > Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> > > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> > > ---
+> > >   arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > > index f45957c05f69..0ca3fc238bc2 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > > @@ -108,7 +108,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+> > >   	encl->base = secs->base;
+> > >   	encl->size = secs->size;
+> > >   	encl->attributes = secs->attributes;
+> > > -	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+> > > +	encl->attributes_mask |= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
 > > 
-> > Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-> > features.  As part of virtualizing SGX, KVM will expose the SGX CPUID
-> > leafs to its guest, and to do so correctly needs to query hardware and
-> > kernel support for SGX1 and SGX2.
+> > Alternatively, move the existing code to sgx_open()?  Initializing the field
+> > when the encl object is allocated feels more correct.
+> > 
 > 
-> This commit message is missing reasoning behind scattered vs. own word.
 > 
-> Please just document the reasoning, that's all.
+> This seems like a good idea. Thanks for your suggestion. I have sent v2
+> patch, include the next two patches.
 
-OK. Will do. How about:
+Did you ask from Sean about suggested-by's? Now it looks like
+that doing these patches were originally proposed by Sean.
 
-"Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-features, since adding a new leaf for only two bits would be wasteful."
-
-?
-
-> 
-> /Jarkko
+/Jarkko
