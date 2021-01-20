@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE3AC433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 18:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D22C433DB
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 18:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0E1233FA
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 18:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4019023434
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 18:43:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732762AbhATSiw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 13:38:52 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62717 "EHLO mga04.intel.com"
+        id S1727162AbhATRgr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 12:36:47 -0500
+Received: from mga18.intel.com ([134.134.136.126]:58326 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbhATSg5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 13:36:57 -0500
-IronPort-SDR: RtzVp/nBfkULSemzSelVzg7ika71VmC1Zg4nvMxJ3hPy3dsVPAIX7Ib2RY8q95ZsCQszpdTKeQ
- 0VQ9RsoB89ng==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="176584436"
+        id S1732877AbhATRfB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 12:35:01 -0500
+IronPort-SDR: ImSt9dUSdFAaPX+0s7k7+8k3CPMHqqujQ00G9Iiwcd91AaJ9s+Y0uheqrdHCU3CKMKuvBVUoK4
+ E11XUKi4yzCQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="166810420"
 X-IronPort-AV: E=Sophos;i="5.79,361,1602572400"; 
-   d="scan'208";a="176584436"
+   d="scan'208";a="166810420"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 10:36:11 -0800
-IronPort-SDR: hhKGgofOLyPi3Odxt3+QJLpBpFpxLAQtjseU6oJjH2pMu4AHckVbwr19uHDi8daYEzbweSZohL
- lgaeEx9Bn+9Q==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 09:34:13 -0800
+IronPort-SDR: tI9ITrsybC+mKjB8lwTgnznevXxieNXakp6WGsXb24EydsJMEQiVfc2Kgc2rFvnajaajTac2K2
+ ZfLGwxSH9GAg==
 X-IronPort-AV: E=Sophos;i="5.79,361,1602572400"; 
-   d="scan'208";a="351140577"
+   d="scan'208";a="351124524"
 Received: from raavalos-mobl2.amr.corp.intel.com (HELO [10.212.38.24]) ([10.212.38.24])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 10:36:10 -0800
-Subject: Re: [RFC PATCH v2 12/26] x86/sgx: Add helper to update
- SGX_LEPUBKEYHASHn MSRs
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Kai Huang <kai.huang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-References: <cover.1610935432.git.kai.huang@intel.com>
- <5116fdc732e8e14b3378c44e3b461a43f330ed0c.1610935432.git.kai.huang@intel.com>
- <YAgcIhkmw0lllD3G@kernel.org>
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 09:34:12 -0800
+Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
+ sgx_release()
+To:     Jarkko Sakkinen <jarkko@kernel.org>, Borislav Petkov <bp@alien8.de>
+Cc:     linux-sgx@vger.kernel.org, kai.huang@intel.com,
+        haitao.huang@intel.com, seanjc@google.com, stable@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>
+References: <20210115014638.15037-1-jarkko@kernel.org>
+ <20210115071809.GA9138@zn.tnic> <YAJ11v5tuS2uMuNm@kernel.org>
+ <20210118185712.GE30090@zn.tnic> <YAhBeaItbqYmf0oF@kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,31 +88,33 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <8613b3f1-c4f6-3e5d-4406-9476727666a7@intel.com>
-Date:   Wed, 20 Jan 2021 10:36:09 -0800
+Message-ID: <bb46fd98-0f67-76a7-9ba9-3a646c2a8f84@intel.com>
+Date:   Wed, 20 Jan 2021 09:34:10 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YAgcIhkmw0lllD3G@kernel.org>
+In-Reply-To: <YAhBeaItbqYmf0oF@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/20/21 4:03 AM, Jarkko Sakkinen wrote:
->> +void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < 4; i++)
->> +		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
->> +}
-> Missing kdoc.
+On 1/20/21 6:43 AM, Jarkko Sakkinen wrote:
+>> So why do you need the synchronize_srcu() call when this process sees an
+>> empty mm_list already?
+>>
+>> Thx.
+> The other process aka some process using the enclave calls list_del_rcu()
+> (and synchronize_srcu()), which starts a new grace period. If we don't
+> do it, then the cleanup_srcu() will race with that grace period.
 
-I dunno... kdoc is nice, but I'm not sure its verbosity is useful here,
-even if this function is called from more than one .c file.
+To me, this is only a partial explanation.
 
-I'd be happy with a single-line comment, personally.
+That goal of synchronize_srcu() is to wait for the completion of a
+*previous* grace period: one that might have observed the old state of
+the list.
 
+Could you explain the *actual* effects of the misplaced
+synchronize_srcu()?  If the race _occurs_, what is the side-effect?
