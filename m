@@ -6,44 +6,41 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D22C433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 18:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD49FC41620
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 22:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4019023434
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 18:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B210223602
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 22:12:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbhATRgr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 12:36:47 -0500
-Received: from mga18.intel.com ([134.134.136.126]:58326 "EHLO mga18.intel.com"
+        id S1730195AbhATWA7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 17:00:59 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56345 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732877AbhATRfB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 12:35:01 -0500
-IronPort-SDR: ImSt9dUSdFAaPX+0s7k7+8k3CPMHqqujQ00G9Iiwcd91AaJ9s+Y0uheqrdHCU3CKMKuvBVUoK4
- E11XUKi4yzCQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="166810420"
-X-IronPort-AV: E=Sophos;i="5.79,361,1602572400"; 
-   d="scan'208";a="166810420"
+        id S2436695AbhATVC6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 16:02:58 -0500
+IronPort-SDR: bYPowWkbbVjyAJ6I71CQIM9w2b7TRqgo4oS0/RE+S+beJksseHrZVwetsXGbXKJPEcG/cP+NA+
+ 9V7J7RtvLGwA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="263990055"
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="263990055"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 09:34:13 -0800
-IronPort-SDR: tI9ITrsybC+mKjB8lwTgnznevXxieNXakp6WGsXb24EydsJMEQiVfc2Kgc2rFvnajaajTac2K2
- ZfLGwxSH9GAg==
-X-IronPort-AV: E=Sophos;i="5.79,361,1602572400"; 
-   d="scan'208";a="351124524"
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 13:02:17 -0800
+IronPort-SDR: H+4uyy08i0Wsv5OSi+x0Ru3l4yHO4E+L8tD0igxvdMfXZbDZcO40SadJNmqZeWcAsLvr3AtQ0T
+ zIt5UWP/KO7w==
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="351208171"
 Received: from raavalos-mobl2.amr.corp.intel.com (HELO [10.212.38.24]) ([10.212.38.24])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 09:34:12 -0800
-Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
- sgx_release()
-To:     Jarkko Sakkinen <jarkko@kernel.org>, Borislav Petkov <bp@alien8.de>
-Cc:     linux-sgx@vger.kernel.org, kai.huang@intel.com,
-        haitao.huang@intel.com, seanjc@google.com, stable@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>
-References: <20210115014638.15037-1-jarkko@kernel.org>
- <20210115071809.GA9138@zn.tnic> <YAJ11v5tuS2uMuNm@kernel.org>
- <20210118185712.GE30090@zn.tnic> <YAhBeaItbqYmf0oF@kernel.org>
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 13:02:16 -0800
+Subject: Re: [RFC PATCH v2 06/26] x86/cpu/intel: Allow SGX virtualization
+ without Launch Control support
+To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de
+References: <cover.1610935432.git.kai.huang@intel.com>
+ <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -88,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <bb46fd98-0f67-76a7-9ba9-3a646c2a8f84@intel.com>
-Date:   Wed, 20 Jan 2021 09:34:10 -0800
+Message-ID: <bc73adaf-fae6-2088-c8d4-6f53057a4eac@intel.com>
+Date:   Wed, 20 Jan 2021 13:02:15 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YAhBeaItbqYmf0oF@kernel.org>
+In-Reply-To: <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,20 +98,32 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/20/21 6:43 AM, Jarkko Sakkinen wrote:
->> So why do you need the synchronize_srcu() call when this process sees an
->> empty mm_list already?
->>
->> Thx.
-> The other process aka some process using the enclave calls list_del_rcu()
-> (and synchronize_srcu()), which starts a new grace period. If we don't
-> do it, then the cleanup_srcu() will race with that grace period.
+On 1/17/21 7:27 PM, Kai Huang wrote:
+> -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
+> -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
+> -		     IS_ENABLED(CONFIG_X86_SGX);
+> +	enable_sgx_driver = cpu_has(c, X86_FEATURE_SGX) &&
+> +			    cpu_has(c, X86_FEATURE_SGX1) &&
+> +			    IS_ENABLED(CONFIG_X86_SGX) &&
+> +			    cpu_has(c, X86_FEATURE_SGX_LC);
+> +	enable_sgx_virt = cpu_has(c, X86_FEATURE_SGX) &&
+> +			  cpu_has(c, X86_FEATURE_SGX1) &&
+> +			  IS_ENABLED(CONFIG_X86_SGX) &&
+> +			  IS_ENABLED(CONFIG_X86_SGX_VIRTUALIZATION) &&
+> +			  enable_vmx;
 
-To me, this is only a partial explanation.
+Would it be too much to ask that the SGX/SGX1 checks not be duplicated?
+ Perhaps:
 
-That goal of synchronize_srcu() is to wait for the completion of a
-*previous* grace period: one that might have observed the old state of
-the list.
+	enable_sgx_any = cpu_feature_enabled(CONFIG_X86_SGX) &&
+			 cpu_feature_enabled(CONFIG_X86_SGX1);
 
-Could you explain the *actual* effects of the misplaced
-synchronize_srcu()?  If the race _occurs_, what is the side-effect?
+	enable_sgx_driver = enable_sgx_any &&
+			    cpu_has(c, X86_FEATURE_SGX_LC);
+
+	enable_sgx_virt = enable_sgx_any &&
+			  enable_vmx &&
+		     IS_ENABLED(CONFIG_X86_SGX_VIRTUALIZATION)
+
+BTW, CONFIG_X86_SGX_VIRTUALIZATION is a pretty porky name.  Maybe just
+CONFIG_X86_SGX_VIRT?
