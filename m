@@ -2,128 +2,118 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD49FC41620
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 22:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F68C43219
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B210223602
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 22:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B25238A0
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbhATWA7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 17:00:59 -0500
-Received: from mga05.intel.com ([192.55.52.43]:56345 "EHLO mga05.intel.com"
+        id S1732671AbhAUAHP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 19:07:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436695AbhATVC6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 16:02:58 -0500
-IronPort-SDR: bYPowWkbbVjyAJ6I71CQIM9w2b7TRqgo4oS0/RE+S+beJksseHrZVwetsXGbXKJPEcG/cP+NA+
- 9V7J7RtvLGwA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="263990055"
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="263990055"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 13:02:17 -0800
-IronPort-SDR: H+4uyy08i0Wsv5OSi+x0Ru3l4yHO4E+L8tD0igxvdMfXZbDZcO40SadJNmqZeWcAsLvr3AtQ0T
- zIt5UWP/KO7w==
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="351208171"
-Received: from raavalos-mobl2.amr.corp.intel.com (HELO [10.212.38.24]) ([10.212.38.24])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 13:02:16 -0800
-Subject: Re: [RFC PATCH v2 06/26] x86/cpu/intel: Allow SGX virtualization
- without Launch Control support
-To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de
-References: <cover.1610935432.git.kai.huang@intel.com>
- <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bc73adaf-fae6-2088-c8d4-6f53057a4eac@intel.com>
-Date:   Wed, 20 Jan 2021 13:02:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1732384AbhATWdA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 17:33:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D05122473;
+        Wed, 20 Jan 2021 22:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611181917;
+        bh=IZpZup+7UVJmyznAHqT5zPuIOVNplTanitrN87XcENQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KwC0JeacdrJ9LXB4DLrYNvG1UWPLOKtQNEEHroZ40vf2MbOcwg7s6hpJbLR8Gy3WX
+         XZFEYY4qiVIU4t+VPH9r0cDDDV6As1d8Wvt0aj4rBoixMdHeVUTvKsHLuIRGPNSQAk
+         ArIZKhC3fvn4kEjz7zGv7kjliP8Ha8wjmrqwlw2cujiDjPvqEDuwjxIZdHB4JIkxpR
+         hNxcwCwPhM/xfLC5L+JhXPj3zqYOU0qhTr/T34gD7tshp9okYz9F7uWqgd2FtO9x8m
+         Y8llKWlB3aoo0LNjX8RQJsGHhGEAx74KdgSbBMDJKKH3caZZB+lY2ER3UYFXIWFjy2
+         kMk9itOxx3uug==
+Date:   Thu, 21 Jan 2021 00:31:52 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH v2] x86/sgx: Fix free_cnt counting logic in epc section
+Message-ID: <YAivWK/b/Mcz39JO@kernel.org>
+References: <20210120035320.19709-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210120035320.19709-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/17/21 7:27 PM, Kai Huang wrote:
-> -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
-> -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
-> -		     IS_ENABLED(CONFIG_X86_SGX);
-> +	enable_sgx_driver = cpu_has(c, X86_FEATURE_SGX) &&
-> +			    cpu_has(c, X86_FEATURE_SGX1) &&
-> +			    IS_ENABLED(CONFIG_X86_SGX) &&
-> +			    cpu_has(c, X86_FEATURE_SGX_LC);
-> +	enable_sgx_virt = cpu_has(c, X86_FEATURE_SGX) &&
-> +			  cpu_has(c, X86_FEATURE_SGX1) &&
-> +			  IS_ENABLED(CONFIG_X86_SGX) &&
-> +			  IS_ENABLED(CONFIG_X86_SGX_VIRTUALIZATION) &&
-> +			  enable_vmx;
+On Wed, Jan 20, 2021 at 11:53:20AM +0800, Tianjia Zhang wrote:
+> Increase `section->free_cnt` in sgx_sanitize_section() is more
+> reasonable, which is called in ksgxd kernel thread, instead of
 
-Would it be too much to ask that the SGX/SGX1 checks not be duplicated?
- Perhaps:
+This is lacking reasoning of why.
 
-	enable_sgx_any = cpu_feature_enabled(CONFIG_X86_SGX) &&
-			 cpu_feature_enabled(CONFIG_X86_SGX1);
+/Jarkko
 
-	enable_sgx_driver = enable_sgx_any &&
-			    cpu_has(c, X86_FEATURE_SGX_LC);
-
-	enable_sgx_virt = enable_sgx_any &&
-			  enable_vmx &&
-		     IS_ENABLED(CONFIG_X86_SGX_VIRTUALIZATION)
-
-BTW, CONFIG_X86_SGX_VIRTUALIZATION is a pretty porky name.  Maybe just
-CONFIG_X86_SGX_VIRT?
+> assigning it to epc section pages number at initialization.
+> Although this is unlikely to fail, these pages cannot be
+> allocated after initialization, and which need to be reset
+> by ksgxd.
+> 
+> At the same time, taking section->lock could be moved inside
+> the !ret flow so that EREMOVE is done without holding the lock.
+> it's theoretically possible that ksgxd hasn't finished
+> sanitizing the EPC when userspace starts creating enclaves.
+> 
+> Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index c519fc5f6948..34a72a147983 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -41,16 +41,18 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
+>  		if (kthread_should_stop())
+>  			return;
+>  
+> -		/* needed for access to ->page_list: */
+> -		spin_lock(&section->lock);
+> -
+>  		page = list_first_entry(&section->init_laundry_list,
+>  					struct sgx_epc_page, list);
+>  
+>  		ret = __eremove(sgx_get_epc_virt_addr(page));
+> -		if (!ret)
+> +
+> +		/* needed for access to ->page_list: */
+> +		spin_lock(&section->lock);
+> +
+> +		if (!ret) {
+>  			list_move(&page->list, &section->page_list);
+> -		else
+> +			section->free_cnt += 1;
+> +		} else
+>  			list_move_tail(&page->list, &dirty);
+>  
+>  		spin_unlock(&section->lock);
+> @@ -646,7 +648,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+>  		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
+>  	}
+>  
+> -	section->free_cnt = nr_pages;
+>  	return true;
+>  }
+>  
+> -- 
+> 2.19.1.3.ge56e4f7
+> 
+> 
