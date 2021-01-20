@@ -4,102 +4,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FDCC433E6
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 12:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D2CC433E6
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 12:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEE852332B
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 12:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F34623359
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 12:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730241AbhATMVq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 07:21:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36204 "EHLO mail.kernel.org"
+        id S1726085AbhATM5F (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 07:57:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbhATLxk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 06:53:40 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 228EA2332B;
-        Wed, 20 Jan 2021 11:51:33 +0000 (UTC)
+        id S1726694AbhATMAL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 07:00:11 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 232A5221FB;
+        Wed, 20 Jan 2021 11:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611143497;
-        bh=gIE/9Q5kcut4jo7HWwDqNs9MboUmlS9BMq0bazv7Y/o=;
+        s=k20201202; t=1611143969;
+        bh=QGrUfzyBYq3J4ag6Ae00hMg37X96K+kbfkc6zS/WLZ4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XgIh6Ifx+SvqtzZYkH13DBqTHhAx3mlS1R1L/fxAix2EW994dCsp7C2BRLv1+Iriy
-         1290pqVNbiGQPeQP7tbRmCTOKLdIgjaDZX9PtcKWL2x9E5yRP5zPBgwMi7cpyO/dPo
-         LsJNAb+tJbuPeA59q6ZU7yUGoSy5RabjxL/ox5dkBp2wnK+efAQLzXDdYU80W1Veco
-         nkezyj8gKgKkZLoFuvKI9xELfWe6d2RPI91fNuC5+Flw6O3sU0Ns9j/PSHmZxcQxQk
-         atnDkyTDclFZ0f8nGaatTdVf+pj+0uzYmmVy6h7ALk97GYr2uwqvCkUpavVege0pwt
-         dVKUASWAUY/Zg==
-Date:   Wed, 20 Jan 2021 13:51:30 +0200
+        b=fkuVBheYIbPk43Pnhu8M/BUbeQUSy2SbkyO6iqEZKBkdZ+Ki8voCLOk/CpOCVBL6p
+         /BJWCMASt+xAeosKXnJRBj/friLny52EiE8qjEGRz88dleipg3dL8mHQiZ2IGBQcJF
+         BSo8175Apci1IsPOrdt0VPV3GUTR6FAZpoWAGEfROkcjvVkhG3TMdckf83pxefcVI4
+         JGZn259as4pSHZkyXezWh/t2qbQ1DAc6AKlQSu8eMby5HrMDVwZv53dk6LBMAqS9mP
+         frU+KpC4BSlprN6SROlrO5+8F5YLcNv07FN4WM31KVVT/Ik8MKRA8HEbi7ehJeSin/
+         ylqzCXsbu+vFg==
+Date:   Wed, 20 Jan 2021 13:59:23 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 04/26] x86/sgx: Add SGX_CHILD_PRESENT hardware
- error code
-Message-ID: <YAgZQtCVOynk0FOt@kernel.org>
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com
+Subject: Re: [RFC PATCH v2 09/26] x86/sgx: Move ENCLS leaf definitions to
+ sgx_arch.h
+Message-ID: <YAgbGzI0Cuw63JyA@kernel.org>
 References: <cover.1610935432.git.kai.huang@intel.com>
- <9638853bc880d5699e01bdf14b37814e2b08065f.1610935432.git.kai.huang@intel.com>
+ <5a23890a36c31896addfd41bae9211545024f8ba.1610935432.git.kai.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9638853bc880d5699e01bdf14b37814e2b08065f.1610935432.git.kai.huang@intel.com>
+In-Reply-To: <5a23890a36c31896addfd41bae9211545024f8ba.1610935432.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 04:26:52PM +1300, Kai Huang wrote:
+On Mon, Jan 18, 2021 at 04:27:50PM +1300, Kai Huang wrote:
 > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> SGX virtualization requires to allocate "raw" EPC and use it as "virtual
-> EPC" for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
-> track how EPC pages are used in VM, e.g. (de)construction of enclaves,
-> so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
-> knowledge of which pages are SECS with non-zero child counts.
-> 
-> Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
-> failures are expected, but only due to SGX_CHILD_PRESENT.
+> Move the ENCLS leaf definitions to sgx_arch.h so that they can be used
+> by KVM.  And because they're architectural.
 > 
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Acked-by: Dave Hansen <dave.hansen@intel.com>
 > Signed-off-by: Kai Huang <kai.huang@intel.com>
+
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+/Jarkko
+
 > ---
-> v1->v2:
+>  arch/x86/include/asm/sgx_arch.h | 15 +++++++++++++++
+>  arch/x86/kernel/cpu/sgx/encls.h | 15 ---------------
+>  2 files changed, 15 insertions(+), 15 deletions(-)
 > 
->  - Change title to reflect hardware error code.
-> 
-> ---
->  arch/x86/kernel/cpu/sgx/arch.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
-> index dd7602c44c72..56b0f8ae3f92 100644
-> --- a/arch/x86/kernel/cpu/sgx/arch.h
-> +++ b/arch/x86/kernel/cpu/sgx/arch.h
-> @@ -26,12 +26,14 @@
+> diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
+> index 56b0f8ae3f92..38ef7ce3d3c7 100644
+> --- a/arch/x86/include/asm/sgx_arch.h
+> +++ b/arch/x86/include/asm/sgx_arch.h
+> @@ -22,6 +22,21 @@
+>  /* The bitmask for the EPC section type. */
+>  #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
+>  
+> +enum sgx_encls_function {
+> +	ECREATE	= 0x00,
+> +	EADD	= 0x01,
+> +	EINIT	= 0x02,
+> +	EREMOVE	= 0x03,
+> +	EDGBRD	= 0x04,
+> +	EDGBWR	= 0x05,
+> +	EEXTEND	= 0x06,
+> +	ELDU	= 0x08,
+> +	EBLOCK	= 0x09,
+> +	EPA	= 0x0A,
+> +	EWB	= 0x0B,
+> +	ETRACK	= 0x0C,
+> +};
+> +
+>  /**
 >   * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
 >   * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
->   *				been completed yet.
-> + * %SGX_CHILD_PRESENT		Enclave has child pages present in the EPC.
-
-s/Enclave/SECS/
-
->   * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
->   *				public key does not match IA32_SGXLEPUBKEYHASH.
->   * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
->   */
->  enum sgx_return_code {
->  	SGX_NOT_TRACKED			= 11,
-> +	SGX_CHILD_PRESENT		= 13,
->  	SGX_INVALID_EINITTOKEN		= 16,
->  	SGX_UNMASKED_EVENT		= 128,
->  };
+> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> index 443188fe7e70..be5c49689980 100644
+> --- a/arch/x86/kernel/cpu/sgx/encls.h
+> +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> @@ -11,21 +11,6 @@
+>  #include <asm/traps.h>
+>  #include "sgx.h"
+>  
+> -enum sgx_encls_function {
+> -	ECREATE	= 0x00,
+> -	EADD	= 0x01,
+> -	EINIT	= 0x02,
+> -	EREMOVE	= 0x03,
+> -	EDGBRD	= 0x04,
+> -	EDGBWR	= 0x05,
+> -	EEXTEND	= 0x06,
+> -	ELDU	= 0x08,
+> -	EBLOCK	= 0x09,
+> -	EPA	= 0x0A,
+> -	EWB	= 0x0B,
+> -	ETRACK	= 0x0C,
+> -};
+> -
+>  /**
+>   * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
+>   *
 > -- 
 > 2.29.2
 > 
 > 
-
-/Jarkko
