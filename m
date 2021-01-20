@@ -2,107 +2,94 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B449C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954B2C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0494023731
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 614AC23718
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392582AbhAUALn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:11:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45362 "EHLO mail.kernel.org"
+        id S2390272AbhAUAMz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 19:12:55 -0500
+Received: from mga03.intel.com ([134.134.136.65]:43800 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390817AbhATW5T (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:57:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A5B7D23440;
-        Wed, 20 Jan 2021 22:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611182258;
-        bh=oSG+9JCEDtoH01WuM1ed6gw+x9TEFGlrSLZLk8N5Ybk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NIByYIeIuKNAFtQlyHLFL/UwxXXgBLrsA0lxr4nxA9/xUtV2fvg7qupq2S1zsyX6d
-         xRgnRAEGfUIT3Q9A7xiluSiVhU5s/uLn4AcyCoLjVa161/VwzYx9j0cuPZr5+khX4v
-         kpgSoMHZExxf4Wr0n9WH3v58G0WCR5ehd72f0bKbwCrCWqF6xGGLASnMF42+h4EKpf
-         IjzpAh0hJKBkKBEJDb7qYIjUyObEK9Zgq1lEiBdVoZjC7940CBJVZezP83Dp6zU6Ok
-         BflbD1LvOZcB2/tGPlRGTzfb3Q+nqrC7czIn/hO9Qr3biRBIOIj2HY9wt9ulHC58en
-         fCMvn9aLkfTYA==
-Date:   Thu, 21 Jan 2021 00:37:32 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, haitao.huang@intel.com,
-        Kai Huang <kai.huang@intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH] x86/sgx: Allows ioctl PROVISION to execute before CREATE
-Message-ID: <YAiwrDrAsxHVowhV@kernel.org>
-References: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
- <YAc7h3zQR06eWPhZ@google.com>
- <5037ee56-0211-f16c-3ea0-86cf8146b7f8@linux.alibaba.com>
- <YAiwA/oQkOVuTO+7@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YAiwA/oQkOVuTO+7@kernel.org>
+        id S2404119AbhATXZn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 18:25:43 -0500
+IronPort-SDR: gFY2GkVHnxs/ZRnbH1dKyEAUX4V2AtZEsYbzf3Zy03g92/OIV3EOWLD6fmknXsgB8wkpevlDsf
+ OumnKIxa+eYg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="179275217"
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="179275217"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:24:58 -0800
+IronPort-SDR: j4uQzzNZ7oqsq4Q5dSwpCAACXOolxIMD8bMx+jH+pjD7zxRJytLD2ELicS7P+tWambE9Nls6tu
+ +gBgRlshCU7Q==
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="354476752"
+Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:24:54 -0800
+Date:   Thu, 21 Jan 2021 12:24:53 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v2 14/26] x86/sgx: Move provisioning device creation
+ out of SGX driver
+Message-Id: <20210121122453.4481ba33c9af309362d7ba79@intel.com>
+In-Reply-To: <YAg5qU5KMGLuPdjy@kernel.org>
+References: <cover.1610935432.git.kai.huang@intel.com>
+        <4aeb65be69701a4a6e7d479ad3563bf7a9f052d5.1610935432.git.kai.huang@intel.com>
+        <YAg5qU5KMGLuPdjy@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 12:34:49AM +0200, Jarkko Sakkinen wrote:
-> On Wed, Jan 20, 2021 at 11:57:18AM +0800, Tianjia Zhang wrote:
-> > Hi,
-> > 
-> > On 1/20/21 4:05 AM, Sean Christopherson wrote:
-> > > On Mon, Jan 18, 2021, Tianjia Zhang wrote:
-> > > > In function sgx_encl_create(), the logic of directly assigning
-> > > > value to attributes_mask determines that the call to
-> > > > SGX_IOC_ENCLAVE_PROVISION must be after the command of
-> > > > SGX_IOC_ENCLAVE_CREATE. If change this assignment statement to
-> > > > or operation, the PROVISION command can be executed earlier and
-> > > > more flexibly.
-> > > > 
-> > > > Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-> > > > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> > > > ---
-> > > >   arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
-> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > > index f45957c05f69..0ca3fc238bc2 100644
-> > > > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > > @@ -108,7 +108,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
-> > > >   	encl->base = secs->base;
-> > > >   	encl->size = secs->size;
-> > > >   	encl->attributes = secs->attributes;
-> > > > -	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
-> > > > +	encl->attributes_mask |= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
-> > > 
-> > > Alternatively, move the existing code to sgx_open()?  Initializing the field
-> > > when the encl object is allocated feels more correct.
-> > > 
-> > 
-> > 
-> > This seems like a good idea. Thanks for your suggestion. I have sent v2
-> > patch, include the next two patches.
+
+> >  
+> > +const struct file_operations sgx_provision_fops = {
+> > +	.owner			= THIS_MODULE,
+> > +};
+> > +
+> > +static struct miscdevice sgx_dev_provision = {
+> > +	.minor = MISC_DYNAMIC_MINOR,
+> > +	.name = "sgx_provision",
+> > +	.nodename = "sgx_provision",
+> > +	.fops = &sgx_provision_fops,
+> > +};
+> > +
+> > +int sgx_set_attribute(unsigned long *allowed_attributes,
+> > +		      unsigned int attribute_fd)
 > 
-> Did you ask from Sean about suggested-by's? Now it looks like
-> that doing these patches were originally proposed by Sean.
+> kdoc
 
-Please do not add tags from people *unauthentically*. I do not
-see anything from Sean to any of the patches that would suggest
-adding those tags. You are basically just stamping that to all
-patches, which he has given a code review. Can you stop doing
-this?
+Will do.
 
-/Jarkko
+> 
+> > +{
+> > +	struct file *file;
+> > +
+> > +	file = fget(attribute_fd);
+> > +	if (!file)
+> > +		return -EINVAL;
+> > +
+> > +	if (file->f_op != &sgx_provision_fops) {
+> > +		fput(file);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	*allowed_attributes |= SGX_ATTR_PROVISIONKEY;
+> > +
+> > +	fput(file);
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(sgx_set_attribute);
+> > +
