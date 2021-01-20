@@ -2,88 +2,97 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86F4C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14257C432C3
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 701D92388E
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD21238A1
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbhAUDcA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 22:32:00 -0500
-Received: from mga05.intel.com ([192.55.52.43]:2613 "EHLO mga05.intel.com"
+        id S1727276AbhAUDgi convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 22:36:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:1611 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388654AbhATXt0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 18:49:26 -0500
-IronPort-SDR: Rc1ysZKafz5YsI+c8MpLliL5+YKxUfXkubGPQS5q0h1wd+XIaDoadY2In1BdvIxyyD9OSGm/5H
- Sh2HD+S94AFw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="264006783"
+        id S2404241AbhATXxy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 18:53:54 -0500
+IronPort-SDR: 8+fCMBKhjDMKPzvbuMZ+7KKTlmGGlgOaLoIjSmSGy2viZlE8xJy8IlsHFhK7s7GzAw7LPQMzQi
+ MVuXGW+yrszg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="176621898"
 X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="264006783"
+   d="scan'208";a="176621898"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:48:36 -0800
-IronPort-SDR: cBRq6EAOaFq8mFCca9V0wIrx/PMa9vz2vg5KHTsWCgO+aFvXiz7A1MDimMRkV0EI0efW9ZILuI
- bKUIGaIjlHmw==
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:52:55 -0800
+IronPort-SDR: c6nnKoz2l45Ksqb09VS82mSX2WhG/mA/oVNADwSqF6BW27PkfxVS0KQqGTFUqHZA1Qbarevg11
+ Q6ML7k8KfGpQ==
 X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="407066390"
+   d="scan'208";a="407066955"
 Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:48:32 -0800
-Date:   Thu, 21 Jan 2021 12:48:30 +1300
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:52:50 -0800
+Date:   Thu, 21 Jan 2021 12:52:48 +1300
 From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <x86@kernel.org>, <jarkko@kernel.org>, <luto@kernel.org>,
-        <haitao.huang@intel.com>, <pbonzini@redhat.com>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <jethro@fortanix.com>, <b.thiel@posteo.de>
-Subject: Re: [RFC PATCH v2 06/26] x86/cpu/intel: Allow SGX virtualization
- without Launch Control support
-Message-Id: <20210121124830.3cb323c5ead91800645c912a@intel.com>
-In-Reply-To: <666e0995-cf08-1ed9-20b2-f64d1ce64c20@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+Subject: Re: [RFC PATCH v2 00/26] KVM SGX virtualization support
+Message-Id: <20210121125248.ca25483b4fcc732492149b49@intel.com>
+In-Reply-To: <YAjALTpv/aDzOalD@kernel.org>
 References: <cover.1610935432.git.kai.huang@intel.com>
-        <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
-        <bc73adaf-fae6-2088-c8d4-6f53057a4eac@intel.com>
-        <YAiwhdcOknqTJihk@google.com>
-        <666e0995-cf08-1ed9-20b2-f64d1ce64c20@intel.com>
+        <YAaW5FIkRrLGncT5@kernel.org>
+        <0adf45fae5207ed3d788bbb7260425f8da7aff43.camel@intel.com>
+        <YAjALTpv/aDzOalD@kernel.org>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 20 Jan 2021 15:27:27 -0800 Dave Hansen wrote:
-> On 1/20/21 2:36 PM, Sean Christopherson wrote:
-> > On Wed, Jan 20, 2021, Dave Hansen wrote:
-> >> BTW, CONFIG_X86_SGX_VIRTUALIZATION is a pretty porky name.  Maybe just
-> >> CONFIG_X86_SGX_VIRT?
-> > Mmm, bacon.  I used the full "virtualization" to avoid any possible confusion
-> > with virtual memory.  The existing sgx_get_epc_virt_addr() in particular gave me
-> > pause.
+On Thu, 21 Jan 2021 01:43:41 +0200 Jarkko Sakkinen wrote:
+> On Wed, Jan 20, 2021 at 01:52:32PM +1300, Kai Huang wrote:
+> > On Tue, 2021-01-19 at 10:23 +0200, Jarkko Sakkinen wrote:
+> > > Can you send a new version that applies:
+> > > 
+> > > $ git pw series apply 416463
+> > > Applying: x86/cpufeatures: Add SGX1 and SGX2 sub-features
+> > > Applying: x86/sgx: Remove a warn from sgx_free_epc_page()
+> > > Applying: x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()
+> > > Applying: x86/sgx: Add SGX_CHILD_PRESENT hardware error code
+> > > Applying: x86/sgx: Introduce virtual EPC for use by KVM guests
+> > > Applying: x86/cpu/intel: Allow SGX virtualization without Launch Control support
+> > > Applying: x86/sgx: Initialize virtual EPC driver even when SGX driver is disabled
+> > > error: sha1 information is lacking or useless (arch/x86/kernel/cpu/sgx/main.c).
+> > > error: could not build fake ancestor
+> > > hint: Use 'git am --show-current-patch=diff' to see the failed patch
+> > > Patch failed at 0007 x86/sgx: Initialize virtual EPC driver even when SGX driver is disabled
+> > > When you have resolved this problem, run "git am --continue".
+> > > If you prefer to skip this patch, run "git am --skip" instead.
+> > > To restore the original branch and stop patching, run "git am --abort".
 > > 
-> > I agree it's long and not consistent since other code in this series uses "virt".
-> > My thinking was that most shortand versions, e.g. virt_epc, would be used only
-> > in contexts that are already fairly obvious to be KVM/virtualization related,
-> > whereas the porcine Kconfig would help establish that context.
+> > Could you let me know which branch should I rebase to? It appears your linux-sgx tree
+> > next branch?
 > 
-> Not a big deal either way.  I agree that "virt" can be confusing.
+> I tried my tree first, which was actually out-of-sync, so I rebase it.
+> You can find it from MAINTAINERS failed.
 > 
-> Considering that:
-> 
-> +config X86_SGX_VIRTUALIZATION
-> +	depends on ... KVM_INTEL
+> After sending this email I rebased it to tip/x86/sgx, which also failed.
+> That tree failed with a merge conflict.
 
-It is already in patch 3: Introduce virtual EPC for use by KVM guests:
+This series is based on v5.11-rc3, as mentioned in cover letter below:
 
-+config X86_SGX_VIRTUALIZATION
-+	bool "Software Guard eXtensions (SGX) Virtualization"
-+	depends on X86_SGX && KVM_INTEL
-
-> 
-> Calling it X86_SGX_KVM doesn't seem horrible either.
+> > > This series is based against upstream v5.11-rc3. You can also get the code from
+> > > upstream branch of kvm-sgx repo on github:
+> > > 
+> > >         https://github.com/intel/kvm-sgx.git upstream
+> > > 
 
