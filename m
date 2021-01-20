@@ -2,164 +2,108 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6C3C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1724AC433E6
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64007233F8
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFDF9233EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jan 2021 16:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403861AbhATQ1y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 11:27:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50312 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391495AbhATQ1u (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 20 Jan 2021 11:27:50 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C016C061575
-        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:27:10 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id q7so15524495pgm.5
-        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:27:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6t8lIgtuar9+s884zrcCGunoGFI/cGmR+eRx6cwTKyA=;
-        b=MPP/+wUKoze/haoerTH7BHaM2dJr1jwyfgdp5zkk4hD8jlpk+fFbidiCfNyrlaorXM
-         lzPae+2FklwoExVYZm2xucxpEmzh82XB8+m287adQp7CXeiHIyQCC75MxVG+bOUZPYad
-         88f9lAIcVAvkDkdH7ASQvPRCV0nlAVb9JvwsSuNdBnMVDWlpbRi4iPgv4i2kSJkQsCmT
-         lxVuhe9NNDZacJflG22XQNio9h1nXbkJzEeiF1l5ccX/MJ6hKpAin8oqqqGQ8qx5fc3/
-         gDArMHrdDWjzpbNmJtybAghkjVJXHATb/iVIMkx70NSQncRWqdkAIbDIwdfn4CPtKZyS
-         UC9g==
+        id S2391610AbhATQoB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 11:44:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51761 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390572AbhATQk7 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 20 Jan 2021 11:40:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611160760;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oQZfi4/Ce6D+3G99X+rNeEgrjpz/uKCb6ET5YSMJWLw=;
+        b=EbMOdg+waz7DLZE+S5164Cr8kdiSok4bJNlYNJ3USeUhw/gtVOR6dkezm78NuD4Yjzy7qp
+        91dn6QxfQLmdoKGALwawpxlQ4Xxa8FUGEMmpKIcdIrHplT/2q3/VjhWrw0/2jqW+Ul+qn1
+        XRHpNme1Bqb3Eg05uwiy/xfbogXWB2I=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-543-fylXKDsrMFSg-JKBpkWrRQ-1; Wed, 20 Jan 2021 11:39:17 -0500
+X-MC-Unique: fylXKDsrMFSg-JKBpkWrRQ-1
+Received: by mail-ed1-f70.google.com with SMTP id 32so9193251edy.22
+        for <linux-sgx@vger.kernel.org>; Wed, 20 Jan 2021 08:39:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6t8lIgtuar9+s884zrcCGunoGFI/cGmR+eRx6cwTKyA=;
-        b=i3/NrCXZ0W4nqvpeTgTfwT2+5QdXlivP9PGAw96WLDX71kBmilzTB9xHlZWgSuU1XN
-         SuGXhYxBgIycbAr67aSfQ4IpQmQ5/+FZnFxoZ95t1ZpeollkSBDpvHvx1rx/spjXmxCY
-         tnsjmji5F9NTYCMmysKkACBI9HVzZfztOQvnQlIXwlZhfCOTr4yTUFnAHE4lLMB4NSOf
-         cp726JR5wkRPrJ7+9wbvgJo8Mc+hLKz9K9Dz7mmIWhil+/ofZ6RL+iuUpM0/qPowAkCl
-         ZF+ZUItDDUGGMQS701JGBuxfudbpEMVPvWcW67R+s2fq08yckzuwFzOF0mz1ldMVqlaF
-         /dMw==
-X-Gm-Message-State: AOAM531ljtWjdlW+JIRYLykuwrxxW6UUxSQy5f9St1gO7Q6RPuwi7ajg
-        f4tqg+fYE8IVKs1al0N+TXTM0w==
-X-Google-Smtp-Source: ABdhPJz7dUcR1alzxkCcyHLt1xuXoOZnOv77pS6JOGtFsS/jVbsXQI+VxnB7Mp7CPzHx6f7db+yiDg==
-X-Received: by 2002:a65:628a:: with SMTP id f10mr9991712pgv.380.1611160030001;
-        Wed, 20 Jan 2021 08:27:10 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
-        by smtp.gmail.com with ESMTPSA id k141sm530954pfd.9.2021.01.20.08.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 08:27:09 -0800 (PST)
-Date:   Wed, 20 Jan 2021 08:27:02 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v2] x86/sgx: Fix free_cnt counting logic in epc section
-Message-ID: <YAhZ1vydPiLtDOcj@google.com>
-References: <20210120035320.19709-1-tianjia.zhang@linux.alibaba.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oQZfi4/Ce6D+3G99X+rNeEgrjpz/uKCb6ET5YSMJWLw=;
+        b=meVlRkm2L+x+fLnuvHpTpDK1f3LhOe7NY69jH2P3+i9pJlaeQ4B31nqasH2yHhxwEl
+         KTLeKfuzVBDLHux6zS1yhR/0GSppFMJN8zUBMOzeKLPrs46N+DgZUOMb/2stXntQUEyD
+         jGq5mraRDrJJyMdSaWywCMAGpyoljYYI1Hn/E1JEbfXagJLeS2HT6vDHeyeHgd0Rj8/M
+         3KCSBb222TWA0GTS16fDpGcWylOP5EJ/QJh2XPzsTBC70TRG5pJgA6cQnUoo3WaqNIy1
+         8vGIN+HGZYOwsyVRrxrXTDIK7M31XAjnSoJOAWf2yvyG9DU98IX4GhZbUFVgF9QFaCVk
+         Qv1w==
+X-Gm-Message-State: AOAM531IBAxYfAI2MPH+6dpu96ELmGwcTYBEwpvXSfCWXG0kjs1WKCex
+        cQ9k/MwiCt1elMftcKIKxcIfK4tC7v41TwadkI6SSt0pt9wPphZLB07wJSqDrUxPm7cKO6tep1a
+        wu37MiuQ3Tz86GaEk1+le
+X-Received: by 2002:a17:906:4151:: with SMTP id l17mr6963878ejk.54.1611160755920;
+        Wed, 20 Jan 2021 08:39:15 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJykBNkBj13lbMYLDJqbA4i/REeVCtiqYGD3w8w8hrVK4Ws+SkWQUFGojSHBZDpgHglL9Woc1Q==
+X-Received: by 2002:a17:906:4151:: with SMTP id l17mr6963862ejk.54.1611160755782;
+        Wed, 20 Jan 2021 08:39:15 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.gmail.com with ESMTPSA id g2sm1105143ejk.108.2021.01.20.08.39.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Jan 2021 08:39:15 -0800 (PST)
+Subject: Re: [RFC PATCH v2 00/26] KVM SGX virtualization support
+To:     Sean Christopherson <seanjc@google.com>,
+        Kai Huang <kai.huang@intel.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+References: <cover.1610935432.git.kai.huang@intel.com>
+ <YAaW5FIkRrLGncT5@kernel.org>
+ <0adf45fae5207ed3d788bbb7260425f8da7aff43.camel@intel.com>
+ <YAhb1mYB3ajc2/n9@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <7cd130cc-cda5-97d5-7c25-99fe813de824@redhat.com>
+Date:   Wed, 20 Jan 2021 17:39:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210120035320.19709-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <YAhb1mYB3ajc2/n9@google.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 20, 2021, Tianjia Zhang wrote:
-> Increase `section->free_cnt` in sgx_sanitize_section() is more
-> reasonable, which is called in ksgxd kernel thread, instead of
-> assigning it to epc section pages number at initialization.
-> Although this is unlikely to fail, these pages cannot be
-> allocated after initialization, and which need to be reset
-> by ksgxd.
+On 20/01/21 17:35, Sean Christopherson wrote:
+> On Wed, Jan 20, 2021, Kai Huang wrote:
+>> I'd like to take this chance to ask: when this series is ready to be merged, what is
+>> the properly way to merge? This series has x86 non-sgx (cpufeature, feat_ctl) and sgx
+>> changes, and it obviously has KVM changes too. So instance, who should be the one to
+>> take this series? And which tree and branch should I rebase to in next version?
+> The path of least resistance is likely to get acks for the x86 and sgx changes,
+> and let Paolo take it through the KVM tree.  The KVM changes are much more
+> likely to have non-trivial conflicts, e.g. making exit_reason a union touches a
+> ton of code; getting and carrying acked-by for those will be tough sledding.
 > 
-> At the same time, taking section->lock could be moved inside
-> the !ret flow so that EREMOVE is done without holding the lock.
-> it's theoretically possible that ksgxd hasn't finished
-> sanitizing the EPC when userspace starts creating enclaves.
 
-Moving the lock should be in a separate patch, they are clearly two different
-functional changes.
+Yes, the best way is to get a topic branch from Thomas or Borislav.
 
-> Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-> Suggested-by: Sean Christopherson <seanjc@google.com>
+Paolo
 
-Moving lock was suggested by me, the original patch was not.
-
-> Reviewed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> ---
->  arch/x86/kernel/cpu/sgx/main.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index c519fc5f6948..34a72a147983 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -41,16 +41,18 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
->  		if (kthread_should_stop())
->  			return;
->  
-> -		/* needed for access to ->page_list: */
-> -		spin_lock(&section->lock);
-> -
->  		page = list_first_entry(&section->init_laundry_list,
->  					struct sgx_epc_page, list);
->  
->  		ret = __eremove(sgx_get_epc_virt_addr(page));
-> -		if (!ret)
-> +
-> +		/* needed for access to ->page_list: */
-> +		spin_lock(&section->lock);
-
-This can actually be even more precise, as the lock doesn't need to be taken
-if __eremove() fails.  The lock protects section->page_list, not page->list.
-At that point, the comment about why the lock is needed can probably be dropped?
-
-> +
-> +		if (!ret) {
->  			list_move(&page->list, &section->page_list);
-> -		else
-> +			section->free_cnt += 1;
-
-Belated feedback, this can use "++".
-
-> +		} else
-
-Need curly braces here.
-
-E.g. when all is said and done, this code can be:
-
-		if (!ret) {
-			spin_lock(&section->lock);
-			list_move(&page->list, &section->page_list);
-			section->free_cnt++;
-			spin_unlock(&section->lock);
-		} else {
-			list_move_tail(&page->list, &dirty);
-		}
-
->  			list_move_tail(&page->list, &dirty);
->  
->  		spin_unlock(&section->lock);
-> @@ -646,7 +648,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
->  		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
->  	}
->  
-> -	section->free_cnt = nr_pages;
->  	return true;
->  }
->  
-> -- 
-> 2.19.1.3.ge56e4f7
-> 
