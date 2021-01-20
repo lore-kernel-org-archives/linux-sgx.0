@@ -2,88 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7B7C4361A
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 02:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86F4C433DB
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8252F2388B
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 02:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 701D92388E
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbhAUAvR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:51:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60956 "EHLO mail.kernel.org"
+        id S1725923AbhAUDcA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 22:32:00 -0500
+Received: from mga05.intel.com ([192.55.52.43]:2613 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390733AbhAUA1n (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 19:27:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 14A052360D;
-        Thu, 21 Jan 2021 00:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611188822;
-        bh=MSfZCiK9RQFqZDpp5Yh8bHp6v47xml7viuNEpHIbXdw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lZ8uuqxQg5lJlJWSYDjs/DCnftdty8gqIkD7M9LxQYlwp30SruxajfYtxuUQfbFyf
-         wWsaTixyiFw2vNR92CqWgDWthkZt8nfaFUoUY8+X/mMbwOEApySeUeYly/7dm0H/1V
-         20TrVO4XA9zG5m47UbdZK8I3vBADovHdCPXYRQPsiWLIXyED0hFCJm6XFvDbLUpA0W
-         Vu3S1vcigXuJJ0OoO7yRwrDOFei3mMG+Jv4VC6xxRtQfXkD4024flOQxCOWsTJfWg4
-         t0Ed+kYh4gcfBtu34X+C3Dd4d8iWW6XUjtw7URQwD2qHo0jWiKiv1uXvcbyRGlijR+
-         bm8F0Y2JqUQBg==
-Date:   Thu, 21 Jan 2021 02:26:56 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
+        id S2388654AbhATXt0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 18:49:26 -0500
+IronPort-SDR: Rc1ysZKafz5YsI+c8MpLliL5+YKxUfXkubGPQS5q0h1wd+XIaDoadY2In1BdvIxyyD9OSGm/5H
+ Sh2HD+S94AFw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="264006783"
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="264006783"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:48:36 -0800
+IronPort-SDR: cBRq6EAOaFq8mFCca9V0wIrx/PMa9vz2vg5KHTsWCgO+aFvXiz7A1MDimMRkV0EI0efW9ZILuI
+ bKUIGaIjlHmw==
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="407066390"
+Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:48:32 -0800
+Date:   Thu, 21 Jan 2021 12:48:30 +1300
+From:   Kai Huang <kai.huang@intel.com>
 To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-sgx@vger.kernel.org,
-        kai.huang@intel.com, haitao.huang@intel.com, seanjc@google.com,
-        stable@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
- sgx_release()
-Message-ID: <YAjKUO+nI2pJs1HD@kernel.org>
-References: <20210115014638.15037-1-jarkko@kernel.org>
- <20210115071809.GA9138@zn.tnic>
- <YAJ11v5tuS2uMuNm@kernel.org>
- <20210118185712.GE30090@zn.tnic>
- <YAhBeaItbqYmf0oF@kernel.org>
- <bb46fd98-0f67-76a7-9ba9-3a646c2a8f84@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb46fd98-0f67-76a7-9ba9-3a646c2a8f84@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <x86@kernel.org>, <jarkko@kernel.org>, <luto@kernel.org>,
+        <haitao.huang@intel.com>, <pbonzini@redhat.com>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <jethro@fortanix.com>, <b.thiel@posteo.de>
+Subject: Re: [RFC PATCH v2 06/26] x86/cpu/intel: Allow SGX virtualization
+ without Launch Control support
+Message-Id: <20210121124830.3cb323c5ead91800645c912a@intel.com>
+In-Reply-To: <666e0995-cf08-1ed9-20b2-f64d1ce64c20@intel.com>
+References: <cover.1610935432.git.kai.huang@intel.com>
+        <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
+        <bc73adaf-fae6-2088-c8d4-6f53057a4eac@intel.com>
+        <YAiwhdcOknqTJihk@google.com>
+        <666e0995-cf08-1ed9-20b2-f64d1ce64c20@intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 09:34:10AM -0800, Dave Hansen wrote:
-> On 1/20/21 6:43 AM, Jarkko Sakkinen wrote:
-> >> So why do you need the synchronize_srcu() call when this process sees an
-> >> empty mm_list already?
-> >>
-> >> Thx.
-> > The other process aka some process using the enclave calls list_del_rcu()
-> > (and synchronize_srcu()), which starts a new grace period. If we don't
-> > do it, then the cleanup_srcu() will race with that grace period.
+On Wed, 20 Jan 2021 15:27:27 -0800 Dave Hansen wrote:
+> On 1/20/21 2:36 PM, Sean Christopherson wrote:
+> > On Wed, Jan 20, 2021, Dave Hansen wrote:
+> >> BTW, CONFIG_X86_SGX_VIRTUALIZATION is a pretty porky name.  Maybe just
+> >> CONFIG_X86_SGX_VIRT?
+> > Mmm, bacon.  I used the full "virtualization" to avoid any possible confusion
+> > with virtual memory.  The existing sgx_get_epc_virt_addr() in particular gave me
+> > pause.
+> > 
+> > I agree it's long and not consistent since other code in this series uses "virt".
+> > My thinking was that most shortand versions, e.g. virt_epc, would be used only
+> > in contexts that are already fairly obvious to be KVM/virtualization related,
+> > whereas the porcine Kconfig would help establish that context.
 > 
-> To me, this is only a partial explanation.
+> Not a big deal either way.  I agree that "virt" can be confusing.
 > 
-> That goal of synchronize_srcu() is to wait for the completion of a
-> *previous* grace period: one that might have observed the old state of
-> the list.
+> Considering that:
 > 
-> Could you explain the *actual* effects of the misplaced
-> synchronize_srcu()?  If the race _occurs_, what is the side-effect?
+> +config X86_SGX_VIRTUALIZATION
+> +	depends on ... KVM_INTEL
 
-As I haven't been able to reproduce this regression myself, I need
-to take steps back and try to reproduce the it with Graphene.
+It is already in patch 3: Introduce virtual EPC for use by KVM guests:
 
-WARN_ON()'s trigger inside cleanup_srcu_struct(), which causes a memory
-leak since free_percpu() gets never called. If I recall correctly, it
-was srcu_readers_active() but unfortunately I don't have a log available.
++config X86_SGX_VIRTUALIZATION
++	bool "Software Guard eXtensions (SGX) Virtualization"
++	depends on X86_SGX && KVM_INTEL
 
-Perhaps Haitao could provide us one.
+> 
+> Calling it X86_SGX_KVM doesn't seem horrible either.
 
-/Jarkko
