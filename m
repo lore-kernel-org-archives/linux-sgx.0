@@ -2,51 +2,50 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA78C433E6
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FF3C43331
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B805F2371F
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9152423750
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392700AbhAUANs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:13:48 -0500
-Received: from mga03.intel.com ([134.134.136.65]:44438 "EHLO mga03.intel.com"
+        id S2392686AbhAUANm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 19:13:42 -0500
+Received: from mga17.intel.com ([192.55.52.151]:41130 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404206AbhATXhM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 18:37:12 -0500
-IronPort-SDR: 1SwFwhgd3QV7gUoKoX0p9EUYd9eGII1cYSdv3OJgd5plvS2XHLhhlBniMtjhVCAmRfKmkBa3eZ
- zSvvrjGKmDdQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="179276171"
+        id S2404186AbhATXaR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 18:30:17 -0500
+IronPort-SDR: YoL9BMNi7Qo81L0BQYtk4GdqCIaOxNu+qYT0/Xr4DgjzzjJgTehj2bi5jK9GwO/r7cr/tBJoNh
+ i5WfJ4MUFJfA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="158966624"
 X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="179276171"
+   d="scan'208";a="158966624"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:36:31 -0800
-IronPort-SDR: ucD97IoPyrNTtfI3/PnwHhmlbYcX0bu6KWUt4DUJuhNovPp6D5kKwLX3Wb5iFKgz/ZI224n0kG
- Eec5g1ZZnjmQ==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:29:36 -0800
+IronPort-SDR: vl3qFs2IQGMm0MTKwZU2F5P7m5TGVlKKRipnU7SrA7G+TZXWaxAz1JSY697ZzO7Io1E3ipSsDH
+ ICcAHoQ8iFDQ==
 X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="354479488"
+   d="scan'208";a="354477897"
 Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:36:27 -0800
-Date:   Thu, 21 Jan 2021 12:36:25 +1300
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 15:29:33 -0800
+Date:   Thu, 21 Jan 2021 12:29:31 +1300
 From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, <linux-sgx@vger.kernel.org>,
-        <kvm@vger.kernel.org>, <x86@kernel.org>, <seanjc@google.com>,
-        <luto@kernel.org>, <haitao.huang@intel.com>, <pbonzini@redhat.com>,
-        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 12/26] x86/sgx: Add helper to update
- SGX_LEPUBKEYHASHn MSRs
-Message-Id: <20210121123625.c45deeccc690138f2417bd41@intel.com>
-In-Reply-To: <8613b3f1-c4f6-3e5d-4406-9476727666a7@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v2 13/26] x86/sgx: Add helpers to expose ECREATE and
+ EINIT to KVM
+Message-Id: <20210121122931.f9168f16f0738e8fddafb9f5@intel.com>
+In-Reply-To: <YAgcVIzdFU3cl3SW@kernel.org>
 References: <cover.1610935432.git.kai.huang@intel.com>
-        <5116fdc732e8e14b3378c44e3b461a43f330ed0c.1610935432.git.kai.huang@intel.com>
-        <YAgcIhkmw0lllD3G@kernel.org>
-        <8613b3f1-c4f6-3e5d-4406-9476727666a7@intel.com>
+        <e9a350fac5b18ca69496d07fe25a7a2408d1a73a.1610935432.git.kai.huang@intel.com>
+        <YAgcVIzdFU3cl3SW@kernel.org>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -55,27 +54,140 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 20 Jan 2021 10:36:09 -0800 Dave Hansen wrote:
-> On 1/20/21 4:03 AM, Jarkko Sakkinen wrote:
-> >> +void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
-> >> +{
-> >> +	int i;
-> >> +
-> >> +	for (i = 0; i < 4; i++)
-> >> +		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-> >> +}
-> > Missing kdoc.
+On Wed, 20 Jan 2021 14:04:36 +0200 Jarkko Sakkinen wrote:
+> On Mon, Jan 18, 2021 at 04:28:06PM +1300, Kai Huang wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > The bare-metal kernel must intercept ECREATE to be able to impose policies
+> > on guests.  When it does this, the bare-metal kernel runs ECREATE against
+> > the userspace mapping of the virtualized EPC.
+> > 
+> > Provide wrappers around __ecreate() and __einit() to hide the ugliness
+> > of overloading the ENCLS return value to encode multiple error formats
+> > in a single int.  KVM will trap-and-execute ECREATE and EINIT as part
+> > of SGX virtualization, and on an exception, KVM needs the trapnr so that
+> > it can inject the correct fault into the guest.
+> > 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >  [Kai: Use sgx_update_lepubkeyhash() to update pubkey hash MSRs.]
 > 
-> I dunno... kdoc is nice, but I'm not sure its verbosity is useful here,
-> even if this function is called from more than one .c file.
+> If you have to go to this, please instead use co-developed-by.
+
+I'll remove it. I don't want to use co-developed-by here.
+
 > 
-> I'd be happy with a single-line comment, personally.
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> > v1->v2:
+> > 
+> >  - Refined commit msg based on Dave's comment.
+> >  - Added comment to explain why to use __uaccess_xxx().
+> > ---
+> >  arch/x86/include/asm/sgx.h     | 16 +++++++++
+> >  arch/x86/kernel/cpu/sgx/virt.c | 61 ++++++++++++++++++++++++++++++++++
+> >  2 files changed, 77 insertions(+)
+> >  create mode 100644 arch/x86/include/asm/sgx.h
+> > 
+> > diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> > new file mode 100644
+> > index 000000000000..0d643b985085
+> > --- /dev/null
+> > +++ b/arch/x86/include/asm/sgx.h
+> > @@ -0,0 +1,16 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _ASM_X86_SGX_H
+> > +#define _ASM_X86_SGX_H
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +#ifdef CONFIG_X86_SGX_VIRTUALIZATION
+> > +struct sgx_pageinfo;
+> > +
+> > +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+> > +		     int *trapnr);
+> > +int sgx_virt_einit(void __user *sigstruct, void __user *token,
+> > +		   void __user *secs, u64 *lepubkeyhash, int *trapnr);
+> > +#endif
+> > +
+> > +#endif /* _ASM_X86_SGX_H */
+> > diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+> > index 1e8620f20651..97f02e5235ca 100644
+> > --- a/arch/x86/kernel/cpu/sgx/virt.c
+> > +++ b/arch/x86/kernel/cpu/sgx/virt.c
+> > @@ -253,3 +253,64 @@ int __init sgx_virt_epc_init(void)
+> >  
+> >  	return misc_register(&sgx_virt_epc_dev);
+> >  }
+> > +
+> > +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+> > +		     int *trapnr)
+> > +{
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * @secs is userspace address, and it's not guaranteed @secs points at
+> > +	 * an actual EPC page. It's also possible to generate a kernel mapping
+> > +	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
+> > +	 * simpler.
+> > +	 */
+> > +	__uaccess_begin();
+> > +	ret = __ecreate(pageinfo, (void *)secs);
+> > +	__uaccess_end();
+> > +
+> > +	if (encls_faulted(ret)) {
+> > +		*trapnr = ENCLS_TRAPNR(ret);
+> > +		return -EFAULT;
+> > +	}
+> > +
+> > +	/* ECREATE doesn't return an error code, it faults or succeeds. */
+> > +	WARN_ON_ONCE(ret);
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(sgx_virt_ecreate);
+> > +
+> > +static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
+> > +			    void __user *secs)
+> > +{
+> > +	int ret;
+> > +
+> > +	__uaccess_begin();
+> > +	ret =  __einit((void *)sigstruct, (void *)token, (void *)secs);
+> > +	__uaccess_end();
+> > +	return ret;
+> > +}
+> > +
+> > +int sgx_virt_einit(void __user *sigstruct, void __user *token,
+> > +		   void __user *secs, u64 *lepubkeyhash, int *trapnr)
 > 
+> kdoc missing.
 
-I actually feel the function name already explains what the function does
-clearly, therefore I don't think even comment is needed. To be honest I
-don't know how to rephrase here. Perhaps:
+OK. Will add for both sgx_virt_create() and sgx_virt_init().
 
-/* Update SGX LEPUBKEYHASH MSRs of the platform. */
-
-? 
+> 
+> > +{
+> > +	int ret;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
+> > +		ret = __sgx_virt_einit(sigstruct, token, secs);
+> > +	} else {
+> > +		preempt_disable();
+> > +
+> > +		sgx_update_lepubkeyhash(lepubkeyhash);
+> > +
+> > +		ret = __sgx_virt_einit(sigstruct, token, secs);
+> > +		preempt_enable();
+> > +	}
+> > +
+> > +	if (encls_faulted(ret)) {
+> > +		*trapnr = ENCLS_TRAPNR(ret);
+> > +		return -EFAULT;
+> > +	}
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(sgx_virt_einit);
+> > -- 
+> > 2.29.2
+> > 
+> > 
+> 
+> /Jarkko
