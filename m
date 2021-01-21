@@ -2,89 +2,91 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15131C43603
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCCBC4360C
 	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8157238D6
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AFB92388E
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbhAUDhf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 22:37:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43144 "EHLO mail.kernel.org"
+        id S1727428AbhAUDhm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 22:37:42 -0500
+Received: from mga11.intel.com ([192.55.52.93]:25788 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730924AbhAUA5G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 19:57:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5837423787;
-        Thu, 21 Jan 2021 00:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611190546;
-        bh=KV28Ht8nRXvJJvq6ndE++WTzU0oDXHtG6Yq4FbS++H8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fqBhtTOyF/zqUlqAeuXmsLrmlt7XJHD2JEWtq56LucpH8Cp3LQ5AoOqCQuXIvChbl
-         GGDivWUsacHCVsuo9xrNvQKGzPQCRDpHm0XO7zvcu58EHOQTbHySfnx4YZqDUK8A10
-         5FLaQck0nqGApoXYtTmZKUryPDmvEmzBrD8VrStmifhCYK4CpvpXKtmlHaD1x1ga81
-         MowHr0NOEZvcR13PWKrYRf3aiKTXk/wEqH655muZ/CxdGwAMCzKAYepKyvNdbsb1jQ
-         1gUdDLIjtTO2YUQ2JfsvFK5/TJBTWbx/n0jugtGvrXi7M3oTYVMv3Xo8XNMzj2YCxW
-         ekpWbbAsrW/KA==
-Date:   Thu, 21 Jan 2021 02:55:41 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 05/26] x86/sgx: Introduce virtual EPC for use by
- KVM guests
-Message-ID: <YAjRDdgOT/AC89gC@kernel.org>
+        id S2392977AbhAUByL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 20:54:11 -0500
+IronPort-SDR: IpbVMVmTta/bS/MJJ6WXIGaYobBnvyAwuCQ60t0ZdPSK/iuhKFzp/2NgxIpALuUjQIfVjlDUcL
+ GWmoH7CyMx/Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="175698492"
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="175698492"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 17:53:29 -0800
+IronPort-SDR: YTuSdqf7JTVPfMOaHl07geipP4qj462+JdHXha35om2ISImZS/FHUNMcsP+MenbKAZO2FEHk51
+ H9KjtxXa/FvQ==
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="427115555"
+Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 17:53:25 -0800
+Date:   Thu, 21 Jan 2021 14:53:23 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <x86@kernel.org>, <jarkko@kernel.org>, <luto@kernel.org>,
+        <haitao.huang@intel.com>, <pbonzini@redhat.com>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <jethro@fortanix.com>, <b.thiel@posteo.de>
+Subject: Re: [RFC PATCH v2 06/26] x86/cpu/intel: Allow SGX virtualization
+ without Launch Control support
+Message-Id: <20210121145323.0caad8f1d1970214bba905b1@intel.com>
+In-Reply-To: <626d0157-c0a0-60fd-813f-af3207ad91df@intel.com>
 References: <cover.1610935432.git.kai.huang@intel.com>
- <4597db567351468c360fc810fff5a8232cb96c4c.1610935432.git.kai.huang@intel.com>
- <YAgZ8lGaafoTXcYF@kernel.org>
- <YAhrJNvg9KfEr/b7@google.com>
- <YAjQuCxYH9V7JsN2@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YAjQuCxYH9V7JsN2@kernel.org>
+        <a6c0b0d2632a6c603e68d9bdc81f564290ff04ad.1610935432.git.kai.huang@intel.com>
+        <bc73adaf-fae6-2088-c8d4-6f53057a4eac@intel.com>
+        <YAiwhdcOknqTJihk@google.com>
+        <666e0995-cf08-1ed9-20b2-f64d1ce64c20@intel.com>
+        <20210121124830.3cb323c5ead91800645c912a@intel.com>
+        <626d0157-c0a0-60fd-813f-af3207ad91df@intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 02:54:23AM +0200, Jarkko Sakkinen wrote:
-> On Wed, Jan 20, 2021 at 09:40:52AM -0800, Sean Christopherson wrote:
-> > On Wed, Jan 20, 2021, Jarkko Sakkinen wrote:
-> > > On Mon, Jan 18, 2021 at 04:26:53PM +1300, Kai Huang wrote:
-> > > > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > 
-> > > > Add a misc device /dev/sgx_virt_epc to allow userspace to allocate "raw"
-> > > > EPC without an associated enclave.  The intended and only known use case
-> > > > for raw EPC allocation is to expose EPC to a KVM guest, hence the
-> > > > virt_epc moniker, virt.{c,h} files and X86_SGX_VIRTUALIZATION Kconfig.
-> > > 
-> > > Is /dev/sgx_virt_epc something only usable for KVM, or is there
-> > > any thinkable use outside of the KVM context?
+On Wed, 20 Jan 2021 15:51:44 -0800 Dave Hansen wrote:
+> On 1/20/21 3:48 PM, Kai Huang wrote:
+> >> Not a big deal either way.  I agree that "virt" can be confusing.
+> >>
+> >> Considering that:
+> >>
+> >> +config X86_SGX_VIRTUALIZATION
+> >> +	depends on ... KVM_INTEL
+> > It is already in patch 3: Introduce virtual EPC for use by KVM guests:
 > > 
-> > I can't think of a sane use case without KVM (or an out-of-tree hypervisor).
-> > Doing anything useful with EPC requires ENCLS, which means being able to run
-> > CPL0 code.
+> > +config X86_SGX_VIRTUALIZATION
+> > +	bool "Software Guard eXtensions (SGX) Virtualization"
+> > +	depends on X86_SGX && KVM_INTEL
 > 
-> OK, thanks for elaboration.
+> Right, I'm suggesting that patch 3 should call it:
 > 
-> To bring more context to my thinking to call this to sgx_vepc is that it's
-> kind of "standard" in other device names I've such as:
+> 	X86_SGX_KVM
 > 
-> - vhost_net
-> - vhci
-> - vtpm
-> - vcs*
-> - The list goes on..
+> instead of:
 > 
-> Since "virtual something" is always abbreviated just with a 'v', wouldn't it
-> make sense to just follow along?
+> 	X86_SGX_VIRTUALIZATION
 
-And even kVm :-)
+In case we want to change to X86_SGX_KVM, is it more reasonable to put it to
+arch/x86/kvm/Kconfig (maybe change to X86_KVM_SGX)?
 
-/Jarkko
+Jarkko also mentioned X86_SGX_VEPC, in which case still putting it to
+arch/x86/Kconfig looks a better fit.
+
+Sean, Paolo,
+
+Do you have comment here?
