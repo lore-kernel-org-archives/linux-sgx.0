@@ -2,121 +2,83 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73A5C43381
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C5EC433DB
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 620B22388E
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DD9C23719
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392060AbhAUBRm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 20:17:42 -0500
-Received: from mga14.intel.com ([192.55.52.115]:37854 "EHLO mga14.intel.com"
+        id S2388089AbhAUBTe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 20:19:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392292AbhAUBOl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 20:14:41 -0500
-IronPort-SDR: XBI0oyKmDyHJU/quZQSOZpOoaMCxjiLlvDkFveO3f5IfWSs96r29XLnBeUvzLf+jgsPJ/BizR1
- gmChyFZ83AeA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="178422363"
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="178422363"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 17:12:27 -0800
-IronPort-SDR: VHI7cQiQwDDNyAFfg7cw6Mmq+3XrLmJSq5C+9eJ5LaET8AdqygV6wTdL1J/JHtZTqcQhcZXFo1
- nzo7tluT86Gw==
-X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
-   d="scan'208";a="356260888"
-Received: from gapoveda-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.186])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 17:12:23 -0800
-Date:   Thu, 21 Jan 2021 14:12:21 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 11/26] x86/sgx: Add encls_faulted() helper
-Message-Id: <20210121141221.7dcabf70b8c6726136f231cd@intel.com>
-In-Reply-To: <YAjUAldgNUtrx6sE@kernel.org>
+        id S2391964AbhAUBKF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 20:10:05 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C4EFF2388A;
+        Thu, 21 Jan 2021 01:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611191364;
+        bh=TsBJwLSX5vV9/b4Cr5dU5LvIyhJs07AuF7QbD4KCc3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XTBP4ObYCpPSgJ7h4hFc8g+vv3mq8+ky8J1u0i/EwIqS54LvDy0rueIR2mxleO6ht
+         ge/xkdgnmG6mQV8CR9GbiYL5K14ITru/Iw7ne521tML3pDyh0toJWGwJy5KOS7rncZ
+         ha7muMO8ziM18q+/0Amgs9EOYJ9tzfhszdmzrmlce+vlZed0BrpHgQXtgnoRj94wAV
+         H62J+x9I35CPmvPFy/337eYNOVZGhTLIXuH8z2MVhTxe2KRZijLu2SolWviKdLJGq0
+         AdNm5gUiLpJhNeXSDh7iKYR3UgvTwSpzzVQ4h4Uxkc2C+3BBt8qtas2IPVRddrec2X
+         WKV0r2Jd59iaA==
+Date:   Thu, 21 Jan 2021 03:09:18 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v2 12/26] x86/sgx: Add helper to update
+ SGX_LEPUBKEYHASHn MSRs
+Message-ID: <YAjUPmnUQVG/e/n4@kernel.org>
 References: <cover.1610935432.git.kai.huang@intel.com>
-        <e36ac729b227d728e2b0d1a48cfbbeca4523f1a5.1610935432.git.kai.huang@intel.com>
-        <YAgb/MhaNLVwBS8K@kernel.org>
-        <20210121124359.7fff8c6d6f90182d8d13062f@intel.com>
-        <YAjUAldgNUtrx6sE@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <5116fdc732e8e14b3378c44e3b461a43f330ed0c.1610935432.git.kai.huang@intel.com>
+ <YAgcIhkmw0lllD3G@kernel.org>
+ <8613b3f1-c4f6-3e5d-4406-9476727666a7@intel.com>
+ <20210121123625.c45deeccc690138f2417bd41@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121123625.c45deeccc690138f2417bd41@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 21 Jan 2021 03:08:18 +0200 Jarkko Sakkinen wrote:
-> On Thu, Jan 21, 2021 at 12:43:59PM +1300, Kai Huang wrote:
-> > On Wed, 20 Jan 2021 14:03:08 +0200 Jarkko Sakkinen wrote:
-> > > On Mon, Jan 18, 2021 at 04:28:04PM +1300, Kai Huang wrote:
-> > > > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > 
-> > > > Add a helper to extract the fault indicator from an encoded ENCLS return
-> > > > value.  SGX virtualization will also need to detect ENCLS faults.
-> > > > 
-> > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > > ---
-> > > >  arch/x86/kernel/cpu/sgx/encls.h | 14 +++++++++++++-
-> > > >  arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
-> > > >  2 files changed, 14 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> > > > index be5c49689980..55919a2b01b0 100644
-> > > > --- a/arch/x86/kernel/cpu/sgx/encls.h
-> > > > +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> > > > @@ -40,6 +40,18 @@
-> > > >  	} while (0);							  \
-> > > >  }
-> > > >  
-> > > > +/*
-> > > > + * encls_faulted() - Check if an ENCLS leaf faulted given an error code
-> > > > + * @ret		the return value of an ENCLS leaf function call
-> > > > + *
-> > > > + * Return:
-> > > > + *	%true if @ret indicates a fault, %false otherwise
-> > > 
-> > > Follow here the style of commenting as in ioctl.c, for the return value.
-> > > It has optimal readability both as text, and also when converted to HTML.
-> > > See sgx_ioc_enclave_add_pages() for an example.
+On Thu, Jan 21, 2021 at 12:36:25PM +1300, Kai Huang wrote:
+> On Wed, 20 Jan 2021 10:36:09 -0800 Dave Hansen wrote:
+> > On 1/20/21 4:03 AM, Jarkko Sakkinen wrote:
+> > >> +void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
+> > >> +{
+> > >> +	int i;
+> > >> +
+> > >> +	for (i = 0; i < 4; i++)
+> > >> +		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
+> > >> +}
+> > > Missing kdoc.
 > > 
-> > You mean something like below?
+> > I dunno... kdoc is nice, but I'm not sure its verbosity is useful here,
+> > even if this function is called from more than one .c file.
 > > 
-> > Return:
-> > - %true:  @ret indicates a fault.
-> > - %false: @ret indicates no fault.
+> > I'd be happy with a single-line comment, personally.
+> > 
 > 
-> Yeah, with '\t' indentation. I'd remove also '%'. Also '@ret' is redudant.
+> I actually feel the function name already explains what the function does
+> clearly, therefore I don't think even comment is needed. To be honest I
+> don't know how to rephrase here. Perhaps:
 > 
-> To put this all together:
+> /* Update SGX LEPUBKEYHASH MSRs of the platform. */
 > 
-> * Return:
-> * - true:       ENCLS leaf faulted.
-> * - false:      Otherwise.
-> 
-> I tried various ways and this was the best way to document return values
-> that i've found. It's easy to read as plain text, and also has the benefit
-> that return values get nicely lined up in htmldocs.
-> 
-> I've been even considering a patch for
-> 
-> https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-> 
-> The only advice given ATM is: "Take a look around the source tree for
-> examples."
+> ? 
 
-OK. Will change to yours. Thanks for the info.
+WFM, thanks.
 
-> 
-> /Jarkko
+/Jarkko
