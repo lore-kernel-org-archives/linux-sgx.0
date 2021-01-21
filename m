@@ -2,75 +2,114 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D3AC433E0
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885BCC433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02FD62388D
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42AE22388B
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732005AbhAUBKe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 20:10:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44008 "EHLO mail.kernel.org"
+        id S1733047AbhAUBK4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 20:10:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728272AbhAUBCG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 20:02:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4CF6B23437;
-        Thu, 21 Jan 2021 01:01:22 +0000 (UTC)
+        id S2391068AbhAUBJF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 20:09:05 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F56223884;
+        Thu, 21 Jan 2021 01:08:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611190884;
-        bh=1gZWAcYhuLStfT0U84gO3DtfjvuA92+Un7OrbpYsL9I=;
+        s=k20201202; t=1611191304;
+        bh=BDcBf5SoNzqHyRsbiBLgPsJSVBSandfMgbWp46fNJDg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jpdRuSTFa/BsMAyCzJanjfgEUM0mvRdRloRI9Zb8l7bVNBuuC5XTCDa1gqZZhrH7I
-         oza0dtv2J8JdcGZSgBnVfLni65igapZEuuaWvo8p5YELGajZ7yM2pskhAVRAfwvvbj
-         BxPhRXfbD05FX3yNSFh+DqTGY8Eq6kBjRzi03wa/GFgDrFDJtaif06Qp7VAUZ3vJGA
-         yseQkuJCGU0+m4uhd4jRdf41Ba5cQdb+G/lfFW7X+LEYfTSd3zVx4r2z2+MSqX7oO8
-         V46sIraxqgXcl0QjAZkZ5OaTkjNz0SBCcFP8stp/l8eFPOk/086GqYs5+rtElYjNoK
-         6G6XLP7Yuwg8w==
-Date:   Thu, 21 Jan 2021 03:01:19 +0200
+        b=UwvQWzJgHhPVlGcMzvtcPHTQOEWxGFnJHRGWtuu8GbV/SO4ve2A0e4TOsN/H83xb0
+         eshPolvPtpX0AUnfVAy7v7YwiGShDpypsVSnJLgfOvwhtLIUs/6SMykrb0z5bYj/ua
+         q16AuG6t2RIj/8x7dOyKQp36e6QPE4+7IwZbq9QEdZpKhBktHsN/TxrGKCZwi1VzO7
+         XcA9LofHLTsKY7QeQVlK1BVpWbsW1hmVEogky33B9KbrER7pwe2dDyRI3KWhAkU8rr
+         L9lvQ6hk8aMLgCqwBps2+X4pkXxksFMYMzera/3GWU08jnQuYcn/rTX5o2HibD9ti6
+         +l1D9whLGi/uQ==
+Date:   Thu, 21 Jan 2021 03:08:18 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 01/26] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
-Message-ID: <YAjSX7KGLjPtS/kK@kernel.org>
+Subject: Re: [RFC PATCH v2 11/26] x86/sgx: Add encls_faulted() helper
+Message-ID: <YAjUAldgNUtrx6sE@kernel.org>
 References: <cover.1610935432.git.kai.huang@intel.com>
- <87385f646120a3b5b34dc20480dbce77b8005acd.1610935432.git.kai.huang@intel.com>
- <YAgY9OfYaGj7og/b@kernel.org>
- <20210121122308.8d920c9d652f58824fe87f3e@intel.com>
+ <e36ac729b227d728e2b0d1a48cfbbeca4523f1a5.1610935432.git.kai.huang@intel.com>
+ <YAgb/MhaNLVwBS8K@kernel.org>
+ <20210121124359.7fff8c6d6f90182d8d13062f@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210121122308.8d920c9d652f58824fe87f3e@intel.com>
+In-Reply-To: <20210121124359.7fff8c6d6f90182d8d13062f@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 12:23:08PM +1300, Kai Huang wrote:
-> On Wed, 20 Jan 2021 13:50:12 +0200 Jarkko Sakkinen wrote:
-> > On Mon, Jan 18, 2021 at 04:26:49PM +1300, Kai Huang wrote:
-> > > From: Sean Christopherson <seanjc@google.com>
+On Thu, Jan 21, 2021 at 12:43:59PM +1300, Kai Huang wrote:
+> On Wed, 20 Jan 2021 14:03:08 +0200 Jarkko Sakkinen wrote:
+> > On Mon, Jan 18, 2021 at 04:28:04PM +1300, Kai Huang wrote:
+> > > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > > > 
-> > > Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-> > > features.  As part of virtualizing SGX, KVM will expose the SGX CPUID
-> > > leafs to its guest, and to do so correctly needs to query hardware and
-> > > kernel support for SGX1 and SGX2.
+> > > Add a helper to extract the fault indicator from an encoded ENCLS return
+> > > value.  SGX virtualization will also need to detect ENCLS faults.
+> > > 
+> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > > ---
+> > >  arch/x86/kernel/cpu/sgx/encls.h | 14 +++++++++++++-
+> > >  arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
+> > >  2 files changed, 14 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> > > index be5c49689980..55919a2b01b0 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/encls.h
+> > > +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> > > @@ -40,6 +40,18 @@
+> > >  	} while (0);							  \
+> > >  }
+> > >  
+> > > +/*
+> > > + * encls_faulted() - Check if an ENCLS leaf faulted given an error code
+> > > + * @ret		the return value of an ENCLS leaf function call
+> > > + *
+> > > + * Return:
+> > > + *	%true if @ret indicates a fault, %false otherwise
 > > 
-> > This commit message is missing reasoning behind scattered vs. own word.
-> > 
-> > Please just document the reasoning, that's all.
+> > Follow here the style of commenting as in ioctl.c, for the return value.
+> > It has optimal readability both as text, and also when converted to HTML.
+> > See sgx_ioc_enclave_add_pages() for an example.
 > 
-> OK. Will do. How about:
+> You mean something like below?
 > 
-> "Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-> features, since adding a new leaf for only two bits would be wasteful."
+> Return:
+> - %true:  @ret indicates a fault.
+> - %false: @ret indicates no fault.
 
-For *me*, that would be sufficient.
+Yeah, with '\t' indentation. I'd remove also '%'. Also '@ret' is redudant.
+
+To put this all together:
+
+* Return:
+* - true:       ENCLS leaf faulted.
+* - false:      Otherwise.
+
+I tried various ways and this was the best way to document return values
+that i've found. It's easy to read as plain text, and also has the benefit
+that return values get nicely lined up in htmldocs.
+
+I've been even considering a patch for
+
+https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+
+The only advice given ATM is: "Take a look around the source tree for
+examples."
 
 /Jarkko
