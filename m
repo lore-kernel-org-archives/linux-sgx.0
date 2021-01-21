@@ -2,125 +2,131 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226B1C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 14:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E53C433E9
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 16:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCE942310A
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 14:40:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6264A23A59
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 16:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbhAUOjc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 21 Jan 2021 09:39:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731686AbhAUOjE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 21 Jan 2021 09:39:04 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4950D239FC;
-        Thu, 21 Jan 2021 14:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611239903;
-        bh=Vzwiik+avSFnh3k8qIxZk4Toqc2fyUI2El9ck+wEblk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WtzLFajqOAk+Jj2lD6lynpJ4J3gcSqcIYo7gfe75p+jxUaJpMOBdCcfhpQJwlC1wh
-         JALDzKGS23CthlWolyQ1TeLAhtfFmgkiu4C83LNaaO4/YQctXSbQqkjOGZDJijThsz
-         Y3UA6BbP12Ux3foJXxAhQFbPeO3MdOVpxu0kbhvgq1g/Tps2Sun2EQ1Q78Xd22vXnC
-         ECLlOfXBpdZ2To/Lgyd6aPSAb8rceYq9oTqiftztYReyb1fQIzZppQwNy1og8emf4Z
-         fGrEn3MYLUFhDblj2iqqxlFIfW67RLiRpqfrL9vEK9AwryhlPi7bSdN0emjUTVIRZg
-         lpyfqkn5LkQQg==
-Date:   Thu, 21 Jan 2021 16:38:21 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 11/26] x86/sgx: Add encls_faulted() helper
-Message-ID: <YAmR3Q9m3JmTmtm0@kernel.org>
+        id S1732506AbhAUQfF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 21 Jan 2021 11:35:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732624AbhAUQeb (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Jan 2021 11:34:31 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 998B7C061786
+        for <linux-sgx@vger.kernel.org>; Thu, 21 Jan 2021 08:33:51 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id n7so1701144pgg.2
+        for <linux-sgx@vger.kernel.org>; Thu, 21 Jan 2021 08:33:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=X+t7xR7tyEcXG4BO7PJTLqhUyVQaz5DDSBnf2PrL/nI=;
+        b=h0OcGN4YIxE6sMTc9bbCaLvNg2aM5EWSgRQcee2Is1A6sx7464yb36gSDPdZw0/zRe
+         ri6xDyydJYJNx6bx+B92IATXKm0Y1fzMy1NsQ4VOrD10va1vxyG7GE3ywJWttwfjTsoy
+         rFhFKVTkm423z129/Ho1VRFqzRyefIPJpCkcgkI8mRaexhNptKDK/UeZ2xhBQrqCRf66
+         SwCFtsUyLm6JngRLrUHNKgYnjlLL1q3DwUhT+9rbhWUtoaT5QdJILgBjI0BtUww5vuxj
+         K07sGiZ4wJ1FYuJ1rGjQZpK7MK0udfFVCxfc/FPCK7ohn5W1T7Iy4qKX+Eqy9ILyjL+G
+         AT1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=X+t7xR7tyEcXG4BO7PJTLqhUyVQaz5DDSBnf2PrL/nI=;
+        b=pVB1QbNS+/9gQLFXTsirOWAkWrxTbTE2hplLFJukJlU67UcxXaEF9QJXbVnsUyPjPV
+         AmH2FBejvRWGN13UiHS6q/ogNW9jHpkPtlthsTCgXbL7UUdLhixWlyej2A/exFm4s6On
+         X57xKGapb3ISzRm5wsWN4VHM8IOnUDdislhDqvtj0akqQEVCy/uzF0qyMiQ1WdpWi7KJ
+         aO7rr+Cv/Wh5c18I6n2hqkThJdiJzUJtOY6vNbw7KOa+dL9mHCUjMqNt2P4LEpZVaeXe
+         ueW7egFlu4HFWEGj8da9DNSEsE5nxQawc4rZFmmo7BP4FmXH14KdZJFdQR3Ap3NxXiWp
+         VD9g==
+X-Gm-Message-State: AOAM532+ESSO3bD3Htf5pe/nm09N2ORzb+v5vGUqCaF2JnB/NVJN9TQ5
+        2oEixFoBMLcxQKrx/eUr89q84S5VTIWR1w==
+X-Google-Smtp-Source: ABdhPJxvRI5mxPw7f28/ltKkO2cdfjerbSpq0FoPFmCNKZTX3D2wcTvXB/aNsyz8ueGv9pBpXwDFlA==
+X-Received: by 2002:a62:2aca:0:b029:1bb:4349:f889 with SMTP id q193-20020a622aca0000b02901bb4349f889mr279548pfq.26.1611246830897;
+        Thu, 21 Jan 2021 08:33:50 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
+        by smtp.gmail.com with ESMTPSA id w192sm6116401pff.181.2021.01.21.08.33.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jan 2021 08:33:50 -0800 (PST)
+Date:   Thu, 21 Jan 2021 08:33:43 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com
+Subject: Re: [RFC PATCH v2 15/26] KVM: VMX: Convert vcpu_vmx.exit_reason to a
+ union
+Message-ID: <YAms5375BLAp/x1W@google.com>
 References: <cover.1610935432.git.kai.huang@intel.com>
- <e36ac729b227d728e2b0d1a48cfbbeca4523f1a5.1610935432.git.kai.huang@intel.com>
- <YAgb/MhaNLVwBS8K@kernel.org>
- <20210121124359.7fff8c6d6f90182d8d13062f@intel.com>
- <YAjUAldgNUtrx6sE@kernel.org>
- <20210121141221.7dcabf70b8c6726136f231cd@intel.com>
+ <72e2f0e0fb28af55cb11f259eb5bc9e034fb705c.1610935432.git.kai.huang@intel.com>
+ <YAg7vzevfw5iL9kN@kernel.org>
+ <YAhcvqXNxq0ALCyO@google.com>
+ <YAjPC5VTiyO3XFsJ@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210121141221.7dcabf70b8c6726136f231cd@intel.com>
+In-Reply-To: <YAjPC5VTiyO3XFsJ@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 02:12:21PM +1300, Kai Huang wrote:
-> On Thu, 21 Jan 2021 03:08:18 +0200 Jarkko Sakkinen wrote:
-> > On Thu, Jan 21, 2021 at 12:43:59PM +1300, Kai Huang wrote:
-> > > On Wed, 20 Jan 2021 14:03:08 +0200 Jarkko Sakkinen wrote:
-> > > > On Mon, Jan 18, 2021 at 04:28:04PM +1300, Kai Huang wrote:
-> > > > > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > > 
-> > > > > Add a helper to extract the fault indicator from an encoded ENCLS return
-> > > > > value.  SGX virtualization will also need to detect ENCLS faults.
-> > > > > 
-> > > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > > > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > > > ---
-> > > > >  arch/x86/kernel/cpu/sgx/encls.h | 14 +++++++++++++-
-> > > > >  arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
-> > > > >  2 files changed, 14 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> > > > > index be5c49689980..55919a2b01b0 100644
-> > > > > --- a/arch/x86/kernel/cpu/sgx/encls.h
-> > > > > +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> > > > > @@ -40,6 +40,18 @@
-> > > > >  	} while (0);							  \
-> > > > >  }
-> > > > >  
-> > > > > +/*
-> > > > > + * encls_faulted() - Check if an ENCLS leaf faulted given an error code
-> > > > > + * @ret		the return value of an ENCLS leaf function call
-> > > > > + *
-> > > > > + * Return:
-> > > > > + *	%true if @ret indicates a fault, %false otherwise
+On Thu, Jan 21, 2021, Jarkko Sakkinen wrote:
+> On Wed, Jan 20, 2021 at 08:39:26AM -0800, Sean Christopherson wrote:
+> > On Wed, Jan 20, 2021, Jarkko Sakkinen wrote:
+> > > On Mon, Jan 18, 2021 at 04:28:26PM +1300, Kai Huang wrote:
+> > > > ---
+> > > >  arch/x86/kvm/vmx/nested.c | 42 +++++++++++++++---------
+> > > >  arch/x86/kvm/vmx/vmx.c    | 68 ++++++++++++++++++++-------------------
+> > > >  arch/x86/kvm/vmx/vmx.h    | 25 +++++++++++++-
+> > > >  3 files changed, 86 insertions(+), 49 deletions(-)
 > > > > 
-> > > > Follow here the style of commenting as in ioctl.c, for the return value.
-> > > > It has optimal readability both as text, and also when converted to HTML.
-> > > > See sgx_ioc_enclave_add_pages() for an example.
+> > > > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> > > > index 0fbb46990dfc..f112c2482887 100644
+> > > > --- a/arch/x86/kvm/vmx/nested.c
+> > > > +++ b/arch/x86/kvm/vmx/nested.c
+> > > > @@ -3311,7 +3311,11 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+> > > >  	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+> > > >  	enum vm_entry_failure_code entry_failure_code;
+> > > >  	bool evaluate_pending_interrupts;
+> > > > -	u32 exit_reason, failed_index;
+> > > > +	u32 failed_index;
+> > > > +	union vmx_exit_reason exit_reason = {
+> > > > +		.basic = -1,
+> > > > +		.failed_vmentry = 1,
+> > > > +	};
 > > > 
-> > > You mean something like below?
+> > > Instead, put this declaration to the correct place, following the
+> > > reverse christmas tree ordering:
 > > > 
-> > > Return:
-> > > - %true:  @ret indicates a fault.
-> > > - %false: @ret indicates no fault.
+> > >         union vmx_exit_reason exit_reason = {};
+> > > 
+> > > And after declarations:
+> > > 
+> > >         exit_reason.basic = -1;
+> > >         exit_reason.failed_vmentry = 1;
+> > > 
+> > > More pleasing for the eye.
 > > 
-> > Yeah, with '\t' indentation. I'd remove also '%'. Also '@ret' is redudant.
-> > 
-> > To put this all together:
-> > 
-> > * Return:
-> > * - true:       ENCLS leaf faulted.
-> > * - false:      Otherwise.
-> > 
-> > I tried various ways and this was the best way to document return values
-> > that i've found. It's easy to read as plain text, and also has the benefit
-> > that return values get nicely lined up in htmldocs.
-> > 
-> > I've been even considering a patch for
-> > 
-> > https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-> > 
-> > The only advice given ATM is: "Take a look around the source tree for
-> > examples."
+> > I disagree (obviously, since I wrote the patch).  Initializing the fields to
+> > their respective values is a critical, but subtle, aspect of this code.  Making
+> > the code stand out via explicit initialization is a good thing, and we really
+> > don't want any possibility of code touching exit_reason before it is initialized.
 > 
-> OK. Will change to yours. Thanks for the info.
- 
-There's also two examples of patterns that *do not* work in that
-file :-)
+> The struct does get initialized to zero, and fields get initialized
+> to their respective values. What is the critical aspect that is gone?
+> I'm not following.
 
-I think I'll post a patch for that file.
-
-/Jarkko
+Setting exit_reason.failed_vmentry from time zero.  This code should never
+synthesize a nested VM-Exit with failed_vmentry=0.  There have been bugs around
+the exit_reason in this code in the past, I strongly prefer to not have any
+window where exit_reason has the "wrong" value.
