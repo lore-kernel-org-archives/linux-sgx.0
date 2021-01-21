@@ -2,99 +2,79 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8491C43217
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2C9C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 777152389F
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55D572342C
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 00:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbhAUALI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:11:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43230 "EHLO mail.kernel.org"
+        id S1728070AbhAUAvm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 19:51:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388151AbhATWfb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:35:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B1B12220B;
-        Wed, 20 Jan 2021 22:34:46 +0000 (UTC)
+        id S2393220AbhAUAad (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 19:30:33 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CB2222360D;
+        Thu, 21 Jan 2021 00:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611182089;
-        bh=2C82eInXgK2XP3lkS3yelUgVXzNNZFQQWo02fjG+A70=;
+        s=k20201202; t=1611188988;
+        bh=Bf6IO1ATdMc1vvu9RwHpYCGphEkPnoTilBxPqOFvYr0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aKrcqVFk4tx3fqxndo4w3WVFUgE3tAHmDHisYKPZaOuc14wUi1g2ZdK912FZpJ8B4
-         cy3QdbZu7OqDNzg9k8AbdEVyxQbJVLEn2DMgL+LAOtm7cS611cUb3JPWzBUBzxJnV5
-         0bVoPRnizOAyyHRfd5nb8kDYUrn5QF3Nqerg0dEn/QGOBQIVHaUs16fIqX5dthLYF5
-         mhutvMvn6tZrTupydxSWesA6mihWF4/iiVTHMIc+rqc/drT7O47g4ycOGnyUyBPABx
-         duiJfyYq+wNDOzhMRURdsVwsyA5tBR9Y5QIlb/OUXNVVwAogvz94Yd61Z5ogPjZUc9
-         GlXSut2CHkrDw==
-Date:   Thu, 21 Jan 2021 00:34:43 +0200
+        b=ExELCMAdDuoz/4llJH1V/29Y/8TRNhsh6RmJe3bopnZ0HpgOkrK5ikepUoEFw30km
+         mGtEE2GF6aWlsoeVXwO3vVnsATYe+DQ3dLHGpxmRAz2NjEGGKa3Aarcaa3R7bTiwFr
+         OaMjf5VSWImvUnveUXA1BM/lyLcwR8IODiquZpqzaOanU/kIJpOkliMsXzx8EUcFgT
+         47hT49hMXDV5U9DVAygdUdOW+/VBizXhTLNcYN/JgwwrTpMJuX1lcAbIy0zCLvo0za
+         d8Nn0Z3AyDXjTEtQQDgl/7YXFfAxv5bQ8vYQjEwijIk//xSnZAOp3b4rCIHg5y7ksU
+         6od8hkx2qrYBQ==
+Date:   Thu, 21 Jan 2021 02:29:42 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        kai.huang@intel.com, haitao.huang@intel.com,
+        stable@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, haitao.huang@intel.com,
-        Kai Huang <kai.huang@intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH] x86/sgx: Allows ioctl PROVISION to execute before CREATE
-Message-ID: <YAiwA/oQkOVuTO+7@kernel.org>
-References: <20210118133335.98907-1-tianjia.zhang@linux.alibaba.com>
- <YAc7h3zQR06eWPhZ@google.com>
- <5037ee56-0211-f16c-3ea0-86cf8146b7f8@linux.alibaba.com>
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
+ sgx_release()
+Message-ID: <YAjK9n6zct2VTp74@kernel.org>
+References: <20210115014638.15037-1-jarkko@kernel.org>
+ <YAhp4Jrj6hIcvgRC@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5037ee56-0211-f16c-3ea0-86cf8146b7f8@linux.alibaba.com>
+In-Reply-To: <YAhp4Jrj6hIcvgRC@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 11:57:18AM +0800, Tianjia Zhang wrote:
-> Hi,
-> 
-> On 1/20/21 4:05 AM, Sean Christopherson wrote:
-> > On Mon, Jan 18, 2021, Tianjia Zhang wrote:
-> > > In function sgx_encl_create(), the logic of directly assigning
-> > > value to attributes_mask determines that the call to
-> > > SGX_IOC_ENCLAVE_PROVISION must be after the command of
-> > > SGX_IOC_ENCLAVE_CREATE. If change this assignment statement to
-> > > or operation, the PROVISION command can be executed earlier and
-> > > more flexibly.
-> > > 
-> > > Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-> > > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> > > ---
-> > >   arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > index f45957c05f69..0ca3fc238bc2 100644
-> > > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > > @@ -108,7 +108,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
-> > >   	encl->base = secs->base;
-> > >   	encl->size = secs->size;
-> > >   	encl->attributes = secs->attributes;
-> > > -	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
-> > > +	encl->attributes_mask |= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+On Wed, Jan 20, 2021 at 09:35:28AM -0800, Sean Christopherson wrote:
+> On Fri, Jan 15, 2021, jarkko@kernel.org wrote:
+> > From: Jarkko Sakkinen <jarkko@kernel.org>
 > > 
-> > Alternatively, move the existing code to sgx_open()?  Initializing the field
-> > when the encl object is allocated feels more correct.
+> > The most trivial example of a race condition can be demonstrated with this
+> > example where mm_list contains just one entry:
 > > 
+> > CPU A                   CPU B
+> > sgx_release()
+> >                         sgx_mmu_notifier_release()
+> >                         list_del_rcu()
+> > sgx_encl_release()
+> >                         synchronize_srcu()
+> > cleanup_srcu_struct()
+> > 
+> > To fix this, call synchronize_srcu() before checking whether mm_list is
+> > empty in sgx_release().
 > 
-> 
-> This seems like a good idea. Thanks for your suggestion. I have sent v2
-> patch, include the next two patches.
+> Why haven't you included the splat that Haitao provided?  That would go a long
+> way to helping answer Boris' question about exactly what is broken...
 
-Did you ask from Sean about suggested-by's? Now it looks like
-that doing these patches were originally proposed by Sean.
+I've lost the klog.
 
 /Jarkko
