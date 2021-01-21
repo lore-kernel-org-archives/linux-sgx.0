@@ -2,316 +2,123 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD03C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 11:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F41C433E9
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 12:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A596D2395A
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 11:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 084AD239FD
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 12:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbhAULqf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:46:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47586 "EHLO mail.kernel.org"
+        id S1731149AbhAUM4a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 21 Jan 2021 07:56:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730361AbhAULor (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 21 Jan 2021 06:44:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 26964238E2;
-        Thu, 21 Jan 2021 11:44:04 +0000 (UTC)
+        id S1728146AbhAUM4A (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 21 Jan 2021 07:56:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D91F23A00;
+        Thu, 21 Jan 2021 12:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611229445;
-        bh=sHZkKx+3SOO3gQx2XzEXNgrfl/7eRgGLQL1Ctr7Qz7s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ldMEK/Jyfn9ioPdauGIeIAq+AH+YIR2oNhrVdH4DMHSNHtaCC5iiB+bvcbGAEvfk+
-         fdfBp2q8vGgtHfS/Gmll/G77UdhWPf+daqU/TiLcyt+YZqpDLpmEvOoUteuzyL5lnr
-         lmkBTvLGrbyzEuX0REpuonEQ7dP8RY1H15uNkPJBLPHv3HBUuIXnSmE/Wj1BsSxMgt
-         /5DGPXxtvaEGDVDhWxOUqwmrX2GTsdrFIx51zcBhhme9Yvg5hhkTTrTRf7Jw6kEFE7
-         JOigR51ZPUPqK363dBwOS5ysjBao35MCWm17/5EsQigFYAUc5QQdSORMhfyXLoBy3i
-         UTIqwtdc0PZpw==
+        s=k20201202; t=1611233719;
+        bh=1BNzVy1B4d8KkBuUW90iFZgA5HwyTa84DBFqPiEQ+1o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U8Rvy+vfheS8CGdDoPazhTsYcGa9DkDU1QSP6a/ZYr/grk0ZzK6tUu62TBB8MzWXO
+         XZqQ4D14Ed9yTmmVdi/saqNzFiBzX+dtqvCysPWcusR+9B3ReS1eUHeo5GkpUJ4IeS
+         CNO0PqIFaj5pplAbdxPGGOgfhsl+FSsG2GrJvgP80PO13/HqTZTWeISaCPj9UaAbv8
+         3qnSj9Gly63KOisMX1yHtfmpBCTmKKZk159GVpWNqXE0eCQ/eSMCrL/h+792fZ/HI/
+         NhhKEwiJTqpAfFEEo8s1HZo6hFxhyIvZ43jejTHYhVbB1qHYERYekUFT0RJKBsRHqw
+         GyqjnqCUie2ww==
+Date:   Thu, 21 Jan 2021 14:55:17 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
-        dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH v3] sgx.7: New page with overview of Software Guard eXtensions (SGX)
-Date:   Thu, 21 Jan 2021 13:43:59 +0200
-Message-Id: <20210121114359.112193-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.29.2
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>, linux-sgx@vger.kernel.org,
+        kai.huang@intel.com, haitao.huang@intel.com,
+        stable@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
+ sgx_release()
+Message-ID: <YAl5tR5uvDqv/Is6@suppilovahvero.lan>
+References: <20210115014638.15037-1-jarkko@kernel.org>
+ <YAhp4Jrj6hIcvgRC@google.com>
+ <YAjK9n6zct2VTp74@kernel.org>
+ <042741ff-1436-f3f2-df23-a524d1d7026d@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <042741ff-1436-f3f2-df23-a524d1d7026d@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-* Overhaul based on Michael's comments. Most likely needs to be refined
-  in various places but this is at least a small step forward for sure.
-v2:
-* Fixed the semantic newlines convention and various style errors etc.
-  that were reported by Alenjandro and Michael.
-* SGX was merged to v5.
- man7/sgx.7 | 248 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 248 insertions(+)
- create mode 100644 man7/sgx.7
+On Wed, Jan 20, 2021 at 05:19:44PM -0800, Dave Hansen wrote:
+> On 1/20/21 4:29 PM, Jarkko Sakkinen wrote:
+> > On Wed, Jan 20, 2021 at 09:35:28AM -0800, Sean Christopherson wrote:
+> >> On Fri, Jan 15, 2021, jarkko@kernel.org wrote:
+> >>> From: Jarkko Sakkinen <jarkko@kernel.org>
+> >>>
+> >>> The most trivial example of a race condition can be demonstrated with this
+> >>> example where mm_list contains just one entry:
+> >>>
+> >>> CPU A                   CPU B
+> >>> sgx_release()
+> >>>                         sgx_mmu_notifier_release()
+> >>>                         list_del_rcu()
+> >>> sgx_encl_release()
+> >>>                         synchronize_srcu()
+> >>> cleanup_srcu_struct()
+> >>>
+> >>> To fix this, call synchronize_srcu() before checking whether mm_list is
+> >>> empty in sgx_release().
+> >> Why haven't you included the splat that Haitao provided?  That would go a long
+> >> way to helping answer Boris' question about exactly what is broken...
+> > I've lost the klog.
+> 
+> Haitao said he thought it was this:
+> 
+> > void cleanup_srcu_struct(struct srcu_struct *ssp)
+> > {
+> ...
+> >         if (WARN_ON(srcu_readers_active(ssp)))
+> >                 return; /* Just leak it! */
+> 
+> Which would indicate that an 'encl' kref reached 0 while some other
+> thread was inside a
+> 
+>         idx = srcu_read_lock(&encl->srcu);
+> 	...
+> 	srcu_read_unlock(&encl->srcu, idx);
+> 
+> critical section.  A quick audit didn't turn up any obvious suspects,
+> though.
+> 
+> If that *is* it, it might be nice to try to catch the culprit at
+> srcu_read_{un}lock() time.  If there's ever a 0 refcount at those sites,
+> it would be nice to spew a warning:
+> 
+>         idx = srcu_read_lock(&encl->srcu);
+> 	WARN_ON(!atomic_read(&encl->refcount->refcount);
+> 	...
+> 	WARN_ON(!atomic_read(&encl->refcount->refcount);
+> 	srcu_read_unlock(&encl->srcu, idx);
+> 
+> at each site.
 
-diff --git a/man7/sgx.7 b/man7/sgx.7
-new file mode 100644
-index 000000000..4f6d6136f
---- /dev/null
-+++ b/man7/sgx.7
-@@ -0,0 +1,248 @@
-+.\" Copyright (C) 2021 Intel Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH SGX 7 2020-12-02 "Linux" "Linux Programmer's Manual"
-+.PP
-+sgx - overview of Software Guard eXtensions
-+.SH DESCRIPTION
-+.PP
-+Intel Software Guard eXtensions (SGX) allow user space applications to set
-+aside private memory regions of code and data.
-+These memory regions are called enclaves.
-+.PP
-+SGX must be enabled by the BIOS.
-+If SGX appears to be unsupported on a system having hardware support,
-+ensure that SGX is enabled in the BIOS.
-+If a BIOS presents a choice between \(dqEnabled\(dq and \(dqSoftware
-+Enabled\(dq modes for SGX,
-+choose \(dqEnabled\(dq.
-+.PP
-+An enclave can be entered only at a fixed set of entry points,
-+each defined by Thread Control Structure (TCS) architectural structure,
-+contained in a single enclave page.
-+A hardware thread reserves a TCS by executing EENTER subfunction of the
-+ENCLU instruction,
-+and the execution continues from the TCS defined entry point.
-+ENCLU contains all the SGX user functions.
-+Depending on the function, they must be called either inside or outside of
-+the enclave.
-+Once the thread has completed its task,
-+it calls EEXIT subfunction of the ENCLU instruction,
-+which releases the TCS and departs the enclave to a given address outside
-+the enclave.
-+While the enclave is loaded from a regular binary file,
-+only the threads inside the enclave can access its memory.
-+.PP
-+Although carved out of normal DRAM,
-+enclave memory is marked in the system memory map as reserved and is not
-+managed by the Linux memory manager.
-+There may be several enclave regions spread across the system.
-+Each contiguous region is called an Enclave Page Cache (EPC) section.
-+The pages belonging to the EPC sections are encrypted when they leave the
-+Last Level Cache (LLC).
-+.PP
-+SGX is available only if the kernel was configured and built with the
-+.B CONFIG_X86_SGX
-+option.
-+[[
-+You can determine whether the hardware supports SGX by checking
-+whether "sgx" appears in the
-+.I flags
-+field in
-+.IR /proc/cpuinfo .
-+]]
-+.SS Enclave management
-+.PP
-+An enclave's life-cycle starts by opening
-+.I /dev/sgx_enclave
-+and ends when all the file descriptors referring to the opened file have
-+been closed.
-+After opening the enclave,
-+its contents must be populated with the ioctl interface provided by
-+.IR <asm/sgx.h> .
-+ENCLS is a privileged (ring-0) instruction with the functionality for
-+managing enclave memory,
-+and the ioctl interface provides a wrapper for it.
-+.PP
-+Enclave construction starts by calling
-+.B SGX_IOC_ENCLAVE_CREATE,
-+which copies the initial version of SGX Enclave Control Structure
-+(SECS).
-+SGX Enclave Control Structure (SECS) contains the description of the
-+enclave.
-+The ioctl calls the ECREATE subfunction of the ENCLS instruction,
-+which will copy the SECS to the SGX reserved memory.
-+The SECS is never mapped to the process address space,
-+and thus cannot be directly referenced.
-+.PP
-+Among other things, the SECS contains the base address and size of the enclave,
-+meaning that the address space must be carved out before the creation.
-+There is also a hardware related invariant that the enclave size must be a
-+power of two,
-+and the base address must be also naturally aligned relative to the size.
-+.PP
-+Some of the SECS fields must be initialized to zero because their values
-+are determined dynamically after the enclave has been created.
-+Most importantly SECS contains two SHA256 hashes: MRENCLAVE and
-+MRSIGNER.
-+Each ENCLS subfunction,
-+which contribute to the enclave construction,
-+hashes its key parameters to the MRENCLAVE.
-+Arbitrary data can be also hashed into MRENCLAVE via the EEXTEND subfunction
-+of the ENCLS instruction.
-+MRSIGNER contains the hash of the enclave signer key,
-+which is used to sign the SIGSTRUCT structure passed to the
-+EINIT subfunction of the ENCLS instruction.
-+MRENCLAVE and MRSIGNER define the enclave identity and sealing identity of the
-+enclave.
-+A thread executing inside the enclave can use them as key material for deriving
-+128-bit cryptographic keys.
-+This is accomplished by calling the EGETKEY subfunction of the ENCLU
-+instruction.
-+.PP
-+After the enclave has been created,
-+a series of
-+.B SGX_IOC_ENCLAVE_ADD_PAGES
-+calls are issued.
-+This ioctl copies the provided data to the enclave memory by invoking
-+the EADD subfunction of the ENCLS instruction.
-+and optionally hashes it with help of the EEXTEND subfunction of the ENCLS
-+instruction.
-+Hashing is optional because it is a slow operation and sometimes not
-+required.
-+For instance, one might only care to measure the code pages.
-+.PP
-+Finally, when all the data has been copied to the enclave memory,
-+.B SGX_IOC_ENCLAVE_INIT
-+is called,
-+which invokes the EINIT subfunction of the ENCLS instruction.
-+This function checks that the accumulated MRENCLAVE matches the
-+MRENCLAVE inside the caller provided SIGSTRUCT,
-+and locks down the enclave from further build operations.
-+After this, the enclave can be invoked.
-+.SS Enclave memory mapping
-+.PP
-+The processor tracks EPC pages in a hardware metadata structure called
-+.I Enclave Page Cache Map (EPCM).
-+The EPCM contains an entry for each EPC page which describes the owning
-+enclave,
-+access rights,
-+and page type among the other things.
-+EPCM permissions are separate from the normal page tables.
-+This prevents the kernel from,
-+for instance,
-+allowing writes to data which an enclave wishes to remain read-only.
-+EPCM permissions may only impose additional restrictions on top of
-+normal x86 page permissions.
-+.PP
-+For all intents and purposes,
-+the SGX architecture allows the processor to invalidate all EPCM entries
-+at will.
-+This requires that software be prepared to handle an EPCM fault at any
-+time.
-+In practice,
-+this can happen on events like power transitions when the ephemeral key
-+that encrypts enclave memory is lost.
-+.PP
-+The kernel records EPCM permissions when
-+.B SGX_IOC_ENCLAVE_ADD_PAGES
-+is called.
-+When the pages are mapped to memory via
-+[[
-+.BR mmap (2)
-+or
-+.BR mprotect (2),
-+]]
-+the EPCM permissions are compared against the declared permissions.
-+If the declared permissions have bits set that are not part of the EPCM
-+permissions,
-+the operation fails with the error
-+.B EACCES.
-+.SS Enclave invocation
-+.PP
-+Enclaves encounter exceptions for many reasons:
-+everything from enclave page faults to NULL pointer dereferences,
-+to system calls that must be called by a delegate from outside the enclave.
-+Finally, a power cycle invalidates the whole EPC,
-+which also needs to be addressed by the caller.
-+.PP
-+This type of exception handling has been traditionally been handled in
-+SIGSEGV handlers,
-+registered by the library.
-+But, being a process-wide state,
-+signal handling and code libraries do not mix well.
-+.PP
-+In order to assist the run-time, kernel provides a vDSO entry point,
-+.BR vsgx_enter_enclave ,
-+which wraps the ENCLU entry subfunctions EENTER and ERESUME,
-+and returns exceptions to the caller at the point they happen.
-+The exception information is filled in RDI, RSI and RDX.
-+The kernel-provided user space portion of the vDSO handler will place
-+this information in a user-provided buffer,
-+or optionally trigger a user-provided callback at the time of the
-+exception.
-+.PP
-+The vDSO function calling convention uses the standard RDI, RSI, RDX,
-+RCX, R8 and R9 registers.
-+This makes it possible to declare the vDSO as a C prototype,
-+but other than that there is no specific support for the x86-64 calling
-+convention,
-+Things like storing XSAVE are the responsibility of the enclave and the
-+runtime.
-+.SS Page reclaimer
-+.PP
-+Just like normal RAM,
-+there is a limited amount of enclave memory available and over-committing
-+it is a very valuable tool to reduce resource use.
-+.PP
-+In contrast to normal page reclaim,
-+the kernel cannot directly access enclave memory.
-+To get around this,
-+the SGX architecture provides a set of functions to help.
-+Among other things,
-+these functions copy enclave memory to and from normal memory,
-+encrypting it and protecting its integrity in the process.
-+.PP
-+The kernel provides a page reclaimer by using these functions.
-+It picks victim pages in LRU fashion from all the enclaves running in
-+the system.
-+A new kernel thread (ksgxd) reclaims pages in the background based on
-+watermarks,
-+similar to normal kswapd.
-+.PP
-+All enclave pages can be reclaimed, architecturally.
-+But, there are some limits to this,
-+such as the SECS page,
-+which must be reclaimed last.
-+The page version array (used to mitigate replaying old reclaimed pages)
-+is also architecturally reclaimable,
-+but support for reclaiming the page version array is not yet implemented,
-+The end result is that the vast majority of enclave pages are currently
-+reclaimable.
-+.SH VERSIONS
-+The SGX feature was added in Linux 5.11.
-+.SH SEE ALSO
-+.BR ioctl (2),
-+.BR mmap() (2),
-+.BR mprotect (2),
--- 
-2.29.2
+The root cause is fully known already and audited.
 
+An mm_list entry is kept up until the process exits *or* when
+VFS close happens, and sgx_release() executes and removes it.
+
+It's entirely possible that MMU notifier callback registered
+by a process happens while sgx_release() is executing, which
+causes list_del_rcu() to happen, unnoticed by sgx_release().
+
+If that empties the list, cleanup_srcu_struct() is executed
+unsynchronized in the middle a unfinished grace period.
+
+/Jarkko
