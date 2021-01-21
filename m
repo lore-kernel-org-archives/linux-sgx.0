@@ -2,83 +2,116 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C5EC433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97CBC433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD9C23719
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6113223719
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jan 2021 01:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388089AbhAUBTe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 20 Jan 2021 20:19:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45120 "EHLO mail.kernel.org"
+        id S1727481AbhAUBTg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jan 2021 20:19:36 -0500
+Received: from mga02.intel.com ([134.134.136.20]:7135 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391964AbhAUBKF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 20 Jan 2021 20:10:05 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C4EFF2388A;
-        Thu, 21 Jan 2021 01:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611191364;
-        bh=TsBJwLSX5vV9/b4Cr5dU5LvIyhJs07AuF7QbD4KCc3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XTBP4ObYCpPSgJ7h4hFc8g+vv3mq8+ky8J1u0i/EwIqS54LvDy0rueIR2mxleO6ht
-         ge/xkdgnmG6mQV8CR9GbiYL5K14ITru/Iw7ne521tML3pDyh0toJWGwJy5KOS7rncZ
-         ha7muMO8ziM18q+/0Amgs9EOYJ9tzfhszdmzrmlce+vlZed0BrpHgQXtgnoRj94wAV
-         H62J+x9I35CPmvPFy/337eYNOVZGhTLIXuH8z2MVhTxe2KRZijLu2SolWviKdLJGq0
-         AdNm5gUiLpJhNeXSDh7iKYR3UgvTwSpzzVQ4h4Uxkc2C+3BBt8qtas2IPVRddrec2X
-         WKV0r2Jd59iaA==
-Date:   Thu, 21 Jan 2021 03:09:18 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
+        id S2390998AbhAUBQZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Jan 2021 20:16:25 -0500
+IronPort-SDR: cyRie6Op3GgEpOE+JMyqW7s/t9g6hen1azdL/ikUKoIRSBzpWgjPOay3Np066Eh0PWGooMLgZh
+ P6ov6oe/TxJg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9870"; a="166298468"
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="166298468"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 17:15:42 -0800
+IronPort-SDR: kzm4LWD2QKLqKo7Dkspim+Bj2ISndd4K6jFtNor98CTUdZfx7Phe3WuT+7j5RJbm32xMU82VX5
+ jxGVTqQCOJWw==
+X-IronPort-AV: E=Sophos;i="5.79,362,1602572400"; 
+   d="scan'208";a="351289601"
+Received: from raavalos-mobl2.amr.corp.intel.com (HELO [10.212.38.24]) ([10.212.38.24])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2021 17:15:40 -0800
+Subject: Re: [RFC PATCH v2 12/26] x86/sgx: Add helper to update
+ SGX_LEPUBKEYHASHn MSRs
 To:     Kai Huang <kai.huang@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
         luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
         bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v2 12/26] x86/sgx: Add helper to update
- SGX_LEPUBKEYHASHn MSRs
-Message-ID: <YAjUPmnUQVG/e/n4@kernel.org>
 References: <cover.1610935432.git.kai.huang@intel.com>
  <5116fdc732e8e14b3378c44e3b461a43f330ed0c.1610935432.git.kai.huang@intel.com>
  <YAgcIhkmw0lllD3G@kernel.org>
  <8613b3f1-c4f6-3e5d-4406-9476727666a7@intel.com>
  <20210121123625.c45deeccc690138f2417bd41@intel.com>
+ <982ddc27-27ec-2d03-54a4-1c0b07e8a3c9@intel.com>
+ <20210121140638.b9bac5af44fc0f33996a2853@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <db1c3826-8299-d83e-95f5-e25ee593b646@intel.com>
+Date:   Wed, 20 Jan 2021 17:15:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210121123625.c45deeccc690138f2417bd41@intel.com>
+In-Reply-To: <20210121140638.b9bac5af44fc0f33996a2853@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 12:36:25PM +1300, Kai Huang wrote:
-> On Wed, 20 Jan 2021 10:36:09 -0800 Dave Hansen wrote:
-> > On 1/20/21 4:03 AM, Jarkko Sakkinen wrote:
-> > >> +void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
-> > >> +{
-> > >> +	int i;
-> > >> +
-> > >> +	for (i = 0; i < 4; i++)
-> > >> +		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-> > >> +}
-> > > Missing kdoc.
-> > 
-> > I dunno... kdoc is nice, but I'm not sure its verbosity is useful here,
-> > even if this function is called from more than one .c file.
-> > 
-> > I'd be happy with a single-line comment, personally.
-> > 
+On 1/20/21 5:06 PM, Kai Huang wrote:
 > 
-> I actually feel the function name already explains what the function does
-> clearly, therefore I don't think even comment is needed. To be honest I
-> don't know how to rephrase here. Perhaps:
-> 
-> /* Update SGX LEPUBKEYHASH MSRs of the platform. */
-> 
-> ? 
+> /*
+>  * Update the SGX_LEPUBKEYHASH MSRs to the values specified by caller.
+>  *
+>  * EINITTOKEN is not used in enclave initialization, which requires
+>  * hash of enclave's signer must match values in SGX_LEPUBKEYHASH MSRs
+>  * to make EINIT be successful.
+>  */
 
-WFM, thanks.
+I'm grumpy, but I hate it.
 
-/Jarkko
+I'll stop the bike shedding for now, though.
