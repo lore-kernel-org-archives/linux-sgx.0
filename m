@@ -3,111 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C921FC433E6
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jan 2021 17:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C08EC433DB
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jan 2021 17:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DEC023A81
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jan 2021 17:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 425BA23A68
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jan 2021 17:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbhAVRmv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 22 Jan 2021 12:42:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48900 "EHLO mail.kernel.org"
+        id S1729250AbhAVRmy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 22 Jan 2021 12:42:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729907AbhAVRaF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:30:05 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 30A5C23A9A;
-        Fri, 22 Jan 2021 17:29:24 +0000 (UTC)
+        id S1729473AbhAVRjE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:39:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ACA7023A68;
+        Fri, 22 Jan 2021 17:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611336564;
-        bh=4gZnnmmnh8aGQ+syP8eUllgr8Tuh6Y9dYtD8qbPup7s=;
+        s=k20201202; t=1611337104;
+        bh=ge6tFCsU5h0tS9yUo8/3zw0PVb/UhI5wMta1OpY7wJM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ge3zo/B+y18FqMAqwkdn4+HPVxV4+lTPa55Q3tBXDkWpgojIG53bf6lt6nOmwaC7p
-         LkM/kg0tMmXxjDRrpvq3jwnS7Ca0RK+5FbHZgj2jXFFQdqNfpDBG5OtF+oi5EExVPn
-         O4s3aTRvJAu+w6s0OlixdNDljSnMQxMVdxpSs2wa9mDl5HvYs+vee7LCG8T0zm8cXX
-         I7QDOodOsmuSqbqVbjxfQg+aateHZ3b7WkF3DKV6gzpEiVfAzdO9qR7coAIu1QTO6D
-         dPbBYELNTzB/nlftURCU9A/xo8OuFB4l5WTvP3v6uOMaMyuUxbdI+jjStiFWWZnZFF
-         yjchrTweuhupg==
-Date:   Fri, 22 Jan 2021 19:29:22 +0200
+        b=RdHV/9mKBWfKxkyGt65UDS6nh7Gm9zzC1uQDDgz/6Pz7OaUPM9Q4WCyNK2PK/C8PQ
+         3NwtLe6z1bbfmkR+ujUgNpLDHoedMnaDDKFwvp0On8N7ftz4fs9cdC8U3K1ANnH9iF
+         ZPdj5xV4FgGXlRK5CRpnAOKHVG00PHS7o2PpR+Kx3sokVMJ7rNobRgs7g6Oy/VSlnt
+         4s+pke/pNHhdVr6HmuxgVtM8hR53oySrrNI9UvWOP6vGCft+97Ke6q18/MYG3t8+tZ
+         yMAhXRcFoKATyn68lVD3MU6NXocopg8y4uhy1MzbXPHRinVlZiSnT4vTBkakYYnvQf
+         ICjAiRvM+ylIA==
+Date:   Fri, 22 Jan 2021 19:38:21 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com
-Subject: Re: [RFC PATCH v2 15/26] KVM: VMX: Convert vcpu_vmx.exit_reason to a
- union
-Message-ID: <YAsLcpOUVd6N7ypv@kernel.org>
-References: <cover.1610935432.git.kai.huang@intel.com>
- <72e2f0e0fb28af55cb11f259eb5bc9e034fb705c.1610935432.git.kai.huang@intel.com>
- <YAg7vzevfw5iL9kN@kernel.org>
- <YAhcvqXNxq0ALCyO@google.com>
- <YAjPC5VTiyO3XFsJ@kernel.org>
- <YAms5375BLAp/x1W@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>,
+        haitao.huang@intel.com, Kai Huang <kai.huang@intel.com>,
+        x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH] mm: Optimizing error condition detection in
+ do_mprotect_pkey()
+Message-ID: <YAsNja81xnhvRGsL@kernel.org>
+References: <20210118133310.98375-1-tianjia.zhang@linux.alibaba.com>
+ <YAg+QHhczqtTZt4Z@kernel.org>
+ <20210121144627.64a60437fe97786596f389d0@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YAms5375BLAp/x1W@google.com>
+In-Reply-To: <20210121144627.64a60437fe97786596f389d0@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 08:33:43AM -0800, Sean Christopherson wrote:
-> On Thu, Jan 21, 2021, Jarkko Sakkinen wrote:
-> > On Wed, Jan 20, 2021 at 08:39:26AM -0800, Sean Christopherson wrote:
-> > > On Wed, Jan 20, 2021, Jarkko Sakkinen wrote:
-> > > > On Mon, Jan 18, 2021 at 04:28:26PM +1300, Kai Huang wrote:
-> > > > > ---
-> > > > >  arch/x86/kvm/vmx/nested.c | 42 +++++++++++++++---------
-> > > > >  arch/x86/kvm/vmx/vmx.c    | 68 ++++++++++++++++++++-------------------
-> > > > >  arch/x86/kvm/vmx/vmx.h    | 25 +++++++++++++-
-> > > > >  3 files changed, 86 insertions(+), 49 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> > > > > index 0fbb46990dfc..f112c2482887 100644
-> > > > > --- a/arch/x86/kvm/vmx/nested.c
-> > > > > +++ b/arch/x86/kvm/vmx/nested.c
-> > > > > @@ -3311,7 +3311,11 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
-> > > > >  	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-> > > > >  	enum vm_entry_failure_code entry_failure_code;
-> > > > >  	bool evaluate_pending_interrupts;
-> > > > > -	u32 exit_reason, failed_index;
-> > > > > +	u32 failed_index;
-> > > > > +	union vmx_exit_reason exit_reason = {
-> > > > > +		.basic = -1,
-> > > > > +		.failed_vmentry = 1,
-> > > > > +	};
-> > > > 
-> > > > Instead, put this declaration to the correct place, following the
-> > > > reverse christmas tree ordering:
-> > > > 
-> > > >         union vmx_exit_reason exit_reason = {};
-> > > > 
-> > > > And after declarations:
-> > > > 
-> > > >         exit_reason.basic = -1;
-> > > >         exit_reason.failed_vmentry = 1;
-> > > > 
-> > > > More pleasing for the eye.
-> > > 
-> > > I disagree (obviously, since I wrote the patch).  Initializing the fields to
-> > > their respective values is a critical, but subtle, aspect of this code.  Making
-> > > the code stand out via explicit initialization is a good thing, and we really
-> > > don't want any possibility of code touching exit_reason before it is initialized.
-> > 
-> > The struct does get initialized to zero, and fields get initialized
-> > to their respective values. What is the critical aspect that is gone?
-> > I'm not following.
+On Thu, Jan 21, 2021 at 02:46:27PM -0800, Andrew Morton wrote:
+> On Wed, 20 Jan 2021 16:29:20 +0200 Jarkko Sakkinen <jarkko@kernel.org> wrote:
 > 
-> Setting exit_reason.failed_vmentry from time zero.  This code should never
-> synthesize a nested VM-Exit with failed_vmentry=0.  There have been bugs around
-> the exit_reason in this code in the past, I strongly prefer to not have any
-> window where exit_reason has the "wrong" value.
+> > 
+> > 
+> > On Mon, Jan 18, 2021 at 09:33:10PM +0800, Tianjia Zhang wrote:
+> > > Obviously, the error variable detection of the if statement is
+> > > for the mprotect callback function, so it is also put into the
+> > > scope of calling callbck.
+> > > 
+> > > Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> > > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> > 
+> > No fixes tag, no description what this commit does. Nothing
+> > makes sense to me.
+> 
+> It's a little cleanup.  Makes the flow at this site consistent with the
+> other places where this function handles errors.  I added a bit to the
+> changelog mentioning this.
 
-OK, I see.  Thanks for the explanation.
+Alright, I see. I'm just used to getting feedback to my own patches
+that "imperative form" of expression should be rigidly used. That's the
+main reason I gave the feedback.
 
 /Jarkko
