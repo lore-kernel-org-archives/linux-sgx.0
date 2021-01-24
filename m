@@ -2,89 +2,90 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7041EC433DB
-	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17428C433E0
+	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3602A22C7E
-	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD3FC22C7E
+	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbhAXGbO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 24 Jan 2021 01:31:14 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:60050 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726569AbhAXGbI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 24 Jan 2021 01:31:08 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UMf9yus_1611469749;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UMf9yus_1611469749)
+        id S1726599AbhAXGfE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 24 Jan 2021 01:35:04 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:40476 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726398AbhAXGfE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 24 Jan 2021 01:35:04 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R551e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UMg2q4g_1611470034;
+Received: from 30.25.221.71(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UMg2q4g_1611470034)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 24 Jan 2021 14:29:09 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
+          Sun, 24 Jan 2021 14:33:55 +0800
+Subject: Re: [PATCH v2] x86/sgx: Remove redundant if conditions in
+ sgx_encl_create
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v3 4/5] x86/sgx: Allows ioctl PROVISION to execute before CREATE
-Date:   Sun, 24 Jan 2021 14:29:06 +0800
-Message-Id: <20210124062907.88229-5-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.3.ge56e4f7
-In-Reply-To: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
-References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+References: <20210120035328.19868-1-tianjia.zhang@linux.alibaba.com>
+ <YAhsyXahEYjV7DZ8@google.com>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <95913686-be5f-85e5-0cc2-91b2a100e16e@linux.alibaba.com>
+Date:   Sun, 24 Jan 2021 14:33:53 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YAhsyXahEYjV7DZ8@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-In the function sgx_create_enclave(), the direct assignment
-operation of attributes_mask determines that the ioctl PROVISION
-operation must be executed after the ioctl CREATE operation,
-which will limit the flexibility of sgx developers.
 
-This patch takes the assignment of `attributes_mask` from the
-function sgx_create_enclave() has been moved to the function
-sgx_open() to avoid this restriction.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- arch/x86/kernel/cpu/sgx/driver.c | 1 +
- arch/x86/kernel/cpu/sgx/ioctl.c  | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+On 1/21/21 1:47 AM, Sean Christopherson wrote:
+> On Wed, Jan 20, 2021, Tianjia Zhang wrote:
+>> In this scenario, there is no case where va_page is NULL, and
+>> the error has been checked. The if condition statement here is
+>> redundant, so remove the condition detection.
+>>
+>> Reported-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+>> Suggested-by: Sean Christopherson <seanjc@google.com>
+>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>> ---
+>>   arch/x86/kernel/cpu/sgx/ioctl.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+>> index 1c6ecf9fbeff..efad2fb61c76 100644
+>> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+>> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+>> @@ -66,9 +66,12 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+>>   	va_page = sgx_encl_grow(encl);
+>>   	if (IS_ERR(va_page))
+>>   		return PTR_ERR(va_page);
+>> -	else if (va_page)
+>> -		list_add(&va_page->list, &encl->va_pages);
+>> -	/* else the tail page of the VA page list had free slots. */
+>> +
+>> +	if (WARN_ONCE(!va_page,
+>> +		      "the tail page of the VA page list had free slots\n"))
+> 
+> IMO it's worth trimming down the message to keep this on a single line.  The
+> newline isn't necessary, and this code expects a completely empty list, e.g. it
+> can be reworded to something like:
+> 
+> 	if (WARN_ONCE(!va_page, "non-empty VA page list before ECREATE"))
+> 
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index f2eac41bb4ff..fba0d0bfe976 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -36,6 +36,7 @@ static int sgx_open(struct inode *inode, struct file *file)
- 		return ret;
- 	}
- 
-+	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
- 	file->private_data = encl;
- 
- 	return 0;
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf76939..1c6ecf9fbeff 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -109,7 +109,6 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	encl->base = secs->base;
- 	encl->size = secs->size;
- 	encl->attributes = secs->attributes;
--	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
- 
- 	/* Set only after completion, as encl->lock has not been taken. */
- 	set_bit(SGX_ENCL_CREATED, &encl->flags);
--- 
-2.19.1.3.ge56e4f7
+Thanks for your suggestion, I have resubmitted a set of patches.
 
+Best regards,
+Tianjia
