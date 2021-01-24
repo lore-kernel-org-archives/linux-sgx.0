@@ -2,25 +2,25 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3085C433E9
-	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F32C4332B
+	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A688722C7B
+	by mail.kernel.org (Postfix) with ESMTP id BC3D522D0A
 	for <linux-sgx@archiver.kernel.org>; Sun, 24 Jan 2021 06:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbhAXGaF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1726489AbhAXGaF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Sun, 24 Jan 2021 01:30:05 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:50047 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726092AbhAXGaE (ORCPT
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:48797 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726096AbhAXGaE (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Sun, 24 Jan 2021 01:30:04 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UMfz8v3_1611469747;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UMfz8v3_1611469747)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UMf9apv_1611469748;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UMf9apv_1611469748)
           by smtp.aliyun-inc.com(127.0.0.1);
           Sun, 24 Jan 2021 14:29:08 +0800
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
@@ -34,40 +34,59 @@ To:     Jarkko Sakkinen <jarkko@kernel.org>,
         linux-kernel@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
 Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v3 0/5] Some optimizations related to sgx
-Date:   Sun, 24 Jan 2021 14:29:02 +0800
-Message-Id: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v3 2/5] x86/sgx: Optimize the locking range in sgx_sanitize_section()
+Date:   Sun, 24 Jan 2021 14:29:04 +0800
+Message-Id: <20210124062907.88229-3-tianjia.zhang@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+In-Reply-To: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This is an optimization of a set of sgx-related codes, each of which
-is independent of the patch. Because the second and third patches have
-conflicting dependencies, these patches are put together.
+The spin lock of sgx_epc_section only locks the page_list. The
+EREMOVE operation and init_laundry_list is not necessary in the
+protection range of the spin lock. This patch reduces the lock
+range of the spin lock in the function sgx_sanitize_section()
+and only protects the operation of the page_list.
 
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 ---
-v3 changes:
-  * split free_cnt count and spin lock optimization into two patches
+ arch/x86/kernel/cpu/sgx/main.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-v2 changes:
-  * review suggested changes
-
-Tianjia Zhang (5):
-  selftests/x86: Simplify the code to get vdso base address in sgx
-  x86/sgx: Optimize the locking range in sgx_sanitize_section()
-  x86/sgx: Optimize the free_cnt count in sgx_epc_section
-  x86/sgx: Allows ioctl PROVISION to execute before CREATE
-  x86/sgx: Remove redundant if conditions in sgx_encl_create
-
- arch/x86/kernel/cpu/sgx/driver.c   |  1 +
- arch/x86/kernel/cpu/sgx/ioctl.c    |  9 +++++----
- arch/x86/kernel/cpu/sgx/main.c     | 13 +++++--------
- tools/testing/selftests/sgx/main.c | 24 ++++--------------------
- 4 files changed, 15 insertions(+), 32 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index c519fc5f6948..4465912174fd 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -41,20 +41,17 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
+ 		if (kthread_should_stop())
+ 			return;
+ 
+-		/* needed for access to ->page_list: */
+-		spin_lock(&section->lock);
+-
+ 		page = list_first_entry(&section->init_laundry_list,
+ 					struct sgx_epc_page, list);
+ 
+ 		ret = __eremove(sgx_get_epc_virt_addr(page));
+-		if (!ret)
++		if (!ret) {
++			spin_lock(&section->lock);
+ 			list_move(&page->list, &section->page_list);
+-		else
++			spin_unlock(&section->lock);
++		} else
+ 			list_move_tail(&page->list, &dirty);
+ 
+-		spin_unlock(&section->lock);
+-
+ 		cond_resched();
+ 	}
+ 
 -- 
 2.19.1.3.ge56e4f7
 
