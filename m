@@ -2,141 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2DDC433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 15:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114C0C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 17:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAEC221EB
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 15:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF86D22C9E
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 17:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730374AbhAYPu3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 25 Jan 2021 10:50:29 -0500
-Received: from mga17.intel.com ([192.55.52.151]:12253 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730295AbhAYPtu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 25 Jan 2021 10:49:50 -0500
-IronPort-SDR: w+iw90LK9NFQyzXdzUdh7DGlBsxvJloCWSvsycQhn85+aB612nxiCPBO4kf4EPzmM6TaKthLcT
- rSEWuasny1NA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="159522079"
-X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
-   d="scan'208";a="159522079"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 07:49:06 -0800
-IronPort-SDR: 0MBPuFo9NoQvRyQ0tE3H2pgg2yKxU/QJoq/27dzz+6fJLgLn5behxqsKhdWL0Ms9bNjqWtKNPQ
- rgriEH3u4kFA==
-X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
-   d="scan'208";a="361552950"
-Received: from stalawai-desk.amr.corp.intel.com (HELO [10.254.124.248]) ([10.254.124.248])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 07:49:05 -0800
-Subject: Re: [PATCH v4] x86/sgx: Fix the call order of synchronize_srcu() in
- sgx_release()
+        id S1730976AbhAYR2o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 25 Jan 2021 12:28:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34868 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730960AbhAYR1s (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 25 Jan 2021 12:27:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611595576;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AgitYRx+b8uwOoFbMl5lYVUM2e7y4oz1Csxlcujd1EM=;
+        b=O2XoGbram8PZvJRmZLlrxIz2iN3Uq8lMLEdiYGGkrG0Lr+/L+oi1GitmQzQih/cCGcu3xs
+        81EZ4nWWWeE8T4d3JHkQ8l2Ka4hAAC1hTxTvOwAl2Uz3oD7rrV44Ay+s6p0Z6vwuaL1DEp
+        56HAtUJmJPvAw7RMbDQGvK6NmrOW9yE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-333-yhwrMqSbNteF_lRPWs5zJw-1; Mon, 25 Jan 2021 12:26:11 -0500
+X-MC-Unique: yhwrMqSbNteF_lRPWs5zJw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 244451934100;
+        Mon, 25 Jan 2021 17:26:10 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E374360C62;
+        Mon, 25 Jan 2021 17:26:09 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 10PHQ9MA026724;
+        Mon, 25 Jan 2021 12:26:09 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 10PHQ8nL026720;
+        Mon, 25 Jan 2021 12:26:08 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 25 Jan 2021 12:26:08 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
 To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>, linux-sgx@vger.kernel.org,
-        kai.huang@intel.com, haitao.huang@intel.com,
-        stable@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>
-References: <20210115014638.15037-1-jarkko@kernel.org>
- <YAhp4Jrj6hIcvgRC@google.com>
- <8d232931-3675-efea-2b53-a0c76e723bff@intel.com>
- <YAvlLxCfN88Ii5qb@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <5b881022-d9f1-3ac4-89e5-7da6d6ce2fc8@intel.com>
-Date:   Mon, 25 Jan 2021 07:49:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Jethro Beekman <jethro@fortanix.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Subject: Re: [PATCH] x86/vdso: fix a warning with x32 compiler
+In-Reply-To: <YA78YPVWsE6WNHhd@kernel.org>
+Message-ID: <alpine.LRH.2.02.2101251224520.5900@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2101230548050.21951@file01.intranet.prod.int.rdu2.redhat.com> <YA78YPVWsE6WNHhd@kernel.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <YAvlLxCfN88Ii5qb@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=mpatocka@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1286110412-1611595569=:5900"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Haitao managed to create another splat over the weekend.  It was, indeed:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+--185206533-1286110412-1611595569=:5900
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-> WARNING: CPU: 3 PID: 7620 at kernel/rcu/srcutree.c:374 cleanup_srcu_struct+0xed/0x100
 
-which is:
 
->         if (WARN_ON(!srcu_get_delay(ssp)))
->                 return; /* Just leak it! */
+On Mon, 25 Jan 2021, Jarkko Sakkinen wrote:
 
-That check means that there is an outstanding "expedited" grace period.
- The fact that it's expedited is not important.  This:
+> On Sat, Jan 23, 2021 at 05:50:31AM -0500, Mikulas Patocka wrote:
+> > This patch fixes a warning:
+> > arch/x86/entry/vdso/vdso2c.h:38:52: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘size_t’ {aka ‘unsigned int’} [-Wformat=]
+> > when compiling the kernel with x32 compiler.
+> > 
+> > The reason for the warning is that in x32 mode, size_t is defined as
+> > unsigned, not unsigned long.
+> > 
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Fixes: 8382c668ce4f ("x86/vdso: Add support for exception fixup in vDSO functions")
+> 
+> So... Why not %zu?
+> 
+> /Jarkko
 
-	https://lwn.net/Articles/202847/
+You can use %zu - it doesn't matter, size_t has the same size as unsigned 
+long on all supported architectures.
 
-describes the reasoning behind the warning:
+Mikulas
+--185206533-1286110412-1611595569=:5900--
 
-	If the struct srcu_struct is dynamically allocated, then
-	cleanup_srcu_struct() must be called before it is freed ... the
-	caller must take care to ensure that all SRCU read-side critical
-	sections have completed (and that no more will commence) before
-	calling cleanup_srcu_struct().
-
-synchronize_srcu() will (obviously) wait for the grace period to
-complete.  Calling it will shut up the warning for sure, most of the time.
-
-The required sequence of events is in here:
-
-> https://lore.kernel.org/lkml/1492472726-3841-4-git-send-email-paulmck@linux.vnet.ibm.com/
-
-I suspect that the mmu notifier's synchronize_srcu() is run in parallel
-very close to when cleanup_srcu_struct() is called.  This violates the
-"prevent any further calls to synchronize_srcu" rule.
-
-So, while I suspect that adding a synchronize_srcu() is *part* of the
-correct solution, I'm still not convinced that the
-sgx_mmu_notifier_release() code is correct.
