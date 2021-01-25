@@ -2,76 +2,65 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BDBC433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 17:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A9EC433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 17:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7F9622B3F
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 17:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9591922ADF
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Jan 2021 17:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731043AbhAYRXg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 25 Jan 2021 12:23:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32860 "EHLO mail.kernel.org"
+        id S1728765AbhAYReB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 25 Jan 2021 12:34:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730980AbhAYRXB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 25 Jan 2021 12:23:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A793C22B3B;
-        Mon, 25 Jan 2021 17:22:20 +0000 (UTC)
+        id S1730800AbhAYRO4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 25 Jan 2021 12:14:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BA4C222B37;
+        Mon, 25 Jan 2021 17:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611595341;
-        bh=NRxiUVpge9iTdgMnIs+QH2bpm+PmX8g8cC8kUYCHmWw=;
+        s=k20201202; t=1611594851;
+        bh=PPQ7an+6EgtubXXMbkYTcDYL0VPIYPWrOHcwoKbJDsM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mlAcewIKQnWR6zGjEZUs6WwjDAn+mbS4O9h9TjncvZxG5s3FhRz8nRNmynog0+gO3
-         w+QyZ/gEoXLEkBG5rluQSBniuyO/lG8bK6TG12pJABV5QKsvBkVyzetTfqYrWoMOpp
-         v2ka4fPaYhPpOSbpvKvMlNkh4RgxeqoF8qtbXhWglFJWsAyKw4YAYRkN4LYivLuo40
-         HDXiIc+ObdcKKXKre3UFp57M5oLY3TUr6JMB8+FOjf3H8OgIJvaeYgb8B4r0QvxJPz
-         D6qFcZLhZuUZITt0WEHpwkrhKdb7mFl7NqvJniSqxndMENs9DkWJcc/kEW2jBELYkU
-         8/PxXCvO0OJ+w==
-Date:   Mon, 25 Jan 2021 19:22:18 +0200
+        b=pUP+sQAzsU2hSQKQZ2Fwiwb/fn5AUy88xDze7oCkU4Vmzh/+u4OIN2siM0uaGr9DR
+         jOXrXES5DW+7bkCsEZLB67r1Ig4+op6bWyNWWYBr09OSND9jsntNXlF5CN4HEJNFSi
+         VZda9xd0TPWdij8pfuwv6xfxm0RSAgOPiWtXmuyWPYqkLqrH/2qoxcuPaRaim4hl7q
+         8iXNlPGBZ9I0VoNePomf63KoA/kcEZc3eC7xZzWw5+FJChhU1MuoVa9sN2UlOtKGfE
+         Cl49bBj5NJpe5T1UQpRLOWqnQfd/uTdWNMbu7ZrTtetP8o/fc2ZLP7OCPFeXlQXzDK
+         Lf4a93ByPWXtw==
+Date:   Mon, 25 Jan 2021 19:14:08 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v3 0/5] Some optimizations related to sgx
-Message-ID: <YA7+Sl1UYnwveHfE@kernel.org>
-References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Jethro Beekman <jethro@fortanix.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Subject: Re: [PATCH] x86/vdso: fix a warning with x32 compiler
+Message-ID: <YA78YPVWsE6WNHhd@kernel.org>
+References: <alpine.LRH.2.02.2101230548050.21951@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LRH.2.02.2101230548050.21951@file01.intranet.prod.int.rdu2.redhat.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Jan 24, 2021 at 02:29:02PM +0800, Tianjia Zhang wrote:
-> This is an optimization of a set of sgx-related codes, each of which
-> is independent of the patch. Because the second and third patches have
-> conflicting dependencies, these patches are put together.
+On Sat, Jan 23, 2021 at 05:50:31AM -0500, Mikulas Patocka wrote:
+> This patch fixes a warning:
+> arch/x86/entry/vdso/vdso2c.h:38:52: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘size_t’ {aka ‘unsigned int’} [-Wformat=]
+> when compiling the kernel with x32 compiler.
 > 
-> ---
-> v3 changes:
->   * split free_cnt count and spin lock optimization into two patches
+> The reason for the warning is that in x32 mode, size_t is defined as
+> unsigned, not unsigned long.
 > 
-> v2 changes:
->   * review suggested changes
-> 
-> Tianjia Zhang (5):
->   selftests/x86: Simplify the code to get vdso base address in sgx
->   x86/sgx: Optimize the locking range in sgx_sanitize_section()
->   x86/sgx: Optimize the free_cnt count in sgx_epc_section
->   x86/sgx: Allows ioctl PROVISION to execute before CREATE
->   x86/sgx: Remove redundant if conditions in sgx_encl_create
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> Fixes: 8382c668ce4f ("x86/vdso: Add support for exception fixup in vDSO functions")
 
-I remember asking about previous patches. I don't recall of getting
-any responses to anything basically.
+So... Why not %zu?
 
 /Jarkko
