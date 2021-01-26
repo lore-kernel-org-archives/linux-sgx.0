@@ -3,44 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED768C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EFAC433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE2012083E
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E9712082D
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391561AbhAZPuT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:50:19 -0500
-Received: from mga09.intel.com ([134.134.136.24]:32864 "EHLO mga09.intel.com"
+        id S2403768AbhAZPfR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:35:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:17317 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391373AbhAZPuC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:50:02 -0500
-IronPort-SDR: uvVkO7KbtFnAC4h40vAEvO39bRUSGU1jDksh5RailyKqNkiT6BBc+J4ij7aFadcnwO7dSyVsH9
- OFSaJJ5is8GQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="180065816"
+        id S2392778AbhAZPfP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 10:35:15 -0500
+IronPort-SDR: 7n3fh0Yo4kyIh9Zj3wB9hjPjhITLPHE7+xunB8phl61HDrY1SzMnSQmegpyy1eq2PVgWVCpo4j
+ ACfYxDfWyNpA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="167018166"
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="180065816"
+   d="scan'208";a="167018166"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:49:11 -0800
-IronPort-SDR: Y7qUeC2OstJ2WnAIVTpWZ+YY9tVz0gJ4/4nVMQ2QIVIlYAxknPlTqbgdzf577/+0eUqPUdmnqQ
- l/vNgl81ndAQ==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:34:35 -0800
+IronPort-SDR: 5Y67a1lGtnM/GGlijPMYZ33ctSO2F5/dR1x05PVxDmwyj+tVtMiu98DHOtmpIOPN0/Rv4XPCVn
+ +geS5Ew3kHJg==
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="369141431"
+   d="scan'208";a="369137935"
 Received: from ekfraser-mobl1.amr.corp.intel.com (HELO [10.209.173.94]) ([10.209.173.94])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:49:09 -0800
-Subject: Re: [RFC PATCH v3 05/27] x86/sgx: Add SGX_CHILD_PRESENT hardware
- error code
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:34:33 -0800
+Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
+ sub-features
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 References: <cover.1611634586.git.kai.huang@intel.com>
- <5a7c7715147f089d97ae4c033b74b0eafb8f3f89.1611634586.git.kai.huang@intel.com>
+ <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <3bdda0ea-3935-1a8a-8d11-b898371d6168@intel.com>
-Date:   Tue, 26 Jan 2021 07:49:09 -0800
+Message-ID: <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
+Date:   Tue, 26 Jan 2021 07:34:33 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <5a7c7715147f089d97ae4c033b74b0eafb8f3f89.1611634586.git.kai.huang@intel.com>
+In-Reply-To: <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,36 +99,28 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 1/26/21 1:30 AM, Kai Huang wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> From: Sean Christopherson <seanjc@google.com>
 > 
-> SGX virtualization requires to allocate "raw" EPC and use it as "virtual
-> EPC" for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
-> track how EPC pages are used in VM, e.g. (de)construction of enclaves,
-> so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
-> knowledge of which pages are SECS with non-zero child counts.
+> Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
+> features, since adding a new leaf for only two bits would be wasteful.
+> As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
+> guest, and to do so correctly needs to query hardware and kernel support
+> for SGX1 and SGX2.
 
-The grammar there is a bit questionable in spots.  Here's a rewrite:
+It's also not _just_ exposing the CPUID leaves.  There are some checks
+here when KVM is emulating some SGX instructions too, right?
 
-SGX can accurately track how bare-metal enclave pages are used.  This
-enables SECS to be specifically targeted and EREMOVE'd only after all
-child pages have been EREMOVE'd.  This ensures that bare-metal SGX will
-never encounter SGX_CHILD_PRESENT in normal operation.
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 84b887825f12..18b2d0c8bbbe 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -292,6 +292,8 @@
+>  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
+>  #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
+>  #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
+> +#define X86_FEATURE_SGX1		(11*32+ 8) /* Software Guard Extensions sub-feature SGX1 */
+> +#define X86_FEATURE_SGX2        	(11*32+ 9) /* Software Guard Extensions sub-feature SGX2 */
 
-Virtual EPC is different.  The host does not track how EPC pages are
-used by the guest, so it cannot guarantee EREMOVE success.  It might,
-for instance, encounter a SECS with a non-zero child count.
-
-Aside: Would it be *possible* for the host to figure out where the SECS
-pages are?  If not, we can say "host can not track" versus what I said:
-"host does not track".
-
-> Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
-> failures are expected, but only due to SGX_CHILD_PRESENT.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-
-With the improved changelog:
-
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+FWIW, I'm not sure how valuable it is to spell the SGX acronym out three
+times.  Can't we use those bytes to put something more useful in that
+comment?
