@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EFAC433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D47C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 16:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9712082D
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E3432082D
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 16:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403768AbhAZPfR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:35:17 -0500
-Received: from mga02.intel.com ([134.134.136.20]:17317 "EHLO mga02.intel.com"
+        id S2390408AbhAZQMV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 11:12:21 -0500
+Received: from mga11.intel.com ([192.55.52.93]:1690 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392778AbhAZPfP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:35:15 -0500
-IronPort-SDR: 7n3fh0Yo4kyIh9Zj3wB9hjPjhITLPHE7+xunB8phl61HDrY1SzMnSQmegpyy1eq2PVgWVCpo4j
- ACfYxDfWyNpA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="167018166"
+        id S2403926AbhAZQFa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 11:05:30 -0500
+IronPort-SDR: /JfHikwDSfEdOacNyOqKHSUll4dt+N0iZvtJqVPWy9jPp6imrr3wu651wthQgh4rZwmy2qUn3T
+ 3eCx3SD5EfuQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="176413932"
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="167018166"
+   d="scan'208";a="176413932"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:34:35 -0800
-IronPort-SDR: 5Y67a1lGtnM/GGlijPMYZ33ctSO2F5/dR1x05PVxDmwyj+tVtMiu98DHOtmpIOPN0/Rv4XPCVn
- +geS5Ew3kHJg==
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 08:04:38 -0800
+IronPort-SDR: syfrDdNL14eOwtMAhmqv70Yeyx20dYlltSmmu1ixHLNOv7NL0MnEXdBFSOXgsVi3EKeVfCi/O6
+ QYsEB0VtLRXQ==
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="369137935"
+   d="scan'208";a="369146692"
 Received: from ekfraser-mobl1.amr.corp.intel.com (HELO [10.209.173.94]) ([10.209.173.94])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:34:33 -0800
-Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 08:04:34 -0800
+Subject: Re: [RFC PATCH v3 04/27] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 References: <cover.1611634586.git.kai.huang@intel.com>
- <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
+ <d93adaec3d4371638f4ea2d9c6efb28e22eafcb3.1611634586.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
-Date:   Tue, 26 Jan 2021 07:34:33 -0800
+Message-ID: <8250aedb-a623-646d-071a-75ece2c41c09@intel.com>
+Date:   Tue, 26 Jan 2021 08:04:35 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
+In-Reply-To: <d93adaec3d4371638f4ea2d9c6efb28e22eafcb3.1611634586.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,28 +99,93 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 1/26/21 1:30 AM, Kai Huang wrote:
-> From: Sean Christopherson <seanjc@google.com>
+> From: Jarkko Sakkinen <jarkko@kernel.org>
 > 
-> Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-> features, since adding a new leaf for only two bits would be wasteful.
-> As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
-> guest, and to do so correctly needs to query hardware and kernel support
-> for SGX1 and SGX2.
+> Encapsulate the snippet in sgx_free_epc_page() concerning EREMOVE to
+> sgx_reset_epc_page(), which is a static helper function for
+> sgx_encl_release().  It's the only function existing, which deals with
+> initialized pages.
 
-It's also not _just_ exposing the CPUID leaves.  There are some checks
-here when KVM is emulating some SGX instructions too, right?
+Yikes.  I have no idea what that is saying.  Here's a rewrite:
 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 84b887825f12..18b2d0c8bbbe 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -292,6 +292,8 @@
->  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
->  #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
->  #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
-> +#define X86_FEATURE_SGX1		(11*32+ 8) /* Software Guard Extensions sub-feature SGX1 */
-> +#define X86_FEATURE_SGX2        	(11*32+ 9) /* Software Guard Extensions sub-feature SGX2 */
+EREMOVE takes a pages and removes any association between that page and
+an enclave.  It must be run on a page before it can be added into
+another enclave.  Currently, EREMOVE is run as part of pages being freed
+into the SGX page allocator.  It is not expected to fail.
 
-FWIW, I'm not sure how valuable it is to spell the SGX acronym out three
-times.  Can't we use those bytes to put something more useful in that
-comment?
+KVM does not track how guest pages are used, which means that SGX
+virtualization use of EREMOVE might fail.
+
+Break out the EREMOVE call from the SGX page allocator.  This will allow
+the SGX virtualization code to use the allocator directly.  (SGX/KVM
+will also introduce a more permissive EREMOVE helper).
+
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index ee50a5010277..a78b71447771 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -389,6 +389,16 @@ const struct vm_operations_struct sgx_vm_ops = {
+>  	.access = sgx_vma_access,
+>  };
+>  
+> +
+> +static void sgx_reset_epc_page(struct sgx_epc_page *epc_page)
+> +{
+> +	int ret;
+> +
+> +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
+> +	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
+> +		return;
+> +}
+> +
+>  /**
+>   * sgx_encl_release - Destroy an enclave instance
+>   * @kref:	address of a kref inside &sgx_encl
+> @@ -412,6 +422,7 @@ void sgx_encl_release(struct kref *ref)
+>  			if (sgx_unmark_page_reclaimable(entry->epc_page))
+>  				continue;
+>  
+> +			sgx_reset_epc_page(entry->epc_page);
+>  			sgx_free_epc_page(entry->epc_page);
+>  			encl->secs_child_cnt--;
+>  			entry->epc_page = NULL;
+> @@ -423,6 +434,7 @@ void sgx_encl_release(struct kref *ref)
+>  	xa_destroy(&encl->page_array);
+>  
+>  	if (!encl->secs_child_cnt && encl->secs.epc_page) {
+> +		sgx_reset_epc_page(encl->secs.epc_page);
+>  		sgx_free_epc_page(encl->secs.epc_page);
+>  		encl->secs.epc_page = NULL;
+>  	}
+> @@ -431,6 +443,7 @@ void sgx_encl_release(struct kref *ref)
+>  		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+>  					   list);
+>  		list_del(&va_page->list);
+> +		sgx_reset_epc_page(va_page->epc_page);
+>  		sgx_free_epc_page(va_page->epc_page);
+>  		kfree(va_page);
+>  	}
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index f330abdb5bb1..21c2ffa13870 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -598,16 +598,14 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+>   * sgx_free_epc_page() - Free an EPC page
+>   * @page:	an EPC page
+>   *
+> - * Call EREMOVE for an EPC page and insert it back to the list of free pages.
+> + * Put the EPC page back to the list of free pages. It's the callers
+
+"caller's"
+
+> + * responsibility to make sure that the page is in uninitialized state In other
+
+Period after "state", please.
+
+> + * words, do EREMOVE, EWB or whatever operation is necessary before calling
+> + * this function.
+>   */
+
+OK, so if you're going to say "the caller must put the page in
+uninitialized state", let's also add a comment to the place that *DO*
+that, like the shiny new sgx_reset_epc_page().
