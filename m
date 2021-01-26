@@ -7,43 +7,40 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EFCC433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6CEC43381
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83B3822D58
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1D822D58
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392362AbhAZPXY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:23:24 -0500
-Received: from mga03.intel.com ([134.134.136.65]:12914 "EHLO mga03.intel.com"
+        id S1730861AbhAZP3f (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:29:35 -0500
+Received: from mga03.intel.com ([134.134.136.65]:12823 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389107AbhAZJdk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 04:33:40 -0500
-IronPort-SDR: oDoNACMtwh34GLxH7zjnE3tbJnHffgnLxV5a6pg3mPfaFnZADBDFHofT0MNTrNpIZW7OUOiUAj
- F4NUnwACIGyQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="179955074"
+        id S1727430AbhAZJdW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 04:33:22 -0500
+IronPort-SDR: FluIt0koWGRaW2TgsJfC/reKmHtkWkl9tDZF6dhSZUuyo8b9HUZn21GNIAW0IEEUSZx0gNriDb
+ sXgSYE2QPh3A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="179954933"
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="179955074"
+   d="scan'208";a="179954933"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:32:56 -0800
-IronPort-SDR: HOvNgMUz6K8dqTavI8DlWWL7/xxsAkbLjYJqVsMrSLcRaoalyWIsnUJTrGyYhhavO84+bvx6jK
- wDu+15PpHmkQ==
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:31:43 -0800
+IronPort-SDR: 0/fIr8Rq8J4cWleJ2/+rvJdTyqMUrpxXdCwCJUJbcWZuf9tbW4bXDblo8TgbL/0gaFslx6ztP/
+ RNjC+D85kxAg==
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="577748034"
+   d="scan'208";a="577747757"
 Received: from ravivisw-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.124.51])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:32:51 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:31:40 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
         bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com, corbet@lwn.net,
-        Andy Lutomirski <luto@amacapital.net>,
         Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v3 27/27] KVM: x86: Add capability to grant VM access to privileged SGX attribute
-Date:   Tue, 26 Jan 2021 22:32:45 +1300
-Message-Id: <14d540efe5cdbd4dd5df1ea17b999b6089654d11.1611634586.git.kai.huang@intel.com>
+Subject: [RFC PATCH v3 14/27] x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
+Date:   Tue, 26 Jan 2021 22:31:06 +1300
+Message-Id: <e807033e3d56ede1177d7a1af34477678bfbfff9.1611634586.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1611634586.git.kai.huang@intel.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
@@ -55,135 +52,153 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add a capability, KVM_CAP_SGX_ATTRIBUTE, that can be used by userspace
-to grant a VM access to a priveleged attribute, with args[0] holding a
-file handle to a valid SGX attribute file.
+The bare-metal kernel must intercept ECREATE to be able to impose policies
+on guests.  When it does this, the bare-metal kernel runs ECREATE against
+the userspace mapping of the virtualized EPC.
 
-The SGX subsystem restricts access to a subset of enclave attributes to
-provide additional security for an uncompromised kernel, e.g. to prevent
-malware from using the PROVISIONKEY to ensure its nodes are running
-inside a geniune SGX enclave and/or to obtain a stable fingerprint.
+Provide wrappers around __ecreate() and __einit() to hide the ugliness
+of overloading the ENCLS return value to encode multiple error formats
+in a single int.  KVM will trap-and-execute ECREATE and EINIT as part
+of SGX virtualization, and on an exception, KVM needs the trapnr so that
+it can inject the correct fault into the guest.
 
-To prevent userspace from circumventing such restrictions by running an
-enclave in a VM, KVM restricts guest access to privileged attributes by
-default.
-
-Cc: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
- arch/x86/kvm/cpuid.c           |  2 +-
- arch/x86/kvm/x86.c             | 22 ++++++++++++++++++++++
- include/uapi/linux/kvm.h       |  1 +
- 4 files changed, 47 insertions(+), 1 deletion(-)
+v2->v3:
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index c136e254b496..47c7c7c33025 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -6037,6 +6037,29 @@ KVM_EXIT_X86_RDMSR and KVM_EXIT_X86_WRMSR exit notifications which user space
- can then handle to implement model specific MSR handling and/or user notifications
- to inform a user that an MSR was not handled.
- 
-+7.22 KVM_CAP_SGX_ATTRIBUTE
-+----------------------
+ - Added kdoc for sgx_virt_ecreate() and sgx_virt_einit(), per Jarkko.
+ - Changed to use CONFIG_X86_SGX_KVM.
+
+---
+ arch/x86/include/asm/sgx.h     | 16 ++++++
+ arch/x86/kernel/cpu/sgx/virt.c | 93 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+ create mode 100644 arch/x86/include/asm/sgx.h
+
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+new file mode 100644
+index 000000000000..8a3ea3e1efbe
+--- /dev/null
++++ b/arch/x86/include/asm/sgx.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_SGX_H
++#define _ASM_X86_SGX_H
 +
-+:Architectures: x86
-+:Target: VM
-+:Parameters: args[0] is a file handle of a SGX attribute file in securityfs
-+:Returns: 0 on success, -EINVAL if the file handle is invalid or if a requested
-+          attribute is not supported by KVM.
++#include <linux/types.h>
 +
-+KVM_CAP_SGX_ATTRIBUTE enables a userspace VMM to grant a VM access to one or
-+more priveleged enclave attributes.  args[0] must hold a file handle to a valid
-+SGX attribute file corresponding to an attribute that is supported/restricted
-+by KVM (currently only PROVISIONKEY).
-+
-+The SGX subsystem restricts access to a subset of enclave attributes to provide
-+additional security for an uncompromised kernel, e.g. use of the PROVISIONKEY
-+is restricted to deter malware from using the PROVISIONKEY to obtain a stable
-+system fingerprint.  To prevent userspace from circumventing such restrictions
-+by running an enclave in a VM, KVM prevents access to privileged attributes by
-+default.
-+
-+See Documentation/x86/sgx/2.Kernel-internals.rst for more details.
-+
- 8. Other capabilities.
- ======================
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 04b2f5de2d7b..ad00a1af1545 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -833,7 +833,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 		 * expected to derive it from supported XCR0.
- 		 */
- 		entry->eax &= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
--			      /* PROVISIONKEY | */ SGX_ATTR_EINITTOKENKEY |
-+			      SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINITTOKENKEY |
- 			      SGX_ATTR_KSS;
- 		entry->ebx &= 0;
- 		break;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5ca7b181a3ae..3d1b4113a57b 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -74,6 +74,8 @@
- #include <asm/tlbflush.h>
- #include <asm/intel_pt.h>
- #include <asm/emulate_prefix.h>
-+#include <asm/sgx.h>
-+#include <asm/sgx_arch.h>
- #include <clocksource/hyperv_timer.h>
- 
- #define CREATE_TRACE_POINTS
-@@ -3767,6 +3769,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_X86_USER_SPACE_MSR:
- 	case KVM_CAP_X86_MSR_FILTER:
- 	case KVM_CAP_ENFORCE_PV_FEATURE_CPUID:
 +#ifdef CONFIG_X86_SGX_KVM
-+	case KVM_CAP_SGX_ATTRIBUTE:
++struct sgx_pageinfo;
++
++int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
++		     int *trapnr);
++int sgx_virt_einit(void __user *sigstruct, void __user *token,
++		   void __user *secs, u64 *lepubkeyhash, int *trapnr);
 +#endif
- 		r = 1;
- 		break;
- 	case KVM_CAP_SYNC_REGS:
-@@ -5295,6 +5300,23 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		kvm->arch.user_space_msr_mask = cap->args[0];
- 		r = 0;
- 		break;
-+#ifdef CONFIG_X86_SGX_KVM
-+	case KVM_CAP_SGX_ATTRIBUTE: {
-+		unsigned long allowed_attributes = 0;
 +
-+		r = sgx_set_attribute(&allowed_attributes, cap->args[0]);
-+		if (r)
-+			break;
++#endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index e1ad7856d878..0f5b0e4e33dd 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -252,3 +252,96 @@ int __init sgx_vepc_init(void)
+ 
+ 	return misc_register(&sgx_vepc_dev);
+ }
 +
-+		/* KVM only supports the PROVISIONKEY privileged attribute. */
-+		if ((allowed_attributes & SGX_ATTR_PROVISIONKEY) &&
-+		    !(allowed_attributes & ~SGX_ATTR_PROVISIONKEY))
-+			kvm->arch.sgx_provisioning_allowed = true;
-+		else
-+			r = -EINVAL;
-+		break;
++/**
++ * sgx_virt_ecreate() - Run ECREATE on behalf of guest
++ * @pageinfo:	Pointer to PAGEINFO structure
++ * @secs:	Userspace pointer to SECS page
++ * @trapnr:	trap number injected to guest in case of ECREATE error
++ *
++ * Run ECREATE on behalf of guest after KVM traps ECREATE for the purpose
++ * of enforcing policies of guest's enclaves, and return the trap number
++ * which should be injected to guest in case of any ECREATE error.
++ *
++ * Return:
++ * - 0: 	ECREATE was successful.
++ * - -EFAULT:	ECREATE returned error.
++ */
++int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
++		     int *trapnr)
++{
++	int ret;
++
++	/*
++	 * @secs is userspace address, and it's not guaranteed @secs points at
++	 * an actual EPC page. It's also possible to generate a kernel mapping
++	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
++	 * simpler.
++	 */
++	__uaccess_begin();
++	ret = __ecreate(pageinfo, (void *)secs);
++	__uaccess_end();
++
++	if (encls_faulted(ret)) {
++		*trapnr = ENCLS_TRAPNR(ret);
++		return -EFAULT;
 +	}
-+#endif
- 	default:
- 		r = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 374c67875cdb..e17bda18a9b4 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1058,6 +1058,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_ENFORCE_PV_FEATURE_CPUID 190
- #define KVM_CAP_SYS_HYPERV_CPUID 191
- #define KVM_CAP_DIRTY_LOG_RING 192
-+#define KVM_CAP_SGX_ATTRIBUTE 200
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
++
++	/* ECREATE doesn't return an error code, it faults or succeeds. */
++	WARN_ON_ONCE(ret);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(sgx_virt_ecreate);
++
++static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
++			    void __user *secs)
++{
++	int ret;
++
++	__uaccess_begin();
++	ret =  __einit((void *)sigstruct, (void *)token, (void *)secs);
++	__uaccess_end();
++	return ret;
++}
++
++/**
++ * sgx_virt_ecreate() - Run EINIT on behalf of guest
++ * @sigstruct:		Userspace pointer to SIGSTRUCT structure
++ * @token:		Userspace pointer to EINITTOKEN structure
++ * @secs:		Userspace pointer to SECS page
++ * @lepubkeyhash:	Pointer to guest's *virtual* SGX_LEPUBKEYHASH MSR
++ * 			values
++ * @trapnr:		trap number injected to guest in case of EINIT error
++ *
++ * Run EINIT on behalf of guest after KVM traps EINIT. If SGX_LC is available
++ * in host, bare-metal driver may rewrite the hardware values, therefore KVM
++ * needs to update hardware values to guest's virtual MSR values in order to
++ * ensure EINIT is executed with expected hardware values.
++ *
++ * Return:
++ * - 0: 	EINIT was successful.
++ * - -EFAULT:	EINIT returned error.
++ */
++int sgx_virt_einit(void __user *sigstruct, void __user *token,
++		   void __user *secs, u64 *lepubkeyhash, int *trapnr)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
++		ret = __sgx_virt_einit(sigstruct, token, secs);
++	} else {
++		preempt_disable();
++
++		sgx_update_lepubkeyhash(lepubkeyhash);
++
++		ret = __sgx_virt_einit(sigstruct, token, secs);
++		preempt_enable();
++	}
++
++	if (encls_faulted(ret)) {
++		*trapnr = ENCLS_TRAPNR(ret);
++		return -EFAULT;
++	}
++	return ret;
++}
++EXPORT_SYMBOL_GPL(sgx_virt_einit);
 -- 
 2.29.2
 
