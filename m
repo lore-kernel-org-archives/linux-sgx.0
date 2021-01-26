@@ -2,45 +2,45 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68CCC433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AB7C433E6
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7586423101
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B332121D42
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391702AbhAZPgB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:36:01 -0500
-Received: from mga03.intel.com ([134.134.136.65]:61737 "EHLO mga03.intel.com"
+        id S2389107AbhAZPlj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:41:39 -0500
+Received: from mga06.intel.com ([134.134.136.31]:59486 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391328AbhAZPfw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:35:52 -0500
-IronPort-SDR: PuqE3nbjvYzRg++Qi5txvcUjqJ0ht5F2BJh+Vxrt8F/N+emTEP9EcOqSx7nUV6ykcn2mIO7WVe
- ToEIF0mMI8xA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="179997998"
+        id S2392365AbhAZPkM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 10:40:12 -0500
+IronPort-SDR: /wZY3hO8ruwtY9mp2k8U4GvUfiUgZsV6bAwpfRQ8nga9ZWspsZshutu6D4gBJkmhb3JAMMHBob
+ ZQ3yiqNC7eMA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="241448361"
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="179997998"
+   d="scan'208";a="241448361"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:35:11 -0800
-IronPort-SDR: 1VBHt18OhjldsiDruJD9nya9QsUgOciXi2zsnzEd7wb+mUJkFnNmMlBgPYglGI34peAa1q/K1t
- FUzjXFV1OTUQ==
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:39:31 -0800
+IronPort-SDR: 7bM+3D0caAg+WzEbRwkav4Sm8LT7rWTeerVcjpdt0m1aBORg+6RjJSSW/FUO8oCK9+8PGtc8zi
+ vXRK+isJlTng==
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="369138048"
+   d="scan'208";a="369138873"
 Received: from ekfraser-mobl1.amr.corp.intel.com (HELO [10.209.173.94]) ([10.209.173.94])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:35:10 -0800
-Subject: Re: [RFC PATCH v3 02/27] x86/cpufeatures: Make SGX_LC feature bit
- depend on SGX bit
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 07:39:30 -0800
+Subject: Re: [RFC PATCH v3 03/27] x86/sgx: Remove a warn from
+ sgx_free_epc_page()
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 References: <cover.1611634586.git.kai.huang@intel.com>
- <bdca25f260a895fcc39b2fb59e1155102a210aa0.1611634586.git.kai.huang@intel.com>
+ <36e999dce8a1a4efb8ca69c9a6fbe3fa63305e08.1611634586.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,28 +85,47 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <81778afc-60aa-2766-d17c-b7b5f6464477@intel.com>
-Date:   Tue, 26 Jan 2021 07:35:11 -0800
+Message-ID: <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
+Date:   Tue, 26 Jan 2021 07:39:30 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <bdca25f260a895fcc39b2fb59e1155102a210aa0.1611634586.git.kai.huang@intel.com>
+In-Reply-To: <36e999dce8a1a4efb8ca69c9a6fbe3fa63305e08.1611634586.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 1/26/21 1:30 AM, Kai Huang wrote:
-> Move SGX_LC feature bit to CPUID dependency table as well, along with
-> new added SGX1 and SGX2 bit, to make clearing all SGX feature bits
-> easier. Also remove clear_sgx_caps() since it is just a wrapper of
-> setup_clear_cpu_cap(X86_FEATURE_SGX) now.
+> Remove SGX_EPC_PAGE_RECLAIMER_TRACKED check and warning.  This cannot
+> happen, as enclave pages are freed only at the time when encl->refcount
+> triggers, i.e. when both VFS and the page reclaimer have given up on
+> their references.
 > 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 8df81a3ed945..f330abdb5bb1 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -605,8 +605,6 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+>  	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
+>  	int ret;
+>  
+> -	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
 
-Looks good:
+I'm all for cleaning up silly, useless warnings.  But, don't we usually
+put warnings in for things that we don't expect to be able to happen?
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+In other words, I'm fine with removing this if it hasn't been a valuable
+warning and we don't expect it to become a valuable warning.  But, the
+changelog doesn't say that.  It also doesn't explain what this patch is
+doing in this series.
+
+Why is this her?
