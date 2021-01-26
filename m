@@ -2,202 +2,110 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27442C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 16:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 693B6C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 17:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC3B12074A
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 16:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F31C2083E
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 17:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390142AbhAZQ1a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 11:27:30 -0500
-Received: from mga06.intel.com ([134.134.136.31]:64033 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405307AbhAZQ1U (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 11:27:20 -0500
-IronPort-SDR: kFkIZKoKRDFSeBncQRLLxfZgQTh747oMaR/CYhxdnakeifPT151Ec1laa11HQpOCafaB3LAV1v
- dRV5gm+1RIBg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="241458294"
-X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="241458294"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 08:26:23 -0800
-IronPort-SDR: BtBCh3ShU89UuBNymlK0+t8vwR12RjTCD9XTyMw7JUgr/JDYw5YYiIH5AhOXOJEOHoMhqxBx1W
- hIW7wAwjlx+Q==
-X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="369154366"
-Received: from ekfraser-mobl1.amr.corp.intel.com (HELO [10.209.173.94]) ([10.209.173.94])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 08:26:22 -0800
-Subject: Re: [RFC PATCH v3 07/27] x86/cpu/intel: Allow SGX virtualization
- without Launch Control support
-To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de
+        id S1728840AbhAZRUn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:20:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43882 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392971AbhAZQaz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 26 Jan 2021 11:30:55 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAE9DC061574
+        for <linux-sgx@vger.kernel.org>; Tue, 26 Jan 2021 08:30:14 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id e9so2532264pjj.0
+        for <linux-sgx@vger.kernel.org>; Tue, 26 Jan 2021 08:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=PaCzCYCH4aX6Kv1jMmoIcCojESLo94WkAXAYpiqsmdk=;
+        b=RGq1J9JqSlV5ElJQhgbRf54UqcTFczVkcyVGQuLoiue+YDzh+JSKx55lyZrvbEs+EL
+         kUdM4CYnu+FMiisy6t0l+ULhDp8YDOJFJdbbs/Qsr6L+lgKyC4N/njPLagnNIv1KjUqN
+         79fW1VXUcxxlm1zc2wm84yNjalDPaHuHvKp9gTe+LecWcdur4CTFPa3TBAyRNASIWLpa
+         jxZV2i2yeGez5sOkZy2611JJp1eWG2X/m95W80B71A4zCS2oI7q0C1JrO0gs4GngZMPG
+         kB0OK7LP8WUkvV8QkfLFjYXXmKwbNNkC8X/iFP4GscoYsILs0edXrPDVsKF6/w1R9foU
+         06HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PaCzCYCH4aX6Kv1jMmoIcCojESLo94WkAXAYpiqsmdk=;
+        b=XRjIG9dT1xtRsnfjasV6zwiY2LHMJh2P2C3HJ/JWU9eSw3xvtGn2IfBBU1k9L9B/CD
+         ahr3REqL+G68fdgOMzRpCTupYtrb7EnWsLLc1vqEZAjTINXi6/xLgIhaeoRrMNmIAYLo
+         HkizGUvAyGxrqD0rlMk96ibt2hcjNK1WtOWw73sNs8JpzIObQm40vW/8GgI116eonSdp
+         JKNoFns1YFrBF+Kn8XbW9y1tk/MzzEzNLmknZU48S1PAWsGLkxh4QgojZsw0Gr1bSeN5
+         M4T8hcZafkiB9SivgXzcAGAIoT+Yo3wokrFu2gV8d2fynfsKndR/TWfaQXkQrscF22n8
+         QJPA==
+X-Gm-Message-State: AOAM533R4bstf35+0y6bKhymiARhMNq3mChH5KklQpxw5piEySFzXcdt
+        Sm2sB403e+VZoacLi6xNWJSoLA==
+X-Google-Smtp-Source: ABdhPJwsKX0DV4kpdoFHr+1Rt0SRbjKnOiNtYc6LXPTb0BN3J77r+R9VhmAyqGrQhmlCaGL4aIc0uA==
+X-Received: by 2002:a17:90a:4504:: with SMTP id u4mr604587pjg.218.1611678614297;
+        Tue, 26 Jan 2021 08:30:14 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:1ea0:b8ff:fe73:50f5])
+        by smtp.gmail.com with ESMTPSA id v9sm2656146pju.33.2021.01.26.08.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 08:30:13 -0800 (PST)
+Date:   Tue, 26 Jan 2021 08:30:07 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
+        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 03/27] x86/sgx: Remove a warn from
+ sgx_free_epc_page()
+Message-ID: <YBBDj4zCDvbgLgS0@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
- <ae05882235e61fd8e7a56e37b0d9c044781bd767.1611634586.git.kai.huang@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <f23b9893-015b-a9cb-de93-1a4978981e83@intel.com>
-Date:   Tue, 26 Jan 2021 08:26:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <36e999dce8a1a4efb8ca69c9a6fbe3fa63305e08.1611634586.git.kai.huang@intel.com>
+ <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <ae05882235e61fd8e7a56e37b0d9c044781bd767.1611634586.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/26/21 1:30 AM, Kai Huang wrote:
-> --- a/arch/x86/kernel/cpu/feat_ctl.c
-> +++ b/arch/x86/kernel/cpu/feat_ctl.c
-> @@ -105,7 +105,8 @@ early_param("nosgx", nosgx);
->  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
->  {
->  	bool tboot = tboot_enabled();
-> -	bool enable_sgx;
-> +	bool enable_vmx;
-> +	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
->  	u64 msr;
->  
->  	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
-> @@ -114,13 +115,22 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
->  		return;
->  	}
->  
-> +	enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
-> +		     IS_ENABLED(CONFIG_KVM_INTEL);
+On Tue, Jan 26, 2021, Dave Hansen wrote:
+> On 1/26/21 1:30 AM, Kai Huang wrote:
+> > Remove SGX_EPC_PAGE_RECLAIMER_TRACKED check and warning.  This cannot
+> > happen, as enclave pages are freed only at the time when encl->refcount
+> > triggers, i.e. when both VFS and the page reclaimer have given up on
+> > their references.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/main.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > index 8df81a3ed945..f330abdb5bb1 100644
+> > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > @@ -605,8 +605,6 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+> >  	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
+> >  	int ret;
+> >  
+> > -	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> 
+> I'm all for cleaning up silly, useless warnings.  But, don't we usually
+> put warnings in for things that we don't expect to be able to happen?
+> 
+> In other words, I'm fine with removing this if it hasn't been a valuable
+> warning and we don't expect it to become a valuable warning.
 
-The reason it's called 'enable_sgx' below is because this code is
-actually going to "enable sgx".  This code does not "enable vmx".  That
-makes this a badly-named variable.  "vmx_enabled" or "vmx_available"
-would be better.
-
->  	/*
-> -	 * Enable SGX if and only if the kernel supports SGX and Launch Control
-> -	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
-> +	 * Enable SGX if and only if the kernel supports SGX.  Require Launch
-> +	 * Control support if SGX virtualization is *not* supported, i.e.
-> +	 * disable SGX if the LE hash MSRs can't be written and SGX can't be
-> +	 * exposed to a KVM guest (which might support non-LC configurations).
->  	 */
-
-I hate this comment.
-
-	/*
-	 * Separate out bare-metal SGX enabling from KVM.  This allows
-	 * KVM guests to use SGX even if the kernel refuses to use it on
-	 * bare-metal.  This happens if flexible Faunch Control is not
-	 * available.
-	 *
-
-> -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
-> -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
-> -		     IS_ENABLED(CONFIG_X86_SGX);
-> +	enable_sgx_any = cpu_has(c, X86_FEATURE_SGX) &&
-> +			 cpu_has(c, X86_FEATURE_SGX1) &&
-> +			 IS_ENABLED(CONFIG_X86_SGX);
-
-The X86_FEATURE_SGX1 check seems to have snuck in here.  Why?
-
-> +	enable_sgx_driver = enable_sgx_any &&
-> +			    cpu_has(c, X86_FEATURE_SGX_LC);
-> +	enable_sgx_kvm = enable_sgx_any && enable_vmx &&
-> +			  IS_ENABLED(CONFIG_X86_SGX_KVM);
->  
->  	if (msr & FEAT_CTL_LOCKED)
->  		goto update_caps;
-> @@ -136,15 +146,18 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
->  	 * i.e. KVM is enabled, to avoid unnecessarily adding an attack vector
->  	 * for the kernel, e.g. using VMX to hide malicious code.
->  	 */
-> -	if (cpu_has(c, X86_FEATURE_VMX) && IS_ENABLED(CONFIG_KVM_INTEL)) {
-> +	if (enable_vmx) {
->  		msr |= FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX;
->  
->  		if (tboot)
->  			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
->  	}
->  
-> -	if (enable_sgx)
-> -		msr |= FEAT_CTL_SGX_ENABLED | FEAT_CTL_SGX_LC_ENABLED;
-> +	if (enable_sgx_kvm || enable_sgx_driver) {
-> +		msr |= FEAT_CTL_SGX_ENABLED;
-> +		if (enable_sgx_driver)
-> +			msr |= FEAT_CTL_SGX_LC_ENABLED;
-> +	}
->  
->  	wrmsrl(MSR_IA32_FEAT_CTL, msr);
->  
-> @@ -167,10 +180,29 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
->  	}
->  
->  update_sgx:
-> -	if (!(msr & FEAT_CTL_SGX_ENABLED) ||
-> -	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
-> -		if (enable_sgx)
-> -			pr_err_once("SGX disabled by BIOS\n");
-> +	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
-> +		if (enable_sgx_kvm || enable_sgx_driver)
-> +			pr_err_once("SGX disabled by BIOS.\n");
->  		clear_cpu_cap(c, X86_FEATURE_SGX);
-> +		return;
-> +	}
-
-
-Isn't there a pr_fmt here already?  Won't these just look like:
-
-	sgx: SGX disabled by BIOS.
-
-That seems a bit silly.
+Ya, I don't understand the motivation for removing this warning.  I tripped it
+more than once in the past during one of the many rebases of the virtual EPC
+and EPC cgroup branches.
