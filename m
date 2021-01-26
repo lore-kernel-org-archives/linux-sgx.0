@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5090C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 14:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38522C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF5132251F
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 14:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02EDC22B37
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 15:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391172AbhAZOz5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 09:55:57 -0500
-Received: from mga05.intel.com ([192.55.52.43]:12992 "EHLO mga05.intel.com"
+        id S2389919AbhAZPTx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:19:53 -0500
+Received: from mga05.intel.com ([192.55.52.43]:13005 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391060AbhAZJes (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 04:34:48 -0500
-IronPort-SDR: IdokXjxQGRoUVybDNpO+cvK5K5CtMRB4gQbYLn0mUR+3lMCT1rNX0nkDhnPDlt3dWRtPnZ6tWj
- A2Yup4TALosg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="264698072"
+        id S2389816AbhAZJeG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 04:34:06 -0500
+IronPort-SDR: 9ah4o5nNs+/rlAyp95ALBDplHujMWLLxDgMPPdgDTrBcDeIjwcbAwhzhnyU8e8MRs1XaQHnuH0
+ CSxIZ/BAFedQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="264698045"
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="264698072"
+   d="scan'208";a="264698045"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:32:27 -0800
-IronPort-SDR: CCRVZ6QjiOqqzBidCv7gw8QDKzI2BREd9atcQ+vh/VFF2UB+qKHlo/CmMVyCP+31qQjXRVLF3i
- XOTqwKubqQ5A==
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:32:18 -0800
+IronPort-SDR: B8Ifyxrn7zaSCQfMcil6x6dG/Ne9fY6Hbx22hS3YO8GVkq2ANAMUP25KwLVJnJNhOQjqvoz42r
+ e7MQ6HIr18VA==
 X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="577747936"
+   d="scan'208";a="577747907"
 Received: from ravivisw-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.124.51])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:32:23 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 01:32:14 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -39,9 +39,9 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
         wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v3 22/27] KVM: VMX: Frame in ENCLS handler for SGX virtualization
-Date:   Tue, 26 Jan 2021 22:31:43 +1300
-Message-Id: <d2ddc82cbc40bd30ab605db399184ec28178fddf.1611634586.git.kai.huang@intel.com>
+Subject: [RFC PATCH v3 20/27] KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
+Date:   Tue, 26 Jan 2021 22:31:41 +1300
+Message-Id: <86991182a60c6ec542464380038da3bed299d0ab.1611634586.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1611634586.git.kai.huang@intel.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
@@ -51,149 +51,63 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Sean Christopherson <seanjc@google.com>
 
-Introduce sgx.c and sgx.h, along with the framework for handling ENCLS
-VM-Exits.  Add a bool, enable_sgx, that will eventually be wired up to a
-module param to control whether or not SGX virtualization is enabled at
-runtime.
+Define a new KVM-only feature word for advertising and querying SGX
+sub-features in CPUID.0x12.0x0.EAX.  Because SGX1 and SGX2 are scattered
+in the kernel's feature word, they need to be translated so that the
+bit numbers match those of hardware.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kvm/Makefile  |  2 ++
- arch/x86/kvm/vmx/sgx.c | 51 ++++++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/vmx/sgx.h | 15 +++++++++++++
- arch/x86/kvm/vmx/vmx.c |  9 +++++---
- 4 files changed, 74 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/kvm/vmx/sgx.c
- create mode 100644 arch/x86/kvm/vmx/sgx.h
+ arch/x86/kvm/cpuid.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-index 4bd14ab01323..5c86edc73b72 100644
---- a/arch/x86/kvm/Makefile
-+++ b/arch/x86/kvm/Makefile
-@@ -21,6 +21,8 @@ kvm-y			+= x86.o emulate.o i8259.o irq.o lapic.o \
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 2041e2f07347..f55701ef58fc 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -13,13 +13,18 @@
+  * "bug" caps, but KVM doesn't use those.
+  */
+ enum kvm_only_cpuid_leafs {
+-	NR_KVM_CPU_CAPS = NCAPINTS,
++	CPUID_12_EAX	 = NCAPINTS,
++	NR_KVM_CPU_CAPS,
  
- kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o \
- 			   vmx/evmcs.o vmx/nested.o vmx/posted_intr.o
-+kvm-intel-$(CONFIG_X86_SGX_KVM)	+= vmx/sgx.o
-+
- kvm-amd-y		+= svm/svm.o svm/vmenter.o svm/pmu.o svm/nested.o svm/avic.o svm/sev.o
+ 	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
+ };
  
- obj-$(CONFIG_KVM)	+= kvm.o
-diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
-new file mode 100644
-index 000000000000..693bf7735308
---- /dev/null
-+++ b/arch/x86/kvm/vmx/sgx.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*  Copyright(c) 2016-20 Intel Corporation. */
-+
-+#include <asm/sgx.h>
-+#include <asm/sgx_arch.h>
-+
-+#include "cpuid.h"
-+#include "kvm_cache_regs.h"
-+#include "sgx.h"
-+#include "vmx.h"
-+#include "x86.h"
-+
-+bool __read_mostly enable_sgx;
-+
-+static inline bool encls_leaf_enabled_in_guest(struct kvm_vcpu *vcpu, u32 leaf)
-+{
-+	if (!enable_sgx || !guest_cpuid_has(vcpu, X86_FEATURE_SGX))
-+		return false;
-+
-+	if (leaf >= ECREATE && leaf <= ETRACK)
-+		return guest_cpuid_has(vcpu, X86_FEATURE_SGX1);
-+
-+	if (leaf >= EAUG && leaf <= EMODT)
-+		return guest_cpuid_has(vcpu, X86_FEATURE_SGX2);
-+
-+	return false;
-+}
-+
-+static inline bool sgx_enabled_in_guest_bios(struct kvm_vcpu *vcpu)
-+{
-+	const u64 bits = FEAT_CTL_SGX_ENABLED | FEAT_CTL_LOCKED;
-+
-+	return (to_vmx(vcpu)->msr_ia32_feature_control & bits) == bits;
-+}
-+
-+int handle_encls(struct kvm_vcpu *vcpu)
-+{
-+	u32 leaf = (u32)vcpu->arch.regs[VCPU_REGS_RAX];
-+
-+	if (!encls_leaf_enabled_in_guest(vcpu, leaf)) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+	} else if (!sgx_enabled_in_guest_bios(vcpu)) {
-+		kvm_inject_gp(vcpu, 0);
-+	} else {
-+		WARN(1, "KVM: unexpected exit on ENCLS[%u]", leaf);
-+		vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
-+		vcpu->run->hw.hardware_exit_reason = EXIT_REASON_ENCLS;
-+		return 0;
-+	}
-+	return 1;
-+}
-diff --git a/arch/x86/kvm/vmx/sgx.h b/arch/x86/kvm/vmx/sgx.h
-new file mode 100644
-index 000000000000..6e17ecd4aca3
---- /dev/null
-+++ b/arch/x86/kvm/vmx/sgx.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __KVM_X86_SGX_H
-+#define __KVM_X86_SGX_H
-+
-+#include <linux/kvm_host.h>
-+
-+#ifdef CONFIG_X86_SGX_KVM
-+extern bool __read_mostly enable_sgx;
-+
-+int handle_encls(struct kvm_vcpu *vcpu);
-+#else
-+#define enable_sgx 0
-+#endif
-+
-+#endif /* __KVM_X86_SGX_H */
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4cb8a3f1374c..dbe585329842 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -56,6 +56,7 @@
- #include "mmu.h"
- #include "nested.h"
- #include "pmu.h"
-+#include "sgx.h"
- #include "trace.h"
- #include "vmcs.h"
- #include "vmcs12.h"
-@@ -5623,16 +5624,18 @@ static int handle_vmx_instruction(struct kvm_vcpu *vcpu)
- 	return 1;
- }
+ #define X86_KVM_FEATURE(w, f)		((w)*32 + (f))
  
-+#ifndef CONFIG_X86_SGX_KVM
- static int handle_encls(struct kvm_vcpu *vcpu)
- {
- 	/*
--	 * SGX virtualization is not yet supported.  There is no software
--	 * enable bit for SGX, so we have to trap ENCLS and inject a #UD
--	 * to prevent the guest from executing ENCLS.
-+	 * SGX virtualization is disabled.  There is no software enable bit for
-+	 * SGX, so KVM intercepts all ENCLS leafs and injects a #UD to prevent
-+	 * the guest from executing ENCLS (when SGX is supported by hardware).
- 	 */
- 	kvm_queue_exception(vcpu, UD_VECTOR);
- 	return 1;
- }
-+#endif /* CONFIG_X86_SGX_KVM */
++/* Intel-defined SGX sub-features, CPUID level 0x12 (EAX). */
++#define __X86_FEATURE_SGX1		X86_KVM_FEATURE(CPUID_12_EAX, 0)
++#define __X86_FEATURE_SGX2		X86_KVM_FEATURE(CPUID_12_EAX, 1)
++
+ extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ void kvm_set_cpu_caps(void);
+ 
+@@ -76,6 +81,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
+ 	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
+ 	[CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX},
++	[CPUID_12_EAX]        = {0x00000012, 0, CPUID_EAX},
+ };
  
  /*
-  * The exit handlers return 1 if the exit was handled fully and guest execution
+@@ -102,6 +108,11 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+  */
+ static __always_inline u32 __feature_translate(int x86_feature)
+ {
++	if (x86_feature == X86_FEATURE_SGX1)
++		return __X86_FEATURE_SGX1;
++	else if (x86_feature == X86_FEATURE_SGX2)
++		return __X86_FEATURE_SGX2;
++
+ 	return x86_feature;
+ }
+ 
 -- 
 2.29.2
 
