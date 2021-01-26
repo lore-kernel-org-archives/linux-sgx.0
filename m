@@ -2,111 +2,95 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166AEC433E6
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 23:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93806C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 23:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4CBD20663
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 23:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 677AD20663
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jan 2021 23:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbhAZXDk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 18:03:40 -0500
-Received: from mga05.intel.com ([192.55.52.43]:26548 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729686AbhAZREy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 12:04:54 -0500
-IronPort-SDR: yXWIS0fpg/ull7Tuiy5KHnxvdHdrk899Yw29l0p96mtu7fGzOXX6dS8vhfg2fBXjpDJH+li5Q7
- oRhH2hzO6wAA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="264758277"
-X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="264758277"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 09:03:25 -0800
-IronPort-SDR: LAkPkzsUHe/EHQWwNtYjCTG7NiK7ch0BYgkP+6XfO9LWj3BDb4u5r1f+y+E5BBf35Hrb5XyonL
- 2zuAKGui4Sdg==
-X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
-   d="scan'208";a="369168525"
-Received: from ekfraser-mobl1.amr.corp.intel.com (HELO [10.209.173.94]) ([10.209.173.94])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 09:03:22 -0800
-Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
- when SGX driver is disabled
-To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-References: <cover.1611634586.git.kai.huang@intel.com>
- <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <24778167-cbd4-1dc5-5b81-e8a49266d1f8@intel.com>
-Date:   Tue, 26 Jan 2021 09:03:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
+        id S1726569AbhAZXDo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 18:03:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36902 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394160AbhAZSKt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 26 Jan 2021 13:10:49 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57EA0C0613ED
+        for <linux-sgx@vger.kernel.org>; Tue, 26 Jan 2021 10:10:09 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id o16so2331816pgg.5
+        for <linux-sgx@vger.kernel.org>; Tue, 26 Jan 2021 10:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=9qXjNZouu+T2bptO4V2q/fEYj1NRhCbZOJSzY37VnAM=;
+        b=kxAv0xKVGG7BwnWPjOQDwlrxfGCTuOtEvgV365hIsKf5iiADFSVyEhvSGIvKkoMLm5
+         GDybLvjtHpDbuPduKHzEf+JyVancUCfRvTXgfF9QES6GhG6l+VXi75cfwnWQB4zZUqoL
+         jwMAuAqRnbhLXuH1CzwE+uFP0hl9ikaC5h10PPCWzziLnmQ2i71NlILSUb+3v1EYoE29
+         fVwnfLMS8launbZjAvVagJoeHiYpatzCKOsb7ahueSeiWX0VtdZdQ7/3A3cuiF6Xx/F5
+         yRLgUCL7LOlOkdIj0cMBKDyl0wdkNsrlS5C3zzZ6v+MNZxBw6Q1LnPImv67phZGG3nWS
+         lPkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=9qXjNZouu+T2bptO4V2q/fEYj1NRhCbZOJSzY37VnAM=;
+        b=GLahLcT/FhFFILoaZNEta+GWOVYIDYyXkiDJ0wbJ7rip4T/PU6FVv9iZ75UEhWoxvf
+         v1JFI4u8yHxFigzONy6UqvkWeOiEvF7muRVl+lp5nvn1d3q0S7PPqwIpqjXcP44jrPWQ
+         i9C0/bYsLOAZtnUurBlmP0mzNj0xbChco2Ns7HY/jS+MXYNnQN5H19y2CHWJaQncGsZP
+         nEzFonmOH4Y8z96CbJEPLC5cMH2oUnXlKpzYBKJv/pTWN66lbqmRR+0+3DJQqXaPYx2p
+         xVQcMxiHRNjCOyfVXQGUrmOt9bli4dBisGA2mDjAehPMRSLb1hv6q4o9NCtu/1rOOv2Y
+         pXOg==
+X-Gm-Message-State: AOAM531nTUg38H/ps6PptgjsCUbLisM2FdDfeGgCPpZ+sFo8yruBhgi/
+        XOJ1x+eJd9qdPXDBtQU0Y94ueQ==
+X-Google-Smtp-Source: ABdhPJw+Pyn/Lj1faj/rBJ50SuyQjLi9aPa/q0qBCO5rOApwmQkuP5S9N1Di3OSJZYoyx3kR9F+YDA==
+X-Received: by 2002:a63:d42:: with SMTP id 2mr7048995pgn.236.1611684608859;
+        Tue, 26 Jan 2021 10:10:08 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:1ef2:4034:b7d6:a311:ffcc? ([2601:646:c200:1ef2:4034:b7d6:a311:ffcc])
+        by smtp.gmail.com with ESMTPSA id p64sm19433188pfb.201.2021.01.26.10.10.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Jan 2021 10:10:07 -0800 (PST)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even when SGX driver is disabled
+Date:   Tue, 26 Jan 2021 10:10:06 -0800
+Message-Id: <7379D257-B504-4142-9FA3-F83DE5ABAEB4@amacapital.net>
+References: <24778167-cbd4-1dc5-5b81-e8a49266d1f8@intel.com>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        jarkko@kernel.org, luto@kernel.org, haitao.huang@intel.com,
+        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+In-Reply-To: <24778167-cbd4-1dc5-5b81-e8a49266d1f8@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+X-Mailer: iPhone Mail (18C66)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/26/21 1:31 AM, Kai Huang wrote:
-> Modify sgx_init() to always try to initialize the virtual EPC driver,
-> even if the bare-metal SGX driver is disabled.  The bare-metal driver
-> might be disabled if SGX Launch Control is in locked mode, or not
-> supported in the hardware at all.  This allows (non-Linux) guests that
-> support non-LC configurations to use SGX.
 
-One thing worth calling out *somewhere* (which is entirely my fault):
-"bare-metal" in the context of this patch set refers to true bare-metal,
-but *ALSO* covers the plain SGX driver running inside a guest.
 
-So, perhaps "bare-metal" isn't the best term to use.  Again, my bad.
-Better nomenclature suggestions are welcome.
+> On Jan 26, 2021, at 9:03 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+>=20
+> =EF=BB=BFOn 1/26/21 1:31 AM, Kai Huang wrote:
+>> Modify sgx_init() to always try to initialize the virtual EPC driver,
+>> even if the bare-metal SGX driver is disabled.  The bare-metal driver
+>> might be disabled if SGX Launch Control is in locked mode, or not
+>> supported in the hardware at all.  This allows (non-Linux) guests that
+>> support non-LC configurations to use SGX.
+>=20
+> One thing worth calling out *somewhere* (which is entirely my fault):
+> "bare-metal" in the context of this patch set refers to true bare-metal,
+> but *ALSO* covers the plain SGX driver running inside a guest.
+>=20
+> So, perhaps "bare-metal" isn't the best term to use.  Again, my bad.
+> Better nomenclature suggestions are welcome.
+
+
+How about just SGX?  We can have an SGX driver and a virtual EPC driver.=
