@@ -4,44 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820A2C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F5AC4321A
 	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 02:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55D28206C3
+	by mail.kernel.org (Postfix) with ESMTP id 6DC68206CB
 	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 02:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbhA0Csj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S231176AbhA0Csj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Tue, 26 Jan 2021 21:48:39 -0500
-Received: from mga06.intel.com ([134.134.136.31]:23834 "EHLO mga06.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:21638 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391768AbhA0BQj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 20:16:39 -0500
-IronPort-SDR: q0OJ4owwrKEH9GKTzCFaCAAwwxBU0wTvQxx+hqKyR8yU/driKfa57fplMZgmfK20BPqHM/LZjW
- Plcg632+8fGw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="241527496"
+        id S2390205AbhA0AWZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 19:22:25 -0500
+IronPort-SDR: 9tJka5twn7+WnyUK4ldBgX/A0a3IFh7q0FpfNkXozKzhYffvqxKnlJx81i9jZNyft0XsXFGeoz
+ f0gmHLL/e1Vw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="198789709"
 X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
-   d="scan'208";a="241527496"
+   d="scan'208";a="198789709"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 17:12:13 -0800
-IronPort-SDR: CCk7n49d6rMVdy+TSAkpAxRRAxkQQE/j3K3deqKpT1w83FzR10OW4+0KJVC3BeTVwp0HvdeXoC
- cVCsOgTuUpSw==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 16:21:38 -0800
+IronPort-SDR: a8d3/506lTjYmR/NxvXjLDYBVMHpNnEzHAlSMCr+uZl+QJJZ2E7rLLeJkuPrPoqVEtOA7mxyD1
+ ZGQm2SNHXD3A==
 X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
-   d="scan'208";a="410351928"
+   d="scan'208";a="410339447"
 Received: from kalinapo-mobl.amr.corp.intel.com (HELO [10.209.85.22]) ([10.209.85.22])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 17:12:12 -0800
-Subject: Re: [RFC PATCH v3 03/27] x86/sgx: Remove a warn from
- sgx_free_epc_page()
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 16:21:36 -0800
+Subject: Re: [RFC PATCH v3 05/27] x86/sgx: Add SGX_CHILD_PRESENT hardware
+ error code
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 References: <cover.1611634586.git.kai.huang@intel.com>
- <36e999dce8a1a4efb8ca69c9a6fbe3fa63305e08.1611634586.git.kai.huang@intel.com>
- <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
- <6e859dc6610d317f09663a4ce76b7e13fc0c0f8e.camel@intel.com>
+ <5a7c7715147f089d97ae4c033b74b0eafb8f3f89.1611634586.git.kai.huang@intel.com>
+ <3bdda0ea-3935-1a8a-8d11-b898371d6168@intel.com>
+ <a7877d1d9624873d25da175a02d0840f7b5e91dc.camel@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,12 +87,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <15dda40e-5875-aaa9-acbb-7d868a13f982@intel.com>
-Date:   Tue, 26 Jan 2021 17:12:12 -0800
+Message-ID: <83fc6b6b-0ced-ca75-5c31-9c275778351f@intel.com>
+Date:   Tue, 26 Jan 2021 16:21:36 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <6e859dc6610d317f09663a4ce76b7e13fc0c0f8e.camel@intel.com>
+In-Reply-To: <a7877d1d9624873d25da175a02d0840f7b5e91dc.camel@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,9 +100,37 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/26/21 5:08 PM, Kai Huang wrote:
-> I don't have deep understanding of SGX driver. Would you help to answer?
+On 1/26/21 4:00 PM, Kai Huang wrote:
+> On Tue, 2021-01-26 at 07:49 -0800, Dave Hansen wrote:
+>> On 1/26/21 1:30 AM, Kai Huang wrote:
+>>> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>>>
+>>> SGX virtualization requires to allocate "raw" EPC and use it as "virtual
+>>> EPC" for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
+>>> track how EPC pages are used in VM, e.g. (de)construction of enclaves,
+>>> so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
+>>> knowledge of which pages are SECS with non-zero child counts.
+>>
+>> The grammar there is a bit questionable in spots.  Here's a rewrite:
+>>
+>> SGX can accurately track how bare-metal enclave pages are used.  This
+>> enables SECS to be specifically targeted and EREMOVE'd only after all
+>> child pages have been EREMOVE'd.  This ensures that bare-metal SGX will
+>> never encounter SGX_CHILD_PRESENT in normal operation.
+> 
+> How about:
+> 
+> "SGX driver can accurate track how enclave pages are used. This enables..."
+> 
+> Since in another email, you mentioned that we should get rid of bare-metal driver,
+> and Andy suggested we can just use SGX driver?
 
-Kai, as the patch submitter, you are expected to be able to at least
-minimally explain what the patch is doing.  Please endeavor to obtain
-this understanding before sending patches in the future.
+<sigh>
+
+Sure, but with correct grammar, please.
+
+"SGX driver can accurately track how enclave pages are used. This
+enables..."
+
+Seriously, if you just paste the sentences into Word, it will highlight
+this and tell you.
