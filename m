@@ -2,49 +2,50 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2526EC43142
-	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 02:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0766BC433E0
+	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 05:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DCAA206C3
-	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 02:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C690F2068D
+	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 05:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbhA0Csi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 21:48:38 -0500
-Received: from mga11.intel.com ([192.55.52.93]:37060 "EHLO mga11.intel.com"
+        id S229802AbhA0FFF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 27 Jan 2021 00:05:05 -0500
+Received: from mga12.intel.com ([192.55.52.136]:61361 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731222AbhAZXUc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 18:20:32 -0500
-IronPort-SDR: FvSb8HqeuE7rULHCiHbHIY6HiDMn27xiXvdKn/Cu2PdsyrWvQKvAMNYHuh5sBSC24nf+ycBMNx
- 5kKrUNmL9rJQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="176478212"
-X-IronPort-AV: E=Sophos;i="5.79,377,1602572400"; 
-   d="scan'208";a="176478212"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 15:18:37 -0800
-IronPort-SDR: TB0ILoE4neBV5jpHdaXohUbBOuzfJmaZ8dPlKgnyb/UBhFWYhJd2zIaahMJExqSqxxJGvHfwQh
- An5bBX40KOKQ==
-X-IronPort-AV: E=Sophos;i="5.79,377,1602572400"; 
-   d="scan'208";a="574196941"
+        id S317658AbhA0BJY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 20:09:24 -0500
+IronPort-SDR: Zr+RXqPynr5p++WoGFf0XaP9MV3JOD32NDFmcTheWIYcxmP9JCD3QrXkIzABL6jQsyebUTk//L
+ xUYZ9cd63j2g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="159172482"
+X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
+   d="scan'208";a="159172482"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 17:08:35 -0800
+IronPort-SDR: VrbeF8nhmPcRss3gpEFl0Pz43Zcj2p1oWMpFi6kZ1MVqyiGKFmLQnAh3GZNsi2m74qufYeZXhM
+ e8J2ES5uRFIw==
+X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
+   d="scan'208";a="388080934"
 Received: from rsperry-desk.amr.corp.intel.com ([10.251.7.187])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 15:18:34 -0800
-Message-ID: <3a82563d5a25b52f0b5f01560d70c50a2323f7e5.camel@intel.com>
-Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 17:08:31 -0800
+Message-ID: <6e859dc6610d317f09663a4ce76b7e13fc0c0f8e.camel@intel.com>
+Subject: Re: [RFC PATCH v3 03/27] x86/sgx: Remove a warn from
+ sgx_free_epc_page()
 From:   Kai Huang <kai.huang@intel.com>
 To:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Date:   Wed, 27 Jan 2021 12:18:32 +1300
-In-Reply-To: <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
+Date:   Wed, 27 Jan 2021 14:08:28 +1300
+In-Reply-To: <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
-         <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
-         <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
+         <36e999dce8a1a4efb8ca69c9a6fbe3fa63305e08.1611634586.git.kai.huang@intel.com>
+         <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
@@ -53,48 +54,41 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2021-01-26 at 07:34 -0800, Dave Hansen wrote:
+On Tue, 2021-01-26 at 07:39 -0800, Dave Hansen wrote:
 > On 1/26/21 1:30 AM, Kai Huang wrote:
-> > From: Sean Christopherson <seanjc@google.com>
+> > Remove SGX_EPC_PAGE_RECLAIMER_TRACKED check and warning.  This cannot
+> > happen, as enclave pages are freed only at the time when encl->refcount
+> > triggers, i.e. when both VFS and the page reclaimer have given up on
+> > their references.
 > > 
-> > Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-> > features, since adding a new leaf for only two bits would be wasteful.
-> > As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
-> > guest, and to do so correctly needs to query hardware and kernel support
-> > for SGX1 and SGX2.
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/main.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > index 8df81a3ed945..f330abdb5bb1 100644
+> > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > @@ -605,8 +605,6 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+> >  	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
+> >  	int ret;
+> >  
+> > 
+> > -	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
 > 
-> It's also not _just_ exposing the CPUID leaves.  There are some checks
-> here when KVM is emulating some SGX instructions too, right?
-
-I would say trapping instead of emulating, but yes KVM will do more. However those
-are quite details, and I don't think we should put lots of details here. Or perhaps
-we can use 'for instance' as brief description:
-
-As part of virtualizing SGX, KVM will need to use the two flags, for instance, to
-expose them to guest.
-
-?
-
+> I'm all for cleaning up silly, useless warnings.  But, don't we usually
+> put warnings in for things that we don't expect to be able to happen?
 > 
-> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> > index 84b887825f12..18b2d0c8bbbe 100644
-> > --- a/arch/x86/include/asm/cpufeatures.h
-> > +++ b/arch/x86/include/asm/cpufeatures.h
-> > @@ -292,6 +292,8 @@
-> >  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
-> >  #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
-> >  #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
-> > +#define X86_FEATURE_SGX1		(11*32+ 8) /* Software Guard Extensions sub-feature SGX1 */
-> > +#define X86_FEATURE_SGX2        	(11*32+ 9) /* Software Guard Extensions sub-feature SGX2 */
+> In other words, I'm fine with removing this if it hasn't been a valuable
+> warning and we don't expect it to become a valuable warning.  But, the
+> changelog doesn't say that.  It also doesn't explain what this patch is
+> doing in this series.
 > 
-> FWIW, I'm not sure how valuable it is to spell the SGX acronym out three
-> times.  Can't we use those bytes to put something more useful in that
-> comment?
+> Why is this her?
 
-I think we can remove comment for SGX1, since it is basically SGX.
+Hi Jarkko,
 
-For SGX2, how about below?
-
-/* SGX Enclave Dynamic Memory Management */
-
+I don't have deep understanding of SGX driver. Would you help to answer?
 
