@@ -3,173 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDD9C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4F6C433E6
 	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 02:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82886206CC
+	by mail.kernel.org (Postfix) with ESMTP id BE1F0206D9
 	for <linux-sgx@archiver.kernel.org>; Wed, 27 Jan 2021 02:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231169AbhA0Csj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jan 2021 21:48:39 -0500
-Received: from mga11.intel.com ([192.55.52.93]:41156 "EHLO mga11.intel.com"
+        id S231146AbhA0Csi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jan 2021 21:48:38 -0500
+Received: from mga06.intel.com ([134.134.136.31]:18876 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404030AbhA0ASD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 26 Jan 2021 19:18:03 -0500
-IronPort-SDR: nxCLUWDeUM8q7FFwlBpsUDtzEeGSAoV38a4gXjg2qkvgyZq1q5Fwka/69a05mt1NMRFSfNFqGp
- ke0TzElTKXwQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="176483941"
-X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
-   d="scan'208";a="176483941"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 16:17:01 -0800
-IronPort-SDR: 3ETKUXA/Qw/MxCCNNA+k0nbEJTQx2K3XQSnhGxlxUwXm/mAWCNC91iVHb7kVQvwaUXImkfoNpK
- xN1yQPH/WM7Q==
-X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
-   d="scan'208";a="410338128"
-Received: from rsperry-desk.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.7.187])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 16:16:57 -0800
-Date:   Wed, 27 Jan 2021 13:16:55 +1300
+        id S2389526AbhA0AF4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 26 Jan 2021 19:05:56 -0500
+IronPort-SDR: gQ5INyTeTkFDLdcfwpaBuFIFqNVx8zX4DRdOitgLbS3s26ww7hF/KGMaiYq4wlVodznptJ5byD
+ 8xe1AwE/Q/gg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="241520118"
+X-IronPort-AV: E=Sophos;i="5.79,377,1602572400"; 
+   d="scan'208";a="241520118"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 16:00:30 -0800
+IronPort-SDR: LyDtHRIRhbRzfMaAD3eTyQWnx6VzE7ilwzaDwwPQOA1IhG27JX1JvP8MVWcSs5YwWBQteLydHz
+ hRyZjP+aMIFA==
+X-IronPort-AV: E=Sophos;i="5.79,377,1602572400"; 
+   d="scan'208";a="472934086"
+Received: from rsperry-desk.amr.corp.intel.com ([10.251.7.187])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 16:00:26 -0800
+Message-ID: <a7877d1d9624873d25da175a02d0840f7b5e91dc.camel@intel.com>
+Subject: Re: [RFC PATCH v3 05/27] x86/sgx: Add SGX_CHILD_PRESENT hardware
+ error code
 From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <x86@kernel.org>, <seanjc@google.com>, <jarkko@kernel.org>,
-        <luto@kernel.org>, <haitao.huang@intel.com>, <pbonzini@redhat.com>,
-        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>
-Subject: Re: [RFC PATCH v3 06/27] x86/sgx: Introduce virtual EPC for use by
- KVM guests
-Message-Id: <20210127131655.d560b6be8b897471d770f54c@intel.com>
-In-Reply-To: <c9da1c45-d4be-e0af-2b67-5408217deb34@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Date:   Wed, 27 Jan 2021 13:00:23 +1300
+In-Reply-To: <3bdda0ea-3935-1a8a-8d11-b898371d6168@intel.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
-        <8492ee41e947aa8151007e5ecbd9ef8914dd8827.1611634586.git.kai.huang@intel.com>
-        <c9da1c45-d4be-e0af-2b67-5408217deb34@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+         <5a7c7715147f089d97ae4c033b74b0eafb8f3f89.1611634586.git.kai.huang@intel.com>
+         <3bdda0ea-3935-1a8a-8d11-b898371d6168@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 26 Jan 2021 08:19:25 -0800 Dave Hansen wrote:
-> I'd also like to see some comments about code sharing between this and
-> the main driver.  For instance, this *could* try to share 99% of the
-> ->fault function.  Why doesn't it?  I'm sure there's a good reason.
+On Tue, 2021-01-26 at 07:49 -0800, Dave Hansen wrote:
+> On 1/26/21 1:30 AM, Kai Huang wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > SGX virtualization requires to allocate "raw" EPC and use it as "virtual
+> > EPC" for SGX guest.  Unlike EPC used by SGX driver, virtual EPC doesn't
+> > track how EPC pages are used in VM, e.g. (de)construction of enclaves,
+> > so it cannot guarantee EREMOVE success, e.g. it doesn't have a priori
+> > knowledge of which pages are SECS with non-zero child counts.
 > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-> > new file mode 100644
-> > index 000000000000..e1ad7856d878
-> > --- /dev/null
-> > +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> > @@ -0,0 +1,254 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*  Copyright(c) 2016-20 Intel Corporation. */
-> > +
-> > +#define pr_fmt(fmt)	"SGX virtual EPC: " fmt
+> The grammar there is a bit questionable in spots.  Here's a rewrite:
 > 
-> Does this actually get used anywhere?  Also, isn't this a bit long?  Maybe:
-> 
-> #define pr_fmt(fmt)	"sgx/virt: " fmt
+> SGX can accurately track how bare-metal enclave pages are used.  This
+> enables SECS to be specifically targeted and EREMOVE'd only after all
+> child pages have been EREMOVE'd.  This ensures that bare-metal SGX will
+> never encounter SGX_CHILD_PRESENT in normal operation.
 
-It is not used. My bad. I'll remove it.
+How about:
 
-And yes "sgx/virt: " is better. 
+"SGX driver can accurate track how enclave pages are used. This enables..."
 
-> 
-> Also, a one-line summary about what's in here would be nice next to the
-> copyright (which needs to be updated).
-> 
-> /*
->  * Device driver to expose SGX enclave memory to KVM guests.
->  *
->  * Copyright(c) 2016-20 Intel Corporation.
->  */
-
-Will do. However the year should not be 2016-20, but should be 2021, right?
-
-I think it has been ignored since the day Sean wrote the file.
+Since in another email, you mentioned that we should get rid of bare-metal driver,
+and Andy suggested we can just use SGX driver?
 
 > 
+> Virtual EPC is different.  The host does not track how EPC pages are
+> used by the guest, so it cannot guarantee EREMOVE success.  It might,
+> for instance, encounter a SECS with a non-zero child count.
 > 
-> > +#include <linux/miscdevice.h>
-> > +#include <linux/mm.h>
-> > +#include <linux/mman.h>
-> > +#include <linux/sched/mm.h>
-> > +#include <linux/sched/signal.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/xarray.h>
-> > +#include <asm/sgx.h>
-> > +#include <uapi/asm/sgx.h>
-> > +
-> > +#include "encls.h"
-> > +#include "sgx.h"
-> > +#include "virt.h"
-> > +
-> > +struct sgx_vepc {
-> > +	struct xarray page_array;
-> > +	struct mutex lock;
-> > +};
-> > +
-> > +static struct mutex zombie_secs_pages_lock;
-> > +static struct list_head zombie_secs_pages;
-> 
-> Comments would be nice for this random lock and list.
-> 
-> The main core functions (fault, etc...) are looking OK to me.
+> Aside: Would it be *possible* for the host to figure out where the SECS
+> pages are?  If not, we can say "host can not track" versus what I said:
+> "host does not track".
 
-Thanks. How about below comment?
-
-/*
- * List to temporarily hold SECS pages that cannot be EREMOVE'd due to
- * having child in other virtual EPC instances, and the lock to protect it.
- */
+Technically it is possible, so "host does not track" is more reasonable.
 
 > 
-> ...
-> > +int __init sgx_vepc_init(void)
-> > +{
-> > +	/* SGX virtualization requires KVM to work */
-> > +	if (!boot_cpu_has(X86_FEATURE_VMX) || !IS_ENABLED(CONFIG_KVM_INTEL))
-> > +		return -ENODEV;
+> > Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
+> > failures are expected, but only due to SGX_CHILD_PRESENT.
+> > 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
 > 
-> Can this even be built without IS_ENABLED(CONFIG_KVM_INTEL)?
-
-I think no. Thanks. I'll remove IS_ENABLED(CONFIG_KVM_INTEL).
-
+> With the improved changelog:
 > 
-> > +	INIT_LIST_HEAD(&zombie_secs_pages);
-> > +	mutex_init(&zombie_secs_pages_lock);
-> > +
-> > +	return misc_register(&sgx_vepc_dev);
-> > +}
-> > diff --git a/arch/x86/kernel/cpu/sgx/virt.h b/arch/x86/kernel/cpu/sgx/virt.h
-> > new file mode 100644
-> > index 000000000000..44d872380ca1
-> > --- /dev/null
-> > +++ b/arch/x86/kernel/cpu/sgx/virt.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> > +#ifndef _ASM_X86_SGX_VIRT_H
-> > +#define _ASM_X86_SGX_VIRT_H
-> > +
-> > +#ifdef CONFIG_X86_SGX_KVM
-> > +int __init sgx_vepc_init(void);
-> > +#else
-> > +static inline int __init sgx_vepc_init(void)
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > +#endif
-> > +
-> > +#endif /* _ASM_X86_SGX_VIRT_H */
-> 
-> Is more going to go in this header?  It's a little sparse as-is.
+> Acked-by: Dave Hansen <dave.hansen@intel.com>
 
-No there's no more. The sgx_vepc_init() function declaration needs to be here
-since sgx/main.c needs to use it.
-
-May I know your suggestion?
+Thanks.
 
