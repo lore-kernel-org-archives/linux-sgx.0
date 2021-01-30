@@ -2,100 +2,144 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565CEC433E0
-	for <linux-sgx@archiver.kernel.org>; Sat, 30 Jan 2021 16:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F740C433E0
+	for <linux-sgx@archiver.kernel.org>; Sat, 30 Jan 2021 19:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A09E64E0E
-	for <linux-sgx@archiver.kernel.org>; Sat, 30 Jan 2021 16:29:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C399E64DF5
+	for <linux-sgx@archiver.kernel.org>; Sat, 30 Jan 2021 19:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231740AbhA3Q2c (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 30 Jan 2021 11:28:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42606 "EHLO mail.kernel.org"
+        id S232246AbhA3TVZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 30 Jan 2021 14:21:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231986AbhA3Oes (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 30 Jan 2021 09:34:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2237864D9F;
-        Sat, 30 Jan 2021 14:33:20 +0000 (UTC)
+        id S232260AbhA3TVZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 30 Jan 2021 14:21:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5604264E11;
+        Sat, 30 Jan 2021 19:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612017201;
-        bh=frYChDynoZg+N8fOjTe4Tkt+LBi35yfdYAwUDLwVxfQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aMiSpV05hsjbvJ6zZ1n61EXx6/B7ks1gKwFylc+nxbVh0rMMEr6+XB9fOALsWEksr
-         wlCdo2jGrkRFDPZiYjUo93cFz7y+oVYAXa3E0KDS8q0gqZ0JEl9+SRH0BhFXl1nuvD
-         OtItTJdjGvHwp/YBBNkPDuPHf8rhoDO1MPLrRd7WaMPdI0zVru8QaG8vrTGlTXev0i
-         //zTNb6WGWK/Tp3phiE1yktUZm4DcppqGo158/js/WjTCsKEBwzJT8HVQRGNbzLuwt
-         h91Yuaciquz+aANsjQ0K/PEFFxCIt+giUBXjVTZOUPnoY3E0ypkjWONkknk8ZdPjjW
-         Ql5faq65mC/Qg==
-Date:   Sat, 30 Jan 2021 16:33:16 +0200
+        s=k20201202; t=1612034443;
+        bh=Khh0VPiLPgid7W8oQUKVvgLkQvNgFEAVk+7jPu0KPAs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=cvgESfj7iMt6iLU0YpOpPMenYYT4PhZF+Ik3HiIX2xDNg4Jlu/q+wE9LfZlyDGdpS
+         qgakvREVhl/YpRSsYEiVeUzYiOJpLgZcW7e+PRAGoRT+xgjf6+YIgip1gfbMqOiGS8
+         KL8IwslquLNeZkpPgY/i50l5wakXppS5aMLB9YCbi9adCQpB760RtP15yJTK4lWEN5
+         7yloPUeUbnPFoqMuFGtL2fykOS7FfCVwTVoAXlvogZytIiNaRxAER6oUwbB0CnfNHL
+         vNm9fc6xn55AeXeeNDq073jcj8Nk9G89jxQav+je9IF+Ug3SNkzz2fq6vicxWg0T/S
+         SaZm2c3ozU7/w==
+Message-ID: <fa43948ba860d6ac99adabad3d8b6ff11f5d2239.camel@kernel.org>
+Subject: Re: [PATCH v5] x86/sgx: Fix use-after-free in
+ sgx_mmu_notifier_release()
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+To:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org
+Cc:     stable@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v3 5/5] x86/sgx: Remove redundant if conditions in
- sgx_encl_create
-Message-ID: <YBVuLFriVAm5EiEc@kernel.org>
-References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
- <20210124062907.88229-6-tianjia.zhang@linux.alibaba.com>
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 30 Jan 2021 21:20:39 +0200
+In-Reply-To: <9dd2a962-2328-8784-9aed-b913502e1102@intel.com>
+References: <20210128125823.18660-1-jarkko@kernel.org>
+         <9dd2a962-2328-8784-9aed-b913502e1102@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.38.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210124062907.88229-6-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Jan 24, 2021 at 02:29:07PM +0800, Tianjia Zhang wrote:
-> In this scenario, there is no case where va_page is NULL, and
-> the error has been checked. The if condition statement here is
-> redundant, so remove the condition detection.
-> 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> ---
->  arch/x86/kernel/cpu/sgx/ioctl.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 1c6ecf9fbeff..b0b829f1b761 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -66,9 +66,11 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
->  	va_page = sgx_encl_grow(encl);
->  	if (IS_ERR(va_page))
->  		return PTR_ERR(va_page);
-> -	else if (va_page)
-> -		list_add(&va_page->list, &encl->va_pages);
-> -	/* else the tail page of the VA page list had free slots. */
+On Thu, 2021-01-28 at 08:33 -0800, Dave Hansen wrote:
+> On 1/28/21 4:58 AM, Jarkko Sakkinen wrote:
+> > The most trivial example of a race condition can be demonstrated by thi=
+s
+> > sequence where mm_list contains just one entry:
+> >=20
+> > CPU A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 CPU B
+> > -> sgx_release()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> sgx_mmu_notifier_release()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> list_del_rcu()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <- list_del_rcu()
+> > -> kref_put()
+> > -> sgx_encl_release()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> synchronize_srcu()
+> > -> cleanup_srcu_struct()
+>=20
+> This is missing some key details including a clear, unambiguous, problem
+> statement.=C2=A0 To me, the patch should concentrate on the SRCU warning
+> since that's where we started.=C2=A0 Here's the detail that needs to be a=
+dded
+> about the issue and the locking in general in this path:
+>=20
+> sgx_release() also does this:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mmu_notifier_unregister(&=
+encl_mm->mmu_notifier, encl_mm->mm);
+>=20
+> which does another synchronize_srcu() on the mmu_notifier's srcu_struct.
+> =C2=A0*But*, it only does this if its own list_del_rcu() is successful.=
+=C2=A0 It
+> does all of this before the kref_put().
+>=20
+> In other words, sgx_release() can *only* get to this buggy path if
+> sgx_mmu_notifier_release() races with sgx_release and does a
+> list_del_rcu() first.
+>=20
+> The key to this patch is that the sgx_mmu_notifier_release() will now
+> take an 'encl' reference in that case, which prevents kref_put() from
+> calling sgx_release() which cleans up and frees 'encl'.
+>=20
+> I was actually also hoping to see some better comments about the new
+> refcount, and the locking in general.=C2=A0 There are *TWO* struct_srcu's=
+ in
+> play, a spinlock and a refcount.=C2=A0 I took me several days with Sean a=
+nd
+> your help to identify the actual path and get a proper fix (versions 1-4
+> did *not* fix the race).
 
-This is fine. The check does not make sense.
+This was really good input, thank you. It made realize something but
+now I need a sanity check.
 
-> +
-> +	if (WARN_ONCE(!va_page, "non-empty VA page list before ECREATE"))
-> +		return -EIO;
+I think that this bug fix is *neither* a legit one :-)
 
-No need for this WARN_ONCE().
+Example scenario would such that all removals "side-channel" through
+the notifier callback. Then mmu_notifier_unregister() gets called
+exactly zero times. No MMU notifier srcu sync would be then happening.
 
-> +
-> +	list_add(&va_page->list, &encl->va_pages);
+NOTE: There's bunch of other examples, I'm just giving one.
 
-This is fine.
+How I think this should be actually fixed is:
 
->  
->  	/* The extra page goes to SECS. */
->  	encl_size = secs->size + PAGE_SIZE;
-> -- 
-> 2.19.1.3.ge56e4f7
-> 
-> 
+1. Whenever MMU notifier is *registered* kref_get() should be called for
+   the enclave reference count.
+2. *BOTH* sgx_release() and sgx_mmu_notifier_release() should
+   decrease the refcount when they process an entry.
+  =20
+I.e. the fix that I sent does kref_get() in wrong location. Please
+sanity check my conclusion.=20
+=20
+> Also, the use-after-free is *fixed* in sgx_mmu_notifier_release() but
+> does not *occur* in sgx_mmu_notifier_release().=C2=A0 The subject here is=
+ a
+> bit misleading in that regard.
+
+Right, this is a valid point. It's incorrect. So if I just change the
+short summary by substituting sgx_mmu_notifier_release() with
+sgx_release()?
 
 /Jarkko
