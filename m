@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78036C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 01:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FED9C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 05:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 466E364E22
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 01:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0832E64E15
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 05:41:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230439AbhBABUC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 31 Jan 2021 20:20:02 -0500
-Received: from mga17.intel.com ([192.55.52.151]:59986 "EHLO mga17.intel.com"
+        id S231591AbhBAFlU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Feb 2021 00:41:20 -0500
+Received: from mga02.intel.com ([134.134.136.20]:49638 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231142AbhBABSM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 31 Jan 2021 20:18:12 -0500
-IronPort-SDR: xixqrOVTz7BirzcvtVbTJjOWQu8RxxUVl3/OYrj+aW0FTJbzC4Ol9l/AP5pj8pqNmp+ViQzehx
- 9jnz+dl2U5Qw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9881"; a="160386674"
+        id S229629AbhBAFjL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Feb 2021 00:39:11 -0500
+IronPort-SDR: rlRxVM9ViubdJ737z12W5DPK7fDfKHkoQrfw0FI7nCehlIrC88TjGruIDhqZAggoegfFiwJPZC
+ 1gYilH1GZYgA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9881"; a="167740574"
 X-IronPort-AV: E=Sophos;i="5.79,391,1602572400"; 
-   d="scan'208";a="160386674"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2021 17:17:25 -0800
-IronPort-SDR: ZjUrABCH9VeaMNX6B/bn0Qv7tEKrvdRUR403IqJV6+DhpEPP4RR8KzOpJ4N1CPumLY4Z8dkA5k
- Ggl98LrgkxxA==
+   d="scan'208";a="167740574"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2021 21:38:29 -0800
+IronPort-SDR: GZ3ZRxcb6RaN0Yhe+da82mltfqCEwGthb9d8uryyzSUYmhi6PchBKQJ4UWSePK2SjBQgUuf+t1
+ 1lGdnYzZOPig==
 X-IronPort-AV: E=Sophos;i="5.79,391,1602572400"; 
-   d="scan'208";a="580477903"
-Received: from kpeng-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.130.129])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2021 17:17:22 -0800
-Date:   Mon, 1 Feb 2021 14:17:20 +1300
+   d="scan'208";a="412141280"
+Received: from jaramosm-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.79.53])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2021 21:38:24 -0800
+Date:   Mon, 1 Feb 2021 18:38:22 +1300
 From:   Kai Huang <kai.huang@intel.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v3 13/27] x86/sgx: Add helper to update
- SGX_LEPUBKEYHASHn MSRs
-Message-Id: <20210201141720.2249c9aef5b3f5ed9fda3f81@intel.com>
-In-Reply-To: <YBVx8P1QfRspUvkC@kernel.org>
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de
+Subject: Re: [RFC PATCH v3 07/27] x86/cpu/intel: Allow SGX virtualization
+ without Launch Control support
+Message-Id: <20210201183822.d30fe56535de72087584c116@intel.com>
+In-Reply-To: <YBVwcJ0KrWmXkcjL@kernel.org>
 References: <cover.1611634586.git.kai.huang@intel.com>
-        <db965546668e24857627a6695ee739aac5c15d3a.1611634586.git.kai.huang@intel.com>
-        <YBVx8P1QfRspUvkC@kernel.org>
+        <ae05882235e61fd8e7a56e37b0d9c044781bd767.1611634586.git.kai.huang@intel.com>
+        <YBVwcJ0KrWmXkcjL@kernel.org>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -54,99 +55,156 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, 30 Jan 2021 16:49:20 +0200 Jarkko Sakkinen wrote:
-> On Tue, Jan 26, 2021 at 10:31:05PM +1300, Kai Huang wrote:
-> > Add a helper to update SGX_LEPUBKEYHASHn MSRs.  SGX virtualization also
-> > needs to update those MSRs based on guest's "virtual" SGX_LEPUBKEYHASHn
-> > before EINIT from guest.
+On Sat, 30 Jan 2021 16:42:56 +0200 Jarkko Sakkinen wrote:
+> On Tue, Jan 26, 2021 at 10:30:54PM +1300, Kai Huang wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > > 
+> > The kernel will currently disable all SGX support if the hardware does
+> > not support launch control.  Make it more permissive to allow SGX
+> > virtualization on systems without Launch Control support.  This will
+> > allow KVM to expose SGX to guests that have less-strict requirements on
+> > the availability of flexible launch control.
+> > 
+> > Improve error message to distinguish between three cases.  There are two
+> > cases where SGX support is completely disabled:
+> > 1) SGX has been disabled completely by the BIOS
+> > 2) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+> >    of LC unavailability.  SGX virtualization is unavailable (because of
+> >    Kconfig).
+> > One where it is partially available:
+> > 3) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+> >    of LC unavailability.  SGX virtualization is supported.
+> > 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Kai Huang <kai.huang@intel.com>
 > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> 
-> 
-> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Thanks Jarkko.
-
-Hi Dave,
-
-This patch originally had your Acked-by, but since I added a comment, I removed
-it. May I still have your Acked-by?
-
-> 
-> /Jarkko
-> 
 > > ---
 > > v2->v3:
 > > 
-> >  - Added comment for sgx_update_lepubkeyhash(), per Jarkko and Dave.
+> >  - Added to use 'enable_sgx_any', per Dave.
+> >  - Changed to call clear_cpu_cap() directly, rather than using clear_sgx_caps()
+> >    and clear_sgx_lc().
+> >  - Changed to use CONFIG_X86_SGX_KVM, instead of CONFIG_X86_SGX_VIRTUALIZATION.
+> > 
+> > v1->v2:
+> > 
+> >  - Refined commit message per Dave's comments.
+> >  - Added check to only enable SGX virtualization when VMX is supported, per
+> >    Dave's comment.
+> >  - Refined error msg print to explicitly call out SGX virtualization will be
+> >    supported when LC is locked by BIOS, per Dave's comment.
 > > 
 > > ---
-> >  arch/x86/kernel/cpu/sgx/ioctl.c |  5 ++---
-> >  arch/x86/kernel/cpu/sgx/main.c  | 15 +++++++++++++++
-> >  arch/x86/kernel/cpu/sgx/sgx.h   |  2 ++
-> >  3 files changed, 19 insertions(+), 3 deletions(-)
+> >  arch/x86/kernel/cpu/feat_ctl.c | 58 ++++++++++++++++++++++++++--------
+> >  1 file changed, 45 insertions(+), 13 deletions(-)
 > > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > index e5977752c7be..1bae754268d1 100644
-> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > @@ -495,7 +495,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
-> >  			 void *token)
+> > diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+> > index 27533a6e04fa..0fc202550fcc 100644
+> > --- a/arch/x86/kernel/cpu/feat_ctl.c
+> > +++ b/arch/x86/kernel/cpu/feat_ctl.c
+> > @@ -105,7 +105,8 @@ early_param("nosgx", nosgx);
+> >  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
 > >  {
-> >  	u64 mrsigner[4];
-> > -	int i, j, k;
-> > +	int i, j;
-> >  	void *addr;
-> >  	int ret;
+> >  	bool tboot = tboot_enabled();
+> > -	bool enable_sgx;
+> > +	bool enable_vmx;
+> > +	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
+> 
+> Move the declaration first (reverse christmas tree).
+
+Will do. Thanks.
+
+> 
+> >  	u64 msr;
 > >  
-> > @@ -544,8 +544,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+> >  	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+> > @@ -114,13 +115,22 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+> >  		return;
+> >  	}
 > >  
-> >  			preempt_disable();
+> > +	enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
+> > +		     IS_ENABLED(CONFIG_KVM_INTEL);
+> > +
+> >  	/*
+> > -	 * Enable SGX if and only if the kernel supports SGX and Launch Control
+> > -	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
+> > +	 * Enable SGX if and only if the kernel supports SGX.  Require Launch
+> > +	 * Control support if SGX virtualization is *not* supported, i.e.
+> > +	 * disable SGX if the LE hash MSRs can't be written and SGX can't be
+> > +	 * exposed to a KVM guest (which might support non-LC configurations).
+> >  	 */
+> > -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
+> > -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
+> > -		     IS_ENABLED(CONFIG_X86_SGX);
+> > +	enable_sgx_any = cpu_has(c, X86_FEATURE_SGX) &&
+> > +			 cpu_has(c, X86_FEATURE_SGX1) &&
+> > +			 IS_ENABLED(CONFIG_X86_SGX);
+> > +	enable_sgx_driver = enable_sgx_any &&
+> > +			    cpu_has(c, X86_FEATURE_SGX_LC);
+> > +	enable_sgx_kvm = enable_sgx_any && enable_vmx &&
+> > +			  IS_ENABLED(CONFIG_X86_SGX_KVM);
 > >  
-> > -			for (k = 0; k < 4; k++)
-> > -				wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + k, mrsigner[k]);
-> > +			sgx_update_lepubkeyhash(mrsigner);
+> >  	if (msr & FEAT_CTL_LOCKED)
+> >  		goto update_caps;
+> > @@ -136,15 +146,18 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+> >  	 * i.e. KVM is enabled, to avoid unnecessarily adding an attack vector
+> >  	 * for the kernel, e.g. using VMX to hide malicious code.
+> >  	 */
+> > -	if (cpu_has(c, X86_FEATURE_VMX) && IS_ENABLED(CONFIG_KVM_INTEL)) {
+> > +	if (enable_vmx) {
+> >  		msr |= FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX;
 > >  
-> >  			ret = __einit(sigstruct, token, addr);
+> >  		if (tboot)
+> >  			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
+> >  	}
 > >  
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index 93d249f7bff3..b456899a9532 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -697,6 +697,21 @@ static bool __init sgx_page_cache_init(void)
-> >  	return true;
+> > -	if (enable_sgx)
+> > -		msr |= FEAT_CTL_SGX_ENABLED | FEAT_CTL_SGX_LC_ENABLED;
+> > +	if (enable_sgx_kvm || enable_sgx_driver) {
+> > +		msr |= FEAT_CTL_SGX_ENABLED;
+> > +		if (enable_sgx_driver)
+> > +			msr |= FEAT_CTL_SGX_LC_ENABLED;
+> > +	}
+> >  
+> >  	wrmsrl(MSR_IA32_FEAT_CTL, msr);
+> >  
+> > @@ -167,10 +180,29 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+> >  	}
+> >  
+> >  update_sgx:
+> > -	if (!(msr & FEAT_CTL_SGX_ENABLED) ||
+> > -	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
+> > -		if (enable_sgx)
+> > -			pr_err_once("SGX disabled by BIOS\n");
+> > +	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
+> > +		if (enable_sgx_kvm || enable_sgx_driver)
+> > +			pr_err_once("SGX disabled by BIOS.\n");
+> >  		clear_cpu_cap(c, X86_FEATURE_SGX);
+> > +		return;
+> > +	}
+> > +
+> > +	/*
+> > +	 * VMX feature bit may be cleared due to being disabled in BIOS,
+> > +	 * in which case SGX virtualization cannot be supported either.
+> > +	 */
+> > +	if (!cpu_has(c, X86_FEATURE_VMX) && enable_sgx_kvm) {
+> > +		pr_err_once("SGX virtualization disabled due to lack of VMX.\n");
+> > +		enable_sgx_kvm = 0;
+> > +	}
+> > +
+> > +	if (!(msr & FEAT_CTL_SGX_LC_ENABLED) && enable_sgx_driver) {
+> > +		if (!enable_sgx_kvm) {
+> > +			pr_err_once("SGX Launch Control is locked. Disable SGX.\n");
+> > +			clear_cpu_cap(c, X86_FEATURE_SGX);
+> > +		} else {
+> > +			pr_err_once("SGX Launch Control is locked. Support SGX virtualization only.\n");
+> > +			clear_cpu_cap(c, X86_FEATURE_SGX_LC);
+> > +		}
+> >  	}
 > >  }
-> >  
-> > +
-> > +/*
-> > + * Update the SGX_LEPUBKEYHASH MSRs to the values specified by caller.
-> > + * Bare-metal driver requires to update them to hash of enclave's signer
-> > + * before EINIT. KVM needs to update them to guest's virtual MSR values
-> > + * before doing EINIT from guest.
-> > + */
-> > +void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i = 0; i < 4; i++)
-> > +		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-> > +}
-> > +
-> >  static int __init sgx_init(void)
-> >  {
-> >  	int ret;
-> > diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> > index 509f2af33e1d..ccd4f145c464 100644
-> > --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> > +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> > @@ -83,4 +83,6 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
-> >  int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
-> >  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
-> >  
-> > +void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
-> > +
-> >  #endif /* _X86_SGX_H */
 > > -- 
 > > 2.29.2
 > > 
 > > 
+> 
+> /Jarkko
