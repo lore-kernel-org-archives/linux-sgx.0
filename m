@@ -2,135 +2,115 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD423C433DB
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 15:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96E8C433E6
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 17:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8486164D9E
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 15:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A283D64EA2
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 17:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbhBAP04 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Feb 2021 10:26:56 -0500
-Received: from mga11.intel.com ([192.55.52.93]:46151 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231628AbhBAP0N (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Feb 2021 10:26:13 -0500
-IronPort-SDR: kzhUoPbl1cNmkNbAGhA7GGmHsSZsE56W7z/JjqUTaA7VxrDfG0FvGsG5QlUVHSnAv37ZJL0yyq
- JZJ5y+Rh/uYg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="177192304"
-X-IronPort-AV: E=Sophos;i="5.79,392,1602572400"; 
-   d="scan'208";a="177192304"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 07:25:32 -0800
-IronPort-SDR: fmqg3osnTsvus2ct5DvRqyKZnBV+8cpRr8+B+LcG5KQRary2wYL9jAXksaiuOw9cNVpNqCqQaU
- tIjaS/C2ZP2w==
-X-IronPort-AV: E=Sophos;i="5.79,392,1602572400"; 
-   d="scan'208";a="369898856"
-Received: from efiguero-mobl.amr.corp.intel.com (HELO [10.209.83.156]) ([10.209.83.156])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 07:25:31 -0800
-Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
- when SGX driver is disabled
-To:     Kai Huang <kai.huang@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
+        id S229549AbhBARNs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Feb 2021 12:13:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231797AbhBARNf (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 1 Feb 2021 12:13:35 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74924C061573
+        for <linux-sgx@vger.kernel.org>; Mon,  1 Feb 2021 09:12:55 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id y142so4033066pfb.3
+        for <linux-sgx@vger.kernel.org>; Mon, 01 Feb 2021 09:12:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wnxL/Wu6UUpfOivFYidUIhipJomX5KXsxYVYyO2G8yE=;
+        b=TvksATvAc6G2vbTvv9nKkYP7Zkep98KYIP24YvDzKYkbyu3f1/BLkRDiyOYhpNsHha
+         BJP9y5tUCKGhHV+IWl0ScrtI/ENwyP+bKqjy6M9JqWRfOconuXxQaE7ZB/vTpnmhXiHp
+         Srq+iMBGi1bUosS7lHO8fWomFpJGlBigTOr5jfMNNPRG5LYIAE5IusTxkMmvNuVvRbrw
+         92g1x25Nt54IIjLqflBsiaL0rL7UOXWyfY/BbB9ZUIuIipRHvbw2zlOP4++OsywgfNJI
+         Bg0AgegGY4lkVIjcSz3CHMWOVcl0WPvr8FstsVnRD8TH7vaz6YsxK5Lf7W9A/xegj4g2
+         k5tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wnxL/Wu6UUpfOivFYidUIhipJomX5KXsxYVYyO2G8yE=;
+        b=SwkZEJ6Ogy3IWyVDMdwQnUhLYNV6ye0PijN137iOd0xyWzNb0PLIAkhgSFBBAqt94X
+         DDWubO8Lcymx2BRNHULABSdSlI7gaFOhx0zgTUvQxY8KMWReQZDxUH/5q7jrKnCOMmHp
+         X3mPyRp7zmAqqCZyKDrUtKPOx/Gk4XoZM+40/TTSWNqYuLfuPNOsnx/LD0gbFuWSQjXi
+         JmelTHBHZD3cYTJHL0/icaUcOfWo6AtzdqixL1idkQcRWWlwnJbx4xMbjXwZCcFkhog4
+         GymevzEgDeIEH7WaYdL272BH/nx8ecXxMfCdpJ+YppPG0nrsYqhRlcog3C20QCJhd5Eb
+         crkg==
+X-Gm-Message-State: AOAM532fORySuPPWYeC4af4iyygWRqkhJ5Z4DyL+fwSygStCRo6/vPL6
+        a5j6l/mOPqt86bAHj1igywyvjg==
+X-Google-Smtp-Source: ABdhPJzlfjcr/RNlVEJ1zibUwiriHwtPa4v2J/8gXajIL0KidyItWMtVCNTTgzXCBnNWe+XYqm30Gg==
+X-Received: by 2002:a62:18c5:0:b029:1bd:e72c:b4f2 with SMTP id 188-20020a6218c50000b02901bde72cb4f2mr17341052pfy.50.1612199574825;
+        Mon, 01 Feb 2021 09:12:54 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:829:fccd:80d7:796f])
+        by smtp.gmail.com with ESMTPSA id i62sm18397083pfe.84.2021.02.01.09.12.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Feb 2021 09:12:54 -0800 (PST)
+Date:   Mon, 1 Feb 2021 09:12:47 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com
+Subject: Re: [RFC PATCH v3 16/27] KVM: VMX: Convert vcpu_vmx.exit_reason to a
+ union
+Message-ID: <YBg2j45w2IIUlZ0V@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
- <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
- <YBVxF2kAl7VzeRPS@kernel.org>
- <20210201184040.646ea9923c2119c205b3378d@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <dc3bc76e-fd89-011d-513b-fac6c6f5e0f0@intel.com>
-Date:   Mon, 1 Feb 2021 07:25:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <d32ab375be78315e3bc2540f2a741859637abcb0.1611634586.git.kai.huang@intel.com>
+ <YBV0nnqUHnING5qA@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210201184040.646ea9923c2119c205b3378d@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YBV0nnqUHnING5qA@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/31/21 9:40 PM, Kai Huang wrote:
->>> -	ret = sgx_drv_init();
->>> +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
->>> +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
->> If would create more dumb code and just add
->>
->> ret = sgx_vepc_init()
->> if (ret)
->>         goto err_kthread;
-
-Jarkko, I'm not sure I understand this suggestion.
-
-> Do you mean you want below?
+On Sat, Jan 30, 2021, Jarkko Sakkinen wrote:
+> On Tue, Jan 26, 2021 at 10:31:37PM +1300, Kai Huang wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > Convert vcpu_vmx.exit_reason from a u32 to a union (of size u32).  The
+> > full VM_EXIT_REASON field is comprised of a 16-bit basic exit reason in
+> > bits 15:0, and single-bit modifiers in bits 31:16.
+> > 
+> > Historically, KVM has only had to worry about handling the "failed
+> > VM-Entry" modifier, which could only be set in very specific flows and
+> > required dedicated handling.  I.e. manually stripping the FAILED_VMENTRY
+> > bit was a somewhat viable approach.  But even with only a single bit to
+> > worry about, KVM has had several bugs related to comparing a basic exit
+> > reason against the full exit reason store in vcpu_vmx.
+> > 
+> > Upcoming Intel features, e.g. SGX, will add new modifier bits that can
+> > be set on more or less any VM-Exit, as opposed to the significantly more
+> > restricted FAILED_VMENTRY, i.e. correctly handling everything in one-off
+> > flows isn't scalable.  Tracking exit reason in a union forces code to
+> > explicitly choose between consuming the full exit reason and the basic
+> > exit, and is a convenient way to document and access the modifiers.
 > 
-> 	ret = sgx_drv_init();
-> 	ret = sgx_vepc_init();
-> 	if (ret)
-> 		goto err_kthread;
+> I *believe* that the change is correct but I dropped in the last paragraph
+> - most likely only because of lack of expertise in this area.
 > 
-> This was Sean's original code, but Dave didn't like it.
+> I ask the most basic question: why SGX will add new modifier bits?
 
-Are you sure?  I remember the !!&!! abomination being Sean's doing. :)
+Register state is loaded with synthetic state and/or trampoline state on VM-Exit
+from enclaves.  For all intents and purposes, emulation and other VMM/hypervisor
+behavior that accesses vCPU state is impossible.  E.g. on a #UD VM-Exit, RIP
+will point at the AEP; emulating would emulate some random instruction in the
+untrusted runtime, not the instruction that faulted.
 
-> Sean/Dave,
-> 
-> Please let me know which way you prefer.
-
-Kai, I don't really know you are saying here.  In the end,
-sgx_vepc_init() has to run regardless of whether sgx_drv_init() is
-successful or not.  Also, we only want to 'goto err_kthraed' if *BOTH*
-fail.  The code you have above will, for instance, 'goto err_kthread' if
-sgx_drv_init() succeeds but sgx_vepc_init() fails.  It entirely
-disregards the sgx_drv_init() error code.
-
+Hardware sets the "exit from enclave" modifier flag so that the VMM can try and
+do something moderately sane, e.g. inject a #UD into the guest instead of
+attempting to emulate random instructions.
