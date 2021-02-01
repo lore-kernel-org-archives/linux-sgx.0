@@ -7,20 +7,20 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0545C433DB
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 13:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2809C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 13:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0EC64E7A
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 13:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3EF964E7A
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 13:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbhBAN23 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Feb 2021 08:28:29 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:60737 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231594AbhBAN2L (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 1 Feb 2021 08:28:11 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UNbCiom_1612186013;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UNbCiom_1612186013)
+        id S231895AbhBAN2o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Feb 2021 08:28:44 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:47747 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231776AbhBAN2i (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 1 Feb 2021 08:28:38 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UNbByqi_1612186014;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UNbByqi_1612186014)
           by smtp.aliyun-inc.com(127.0.0.1);
           Mon, 01 Feb 2021 21:26:54 +0800
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
@@ -34,9 +34,9 @@ To:     Jarkko Sakkinen <jarkko@kernel.org>,
         linux-kernel@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
 Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v4 2/5] x86/sgx: Reduce the locking range in sgx_sanitize_section()
-Date:   Mon,  1 Feb 2021 21:26:50 +0800
-Message-Id: <20210201132653.35690-3-tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v4 3/5] x86/sgx: Optimize the free_cnt count in sgx_epc_section
+Date:   Mon,  1 Feb 2021 21:26:51 +0800
+Message-Id: <20210201132653.35690-4-tianjia.zhang@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.3.ge56e4f7
 In-Reply-To: <20210201132653.35690-1-tianjia.zhang@linux.alibaba.com>
 References: <20210201132653.35690-1-tianjia.zhang@linux.alibaba.com>
@@ -46,46 +46,45 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The spin lock of sgx_epc_section only locks the page_list. The
-EREMOVE operation and init_laundry_list is not necessary in the
-protection range of the spin lock. This patch reduces the lock
-range of the spin lock in the function sgx_sanitize_section()
-and only protects the operation of the page_list.
+'section->free_cnt' represents the free page in sgx_epc_section,
+which is assigned once after initialization. In fact, just after the
+initialization is completed, the pages are in the init_laundry_list
+list and cannot be allocated. This needs to be recovered by EREMOVE
+of function sgx_sanitize_section() before it can be used as a page
+that can be allocated. The sgx_sanitize_section() will be called in
+the kernel thread ksgxd.
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+This patch moves the initialization of 'section->free_cnt' from the
+initialization function sgx_setup_epc_section() to the function
+sgx_sanitize_section(), and then accumulates the count after the
+successful execution of EREMOVE. This seems to be more reasonable,
+free_cnt will also truly reflect the allocatable free pages in EPC.
+
+Sined-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Reviewed-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index c519fc5f6948..4465912174fd 100644
+index 4465912174fd..e455ec7b3449 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -41,20 +41,17 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
- 		if (kthread_should_stop())
- 			return;
- 
--		/* needed for access to ->page_list: */
--		spin_lock(&section->lock);
--
- 		page = list_first_entry(&section->init_laundry_list,
- 					struct sgx_epc_page, list);
- 
- 		ret = __eremove(sgx_get_epc_virt_addr(page));
--		if (!ret)
-+		if (!ret) {
-+			spin_lock(&section->lock);
+@@ -48,6 +48,7 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
+ 		if (!ret) {
+ 			spin_lock(&section->lock);
  			list_move(&page->list, &section->page_list);
--		else
-+			spin_unlock(&section->lock);
-+		} else
++			section->free_cnt++;
+ 			spin_unlock(&section->lock);
+ 		} else
  			list_move_tail(&page->list, &dirty);
- 
--		spin_unlock(&section->lock);
--
- 		cond_resched();
+@@ -643,7 +644,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
  	}
+ 
+-	section->free_cnt = nr_pages;
+ 	return true;
+ }
  
 -- 
 2.19.1.3.ge56e4f7
