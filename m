@@ -2,153 +2,110 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56C4C433E0
-	for <linux-sgx@archiver.kernel.org>; Sat, 30 Jan 2021 19:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91739C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 00:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA87664E11
-	for <linux-sgx@archiver.kernel.org>; Sat, 30 Jan 2021 19:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D18C64E24
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 00:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232101AbhA3T0x (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 30 Jan 2021 14:26:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38908 "EHLO mail.kernel.org"
+        id S229495AbhBAACl convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 31 Jan 2021 19:02:41 -0500
+Received: from mga06.intel.com ([134.134.136.31]:55767 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231861AbhA3T0w (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 30 Jan 2021 14:26:52 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5D1CE64E11;
-        Sat, 30 Jan 2021 19:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612034771;
-        bh=I6LY0HAE2jupB8OMT00M3A3D03Qojgg5AwyLaL3ZKmU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RGhxGTeY1H58fysQfw6t9t7eKNNxC5GTQYKvoihoGMH4uaMr6kGX5svzc4Kpo/y6F
-         CJHCWJu6tTZ9iqBHiPKLp8WpqjovIk9YRqlu4y8TEau5oxKPf24aOX5PhMrA29I0Pr
-         46KEF5CiKS7hBuY0fspgbgEPVQG8LZJbi2iiko+SiifUqHUqO2xKHTjwy1wtcuUaGD
-         683AtJYIgMfXXLvKC0EsrX3bCBd1GUcPSgm1eZ/Nni3PqJins3eylgBdDHNwg6pTW5
-         hDeHLZRfzTtS8i4hQFRs818Ih86qisXFMODGDZ+kap4a37QOJja60/osInYCImUU2F
-         +0hLcxgq7vLCg==
-Message-ID: <c11fb781953e0fc84f77ca75eca8db43ac10d289.camel@kernel.org>
-Subject: Re: [PATCH v5] x86/sgx: Fix use-after-free in
- sgx_mmu_notifier_release()
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org
-Cc:     stable@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 30 Jan 2021 21:26:07 +0200
-In-Reply-To: <fa43948ba860d6ac99adabad3d8b6ff11f5d2239.camel@kernel.org>
-References: <20210128125823.18660-1-jarkko@kernel.org>
-         <9dd2a962-2328-8784-9aed-b913502e1102@intel.com>
-         <fa43948ba860d6ac99adabad3d8b6ff11f5d2239.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.38.3 
-MIME-Version: 1.0
+        id S229474AbhBAACj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 31 Jan 2021 19:02:39 -0500
+IronPort-SDR: TTEULFyxmkvaPzWUqKEyYYLFzYhM7HbDVGzLzqlQd3QVK3Z2GU5d7AvNFwfTPj0JLd5ONAu7+k
+ fjKI1w0NGTAg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9881"; a="242134595"
+X-IronPort-AV: E=Sophos;i="5.79,391,1602572400"; 
+   d="scan'208";a="242134595"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2021 16:01:56 -0800
+IronPort-SDR: vKIEfUNSmCzp8znaWhMQRy+fuFvwffEDgPWAONK+FMH5FUkONRgx7SqLcd3wmwS5ICwpaCnKVM
+ wk2BvG53fhcw==
+X-IronPort-AV: E=Sophos;i="5.79,391,1602572400"; 
+   d="scan'208";a="390408021"
+Received: from kpeng-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.130.129])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2021 16:01:53 -0800
+Date:   Mon, 1 Feb 2021 13:01:51 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
+ sub-features
+Message-Id: <20210201130151.4bfb5258885ca0f0905858c6@intel.com>
+In-Reply-To: <YBVdNl+pTBBm6igw@kernel.org>
+References: <cover.1611634586.git.kai.huang@intel.com>
+        <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
+        <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
+        <3a82563d5a25b52f0b5f01560d70c50a2323f7e5.camel@intel.com>
+        <YBVdNl+pTBBm6igw@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, 2021-01-30 at 21:20 +0200, Jarkko Sakkinen wrote:
-> On Thu, 2021-01-28 at 08:33 -0800, Dave Hansen wrote:
-> > On 1/28/21 4:58 AM, Jarkko Sakkinen wrote:
-> > > The most trivial example of a race condition can be demonstrated by t=
-his
-> > > sequence where mm_list contains just one entry:
-> > >=20
-> > > CPU A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 CPU B
-> > > -> sgx_release()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> sgx_mmu_notifier_release()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> list_del_rcu()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <- list_del_rcu()
-> > > -> kref_put()
-> > > -> sgx_encl_release()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> synchronize_srcu()
-> > > -> cleanup_srcu_struct()
-> >=20
-> > This is missing some key details including a clear, unambiguous, proble=
-m
-> > statement.=C2=A0 To me, the patch should concentrate on the SRCU warnin=
-g
-> > since that's where we started.=C2=A0 Here's the detail that needs to be=
- added
-> > about the issue and the locking in general in this path:
-> >=20
-> > sgx_release() also does this:
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mmu_notifier_unregister=
-(&encl_mm->mmu_notifier, encl_mm->mm);
-> >=20
-> > which does another synchronize_srcu() on the mmu_notifier's srcu_struct=
-.
-> > =C2=A0*But*, it only does this if its own list_del_rcu() is successful.=
-=C2=A0 It
-> > does all of this before the kref_put().
-> >=20
-> > In other words, sgx_release() can *only* get to this buggy path if
-> > sgx_mmu_notifier_release() races with sgx_release and does a
-> > list_del_rcu() first.
-> >=20
-> > The key to this patch is that the sgx_mmu_notifier_release() will now
-> > take an 'encl' reference in that case, which prevents kref_put() from
-> > calling sgx_release() which cleans up and frees 'encl'.
-> >=20
-> > I was actually also hoping to see some better comments about the new
-> > refcount, and the locking in general.=C2=A0 There are *TWO* struct_srcu=
-'s in
-> > play, a spinlock and a refcount.=C2=A0 I took me several days with Sean=
- and
-> > your help to identify the actual path and get a proper fix (versions 1-=
-4
-> > did *not* fix the race).
->=20
-> This was really good input, thank you. It made realize something but
-> now I need a sanity check.
->=20
-> I think that this bug fix is *neither* a legit one :-)
->=20
-> Example scenario would such that all removals "side-channel" through
-> the notifier callback. Then mmu_notifier_unregister() gets called
-> exactly zero times. No MMU notifier srcu sync would be then happening.
->=20
-> NOTE: There's bunch of other examples, I'm just giving one.
->=20
-> How I think this should be actually fixed is:
->=20
-> 1. Whenever MMU notifier is *registered* kref_get() should be called for
-> =C2=A0=C2=A0 the enclave reference count.
-> 2. *BOTH* sgx_release() and sgx_mmu_notifier_release() should
-> =C2=A0=C2=A0 decrease the refcount when they process an entry.
-> =C2=A0=C2=A0=20
-> I.e. the fix that I sent does kref_get() in wrong location. Please
-> sanity check my conclusion.=20
-> =C2=A0
-> > Also, the use-after-free is *fixed* in sgx_mmu_notifier_release() but
-> > does not *occur* in sgx_mmu_notifier_release().=C2=A0 The subject here =
-is a
-> > bit misleading in that regard.
->=20
-> Right, this is a valid point. It's incorrect. So if I just change the
-> short summary by substituting sgx_mmu_notifier_release() with
-> sgx_release()?
+On Sat, 30 Jan 2021 15:20:54 +0200 Jarkko Sakkinen wrote:
+> On Wed, Jan 27, 2021 at 12:18:32PM +1300, Kai Huang wrote:
+> > On Tue, 2021-01-26 at 07:34 -0800, Dave Hansen wrote:
+> > > On 1/26/21 1:30 AM, Kai Huang wrote:
+> > > > From: Sean Christopherson <seanjc@google.com>
+> > > > 
+> > > > Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
+> > > > features, since adding a new leaf for only two bits would be wasteful.
+> > > > As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
+> > > > guest, and to do so correctly needs to query hardware and kernel support
+> > > > for SGX1 and SGX2.
+> > > 
+> > > It's also not _just_ exposing the CPUID leaves.  There are some checks
+> > > here when KVM is emulating some SGX instructions too, right?
+> > 
+> > I would say trapping instead of emulating, but yes KVM will do more. However those
+> > are quite details, and I don't think we should put lots of details here. Or perhaps
+> > we can use 'for instance' as brief description:
+> > 
+> > As part of virtualizing SGX, KVM will need to use the two flags, for instance, to
+> > expose them to guest.
+> > 
+> > ?
+> > 
+> > > 
+> > > > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > > > index 84b887825f12..18b2d0c8bbbe 100644
+> > > > --- a/arch/x86/include/asm/cpufeatures.h
+> > > > +++ b/arch/x86/include/asm/cpufeatures.h
+> > > > @@ -292,6 +292,8 @@
+> > > >  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
+> > > >  #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
+> > > >  #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
+> > > > +#define X86_FEATURE_SGX1		(11*32+ 8) /* Software Guard Extensions sub-feature SGX1 */
+> > > > +#define X86_FEATURE_SGX2        	(11*32+ 9) /* Software Guard Extensions sub-feature SGX2 */
+> > > 
+> > > FWIW, I'm not sure how valuable it is to spell the SGX acronym out three
+> > > times.  Can't we use those bytes to put something more useful in that
+> > > comment?
+> > 
+> > I think we can remove comment for SGX1, since it is basically SGX.
+> > 
+> > For SGX2, how about below?
+> > 
+> > /* SGX Enclave Dynamic Memory Management */
+> 
+> (EDMM)
 
-I.e. refcount should be increased in sgx_encl_mm_add(). That way the
-whole thing should be somewhat stable.
+Does EDMM obvious to everyone, instead of explicitly saying Enclave Dynamic
+Memory Management?
 
-/Jarkko
+Also do you think we need a comment for SGX1 bit? I can add /* Basic SGX */,
+but I am not sure whether it is required.
