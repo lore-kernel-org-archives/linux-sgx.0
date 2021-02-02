@@ -2,117 +2,116 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797C1C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 01:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469A5C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C26B64E46
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 01:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD9564F92
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbhBBBiM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Feb 2021 20:38:12 -0500
-Received: from mga03.intel.com ([134.134.136.65]:54238 "EHLO mga03.intel.com"
+        id S236042AbhBBRUo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 12:20:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229736AbhBBBiL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Feb 2021 20:38:11 -0500
-IronPort-SDR: xMZZFBLez2cvh8haHyVLmGBESlVJcIDr/zvcPXYHOzse0wC4zKafiTTXFhOmd4w24osF/DJ70L
- pzsz0n7oafhw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="180857770"
-X-IronPort-AV: E=Sophos;i="5.79,393,1602572400"; 
-   d="scan'208";a="180857770"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 17:37:30 -0800
-IronPort-SDR: IZZPI5C6/xyLi+cjoyhhNGucBzp+wVrvOAQmrc5cO3HgKDMd/fyboe7QOaYPZYHKJmMU6ElpYM
- 3i6pwpUHbLvQ==
-X-IronPort-AV: E=Sophos;i="5.79,393,1602572400"; 
-   d="scan'208";a="507065127"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 17:37:30 -0800
-From:   ira.weiny@intel.com
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: [PATCH] x86: Remove unnecessary kmap() from sgx_ioc_enclave_init()
-Date:   Mon,  1 Feb 2021 17:37:25 -0800
-Message-Id: <20210202013725.3514671-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
+        id S237428AbhBBRSn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 12:18:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 294A364ECE;
+        Tue,  2 Feb 2021 17:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612286283;
+        bh=ztqEUDdfJBfqYT57dN3W7l+zECPHVQXnH/jA6zkc4p0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cylXdh1Eu27aP2lkBXxgtPD3DlueNwoqbrqdB127wJT5y4a7j0EtUu/d6xFZrnCLu
+         gBdu/hZP+n4XQ8W2nJBRIZjro6dD8K4IBDKXcmPAUUD5dc/3v7WmctCRtsQLPTS1qc
+         KhBJu2dpq/OafhsmHbsixvTHYZqiORGuVh3fsEdjSD23Hw/s4eR2viF426jK5vtIz3
+         /Mi/AZRILkP2yyZT8nfHx0Cc++2uC6u8V4EuGCKLgfb0FQrOxQUAa7ZQWHB8/5z0zy
+         hvt/6p1ES0ONpY82WdkKotNrHRqCB2ayI6PXRmtmmO/MpV2jlT1ByQN67qCcoHT5CJ
+         DjfCSvqK/EpsQ==
+Date:   Tue, 2 Feb 2021 19:17:56 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
+ sub-features
+Message-ID: <YBmJRKRcg8gvxW1O@kernel.org>
+References: <cover.1611634586.git.kai.huang@intel.com>
+ <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
+ <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
+ <3a82563d5a25b52f0b5f01560d70c50a2323f7e5.camel@intel.com>
+ <YBVdNl+pTBBm6igw@kernel.org>
+ <20210201130151.4bfb5258885ca0f0905858c6@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210201130151.4bfb5258885ca0f0905858c6@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Mon, Feb 01, 2021 at 01:01:51PM +1300, Kai Huang wrote:
+> On Sat, 30 Jan 2021 15:20:54 +0200 Jarkko Sakkinen wrote:
+> > On Wed, Jan 27, 2021 at 12:18:32PM +1300, Kai Huang wrote:
+> > > On Tue, 2021-01-26 at 07:34 -0800, Dave Hansen wrote:
+> > > > On 1/26/21 1:30 AM, Kai Huang wrote:
+> > > > > From: Sean Christopherson <seanjc@google.com>
+> > > > > 
+> > > > > Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
+> > > > > features, since adding a new leaf for only two bits would be wasteful.
+> > > > > As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
+> > > > > guest, and to do so correctly needs to query hardware and kernel support
+> > > > > for SGX1 and SGX2.
+> > > > 
+> > > > It's also not _just_ exposing the CPUID leaves.  There are some checks
+> > > > here when KVM is emulating some SGX instructions too, right?
+> > > 
+> > > I would say trapping instead of emulating, but yes KVM will do more. However those
+> > > are quite details, and I don't think we should put lots of details here. Or perhaps
+> > > we can use 'for instance' as brief description:
+> > > 
+> > > As part of virtualizing SGX, KVM will need to use the two flags, for instance, to
+> > > expose them to guest.
+> > > 
+> > > ?
+> > > 
+> > > > 
+> > > > > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > > > > index 84b887825f12..18b2d0c8bbbe 100644
+> > > > > --- a/arch/x86/include/asm/cpufeatures.h
+> > > > > +++ b/arch/x86/include/asm/cpufeatures.h
+> > > > > @@ -292,6 +292,8 @@
+> > > > >  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
+> > > > >  #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
+> > > > >  #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
+> > > > > +#define X86_FEATURE_SGX1		(11*32+ 8) /* Software Guard Extensions sub-feature SGX1 */
+> > > > > +#define X86_FEATURE_SGX2        	(11*32+ 9) /* Software Guard Extensions sub-feature SGX2 */
+> > > > 
+> > > > FWIW, I'm not sure how valuable it is to spell the SGX acronym out three
+> > > > times.  Can't we use those bytes to put something more useful in that
+> > > > comment?
+> > > 
+> > > I think we can remove comment for SGX1, since it is basically SGX.
+> > > 
+> > > For SGX2, how about below?
+> > > 
+> > > /* SGX Enclave Dynamic Memory Management */
+> > 
+> > (EDMM)
+> 
+> Does EDMM obvious to everyone, instead of explicitly saying Enclave Dynamic
+> Memory Management?
+> 
+> Also do you think we need a comment for SGX1 bit? I can add /* Basic SGX */,
+> but I am not sure whether it is required.
 
-kmap is inefficient and we are trying to reduce the usage in the kernel.
-There is no readily apparent reason why the initp_page page needs to be
-allocated and kmap'ed() but sigstruct needs to be page aligned and token
-512 byte aligned.
+I would put write the whole thing down and put EDMM to parentheses.
 
-In this case page_address() can be used instead of kmap_local_page() as
-a much more efficient way to use the address because the page is
-allocated GFP_KERNEL.
+For SGX1 I would put "Basic SGX features for enclave construction".
 
-Remove the kmap and replace with page_address() to get a kernel address
-for the alloc'ed page.
-
-In addition add a comment regarding the alignment requirements as well
-as 2 BUILD_BUG_ON's to ensure future changes to sigstruct and token do
-not go unnoticed and cause a bug.
-
-Cc: Sean Christopherson <seanjc@google.com>,
-Cc: Jethro Beekman <jethro@fortanix.com>,
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
----
-Changes from v1[1]:
-	Use page_address() instead of kcmalloc() to ensure sigstruct is
-	page aligned
-	Use BUILD_BUG_ON to ensure token and sigstruct don't collide.
-
-[1] https://lore.kernel.org/lkml/20210129001459.1538805-1-ira.weiny@intel.com/
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf76939..678b02d67c3c 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -615,11 +615,18 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	if (copy_from_user(&init_arg, arg, sizeof(init_arg)))
- 		return -EFAULT;
- 
-+	/*
-+	 * sigstruct must be on a page boundry and token on a 512 byte boundry
-+	 * so use alloc_page/page_address instead of a kmalloc().
-+	 */
- 	initp_page = alloc_page(GFP_KERNEL);
- 	if (!initp_page)
- 		return -ENOMEM;
- 
--	sigstruct = kmap(initp_page);
-+	sigstruct = page_address(initp_page);
-+
-+	BUILD_BUG_ON(sizeof(*sigstruct) > (PAGE_SIZE/2));
-+	BUILD_BUG_ON(SGX_LAUNCH_TOKEN_SIZE > (PAGE_SIZE/2));
- 	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
- 	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
- 
-@@ -645,7 +652,6 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	ret = sgx_encl_init(encl, sigstruct, token);
- 
- out:
--	kunmap(initp_page);
- 	__free_page(initp_page);
- 	return ret;
- }
--- 
-2.28.0.rc0.12.gb6a658bd00c9
-
+/Jarkko
