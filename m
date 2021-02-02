@@ -2,127 +2,117 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94ED9C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 00:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797C1C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 01:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68B1C64DDC
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 00:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C26B64E46
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 01:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbhBBANB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Feb 2021 19:13:01 -0500
-Received: from mga01.intel.com ([192.55.52.88]:14122 "EHLO mga01.intel.com"
+        id S230106AbhBBBiM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Feb 2021 20:38:12 -0500
+Received: from mga03.intel.com ([134.134.136.65]:54238 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229530AbhBBANA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Feb 2021 19:13:00 -0500
-IronPort-SDR: 1JtRBZrW7re9Wcu4GqANrA00rhJI0HjJ6x1t0PMDmi2F5a5FkpTNO+Hb7x91w+NLmWSRV0MEBQ
- pRABYXRGmJRQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="199680664"
+        id S229736AbhBBBiL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Feb 2021 20:38:11 -0500
+IronPort-SDR: xMZZFBLez2cvh8haHyVLmGBESlVJcIDr/zvcPXYHOzse0wC4zKafiTTXFhOmd4w24osF/DJ70L
+ pzsz0n7oafhw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="180857770"
 X-IronPort-AV: E=Sophos;i="5.79,393,1602572400"; 
-   d="scan'208";a="199680664"
+   d="scan'208";a="180857770"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 16:12:17 -0800
-IronPort-SDR: FOQN8h8rNiqo1GQ/xhm8q2xkM9V8SIjdpOBLYxhzRXQ2KjELc0M9gkT/I2glhIvoHxC0GtRQkc
- uh7i/Kq5QTZQ==
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 17:37:30 -0800
+IronPort-SDR: IZZPI5C6/xyLi+cjoyhhNGucBzp+wVrvOAQmrc5cO3HgKDMd/fyboe7QOaYPZYHKJmMU6ElpYM
+ 3i6pwpUHbLvQ==
 X-IronPort-AV: E=Sophos;i="5.79,393,1602572400"; 
-   d="scan'208";a="507045754"
-Received: from gsabbine-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.23.28])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 16:12:09 -0800
-Date:   Tue, 2 Feb 2021 13:12:07 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver
- even when SGX driver is disabled
-Message-Id: <20210202131207.a806a0c35140a9a210aaccec@intel.com>
-In-Reply-To: <YBg5BradIvA4jNGw@google.com>
-References: <cover.1611634586.git.kai.huang@intel.com>
-        <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
-        <YBVxF2kAl7VzeRPS@kernel.org>
-        <20210201184040.646ea9923c2119c205b3378d@intel.com>
-        <dc3bc76e-fd89-011d-513b-fac6c6f5e0f0@intel.com>
-        <YBg5BradIvA4jNGw@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="507065127"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 17:37:30 -0800
+From:   ira.weiny@intel.com
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
+Subject: [PATCH] x86: Remove unnecessary kmap() from sgx_ioc_enclave_init()
+Date:   Mon,  1 Feb 2021 17:37:25 -0800
+Message-Id: <20210202013725.3514671-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 1 Feb 2021 09:23:18 -0800 Sean Christopherson wrote:
-> On Mon, Feb 01, 2021, Dave Hansen wrote:
-> > On 1/31/21 9:40 PM, Kai Huang wrote:
-> > >>> -	ret = sgx_drv_init();
-> > >>> +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
-> > >>> +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-> > >> If would create more dumb code and just add
-> > >>
-> > >> ret = sgx_vepc_init()
-> > >> if (ret)
-> > >>         goto err_kthread;
-> > 
-> > Jarkko, I'm not sure I understand this suggestion.
-> > 
-> > > Do you mean you want below?
-> > > 
-> > > 	ret = sgx_drv_init();
-> > > 	ret = sgx_vepc_init();
-> > > 	if (ret)
-> > > 		goto err_kthread;
-> > > 
-> > > This was Sean's original code, but Dave didn't like it.
-> 
-> The problem is it's wrong.  That snippet would incorrectly bail if drv_init()
-> succeeds but vepc_init() fails.
-> 
-> The alternative to the bitwise AND is to snapshot the result in two separate
-> variables:
-> 
-> 	ret = sgx_drv_init();
-> 	ret2 = sgx_vepc_init();
-> 	if (ret && ret2)
-> 		goto err_kthread;
-> 
-> or check the return from drv_init() _after_ vepc_init():
-> 
-> 	ret = sgx_drv_init();
-> 	if (sgx_vepc_init() && ret)
-> 		goto err_kthread;
-> 
-> 
-> As evidenced by this thread, the behavior is subtle and easy to get wrong.  I
-> deliberately chose the option that was the weirdest specifically to reduce the
-> probability of someone incorrectly "cleaning up" the code.
-> 
-> > Are you sure?  I remember the !!&!! abomination being Sean's doing. :)
-> 
-> Yep!  That 100% functionally correct horror is my doing.
-> 
-> > > Sean/Dave,
-> > > 
-> > > Please let me know which way you prefer.
-> > 
-> > Kai, I don't really know you are saying here.  In the end,
-> > sgx_vepc_init() has to run regardless of whether sgx_drv_init() is
-> > successful or not.  Also, we only want to 'goto err_kthraed' if *BOTH*
-> > fail.  The code you have above will, for instance, 'goto err_kthread' if
-> > sgx_drv_init() succeeds but sgx_vepc_init() fails.  It entirely
-> > disregards the sgx_drv_init() error code.
-> 
+From: Ira Weiny <ira.weiny@intel.com>
 
-Hi Dave, Sean,
+kmap is inefficient and we are trying to reduce the usage in the kernel.
+There is no readily apparent reason why the initp_page page needs to be
+allocated and kmap'ed() but sigstruct needs to be page aligned and token
+512 byte aligned.
 
-Yeah sorry my bad. The example I provided won't work. So I'd like keep the !!
-&!! :)
+In this case page_address() can be used instead of kmap_local_page() as
+a much more efficient way to use the address because the page is
+allocated GFP_KERNEL.
 
-Thanks. 
+Remove the kmap and replace with page_address() to get a kernel address
+for the alloc'ed page.
 
-Jarkko, please let us know if you still have concern.
+In addition add a comment regarding the alignment requirements as well
+as 2 BUILD_BUG_ON's to ensure future changes to sigstruct and token do
+not go unnoticed and cause a bug.
+
+Cc: Sean Christopherson <seanjc@google.com>,
+Cc: Jethro Beekman <jethro@fortanix.com>,
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+
+---
+Changes from v1[1]:
+	Use page_address() instead of kcmalloc() to ensure sigstruct is
+	page aligned
+	Use BUILD_BUG_ON to ensure token and sigstruct don't collide.
+
+[1] https://lore.kernel.org/lkml/20210129001459.1538805-1-ira.weiny@intel.com/
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 90a5caf76939..678b02d67c3c 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -615,11 +615,18 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	if (copy_from_user(&init_arg, arg, sizeof(init_arg)))
+ 		return -EFAULT;
+ 
++	/*
++	 * sigstruct must be on a page boundry and token on a 512 byte boundry
++	 * so use alloc_page/page_address instead of a kmalloc().
++	 */
+ 	initp_page = alloc_page(GFP_KERNEL);
+ 	if (!initp_page)
+ 		return -ENOMEM;
+ 
+-	sigstruct = kmap(initp_page);
++	sigstruct = page_address(initp_page);
++
++	BUILD_BUG_ON(sizeof(*sigstruct) > (PAGE_SIZE/2));
++	BUILD_BUG_ON(SGX_LAUNCH_TOKEN_SIZE > (PAGE_SIZE/2));
+ 	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
+ 	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
+ 
+@@ -645,7 +652,6 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	ret = sgx_encl_init(encl, sigstruct, token);
+ 
+ out:
+-	kunmap(initp_page);
+ 	__free_page(initp_page);
+ 	return ret;
+ }
+-- 
+2.28.0.rc0.12.gb6a658bd00c9
+
