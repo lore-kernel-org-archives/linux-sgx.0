@@ -4,41 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B28C433E9
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECFDC433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 19:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E90A64F5D
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B5BD64F4B
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 19:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239156AbhBBS5Z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 13:57:25 -0500
-Received: from mga09.intel.com ([134.134.136.24]:51332 "EHLO mga09.intel.com"
+        id S239262AbhBBTFl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 14:05:41 -0500
+Received: from mga17.intel.com ([192.55.52.151]:28215 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239086AbhBBS5G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Feb 2021 13:57:06 -0500
-IronPort-SDR: EYVFOsmYuHDPHDGMPjo7OmTOv0u8Ip+5DR9rds4iSfRW6+k/fzDZolVAKwb+fxrFoS3097Q397
- tAl9FDFnANaQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="181055493"
+        id S239416AbhBBTDi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 14:03:38 -0500
+IronPort-SDR: 2ycunX22gZZExKvdRPjeRZ9ruLsYfwVeam3pxnnmkXG+zIaIFrRTti0WK2tVrwVpZqJJ5flu2w
+ PJPh3nTGCULQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="160676802"
 X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
-   d="scan'208";a="181055493"
+   d="scan'208";a="160676802"
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:56:22 -0800
-IronPort-SDR: 34kBPjF/XvUJEtNBpBMzBpyXxSvoR0g0LfZgjS8L5VF9EsXtTKY6ODjoUj6SD1aY5usJcSFakz
- tYr6mTAVNnpg==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 11:02:50 -0800
+IronPort-SDR: VyDHmS52dhttnJCRXR/86DgK5r9uELB3tCrzHR5Odoy4Adn/C8GcSy3Tr7dKbpobbFoxo4vKNp
+ pKlQrFXphSpw==
 X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
-   d="scan'208";a="406273283"
+   d="scan'208";a="406275645"
 Received: from capeter1-mobl.amr.corp.intel.com (HELO [10.212.5.169]) ([10.212.5.169])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:55:37 -0800
-Subject: Re: [PATCH] x86: Remove unnecessary kmap() from
- sgx_ioc_enclave_init()
-To:     ira.weiny@intel.com, Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-References: <20210202013725.3514671-1-ira.weiny@intel.com>
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 11:02:49 -0800
+Subject: Re: [RFC PATCH v3 04/27] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+References: <cover.1611634586.git.kai.huang@intel.com>
+ <d93adaec3d4371638f4ea2d9c6efb28e22eafcb3.1611634586.git.kai.huang@intel.com>
+ <8250aedb-a623-646d-071a-75ece2c41c09@intel.com>
+ <20210127142537.9e831f66f925cbf82b9ab45d@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -83,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <ba4adad5-754f-65b5-5dae-69dee6803a23@intel.com>
-Date:   Tue, 2 Feb 2021 10:55:36 -0800
+Message-ID: <6b43282c-8609-73a6-9074-d595e51f1775@intel.com>
+Date:   Tue, 2 Feb 2021 11:02:49 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210202013725.3514671-1-ira.weiny@intel.com>
+In-Reply-To: <20210127142537.9e831f66f925cbf82b9ab45d@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -96,22 +99,24 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/1/21 5:37 PM, ira.weiny@intel.com wrote:
-> kmap is inefficient and we are trying to reduce the usage in the kernel.
-> There is no readily apparent reason why the initp_page page needs to be
-> allocated and kmap'ed() but sigstruct needs to be page aligned and token
-> 512 byte aligned.
+On 1/26/21 5:25 PM, Kai Huang wrote:
+>>
+>>> + * responsibility to make sure that the page is in uninitialized state In other
+>> Period after "state", please.
+>>
+>>> + * words, do EREMOVE, EWB or whatever operation is necessary before calling
+>>> + * this function.
+>>>   */
+>> OK, so if you're going to say "the caller must put the page in
+>> uninitialized state", let's also add a comment to the place that *DO*
+>> that, like the shiny new sgx_reset_epc_page().
+> Hi Dave,
+> 
+> Sorry I am a little bit confused here. Do you mean we should add a comment in
+> sgx_reset_epc_page() to say, for instance: sgx_free_epc_page() requires the EPC
+> page already been EREMOVE'd?
 
-Hi Ira,
+Yes.  You need to place a comment in sgx_reset_epc_page() which says
+something like:
 
-It's a *relatively* recent guaranteed, but:
-
-https://www.kernel.org/doc/Documentation/core-api/memory-allocation.rst
-
-says:
-
-> The address of a chunk allocated with `kmalloc` is aligned to at least
-> ARCH_KMALLOC_MINALIGN bytes.  For sizes which are a power of two, the
-> alignment is also guaranteed to be at least the respective size.
-
-So, if you allocate a page with kmalloc(), you get an aligned page.  Yay!
+	/* Place the page in uninitialized state: */
