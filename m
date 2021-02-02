@@ -2,103 +2,124 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6545DC433E6
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6098C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 345B864F6B
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8B764E9C
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236736AbhBBR3q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 12:29:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
+        id S237621AbhBBRfh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 12:35:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236982AbhBBRZ2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Feb 2021 12:25:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1BB1264ECE;
-        Tue,  2 Feb 2021 17:24:48 +0000 (UTC)
+        id S237619AbhBBRdQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 12:33:16 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DCFFA64E9C;
+        Tue,  2 Feb 2021 17:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612286689;
-        bh=qTVcg58dYz2tktDpLyrhv2bbFrtX8nF858qAAt+v8h8=;
+        s=k20201202; t=1612287157;
+        bh=M04SyJQ3T5b23EF8TLLqUAMtt12G2frfLwd0wJ9JWQ8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RKMAXVB2l2x4IIRqxnt+M+dihjloQZbJznd+xuj1HCtAqXmKhhdxsXrQSz8wdBIdE
-         Gn+xpKIpHy/ghX/0mO7IMzsYmt6VTXsUFAsWsBdK2tbvmXIT4Aqq6FnNaWD0+q0UTN
-         LXtT0sFYNjoI3o+eYDfNnhXmxEtWNIM6FemHDIeYCaULnl9ZXRuMUU5nTwTmn6Tr5p
-         jb3Sqq8VtVKE/jgkJzOaYL6m9e8p59fP7hCYswV+ZBob8VFxZONdgc5J4PHT782b2V
-         Sd+rl2y5e0NNZ6hqELehc/5RfO48vFPtR+I+WvsBl19PhkP7QIRTpsBJCHbTd3CtvV
-         3vgN9w6qitjig==
-Date:   Tue, 2 Feb 2021 19:24:42 +0200
+        b=lRxlVEhEKodVWMocEvyPe3sQzPs9mOXAwDb6/SMLVVqNyrCjd0DOQWHR2btcxPiZp
+         ZZrdMff5hUFPzoiDew4VHSK8uKINZp301DKBfW8QeMlt+hbPeYsjbp1BMBFkQsz/oK
+         5HYbBmDU1+URsjyx5sUmxP1Lc8FxtIXQ+KnAg9q1H7dVz9ShgMVk77gDTFQPyfYg6U
+         uYMUS2mRfmmoiTw4REPX9VFT3Jl+u5VGphRmwT1tE8ykU0DWSso2WCsZk+zEI90jwe
+         hKevJyTOxMz6cVS4YFHneY15O6c0P4z777MnE1SnAobeFTPWEHTrdmts4sqhghnDVJ
+         73iULHZRVzdug==
+Date:   Tue, 2 Feb 2021 19:32:30 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
         seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com
-Subject: Re: [RFC PATCH v3 16/27] KVM: VMX: Convert vcpu_vmx.exit_reason to a
- union
-Message-ID: <YBmK2lt/5r/+HrAO@kernel.org>
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
+ when SGX driver is disabled
+Message-ID: <YBmMrqxlTxClg9Eb@kernel.org>
 References: <cover.1611634586.git.kai.huang@intel.com>
- <d32ab375be78315e3bc2540f2a741859637abcb0.1611634586.git.kai.huang@intel.com>
- <YBV0nnqUHnING5qA@kernel.org>
- <20210201133259.e0398c9f0b229fd79a8c16c6@intel.com>
+ <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
+ <YBVxF2kAl7VzeRPS@kernel.org>
+ <20210201184040.646ea9923c2119c205b3378d@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210201133259.e0398c9f0b229fd79a8c16c6@intel.com>
+In-Reply-To: <20210201184040.646ea9923c2119c205b3378d@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Feb 01, 2021 at 01:32:59PM +1300, Kai Huang wrote:
-> On Sat, 30 Jan 2021 17:00:46 +0200 Jarkko Sakkinen wrote:
-> > On Tue, Jan 26, 2021 at 10:31:37PM +1300, Kai Huang wrote:
-> > > From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Mon, Feb 01, 2021 at 06:40:40PM +1300, Kai Huang wrote:
+> On Sat, 30 Jan 2021 16:45:43 +0200 Jarkko Sakkinen wrote:
+> > On Tue, Jan 26, 2021 at 10:31:00PM +1300, Kai Huang wrote:
+> > > Modify sgx_init() to always try to initialize the virtual EPC driver,
+> > > even if the bare-metal SGX driver is disabled.  The bare-metal driver
+> > > might be disabled if SGX Launch Control is in locked mode, or not
+> > > supported in the hardware at all.  This allows (non-Linux) guests that
+> > > support non-LC configurations to use SGX.
 > > > 
-> > > Convert vcpu_vmx.exit_reason from a u32 to a union (of size u32).  The
-> > > full VM_EXIT_REASON field is comprised of a 16-bit basic exit reason in
-> > > bits 15:0, and single-bit modifiers in bits 31:16.
+> > > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > > ---
+> > > v2->v3:
 > > > 
-> > > Historically, KVM has only had to worry about handling the "failed
-> > > VM-Entry" modifier, which could only be set in very specific flows and
-> > > required dedicated handling.  I.e. manually stripping the FAILED_VMENTRY
-> > > bit was a somewhat viable approach.  But even with only a single bit to
-> > > worry about, KVM has had several bugs related to comparing a basic exit
-> > > reason against the full exit reason store in vcpu_vmx.
+> > >  - Changed from sgx_virt_epc_init() to sgx_vepc_init().
 > > > 
-> > > Upcoming Intel features, e.g. SGX, will add new modifier bits that can
-
-BTW, SGX is not an upcoming CPU feature.
-
-Also, broadly speaking of upcoming features is not right thing to do.
-Better just to scope this down SGX. Theoretically upcoming CPU features
-can do pretty much anything. This is change is first and foremost done
-for SGX.
-
-> > > be set on more or less any VM-Exit, as opposed to the significantly more
-> > > restricted FAILED_VMENTRY, i.e. correctly handling everything in one-off
-> > > flows isn't scalable.  Tracking exit reason in a union forces code to
-> > > explicitly choose between consuming the full exit reason and the basic
-> > > exit, and is a convenient way to document and access the modifiers.
+> > > ---
+> > >  arch/x86/kernel/cpu/sgx/main.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > > index 21c2ffa13870..93d249f7bff3 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > > @@ -12,6 +12,7 @@
+> > >  #include "driver.h"
+> > >  #include "encl.h"
+> > >  #include "encls.h"
+> > > +#include "virt.h"
+> > >  
+> > >  struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> > >  static int sgx_nr_epc_sections;
+> > > @@ -712,7 +713,8 @@ static int __init sgx_init(void)
+> > >  		goto err_page_cache;
+> > >  	}
+> > >  
+> > > -	ret = sgx_drv_init();
+> > > +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
+> > > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
 > > 
-> > I *believe* that the change is correct but I dropped in the last paragraph
-> > - most likely only because of lack of expertise in this area.
+> > If would create more dumb code and just add
 > > 
-> > I ask the most basic question: why SGX will add new modifier bits?
+> > ret = sgx_vepc_init()
+> > if (ret)
+> >         goto err_kthread;
 > 
-> Not 100% sure about your question. Assuming you are asking SGX hardware
-> behavior, SGX architecture adds a new modifier bit (27) to Exit Reason, similar
-> to new #PF.SGX bit. 
+> Do you mean you want below?
 > 
-> Please refer to SDM Volume 3, Chapter 27.2.1 Basic VM-Exit Information.
+> 	ret = sgx_drv_init();
+> 	ret = sgx_vepc_init();
+> 	if (ret)
+> 		goto err_kthread;
 > 
-> Sean's commit msg already provides significant motivation of the change in this
-> patch.
+> This was Sean's original code, but Dave didn't like it.
 
-Just describe why SGX requires this. That's all.
+I think it should be like:
+
+ret = sgx_drv_init();
+if (ret)
+        pr_warn("Driver initialization failed with %d\n", ret);
+
+ret = sgx_vepc_init();
+if (ret)
+	goto err_kthread;
+
+There is problem here anyhow. I.e. -ENODEV's from sgx_drv_init().  I think
+how driver.c should be changed would be just to return 0 in the places
+where it now return -ENODEV. Consider "not initialized" as a successful
+initialization.
 
 /Jarkko
