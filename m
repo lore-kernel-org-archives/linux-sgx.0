@@ -2,71 +2,46 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D68CC433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 22:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44340C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 22:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 572F664F2C
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 22:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0098264EDA
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 22:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235434AbhBBWgh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 17:36:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231209AbhBBWeX (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Feb 2021 17:34:23 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 233FBC061573
-        for <linux-sgx@vger.kernel.org>; Tue,  2 Feb 2021 14:33:43 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id j11so10723029plt.11
-        for <linux-sgx@vger.kernel.org>; Tue, 02 Feb 2021 14:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6H4XfHqW3HG9z7ezVHnYakV7OIlHGdY2zaIRE+3MY+o=;
-        b=IrucQmt/MRh0ZX1a7l/dpjLM328BUP4vgrAY1XPU7W4oCjaUlnd5N4UEtOiYdh2GH2
-         u0IjVqkz6Vt/HXof7/bjy/f7IXOCkNfa29QCXSjb0WaRafKgWE3PNkixLzJPkHg39Kh4
-         bjRo0hee0l8dLCfkw0O9XqDow31NjBFBdioYGyLQKC+/ppciVjseT/naA5gNaXZRsQQe
-         d4xx18ROJaYyTOqG3aYlSeQexYc9q1oxhPS9rKy1t14S+Vt02BesztP4znlnbqEjL+oT
-         d487LUnDDFE3sMmBxrCeHNlML3w+uzC82bi0PvMAxA5jUWmkUeaiTPxQhx61uk1e3pUU
-         fo0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6H4XfHqW3HG9z7ezVHnYakV7OIlHGdY2zaIRE+3MY+o=;
-        b=CgCaF/5J/ShPDXHIM6oWdnHNTrSwGNITh3LrLymExztLSxt45cC1Knexjs7opGB+vn
-         iZJmlJI3ZjUoB6cW9PvtFDlZ9C+rFsWWIvC/OE4eyBkDzWfYucWxEAcsjMFlwn2kOVv0
-         snHldtiv7KyQHH7NEXbTQcUgSMYPTB20IQQpTtXJUhbifsOTz76QxQaE9bp2SqGLzZHd
-         KvAOolkZkrJ8YVli2ly5rIUHu5Yn/JlFOqV3C30B9u89NLzBLf/UwHHnMrc04/PR6Y2/
-         taqtWPHMzpQj5Ay9znRFdahHBj8OYg8C1gFOEXthguRgnJE2l3f8/yIUMz+i90xaee+i
-         TOhw==
-X-Gm-Message-State: AOAM5319om9tLfF054TRP/WM/RnjXo3aIrF1zGk4iW6TnV0rPihOsgjJ
-        1FTrx2R1Vzr67CBjnP6C6JsPOuECQrhhAw==
-X-Google-Smtp-Source: ABdhPJy0kLjiIZNkp8Jipm+TYTfwVuWB947W5dmhFbW8IF0X331oHfI0YHK+BEVr3JRRstmxmqOlVg==
-X-Received: by 2002:a17:902:ce89:b029:df:c98f:430d with SMTP id f9-20020a170902ce89b02900dfc98f430dmr219006plg.18.1612305222543;
-        Tue, 02 Feb 2021 14:33:42 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:e1bc:da69:2e4b:ce97])
-        by smtp.gmail.com with ESMTPSA id h3sm6578pgm.67.2021.02.02.14.33.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Feb 2021 14:33:41 -0800 (PST)
-Date:   Tue, 2 Feb 2021 14:33:34 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        id S235659AbhBBWiD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 17:38:03 -0500
+Received: from mga14.intel.com ([192.55.52.115]:6099 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235520AbhBBWhf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 17:37:35 -0500
+IronPort-SDR: Z3z0pg9AesEqKF1MRbbM1Te3KukM+0BipgeN71zyzpP1eK0vrvKmENmPATL/w5uqf4z6T9O8gn
+ 2spQ+wgsVwCw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="180171168"
+X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
+   d="scan'208";a="180171168"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 14:36:45 -0800
+IronPort-SDR: A7pOru+OIVFktVUZVOjZn6ezFsYVxovt9mp+3becGQrs3JalMpTgG4fOCAKCJXH9hIYFnpchJa
+ qN2zsWWSYcmA==
+X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
+   d="scan'208";a="433100977"
+Received: from capeter1-mobl.amr.corp.intel.com (HELO [10.212.5.169]) ([10.212.5.169])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 14:36:43 -0800
+Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "Huang, Kai" <kai.huang@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
+        "x86@kernel.org" <x86@kernel.org>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
         "luto@kernel.org" <luto@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
         "jethro@fortanix.com" <jethro@fortanix.com>,
         "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "seanjc@google.com" <seanjc@google.com>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "b.thiel@posteo.de" <b.thiel@posteo.de>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -78,26 +53,73 @@ Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
         "bp@alien8.de" <bp@alien8.de>,
         "Huang, Haitao" <haitao.huang@intel.com>
-Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
-Message-ID: <YBnTPmbPCAUS6XNl@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
  <4b4b9ed1d7756e8bccf548fc41d05c7dd8367b33.camel@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <fc5c2507-b109-b4ab-0eb8-4203dc6ab552@intel.com>
+Date:   Tue, 2 Feb 2021 14:36:41 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <4b4b9ed1d7756e8bccf548fc41d05c7dd8367b33.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 02, 2021, Edgecombe, Rick P wrote:
+On 2/2/21 2:21 PM, Edgecombe, Rick P wrote:
 > On Tue, 2021-01-26 at 23:10 +1300, Kai Huang wrote:
-> > This series adds KVM SGX virtualization support. The first 15 patches
-> > starting
-> > with x86/sgx or x86/cpu.. are necessary changes to x86 and SGX
-> > core/driver to
-> > support KVM SGX virtualization, while the rest are patches to KVM
-> > subsystem.
+>> This series adds KVM SGX virtualization support. The first 15 patches
+>> starting
+>> with x86/sgx or x86/cpu.. are necessary changes to x86 and SGX
+>> core/driver to
+>> support KVM SGX virtualization, while the rest are patches to KVM
+>> subsystem.
 > 
 > Do we need to restrict normal KVM host kernel access to EPC (i.e. via
 > __kvm_map_gfn() and friends)? As best I can tell the exact behavior of
@@ -105,12 +127,8 @@ On Tue, Feb 02, 2021, Edgecombe, Rick P wrote:
 > treated it as an error, the guest could subject the host kernel to it.
 > Is it worth a check in those?
 
-I don't think so.  The SDM does state that the exact behavior is uArch specific,
-but it also explicitly states that the access will be altered, which IMO doesn't
-leave any wiggle room for a future CPU to fault instead of using some form of
-abort semantics.
+Geez, you're right.  It's not even a page fault we can recover from.
 
-  Attempts to execute, read, or write to linear addresses mapped to EPC pages
-  when not inside an enclave will result in the processor altering the access to
-  preserve the confidentiality and integrity of the enclave. The exact behavior
-  may be different between implementations.
+SDM, Vol. 3D 37-1, 37.3 ACCESS-CONTROL REQUIREMENTS, says:
+
+"Non-enclave accesses to EPC memory result in undefined behavior"
