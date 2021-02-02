@@ -2,137 +2,116 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5155AC43381
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B28C433E9
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1542064E75
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E90A64F5D
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238921AbhBBSwf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 13:52:35 -0500
-Received: from mga17.intel.com ([192.55.52.151]:27098 "EHLO mga17.intel.com"
+        id S239156AbhBBS5Z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 13:57:25 -0500
+Received: from mga09.intel.com ([134.134.136.24]:51332 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236794AbhBBSug (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Feb 2021 13:50:36 -0500
-IronPort-SDR: eY4m2ZcGJ/ZKYrRSL9y3g/hXMREy0Wyo5UirBZ57Go1La4a6FYllYrN6+YRBO6CYQLYBB8WKLk
- ERG2V4ITF0BA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="160674917"
+        id S239086AbhBBS5G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 13:57:06 -0500
+IronPort-SDR: EYVFOsmYuHDPHDGMPjo7OmTOv0u8Ip+5DR9rds4iSfRW6+k/fzDZolVAKwb+fxrFoS3097Q397
+ tAl9FDFnANaQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="181055493"
 X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
-   d="scan'208";a="160674917"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:49:51 -0800
-IronPort-SDR: RHEFA3wL1qnQS5Y8mIIsJtbUKkn5IafRFf/lzt4UCgSLHXskVm96SR6yXiWt0Ch7n9rD+eS0Ys
- U3tkci7cpNHw==
+   d="scan'208";a="181055493"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:56:22 -0800
+IronPort-SDR: 34kBPjF/XvUJEtNBpBMzBpyXxSvoR0g0LfZgjS8L5VF9EsXtTKY6ODjoUj6SD1aY5usJcSFakz
+ tYr6mTAVNnpg==
 X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
-   d="scan'208";a="391621380"
-Received: from asalasax-mobl2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.7.175])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:49:48 -0800
-Date:   Wed, 3 Feb 2021 07:49:45 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver
- even when SGX driver is disabled
-Message-Id: <20210203074945.0e836486d6afc29e9b44fdbf@intel.com>
-In-Reply-To: <YBmMrqxlTxClg9Eb@kernel.org>
-References: <cover.1611634586.git.kai.huang@intel.com>
-        <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
-        <YBVxF2kAl7VzeRPS@kernel.org>
-        <20210201184040.646ea9923c2119c205b3378d@intel.com>
-        <YBmMrqxlTxClg9Eb@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="406273283"
+Received: from capeter1-mobl.amr.corp.intel.com (HELO [10.212.5.169]) ([10.212.5.169])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:55:37 -0800
+Subject: Re: [PATCH] x86: Remove unnecessary kmap() from
+ sgx_ioc_enclave_init()
+To:     ira.weiny@intel.com, Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
+References: <20210202013725.3514671-1-ira.weiny@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ba4adad5-754f-65b5-5dae-69dee6803a23@intel.com>
+Date:   Tue, 2 Feb 2021 10:55:36 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20210202013725.3514671-1-ira.weiny@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2 Feb 2021 19:32:30 +0200 Jarkko Sakkinen wrote:
-> On Mon, Feb 01, 2021 at 06:40:40PM +1300, Kai Huang wrote:
-> > On Sat, 30 Jan 2021 16:45:43 +0200 Jarkko Sakkinen wrote:
-> > > On Tue, Jan 26, 2021 at 10:31:00PM +1300, Kai Huang wrote:
-> > > > Modify sgx_init() to always try to initialize the virtual EPC driver,
-> > > > even if the bare-metal SGX driver is disabled.  The bare-metal driver
-> > > > might be disabled if SGX Launch Control is in locked mode, or not
-> > > > supported in the hardware at all.  This allows (non-Linux) guests that
-> > > > support non-LC configurations to use SGX.
-> > > > 
-> > > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > > ---
-> > > > v2->v3:
-> > > > 
-> > > >  - Changed from sgx_virt_epc_init() to sgx_vepc_init().
-> > > > 
-> > > > ---
-> > > >  arch/x86/kernel/cpu/sgx/main.c | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > > > index 21c2ffa13870..93d249f7bff3 100644
-> > > > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > > > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > > > @@ -12,6 +12,7 @@
-> > > >  #include "driver.h"
-> > > >  #include "encl.h"
-> > > >  #include "encls.h"
-> > > > +#include "virt.h"
-> > > >  
-> > > >  struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-> > > >  static int sgx_nr_epc_sections;
-> > > > @@ -712,7 +713,8 @@ static int __init sgx_init(void)
-> > > >  		goto err_page_cache;
-> > > >  	}
-> > > >  
-> > > > -	ret = sgx_drv_init();
-> > > > +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
-> > > > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-> > > 
-> > > If would create more dumb code and just add
-> > > 
-> > > ret = sgx_vepc_init()
-> > > if (ret)
-> > >         goto err_kthread;
-> > 
-> > Do you mean you want below?
-> > 
-> > 	ret = sgx_drv_init();
-> > 	ret = sgx_vepc_init();
-> > 	if (ret)
-> > 		goto err_kthread;
-> > 
-> > This was Sean's original code, but Dave didn't like it.
-> 
-> I think it should be like:
-> 
-> ret = sgx_drv_init();
-> if (ret)
->         pr_warn("Driver initialization failed with %d\n", ret);
-> 
-> ret = sgx_vepc_init();
-> if (ret)
-> 	goto err_kthread;
-> 
-> There is problem here anyhow. I.e. -ENODEV's from sgx_drv_init().  I think
-> how driver.c should be changed would be just to return 0 in the places
-> where it now return -ENODEV. Consider "not initialized" as a successful
-> initialization.
+On 2/1/21 5:37 PM, ira.weiny@intel.com wrote:
+> kmap is inefficient and we are trying to reduce the usage in the kernel.
+> There is no readily apparent reason why the initp_page page needs to be
+> allocated and kmap'ed() but sigstruct needs to be page aligned and token
+> 512 byte aligned.
 
-Hi Jarkko,
+Hi Ira,
 
-Dave already pointed out above code won't work. The problem is failure to
-initialize vepc will just goto err_kthread, no matter whether driver has been
-initialized successfully or not. 
+It's a *relatively* recent guaranteed, but:
 
-I am sticking to the original way (!! & !!).
+https://www.kernel.org/doc/Documentation/core-api/memory-allocation.rst
 
-> 
-> /Jarkko
+says:
+
+> The address of a chunk allocated with `kmalloc` is aligned to at least
+> ARCH_KMALLOC_MINALIGN bytes.  For sizes which are a power of two, the
+> alignment is also guaranteed to be at least the respective size.
+
+So, if you allocate a page with kmalloc(), you get an aligned page.  Yay!
