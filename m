@@ -2,121 +2,127 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91001C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 21:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94ED9C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 00:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E17A64E31
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Feb 2021 21:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B1C64DDC
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 00:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232326AbhBAVWq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Feb 2021 16:22:46 -0500
-Received: from mga12.intel.com ([192.55.52.136]:44242 "EHLO mga12.intel.com"
+        id S229556AbhBBANB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Feb 2021 19:13:01 -0500
+Received: from mga01.intel.com ([192.55.52.88]:14122 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230094AbhBAVWp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Feb 2021 16:22:45 -0500
-IronPort-SDR: jbVLfQW2Gn+FgYrqAh+Byjsc/Gs5+ebyoIGB4munYhBPgvP/XvfdJnjvUhehhtDausuhVAoEqj
- jrQbC7OjCTXw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="159922505"
+        id S229530AbhBBANA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Feb 2021 19:13:00 -0500
+IronPort-SDR: 1JtRBZrW7re9Wcu4GqANrA00rhJI0HjJ6x1t0PMDmi2F5a5FkpTNO+Hb7x91w+NLmWSRV0MEBQ
+ pRABYXRGmJRQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9882"; a="199680664"
 X-IronPort-AV: E=Sophos;i="5.79,393,1602572400"; 
-   d="scan'208";a="159922505"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 13:22:03 -0800
-IronPort-SDR: UneeydW71itvdqbCZnqY7Cazh7OsC49p6cpr9Rkwwjtdujy3RTyz95H1QTSJvNRNdwGi8KsrVB
- 1GlABROfl89Q==
+   d="scan'208";a="199680664"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 16:12:17 -0800
+IronPort-SDR: FOQN8h8rNiqo1GQ/xhm8q2xkM9V8SIjdpOBLYxhzRXQ2KjELc0M9gkT/I2glhIvoHxC0GtRQkc
+ uh7i/Kq5QTZQ==
 X-IronPort-AV: E=Sophos;i="5.79,393,1602572400"; 
-   d="scan'208";a="578053640"
-Received: from ccmincem-mobl1.amr.corp.intel.com (HELO [10.212.145.244]) ([10.212.145.244])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 13:22:00 -0800
-Subject: Re: [RFC PATCH v3 13/27] x86/sgx: Add helper to update
- SGX_LEPUBKEYHASHn MSRs
-To:     Kai Huang <kai.huang@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
+   d="scan'208";a="507045754"
+Received: from gsabbine-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.23.28])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 16:12:09 -0800
+Date:   Tue, 2 Feb 2021 13:12:07 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver
+ even when SGX driver is disabled
+Message-Id: <20210202131207.a806a0c35140a9a210aaccec@intel.com>
+In-Reply-To: <YBg5BradIvA4jNGw@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
- <db965546668e24857627a6695ee739aac5c15d3a.1611634586.git.kai.huang@intel.com>
- <YBVx8P1QfRspUvkC@kernel.org>
- <20210201141720.2249c9aef5b3f5ed9fda3f81@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <03163045-2958-d2f3-c04b-bf9f2fa5a741@intel.com>
-Date:   Mon, 1 Feb 2021 13:22:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210201141720.2249c9aef5b3f5ed9fda3f81@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
+        <YBVxF2kAl7VzeRPS@kernel.org>
+        <20210201184040.646ea9923c2119c205b3378d@intel.com>
+        <dc3bc76e-fd89-011d-513b-fac6c6f5e0f0@intel.com>
+        <YBg5BradIvA4jNGw@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/31/21 5:17 PM, Kai Huang wrote:
-> On Sat, 30 Jan 2021 16:49:20 +0200 Jarkko Sakkinen wrote:
->> On Tue, Jan 26, 2021 at 10:31:05PM +1300, Kai Huang wrote:
->>> Add a helper to update SGX_LEPUBKEYHASHn MSRs.  SGX virtualization also
->>> needs to update those MSRs based on guest's "virtual" SGX_LEPUBKEYHASHn
->>> before EINIT from guest.
->>>
->>> Signed-off-by: Kai Huang <kai.huang@intel.com>
->>
->> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Thanks Jarkko.
+On Mon, 1 Feb 2021 09:23:18 -0800 Sean Christopherson wrote:
+> On Mon, Feb 01, 2021, Dave Hansen wrote:
+> > On 1/31/21 9:40 PM, Kai Huang wrote:
+> > >>> -	ret = sgx_drv_init();
+> > >>> +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
+> > >>> +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
+> > >> If would create more dumb code and just add
+> > >>
+> > >> ret = sgx_vepc_init()
+> > >> if (ret)
+> > >>         goto err_kthread;
+> > 
+> > Jarkko, I'm not sure I understand this suggestion.
+> > 
+> > > Do you mean you want below?
+> > > 
+> > > 	ret = sgx_drv_init();
+> > > 	ret = sgx_vepc_init();
+> > > 	if (ret)
+> > > 		goto err_kthread;
+> > > 
+> > > This was Sean's original code, but Dave didn't like it.
 > 
-> Hi Dave,
+> The problem is it's wrong.  That snippet would incorrectly bail if drv_init()
+> succeeds but vepc_init() fails.
 > 
-> This patch originally had your Acked-by, but since I added a comment, I removed
-> it. May I still have your Acked-by?
+> The alternative to the bitwise AND is to snapshot the result in two separate
+> variables:
+> 
+> 	ret = sgx_drv_init();
+> 	ret2 = sgx_vepc_init();
+> 	if (ret && ret2)
+> 		goto err_kthread;
+> 
+> or check the return from drv_init() _after_ vepc_init():
+> 
+> 	ret = sgx_drv_init();
+> 	if (sgx_vepc_init() && ret)
+> 		goto err_kthread;
+> 
+> 
+> As evidenced by this thread, the behavior is subtle and easy to get wrong.  I
+> deliberately chose the option that was the weirdest specifically to reduce the
+> probability of someone incorrectly "cleaning up" the code.
+> 
+> > Are you sure?  I remember the !!&!! abomination being Sean's doing. :)
+> 
+> Yep!  That 100% functionally correct horror is my doing.
+> 
+> > > Sean/Dave,
+> > > 
+> > > Please let me know which way you prefer.
+> > 
+> > Kai, I don't really know you are saying here.  In the end,
+> > sgx_vepc_init() has to run regardless of whether sgx_drv_init() is
+> > successful or not.  Also, we only want to 'goto err_kthraed' if *BOTH*
+> > fail.  The code you have above will, for instance, 'goto err_kthread' if
+> > sgx_drv_init() succeeds but sgx_vepc_init() fails.  It entirely
+> > disregards the sgx_drv_init() error code.
+> 
 
-Yes, feel free to restore it.  This looks fine.
+Hi Dave, Sean,
 
+Yeah sorry my bad. The example I provided won't work. So I'd like keep the !!
+&!! :)
+
+Thanks. 
+
+Jarkko, please let us know if you still have concern.
