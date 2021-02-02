@@ -2,113 +2,126 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F14C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC82C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 504F664F69
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4762F64F95
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 18:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238129AbhBBSAK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 13:00:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36882 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233969AbhBBR6E (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Feb 2021 12:58:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612288598;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dN94EaBZoEheJv2bVKF3aVQ488mV21cwDUunabYy/Qg=;
-        b=hv7ntu2ImIGe6t8jFPVdClNrqgL0H++Tpfk48pkpT33hYw7v75FvzdLLjPCWfuMWSDPotU
-        vbQ3ORDizXkd1sO3nK+KLdEzQsAluiqrCox0E0pYJYT7tvGLi5xPr2PGnPZCPjq+Ug/3Vh
-        8Tnu0i5lngSEnlGjAhlWGwL2ZXV2k1I=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-518-XG-DO64NOwqbLAq__YZ-bg-1; Tue, 02 Feb 2021 12:56:37 -0500
-X-MC-Unique: XG-DO64NOwqbLAq__YZ-bg-1
-Received: by mail-ed1-f70.google.com with SMTP id x13so9997024edi.7
-        for <linux-sgx@vger.kernel.org>; Tue, 02 Feb 2021 09:56:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dN94EaBZoEheJv2bVKF3aVQ488mV21cwDUunabYy/Qg=;
-        b=RDfDKwa+9jcFAA/6foLtdhpvSWrSflIOEngUKZGbccf8a//XFxxSgE2GNoj01xUK0D
-         C1YOtducYO2zWUF17Zrqv487VXQtY+xQEjgeptXTm6404SxQsSTeatJP57/mkHHf8AaC
-         zMYxzpBVSqQEZceVXZ7HFxQUMBAGnZ6ICpmK3MgYMc+uusPQqCWiWrqttfwxfrzatGYK
-         I+178EX946xSxpCtK+1+Pd8Tcv+Dt21/eGGok/6i0jZiWJHzcLJehr1+XUNHW/GtFzAc
-         5M/sgEBLQKBT3avUBBLnZ+19mKaNdjn+bh7d24jxhna0v4JhM4jDbGRR48kVMm8M4rnr
-         F8VA==
-X-Gm-Message-State: AOAM533qNez7PVUtTRlm0w+7m7Qza6DuMkBnErJOSiQ8PEkfPSSb/tNV
-        g3fYFVLfZxExiP9chAq7v5+1dx9QIdOiFrY8lelX42s2J+nqN+rzyrEe4iXxIc2PWu12CX1m+qh
-        KHNXpo493FGvo7+eOkPlC
-X-Received: by 2002:aa7:c884:: with SMTP id p4mr139197eds.212.1612288595838;
-        Tue, 02 Feb 2021 09:56:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJweACfB87YxeuSAxTmHEDhxNUQg9iEM2Fqa37a/m/k4cY0OXCQZyW6QjL2h5dDB1cEfiavzBA==
-X-Received: by 2002:aa7:c884:: with SMTP id p4mr139189eds.212.1612288595650;
-        Tue, 02 Feb 2021 09:56:35 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
-        by smtp.gmail.com with ESMTPSA id z20sm10334643edx.15.2021.02.02.09.56.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Feb 2021 09:56:34 -0800 (PST)
+        id S238181AbhBBSDN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 13:03:13 -0500
+Received: from mga07.intel.com ([134.134.136.100]:26194 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238107AbhBBSAy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 13:00:54 -0500
+IronPort-SDR: 9p8sWKEBZ0iwOL01zgb8DhKFOAAxj/fLcr0eWBR7Djf58PTGv2YW1TiLqWWfcDEssoFUI516nJ
+ 0Qi/ehOToSUA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="244981566"
+X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
+   d="scan'208";a="244981566"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:00:11 -0800
+IronPort-SDR: bH/wnIdUtKyhdgdbzgrX3aS2hZPLEokPUREfSfiNqaC9STi1PCBwMdwyqQyLwajUWrWu1Z1HQV
+ CJgKStburkSQ==
+X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
+   d="scan'208";a="406253452"
+Received: from capeter1-mobl.amr.corp.intel.com (HELO [10.212.5.169]) ([10.212.5.169])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 10:00:08 -0800
 Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
  sub-features
-To:     Kai Huang <kai.huang@intel.com>,
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Kai Huang <kai.huang@intel.com>,
         Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
-        luto@kernel.org, haitao.huang@intel.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, haitao.huang@intel.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 References: <cover.1611634586.git.kai.huang@intel.com>
  <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
  <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
  <3a82563d5a25b52f0b5f01560d70c50a2323f7e5.camel@intel.com>
  <YBVdNl+pTBBm6igw@kernel.org>
  <20210201130151.4bfb5258885ca0f0905858c6@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <89755f15-a873-badc-b3d6-d4f0f817326e@redhat.com>
-Date:   Tue, 2 Feb 2021 18:56:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+ <89755f15-a873-badc-b3d6-d4f0f817326e@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <87a8a3f4-3775-21f1-cb67-107cca1a78e5@intel.com>
+Date:   Tue, 2 Feb 2021 10:00:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210201130151.4bfb5258885ca0f0905858c6@intel.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <89755f15-a873-badc-b3d6-d4f0f817326e@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 01/02/21 01:01, Kai Huang wrote:
->>> I think we can remove comment for SGX1, since it is basically SGX.
->>>
->>> For SGX2, how about below?
->>>
->>> /* SGX Enclave Dynamic Memory Management */
->> (EDMM)
-> Does EDMM obvious to everyone, instead of explicitly saying Enclave Dynamic
-> Memory Management?
+On 2/2/21 9:56 AM, Paolo Bonzini wrote:
+> On 01/02/21 01:01, Kai Huang wrote:
+>>>> I think we can remove comment for SGX1, since it is basically SGX.
+>>>>
+>>>> For SGX2, how about below?
+>>>>
+>>>> /* SGX Enclave Dynamic Memory Management */
+>>> (EDMM)
+>> Does EDMM obvious to everyone, instead of explicitly saying Enclave
+>> Dynamic
+>> Memory Management?
+>>
+>> Also do you think we need a comment for SGX1 bit? I can add /* Basic
+>> SGX */,
+>> but I am not sure whether it is required.
 > 
-> Also do you think we need a comment for SGX1 bit? I can add /* Basic SGX */,
-> but I am not sure whether it is required.
+> Yes, please use
 > 
+> /* "" Basic SGX */
+> /* "" SGX Enclave Dynamic Memory Mgmt */
 
-Yes, please use
-
-/* "" Basic SGX */
-/* "" SGX Enclave Dynamic Memory Mgmt */
-
-Paolo
-
+Do you actually want to suppress these from /proc/cpuinfo with the ""?
