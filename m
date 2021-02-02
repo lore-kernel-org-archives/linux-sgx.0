@@ -2,131 +2,146 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3292CC433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 23:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F8FC433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 23:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E50E964E39
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 23:11:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436B964FA2
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 23:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236093AbhBBXLk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 18:11:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47918 "EHLO mail.kernel.org"
+        id S236440AbhBBXRJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 18:17:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236088AbhBBXLj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Feb 2021 18:11:39 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C7A364F49;
-        Tue,  2 Feb 2021 23:10:57 +0000 (UTC)
+        id S236418AbhBBXRI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 18:17:08 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3921B64F74;
+        Tue,  2 Feb 2021 23:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612307458;
-        bh=eW8um/Ioo/THqZqn4fbfRLa1bLZzyvdNcBq7vNyKrrk=;
+        s=k20201202; t=1612307787;
+        bh=vD9heg/ocCMzRX0Ub+/qDUdUBZRo012giLlKJyJKnX8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mwGFlD2WRN5QZTYwT6fis8iqzHqxGeW5A4V8a8SDrLvwZ0PiN5DeNGrAwHAsSiq5A
-         fz/fy7fEFJXDdg4lKm4jlyB4zUOI0Ie3jdRCBm9Ch0jvcHirDUeOHfxqkeIYAb5Y/T
-         pkFFkwGEYs5NqVotFxVUN7dyNfUptzzkhQFEIBUCg1pfGQ5TrnAYfNEH6v61w3RRP2
-         tP2cMURMHwzTj4JA5EElf7d2jtIlCQs/lRt0m1uI32Qx626Wc4/DF04lUDjTego794
-         VYIoXiyQy6pj9N92HqpcpC42QH5dyrtZCQVt1rO6Vic4Y3zlcBBidQ6QAiu8N/U7eB
-         zb2WwJSsdWYyw==
-Date:   Wed, 3 Feb 2021 01:10:50 +0200
+        b=EFsyhma1Q5g+lrYAateEcRPIy/yd6gkRp0Q3ct3t053VBnCYKIVfDfka6MnDs3QX6
+         qVOPpSUOnfKCgXWqSJqVwnY0A8jaj6OHZSch0vD8LrQbab7vwd9zTElfoBqH+rqlZS
+         N7msE4Jd4MWtdvhFGBktMfqSs4Hff5YMNDxBWndS7btcno+5cv0Cmq1WbHYfkwdJdf
+         ULDHAOjFGTr22n9ofjymsP+9LHZ4PzoIYJ7f7HnxDjKjC2oKZpgCmtaURO4NZRsHF3
+         P4ps7K+utOgH4ftThUKMQ9gFfQ15gcEe89U4domHTArAaCGOKMl9V+3bRscSzPj9ao
+         bMyY1aMo9WBOw==
+Date:   Wed, 3 Feb 2021 01:16:20 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
  when SGX driver is disabled
-Message-ID: <YBnb+hTkHqmuUeX3@kernel.org>
+Message-ID: <YBndRM9m0XHYwsPP@kernel.org>
 References: <cover.1611634586.git.kai.huang@intel.com>
  <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
  <YBVxF2kAl7VzeRPS@kernel.org>
  <20210201184040.646ea9923c2119c205b3378d@intel.com>
- <dc3bc76e-fd89-011d-513b-fac6c6f5e0f0@intel.com>
- <YBg5BradIvA4jNGw@google.com>
- <20210202131207.a806a0c35140a9a210aaccec@intel.com>
+ <YBmMrqxlTxClg9Eb@kernel.org>
+ <YBmX/wFFshokDqWM@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210202131207.a806a0c35140a9a210aaccec@intel.com>
+In-Reply-To: <YBmX/wFFshokDqWM@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 01:12:07PM +1300, Kai Huang wrote:
-> On Mon, 1 Feb 2021 09:23:18 -0800 Sean Christopherson wrote:
-> > On Mon, Feb 01, 2021, Dave Hansen wrote:
-> > > On 1/31/21 9:40 PM, Kai Huang wrote:
-> > > >>> -	ret = sgx_drv_init();
-> > > >>> +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
-> > > >>> +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-> > > >> If would create more dumb code and just add
-> > > >>
-> > > >> ret = sgx_vepc_init()
-> > > >> if (ret)
-> > > >>         goto err_kthread;
-> > > 
-> > > Jarkko, I'm not sure I understand this suggestion.
-> > > 
-> > > > Do you mean you want below?
+On Tue, Feb 02, 2021 at 10:20:47AM -0800, Sean Christopherson wrote:
+> On Tue, Feb 02, 2021, Jarkko Sakkinen wrote:
+> > On Mon, Feb 01, 2021 at 06:40:40PM +1300, Kai Huang wrote:
+> > > On Sat, 30 Jan 2021 16:45:43 +0200 Jarkko Sakkinen wrote:
+> > > > On Tue, Jan 26, 2021 at 10:31:00PM +1300, Kai Huang wrote:
+> > > > > Modify sgx_init() to always try to initialize the virtual EPC driver,
+> > > > > even if the bare-metal SGX driver is disabled.  The bare-metal driver
+> > > > > might be disabled if SGX Launch Control is in locked mode, or not
+> > > > > supported in the hardware at all.  This allows (non-Linux) guests that
+> > > > > support non-LC configurations to use SGX.
+> > > > > 
+> > > > > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > > > > ---
+> > > > > v2->v3:
+> > > > > 
+> > > > >  - Changed from sgx_virt_epc_init() to sgx_vepc_init().
+> > > > > 
+> > > > > ---
+> > > > >  arch/x86/kernel/cpu/sgx/main.c | 4 +++-
+> > > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > > > > index 21c2ffa13870..93d249f7bff3 100644
+> > > > > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > > > > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > > > > @@ -12,6 +12,7 @@
+> > > > >  #include "driver.h"
+> > > > >  #include "encl.h"
+> > > > >  #include "encls.h"
+> > > > > +#include "virt.h"
+> > > > >  
+> > > > >  struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> > > > >  static int sgx_nr_epc_sections;
+> > > > > @@ -712,7 +713,8 @@ static int __init sgx_init(void)
+> > > > >  		goto err_page_cache;
+> > > > >  	}
+> > > > >  
+> > > > > -	ret = sgx_drv_init();
+> > > > > +	/* Success if the native *or* virtual EPC driver initialized cleanly. */
+> > > > > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
 > > > > 
-> > > > 	ret = sgx_drv_init();
-> > > > 	ret = sgx_vepc_init();
-> > > > 	if (ret)
-> > > > 		goto err_kthread;
+> > > > If would create more dumb code and just add
 > > > > 
-> > > > This was Sean's original code, but Dave didn't like it.
-> > 
-> > The problem is it's wrong.  That snippet would incorrectly bail if drv_init()
-> > succeeds but vepc_init() fails.
-> > 
-> > The alternative to the bitwise AND is to snapshot the result in two separate
-> > variables:
-> > 
-> > 	ret = sgx_drv_init();
-> > 	ret2 = sgx_vepc_init();
-> > 	if (ret && ret2)
-> > 		goto err_kthread;
-> > 
-> > or check the return from drv_init() _after_ vepc_init():
-> > 
-> > 	ret = sgx_drv_init();
-> > 	if (sgx_vepc_init() && ret)
-> > 		goto err_kthread;
-> > 
-> > 
-> > As evidenced by this thread, the behavior is subtle and easy to get wrong.  I
-> > deliberately chose the option that was the weirdest specifically to reduce the
-> > probability of someone incorrectly "cleaning up" the code.
-> > 
-> > > Are you sure?  I remember the !!&!! abomination being Sean's doing. :)
-> > 
-> > Yep!  That 100% functionally correct horror is my doing.
-> > 
-> > > > Sean/Dave,
-> > > > 
-> > > > Please let me know which way you prefer.
+> > > > ret = sgx_vepc_init()
+> > > > if (ret)
+> > > >         goto err_kthread;
 > > > 
-> > > Kai, I don't really know you are saying here.  In the end,
-> > > sgx_vepc_init() has to run regardless of whether sgx_drv_init() is
-> > > successful or not.  Also, we only want to 'goto err_kthraed' if *BOTH*
-> > > fail.  The code you have above will, for instance, 'goto err_kthread' if
-> > > sgx_drv_init() succeeds but sgx_vepc_init() fails.  It entirely
-> > > disregards the sgx_drv_init() error code.
+> > > Do you mean you want below?
+> > > 
+> > > 	ret = sgx_drv_init();
+> > > 	ret = sgx_vepc_init();
+> > > 	if (ret)
+> > > 		goto err_kthread;
+> > > 
+> > > This was Sean's original code, but Dave didn't like it.
 > > 
+> > I think it should be like:
+> > 
+> > ret = sgx_drv_init();
+> > if (ret)
+> >         pr_warn("Driver initialization failed with %d\n", ret);
+> > 
+> > ret = sgx_vepc_init();
+> > if (ret)
+> > 	goto err_kthread;
 > 
-> Hi Dave, Sean,
-> 
-> Yeah sorry my bad. The example I provided won't work. So I'd like keep the !!
-> &!! :)
-> 
-> Thanks. 
-> 
-> Jarkko, please let us know if you still have concern.
+> And that's wrong, it doesn't correctly handle the case where sgx_drv_init()
+> succeeds but sgx_vepc_init() fails.
 
-I'll just review the next version. I disagree with this packing though.
+After reading all of this, I think that the only acceptable way to
+to manage this is to
 
-/Jarkko
+ret = sgx_drv_init();
+if (ret && ret != -ENODEV)
+        goto err_kthread;
+
+ret = sgx_vepc_init();
+if (ret)
+	goto err_kthread;
+
+Anything else would be a bad idea.
+
+We do support allowing KVM when the driver does not *support* SGX,
+not when something is working incorrectly. In that case it is a bad
+idea to allow any SGX related initialization to continue.
+
+Agreed that my earlier example is incorrect but so is the condition
+in the original patch.
+
+/Jarkko 
