@@ -4,74 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A151FC43381
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A80C433E9
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67A5564F6C
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BD5864F6F
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 17:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236811AbhBBRlB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 12:41:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47920 "EHLO mail.kernel.org"
+        id S233991AbhBBRrh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 12:47:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237626AbhBBRh4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Feb 2021 12:37:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 700A164F6B;
-        Tue,  2 Feb 2021 17:37:15 +0000 (UTC)
+        id S237711AbhBBRpa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 12:45:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AD4AA64F5F;
+        Tue,  2 Feb 2021 17:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612287435;
-        bh=Q5IXGz4agDy9l+eqDqusJEsm5r3+bp1i2JQICg3Sb68=;
+        s=k20201202; t=1612287890;
+        bh=Huh4himrnJQ9obbj+IIUqJHftGB0fTq9/gaoWoFoc8M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rOR49h7ioJoHRRu5wIYcUXazOLckzJoNzfEV3hbml47dbWe4z0657cijt/Nz8JJ/W
-         Y68M2Y+uig8GpuIQD4jZlGffvlPWh1ZtJbBT+hc4yVpBRtghugXe7Vj++SNtaGTp3s
-         RE0W636qwLqAeLeLVzfpwcLVrufiWqk0JCbXPZJr63Fy11w2ARUqiSdwsWN+JZepsa
-         JbKzoIEx81P8nPMS3PH6Cbs6llixrsMMnmmne4hBl9v5IwYZDcd0ljqoyNROCDF/Ta
-         NziQUEJ7C4SG2uK2SChu3+Qj7huntndezUE63PkmYT9XdGc41SNf/9hBINN70P3A2+
-         xLv20C+mkmmpg==
-Date:   Tue, 2 Feb 2021 19:37:08 +0200
+        b=XeTIuUro/lvwI0+pDd0IkXmDHc/a/0SDf4bKyjzkRij/oL9naQF+fRAijRV8SiMke
+         T07TJ3/Rr/uYFk9zQ+cDsVaewBxeJSroIAx3t87Y4KrkmUXg9GdqdG2Zw5QTuDeYIP
+         yQxzs7hhB+ox8NyhUkY0daLhFAePskxdWyZwHTSAHeRY90MoYjiUMUpQ02pe19XdK2
+         x9vx/yGMLRtxotWolxRjnjxDeRniDmyR9OT95EH+Rfu3ZRNumRmtcHz4O0upt4bxmI
+         hZWwSROwB0myc+j2R+w5M40tyDmxBESaoIXf4lZUsn92wsGGVMTxCZmXAgohc/39jT
+         2n6cBQM7ppjfw==
+Date:   Tue, 2 Feb 2021 19:44:42 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Sean Christopherson <seanjc@google.com>, ira.weiny@intel.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: Re: [PATCH] x86: Remove unnecessary kmap() from
- sgx_ioc_enclave_init()
-Message-ID: <YBmNxAW8jYTqg/IF@kernel.org>
-References: <20210129001459.1538805-1-ira.weiny@intel.com>
- <YBRH2jfPKS8ZofMZ@google.com>
- <20210201084812.GA3229269@infradead.org>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@linux.intel.com
+Subject: Re: [PATCH v2] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+Message-ID: <YBmPiqfHLz5JV57y@kernel.org>
+References: <20201222004108.49159-1-jarkko@kernel.org>
+ <16f13aee-a966-ecd4-6f08-d9d7b0e869f3@gmail.com>
+ <YAli9syKOwVTYeh6@kernel.org>
+ <cb04f65c-7598-e5c0-6aa9-421b8e37c8db@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210201084812.GA3229269@infradead.org>
+In-Reply-To: <cb04f65c-7598-e5c0-6aa9-421b8e37c8db@gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Feb 01, 2021 at 08:48:12AM +0000, Christoph Hellwig wrote:
-> On Fri, Jan 29, 2021 at 09:37:30AM -0800, Sean Christopherson wrote:
-> > On Thu, Jan 28, 2021, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > There is no reason to alloc a page and kmap it to store this temporary
-> > > data from the user. 
-> > 
-> > Actually, there is, it's just poorly documented.  The sigstruct needs to be
-> > page aligned, and the token needs to be 512-byte aligned.  kmcalloc doesn't
-> > guarantee alignment.  IIRC things will work until slub_debug is enabled, at
-> > which point the natural alignment behavior goes out the window.
+On Thu, Jan 21, 2021 at 03:33:05PM +0100, Michael Kerrisk (man-pages) wrote:
+> Hi Jarko,
+
+Jarkko :-)
+
+> On 1/21/21 12:18 PM, Jarkko Sakkinen wrote:
+> > On Tue, Dec 22, 2020 at 07:53:24PM +0100, Michael Kerrisk (man-pages) wrote:
+> >>> * Fixed the semantic newlines convention and various style errors etc.
+> >>>   that were reported by Alenjandro and Michael.
 > 
-> Well, there still is absolutely no need for the kmap as you can use
-> page_address for a GFP_KERNEL allocation.
+> s/Alenjandro/Alejandro/  :-)
 
-Yeah, we do that in sgx_ioc_enclave_create already based on feedback:
+Just had to mention the typo above because of this, sorry :-) I'll
+fix this.
 
-        secs = kmalloc(PAGE_SIZE, GFP_KERNEL);
-        if (!secs)
-                return -ENOMEM;
-        
-The kmap() in sgx_ioc_enclave_init() is an unfortunate miss. Let's just
-follow the pre-existing pattern.
+> > So the thing is that there is reserved memory, consider it as a bit like
+> > VRAM. This memory can be oversubscribed. Then when you create an enclave
+> > you consume these pages. When running out of them, the kernel swaps pages
+> > from enclaves across the system currently based on a trivial FIFO policy.
+> > So these regions define kind of the memory pool for all enclaves running in
+> > the system.
+> 
+> SO, is there some suitable change for the manual page text?
+
+What if I just edit it from this? I think the video RAM comparison makes
+this common sense understandable. There's restricted memory shared by
+processes and managed by the kernel.
 
 /Jarkko
