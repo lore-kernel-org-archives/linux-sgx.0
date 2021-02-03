@@ -2,142 +2,219 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F03C433E6
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 17:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62C7C433E0
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 17:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0798C64E93
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 17:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B3BF64F87
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 17:37:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231939AbhBCRIs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 12:08:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
+        id S231675AbhBCRhM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Feb 2021 12:37:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231404AbhBCRIp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Feb 2021 12:08:45 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1170DC0613ED
-        for <linux-sgx@vger.kernel.org>; Wed,  3 Feb 2021 09:08:00 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id t29so210591pfg.11
-        for <linux-sgx@vger.kernel.org>; Wed, 03 Feb 2021 09:08:00 -0800 (PST)
+        with ESMTP id S229931AbhBCRhL (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Feb 2021 12:37:11 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B547C061573
+        for <linux-sgx@vger.kernel.org>; Wed,  3 Feb 2021 09:36:31 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id y205so284185pfc.5
+        for <linux-sgx@vger.kernel.org>; Wed, 03 Feb 2021 09:36:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=G1iwSbTVj6QBQpGti6KeydgsQsfsoS1OzKLwdbvGTlg=;
-        b=Y/iuW7ktUr9N60A9jncs5vg9Df3WAmp7Mz/GBlCJvytad9IsqzMFNSjX20mjDweX8t
-         SfeM0TrXnWtmLpCKXNenztGoOffKRBKoUGnBVldUZalpPxA1xHp5D4h2tVagdxcmdF+H
-         1QC9ns87ZGbm2a4Jc1Y43fqKAdDriiOZHZ+9MUipbLGb8jU4L85LwHxamry5Yu/yC8eO
-         exvxIiB/wwGng0NBVRiVJlrH4+0tylVlHdKpD3JYORITsgUmbQu4qzyeqApdloFnRuFz
-         cYTNSU8nE4/65pfz6TJssev82KTiljmL78AUr4aI7ttc6//FhQypp860FpBHC7ZCKanB
-         /XQg==
+         :content-disposition:in-reply-to;
+        bh=oSCtPYvB36c/3FOI/pxSNY8EAQ3LNUiqVCd8tQQiPLM=;
+        b=KhgGhrQk+3cC//ayOQ3/op7AdpEY30jmoaslxHSRlYdwS3DQ/JGHFhPdb9mEfZBM3K
+         BEX6Cqskgo+bSNo9x1+EutpSyeCaJOzxe672z9FFmXCZF3330254BTSXAEUKEF44QJYa
+         wzTHylKN4kZE/nCsOT7x7bAc6bBkGKV3MlHhoCf1PPAsVXf8W3/Onaqc1Uo/RNNyqm5y
+         qL3lF25/dpM88jMnizkrL+8V3gmbQafUoAyyOlEtW4ulJMsBKFIq5NsfnGddFpq/KaGM
+         eaxcabUtf9ZUxlSN49vMNVY2VmteYbkpcnGWzuUrhLnd3KT4/X263pmMxRQlJQduWPZn
+         q+6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=G1iwSbTVj6QBQpGti6KeydgsQsfsoS1OzKLwdbvGTlg=;
-        b=bnKBgo/UwECLutahlRJwcES09nrQTLiJNu1sLpU0cCfLY7hWs1Aj343d0A1vAUQ3ZP
-         QgkaSl8QBoIa1LrwVK9ndPpGFpVl+xaEsMvwL4v3MllJvWIOrsrLvcI4xPJo8P0CeuGt
-         3r6BLX8uyctJu3hOlwfefbwqwfh5JQSvukK2Lg7c0nf/XFO2i+Bu0PBYgITjs+jXqpQ+
-         /qUNqfx3lRWFjlQxWwBDdDECfs+PYP5f1VJRxND48AnKwgXNuvtSFMnIodgJgn6Buaeh
-         G9fLuUuIqBXM8NBTdS0Bniz7K5J7Q9fEBw60JPtR2BYQOCBYf5eab00+gDdwVPeFeShj
-         6N/Q==
-X-Gm-Message-State: AOAM533Av34HBddDWvcz8/pFrrfFAF/gThuqQfXTmZPrSfRDMr3tpCbU
-        sWRK0URTL0pCm8RgygTfz0CpJct/KGKGBQ==
-X-Google-Smtp-Source: ABdhPJxCuXMUJNpQmsJXTGvIkc9S/pMWMsa405DX5HjgAscsYcnCDDnULytXFdhfFVDsbihZnILAyw==
-X-Received: by 2002:a63:e109:: with SMTP id z9mr4715327pgh.5.1612372079463;
-        Wed, 03 Feb 2021 09:07:59 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to;
+        bh=oSCtPYvB36c/3FOI/pxSNY8EAQ3LNUiqVCd8tQQiPLM=;
+        b=XNwdUU3hYZ3C6uUmuAc6efXg58Yr/j8grwYCAXWaWQ4rh8QYrUT7ExjsBRrSV05plt
+         CXv4tP7ned4KFtWjOuCAAwYYV4xdycO8shhABe0JpQ/XZF4YPO5z6+3PxYVaINvpQo93
+         RgCUzt5QZhqNndLMB0wjdl3ojRfKZ9tfIoqQPEMSJUNjJMLC0qaSTMhvXtzyBdwaZgwD
+         GyyBpn2YBNyKtxoaoXraoJa+rKhL/DOElj33AVa0YCmxRmWW8Vlsj0962JE6Kiclexn7
+         dU0ZVU/vS49Gh9ZfOKKmCwuxRblWu+nNFZ+nWpsNK6K1HsRDqHuYbZ40/Gq6fSO4ptRg
+         aqcg==
+X-Gm-Message-State: AOAM5309ylXhHGNFVWzukCqsUpaK4z1gdtFlDhK3nyU7ImhDvQmYzuRH
+        7aSjDmIZLFgSkxfq2XY3tsRwaw==
+X-Google-Smtp-Source: ABdhPJzsMatZaLu/NQVLK6WFvASbdeHEpy0+n8eRwulpfnE3JpbAqDmFbOgU3KJO1DaxmZipUa9Tiw==
+X-Received: by 2002:a63:f447:: with SMTP id p7mr4664831pgk.243.1612373790529;
+        Wed, 03 Feb 2021 09:36:30 -0800 (PST)
 Received: from google.com ([2620:15c:f:10:a9a0:e924:d161:b6cb])
-        by smtp.gmail.com with ESMTPSA id p8sm3258411pgi.21.2021.02.03.09.07.57
+        by smtp.gmail.com with ESMTPSA id a188sm3056358pfb.108.2021.02.03.09.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Feb 2021 09:07:58 -0800 (PST)
-Date:   Wed, 3 Feb 2021 09:07:52 -0800
+        Wed, 03 Feb 2021 09:36:29 -0800 (PST)
+Date:   Wed, 3 Feb 2021 09:36:23 -0800
 From:   Sean Christopherson <seanjc@google.com>
-To:     Kai Huang <kai.huang@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
         "x86@kernel.org" <x86@kernel.org>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
         "luto@kernel.org" <luto@kernel.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "b.thiel@posteo.de" <b.thiel@posteo.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
         "jarkko@kernel.org" <jarkko@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "jmattson@google.com" <jmattson@google.com>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
         "bp@alien8.de" <bp@alien8.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>
-Subject: Re: [RFC PATCH v3 23/27] KVM: VMX: Add SGX ENCLS[ECREATE] handler to
- enforce CPUID restrictions
-Message-ID: <YBrYaFxo6S79l0kA@google.com>
+        "Huang, Haitao" <haitao.huang@intel.com>
+Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
+Message-ID: <YBrfF0XQvzQf9PhR@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
- <d68c01baed78f859ac5fce4519646fc8a356c77d.1611634586.git.kai.huang@intel.com>
- <f60226157935d2bbc20958e6eae7c3532b72f7a3.camel@intel.com>
- <YBn+DBXJgPmA1iED@google.com>
- <20210203221110.c50ec5cd50a77d269c3656bd@intel.com>
+ <4b4b9ed1d7756e8bccf548fc41d05c7dd8367b33.camel@intel.com>
+ <YBnTPmbPCAUS6XNl@google.com>
+ <99135352-8e10-fe81-f0dc-8d552d73e3d3@intel.com>
+ <YBnmow4e8WUkRl2H@google.com>
+ <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210203221110.c50ec5cd50a77d269c3656bd@intel.com>
+In-Reply-To: <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Feb 03, 2021, Kai Huang wrote:
-> On Tue, 2 Feb 2021 17:36:12 -0800 Sean Christopherson wrote:
-> > On Wed, Feb 03, 2021, Edgecombe, Rick P wrote:
-> > > On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
-> > > > +       /*
-> > > > +        * Verify alignment early.  This conveniently avoids having
-> > > > to worry
-> > > > +        * about page splits on userspace addresses.
-> > > > +        */
-> > > > +       if (!IS_ALIGNED(pageinfo.metadata, 64) ||
-> > > > +           !IS_ALIGNED(pageinfo.contents, 4096)) {
-> > > > +               kvm_inject_gp(vcpu, 0);
-> > > > +               return 1;
-> > > > +       }
-> > > > +
-> > > > +       /*
-> > > > +        * Translate the SECINFO, SOURCE and SECS pointers from GVA
-> > > > to GPA.
-> > > > +        * Resume the guest on failure to inject a #PF.
-> > > > +        */
-> > > > +       if (sgx_gva_to_gpa(vcpu, pageinfo.metadata, false,
-> > > > &metadata_gpa) ||
-> > > > +           sgx_gva_to_gpa(vcpu, pageinfo.contents, false,
-> > > > &contents_gpa) ||
-> > > > +           sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
-> > > > +               return 1;
-> > > > +
-> > > 
-> > > Do pageinfo.metadata and pageinfo.contents need cannonical checks here?
-> > 
-> > Bugger, yes.  So much boilerplate needed in this code :-/
-> > 
-> > Maybe add yet another helper to do alignment+canonical checks, up where the
-> > IS_ALIGNED() calls are?
+On Wed, Feb 03, 2021, Dave Hansen wrote:
+> On 2/2/21 3:56 PM, Sean Christopherson wrote:
+> >> I seem to remember much stronger language in the SDM about this.  I've
+> >> always thought of SGX as a big unrecoverable machine-check party waiting
+> >> to happen.
+> >>
+> >> I'll ask around internally at Intel and see what folks say.  Basically,
+> >> should we be afraid of a big bad EPC access?
+> > If bad accesses to the EPC can cause machine checks, then EPC should never be
+> > mapped into userspace, i.e. the SGX driver should never have been merged.
 > 
-> sgx_get_encls_gva() already does canonical check. Couldn't we just use it?
-
-After rereading the SDM for the bajillionth time, yes, these should indeed use
-sgx_get_encls_gva().  Originally I was thinking they were linear addresses, but
-they are effective addresses that use DS, i.e. not using the helper to avoid the
-DS.base adjustment for 32-bit mode was also wrong.
-
-> For instance:
+> The SDM doesn't define the behavior well enough.  I'll try to get that
+> fixed.
 > 
-> 	if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64 &metadata_gva) ||
-> 	    sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
->                              &contents_gva))
-> 		return 1;
+> But, there is some documentation of the abort page semantics:
+> 
+> > https://download.01.org/intel-sgx/sgx-linux/2.10/docs/Intel_SGX_Developer_Reference_Linux_2.10_Open_Source.pdf
+> 
+> Basically, writes get dropped and reads get all 1's on all the
+> implementations in the wild.  I actually would have much rather gotten a
+> fault, but oh well.
+> 
+> It sounds like we need to at least modify KVM to make sure not to map
+> and access EPC addresses.
+
+Why?  KVM will read garbage, but KVM needs to be careful with the data it reads,
+irrespective of SGX, because the data is user/guest controlled even in the happy
+case.
+
+I'm not at all opposed to preventing KVM from accessing EPC, but I really don't
+want to add a special check in KVM to avoid reading EPC.  KVM generally isn't
+aware of physical backings, and the relevant KVM code is shared between all
+architectures.
+
+> We might even want to add some VM_WARN_ON()s in the code that creates kernel
+> mappings to catch these mappings if they happen anywhere else.
+
+One thought for handling this would be to extend __ioremap_check_other() to flag
+EPC in some way, and then disallow memremap() to EPC.  A clever way to do that
+without disallowing SGX's initial memremap() would be to tap into SGX's
+sgx_epc_sections array, as the per-section check would activate only after each
+section is initialized/map by SGX.
+
+Disallowing memremap(), without warning, would address the KVM flow (the
+memremap() in __kvm_map_gfn()) without forcing KVM to explicitly check for EPC.
+
+E.g. something like:
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index c519fc5f6948..f263f3554f27 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -26,6 +26,19 @@ static LIST_HEAD(sgx_active_page_list);
+
+ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+
++bool is_sgx_epc(resource_size_t addr, unsigned long size)
++{
++       resource_size_t end = addr + size - 1;
++       int i;
++
++       for (i = 0; i < sgx_nr_epc_sections; i++) {
++               if (<check for overlap with sgx_epc_sections[i])
++                       return true;
++       }
++
++       return false;
++}
++
+ /*
+  * Reset dirty EPC pages to uninitialized state. Laundry can be left with SECS
+  * pages whose child pages blocked EREMOVE.
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 9e5ccc56f8e0..145fc6fc6bc5 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -34,6 +34,7 @@
+  */
+ struct ioremap_desc {
+        unsigned int flags;
++       bool sgx_epc;
+ };
+
+ /*
+@@ -110,8 +111,14 @@ static unsigned int __ioremap_check_encrypted(struct resource *res)
+  * The EFI runtime services data area is not covered by walk_mem_res(), but must
+  * be mapped encrypted when SEV is active.
+  */
+-static void __ioremap_check_other(resource_size_t addr, struct ioremap_desc *desc)
++static void __ioremap_check_other(resource_size_t addr, unsigned long size,
++                                 struct ioremap_desc *desc)
+ {
++       if (sgx_is_epc(addr, size)) {
++               desc->sgx_epc = true;
++               return;
++       }
++
+        if (!sev_active())
+                return;
+
+@@ -155,7 +162,7 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+
+        walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
+
+-       __ioremap_check_other(addr, desc);
++       __ioremap_check_other(addr, size, desc);
+ }
+
+ /*
+@@ -210,6 +217,13 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
+                return NULL;
+        }
+
++       /*
++        * Don't allow mapping SGX EPC, it's not accessible via normal reads
++        * and writes.
++        */
++       if (io_desc.epc)
++               return NULL;
++
+        /*
+         * Mappings have to be page-aligned
+         */
+
