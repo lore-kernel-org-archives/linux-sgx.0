@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8DEC433E6
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 23:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6CAC433E6
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 23:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF2164F5C
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 23:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F77264DE7
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 23:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233522AbhBCXL7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 18:11:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38758 "EHLO mga04.intel.com"
+        id S233533AbhBCXaJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Feb 2021 18:30:09 -0500
+Received: from mga03.intel.com ([134.134.136.65]:59041 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233427AbhBCXLx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Feb 2021 18:11:53 -0500
-IronPort-SDR: HnWjrkITVVPXofg1I/pds9U23ziJsnvJ4aFqjWXaFJqaVtG+hiE9PR5Hn1IqEv/6cVe9DzhFNr
- VTUEC9XpnXnQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9884"; a="178573697"
+        id S232990AbhBCXaG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Feb 2021 18:30:06 -0500
+IronPort-SDR: yI342EANUoR1LHWaRif9FYmVBPlUUQixs88PZT0lJM3XBwwAJnZBJpBPOJGFZMlPVhgKuxj648
+ QdMECGxj2i2A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9884"; a="181209889"
 X-IronPort-AV: E=Sophos;i="5.79,399,1602572400"; 
-   d="scan'208";a="178573697"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 15:11:12 -0800
-IronPort-SDR: jBv23RtswQXmbmaklkEgNsCN/lssnr17GBfN6Bu97a5wr99aBmLcVEMiFWwUPbaYq42DHJCXof
- 4hvQ5nvpzOww==
+   d="scan'208";a="181209889"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 15:29:24 -0800
+IronPort-SDR: ZCyoeF85HpRQSAqr81wEd8lX9XHoGFN8PP4hIwaoMw0f++/Rh9X86Ek1zwIPcQfrH9TMwkek7J
+ 0jwgstSZ+7jA==
 X-IronPort-AV: E=Sophos;i="5.79,399,1602572400"; 
-   d="scan'208";a="576071191"
+   d="scan'208";a="392735178"
 Received: from rvchebia-mobl.amr.corp.intel.com ([10.251.7.104])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 15:11:08 -0800
-Message-ID: <61fd68c4f03881596331c663040b92751bd67832.camel@intel.com>
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 15:29:20 -0800
+Message-ID: <b8b57360a1b4c0fa4486cd4c3892c7138e972fff.camel@intel.com>
 Subject: Re: [RFC PATCH v3 23/27] KVM: VMX: Add SGX ENCLS[ECREATE] handler
  to enforce CPUID restrictions
 From:   Kai Huang <kai.huang@intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+To:     Sean Christopherson <seanjc@google.com>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
         "Huang, Haitao" <haitao.huang@intel.com>,
@@ -53,14 +53,12 @@ Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
         "joro@8bytes.org" <joro@8bytes.org>,
         "wanpengli@tencent.com" <wanpengli@tencent.com>,
         "jmattson@google.com" <jmattson@google.com>
-Date:   Thu, 04 Feb 2021 12:11:05 +1300
-In-Reply-To: <YBrYaFxo6S79l0kA@google.com>
+Date:   Thu, 04 Feb 2021 12:29:18 +1300
+In-Reply-To: <YBr7R0ns79HB74XD@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
          <d68c01baed78f859ac5fce4519646fc8a356c77d.1611634586.git.kai.huang@intel.com>
-         <f60226157935d2bbc20958e6eae7c3532b72f7a3.camel@intel.com>
-         <YBn+DBXJgPmA1iED@google.com>
-         <20210203221110.c50ec5cd50a77d269c3656bd@intel.com>
-         <YBrYaFxo6S79l0kA@google.com>
+         <c235e9ca6fae38ae3a6828218cb1a68f2a0c3912.camel@intel.com>
+         <YBr7R0ns79HB74XD@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
@@ -69,57 +67,64 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 2021-02-03 at 09:07 -0800, Sean Christopherson wrote:
-> On Wed, Feb 03, 2021, Kai Huang wrote:
-> > On Tue, 2 Feb 2021 17:36:12 -0800 Sean Christopherson wrote:
-> > > On Wed, Feb 03, 2021, Edgecombe, Rick P wrote:
-> > > > On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
-> > > > > +       /*
-> > > > > +        * Verify alignment early.  This conveniently avoids having
-> > > > > to worry
-> > > > > +        * about page splits on userspace addresses.
-> > > > > +        */
-> > > > > +       if (!IS_ALIGNED(pageinfo.metadata, 64) ||
-> > > > > +           !IS_ALIGNED(pageinfo.contents, 4096)) {
-> > > > > +               kvm_inject_gp(vcpu, 0);
-> > > > > +               return 1;
-> > > > > +       }
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Translate the SECINFO, SOURCE and SECS pointers from GVA
-> > > > > to GPA.
-> > > > > +        * Resume the guest on failure to inject a #PF.
-> > > > > +        */
-> > > > > +       if (sgx_gva_to_gpa(vcpu, pageinfo.metadata, false,
-> > > > > &metadata_gpa) ||
-> > > > > +           sgx_gva_to_gpa(vcpu, pageinfo.contents, false,
-> > > > > &contents_gpa) ||
-> > > > > +           sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
-> > > > > +               return 1;
-> > > > > +
-> > > > 
-> > > > Do pageinfo.metadata and pageinfo.contents need cannonical checks here?
-> > > 
-> > > Bugger, yes.  So much boilerplate needed in this code :-/
-> > > 
-> > > Maybe add yet another helper to do alignment+canonical checks, up where the
-> > > IS_ALIGNED() calls are?
+On Wed, 2021-02-03 at 11:36 -0800, Sean Christopherson wrote:
+> On Wed, Feb 03, 2021, Edgecombe, Rick P wrote:
+> > On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
+> > > +       /* Exit to userspace if copying from a host userspace address
+> > > fails. */
+> > > +       if (sgx_read_hva(vcpu, m_hva, &miscselect,
+> > > sizeof(miscselect)) ||
+> > > +           sgx_read_hva(vcpu, a_hva, &attributes,
+> > > sizeof(attributes)) ||
+> > > +           sgx_read_hva(vcpu, x_hva, &xfrm, sizeof(xfrm)) ||
+> > > +           sgx_read_hva(vcpu, s_hva, &size, sizeof(size)))
+> > > +               return 0;
+> > > +
+> > > +       /* Enforce restriction of access to the PROVISIONKEY. */
+> > > +       if (!vcpu->kvm->arch.sgx_provisioning_allowed &&
+> > > +           (attributes & SGX_ATTR_PROVISIONKEY)) {
+> > > +               if (sgx_12_1->eax & SGX_ATTR_PROVISIONKEY)
+> > > +                       pr_warn_once("KVM: SGX PROVISIONKEY
+> > > advertised but not allowed\n");
+> > > +               kvm_inject_gp(vcpu, 0);
+> > > +               return 1;
+> > > +       }
+> > > +
+> > > +       /* Enforce CPUID restrictions on MISCSELECT, ATTRIBUTES and
+> > > XFRM. */
+> > > +       if ((u32)miscselect & ~sgx_12_0->ebx ||
+> > > +           (u32)attributes & ~sgx_12_1->eax ||
+> > > +           (u32)(attributes >> 32) & ~sgx_12_1->ebx ||
+> > > +           (u32)xfrm & ~sgx_12_1->ecx ||
+> > > +           (u32)(xfrm >> 32) & ~sgx_12_1->edx) {
+> > > +               kvm_inject_gp(vcpu, 0);
+> > > +               return 1;
+> > > +       }
 > > 
-> > sgx_get_encls_gva() already does canonical check. Couldn't we just use it?
-> 
-> After rereading the SDM for the bajillionth time, yes, these should indeed use
-> sgx_get_encls_gva().  Originally I was thinking they were linear addresses, but
-> they are effective addresses that use DS, i.e. not using the helper to avoid the
-> DS.base adjustment for 32-bit mode was also wrong.
-
-Agreed.
-
-> 
-> > For instance:
+> > Don't you need to deep copy the pageinfo.contents struct as well?
+> > Otherwise the guest could change these after they were checked.
 > > 
-> > 	if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64 &metadata_gva) ||
-> > 	    sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
-> >                              &contents_gva))
-> > 		return 1;
+> > But it seems it is checked by the HW and something is caught that would
+> > inject a GP anyway? Can you elaborate on the importance of these
+> > checks?
+> 
+> Argh, yes.  These checks are to allow migration between systems with different
+> SGX capabilities, and more importantly to prevent userspace from doing an end
+> around on the restricted access to PROVISIONKEY.
+> 
+> IIRC, earlier versions did do a deep copy, but then I got clever.  Anyways, yeah,
+> sadly the entire pageinfo.contents page will need to be copied.
+
+I don't fully understand the problem. Are you worried about contents being updated by
+other vcpus during the trap? 
+
+And I don't see how copy can avoid this problem. Even you do copy, the content can
+still be modified afterwards, correct? So what's the point of copying? Looks a better
+solution is to kick all vcpus and put them into block state while KVM is doing ENCLS
+for guest.
+
+
+
+
 
 
