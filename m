@@ -2,127 +2,153 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23F2C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 23:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AD5C433DB
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 00:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B448064F5D
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Feb 2021 23:57:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D75464F6C
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 00:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231282AbhBBX5I (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 18:57:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231273AbhBBX5H (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Feb 2021 18:57:07 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D634C061573
-        for <linux-sgx@vger.kernel.org>; Tue,  2 Feb 2021 15:56:27 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id o16so16024182pgg.5
-        for <linux-sgx@vger.kernel.org>; Tue, 02 Feb 2021 15:56:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=b2T9PQ4l/YYugYnX7ZP4GlOVWI5dL3LOQ1dsVnqyFvs=;
-        b=XXdNI6hl0pa3AM8fe+eOpbtg2REQFRUurTyOlcjOQg90/ToJ8AEsCmkL8kRvMdJKlj
-         +o3pWtnhVYpfQgNbFFaVaBa9o3BI8338Tr6kLVZZPnAzPDp907r6Ay2BC2UPMMkNJGum
-         wA2CKLZPoEiFyMBukSyM+s5zllIwfZzQNWdb5E1UcCSk1KlEqLBZDAYk1zT2lF1qp2kt
-         LZb0KjG7bgZWS+NULtdZcOkssjCqO6gzCaIeav1NCZsfhzwAFaENR5g4F7PcxBxc6wpU
-         7EiU0414lKcwTYdOJ8/XFNEQFk7S5/c8joUcwRFglnJGMt9YNSUyiyQIiwrsdNLz4r/8
-         BpDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b2T9PQ4l/YYugYnX7ZP4GlOVWI5dL3LOQ1dsVnqyFvs=;
-        b=rtWrUQP7HkkVinxDyXpJguGpM80/bnwNnDxmJMzDRgex44oag2vdGVzz0QDm4L+ben
-         hg6HAf9lBHouimcrr6ZFIPkHdgxN2Tghsh/Il3rdp4x3kDiqXrcwepdFaHvxFz1LcMAs
-         VMMwL4aXaSFLX7C97h1my0Mrmae7GNOAmOdQ7uIfXeIcWtIcsq6n1Zh0H9OWpYRe/WTN
-         nAaBxyH4fqnNr8FGb0WYueh3QJjI+9uLZ8a5i+IWdY+eF27txB052rCIhXZCwYBuOCaQ
-         wOB4MQXSPggLuu1k7EmoIS0/Wgnj+zyZ+Rk3GQn1Us/f3IFH3TpcQGcnCXGBzOG1tqE0
-         HAOw==
-X-Gm-Message-State: AOAM5331eX9LV+Tgn8id4OzCEJ1Ij/V2otrzGLr0GeP8/Oe1r2J1Y9dl
-        dgbBV7+JHAg9QoMKFXL9JOLkYkP3WUaJLw==
-X-Google-Smtp-Source: ABdhPJzQvLzh/KiU6HZCTS0iRoNr73zqZAVc1FThQLipKJ56IFfVJDQdvps7ic3gwh7dZ8sGfXxxzg==
-X-Received: by 2002:a05:6a00:1506:b029:1bc:6f53:8eb8 with SMTP id q6-20020a056a001506b02901bc6f538eb8mr477622pfu.36.1612310186703;
-        Tue, 02 Feb 2021 15:56:26 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:e1bc:da69:2e4b:ce97])
-        by smtp.gmail.com with ESMTPSA id t6sm106477pfe.177.2021.02.02.15.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Feb 2021 15:56:26 -0800 (PST)
-Date:   Tue, 2 Feb 2021 15:56:19 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "b.thiel@posteo.de" <b.thiel@posteo.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Huang, Haitao" <haitao.huang@intel.com>
-Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
-Message-ID: <YBnmow4e8WUkRl2H@google.com>
+        id S232495AbhBCAny (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 19:43:54 -0500
+Received: from mga17.intel.com ([192.55.52.151]:54141 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232520AbhBCAnx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 2 Feb 2021 19:43:53 -0500
+IronPort-SDR: wn9X8LUhOp7DxDA8VP4m09r/UNkcFPODdb1XbO9xuz9p2S5yzozPnzsyvC+q0QImArARiRqQsy
+ Uy0nCTqiwysA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="160723205"
+X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
+   d="scan'208";a="160723205"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 16:43:03 -0800
+IronPort-SDR: NK3xU81U027uIwI+LXqOFFS3Pw+HHxXdQsUioR51xooZ7Pg/F+eYiWmyLJ5PYmIUyT/wFwVc4f
+ PNabHFAGUWQg==
+X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
+   d="scan'208";a="406362523"
+Received: from asalasax-mobl2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.7.175])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 16:42:58 -0800
+Date:   Wed, 3 Feb 2021 13:42:55 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com
+Subject: Re: [RFC PATCH v3 16/27] KVM: VMX: Convert vcpu_vmx.exit_reason to
+ a union
+Message-Id: <20210203134255.bb27c26ae4d91b543f3ccee0@intel.com>
+In-Reply-To: <YBnU/PZzKHkOIdW1@kernel.org>
 References: <cover.1611634586.git.kai.huang@intel.com>
- <4b4b9ed1d7756e8bccf548fc41d05c7dd8367b33.camel@intel.com>
- <YBnTPmbPCAUS6XNl@google.com>
- <99135352-8e10-fe81-f0dc-8d552d73e3d3@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99135352-8e10-fe81-f0dc-8d552d73e3d3@intel.com>
+        <d32ab375be78315e3bc2540f2a741859637abcb0.1611634586.git.kai.huang@intel.com>
+        <YBV0nnqUHnING5qA@kernel.org>
+        <20210201133259.e0398c9f0b229fd79a8c16c6@intel.com>
+        <YBmK2lt/5r/+HrAO@kernel.org>
+        <20210203082340.e808a4d97318e07b265d0326@intel.com>
+        <YBnU/PZzKHkOIdW1@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 02, 2021, Dave Hansen wrote:
-> On 2/2/21 2:33 PM, Sean Christopherson wrote:
-> >> Do we need to restrict normal KVM host kernel access to EPC (i.e. via
-> >> __kvm_map_gfn() and friends)? As best I can tell the exact behavior of
-> >> this kind of access is undefined. The concern would be if any HW ever
-> >> treated it as an error, the guest could subject the host kernel to it.
-> >> Is it worth a check in those?
-> > I don't think so.  The SDM does state that the exact behavior is uArch specific,
-> > but it also explicitly states that the access will be altered, which IMO doesn't
-> > leave any wiggle room for a future CPU to fault instead of using some form of
-> > abort semantics.
+On Wed, 3 Feb 2021 00:41:00 +0200 Jarkko Sakkinen wrote:
+> On Wed, Feb 03, 2021 at 08:23:40AM +1300, Kai Huang wrote:
+> > On Tue, 2 Feb 2021 19:24:42 +0200 Jarkko Sakkinen wrote:
+> > > On Mon, Feb 01, 2021 at 01:32:59PM +1300, Kai Huang wrote:
+> > > > On Sat, 30 Jan 2021 17:00:46 +0200 Jarkko Sakkinen wrote:
+> > > > > On Tue, Jan 26, 2021 at 10:31:37PM +1300, Kai Huang wrote:
+> > > > > > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > > > > > 
+> > > > > > Convert vcpu_vmx.exit_reason from a u32 to a union (of size u32).  The
+> > > > > > full VM_EXIT_REASON field is comprised of a 16-bit basic exit reason in
+> > > > > > bits 15:0, and single-bit modifiers in bits 31:16.
+> > > > > > 
+> > > > > > Historically, KVM has only had to worry about handling the "failed
+> > > > > > VM-Entry" modifier, which could only be set in very specific flows and
+> > > > > > required dedicated handling.  I.e. manually stripping the FAILED_VMENTRY
+> > > > > > bit was a somewhat viable approach.  But even with only a single bit to
+> > > > > > worry about, KVM has had several bugs related to comparing a basic exit
+> > > > > > reason against the full exit reason store in vcpu_vmx.
+> > > > > > 
+> > > > > > Upcoming Intel features, e.g. SGX, will add new modifier bits that can
+> > > 
+> > > BTW, SGX is not an upcoming CPU feature.
 > > 
-> >   Attempts to execute, read, or write to linear addresses mapped to EPC pages
-> >   when not inside an enclave will result in the processor altering the access to
-> >   preserve the confidentiality and integrity of the enclave. The exact behavior
-> >   may be different between implementations.
+> > Probably Sean was implying: "Upcoming CPU features that will be supported by
+> > Linux". I don't see big deal here.
+> > 
+> > > 
+> > > Also, broadly speaking of upcoming features is not right thing to do.
+> > > Better just to scope this down SGX. Theoretically upcoming CPU features
+> > > can do pretty much anything. This is change is first and foremost done
+> > > for SGX.
+> > > 
+> > > > > > be set on more or less any VM-Exit, as opposed to the significantly more
+> > > > > > restricted FAILED_VMENTRY, i.e. correctly handling everything in one-off
+> > > > > > flows isn't scalable.  Tracking exit reason in a union forces code to
+> > > > > > explicitly choose between consuming the full exit reason and the basic
+> > > > > > exit, and is a convenient way to document and access the modifiers.
+> > > > > 
+> > > > > I *believe* that the change is correct but I dropped in the last paragraph
+> > > > > - most likely only because of lack of expertise in this area.
+> > > > > 
+> > > > > I ask the most basic question: why SGX will add new modifier bits?
+> > > > 
+> > > > Not 100% sure about your question. Assuming you are asking SGX hardware
+> > > > behavior, SGX architecture adds a new modifier bit (27) to Exit Reason, similar
+> > > > to new #PF.SGX bit. 
+> > > > 
+> > > > Please refer to SDM Volume 3, Chapter 27.2.1 Basic VM-Exit Information.
+> > > > 
+> > > > Sean's commit msg already provides significant motivation of the change in this
+> > > > patch.
+> > > 
+> > > Just describe why SGX requires this. That's all.
+> > 
+> > This patch is to change vmexit info from u32 to union, because at least one
+> > additional modifier is going to be added, due to SGX. So the motivation of this
+> > patch is the fact that "one or more additional modifier bits will be added",
+> > and SGX is just example. 
+> > 
+> > So I don't think adding too much SGX backgroud in *THIS* patch is needed.
+> > And another patch: 
+> > 
+> > [RFC PATCH v3 21/27] KVM: VMX: Add basic handling of VM-Exit from SGX enclave
+> > 
+> > already has enough information of "why new modifier bit is aadded for SGX".
+> > Sean also replied to you. 
 > 
-> I seem to remember much stronger language in the SDM about this.  I've
-> always thought of SGX as a big unrecoverable machine-check party waiting
-> to happen.
->
-> I'll ask around internally at Intel and see what folks say.  Basically,
-> should we be afraid of a big bad EPC access?
+> Well it comes after this patch. So you either need to provide the context
+> here or reorder patches. If latter is impossible, I would just add those
+> couple of paragraphs that Sean wrote.
 
-If bad accesses to the EPC can cause machine checks, then EPC should never be
-mapped into userspace, i.e. the SGX driver should never have been merged.
+As I explained, to me the motivation of this patch is due to "adding additional
+modifier bit", but not due to "adding additional modifier bit *due to SGX*". 
 
-The SGX architecture is predicated on using isolation to protect enclaves from
-software, not by poisoning memory, a la TDX.  E.g. SGX on ICX's MKTME wouldn't
-be a thing if that weren't the case.
+For instance, let's remove SGX in the commit msg, this patch still stands.
+Correct?
 
-A physical attack on DRAM can trigger #MC on systems that use the MEE as
-opposed to MKTME, but that obviously doesn't require a guest to coerce KVM into
-accessing the EPC.
+Sean's paragraph is about why *SGX* adds one additional modifier bit, which
+needs to be in another patch, and logically, that patch comes later.
+
+> 
+> > Please look at that patch and see whether it satisfies you.
+> 
+> Well there needs to be causality in patches. I should be able to review
+> the patches if 17-> did not exist.
+> 
+> 
+> > 
+> > > 
+> > > /Jarkko
+> > 
+> 
+> /Jarkko
