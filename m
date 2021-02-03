@@ -2,126 +2,152 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B63C433DB
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 08:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476DFC4332E
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 09:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF3F64F65
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 08:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 121E264F8D
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 09:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232248AbhBCIMA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 03:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231704AbhBCIL7 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Feb 2021 03:11:59 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF23C06174A;
-        Wed,  3 Feb 2021 00:11:19 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id c12so23100300wrc.7;
-        Wed, 03 Feb 2021 00:11:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GMkk0PLQYC5yjtJhBL5QqnCNEN+xIHzvgjGjkI4SSr0=;
-        b=H156lNPMFt/fJt1Li8iHVTh1TAazwks3SJvEQ6qzJHWUT/PQPYxzrYEFubqqNWrXNq
-         mgoLLYIJeAAikA4O2/u6niOXVo/HrkDY40qS0LPHavW3VCQInaHL+tpfNVtff8s+0TjP
-         MQxEK4gg1pdd3u7Bwi02dW7Ek1k44RKwUkokbBaT79w62HQobBSudyrIOhuWsj4MrcKw
-         xR/bQTSon/6cfb5Jc/LTxzXd82f8ClXu6zKxpZ0hb1GbteWyo+3KKSD2HL7S2G18/a3e
-         9luo6lkgLDePUVPcdz28Ie9TOQ7t41uo+F8o+k+I0o61ha1sgWN+/fmmsMAK+fbV4u2k
-         zF9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GMkk0PLQYC5yjtJhBL5QqnCNEN+xIHzvgjGjkI4SSr0=;
-        b=fLYt+MThlq9POrmqG7qOVJH8sXo6t/YbZHMe6xUjEnn/aZhz1MaImi8lqkAORQgrjR
-         8etLrt9YFDGvBF91WdEZ0wMccRNGBrl8WPUTBMVOkXGQtCUcYLVXuXQZB7+JbVh7KA7L
-         wIONZ9s0o7lx78Wk2NCWaAdwySklUhe2362DWPGWJCSW7gW3mTpL7cOA2T4mmBv/9O2t
-         7TSz+Dr0t69EZ6mRgba3uqe5Um11mQ/reGDZh24uhAhXCjzMKDMeg7gAxwZAKFVdgwn3
-         omVXcqL47xeoS/piMJkpXiqJQ60Q+xCt8isUa21/5hlnPwX2xcohk8SbXB3BxilPk6hx
-         tB0Q==
-X-Gm-Message-State: AOAM530JD16LG7IZZ3dzD0lgRXDUXZSAec+heQDa7xJ/T2wryTa7Z8CV
-        wc0KfMiz+p6gQFOTRnMKkxVpIcu8rM0=
-X-Google-Smtp-Source: ABdhPJxD+PANN8G+Kf39iMcS452T+kU/+V6qJV5vC3YZIvIFleyojmEYW7Djfm5lgsD9CIDmcE8q2g==
-X-Received: by 2002:a05:6000:1202:: with SMTP id e2mr2052338wrx.328.1612339877824;
-        Wed, 03 Feb 2021 00:11:17 -0800 (PST)
-Received: from ?IPv6:2001:a61:2542:b001:294f:8948:78a8:d929? ([2001:a61:2542:b001:294f:8948:78a8:d929])
-        by smtp.gmail.com with ESMTPSA id w15sm1921011wrp.15.2021.02.03.00.11.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Feb 2021 00:11:16 -0800 (PST)
-Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com
-Subject: Re: [PATCH v2] sgx.7: New page with overview of Software Guard
- eXtensions (SGX)
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-References: <20201222004108.49159-1-jarkko@kernel.org>
- <16f13aee-a966-ecd4-6f08-d9d7b0e869f3@gmail.com>
- <YAli9syKOwVTYeh6@kernel.org>
- <cb04f65c-7598-e5c0-6aa9-421b8e37c8db@gmail.com>
- <YBmPiqfHLz5JV57y@kernel.org>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <fcd5531f-3d8b-491f-6949-9e20a47882fb@gmail.com>
-Date:   Wed, 3 Feb 2021 09:11:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
-MIME-Version: 1.0
-In-Reply-To: <YBmPiqfHLz5JV57y@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S232660AbhBCJMq convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Feb 2021 04:12:46 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30494 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233260AbhBCJL7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Feb 2021 04:11:59 -0500
+IronPort-SDR: rtFndnB87DhvUK80sO3rfxkL8sUFeQ0dq6X+BtmjZaPMPsx714d34yphOB50o4qqoCT8Xzi3IY
+ 5s6R8BeogSBQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="180236352"
+X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
+   d="scan'208";a="180236352"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 01:11:16 -0800
+IronPort-SDR: lkF3YBeus05rtUyvywU4oGiG33MV3CixKci2kHDF7/M9LlluSc+7IPBU8nzG0PStu/Tvcohv2e
+ aFmNXY7TV5pg==
+X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
+   d="scan'208";a="392345797"
+Received: from jalva12x-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.229.229])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 01:11:13 -0800
+Date:   Wed, 3 Feb 2021 22:11:10 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>
+Subject: Re: [RFC PATCH v3 23/27] KVM: VMX: Add SGX ENCLS[ECREATE] handler
+ to enforce CPUID restrictions
+Message-Id: <20210203221110.c50ec5cd50a77d269c3656bd@intel.com>
+In-Reply-To: <YBn+DBXJgPmA1iED@google.com>
+References: <cover.1611634586.git.kai.huang@intel.com>
+        <d68c01baed78f859ac5fce4519646fc8a356c77d.1611634586.git.kai.huang@intel.com>
+        <f60226157935d2bbc20958e6eae7c3532b72f7a3.camel@intel.com>
+        <YBn+DBXJgPmA1iED@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello Jarkko,
-
-On 2/2/21 6:44 PM, Jarkko Sakkinen wrote:
-> On Thu, Jan 21, 2021 at 03:33:05PM +0100, Michael Kerrisk (man-pages) wrote:
->> Hi Jarko,
+On Tue, 2 Feb 2021 17:36:12 -0800 Sean Christopherson wrote:
+> On Wed, Feb 03, 2021, Edgecombe, Rick P wrote:
+> > On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
+> > > +static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
+> > > +{
+> > > +       unsigned long a_hva, m_hva, x_hva, s_hva, secs_hva;
+> > > +       struct kvm_cpuid_entry2 *sgx_12_0, *sgx_12_1;
+> > > +       gpa_t metadata_gpa, contents_gpa, secs_gpa;
+> > > +       struct sgx_pageinfo pageinfo;
+> > > +       gva_t pageinfo_gva, secs_gva;
+> > > +       u64 attributes, xfrm, size;
+> > > +       struct x86_exception ex;
+> > > +       u8 max_size_log2;
+> > > +       u32 miscselect;
+> > > +       int trapnr, r;
+> > > +
+> > > +       sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
+> > > +       sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
+> > > +       if (!sgx_12_0 || !sgx_12_1) {
+> > > +               kvm_inject_gp(vcpu, 0);
+> > > +               return 1;
+> > > +       }
+> > > +
+> > > +       if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 32, 32,
+> > > &pageinfo_gva) ||
+> > > +           sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096,
+> > > &secs_gva))
+> > > +               return 1;
+> > > +
+> > > +       /*
+> > > +        * Copy the PAGEINFO to local memory, its pointers need to be
+> > > +        * translated, i.e. we need to do a deep copy/translate.
+> > > +        */
+> > > +       r = kvm_read_guest_virt(vcpu, pageinfo_gva, &pageinfo,
+> > > +                               sizeof(pageinfo), &ex);
+> > > +       if (r == X86EMUL_PROPAGATE_FAULT) {
+> > > +               kvm_inject_emulated_page_fault(vcpu, &ex);
+> > > +               return 1;
+> > > +       } else if (r != X86EMUL_CONTINUE) {
+> > > +               sgx_handle_emulation_failure(vcpu, pageinfo_gva,
+> > > size);
+> > > +               return 0;
+> > > +       }
+> > > +
+> > > +       /*
+> > > +        * Verify alignment early.  This conveniently avoids having
+> > > to worry
+> > > +        * about page splits on userspace addresses.
+> > > +        */
+> > > +       if (!IS_ALIGNED(pageinfo.metadata, 64) ||
+> > > +           !IS_ALIGNED(pageinfo.contents, 4096)) {
+> > > +               kvm_inject_gp(vcpu, 0);
+> > > +               return 1;
+> > > +       }
+> > > +
+> > > +       /*
+> > > +        * Translate the SECINFO, SOURCE and SECS pointers from GVA
+> > > to GPA.
+> > > +        * Resume the guest on failure to inject a #PF.
+> > > +        */
+> > > +       if (sgx_gva_to_gpa(vcpu, pageinfo.metadata, false,
+> > > &metadata_gpa) ||
+> > > +           sgx_gva_to_gpa(vcpu, pageinfo.contents, false,
+> > > &contents_gpa) ||
+> > > +           sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
+> > > +               return 1;
+> > > +
+> > 
+> > Do pageinfo.metadata and pageinfo.contents need cannonical checks here?
 > 
-> Jarkko :-)
+> Bugger, yes.  So much boilerplate needed in this code :-/
 > 
->> On 1/21/21 12:18 PM, Jarkko Sakkinen wrote:
->>> On Tue, Dec 22, 2020 at 07:53:24PM +0100, Michael Kerrisk (man-pages) wrote:
->>>>> * Fixed the semantic newlines convention and various style errors etc.
->>>>>   that were reported by Alenjandro and Michael.
->>
->> s/Alenjandro/Alejandro/  :-)
-> 
-> Just had to mention the typo above because of this, sorry :-) I'll
-> fix this.
+> Maybe add yet another helper to do alignment+canonical checks, up where the
+> IS_ALIGNED() calls are?
 
-Got it. Not enough practivce with Finnish :-)
+sgx_get_encls_gva() already does canonical check. Couldn't we just use it?
 
->>> So the thing is that there is reserved memory, consider it as a bit like
->>> VRAM. This memory can be oversubscribed. Then when you create an enclave
->>> you consume these pages. When running out of them, the kernel swaps pages
->>> from enclaves across the system currently based on a trivial FIFO policy.
->>> So these regions define kind of the memory pool for all enclaves running in
->>> the system.
->>
->> SO, is there some suitable change for the manual page text?
-> 
-> What if I just edit it from this? I think the video RAM comparison makes
-> this common sense understandable. There's restricted memory shared by
-> processes and managed by the kernel.
+For instance:
 
-That sounds okay to me.
-
-Thanks,
-
-Michael
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+	if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64 &metadata_gva) ||
+	    sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
+                             &contents_gva))
+		return 1;
