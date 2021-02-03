@@ -2,152 +2,81 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476DFC4332E
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 09:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FDDC433E0
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 10:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 121E264F8D
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 09:13:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83DED64DD4
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 10:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232660AbhBCJMq convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 04:12:46 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30494 "EHLO mga14.intel.com"
+        id S233448AbhBCKEd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Feb 2021 05:04:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233260AbhBCJL7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Feb 2021 04:11:59 -0500
-IronPort-SDR: rtFndnB87DhvUK80sO3rfxkL8sUFeQ0dq6X+BtmjZaPMPsx714d34yphOB50o4qqoCT8Xzi3IY
- 5s6R8BeogSBQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="180236352"
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="180236352"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 01:11:16 -0800
-IronPort-SDR: lkF3YBeus05rtUyvywU4oGiG33MV3CixKci2kHDF7/M9LlluSc+7IPBU8nzG0PStu/Tvcohv2e
- aFmNXY7TV5pg==
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="392345797"
-Received: from jalva12x-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.229.229])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 01:11:13 -0800
-Date:   Wed, 3 Feb 2021 22:11:10 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>
-Subject: Re: [RFC PATCH v3 23/27] KVM: VMX: Add SGX ENCLS[ECREATE] handler
- to enforce CPUID restrictions
-Message-Id: <20210203221110.c50ec5cd50a77d269c3656bd@intel.com>
-In-Reply-To: <YBn+DBXJgPmA1iED@google.com>
+        id S233215AbhBCKEc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Feb 2021 05:04:32 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C842764DD4;
+        Wed,  3 Feb 2021 10:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612346631;
+        bh=iDRUK1dfIoKv6p3k1yQ5f2Cl0AFuONzv34q2WQe7GM0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F0m4Sltz3uZxB1AklHhBuerzDt/tEJafYqB0uS0KywOB1mvXTeW9KjjmYoF53zGw7
+         vEZK8b0aseAfyl/bgDADaBF4N3ApbdRLeWnVBuihAqOL23L9kjH3id/n1Ar+/vV7Vl
+         8Z+40H+IfOZ7JaG8/wBoYgblQQav8n2ZwQ58L6zPkio2mt4AzS43UQD3dySKIRMjR6
+         VJ/goWdqchVa99j8T9IZC7dJyGpjd8GIS/HOH/Ha8eqm86S9a3nu+frBoQ/7NBxpeg
+         eLfVdzE8qJEf4s3gQJlrGYZqBnqh6QguRCQin4stnwiGAt6ZqfJxjbOemtKO4dLwJf
+         6GyNsAdvvTXxQ==
+Date:   Wed, 3 Feb 2021 12:03:44 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 03/27] x86/sgx: Remove a warn from
+ sgx_free_epc_page()
+Message-ID: <YBp1APi0LBhrbgQx@kernel.org>
 References: <cover.1611634586.git.kai.huang@intel.com>
-        <d68c01baed78f859ac5fce4519646fc8a356c77d.1611634586.git.kai.huang@intel.com>
-        <f60226157935d2bbc20958e6eae7c3532b72f7a3.camel@intel.com>
-        <YBn+DBXJgPmA1iED@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+ <36e999dce8a1a4efb8ca69c9a6fbe3fa63305e08.1611634586.git.kai.huang@intel.com>
+ <d09b8b34-6e8c-5323-e155-f45da5abb48b@intel.com>
+ <6e859dc6610d317f09663a4ce76b7e13fc0c0f8e.camel@intel.com>
+ <15dda40e-5875-aaa9-acbb-7d868a13f982@intel.com>
+ <20210127142652.b9d181813b10f8660d0df664@intel.com>
+ <20210201131110.d1425c4d0db46fb895bde10f@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210201131110.d1425c4d0db46fb895bde10f@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2 Feb 2021 17:36:12 -0800 Sean Christopherson wrote:
-> On Wed, Feb 03, 2021, Edgecombe, Rick P wrote:
-> > On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
-> > > +static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
-> > > +{
-> > > +       unsigned long a_hva, m_hva, x_hva, s_hva, secs_hva;
-> > > +       struct kvm_cpuid_entry2 *sgx_12_0, *sgx_12_1;
-> > > +       gpa_t metadata_gpa, contents_gpa, secs_gpa;
-> > > +       struct sgx_pageinfo pageinfo;
-> > > +       gva_t pageinfo_gva, secs_gva;
-> > > +       u64 attributes, xfrm, size;
-> > > +       struct x86_exception ex;
-> > > +       u8 max_size_log2;
-> > > +       u32 miscselect;
-> > > +       int trapnr, r;
-> > > +
-> > > +       sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
-> > > +       sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
-> > > +       if (!sgx_12_0 || !sgx_12_1) {
-> > > +               kvm_inject_gp(vcpu, 0);
-> > > +               return 1;
-> > > +       }
-> > > +
-> > > +       if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 32, 32,
-> > > &pageinfo_gva) ||
-> > > +           sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096,
-> > > &secs_gva))
-> > > +               return 1;
-> > > +
-> > > +       /*
-> > > +        * Copy the PAGEINFO to local memory, its pointers need to be
-> > > +        * translated, i.e. we need to do a deep copy/translate.
-> > > +        */
-> > > +       r = kvm_read_guest_virt(vcpu, pageinfo_gva, &pageinfo,
-> > > +                               sizeof(pageinfo), &ex);
-> > > +       if (r == X86EMUL_PROPAGATE_FAULT) {
-> > > +               kvm_inject_emulated_page_fault(vcpu, &ex);
-> > > +               return 1;
-> > > +       } else if (r != X86EMUL_CONTINUE) {
-> > > +               sgx_handle_emulation_failure(vcpu, pageinfo_gva,
-> > > size);
-> > > +               return 0;
-> > > +       }
-> > > +
-> > > +       /*
-> > > +        * Verify alignment early.  This conveniently avoids having
-> > > to worry
-> > > +        * about page splits on userspace addresses.
-> > > +        */
-> > > +       if (!IS_ALIGNED(pageinfo.metadata, 64) ||
-> > > +           !IS_ALIGNED(pageinfo.contents, 4096)) {
-> > > +               kvm_inject_gp(vcpu, 0);
-> > > +               return 1;
-> > > +       }
-> > > +
-> > > +       /*
-> > > +        * Translate the SECINFO, SOURCE and SECS pointers from GVA
-> > > to GPA.
-> > > +        * Resume the guest on failure to inject a #PF.
-> > > +        */
-> > > +       if (sgx_gva_to_gpa(vcpu, pageinfo.metadata, false,
-> > > &metadata_gpa) ||
-> > > +           sgx_gva_to_gpa(vcpu, pageinfo.contents, false,
-> > > &contents_gpa) ||
-> > > +           sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
-> > > +               return 1;
-> > > +
+On Mon, Feb 01, 2021 at 01:11:10PM +1300, Kai Huang wrote:
+> On Wed, 27 Jan 2021 14:26:52 +1300 Kai Huang wrote:
+> > On Tue, 26 Jan 2021 17:12:12 -0800 Dave Hansen wrote:
+> > > On 1/26/21 5:08 PM, Kai Huang wrote:
+> > > > I don't have deep understanding of SGX driver. Would you help to answer?
+> > > 
+> > > Kai, as the patch submitter, you are expected to be able to at least
+> > > minimally explain what the patch is doing.  Please endeavor to obtain
+> > > this understanding before sending patches in the future.
 > > 
-> > Do pageinfo.metadata and pageinfo.contents need cannonical checks here?
+> > I see. Thanks.
 > 
-> Bugger, yes.  So much boilerplate needed in this code :-/
+> Hi Jarkko,
 > 
-> Maybe add yet another helper to do alignment+canonical checks, up where the
-> IS_ALIGNED() calls are?
+> I think I'll remove this patch in next version, since it is not related to KVM
+> SGX. And I'll rebase your second patch based on current tip/x86/sgx. You may
+> send out this patch independently. Let me know if you have comment.
 
-sgx_get_encls_gva() already does canonical check. Couldn't we just use it?
+I don't like to pre-ack changes.
 
-For instance:
+My main concern is not to introduce multiple disjoint versions
+of sgx_free_epc_page(). It is just not sane because you can do
+an implementation where those don't exist.
 
-	if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64 &metadata_gva) ||
-	    sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
-                             &contents_gva))
-		return 1;
+/Jarkko
