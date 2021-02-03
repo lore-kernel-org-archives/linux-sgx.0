@@ -4,61 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6E8C433DB
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 15:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A452C433E0
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 15:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 977F364E4E
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 15:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F21E564F5D
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 15:47:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233328AbhBCPMj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 10:12:39 -0500
-Received: from mga06.intel.com ([134.134.136.31]:55692 "EHLO mga06.intel.com"
+        id S234613AbhBCPrp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Feb 2021 10:47:45 -0500
+Received: from mga09.intel.com ([134.134.136.24]:47472 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233374AbhBCPLS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Feb 2021 10:11:18 -0500
-IronPort-SDR: qulNfgA2jv6AbsvLc3KHl1/9NaGLOiXY4hYWMuwc5RjfS5T/IXrL5UZ+iijRF90yBhwj5aptEx
- 8AcAkrnnyE4Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9884"; a="242565854"
+        id S234628AbhBCPrd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Feb 2021 10:47:33 -0500
+IronPort-SDR: UfOzxXH1qZAnXYMjo/CS+Af7XaoxuCXGUc03zPILzaJqWRnzq8120fas3xn2g3vM8qWD6r7Vxm
+ YeP6RPhoZStA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9884"; a="181204534"
 X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="242565854"
+   d="scan'208";a="181204534"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 07:10:33 -0800
-IronPort-SDR: za8AOhN1DIgpAK46PXfd19SUmNXQeEfcLC4IRHmsVR6bKafRjnA9wkR2mMocKHNu7G3MTzXA4b
- /JcA/x2mc+OQ==
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 07:46:49 -0800
+IronPort-SDR: 9fgWHYASVIaLGRtcNgZyN4AMQAotrFc5PB4Cc/AaC9Kr7wM7eBjGBPLElCFY+iW+NKTyWJLVwQ
+ oYqBpAgfwikw==
 X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="356055870"
+   d="scan'208";a="356064821"
 Received: from pmehra-mobl.amr.corp.intel.com (HELO [10.255.230.38]) ([10.255.230.38])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 07:10:32 -0800
-Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "b.thiel@posteo.de" <b.thiel@posteo.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Huang, Haitao" <haitao.huang@intel.com>
-References: <cover.1611634586.git.kai.huang@intel.com>
- <4b4b9ed1d7756e8bccf548fc41d05c7dd8367b33.camel@intel.com>
- <YBnTPmbPCAUS6XNl@google.com>
- <99135352-8e10-fe81-f0dc-8d552d73e3d3@intel.com>
- <YBnmow4e8WUkRl2H@google.com>
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 07:46:49 -0800
+Subject: Re: [PATCH v5] x86/sgx: Fix use-after-free in
+ sgx_mmu_notifier_release()
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
+Cc:     stable@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-kernel@vger.kernel.org
+References: <20210128125823.18660-1-jarkko@kernel.org>
+ <9dd2a962-2328-8784-9aed-b913502e1102@intel.com>
+ <fa43948ba860d6ac99adabad3d8b6ff11f5d2239.camel@kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -103,12 +88,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
-Date:   Wed, 3 Feb 2021 07:10:31 -0800
+Message-ID: <8df884af-825e-bae0-f0c3-c3e97f48d138@intel.com>
+Date:   Wed, 3 Feb 2021 07:46:48 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YBnmow4e8WUkRl2H@google.com>
+In-Reply-To: <fa43948ba860d6ac99adabad3d8b6ff11f5d2239.camel@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -116,30 +101,17 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/2/21 3:56 PM, Sean Christopherson wrote:
->> I seem to remember much stronger language in the SDM about this.  I've
->> always thought of SGX as a big unrecoverable machine-check party waiting
->> to happen.
->>
->> I'll ask around internally at Intel and see what folks say.  Basically,
->> should we be afraid of a big bad EPC access?
-> If bad accesses to the EPC can cause machine checks, then EPC should never be
-> mapped into userspace, i.e. the SGX driver should never have been merged.
+On 1/30/21 11:20 AM, Jarkko Sakkinen wrote:
+...
+> Example scenario would such that all removals "side-channel" through
+> the notifier callback. Then mmu_notifier_unregister() gets called
+> exactly zero times. No MMU notifier srcu sync would be then happening.
+> 
+> NOTE: There's bunch of other examples, I'm just giving one.
 
-The SDM doesn't define the behavior well enough.  I'll try to get that
-fixed.
+Could you flesh this out a bit?  I don't quite understand the scenario
+from what you describe above.
 
-But, there is some documentation of the abort page semantics:
-
-> https://download.01.org/intel-sgx/sgx-linux/2.10/docs/Intel_SGX_Developer_Reference_Linux_2.10_Open_Source.pdf
-
-Basically, writes get dropped and reads get all 1's on all the
-implementations in the wild.  I actually would have much rather gotten a
-fault, but oh well.
-
-It sounds like we need to at least modify KVM to make sure not to map
-and access EPC addresses.  We might even want to add some VM_WARN_ON()s
-in the code that creates kernel mappings to catch these mappings if they
-happen anywhere else.
-
-EPC mappings seem like (silent) trouble waiting to happen.
+In any case, I'm open to other implementations that fix the race we know
+about.  If you think you have a better fix, I'm happy to review it and
+make sure it closes the other race.
