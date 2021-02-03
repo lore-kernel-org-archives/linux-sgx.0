@@ -2,129 +2,165 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F02C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 01:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7FFC433E6
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 01:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19C9C64F59
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 01:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ABEC64F69
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Feb 2021 01:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbhBCBKJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Feb 2021 20:10:09 -0500
-Received: from mga07.intel.com ([134.134.136.100]:59206 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229570AbhBCBKI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Feb 2021 20:10:08 -0500
-IronPort-SDR: Gd9Rt/jhkrnFO1s0GPOssKFAZ5eRhCLHwghjpf00eNjZaPwqsj1p0lOdjaVlkFF4ztEtOGr1R6
- GjbxwNkB5Hkg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9883"; a="245040104"
-X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
-   d="scan'208";a="245040104"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 17:09:28 -0800
-IronPort-SDR: +rkuyj3uCw99PwO+egvb01rkXS9iR7jdiZxnQIFf19TD2i6HQim6v98Jz2dXNtPiG5Bx5pVauy
- eqsqJW5XmJ8g==
-X-IronPort-AV: E=Sophos;i="5.79,396,1602572400"; 
-   d="scan'208";a="413802817"
-Received: from asalasax-mobl2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.7.175])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2021 17:09:24 -0800
-Date:   Wed, 3 Feb 2021 14:09:22 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, seanjc@google.com,
-        luto@kernel.org, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v3 01/27] x86/cpufeatures: Add SGX1 and SGX2
- sub-features
-Message-Id: <20210203140922.46281a9f9a29497dd8ac20d4@intel.com>
-In-Reply-To: <YBmJRKRcg8gvxW1O@kernel.org>
+        id S229975AbhBCBhB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Feb 2021 20:37:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229572AbhBCBhB (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Feb 2021 20:37:01 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A469C06174A
+        for <linux-sgx@vger.kernel.org>; Tue,  2 Feb 2021 17:36:20 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id e9so3605940pjj.0
+        for <linux-sgx@vger.kernel.org>; Tue, 02 Feb 2021 17:36:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=opcqxiP9Xf8gHPgADeMXSxCYS/VX084Gu2Z5G35pT60=;
+        b=GNtc7wzH0QU5jlPXZgM2sql00Ns8qYLqPu9MDqgymnfoCWb70rr5qbRSq014KZI+QF
+         EtH4du5NQ0wXy9Pg9beIR8pqo4XKQrDhizKCN3LeHubBn2sgf0U+ni+bwk9JP7SCTofP
+         OPSDHJemtwKV7lt/YIkx5ycYXo21zUHejZ+bMnKcl05o16VKc827pB8qClnh90vVkLvm
+         4eBXovhNninlnEElTQdHPMSfjVv3jKHZIt1D1+98MBRMqnJuZN4k4opTGWYudgedxQO+
+         0OwP2dE/6GmQm+2Pv2cLsA8PzWJFAT1r8o7fvlsOBxFAEOcIB/LIySknMWsiI4wXUoqy
+         e9xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=opcqxiP9Xf8gHPgADeMXSxCYS/VX084Gu2Z5G35pT60=;
+        b=BFPnnIfHAPSAaynF+JbbmOfn+iF+l3WhWRjm2+DV5ZwPtuMhUInzaxMs7Hl1bwRop6
+         MlUEbZrtk2VN//UhYQoA8S+PeNWWlIj41VhAbKUBfneaCt1bBBemgL7+0B8mWipycp2U
+         deDfVEs60ONbb9J0UQlyyj8TckMoAwnj+pY/GlFtnQBpBx74bAwegkLS96QHVhe5lVk2
+         gyftuNVPjqYPAikZw738QCtdJU9iWT1UDbMmt0SBlH5h5+f8XScmKiA50qupBO8vRLPW
+         WxnmjoYoB92XgTu7NFp7czQHySyr4JkU5cfcxLpcb/n6eyGL42Nyw4MNM3PZJealHFlb
+         bJwg==
+X-Gm-Message-State: AOAM533ZPK2lK/Dd21TBDPIeP+4Dkdn8i7qRHGLs37hNcA2vUlBBd3vE
+        uda7jt3qwKiWlyrT40BMvpKcsQ==
+X-Google-Smtp-Source: ABdhPJxoG0EhX5q7rDGZ3PIxaTFASz8Pc2rYtU6KEZ44Rnr6cb1CppuEt74qOEKpfZNr7Qxx3OmPfg==
+X-Received: by 2002:a17:902:e541:b029:df:df4f:2921 with SMTP id n1-20020a170902e541b02900dfdf4f2921mr786634plf.52.1612316179501;
+        Tue, 02 Feb 2021 17:36:19 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:e1bc:da69:2e4b:ce97])
+        by smtp.gmail.com with ESMTPSA id 145sm206747pge.88.2021.02.02.17.36.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Feb 2021 17:36:18 -0800 (PST)
+Date:   Tue, 2 Feb 2021 17:36:12 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>
+Subject: Re: [RFC PATCH v3 23/27] KVM: VMX: Add SGX ENCLS[ECREATE] handler to
+ enforce CPUID restrictions
+Message-ID: <YBn+DBXJgPmA1iED@google.com>
 References: <cover.1611634586.git.kai.huang@intel.com>
-        <aefe8025b615f75eae3ff891f08191bf730b3c99.1611634586.git.kai.huang@intel.com>
-        <ca0fa265-0886-2a37-e686-882346fe2a6f@intel.com>
-        <3a82563d5a25b52f0b5f01560d70c50a2323f7e5.camel@intel.com>
-        <YBVdNl+pTBBm6igw@kernel.org>
-        <20210201130151.4bfb5258885ca0f0905858c6@intel.com>
-        <YBmJRKRcg8gvxW1O@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+ <d68c01baed78f859ac5fce4519646fc8a356c77d.1611634586.git.kai.huang@intel.com>
+ <f60226157935d2bbc20958e6eae7c3532b72f7a3.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f60226157935d2bbc20958e6eae7c3532b72f7a3.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2 Feb 2021 19:17:56 +0200 Jarkko Sakkinen wrote:
-> On Mon, Feb 01, 2021 at 01:01:51PM +1300, Kai Huang wrote:
-> > On Sat, 30 Jan 2021 15:20:54 +0200 Jarkko Sakkinen wrote:
-> > > On Wed, Jan 27, 2021 at 12:18:32PM +1300, Kai Huang wrote:
-> > > > On Tue, 2021-01-26 at 07:34 -0800, Dave Hansen wrote:
-> > > > > On 1/26/21 1:30 AM, Kai Huang wrote:
-> > > > > > From: Sean Christopherson <seanjc@google.com>
-> > > > > > 
-> > > > > > Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-> > > > > > features, since adding a new leaf for only two bits would be wasteful.
-> > > > > > As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
-> > > > > > guest, and to do so correctly needs to query hardware and kernel support
-> > > > > > for SGX1 and SGX2.
-> > > > > 
-> > > > > It's also not _just_ exposing the CPUID leaves.  There are some checks
-> > > > > here when KVM is emulating some SGX instructions too, right?
-> > > > 
-> > > > I would say trapping instead of emulating, but yes KVM will do more. However those
-> > > > are quite details, and I don't think we should put lots of details here. Or perhaps
-> > > > we can use 'for instance' as brief description:
-> > > > 
-> > > > As part of virtualizing SGX, KVM will need to use the two flags, for instance, to
-> > > > expose them to guest.
-> > > > 
-> > > > ?
-> > > > 
-> > > > > 
-> > > > > > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> > > > > > index 84b887825f12..18b2d0c8bbbe 100644
-> > > > > > --- a/arch/x86/include/asm/cpufeatures.h
-> > > > > > +++ b/arch/x86/include/asm/cpufeatures.h
-> > > > > > @@ -292,6 +292,8 @@
-> > > > > >  #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
-> > > > > >  #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
-> > > > > >  #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
-> > > > > > +#define X86_FEATURE_SGX1		(11*32+ 8) /* Software Guard Extensions sub-feature SGX1 */
-> > > > > > +#define X86_FEATURE_SGX2        	(11*32+ 9) /* Software Guard Extensions sub-feature SGX2 */
-> > > > > 
-> > > > > FWIW, I'm not sure how valuable it is to spell the SGX acronym out three
-> > > > > times.  Can't we use those bytes to put something more useful in that
-> > > > > comment?
-> > > > 
-> > > > I think we can remove comment for SGX1, since it is basically SGX.
-> > > > 
-> > > > For SGX2, how about below?
-> > > > 
-> > > > /* SGX Enclave Dynamic Memory Management */
-> > > 
-> > > (EDMM)
-> > 
-> > Does EDMM obvious to everyone, instead of explicitly saying Enclave Dynamic
-> > Memory Management?
-> > 
-> > Also do you think we need a comment for SGX1 bit? I can add /* Basic SGX */,
-> > but I am not sure whether it is required.
+On Wed, Feb 03, 2021, Edgecombe, Rick P wrote:
+> On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
+> > +static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
+> > +{
+> > +       unsigned long a_hva, m_hva, x_hva, s_hva, secs_hva;
+> > +       struct kvm_cpuid_entry2 *sgx_12_0, *sgx_12_1;
+> > +       gpa_t metadata_gpa, contents_gpa, secs_gpa;
+> > +       struct sgx_pageinfo pageinfo;
+> > +       gva_t pageinfo_gva, secs_gva;
+> > +       u64 attributes, xfrm, size;
+> > +       struct x86_exception ex;
+> > +       u8 max_size_log2;
+> > +       u32 miscselect;
+> > +       int trapnr, r;
+> > +
+> > +       sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
+> > +       sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
+> > +       if (!sgx_12_0 || !sgx_12_1) {
+> > +               kvm_inject_gp(vcpu, 0);
+> > +               return 1;
+> > +       }
+> > +
+> > +       if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 32, 32,
+> > &pageinfo_gva) ||
+> > +           sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096,
+> > &secs_gva))
+> > +               return 1;
+> > +
+> > +       /*
+> > +        * Copy the PAGEINFO to local memory, its pointers need to be
+> > +        * translated, i.e. we need to do a deep copy/translate.
+> > +        */
+> > +       r = kvm_read_guest_virt(vcpu, pageinfo_gva, &pageinfo,
+> > +                               sizeof(pageinfo), &ex);
+> > +       if (r == X86EMUL_PROPAGATE_FAULT) {
+> > +               kvm_inject_emulated_page_fault(vcpu, &ex);
+> > +               return 1;
+> > +       } else if (r != X86EMUL_CONTINUE) {
+> > +               sgx_handle_emulation_failure(vcpu, pageinfo_gva,
+> > size);
+> > +               return 0;
+> > +       }
+> > +
+> > +       /*
+> > +        * Verify alignment early.  This conveniently avoids having
+> > to worry
+> > +        * about page splits on userspace addresses.
+> > +        */
+> > +       if (!IS_ALIGNED(pageinfo.metadata, 64) ||
+> > +           !IS_ALIGNED(pageinfo.contents, 4096)) {
+> > +               kvm_inject_gp(vcpu, 0);
+> > +               return 1;
+> > +       }
+> > +
+> > +       /*
+> > +        * Translate the SECINFO, SOURCE and SECS pointers from GVA
+> > to GPA.
+> > +        * Resume the guest on failure to inject a #PF.
+> > +        */
+> > +       if (sgx_gva_to_gpa(vcpu, pageinfo.metadata, false,
+> > &metadata_gpa) ||
+> > +           sgx_gva_to_gpa(vcpu, pageinfo.contents, false,
+> > &contents_gpa) ||
+> > +           sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
+> > +               return 1;
+> > +
 > 
-> I would put write the whole thing down and put EDMM to parentheses.
+> Do pageinfo.metadata and pageinfo.contents need cannonical checks here?
 
-Good idea to me. Will do.
+Bugger, yes.  So much boilerplate needed in this code :-/
 
-> 
-> For SGX1 I would put "Basic SGX features for enclave construction".
-
-I think "Basic SGX" should be enough, since it already implies "enclave
-construction" part (plus other things). For someone doesn't care about SGX,
-having "enclave construction" or not doesn't matter; for someone has some
-knowledge of SGX, he or she knows what does "Basic SGX" mean.
-
-> 
-> /Jarkko
+Maybe add yet another helper to do alignment+canonical checks, up where the
+IS_ALIGNED() calls are?
