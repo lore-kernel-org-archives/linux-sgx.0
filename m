@@ -2,136 +2,89 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051D6C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 00:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2347C433DB
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 01:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBA7364F65
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 00:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BB464F64
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 01:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233967AbhBDA3g (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 19:29:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233932AbhBDA3e (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Feb 2021 19:29:34 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDE54C0613ED
-        for <linux-sgx@vger.kernel.org>; Wed,  3 Feb 2021 16:28:54 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id g15so905493pgu.9
-        for <linux-sgx@vger.kernel.org>; Wed, 03 Feb 2021 16:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BvFluTlIkULOLaKl7jy+jl1lM3clNsaQR0cSWQQ2zJ4=;
-        b=JZ7DGnacARYdo++T6lycBEhG1C7K/fY71j15lWIzXbSHTx5zr+RbWnmrDmkpQCqQwE
-         gBgVrMqbJ6GXzlGaRD+8TFA5z3NL68+s3zGPEwGimPV9j3sm4yQfl3mWH7uy4Y9kw9zD
-         01XKdiEDeDxYUlIfAkrRgELoQxj6xjrzy7UrHpsIvQSEEHr4NWeWiGoKxQJGdKCKa/hq
-         XHgSesWx93nQ9BSclRQF31HaL/dfxO1bWl9oP/BVxtwbCMVAT+xQ7tpKldQvrcN+9Xy2
-         BSboMti41CQpFr9m1SRJewqmzb7jW/PrEPuP4+qz3/LNwflYtDDrASNf2kU4Kof7feC9
-         n+dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BvFluTlIkULOLaKl7jy+jl1lM3clNsaQR0cSWQQ2zJ4=;
-        b=fJUTbsGVQhSy41nwXo1eL8wHyQeXBnC/Mpa+3ySMptqwRnDtRsVHBko0nWmGTqDYfQ
-         fD3zRFgV7foqxGHwkYqavtnqEPoQZ211iqmzEwSZYOdz+BD/SGg5wo8TL73JwPnPHT4X
-         MVNFuEr9rof7ykTF/7l34fydTSzQ1Khx4pD1R/AVBx7xmX36APqzZeogZkTDwaqQ3EL6
-         W9dX9W8qRVuNKUVGGwi4g6dd1riGEaJn7oodFopCCQdWUOKqOy36/Z/uiDTmgBe5lbaH
-         AlbzMycAnHhJnROUIOhJJnlvcdCVSR6DtNb86kiQuKwDuMDJtltOuzU/+CRSl3eeZMSQ
-         MfXw==
-X-Gm-Message-State: AOAM533ffjpC6kuajJ83TQGwqfDwvQfVkA0BAsNoK1k5KeX3LmC1RH6j
-        u6w2+yLM1n3tklsP0jbdEEt4bw==
-X-Google-Smtp-Source: ABdhPJyha8BVOyP6qluWrIDyhCiYq3xjf+nd6smVEzEQqGIyxChsmUs5hPa7Pi9rlm8VECQnbARC3Q==
-X-Received: by 2002:a05:6a00:1702:b029:1b5:1121:729a with SMTP id h2-20020a056a001702b02901b51121729amr5320745pfc.57.1612398533920;
-        Wed, 03 Feb 2021 16:28:53 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:a9a0:e924:d161:b6cb])
-        by smtp.gmail.com with ESMTPSA id n73sm3410970pfd.109.2021.02.03.16.28.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Feb 2021 16:28:53 -0800 (PST)
-Date:   Wed, 3 Feb 2021 16:28:46 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "b.thiel@posteo.de" <b.thiel@posteo.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Huang, Haitao" <haitao.huang@intel.com>
-Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
-Message-ID: <YBs/vveIBg00Im0U@google.com>
-References: <99135352-8e10-fe81-f0dc-8d552d73e3d3@intel.com>
- <YBnmow4e8WUkRl2H@google.com>
- <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
- <YBrfF0XQvzQf9PhR@google.com>
- <475c5f8b-efb7-629d-b8d2-2916ee150e4f@redhat.com>
- <c827fed1-d7af-a94a-b69e-114d4a2ec988@intel.com>
- <d044ccde68171dc319d77917c8ab9f83e9a98645.camel@intel.com>
- <YBsyqLHPtYOpqeW4@google.com>
- <b6e0a32f-0070-f97e-5d94-d12f7972d474@intel.com>
- <44b5a747aaf1d42fb8ef388bd28f49614d42cd50.camel@intel.com>
+        id S231475AbhBDBkF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Feb 2021 20:40:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229601AbhBDBkE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Feb 2021 20:40:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7172E64E31;
+        Thu,  4 Feb 2021 01:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612402764;
+        bh=6M98RcZOM/Vz/I/vJ2XWRs5F5FBLaXaewlLXJ7TVPXs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y4GMFZkLXl+nnbtq16WfAcOSgIx3UWaTIwtN9anXdO1NCFQpzjpf2zaDc85BspcuE
+         q5daxXWBuzLjdkVDWV6gX7FWP/ZxkD4PZPwlXFJKMqynfYDsyw4aTPgM2hjFhC4DGh
+         uCSQjKnsgAlSnf7s67fIHthyXRWxzs6sDWTaupE6Ex7z/sMwHUVpoeUQrZR78X/4w1
+         IvR1jq/Hu33MU6rfSMh9EK5JoZ/3Ifh6bVZcK8HDIN6AyjXbVXznlv2J1pQ9WtVNJx
+         +xUuEWXunHnmatS7R2QBp12Q0DTUJkOPozKWTbkQKX+8TImQt5ZEUTOrbTRCM8CASl
+         qkiZXwcBfsSbA==
+Date:   Thu, 4 Feb 2021 03:39:16 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
+ when SGX driver is disabled
+Message-ID: <YBtQRCC3NHBmtrck@kernel.org>
+References: <cover.1611634586.git.kai.huang@intel.com>
+ <5076ed2c486ac33bfd87dc0e17047a1673692b53.1611634586.git.kai.huang@intel.com>
+ <YBVxF2kAl7VzeRPS@kernel.org>
+ <20210201184040.646ea9923c2119c205b3378d@intel.com>
+ <YBmMrqxlTxClg9Eb@kernel.org>
+ <YBmX/wFFshokDqWM@google.com>
+ <YBndRM9m0XHYwsPP@kernel.org>
+ <20210203134906.78b5265502c65f13bacc5e68@intel.com>
+ <YBsdeco/t8sa7ecV@kernel.org>
+ <YBsq45IDDX9PPc7s@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <44b5a747aaf1d42fb8ef388bd28f49614d42cd50.camel@intel.com>
+In-Reply-To: <YBsq45IDDX9PPc7s@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Feb 04, 2021, Kai Huang wrote:
-> On Wed, 2021-02-03 at 15:37 -0800, Dave Hansen wrote:
-> > On 2/3/21 3:32 PM, Sean Christopherson wrote:
-> > > > > > Yeah, special casing KVM is almost always the wrong thing to do.
-> > > > > > Anything that KVM can do, other subsystems will do as well.
-> > > > > Agreed.  Thwarting ioremap itself seems like the right way to go.
-> > > > This sounds irrelevant to KVM SGX, thus I won't include it to KVM SGX series.
-> > > I would say it's relevant, but a pre-existing bug.  Same net effect on what's
-> > > needed for this series..
-> > > 
-> > > I say it's a pre-existing bug, because I'm pretty sure KVM can be coerced into
-> > > accessing the EPC by handing KVM a memslot that's backed by an enclave that was
-> > > created by host userspace (via /dev/sgx_enclave).
+On Wed, Feb 03, 2021 at 02:59:47PM -0800, Sean Christopherson wrote:
+> On Thu, Feb 04, 2021, Jarkko Sakkinen wrote:
+> > On Wed, Feb 03, 2021 at 01:49:06PM +1300, Kai Huang wrote:
+> > > What working *incorrectly* thing is related to SGX virtualization? The things
+> > > SGX virtualization requires (basically just raw EPC allocation) are all in
+> > > sgx/main.c. 
 > > 
-> > Dang, you beat me to it.  I was composing another email that said the
-> > exact same thing.
+> > States:
 > > 
-> > I guess we need to take a closer look at the KVM fallout from this.
-> > It's a few spots where it KVM knew it might be consuming garbage.  It
-> > just get extra weird stinky garbage now.
+> > A. SGX driver is unsupported.
+> > B. SGX driver is supported and initialized correctly.
+> > C. SGX driver is supported and failed to initialize.
+> > 
+> > I just thought that KVM should support SGX when we are either in states A
+> > or B.  Even the short summary implies this. It is expected that SGX driver
+> > initializes correctly if it is supported in the first place. If it doesn't,
+> > something is probaly seriously wrong. That is something we don't expect in
+> > a legit system behavior.
 > 
-> I don't quite understand how KVM will need to access EPC memslot. It is *guest*, but
-> not KVM, who can read EPC from non-enclave. And if I understand correctly, there will
-> be no place for KVM to use kernel address of EPC to access it. To KVM, there's no
-> difference, whether EPC backend is from /dev/sgx_enclave, or /dev/sgx_vepc. And we
-> really cannot prevent guest from doing anything.
-> 
-> So how memremap() of EPC section is related to KVM SGX? For instance, the
-> implementation of this series needs to be modified due to this?
+> It's legit behavior, and something we (you?) explicitly want to support.  See
+> patch 05, x86/cpu/intel: Allow SGX virtualization without Launch Control support.
 
-See kvm_vcpu_map() -> __kvm_map_gfn(), which blindly uses memremap() when the
-resulting pfn isn't a "valid" pfn.  KVM doesn't need access to an EPC memslot,
-we're talking the case where a malicious userspace/guest hands KVM a GPA that
-resolves to the EPC.  E.g. nested VM-Enter with the L1->L2 MSR bitmap pointing
-at EPC.  L0 KVM will intercept VM-Enter and then read L1's bitmap to merge it's
-desires with L0 KVM's requirements.  That read will hit the EPC, and thankfully
-for KVM, return garbage.
+What I think would be a sane behavior, would be to allow KVM when
+sgx_drv_init() returns -ENODEV (case A). This happens when LC is
+not enabled:
+
+	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
+		return -ENODEV;
+
+/Jarkko
