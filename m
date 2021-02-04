@@ -2,213 +2,140 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C866C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 03:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAF0C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 14:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0462264F5F
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 03:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C025D64F58
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 14:47:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbhBDDyD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Feb 2021 22:54:03 -0500
-Received: from mga07.intel.com ([134.134.136.100]:49976 "EHLO mga07.intel.com"
+        id S236881AbhBDOq7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 4 Feb 2021 09:46:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229771AbhBDDyC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Feb 2021 22:54:02 -0500
-IronPort-SDR: 8pVcAOoSp9g6v61GUqKKlpfs7qAqtV8u9lVxVLfVAFYTy4P7k1F2Wvdka8r3tmbzTDJKmK4TdX
- Dbm/f4u0Qw8w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9884"; a="245239526"
-X-IronPort-AV: E=Sophos;i="5.79,400,1602572400"; 
-   d="scan'208";a="245239526"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 19:53:19 -0800
-IronPort-SDR: RkWbXfBccY5JWNlGi4Gz5J7THXdelYV3t74tYuY7QLrK40vUTwD8gIl01L9dbj1BCyLF6p5JHD
- Sp7iIjxDe7tw==
-X-IronPort-AV: E=Sophos;i="5.79,400,1602572400"; 
-   d="scan'208";a="372776804"
-Received: from hgheewal-mobl2.amr.corp.intel.com ([10.254.80.158])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2021 19:53:16 -0800
-Message-ID: <d20976b25943c34ecfc970ebcb6f282c69a3dd43.camel@intel.com>
-Subject: Re: [RFC PATCH v3 14/27] x86/sgx: Add helpers to expose ECREATE and
- EINIT to KVM
-From:   Kai Huang <kai.huang@intel.com>
-To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Date:   Thu, 04 Feb 2021 16:53:14 +1300
-In-Reply-To: <e807033e3d56ede1177d7a1af34477678bfbfff9.1611634586.git.kai.huang@intel.com>
-References: <cover.1611634586.git.kai.huang@intel.com>
-         <e807033e3d56ede1177d7a1af34477678bfbfff9.1611634586.git.kai.huang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+        id S236829AbhBDOkG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 4 Feb 2021 09:40:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 95B2764EE2;
+        Thu,  4 Feb 2021 14:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612449550;
+        bh=iLvEJLr/7hPAPOQD8ilNW6UIeGHzslNxwFZrNXPAO6I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pyf9Sg4Ur8iSkZwKQ1Cm1DvsyHUM4e1646IjfATSRa08fAP/bUPq/P1Mamu80JyOV
+         O2ls5/1k+qrcGUeNkG3bYn97mp4YMa8rn5j+T3bBfpQYP21/JCNXv8Qfko9f7JOwkf
+         MT9ysBlNW4AVAEEfh3yohzba73x5ttx5Us6K/ldGjuDkx2x3lfRpy4TQhhj4fzyrD2
+         J8uZVMgc1XfyYsHcR0kpkbxSwtO66mI8PU4ZfD6acL27PXDrsAE9KHhuekaBcVIWdd
+         EUPguUFUqA7gmxN76jHzOI9cqLuFkBtDN+XDkF4wpZsV7Sw4WCzZGNuQLjPIQJt4vU
+         JeDIuoVP+EX8g==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6] x86/sgx: Maintain encl->refcount for each encl->mm_list entry
+Date:   Thu,  4 Feb 2021 16:38:45 +0200
+Message-Id: <20210204143845.39697-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Sean,
+This has been shown in tests:
 
-Do you think is it reasonable to move this patch to KVM? sgx_virt_ecreate() can be
-merged to handle ECREATE patch, and sgx_virt_einit() can be merged to handle EINIT
-patch. W/o the context of that two patches, it doesn't makes too much sense to have
-them standalone under x86 here I think. And nobody except KVM will use them.
+[  +0.000008] WARNING: CPU: 3 PID: 7620 at kernel/rcu/srcutree.c:374 cleanup_srcu_struct+0xed/0x100
 
-On Tue, 2021-01-26 at 22:31 +1300, Kai Huang wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> The bare-metal kernel must intercept ECREATE to be able to impose policies
-> on guests.  When it does this, the bare-metal kernel runs ECREATE against
-> the userspace mapping of the virtualized EPC.
-> 
-> Provide wrappers around __ecreate() and __einit() to hide the ugliness
-> of overloading the ENCLS return value to encode multiple error formats
-> in a single int.  KVM will trap-and-execute ECREATE and EINIT as part
-> of SGX virtualization, and on an exception, KVM needs the trapnr so that
-> it can inject the correct fault into the guest.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> ---
-> v2->v3:
-> 
->  - Added kdoc for sgx_virt_ecreate() and sgx_virt_einit(), per Jarkko.
->  - Changed to use CONFIG_X86_SGX_KVM.
-> 
-> ---
->  arch/x86/include/asm/sgx.h     | 16 ++++++
->  arch/x86/kernel/cpu/sgx/virt.c | 93 ++++++++++++++++++++++++++++++++++
->  2 files changed, 109 insertions(+)
->  create mode 100644 arch/x86/include/asm/sgx.h
-> 
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> new file mode 100644
-> index 000000000000..8a3ea3e1efbe
-> --- /dev/null
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_SGX_H
-> +#define _ASM_X86_SGX_H
-> +
-> +#include <linux/types.h>
-> +
-> +#ifdef CONFIG_X86_SGX_KVM
-> +struct sgx_pageinfo;
-> +
-> +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
-> +		     int *trapnr);
-> +int sgx_virt_einit(void __user *sigstruct, void __user *token,
-> +		   void __user *secs, u64 *lepubkeyhash, int *trapnr);
-> +#endif
-> +
-> +#endif /* _ASM_X86_SGX_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-> index e1ad7856d878..0f5b0e4e33dd 100644
-> --- a/arch/x86/kernel/cpu/sgx/virt.c
-> +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> @@ -252,3 +252,96 @@ int __init sgx_vepc_init(void)
->  
-> 
->  	return misc_register(&sgx_vepc_dev);
->  }
-> +
-> +/**
-> + * sgx_virt_ecreate() - Run ECREATE on behalf of guest
-> + * @pageinfo:	Pointer to PAGEINFO structure
-> + * @secs:	Userspace pointer to SECS page
-> + * @trapnr:	trap number injected to guest in case of ECREATE error
-> + *
-> + * Run ECREATE on behalf of guest after KVM traps ECREATE for the purpose
-> + * of enforcing policies of guest's enclaves, and return the trap number
-> + * which should be injected to guest in case of any ECREATE error.
-> + *
-> + * Return:
-> + * - 0: 	ECREATE was successful.
-> + * - -EFAULT:	ECREATE returned error.
-> + */
-> +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
-> +		     int *trapnr)
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * @secs is userspace address, and it's not guaranteed @secs points at
-> +	 * an actual EPC page. It's also possible to generate a kernel mapping
-> +	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
-> +	 * simpler.
-> +	 */
-> +	__uaccess_begin();
-> +	ret = __ecreate(pageinfo, (void *)secs);
-> +	__uaccess_end();
-> +
-> +	if (encls_faulted(ret)) {
-> +		*trapnr = ENCLS_TRAPNR(ret);
-> +		return -EFAULT;
-> +	}
-> +
-> +	/* ECREATE doesn't return an error code, it faults or succeeds. */
-> +	WARN_ON_ONCE(ret);
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(sgx_virt_ecreate);
-> +
-> +static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
-> +			    void __user *secs)
-> +{
-> +	int ret;
-> +
-> +	__uaccess_begin();
-> +	ret =  __einit((void *)sigstruct, (void *)token, (void *)secs);
-> +	__uaccess_end();
-> +	return ret;
-> +}
-> +
-> +/**
-> + * sgx_virt_ecreate() - Run EINIT on behalf of guest
-> + * @sigstruct:		Userspace pointer to SIGSTRUCT structure
-> + * @token:		Userspace pointer to EINITTOKEN structure
-> + * @secs:		Userspace pointer to SECS page
-> + * @lepubkeyhash:	Pointer to guest's *virtual* SGX_LEPUBKEYHASH MSR
-> + * 			values
-> + * @trapnr:		trap number injected to guest in case of EINIT error
-> + *
-> + * Run EINIT on behalf of guest after KVM traps EINIT. If SGX_LC is available
-> + * in host, bare-metal driver may rewrite the hardware values, therefore KVM
-> + * needs to update hardware values to guest's virtual MSR values in order to
-> + * ensure EINIT is executed with expected hardware values.
-> + *
-> + * Return:
-> + * - 0: 	EINIT was successful.
-> + * - -EFAULT:	EINIT returned error.
-> + */
-> +int sgx_virt_einit(void __user *sigstruct, void __user *token,
-> +		   void __user *secs, u64 *lepubkeyhash, int *trapnr)
-> +{
-> +	int ret;
-> +
-> +	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
-> +		ret = __sgx_virt_einit(sigstruct, token, secs);
-> +	} else {
-> +		preempt_disable();
-> +
-> +		sgx_update_lepubkeyhash(lepubkeyhash);
-> +
-> +		ret = __sgx_virt_einit(sigstruct, token, secs);
-> +		preempt_enable();
-> +	}
-> +
-> +	if (encls_faulted(ret)) {
-> +		*trapnr = ENCLS_TRAPNR(ret);
-> +		return -EFAULT;
-> +	}
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(sgx_virt_einit);
+There are two functions that drain encl->mm_list:
 
+- sgx_release() (i.e. VFS release) removes the remaining mm_list entries.
+- sgx_mmu_notifier_release() removes mm_list entry for the registered
+  process, if it still exists.
+
+If encl->refcount is taken only for VFS, this can lead to
+sgx_encl_release() being executed before sgx_mmu_notifier_release()
+completes, which is exactly what happens in the above klog entry.
+
+Each process also needs its own enclave reference.
+
+In order to fix the race condition, increase encl->refcount when an
+entry to encl->mm_list added for a process. Release this reference
+when the mm_list entry is cleaned up, either in
+sgx_mmu_notifier_release() or sgx_release().
+
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Reported-by: Haitao Huang <haitao.huang@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v6:
+- Maintain refcount for each encl->mm_list entry.
+v5:
+- To make sure that the instance does not get deleted use kref_get()
+  kref_put(). This also removes the need for additional
+  synchronize_srcu().
+v4:
+- Rewrite the commit message.
+- Just change the call order. *_expedited() is out of scope for this
+  bug fix.
+v3: Fine-tuned tags, and added missing change log for v2.
+v2: Switch to synchronize_srcu_expedited().
+ arch/x86/kernel/cpu/sgx/driver.c | 6 ++++++
+ arch/x86/kernel/cpu/sgx/encl.c   | 8 ++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index f2eac41bb4ff..8d8fcc91c0d6 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -72,6 +72,12 @@ static int sgx_release(struct inode *inode, struct file *file)
+ 		synchronize_srcu(&encl->srcu);
+ 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
+ 		kfree(encl_mm);
++
++		/*
++		 * Release the mm_list reference, as sgx_mmu_notifier_release()
++		 * will only do this only, when it grabs encl_mm.
++		 */
++		kref_put(&encl->refcount, sgx_encl_release);
+ 	}
+ 
+ 	kref_put(&encl->refcount, sgx_encl_release);
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index ee50a5010277..c1d9c86c0265 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -474,6 +474,7 @@ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
+ 	if (tmp == encl_mm) {
+ 		synchronize_srcu(&encl_mm->encl->srcu);
+ 		mmu_notifier_put(mn);
++		kref_put(&encl_mm->encl->refcount, sgx_encl_release);
+ 	}
+ }
+ 
+@@ -545,6 +546,13 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 	}
+ 
+ 	spin_lock(&encl->mm_lock);
++
++	/*
++	 * Take a reference to guarantee that the enclave is not destroyed,
++	 * while sgx_mmu_notifier_release() is active.
++	 */
++	kref_get(&encl->refcount);
++
+ 	list_add_rcu(&encl_mm->list, &encl->mm_list);
+ 	/* Pairs with smp_rmb() in sgx_reclaimer_block(). */
+ 	smp_wmb();
+-- 
+2.30.0
 
