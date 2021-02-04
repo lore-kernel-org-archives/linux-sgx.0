@@ -2,131 +2,127 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127D5C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 16:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 416D4C433DB
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 18:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA3AF64F60
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 16:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F28AA64DDE
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 18:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237985AbhBDQw3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 4 Feb 2021 11:52:29 -0500
-Received: from mga05.intel.com ([192.55.52.43]:21807 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238134AbhBDQsy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 4 Feb 2021 11:48:54 -0500
-IronPort-SDR: CI2RgHgZexLdraLjq/8Psn8LkxM9I43bOM/CUzb/gMdeTB0TneS+GeuGs1tIZFgYpHk4o61Gsk
- Wd1cbr5SY6hg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9885"; a="266111255"
-X-IronPort-AV: E=Sophos;i="5.79,401,1602572400"; 
-   d="scan'208";a="266111255"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 08:48:09 -0800
-IronPort-SDR: 1lmu3iFRQqDiiUBhQWcRobNbypwuXyQRWBiyalqBf5vIARZ0xOxjmzVX/oVAY48KQ82rPjOYyo
- LXIITbVyCcYw==
-X-IronPort-AV: E=Sophos;i="5.79,401,1602572400"; 
-   d="scan'208";a="483624099"
-Received: from mmjajodi-mobl1.amr.corp.intel.com (HELO [10.251.130.164]) ([10.251.130.164])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 08:48:08 -0800
-Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
-To:     Sean Christopherson <seanjc@google.com>,
-        Kai Huang <kai.huang@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "b.thiel@posteo.de" <b.thiel@posteo.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Huang, Haitao" <haitao.huang@intel.com>
-References: <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
- <YBrfF0XQvzQf9PhR@google.com>
- <475c5f8b-efb7-629d-b8d2-2916ee150e4f@redhat.com>
- <c827fed1-d7af-a94a-b69e-114d4a2ec988@intel.com>
- <d044ccde68171dc319d77917c8ab9f83e9a98645.camel@intel.com>
- <YBsyqLHPtYOpqeW4@google.com>
- <b6e0a32f-0070-f97e-5d94-d12f7972d474@intel.com>
- <44b5a747aaf1d42fb8ef388bd28f49614d42cd50.camel@intel.com>
- <YBs/vveIBg00Im0U@google.com>
- <5bd3231e05911bc64f5c51e1eddc3ed1f6bfe6c4.camel@intel.com>
- <YBwgw0vVCjlhFvqP@google.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <635e339e-e3f5-c437-0265-b9d44c180858@intel.com>
-Date:   Thu, 4 Feb 2021 08:48:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S239440AbhBDSvX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 4 Feb 2021 13:51:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239313AbhBDSqI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 4 Feb 2021 13:46:08 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CA7C06178B
+        for <linux-sgx@vger.kernel.org>; Thu,  4 Feb 2021 10:45:28 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id l12so4035751wmq.2
+        for <linux-sgx@vger.kernel.org>; Thu, 04 Feb 2021 10:45:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PDlKe0WbpqBDHIpCDDh4FugA9Yl2NTww4rbLOTGr+nM=;
+        b=BSD24lcMJFm1yoPHDL+vPC2t6eYWXJl+gb63Lc2kEu4Y6EX8foAiW4INgUcC7527BK
+         is+2hBSUdsPg0+Z3aHdGn8s4rSjiYJZI/Wed+PMMBRS5JJPUJEcRXT6pfG8B2lPQ4COf
+         jC+i/6A1QM62BytlMc5wKaK52uyyRjCdedByQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PDlKe0WbpqBDHIpCDDh4FugA9Yl2NTww4rbLOTGr+nM=;
+        b=r4SEL0aMMYYgVaj+hiooxp7XkOF9Ek9IqhpnWCcTj27Uu188ZM5sKjaoz3vCUBm5ae
+         W9WSohThSVdBsYih5H8WPDlskKZ9/66Umn7j9JDjyo5ZH8fE14eJVVXfqahpGthTiANY
+         gn0nZyqcOhcNFltnZq0au9vuYXDSZI3GOVKKiERyELtWOYERRP09lIlbaWfon+qcOEK9
+         tE9GupWPXWGtF+uJYf6/AnE2qCN4hETDk4JB46Fbqr3O/cYaIRoTkU3Grw/Znn9Cnqw5
+         knRPF07yVJW/c076U2rv78HA75uzi5pJn4PFIdaTKjKOWH3gJ34VeBpMmZmMhjLArl14
+         UEzw==
+X-Gm-Message-State: AOAM530F6ZHrzevYGO8F330KgLLKoWb4fFXuK/dAuODwRQMnreleX9S8
+        I202/8ratvvdvlgaed/3W5PwZg==
+X-Google-Smtp-Source: ABdhPJwr8sCr/vTIsvxni8hp5KegeEeUyEeymi2FitAM/6CHsPHduLd2lAH04rBfHoBvmYrzEYKENw==
+X-Received: by 2002:a1c:105:: with SMTP id 5mr469215wmb.89.1612464326728;
+        Thu, 04 Feb 2021 10:45:26 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id m10sm9322997wro.7.2021.02.04.10.45.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Feb 2021 10:45:26 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Sean Christopherson <seanjc@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH] x86/sgx: Drop racy follow_pfn check
+Date:   Thu,  4 Feb 2021 19:45:19 +0100
+Message-Id: <20210204184519.2809313-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-In-Reply-To: <YBwgw0vVCjlhFvqP@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/4/21 8:28 AM, Sean Christopherson wrote:
->> Do we see any security risk here?
-> Not with current CPUs, which drop writes and read all ones.  If future CPUs take
-> creatives liberties with the SDM, then we could have a problem, but that's why
-> Dave is trying to get stronger guarantees into the SDM.
+PTE insertion is fundamentally racy, and this check doesn't do
+anything useful. Quoting Sean:
 
-I really don't like the idea of the abort page being used by code that
-doesn't know what it's dealing with.  It just seems like trouble (aka.
-security risk) waiting to happen.
+"Yeah, it can be whacked.  The original, never-upstreamed code asserted that the
+resolved PFN matched the PFN being installed by the fault handler as a sanity
+check on the SGX driver's EPC management.  The WARN assertion got dropped for
+whatever reason, leaving that useless chunk."
+
+Jason stumbled over this as a new user of follow_pfn, and I'm trying
+to get rid of unsafe callers of that function so it can be locked down
+further.
+
+This is independent prep work for the referenced patch series.
+
+References: https://lore.kernel.org/dri-devel/20201127164131.2244124-1-daniel.vetter@ffwll.ch/
+Reported-by: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sean Christopherson <seanjc@google.com>
+Fixes: 947c6e11fa43 ("x86/sgx: Add ptrace() support for the SGX driver")
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: linux-sgx@vger.kernel.org
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index ee50a5010277..20a2dd5ba2b4 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -141,7 +141,6 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	struct sgx_encl_page *entry;
+ 	unsigned long phys_addr;
+ 	struct sgx_encl *encl;
+-	unsigned long pfn;
+ 	vm_fault_t ret;
+ 
+ 	encl = vma->vm_private_data;
+@@ -168,13 +167,6 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 
+ 	phys_addr = sgx_get_epc_phys_addr(entry->epc_page);
+ 
+-	/* Check if another thread got here first to insert the PTE. */
+-	if (!follow_pfn(vma, addr, &pfn)) {
+-		mutex_unlock(&encl->lock);
+-
+-		return VM_FAULT_NOPAGE;
+-	}
+-
+ 	ret = vmf_insert_pfn(vma, addr, PFN_DOWN(phys_addr));
+ 	if (ret != VM_FAULT_NOPAGE) {
+ 		mutex_unlock(&encl->lock);
+-- 
+2.30.0
+
