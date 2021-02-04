@@ -2,140 +2,114 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAF0C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 14:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD39DC433DB
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 14:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C025D64F58
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 14:47:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 692A864F4D
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Feb 2021 14:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236881AbhBDOq7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 4 Feb 2021 09:46:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41010 "EHLO mail.kernel.org"
+        id S236737AbhBDOwU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 4 Feb 2021 09:52:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236829AbhBDOkG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 4 Feb 2021 09:40:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 95B2764EE2;
-        Thu,  4 Feb 2021 14:39:09 +0000 (UTC)
+        id S236861AbhBDOwG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 4 Feb 2021 09:52:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0196064E42;
+        Thu,  4 Feb 2021 14:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612449550;
-        bh=iLvEJLr/7hPAPOQD8ilNW6UIeGHzslNxwFZrNXPAO6I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pyf9Sg4Ur8iSkZwKQ1Cm1DvsyHUM4e1646IjfATSRa08fAP/bUPq/P1Mamu80JyOV
-         O2ls5/1k+qrcGUeNkG3bYn97mp4YMa8rn5j+T3bBfpQYP21/JCNXv8Qfko9f7JOwkf
-         MT9ysBlNW4AVAEEfh3yohzba73x5ttx5Us6K/ldGjuDkx2x3lfRpy4TQhhj4fzyrD2
-         J8uZVMgc1XfyYsHcR0kpkbxSwtO66mI8PU4ZfD6acL27PXDrsAE9KHhuekaBcVIWdd
-         EUPguUFUqA7gmxN76jHzOI9cqLuFkBtDN+XDkF4wpZsV7Sw4WCzZGNuQLjPIQJt4vU
-         JeDIuoVP+EX8g==
+        s=k20201202; t=1612450285;
+        bh=0qYGseK9qf12SS5lXXAuSTG3AzzmKTRorIWU/7nzoEw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dlNzm8dAKbkBKUruPZZi3TYb/UhRCldN/2NOVeBd5wxJ13B7iK7NFn77Fp511bMb3
+         K/QMAZKneSu0Fqdrg3//TubwABcutxn5J5LY3BUaUWFBDvR8oeiWlg65enEp5S5suC
+         cwr7v04jk9ezr0OLsUC3pzoh8fPZ4McZFrxOBnIo5KJjv2gEIqZ9nB54Dj16W8vKbL
+         1tpszIvDYbdknpvo2Qg9vVrhgtrXueKBToFoZmnNRsvNfZvpuEYrOyDTSgYnM2Fi5b
+         slDs8YFH810aoTP0JKrnPyBpFF/M9mnFzTuycD+q17utrVVkKUY/C3pOSygWkiGsqj
+         GkfckfFmxSLpQ==
+Date:   Thu, 4 Feb 2021 16:51:17 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6] x86/sgx: Maintain encl->refcount for each encl->mm_list entry
-Date:   Thu,  4 Feb 2021 16:38:45 +0200
-Message-Id: <20210204143845.39697-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.30.0
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, haitao.huang@intel.com, pbonzini@redhat.com,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
+ when SGX driver is disabled
+Message-ID: <YBwJ5S0C3dMS2AFY@kernel.org>
+References: <YBmX/wFFshokDqWM@google.com>
+ <YBndRM9m0XHYwsPP@kernel.org>
+ <20210203134906.78b5265502c65f13bacc5e68@intel.com>
+ <YBsdeco/t8sa7ecV@kernel.org>
+ <YBsq45IDDX9PPc7s@google.com>
+ <YBtQRCC3NHBmtrck@kernel.org>
+ <b63bf7db09442e994563ccc3a3b608fc2f17b784.camel@intel.com>
+ <YBtkkEp5hXpTl84s@kernel.org>
+ <YBtlTE2xZ3wBrukB@kernel.org>
+ <b523357d2f062bf801d8fa1b05bf7abf13c19e89.camel@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b523357d2f062bf801d8fa1b05bf7abf13c19e89.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This has been shown in tests:
+On Thu, Feb 04, 2021 at 04:20:49PM +1300, Kai Huang wrote:
+> On Thu, 2021-02-04 at 05:09 +0200, Jarkko Sakkinen wrote:
+> > On Thu, Feb 04, 2021 at 05:05:56AM +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Feb 04, 2021 at 03:59:20PM +1300, Kai Huang wrote:
+> > > > On Thu, 2021-02-04 at 03:39 +0200, Jarkko Sakkinen wrote:
+> > > > > On Wed, Feb 03, 2021 at 02:59:47PM -0800, Sean Christopherson wrote:
+> > > > > > On Thu, Feb 04, 2021, Jarkko Sakkinen wrote:
+> > > > > > > On Wed, Feb 03, 2021 at 01:49:06PM +1300, Kai Huang wrote:
+> > > > > > > > What working *incorrectly* thing is related to SGX virtualization? The things
+> > > > > > > > SGX virtualization requires (basically just raw EPC allocation) are all in
+> > > > > > > > sgx/main.c. 
+> > > > > > > 
+> > > > > > > States:
+> > > > > > > 
+> > > > > > > A. SGX driver is unsupported.
+> > > > > > > B. SGX driver is supported and initialized correctly.
+> > > > > > > C. SGX driver is supported and failed to initialize.
+> > > > > > > 
+> > > > > > > I just thought that KVM should support SGX when we are either in states A
+> > > > > > > or B.  Even the short summary implies this. It is expected that SGX driver
+> > > > > > > initializes correctly if it is supported in the first place. If it doesn't,
+> > > > > > > something is probaly seriously wrong. That is something we don't expect in
+> > > > > > > a legit system behavior.
+> > > > > > 
+> > > > > > It's legit behavior, and something we (you?) explicitly want to support.  See
+> > > > > > patch 05, x86/cpu/intel: Allow SGX virtualization without Launch Control support.
+> > > > > 
+> > > > > What I think would be a sane behavior, would be to allow KVM when
+> > > > > sgx_drv_init() returns -ENODEV (case A). This happens when LC is
+> > > > > not enabled:
+> > > > > 
+> > > > > 	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
+> > > > > 		return -ENODEV;
+> > > > > 
+> > > > > /Jarkko
+> > > > 
+> > > > I really don't understand what's the difference between A and C. When "SGX driver is
+> > > > supported and failed to initialize" happens, it just means "SGX driver is
+> > > > unsupported". If it is not the case, can you explicitly point out what will be the
+> > > > problem?
+> > 
+> > This is as explicit as I can ever possibly get:
+> > 
+> > A: ret == -ENODEV
+> > B: ret == 0
+> > C: ret != 0 && ret != -ENODEV
+> 
+> Let me try again: 
+> 
+> Why A and C should be treated differently? What will behave incorrectly, in case of
+> C?
 
-[  +0.000008] WARNING: CPU: 3 PID: 7620 at kernel/rcu/srcutree.c:374 cleanup_srcu_struct+0xed/0x100
+So you don't know what different error codes mean?
 
-There are two functions that drain encl->mm_list:
-
-- sgx_release() (i.e. VFS release) removes the remaining mm_list entries.
-- sgx_mmu_notifier_release() removes mm_list entry for the registered
-  process, if it still exists.
-
-If encl->refcount is taken only for VFS, this can lead to
-sgx_encl_release() being executed before sgx_mmu_notifier_release()
-completes, which is exactly what happens in the above klog entry.
-
-Each process also needs its own enclave reference.
-
-In order to fix the race condition, increase encl->refcount when an
-entry to encl->mm_list added for a process. Release this reference
-when the mm_list entry is cleaned up, either in
-sgx_mmu_notifier_release() or sgx_release().
-
-Cc: stable@vger.kernel.org
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Reported-by: Haitao Huang <haitao.huang@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v6:
-- Maintain refcount for each encl->mm_list entry.
-v5:
-- To make sure that the instance does not get deleted use kref_get()
-  kref_put(). This also removes the need for additional
-  synchronize_srcu().
-v4:
-- Rewrite the commit message.
-- Just change the call order. *_expedited() is out of scope for this
-  bug fix.
-v3: Fine-tuned tags, and added missing change log for v2.
-v2: Switch to synchronize_srcu_expedited().
- arch/x86/kernel/cpu/sgx/driver.c | 6 ++++++
- arch/x86/kernel/cpu/sgx/encl.c   | 8 ++++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index f2eac41bb4ff..8d8fcc91c0d6 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -72,6 +72,12 @@ static int sgx_release(struct inode *inode, struct file *file)
- 		synchronize_srcu(&encl->srcu);
- 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
- 		kfree(encl_mm);
-+
-+		/*
-+		 * Release the mm_list reference, as sgx_mmu_notifier_release()
-+		 * will only do this only, when it grabs encl_mm.
-+		 */
-+		kref_put(&encl->refcount, sgx_encl_release);
- 	}
- 
- 	kref_put(&encl->refcount, sgx_encl_release);
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index ee50a5010277..c1d9c86c0265 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -474,6 +474,7 @@ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
- 	if (tmp == encl_mm) {
- 		synchronize_srcu(&encl_mm->encl->srcu);
- 		mmu_notifier_put(mn);
-+		kref_put(&encl_mm->encl->refcount, sgx_encl_release);
- 	}
- }
- 
-@@ -545,6 +546,13 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
- 	}
- 
- 	spin_lock(&encl->mm_lock);
-+
-+	/*
-+	 * Take a reference to guarantee that the enclave is not destroyed,
-+	 * while sgx_mmu_notifier_release() is active.
-+	 */
-+	kref_get(&encl->refcount);
-+
- 	list_add_rcu(&encl_mm->list, &encl->mm_list);
- 	/* Pairs with smp_rmb() in sgx_reclaimer_block(). */
- 	smp_wmb();
--- 
-2.30.0
-
+/Jarkko
