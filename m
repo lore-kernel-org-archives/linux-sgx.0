@@ -2,137 +2,146 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B53C433E0
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 20:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF3DC433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 22:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D009E64DDB
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 20:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D8F164F51
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 22:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbhBESUA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Feb 2021 13:20:00 -0500
-Received: from mga12.intel.com ([192.55.52.136]:12920 "EHLO mga12.intel.com"
+        id S231701AbhBEWdg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Feb 2021 17:33:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233194AbhBEPTg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 5 Feb 2021 10:19:36 -0500
-IronPort-SDR: E+6cNZntzTkqJqklPGZI7URf2unAPQ6UksTpqxu720fxC3ikFWMq+DE/iB+2RWw+LtrPgJ12NC
- RVSI8RyDFDxg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9885"; a="160617116"
-X-IronPort-AV: E=Sophos;i="5.81,155,1610438400"; 
-   d="scan'208";a="160617116"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 09:00:33 -0800
-IronPort-SDR: dXzCx5U6Xk5bWVQGNxHAMg0SBqC2Q+19yJAtpsRfaY8QeMHf/bUivHNyXfrjA85IhS172+SbLC
- urA3jfCsB2Qg==
-X-IronPort-AV: E=Sophos;i="5.81,155,1610438400"; 
-   d="scan'208";a="373464871"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 09:00:33 -0800
-From:   ira.weiny@intel.com
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Sean Christopherson <seanjc@google.com>,
+        id S231152AbhBEOOr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Feb 2021 09:14:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7877A650E9;
+        Fri,  5 Feb 2021 15:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612538158;
+        bh=1sEW+rtg5YJG4p9Obi9qq7oVcTQWtSvG+Gb0mHpyNM8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=W5uGP6H8vyQLn3hzvdc2oI0Wsj9H6KabWgkB55CVhy4/bzpnBs0BiswDlXtPUmTbz
+         8/25XHXXGAWByLz7F5mw338mbqRJBMoSJ7xQm2OgFgRxADCVTQdy4S0fl1Z23q926T
+         RZw3qoyeT5q1129rgHxO4RY20YtM77/6CSP2+luxZ8C2GEvapWEyeLJKC5pci+K1Sz
+         9u+r6KugDyXp9m9fKM5c4QdT+626TfCFzRicUvPTyOt8Wpe/4HHxrpELrjDowNXx+l
+         8VzuGXbJZ/7BoxZYUA6g1/0BuPzM6sBktPnYMZCXu50vQ2ZfTDeTO3IHJoT8eGZ22+
+         +RMe63td2tJGQ==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     sgx@eclists.intel.com
+Cc:     dave.hansen@intel.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: [PATCH v4] x86: Remove unnecessary kmap() from sgx_ioc_enclave_init()
-Date:   Fri,  5 Feb 2021 09:00:30 -0800
-Message-Id: <20210205170030.856723-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
+        Sean Christopherson <seanjc@google.com>,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] x86/sgx: Maintain encl->refcount for each encl->mm_list entry
+Date:   Fri,  5 Feb 2021 17:15:45 +0200
+Message-Id: <20210205151546.144810-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210205151546.144810-1-jarkko@kernel.org>
+References: <20210205151546.144810-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+This has been shown in tests:
 
-kmap is inefficient and we are trying to reduce the usage in the kernel.
-There is no readily apparent reason why initp_page needs to be allocated
-and kmap'ed() but sigstruct needs to be page aligned and token
-512 byte aligned.
+[  +0.000008] WARNING: CPU: 3 PID: 7620 at kernel/rcu/srcutree.c:374 cleanup_srcu_struct+0xed/0x100
 
-kmalloc() can give us this alignment but we need to allocate PAGE_SIZE
-bytes to do so.  Rather than change this kmap() to kmap_local_page() use
-kmalloc() instead.
+There are two functions that drain encl->mm_list:
 
-Remove the alloc_page()/kmap() and replace with kmalloc(PAGE_SIZE, ...)
-to get a page aligned kernel address to use.
+- sgx_release() (i.e. VFS release) removes the remaining mm_list entries.
+- sgx_mmu_notifier_release() removes mm_list entry for the registered
+  process, if it still exists.
 
-In addition add a comment to document the alignment requirements so that
-others like myself don't attempt to 'fix' this again.
+If encl->refcount is taken only for VFS, this can lead to
+sgx_encl_release() being executed before sgx_mmu_notifier_release()
+completes, which is exactly what happens in the above klog entry.
 
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Jethro Beekman <jethro@fortanix.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Each process also needs its own enclave reference.
 
+In order to fix the race condition, increase encl->refcount when an
+entry to encl->mm_list added for a process. Release this reference
+when the mm_list entry is cleaned up, either in
+sgx_mmu_notifier_release() or sgx_release().
+
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Reported-by: Haitao Huang <haitao.huang@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
-Changes from v3[3]:
-	Remove BUILD_BUG_ONs
+v7:
+- Same as v6 but v6 was missing cc to Dave. Thus, also the
+  MAINTAINERS update.
+v6:
+- Maintain refcount for each encl->mm_list entry.
+v5:
+- To make sure that the instance does not get deleted use kref_get()
+  kref_put(). This also removes the need for additional
+  synchronize_srcu().
+v4:
+- Rewrite the commit message.
+- Just change the call order. *_expedited() is out of scope for this
+  bug fix.
+v3: Fine-tuned tags, and added missing change log for v2.
+v2: Switch to synchronize_srcu_expedited().
+ arch/x86/kernel/cpu/sgx/driver.c | 6 ++++++
+ arch/x86/kernel/cpu/sgx/encl.c   | 8 ++++++++
+ 2 files changed, 14 insertions(+)
 
-Changes from v2[2]:
-        When allocating a power of 2 size kmalloc() now guarantees the
-        alignment of the respective size.  So go back to using kmalloc() but
-        with a PAGE_SIZE allocation to get the alignment.  This also follows
-        the pattern in sgx_ioc_enclave_create()
-
-Changes from v1[1]:
-	Use page_address() instead of kcmalloc() to ensure sigstruct is
-	page aligned
-	Use BUILD_BUG_ON to ensure token and sigstruct don't collide.
-
-[1] https://lore.kernel.org/lkml/20210129001459.1538805-1-ira.weiny@intel.com/
-[2] https://lore.kernel.org/lkml/20210202013725.3514671-1-ira.weiny@intel.com/
-[3] https://lore.kernel.org/lkml/20210205050850.GC5033@iweiny-DESK2.sc.intel.com/#t
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf76939..38e540de5e2a 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -604,7 +604,6 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- {
- 	struct sgx_sigstruct *sigstruct;
- 	struct sgx_enclave_init init_arg;
--	struct page *initp_page;
- 	void *token;
- 	int ret;
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index f2eac41bb4ff..8d8fcc91c0d6 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -72,6 +72,12 @@ static int sgx_release(struct inode *inode, struct file *file)
+ 		synchronize_srcu(&encl->srcu);
+ 		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
+ 		kfree(encl_mm);
++
++		/*
++		 * Release the mm_list reference, as sgx_mmu_notifier_release()
++		 * will only do this only, when it grabs encl_mm.
++		 */
++		kref_put(&encl->refcount, sgx_encl_release);
+ 	}
  
-@@ -615,11 +614,14 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	if (copy_from_user(&init_arg, arg, sizeof(init_arg)))
- 		return -EFAULT;
- 
--	initp_page = alloc_page(GFP_KERNEL);
--	if (!initp_page)
-+	/*
-+	 * sigstruct must be on a page boundry and token on a 512 byte boundry
-+	 * kmalloc() gives us this alignment when allocating PAGE_SIZE bytes
-+	 */
-+	sigstruct = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!sigstruct)
- 		return -ENOMEM;
- 
--	sigstruct = kmap(initp_page);
- 	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
- 	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
- 
-@@ -645,8 +647,7 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	ret = sgx_encl_init(encl, sigstruct, token);
- 
- out:
--	kunmap(initp_page);
--	__free_page(initp_page);
-+	kfree(sigstruct);
- 	return ret;
+ 	kref_put(&encl->refcount, sgx_encl_release);
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index ee50a5010277..c1d9c86c0265 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -474,6 +474,7 @@ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
+ 	if (tmp == encl_mm) {
+ 		synchronize_srcu(&encl_mm->encl->srcu);
+ 		mmu_notifier_put(mn);
++		kref_put(&encl_mm->encl->refcount, sgx_encl_release);
+ 	}
  }
  
+@@ -545,6 +546,13 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 	}
+ 
+ 	spin_lock(&encl->mm_lock);
++
++	/*
++	 * Take a reference to guarantee that the enclave is not destroyed,
++	 * while sgx_mmu_notifier_release() is active.
++	 */
++	kref_get(&encl->refcount);
++
+ 	list_add_rcu(&encl_mm->list, &encl->mm_list);
+ 	/* Pairs with smp_rmb() in sgx_reclaimer_block(). */
+ 	smp_wmb();
 -- 
-2.28.0.rc0.12.gb6a658bd00c9
+2.30.0
 
