@@ -2,90 +2,113 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742E5C433DB
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 07:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA84C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 12:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A4D464F8C
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 07:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C149B64FB5
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 12:36:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231316AbhBEHoU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Feb 2021 02:44:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50688 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbhBEHoR (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 5 Feb 2021 02:44:17 -0500
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF16AC061786
-        for <linux-sgx@vger.kernel.org>; Thu,  4 Feb 2021 23:43:35 -0800 (PST)
-Received: by mail-oi1-x236.google.com with SMTP id n7so6549090oic.11
-        for <linux-sgx@vger.kernel.org>; Thu, 04 Feb 2021 23:43:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pNYDAPwmA+T5j4N+W3YFNQofLY2Q0zVUyzfw2M1AxTo=;
-        b=Q2BMWEdoyt5JsbluyrH16Kus+GEbCbjKP3WuVs802CW2/HihCB0uwOlViUTXQZVNzN
-         s3C5hiSYAbZbqg2E1nAfEi1FEx/D3kJAfILhJrcc3hXV0lOOxgta/C2apinoAKf+KxWJ
-         t/6+UVZ99B4akfS6vHKWYKnPDVAkubUnzpf6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pNYDAPwmA+T5j4N+W3YFNQofLY2Q0zVUyzfw2M1AxTo=;
-        b=h1isXoAMb9ewGxAfdLmL/o1C4BurChlmH+BDauBNGkmGNLVVp1oMqZAGw/vid+Gt98
-         DGPgD8SdSZ7fDSLez056M7BF6WZqpXUvp1rq+HSGuc+wZsywMMTPLaAk95Bd0qpWO3Ny
-         Z6f49xmFlt39m4eVqOkPaE21Hjrfp7FNLibG1AsqPC4SBq0Z+c8aDKDmOh6SQyXuhJlZ
-         6Ob3F1GRIhr1ypoEVFsoLWRhezPDqBntj6cHCklrCP6rrm+qZp/jITvMr8hFGHUcOQcB
-         MDK97JrMB3Wt8BKJG8LyoRQjjyHxGMcJVRszna3aowT3fCT9X3lJDNw2JokwcI29G6iv
-         MCKQ==
-X-Gm-Message-State: AOAM530N+yAZ9NBlfUSo1Ia+PAuOQB/zh5lGKdtVcv0qPIib+c7LtkPV
-        2VCJG/HC5UKStf1NiRKJdI5VoQ4xOS6naRpqaNC7NQ==
-X-Google-Smtp-Source: ABdhPJzDeNovUCPUxkRfFTLU3DtLUexLktQWZivHRJ6NvIconAVJrQwO2Lte5w/rWcaQKnjtutQjcyt/8/gUQCEuDy4=
-X-Received: by 2002:aca:1906:: with SMTP id l6mr2274756oii.101.1612511015117;
- Thu, 04 Feb 2021 23:43:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20210204184519.2809313-1-daniel.vetter@ffwll.ch> <YBys6Io1ZbZdzWmj@kernel.org>
-In-Reply-To: <YBys6Io1ZbZdzWmj@kernel.org>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 5 Feb 2021 08:43:24 +0100
-Message-ID: <CAKMK7uFM=ZW_+D32OGfirwY83ZkUKQpiA-3zGx9KAe1UKjW0XQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/sgx: Drop racy follow_pfn check
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Sean Christopherson <seanjc@google.com>,
-        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>
+        id S232171AbhBEMgD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Feb 2021 07:36:03 -0500
+Received: from mga03.intel.com ([134.134.136.65]:46470 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232148AbhBEMdm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Feb 2021 07:33:42 -0500
+IronPort-SDR: mSiTMEPLWrL85gMbWrnX3fTz5ghv0GFNiUkNqwanWs6tmH1L4m677nXefYqJXAQ5bOJ2RZO5tl
+ TveCGvnZknHw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9885"; a="181490635"
+X-IronPort-AV: E=Sophos;i="5.81,154,1610438400"; 
+   d="scan'208";a="181490635"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 04:33:00 -0800
+IronPort-SDR: /RP21vhYieDly6c3NcARWjOrNa+aVTRf6m5/uYOoNbjVkzUbnRJWQgHssxtWMsp8HMs32Mx1eX
+ PywILmtIIRFQ==
+X-IronPort-AV: E=Sophos;i="5.81,154,1610438400"; 
+   d="scan'208";a="508523273"
+Received: from nadams-mobl1.amr.corp.intel.com ([10.254.96.120])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 04:32:56 -0800
+Message-ID: <35808048da366b7e531f291c3611c1172f988d6a.camel@intel.com>
+Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
+From:   Kai Huang <kai.huang@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jethro@fortanix.com" <jethro@fortanix.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "b.thiel@posteo.de" <b.thiel@posteo.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Huang, Haitao" <haitao.huang@intel.com>
+Date:   Sat, 06 Feb 2021 01:32:53 +1300
+In-Reply-To: <635e339e-e3f5-c437-0265-b9d44c180858@intel.com>
+References: <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
+         <YBrfF0XQvzQf9PhR@google.com>
+         <475c5f8b-efb7-629d-b8d2-2916ee150e4f@redhat.com>
+         <c827fed1-d7af-a94a-b69e-114d4a2ec988@intel.com>
+         <d044ccde68171dc319d77917c8ab9f83e9a98645.camel@intel.com>
+         <YBsyqLHPtYOpqeW4@google.com>
+         <b6e0a32f-0070-f97e-5d94-d12f7972d474@intel.com>
+         <44b5a747aaf1d42fb8ef388bd28f49614d42cd50.camel@intel.com>
+         <YBs/vveIBg00Im0U@google.com>
+         <5bd3231e05911bc64f5c51e1eddc3ed1f6bfe6c4.camel@intel.com>
+         <YBwgw0vVCjlhFvqP@google.com>
+         <635e339e-e3f5-c437-0265-b9d44c180858@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 3:26 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Thu, Feb 04, 2021 at 07:45:19PM +0100, Daniel Vetter wrote:
-> > References: https://lore.kernel.org/dri-devel/20201127164131.2244124-1-daniel.vetter@ffwll.ch/
->
-> What is the difference between this and "Link:" anyway?
+On Thu, 2021-02-04 at 08:48 -0800, Dave Hansen wrote:
+> On 2/4/21 8:28 AM, Sean Christopherson wrote:
+> > > Do we see any security risk here?
+> > Not with current CPUs, which drop writes and read all ones.  If future CPUs take
+> > creatives liberties with the SDM, then we could have a problem, but that's why
+> > Dave is trying to get stronger guarantees into the SDM.
+> 
+> I really don't like the idea of the abort page being used by code that
+> doesn't know what it's dealing with.  It just seems like trouble (aka.
+> security risk) waiting to happen.
 
-Afaik References: is for other reading (bug reports, discussions,
-other patch series), Link: is for patch submission itself (which I
-think some subsystem do an entire chain of, on each revision). My
-scripts aren't good enough that they add the Link: before submitting,
-I add them when I apply patches (since most patches I get don't have
-them anyway).
+Hi Dave,
 
-btw since the final patch to remove follow_pfn won't be ready for 5.12
-merge window (kvm and vfio have some work to do) I think it's best if
-you just queue this up in your tree?
+Just to confirm, you want this (disallow ioremap() for EPC) fixed in upstream kernel
+before KVM SGX can be merged, correct?
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+If so, and since it seems you also agreed that better solution is to modify ioremap()
+to refuse to map EPC, what do you think of the sample code Sean put in his previous
+reply?
+
+https://www.spinics.net/lists/kvm/msg234754.html
+
+IMHO adding 'bool sgx_epc' to ioremap_desc seems not ideal, since it's not generic.
+Instead, we may define some new flag here, and ioremap_desc->flag can just cope with
+it.
+
+Btw as Sean already pointed out, SGX code uses memremap() to initialize EPC section,
+and we could choose to still allow this to avoid code change to SGX driver. But it
+seems it is a little hack here. What's your opinion? 
+
+Hi Sean,
+
+If we all agree the fix is needed here, do you want to work on the patch (since you
+already provided your thought), or do you want me to do it, with Suggested-by you?
+
