@@ -2,41 +2,64 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA84C433DB
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 12:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D25C433E0
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 17:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C149B64FB5
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 12:36:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4589064F20
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 17:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232171AbhBEMgD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Feb 2021 07:36:03 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46470 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232148AbhBEMdm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 5 Feb 2021 07:33:42 -0500
-IronPort-SDR: mSiTMEPLWrL85gMbWrnX3fTz5ghv0GFNiUkNqwanWs6tmH1L4m677nXefYqJXAQ5bOJ2RZO5tl
- TveCGvnZknHw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9885"; a="181490635"
-X-IronPort-AV: E=Sophos;i="5.81,154,1610438400"; 
-   d="scan'208";a="181490635"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 04:33:00 -0800
-IronPort-SDR: /RP21vhYieDly6c3NcARWjOrNa+aVTRf6m5/uYOoNbjVkzUbnRJWQgHssxtWMsp8HMs32Mx1eX
- PywILmtIIRFQ==
-X-IronPort-AV: E=Sophos;i="5.81,154,1610438400"; 
-   d="scan'208";a="508523273"
-Received: from nadams-mobl1.amr.corp.intel.com ([10.254.96.120])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 04:32:56 -0800
-Message-ID: <35808048da366b7e531f291c3611c1172f988d6a.camel@intel.com>
-Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
-From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        id S233240AbhBEP27 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Feb 2021 10:28:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233247AbhBEP1Q (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 5 Feb 2021 10:27:16 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F1DC06174A
+        for <linux-sgx@vger.kernel.org>; Fri,  5 Feb 2021 08:52:06 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id e9so3867097plh.3
+        for <linux-sgx@vger.kernel.org>; Fri, 05 Feb 2021 08:52:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RO4dIZbXCHxgGtgQUSgkK1eNDMrMfPhO1PoHqkge4zU=;
+        b=Xmwyxyw3v/HXwd2nQjd/2BUg2EEGJ5fX90Q6UKMSb4EzTrgBS5iYjcbnOepw0ncPUX
+         MNKRaX9tjSsWjsVhxWSdBngwSbpeBhJA1hYjeMjhCkXxhPahOwzUzje5amZL9b4pM4OU
+         rdf5QRfhRnNvAWtcdfSXgGgHVJ/emBbbgX20A3/lpPcujpGHAjusmJ8SkdwBP7LWj+jx
+         vWh9xHx36kYxY5z9RxKdqCtioNQF7vhvuEVA6KHeBDeL+vaWV8toxBiZO8owVG64oCf9
+         Ji7V2MEAIt0ZZK1pYiejoy4ukDl7Qa4ssBnyt//2y+oz/T5MX96qYqW+YanUaYzkv7F1
+         zUdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RO4dIZbXCHxgGtgQUSgkK1eNDMrMfPhO1PoHqkge4zU=;
+        b=Pn7I1c1w/5ka9UIYPqmbcUyLlo8Ujw4+UfqyWVBF8Nexy+Cqs2u2IZIAre7dS+zyIt
+         RX7ecCNb1EBWjnlEQ2+SQxw2ZYO91UwclaakxMct7ljfzIH2RHtwmFSuqhvhjjzANOoi
+         VwFRm4T1Yn7O/HkHqcnsbJO3MAZkQMdbRcgoqxUe6EFsRBE6vq4N+ou1oJuVyKeTx0Zw
+         eAWVDa4Gm6PaQOdWPYserRLJ49MUoxNDliHNC6SvjupF/ohXHzvQd3sVZqmlvZX55b2q
+         KE3U8F5o24mU4vcpXjK92O1L4jlZOXMsX6DMizrwHvzf1tokfJ2z1en35pykcW6OMjsu
+         EmRQ==
+X-Gm-Message-State: AOAM532EbcRo8LAB6MXutgBsSLDC+4IkZtC2b7RKtFrm5MiQFh8lUPh7
+        yBwR/ZIhDnzCrS9dJKhW5jLZyA==
+X-Google-Smtp-Source: ABdhPJw+8Tef3Qby15x0TyDv1F69X4SxvY97339jGVjxV1d4q0Ziwccau8NBcqd2KIPUvOoRgK2HLQ==
+X-Received: by 2002:a17:90a:657:: with SMTP id q23mr5076265pje.192.1612543925784;
+        Fri, 05 Feb 2021 08:52:05 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:d169:a9f7:513:e5])
+        by smtp.gmail.com with ESMTPSA id x141sm9765955pfc.128.2021.02.05.08.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Feb 2021 08:52:05 -0800 (PST)
+Date:   Fri, 5 Feb 2021 08:51:58 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
@@ -55,60 +78,30 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
         "bp@alien8.de" <bp@alien8.de>,
         "Huang, Haitao" <haitao.huang@intel.com>
-Date:   Sat, 06 Feb 2021 01:32:53 +1300
-In-Reply-To: <635e339e-e3f5-c437-0265-b9d44c180858@intel.com>
-References: <f50ac476-71f2-60d4-5008-672365f4d554@intel.com>
-         <YBrfF0XQvzQf9PhR@google.com>
-         <475c5f8b-efb7-629d-b8d2-2916ee150e4f@redhat.com>
-         <c827fed1-d7af-a94a-b69e-114d4a2ec988@intel.com>
-         <d044ccde68171dc319d77917c8ab9f83e9a98645.camel@intel.com>
-         <YBsyqLHPtYOpqeW4@google.com>
-         <b6e0a32f-0070-f97e-5d94-d12f7972d474@intel.com>
-         <44b5a747aaf1d42fb8ef388bd28f49614d42cd50.camel@intel.com>
-         <YBs/vveIBg00Im0U@google.com>
-         <5bd3231e05911bc64f5c51e1eddc3ed1f6bfe6c4.camel@intel.com>
-         <YBwgw0vVCjlhFvqP@google.com>
-         <635e339e-e3f5-c437-0265-b9d44c180858@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+Subject: Re: [RFC PATCH v3 00/27] KVM SGX virtualization support
+Message-ID: <YB13rk29J8Obs80J@google.com>
+References: <c827fed1-d7af-a94a-b69e-114d4a2ec988@intel.com>
+ <d044ccde68171dc319d77917c8ab9f83e9a98645.camel@intel.com>
+ <YBsyqLHPtYOpqeW4@google.com>
+ <b6e0a32f-0070-f97e-5d94-d12f7972d474@intel.com>
+ <44b5a747aaf1d42fb8ef388bd28f49614d42cd50.camel@intel.com>
+ <YBs/vveIBg00Im0U@google.com>
+ <5bd3231e05911bc64f5c51e1eddc3ed1f6bfe6c4.camel@intel.com>
+ <YBwgw0vVCjlhFvqP@google.com>
+ <635e339e-e3f5-c437-0265-b9d44c180858@intel.com>
+ <35808048da366b7e531f291c3611c1172f988d6a.camel@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35808048da366b7e531f291c3611c1172f988d6a.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 2021-02-04 at 08:48 -0800, Dave Hansen wrote:
-> On 2/4/21 8:28 AM, Sean Christopherson wrote:
-> > > Do we see any security risk here?
-> > Not with current CPUs, which drop writes and read all ones.  If future CPUs take
-> > creatives liberties with the SDM, then we could have a problem, but that's why
-> > Dave is trying to get stronger guarantees into the SDM.
+On Sat, Feb 06, 2021, Kai Huang wrote:
+> Hi Sean,
 > 
-> I really don't like the idea of the abort page being used by code that
-> doesn't know what it's dealing with.  It just seems like trouble (aka.
-> security risk) waiting to happen.
+> If we all agree the fix is needed here, do you want to work on the patch (since you
+> already provided your thought), or do you want me to do it, with Suggested-by you?
 
-Hi Dave,
-
-Just to confirm, you want this (disallow ioremap() for EPC) fixed in upstream kernel
-before KVM SGX can be merged, correct?
-
-If so, and since it seems you also agreed that better solution is to modify ioremap()
-to refuse to map EPC, what do you think of the sample code Sean put in his previous
-reply?
-
-https://www.spinics.net/lists/kvm/msg234754.html
-
-IMHO adding 'bool sgx_epc' to ioremap_desc seems not ideal, since it's not generic.
-Instead, we may define some new flag here, and ioremap_desc->flag can just cope with
-it.
-
-Btw as Sean already pointed out, SGX code uses memremap() to initialize EPC section,
-and we could choose to still allow this to avoid code change to SGX driver. But it
-seems it is a little hack here. What's your opinion? 
-
-Hi Sean,
-
-If we all agree the fix is needed here, do you want to work on the patch (since you
-already provided your thought), or do you want me to do it, with Suggested-by you?
-
+Nope, all yours.
