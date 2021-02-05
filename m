@@ -2,56 +2,128 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F50BC433E0
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 02:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D872C4332B
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 03:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04A1264FB3
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 02:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA9E964FB8
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Feb 2021 03:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230128AbhBEC1m (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 4 Feb 2021 21:27:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44500 "EHLO mail.kernel.org"
+        id S229772AbhBEDBI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 4 Feb 2021 22:01:08 -0500
+Received: from mga11.intel.com ([192.55.52.93]:46073 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230126AbhBEC1h (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 4 Feb 2021 21:27:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D399864E27;
-        Fri,  5 Feb 2021 02:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612492016;
-        bh=NvTeyLkGnCyH2iLBqvoIV8wdZ2ZVNl8xEvCA36FMQa0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UbFQDWu0/SSpstCk4fsRb0CvXGO3w0yVyoSu64AWZHxfdhzFaIVAzWvOcK/IfLG73
-         KJsIe5L+ye/AF6i9tjwKx0U7lz2US7rbh3OZFoqDypDEvsIAZxLfy+1fY/u2Gc0UFN
-         ULrequ+7DJV/WBXt/+1CwxWiK4rXynijPI4TkzrRlzYF+ybIkgibFRTFf5MfckxuZt
-         J7qlebEsvInWBIP+nOsTlSvFyAXcLZUaQNhy/3RogleigrcFTlcBO9ls94EpS/e1gg
-         9nvEJa8+nxFFMKS03UKKrmCvRCHcYz506K6dnF99gSdW0rbkrzBT7UyDj8z18maNMa
-         YhB405qfNSIjg==
-Date:   Fri, 5 Feb 2021 04:26:48 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Sean Christopherson <seanjc@google.com>,
-        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] x86/sgx: Drop racy follow_pfn check
-Message-ID: <YBys6Io1ZbZdzWmj@kernel.org>
-References: <20210204184519.2809313-1-daniel.vetter@ffwll.ch>
+        id S229979AbhBEDBG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 4 Feb 2021 22:01:06 -0500
+IronPort-SDR: /2iAwB1Voxkjf8eSbPNHCb5k7150cX4PoC1EKNP55ukq/+2DmmOYZDHz0Vy2NQgGyHkGRbzzq/
+ LO39j8+ROPtw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9885"; a="177863845"
+X-IronPort-AV: E=Sophos;i="5.81,154,1610438400"; 
+   d="scan'208";a="177863845"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 19:00:25 -0800
+IronPort-SDR: /N9KlomrGzE1NvDHkNF3/6VYBOFGIQCix9bArtsU56IhCHRnMcVq+RmSQ9NmjU4DUA5xGeJ6b0
+ BiNI8ZoKCKuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,154,1610438400"; 
+   d="scan'208";a="415443677"
+Received: from orsmsx605.amr.corp.intel.com ([10.22.229.18])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Feb 2021 19:00:25 -0800
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX605.amr.corp.intel.com (10.22.229.18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Thu, 4 Feb 2021 19:00:24 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Thu, 4 Feb 2021 19:00:24 -0800
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15]) by
+ ORSMSX602.amr.corp.intel.com ([10.22.229.15]) with mapi id 15.01.2106.002;
+ Thu, 4 Feb 2021 19:00:24 -0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+CC:     Sean Christopherson <seanjc@google.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: RE: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
+ when SGX driver is disabled
+Thread-Topic: [RFC PATCH v3 08/27] x86/sgx: Initialize virtual EPC driver even
+ when SGX driver is disabled
+Thread-Index: AQHW88S6tXP2pgrp0EKF1qhJ4uWs4apAy76AgAKMYQCAAlk3AIAADX2AgABSlACAABnrAIABY8yAgAAP/oCAACyPAIAA8E0A//8n5QCAAADgAIAA3TuA///m/ICAAIOBgIAAObmA//+IQVA=
+Date:   Fri, 5 Feb 2021 03:00:24 +0000
+Message-ID: <f37a40b7137b4c89ba202c65f781cc0e@intel.com>
+References: <20210203134906.78b5265502c65f13bacc5e68@intel.com>
+ <YBsdeco/t8sa7ecV@kernel.org> <YBsq45IDDX9PPc7s@google.com>
+ <YBtQRCC3NHBmtrck@kernel.org>
+ <b63bf7db09442e994563ccc3a3b608fc2f17b784.camel@intel.com>
+ <YBtkkEp5hXpTl84s@kernel.org> <YBtlTE2xZ3wBrukB@kernel.org>
+ <b523357d2f062bf801d8fa1b05bf7abf13c19e89.camel@intel.com>
+ <YBwJ5S0C3dMS2AFY@kernel.org>
+ <7a1d2316-5ce2-63fa-4186-a623dac1ecc8@intel.com>
+ <YByooRl8riad4moe@kernel.org>
+In-Reply-To: <YByooRl8riad4moe@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.5.1.3
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210204184519.2809313-1-daniel.vetter@ffwll.ch>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 07:45:19PM +0100, Daniel Vetter wrote:
-> References: https://lore.kernel.org/dri-devel/20201127164131.2244124-1-daniel.vetter@ffwll.ch/
+> On Thu, Feb 04, 2021 at 02:41:57PM -0800, Dave Hansen wrote:
+> > On 2/4/21 6:51 AM, Jarkko Sakkinen wrote:
+> > >>> A: ret == -ENODEV
+> > >>> B: ret == 0
+> > >>> C: ret != 0 && ret != -ENODEV
+> > >> Let me try again:
+> > >>
+> > >> Why A and C should be treated differently? What will behave
+> > >> incorrectly, in case of C?
+> > > So you don't know what different error codes mean?
+> >
+> > How about we just leave the check in place as Sean wrote it, and add a
+> > nice comment to explain what it is doing:
+> >
+> > 	/*
+> > 	 * Always try to initialize the native *and* KVM drivers.
+> > 	 * The KVM driver is less picky than the native one and
+> > 	 * can function if the native one is not supported on the
+> > 	 * current system or fails to initialize.
+> > 	 *
+> > 	 * Error out only if both fail to initialize.
+> >  	 */
+> > 	ret = !!sgx_drv_init() & !!sgx_vepc_init();
+> > 	if (ret)
+> > 		goto err_kthread;
+> 
+> WFM, I can go along, as long as there is a remark. There is a semantical
+> difference between "not supported" and "failure to initialize". The driving point
+> is that this should not be hidden. I was first thinking a note in the commit
+> message, but inline comment is actually a better idea. Thanks!
+> 
+> I can ack the next version, as long as this comment is included.
 
-What is the difference between this and "Link:" anyway?
+Sure. Thanks Dave and Jarkko.
 
-/Jarkko
+> 
+> /Jarkko
