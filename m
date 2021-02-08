@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CF3C43333
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8C0C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEBC264E8A
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81CDD64E7A
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbhBHLAL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Feb 2021 06:00:11 -0500
-Received: from mga17.intel.com ([192.55.52.151]:43443 "EHLO mga17.intel.com"
+        id S232844AbhBHLAO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Feb 2021 06:00:14 -0500
+Received: from mga17.intel.com ([192.55.52.151]:51142 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232837AbhBHK6W (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S232838AbhBHK6W (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Mon, 8 Feb 2021 05:58:22 -0500
-IronPort-SDR: NAtJpM4vWl2bbLGlbZgfbx8Qa5AMHVylLkCbhgdwkO1eKHSuXzz5wuRPcF735KP7VlmH8CoiLS
- GvdS9Elv3byw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="161443931"
+IronPort-SDR: KuwfAocQ7LtLg2HV+sBXauSUP0J34gqxlIOWwCYs28U6pqlQzEyJfBpTx7YPAB8O3Y/z89BLQP
+ yIVodEftRlcw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="161443937"
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="161443931"
+   d="scan'208";a="161443937"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:21 -0800
-IronPort-SDR: yyJ+SO9MgqzZ9M3pfQ6PiRrT5gY4+ZK6m/pZulHhSjQhZy9gpd5KGbaPDS8rJL/gkg7JkOTKEJ
- ViXRf7G/AmWg==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:24 -0800
+IronPort-SDR: O+73kYbz8QVzP6qEFIdlQOkTohnMiuVC2Ra+ACyYqHnk895Iox1LO/JDy5/0Vfzd9eXZQa/MwE
+ kr2+xOVNHpwA==
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="374451109"
+   d="scan'208";a="374451114"
 Received: from jaeminha-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.11.62])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:17 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:21 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -39,9 +39,9 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v4 10/26] x86/sgx: Add SGX2 ENCLS leaf definitions (EAUG, EMODPR and EMODT)
-Date:   Mon,  8 Feb 2021 23:54:53 +1300
-Message-Id: <99ee8ed32c15885ec6e9be52f15d479ac0a7eb4e.1612777752.git.kai.huang@intel.com>
+Subject: [RFC PATCH v4 11/26] x86/sgx: Add encls_faulted() helper
+Date:   Mon,  8 Feb 2021 23:54:54 +1300
+Message-Id: <a84a952017f728f52055e3d7295056cd3ec3ff9d.1612777752.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1612777752.git.kai.huang@intel.com>
 References: <cover.1612777752.git.kai.huang@intel.com>
@@ -53,32 +53,73 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Define the ENCLS leafs that are available with SGX2, also referred to as
-Enclave Dynamic Memory Management (EDMM).  The leafs will be used by KVM
-to conditionally expose SGX2 capabilities to guests.
+Add a helper to extract the fault indicator from an encoded ENCLS return
+value.  SGX virtualization will also need to detect ENCLS faults.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
 Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/include/asm/sgx_arch.h | 3 +++
- 1 file changed, 3 insertions(+)
+v3->v4:
 
-diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
-index 3dbe7aacf552..756c8dacc52a 100644
---- a/arch/x86/include/asm/sgx_arch.h
-+++ b/arch/x86/include/asm/sgx_arch.h
-@@ -35,6 +35,9 @@ enum sgx_encls_function {
- 	EPA	= 0x0A,
- 	EWB	= 0x0B,
- 	ETRACK	= 0x0C,
-+	EAUG	= 0x0D,
-+	EMODPR	= 0x0E,
-+	EMODT	= 0x0F,
- };
+ - No code change. Added Jarkko's Acked-by.
+
+v2->v3:
+
+ - Changed commenting style for return value, per Jarkko.
+
+---
+ arch/x86/kernel/cpu/sgx/encls.h | 15 ++++++++++++++-
+ arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index be5c49689980..3219d011ee28 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -40,6 +40,19 @@
+ 	} while (0);							  \
+ }
  
++/*
++ * encls_faulted() - Check if an ENCLS leaf faulted given an error code
++ * @ret 	the return value of an ENCLS leaf function call
++ *
++ * Return:
++ * - true:	ENCLS leaf faulted.
++ * - false:	Otherwise.
++ */
++static inline bool encls_faulted(int ret)
++{
++	return ret & ENCLS_FAULT_FLAG;
++}
++
  /**
+  * encls_failed() - Check if an ENCLS function failed
+  * @ret:	the return value of an ENCLS function call
+@@ -50,7 +63,7 @@
+  */
+ static inline bool encls_failed(int ret)
+ {
+-	if (ret & ENCLS_FAULT_FLAG)
++	if (encls_faulted(ret))
+ 		return ENCLS_TRAPNR(ret) != X86_TRAP_PF;
+ 
+ 	return !!ret;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 90a5caf76939..e5977752c7be 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -568,7 +568,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 		}
+ 	}
+ 
+-	if (ret & ENCLS_FAULT_FLAG) {
++	if (encls_faulted(ret)) {
+ 		if (encls_failed(ret))
+ 			ENCLS_WARN(ret, "EINIT");
+ 
 -- 
 2.29.2
 
