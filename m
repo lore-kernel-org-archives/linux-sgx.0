@@ -7,42 +7,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B526C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C2FC433E9
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCC7564E54
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:05:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F213C64E5D
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:05:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232414AbhBHLFS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Feb 2021 06:05:18 -0500
-Received: from mga03.intel.com ([134.134.136.65]:50171 "EHLO mga03.intel.com"
+        id S232709AbhBHLFa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Feb 2021 06:05:30 -0500
+Received: from mga17.intel.com ([192.55.52.151]:43443 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232897AbhBHLBR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Feb 2021 06:01:17 -0500
-IronPort-SDR: b5zo43EuzYZuNcTXaJqL2A0KcKtMHM6pAa1NfpKkFkpAc95jmfLJ8Zy81NCTnIe7mbDgEe8mKI
- hop8Z6X+uESQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="181758576"
+        id S231945AbhBHLAJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Feb 2021 06:00:09 -0500
+IronPort-SDR: dEAEj1D3joI8yLDttEaeQY0/Iw4uNGui6Aq9C2wRBya1IkA62V6wLLkGO3dMmaxFlzNg/LQpFy
+ wYnuiZRaywwA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="161443951"
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="181758576"
+   d="scan'208";a="161443951"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:56:20 -0800
-IronPort-SDR: jYYcCEpC/WmWfzPHoNK4/HNmBpBLHQbPfr4usOTSuUV3HMc4EcTt0PGEwX7gUutOm7WQhX/qAu
- RRKl1vkq1bUg==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:31 -0800
+IronPort-SDR: VXJCg/JieLrHZNWjIRBpA6dA+Pi+jlPxViDJ5CiKEqWW+y7gnIwd7KyT81UNm3XJv2pUoAKjbc
+ xx4NXM4m3ycA==
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="374451307"
+   d="scan'208";a="374451162"
 Received: from jaeminha-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.11.62])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:56:16 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:28 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v4 22/26] KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
-Date:   Mon,  8 Feb 2021 23:55:32 +1300
-Message-Id: <2ba27310c6ebccd87b268b0d9f616d79f07d3c8c.1612777752.git.kai.huang@intel.com>
+        Kai Huang <kai.huang@intel.com>
+Subject: [RFC PATCH v4 13/26] x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
+Date:   Mon,  8 Feb 2021 23:54:56 +1300
+Message-Id: <9d79e09b0f0d24c002a91bd95edace2d09045c10.1612777752.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1612777752.git.kai.huang@intel.com>
 References: <cover.1612777752.git.kai.huang@intel.com>
@@ -54,311 +53,158 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add an ECREATE handler that will be used to intercept ECREATE for the
-purpose of enforcing and enclave's MISCSELECT, ATTRIBUTES and XFRM, i.e.
-to allow userspace to restrict SGX features via CPUID.  ECREATE will be
-intercepted when any of the aforementioned masks diverges from hardware
-in order to enforce the desired CPUID model, i.e. inject #GP if the
-guest attempts to set a bit that hasn't been enumerated as allowed-1 in
-CPUID.
+The host kernel must intercept ECREATE to be able to impose policies on
+guests.  When it does this, the host kernel runs ECREATE against the
+userspace mapping of the virtualized EPC.
 
-Note, access to the PROVISIONKEY is not yet supported.
+Provide wrappers around __ecreate() and __einit() to hide the ugliness
+of overloading the ENCLS return value to encode multiple error formats
+in a single int.  KVM will trap-and-execute ECREATE and EINIT as part
+of SGX virtualization, and on an exception, KVM needs the trapnr so that
+it can inject the correct fault into the guest.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Kai Huang <kai.huang@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
 v3->v4:
 
- - Added canonical check for guest's PAGEINFO.metadata and PAGEINFO.contents,
-   per Rick and Sean.
- - Added deep copy of guest's PAGEINFO.contents to kernel memory to avoid TOCTOU
-   attack, per Rick and Sean.
+ - Added one new line before last return in sgx_virt_einit(), per Jarkko.
+
+v2->v3:
+
+ - Added kdoc for sgx_virt_ecreate() and sgx_virt_einit(), per Jarkko.
+ - Changed to use CONFIG_X86_SGX_KVM.
 
 ---
- arch/x86/include/asm/kvm_host.h |   3 +
- arch/x86/kvm/vmx/sgx.c          | 247 ++++++++++++++++++++++++++++++++
- 2 files changed, 250 insertions(+)
+ arch/x86/include/asm/sgx.h     | 16 ++++++
+ arch/x86/kernel/cpu/sgx/virt.c | 94 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 110 insertions(+)
+ create mode 100644 arch/x86/include/asm/sgx.h
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 9581f81e62a4..cd71f30fbdd1 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1000,6 +1000,9 @@ struct kvm_arch {
- 		struct msr_bitmap_range ranges[16];
- 	} msr_filter;
- 
-+	/* Guest can access the SGX PROVISIONKEY. */
-+	bool sgx_provisioning_allowed;
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+new file mode 100644
+index 000000000000..8a3ea3e1efbe
+--- /dev/null
++++ b/arch/x86/include/asm/sgx.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_SGX_H
++#define _ASM_X86_SGX_H
 +
- 	struct kvm_pmu_event_filter *pmu_event_filter;
- 	struct task_struct *nx_lpage_recovery_thread;
++#include <linux/types.h>
++
++#ifdef CONFIG_X86_SGX_KVM
++struct sgx_pageinfo;
++
++int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
++		     int *trapnr);
++int sgx_virt_einit(void __user *sigstruct, void __user *token,
++		   void __user *secs, u64 *lepubkeyhash, int *trapnr);
++#endif
++
++#endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index 47542140f8c1..016bad7cff8d 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -257,3 +257,97 @@ int __init sgx_vepc_init(void)
  
-diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
-index 6b3d614d288c..7bdb125325ef 100644
---- a/arch/x86/kvm/vmx/sgx.c
-+++ b/arch/x86/kvm/vmx/sgx.c
-@@ -12,6 +12,251 @@
- 
- bool __read_mostly enable_sgx;
- 
-+/*
-+ * ENCLS's memory operands use a fixed segment (DS) and a fixed
-+ * address size based on the mode.  Related prefixes are ignored.
+ 	return misc_register(&sgx_vepc_dev);
+ }
++
++/**
++ * sgx_virt_ecreate() - Run ECREATE on behalf of guest
++ * @pageinfo:	Pointer to PAGEINFO structure
++ * @secs:	Userspace pointer to SECS page
++ * @trapnr:	trap number injected to guest in case of ECREATE error
++ *
++ * Run ECREATE on behalf of guest after KVM traps ECREATE for the purpose
++ * of enforcing policies of guest's enclaves, and return the trap number
++ * which should be injected to guest in case of any ECREATE error.
++ *
++ * Return:
++ * - 0: 	ECREATE was successful.
++ * - -EFAULT:	ECREATE returned error.
 + */
-+static int sgx_get_encls_gva(struct kvm_vcpu *vcpu, unsigned long offset,
-+			     int size, int alignment, gva_t *gva)
++int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
++		     int *trapnr)
 +{
-+	struct kvm_segment s;
-+	bool fault;
++	int ret;
 +
-+	/* Skip vmcs.GUEST_DS retrieval for 64-bit mode to avoid VMREADs. */
-+	*gva = offset;
-+	if (!is_long_mode(vcpu)) {
-+		vmx_get_segment(vcpu, &s, VCPU_SREG_DS);
-+		*gva += s.base;
++	/*
++	 * @secs is userspace address, and it's not guaranteed @secs points at
++	 * an actual EPC page. It's also possible to generate a kernel mapping
++	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
++	 * simpler.
++	 */
++	__uaccess_begin();
++	ret = __ecreate(pageinfo, (void *)secs);
++	__uaccess_end();
++
++	if (encls_faulted(ret)) {
++		*trapnr = ENCLS_TRAPNR(ret);
++		return -EFAULT;
 +	}
 +
-+	if (!IS_ALIGNED(*gva, alignment)) {
-+		fault = true;
-+	} else if (likely(is_long_mode(vcpu))) {
-+		fault = is_noncanonical_address(*gva, vcpu);
++	/* ECREATE doesn't return an error code, it faults or succeeds. */
++	WARN_ON_ONCE(ret);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(sgx_virt_ecreate);
++
++static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
++			    void __user *secs)
++{
++	int ret;
++
++	__uaccess_begin();
++	ret =  __einit((void *)sigstruct, (void *)token, (void *)secs);
++	__uaccess_end();
++	return ret;
++}
++
++/**
++ * sgx_virt_einit() - Run EINIT on behalf of guest
++ * @sigstruct:		Userspace pointer to SIGSTRUCT structure
++ * @token:		Userspace pointer to EINITTOKEN structure
++ * @secs:		Userspace pointer to SECS page
++ * @lepubkeyhash:	Pointer to guest's *virtual* SGX_LEPUBKEYHASH MSR
++ * 			values
++ * @trapnr:		trap number injected to guest in case of EINIT error
++ *
++ * Run EINIT on behalf of guest after KVM traps EINIT. If SGX_LC is available
++ * in host, SGX driver may rewrite the hardware values at wish, therefore KVM
++ * needs to update hardware values to guest's virtual MSR values in order to
++ * ensure EINIT is executed with expected hardware values.
++ *
++ * Return:
++ * - 0: 	EINIT was successful.
++ * - -EFAULT:	EINIT returned error.
++ */
++int sgx_virt_einit(void __user *sigstruct, void __user *token,
++		   void __user *secs, u64 *lepubkeyhash, int *trapnr)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
++		ret = __sgx_virt_einit(sigstruct, token, secs);
 +	} else {
-+		*gva &= 0xffffffff;
-+		fault = (s.unusable) ||
-+			(s.type != 2 && s.type != 3) ||
-+			(*gva > s.limit) ||
-+			((s.base != 0 || s.limit != 0xffffffff) &&
-+			(((u64)*gva + size - 1) > s.limit + 1));
++		preempt_disable();
++
++		sgx_update_lepubkeyhash(lepubkeyhash);
++
++		ret = __sgx_virt_einit(sigstruct, token, secs);
++		preempt_enable();
 +	}
-+	if (fault)
-+		kvm_inject_gp(vcpu, 0);
-+	return fault ? -EINVAL : 0;
-+}
 +
-+static void sgx_handle_emulation_failure(struct kvm_vcpu *vcpu, u64 addr,
-+					 unsigned int size)
-+{
-+	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-+	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
-+	vcpu->run->internal.ndata = 2;
-+	vcpu->run->internal.data[0] = addr;
-+	vcpu->run->internal.data[1] = size;
-+}
-+
-+static int sgx_read_hva(struct kvm_vcpu *vcpu, unsigned long hva, void *data,
-+			unsigned int size)
-+{
-+	if (__copy_from_user(data, (void __user *)hva, size)) {
-+		sgx_handle_emulation_failure(vcpu, hva, size);
++	if (encls_faulted(ret)) {
++		*trapnr = ENCLS_TRAPNR(ret);
 +		return -EFAULT;
 +	}
 +
-+	return 0;
++	return ret;
 +}
-+
-+static int sgx_gva_to_gpa(struct kvm_vcpu *vcpu, gva_t gva, bool write,
-+			  gpa_t *gpa)
-+{
-+	struct x86_exception ex;
-+
-+	if (write)
-+		*gpa = kvm_mmu_gva_to_gpa_write(vcpu, gva, &ex);
-+	else
-+		*gpa = kvm_mmu_gva_to_gpa_read(vcpu, gva, &ex);
-+
-+	if (*gpa == UNMAPPED_GVA) {
-+		kvm_inject_emulated_page_fault(vcpu, &ex);
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sgx_gpa_to_hva(struct kvm_vcpu *vcpu, gpa_t gpa, unsigned long *hva)
-+{
-+	*hva = kvm_vcpu_gfn_to_hva(vcpu, PFN_DOWN(gpa));
-+	if (kvm_is_error_hva(*hva)) {
-+		sgx_handle_emulation_failure(vcpu, gpa, 1);
-+		return -EFAULT;
-+	}
-+
-+	*hva |= gpa & ~PAGE_MASK;
-+
-+	return 0;
-+}
-+
-+static int sgx_inject_fault(struct kvm_vcpu *vcpu, gva_t gva, int trapnr)
-+{
-+	struct x86_exception ex;
-+
-+	/*
-+	 * A non-EPCM #PF indicates a bad userspace HVA.  This *should* check
-+	 * for PFEC.SGX and not assume any #PF on SGX2 originated in the EPC,
-+	 * but the error code isn't (yet) plumbed through the ENCLS helpers.
-+	 */
-+	if (trapnr == PF_VECTOR && !boot_cpu_has(X86_FEATURE_SGX2)) {
-+		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-+		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
-+		vcpu->run->internal.ndata = 0;
-+		return 0;
-+	}
-+
-+	/*
-+	 * If the guest thinks it's running on SGX2 hardware, inject an SGX
-+	 * #PF if the fault matches an EPCM fault signature (#GP on SGX1,
-+	 * #PF on SGX2).  The assumption is that EPCM faults are much more
-+	 * likely than a bad userspace address.
-+	 */
-+	if ((trapnr == PF_VECTOR || !boot_cpu_has(X86_FEATURE_SGX2)) &&
-+	    guest_cpuid_has(vcpu, X86_FEATURE_SGX2)) {
-+		memset(&ex, 0, sizeof(ex));
-+		ex.vector = PF_VECTOR;
-+		ex.error_code = PFERR_PRESENT_MASK | PFERR_WRITE_MASK |
-+				PFERR_SGX_MASK;
-+		ex.address = gva;
-+		ex.error_code_valid = true;
-+		ex.nested_page_fault = false;
-+		kvm_inject_page_fault(vcpu, &ex);
-+	} else {
-+		kvm_inject_gp(vcpu, 0);
-+	}
-+	return 1;
-+}
-+
-+static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_cpuid_entry2 *sgx_12_0, *sgx_12_1;
-+	gva_t pageinfo_gva, secs_gva;
-+	gva_t metadata_gva, contents_gva;
-+	gpa_t metadata_gpa, contents_gpa, secs_gpa;
-+	unsigned long metadata_hva, contents_hva, secs_hva;
-+	struct sgx_pageinfo pageinfo;
-+	struct sgx_secs *contents;
-+	u64 attributes, xfrm, size;
-+	u32 miscselect;
-+	struct x86_exception ex;
-+	u8 max_size_log2;
-+	int trapnr, r;
-+
-+	sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
-+	sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
-+	if (!sgx_12_0 || !sgx_12_1) {
-+		kvm_inject_gp(vcpu, 0);
-+		return 1;
-+	}
-+
-+	if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 32, 32, &pageinfo_gva) ||
-+	    sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096, &secs_gva))
-+		return 1;
-+
-+	/*
-+	 * Copy the PAGEINFO to local memory, its pointers need to be
-+	 * translated, i.e. we need to do a deep copy/translate.
-+	 */
-+	r = kvm_read_guest_virt(vcpu, pageinfo_gva, &pageinfo,
-+				sizeof(pageinfo), &ex);
-+	if (r == X86EMUL_PROPAGATE_FAULT) {
-+		kvm_inject_emulated_page_fault(vcpu, &ex);
-+		return 1;
-+	} else if (r != X86EMUL_CONTINUE) {
-+		sgx_handle_emulation_failure(vcpu, pageinfo_gva, size);
-+		return 0;
-+	}
-+
-+	if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64, &metadata_gva) ||
-+	    sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
-+			      &contents_gva))
-+		return 1;
-+
-+	/*
-+	 * Translate the SECINFO, SOURCE and SECS pointers from GVA to GPA.
-+	 * Resume the guest on failure to inject a #PF.
-+	 */
-+	if (sgx_gva_to_gpa(vcpu, metadata_gva, false, &metadata_gpa) ||
-+	    sgx_gva_to_gpa(vcpu, contents_gva, false, &contents_gpa) ||
-+	    sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
-+		return 1;
-+
-+	/*
-+	 * ...and then to HVA.  The order of accesses isn't architectural, i.e.
-+	 * KVM doesn't have to fully process one address at a time.  Exit to
-+	 * userspace if a GPA is invalid.
-+	 */
-+	if (sgx_gpa_to_hva(vcpu, metadata_gpa, &metadata_hva) ||
-+	    sgx_gpa_to_hva(vcpu, contents_gpa, &contents_hva) ||
-+	    sgx_gpa_to_hva(vcpu, secs_gpa, &secs_hva))
-+		return 0;
-+
-+	/*
-+	 * Copy contents into kernel memory to prevent TOCTOU attack. E.g. the
-+	 * guest could do ECREATE w/ SECS.SGX_ATTR_PROVISIONKEY=0, and
-+	 * simultaneously set SGX_ATTR_PROVISIONKEY to bypass the check to
-+	 * enforce restriction of access to the PROVISIONKEY.
-+	 */
-+	contents = (struct sgx_secs *)__get_free_page(GFP_KERNEL);
-+	if (!contents)
-+		return -ENOMEM;
-+
-+	/* Exit to userspace if copying from a host userspace address fails. */
-+	if (sgx_read_hva(vcpu, contents_hva, (void *)contents, PAGE_SIZE))
-+		return 0;
-+
-+	miscselect = contents->miscselect;
-+	attributes = contents->attributes;
-+	xfrm = contents->xfrm;
-+	size = contents->size;
-+
-+	/* Enforce restriction of access to the PROVISIONKEY. */
-+	if (!vcpu->kvm->arch.sgx_provisioning_allowed &&
-+	    (attributes & SGX_ATTR_PROVISIONKEY)) {
-+		if (sgx_12_1->eax & SGX_ATTR_PROVISIONKEY)
-+			pr_warn_once("KVM: SGX PROVISIONKEY advertised but not allowed\n");
-+		kvm_inject_gp(vcpu, 0);
-+		return 1;
-+	}
-+
-+	/* Enforce CPUID restrictions on MISCSELECT, ATTRIBUTES and XFRM. */
-+	if ((u32)miscselect & ~sgx_12_0->ebx ||
-+	    (u32)attributes & ~sgx_12_1->eax ||
-+	    (u32)(attributes >> 32) & ~sgx_12_1->ebx ||
-+	    (u32)xfrm & ~sgx_12_1->ecx ||
-+	    (u32)(xfrm >> 32) & ~sgx_12_1->edx) {
-+		kvm_inject_gp(vcpu, 0);
-+		return 1;
-+	}
-+
-+	/* Enforce CPUID restriction on max enclave size. */
-+	max_size_log2 = (attributes & SGX_ATTR_MODE64BIT) ? sgx_12_0->edx >> 8 :
-+							    sgx_12_0->edx;
-+	if (size >= BIT_ULL(max_size_log2))
-+		kvm_inject_gp(vcpu, 0);
-+
-+	pageinfo.metadata = metadata_hva;
-+	pageinfo.contents = (u64)contents;
-+
-+	r = sgx_virt_ecreate(&pageinfo, (void __user *)secs_hva, &trapnr);
-+
-+	free_page((unsigned long)contents);
-+
-+	if (r)
-+		return sgx_inject_fault(vcpu, secs_gva, trapnr);
-+
-+	return kvm_skip_emulated_instruction(vcpu);
-+}
-+
- static inline bool encls_leaf_enabled_in_guest(struct kvm_vcpu *vcpu, u32 leaf)
- {
- 	if (!enable_sgx || !guest_cpuid_has(vcpu, X86_FEATURE_SGX))
-@@ -42,6 +287,8 @@ int handle_encls(struct kvm_vcpu *vcpu)
- 	} else if (!sgx_enabled_in_guest_bios(vcpu)) {
- 		kvm_inject_gp(vcpu, 0);
- 	} else {
-+		if (leaf == ECREATE)
-+			return handle_encls_ecreate(vcpu);
- 		WARN(1, "KVM: unexpected exit on ENCLS[%u]", leaf);
- 		vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
- 		vcpu->run->hw.hardware_exit_reason = EXIT_REASON_ENCLS;
++EXPORT_SYMBOL_GPL(sgx_virt_einit);
 -- 
 2.29.2
 
