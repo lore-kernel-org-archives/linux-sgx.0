@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A60DC433E6
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45FFC433E6
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D728464E7A
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB0264E79
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:15:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232995AbhBHLLb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Feb 2021 06:11:31 -0500
-Received: from mga14.intel.com ([192.55.52.115]:64856 "EHLO mga14.intel.com"
+        id S232904AbhBHLOi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Feb 2021 06:14:38 -0500
+Received: from mga07.intel.com ([134.134.136.100]:57964 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232838AbhBHLGl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Feb 2021 06:06:41 -0500
-IronPort-SDR: T7vLtO3R03D/vcBVXO08TGAFucbmbJ6noPvfY3Dsn9TYzmo8+OpCAHOtuQQ3A/RemCn39GabcM
- OOi8OkUe3zcg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="180918197"
+        id S232912AbhBHLM1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Feb 2021 06:12:27 -0500
+IronPort-SDR: o//x8aAfwseqkEBU/cujdxezD1boxb/5aOtOpt+3YnKf15+7iE6HEal00lsOlV+miOFmkrZiyd
+ VKsl9K/2WfVA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="245765270"
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="180918197"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 03:05:19 -0800
-IronPort-SDR: winturclMo5cxgK1dMR6mCNDla/gO+6YwbZs4M3YNHH5tHraLqh9PM028W5DLc6pHPWZghihjY
- +b153LclKJHA==
+   d="scan'208";a="245765270"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 03:11:39 -0800
+IronPort-SDR: A4DbqZDXwKiS9eso/diXcBl2Z1++6PMjWqZeilLGg6JlLlJhV6UUjw2CFdZnn8p1s8syay0JbE
+ kuo+yN6QLcQg==
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="395344625"
+   d="scan'208";a="585634105"
 Received: from jaeminha-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.11.62])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 03:05:14 -0800
-Date:   Tue, 9 Feb 2021 00:05:12 +1300
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 03:11:34 -0800
+Date:   Tue, 9 Feb 2021 00:11:32 +1300
 From:   Kai Huang <kai.huang@intel.com>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
@@ -42,13 +42,13 @@ Cc:     <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
         <pbonzini@redhat.com>, <bp@alien8.de>, <tglx@linutronix.de>,
         <mingo@redhat.com>, <hpa@zytor.com>, <jmattson@google.com>,
         <joro@8bytes.org>, <vkuznets@redhat.com>, <wanpengli@tencent.com>,
-        robert.hu@intel.com
-Subject: Re: [RFC PATCH v4 18/26] KVM: x86: Add support for reverse CPUID
- lookup of scattered features
-Message-Id: <20210209000512.c6f6eed81da5a8337c2c6510@intel.com>
-In-Reply-To: <3189b8090d5d1d4547dade6d1a7feb034af3c2c6.1612777752.git.kai.huang@intel.com>
+        isaku.yamahata@intel.com
+Subject: Re: [RFC PATCH v4 15/26] KVM: VMX: Convert vcpu_vmx.exit_reason to
+ a union
+Message-Id: <20210209001132.426f38085622c7e3684dbb8d@intel.com>
+In-Reply-To: <0daea2891388cd30097cc62a7a5644b321ae80a5.1612777752.git.kai.huang@intel.com>
 References: <cover.1612777752.git.kai.huang@intel.com>
-        <3189b8090d5d1d4547dade6d1a7feb034af3c2c6.1612777752.git.kai.huang@intel.com>
+        <0daea2891388cd30097cc62a7a5644b321ae80a5.1612777752.git.kai.huang@intel.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -60,213 +60,400 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 Hi Paolo,
 
 Although this series was sent as RFC, would you consider reviewing and merging
-this patch from Sean? As more Intel features are coming, KVM reverse lookup
-needs to handle scattered x86 feature bits. One example is Robert's KVM
-keylocker support:
-
-https://www.spinics.net/lists/kvm/msg233638.html
+this patch from Sean? Intel TDX support (already sent by Isaku as RFC) has
+conflict with this one, and I am expecting other features might also conflict
+with it too.
 
 Thanks!
 
-On Mon, 8 Feb 2021 23:55:28 +1300 Kai Huang wrote:
-> From: Sean Christopherson <seanjc@google.com>
+On Mon, 8 Feb 2021 23:55:25 +1300 Kai Huang wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> Introduce a scheme that allows KVM's CPUID magic to support features
-> that are scattered in the kernel's feature words.  To advertise and/or
-> query guest support for CPUID-based features, KVM requires the bit
-> number of an X86_FEATURE_* to match the bit number in its associated
-> CPUID entry.  For scattered features, this does not hold true.
+> Convert vcpu_vmx.exit_reason from a u32 to a union (of size u32).  The
+> full VM_EXIT_REASON field is comprised of a 16-bit basic exit reason in
+> bits 15:0, and single-bit modifiers in bits 31:16.
 > 
-> Add a framework to allow defining KVM-only words, stored in
-> kvm_cpu_caps after the shared kernel caps, that can be used to gather
-> the scattered feature bits by translating X86_FEATURE_* flags into their
-> KVM-defined feature.
+> Historically, KVM has only had to worry about handling the "failed
+> VM-Entry" modifier, which could only be set in very specific flows and
+> required dedicated handling.  I.e. manually stripping the FAILED_VMENTRY
+> bit was a somewhat viable approach.  But even with only a single bit to
+> worry about, KVM has had several bugs related to comparing a basic exit
+> reason against the full exit reason store in vcpu_vmx.
 > 
-> Note, because reverse_cpuid_check() effectively forces kvm_cpu_caps
-> lookups to be resolved at compile time, there is no runtime cost for
-> translating from kernel-defined to kvm-defined features.
+> Upcoming Intel features, e.g. SGX, will add new modifier bits that can
+> be set on more or less any VM-Exit, as opposed to the significantly more
+> restricted FAILED_VMENTRY, i.e. correctly handling everything in one-off
+> flows isn't scalable.  Tracking exit reason in a union forces code to
+> explicitly choose between consuming the full exit reason and the basic
+> exit, and is a convenient way to document and access the modifiers.
 > 
-> More details here:  https://lkml.kernel.org/r/X/jxCOLG+HUO4QlZ@google.com
+> No functional change intended.
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > Signed-off-by: Kai Huang <kai.huang@intel.com>
 > ---
->  arch/x86/kvm/cpuid.c | 32 +++++++++++++++++++++++++++-----
->  arch/x86/kvm/cpuid.h | 39 ++++++++++++++++++++++++++++++++++-----
->  2 files changed, 61 insertions(+), 10 deletions(-)
+>  arch/x86/kvm/vmx/nested.c | 42 +++++++++++++++---------
+>  arch/x86/kvm/vmx/vmx.c    | 68 ++++++++++++++++++++-------------------
+>  arch/x86/kvm/vmx/vmx.h    | 25 +++++++++++++-
+>  3 files changed, 86 insertions(+), 49 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 13036cf0b912..f8037fab8950 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -28,7 +28,7 @@
->   * Unlike "struct cpuinfo_x86.x86_capability", kvm_cpu_caps doesn't need to be
->   * aligned to sizeof(unsigned long) because it's not accessed via bitops.
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 0fbb46990dfc..f112c2482887 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -3311,7 +3311,11 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+>  	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+>  	enum vm_entry_failure_code entry_failure_code;
+>  	bool evaluate_pending_interrupts;
+> -	u32 exit_reason, failed_index;
+> +	u32 failed_index;
+> +	union vmx_exit_reason exit_reason = {
+> +		.basic = -1,
+> +		.failed_vmentry = 1,
+> +	};
+>  
+>  	if (kvm_check_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu))
+>  		kvm_vcpu_flush_tlb_current(vcpu);
+> @@ -3363,7 +3367,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+>  
+>  		if (nested_vmx_check_guest_state(vcpu, vmcs12,
+>  						 &entry_failure_code)) {
+> -			exit_reason = EXIT_REASON_INVALID_STATE;
+> +			exit_reason.basic = EXIT_REASON_INVALID_STATE;
+>  			vmcs12->exit_qualification = entry_failure_code;
+>  			goto vmentry_fail_vmexit;
+>  		}
+> @@ -3374,7 +3378,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+>  		vcpu->arch.tsc_offset += vmcs12->tsc_offset;
+>  
+>  	if (prepare_vmcs02(vcpu, vmcs12, &entry_failure_code)) {
+> -		exit_reason = EXIT_REASON_INVALID_STATE;
+> +		exit_reason.basic = EXIT_REASON_INVALID_STATE;
+>  		vmcs12->exit_qualification = entry_failure_code;
+>  		goto vmentry_fail_vmexit_guest_mode;
+>  	}
+> @@ -3384,7 +3388,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+>  						   vmcs12->vm_entry_msr_load_addr,
+>  						   vmcs12->vm_entry_msr_load_count);
+>  		if (failed_index) {
+> -			exit_reason = EXIT_REASON_MSR_LOAD_FAIL;
+> +			exit_reason.basic = EXIT_REASON_MSR_LOAD_FAIL;
+>  			vmcs12->exit_qualification = failed_index;
+>  			goto vmentry_fail_vmexit_guest_mode;
+>  		}
+> @@ -3452,7 +3456,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+>  		return NVMX_VMENTRY_VMEXIT;
+>  
+>  	load_vmcs12_host_state(vcpu, vmcs12);
+> -	vmcs12->vm_exit_reason = exit_reason | VMX_EXIT_REASONS_FAILED_VMENTRY;
+> +	vmcs12->vm_exit_reason = exit_reason.full;
+>  	if (enable_shadow_vmcs || vmx->nested.hv_evmcs)
+>  		vmx->nested.need_vmcs12_to_shadow_sync = true;
+>  	return NVMX_VMENTRY_VMEXIT;
+> @@ -5540,7 +5544,12 @@ static int handle_vmfunc(struct kvm_vcpu *vcpu)
+>  	return kvm_skip_emulated_instruction(vcpu);
+>  
+>  fail:
+> -	nested_vmx_vmexit(vcpu, vmx->exit_reason,
+> +	/*
+> +	 * This is effectively a reflected VM-Exit, as opposed to a synthesized
+> +	 * nested VM-Exit.  Pass the original exit reason, i.e. don't hardcode
+> +	 * EXIT_REASON_VMFUNC as the exit reason.
+> +	 */
+> +	nested_vmx_vmexit(vcpu, vmx->exit_reason.full,
+>  			  vmx_get_intr_info(vcpu),
+>  			  vmx_get_exit_qual(vcpu));
+>  	return 1;
+> @@ -5608,7 +5617,8 @@ static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
+>   * MSR bitmap. This may be the case even when L0 doesn't use MSR bitmaps.
 >   */
-> -u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
-> +u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
->  EXPORT_SYMBOL_GPL(kvm_cpu_caps);
->  
->  static u32 xstate_required_size(u64 xstate_bv, bool compacted)
-> @@ -53,6 +53,7 @@ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
->  }
->  
->  #define F feature_bit
-> +#define SF(name) (boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0)
->  
->  static inline struct kvm_cpuid_entry2 *cpuid_entry2_find(
->  	struct kvm_cpuid_entry2 *entries, int nent, u32 function, u32 index)
-> @@ -331,13 +332,13 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
->  	return r;
->  }
->  
-> -static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
-> +/* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
-> +static __always_inline void __kvm_cpu_cap_mask(enum cpuid_leafs leaf)
+>  static bool nested_vmx_exit_handled_msr(struct kvm_vcpu *vcpu,
+> -	struct vmcs12 *vmcs12, u32 exit_reason)
+> +					struct vmcs12 *vmcs12,
+> +					union vmx_exit_reason exit_reason)
 >  {
->  	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
->  	struct kvm_cpuid_entry2 entry;
+>  	u32 msr_index = kvm_rcx_read(vcpu);
+>  	gpa_t bitmap;
+> @@ -5622,7 +5632,7 @@ static bool nested_vmx_exit_handled_msr(struct kvm_vcpu *vcpu,
+>  	 * First we need to figure out which of the four to use:
+>  	 */
+>  	bitmap = vmcs12->msr_bitmap;
+> -	if (exit_reason == EXIT_REASON_MSR_WRITE)
+> +	if (exit_reason.basic == EXIT_REASON_MSR_WRITE)
+>  		bitmap += 2048;
+>  	if (msr_index >= 0xc0000000) {
+>  		msr_index -= 0xc0000000;
+> @@ -5759,11 +5769,12 @@ static bool nested_vmx_exit_handled_mtf(struct vmcs12 *vmcs12)
+>   * Return true if L0 wants to handle an exit from L2 regardless of whether or not
+>   * L1 wants the exit.  Only call this when in is_guest_mode (L2).
+>   */
+> -static bool nested_vmx_l0_wants_exit(struct kvm_vcpu *vcpu, u32 exit_reason)
+> +static bool nested_vmx_l0_wants_exit(struct kvm_vcpu *vcpu,
+> +				     union vmx_exit_reason exit_reason)
+>  {
+>  	u32 intr_info;
 >  
->  	reverse_cpuid_check(leaf);
-> -	kvm_cpu_caps[leaf] &= mask;
+> -	switch ((u16)exit_reason) {
+> +	switch (exit_reason.basic) {
+>  	case EXIT_REASON_EXCEPTION_NMI:
+>  		intr_info = vmx_get_intr_info(vcpu);
+>  		if (is_nmi(intr_info))
+> @@ -5819,12 +5830,13 @@ static bool nested_vmx_l0_wants_exit(struct kvm_vcpu *vcpu, u32 exit_reason)
+>   * Return 1 if L1 wants to intercept an exit from L2.  Only call this when in
+>   * is_guest_mode (L2).
+>   */
+> -static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu, u32 exit_reason)
+> +static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu,
+> +				     union vmx_exit_reason exit_reason)
+>  {
+>  	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+>  	u32 intr_info;
 >  
->  	cpuid_count(cpuid.function, cpuid.index,
->  		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-> @@ -345,6 +346,26 @@ static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
->  	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
+> -	switch ((u16)exit_reason) {
+> +	switch (exit_reason.basic) {
+>  	case EXIT_REASON_EXCEPTION_NMI:
+>  		intr_info = vmx_get_intr_info(vcpu);
+>  		if (is_nmi(intr_info))
+> @@ -5943,7 +5955,7 @@ static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu, u32 exit_reason)
+>  bool nested_vmx_reflect_vmexit(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> -	u32 exit_reason = vmx->exit_reason;
+> +	union vmx_exit_reason exit_reason = vmx->exit_reason;
+>  	unsigned long exit_qual;
+>  	u32 exit_intr_info;
+>  
+> @@ -5962,7 +5974,7 @@ bool nested_vmx_reflect_vmexit(struct kvm_vcpu *vcpu)
+>  		goto reflect_vmexit;
+>  	}
+>  
+> -	trace_kvm_nested_vmexit(exit_reason, vcpu, KVM_ISA_VMX);
+> +	trace_kvm_nested_vmexit(exit_reason.full, vcpu, KVM_ISA_VMX);
+>  
+>  	/* If L0 (KVM) wants the exit, it trumps L1's desires. */
+>  	if (nested_vmx_l0_wants_exit(vcpu, exit_reason))
+> @@ -5988,7 +6000,7 @@ bool nested_vmx_reflect_vmexit(struct kvm_vcpu *vcpu)
+>  	exit_qual = vmx_get_exit_qual(vcpu);
+>  
+>  reflect_vmexit:
+> -	nested_vmx_vmexit(vcpu, exit_reason, exit_intr_info, exit_qual);
+> +	nested_vmx_vmexit(vcpu, exit_reason.full, exit_intr_info, exit_qual);
+>  	return true;
 >  }
 >  
-> +static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
-> +{
-> +	/* Use the "init" variant for scattered leafs. */
-> +	BUILD_BUG_ON(leaf >= NCAPINTS);
-> +
-> +	kvm_cpu_caps[leaf] &= mask;
-> +
-> +	__kvm_cpu_cap_mask(leaf);
-> +}
-> +
-> +static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
-> +{
-> +	/* Use the "mask" variant for hardwared-defined leafs. */
-> +	BUILD_BUG_ON(leaf < NCAPINTS);
-> +
-> +	kvm_cpu_caps[leaf] = mask;
-> +
-> +	__kvm_cpu_cap_mask(leaf);
-> +}
-> +
->  void kvm_set_cpu_caps(void)
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 2af05d3b0590..746b87375aff 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1577,7 +1577,7 @@ static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
+>  	 * i.e. we end up advancing IP with some random value.
+>  	 */
+>  	if (!static_cpu_has(X86_FEATURE_HYPERVISOR) ||
+> -	    to_vmx(vcpu)->exit_reason != EXIT_REASON_EPT_MISCONFIG) {
+> +	    to_vmx(vcpu)->exit_reason.basic != EXIT_REASON_EPT_MISCONFIG) {
+>  		orig_rip = kvm_rip_read(vcpu);
+>  		rip = orig_rip + vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
+>  #ifdef CONFIG_X86_64
+> @@ -5667,7 +5667,7 @@ static void vmx_get_exit_info(struct kvm_vcpu *vcpu, u64 *info1, u64 *info2,
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>  
+>  	*info1 = vmx_get_exit_qual(vcpu);
+> -	if (!(vmx->exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY)) {
+> +	if (!vmx->exit_reason.failed_vmentry) {
+>  		*info2 = vmx->idt_vectoring_info;
+>  		*intr_info = vmx_get_intr_info(vcpu);
+>  		if (is_exception_with_error_code(*intr_info))
+> @@ -5911,8 +5911,9 @@ void dump_vmcs(void)
+>  static int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 >  {
->  	unsigned int f_nx = is_efer_nx() ? F(NX) : 0;
-> @@ -355,12 +376,13 @@ void kvm_set_cpu_caps(void)
->  	unsigned int f_gbpages = 0;
->  	unsigned int f_lm = 0;
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> -	u32 exit_reason = vmx->exit_reason;
+> +	union vmx_exit_reason exit_reason = vmx->exit_reason;
+>  	u32 vectoring_info = vmx->idt_vectoring_info;
+> +	u16 exit_handler_index;
+>  
+>  	/*
+>  	 * Flush logged GPAs PML buffer, this will make dirty_bitmap more
+> @@ -5954,11 +5955,11 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>  			return 1;
+>  	}
+>  
+> -	if (exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
+> +	if (exit_reason.failed_vmentry) {
+>  		dump_vmcs();
+>  		vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
+>  		vcpu->run->fail_entry.hardware_entry_failure_reason
+> -			= exit_reason;
+> +			= exit_reason.full;
+>  		vcpu->run->fail_entry.cpu = vcpu->arch.last_vmentry_cpu;
+>  		return 0;
+>  	}
+> @@ -5980,18 +5981,18 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>  	 * will cause infinite loop.
+>  	 */
+>  	if ((vectoring_info & VECTORING_INFO_VALID_MASK) &&
+> -			(exit_reason != EXIT_REASON_EXCEPTION_NMI &&
+> -			exit_reason != EXIT_REASON_EPT_VIOLATION &&
+> -			exit_reason != EXIT_REASON_PML_FULL &&
+> -			exit_reason != EXIT_REASON_APIC_ACCESS &&
+> -			exit_reason != EXIT_REASON_TASK_SWITCH)) {
+> +	    (exit_reason.basic != EXIT_REASON_EXCEPTION_NMI &&
+> +	     exit_reason.basic != EXIT_REASON_EPT_VIOLATION &&
+> +	     exit_reason.basic != EXIT_REASON_PML_FULL &&
+> +	     exit_reason.basic != EXIT_REASON_APIC_ACCESS &&
+> +	     exit_reason.basic != EXIT_REASON_TASK_SWITCH)) {
+>  		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+>  		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_DELIVERY_EV;
+>  		vcpu->run->internal.ndata = 3;
+>  		vcpu->run->internal.data[0] = vectoring_info;
+> -		vcpu->run->internal.data[1] = exit_reason;
+> +		vcpu->run->internal.data[1] = exit_reason.full;
+>  		vcpu->run->internal.data[2] = vcpu->arch.exit_qualification;
+> -		if (exit_reason == EXIT_REASON_EPT_MISCONFIG) {
+> +		if (exit_reason.basic == EXIT_REASON_EPT_MISCONFIG) {
+>  			vcpu->run->internal.ndata++;
+>  			vcpu->run->internal.data[3] =
+>  				vmcs_read64(GUEST_PHYSICAL_ADDRESS);
+> @@ -6023,38 +6024,39 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>  	if (exit_fastpath != EXIT_FASTPATH_NONE)
+>  		return 1;
+>  
+> -	if (exit_reason >= kvm_vmx_max_exit_handlers)
+> +	if (exit_reason.basic >= kvm_vmx_max_exit_handlers)
+>  		goto unexpected_vmexit;
+>  #ifdef CONFIG_RETPOLINE
+> -	if (exit_reason == EXIT_REASON_MSR_WRITE)
+> +	if (exit_reason.basic == EXIT_REASON_MSR_WRITE)
+>  		return kvm_emulate_wrmsr(vcpu);
+> -	else if (exit_reason == EXIT_REASON_PREEMPTION_TIMER)
+> +	else if (exit_reason.basic == EXIT_REASON_PREEMPTION_TIMER)
+>  		return handle_preemption_timer(vcpu);
+> -	else if (exit_reason == EXIT_REASON_INTERRUPT_WINDOW)
+> +	else if (exit_reason.basic == EXIT_REASON_INTERRUPT_WINDOW)
+>  		return handle_interrupt_window(vcpu);
+> -	else if (exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+> +	else if (exit_reason.basic == EXIT_REASON_EXTERNAL_INTERRUPT)
+>  		return handle_external_interrupt(vcpu);
+> -	else if (exit_reason == EXIT_REASON_HLT)
+> +	else if (exit_reason.basic == EXIT_REASON_HLT)
+>  		return kvm_emulate_halt(vcpu);
+> -	else if (exit_reason == EXIT_REASON_EPT_MISCONFIG)
+> +	else if (exit_reason.basic == EXIT_REASON_EPT_MISCONFIG)
+>  		return handle_ept_misconfig(vcpu);
 >  #endif
-> +	memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
 >  
-> -	BUILD_BUG_ON(sizeof(kvm_cpu_caps) >
-> +	BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
->  		     sizeof(boot_cpu_data.x86_capability));
+> -	exit_reason = array_index_nospec(exit_reason,
+> -					 kvm_vmx_max_exit_handlers);
+> -	if (!kvm_vmx_exit_handlers[exit_reason])
+> +	exit_handler_index = array_index_nospec((u16)exit_reason.basic,
+> +						kvm_vmx_max_exit_handlers);
+> +	if (!kvm_vmx_exit_handlers[exit_handler_index])
+>  		goto unexpected_vmexit;
 >  
->  	memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
-> -	       sizeof(kvm_cpu_caps));
-> +	       sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)));
+> -	return kvm_vmx_exit_handlers[exit_reason](vcpu);
+> +	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
 >  
->  	kvm_cpu_cap_mask(CPUID_1_ECX,
->  		/*
-> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> index dc921d76e42e..2041e2f07347 100644
-> --- a/arch/x86/kvm/cpuid.h
-> +++ b/arch/x86/kvm/cpuid.h
-> @@ -7,7 +7,20 @@
->  #include <asm/processor.h>
->  #include <uapi/asm/kvm_para.h>
+>  unexpected_vmexit:
+> -	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n", exit_reason);
+> +	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n",
+> +		    exit_reason.full);
+>  	dump_vmcs();
+>  	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+>  	vcpu->run->internal.suberror =
+>  			KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
+>  	vcpu->run->internal.ndata = 2;
+> -	vcpu->run->internal.data[0] = exit_reason;
+> +	vcpu->run->internal.data[0] = exit_reason.full;
+>  	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
+>  	return 0;
+>  }
+> @@ -6373,9 +6375,9 @@ static void vmx_handle_exit_irqoff(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
 >  
-> -extern u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
-> +/*
-> + * Hardware-defined CPUID leafs that are scattered in the kernel, but need to
-> + * be directly used by KVM.  Note, these word values conflict with the kernel's
-> + * "bug" caps, but KVM doesn't use those.
-> + */
-> +enum kvm_only_cpuid_leafs {
-> +	NR_KVM_CPU_CAPS = NCAPINTS,
-> +
-> +	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
+> -	if (vmx->exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+> +	if (vmx->exit_reason.basic == EXIT_REASON_EXTERNAL_INTERRUPT)
+>  		handle_external_interrupt_irqoff(vcpu);
+> -	else if (vmx->exit_reason == EXIT_REASON_EXCEPTION_NMI)
+> +	else if (vmx->exit_reason.basic == EXIT_REASON_EXCEPTION_NMI)
+>  		handle_exception_nmi_irqoff(vmx);
+>  }
+>  
+> @@ -6567,7 +6569,7 @@ void noinstr vmx_update_host_rsp(struct vcpu_vmx *vmx, unsigned long host_rsp)
+>  
+>  static fastpath_t vmx_exit_handlers_fastpath(struct kvm_vcpu *vcpu)
+>  {
+> -	switch (to_vmx(vcpu)->exit_reason) {
+> +	switch (to_vmx(vcpu)->exit_reason.basic) {
+>  	case EXIT_REASON_MSR_WRITE:
+>  		return handle_fastpath_set_msr_irqoff(vcpu);
+>  	case EXIT_REASON_PREEMPTION_TIMER:
+> @@ -6766,17 +6768,17 @@ static fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>  	vmx->idt_vectoring_info = 0;
+>  
+>  	if (unlikely(vmx->fail)) {
+> -		vmx->exit_reason = 0xdead;
+> +		vmx->exit_reason.full = 0xdead;
+>  		return EXIT_FASTPATH_NONE;
+>  	}
+>  
+> -	vmx->exit_reason = vmcs_read32(VM_EXIT_REASON);
+> -	if (unlikely((u16)vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY))
+> +	vmx->exit_reason.full = vmcs_read32(VM_EXIT_REASON);
+> +	if (unlikely(vmx->exit_reason.basic == EXIT_REASON_MCE_DURING_VMENTRY))
+>  		kvm_machine_check();
+>  
+> -	trace_kvm_exit(vmx->exit_reason, vcpu, KVM_ISA_VMX);
+> +	trace_kvm_exit(vmx->exit_reason.full, vcpu, KVM_ISA_VMX);
+>  
+> -	if (unlikely(vmx->exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
+> +	if (unlikely(vmx->exit_reason.failed_vmentry))
+>  		return EXIT_FASTPATH_NONE;
+>  
+>  	vmx->loaded_vmcs->launched = 1;
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 9d3a557949ac..903f246b5abd 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -70,6 +70,29 @@ struct pt_desc {
+>  	struct pt_ctx guest;
+>  };
+>  
+> +union vmx_exit_reason {
+> +	struct {
+> +		u32	basic			: 16;
+> +		u32	reserved16		: 1;
+> +		u32	reserved17		: 1;
+> +		u32	reserved18		: 1;
+> +		u32	reserved19		: 1;
+> +		u32	reserved20		: 1;
+> +		u32	reserved21		: 1;
+> +		u32	reserved22		: 1;
+> +		u32	reserved23		: 1;
+> +		u32	reserved24		: 1;
+> +		u32	reserved25		: 1;
+> +		u32	reserved26		: 1;
+> +		u32	sgx_enclave_mode	: 1;
+> +		u32	smi_pending_mtf		: 1;
+> +		u32	smi_from_vmx_root	: 1;
+> +		u32	reserved30		: 1;
+> +		u32	failed_vmentry		: 1;
+> +	};
+> +	u32 full;
 > +};
 > +
-> +#define X86_KVM_FEATURE(w, f)		((w)*32 + (f))
-> +
-> +extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
->  void kvm_set_cpu_caps(void);
->  
->  void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu);
-> @@ -83,6 +96,20 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
->  	BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
->  }
->  
-> +/*
-> + * Translate feature bits that are scattered in the kernel's cpufeatures word
-> + * into KVM feature words that align with hardware's definitions.
-> + */
-> +static __always_inline u32 __feature_translate(int x86_feature)
-> +{
-> +	return x86_feature;
-> +}
-> +
-> +static __always_inline u32 __feature_leaf(int x86_feature)
-> +{
-> +	return __feature_translate(x86_feature) / 32;
-> +}
-> +
 >  /*
->   * Retrieve the bit mask from an X86_FEATURE_* definition.  Features contain
->   * the hardware defined bit number (stored in bits 4:0) and a software defined
-> @@ -91,6 +118,8 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
->   */
->  static __always_inline u32 __feature_bit(int x86_feature)
->  {
-> +	x86_feature = __feature_translate(x86_feature);
-> +
->  	reverse_cpuid_check(x86_feature / 32);
->  	return 1 << (x86_feature & 31);
->  }
-> @@ -99,7 +128,7 @@ static __always_inline u32 __feature_bit(int x86_feature)
+>   * The nested_vmx structure is part of vcpu_vmx, and holds information we need
+>   * for correct emulation of VMX (i.e., nested VMX) on this vcpu.
+> @@ -244,7 +267,7 @@ struct vcpu_vmx {
+>  	int vpid;
+>  	bool emulation_required;
 >  
->  static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned int x86_feature)
->  {
-> -	unsigned int x86_leaf = x86_feature / 32;
-> +	unsigned int x86_leaf = __feature_leaf(x86_feature);
+> -	u32 exit_reason;
+> +	union vmx_exit_reason exit_reason;
 >  
->  	reverse_cpuid_check(x86_leaf);
->  	return reverse_cpuid[x86_leaf];
-> @@ -291,7 +320,7 @@ static inline bool cpuid_fault_enabled(struct kvm_vcpu *vcpu)
->  
->  static __always_inline void kvm_cpu_cap_clear(unsigned int x86_feature)
->  {
-> -	unsigned int x86_leaf = x86_feature / 32;
-> +	unsigned int x86_leaf = __feature_leaf(x86_feature);
->  
->  	reverse_cpuid_check(x86_leaf);
->  	kvm_cpu_caps[x86_leaf] &= ~__feature_bit(x86_feature);
-> @@ -299,7 +328,7 @@ static __always_inline void kvm_cpu_cap_clear(unsigned int x86_feature)
->  
->  static __always_inline void kvm_cpu_cap_set(unsigned int x86_feature)
->  {
-> -	unsigned int x86_leaf = x86_feature / 32;
-> +	unsigned int x86_leaf = __feature_leaf(x86_feature);
->  
->  	reverse_cpuid_check(x86_leaf);
->  	kvm_cpu_caps[x86_leaf] |= __feature_bit(x86_feature);
-> @@ -307,7 +336,7 @@ static __always_inline void kvm_cpu_cap_set(unsigned int x86_feature)
->  
->  static __always_inline u32 kvm_cpu_cap_get(unsigned int x86_feature)
->  {
-> -	unsigned int x86_leaf = x86_feature / 32;
-> +	unsigned int x86_leaf = __feature_leaf(x86_feature);
->  
->  	reverse_cpuid_check(x86_leaf);
->  	return kvm_cpu_caps[x86_leaf] & __feature_bit(x86_feature);
+>  	/* Posted interrupt descriptor */
+>  	struct pi_desc pi_desc;
 > -- 
 > 2.29.2
 > 
