@@ -7,44 +7,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA35FC433E9
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DA6C4332D
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A2C664E87
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CB1464E87
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232682AbhBHK7w (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Feb 2021 05:59:52 -0500
-Received: from mga05.intel.com ([192.55.52.43]:15612 "EHLO mga05.intel.com"
+        id S229774AbhBHLAB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Feb 2021 06:00:01 -0500
+Received: from mga12.intel.com ([192.55.52.136]:12408 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232718AbhBHK50 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Feb 2021 05:57:26 -0500
-IronPort-SDR: GRaoRPOvMWcc4ilEZOwy6RO28CeU1kCVjd4FNFEyBcqXsTl4aRNPcwCl/eOnyeymSG1cnsO0w8
- 2H33scnJFfZA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="266525520"
+        id S232724AbhBHK5e (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Feb 2021 05:57:34 -0500
+IronPort-SDR: CNbOY0pMCjEp4sWdBD8A0m8jS09QKDZeJDve9K4MGawH+tCdxefNa0FK5KUhZ3bJi4VvnfbO5x
+ NdQXhDWUeahQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="160848447"
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="266525520"
+   d="scan'208";a="160848447"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:56:45 -0800
-IronPort-SDR: tOp+LK2t3eucjEPmhG6dNYeE8N9Jv+49hRIQ1vHwTTn0DEQbEwvPDvr61WpP3l40BIDTJKm+Fd
- 68JVq0CNQdKg==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:54:37 -0800
+IronPort-SDR: 6P61UZizKkR5CojD8/MKiSjDZ6UECYyFwBCXXug/ZAWDcsmBdQf0SgH9ljgR+lTVV7e5JgEGCT
+ Yku6NfzTaJrA==
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="374451368"
+   d="scan'208";a="374450973"
 Received: from jaeminha-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.11.62])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:56:40 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:54:33 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com, corbet@lwn.net,
-        Andy Lutomirski <luto@amacapital.net>,
         Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v4 26/26] KVM: x86: Add capability to grant VM access to privileged SGX attribute
-Date:   Mon,  8 Feb 2021 23:56:33 +1300
-Message-Id: <897b4a9088dc04a674b8bf244d465ebac042a8a2.1612777752.git.kai.huang@intel.com>
+Subject: [RFC PATCH v4 04/26] x86/sgx: Add SGX_CHILD_PRESENT hardware error code
+Date:   Mon,  8 Feb 2021 23:54:08 +1300
+Message-Id: <3c1edb38e95843eb9bf3fcbbec6cf9bdd9b3e7b1.1612777752.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1612777752.git.kai.huang@intel.com>
 References: <cover.1612777752.git.kai.huang@intel.com>
@@ -56,135 +53,54 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add a capability, KVM_CAP_SGX_ATTRIBUTE, that can be used by userspace
-to grant a VM access to a priveleged attribute, with args[0] holding a
-file handle to a valid SGX attribute file.
+SGX driver can accurately track how enclave pages are used.  This
+enables SECS to be specifically targeted and EREMOVE'd only after all
+child pages have been EREMOVE'd.  This ensures that SGX driver will
+never encounter SGX_CHILD_PRESENT in normal operation.
 
-The SGX subsystem restricts access to a subset of enclave attributes to
-provide additional security for an uncompromised kernel, e.g. to prevent
-malware from using the PROVISIONKEY to ensure its nodes are running
-inside a geniune SGX enclave and/or to obtain a stable fingerprint.
+Virtual EPC is different.  The host does not track how EPC pages are
+used by the guest, so it cannot guarantee EREMOVE success.  It might,
+for instance, encounter a SECS with a non-zero child count.
 
-To prevent userspace from circumventing such restrictions by running an
-enclave in a VM, KVM restricts guest access to privileged attributes by
-default.
+Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
+failures are expected, but only due to SGX_CHILD_PRESENT.
 
-Cc: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
- arch/x86/kvm/cpuid.c           |  2 +-
- arch/x86/kvm/x86.c             | 22 ++++++++++++++++++++++
- include/uapi/linux/kvm.h       |  1 +
- 4 files changed, 47 insertions(+), 1 deletion(-)
+v3->v4:
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index c136e254b496..47c7c7c33025 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -6037,6 +6037,29 @@ KVM_EXIT_X86_RDMSR and KVM_EXIT_X86_WRMSR exit notifications which user space
- can then handle to implement model specific MSR handling and/or user notifications
- to inform a user that an MSR was not handled.
- 
-+7.22 KVM_CAP_SGX_ATTRIBUTE
-+----------------------
-+
-+:Architectures: x86
-+:Target: VM
-+:Parameters: args[0] is a file handle of a SGX attribute file in securityfs
-+:Returns: 0 on success, -EINVAL if the file handle is invalid or if a requested
-+          attribute is not supported by KVM.
-+
-+KVM_CAP_SGX_ATTRIBUTE enables a userspace VMM to grant a VM access to one or
-+more priveleged enclave attributes.  args[0] must hold a file handle to a valid
-+SGX attribute file corresponding to an attribute that is supported/restricted
-+by KVM (currently only PROVISIONKEY).
-+
-+The SGX subsystem restricts access to a subset of enclave attributes to provide
-+additional security for an uncompromised kernel, e.g. use of the PROVISIONKEY
-+is restricted to deter malware from using the PROVISIONKEY to obtain a stable
-+system fingerprint.  To prevent userspace from circumventing such restrictions
-+by running an enclave in a VM, KVM prevents access to privileged attributes by
-+default.
-+
-+See Documentation/x86/sgx/2.Kernel-internals.rst for more details.
-+
- 8. Other capabilities.
- ======================
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 04b2f5de2d7b..ad00a1af1545 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -833,7 +833,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 		 * expected to derive it from supported XCR0.
- 		 */
- 		entry->eax &= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
--			      /* PROVISIONKEY | */ SGX_ATTR_EINITTOKENKEY |
-+			      SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINITTOKENKEY |
- 			      SGX_ATTR_KSS;
- 		entry->ebx &= 0;
- 		break;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5ca7b181a3ae..3d1b4113a57b 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -74,6 +74,8 @@
- #include <asm/tlbflush.h>
- #include <asm/intel_pt.h>
- #include <asm/emulate_prefix.h>
-+#include <asm/sgx.h>
-+#include <asm/sgx_arch.h>
- #include <clocksource/hyperv_timer.h>
- 
- #define CREATE_TRACE_POINTS
-@@ -3767,6 +3769,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_X86_USER_SPACE_MSR:
- 	case KVM_CAP_X86_MSR_FILTER:
- 	case KVM_CAP_ENFORCE_PV_FEATURE_CPUID:
-+#ifdef CONFIG_X86_SGX_KVM
-+	case KVM_CAP_SGX_ATTRIBUTE:
-+#endif
- 		r = 1;
- 		break;
- 	case KVM_CAP_SYNC_REGS:
-@@ -5295,6 +5300,23 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		kvm->arch.user_space_msr_mask = cap->args[0];
- 		r = 0;
- 		break;
-+#ifdef CONFIG_X86_SGX_KVM
-+	case KVM_CAP_SGX_ATTRIBUTE: {
-+		unsigned long allowed_attributes = 0;
-+
-+		r = sgx_set_attribute(&allowed_attributes, cap->args[0]);
-+		if (r)
-+			break;
-+
-+		/* KVM only supports the PROVISIONKEY privileged attribute. */
-+		if ((allowed_attributes & SGX_ATTR_PROVISIONKEY) &&
-+		    !(allowed_attributes & ~SGX_ATTR_PROVISIONKEY))
-+			kvm->arch.sgx_provisioning_allowed = true;
-+		else
-+			r = -EINVAL;
-+		break;
-+	}
-+#endif
- 	default:
- 		r = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 374c67875cdb..e17bda18a9b4 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1058,6 +1058,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_ENFORCE_PV_FEATURE_CPUID 190
- #define KVM_CAP_SYS_HYPERV_CPUID 191
- #define KVM_CAP_DIRTY_LOG_RING 192
-+#define KVM_CAP_SGX_ATTRIBUTE 200
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
+ - Refined the commit msg, per Dave.
+
+v2->v3:
+
+ - Changed from 'Enclave has child' to 'SECS has child', per Jarkko.
+
+---
+ arch/x86/kernel/cpu/sgx/arch.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+index dd7602c44c72..abf99bb71fdc 100644
+--- a/arch/x86/kernel/cpu/sgx/arch.h
++++ b/arch/x86/kernel/cpu/sgx/arch.h
+@@ -26,12 +26,14 @@
+  * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
+  * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
+  *				been completed yet.
++ * %SGX_CHILD_PRESENT		SECS has child pages present in the EPC.
+  * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
+  *				public key does not match IA32_SGXLEPUBKEYHASH.
+  * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
+  */
+ enum sgx_return_code {
+ 	SGX_NOT_TRACKED			= 11,
++	SGX_CHILD_PRESENT		= 13,
+ 	SGX_INVALID_EINITTOKEN		= 16,
+ 	SGX_UNMASKED_EVENT		= 128,
+ };
 -- 
 2.29.2
 
