@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C2FC433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 177D9C433DB
 	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F213C64E5D
+	by mail.kernel.org (Postfix) with ESMTP id C5CFD64E54
 	for <linux-sgx@archiver.kernel.org>; Mon,  8 Feb 2021 11:05:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232709AbhBHLFa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Feb 2021 06:05:30 -0500
-Received: from mga17.intel.com ([192.55.52.151]:43443 "EHLO mga17.intel.com"
+        id S232553AbhBHLFZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Feb 2021 06:05:25 -0500
+Received: from mga03.intel.com ([134.134.136.65]:50182 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231945AbhBHLAJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Feb 2021 06:00:09 -0500
-IronPort-SDR: dEAEj1D3joI8yLDttEaeQY0/Iw4uNGui6Aq9C2wRBya1IkA62V6wLLkGO3dMmaxFlzNg/LQpFy
- wYnuiZRaywwA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="161443951"
+        id S232902AbhBHLBW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Feb 2021 06:01:22 -0500
+IronPort-SDR: ZhfuUlO4p+oxX01sVsQnmWIHcl4tiLRX5yitZ1Kut/lt9pTUgMVddUJQOQ3DrucVWMfL5zOt15
+ paRTwvSiLRZA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="181758581"
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="161443951"
+   d="scan'208";a="181758581"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:31 -0800
-IronPort-SDR: VXJCg/JieLrHZNWjIRBpA6dA+Pi+jlPxViDJ5CiKEqWW+y7gnIwd7KyT81UNm3XJv2pUoAKjbc
- xx4NXM4m3ycA==
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:56:25 -0800
+IronPort-SDR: mJYUi+0Y0Ade2bkV0l0zGhoRX/XJWQz1t/oNebc4iFV+W4EpHdXz3y+ww3X17CKdGoLzKv47UM
+ N2k2jEhu/0FA==
 X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
-   d="scan'208";a="374451162"
+   d="scan'208";a="374451329"
 Received: from jaeminha-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.11.62])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:55:28 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 02:56:21 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v4 13/26] x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
-Date:   Mon,  8 Feb 2021 23:54:56 +1300
-Message-Id: <9d79e09b0f0d24c002a91bd95edace2d09045c10.1612777752.git.kai.huang@intel.com>
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
+Subject: [RFC PATCH v4 23/26] KVM: VMX: Add emulation of SGX Launch Control LE hash MSRs
+Date:   Mon,  8 Feb 2021 23:55:33 +1300
+Message-Id: <76b580c72541b17a7ee1f8cd3038329d9ad6023d.1612777752.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1612777752.git.kai.huang@intel.com>
 References: <cover.1612777752.git.kai.huang@intel.com>
@@ -53,158 +54,173 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-The host kernel must intercept ECREATE to be able to impose policies on
-guests.  When it does this, the host kernel runs ECREATE against the
-userspace mapping of the virtualized EPC.
+Emulate the four Launch Enclave public key hash MSRs (LE hash MSRs) that
+exist on CPUs that support SGX Launch Control (LC).  SGX LC modifies the
+behavior of ENCLS[EINIT] to use the LE hash MSRs when verifying the key
+used to sign an enclave.  On CPUs without LC support, the LE hash is
+hardwired into the CPU to an Intel controlled key (the Intel key is also
+the reset value of the LE hash MSRs). Track the guest's desired hash so
+that a future patch can stuff the hash into the hardware MSRs when
+executing EINIT on behalf of the guest, when those MSRs are writable in
+host.
 
-Provide wrappers around __ecreate() and __einit() to hide the ugliness
-of overloading the ENCLS return value to encode multiple error formats
-in a single int.  KVM will trap-and-execute ECREATE and EINIT as part
-of SGX virtualization, and on an exception, KVM needs the trapnr so that
-it can inject the correct fault into the guest.
+Note, KVM allows writes to the LE hash MSRs if IA32_FEATURE_CONTROL is
+unlocked.  This is technically not architectural behavior, but it's
+roughly equivalent to the arch behavior of the MSRs being writable prior
+to activating SGX[1].  Emulating SGX activation is feasible, but adds no
+tangible benefits and would just create extra work for KVM and guest
+firmware.
+
+[1] SGX related bits in IA32_FEATURE_CONTROL cannot be set until SGX
+    is activated, e.g. by firmware.  SGX activation is triggered by
+    setting bit 0 in MSR 0x7a.  Until SGX is activated, the LE hash
+    MSRs are writable, e.g. to allow firmware to lock down the LE
+    root key with a non-Intel value.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Kai Huang <kai.huang@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
-v3->v4:
+ arch/x86/kvm/vmx/sgx.c | 35 +++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/sgx.h |  6 ++++++
+ arch/x86/kvm/vmx/vmx.c | 20 ++++++++++++++++++++
+ arch/x86/kvm/vmx/vmx.h |  2 ++
+ 4 files changed, 63 insertions(+)
 
- - Added one new line before last return in sgx_virt_einit(), per Jarkko.
-
-v2->v3:
-
- - Added kdoc for sgx_virt_ecreate() and sgx_virt_einit(), per Jarkko.
- - Changed to use CONFIG_X86_SGX_KVM.
-
----
- arch/x86/include/asm/sgx.h     | 16 ++++++
- arch/x86/kernel/cpu/sgx/virt.c | 94 ++++++++++++++++++++++++++++++++++
- 2 files changed, 110 insertions(+)
- create mode 100644 arch/x86/include/asm/sgx.h
-
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-new file mode 100644
-index 000000000000..8a3ea3e1efbe
---- /dev/null
-+++ b/arch/x86/include/asm/sgx.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_SGX_H
-+#define _ASM_X86_SGX_H
-+
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_X86_SGX_KVM
-+struct sgx_pageinfo;
-+
-+int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
-+		     int *trapnr);
-+int sgx_virt_einit(void __user *sigstruct, void __user *token,
-+		   void __user *secs, u64 *lepubkeyhash, int *trapnr);
-+#endif
-+
-+#endif /* _ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index 47542140f8c1..016bad7cff8d 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -257,3 +257,97 @@ int __init sgx_vepc_init(void)
+diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
+index 7bdb125325ef..177ee1c826a8 100644
+--- a/arch/x86/kvm/vmx/sgx.c
++++ b/arch/x86/kvm/vmx/sgx.c
+@@ -12,6 +12,9 @@
  
- 	return misc_register(&sgx_vepc_dev);
+ bool __read_mostly enable_sgx;
+ 
++/* Initial value of guest's virtual SGX_LEPUBKEYHASHn MSRs */
++static u64 sgx_pubkey_hash[4] __ro_after_init;
++
+ /*
+  * ENCLS's memory operands use a fixed segment (DS) and a fixed
+  * address size based on the mode.  Related prefixes are ignored.
+@@ -296,3 +299,35 @@ int handle_encls(struct kvm_vcpu *vcpu)
+ 	}
+ 	return 1;
  }
 +
-+/**
-+ * sgx_virt_ecreate() - Run ECREATE on behalf of guest
-+ * @pageinfo:	Pointer to PAGEINFO structure
-+ * @secs:	Userspace pointer to SECS page
-+ * @trapnr:	trap number injected to guest in case of ECREATE error
-+ *
-+ * Run ECREATE on behalf of guest after KVM traps ECREATE for the purpose
-+ * of enforcing policies of guest's enclaves, and return the trap number
-+ * which should be injected to guest in case of any ECREATE error.
-+ *
-+ * Return:
-+ * - 0: 	ECREATE was successful.
-+ * - -EFAULT:	ECREATE returned error.
-+ */
-+int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
-+		     int *trapnr)
++void setup_default_sgx_lepubkeyhash(void)
 +{
-+	int ret;
-+
 +	/*
-+	 * @secs is userspace address, and it's not guaranteed @secs points at
-+	 * an actual EPC page. It's also possible to generate a kernel mapping
-+	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
-+	 * simpler.
++	 * Use Intel's default value for Skylake hardware if Launch Control is
++	 * not supported, i.e. Intel's hash is hardcoded into silicon, or if
++	 * Launch Control is supported and enabled, i.e. mimic the reset value
++	 * and let the guest write the MSRs at will.  If Launch Control is
++	 * supported but disabled, then use the current MSR values as the hash
++	 * MSRs exist but are read-only (locked and not writable).
 +	 */
-+	__uaccess_begin();
-+	ret = __ecreate(pageinfo, (void *)secs);
-+	__uaccess_end();
-+
-+	if (encls_faulted(ret)) {
-+		*trapnr = ENCLS_TRAPNR(ret);
-+		return -EFAULT;
-+	}
-+
-+	/* ECREATE doesn't return an error code, it faults or succeeds. */
-+	WARN_ON_ONCE(ret);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sgx_virt_ecreate);
-+
-+static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
-+			    void __user *secs)
-+{
-+	int ret;
-+
-+	__uaccess_begin();
-+	ret =  __einit((void *)sigstruct, (void *)token, (void *)secs);
-+	__uaccess_end();
-+	return ret;
-+}
-+
-+/**
-+ * sgx_virt_einit() - Run EINIT on behalf of guest
-+ * @sigstruct:		Userspace pointer to SIGSTRUCT structure
-+ * @token:		Userspace pointer to EINITTOKEN structure
-+ * @secs:		Userspace pointer to SECS page
-+ * @lepubkeyhash:	Pointer to guest's *virtual* SGX_LEPUBKEYHASH MSR
-+ * 			values
-+ * @trapnr:		trap number injected to guest in case of EINIT error
-+ *
-+ * Run EINIT on behalf of guest after KVM traps EINIT. If SGX_LC is available
-+ * in host, SGX driver may rewrite the hardware values at wish, therefore KVM
-+ * needs to update hardware values to guest's virtual MSR values in order to
-+ * ensure EINIT is executed with expected hardware values.
-+ *
-+ * Return:
-+ * - 0: 	EINIT was successful.
-+ * - -EFAULT:	EINIT returned error.
-+ */
-+int sgx_virt_einit(void __user *sigstruct, void __user *token,
-+		   void __user *secs, u64 *lepubkeyhash, int *trapnr)
-+{
-+	int ret;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
-+		ret = __sgx_virt_einit(sigstruct, token, secs);
++	if (!enable_sgx || !boot_cpu_has(X86_FEATURE_SGX_LC) ||
++	    rdmsrl_safe(MSR_IA32_SGXLEPUBKEYHASH0, &sgx_pubkey_hash[0])) {
++		sgx_pubkey_hash[0] = 0xa6053e051270b7acULL;
++		sgx_pubkey_hash[1] = 0x6cfbe8ba8b3b413dULL;
++		sgx_pubkey_hash[2] = 0xc4916d99f2b3735dULL;
++		sgx_pubkey_hash[3] = 0xd4f8c05909f9bb3bULL;
 +	} else {
-+		preempt_disable();
-+
-+		sgx_update_lepubkeyhash(lepubkeyhash);
-+
-+		ret = __sgx_virt_einit(sigstruct, token, secs);
-+		preempt_enable();
++		/* MSR_IA32_SGXLEPUBKEYHASH0 is read above */
++		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH1, sgx_pubkey_hash[1]);
++		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH2, sgx_pubkey_hash[2]);
++		rdmsrl(MSR_IA32_SGXLEPUBKEYHASH3, sgx_pubkey_hash[3]);
 +	}
-+
-+	if (encls_faulted(ret)) {
-+		*trapnr = ENCLS_TRAPNR(ret);
-+		return -EFAULT;
-+	}
-+
-+	return ret;
 +}
-+EXPORT_SYMBOL_GPL(sgx_virt_einit);
++
++void vcpu_setup_sgx_lepubkeyhash(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	memcpy(vmx->msr_ia32_sgxlepubkeyhash, sgx_pubkey_hash,
++	       sizeof(sgx_pubkey_hash));
++}
+diff --git a/arch/x86/kvm/vmx/sgx.h b/arch/x86/kvm/vmx/sgx.h
+index 6e17ecd4aca3..6502fa52c7e9 100644
+--- a/arch/x86/kvm/vmx/sgx.h
++++ b/arch/x86/kvm/vmx/sgx.h
+@@ -8,8 +8,14 @@
+ extern bool __read_mostly enable_sgx;
+ 
+ int handle_encls(struct kvm_vcpu *vcpu);
++
++void setup_default_sgx_lepubkeyhash(void);
++void vcpu_setup_sgx_lepubkeyhash(struct kvm_vcpu *vcpu);
+ #else
+ #define enable_sgx 0
++
++static inline void setup_default_sgx_lepubkeyhash(void) { }
++static inline void vcpu_setup_sgx_lepubkeyhash(struct kvm_vcpu *vcpu) { }
+ #endif
+ 
+ #endif /* __KVM_X86_SGX_H */
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index dbe585329842..349585f63c4d 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1888,6 +1888,13 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_IA32_FEAT_CTL:
+ 		msr_info->data = vmx->msr_ia32_feature_control;
+ 		break;
++	case MSR_IA32_SGXLEPUBKEYHASH0 ... MSR_IA32_SGXLEPUBKEYHASH3:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_SGX_LC))
++			return 1;
++		msr_info->data = to_vmx(vcpu)->msr_ia32_sgxlepubkeyhash
++			[msr_info->index - MSR_IA32_SGXLEPUBKEYHASH0];
++		break;
+ 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
+ 		if (!nested_vmx_allowed(vcpu))
+ 			return 1;
+@@ -2154,6 +2161,15 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		if (msr_info->host_initiated && data == 0)
+ 			vmx_leave_nested(vcpu);
+ 		break;
++	case MSR_IA32_SGXLEPUBKEYHASH0 ... MSR_IA32_SGXLEPUBKEYHASH3:
++		if (!msr_info->host_initiated &&
++		    (!guest_cpuid_has(vcpu, X86_FEATURE_SGX_LC) ||
++		    ((vmx->msr_ia32_feature_control & FEAT_CTL_LOCKED) &&
++		    !(vmx->msr_ia32_feature_control & FEAT_CTL_SGX_LC_ENABLED))))
++			return 1;
++		vmx->msr_ia32_sgxlepubkeyhash
++			[msr_index - MSR_IA32_SGXLEPUBKEYHASH0] = data;
++		break;
+ 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
+ 		if (!msr_info->host_initiated)
+ 			return 1; /* they are read-only */
+@@ -6957,6 +6973,8 @@ static int vmx_create_vcpu(struct kvm_vcpu *vcpu)
+ 	else
+ 		memset(&vmx->nested.msrs, 0, sizeof(vmx->nested.msrs));
+ 
++	vcpu_setup_sgx_lepubkeyhash(vcpu);
++
+ 	vmx->nested.posted_intr_nv = -1;
+ 	vmx->nested.current_vmptr = -1ull;
+ 
+@@ -7907,6 +7925,8 @@ static __init int hardware_setup(void)
+ 	if (!enable_ept || !cpu_has_vmx_intel_pt())
+ 		pt_mode = PT_MODE_SYSTEM;
+ 
++	setup_default_sgx_lepubkeyhash();
++
+ 	if (nested) {
+ 		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
+ 					   vmx_capability.ept);
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 903f246b5abd..af4bced6c84b 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -299,6 +299,8 @@ struct vcpu_vmx {
+ 	 */
+ 	u64 msr_ia32_feature_control;
+ 	u64 msr_ia32_feature_control_valid_bits;
++	/* SGX Launch Control public key hash */
++	u64 msr_ia32_sgxlepubkeyhash[4];
+ 	u64 ept_pointer;
+ 
+ 	struct pt_desc pt_desc;
 -- 
 2.29.2
 
