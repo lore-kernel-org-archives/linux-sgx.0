@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C23BAC433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 16:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C21C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 16:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8942264EB6
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 16:19:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE83564DE0
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 16:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232004AbhBIQTt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 9 Feb 2021 11:19:49 -0500
-Received: from mga17.intel.com ([192.55.52.151]:35604 "EHLO mga17.intel.com"
+        id S232805AbhBIQ0B (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 9 Feb 2021 11:26:01 -0500
+Received: from mga05.intel.com ([192.55.52.43]:36359 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231249AbhBIQTm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 9 Feb 2021 11:19:42 -0500
-IronPort-SDR: 81/f7TJv3FB1b2bOttGXXXJQXvWMddT0NVQS60KznvqMlcgfs1sT0CKfmxGhBPsj9dCxaB3Kiq
- 7HpSPfqZd0zA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="161658880"
+        id S232822AbhBIQZp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 9 Feb 2021 11:25:45 -0500
+IronPort-SDR: YHoz+tepwr7pFkfqnXA4WAElk4K9RHwLHdX9gS4yinvc3fnhwNZXgMtimdqyyDL6XxM+IoHn4K
+ yRjhrI6aKuUA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="266744047"
 X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
-   d="scan'208";a="161658880"
+   d="scan'208";a="266744047"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:19:01 -0800
-IronPort-SDR: c3tSmeXtupPNHM56da6SXp3YklU1PUinSjZizs166mpKQGFtGf1uML/Ku0b0ag2AO6iGHOV2ZY
- XnO8CYEnUG6w==
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:24:53 -0800
+IronPort-SDR: Xo/KQOeOVTPNb/462SPz5WEXa30/VYCOajAUkdJCkroCypj0vW5o5Q9hRBu5+NyX27Yrk/NW5h
+ KZqrDxWgF0qw==
 X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
-   d="scan'208";a="375015832"
+   d="scan'208";a="375017964"
 Received: from asklovsk-mobl.amr.corp.intel.com (HELO [10.212.123.206]) ([10.212.123.206])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:19:00 -0800
-Subject: Re: [RFC PATCH v4 03/26] x86/sgx: Wipe out EREMOVE from
- sgx_free_epc_page()
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:24:52 -0800
+Subject: Re: [RFC PATCH v4 04/26] x86/sgx: Add SGX_CHILD_PRESENT hardware
+ error code
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -40,7 +40,7 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
         mingo@redhat.com, hpa@zytor.com
 References: <cover.1612777752.git.kai.huang@intel.com>
- <237b82e13e52191409577acddf9b4b28b16bf1bc.1612777752.git.kai.huang@intel.com>
+ <3c1edb38e95843eb9bf3fcbbec6cf9bdd9b3e7b1.1612777752.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <38eb4166-8687-2f0d-0ca3-66c1afdf0a5d@intel.com>
-Date:   Tue, 9 Feb 2021 08:18:59 -0800
+Message-ID: <b9e8a9a0-6a53-6523-4ea8-347c67e7ba86@intel.com>
+Date:   Tue, 9 Feb 2021 08:24:51 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <237b82e13e52191409577acddf9b4b28b16bf1bc.1612777752.git.kai.huang@intel.com>
+In-Reply-To: <3c1edb38e95843eb9bf3fcbbec6cf9bdd9b3e7b1.1612777752.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,47 +99,12 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 2/8/21 2:54 AM, Kai Huang wrote:
-> From: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> Encapsulate the snippet in sgx_free_epc_page() concerning EREMOVE to
-> sgx_reset_epc_page(), which is a static helper function for
-> sgx_encl_release().  It's the only function existing, which deals with
-> initialized pages.
+...
+> Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
+> failures are expected, but only due to SGX_CHILD_PRESENT.
 
-I didn't really like the changelog the last time around, so I wrote you
-a new one:
+This paragraph broke my brain when I read it.  How about:
 
-> https://lore.kernel.org/kvm/8250aedb-a623-646d-071a-75ece2c41c09@intel.com/
-
-The "v4" changelog is pretty hard for me to read.  It doesn't tell me
-why we can "wipe out EREMOVE" or how it is going to get used going forward.
-
-
-> +
-> +/*
-> + * Place the page in uninitialized state.  Called by in sgx_encl_release()
-> + * before sgx_free_epc_page(), which requires EPC page is already in clean
-> + * slate.
-> + */
-
-I really don't like comments like that that refer to callers.  They're
-basically guaranteed to become obsolete.
-
-/*
- * Place the page in uninitialized state.  Only usable by callers that
- * know the page is in a clean state in which EREMOVE will succeed.
- */
-
-> +static void sgx_reset_epc_page(struct sgx_epc_page *epc_page)
-> +{
-> +	int ret;
-> +
-> +	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> +
-> +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-> +	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
-> +		return;
-> +}
-
-The uncommented warnings aren't very nice, but I guess they're in the
-existing code.
+	Add a definition of SGX_CHILD_PRESENT.  It will be used
+	exclusively by the SGX virtualization driver to suppress EREMOVE
+	warnings.
