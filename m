@@ -2,122 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4891DC433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 17:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA444C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 18:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0788164E6C
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 17:08:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7201864EC7
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 18:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233100AbhBIRID (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 9 Feb 2021 12:08:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232869AbhBIRH7 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 9 Feb 2021 12:07:59 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D206C06174A
-        for <linux-sgx@vger.kernel.org>; Tue,  9 Feb 2021 09:07:18 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id d2so2027641pjs.4
-        for <linux-sgx@vger.kernel.org>; Tue, 09 Feb 2021 09:07:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NYn0hIXEI1Dd7es1MA3rMU4kotjM8jzL+1QZgKfs5N0=;
-        b=d9usAGL29F/qZldLYA3EJ7uPSzbSHy3kB9GW/Sthmsw4HRaH1PXk43WAZIJYkdjOCJ
-         rCuCbA8s5G20hMqlG8ZhY/Veu2r/9fnvdTESTvcGQfCjGNzPO2WggZ5qKQGb/2IUcrjj
-         O7dABTJ2DQFKLk14lWAG5ucxHLMS/KPMaR90a5d6XUbfjaWk9wsKjnk3pHc4s8glHoOR
-         39Xy5zTC5g2DoDeGVFKj3hill/w4A7cRYasw3EPS/0/FyWgTHOGp/V9iKSwy8xb9uth3
-         t8EV107UkAZ2JLH1645lcaNRqlqyb7l9n1DQ8F/hpiPRGswdzSJ5Fkyfy9tAAwAQFYkR
-         kjaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NYn0hIXEI1Dd7es1MA3rMU4kotjM8jzL+1QZgKfs5N0=;
-        b=R3Qwb2UGmjGLCnos+u3mQX3Y3BvXB18nGXJwoKmoyEr2GnTsy2T+7lHo7Tig05M+2k
-         1uIv4Ugt90VZpBo3liRPvGet3jLtGbpogaHthJi4r0OnCs8rzXUxAgrsuOjq8+5b3wd2
-         Q31rLAUsLSuYdDAFlC8OtO3LZ0+ggD0fe2SNcUGqJlHpMyQM5NeKZa0DHql9v1TlMDzb
-         uRDntLJ0yhPowaR69xWbLI+63+IhOJQFCKT91VvUgaoz6l84YZuMnWWrDP+6pKyOebh9
-         KCJQ18FhviFFij2cHJoO/5Q7g+EZUUGCy/PMbrfN+socgSg8frzA20OENeRckbWn87Ah
-         bAAQ==
-X-Gm-Message-State: AOAM531IqxuHZWQNwi4CRy8i6jFjcXGyrlA7ztdey5segS9BgUHBBHPS
-        YREMY0UrYHMx34ZmvrKatUt+Qg==
-X-Google-Smtp-Source: ABdhPJxA47uSfwPY5CZ8jMym5yNQ34qyJTE7CkZ260kgwKGkj1O9fzpD81uk18+T/6xQ5Wc18Sn6Pg==
-X-Received: by 2002:a17:90a:70c8:: with SMTP id a8mr4844995pjm.209.1612890437612;
-        Tue, 09 Feb 2021 09:07:17 -0800 (PST)
-Received: from google.com (240.111.247.35.bc.googleusercontent.com. [35.247.111.240])
-        by smtp.gmail.com with ESMTPSA id lw4sm2681793pjb.16.2021.02.09.09.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Feb 2021 09:07:16 -0800 (PST)
-Date:   Tue, 9 Feb 2021 17:07:13 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v4 04/26] x86/sgx: Add SGX_CHILD_PRESENT hardware
- error code
-Message-ID: <YCLBQYq2HaA7MFKH@google.com>
+        id S232925AbhBIStR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 9 Feb 2021 13:49:17 -0500
+Received: from mga18.intel.com ([134.134.136.126]:6205 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233510AbhBISfZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 9 Feb 2021 13:35:25 -0500
+IronPort-SDR: I/vg+B9Sa9BnzcKiTPFxrb+uZ+8sqrXwGfJCU/SX/VkUut2gxJZrJpwoUd4B2V9+HahVhnt90+
+ SZkomVtccyrw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="169614752"
+X-IronPort-AV: E=Sophos;i="5.81,166,1610438400"; 
+   d="scan'208";a="169614752"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 10:26:29 -0800
+IronPort-SDR: RqcIhMC+gEGPRSlEvHEzQ+EOI6cLwBH8wpQJUfKdqIgwk6Csyb9isuB5occafc47FoMom2erGV
+ KcotBRqFYiow==
+X-IronPort-AV: E=Sophos;i="5.81,166,1610438400"; 
+   d="scan'208";a="379208806"
+Received: from aellsw1-mobl.amr.corp.intel.com ([10.251.22.237])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 10:26:25 -0800
+Message-ID: <c8a87b4980edb5e21a7d14497e84a12827e57648.camel@intel.com>
+Subject: Re: [RFC PATCH v4 03/26] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+From:   Kai Huang <kai.huang@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
+        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Date:   Wed, 10 Feb 2021 07:26:23 +1300
+In-Reply-To: <38eb4166-8687-2f0d-0ca3-66c1afdf0a5d@intel.com>
 References: <cover.1612777752.git.kai.huang@intel.com>
- <3c1edb38e95843eb9bf3fcbbec6cf9bdd9b3e7b1.1612777752.git.kai.huang@intel.com>
- <b9e8a9a0-6a53-6523-4ea8-347c67e7ba86@intel.com>
- <YCK81Zcz++PfGPnw@google.com>
- <af80db88-9097-0947-e05d-9508daee18df@intel.com>
+         <237b82e13e52191409577acddf9b4b28b16bf1bc.1612777752.git.kai.huang@intel.com>
+         <38eb4166-8687-2f0d-0ca3-66c1afdf0a5d@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af80db88-9097-0947-e05d-9508daee18df@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 09, 2021, Dave Hansen wrote:
-> On 2/9/21 8:48 AM, Sean Christopherson wrote:
-> > On Tue, Feb 09, 2021, Dave Hansen wrote:
-> >> On 2/8/21 2:54 AM, Kai Huang wrote:
-> >> ...
-> >>> Add SGX_CHILD_PRESENT for use by SGX virtualization to assert EREMOVE
-> >>> failures are expected, but only due to SGX_CHILD_PRESENT.
-> >> This paragraph broke my brain when I read it.  How about:
-> >>
-> >> 	Add a definition of SGX_CHILD_PRESENT.  It will be used
-> >> 	exclusively by the SGX virtualization driver to suppress EREMOVE
-> >> 	warnings.
-> > Maybe worth clarifying that the driver isn't suppressing warnings willy-nilly?
-> > And the error code isn't about suppressing warnings, it's about identifying the
-> > expected EREMOVE failure scenario.  The patch that creates the separate helper
-> > for doing EREMOVE without the WARN is what provides the suppression mechanism.
+On Tue, 2021-02-09 at 08:18 -0800, Dave Hansen wrote:
+> On 2/8/21 2:54 AM, Kai Huang wrote:
+> > From: Jarkko Sakkinen <jarkko@kernel.org>
 > > 
-> > Something like this?
-> > 
-> >   Add a definition of SGX_CHILD_PRESENT.  It will be used exclusively by
-> >   the SGX virtualization driver to handle recoverable EREMOVE errors when
-> >   saniziting EPC pages after they are reclaimed from a guest.
+> > Encapsulate the snippet in sgx_free_epc_page() concerning EREMOVE to
+> > sgx_reset_epc_page(), which is a static helper function for
+> > sgx_encl_release().  It's the only function existing, which deals with
+> > initialized pages.
 > 
-> Looks great to me.  One nit: to a me, "reclaim" is different than
-> "free".  Reclaim is a specific operation where a page is taken from one
-> user and reclaimed for other use.  "Free" is the more general case
-> (which includes reclaim) when a physical page is no longer being used
-> (because the user is done *or* had the page reclaimed) and may be either
-> used by someone else or put in a free pool.
+> I didn't really like the changelog the last time around, so I wrote you
+> a new one:
 > 
-> I *think* this is actually a "free" operation, rather than a "reclaim".
->  IIRC, this code gets used at munmap().
+> > https://lore.kernel.org/kvm/8250aedb-a623-646d-071a-75ece2c41c09@intel.com/
+> 
+> The "v4" changelog is pretty hard for me to read.  It doesn't tell me
+> why we can "wipe out EREMOVE" or how it is going to get used going forward.
 
-It does.  I used reclaim because userspace, which does the freeing from this
-code's perspective, never touches the EPC pages.  The SGX_CHILD_PRESENT case is
-handling the scenario where userspace has for all intents and purposed reclaimed
-the EPC from a guest.  If the guest cleanly tears down its enclaves, EREMOVE
-will not fail.
+Oh sorry I missed this. I'll use yours in next version. Thanks.
 
-"free" is probably better though, the above is far from obvious and still not
-guaranteed to be a true reclaim scenario.  If using "freed", drop the "from a
-guest" part.
+> 
+> 
+> > +
+> > +/*
+> > + * Place the page in uninitialized state.  Called by in sgx_encl_release()
+> > + * before sgx_free_epc_page(), which requires EPC page is already in clean
+> > + * slate.
+> > + */
+> 
+> I really don't like comments like that that refer to callers.  They're
+> basically guaranteed to become obsolete.
+> 
+> /*
+>  * Place the page in uninitialized state.  Only usable by callers that
+>  * know the page is in a clean state in which EREMOVE will succeed.
+>  */
+
+Thanks. Agreed it's not good to mention specific caller name.
+
+> 
+> > +static void sgx_reset_epc_page(struct sgx_epc_page *epc_page)
+> > +{
+> > +	int ret;
+> > +
+> > +	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> > +
+> > +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
+> > +	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
+> > +		return;
+> > +}
+> 
+> The uncommented warnings aren't very nice, but I guess they're in the
+> existing code.
+
+Yes. Adding comment should be another patch logically, and I don't want to introduce
+it in this patch.
+
+
