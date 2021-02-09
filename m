@@ -2,104 +2,110 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAB5C433E6
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 00:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199D3C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 16:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2826164EB4
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 00:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7DB964EAA
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Feb 2021 16:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229917AbhBIAKG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Feb 2021 19:10:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhBIAKE (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 8 Feb 2021 19:10:04 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE73C061786
-        for <linux-sgx@vger.kernel.org>; Mon,  8 Feb 2021 16:09:23 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id q9so14550567ilo.1
-        for <linux-sgx@vger.kernel.org>; Mon, 08 Feb 2021 16:09:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=akc8PS5t2j1XjbrR6CgcuGW0rLr1kbq6jUz31C/0DcU=;
-        b=G2F2sqG02nvIMHDsvW1ah8tVs6aTUU86GWEoocC4s68fvFgZeBRfGPD0Afl2r8MQYj
-         Adtu53Ykg2YAWTl9Y3epbLqnHAOyfEK0rQwhueBcFELvDhCWJugi/relPLWnpeDs3CD4
-         IDP6+7CbgKHFicHGBs5Xezd8iQ4NyOSmeHw4E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=akc8PS5t2j1XjbrR6CgcuGW0rLr1kbq6jUz31C/0DcU=;
-        b=kauWFbmDGtN/Dy1s6865OcgyoZdCcKhf6cTQgAd40xMCemmHmPcmF9/H/dBrFucgxG
-         ylMWEoTxaJxeH+DD5mnUl19CwmbqwVwdy8YvMrp5j+QzrP7jEP1qzDTSlJGz8teSpvza
-         SeJAQsp8UTDSo5my49jfrDzo/6jXNG/LwiPYbi/7ukvQvezsJXrPE+PcM2u/ajioCuiU
-         2L6zJZN31RylcLFRacCnIdUm6RC9dVtCgRtm2i1/0D0e76RxFIRlXz6ZigRMFNdETOJT
-         JR9vlm6gkvLCpM3Pv02//eptxQr28DOqXGWPQPYFKbojjkjN1yEr9yD19+4ZEmiofQ1Q
-         /aeQ==
-X-Gm-Message-State: AOAM533GS+Mm83xIauIns+149KuNfa7YjyawhJv3zTeGOlFB3ZyyxTi0
-        rLP9KOQxhoAY/GZFaV4RicI94Q7zlGMIbg==
-X-Google-Smtp-Source: ABdhPJxzZq3u/EH2OoAq4jOquUIpYtQ02A5RoV3cCqrI+bgqsz6vcFfm1uqwrlwomHTLPxsVSGfhhQ==
-X-Received: by 2002:a05:6e02:cd4:: with SMTP id c20mr17789361ilj.189.1612829363145;
-        Mon, 08 Feb 2021 16:09:23 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id f9sm9401648ilu.36.2021.02.08.16.09.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Feb 2021 16:09:22 -0800 (PST)
-Subject: Re: [PATCH v4 1/5] selftests/x86: Use getauxval() to simplify the
- code in sgx
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20210201132653.35690-1-tianjia.zhang@linux.alibaba.com>
- <20210201132653.35690-2-tianjia.zhang@linux.alibaba.com>
- <YBnMCWW8tux490JK@kernel.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <91629d56-a890-18ac-7b10-b20229343d2f@linuxfoundation.org>
-Date:   Mon, 8 Feb 2021 17:09:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S232662AbhBIQMt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 9 Feb 2021 11:12:49 -0500
+Received: from mga06.intel.com ([134.134.136.31]:57364 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232547AbhBIQMr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 9 Feb 2021 11:12:47 -0500
+IronPort-SDR: 5o4IqHr0JwEmc48wQFJeiPNzip26JD1ZAH3oeFV6irQ2fIUBrwHOEsfpLpk5jnI3eLo3mufdjd
+ WpdtEEajMXxA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="243401471"
+X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
+   d="scan'208";a="243401471"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:11:44 -0800
+IronPort-SDR: 3/uG0VvuVUb4IBrkIUUEGjtBg2gjbTt5VpTT+ayvLGgk4g9ziFLWzBDguVGSnIuJIudwbACz1X
+ Ba6L4YJ5JqtQ==
+X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
+   d="scan'208";a="375012633"
+Received: from asklovsk-mobl.amr.corp.intel.com (HELO [10.212.123.206]) ([10.212.123.206])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:11:41 -0800
+Subject: Re: [RFC PATCH v4 02/26] x86/cpufeatures: Add SGX1 and SGX2
+ sub-features
+To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
+        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+References: <cover.1612777752.git.kai.huang@intel.com>
+ <3e7f24c8d5341f71df6f96fabe6c6ca564c90bcb.1612777752.git.kai.huang@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <84d6dc5b-8755-1a1d-904c-817dbc9a5262@intel.com>
+Date:   Tue, 9 Feb 2021 08:11:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YBnMCWW8tux490JK@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <3e7f24c8d5341f71df6f96fabe6c6ca564c90bcb.1612777752.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/2/21 3:02 PM, Jarkko Sakkinen wrote:
-> On Mon, Feb 01, 2021 at 09:26:49PM +0800, Tianjia Zhang wrote:
->> Simplify the sgx code implemntation by using library function
->> getauxval() instead of a custom function to get the base address
->> of vDSO.
->>
->> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> This needs also ack from Shuah.
-> 
+On 2/8/21 2:54 AM, Kai Huang wrote:
+> Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
+> features, since adding a new leaf for only two bits would be wasteful.
+> As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
+> guest, and to do so correctly needs to query hardware and kernel support
+> for SGX1 and SGX2.
 
-Looks good to me. Thank you.
+Looks good now.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
-
+Acked-by: Dave Hansen <dave.hansen@intel.com>
