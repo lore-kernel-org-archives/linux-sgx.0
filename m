@@ -2,128 +2,111 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A46C43381
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Feb 2021 23:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0904CC433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Feb 2021 06:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81D3A64EBB
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Feb 2021 23:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5BE264E7C
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Feb 2021 06:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbhBJXQF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Feb 2021 18:16:05 -0500
-Received: from mga12.intel.com ([192.55.52.136]:59962 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234366AbhBJXNH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Feb 2021 18:13:07 -0500
-IronPort-SDR: ose5+5MLuk1UhGX86n0jV4riMQ5sx4imqVPq4cgqumwdL13cQxrioYQLmmvFF2MfO2GOntrDXv
- qjNbbXIxp7UA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9891"; a="161312464"
-X-IronPort-AV: E=Sophos;i="5.81,169,1610438400"; 
-   d="scan'208";a="161312464"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2021 15:12:22 -0800
-IronPort-SDR: 2Nmz5lwLG+yiGinCih9E8NYBbCP534jpDXDyZJwKG6K0zPob5ypBU4Ph1vsV2wyhGF7WDTuDJX
- AOz7XvnWjmwA==
-X-IronPort-AV: E=Sophos;i="5.81,169,1610438400"; 
-   d="scan'208";a="489344248"
-Received: from gadalarx-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.135.39])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2021 15:12:18 -0800
-Date:   Thu, 11 Feb 2021 12:12:16 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v4 05/26] x86/sgx: Introduce virtual EPC for use by
- KVM guests
-Message-Id: <20210211121216.bb9a9430eee1f2fd43702e93@intel.com>
-In-Reply-To: <YCQPSUNFlWd/s+up@google.com>
-References: <cover.1612777752.git.kai.huang@intel.com>
-        <11a923a314accf36a82aac4b676310a4802f5c75.1612777752.git.kai.huang@intel.com>
-        <YCL8ErAGKNSnX2Up@kernel.org>
-        <YCL8eNNfuo2k5ghO@kernel.org>
-        <9aebc8e6-cff5-b2b4-04af-d3968a3586dc@intel.com>
-        <ec9604199072e185de4b6b74209e84f30423c5e3.camel@intel.com>
-        <YCQPSUNFlWd/s+up@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S229480AbhBKGFA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 11 Feb 2021 01:05:00 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:51927 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229457AbhBKGE6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 11 Feb 2021 01:04:58 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R531e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UOPTk-a_1613023452;
+Received: from 30.27.210.10(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UOPTk-a_1613023452)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 11 Feb 2021 14:04:13 +0800
+Subject: Re: [PATCH v3 3/5] x86/sgx: Optimize the free_cnt count in
+ sgx_epc_section
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+ <20210124062907.88229-4-tianjia.zhang@linux.alibaba.com>
+ <YBGlodsOaX4cWAtl@kernel.org>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <abd77ee8-0311-1664-f3ee-6d4a9fe512b1@linux.alibaba.com>
+Date:   Thu, 11 Feb 2021 14:04:12 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <YBGlodsOaX4cWAtl@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 10 Feb 2021 08:52:25 -0800 Sean Christopherson wrote:
-> On Wed, Feb 10, 2021, Kai Huang wrote:
-> > On Tue, 2021-02-09 at 13:36 -0800, Dave Hansen wrote:
-> > > On 2/9/21 1:19 PM, Jarkko Sakkinen wrote:
-> > > > > Without that clearly documented, it would be unwise to merge this.
-> > > > E.g.
-> > > > 
-> > > > - Have ioctl() to turn opened fd as vEPC.
-> > > > - If FLC is disabled, you could only use the fd for creating vEPC.
-> > > > 
-> > > > Quite easy stuff to implement.
-> 
-> ...
-> 
-> > What's your opinion? Did I miss anything?
-> 
-> Frankly, I think trying to smush them together would be a complete trainwreck.
-> 
-> The vast majority of flows would need to go down completely different paths, so
-> you'd end up with code like this:
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-> index f2eac41bb4ff..5128043c7871 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -46,6 +46,9 @@ static int sgx_release(struct inode *inode, struct file *file)
->         struct sgx_encl *encl = file->private_data;
->         struct sgx_encl_mm *encl_mm;
->  
-> +       if (encl->not_an_enclave)
-> +               return sgx_virt_epc_release(encl);
-> +
->         /*
->          * Drain the remaining mm_list entries. At this point the list contains
->          * entries for processes, which have closed the enclave file but have
-> @@ -83,6 +86,9 @@ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
->         struct sgx_encl *encl = file->private_data;
->         int ret;
->  
-> +       if (encl->not_an_enclave)
-> +               return sgx_virt_epc_mmap(encl, vma);
-> +
->         ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end, vma->vm_flags);
->         if (ret)
->                 return ret;
-> @@ -104,6 +110,11 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
->                                            unsigned long pgoff,
->                                            unsigned long flags)
->  {
-> +       struct sgx_encl *encl = file->private_data;
-> +
-> +       if (encl->not_an_enclave)
-> +               return sgx_virt_epc_mmap(encl, addr, len, pgoff, flags);
-> +
->         if ((flags & MAP_TYPE) == MAP_PRIVATE)
->                 return -EINVAL;
-> 
-> I suspect it would also be tricky to avoid introducing races, since anything that
-> is different for virtual EPC would have a dependency on the ioctl() being called.
-> 
-> This would also prevent making /dev/sgx_enclave root-only while allowing users
-> access to /dev/sgx_vepc.  Forcing admins to use LSMs to do the same is silly.
+Hi,
 
-Agreed. This is really a good point. Two different device nodes allows
-different permission control. Thanks.
+Sorry for the late reply.
 
+On 1/28/21 1:40 AM, Jarkko Sakkinen wrote:
+> I could bet some money that this does not bring any significant
+> performance gain.
 > 
-> For the few flows that can share code, just split out the common bits to helpers.
+
+Yes, this does not bring performance gains. This is not a change for 
+performance, mainly to make the value of free_cnt look more accurate.
+
+> On Sun, Jan 24, 2021 at 02:29:05PM +0800, Tianjia Zhang wrote:
+>> `section->free_cnt` represents the free page in sgx_epc_section,
+>> which is assigned once after initialization. In fact, just after the
+>> initialization is completed, the pages are in the `init_laundry_list`
+>> list and cannot be allocated. This needs to be recovered by EREMOVE
+>> of function sgx_sanitize_section() before it can be used as a page
+>> that can be allocated. The sgx_sanitize_section() will be called in
+>> the kernel thread ksgxd.
+>>
+>> This patch moves the initialization of `section->free_cnt` from the
+>> initialization function `sgx_setup_epc_section()` to the function
+>> `sgx_sanitize_section()`, and then accumulates the count after the
+> 
+> Use single quotes instead of hyphens.
+> >> successful execution of EREMOVE. This seems to be more reasonable,
+>> free_cnt will also truly reflect the allocatable free pages in EPC.
+>>
+>> Sined-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>> Reviewed-by: Sean Christopherson <seanjc@google.com>
+>> ---
+>>   arch/x86/kernel/cpu/sgx/main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+>> index 4465912174fd..e455ec7b3449 100644
+>> --- a/arch/x86/kernel/cpu/sgx/main.c
+>> +++ b/arch/x86/kernel/cpu/sgx/main.c
+>> @@ -48,6 +48,7 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
+>>   		if (!ret) {
+>>   			spin_lock(&section->lock);
+>>   			list_move(&page->list, &section->page_list);
+>> +			section->free_cnt++;
+>>   			spin_unlock(&section->lock);
+> 
+> Someone can try to allocate a page while sanitize process is in progress.
+> 
+> I think it is better to keep critical sections in the form that when you
+> leave from one, the global state is legit.
+> 
+
+Do you mean to move the critical section to protect the entire while 
+loop? Of course, this is also possible, sanitize is a process only 
+needed for initialization, and the possibility of conflict is very small.
+
+Best regards,
+Tianjia
+
