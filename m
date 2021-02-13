@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14C8C433DB
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDEAC433DB
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76AE064E50
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B707B64E46
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:33:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbhBMNdf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 13 Feb 2021 08:33:35 -0500
-Received: from mga05.intel.com ([192.55.52.43]:55920 "EHLO mga05.intel.com"
+        id S229741AbhBMNds (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 13 Feb 2021 08:33:48 -0500
+Received: from mga01.intel.com ([192.55.52.88]:30418 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229861AbhBMNcy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 13 Feb 2021 08:32:54 -0500
-IronPort-SDR: bH/UfTBdE0OK3d4L47N7gBBFYMI/CAl98+zgv8zecLFvY3AcZefAjv6EgRQz6mzLQ7dYgVwU9U
- gk/MglycZPdg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9893"; a="267371909"
+        id S229958AbhBMNdO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 13 Feb 2021 08:33:14 -0500
+IronPort-SDR: MNqBiSJNnIJEfhjGNS06ZNay6mnIVG/jBZeeBS3Q/e4pYECBlrVdFHcukPvehTGvlpUvYMHwDt
+ 9OHwDIu+pqhw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9893"; a="201682484"
 X-IronPort-AV: E=Sophos;i="5.81,176,1610438400"; 
-   d="scan'208";a="267371909"
+   d="scan'208";a="201682484"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:30:57 -0800
-IronPort-SDR: od26tjulHm6ZJ8i0gMWcEmUMe0K3NnRwlus4FeK4hDJOpy3tOFgZaASjXbPJto1GDuVBfpLCRR
- lNwe/hjvPg0g==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:30:40 -0800
+IronPort-SDR: i3zOrBB5tfRWIZ6HSEopzYYTg5K5AOYyzMLv9X/9G3tdmlUx0PpHuruGw3c3OLClBnvMl5b7bj
+ 5A88QfAZwVCw==
 X-IronPort-AV: E=Sophos;i="5.81,176,1610438400"; 
-   d="scan'208";a="398366310"
+   d="scan'208";a="398366269"
 Received: from kshah-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.230.239])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:30:53 -0800
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:30:36 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -39,12 +39,10 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com, corbet@lwn.net,
-        Andy Lutomirski <luto@amacapital.net>,
-        Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v5 26/26] KVM: x86: Add capability to grant VM access to privileged SGX attribute
-Date:   Sun, 14 Feb 2021 02:30:45 +1300
-Message-Id: <5cb830912bb6a641a3947a10743ff40d71b4e953.1613221549.git.kai.huang@intel.com>
+        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
+Subject: [RFC PATCH v5 24/26] KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
+Date:   Sun, 14 Feb 2021 02:29:52 +1300
+Message-Id: <1b1ad90f44052c29ae43501c11301bbbb7065d43.1613221549.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1613221549.git.kai.huang@intel.com>
 References: <cover.1613221549.git.kai.huang@intel.com>
@@ -56,135 +54,98 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add a capability, KVM_CAP_SGX_ATTRIBUTE, that can be used by userspace
-to grant a VM access to a priveleged attribute, with args[0] holding a
-file handle to a valid SGX attribute file.
+Add a VM-Exit handler to trap-and-execute EINIT when SGX LC is enabled
+in the host.  When SGX LC is enabled, the host kernel may rewrite the
+hardware values at will, e.g. to launch enclaves with different signers,
+thus KVM needs to intercept EINIT to ensure it is executed with the
+correct LE hash (even if the guest sees a hardwired hash).
 
-The SGX subsystem restricts access to a subset of enclave attributes to
-provide additional security for an uncompromised kernel, e.g. to prevent
-malware from using the PROVISIONKEY to ensure its nodes are running
-inside a geniune SGX enclave and/or to obtain a stable fingerprint.
+Switching the LE hash MSRs on VM-Enter/VM-Exit is not a viable option as
+writing the MSRs is prohibitively expensive, e.g. on SKL hardware each
+WRMSR is ~400 cycles.  And because EINIT takes tens of thousands of
+cycles to execute, the ~1500 cycle overhead to trap-and-execute EINIT is
+unlikely to be noticed by the guest, let alone impact its overall SGX
+performance.
 
-To prevent userspace from circumventing such restrictions by running an
-enclave in a VM, KVM restricts guest access to privileged attributes by
-default.
-
-Cc: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
- arch/x86/kvm/cpuid.c           |  2 +-
- arch/x86/kvm/x86.c             | 22 ++++++++++++++++++++++
- include/uapi/linux/kvm.h       |  1 +
- 4 files changed, 47 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx/sgx.c | 55 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index c136e254b496..47c7c7c33025 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -6037,6 +6037,29 @@ KVM_EXIT_X86_RDMSR and KVM_EXIT_X86_WRMSR exit notifications which user space
- can then handle to implement model specific MSR handling and/or user notifications
- to inform a user that an MSR was not handled.
+diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
+index d849629af8e6..b69a267305c0 100644
+--- a/arch/x86/kvm/vmx/sgx.c
++++ b/arch/x86/kvm/vmx/sgx.c
+@@ -260,6 +260,59 @@ static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
  
-+7.22 KVM_CAP_SGX_ATTRIBUTE
-+----------------------
++static int handle_encls_einit(struct kvm_vcpu *vcpu)
++{
++	unsigned long sig_hva, secs_hva, token_hva, rflags;
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	gva_t sig_gva, secs_gva, token_gva;
++	gpa_t sig_gpa, secs_gpa, token_gpa;
++	int ret, trapnr;
 +
-+:Architectures: x86
-+:Target: VM
-+:Parameters: args[0] is a file handle of a SGX attribute file in securityfs
-+:Returns: 0 on success, -EINVAL if the file handle is invalid or if a requested
-+          attribute is not supported by KVM.
++	if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 1808, 4096, &sig_gva) ||
++	    sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096, &secs_gva) ||
++	    sgx_get_encls_gva(vcpu, kvm_rdx_read(vcpu), 304, 512, &token_gva))
++		return 1;
 +
-+KVM_CAP_SGX_ATTRIBUTE enables a userspace VMM to grant a VM access to one or
-+more priveleged enclave attributes.  args[0] must hold a file handle to a valid
-+SGX attribute file corresponding to an attribute that is supported/restricted
-+by KVM (currently only PROVISIONKEY).
++	/*
++	 * Translate the SIGSTRUCT, SECS and TOKEN pointers from GVA to GPA.
++	 * Resume the guest on failure to inject a #PF.
++	 */
++	if (sgx_gva_to_gpa(vcpu, sig_gva, false, &sig_gpa) ||
++	    sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa) ||
++	    sgx_gva_to_gpa(vcpu, token_gva, false, &token_gpa))
++		return 1;
 +
-+The SGX subsystem restricts access to a subset of enclave attributes to provide
-+additional security for an uncompromised kernel, e.g. use of the PROVISIONKEY
-+is restricted to deter malware from using the PROVISIONKEY to obtain a stable
-+system fingerprint.  To prevent userspace from circumventing such restrictions
-+by running an enclave in a VM, KVM prevents access to privileged attributes by
-+default.
++	/*
++	 * ...and then to HVA.  The order of accesses isn't architectural, i.e.
++	 * KVM doesn't have to fully process one address at a time.  Exit to
++	 * userspace if a GPA is invalid.  Note, all structures are aligned and
++	 * cannot split pages.
++	 */
++	if (sgx_gpa_to_hva(vcpu, sig_gpa, &sig_hva) ||
++	    sgx_gpa_to_hva(vcpu, secs_gpa, &secs_hva) ||
++	    sgx_gpa_to_hva(vcpu, token_gpa, &token_hva))
++		return 0;
 +
-+See Documentation/x86/sgx/2.Kernel-internals.rst for more details.
++	ret = sgx_virt_einit((void __user *)sig_hva, (void __user *)token_hva,
++			     (void __user *)secs_hva,
++			     vmx->msr_ia32_sgxlepubkeyhash, &trapnr);
 +
- 8. Other capabilities.
- ======================
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 04b2f5de2d7b..ad00a1af1545 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -833,7 +833,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 		 * expected to derive it from supported XCR0.
- 		 */
- 		entry->eax &= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
--			      /* PROVISIONKEY | */ SGX_ATTR_EINITTOKENKEY |
-+			      SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINITTOKENKEY |
- 			      SGX_ATTR_KSS;
- 		entry->ebx &= 0;
- 		break;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5ca7b181a3ae..3d1b4113a57b 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -74,6 +74,8 @@
- #include <asm/tlbflush.h>
- #include <asm/intel_pt.h>
- #include <asm/emulate_prefix.h>
-+#include <asm/sgx.h>
-+#include <asm/sgx_arch.h>
- #include <clocksource/hyperv_timer.h>
- 
- #define CREATE_TRACE_POINTS
-@@ -3767,6 +3769,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_X86_USER_SPACE_MSR:
- 	case KVM_CAP_X86_MSR_FILTER:
- 	case KVM_CAP_ENFORCE_PV_FEATURE_CPUID:
-+#ifdef CONFIG_X86_SGX_KVM
-+	case KVM_CAP_SGX_ATTRIBUTE:
-+#endif
- 		r = 1;
- 		break;
- 	case KVM_CAP_SYNC_REGS:
-@@ -5295,6 +5300,23 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		kvm->arch.user_space_msr_mask = cap->args[0];
- 		r = 0;
- 		break;
-+#ifdef CONFIG_X86_SGX_KVM
-+	case KVM_CAP_SGX_ATTRIBUTE: {
-+		unsigned long allowed_attributes = 0;
++	if (ret == -EFAULT)
++		return sgx_inject_fault(vcpu, secs_gva, trapnr);
 +
-+		r = sgx_set_attribute(&allowed_attributes, cap->args[0]);
-+		if (r)
-+			break;
++	rflags = vmx_get_rflags(vcpu) & ~(X86_EFLAGS_CF | X86_EFLAGS_PF |
++					  X86_EFLAGS_AF | X86_EFLAGS_SF |
++					  X86_EFLAGS_OF);
++	if (ret)
++		rflags |= X86_EFLAGS_ZF;
++	else
++		rflags &= ~X86_EFLAGS_ZF;
++	vmx_set_rflags(vcpu, rflags);
 +
-+		/* KVM only supports the PROVISIONKEY privileged attribute. */
-+		if ((allowed_attributes & SGX_ATTR_PROVISIONKEY) &&
-+		    !(allowed_attributes & ~SGX_ATTR_PROVISIONKEY))
-+			kvm->arch.sgx_provisioning_allowed = true;
-+		else
-+			r = -EINVAL;
-+		break;
-+	}
-+#endif
- 	default:
- 		r = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 374c67875cdb..e17bda18a9b4 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1058,6 +1058,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_ENFORCE_PV_FEATURE_CPUID 190
- #define KVM_CAP_SYS_HYPERV_CPUID 191
- #define KVM_CAP_DIRTY_LOG_RING 192
-+#define KVM_CAP_SGX_ATTRIBUTE 200
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
++	kvm_rax_write(vcpu, ret);
++	return kvm_skip_emulated_instruction(vcpu);
++}
++
+ static inline bool encls_leaf_enabled_in_guest(struct kvm_vcpu *vcpu, u32 leaf)
+ {
+ 	if (!enable_sgx || !guest_cpuid_has(vcpu, X86_FEATURE_SGX))
+@@ -292,6 +345,8 @@ int handle_encls(struct kvm_vcpu *vcpu)
+ 	} else {
+ 		if (leaf == ECREATE)
+ 			return handle_encls_ecreate(vcpu);
++		if (leaf == EINIT)
++			return handle_encls_einit(vcpu);
+ 		WARN(1, "KVM: unexpected exit on ENCLS[%u]", leaf);
+ 		vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
+ 		vcpu->run->hw.hardware_exit_reason = EXIT_REASON_ENCLS;
 -- 
 2.29.2
 
