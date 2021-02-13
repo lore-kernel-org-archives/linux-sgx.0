@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4823AC433DB
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070A6C433E0
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2245B64E50
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDBB164E46
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229827AbhBMNam (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 13 Feb 2021 08:30:42 -0500
-Received: from mga12.intel.com ([192.55.52.136]:59256 "EHLO mga12.intel.com"
+        id S229653AbhBMNas (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 13 Feb 2021 08:30:48 -0500
+Received: from mga12.intel.com ([192.55.52.136]:59259 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229625AbhBMNa1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 13 Feb 2021 08:30:27 -0500
-IronPort-SDR: WwhVsIoAdJDKD3pm1JGymuVO0mbSMx1B8Z3VK0Qd4Mn0aT1auXvTs24opxv/TkMsuu7cfYiYJq
- GKLY6LRmCKMQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9893"; a="161667694"
+        id S229662AbhBMNaa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 13 Feb 2021 08:30:30 -0500
+IronPort-SDR: eIDCoW9CAxmNY2DO/vTGbgMZncS3quTeoxGLxgF6ySfOsQmdOsuiuzncNzLAEy3Avp4TvZUXXp
+ Fq2JENoBJaIQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9893"; a="161667700"
 X-IronPort-AV: E=Sophos;i="5.81,176,1610438400"; 
-   d="scan'208";a="161667694"
+   d="scan'208";a="161667700"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:29:39 -0800
-IronPort-SDR: VYRZHaIxpdQCnA/kGuT03IUTiIfGWpdZOnzBL/aDgyjjdkocDCE+a1WZHPmVFBb0N5XGfTg9VH
- UcUvEz1hv/cQ==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:29:46 -0800
+IronPort-SDR: N5HUOJQzJgrbskEMiM/HNp5mT/eJcRLBsFF0jslH1wMLqBVtp1n5avBA+aTYzUf68QytScW+30
+ yVyD5LE0cZ2Q==
 X-IronPort-AV: E=Sophos;i="5.81,176,1610438400"; 
-   d="scan'208";a="398366032"
+   d="scan'208";a="398366044"
 Received: from kshah-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.230.239])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:29:36 -0800
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:29:43 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -39,9 +39,9 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v5 10/26] x86/sgx: Add SGX2 ENCLS leaf definitions (EAUG, EMODPR and EMODT)
-Date:   Sun, 14 Feb 2021 02:29:12 +1300
-Message-Id: <729d01df93227792d0eb30d225175f1024f0e1e1.1613221549.git.kai.huang@intel.com>
+Subject: [RFC PATCH v5 12/26] x86/sgx: Add helper to update SGX_LEPUBKEYHASHn MSRs
+Date:   Sun, 14 Feb 2021 02:29:14 +1300
+Message-Id: <7d2365223d92d489356926fa36dc06fd0e1c1ab8.1613221549.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1613221549.git.kai.huang@intel.com>
 References: <cover.1613221549.git.kai.huang@intel.com>
@@ -51,34 +51,94 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Add a helper to update SGX_LEPUBKEYHASHn MSRs.  SGX virtualization also
+needs to update those MSRs based on guest's "virtual" SGX_LEPUBKEYHASHn
+before EINIT from guest.
 
-Define the ENCLS leafs that are available with SGX2, also referred to as
-Enclave Dynamic Memory Management (EDMM).  The leafs will be used by KVM
-to conditionally expose SGX2 capabilities to guests.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
 Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/include/asm/sgx_arch.h | 3 +++
- 1 file changed, 3 insertions(+)
+v4->v5:
 
-diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
-index 3dbe7aacf552..756c8dacc52a 100644
---- a/arch/x86/include/asm/sgx_arch.h
-+++ b/arch/x86/include/asm/sgx_arch.h
-@@ -35,6 +35,9 @@ enum sgx_encls_function {
- 	EPA	= 0x0A,
- 	EWB	= 0x0B,
- 	ETRACK	= 0x0C,
-+	EAUG	= 0x0D,
-+	EMODPR	= 0x0E,
-+	EMODT	= 0x0F,
- };
+ - No code change.
+
+v3->v4:
+
+ - Patch rebase due to sgx/virt.h was removed per Dave, and sgx_vepc_init()
+   declaration was moved to sgx/sgx.h.
+ - Added Jarkko's Ack-by. Restored Dave's Acked-by.
+
+v2->v3:
+
+ - Added comment for sgx_update_lepubkeyhash(), per Jarkko and Dave.
+
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c |  5 ++---
+ arch/x86/kernel/cpu/sgx/main.c  | 15 +++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h   |  2 ++
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index e5977752c7be..1bae754268d1 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -495,7 +495,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 			 void *token)
+ {
+ 	u64 mrsigner[4];
+-	int i, j, k;
++	int i, j;
+ 	void *addr;
+ 	int ret;
  
- /**
+@@ -544,8 +544,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 
+ 			preempt_disable();
+ 
+-			for (k = 0; k < 4; k++)
+-				wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + k, mrsigner[k]);
++			sgx_update_lepubkeyhash(mrsigner);
+ 
+ 			ret = __einit(sigstruct, token, addr);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8c922e68274d..276220d0e4b5 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -696,6 +696,21 @@ static bool __init sgx_page_cache_init(void)
+ 	return true;
+ }
+ 
++
++/*
++ * Update the SGX_LEPUBKEYHASH MSRs to the values specified by caller.
++ * Bare-metal driver requires to update them to hash of enclave's signer
++ * before EINIT. KVM needs to update them to guest's virtual MSR values
++ * before doing EINIT from guest.
++ */
++void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
++{
++	int i;
++
++	for (i = 0; i < 4; i++)
++		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
++}
++
+ static int __init sgx_init(void)
+ {
+ 	int ret;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 161d2d8ac3b6..371fdf3b16a8 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -92,4 +92,6 @@ static inline int __init sgx_vepc_init(void)
+ }
+ #endif
+ 
++void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
++
+ #endif /* _X86_SGX_H */
 -- 
 2.29.2
 
