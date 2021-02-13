@@ -2,46 +2,47 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E64BC433DB
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E7EC433DB
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4BA64E44
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086D364E46
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Feb 2021 13:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbhBMNbd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 13 Feb 2021 08:31:33 -0500
-Received: from mga12.intel.com ([192.55.52.136]:59259 "EHLO mga12.intel.com"
+        id S229916AbhBMNcA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 13 Feb 2021 08:32:00 -0500
+Received: from mga01.intel.com ([192.55.52.88]:30418 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229539AbhBMNbD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 13 Feb 2021 08:31:03 -0500
-IronPort-SDR: AX1PDUJJf9tIwnlhjCgSef8YnLXJpX9wFqf7Jz6TA3RNR/t9TdzP1H8bMBC7tb4PJugCYg5+aX
- wtH0cgdtUFeg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9893"; a="161667710"
+        id S229929AbhBMNbY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 13 Feb 2021 08:31:24 -0500
+IronPort-SDR: PuBpl6J5/DaMid3tkakbYEcSVOKNO/2Wjsg4GFPZZblEGOmNGpIwTd4Gs54oLmFM30gnhQ86Ez
+ MlGsS8I8Rh7g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9893"; a="201682452"
 X-IronPort-AV: E=Sophos;i="5.81,176,1610438400"; 
-   d="scan'208";a="161667710"
+   d="scan'208";a="201682452"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:29:52 -0800
-IronPort-SDR: 9K4rB2jpGiXpMnEfJvEkGHktm8tVixNZFTqKzGXze0JYCO2VOYCwyd9jDR5ObMsJ+RUO8hjcZX
- cMwB5gsQy3Ww==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:30:17 -0800
+IronPort-SDR: iqJ2sHIsg4gCutiT3M+KentJXF8MHioAMpt8pIOFL1WEBY4VvoXJpcps8RJYnTuuZPm46rXiBz
+ MQdK2URNfH6Q==
 X-IronPort-AV: E=Sophos;i="5.81,176,1610438400"; 
-   d="scan'208";a="398366059"
+   d="scan'208";a="398366177"
 Received: from kshah-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.230.239])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:29:49 -0800
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2021 05:30:13 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v5 14/26] x86/sgx: Move provisioning device creation out of SGX driver
-Date:   Sun, 14 Feb 2021 02:29:16 +1300
-Message-Id: <94adb11a65cd8a523d1b6b721f94dd8081ed4d5d.1613221549.git.kai.huang@intel.com>
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
+Subject: [RFC PATCH v5 18/26] KVM: x86: Add support for reverse CPUID lookup of scattered features
+Date:   Sun, 14 Feb 2021 02:29:46 +1300
+Message-Id: <d1d414379f374825c2d5e04a805f990888568a7a.1613221549.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1613221549.git.kai.huang@intel.com>
 References: <cover.1613221549.git.kai.huang@intel.com>
@@ -51,240 +52,204 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Sean Christopherson <seanjc@google.com>
 
-And extract sgx_set_attribute() out of sgx_ioc_enclave_provision() and
-export it as symbol for KVM to use.
+Introduce a scheme that allows KVM's CPUID magic to support features
+that are scattered in the kernel's feature words.  To advertise and/or
+query guest support for CPUID-based features, KVM requires the bit
+number of an X86_FEATURE_* to match the bit number in its associated
+CPUID entry.  For scattered features, this does not hold true.
 
-Provisioning key is sensitive. SGX driver only allows to create enclave
-which can access provisioning key when enclave creator has permission to
-open /dev/sgx_provision.  It should apply to VM as well, as provisioning
-key is platform specific, thus unrestricted VM can also potentially
-compromise provisioning key.
+Add a framework to allow defining KVM-only words, stored in
+kvm_cpu_caps after the shared kernel caps, that can be used to gather
+the scattered feature bits by translating X86_FEATURE_* flags into their
+KVM-defined feature.
 
-Move provisioning device creation out of sgx_drv_init() to sgx_init() as
-preparation for adding SGX virtualization support, so that even SGX
-driver is not enabled due to flexible launch control is not available,
-SGX virtualization can still be enabled, and use it to restrict VM's
-capability of being able to access provisioning key.
+Note, because reverse_cpuid_check() effectively forces kvm_cpu_caps
+lookups to be resolved at compile time, there is no runtime cost for
+translating from kernel-defined to kvm-defined features.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+More details here:  https://lkml.kernel.org/r/X/jxCOLG+HUO4QlZ@google.com
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
-v4->v5:
+ arch/x86/kvm/cpuid.c | 32 +++++++++++++++++++++++++++-----
+ arch/x86/kvm/cpuid.h | 39 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 61 insertions(+), 10 deletions(-)
 
- - No code change.
-
-v3->v4:
-
- - No code change. Added Jarkko's Reviewed-by.
-
-v2->v3:
-
- - Added kdoc for sgx_set_attribute(), per Jarkko.
-
----
- arch/x86/include/asm/sgx.h       |  3 ++
- arch/x86/kernel/cpu/sgx/driver.c | 17 ----------
- arch/x86/kernel/cpu/sgx/ioctl.c  | 16 ++-------
- arch/x86/kernel/cpu/sgx/main.c   | 58 +++++++++++++++++++++++++++++++-
- 4 files changed, 62 insertions(+), 32 deletions(-)
-
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 8a3ea3e1efbe..d67afb051db3 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -4,6 +4,9 @@
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 13036cf0b912..f8037fab8950 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -28,7 +28,7 @@
+  * Unlike "struct cpuinfo_x86.x86_capability", kvm_cpu_caps doesn't need to be
+  * aligned to sizeof(unsigned long) because it's not accessed via bitops.
+  */
+-u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
++u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ EXPORT_SYMBOL_GPL(kvm_cpu_caps);
  
- #include <linux/types.h>
+ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
+@@ -53,6 +53,7 @@ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
+ }
  
-+int sgx_set_attribute(unsigned long *allowed_attributes,
-+		      unsigned int attribute_fd);
-+
- #ifdef CONFIG_X86_SGX_KVM
- struct sgx_pageinfo;
+ #define F feature_bit
++#define SF(name) (boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0)
  
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index f2eac41bb4ff..4f3241109bda 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -133,10 +133,6 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
+ static inline struct kvm_cpuid_entry2 *cpuid_entry2_find(
+ 	struct kvm_cpuid_entry2 *entries, int nent, u32 function, u32 index)
+@@ -331,13 +332,13 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
+ 	return r;
+ }
  
--const struct file_operations sgx_provision_fops = {
--	.owner			= THIS_MODULE,
--};
--
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "sgx_enclave",
-@@ -144,13 +140,6 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
--static struct miscdevice sgx_dev_provision = {
--	.minor = MISC_DYNAMIC_MINOR,
--	.name = "sgx_provision",
--	.nodename = "sgx_provision",
--	.fops = &sgx_provision_fops,
--};
--
- int __init sgx_drv_init(void)
+-static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
++/* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
++static __always_inline void __kvm_cpu_cap_mask(enum cpuid_leafs leaf)
  {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -184,11 +173,5 @@ int __init sgx_drv_init(void)
- 	if (ret)
- 		return ret;
+ 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
+ 	struct kvm_cpuid_entry2 entry;
  
--	ret = misc_register(&sgx_dev_provision);
--	if (ret) {
--		misc_deregister(&sgx_dev_enclave);
--		return ret;
--	}
--
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 1bae754268d1..4714de12422d 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -2,6 +2,7 @@
- /*  Copyright(c) 2016-20 Intel Corporation. */
+ 	reverse_cpuid_check(leaf);
+-	kvm_cpu_caps[leaf] &= mask;
  
- #include <asm/mman.h>
-+#include <asm/sgx.h>
- #include <linux/mman.h>
- #include <linux/delay.h>
- #include <linux/file.h>
-@@ -664,24 +665,11 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
- {
- 	struct sgx_enclave_provision params;
--	struct file *file;
- 
- 	if (copy_from_user(&params, arg, sizeof(params)))
- 		return -EFAULT;
- 
--	file = fget(params.fd);
--	if (!file)
--		return -EINVAL;
--
--	if (file->f_op != &sgx_provision_fops) {
--		fput(file);
--		return -EINVAL;
--	}
--
--	encl->attributes_mask |= SGX_ATTR_PROVISIONKEY;
--
--	fput(file);
--	return 0;
-+	return sgx_set_attribute(&encl->attributes_mask, params.fd);
+ 	cpuid_count(cpuid.function, cpuid.index,
+ 		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
+@@ -345,6 +346,26 @@ static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+ 	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
  }
  
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 276220d0e4b5..7167f607d92c 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -1,14 +1,18 @@
- // SPDX-License-Identifier: GPL-2.0
- /*  Copyright(c) 2016-20 Intel Corporation. */
- 
-+#include <linux/file.h>
- #include <linux/freezer.h>
- #include <linux/highmem.h>
- #include <linux/kthread.h>
-+#include <linux/miscdevice.h>
- #include <linux/pagemap.h>
- #include <linux/ratelimit.h>
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/slab.h>
-+#include <asm/sgx_arch.h>
-+#include <asm/sgx.h>
- #include "driver.h"
- #include "encl.h"
- #include "encls.h"
-@@ -711,6 +715,51 @@ void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
- 		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
- }
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
-+
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "sgx_provision",
-+	.nodename = "sgx_provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
-+/**
-+ * sgx_set_attribute() - Update allowed attributes given file descriptor
-+ * @allowed_attributes: 	Pointer to allowed enclave attributes
-+ * @attribute_fd:		File descriptor for specific attribute
-+ *
-+ * Append enclave attribute indicated by file descriptor to allowed
-+ * attributes. Currently only SGX_ATTR_PROVISIONKEY indicated by
-+ * /dev/sgx_provision is supported.
-+ *
-+ * Return:
-+ * -0:		SGX_ATTR_PROVISIONKEY is appended to allowed_attributes
-+ * -EINVAL:	Invalid, or not supported file descriptor
-+ */
-+int sgx_set_attribute(unsigned long *allowed_attributes,
-+		      unsigned int attribute_fd)
++static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
 +{
-+	struct file *file;
++	/* Use the "init" variant for scattered leafs. */
++	BUILD_BUG_ON(leaf >= NCAPINTS);
 +
-+	file = fget(attribute_fd);
-+	if (!file)
-+		return -EINVAL;
++	kvm_cpu_caps[leaf] &= mask;
 +
-+	if (file->f_op != &sgx_provision_fops) {
-+		fput(file);
-+		return -EINVAL;
-+	}
-+
-+	*allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-+
-+	fput(file);
-+	return 0;
++	__kvm_cpu_cap_mask(leaf);
 +}
-+EXPORT_SYMBOL_GPL(sgx_set_attribute);
 +
- static int __init sgx_init(void)
++static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
++{
++	/* Use the "mask" variant for hardwared-defined leafs. */
++	BUILD_BUG_ON(leaf < NCAPINTS);
++
++	kvm_cpu_caps[leaf] = mask;
++
++	__kvm_cpu_cap_mask(leaf);
++}
++
+ void kvm_set_cpu_caps(void)
  {
- 	int ret;
-@@ -727,6 +776,10 @@ static int __init sgx_init(void)
- 		goto err_page_cache;
- 	}
+ 	unsigned int f_nx = is_efer_nx() ? F(NX) : 0;
+@@ -355,12 +376,13 @@ void kvm_set_cpu_caps(void)
+ 	unsigned int f_gbpages = 0;
+ 	unsigned int f_lm = 0;
+ #endif
++	memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
  
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret)
-+		goto err_kthread;
+-	BUILD_BUG_ON(sizeof(kvm_cpu_caps) >
++	BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
+ 		     sizeof(boot_cpu_data.x86_capability));
+ 
+ 	memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
+-	       sizeof(kvm_cpu_caps));
++	       sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)));
+ 
+ 	kvm_cpu_cap_mask(CPUID_1_ECX,
+ 		/*
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index dc921d76e42e..2041e2f07347 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -7,7 +7,20 @@
+ #include <asm/processor.h>
+ #include <uapi/asm/kvm_para.h>
+ 
+-extern u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
++/*
++ * Hardware-defined CPUID leafs that are scattered in the kernel, but need to
++ * be directly used by KVM.  Note, these word values conflict with the kernel's
++ * "bug" caps, but KVM doesn't use those.
++ */
++enum kvm_only_cpuid_leafs {
++	NR_KVM_CPU_CAPS = NCAPINTS,
 +
- 	/*
- 	 * Always try to initialize the native *and* KVM drivers.
- 	 * The KVM driver is less picky than the native one and
-@@ -737,10 +790,13 @@ static int __init sgx_init(void)
- 	 */
- 	ret = !!sgx_drv_init() & !!sgx_vepc_init();
- 	if (ret)
--		goto err_kthread;
-+		goto err_provision;
- 
- 	return 0;
- 
-+err_provision:
-+	misc_deregister(&sgx_dev_provision);
++	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
++};
 +
- err_kthread:
- 	kthread_stop(ksgxd_tsk);
++#define X86_KVM_FEATURE(w, f)		((w)*32 + (f))
++
++extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ void kvm_set_cpu_caps(void);
  
+ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu);
+@@ -83,6 +96,20 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+ 	BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
+ }
+ 
++/*
++ * Translate feature bits that are scattered in the kernel's cpufeatures word
++ * into KVM feature words that align with hardware's definitions.
++ */
++static __always_inline u32 __feature_translate(int x86_feature)
++{
++	return x86_feature;
++}
++
++static __always_inline u32 __feature_leaf(int x86_feature)
++{
++	return __feature_translate(x86_feature) / 32;
++}
++
+ /*
+  * Retrieve the bit mask from an X86_FEATURE_* definition.  Features contain
+  * the hardware defined bit number (stored in bits 4:0) and a software defined
+@@ -91,6 +118,8 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+  */
+ static __always_inline u32 __feature_bit(int x86_feature)
+ {
++	x86_feature = __feature_translate(x86_feature);
++
+ 	reverse_cpuid_check(x86_feature / 32);
+ 	return 1 << (x86_feature & 31);
+ }
+@@ -99,7 +128,7 @@ static __always_inline u32 __feature_bit(int x86_feature)
+ 
+ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	return reverse_cpuid[x86_leaf];
+@@ -291,7 +320,7 @@ static inline bool cpuid_fault_enabled(struct kvm_vcpu *vcpu)
+ 
+ static __always_inline void kvm_cpu_cap_clear(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	kvm_cpu_caps[x86_leaf] &= ~__feature_bit(x86_feature);
+@@ -299,7 +328,7 @@ static __always_inline void kvm_cpu_cap_clear(unsigned int x86_feature)
+ 
+ static __always_inline void kvm_cpu_cap_set(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	kvm_cpu_caps[x86_leaf] |= __feature_bit(x86_feature);
+@@ -307,7 +336,7 @@ static __always_inline void kvm_cpu_cap_set(unsigned int x86_feature)
+ 
+ static __always_inline u32 kvm_cpu_cap_get(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	return kvm_cpu_caps[x86_leaf] & __feature_bit(x86_feature);
 -- 
 2.29.2
 
