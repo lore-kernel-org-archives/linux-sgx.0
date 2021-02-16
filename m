@@ -2,31 +2,30 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3B9C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5428FC433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17C3264DF4
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:31:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C71164DA8
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbhBPDbB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Feb 2021 22:31:01 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40303 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229617AbhBPDbA (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 15 Feb 2021 22:31:00 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UOk85wU_1613446213;
-Received: from 30.25.189.44(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UOk85wU_1613446213)
+        id S229890AbhBPDcS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Feb 2021 22:32:18 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:53093 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229617AbhBPDcR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 15 Feb 2021 22:32:17 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UOk1HHh_1613446294;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UOk1HHh_1613446294)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 16 Feb 2021 11:30:14 +0800
-Subject: Re: [PATCH v3 3/5] x86/sgx: Optimize the free_cnt count in
- sgx_epc_section
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+          Tue, 16 Feb 2021 11:31:34 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Sean Christopherson <seanjc@google.com>,
@@ -34,98 +33,86 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
-References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
- <20210124062907.88229-4-tianjia.zhang@linux.alibaba.com>
- <YBGlodsOaX4cWAtl@kernel.org>
- <abd77ee8-0311-1664-f3ee-6d4a9fe512b1@linux.alibaba.com>
- <YCZyVXIeeYqNK+sy@kernel.org>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <483f1ff9-9022-b7fc-5931-79c0c83f1289@linux.alibaba.com>
-Date:   Tue, 16 Feb 2021 11:30:13 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v5 1/3] selftests/x86: Use getauxval() to simplify the code in sgx
+Date:   Tue, 16 Feb 2021 11:31:31 +0800
+Message-Id: <20210216033133.79543-2-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+In-Reply-To: <20210216033133.79543-1-tianjia.zhang@linux.alibaba.com>
+References: <20210216033133.79543-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <YCZyVXIeeYqNK+sy@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+Simplify the sgx code implemntation by using library function
+getauxval() instead of a custom function to get the base address
+of vDSO.
 
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+---
+ tools/testing/selftests/sgx/main.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-On 2/12/21 8:19 PM, Jarkko Sakkinen wrote:
-> On Thu, Feb 11, 2021 at 02:04:12PM +0800, Tianjia Zhang wrote:
->> Hi,
->>
->> Sorry for the late reply.
->>
->> On 1/28/21 1:40 AM, Jarkko Sakkinen wrote:
->>> I could bet some money that this does not bring any significant
->>> performance gain.
->>>
->>
->> Yes, this does not bring performance gains. This is not a change for
->> performance, mainly to make the value of free_cnt look more accurate.
->>
->>> On Sun, Jan 24, 2021 at 02:29:05PM +0800, Tianjia Zhang wrote:
->>>> `section->free_cnt` represents the free page in sgx_epc_section,
->>>> which is assigned once after initialization. In fact, just after the
->>>> initialization is completed, the pages are in the `init_laundry_list`
->>>> list and cannot be allocated. This needs to be recovered by EREMOVE
->>>> of function sgx_sanitize_section() before it can be used as a page
->>>> that can be allocated. The sgx_sanitize_section() will be called in
->>>> the kernel thread ksgxd.
->>>>
->>>> This patch moves the initialization of `section->free_cnt` from the
->>>> initialization function `sgx_setup_epc_section()` to the function
->>>> `sgx_sanitize_section()`, and then accumulates the count after the
->>>
->>> Use single quotes instead of hyphens.
->>>>> successful execution of EREMOVE. This seems to be more reasonable,
->>>> free_cnt will also truly reflect the allocatable free pages in EPC.
->>>>
->>>> Sined-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->>>> Reviewed-by: Sean Christopherson <seanjc@google.com>
->>>> ---
->>>>    arch/x86/kernel/cpu/sgx/main.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
->>>> index 4465912174fd..e455ec7b3449 100644
->>>> --- a/arch/x86/kernel/cpu/sgx/main.c
->>>> +++ b/arch/x86/kernel/cpu/sgx/main.c
->>>> @@ -48,6 +48,7 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
->>>>    		if (!ret) {
->>>>    			spin_lock(&section->lock);
->>>>    			list_move(&page->list, &section->page_list);
->>>> +			section->free_cnt++;
->>>>    			spin_unlock(&section->lock);
->>>
->>> Someone can try to allocate a page while sanitize process is in progress.
->>>
->>> I think it is better to keep critical sections in the form that when you
->>> leave from one, the global state is legit.
->>>
->>
->> Do you mean to move the critical section to protect the entire while loop?
->> Of course, this is also possible, sanitize is a process only needed for
->> initialization, and the possibility of conflict is very small.
->>
->> Best regards,
->> Tianjia
-> 
-> The big picture of this change to me, to be frank is that it's completely
-> useless.
-> 
-> Please start with the picture.
-> 
-> /Jarkko
-> 
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 724cec700926..5167505fbb46 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -15,6 +15,7 @@
+ #include <sys/stat.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
++#include <sys/auxv.h>
+ #include "defines.h"
+ #include "main.h"
+ #include "../kselftest.h"
+@@ -28,24 +29,6 @@ struct vdso_symtab {
+ 	Elf64_Word *elf_hashtab;
+ };
+ 
+-static void *vdso_get_base_addr(char *envp[])
+-{
+-	Elf64_auxv_t *auxv;
+-	int i;
+-
+-	for (i = 0; envp[i]; i++)
+-		;
+-
+-	auxv = (Elf64_auxv_t *)&envp[i + 1];
+-
+-	for (i = 0; auxv[i].a_type != AT_NULL; i++) {
+-		if (auxv[i].a_type == AT_SYSINFO_EHDR)
+-			return (void *)auxv[i].a_un.a_val;
+-	}
+-
+-	return NULL;
+-}
+-
+ static Elf64_Dyn *vdso_get_dyntab(void *addr)
+ {
+ 	Elf64_Ehdr *ehdr = addr;
+@@ -162,7 +145,7 @@ static int user_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r
+ 	return 0;
+ }
+ 
+-int main(int argc, char *argv[], char *envp[])
++int main(int argc, char *argv[])
+ {
+ 	struct sgx_enclave_run run;
+ 	struct vdso_symtab symtab;
+@@ -203,7 +186,8 @@ int main(int argc, char *argv[], char *envp[])
+ 	memset(&run, 0, sizeof(run));
+ 	run.tcs = encl.encl_base;
+ 
+-	addr = vdso_get_base_addr(envp);
++	/* Get vDSO base address */
++	addr = (void *)getauxval(AT_SYSINFO_EHDR);
+ 	if (!addr)
+ 		goto err;
+ 
+-- 
+2.19.1.3.ge56e4f7
 
-I carefully considered your suggestion, and I will delete 2/5 and 3/5 in 
-the next version.
-
-Best regards,
-Tianjia
