@@ -2,235 +2,130 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73F3C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3B9C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E67B64D9D
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17C3264DF4
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbhBPDKK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Feb 2021 22:10:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229703AbhBPDKJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 15 Feb 2021 22:10:09 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F31F64DE8;
-        Tue, 16 Feb 2021 03:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613444968;
-        bh=H7pZrLgEmbVOB3J1+nLiVbNoH4kxBddNoDdxLu2lTog=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ImFdodrKuxejL8+eCSYq17Qkqd0T1w4/N64OJ1lsDM2U5GbTeKf5zWaICFLHEaRJg
-         oUoyAOW+jsPK14phvJSPdD8RT+OVlVod5+xFr0OjQrEAT0VHN25ofQzVTiGCJyJWuU
-         0BXGOj52k9QPlHLdFVGbB1v2gCT3adt2DHJpTTv3tenIxM+4lPzs+6BMiYqbrZhU5o
-         nF4t/OhNu3Lt4JC9sd1jNKmXNWK9W9z6y3FAXSB7+O5HM268OJa+PVoxZsQJQ0szB8
-         XNdTXXzaEV8FaVQ4Fu5CTkyF3NAR+fIpWR/rvQDTYSLbsN/FzPj4vMk7oPamXCfyfb
-         FSsP4ENDhITgw==
-Date:   Tue, 16 Feb 2021 05:09:14 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, luto@kernel.org, dave.hansen@intel.com,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v5 13/26] x86/sgx: Add helpers to expose ECREATE and
- EINIT to KVM
-Message-ID: <YCs3Wt+il5+pnwCV@kernel.org>
-References: <cover.1613221549.git.kai.huang@intel.com>
- <4b8921da8e0d037b1e99d5cc92eea8f8470cf2e0.1613221549.git.kai.huang@intel.com>
- <YCs3IZ/Edv6AeIYo@kernel.org>
+        id S229731AbhBPDbB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Feb 2021 22:31:01 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40303 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229617AbhBPDbA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 15 Feb 2021 22:31:00 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UOk85wU_1613446213;
+Received: from 30.25.189.44(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UOk85wU_1613446213)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 16 Feb 2021 11:30:14 +0800
+Subject: Re: [PATCH v3 3/5] x86/sgx: Optimize the free_cnt count in
+ sgx_epc_section
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+References: <20210124062907.88229-1-tianjia.zhang@linux.alibaba.com>
+ <20210124062907.88229-4-tianjia.zhang@linux.alibaba.com>
+ <YBGlodsOaX4cWAtl@kernel.org>
+ <abd77ee8-0311-1664-f3ee-6d4a9fe512b1@linux.alibaba.com>
+ <YCZyVXIeeYqNK+sy@kernel.org>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <483f1ff9-9022-b7fc-5931-79c0c83f1289@linux.alibaba.com>
+Date:   Tue, 16 Feb 2021 11:30:13 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YCs3IZ/Edv6AeIYo@kernel.org>
+In-Reply-To: <YCZyVXIeeYqNK+sy@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 05:08:20AM +0200, Jarkko Sakkinen wrote:
-> On Sun, Feb 14, 2021 at 02:29:15AM +1300, Kai Huang wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > The host kernel must intercept ECREATE to be able to impose policies on
-> > guests.  When it does this, the host kernel runs ECREATE against the
-> > userspace mapping of the virtualized EPC.
-> > 
-> > Provide wrappers around __ecreate() and __einit() to hide the ugliness
-> > of overloading the ENCLS return value to encode multiple error formats
-> > in a single int.  KVM will trap-and-execute ECREATE and EINIT as part
-> > of SGX virtualization, and on an exception, KVM needs the trapnr so that
-> > it can inject the correct fault into the guest.
-> > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> > v4->v5:
-> > 
-> >  - No code change.
-> > 
-> > v3->v4:
-> > 
-> >  - Added one new line before last return in sgx_virt_einit(), per Jarkko.
-> > 
-> > v2->v3:
-> > 
-> >  - Added kdoc for sgx_virt_ecreate() and sgx_virt_einit(), per Jarkko.
-> >  - Changed to use CONFIG_X86_SGX_KVM.
-> > 
-> > ---
-> >  arch/x86/include/asm/sgx.h     | 16 ++++++
-> >  arch/x86/kernel/cpu/sgx/virt.c | 94 ++++++++++++++++++++++++++++++++++
-> >  2 files changed, 110 insertions(+)
-> >  create mode 100644 arch/x86/include/asm/sgx.h
-> > 
-> > diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> > new file mode 100644
-> > index 000000000000..8a3ea3e1efbe
-> > --- /dev/null
-> > +++ b/arch/x86/include/asm/sgx.h
-> > @@ -0,0 +1,16 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_X86_SGX_H
-> > +#define _ASM_X86_SGX_H
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +#ifdef CONFIG_X86_SGX_KVM
-> > +struct sgx_pageinfo;
-> > +
-> > +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
-> > +		     int *trapnr);
-> > +int sgx_virt_einit(void __user *sigstruct, void __user *token,
-> > +		   void __user *secs, u64 *lepubkeyhash, int *trapnr);
-> 
-> s/virt/vepc/g
-> 
-> > +#endif
-> > +
-> > +#endif /* _ASM_X86_SGX_H */
-> > diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-> > index 47542140f8c1..016bad7cff8d 100644
-> > --- a/arch/x86/kernel/cpu/sgx/virt.c
-> > +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> 
-> Rename as vepc.c.
-> 
-> > @@ -257,3 +257,97 @@ int __init sgx_vepc_init(void)
-> >  
-> >  	return misc_register(&sgx_vepc_dev);
-> >  }
-> > +
-> > +/**
-> > + * sgx_virt_ecreate() - Run ECREATE on behalf of guest
-> > + * @pageinfo:	Pointer to PAGEINFO structure
-> > + * @secs:	Userspace pointer to SECS page
-> > + * @trapnr:	trap number injected to guest in case of ECREATE error
-> > + *
-> > + * Run ECREATE on behalf of guest after KVM traps ECREATE for the purpose
-> > + * of enforcing policies of guest's enclaves, and return the trap number
-> > + * which should be injected to guest in case of any ECREATE error.
-> > + *
-> > + * Return:
-> > + * - 0: 	ECREATE was successful.
-> > + * - -EFAULT:	ECREATE returned error.
-> > + */
-> > +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
-> > +		     int *trapnr)
-> > +{
-> > +	int ret;
-> > +
-> > +	/*
-> > +	 * @secs is userspace address, and it's not guaranteed @secs points at
-> > +	 * an actual EPC page. It's also possible to generate a kernel mapping
-> > +	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
-> > +	 * simpler.
-> > +	 */
-> > +	__uaccess_begin();
-> > +	ret = __ecreate(pageinfo, (void *)secs);
-> > +	__uaccess_end();
-> > +
-> > +	if (encls_faulted(ret)) {
-> > +		*trapnr = ENCLS_TRAPNR(ret);
-> > +		return -EFAULT;
-> > +	}
-> > +
-> > +	/* ECREATE doesn't return an error code, it faults or succeeds. */
-> > +	WARN_ON_ONCE(ret);
-> 
-> Empty line.
-> 
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sgx_virt_ecreate);
-> > +
-> > +static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
-> > +			    void __user *secs)
-> > +{
-> > +	int ret;
-> > +
-> > +	__uaccess_begin();
-> > +	ret =  __einit((void *)sigstruct, (void *)token, (void *)secs);
-> > +	__uaccess_end();
-> 
-> Ditto.
-> 
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * sgx_virt_einit() - Run EINIT on behalf of guest
-> > + * @sigstruct:		Userspace pointer to SIGSTRUCT structure
-> > + * @token:		Userspace pointer to EINITTOKEN structure
-> > + * @secs:		Userspace pointer to SECS page
-> > + * @lepubkeyhash:	Pointer to guest's *virtual* SGX_LEPUBKEYHASH MSR
-> > + * 			values
-> > + * @trapnr:		trap number injected to guest in case of EINIT error
-> > + *
-> > + * Run EINIT on behalf of guest after KVM traps EINIT. If SGX_LC is available
-> > + * in host, SGX driver may rewrite the hardware values at wish, therefore KVM
-> > + * needs to update hardware values to guest's virtual MSR values in order to
-> > + * ensure EINIT is executed with expected hardware values.
-> > + *
-> > + * Return:
-> > + * - 0: 	EINIT was successful.
-> > + * - -EFAULT:	EINIT returned error.
-> > + */
-> > +int sgx_virt_einit(void __user *sigstruct, void __user *token,
-> > +		   void __user *secs, u64 *lepubkeyhash, int *trapnr)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
-> > +		ret = __sgx_virt_einit(sigstruct, token, secs);
-> > +	} else {
-> > +		preempt_disable();
-> > +
-> > +		sgx_update_lepubkeyhash(lepubkeyhash);
-> > +
-> > +		ret = __sgx_virt_einit(sigstruct, token, secs);
-> > +		preempt_enable();
-> > +	}
-> > +
-> > +	if (encls_faulted(ret)) {
-> > +		*trapnr = ENCLS_TRAPNR(ret);
-> > +		return -EFAULT;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sgx_virt_einit);
 
-Remove exports.
 
-> > -- 
-> > 2.29.2
-> > 
-> > 
+On 2/12/21 8:19 PM, Jarkko Sakkinen wrote:
+> On Thu, Feb 11, 2021 at 02:04:12PM +0800, Tianjia Zhang wrote:
+>> Hi,
+>>
+>> Sorry for the late reply.
+>>
+>> On 1/28/21 1:40 AM, Jarkko Sakkinen wrote:
+>>> I could bet some money that this does not bring any significant
+>>> performance gain.
+>>>
+>>
+>> Yes, this does not bring performance gains. This is not a change for
+>> performance, mainly to make the value of free_cnt look more accurate.
+>>
+>>> On Sun, Jan 24, 2021 at 02:29:05PM +0800, Tianjia Zhang wrote:
+>>>> `section->free_cnt` represents the free page in sgx_epc_section,
+>>>> which is assigned once after initialization. In fact, just after the
+>>>> initialization is completed, the pages are in the `init_laundry_list`
+>>>> list and cannot be allocated. This needs to be recovered by EREMOVE
+>>>> of function sgx_sanitize_section() before it can be used as a page
+>>>> that can be allocated. The sgx_sanitize_section() will be called in
+>>>> the kernel thread ksgxd.
+>>>>
+>>>> This patch moves the initialization of `section->free_cnt` from the
+>>>> initialization function `sgx_setup_epc_section()` to the function
+>>>> `sgx_sanitize_section()`, and then accumulates the count after the
+>>>
+>>> Use single quotes instead of hyphens.
+>>>>> successful execution of EREMOVE. This seems to be more reasonable,
+>>>> free_cnt will also truly reflect the allocatable free pages in EPC.
+>>>>
+>>>> Sined-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>>>> Reviewed-by: Sean Christopherson <seanjc@google.com>
+>>>> ---
+>>>>    arch/x86/kernel/cpu/sgx/main.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+>>>> index 4465912174fd..e455ec7b3449 100644
+>>>> --- a/arch/x86/kernel/cpu/sgx/main.c
+>>>> +++ b/arch/x86/kernel/cpu/sgx/main.c
+>>>> @@ -48,6 +48,7 @@ static void sgx_sanitize_section(struct sgx_epc_section *section)
+>>>>    		if (!ret) {
+>>>>    			spin_lock(&section->lock);
+>>>>    			list_move(&page->list, &section->page_list);
+>>>> +			section->free_cnt++;
+>>>>    			spin_unlock(&section->lock);
+>>>
+>>> Someone can try to allocate a page while sanitize process is in progress.
+>>>
+>>> I think it is better to keep critical sections in the form that when you
+>>> leave from one, the global state is legit.
+>>>
+>>
+>> Do you mean to move the critical section to protect the entire while loop?
+>> Of course, this is also possible, sanitize is a process only needed for
+>> initialization, and the possibility of conflict is very small.
+>>
+>> Best regards,
+>> Tianjia
+> 
+> The big picture of this change to me, to be frank is that it's completely
+> useless.
+> 
+> Please start with the picture.
 > 
 > /Jarkko
+> 
+
+I carefully considered your suggestion, and I will delete 2/5 and 3/5 in 
+the next version.
+
+Best regards,
+Tianjia
