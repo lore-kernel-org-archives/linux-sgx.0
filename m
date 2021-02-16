@@ -2,287 +2,94 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886A3C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 05:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670B0C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 08:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B55264DCF
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 05:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3407E64E08
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 08:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbhBPFEK convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 00:04:10 -0500
-Received: from mga07.intel.com ([134.134.136.100]:19675 "EHLO mga07.intel.com"
+        id S229853AbhBPIcA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Feb 2021 03:32:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229461AbhBPFEI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Feb 2021 00:04:08 -0500
-IronPort-SDR: KIWfTWwk961fpo8xO3jJdifMZd1+y+HTCyDaYjHT0Gvvz72BxdS7jO4VTdf+0GLvshACMCTYAE
- d51SVx1tOXxw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9896"; a="246871575"
-X-IronPort-AV: E=Sophos;i="5.81,182,1610438400"; 
-   d="scan'208";a="246871575"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2021 21:03:27 -0800
-IronPort-SDR: JnDdbw7zRtDYFbq8FuhT/5R0GzJZxduPRKlprLlkCOwZUrbxT9CN6SLhgrgHdmuL5HPHRLy8W7
- UKHIhjCcOB8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,182,1610438400"; 
-   d="scan'208";a="384225230"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Feb 2021 21:03:27 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Mon, 15 Feb 2021 21:03:27 -0800
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Mon, 15 Feb 2021 21:03:26 -0800
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15]) by
- ORSMSX602.amr.corp.intel.com ([10.22.229.15]) with mapi id 15.01.2106.002;
- Mon, 15 Feb 2021 21:03:26 -0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "seanjc@google.com" <seanjc@google.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "b.thiel@posteo.de" <b.thiel@posteo.de>
-Subject: RE: [RFC PATCH v5 06/26] x86/cpu/intel: Allow SGX virtualization
- without Launch Control support
-Thread-Topic: [RFC PATCH v5 06/26] x86/cpu/intel: Allow SGX virtualization
- without Launch Control support
-Thread-Index: AQHXAgqLyQlO6VDl10euDf/K0SnZy6palUwA//+mseA=
-Date:   Tue, 16 Feb 2021 05:03:26 +0000
-Message-ID: <af4798077c93450e8e30dddbc7c650d0@intel.com>
-References: <cover.1613221549.git.kai.huang@intel.com>
- <82c304d6f4e8ebfa9b35d1be74360a5004179c5f.1613221549.git.kai.huang@intel.com>
- <YCsq0uFdzwLrFCMW@kernel.org>
-In-Reply-To: <YCsq0uFdzwLrFCMW@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-version: 11.5.1.3
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S229754AbhBPIbS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Feb 2021 03:31:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 38DB264E08;
+        Tue, 16 Feb 2021 08:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613464180;
+        bh=xp2E7pVtr9+d2BktWCe8eCxmT+MJcLpfXlVFen7+2R8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P22fm4xO1zbk7rb9lHb1iki62q78cwkLEo/0/ifn+xuvYoCtWnZdBFohO+QY6+DQj
+         lUqGucXVJadLmm7X54q4ogiIOMxMrod7Phou2sj8rEYX8E/q0oUPR2GMbHf10+PYJv
+         AEGyJR2BAA1aOMKoTQnQTFvu9li6nOLLcSjSQ6cxicxwyiI7Uovblg0ZFhvTxWbP8o
+         xbb3dKCGDV4VxoQlEKXphmPoob0UGdnzUi17aVn/pWb75R/vOeASREdwex3x/MS3bV
+         f8lgptM2P4oFLtSAXg/It5BQEDHhCle5Ev3vzwHZClEhvOY3FDjIbWWMNZ8ffRJW+y
+         PA3YhwWimKwCA==
+Date:   Tue, 16 Feb 2021 10:29:28 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH v5 3/3] x86/sgx: Remove redundant if conditions in
+ sgx_encl_create
+Message-ID: <YCuCaG2CWNeoKQFQ@kernel.org>
+References: <20210216033133.79543-1-tianjia.zhang@linux.alibaba.com>
+ <20210216033133.79543-4-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210216033133.79543-4-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On Tue, Feb 16, 2021 at 11:31:33AM +0800, Tianjia Zhang wrote:
+> In this scenario, there is no case where va_page is NULL, and
+> the error has been checked. The if-condition statement here is
+> redundant, so remove the condition detection.
 > 
-> On Sun, Feb 14, 2021 at 02:29:05AM +1300, Kai Huang wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> >
-> > The kernel will currently disable all SGX support if the hardware does
-> > not support launch control.  Make it more permissive to allow SGX
-> > virtualization on systems without Launch Control support.  This will
-> > allow KVM to expose SGX to guests that have less-strict requirements
-> > on the availability of flexible launch control.
-> >
-> > Improve error message to distinguish between three cases.  There are
-> > two cases where SGX support is completely disabled:
-> > 1) SGX has been disabled completely by the BIOS
-> > 2) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
-> >    of LC unavailability.  SGX virtualization is unavailable (because of
-> >    Kconfig).
-> > One where it is partially available:
-> > 3) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
-> >    of LC unavailability.  SGX virtualization is supported.
-> >
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Co-developed-by: Kai Huang <kai.huang@intel.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> > v4->v5:
-> >
-> >  - No code change.
-> >
-> > v3->v4:
-> >
-> >  - Removed cpu_has(X86_FEATURE_SGX1) check in enable_sgx_any, since it
-> logically
-> >    is not related to KVM SGX series, per Sean.
-> >  - Changed declaration of variables to be in reverse-christmas tree style, per
-> >    Jarkko.
-> >
-> > v2->v3:
-> >
-> >  - Added to use 'enable_sgx_any', per Dave.
-> >  - Changed to call clear_cpu_cap() directly, rather than using clear_sgx_caps()
-> >    and clear_sgx_lc().
-> >  - Changed to use CONFIG_X86_SGX_KVM, instead of
-> CONFIG_X86_SGX_VIRTUALIZATION.
-> >
-> > v1->v2:
-> >
-> >  - Refined commit message per Dave's comments.
-> >  - Added check to only enable SGX virtualization when VMX is supported, per
-> >    Dave's comment.
-> >  - Refined error msg print to explicitly call out SGX virtualization will be
-> >    supported when LC is locked by BIOS, per Dave's comment.
-> >
-> > ---
-> >  arch/x86/kernel/cpu/feat_ctl.c | 57
-> > ++++++++++++++++++++++++++--------
-> >  1 file changed, 44 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/arch/x86/kernel/cpu/feat_ctl.c
-> > b/arch/x86/kernel/cpu/feat_ctl.c index 27533a6e04fa..96c370284913
-> > 100644
-> > --- a/arch/x86/kernel/cpu/feat_ctl.c
-> > +++ b/arch/x86/kernel/cpu/feat_ctl.c
-> > @@ -105,7 +105,8 @@ early_param("nosgx", nosgx);  void
-> > init_ia32_feat_ctl(struct cpuinfo_x86 *c)  {
-> >  	bool tboot = tboot_enabled();
-> > -	bool enable_sgx;
-> > +	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
-> > +	bool enable_vmx;
-> >  	u64 msr;
-> >
-> >  	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) { @@ -114,13 +115,21
-> @@
-> > void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
-> >  		return;
-> >  	}
-> >
-> > +	enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
-> > +		     IS_ENABLED(CONFIG_KVM_INTEL);
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> It's less than 100 characters:
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 1c6ecf9fbeff..719c21cca569 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -66,9 +66,10 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+>  	va_page = sgx_encl_grow(encl);
+>  	if (IS_ERR(va_page))
+>  		return PTR_ERR(va_page);
+> -	else if (va_page)
+> -		list_add(&va_page->list, &encl->va_pages);
+> -	/* else the tail page of the VA page list had free slots. */
+> +	if (!va_page)
+> +		return -EIO;
 
-Just carious, shouldn't be 80 characters to wrap a new line, instead of 100?
+Why this check?
 
+> +
+> +	list_add(&va_page->list, &encl->va_pages);
+>  
+>  	/* The extra page goes to SECS. */
+>  	encl_size = secs->size + PAGE_SIZE;
+> -- 
+> 2.19.1.3.ge56e4f7
 > 
->         enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
-> IS_ENABLED(CONFIG_KVM_INTEL);
 > 
-> This is better:
-> 
->         enable_vmx = IS_ENABLED(CONFIG_KVM_INTEL) && cpu_has(c,
-> X86_FEATURE_VMX);
-> 
-> You only want to evaluate cpu_has() if COHNFIG_KVM_INTEL is enabled.
 
-If you look at the original code, cpu_has() comes first. It's just one-time booting time code, and I don't think it matters.
-
-Btw, are you also suggesting IS_ENABLED(CONFIG_X86_SGX) should come before cpu_has() for SGX in below code? 
-
-That being said, cpu_has() comes first for both VMX and SGX in the original code. I don't know why I need to change the sequence in this patch.
-
-> 
-> > +
-> >  	/*
-> > -	 * Enable SGX if and only if the kernel supports SGX and Launch Control
-> > -	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
-> > +	 * Separate out SGX driver enabling from KVM.  This allows KVM
-> > +	 * guests to use SGX even if the kernel SGX driver refuses to
-> > +	 * use it.  This happens if flexible Faunch Control is not
-> > +	 * available.
-> >  	 */
-> > -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
-> > -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
-> > -		     IS_ENABLED(CONFIG_X86_SGX);
-> > +	enable_sgx_any = cpu_has(c, X86_FEATURE_SGX) &&
-> > +			 IS_ENABLED(CONFIG_X86_SGX);
-> > +	enable_sgx_driver = enable_sgx_any &&
-> > +			    cpu_has(c, X86_FEATURE_SGX_LC);
-> > +	enable_sgx_kvm = enable_sgx_any && enable_vmx &&
-> > +			  IS_ENABLED(CONFIG_X86_SGX_KVM);
-> >
-> >  	if (msr & FEAT_CTL_LOCKED)
-> >  		goto update_caps;
-> > @@ -136,15 +145,18 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
-> >  	 * i.e. KVM is enabled, to avoid unnecessarily adding an attack vector
-> >  	 * for the kernel, e.g. using VMX to hide malicious code.
-> >  	 */
-> > -	if (cpu_has(c, X86_FEATURE_VMX) &&
-> IS_ENABLED(CONFIG_KVM_INTEL)) {
-> > +	if (enable_vmx) {
-> >  		msr |= FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX;
-> >
-> >  		if (tboot)
-> >  			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
-> >  	}
-> >
-> > -	if (enable_sgx)
-> > -		msr |= FEAT_CTL_SGX_ENABLED |
-> FEAT_CTL_SGX_LC_ENABLED;
-> > +	if (enable_sgx_kvm || enable_sgx_driver) {
-> > +		msr |= FEAT_CTL_SGX_ENABLED;
-> > +		if (enable_sgx_driver)
-> > +			msr |= FEAT_CTL_SGX_LC_ENABLED;
-> > +	}
-> >
-> >  	wrmsrl(MSR_IA32_FEAT_CTL, msr);
-> >
-> > @@ -167,10 +179,29 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
-> >  	}
-> >
-> >  update_sgx:
-> > -	if (!(msr & FEAT_CTL_SGX_ENABLED) ||
-> > -	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
-> > -		if (enable_sgx)
-> > -			pr_err_once("SGX disabled by BIOS\n");
-> > +	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
-> > +		if (enable_sgx_kvm || enable_sgx_driver)
-> > +			pr_err_once("SGX disabled by BIOS.\n");
-> >  		clear_cpu_cap(c, X86_FEATURE_SGX);
-> 
-> Empty line before return statement.
-
-It's just two statements inside the if() {} statement. Putting a new line here is too sparse IMHO.
-
-I'd like to hear more.
-
-Dave, do you have any comment?
-
-> 
-> > +		return;
-> > +	}
-> > +
-> > +	/*
-> > +	 * VMX feature bit may be cleared due to being disabled in BIOS,
-> > +	 * in which case SGX virtualization cannot be supported either.
-> > +	 */
-> > +	if (!cpu_has(c, X86_FEATURE_VMX) && enable_sgx_kvm) {
-> > +		pr_err_once("SGX virtualization disabled due to lack of VMX.\n");
-> > +		enable_sgx_kvm = 0;
-> > +	}
-> > +
-> > +	if (!(msr & FEAT_CTL_SGX_LC_ENABLED) && enable_sgx_driver) {
-> > +		if (!enable_sgx_kvm) {
-> > +			pr_err_once("SGX Launch Control is locked. Disable
-> SGX.\n");
-> > +			clear_cpu_cap(c, X86_FEATURE_SGX);
-> > +		} else {
-> > +			pr_err_once("SGX Launch Control is locked. Support
-> SGX virtualization only.\n");
-> > +			clear_cpu_cap(c, X86_FEATURE_SGX_LC);
-> > +		}
-> >  	}
-> >  }
-> > --
-> > 2.29.2
-> >
-> >
-> 
-> /Jarkko
+/Jarkko
