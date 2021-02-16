@@ -2,89 +2,100 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20124C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 19:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 386A7C433E6
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 20:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE2A264EB4
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 19:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED57B64E7A
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 20:43:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbhBPT0U (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 14:26:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58808 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbhBPT0T (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Feb 2021 14:26:19 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB724C061574
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Feb 2021 11:25:39 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id d2so6595908pjs.4
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Feb 2021 11:25:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6pGhr0lLQTg5Y4WWGGYsJGmCuH6QGJ7ZmH7j+4B6fO0=;
-        b=jcMSHmqrBxMlYE72GFYJYYQF9nFoMT8f+DpsnOohzDyd03St4i7DqZo89SaolbnFTi
-         e2Ja5TFI5EAPny5wzmltnBh3TnjCIuBMMKD2VbabO0byZD+hbj0fv5xMkgcd96ZcfbF8
-         7coS2ZCkbkduIOP7Lir7k+0AXpJBUGYDQqOeb025Ah8HhINiEOq+7OEyYmz3SsTpykf1
-         z2T5A7RcJR3wACjRKz5B78r53Y7LSrvjB6CPezaI+HQiOnvRBGUTQf3iDGnSekdZQT8q
-         C4Xad8BMkgdPWe5l/EXlqy9ZY8eGBSh1suVbQTPR5DMs/PtewpmyzSk9R5b/Z13UI65f
-         rJzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6pGhr0lLQTg5Y4WWGGYsJGmCuH6QGJ7ZmH7j+4B6fO0=;
-        b=qegb2LKbp7i+oXYuOxfYVxZPEw5PcGJAj56k+zo+vADqNsNWxVo1PpXoq7ZgbUGn7L
-         ZWPxzygIHm7wjIp4VhpN+C2HBfkmT6S67c3XpJmfzdCC8U+tnf9V0oioF7VuIUnaeA0i
-         vf5mcDs9cxc2pjAokd++h79nh974mvSdiKDhFZY0y4qKTnccjbzwamRwOIJuSy/YykaI
-         3uYn1eNh+Y4gCWA46yqi4eeJaq95+6nL8wpucCxqo0NwhnmXw1QsGNvXbToLWPOx30Py
-         oeVxTPWoqKyT/8/MaHfNeOE3M+BSCHril71mNcW7AiHWF4B2QVvBQilyCgNRVvZlBep3
-         sl2Q==
-X-Gm-Message-State: AOAM5336tsN0Q5wXEZgvndfjHebaTQ70Fod47fZzCmxcOgKo9aY7ucn/
-        XtyobQ5Ll/EKVsUM0LQ8ob2nZA==
-X-Google-Smtp-Source: ABdhPJzGo17ipEZb1+AmMEOCTgvYjDPeWMOyjad0F6FQnkAP6Tl1TEqdffLRGZ/5kQI2xxLAmUpZZA==
-X-Received: by 2002:a17:90b:224f:: with SMTP id hk15mr5582032pjb.31.1613503539177;
-        Tue, 16 Feb 2021 11:25:39 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:6948:259b:72c6:5517])
-        by smtp.gmail.com with ESMTPSA id z16sm3244505pgk.13.2021.02.16.11.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Feb 2021 11:25:38 -0800 (PST)
-Date:   Tue, 16 Feb 2021 11:25:32 -0800
-From:   Sean Christopherson <seanjc@google.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [RFC PATCH v5 05/26] x86/sgx: Introduce virtual EPC for use by
- KVM guests
-Message-ID: <YCwcLIyUypf4huX1@google.com>
+        id S229970AbhBPUnR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Feb 2021 15:43:17 -0500
+Received: from mga01.intel.com ([192.55.52.88]:59650 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229796AbhBPUnQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Feb 2021 15:43:16 -0500
+IronPort-SDR: pUwqDX4NKpsvnukQWTr1omr9GEr9WCA5c8cjMu/ZmBc+pQ4bRuMABUOKz6MsI58hm5jAqrNn6n
+ +zlt4jewX7qQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="202210025"
+X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
+   d="scan'208";a="202210025"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 12:42:35 -0800
+IronPort-SDR: BTyRH5s5DawYWw83+42XssVfBwuJiCsvK0VDwAjUffP72fMFSNkH5qJxgPXKBRMNHCFZO5o1Oy
+ kX1Cv1e5Hfcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
+   d="scan'208";a="399666836"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orsmga008.jf.intel.com with ESMTP; 16 Feb 2021 12:42:35 -0800
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Tue, 16 Feb 2021 12:42:34 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Tue, 16 Feb 2021 12:42:34 -0800
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15]) by
+ ORSMSX602.amr.corp.intel.com ([10.22.229.15]) with mapi id 15.01.2106.002;
+ Tue, 16 Feb 2021 12:42:34 -0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "Hansen, Dave" <dave.hansen@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "seanjc@google.com" <seanjc@google.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: RE: [RFC PATCH v5 03/26] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+Thread-Topic: [RFC PATCH v5 03/26] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+Thread-Index: AQHXAgqCiMCWrYnrK0Whc7d+icsirqpbjZWA//+2gGA=
+Date:   Tue, 16 Feb 2021 20:42:34 +0000
+Message-ID: <679324c4b4644ed4a6419718252d318c@intel.com>
 References: <cover.1613221549.git.kai.huang@intel.com>
- <4813545fa5765d05c2ed18f2e2c44275bd087c0a.1613221549.git.kai.huang@intel.com>
- <eafcdcae-ae66-e717-2f8b-2bdfb8e7d0d5@intel.com>
+ <f6f9867642505d90968a260538c90444b3fe3809.1613221549.git.kai.huang@intel.com>
+ <57878292-69d0-2234-d732-131318795726@intel.com>
+In-Reply-To: <57878292-69d0-2234-d732-131318795726@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.5.1.3
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eafcdcae-ae66-e717-2f8b-2bdfb8e7d0d5@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 16, 2021, Dave Hansen wrote:
-> > Having separate device nodes for SGX driver and KVM virtual EPC also
-> > allows separate permission control for running host SGX enclaves and
-> > KVM SGX guests.
-> 
-> Specifically, 'sgx_vepc' is a less restrictive interface.  It would make
-> a lot of sense to more tightly control access compared to 'sgx_enclave'.
-
-The opposite is just as likely, i.e. exposing SGX to a guest but not allowing
-enclaves in the host.  Not from a "sgx_enclave is easier to abuse" perspective,
-but from a "enclaves should never be runnable in the host in our environment".
+PiA+ICsvKg0KPiA+ICsgKiBQbGFjZSB0aGUgcGFnZSBpbiB1bmluaXRpYWxpemVkIHN0YXRlLiAg
+T25seSB1c2FibGUgYnkgY2FsbGVycw0KPiA+ICt0aGF0DQo+ID4gKyAqIGtub3cgdGhlIHBhZ2Ug
+aXMgaW4gYSBjbGVhbiBzdGF0ZSBpbiB3aGljaCBFUkVNT1ZFIHdpbGwgc3VjY2VlZC4NCj4gPiAr
+ICovDQo+ID4gK3N0YXRpYyB2b2lkIHNneF9yZXNldF9lcGNfcGFnZShzdHJ1Y3Qgc2d4X2VwY19w
+YWdlICplcGNfcGFnZSkgew0KPiA+ICsJaW50IHJldDsNCj4gPiArDQo+ID4gKwlXQVJOX09OX09O
+Q0UoZXBjX3BhZ2UtPmZsYWdzICYNCj4gU0dYX0VQQ19QQUdFX1JFQ0xBSU1FUl9UUkFDS0VEKTsN
+Cj4gPiArDQo+ID4gKwlyZXQgPSBfX2VyZW1vdmUoc2d4X2dldF9lcGNfdmlydF9hZGRyKGVwY19w
+YWdlKSk7DQo+ID4gKwlpZiAoV0FSTl9PTkNFKHJldCwgIkVSRU1PVkUgcmV0dXJuZWQgJWQgKDB4
+JXgpIiwgcmV0LCByZXQpKQ0KPiA+ICsJCXJldHVybjsNCj4gPiArfQ0KPiANCj4gU2hvdWxkbid0
+IHRoaXMganVzdCBiZToNCj4gDQo+IC4uLg0KPiAJcmV0ID0gX19lcmVtb3ZlKHNneF9nZXRfZXBj
+X3ZpcnRfYWRkcihlcGNfcGFnZSkpOw0KPiAJV0FSTl9PTkNFKHJldCwgIkVSRU1PVkUgcmV0dXJu
+ZWQgJWQgKDB4JXgpIiwgcmV0LCByZXQpOyB9DQo+IA0KPiBTb21ldGltZXMsIHlvdSBhY3R1YWxs
+eSBuZWVkIHRvIGxvb2sgYXQgdGhlIGNvZGUgdGhhdCB5b3UgY3V0IGFuZCBwYXN0ZS4gOykNCg0K
+Q29ycmVjdCEgVGhhbmtzIGZvciBjYXRjaGluZy4gSSdsbCByZW1vdmUgdGhpcyB1c2VsZXNzICdy
+ZXR1cm4nIGluIG5leHQgdmVyc2lvbi4NCg0K
