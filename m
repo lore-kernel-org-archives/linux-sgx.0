@@ -2,43 +2,50 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EB0C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 10:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE120C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 11:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 263C764DAF
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 10:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A433E64DDA
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 11:16:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbhBPKdN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 05:33:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57418 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbhBPKdB (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Feb 2021 05:33:01 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35637C06174A;
-        Tue, 16 Feb 2021 02:32:21 -0800 (PST)
-Received: from zn.tnic (p200300ec2f07cd0057261f4475df3a88.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:cd00:5726:1f44:75df:3a88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C46F01EC00F4;
-        Tue, 16 Feb 2021 11:32:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1613471539;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=taujXJ9IVmPIpWmt0Yydj0ss/bNTkZSZhLwAF1A5sbY=;
-        b=JK22ntLsPycUePc+z7w8QIeoZfHUyJs7dOHnrO7gKQp5fwOM7B+nBDoWgTnrQLfwgRAUy0
-        uuVyssvlC2QK1Zzz7ieJic1BnkWCIX6cdu045o09e6wqm/WnmqTlEw/c20FYxjGZghMpid
-        uEh9DHV8rERXOHvyuqKU52aSVchVbLk=
-Date:   Tue, 16 Feb 2021 11:32:18 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        id S230106AbhBPLQd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Feb 2021 06:16:33 -0500
+Received: from mga14.intel.com ([192.55.52.115]:11247 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229912AbhBPLQb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Feb 2021 06:16:31 -0500
+IronPort-SDR: OXEf40TxlM/NJhDx9/bBChETAijR0yUP2XiZFb9E2bOxTCzC/DYn9etnmHNsCNTmLMwgdYaCGD
+ b6FfOD/sXn+g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9896"; a="182079232"
+X-IronPort-AV: E=Sophos;i="5.81,183,1610438400"; 
+   d="scan'208";a="182079232"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 03:15:36 -0800
+IronPort-SDR: OHNR5e1JOcrH21t0+6p1clrEVmDONMaJDkqEZ9zsve3jqh5GyrI17ZRuRdC4zeqVFXg+MIfYWK
+ F/LPJAdq2qRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,183,1610438400"; 
+   d="scan'208";a="377524270"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orsmga002.jf.intel.com with ESMTP; 16 Feb 2021 03:15:36 -0800
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Tue, 16 Feb 2021 03:15:35 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Tue, 16 Feb 2021 03:15:35 -0800
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15]) by
+ ORSMSX602.amr.corp.intel.com ([10.22.229.15]) with mapi id 15.01.2106.002;
+ Tue, 16 Feb 2021 03:15:35 -0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Jarkko Sakkinen <jarkko@kernel.org>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
@@ -51,32 +58,44 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "hpa@zytor.com" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
+Subject: RE: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
  definitions to the kernel
-Message-ID: <20210216103218.GB10592@zn.tnic>
+Thread-Topic: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
+ definitions to the kernel
+Thread-Index: AQHXAgqNtwlxthmplU6cFSX1Hb3mCqpalcMAgAACzaCAAId3AP//ga0A
+Date:   Tue, 16 Feb 2021 11:15:35 +0000
+Message-ID: <a792bf6271da4fddb537085845cf868f@intel.com>
 References: <cover.1613221549.git.kai.huang@intel.com>
  <1d6fe6bd392b604091b57842c15cc5460aa92593.1613221549.git.kai.huang@intel.com>
- <YCsrNqcB1C0Tyxz9@kernel.org>
- <cdc73d737d634e778de4c691ca4fd080@intel.com>
+ <YCsrNqcB1C0Tyxz9@kernel.org> <cdc73d737d634e778de4c691ca4fd080@intel.com>
+ <20210216103218.GB10592@zn.tnic>
+In-Reply-To: <20210216103218.GB10592@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.5.1.3
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cdc73d737d634e778de4c691ca4fd080@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 10:30:03AM +0000, Huang, Kai wrote:
-> Because those contents are *architectural*. They are defined in SDM.
->
-> And patch 13 (x86/sgx: Add helpers to expose ECREATE and EINIT to KVM)
-> will introduce arch/x86/include/asm/sgx.h, where non-architectural
-> functions will be declared.
-
-Who cares about the SDM?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+PiANCj4gT24gVHVlLCBGZWIgMTYsIDIwMjEgYXQgMTA6MzA6MDNBTSArMDAwMCwgSHVhbmcsIEth
+aSB3cm90ZToNCj4gPiBCZWNhdXNlIHRob3NlIGNvbnRlbnRzIGFyZSAqYXJjaGl0ZWN0dXJhbCou
+IFRoZXkgYXJlIGRlZmluZWQgaW4gU0RNLg0KPiA+DQo+ID4gQW5kIHBhdGNoIDEzICh4ODYvc2d4
+OiBBZGQgaGVscGVycyB0byBleHBvc2UgRUNSRUFURSBhbmQgRUlOSVQgdG8gS1ZNKQ0KPiA+IHdp
+bGwgaW50cm9kdWNlIGFyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oLCB3aGVyZSBub24tYXJjaGl0
+ZWN0dXJhbA0KPiA+IGZ1bmN0aW9ucyB3aWxsIGJlIGRlY2xhcmVkLg0KPiANCj4gV2hvIGNhcmVz
+IGFib3V0IHRoZSBTRE0/DQoNClNvcnJ5IEkgYW0gbm90IHN1cmUgSSB1bmRlcnN0YW5kIHlvdXIg
+cXVlc3Rpb24uIENvdWxkIHlvdSBlbGFib3JhdGU/DQoNCklNSE8gaXQncyBiZXR0ZXIgdG8gcHV0
+IGFyY2hpdGVjdHVyYWwgc3RhZmYgKHN1Y2ggYXMgZGF0YSBzdHJ1Y3R1cmVzIGRlZmluZWQgaW4g
+U0RNIGFuZCB1c2VkIGJ5IGhhcmR3YXJlKSBpbnRvIG9uZSBoZWFkZXIsIGFuZCBvdGhlciBub24t
+YXJjaGl0ZWN0dXJhbCBzdGFmZiBpbnRvIGFub3RoZXIgaGVhZGVyLCBzbyB0aGF0IHRoZSB1c2Vy
+IGNhbiBpbmNsdWRlIHRoZSBvbmUgdGhhdCBpcyBhY3R1YWxseSByZXF1aXJlZCwgYnV0IGRvZXNu
+J3QgaGF2ZSB0byBpbmNsdWRlIG9uZSBiaWcgaGVhZGVyIHdoaWNoIGluY2x1ZGVzIGFsbCBTR1gg
+cmVsYXRlZCBkYXRhIHN0cnVjdHVyZXMgYW5kIGZ1bmN0aW9ucy4NCg0K
