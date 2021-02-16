@@ -2,97 +2,82 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01185C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 19:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A971C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 19:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF6B564E79
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 19:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E70B64E7A
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 19:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbhBPTQl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 14:16:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56726 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230009AbhBPTQl (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Feb 2021 14:16:41 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E92C061756
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Feb 2021 11:15:58 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id d15so6031268plh.4
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Feb 2021 11:15:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UNT4p+ndT2CF9uJiolrgGldwNqQhpBDFWUyxsDRx5GE=;
-        b=qCOiDvhFBQYE/D1huT4njGW6vTXfkg1S9pyHSS15xIYSLbOWIuvdNsCftHYmizD17V
-         tNa25FTCpt2mmJEgWcKr75wxHzEPA5W883gY/23TDGf7UrPvOdzLWEB6Z5hzeIMYm7oI
-         JTTSUJ9EcM2J25y1YtcCwI33cbf3O0oUNW97vz1Phx0ktziMpKa6rUt0IaolbKXXS5Kj
-         imn0+Yjmobv9ROABEhvlKa9s8czxqxnZmMqZmiuldeBONXvwhMhepwfCbhwBOfAEFqrE
-         U4vwS9iywpbjPmDCKQp6GewntABq1jZsmJJMFCXzwPeR5Mqb9AGoLpFM2I12Sni25qNh
-         LNdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UNT4p+ndT2CF9uJiolrgGldwNqQhpBDFWUyxsDRx5GE=;
-        b=GS0qw9G5UormUnWtgBodhs57SUpmwy53LjoDxKdSsv7Dmm37fXk/N8eoyJCBudrxD3
-         fiBW4t/K+8Hsc07szAkuGglUAUncoTADArCC1yz6PpK/YI4uNvR+bhFhpzcPIzUfL49y
-         3F415uUF7MxeqWHeL+vrzijkbI3zqPlc7kOhOWHV3JAjJcT/xkCcD8Ti1dXg9J8/9MDX
-         kxAfHmoiaR4rxNoH8/eFETnqmPon7b1ikZIDlwKHltrzK7gN/17357jPOFfwgC8zpTJM
-         6oMDfM7mZtjJspyCq71K6OvFIv8Vhuc/sZ/lBB/MviE1brGKfKLKrqLKZSdq9oy303NT
-         b3kw==
-X-Gm-Message-State: AOAM531dnue95Wf1jdDflgraqqDSbUMrDi8J3KBxRsnkTtUan1Funs7/
-        JE+u9fxrRnaprlJH1x6s3Hha1w==
-X-Google-Smtp-Source: ABdhPJyXB0wyF3P7diNUHr5UTQ8EgVg+gtnluS2wMuZ34wnFoxWWkMzmwA5Qon7jA7FYNpPaOA2ZUw==
-X-Received: by 2002:a17:902:778e:b029:de:b475:c430 with SMTP id o14-20020a170902778eb02900deb475c430mr21207524pll.53.1613502957186;
-        Tue, 16 Feb 2021 11:15:57 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:6948:259b:72c6:5517])
-        by smtp.gmail.com with ESMTPSA id j185sm22613248pge.46.2021.02.16.11.15.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Feb 2021 11:15:56 -0800 (PST)
-Date:   Tue, 16 Feb 2021 11:15:49 -0800
-From:   Sean Christopherson <seanjc@google.com>
+        id S230421AbhBPTTj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Feb 2021 14:19:39 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49528 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230199AbhBPTT3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Feb 2021 14:19:29 -0500
+Received: from zn.tnic (p200300ec2f07cd005a29834948e41e58.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:cd00:5a29:8349:48e4:1e58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A8421EC026D;
+        Tue, 16 Feb 2021 20:18:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1613503128;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=LirkGUTDtrfE2EUpkZxgMtdWuNSxswNCfjqbDnlkDmg=;
+        b=ECe+M8jtGj8U7AQs41e7hepvU4gF+c02vsBlCVfWzyvJqB4ZT61tz+P/5rZp0zVe3STEI3
+        E09UFGOWJEluH5YKx01/jHJh9an7JD/pC38qP9Rwj+32nlmmURRlVNiIs6du5m0jxI+/Ug
+        Jy5XHVqNyeMQcoRW3357Bn2HVPEdqO8=
+Date:   Tue, 16 Feb 2021 20:18:47 +0100
+From:   Borislav Petkov <bp@alien8.de>
 To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
-        luto@kernel.org, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
-        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
-        corbet@lwn.net
-Subject: Re: [RFC PATCH v5 00/26] KVM SGX virtualization support
-Message-ID: <YCwZ5fI/CVfPNATJ@google.com>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "seanjc@google.com" <seanjc@google.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
+ definitions to the kernel
+Message-ID: <20210216191847.GF10592@zn.tnic>
 References: <cover.1613221549.git.kai.huang@intel.com>
- <0e4e044c-020e-51a3-1f27-123c81f22c33@intel.com>
+ <1d6fe6bd392b604091b57842c15cc5460aa92593.1613221549.git.kai.huang@intel.com>
+ <YCsrNqcB1C0Tyxz9@kernel.org>
+ <cdc73d737d634e778de4c691ca4fd080@intel.com>
+ <20210216103218.GB10592@zn.tnic>
+ <a792bf6271da4fddb537085845cf868f@intel.com>
+ <20210216114851.GD10592@zn.tnic>
+ <9dca76b9-a0f9-a7aa-5d85-f8b43f89a3d2@intel.com>
+ <20210216184718.GE10592@zn.tnic>
+ <b3966341-b777-fb89-e2f2-7aa4735cb28a@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0e4e044c-020e-51a3-1f27-123c81f22c33@intel.com>
+In-Reply-To: <b3966341-b777-fb89-e2f2-7aa4735cb28a@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 16, 2021, Dave Hansen wrote:
-> On 2/13/21 5:28 AM, Kai Huang wrote:
-> >  arch/x86/kvm/vmx/sgx.c                        | 466 ++++++++++++++++++
-> >  arch/x86/kvm/vmx/sgx.h                        |  34 ++
-> 
-> Changes to these files won't hit the SGX MAINTAINERS entry if you run
-> get_maintainer.pl.  That means Jarkko (and me, and the SGX mailing list)
-> probably won't get cc'd on changes here.
-> 
-> Is that a bug or a feature? :)
+On Tue, Feb 16, 2021 at 10:53:03AM -0800, Dave Hansen wrote:
+> Fine with me. It's just as easy to miss this comment as is would be to
+> miss the comment at the top of sgx_arch.h. :)
 
-Feature.  The stuff in those files is pure KVM, there's nothing interesting from
-an SGX subsystem persective.  That's another reason to have sgx/virt.c, the
-stuff that does impact SGX can all go in there.
+Sure but SGX should try to keep it together and not plant headers
+everywhere. :-)
 
-The KVM SGX code is in split out because virtualizing ENCLS leafs takes a
-painful amount of code, and because SGX already has a separate Kconfig.
-Association with the SGX subsystem was a non-factor in that choice.
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
