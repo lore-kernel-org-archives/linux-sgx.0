@@ -7,20 +7,20 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B483C433E6
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76C8C433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BFDA64DCF
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A07064DC3
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 03:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbhBPDc0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Feb 2021 22:32:26 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:45961 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229919AbhBPDcZ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 15 Feb 2021 22:32:25 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UOk.2h4_1613446295;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UOk.2h4_1613446295)
+        id S229996AbhBPDcq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Feb 2021 22:32:46 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:53430 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229894AbhBPDci (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 15 Feb 2021 22:32:38 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UOjzwRj_1613446294;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UOjzwRj_1613446294)
           by smtp.aliyun-inc.com(127.0.0.1);
           Tue, 16 Feb 2021 11:31:35 +0800
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
@@ -34,9 +34,9 @@ To:     Jarkko Sakkinen <jarkko@kernel.org>,
         linux-kernel@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
 Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v5 3/3] x86/sgx: Remove redundant if conditions in sgx_encl_create
-Date:   Tue, 16 Feb 2021 11:31:33 +0800
-Message-Id: <20210216033133.79543-4-tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v5 2/3] x86/sgx: Allows ioctl PROVISION to execute before CREATE
+Date:   Tue, 16 Feb 2021 11:31:32 +0800
+Message-Id: <20210216033133.79543-3-tianjia.zhang@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.3.ge56e4f7
 In-Reply-To: <20210216033133.79543-1-tianjia.zhang@linux.alibaba.com>
 References: <20210216033133.79543-1-tianjia.zhang@linux.alibaba.com>
@@ -46,34 +46,47 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-In this scenario, there is no case where va_page is NULL, and
-the error has been checked. The if-condition statement here is
-redundant, so remove the condition detection.
+In the function sgx_create_enclave(), the direct assignment
+operation of attributes_mask determines that the ioctl PROVISION
+operation must be executed after the ioctl CREATE operation,
+which will limit the flexibility of SGX developers.
+
+This patch takes the assignment of attributes_mask from the
+function sgx_create_enclave() has been moved to the function
+sgx_open(), this will allow users to perform ioctl PROVISION
+operations before ioctl CREATE, increase the flexibility of
+the API and reduce restrictions.
 
 Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver.c | 1 +
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 8ce6d8371cfb..892e2a2a3221 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -36,6 +36,7 @@ static int sgx_open(struct inode *inode, struct file *file)
+ 		return ret;
+ 	}
+ 
++	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+ 	file->private_data = encl;
+ 
+ 	return 0;
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 1c6ecf9fbeff..719c21cca569 100644
+index 90a5caf76939..1c6ecf9fbeff 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -66,9 +66,10 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	va_page = sgx_encl_grow(encl);
- 	if (IS_ERR(va_page))
- 		return PTR_ERR(va_page);
--	else if (va_page)
--		list_add(&va_page->list, &encl->va_pages);
--	/* else the tail page of the VA page list had free slots. */
-+	if (!va_page)
-+		return -EIO;
-+
-+	list_add(&va_page->list, &encl->va_pages);
+@@ -109,7 +109,6 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	encl->base = secs->base;
+ 	encl->size = secs->size;
+ 	encl->attributes = secs->attributes;
+-	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
  
- 	/* The extra page goes to SECS. */
- 	encl_size = secs->size + PAGE_SIZE;
+ 	/* Set only after completion, as encl->lock has not been taken. */
+ 	set_bit(SGX_ENCL_CREATED, &encl->flags);
 -- 
 2.19.1.3.ge56e4f7
 
