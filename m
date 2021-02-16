@@ -2,46 +2,58 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6150C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 18:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FAFC433E0
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 18:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEC0C64E41
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 18:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A957964EB2
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 18:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230203AbhBPStU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 13:49:20 -0500
-Received: from mga11.intel.com ([192.55.52.93]:24100 "EHLO mga11.intel.com"
+        id S229806AbhBPSxp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Feb 2021 13:53:45 -0500
+Received: from mga12.intel.com ([192.55.52.136]:2143 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229787AbhBPStT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Feb 2021 13:49:19 -0500
-IronPort-SDR: gHw0f5ZYM9/n0QkKkGSDVyGRNBHpqsyxuDX/2pK05+QmONaif5OQx4mhV5QFesHV3MlT2u9o9k
- avOFurZkklpQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="179478218"
+        id S229780AbhBPSxp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Feb 2021 13:53:45 -0500
+IronPort-SDR: 4WWdjfXb7IGKWoz9uNCz6q54vTwKtibqtLQ/z2aCBh4toRtIEePbgkM+HH088hT4IL2IfsoO6H
+ Dedh/PO5uX1g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="162119195"
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="179478218"
+   d="scan'208";a="162119195"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 10:48:39 -0800
-IronPort-SDR: yqO14FBemWe/3Ake2YPlv50VmpVqt4SvU/R+ZY6PL5YQ2Juc9jjPDddCOx08Ea8FYVam8/Pwd9
- sxDJArpvW52Q==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 10:53:04 -0800
+IronPort-SDR: /vbzP0GKneg46nRBJsUt0PWJhe12KvCFWs6k+mvm4iqkPOkWjvs6eKdmJwVHND3j9ok0Ycicgt
+ rmXnmzd0JYOg==
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="589335643"
+   d="scan'208";a="589336611"
 Received: from twblanch-mobl.amr.corp.intel.com (HELO [10.209.156.22]) ([10.209.156.22])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 10:48:38 -0800
-Subject: Re: [RFC PATCH v5 00/26] KVM SGX virtualization support
-To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, jethro@fortanix.com,
-        b.thiel@posteo.de, jmattson@google.com, joro@8bytes.org,
-        vkuznets@redhat.com, wanpengli@tencent.com, corbet@lwn.net
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 10:53:03 -0800
+Subject: Re: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
+ definitions to the kernel
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "seanjc@google.com" <seanjc@google.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>
 References: <cover.1613221549.git.kai.huang@intel.com>
+ <1d6fe6bd392b604091b57842c15cc5460aa92593.1613221549.git.kai.huang@intel.com>
+ <YCsrNqcB1C0Tyxz9@kernel.org> <cdc73d737d634e778de4c691ca4fd080@intel.com>
+ <20210216103218.GB10592@zn.tnic> <a792bf6271da4fddb537085845cf868f@intel.com>
+ <20210216114851.GD10592@zn.tnic>
+ <9dca76b9-a0f9-a7aa-5d85-f8b43f89a3d2@intel.com>
+ <20210216184718.GE10592@zn.tnic>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,25 +98,26 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <0e4e044c-020e-51a3-1f27-123c81f22c33@intel.com>
-Date:   Tue, 16 Feb 2021 10:48:37 -0800
+Message-ID: <b3966341-b777-fb89-e2f2-7aa4735cb28a@intel.com>
+Date:   Tue, 16 Feb 2021 10:53:03 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1613221549.git.kai.huang@intel.com>
+In-Reply-To: <20210216184718.GE10592@zn.tnic>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/13/21 5:28 AM, Kai Huang wrote:
->  arch/x86/kvm/vmx/sgx.c                        | 466 ++++++++++++++++++
->  arch/x86/kvm/vmx/sgx.h                        |  34 ++
+On 2/16/21 10:47 AM, Borislav Petkov wrote:
+> header which contains the architectural definitions at the *top* and at
+> their end, there'll be a:
+> 
+> /* Do not put any hardware-defined SGX structure representations below this line! */
+> 
+> and after that line begin the other, software definitions?
 
-Changes to these files won't hit the SGX MAINTAINERS entry if you run
-get_maintainer.pl.  That means Jarkko (and me, and the SGX mailing list)
-probably won't get cc'd on changes here.
-
-Is that a bug or a feature? :)
+Fine with me.  It's just as easy to miss this comment as is would be to
+miss the comment at the top of sgx_arch.h. :)
