@@ -2,37 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA09EC433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 17:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39BEC433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 18:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9547664DCF
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 17:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0F7C64E2B
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 18:39:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbhBPRFR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 12:05:17 -0500
-Received: from mga02.intel.com ([134.134.136.20]:38670 "EHLO mga02.intel.com"
+        id S229572AbhBPSj1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Feb 2021 13:39:27 -0500
+Received: from mga02.intel.com ([134.134.136.20]:48766 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230454AbhBPRFQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Feb 2021 12:05:16 -0500
-IronPort-SDR: aNV41zNvWjWyv3oOIrXW9d1I+jh/NJ7fLpDNWgqjx7iI6UNU+ty0amTZ/8opr6ArBiz2YvZ59s
- DCZ+fnAJ69jg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="170081670"
+        id S230362AbhBPSj0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Feb 2021 13:39:26 -0500
+IronPort-SDR: Qqp10DiXQ9fFzuBLmO4W7trAbVXZmHjwLgqmTHfBvWP+dIN96S9bHZ72wHC5TcD0Y2jdxn9agL
+ ucUFPIbSALVQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="170113484"
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="170081670"
+   d="scan'208";a="170113484"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 09:04:29 -0800
-IronPort-SDR: BFjrZ2wZbybembjxfRLB+E7QumBZHjfL0PpXV7rBkjvdCpr2lLYWxt1dGOi/j0VLSVxu27yEN3
- bbDvjVHDvz1A==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 10:38:44 -0800
+IronPort-SDR: ZcKwjlU3ZwM2jn/gFh8ZKugK6sChsdR8YrJ7jEjkEelq+kUVgF5K90vXW40gLcOnOtPxQ19kCW
+ ZWK8+/UkwYvQ==
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="589291958"
+   d="scan'208";a="589332575"
 Received: from twblanch-mobl.amr.corp.intel.com (HELO [10.209.156.22]) ([10.209.156.22])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 09:04:26 -0800
-Subject: Re: [RFC PATCH v5 03/26] x86/sgx: Wipe out EREMOVE from
- sgx_free_epc_page()
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 10:38:43 -0800
+Subject: Re: [RFC PATCH v5 05/26] x86/sgx: Introduce virtual EPC for use by
+ KVM guests
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -40,7 +41,7 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
         mingo@redhat.com, hpa@zytor.com
 References: <cover.1613221549.git.kai.huang@intel.com>
- <f6f9867642505d90968a260538c90444b3fe3809.1613221549.git.kai.huang@intel.com>
+ <4813545fa5765d05c2ed18f2e2c44275bd087c0a.1613221549.git.kai.huang@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <57878292-69d0-2234-d732-131318795726@intel.com>
-Date:   Tue, 16 Feb 2021 09:04:25 -0800
+Message-ID: <eafcdcae-ae66-e717-2f8b-2bdfb8e7d0d5@intel.com>
+Date:   Tue, 16 Feb 2021 10:38:42 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <f6f9867642505d90968a260538c90444b3fe3809.1613221549.git.kai.huang@intel.com>
+In-Reply-To: <4813545fa5765d05c2ed18f2e2c44275bd087c0a.1613221549.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -98,26 +99,43 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> +/*
-> + * Place the page in uninitialized state.  Only usable by callers that
-> + * know the page is in a clean state in which EREMOVE will succeed.
-> + */
-> +static void sgx_reset_epc_page(struct sgx_epc_page *epc_page)
-> +{
-> +	int ret;
-> +
-> +	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> +
-> +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-> +	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
-> +		return;
-> +}
+On 2/13/21 5:28 AM, Kai Huang wrote:
+> SGX driver uses misc device /dev/sgx_enclave to support userspace to
+> create enclave.  Each file descriptor from opening /dev/sgx_enclave
+> represents an enclave.  
 
-Shouldn't this just be:
+Is this strictly true?  Does dup(2) create a new enclave?
 
-...
-	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-	WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret);
-}
+> Unlike SGX driver, KVM doesn't control how guest
+> uses EPC, therefore EPC allocated to KVM guest is not associated to an
+> encalve, and /dev/sgx_enclave is not suitable for allocating EPC for KVM
 
-Sometimes, you actually need to look at the code that you cut and paste. ;)
+  ^ enclave
+
+> guest.
+
+
+> Having separate device nodes for SGX driver and KVM virtual EPC also
+> allows separate permission control for running host SGX enclaves and
+> KVM SGX guests.
+
+Specifically, 'sgx_vepc' is a less restrictive interface.  It would make
+a lot of sense to more tightly control access compared to 'sgx_enclave'.
+
+> More specifically, to allocate a virtual EPC instance with particular
+> size, the userspace hypervisor opens /dev/sgx_vepc, and uses mmap()
+> with the intended size to get an address range of virtual EPC.  Then
+> it may use the address range to create one KVM memory slot as virtual
+> EPC for guest.
+
+This paragraph doesn't really explain anything important to me.  Both
+devices require using mmap().
+
+With typos in the changelog fixed, I'm OK with the rest:
+
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+
+BTW...  A lot of this patch is just a skeletal device driver.  I'm a
+horrible device driver writer, so take this ack as "everything seems
+explained well" versus "I promise this will pass muster with the guys
+who review device drivers all day long."
