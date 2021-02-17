@@ -2,125 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842E0C433E6
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 21:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C1BC433E9
+	for <linux-sgx@archiver.kernel.org>; Wed, 17 Feb 2021 22:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 634FE64D99
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Feb 2021 21:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195DB64E85
+	for <linux-sgx@archiver.kernel.org>; Wed, 17 Feb 2021 22:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbhBPVey (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Feb 2021 16:34:54 -0500
-Received: from mga03.intel.com ([134.134.136.65]:24687 "EHLO mga03.intel.com"
+        id S232607AbhBQWV3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 17 Feb 2021 17:21:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230038AbhBPVet (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Feb 2021 16:34:49 -0500
-IronPort-SDR: lABltlwQpaEkNxrSDhKCSZUv6EgEprMOFIbufmPYUJev++voJsICUOvpKwJnNnbUg3dUy/mhCF
- VazsHi3o5KKQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="183098787"
-X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="183098787"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 13:34:05 -0800
-IronPort-SDR: sdn1W8u9d+h3dj+bFYTi9oUPLGyRdxKDYzzrNqFJayJBgkS6s2kX77BiKp9YPATtay7SI1Zmz7
- o+aqGuO4Pw/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="384820977"
-Received: from orsmsx606.amr.corp.intel.com ([10.22.229.19])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Feb 2021 13:34:04 -0800
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX606.amr.corp.intel.com (10.22.229.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Tue, 16 Feb 2021 13:34:04 -0800
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Tue, 16 Feb 2021 13:34:04 -0800
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15]) by
- ORSMSX602.amr.corp.intel.com ([10.22.229.15]) with mapi id 15.01.2106.002;
- Tue, 16 Feb 2021 13:34:04 -0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "Hansen, Dave" <dave.hansen@intel.com>,
+        id S233536AbhBQWV2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 17 Feb 2021 17:21:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4E83F64DFF;
+        Wed, 17 Feb 2021 22:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613600447;
+        bh=UYGkLLRxSgCWyallw/00M7Zbt1lN5wnAZcPj6AvPTOs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rGmSqnJ/bgYlkbI/Nmb7BAnQfb6kbXWq1IKVGBxApOBZIzYYV9BnhtJM+c8auLnAo
+         d1ZuikagYjN7DiHixRNG9hk9SCxBPY0tUPjG0vJZWW/4ZJDLBHP7KMFyUqCMFEm/pr
+         79XXezqfmnzDtMt5fApn4S8fVtPJnx5BauXXMhNTH7+neaPO4GYIUANSVsOx07mIbO
+         MRlOLLkEW4gU7DIYnWxrBnzu2C/XYj5DMOiiE+Q4YxySKFjuZJXGC3crocw3mvQvqG
+         r4GJBDf0CPUjQIGI1NfWzzW7wzVlKnEmNdtj+TGoabHBb5n0o7jbjL+ri7g0B4iBip
+         O5SyPnjspi2UQ==
+Date:   Thu, 18 Feb 2021 00:20:35 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, "Huang, Kai" <kai.huang@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     "seanjc@google.com" <seanjc@google.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "seanjc@google.com" <seanjc@google.com>,
         "luto@kernel.org" <luto@kernel.org>,
         "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
         "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "hpa@zytor.com" <hpa@zytor.com>
-Subject: RE: [RFC PATCH v5 05/26] x86/sgx: Introduce virtual EPC for use by
- KVM guests
-Thread-Topic: [RFC PATCH v5 05/26] x86/sgx: Introduce virtual EPC for use by
- KVM guests
-Thread-Index: AQHXAgqDJqyGy35FR0GtJTdCjOjmr6pbp+0A//+ohfA=
-Date:   Tue, 16 Feb 2021 21:34:04 +0000
-Message-ID: <321918254f444631bd06c8f1a6627947@intel.com>
+Subject: Re: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
+ definitions to the kernel
+Message-ID: <YC2Ws68oxi3hizrG@kernel.org>
 References: <cover.1613221549.git.kai.huang@intel.com>
- <4813545fa5765d05c2ed18f2e2c44275bd087c0a.1613221549.git.kai.huang@intel.com>
- <eafcdcae-ae66-e717-2f8b-2bdfb8e7d0d5@intel.com>
-In-Reply-To: <eafcdcae-ae66-e717-2f8b-2bdfb8e7d0d5@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-version: 11.5.1.3
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <1d6fe6bd392b604091b57842c15cc5460aa92593.1613221549.git.kai.huang@intel.com>
+ <YCsrNqcB1C0Tyxz9@kernel.org>
+ <cdc73d737d634e778de4c691ca4fd080@intel.com>
+ <20210216103218.GB10592@zn.tnic>
+ <a792bf6271da4fddb537085845cf868f@intel.com>
+ <20210216114851.GD10592@zn.tnic>
+ <9dca76b9-a0f9-a7aa-5d85-f8b43f89a3d2@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dca76b9-a0f9-a7aa-5d85-f8b43f89a3d2@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiBPbiAyLzEzLzIxIDU6MjggQU0sIEthaSBIdWFuZyB3cm90ZToNCj4gPiBTR1ggZHJpdmVyIHVz
-ZXMgbWlzYyBkZXZpY2UgL2Rldi9zZ3hfZW5jbGF2ZSB0byBzdXBwb3J0IHVzZXJzcGFjZSB0bw0K
-PiA+IGNyZWF0ZSBlbmNsYXZlLiAgRWFjaCBmaWxlIGRlc2NyaXB0b3IgZnJvbSBvcGVuaW5nIC9k
-ZXYvc2d4X2VuY2xhdmUNCj4gPiByZXByZXNlbnRzIGFuIGVuY2xhdmUuDQo+IA0KPiBJcyB0aGlz
-IHN0cmljdGx5IHRydWU/ICBEb2VzIGR1cCgyKSBjcmVhdGUgYSBuZXcgZW5jbGF2ZT8NCg0KSSBk
-b24ndCB0aGluayBkdXAoKSB3aWxsIGNyZWF0ZSBhIG5ldyBlbmNsYXZlLiBFbmNsYXZlIGRhdGEg
-c3RydWN0dXJlIGlzIGtlcHQgaW4gZmlsZXAtPnByaXZhdGVfZGF0YSwgYW5kIG9ubHkgJ29wZW4n
-IHdpbGwgY3JlYXRlIGEgbmV3IG9uZS4NCg0KPiANCj4gPiBVbmxpa2UgU0dYIGRyaXZlciwgS1ZN
-IGRvZXNuJ3QgY29udHJvbCBob3cgZ3Vlc3QgdXNlcyBFUEMsIHRoZXJlZm9yZQ0KPiA+IEVQQyBh
-bGxvY2F0ZWQgdG8gS1ZNIGd1ZXN0IGlzIG5vdCBhc3NvY2lhdGVkIHRvIGFuIGVuY2FsdmUsIGFu
-ZA0KPiA+IC9kZXYvc2d4X2VuY2xhdmUgaXMgbm90IHN1aXRhYmxlIGZvciBhbGxvY2F0aW5nIEVQ
-QyBmb3IgS1ZNDQo+IA0KPiAgIF4gZW5jbGF2ZQ0KDQpPcHMuIFRoYW5rcy4NCg0KPiANCj4gPiBn
-dWVzdC4NCj4gDQo+IA0KPiA+IEhhdmluZyBzZXBhcmF0ZSBkZXZpY2Ugbm9kZXMgZm9yIFNHWCBk
-cml2ZXIgYW5kIEtWTSB2aXJ0dWFsIEVQQyBhbHNvDQo+ID4gYWxsb3dzIHNlcGFyYXRlIHBlcm1p
-c3Npb24gY29udHJvbCBmb3IgcnVubmluZyBob3N0IFNHWCBlbmNsYXZlcyBhbmQNCj4gPiBLVk0g
-U0dYIGd1ZXN0cy4NCj4gDQo+IFNwZWNpZmljYWxseSwgJ3NneF92ZXBjJyBpcyBhIGxlc3MgcmVz
-dHJpY3RpdmUgaW50ZXJmYWNlLiAgSXQgd291bGQgbWFrZSBhIGxvdCBvZg0KPiBzZW5zZSB0byBt
-b3JlIHRpZ2h0bHkgY29udHJvbCBhY2Nlc3MgY29tcGFyZWQgdG8gJ3NneF9lbmNsYXZlJy4NCg0K
-U2VhbiBtZW50aW9uZWQgdGhlIG9wcG9zaXRlIGlzIGFsc28gbGlrZWx5LCBhbmQgSSBhZ3JlZS4g
-UGxlYXNlIHNlZSBteSByZXBseSB0byBTZWFuJ3MuDQoNCj4gDQo+ID4gTW9yZSBzcGVjaWZpY2Fs
-bHksIHRvIGFsbG9jYXRlIGEgdmlydHVhbCBFUEMgaW5zdGFuY2Ugd2l0aCBwYXJ0aWN1bGFyDQo+
-ID4gc2l6ZSwgdGhlIHVzZXJzcGFjZSBoeXBlcnZpc29yIG9wZW5zIC9kZXYvc2d4X3ZlcGMsIGFu
-ZCB1c2VzIG1tYXAoKQ0KPiA+IHdpdGggdGhlIGludGVuZGVkIHNpemUgdG8gZ2V0IGFuIGFkZHJl
-c3MgcmFuZ2Ugb2YgdmlydHVhbCBFUEMuICBUaGVuDQo+ID4gaXQgbWF5IHVzZSB0aGUgYWRkcmVz
-cyByYW5nZSB0byBjcmVhdGUgb25lIEtWTSBtZW1vcnkgc2xvdCBhcyB2aXJ0dWFsDQo+ID4gRVBD
-IGZvciBndWVzdC4NCj4gDQo+IFRoaXMgcGFyYWdyYXBoIGRvZXNuJ3QgcmVhbGx5IGV4cGxhaW4g
-YW55dGhpbmcgaW1wb3J0YW50IHRvIG1lLiAgQm90aCBkZXZpY2VzDQo+IHJlcXVpcmUgdXNpbmcg
-bW1hcCgpLg0KDQpUaGlzIHBhcmFncmFwaCB3YXMgcmVxdWVzdGVkIGJ5IEphcmtrbyB0byBleHBs
-YWluIGhvdyB0byB1c2UgdGhpcyAvZGV2L3NneF92ZXBjLiANCg0KUGVyaGFwcyBJIGNhbiByZW1v
-dmUgaXQ/DQoNCk9yIHBlcmhhcHMgSSBjYW4gcmVmaW5lIHRvICJUbyB1c2UgL2Rldi9zZ3hfdmVw
-YyB0byBhbGxvY2F0ZSBhIHZpcnR1YWwgRVBDIGluc3RhbmNlIHdpdGggcGFydGljdWxhciBzaXpl
-LCB0aGUgdXNlcnNwYWNlIGh5cGVydmlzb3IuLi4iPw0KDQo+IA0KPiBXaXRoIHR5cG9zIGluIHRo
-ZSBjaGFuZ2Vsb2cgZml4ZWQsIEknbSBPSyB3aXRoIHRoZSByZXN0Og0KPiANCj4gQWNrZWQtYnk6
-IERhdmUgSGFuc2VuIDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+DQo+IA0KPiBCVFcuLi4gIEEgbG90
-IG9mIHRoaXMgcGF0Y2ggaXMganVzdCBhIHNrZWxldGFsIGRldmljZSBkcml2ZXIuICBJJ20gYSBo
-b3JyaWJsZSBkZXZpY2UNCj4gZHJpdmVyIHdyaXRlciwgc28gdGFrZSB0aGlzIGFjayBhcyAiZXZl
-cnl0aGluZyBzZWVtcyBleHBsYWluZWQgd2VsbCIgdmVyc3VzICJJDQo+IHByb21pc2UgdGhpcyB3
-aWxsIHBhc3MgbXVzdGVyIHdpdGggdGhlIGd1eXMgd2hvIHJldmlldyBkZXZpY2UgZHJpdmVycyBh
-bGwgZGF5DQo+IGxvbmcuIg0KDQpUaGFua3MuIA0K
+On Tue, Feb 16, 2021 at 07:18:27AM -0800, Dave Hansen wrote:
+> On 2/16/21 3:48 AM, Borislav Petkov wrote:
+> > What I'm trying to point you at is, to not give some artificial reasons
+> > why the headers should be separate - artificial as the SDM says it
+> > is architectural and so on - but give a reason from software design
+> > perspective why the separation is needed: better build times, less
+> > symbols exposed to modules, blabla and so on.
+> 
+> I think I actually suggested this sgx_arch.h split for SGX in the first
+> place.
+> 
+> I was reading the patches and I had a really hard time separating the
+> hardware and software structures.  There would be a 'struct sgx_foo {}'
+> and some chit chat about what it did...  and I still had no idea if it
+> was an architectural structure or not.
+> 
+> This way, it's 100% crystal clear what Linux is defining and what the
+> hardware defines from the diff context.
+
+Let's worry about split later on when we add "big" SGX specific
+features like EDMM, and consider this more like "move and rename".
+
+/Jarkko
