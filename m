@@ -2,116 +2,206 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2660FC433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Feb 2021 10:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5824C433DB
+	for <linux-sgx@archiver.kernel.org>; Sun, 21 Feb 2021 02:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2E1164E85
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Feb 2021 10:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CF3564EF2
+	for <linux-sgx@archiver.kernel.org>; Sun, 21 Feb 2021 02:07:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbhBRKNJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 18 Feb 2021 05:13:09 -0500
-Received: from mga04.intel.com ([192.55.52.120]:45924 "EHLO mga04.intel.com"
+        id S229811AbhBUCHe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 20 Feb 2021 21:07:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231586AbhBRJNj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 18 Feb 2021 04:13:39 -0500
-IronPort-SDR: SmJ8EWqiq4bWgM4299WfUvWqmTVoxPLOiUpod2oF9m6VpRwPKJkySTs9zw6XBWlQkzwrKew1jO
- lFXVBzpcwLiQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9898"; a="180881724"
-X-IronPort-AV: E=Sophos;i="5.81,186,1610438400"; 
-   d="scan'208";a="180881724"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2021 01:09:14 -0800
-IronPort-SDR: 3Pg4ShUUz8TimkWWUFVc33lHCEuesb0CrpzdSl9/aAJANQaHUAxW2qiiOmv+UVTXYPOw7EUH1u
- s+LdXrn7CQtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,186,1610438400"; 
-   d="scan'208";a="362360001"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orsmga003.jf.intel.com with ESMTP; 18 Feb 2021 01:09:13 -0800
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 18 Feb 2021 01:09:12 -0800
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 18 Feb 2021 01:09:12 -0800
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15]) by
- ORSMSX602.amr.corp.intel.com ([10.22.229.15]) with mapi id 15.01.2106.002;
- Thu, 18 Feb 2021 01:09:12 -0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-CC:     Borislav Petkov <bp@alien8.de>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "seanjc@google.com" <seanjc@google.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>
-Subject: RE: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
- definitions to the kernel
-Thread-Topic: [RFC PATCH v5 08/26] x86/sgx: Expose SGX architectural
- definitions to the kernel
-Thread-Index: AQHXAgqNtwlxthmplU6cFSX1Hb3mCqpalcMAgAACzaCAAId3AP//ga0AgACTtoCAADqQgIACCEaAgAAtVTA=
-Date:   Thu, 18 Feb 2021 09:09:12 +0000
-Message-ID: <0c7e6768a33f450fb4da9167ffe6f78d@intel.com>
-References: <cover.1613221549.git.kai.huang@intel.com>
- <1d6fe6bd392b604091b57842c15cc5460aa92593.1613221549.git.kai.huang@intel.com>
- <YCsrNqcB1C0Tyxz9@kernel.org> <cdc73d737d634e778de4c691ca4fd080@intel.com>
- <20210216103218.GB10592@zn.tnic> <a792bf6271da4fddb537085845cf868f@intel.com>
- <20210216114851.GD10592@zn.tnic>
- <9dca76b9-a0f9-a7aa-5d85-f8b43f89a3d2@intel.com>
- <YC2Ws68oxi3hizrG@kernel.org>
-In-Reply-To: <YC2Ws68oxi3hizrG@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-version: 11.5.1.3
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S229826AbhBUCHd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 20 Feb 2021 21:07:33 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 10FEF64EF2;
+        Sun, 21 Feb 2021 02:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613873208;
+        bh=Nm+5OkKW4X7QmW/uKwyf/FKGq/9207/TvxjJOKuREHs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DIzy17qAEc1Jgi+GT/lBeEN09XCUU26SQpcA1V0+Ex0vhmyg+LuexROdEqgiv5WES
+         4Q5WhjfzhvbvK1JJiSCSsCjYQTymmM9mR69KLIsbtN1PI16S+0PR2JEw3WoSASfX7G
+         V+gsqX5Yam2RcOGxKVCH3buagX42ONQaus7deE+NxDkJ9Dj75liwwq3eViaecZLeba
+         KfxwWT90yfHh3UXyOJq/cX45ZAhZBPnEkZNhZlK2laFzAhuUJ0HmmiMQnYRQU+R6MG
+         tLq0bD+wjIQcTzriDy5fcB94CYqKKqzcToep0naronywIX+/FTi7gHfyUHMWWzMLun
+         D4cJtfDbC0O5w==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     haitao.huang@intel.com, dan.j.williams@intel.com,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()
+Date:   Sun, 21 Feb 2021 04:06:30 +0200
+Message-Id: <20210221020631.171404-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> 
-> On Tue, Feb 16, 2021 at 07:18:27AM -0800, Dave Hansen wrote:
-> > On 2/16/21 3:48 AM, Borislav Petkov wrote:
-> > > What I'm trying to point you at is, to not give some artificial
-> > > reasons why the headers should be separate - artificial as the SDM
-> > > says it is architectural and so on - but give a reason from software
-> > > design perspective why the separation is needed: better build times,
-> > > less symbols exposed to modules, blabla and so on.
-> >
-> > I think I actually suggested this sgx_arch.h split for SGX in the
-> > first place.
-> >
-> > I was reading the patches and I had a really hard time separating the
-> > hardware and software structures.  There would be a 'struct sgx_foo {}'
-> > and some chit chat about what it did...  and I still had no idea if it
-> > was an architectural structure or not.
-> >
-> > This way, it's 100% crystal clear what Linux is defining and what the
-> > hardware defines from the diff context.
-> 
-> Let's worry about split later on when we add "big" SGX specific features like
-> EDMM, and consider this more like "move and rename".
+Background
+==========
 
-If we need to worry about split when we add EDMM, why we are merging to one single asm/sgx.h in this KVM SGX series?
+EPC section is covered by one or more SRAT entries that are associated with
+one and only one PXM (NUMA node). The motivation behind this patch is to
+provide basic elements of building allocation scheme based on this premise.
 
-EDMM is a feature we definitely need to support, right?
+It does not try to fully address NUMA. For instance, it does not provide
+integration to the mempolicy API, but neither does introduce any
+bottlenecks to address this later on. Memory allocation is a complex topic,
+and thus it's better to start with baby steps.
+
+Solution
+========
+
+Use phys_to_target_node() to associate each NUMA node with the EPC sections
+contained within its range.
+
+In sgx_alloc_epc_page(), first try to allocate from the NUMA node, where
+the CPU is executing. If that fails, fallback to the legacy allocation.
+
+Link: https://lore.kernel.org/lkml/158188326978.894464.217282995221175417.stgit@dwillia2-desk3.amr.corp.intel.com/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/Kconfig               |  1 +
+ arch/x86/kernel/cpu/sgx/main.c | 52 +++++++++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/sgx.h  |  1 +
+ 3 files changed, 53 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 21f851179ff0..dcb73a5edf63 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1941,6 +1941,7 @@ config X86_SGX
+ 	depends on CRYPTO_SHA256=y
+ 	select SRCU
+ 	select MMU_NOTIFIER
++	select NUMA_KEEP_MEMINFO if NUMA
+ 	help
+ 	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
+ 	  that can be used by applications to set aside private regions of code
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8df81a3ed945..21addedc5240 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -18,6 +18,12 @@ static int sgx_nr_epc_sections;
+ static struct task_struct *ksgxd_tsk;
+ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+ 
++/* Nodes with one or more EPC sections. */
++static nodemask_t sgx_numa_mask;
++
++/* Array of lists of EPC sections for each NUMA node. */
++struct list_head *sgx_numa_nodes;
++
+ /*
+  * These variables are part of the state of the reclaimer, and must be accessed
+  * with sgx_reclaimer_lock acquired.
+@@ -473,6 +479,26 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
+ 	return page;
+ }
+ 
++static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
++{
++	struct sgx_epc_section *section;
++	struct sgx_epc_page *page;
++
++	if (WARN_ON_ONCE(nid < 0 || nid >= MAX_NUMNODES))
++		return NULL;
++
++	if (!node_isset(nid, sgx_numa_mask))
++		return NULL;
++
++	list_for_each_entry(section, &sgx_numa_nodes[nid], section_list) {
++		page = __sgx_alloc_epc_page_from_section(section);
++		if (page)
++			return page;
++	}
++
++	return NULL;
++}
++
+ /**
+  * __sgx_alloc_epc_page() - Allocate an EPC page
+  *
+@@ -485,13 +511,17 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
+  */
+ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+ {
++	int current_nid = numa_node_id();
+ 	struct sgx_epc_section *section;
+ 	struct sgx_epc_page *page;
+ 	int i;
+ 
++	page = __sgx_alloc_epc_page_from_node(current_nid);
++	if (page)
++		return page;
++
+ 	for (i = 0; i < sgx_nr_epc_sections; i++) {
+ 		section = &sgx_epc_sections[i];
+-
+ 		page = __sgx_alloc_epc_page_from_section(section);
+ 		if (page)
+ 			return page;
+@@ -665,8 +695,12 @@ static bool __init sgx_page_cache_init(void)
+ {
+ 	u32 eax, ebx, ecx, edx, type;
+ 	u64 pa, size;
++	int nid;
+ 	int i;
+ 
++	nodes_clear(sgx_numa_mask);
++	sgx_numa_nodes = kmalloc_array(MAX_NUMNODES, sizeof(*sgx_numa_nodes), GFP_KERNEL);
++
+ 	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
+ 		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, &ebx, &ecx, &edx);
+ 
+@@ -690,6 +724,22 @@ static bool __init sgx_page_cache_init(void)
+ 		}
+ 
+ 		sgx_nr_epc_sections++;
++
++		nid = numa_map_to_online_node(phys_to_target_node(pa));
++
++		if (nid == NUMA_NO_NODE) {
++			pr_err(FW_BUG "unable to map EPC section %d to online node.\n", nid);
++			nid = 0;
++		} else if (WARN_ON_ONCE(nid < 0 || nid >= MAX_NUMNODES)) {
++			nid = 0;
++		}
++
++		if (!node_isset(nid, sgx_numa_mask)) {
++			INIT_LIST_HEAD(&sgx_numa_nodes[nid]);
++			node_set(nid, sgx_numa_mask);
++		}
++
++		list_add_tail(&sgx_epc_sections[i].section_list, &sgx_numa_nodes[nid]);
+ 	}
+ 
+ 	if (!sgx_nr_epc_sections) {
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 5fa42d143feb..4bc31bc4bacf 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -45,6 +45,7 @@ struct sgx_epc_section {
+ 	spinlock_t lock;
+ 	struct list_head page_list;
+ 	unsigned long free_cnt;
++	struct list_head section_list;
+ 
+ 	/*
+ 	 * Pages which need EREMOVE run on them before they can be
+-- 
+2.30.1
+
