@@ -2,36 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09307C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Feb 2021 00:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE6BC433E6
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Feb 2021 19:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1CDD64EC3
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Feb 2021 00:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4718C64E09
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Feb 2021 19:15:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbhBVAzQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 21 Feb 2021 19:55:16 -0500
-Received: from mga01.intel.com ([192.55.52.88]:38495 "EHLO mga01.intel.com"
+        id S233530AbhBWTPL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 23 Feb 2021 14:15:11 -0500
+Received: from mga12.intel.com ([192.55.52.136]:41871 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229802AbhBVAzQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 21 Feb 2021 19:55:16 -0500
-IronPort-SDR: ksf9cKzOWJuRs1aAs0CcUxgb6UzKyY47C28fNTqOc1v61pQDoRjOO3RbgSBOzY6pmpo3rzBMtw
- u9/D+u3kqjnw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9902"; a="203684205"
-X-IronPort-AV: E=Sophos;i="5.81,195,1610438400"; 
-   d="scan'208";a="203684205"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2021 16:54:35 -0800
-IronPort-SDR: U6YT//L/lZgPE4363x3l7YRll+aJ2Onk6GtmvQxV7YnXfsTNa8XRkvNSn1n+21/56rQoN0B2FQ
- Zav4wx9gvajw==
-X-IronPort-AV: E=Sophos;i="5.81,195,1610438400"; 
-   d="scan'208";a="402311448"
-Received: from arajago-mobl.amr.corp.intel.com (HELO [10.209.130.124]) ([10.209.130.124])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2021 16:54:34 -0800
+        id S231878AbhBWTPF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 23 Feb 2021 14:15:05 -0500
+IronPort-SDR: e1/j+ZqYngGZz4YUFQqbLqzxHrvH4R6fOXPz0aYY88KVVBKvEgeIOHhr7uNyL2/xycklLaE9z7
+ ogp4XY4VZGNg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9904"; a="164142010"
+X-IronPort-AV: E=Sophos;i="5.81,200,1610438400"; 
+   d="scan'208";a="164142010"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2021 11:14:15 -0800
+IronPort-SDR: n5n5+j4Z4lIS9yhmxAoeSE1Lb8xQvIE9wSG5TbU2c36rcfYsvNSa79Fgvur5KH7I9UVy2IZYO8
+ DuEWLDuuBytQ==
+X-IronPort-AV: E=Sophos;i="5.81,200,1610438400"; 
+   d="scan'208";a="431060530"
+Received: from bdchartr-mobl3.amr.corp.intel.com (HELO [10.209.183.77]) ([10.209.183.77])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2021 11:14:14 -0800
 Subject: Re: [PATCH] x86/sgx: Add a basic NUMA allocation scheme to
  sgx_alloc_epc_page()
 To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
@@ -42,6 +41,7 @@ Cc:     haitao.huang@intel.com, dan.j.williams@intel.com,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
 References: <20210221020631.171404-1-jarkko@kernel.org>
+ <7acc3c1c-373e-cfee-e838-2af170e87d98@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <7acc3c1c-373e-cfee-e838-2af170e87d98@intel.com>
-Date:   Sun, 21 Feb 2021 16:54:33 -0800
+Message-ID: <3b3391bc-8c40-cf08-d09d-90ff1517ff8c@intel.com>
+Date:   Tue, 23 Feb 2021 11:14:10 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210221020631.171404-1-jarkko@kernel.org>
+In-Reply-To: <7acc3c1c-373e-cfee-e838-2af170e87d98@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,164 +99,62 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> +/* Nodes with one or more EPC sections. */
-> +static nodemask_t sgx_numa_mask;
+On 2/21/21 4:54 PM, Dave Hansen wrote:
+> Instead of having a for-each-section loop, I'd make it for-each-node ->
+> for-each-section.  Something like:
+> 
+> 	for (i = 0; i < num_possible_nodes(); i++) {
+> 		node = (numa_node_id() + i) % num_possible_nodes()
+> 		
+> 		if (!node_isset(nid, sgx_numa_mask))
+> 			continue;
+> 
+> 		list_for_each_entry(section, &sgx_numa_nodes[nid],
+> 				    section_list) {
+> 			__sgx_alloc_epc_page_from_section(section)
+> 		}
+> 	}
 
-I'd also add that this is for optimization only.
+OK, here's an almost completely fleshed-out loop:
 
-> +/* Array of lists of EPC sections for each NUMA node. */
-> +struct list_head *sgx_numa_nodes;
-
-I'd much prefer:
-
-/*
- * Array with one list_head for each possible NUMA node.  Each
- * list contains all the sgx_epc_section's which are on that
- * node.
- */
-
-Otherwise, it's hard to imagine what this structure looks like.
-
->  /*
->   * These variables are part of the state of the reclaimer, and must be accessed
->   * with sgx_reclaimer_lock acquired.
-> @@ -473,6 +479,26 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
->  	return page;
->  }
->  
-> +static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
-> +{
-> +	struct sgx_epc_section *section;
-> +	struct sgx_epc_page *page;
-> +
-> +	if (WARN_ON_ONCE(nid < 0 || nid >= MAX_NUMNODES))
-> +		return NULL;
-> +
-> +	if (!node_isset(nid, sgx_numa_mask))
-> +		return NULL;
-> +
-> +	list_for_each_entry(section, &sgx_numa_nodes[nid], section_list) {
-> +		page = __sgx_alloc_epc_page_from_section(section);
-> +		if (page)
-> +			return page;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  /**
->   * __sgx_alloc_epc_page() - Allocate an EPC page
->   *
-> @@ -485,13 +511,17 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
->   */
->  struct sgx_epc_page *__sgx_alloc_epc_page(void)
->  {
-> +	int current_nid = numa_node_id();
->  	struct sgx_epc_section *section;
->  	struct sgx_epc_page *page;
->  	int i;
->  
-> +	page = __sgx_alloc_epc_page_from_node(current_nid);
-> +	if (page)
-> +		return page;
-
-Comments, please.
-
-	/* Try to allocate EPC from the current node, first: */
-
-then:
-
-	/* Search all EPC sections, ignoring locality: */
-
->  	for (i = 0; i < sgx_nr_epc_sections; i++) {
->  		section = &sgx_epc_sections[i];
-> -
->  		page = __sgx_alloc_epc_page_from_section(section);
->  		if (page)
->  			return page;
-
-This still has the problem that it exerts too much pressure on the
-low-numbered sgx_epc_sections[].  If a node's sections are full, it
-always tries to go after sgx_epc_sections[0].
-
-It can be in another patch, but I think the *minimal* thing we can do
-here for a NUMA allocator is to try to at least balance the allocations.
-
-Instead of having a for-each-section loop, I'd make it for-each-node ->
-for-each-section.  Something like:
-
-	for (i = 0; i < num_possible_nodes(); i++) {
-		node = (numa_node_id() + i) % num_possible_nodes()
-		
-		if (!node_isset(nid, sgx_numa_mask))
-			continue;
-
+	page = NULL;
+	node = numa_node_id();
+	start_node = node;
+	while (1) {
 		list_for_each_entry(section, &sgx_numa_nodes[nid],
-				    section_list) {
-			__sgx_alloc_epc_page_from_section(section)
-		}
+ 				    section_list) {
+ 			page = __sgx_alloc_epc(section);
+			if (page)
+				break;
+ 		}
+		if (page)
+			break;
+		
+		/*
+		 * EPC allocation failed on 'node'.  Fall
+		 * back with round-robin to other nodes with
+		 * EPC:
+		 */
+		node = next_node_in(node, sgx_numa_mask);
+
+		/* Give up if allocation wraps back to the start: */
+		if (node == start_node)
+			break;
 	}
-	
-Then you have a single loop instead of a "try local then a fall back".
 
-Also, that "node++" thing might be able to use next_online_node().
+This will:
+1. Always start close to the CPU that started the allocation
+2. Always spread the allocations out among nodes evenly, never
+   concentrating allocations on node 0, for instance.  (This could also
+   be node_random() and get a similar effect, but this probably has
+   slightly better default NUMA behavior).
+3. Efficiently look among all nodes because of 'sgx_numa_mask'
+4. Have no special case for the first allocation.  All allocations will
+   be satisfied from this unified loop.
+5. Compile down to no loop on CONFIG_NUMA=y systems.
+6. Be guaranteed to make forward progress even if preempted and
+   numa_node_id() changes in the loop.
 
-> @@ -665,8 +695,12 @@ static bool __init sgx_page_cache_init(void)
->  {
->  	u32 eax, ebx, ecx, edx, type;
->  	u64 pa, size;
-> +	int nid;
->  	int i;
->  
-> +	nodes_clear(sgx_numa_mask);
-> +	sgx_numa_nodes = kmalloc_array(MAX_NUMNODES, sizeof(*sgx_numa_nodes), GFP_KERNEL);
-
-MAX_NUMNODES will always be the largest compile-time constant.  That's
-4k, IIRC.  num_possible_nodes() might be as small as 1 if NUMA is off.
-
->  	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
->  		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, &ebx, &ecx, &edx);
->  
-> @@ -690,6 +724,22 @@ static bool __init sgx_page_cache_init(void)
->  		}
->  
->  		sgx_nr_epc_sections++;
-> +
-> +		nid = numa_map_to_online_node(phys_to_target_node(pa));
-> +
-> +		if (nid == NUMA_NO_NODE) {
-> +			pr_err(FW_BUG "unable to map EPC section %d to online node.\n", nid);
-> +			nid = 0;
-
-Could we dump out the physical address there?  I think that's even more
-informative than a section number.
-
-> +		} else if (WARN_ON_ONCE(nid < 0 || nid >= MAX_NUMNODES)) {
-> +			nid = 0;
-> +		}
-
-I'm not sure we really need to check for these.  If we're worried about
-the firmware returning these, I'd expect numa_map_to_online_node() to
-sanity check them for us.
-
-> +		if (!node_isset(nid, sgx_numa_mask)) {
-> +			INIT_LIST_HEAD(&sgx_numa_nodes[nid]);
-> +			node_set(nid, sgx_numa_mask);
-> +		}
-> +
-> +		list_add_tail(&sgx_epc_sections[i].section_list, &sgx_numa_nodes[nid]);
->  	}
->  
->  	if (!sgx_nr_epc_sections) {
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> index 5fa42d143feb..4bc31bc4bacf 100644
-> --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -45,6 +45,7 @@ struct sgx_epc_section {
->  	spinlock_t lock;
->  	struct list_head page_list;
->  	unsigned long free_cnt;
-> +	struct list_head section_list;
-
-Maybe name this numa_section_list.
-
+BTW, I think the name of __sgx_alloc_epc_page_from_section() can be
+shortened down.  It's passed a section and returns a page, so both of
+those could be removed from the name.
