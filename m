@@ -2,100 +2,121 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A9BC433E6
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Feb 2021 09:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE16C433DB
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Feb 2021 17:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B37EE64EBA
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Feb 2021 09:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA9B264F13
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Feb 2021 17:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234634AbhBXJcV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Feb 2021 04:32:21 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:57553 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232166AbhBXJcD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 24 Feb 2021 04:32:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UPS1eWx_1614159062;
-Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UPS1eWx_1614159062)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 24 Feb 2021 17:31:03 +0800
-Subject: Re: [PATCH v5 3/3] x86/sgx: Remove redundant if conditions in
- sgx_encl_create
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        id S229644AbhBXRas (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Feb 2021 12:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229594AbhBXRar (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Feb 2021 12:30:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3328C64EDB;
+        Wed, 24 Feb 2021 17:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614187806;
+        bh=3f1JPeP2WveFctyK2JC6+FfYW964gGhcHeqIX6mttLM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fr/oMZagr9ei7bNSVzuJIQA2T063jTGFnm0FT0R2pYSU1ucY+7x/aY2+T1Lm4ymUU
+         24m3P88slWXXRlz6lNu5sCaQoqHuAbCjbv2mlcyvS9ag4PXr4NXzC/YMpC7Jezh98R
+         9Kse4+ECzv8iOKKy0fVt95UeHpQQ9N6cAY46HoAJvXEK2GxywJ0PANDw4hlSX6/Ev2
+         RWdMLBso8IWgKR956rqYlEghh02nh3gao8JyH5nxGRfL6E4Z5PEirbS/vDGsbvtdGV
+         srUuLUvsyvhc4eG2y8WnuoJ3WhY27XL72h3AqXjedKWmMdhNRx5eMpHt7rPc9I2Xqy
+         ULUgVAn40+jvQ==
+Date:   Wed, 24 Feb 2021 19:29:49 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org, haitao.huang@intel.com,
+        dan.j.williams@intel.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-References: <20210216033133.79543-1-tianjia.zhang@linux.alibaba.com>
- <20210216033133.79543-4-tianjia.zhang@linux.alibaba.com>
- <YCuCaG2CWNeoKQFQ@kernel.org>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <04aea989-13b3-1046-b8cd-86abb27f09c0@linux.alibaba.com>
-Date:   Wed, 24 Feb 2021 17:31:02 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Add a basic NUMA allocation scheme to
+ sgx_alloc_epc_page()
+Message-ID: <YDaNDcJvnAen0wZn@kernel.org>
+References: <20210221020631.171404-1-jarkko@kernel.org>
+ <7acc3c1c-373e-cfee-e838-2af170e87d98@intel.com>
+ <3b3391bc-8c40-cf08-d09d-90ff1517ff8c@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <YCuCaG2CWNeoKQFQ@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b3391bc-8c40-cf08-d09d-90ff1517ff8c@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-
-
-On 2/16/21 4:29 PM, Jarkko Sakkinen wrote:
-> On Tue, Feb 16, 2021 at 11:31:33AM +0800, Tianjia Zhang wrote:
->> In this scenario, there is no case where va_page is NULL, and
->> the error has been checked. The if-condition statement here is
->> redundant, so remove the condition detection.
->>
->> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
->> ---
->>   arch/x86/kernel/cpu/sgx/ioctl.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
->> index 1c6ecf9fbeff..719c21cca569 100644
->> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
->> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
->> @@ -66,9 +66,10 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
->>   	va_page = sgx_encl_grow(encl);
->>   	if (IS_ERR(va_page))
->>   		return PTR_ERR(va_page);
->> -	else if (va_page)
->> -		list_add(&va_page->list, &encl->va_pages);
->> -	/* else the tail page of the VA page list had free slots. */
->> +	if (!va_page)
->> +		return -EIO;
+On Tue, Feb 23, 2021 at 11:14:10AM -0800, Dave Hansen wrote:
+> On 2/21/21 4:54 PM, Dave Hansen wrote:
+> > Instead of having a for-each-section loop, I'd make it for-each-node ->
+> > for-each-section.  Something like:
+> > 
+> > 	for (i = 0; i < num_possible_nodes(); i++) {
+> > 		node = (numa_node_id() + i) % num_possible_nodes()
+> > 		
+> > 		if (!node_isset(nid, sgx_numa_mask))
+> > 			continue;
+> > 
+> > 		list_for_each_entry(section, &sgx_numa_nodes[nid],
+> > 				    section_list) {
+> > 			__sgx_alloc_epc_page_from_section(section)
+> > 		}
+> > 	}
 > 
-> Why this check?
+> OK, here's an almost completely fleshed-out loop:
 > 
-
-The value of va_page may be a negative error value, it may be NULL, or 
-it may be a valid pointer, so check this return value.
-
-Tianjia
-
->> +
->> +	list_add(&va_page->list, &encl->va_pages);
->>   
->>   	/* The extra page goes to SECS. */
->>   	encl_size = secs->size + PAGE_SIZE;
->> -- 
->> 2.19.1.3.ge56e4f7
->>
->>
+> 	page = NULL;
+> 	node = numa_node_id();
+> 	start_node = node;
+> 	while (1) {
+> 		list_for_each_entry(section, &sgx_numa_nodes[nid],
+>  				    section_list) {
+>  			page = __sgx_alloc_epc(section);
+> 			if (page)
+> 				break;
+>  		}
+> 		if (page)
+> 			break;
+> 		
+> 		/*
+> 		 * EPC allocation failed on 'node'.  Fall
+> 		 * back with round-robin to other nodes with
+> 		 * EPC:
+> 		 */
+> 		node = next_node_in(node, sgx_numa_mask);
 > 
-> /Jarkko
+> 		/* Give up if allocation wraps back to the start: */
+> 		if (node == start_node)
+> 			break;
+> 	}
 > 
+> This will:
+> 1. Always start close to the CPU that started the allocation
+> 2. Always spread the allocations out among nodes evenly, never
+>    concentrating allocations on node 0, for instance.  (This could also
+>    be node_random() and get a similar effect, but this probably has
+>    slightly better default NUMA behavior).
+> 3. Efficiently look among all nodes because of 'sgx_numa_mask'
+> 4. Have no special case for the first allocation.  All allocations will
+>    be satisfied from this unified loop.
+> 5. Compile down to no loop on CONFIG_NUMA=y systems.
+> 6. Be guaranteed to make forward progress even if preempted and
+>    numa_node_id() changes in the loop.
+> 
+> BTW, I think the name of __sgx_alloc_epc_page_from_section() can be
+> shortened down.  It's passed a section and returns a page, so both of
+> those could be removed from the name.
+
+I would start with what I have with minimal changes, and then continue
+with a patch that completely wipes the section list.
+
+Then fallback can just take a page from a flat FIFO of EPC pages.
+
+/Jarkko
