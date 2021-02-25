@@ -2,67 +2,84 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00F9C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Feb 2021 07:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB325C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Feb 2021 08:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA6164EF1
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Feb 2021 07:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5505164F06
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Feb 2021 08:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234266AbhBYHfz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Feb 2021 02:35:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60506 "EHLO mail.kernel.org"
+        id S230459AbhBYIP6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Feb 2021 03:15:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234255AbhBYHf2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:35:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 72C6164E85;
-        Thu, 25 Feb 2021 07:34:38 +0000 (UTC)
+        id S230142AbhBYIPx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 25 Feb 2021 03:15:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7899964F06;
+        Thu, 25 Feb 2021 08:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614238479;
-        bh=fCo4630llG1h78vVNDcLgazcjDfv48yQtx8UMOFjzGo=;
+        s=k20201202; t=1614240913;
+        bh=SCu/6AE/LP0gy9KIcXIomCfrmvpzfk+GayRKyu3RzUQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gIXpOLzX0O9vSF5/eAHd907IggebEqg0JMZ5gsMa2888wD/TrolmVlYPBxL0I1Hur
-         YgWLHvQ0z5rciE9uHyQ7cvhDWYP+oOv4RsejGsh5c/VQBsAinuj4akDGFt8d5OUDmT
-         TqM03SGm5dRel1KYUaon98TfokNiLyWrdO2rDZyJ3kUeCBeqAavyVGlOkicbfEfoIm
-         Y4AqjOG4n+p8TTBKhzSLqWzM/1BSlmSIaZrWaSd7z+Wcq/OgxFEMmOmp7PIPp3+t8j
-         q/vpzLwJ8S0uHpMCp2wqMdVz8dz6C2semR13RM12uFmizqe9fvcgp4xFwCibzZFodZ
-         KoIorIEe8dWqA==
-Date:   Thu, 25 Feb 2021 09:34:21 +0200
+        b=sF4exJeiboeRfsNY0wutZPfLHV8P02j4gS9n8mQAoBZGTy13u6BW4O2XyqcG0NKmD
+         nkfJ9cUZbrcgvz3NQe04Nsch6ScIDIPFYjfKPHHa9PEwaf0NDtooqB8Eqlq9u95aZU
+         awu5WgR5RcUy0BZlmeS9j/3C0/h60xuD4rl3N5v4DS86Ae1kEemQct6MbIwNBmw3hF
+         Wmxfar7hWslcpsefA+VpGSiGDbsPRb0QxRVRum/mE0qQ50Qt6eOVxWF0YcEgtoScvT
+         /yaiFJc6ZLsD5kg9Hs73YyUvK3K8NJEfbR8glvqMn57ipdu+mBs6FONc0N5Io8iday
+         byyR/b3AY+viQ==
+Date:   Thu, 25 Feb 2021 10:14:54 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     haitao.huang@intel.com, dan.j.williams@intel.com,
-        dave.hansen@linux.intel.com, bp@alien8.de, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 0/3] Introduce version array structure: sgx_va
-Message-ID: <YDdS/WHqu7y9piie@kernel.org>
-References: <20210224222049.240754-1-jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org, haitao.huang@intel.com
+Cc:     dan.j.williams@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.orgc
+Subject: Re: [PATCH v2] x86/sgx: Add a basic NUMA allocation scheme to
+ sgx_alloc_epc_page()
+Message-ID: <YDdcfrqlitSS/aw/@kernel.org>
+References: <20210223213541.284871-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210224222049.240754-1-jarkko@kernel.org>
+In-Reply-To: <20210223213541.284871-1-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Feb 25, 2021 at 12:20:46AM +0200, Jarkko Sakkinen wrote:
-> Introduce an xarray based version array (VA) structure: struct sgx_va.
+On Tue, Feb 23, 2021 at 11:35:41PM +0200, Jarkko Sakkinen wrote:
+> Background
+> ==========
 > 
-> The use of sgx_va can be later on extended to the following use cases:
+> EPC section is covered by one or more SRAT entries that are associated with
+> one and only one PXM (NUMA node). The motivation behind this patch is to
+> provide basic elements of building allocation scheme based on this premise.
 > 
-> - A global VA for reclaimed SECS pages.
-> - A global VA for reclaimed VA pages.
+> It does not try to fully address NUMA. For instance, it does not provide
+> integration to the mempolicy API, but neither does introduce any
+> bottlenecks to address this later on. Memory allocation is a complex topic,
+> and thus it's better to start with baby steps.
 > 
-> Testing done while developing the patch:
+> Solution
+> ========
 > 
-> - With NUC7PJYH: https://www.intel.com/content/www/us/en/products/boards-kits/nuc/kits/nuc7pjyh.html
-> - seq 10000 | xargs -I {} -P10000 ./test_sgx > /dev/null
-> - The EPC size was set from BIOS to 32 MB.
+> Use phys_to_target_node() to associate each NUMA node with the EPC sections
+> contained within its range.
+> 
+> In sgx_alloc_epc_page(), first try to allocate from the NUMA node, where
+> the CPU is executing. If that fails, fallback to the legacy allocation.
+> 
+> Link: https://lore.kernel.org/lkml/158188326978.894464.217282995221175417.stgit@dwillia2-desk3.amr.corp.intel.com/
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-In [1], 'va' branch is tip/master with the patch set on top.
+In [1], 'numa' branch is tip/master with the patch set on top.
+
+Haitao, Any chances that you might have time to give a shot at testing
+this, when the bandwidth allows?
 
 [1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git:
 
