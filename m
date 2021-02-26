@@ -2,138 +2,115 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60726C433E0
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 17:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49065C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 19:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A19664F17
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 17:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06C2064DE0
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 19:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbhBZRUP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 26 Feb 2021 12:20:15 -0500
-Received: from www.sr71.net ([198.145.64.142]:37568 "EHLO blackbird.sr71.net"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S229571AbhBZRUL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 26 Feb 2021 12:20:11 -0500
-X-Greylist: delayed 629 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Feb 2021 12:20:10 EST
-Received: from [0.0.0.0] (unknown [50.53.169.119])
-        (Authenticated sender: dave)
-        by blackbird.sr71.net (Postfix) with ESMTPSA id 0B467FA87F;
-        Fri, 26 Feb 2021 09:08:56 -0800 (PST)
+        id S229915AbhBZTxY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 26 Feb 2021 14:53:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229622AbhBZTxW (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 26 Feb 2021 14:53:22 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADBFC06174A
+        for <linux-sgx@vger.kernel.org>; Fri, 26 Feb 2021 11:52:41 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id z7so5849422plk.7
+        for <linux-sgx@vger.kernel.org>; Fri, 26 Feb 2021 11:52:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fiDtBSrDM5VQf32jdhUorkZ49v06+aiMH0P6vHa7yco=;
+        b=Vv3LrwgLGHNvhPopQXi5zrlDChuZ+S8i0rJ+kwqJZ/n42QbDBVvLC3ZUsOq+qtctL/
+         CpfrskxHOPJTaSRHipK1nLFNLW6v/ap+ydnIxGnBILmPuDwzeSQjAiD+SpfJ83Ytc1N3
+         PntbqeSbDQU1CiKLKrHXqjgdLOXugBH1jQcaXsc8IY6zhpFKU+3YEkfyNIocboWBFGMc
+         rgfFXw6da2i1Lj51p1TLmfgto7gxRlpTb3kKEdNym9xNupbkG0+mZpJpUgryKBllis+i
+         0sPZTZ2q4ztZ01j0CkQnJjFZTOQYAS4VNPCORkCJvq6vXlpC4KDFCYWx7ipM3krDcaRl
+         wFUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fiDtBSrDM5VQf32jdhUorkZ49v06+aiMH0P6vHa7yco=;
+        b=W9/ffXou/XTKn+rsTmfiiApZFbFSH1RSx0ljma6Qc25U4sjerhV9Jpic2nXPeB0Nmr
+         MedqhFvOkZZ7Hg0EgTRkrZSLdWlgXvUHsKyPdefRzLPyJ/WqBTRFiNp2YCdWkqGGgLNU
+         0Sl0RkSUJVv0kFkco9kuHtstPfLutBqUythQ27u5alxexxYPPviKBHl2wnXuyEtAwdHW
+         QWBD6tdcioSrKMjeydAer4kbjwUayET/HaVvDeMyS6J9R6d6N+rF5NbaZeVDzZg+XDAZ
+         fFXP5eZMT3qGSP6yc4LjkyNhwbF/GgFak4Fj00xyQGNPAPJI6tXe1J7FVomjJnreV5yG
+         a76A==
+X-Gm-Message-State: AOAM531T4ozg+hnqbz3/asB0oxAkxToJv+J6PpQrtb2plvZtE33UYkfu
+        vWYGth67SWfHyq3j8yMLxZgyag==
+X-Google-Smtp-Source: ABdhPJwcATg72NLMgbE56tLKCFBXOsz7GYLXHW5rg3mdoN061Uo9Lt4SebiQvCxn9wNDzXqCQx+tFw==
+X-Received: by 2002:a17:90a:aa05:: with SMTP id k5mr5093577pjq.106.1614369161159;
+        Fri, 26 Feb 2021 11:52:41 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:e190:bf4c:e355:6c55])
+        by smtp.gmail.com with ESMTPSA id h186sm9706804pgc.38.2021.02.26.11.52.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Feb 2021 11:52:40 -0800 (PST)
+Date:   Fri, 26 Feb 2021 11:52:34 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Dave Hansen <dave@sr71.net>
+Cc:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, jarkko@kernel.org,
+        luto@kernel.org, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 Subject: Re: [RFC PATCH v6 03/25] x86/sgx: Wipe out EREMOVE from
  sgx_free_epc_page()
-To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
-        kvm@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
+Message-ID: <YDlRgtnVS4+KkzUW@google.com>
 References: <cover.1614338774.git.kai.huang@intel.com>
  <308bd5a53199d1bf520d488f748e11ce76156a33.1614338774.git.kai.huang@intel.com>
-From:   Dave Hansen <dave@sr71.net>
-Autocrypt: addr=dave@sr71.net; keydata=
- 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
- z5cecg==
-Message-ID: <746450bb-917d-ab6c-9a6a-671112cd203e@sr71.net>
-Date:   Fri, 26 Feb 2021 09:08:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <746450bb-917d-ab6c-9a6a-671112cd203e@sr71.net>
 MIME-Version: 1.0
-In-Reply-To: <308bd5a53199d1bf520d488f748e11ce76156a33.1614338774.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <746450bb-917d-ab6c-9a6a-671112cd203e@sr71.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/26/21 4:14 AM, Kai Huang wrote:
-> +/*
-> + * Place the page in uninitialized state.  Only usable by callers that
-> + * know the page is in a clean state in which EREMOVE will succeed.
-> + */
-> +static int sgx_reset_epc_page(struct sgx_epc_page *epc_page)
-> +{
-> +	int ret;
-> +
-> +	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> +
-> +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-> +	WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret);
-> +
-> +	return ret;
-> +}
-> +
->  /**
->   * sgx_encl_release - Destroy an enclave instance
->   * @kref:	address of a kref inside &sgx_encl
-> @@ -404,7 +421,8 @@ void sgx_encl_release(struct kref *ref)
->  			if (sgx_unmark_page_reclaimable(entry->epc_page))
->  				continue;
->  
-> -			sgx_free_epc_page(entry->epc_page);
-> +			if (!sgx_reset_epc_page(entry->epc_page))
-> +				sgx_free_epc_page(entry->epc_page);
+On Fri, Feb 26, 2021, Dave Hansen wrote:
+> On 2/26/21 4:14 AM, Kai Huang wrote:
+> > @@ -404,7 +421,8 @@ void sgx_encl_release(struct kref *ref)
+> >  			if (sgx_unmark_page_reclaimable(entry->epc_page))
+> >  				continue;
+> >  
+> > -			sgx_free_epc_page(entry->epc_page);
+> > +			if (!sgx_reset_epc_page(entry->epc_page))
+> > +				sgx_free_epc_page(entry->epc_page);
+> 
+> Won't this leak the page?
 
-Won't this leak the page?
+Yep.
 
-I think that's fine; the page *IS* unusable if this happens.  But, the
-error message that will show up isn't super informative.  If this
-happened to a bunch of EPC pages, we'd be out of EPC with nothing to
-show for it.
+> I think that's fine; the page *IS* unusable if this happens.  But, the
+> error message that will show up isn't super informative.  If this
+> happened to a bunch of EPC pages, we'd be out of EPC with nothing to
+> show for it.
+> 
+> We must give a more informative message saying that the page is leaked.
+>  Ideally, we'd also make this debuggable by dumping out how many of
+> these pages there have been somewhere.  That can wait, though, until we
+> have some kind of stats coming out of the code (there's nothing now).  A
+> comment to remind us to do this would be nice.
 
-We must give a more informative message saying that the page is leaked.
- Ideally, we'd also make this debuggable by dumping out how many of
-these pages there have been somewhere.  That can wait, though, until we
-have some kind of stats coming out of the code (there's nothing now).  A
-comment to remind us to do this would be nice.
+Eh, having debugged these several times, the WARN_ONCE in sgx_reset_epc_page()
+is probably sufficient.  IIRC, when I hit this, things were either laughably
+broken and every page was failing, or there was another ENCLS failure somewhere
+else that provided additional info.  Not saying don't add more debug info,
+rather that it's probably not a priority.
 
-Anyway, these are in decent shape and only getting better.  It's time to
-get some more eyeballs on them and get the RFC tag off, so assuming that
-a better error message gets stuck in here:
-
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+> Anyway, these are in decent shape and only getting better.  It's time to
+> get some more eyeballs on them and get the RFC tag off, so assuming that
+> a better error message gets stuck in here:
+> 
+> Acked-by: Dave Hansen <dave.hansen@intel.com>
