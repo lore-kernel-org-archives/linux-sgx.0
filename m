@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431B7C433E0
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 12:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E125C433E0
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 12:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBC2964EF3
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 12:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04E5764EF3
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Feb 2021 12:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbhBZMQ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 26 Feb 2021 07:16:56 -0500
-Received: from mga09.intel.com ([134.134.136.24]:44781 "EHLO mga09.intel.com"
+        id S230170AbhBZMQ5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 26 Feb 2021 07:16:57 -0500
+Received: from mga03.intel.com ([134.134.136.65]:51455 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230206AbhBZMQa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 26 Feb 2021 07:16:30 -0500
-IronPort-SDR: QaGJ7mdzwDNoGHYFBVjRiWjSdr0qJKp2Bt6NeqquOwmhvYhlGxmrxhu4Lu/J9jGB42oiheZDai
- gmMHZm/GHWpA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9906"; a="185979984"
+        id S230422AbhBZMQu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 26 Feb 2021 07:16:50 -0500
+IronPort-SDR: XcUidcubxNlwyLxiwZ6dY63gIEO3rx9VfKlXA4x3kDXiLy6ul2evX44cNLE2IOloamM37o+npo
+ VLj23a72KjNQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9906"; a="185913182"
 X-IronPort-AV: E=Sophos;i="5.81,208,1610438400"; 
-   d="scan'208";a="185979984"
+   d="scan'208";a="185913182"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2021 04:15:44 -0800
-IronPort-SDR: FDOPITsE9EeS6enEtHePgCUaQQAitvFgIjWdSZ5/SKT/zw3xN6DxhbfqMowMKXeJGGhPYfMiai
- yk4fakIB2wxw==
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2021 04:16:17 -0800
+IronPort-SDR: xZ3sCYu8WuSrtgYaeGTgP6M9S22fSjXiGbr1gVO0LlVasMruEawxV36RLfOfGh8Y/ElTj53GI/
+ lnS5+4op7gwQ==
 X-IronPort-AV: E=Sophos;i="5.81,208,1610438400"; 
-   d="scan'208";a="598420591"
+   d="scan'208";a="598420703"
 Received: from ciparjol-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.230.175])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2021 04:15:40 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2021 04:16:13 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        Kai Huang <kai.huang@intel.com>
-Subject: [RFC PATCH v6 12/25] x86/sgx: Add helper to update SGX_LEPUBKEYHASHn MSRs
-Date:   Sat, 27 Feb 2021 01:15:11 +1300
-Message-Id: <a689835aa2e3ac9f796e224efca66daec2174f50.1614338774.git.kai.huang@intel.com>
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
+Subject: [RFC PATCH v6 18/25] KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
+Date:   Sat, 27 Feb 2021 01:15:45 +1300
+Message-Id: <36eaa8ffde4f433840d633acbd32903e6f765be6.1614338774.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614338774.git.kai.huang@intel.com>
 References: <cover.1614338774.git.kai.huang@intel.com>
@@ -51,79 +52,63 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a helper to update SGX_LEPUBKEYHASHn MSRs.  SGX virtualization also
-needs to update those MSRs based on guest's "virtual" SGX_LEPUBKEYHASHn
-before EINIT from guest.
+From: Sean Christopherson <seanjc@google.com>
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Define a new KVM-only feature word for advertising and querying SGX
+sub-features in CPUID.0x12.0x0.EAX.  Because SGX1 and SGX2 are scattered
+in the kernel's feature word, they need to be translated so that the
+bit numbers match those of hardware.
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c |  5 ++---
- arch/x86/kernel/cpu/sgx/main.c  | 15 +++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h   |  2 ++
- 3 files changed, 19 insertions(+), 3 deletions(-)
+ arch/x86/kvm/cpuid.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index e5977752c7be..1bae754268d1 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -495,7 +495,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
- 			 void *token)
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 8925a929186c..a175ff75bbbe 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -13,13 +13,18 @@
+  * "bug" caps, but KVM doesn't use those.
+  */
+ enum kvm_only_cpuid_leafs {
+-	NR_KVM_CPU_CAPS = NCAPINTS,
++	CPUID_12_EAX	 = NCAPINTS,
++	NR_KVM_CPU_CAPS,
+ 
+ 	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
+ };
+ 
+ #define X86_KVM_FEATURE(w, f)		((w)*32 + (f))
+ 
++/* Intel-defined SGX sub-features, CPUID level 0x12 (EAX). */
++#define __X86_FEATURE_SGX1		X86_KVM_FEATURE(CPUID_12_EAX, 0)
++#define __X86_FEATURE_SGX2		X86_KVM_FEATURE(CPUID_12_EAX, 1)
++
+ extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ void kvm_set_cpu_caps(void);
+ 
+@@ -93,6 +98,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
+ 	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
+ 	[CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX},
++	[CPUID_12_EAX]        = {0x00000012, 0, CPUID_EAX},
+ };
+ 
+ /*
+@@ -119,6 +125,11 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+  */
+ static __always_inline u32 __feature_translate(int x86_feature)
  {
- 	u64 mrsigner[4];
--	int i, j, k;
-+	int i, j;
- 	void *addr;
- 	int ret;
- 
-@@ -544,8 +544,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
- 
- 			preempt_disable();
- 
--			for (k = 0; k < 4; k++)
--				wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + k, mrsigner[k]);
-+			sgx_update_lepubkeyhash(mrsigner);
- 
- 			ret = __einit(sigstruct, token, addr);
- 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8c922e68274d..276220d0e4b5 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -696,6 +696,21 @@ static bool __init sgx_page_cache_init(void)
- 	return true;
++	if (x86_feature == X86_FEATURE_SGX1)
++		return __X86_FEATURE_SGX1;
++	else if (x86_feature == X86_FEATURE_SGX2)
++		return __X86_FEATURE_SGX2;
++
+ 	return x86_feature;
  }
  
-+
-+/*
-+ * Update the SGX_LEPUBKEYHASH MSRs to the values specified by caller.
-+ * Bare-metal driver requires to update them to hash of enclave's signer
-+ * before EINIT. KVM needs to update them to guest's virtual MSR values
-+ * before doing EINIT from guest.
-+ */
-+void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
-+{
-+	int i;
-+
-+	for (i = 0; i < 4; i++)
-+		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-+}
-+
- static int __init sgx_init(void)
- {
- 	int ret;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 5d71c9c8644d..d4b19e5cca16 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -92,4 +92,6 @@ static inline int __init sgx_vepc_init(void)
- }
- #endif
- 
-+void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
-+
- #endif /* _X86_SGX_H */
 -- 
 2.29.2
 
