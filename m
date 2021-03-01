@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18767C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6337C43381
 	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6209601FE
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6386064E07
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234118AbhCAJqK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:46:10 -0500
-Received: from mga02.intel.com ([134.134.136.20]:12500 "EHLO mga02.intel.com"
+        id S234082AbhCAJqO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:46:14 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12507 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234094AbhCAJpe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:45:34 -0500
-IronPort-SDR: c6ryIvsKaEkMSXrM2VHkkvYLiA9Pkeik0sls8k3vXzGjw6uu4CxI0Ug2ihW8XsnHWEdxoGVO7H
- 4SPv9Hc6ye/w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="173542477"
+        id S234101AbhCAJpi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:45:38 -0500
+IronPort-SDR: mUiW0UENOVCkcR04FIjmkkPLM+95o2Kjarggno4omJCxpFwnPVqzWT736GYqyFEKTpnjzWm8H1
+ +L74mrdTPrUg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="173542490"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="173542477"
+   d="scan'208";a="173542490"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:48 -0800
-IronPort-SDR: fC+0gOq3VyKRbjdhb6WYiOI8P7X7d9wTmSDebKKgDgNAxb1BTpskmXglh4hgq4AMahBMVFHikW
- PAHwGB7ffLgA==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:54 -0800
+IronPort-SDR: FfgqcorckhK8BbAoCv3pnzckWJRiYSB5Fxt9Sei8fXqXhZ52yGvntAK04Iavbr4XPCE6fUGypz
+ 3QJCCgefW5Ug==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267315"
+   d="scan'208";a="599267336"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:42 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:50 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 01/25] x86/cpufeatures: Make SGX_LC feature bit depend on SGX bit
-Date:   Mon,  1 Mar 2021 22:44:28 +1300
-Message-Id: <0f5c13b8d89355626c343ad78f60807b321baf6f.1614590788.git.kai.huang@intel.com>
+Subject: [PATCH 03/25] x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()
+Date:   Mon,  1 Mar 2021 22:44:30 +1300
+Message-Id: <9c2c83ccc7324390bfb302bd327d9236b890c679.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -51,69 +51,126 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Move SGX_LC feature bit to CPUID dependency table to make clearing all
-SGX feature bits easier. Also remove clear_sgx_caps() since it is just
-a wrapper of setup_clear_cpu_cap(X86_FEATURE_SGX) now.
+From: Jarkko Sakkinen <jarkko@kernel.org>
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+EREMOVE takes a pages and removes any association between that page and
+an enclave.  It must be run on a page before it can be added into
+another enclave.  Currently, EREMOVE is run as part of pages being freed
+into the SGX page allocator.  It is not expected to fail.
+
+KVM does not track how guest pages are used, which means that SGX
+virtualization use of EREMOVE might fail.
+
+Break out the EREMOVE call from the SGX page allocator.  This will allow
+the SGX virtualization code to use the allocator directly.  (SGX/KVM
+will also introduce a more permissive EREMOVE helper).
+
+Implement original sgx_free_epc_page() as sgx_encl_free_epc_page() to be
+more specific that it is used to free EPC page assigned to one enclave.
+Print an error message when EREMOVE fails to explicitly call out EPC
+page is leaked, and requires machine reboot to get leaked pages back.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Co-developed-by: Kai Huang <kai.huang@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kernel/cpu/cpuid-deps.c |  1 +
- arch/x86/kernel/cpu/feat_ctl.c   | 12 +++---------
- 2 files changed, 4 insertions(+), 9 deletions(-)
+RFC v6->v1:
 
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index 42af31b64c2c..d40f8e0a54ce 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -72,6 +72,7 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_AVX512_FP16,		X86_FEATURE_AVX512BW  },
- 	{ X86_FEATURE_ENQCMD,			X86_FEATURE_XSAVES    },
- 	{ X86_FEATURE_PER_THREAD_MBA,		X86_FEATURE_MBA       },
-+	{ X86_FEATURE_SGX_LC,			X86_FEATURE_SGX	      },
- 	{}
+ - Removed sgx_reset_epc_page() since with it, I found it is hard to find
+   a place to print the msg saying EPC page is leaked.
+ - Implemented original sgx_free_epc_page() as sgx_encl_free_epc_page(),
+   and add pr_err_once() to print EPC page is leaked when EREMOVE failed.
+
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 26 +++++++++++++++++++++++---
+ arch/x86/kernel/cpu/sgx/main.c | 12 ++++--------
+ 2 files changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 7449ef33f081..a7dc86e87a09 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -381,6 +381,26 @@ const struct vm_operations_struct sgx_vm_ops = {
+ 	.access = sgx_vma_access,
  };
  
-diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 3b1b01f2b248..27533a6e04fa 100644
---- a/arch/x86/kernel/cpu/feat_ctl.c
-+++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -93,15 +93,9 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
- }
- #endif /* CONFIG_X86_VMX_FEATURE_NAMES */
++static void sgx_encl_free_epc_page(struct sgx_epc_page *epc_page)
++{
++	int ret;
++
++	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
++
++	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
++	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret)) {
++		/*
++		 * Give a message to remind EPC page is leaked, and requires
++		 * machine reboot to get leaked pages back. This can be improved
++		 * in the future by adding stats of leaked pages, etc.
++		 */
++		pr_err_once("EPC page is leaked. Require machine reboot to get leaked pages back.\n");
++		return;
++	}
++
++	sgx_free_epc_page(epc_page);
++}
++
+ /**
+  * sgx_encl_release - Destroy an enclave instance
+  * @kref:	address of a kref inside &sgx_encl
+@@ -404,7 +424,7 @@ void sgx_encl_release(struct kref *ref)
+ 			if (sgx_unmark_page_reclaimable(entry->epc_page))
+ 				continue;
  
--static void clear_sgx_caps(void)
--{
--	setup_clear_cpu_cap(X86_FEATURE_SGX);
--	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
--}
--
- static int __init nosgx(char *str)
+-			sgx_free_epc_page(entry->epc_page);
++			sgx_encl_free_epc_page(entry->epc_page);
+ 			encl->secs_child_cnt--;
+ 			entry->epc_page = NULL;
+ 		}
+@@ -415,7 +435,7 @@ void sgx_encl_release(struct kref *ref)
+ 	xa_destroy(&encl->page_array);
+ 
+ 	if (!encl->secs_child_cnt && encl->secs.epc_page) {
+-		sgx_free_epc_page(encl->secs.epc_page);
++		sgx_encl_free_epc_page(entry->epc_page);
+ 		encl->secs.epc_page = NULL;
+ 	}
+ 
+@@ -423,7 +443,7 @@ void sgx_encl_release(struct kref *ref)
+ 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+ 					   list);
+ 		list_del(&va_page->list);
+-		sgx_free_epc_page(va_page->epc_page);
++		sgx_encl_free_epc_page(entry->epc_page);
+ 		kfree(va_page);
+ 	}
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8df81a3ed945..44fe91a5bfb3 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -598,18 +598,14 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+  * sgx_free_epc_page() - Free an EPC page
+  * @page:	an EPC page
+  *
+- * Call EREMOVE for an EPC page and insert it back to the list of free pages.
++ * Put the EPC page back to the list of free pages. It's the caller's
++ * responsibility to make sure that the page is in uninitialized state. In other
++ * words, do EREMOVE, EWB or whatever operation is necessary before calling
++ * this function.
+  */
+ void sgx_free_epc_page(struct sgx_epc_page *page)
  {
--	clear_sgx_caps();
-+	setup_clear_cpu_cap(X86_FEATURE_SGX);
+ 	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
+-	int ret;
+-
+-	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+-
+-	ret = __eremove(sgx_get_epc_virt_addr(page));
+-	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
+-		return;
  
- 	return 0;
- }
-@@ -116,7 +110,7 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
- 
- 	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
- 		clear_cpu_cap(c, X86_FEATURE_VMX);
--		clear_sgx_caps();
-+		clear_cpu_cap(c, X86_FEATURE_SGX);
- 		return;
- 	}
- 
-@@ -177,6 +171,6 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
- 	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
- 		if (enable_sgx)
- 			pr_err_once("SGX disabled by BIOS\n");
--		clear_sgx_caps();
-+		clear_cpu_cap(c, X86_FEATURE_SGX);
- 	}
- }
+ 	spin_lock(&section->lock);
+ 	list_add_tail(&page->list, &section->page_list);
 -- 
 2.29.2
 
