@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31D2C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD81C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57A0C64E3F
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75DF464E07
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234146AbhCAJqd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:46:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:26450 "EHLO mga01.intel.com"
+        id S234112AbhCAJq4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:46:56 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12500 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234119AbhCAJqL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:46:11 -0500
-IronPort-SDR: DhM2XLARrK7XOM+DpCbQqN3CtM04NsmoZR/snrrHKZ4jLTfMcTHqf78oRp4J1AI72ufQiNLH8a
- EzmhteRxvLjw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="206015975"
+        id S234136AbhCAJqY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:46:24 -0500
+IronPort-SDR: KgkoAmOTM6+M8k78/0e29GuoE6NXLtvNxTQ9dhVloX61h45u9JRKeiCYwN5K0Xs4iXD23h8e7h
+ hmlzyoiMKJZQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="173542500"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="206015975"
+   d="scan'208";a="173542500"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:30 -0800
-IronPort-SDR: eH/ga+clTU+rthz9Ky8qGvi4aJxsGpK3GElRzkAtBan59ApLTO2X/qSeRYui2SU1hlMhBFNCJQ
- CVJLOcRfMjgA==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:58 -0800
+IronPort-SDR: nZitoD4NuJ6KqYpFrAKtj+mM/SgoicY6mwqMPyHdFakCS87rxFtJ79dqU0zs9cLS/nSZ1AyBV/
+ jxcrTG1Vrn6g==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267473"
+   d="scan'208";a="599267351"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:26 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:54 -0800
 From:   Kai Huang <kai.huang@intel.com>
-To:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org
+To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 08/25] x86/sgx: Expose SGX architectural definitions to the kernel
-Date:   Mon,  1 Mar 2021 22:45:08 +1300
-Message-Id: <cd6d402186d65462d014bb887ba41c430e5e29c1.1614590788.git.kai.huang@intel.com>
+Subject: [PATCH 04/25] x86/sgx: Add SGX_CHILD_PRESENT hardware error code
+Date:   Mon,  1 Mar 2021 22:44:31 +1300
+Message-Id: <8b0addaaa0083573bda94b7e9c0f977740096363.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -53,107 +53,46 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Expose SGX architectural structures, as KVM will use many of the
-architectural constants and structs to virtualize SGX.
+SGX driver can accurately track how enclave pages are used.  This
+enables SECS to be specifically targeted and EREMOVE'd only after all
+child pages have been EREMOVE'd.  This ensures that SGX driver will
+never encounter SGX_CHILD_PRESENT in normal operation.
 
-Name the new header file as asm/sgx.h, rather than asm/sgx_arch.h, to
-have single header to provide SGX facilities to share with other kernel
-componments.
+Virtual EPC is different.  The host does not track how EPC pages are
+used by the guest, so it cannot guarantee EREMOVE success.  It might,
+for instance, encounter a SECS with a non-zero child count.
+
+Add a definition of SGX_CHILD_PRESENT.  It will be used exclusively by
+the SGX virtualization driver to handle recoverable EREMOVE errors when
+saniziting EPC pages after they are freed.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Kai Huang <kai.huang@intel.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- .../cpu/sgx/arch.h => include/asm/sgx.h}      | 20 ++++++++++++++-----
- arch/x86/kernel/cpu/sgx/encl.c                |  2 +-
- arch/x86/kernel/cpu/sgx/sgx.h                 |  2 +-
- tools/testing/selftests/sgx/defines.h         |  2 +-
- 4 files changed, 18 insertions(+), 8 deletions(-)
- rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx.h} (95%)
+ arch/x86/kernel/cpu/sgx/arch.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/include/asm/sgx.h
-similarity index 95%
-rename from arch/x86/kernel/cpu/sgx/arch.h
-rename to arch/x86/include/asm/sgx.h
-index abf99bb71fdc..d4ad35f6319a 100644
+diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+index dd7602c44c72..abf99bb71fdc 100644
 --- a/arch/x86/kernel/cpu/sgx/arch.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -2,15 +2,20 @@
- /**
-  * Copyright(c) 2016-20 Intel Corporation.
-  *
-- * Contains data structures defined by the SGX architecture.  Data structures
-- * defined by the Linux software stack should not be placed here.
-+ * Intel Software Guard Extensions (SGX) support.
++++ b/arch/x86/kernel/cpu/sgx/arch.h
+@@ -26,12 +26,14 @@
+  * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
+  * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
+  *				been completed yet.
++ * %SGX_CHILD_PRESENT		SECS has child pages present in the EPC.
+  * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
+  *				public key does not match IA32_SGXLEPUBKEYHASH.
+  * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
   */
--#ifndef _ASM_X86_SGX_ARCH_H
--#define _ASM_X86_SGX_ARCH_H
-+#ifndef _ASM_X86_SGX_H
-+#define _ASM_X86_SGX_H
- 
- #include <linux/bits.h>
- #include <linux/types.h>
- 
-+/*
-+ * This file contains both data structures defined by SGX architecture and Linux
-+ * defined software data structures and functions.  The two should not be mixed
-+ * together for better readibility.  The architectural definitions come first.
-+ */
-+
- /* The SGX specific CPUID function. */
- #define SGX_CPUID		0x12
- /* EPC enumeration. */
-@@ -337,4 +342,9 @@ struct sgx_sigstruct {
- 
- #define SGX_LAUNCH_TOKEN_SIZE 304
- 
--#endif /* _ASM_X86_SGX_ARCH_H */
-+/*
-+ * Do not put any hardware-defined SGX structure representations below this
-+ * line!
-+ */
-+
-+#endif /* _ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index a7dc86e87a09..a9fda247223e 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -7,7 +7,7 @@
- #include <linux/shmem_fs.h>
- #include <linux/suspend.h>
- #include <linux/sched/mm.h>
--#include "arch.h"
-+#include <asm/sgx.h>
- #include "encl.h"
- #include "encls.h"
- #include "sgx.h"
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 1bff93be7bf4..5d71c9c8644d 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -8,7 +8,7 @@
- #include <linux/rwsem.h>
- #include <linux/types.h>
- #include <asm/asm.h>
--#include "arch.h"
-+#include <asm/sgx.h>
- 
- #undef pr_fmt
- #define pr_fmt(fmt) "sgx: " fmt
-diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index 592c1ccf4576..0bd73428d2f3 100644
---- a/tools/testing/selftests/sgx/defines.h
-+++ b/tools/testing/selftests/sgx/defines.h
-@@ -14,7 +14,7 @@
- #define __aligned(x) __attribute__((__aligned__(x)))
- #define __packed __attribute__((packed))
- 
--#include "../../../../arch/x86/kernel/cpu/sgx/arch.h"
-+#include "../../../../arch/x86/include/asm/sgx.h"
- #include "../../../../arch/x86/include/asm/enclu.h"
- #include "../../../../arch/x86/include/uapi/asm/sgx.h"
- 
+ enum sgx_return_code {
+ 	SGX_NOT_TRACKED			= 11,
++	SGX_CHILD_PRESENT		= 13,
+ 	SGX_INVALID_EINITTOKEN		= 16,
+ 	SGX_UNMASKED_EVENT		= 128,
+ };
 -- 
 2.29.2
 
