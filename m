@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6337C43381
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A1EC4332E
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6386064E07
+	by mail.kernel.org (Postfix) with ESMTP id F3B7364E40
 	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234082AbhCAJqO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:46:14 -0500
-Received: from mga02.intel.com ([134.134.136.20]:12507 "EHLO mga02.intel.com"
+        id S234133AbhCAJqT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:46:19 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23944 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234101AbhCAJpi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:45:38 -0500
-IronPort-SDR: mUiW0UENOVCkcR04FIjmkkPLM+95o2Kjarggno4omJCxpFwnPVqzWT736GYqyFEKTpnjzWm8H1
- +L74mrdTPrUg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="173542490"
+        id S234106AbhCAJp5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:45:57 -0500
+IronPort-SDR: KymdAsDzbOdaS1YUyQNg2CPTuRgqo+wquBzjif6XnUqHsXbRartPx96ewiaLGWn9fHDAgGr031
+ Uu+xY6WHRElA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="247822421"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="173542490"
+   d="scan'208";a="247822421"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:54 -0800
-IronPort-SDR: FfgqcorckhK8BbAoCv3pnzckWJRiYSB5Fxt9Sei8fXqXhZ52yGvntAK04Iavbr4XPCE6fUGypz
- 3QJCCgefW5Ug==
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:13 -0800
+IronPort-SDR: 0apQbZCRaW3T6t4buz1Vkt79cibMH/LqxhE8r2r4aa/GMp0j7FXoREVoKQOnVp3QCKYwYE2V5s
+ pe0xoftsGK5g==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267336"
+   d="scan'208";a="599267426"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:50 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:09 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de,
         Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 03/25] x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()
-Date:   Mon,  1 Mar 2021 22:44:30 +1300
-Message-Id: <9c2c83ccc7324390bfb302bd327d9236b890c679.1614590788.git.kai.huang@intel.com>
+Subject: [PATCH 06/25] x86/cpu/intel: Allow SGX virtualization without Launch Control support
+Date:   Mon,  1 Mar 2021 22:45:02 +1300
+Message-Id: <12541888ae9ac7f517582aa64d9153feede7aed4.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -51,126 +52,129 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Jarkko Sakkinen <jarkko@kernel.org>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-EREMOVE takes a pages and removes any association between that page and
-an enclave.  It must be run on a page before it can be added into
-another enclave.  Currently, EREMOVE is run as part of pages being freed
-into the SGX page allocator.  It is not expected to fail.
+The kernel will currently disable all SGX support if the hardware does
+not support launch control.  Make it more permissive to allow SGX
+virtualization on systems without Launch Control support.  This will
+allow KVM to expose SGX to guests that have less-strict requirements on
+the availability of flexible launch control.
 
-KVM does not track how guest pages are used, which means that SGX
-virtualization use of EREMOVE might fail.
+Improve error message to distinguish between three cases.  There are two
+cases where SGX support is completely disabled:
+1) SGX has been disabled completely by the BIOS
+2) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+   of LC unavailability.  SGX virtualization is unavailable (because of
+   Kconfig).
+One where it is partially available:
+3) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+   of LC unavailability.  SGX virtualization is supported.
 
-Break out the EREMOVE call from the SGX page allocator.  This will allow
-the SGX virtualization code to use the allocator directly.  (SGX/KVM
-will also introduce a more permissive EREMOVE helper).
-
-Implement original sgx_free_epc_page() as sgx_encl_free_epc_page() to be
-more specific that it is used to free EPC page assigned to one enclave.
-Print an error message when EREMOVE fails to explicitly call out EPC
-page is leaked, and requires machine reboot to get leaked pages back.
-
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Co-developed-by: Kai Huang <kai.huang@intel.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
-RFC v6->v1:
+ arch/x86/kernel/cpu/feat_ctl.c | 57 ++++++++++++++++++++++++++--------
+ 1 file changed, 44 insertions(+), 13 deletions(-)
 
- - Removed sgx_reset_epc_page() since with it, I found it is hard to find
-   a place to print the msg saying EPC page is leaked.
- - Implemented original sgx_free_epc_page() as sgx_encl_free_epc_page(),
-   and add pr_err_once() to print EPC page is leaked when EREMOVE failed.
-
----
- arch/x86/kernel/cpu/sgx/encl.c | 26 +++++++++++++++++++++++---
- arch/x86/kernel/cpu/sgx/main.c | 12 ++++--------
- 2 files changed, 27 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7449ef33f081..a7dc86e87a09 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -381,6 +381,26 @@ const struct vm_operations_struct sgx_vm_ops = {
- 	.access = sgx_vma_access,
- };
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 27533a6e04fa..96c370284913 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -105,7 +105,8 @@ early_param("nosgx", nosgx);
+ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ {
+ 	bool tboot = tboot_enabled();
+-	bool enable_sgx;
++	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
++	bool enable_vmx;
+ 	u64 msr;
  
-+static void sgx_encl_free_epc_page(struct sgx_epc_page *epc_page)
-+{
-+	int ret;
+ 	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+@@ -114,13 +115,21 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 		return;
+ 	}
+ 
++	enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
++		     IS_ENABLED(CONFIG_KVM_INTEL);
 +
-+	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-+
-+	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-+	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret)) {
-+		/*
-+		 * Give a message to remind EPC page is leaked, and requires
-+		 * machine reboot to get leaked pages back. This can be improved
-+		 * in the future by adding stats of leaked pages, etc.
-+		 */
-+		pr_err_once("EPC page is leaked. Require machine reboot to get leaked pages back.\n");
+ 	/*
+-	 * Enable SGX if and only if the kernel supports SGX and Launch Control
+-	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
++	 * Separate out SGX driver enabling from KVM.  This allows KVM
++	 * guests to use SGX even if the kernel SGX driver refuses to
++	 * use it.  This happens if flexible Faunch Control is not
++	 * available.
+ 	 */
+-	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
+-		     cpu_has(c, X86_FEATURE_SGX_LC) &&
+-		     IS_ENABLED(CONFIG_X86_SGX);
++	enable_sgx_any = cpu_has(c, X86_FEATURE_SGX) &&
++			 IS_ENABLED(CONFIG_X86_SGX);
++	enable_sgx_driver = enable_sgx_any &&
++			    cpu_has(c, X86_FEATURE_SGX_LC);
++	enable_sgx_kvm = enable_sgx_any && enable_vmx &&
++			  IS_ENABLED(CONFIG_X86_SGX_KVM);
+ 
+ 	if (msr & FEAT_CTL_LOCKED)
+ 		goto update_caps;
+@@ -136,15 +145,18 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 	 * i.e. KVM is enabled, to avoid unnecessarily adding an attack vector
+ 	 * for the kernel, e.g. using VMX to hide malicious code.
+ 	 */
+-	if (cpu_has(c, X86_FEATURE_VMX) && IS_ENABLED(CONFIG_KVM_INTEL)) {
++	if (enable_vmx) {
+ 		msr |= FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX;
+ 
+ 		if (tboot)
+ 			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
+ 	}
+ 
+-	if (enable_sgx)
+-		msr |= FEAT_CTL_SGX_ENABLED | FEAT_CTL_SGX_LC_ENABLED;
++	if (enable_sgx_kvm || enable_sgx_driver) {
++		msr |= FEAT_CTL_SGX_ENABLED;
++		if (enable_sgx_driver)
++			msr |= FEAT_CTL_SGX_LC_ENABLED;
++	}
+ 
+ 	wrmsrl(MSR_IA32_FEAT_CTL, msr);
+ 
+@@ -167,10 +179,29 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 	}
+ 
+ update_sgx:
+-	if (!(msr & FEAT_CTL_SGX_ENABLED) ||
+-	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
+-		if (enable_sgx)
+-			pr_err_once("SGX disabled by BIOS\n");
++	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
++		if (enable_sgx_kvm || enable_sgx_driver)
++			pr_err_once("SGX disabled by BIOS.\n");
+ 		clear_cpu_cap(c, X86_FEATURE_SGX);
 +		return;
 +	}
 +
-+	sgx_free_epc_page(epc_page);
-+}
++	/*
++	 * VMX feature bit may be cleared due to being disabled in BIOS,
++	 * in which case SGX virtualization cannot be supported either.
++	 */
++	if (!cpu_has(c, X86_FEATURE_VMX) && enable_sgx_kvm) {
++		pr_err_once("SGX virtualization disabled due to lack of VMX.\n");
++		enable_sgx_kvm = 0;
++	}
 +
- /**
-  * sgx_encl_release - Destroy an enclave instance
-  * @kref:	address of a kref inside &sgx_encl
-@@ -404,7 +424,7 @@ void sgx_encl_release(struct kref *ref)
- 			if (sgx_unmark_page_reclaimable(entry->epc_page))
- 				continue;
- 
--			sgx_free_epc_page(entry->epc_page);
-+			sgx_encl_free_epc_page(entry->epc_page);
- 			encl->secs_child_cnt--;
- 			entry->epc_page = NULL;
- 		}
-@@ -415,7 +435,7 @@ void sgx_encl_release(struct kref *ref)
- 	xa_destroy(&encl->page_array);
- 
- 	if (!encl->secs_child_cnt && encl->secs.epc_page) {
--		sgx_free_epc_page(encl->secs.epc_page);
-+		sgx_encl_free_epc_page(entry->epc_page);
- 		encl->secs.epc_page = NULL;
++	if (!(msr & FEAT_CTL_SGX_LC_ENABLED) && enable_sgx_driver) {
++		if (!enable_sgx_kvm) {
++			pr_err_once("SGX Launch Control is locked. Disable SGX.\n");
++			clear_cpu_cap(c, X86_FEATURE_SGX);
++		} else {
++			pr_err_once("SGX Launch Control is locked. Support SGX virtualization only.\n");
++			clear_cpu_cap(c, X86_FEATURE_SGX_LC);
++		}
  	}
- 
-@@ -423,7 +443,7 @@ void sgx_encl_release(struct kref *ref)
- 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
- 					   list);
- 		list_del(&va_page->list);
--		sgx_free_epc_page(va_page->epc_page);
-+		sgx_encl_free_epc_page(entry->epc_page);
- 		kfree(va_page);
- 	}
- 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8df81a3ed945..44fe91a5bfb3 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -598,18 +598,14 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
-  * sgx_free_epc_page() - Free an EPC page
-  * @page:	an EPC page
-  *
-- * Call EREMOVE for an EPC page and insert it back to the list of free pages.
-+ * Put the EPC page back to the list of free pages. It's the caller's
-+ * responsibility to make sure that the page is in uninitialized state. In other
-+ * words, do EREMOVE, EWB or whatever operation is necessary before calling
-+ * this function.
-  */
- void sgx_free_epc_page(struct sgx_epc_page *page)
- {
- 	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
--	int ret;
--
--	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
--
--	ret = __eremove(sgx_get_epc_virt_addr(page));
--	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
--		return;
- 
- 	spin_lock(&section->lock);
- 	list_add_tail(&page->list, &section->page_list);
+ }
 -- 
 2.29.2
 
