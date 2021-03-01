@@ -2,102 +2,249 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4586FC433DB
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 06:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FC4C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B3CD64E09
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 06:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C26DC64DEE
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbhCAGOO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 01:14:14 -0500
-Received: from mga06.intel.com ([134.134.136.31]:6306 "EHLO mga06.intel.com"
+        id S234074AbhCAJpQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:45:16 -0500
+Received: from mga18.intel.com ([134.134.136.126]:59762 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231247AbhCAGOO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 01:14:14 -0500
-IronPort-SDR: JDxwnz1Wkq3Qp5gKNMYZt630Wgahkjk2vb230xTP+RkVODYgmYZ2maMeT4bS4aoh8Eo3y6ypHI
- fHV6Dg/471UQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="247780721"
-X-IronPort-AV: E=Sophos;i="5.81,214,1610438400"; 
-   d="scan'208";a="247780721"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 22:13:31 -0800
-IronPort-SDR: gjjuLpoz9CdjFbuuRI3Jf02DDXMPatetPJznPnEPkciJpm5g/1hjgCxG3fbHunpHG807ca7fhF
- z2aztX39tyJw==
-X-IronPort-AV: E=Sophos;i="5.81,214,1610438400"; 
-   d="scan'208";a="517310331"
-Received: from jscomeax-mobl.amr.corp.intel.com ([10.252.139.76])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 22:13:28 -0800
-Message-ID: <c528da37e6ea6172d68270d8bdc1280afc1e98c8.camel@intel.com>
-Subject: Re: [RFC PATCH v6 03/25] x86/sgx: Wipe out EREMOVE from
- sgx_free_epc_page()
+        id S234055AbhCAJpO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:45:14 -0500
+IronPort-SDR: cP6QF051E+zHJurv2bT4EeiqfS/Fdja5+Zs9GEwvAIv3o/5AoxDNFuUXXYnMstDWOINOB1ENah
+ BK060BAlv+2A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="174046470"
+X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
+   d="scan'208";a="174046470"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:32 -0800
+IronPort-SDR: +YgmYuPFNEhKo28m17pGTA+znN2qrayg6lsxhGtmo9GliqKg2kOh52g9KXdkbT4HJuzAIwGWtn
+ hu3EviFiP8sg==
+X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
+   d="scan'208";a="599267263"
+Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:22 -0800
 From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave@sr71.net>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        jarkko@kernel.org, luto@kernel.org, rick.p.edgecombe@intel.com,
+To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
+        luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Date:   Mon, 01 Mar 2021 19:13:25 +1300
-In-Reply-To: <55e0f003-ca2b-24d2-5a23-31a77c5b943d@sr71.net>
-References: <cover.1614338774.git.kai.huang@intel.com>
-         <308bd5a53199d1bf520d488f748e11ce76156a33.1614338774.git.kai.huang@intel.com>
-         <746450bb-917d-ab6c-9a6a-671112cd203e@sr71.net>
-         <YDlRgtnVS4+KkzUW@google.com>
-         <55e0f003-ca2b-24d2-5a23-31a77c5b943d@sr71.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jethro@fortanix.com, b.thiel@posteo.de, jmattson@google.com,
+        joro@8bytes.org, vkuznets@redhat.com, wanpengli@tencent.com,
+        corbet@lwn.net
+Subject: [PATCH 00/25] KVM SGX virtualization support
+Date:   Mon,  1 Mar 2021 22:44:08 +1300
+Message-Id: <cover.1614590788.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, 2021-02-26 at 12:12 -0800, Dave Hansen wrote:
-> On 2/26/21 11:52 AM, Sean Christopherson wrote:
-> > > We must give a more informative message saying that the page is leaked.
-> > >  Ideally, we'd also make this debuggable by dumping out how many of
-> > > these pages there have been somewhere.  That can wait, though, until we
-> > > have some kind of stats coming out of the code (there's nothing now).  A
-> > > comment to remind us to do this would be nice.
-> > Eh, having debugged these several times, the WARN_ONCE in sgx_reset_epc_page()
-> > is probably sufficient.  IIRC, when I hit this, things were either laughably
-> > broken and every page was failing, or there was another ENCLS failure somewhere
-> > else that provided additional info.  Not saying don't add more debug info,
-> > rather that it's probably not a priority.
-> 
-> Minimally, I just want a warning that says, "Whoops, I leaked a page".
-> Or EREMOVE could even say, "whoops, this *MIGHT* leak a page".
-> 
-> My beef is mostly that "EREMOVE failed" doesn't tell and end user squat
-> about what this means for their system.  At least if we say "leaked",
-> they have some inclination that they've got to reboot to get the page back.
+This series adds KVM SGX virtualization support. The first 14 patches starting
+with x86/sgx or x86/cpu.. are necessary changes to x86 and SGX core/driver to
+support KVM SGX virtualization, while the rest are patches to KVM subsystem.
 
-Agreed that a msg to say EPC page is leaked is useful. However I found with current
-sgx_reset_epc_page() I cannot find a suitable place to add:
+This series is based against latest upstream kernel master branch (v5.12-rc1).
 
-Theoretically, it's not that right to add "EPC page is leaked", or even *might* (btw,
-I don't think we should use *might* since it is vague), in to sgx_reset_epc_page(),
-since whether leak or not is controlled by whether to call sgx_free_epc_page() upon
-error, which is not in sgx_reset_epc_page(). And
+You can also get the code from upstream branch of kvm-sgx repo on github:
 
-	if (!sgx_reset_epc_page())
-		sgx_free_epc_page();
+        https://github.com/intel/kvm-sgx.git upstream
 
-is called 3 times so I don't want to add a msg for each of them.
+It also requires Qemu changes to create VM with SGX support. You can find Qemu
+repo here:
 
-I ended up with this solution: 
+	https://github.com/intel/qemu-sgx.git upstream
 
-1) Rename existing sgx_free_epc_page() to sgx_encl_free_epc_page() to make it more
-specific that it is used to free EPC page that is assigned to an enclave. 2) Wrap
-non-EREMOVE part (putting back to free EPC pool) to sgx_free_epc_page() so it can be
-used by virtual EPC.
+Please refer to README.md of above qemu-sgx repo for detail on how to create
+guest with SGX support. At meantime, for your quick reference you can use below
+command to create SGX guest:
 
-In this way we can just put the error msg in sgx_encl_free_epc_page().
+	#qemu-system-x86_64 -smp 4 -m 2G -drive file=<your_vm_image>,if=virtio \
+		-cpu host,+sgx_provisionkey \
+		-sgx-epc id=epc1,memdev=mem1 \
+		-object memory-backend-epc,id=mem1,size=64M,prealloc
 
-And as you said it's time to get RFC tag off, so I'll send out formal patch with
-above solution, but w/o your Acked-by on this particular patch. Thanks :)
+Please note that the SGX relevant part is:
+
+		-cpu host,+sgx_provisionkey \
+		-sgx-epc id=epc1,memdev=mem1 \
+		-object memory-backend-epc,id=mem1,size=64M,prealloc
+
+And you can change other parameters of your qemu command based on your needs.
+
+=========
+Changelog:
+
+(Changelog here is for global changes. Please see each patch's changelog for
+ changes made to specific patch.)
+
+RFC->v1:
+
+ - Refined patch (x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()) to print
+   error msg that EPC page is leaked when EREMOVE failed, requested by Dave.
+ - Changelog history of all RFC series is removed in both this cover letter
+   and each individual patch, since majority of x86 part patches already got
+   Acked-by from Dave and Jarkko. And the changelogs are not quite useful from
+   my perspective.
+
+=========
+KVM SGX virtualization Overview
+
+- Virtual EPC
+
+SGX enclave memory is special and is reserved specifically for enclave use.
+In bare-metal SGX enclaves, the kernel allocates enclave pages, copies data
+into the pages with privileged instructions, then allows the enclave to start.
+In this scenario, only initialized pages already assigned to an enclave are
+mapped to userspace.
+
+In virtualized environments, the hypervisor still needs to do the physical
+enclave page allocation.  The guest kernel is responsible for the data copying
+(among other things).  This means that the job of starting an enclave is now
+split between hypervisor and guest.
+
+This series introduces a new misc device: /dev/sgx_vepc.  This device allows
+the host to map *uninitialized* enclave memory into userspace, which can then
+be passed into a guest.
+
+While it might be *possible* to start a host-side enclave with /dev/sgx_enclave
+and pass its memory into a guest, it would be wasteful and convoluted.
+
+Implement the *raw* EPC allocation in the x86 core-SGX subsystem via
+/dev/sgx_vepc rather than in KVM.  Doing so has two major advantages:
+
+  - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
+    just another memory backend for guests.
+
+  - EPC management is wholly contained in the SGX subsystem, e.g. SGX
+    does not have to export any symbols, changes to reclaim flows don't
+    need to be routed through KVM, SGX's dirty laundry doesn't have to
+    get aired out for the world to see, and so on and so forth.
+
+The virtual EPC pages allocated to guests are currently not reclaimable.
+Reclaiming EPC page used by enclave requires a special reclaim mechanism
+separate from normal page reclaim, and that mechanism is not supported
+for virutal EPC pages.  Due to the complications of handling reclaim
+conflicts between guest and host, reclaiming virtual EPC pages is 
+significantly more complex than basic support for SGX virtualization.
+
+- Support SGX virtualization without SGX Flexible Launch Control
+
+SGX hardware supports two "launch control" modes to limit which enclaves can
+run.  In the "locked" mode, the hardware prevents enclaves from running unless
+they are blessed by a third party.  In the unlocked mode, the kernel is in
+full control of which enclaves can run.  The bare-metal SGX code refuses to
+launch enclaves unless it is in the unlocked mode.
+
+This sgx_virt_epc driver does not have such a restriction.  This allows guests
+which are OK with the locked mode to use SGX, even if the host kernel refuses
+to.
+
+- Support exposing SGX2
+
+Due to the same reason above, SGX2 feature detection is added to core SGX code
+to allow KVM to expose SGX2 to guest, even currently SGX driver doesn't support
+SGX2, because SGX2 can work just fine in guest w/o any interaction to host SGX
+driver.
+
+- Restricit SGX guest access to provisioning key
+
+To grant guest being able to fully use SGX, guest needs to be able to access
+provisioning key.  The provisioning key is sensitive, and accessing to it should
+be restricted. In bare-metal driver, allowing enclave to access provisioning key
+is restricted by being able to open /dev/sgx_provision.
+
+Add a new KVM_CAP_SGX_ATTRIBUTE to KVM uAPI to extend above mechanism to KVM
+guests as well.  When userspace hypervisor creates a new VM, the new cap is only
+added to VM when userspace hypervisior is able to open /dev/sgx_provision,
+following the same role as in bare-metal driver.  KVM then traps ECREATE from
+guest, and only allows ECREATE with provisioning key bit to run when guest
+supports KVM_CAP_SGX_ATTRIBUTE.
+
+
+
+Jarkko Sakkinen (1):
+  x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()
+
+Kai Huang (3):
+  x86/cpufeatures: Make SGX_LC feature bit depend on SGX bit
+  x86/sgx: Initialize virtual EPC driver even when SGX driver is
+    disabled
+  x86/sgx: Add helper to update SGX_LEPUBKEYHASHn MSRs
+
+Sean Christopherson (21):
+  x86/cpufeatures: Add SGX1 and SGX2 sub-features
+  x86/sgx: Add SGX_CHILD_PRESENT hardware error code
+  x86/sgx: Introduce virtual EPC for use by KVM guests
+  x86/cpu/intel: Allow SGX virtualization without Launch Control support
+  x86/sgx: Expose SGX architectural definitions to the kernel
+  x86/sgx: Move ENCLS leaf definitions to sgx.h
+  x86/sgx: Add SGX2 ENCLS leaf definitions (EAUG, EMODPR and EMODT)
+  x86/sgx: Add encls_faulted() helper
+  x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
+  x86/sgx: Move provisioning device creation out of SGX driver
+  KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for SGX (VMX)
+  KVM: x86: Define new #PF SGX error code bit
+  KVM: x86: Add support for reverse CPUID lookup of scattered features
+  KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
+  KVM: VMX: Add basic handling of VM-Exit from SGX enclave
+  KVM: VMX: Frame in ENCLS handler for SGX virtualization
+  KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+  KVM: VMX: Add emulation of SGX Launch Control LE hash MSRs
+  KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
+  KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
+  KVM: x86: Add capability to grant VM access to privileged SGX
+    attribute
+
+ Documentation/virt/kvm/api.rst                |  23 +
+ arch/x86/Kconfig                              |  12 +
+ arch/x86/include/asm/cpufeatures.h            |   2 +
+ arch/x86/include/asm/kvm_host.h               |   5 +
+ .../cpu/sgx/arch.h => include/asm/sgx.h}      |  50 +-
+ arch/x86/include/asm/vmx.h                    |   1 +
+ arch/x86/include/uapi/asm/vmx.h               |   1 +
+ arch/x86/kernel/cpu/cpuid-deps.c              |   3 +
+ arch/x86/kernel/cpu/feat_ctl.c                |  69 ++-
+ arch/x86/kernel/cpu/scattered.c               |   2 +
+ arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c              |  17 -
+ arch/x86/kernel/cpu/sgx/encl.c                |  28 +-
+ arch/x86/kernel/cpu/sgx/encls.h               |  30 +-
+ arch/x86/kernel/cpu/sgx/ioctl.c               |  23 +-
+ arch/x86/kernel/cpu/sgx/main.c                |  92 +++-
+ arch/x86/kernel/cpu/sgx/sgx.h                 |  13 +-
+ arch/x86/kernel/cpu/sgx/virt.c                | 355 +++++++++++++
+ arch/x86/kvm/Makefile                         |   2 +
+ arch/x86/kvm/cpuid.c                          |  89 +++-
+ arch/x86/kvm/cpuid.h                          |  50 +-
+ arch/x86/kvm/vmx/nested.c                     |  28 +-
+ arch/x86/kvm/vmx/nested.h                     |   5 +
+ arch/x86/kvm/vmx/sgx.c                        | 465 ++++++++++++++++++
+ arch/x86/kvm/vmx/sgx.h                        |  34 ++
+ arch/x86/kvm/vmx/vmcs12.c                     |   1 +
+ arch/x86/kvm/vmx/vmcs12.h                     |   4 +-
+ arch/x86/kvm/vmx/vmx.c                        | 102 +++-
+ arch/x86/kvm/vmx/vmx.h                        |   2 +
+ arch/x86/kvm/x86.c                            |  23 +
+ include/uapi/linux/kvm.h                      |   1 +
+ tools/testing/selftests/sgx/defines.h         |   2 +-
+ 32 files changed, 1419 insertions(+), 116 deletions(-)
+ rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx.h} (89%)
+ create mode 100644 arch/x86/kernel/cpu/sgx/virt.c
+ create mode 100644 arch/x86/kvm/vmx/sgx.c
+ create mode 100644 arch/x86/kvm/vmx/sgx.h
+
+-- 
+2.29.2
 
