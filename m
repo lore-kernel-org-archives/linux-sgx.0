@@ -7,42 +7,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62FFC433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DA7C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D552601FE
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 117F164DEE
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234152AbhCAJrS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:47:18 -0500
-Received: from mga05.intel.com ([192.55.52.43]:62394 "EHLO mga05.intel.com"
+        id S234143AbhCAJrZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:47:25 -0500
+Received: from mga01.intel.com ([192.55.52.88]:26450 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234154AbhCAJq6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:46:58 -0500
-IronPort-SDR: ygObrp1Lk2XrS9O4ei6AFAy4gKCcjxvcrZX7mDSVYCeNmIgTs9C96BanlWZf2y20K4PXbBNOT0
- 6Wi1/h20rPoA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="271409584"
+        id S234148AbhCAJqd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:46:33 -0500
+IronPort-SDR: 9DpHLZwPPtAcwyp8D3DFD7JORoz2koxd+KGFY75GUyZmCPiRCZ8KWBQfYXHer+fgfoELxtr3+r
+ 8VRPh0Hb18/w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="206016029"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="271409584"
+   d="scan'208";a="206016029"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:17 -0800
-IronPort-SDR: +fnb+iqs/pCcwPUO8ugtvD6G3QSsn0aDB9mwopYTCWfdSK8BQPyn2PEDJQGA3oxbMjtKIqkPW4
- NX6TGop2KEqg==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:41 -0800
+IronPort-SDR: 81QM+9/39x0VqMMRz7oSkgYSiyOxC5lR9u1i4ocQFpagcqb9sBTpDnteQznMAZFerNfxeUeFDL
+ nOl3sqg4NEpw==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267604"
+   d="scan'208";a="599267501"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:13 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:38 -0800
 From:   Kai Huang <kai.huang@intel.com>
-To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
+To:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 16/25] KVM: x86: Define new #PF SGX error code bit
-Date:   Mon,  1 Mar 2021 22:45:49 +1300
-Message-Id: <066d2b8c78c81c9f92873f7ed03420484efc5404.1614590788.git.kai.huang@intel.com>
+        Kai Huang <kai.huang@intel.com>
+Subject: [PATCH 11/25] x86/sgx: Add encls_faulted() helper
+Date:   Mon,  1 Mar 2021 22:45:11 +1300
+Message-Id: <67bb4c7baa9cf0e59c521675642c0621801ed9da.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -54,38 +53,63 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Page faults that are signaled by the SGX Enclave Page Cache Map (EPCM),
-as opposed to the traditional IA32/EPT page tables, set an SGX bit in
-the error code to indicate that the #PF was induced by SGX.  KVM will
-need to emulate this behavior as part of its trap-and-execute scheme for
-virtualizing SGX Launch Control, e.g. to inject SGX-induced #PFs if
-EINIT faults in the host, and to support live migration.
+Add a helper to extract the fault indicator from an encoded ENCLS return
+value.  SGX virtualization will also need to detect ENCLS faults.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/include/asm/kvm_host.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/cpu/sgx/encls.h | 15 ++++++++++++++-
+ arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 0cf71ff2b2e5..aa6b5146eafe 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -227,6 +227,7 @@ enum x86_intercept_stage;
- #define PFERR_RSVD_BIT 3
- #define PFERR_FETCH_BIT 4
- #define PFERR_PK_BIT 5
-+#define PFERR_SGX_BIT 15
- #define PFERR_GUEST_FINAL_BIT 32
- #define PFERR_GUEST_PAGE_BIT 33
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index be5c49689980..3219d011ee28 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -40,6 +40,19 @@
+ 	} while (0);							  \
+ }
  
-@@ -236,6 +237,7 @@ enum x86_intercept_stage;
- #define PFERR_RSVD_MASK (1U << PFERR_RSVD_BIT)
- #define PFERR_FETCH_MASK (1U << PFERR_FETCH_BIT)
- #define PFERR_PK_MASK (1U << PFERR_PK_BIT)
-+#define PFERR_SGX_MASK (1U << PFERR_SGX_BIT)
- #define PFERR_GUEST_FINAL_MASK (1ULL << PFERR_GUEST_FINAL_BIT)
- #define PFERR_GUEST_PAGE_MASK (1ULL << PFERR_GUEST_PAGE_BIT)
++/*
++ * encls_faulted() - Check if an ENCLS leaf faulted given an error code
++ * @ret 	the return value of an ENCLS leaf function call
++ *
++ * Return:
++ * - true:	ENCLS leaf faulted.
++ * - false:	Otherwise.
++ */
++static inline bool encls_faulted(int ret)
++{
++	return ret & ENCLS_FAULT_FLAG;
++}
++
+ /**
+  * encls_failed() - Check if an ENCLS function failed
+  * @ret:	the return value of an ENCLS function call
+@@ -50,7 +63,7 @@
+  */
+ static inline bool encls_failed(int ret)
+ {
+-	if (ret & ENCLS_FAULT_FLAG)
++	if (encls_faulted(ret))
+ 		return ENCLS_TRAPNR(ret) != X86_TRAP_PF;
+ 
+ 	return !!ret;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 90a5caf76939..e5977752c7be 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -568,7 +568,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 		}
+ 	}
+ 
+-	if (ret & ENCLS_FAULT_FLAG) {
++	if (encls_faulted(ret)) {
+ 		if (encls_failed(ret))
+ 			ENCLS_WARN(ret, "EINIT");
  
 -- 
 2.29.2
