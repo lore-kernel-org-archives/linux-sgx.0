@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DA7C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95C3C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 117F164DEE
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EA0064E07
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234143AbhCAJrZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:47:25 -0500
-Received: from mga01.intel.com ([192.55.52.88]:26450 "EHLO mga01.intel.com"
+        id S234177AbhCAJsR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:48:17 -0500
+Received: from mga05.intel.com ([192.55.52.43]:62391 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234148AbhCAJqd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:46:33 -0500
-IronPort-SDR: 9DpHLZwPPtAcwyp8D3DFD7JORoz2koxd+KGFY75GUyZmCPiRCZ8KWBQfYXHer+fgfoELxtr3+r
- 8VRPh0Hb18/w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="206016029"
+        id S234080AbhCAJrM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:47:12 -0500
+IronPort-SDR: qYzK//Hpge9ta8X+/JqZ3qVJPQa3dOsGo9OXuuonPCJhPMXLcpgynbPV9Dhv7ZyJIe/luvzFso
+ uR6bzS7kK08A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="271409623"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="206016029"
+   d="scan'208";a="271409623"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:41 -0800
-IronPort-SDR: 81QM+9/39x0VqMMRz7oSkgYSiyOxC5lR9u1i4ocQFpagcqb9sBTpDnteQznMAZFerNfxeUeFDL
- nOl3sqg4NEpw==
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:27 -0800
+IronPort-SDR: G9kOaAOzHCcQY2v15DPUV/rfERW1jlq9uDMOPkgJ/NiprX15zUm+ICe5EXsvgCZf+dUOi/WEWr
+ Syyyoeum/2eQ==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267501"
+   d="scan'208";a="599267626"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:45:38 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:22 -0800
 From:   Kai Huang <kai.huang@intel.com>
-To:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org
+To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 11/25] x86/sgx: Add encls_faulted() helper
-Date:   Mon,  1 Mar 2021 22:45:11 +1300
-Message-Id: <67bb4c7baa9cf0e59c521675642c0621801ed9da.1614590788.git.kai.huang@intel.com>
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
+Subject: [PATCH 18/25] KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
+Date:   Mon,  1 Mar 2021 22:45:51 +1300
+Message-Id: <d1f3c480539b812e1a5e83e5f69c2815c3e8ad85.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -51,65 +52,62 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Sean Christopherson <seanjc@google.com>
 
-Add a helper to extract the fault indicator from an encoded ENCLS return
-value.  SGX virtualization will also need to detect ENCLS faults.
+Define a new KVM-only feature word for advertising and querying SGX
+sub-features in CPUID.0x12.0x0.EAX.  Because SGX1 and SGX2 are scattered
+in the kernel's feature word, they need to be translated so that the
+bit numbers match those of hardware.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encls.h | 15 ++++++++++++++-
- arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ arch/x86/kvm/cpuid.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index be5c49689980..3219d011ee28 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -40,6 +40,19 @@
- 	} while (0);							  \
- }
- 
-+/*
-+ * encls_faulted() - Check if an ENCLS leaf faulted given an error code
-+ * @ret 	the return value of an ENCLS leaf function call
-+ *
-+ * Return:
-+ * - true:	ENCLS leaf faulted.
-+ * - false:	Otherwise.
-+ */
-+static inline bool encls_faulted(int ret)
-+{
-+	return ret & ENCLS_FAULT_FLAG;
-+}
-+
- /**
-  * encls_failed() - Check if an ENCLS function failed
-  * @ret:	the return value of an ENCLS function call
-@@ -50,7 +63,7 @@
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 8925a929186c..a175ff75bbbe 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -13,13 +13,18 @@
+  * "bug" caps, but KVM doesn't use those.
   */
- static inline bool encls_failed(int ret)
+ enum kvm_only_cpuid_leafs {
+-	NR_KVM_CPU_CAPS = NCAPINTS,
++	CPUID_12_EAX	 = NCAPINTS,
++	NR_KVM_CPU_CAPS,
+ 
+ 	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
+ };
+ 
+ #define X86_KVM_FEATURE(w, f)		((w)*32 + (f))
+ 
++/* Intel-defined SGX sub-features, CPUID level 0x12 (EAX). */
++#define __X86_FEATURE_SGX1		X86_KVM_FEATURE(CPUID_12_EAX, 0)
++#define __X86_FEATURE_SGX2		X86_KVM_FEATURE(CPUID_12_EAX, 1)
++
+ extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ void kvm_set_cpu_caps(void);
+ 
+@@ -93,6 +98,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
+ 	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
+ 	[CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX},
++	[CPUID_12_EAX]        = {0x00000012, 0, CPUID_EAX},
+ };
+ 
+ /*
+@@ -119,6 +125,11 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+  */
+ static __always_inline u32 __feature_translate(int x86_feature)
  {
--	if (ret & ENCLS_FAULT_FLAG)
-+	if (encls_faulted(ret))
- 		return ENCLS_TRAPNR(ret) != X86_TRAP_PF;
- 
- 	return !!ret;
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf76939..e5977752c7be 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -568,7 +568,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
- 		}
- 	}
- 
--	if (ret & ENCLS_FAULT_FLAG) {
-+	if (encls_faulted(ret)) {
- 		if (encls_failed(ret))
- 			ENCLS_WARN(ret, "EINIT");
++	if (x86_feature == X86_FEATURE_SGX1)
++		return __X86_FEATURE_SGX1;
++	else if (x86_feature == X86_FEATURE_SGX2)
++		return __X86_FEATURE_SGX2;
++
+ 	return x86_feature;
+ }
  
 -- 
 2.29.2
