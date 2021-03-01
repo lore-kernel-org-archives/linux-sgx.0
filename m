@@ -2,134 +2,102 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD3BC433DB
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 05:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4586FC433DB
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 06:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF4764E22
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 05:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B3CD64E09
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 06:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233449AbhCAFTV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 00:19:21 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:53026 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233439AbhCAFTV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 1 Mar 2021 00:19:21 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UPtRs.4_1614575916;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UPtRs.4_1614575916)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 01 Mar 2021 13:18:36 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH] selftests/sgx: fix EINIT failure dueto SGX_INVALID_SIGNATURE
-Date:   Mon,  1 Mar 2021 13:18:36 +0800
-Message-Id: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+        id S231473AbhCAGOO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 01:14:14 -0500
+Received: from mga06.intel.com ([134.134.136.31]:6306 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231247AbhCAGOO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 01:14:14 -0500
+IronPort-SDR: JDxwnz1Wkq3Qp5gKNMYZt630Wgahkjk2vb230xTP+RkVODYgmYZ2maMeT4bS4aoh8Eo3y6ypHI
+ fHV6Dg/471UQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="247780721"
+X-IronPort-AV: E=Sophos;i="5.81,214,1610438400"; 
+   d="scan'208";a="247780721"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 22:13:31 -0800
+IronPort-SDR: gjjuLpoz9CdjFbuuRI3Jf02DDXMPatetPJznPnEPkciJpm5g/1hjgCxG3fbHunpHG807ca7fhF
+ z2aztX39tyJw==
+X-IronPort-AV: E=Sophos;i="5.81,214,1610438400"; 
+   d="scan'208";a="517310331"
+Received: from jscomeax-mobl.amr.corp.intel.com ([10.252.139.76])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 22:13:28 -0800
+Message-ID: <c528da37e6ea6172d68270d8bdc1280afc1e98c8.camel@intel.com>
+Subject: Re: [RFC PATCH v6 03/25] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+From:   Kai Huang <kai.huang@intel.com>
+To:     Dave Hansen <dave@sr71.net>,
+        Sean Christopherson <seanjc@google.com>
+Cc:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        jarkko@kernel.org, luto@kernel.org, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Date:   Mon, 01 Mar 2021 19:13:25 +1300
+In-Reply-To: <55e0f003-ca2b-24d2-5a23-31a77c5b943d@sr71.net>
+References: <cover.1614338774.git.kai.huang@intel.com>
+         <308bd5a53199d1bf520d488f748e11ce76156a33.1614338774.git.kai.huang@intel.com>
+         <746450bb-917d-ab6c-9a6a-671112cd203e@sr71.net>
+         <YDlRgtnVS4+KkzUW@google.com>
+         <55e0f003-ca2b-24d2-5a23-31a77c5b943d@sr71.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-q2 is not always 384-byte length. Sometimes it only has 383-byte.
-In this case, the valid portion of q2 is reordered reversely for
-little endian order, and the remaining portion is filled with zero.
+On Fri, 2021-02-26 at 12:12 -0800, Dave Hansen wrote:
+> On 2/26/21 11:52 AM, Sean Christopherson wrote:
+> > > We must give a more informative message saying that the page is leaked.
+> > >  Ideally, we'd also make this debuggable by dumping out how many of
+> > > these pages there have been somewhere.  That can wait, though, until we
+> > > have some kind of stats coming out of the code (there's nothing now).  A
+> > > comment to remind us to do this would be nice.
+> > Eh, having debugged these several times, the WARN_ONCE in sgx_reset_epc_page()
+> > is probably sufficient.  IIRC, when I hit this, things were either laughably
+> > broken and every page was failing, or there was another ENCLS failure somewhere
+> > else that provided additional info.  Not saying don't add more debug info,
+> > rather that it's probably not a priority.
+> 
+> Minimally, I just want a warning that says, "Whoops, I leaked a page".
+> Or EREMOVE could even say, "whoops, this *MIGHT* leak a page".
+> 
+> My beef is mostly that "EREMOVE failed" doesn't tell and end user squat
+> about what this means for their system.  At least if we say "leaked",
+> they have some inclination that they've got to reboot to get the page back.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- tools/testing/selftests/sgx/sigstruct.c | 41 +++++++++++++------------
- 1 file changed, 21 insertions(+), 20 deletions(-)
+Agreed that a msg to say EPC page is leaked is useful. However I found with current
+sgx_reset_epc_page() I cannot find a suitable place to add:
 
-diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-index dee7a3d6c5a5..92bbc5a15c39 100644
---- a/tools/testing/selftests/sgx/sigstruct.c
-+++ b/tools/testing/selftests/sgx/sigstruct.c
-@@ -55,10 +55,27 @@ static bool alloc_q1q2_ctx(const uint8_t *s, const uint8_t *m,
- 	return true;
- }
- 
-+static void reverse_bytes(void *data, int length)
-+{
-+	int i = 0;
-+	int j = length - 1;
-+	uint8_t temp;
-+	uint8_t *ptr = data;
-+
-+	while (i < j) {
-+		temp = ptr[i];
-+		ptr[i] = ptr[j];
-+		ptr[j] = temp;
-+		i++;
-+		j--;
-+	}
-+}
-+
- static bool calc_q1q2(const uint8_t *s, const uint8_t *m, uint8_t *q1,
- 		      uint8_t *q2)
- {
- 	struct q1q2_ctx ctx;
-+	int len;
- 
- 	if (!alloc_q1q2_ctx(s, m, &ctx)) {
- 		fprintf(stderr, "Not enough memory for Q1Q2 calculation\n");
-@@ -89,8 +106,10 @@ static bool calc_q1q2(const uint8_t *s, const uint8_t *m, uint8_t *q1,
- 		goto out;
- 	}
- 
--	BN_bn2bin(ctx.q1, q1);
--	BN_bn2bin(ctx.q2, q2);
-+	len = BN_bn2bin(ctx.q1, q1);
-+	reverse_bytes(q1, len);
-+	len = BN_bn2bin(ctx.q2, q2);
-+	reverse_bytes(q2, len);
- 
- 	free_q1q2_ctx(&ctx);
- 	return true;
-@@ -152,22 +171,6 @@ static RSA *gen_sign_key(void)
- 	return key;
- }
- 
--static void reverse_bytes(void *data, int length)
--{
--	int i = 0;
--	int j = length - 1;
--	uint8_t temp;
--	uint8_t *ptr = data;
--
--	while (i < j) {
--		temp = ptr[i];
--		ptr[i] = ptr[j];
--		ptr[j] = temp;
--		i++;
--		j--;
--	}
--}
--
- enum mrtags {
- 	MRECREATE = 0x0045544145524345,
- 	MREADD = 0x0000000044444145,
-@@ -367,8 +370,6 @@ bool encl_measure(struct encl *encl)
- 	/* BE -> LE */
- 	reverse_bytes(sigstruct->signature, SGX_MODULUS_SIZE);
- 	reverse_bytes(sigstruct->modulus, SGX_MODULUS_SIZE);
--	reverse_bytes(sigstruct->q1, SGX_MODULUS_SIZE);
--	reverse_bytes(sigstruct->q2, SGX_MODULUS_SIZE);
- 
- 	EVP_MD_CTX_destroy(ctx);
- 	RSA_free(key);
--- 
-2.19.1.3.ge56e4f7
+Theoretically, it's not that right to add "EPC page is leaked", or even *might* (btw,
+I don't think we should use *might* since it is vague), in to sgx_reset_epc_page(),
+since whether leak or not is controlled by whether to call sgx_free_epc_page() upon
+error, which is not in sgx_reset_epc_page(). And
+
+	if (!sgx_reset_epc_page())
+		sgx_free_epc_page();
+
+is called 3 times so I don't want to add a msg for each of them.
+
+I ended up with this solution: 
+
+1) Rename existing sgx_free_epc_page() to sgx_encl_free_epc_page() to make it more
+specific that it is used to free EPC page that is assigned to an enclave. 2) Wrap
+non-EREMOVE part (putting back to free EPC pool) to sgx_free_epc_page() so it can be
+used by virtual EPC.
+
+In this way we can just put the error msg in sgx_encl_free_epc_page().
+
+And as you said it's time to get RFC tag off, so I'll send out formal patch with
+above solution, but w/o your Acked-by on this particular patch. Thanks :)
 
