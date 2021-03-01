@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DFDC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18767C433DB
 	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEBCA64E07
+	by mail.kernel.org (Postfix) with ESMTP id B6209601FE
 	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234122AbhCAJqM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:46:12 -0500
-Received: from mga02.intel.com ([134.134.136.20]:12503 "EHLO mga02.intel.com"
+        id S234118AbhCAJqK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:46:10 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12500 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234098AbhCAJpf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:45:35 -0500
-IronPort-SDR: 4aHkzBAZ90QBnoug1RXHfAhc5F3MJEfee9lPiWILbgoQVmjsh12ykU2yhkif4zuIMTHYViysgP
- miTOhpihotZA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="173542485"
+        id S234094AbhCAJpe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:45:34 -0500
+IronPort-SDR: c6ryIvsKaEkMSXrM2VHkkvYLiA9Pkeik0sls8k3vXzGjw6uu4CxI0Ug2ihW8XsnHWEdxoGVO7H
+ 4SPv9Hc6ye/w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="173542477"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="173542485"
+   d="scan'208";a="173542477"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:50 -0800
-IronPort-SDR: vv/HaewzW8y0a9P0kwoS8fi3pucSI3w4gfpVM8IndX3RJPOuLXVGkQr34tAcxl9I+DxgQUWSKE
- B/NCJGymNs9A==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:48 -0800
+IronPort-SDR: fC+0gOq3VyKRbjdhb6WYiOI8P7X7d9wTmSDebKKgDgNAxb1BTpskmXglh4hgq4AMahBMVFHikW
+ PAHwGB7ffLgA==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267325"
+   d="scan'208";a="599267315"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:46 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:44:42 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-Date:   Mon,  1 Mar 2021 22:44:29 +1300
-Message-Id: <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com>
+Subject: [PATCH 01/25] x86/cpufeatures: Make SGX_LC feature bit depend on SGX bit
+Date:   Mon,  1 Mar 2021 22:44:28 +1300
+Message-Id: <0f5c13b8d89355626c343ad78f60807b321baf6f.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -51,62 +51,69 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <seanjc@google.com>
+Move SGX_LC feature bit to CPUID dependency table to make clearing all
+SGX feature bits easier. Also remove clear_sgx_caps() since it is just
+a wrapper of setup_clear_cpu_cap(X86_FEATURE_SGX) now.
 
-Add SGX1 and SGX2 feature flags, via CPUID.0x12.0x0.EAX, as scattered
-features, since adding a new leaf for only two bits would be wasteful.
-As part of virtualizing SGX, KVM will expose the SGX CPUID leafs to its
-guest, and to do so correctly needs to query hardware and kernel support
-for SGX1 and SGX2.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Suggested-by: Sean Christopherson <seanjc@google.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/include/asm/cpufeatures.h | 2 ++
- arch/x86/kernel/cpu/cpuid-deps.c   | 2 ++
- arch/x86/kernel/cpu/scattered.c    | 2 ++
- 3 files changed, 6 insertions(+)
+ arch/x86/kernel/cpu/cpuid-deps.c |  1 +
+ arch/x86/kernel/cpu/feat_ctl.c   | 12 +++---------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index cc96e26d69f7..9502c445a3e9 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -290,6 +290,8 @@
- #define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
- #define X86_FEATURE_SPLIT_LOCK_DETECT	(11*32+ 6) /* #AC for split lock */
- #define X86_FEATURE_PER_THREAD_MBA	(11*32+ 7) /* "" Per-thread Memory Bandwidth Allocation */
-+#define X86_FEATURE_SGX1		(11*32+ 8) /* "" Basic SGX */
-+#define X86_FEATURE_SGX2        	(11*32+ 9) /* SGX Enclave Dynamic Memory Management (EDMM) */
- 
- /* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
- #define X86_FEATURE_AVX_VNNI		(12*32+ 4) /* AVX VNNI instructions */
 diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index d40f8e0a54ce..defda61f372d 100644
+index 42af31b64c2c..d40f8e0a54ce 100644
 --- a/arch/x86/kernel/cpu/cpuid-deps.c
 +++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -73,6 +73,8 @@ static const struct cpuid_dep cpuid_deps[] = {
+@@ -72,6 +72,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_AVX512_FP16,		X86_FEATURE_AVX512BW  },
  	{ X86_FEATURE_ENQCMD,			X86_FEATURE_XSAVES    },
  	{ X86_FEATURE_PER_THREAD_MBA,		X86_FEATURE_MBA       },
- 	{ X86_FEATURE_SGX_LC,			X86_FEATURE_SGX	      },
-+	{ X86_FEATURE_SGX1,			X86_FEATURE_SGX       },
-+	{ X86_FEATURE_SGX2,			X86_FEATURE_SGX1      },
++	{ X86_FEATURE_SGX_LC,			X86_FEATURE_SGX	      },
  	{}
  };
  
-diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-index 972ec3bfa9c0..21d1f062895a 100644
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -36,6 +36,8 @@ static const struct cpuid_bit cpuid_bits[] = {
- 	{ X86_FEATURE_CDP_L2,		CPUID_ECX,  2, 0x00000010, 2 },
- 	{ X86_FEATURE_MBA,		CPUID_EBX,  3, 0x00000010, 0 },
- 	{ X86_FEATURE_PER_THREAD_MBA,	CPUID_ECX,  0, 0x00000010, 3 },
-+	{ X86_FEATURE_SGX1,		CPUID_EAX,  0, 0x00000012, 0 },
-+	{ X86_FEATURE_SGX2,		CPUID_EAX,  1, 0x00000012, 0 },
- 	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
- 	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
- 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 3b1b01f2b248..27533a6e04fa 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -93,15 +93,9 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
+ }
+ #endif /* CONFIG_X86_VMX_FEATURE_NAMES */
+ 
+-static void clear_sgx_caps(void)
+-{
+-	setup_clear_cpu_cap(X86_FEATURE_SGX);
+-	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+-}
+-
+ static int __init nosgx(char *str)
+ {
+-	clear_sgx_caps();
++	setup_clear_cpu_cap(X86_FEATURE_SGX);
+ 
+ 	return 0;
+ }
+@@ -116,7 +110,7 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 
+ 	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+ 		clear_cpu_cap(c, X86_FEATURE_VMX);
+-		clear_sgx_caps();
++		clear_cpu_cap(c, X86_FEATURE_SGX);
+ 		return;
+ 	}
+ 
+@@ -177,6 +171,6 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 	    !(msr & FEAT_CTL_SGX_LC_ENABLED) || !enable_sgx) {
+ 		if (enable_sgx)
+ 			pr_err_once("SGX disabled by BIOS\n");
+-		clear_sgx_caps();
++		clear_cpu_cap(c, X86_FEATURE_SGX);
+ 	}
+ }
 -- 
 2.29.2
 
