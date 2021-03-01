@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C65C433DB
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04637C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42E8864DEE
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC31601FE
+	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 09:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234275AbhCAJsM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:48:12 -0500
-Received: from mga05.intel.com ([192.55.52.43]:62394 "EHLO mga05.intel.com"
+        id S234235AbhCAJsZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 1 Mar 2021 04:48:25 -0500
+Received: from mga05.intel.com ([192.55.52.43]:62399 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234158AbhCAJrV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:47:21 -0500
-IronPort-SDR: gvLwUyvOqRhSrNM1+WCO/VBzda4QKCRGSGbiXJFGF7FrMtkOPcb1vi3VsJPGyqHHOI97z6aWZB
- joZW3Z5SsrkQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="271409633"
+        id S234167AbhCAJrD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 04:47:03 -0500
+IronPort-SDR: l6UWzoraQRMG3t5091ZAp0YSv4lBQnhETDNGH3rYG1ZUHC5EaYN0dbnPDJbijjb+a4ICFjG+K1
+ W+kj3avkhtFg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="271409609"
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="271409633"
+   d="scan'208";a="271409609"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:32 -0800
-IronPort-SDR: NJJoCJVkoe/wdTVLfvMdA3VrsVmbttvxNluk7atRiZ1vJ47C7DLETMttirvFwlAQxiGmuZl0/A
- rKGB6j1tpIHg==
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:22 -0800
+IronPort-SDR: o8gnOkKZz7WmrxrqfmohdZgNQG/dSi/0afiez8p7fB9qTpumNrmjEgNjjGivN3xmT8LiD4QRto
+ Qws/4VexIpCA==
 X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
-   d="scan'208";a="599267639"
+   d="scan'208";a="599267620"
 Received: from jscomeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.76])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:27 -0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 01:46:17 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
@@ -40,9 +40,9 @@ Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
         wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 19/25] KVM: VMX: Add basic handling of VM-Exit from SGX enclave
-Date:   Mon,  1 Mar 2021 22:45:52 +1300
-Message-Id: <918aaa770de5d98cf81cce8b6cdb6faad32cbeb7.1614590788.git.kai.huang@intel.com>
+Subject: [PATCH 17/25] KVM: x86: Add support for reverse CPUID lookup of scattered features
+Date:   Mon,  1 Mar 2021 22:45:50 +1300
+Message-Id: <74c52b8fdb8363153d24128e7a24f101a2444c7d.1614590788.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1614590788.git.kai.huang@intel.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
@@ -52,185 +52,204 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Sean Christopherson <seanjc@google.com>
 
-Add support for handling VM-Exits that originate from a guest SGX
-enclave.  In SGX, an "enclave" is a new CPL3-only execution environment,
-wherein the CPU and memory state is protected by hardware to make the
-state inaccesible to code running outside of the enclave.  When exiting
-an enclave due to an asynchronous event (from the perspective of the
-enclave), e.g. exceptions, interrupts, and VM-Exits, the enclave's state
-is automatically saved and scrubbed (the CPU loads synthetic state), and
-then reloaded when re-entering the enclave.  E.g. after an instruction
-based VM-Exit from an enclave, vmcs.GUEST_RIP will not contain the RIP
-of the enclave instruction that trigered VM-Exit, but will instead point
-to a RIP in the enclave's untrusted runtime (the guest userspace code
-that coordinates entry/exit to/from the enclave).
+Introduce a scheme that allows KVM's CPUID magic to support features
+that are scattered in the kernel's feature words.  To advertise and/or
+query guest support for CPUID-based features, KVM requires the bit
+number of an X86_FEATURE_* to match the bit number in its associated
+CPUID entry.  For scattered features, this does not hold true.
 
-To help a VMM recognize and handle exits from enclaves, SGX adds bits to
-existing VMCS fields, VM_EXIT_REASON.VMX_EXIT_REASON_FROM_ENCLAVE and
-GUEST_INTERRUPTIBILITY_INFO.GUEST_INTR_STATE_ENCLAVE_INTR.  Define the
-new architectural bits, and add a boolean to struct vcpu_vmx to cache
-VMX_EXIT_REASON_FROM_ENCLAVE.  Clear the bit in exit_reason so that
-checks against exit_reason do not need to account for SGX, e.g.
-"if (exit_reason == EXIT_REASON_EXCEPTION_NMI)" continues to work.
+Add a framework to allow defining KVM-only words, stored in
+kvm_cpu_caps after the shared kernel caps, that can be used to gather
+the scattered feature bits by translating X86_FEATURE_* flags into their
+KVM-defined feature.
 
-KVM is a largely a passive observer of the new bits, e.g. KVM needs to
-account for the bits when propagating information to a nested VMM, but
-otherwise doesn't need to act differently for the majority of VM-Exits
-from enclaves.
+Note, because reverse_cpuid_check() effectively forces kvm_cpu_caps
+lookups to be resolved at compile time, there is no runtime cost for
+translating from kernel-defined to kvm-defined features.
 
-The one scenario that is directly impacted is emulation, which is for
-all intents and purposes impossible[1] since KVM does not have access to
-the RIP or instruction stream that triggered the VM-Exit.  The inability
-to emulate is a non-issue for KVM, as most instructions that might
-trigger VM-Exit unconditionally #UD in an enclave (before the VM-Exit
-check.  For the few instruction that conditionally #UD, KVM either never
-sets the exiting control, e.g. PAUSE_EXITING[2], or sets it if and only
-if the feature is not exposed to the guest in order to inject a #UD,
-e.g. RDRAND_EXITING.
+More details here:  https://lkml.kernel.org/r/X/jxCOLG+HUO4QlZ@google.com
 
-But, because it is still possible for a guest to trigger emulation,
-e.g. MMIO, inject a #UD if KVM ever attempts emulation after a VM-Exit
-from an enclave.  This is architecturally accurate for instruction
-VM-Exits, and for MMIO it's the least bad choice, e.g. it's preferable
-to killing the VM.  In practice, only broken or particularly stupid
-guests should ever encounter this behavior.
-
-Add a WARN in skip_emulated_instruction to detect any attempt to
-modify the guest's RIP during an SGX enclave VM-Exit as all such flows
-should either be unreachable or must handle exits from enclaves before
-getting to skip_emulated_instruction.
-
-[1] Impossible for all practical purposes.  Not truly impossible
-    since KVM could implement some form of para-virtualization scheme.
-
-[2] PAUSE_LOOP_EXITING only affects CPL0 and enclaves exist only at
-    CPL3, so we also don't need to worry about that interaction.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/include/asm/vmx.h      |  1 +
- arch/x86/include/uapi/asm/vmx.h |  1 +
- arch/x86/kvm/vmx/nested.c       |  2 ++
- arch/x86/kvm/vmx/vmx.c          | 38 +++++++++++++++++++++++++++++++--
- 4 files changed, 40 insertions(+), 2 deletions(-)
+ arch/x86/kvm/cpuid.c | 32 +++++++++++++++++++++++++++-----
+ arch/x86/kvm/cpuid.h | 39 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 61 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index 358707f60d99..0ffaa3156a4e 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -373,6 +373,7 @@ enum vmcs_field {
- #define GUEST_INTR_STATE_MOV_SS		0x00000002
- #define GUEST_INTR_STATE_SMI		0x00000004
- #define GUEST_INTR_STATE_NMI		0x00000008
-+#define GUEST_INTR_STATE_ENCLAVE_INTR	0x00000010
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 6bd2f8b830e4..a0e7be9ed449 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -28,7 +28,7 @@
+  * Unlike "struct cpuinfo_x86.x86_capability", kvm_cpu_caps doesn't need to be
+  * aligned to sizeof(unsigned long) because it's not accessed via bitops.
+  */
+-u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
++u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ EXPORT_SYMBOL_GPL(kvm_cpu_caps);
  
- /* GUEST_ACTIVITY_STATE flags */
- #define GUEST_ACTIVITY_ACTIVE		0
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index b8e650a985e3..946d761adbd3 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -27,6 +27,7 @@
- 
- 
- #define VMX_EXIT_REASONS_FAILED_VMENTRY         0x80000000
-+#define VMX_EXIT_REASONS_SGX_ENCLAVE_MODE	0x08000000
- 
- #define EXIT_REASON_EXCEPTION_NMI       0
- #define EXIT_REASON_EXTERNAL_INTERRUPT  1
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index bcca0b80e0d0..28848e9f70e2 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -4105,6 +4105,8 @@ static void prepare_vmcs12(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- {
- 	/* update exit information fields: */
- 	vmcs12->vm_exit_reason = vm_exit_reason;
-+	if (to_vmx(vcpu)->exit_reason.enclave_mode)
-+		vmcs12->vm_exit_reason |= VMX_EXIT_REASONS_SGX_ENCLAVE_MODE;
- 	vmcs12->exit_qualification = exit_qualification;
- 	vmcs12->vm_exit_intr_info = exit_intr_info;
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 50810d471462..df8e338267aa 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1570,12 +1570,18 @@ static int vmx_rtit_ctl_check(struct kvm_vcpu *vcpu, u64 data)
- 
- static bool vmx_can_emulate_instruction(struct kvm_vcpu *vcpu, void *insn, int insn_len)
- {
-+	if (to_vmx(vcpu)->exit_reason.enclave_mode) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+		return false;
-+	}
- 	return true;
+ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
+@@ -53,6 +53,7 @@ static u32 xstate_required_size(u64 xstate_bv, bool compacted)
  }
  
- static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
- {
-+	union vmx_exit_reason exit_reason = to_vmx(vcpu)->exit_reason;
- 	unsigned long rip, orig_rip;
-+	u32 instr_len;
+ #define F feature_bit
++#define SF(name) (boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0)
  
- 	/*
- 	 * Using VMCS.VM_EXIT_INSTRUCTION_LEN on EPT misconfig depends on
-@@ -1586,9 +1592,33 @@ static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
- 	 * i.e. we end up advancing IP with some random value.
- 	 */
- 	if (!static_cpu_has(X86_FEATURE_HYPERVISOR) ||
--	    to_vmx(vcpu)->exit_reason.basic != EXIT_REASON_EPT_MISCONFIG) {
-+	    exit_reason.basic != EXIT_REASON_EPT_MISCONFIG) {
-+		instr_len = vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
+ static inline struct kvm_cpuid_entry2 *cpuid_entry2_find(
+ 	struct kvm_cpuid_entry2 *entries, int nent, u32 function, u32 index)
+@@ -347,13 +348,13 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
+ 	return r;
+ }
+ 
+-static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
++/* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
++static __always_inline void __kvm_cpu_cap_mask(enum cpuid_leafs leaf)
+ {
+ 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
+ 	struct kvm_cpuid_entry2 entry;
+ 
+ 	reverse_cpuid_check(leaf);
+-	kvm_cpu_caps[leaf] &= mask;
+ 
+ 	cpuid_count(cpuid.function, cpuid.index,
+ 		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
+@@ -361,6 +362,26 @@ static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+ 	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
+ }
+ 
++static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
++{
++	/* Use the "init" variant for scattered leafs. */
++	BUILD_BUG_ON(leaf >= NCAPINTS);
 +
-+		/*
-+		 * Emulating an enclave's instructions isn't supported as KVM
-+		 * cannot access the enclave's memory or its true RIP, e.g. the
-+		 * vmcs.GUEST_RIP points at the exit point of the enclave, not
-+		 * the RIP that actually triggered the VM-Exit.  But, because
-+		 * most instructions that cause VM-Exit will #UD in an enclave,
-+		 * most instruction-based VM-Exits simply do not occur.
-+		 *
-+		 * There are a few exceptions, notably the debug instructions
-+		 * INT1ICEBRK and INT3, as they are allowed in debug enclaves
-+		 * and generate #DB/#BP as expected, which KVM might intercept.
-+		 * But again, the CPU does the dirty work and saves an instr
-+		 * length of zero so VMMs don't shoot themselves in the foot.
-+		 * WARN if KVM tries to skip a non-zero length instruction on
-+		 * a VM-Exit from an enclave.
-+		 */
-+		if (!instr_len)
-+			goto rip_updated;
++	kvm_cpu_caps[leaf] &= mask;
 +
-+		WARN(exit_reason.enclave_mode,
-+		     "KVM: skipping instruction after SGX enclave VM-Exit");
++	__kvm_cpu_cap_mask(leaf);
++}
 +
- 		orig_rip = kvm_rip_read(vcpu);
--		rip = orig_rip + vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
-+		rip = orig_rip + instr_len;
- #ifdef CONFIG_X86_64
++static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
++{
++	/* Use the "mask" variant for hardwared-defined leafs. */
++	BUILD_BUG_ON(leaf < NCAPINTS);
++
++	kvm_cpu_caps[leaf] = mask;
++
++	__kvm_cpu_cap_mask(leaf);
++}
++
+ void kvm_set_cpu_caps(void)
+ {
+ 	unsigned int f_nx = is_efer_nx() ? F(NX) : 0;
+@@ -371,12 +392,13 @@ void kvm_set_cpu_caps(void)
+ 	unsigned int f_gbpages = 0;
+ 	unsigned int f_lm = 0;
+ #endif
++	memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
+ 
+-	BUILD_BUG_ON(sizeof(kvm_cpu_caps) >
++	BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
+ 		     sizeof(boot_cpu_data.x86_capability));
+ 
+ 	memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
+-	       sizeof(kvm_cpu_caps));
++	       sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)));
+ 
+ 	kvm_cpu_cap_mask(CPUID_1_ECX,
  		/*
- 		 * We need to mask out the high 32 bits of RIP if not in 64-bit
-@@ -1604,6 +1634,7 @@ static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
- 			return 0;
- 	}
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 2a0c5064497f..8925a929186c 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -7,7 +7,20 @@
+ #include <asm/processor.h>
+ #include <uapi/asm/kvm_para.h>
  
-+rip_updated:
- 	/* skipping an emulated instruction also counts */
- 	vmx_set_interrupt_shadow(vcpu, 0);
- 
-@@ -5384,6 +5415,9 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
- {
- 	gpa_t gpa;
- 
-+	if (!vmx_can_emulate_instruction(vcpu, NULL, 0))
-+		return 1;
+-extern u32 kvm_cpu_caps[NCAPINTS] __read_mostly;
++/*
++ * Hardware-defined CPUID leafs that are scattered in the kernel, but need to
++ * be directly used by KVM.  Note, these word values conflict with the kernel's
++ * "bug" caps, but KVM doesn't use those.
++ */
++enum kvm_only_cpuid_leafs {
++	NR_KVM_CPU_CAPS = NCAPINTS,
 +
- 	/*
- 	 * A nested guest cannot optimize MMIO vmexits, because we have an
- 	 * nGPA here instead of the required GPA.
++	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
++};
++
++#define X86_KVM_FEATURE(w, f)		((w)*32 + (f))
++
++extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+ void kvm_set_cpu_caps(void);
+ 
+ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu);
+@@ -100,6 +113,20 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+ 	BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
+ }
+ 
++/*
++ * Translate feature bits that are scattered in the kernel's cpufeatures word
++ * into KVM feature words that align with hardware's definitions.
++ */
++static __always_inline u32 __feature_translate(int x86_feature)
++{
++	return x86_feature;
++}
++
++static __always_inline u32 __feature_leaf(int x86_feature)
++{
++	return __feature_translate(x86_feature) / 32;
++}
++
+ /*
+  * Retrieve the bit mask from an X86_FEATURE_* definition.  Features contain
+  * the hardware defined bit number (stored in bits 4:0) and a software defined
+@@ -108,6 +135,8 @@ static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+  */
+ static __always_inline u32 __feature_bit(int x86_feature)
+ {
++	x86_feature = __feature_translate(x86_feature);
++
+ 	reverse_cpuid_check(x86_feature / 32);
+ 	return 1 << (x86_feature & 31);
+ }
+@@ -116,7 +145,7 @@ static __always_inline u32 __feature_bit(int x86_feature)
+ 
+ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	return reverse_cpuid[x86_leaf];
+@@ -308,7 +337,7 @@ static inline bool cpuid_fault_enabled(struct kvm_vcpu *vcpu)
+ 
+ static __always_inline void kvm_cpu_cap_clear(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	kvm_cpu_caps[x86_leaf] &= ~__feature_bit(x86_feature);
+@@ -316,7 +345,7 @@ static __always_inline void kvm_cpu_cap_clear(unsigned int x86_feature)
+ 
+ static __always_inline void kvm_cpu_cap_set(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	kvm_cpu_caps[x86_leaf] |= __feature_bit(x86_feature);
+@@ -324,7 +353,7 @@ static __always_inline void kvm_cpu_cap_set(unsigned int x86_feature)
+ 
+ static __always_inline u32 kvm_cpu_cap_get(unsigned int x86_feature)
+ {
+-	unsigned int x86_leaf = x86_feature / 32;
++	unsigned int x86_leaf = __feature_leaf(x86_feature);
+ 
+ 	reverse_cpuid_check(x86_leaf);
+ 	return kvm_cpu_caps[x86_leaf] & __feature_bit(x86_feature);
 -- 
 2.29.2
 
