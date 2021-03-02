@@ -2,50 +2,58 @@ Return-Path: <SRS0=TB01=ID=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E345AC4332D
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078C1C43603
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2AF9650B8
+	by mail.kernel.org (Postfix) with ESMTP id E57BD650B2
 	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbhCERi3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S229597AbhCERi3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 5 Mar 2021 12:38:29 -0500
-Received: from mga18.intel.com ([134.134.136.126]:54203 "EHLO mga18.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:23772 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229693AbhCERiN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S229688AbhCERiN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Fri, 5 Mar 2021 12:38:13 -0500
-IronPort-SDR: 7+D0A/ZjjSMqGHM3ap2KgMlY1yk7p4jzFJsdsuIPVM/w+AYU5R+rvQd3DlaV1Y4EXzvELMxL6t
- suX6SxjkH7jQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="175318626"
+IronPort-SDR: ryBwdz8Q3ONSkc+QWbLtNvvJHtAcRjqV2d6OugyZWIV6bMgXAh+uTT6cWwFNF4R8nJ//ocJ999
+ L1CBZlm6h7Bg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="185287120"
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="175318626"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:38:12 -0800
-IronPort-SDR: axsGfp+7HrLgNt1PotlK27V/jGeAZFT7U0Hg6nPZgZjPYQ2/o7X5p8FD0oK/07kXtKgSOkcjW2
- jMo8EXrdC7FQ==
+   d="scan'208";a="185287120"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:38:10 -0800
+IronPort-SDR: f/HQnrIihK4c2zmoBf7XqRAKmUeZ++3q3FuZqnmcNW94GS0y7WhMFpFxTTR7uOOm6/KOXFcF/D
+ iGSpy7AJbNqQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="601199824"
+   d="scan'208";a="446288790"
 Received: from viggo.jf.intel.com (HELO ray) ([10.54.77.144])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Mar 2021 09:38:11 -0800
+  by orsmga001.jf.intel.com with ESMTP; 05 Mar 2021 09:38:10 -0800
 Received: from [127.0.0.1] (localhost [127.0.0.1])
-        by ray (Postfix) with ESMTP id B7B4FE447D;
-        Wed,  3 Mar 2021 08:59:17 -0800 (PST)
-Subject: Re: [PATCH v3 2/5] x86/sgx: Use sgx_free_epc_page() in
- sgx_reclaim_pages()
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org
-References: <20210303150323.433207-1-jarkko@kernel.org>
- <20210303150323.433207-3-jarkko@kernel.org>
+        by ray (Postfix) with ESMTP id 0FC74E03B4;
+        Tue,  2 Mar 2021 07:58:38 -0800 (PST)
+Subject: Re: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>, Kai Huang <kai.huang@intel.com>
+Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
+        luto@kernel.org, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+References: <cover.1614590788.git.kai.huang@intel.com>
+ <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com>
+ <20210301100037.GA6699@zn.tnic>
+ <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com>
+ <20210301103043.GB6699@zn.tnic>
+ <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com>
+ <20210301105346.GC6699@zn.tnic>
+ <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com>
+ <20210301113257.GD6699@zn.tnic>
+ <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com>
+ <op.0zmwm1ogwjvjmi@arkane-mobl1.gar.corp.intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -90,48 +98,24 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <b223ea92-8b20-def3-7bd0-2cc44474bd78@intel.com>
-Date:   Wed, 3 Mar 2021 08:59:17 -0800
+Message-ID: <22f8a4be-b0ec-dfc5-cf05-a2586ce7557c@intel.com>
+Date:   Tue, 2 Mar 2021 07:58:37 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210303150323.433207-3-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <op.0zmwm1ogwjvjmi@arkane-mobl1.gar.corp.intel.com>
+Content-Type: text/plain; charset=iso-8859-15
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 3/3/21 7:03 AM, Jarkko Sakkinen wrote:
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 52d070fb4c9a..ed99c60024dc 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -305,7 +305,6 @@ static void sgx_reclaim_pages(void)
->  {
->  	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
->  	struct sgx_backing backing[SGX_NR_TO_SCAN];
-> -	struct sgx_epc_section *section;
->  	struct sgx_encl_page *encl_page;
->  	struct sgx_epc_page *epc_page;
->  	pgoff_t page_index;
-> @@ -378,11 +377,7 @@ static void sgx_reclaim_pages(void)
->  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
->  		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
->  
-> -		section = &sgx_epc_sections[epc_page->section];
-> -		spin_lock(&section->lock);
-> -		list_add_tail(&epc_page->list, &section->page_list);
-> -		section->free_cnt++;
-> -		spin_unlock(&section->lock);
-> +		sgx_free_epc_page(epc_page);
->  	}
->  }
+On 3/2/21 7:48 AM, Haitao Huang wrote:
+> 
+> Hi Haitao, Jarkko,
+> 
+> Do you have more concrete use case of needing "sgx2" in /proc/cpuinfo?
 
-In current upstream (3fb6d0e00e), sgx_free_epc_page() calls __eremove().
- This code does not call __eremove().  That seems to be changing
-behavior where none was intended.
-
-Was this, perhaps, based on top of Kai's series that changes the
-behavior of sgx_free_epc_page()?
+Kai, please remove it from your series.  I'm not hearing any arguments
+remotely close enough to what Boris would require in order to keep it.
