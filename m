@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D64AC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D051C433E0
 	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44D7364F34
+	by mail.kernel.org (Postfix) with ESMTP id 1D0A564F31
 	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382031AbhCBViD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:38:03 -0500
-Received: from mga07.intel.com ([134.134.136.100]:28029 "EHLO mga07.intel.com"
+        id S1381985AbhCBVhT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:37:19 -0500
+Received: from mga04.intel.com ([192.55.52.120]:29018 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239889AbhCBAgS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 19:36:18 -0500
-IronPort-SDR: aVUhxmNESQveZO4dyfIEmEkrZVhgGoZeTfSD5QT5Oe01vBC4IcLqDGupiV7uQChxGa/DJc4fir
- syDWkYLt0Zug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="250689958"
+        id S239662AbhCBAfE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 19:35:04 -0500
+IronPort-SDR: +5S460RINKlMSk9d8lc8f8fjseZUfMVxdXWamCDzuMvjiB95H8vJJtaKiUISat76zNvwBBR2tL
+ hbk0yuKAl8TQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="184202209"
 X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="250689958"
+   d="scan'208";a="184202209"
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:34:52 -0800
-IronPort-SDR: q/gVISHjvG9nz3tcGBNF2kID5er53oMhF8pXWDjUedqSozUxg5VB4RjzHUvh05q0z5shv0bjnJ
- j2vQ9wXi3Ehg==
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:34:11 -0800
+IronPort-SDR: wm68+FVE8fzTcwP9ORFXnGnBOjQIQpWxBr0qaCMzAxMqvx/ooSqFxg792i2nT5eSqem/BTBqhp
+ /uMKKdBmUCeA==
 X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="427144731"
+   d="scan'208";a="427144573"
 Received: from yueliu2-mobl.amr.corp.intel.com ([10.252.139.111])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:34:48 -0800
-Message-ID: <bbebb1b782ace1b4b9ba17cb4cefacead97d73b0.camel@intel.com>
-Subject: Re: [PATCH 12/25] x86/sgx: Add helper to update SGX_LEPUBKEYHASHn
- MSRs
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:34:03 -0800
+Message-ID: <4f12b97a49f5803af06b8a8be36d8c45094a5ab1.camel@intel.com>
+Subject: Re: [PATCH 09/25] x86/sgx: Move ENCLS leaf definitions to sgx.h
 From:   Kai Huang <kai.huang@intel.com>
 To:     Sean Christopherson <seanjc@google.com>
 Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
@@ -41,11 +41,11 @@ Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Date:   Tue, 02 Mar 2021 13:34:46 +1300
-In-Reply-To: <YD0c4rEAbx2y5CXT@google.com>
+Date:   Tue, 02 Mar 2021 13:34:00 +1300
+In-Reply-To: <YD0VbJ1fUoZmt4Ca@google.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
-         <6730fbd2f7b26532f09e5a5e416a58f03a66d222.1614590788.git.kai.huang@intel.com>
-         <YD0c4rEAbx2y5CXT@google.com>
+         <e8eb1ac6272ef7698ce6fbdc43e43bf38f25c494.1614590788.git.kai.huang@intel.com>
+         <YD0VbJ1fUoZmt4Ca@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
@@ -54,44 +54,23 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2021-03-01 at 08:57 -0800, Sean Christopherson wrote:
+On Mon, 2021-03-01 at 08:25 -0800, Sean Christopherson wrote:
 > On Mon, Mar 01, 2021, Kai Huang wrote:
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index 8c922e68274d..276220d0e4b5 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -696,6 +696,21 @@ static bool __init sgx_page_cache_init(void)
-> >  	return true;
-> >  }
-> >  
-> > 
-> > 
-> > 
-> > +
-> > +/*
-> > + * Update the SGX_LEPUBKEYHASH MSRs to the values specified by caller.
-> > + * Bare-metal driver requires to update them to hash of enclave's signer
-> > + * before EINIT. KVM needs to update them to guest's virtual MSR values
-> > + * before doing EINIT from guest.
-> > + */
-> > +void sgx_update_lepubkeyhash(u64 *lepubkeyhash)
-> > +{
-> > +	int i;
+> > And because they're architectural.
 > 
-> Probably worth adding:
-> 
-> 	WARN_ON_ONCE(preemptible());
+> Heh, this snarky sentence can be dropped, it was a lot more clever when these
+> were being moved to sgx_arch.h.
 
-Agreed. Will do.
+Sure. Reasonable to me.
 
 > 
-> > +
-> > +	for (i = 0; i < 4; i++)
-> > +		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-> > +}
-> > +
-> >  static int __init sgx_init(void)
-> >  {
-> >  	int ret;
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> >  arch/x86/include/asm/sgx.h      | 15 +++++++++++++++
+> >  arch/x86/kernel/cpu/sgx/encls.h | 15 ---------------
+> >  2 files changed, 15 insertions(+), 15 deletions(-)
 
 
