@@ -2,333 +2,115 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA457C4332E
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B77C4360C
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9665564F34
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 741EB64F34
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378006AbhCBVnM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:43:12 -0500
-Received: from mga03.intel.com ([134.134.136.65]:19150 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1377937AbhCBIpo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Mar 2021 03:45:44 -0500
-IronPort-SDR: C+x58kp+jMtw+rAbn8ppsujcocwBf/x1scTgOM2UMDbzk+pGJn8tdEVHCDE8gEzU5M8EnTQ56a
- WkMU96+rxRzQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="186802356"
-X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="186802356"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 00:44:45 -0800
-IronPort-SDR: KMSrY4o0ZduB2VhmywqYnIo767paNjXkBSpu/5zBkkGpnkh/RZ/dOwrtV3XrW6S5ygv0MHY42G
- GHob1dw+kJ9A==
-X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="405988150"
-Received: from yueliu2-mobl.amr.corp.intel.com ([10.252.139.111])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 00:44:39 -0800
-Message-ID: <247ec46adddb6f043c15d68f52f83efe7b9db3dd.camel@intel.com>
-Subject: Re: [PATCH 21/25] KVM: VMX: Add SGX ENCLS[ECREATE] handler to
- enforce CPUID restrictions
-From:   Kai Huang <kai.huang@intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+        id S1378979AbhCBVo1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:44:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1449003AbhCBQDc (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Mar 2021 11:03:32 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1399BC06178C
+        for <linux-sgx@vger.kernel.org>; Tue,  2 Mar 2021 08:02:21 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id e6so14092713pgk.5
+        for <linux-sgx@vger.kernel.org>; Tue, 02 Mar 2021 08:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=svOHLaBnqkDfLhE0cZ4LJEE36nGBqyQ9USTfjmqqgrQ=;
+        b=Lt+J5F4Qzn5XcdVTLUz5v5KhazZ3GtoSKi4eCwnhUyfDVP7CjIdTe7wrEupIgJjMIA
+         HlEZVtJ4zbOe7b76HD6dAnG1S4mTkKoSoRXAJchNJGjm5jbrHl2vNE2e9zX2776arIOf
+         UdKsWBRwTk9ywichOZb2Ro3wb2a2Z+VxipxSFch75SK8FHkGV246bAofC+niKQpJXehf
+         72HdOj0vU8M5ay2vJJwK40EHtP0D4bsWr/cHZQsOdFTq+DzNSkk9AJFiElG6TSAEPQtk
+         W/sjo/MiPdD35E2LyD3d1O6fbxO62upDmumlXFe+R2chC97vx6mTl3qzaOix0UNu7QPy
+         uqmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=svOHLaBnqkDfLhE0cZ4LJEE36nGBqyQ9USTfjmqqgrQ=;
+        b=TTAiiqIvsTHqRi5OMB0J8pUYl35zIn1nubNkH3M3d+vg4IBmiGBtVUCyZPox1LkhIc
+         JCjfOycGkiCcgj9vRtNtUACyw0G89nG+GwXSuLuFajw0YJdYEWtrlOBzz2+vAz2EzeGV
+         pzVjhROJqWJ9vg+enSjR8CatkuKtVk8IxDfZSmD+C1cB+YH1Ie1rj1UJu3i0l1g55NWf
+         n5MfDXfJR7p+d3lQqKYy7BSmPRapfYRLw6jQeereRY6obp4H67pOGol3lJjJ8P40BRhq
+         arPnu0Se/1HwR263dZ2sxVvN/0SUOJytEDWg42h9p7u+g1Pd3K1YkRvtfl9r+EzJQFaj
+         H5Vg==
+X-Gm-Message-State: AOAM531/73UgGvGo6p+5pvlMB+GZ8fsfnx2QTWqRpuZtiGCAjdPuyU1N
+        81p2uN4h/cQMXBueQpBunJ1nrA==
+X-Google-Smtp-Source: ABdhPJw8fIoq/1KmCJqNQp/hD/uLuk0oH7QC1JQ5gpW5sqU026irp8qx8M6uJ7zNiZLj0GP87RUJYw==
+X-Received: by 2002:a62:7d17:0:b029:1ee:3bbe:fa5f with SMTP id y23-20020a627d170000b02901ee3bbefa5fmr3727106pfc.67.1614700940422;
+        Tue, 02 Mar 2021 08:02:20 -0800 (PST)
+Received: from google.com ([2620:15c:f:10:805d:6324:3372:6183])
+        by smtp.gmail.com with ESMTPSA id ie12sm3763220pjb.52.2021.03.02.08.02.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 08:02:19 -0800 (PST)
+Date:   Tue, 2 Mar 2021 08:02:13 -0800
+From:   Sean Christopherson <seanjc@google.com>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
+        x86@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
-        wanpengli@tencent.com
-Date:   Tue, 02 Mar 2021 21:44:36 +1300
-In-Reply-To: <YD0iT3c8FMPGUNjo@google.com>
+        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Subject: Re: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+Message-ID: <YD5hhah9Sgj1YGqw@google.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
-         <58db33aae58582de8f644b686fc99b27f39d4d8f.1614590788.git.kai.huang@intel.com>
-         <YD0iT3c8FMPGUNjo@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+ <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com>
+ <20210301100037.GA6699@zn.tnic>
+ <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com>
+ <20210301103043.GB6699@zn.tnic>
+ <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com>
+ <20210301105346.GC6699@zn.tnic>
+ <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com>
+ <20210301113257.GD6699@zn.tnic>
+ <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2021-03-01 at 09:20 -0800, Sean Christopherson wrote:
-> On Mon, Mar 01, 2021, Kai Huang wrote:
-> > +static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
-> > +{
-> > +	struct kvm_cpuid_entry2 *sgx_12_0, *sgx_12_1;
-> > +	gva_t pageinfo_gva, secs_gva;
-> > +	gva_t metadata_gva, contents_gva;
-> > +	gpa_t metadata_gpa, contents_gpa, secs_gpa;
-> > +	unsigned long metadata_hva, contents_hva, secs_hva;
-> > +	struct sgx_pageinfo pageinfo;
-> > +	struct sgx_secs *contents;
-> > +	u64 attributes, xfrm, size;
-> > +	u32 miscselect;
-> > +	struct x86_exception ex;
-> > +	u8 max_size_log2;
-> > +	int trapnr, r;
-> > +
+On Tue, Mar 02, 2021, Kai Huang wrote:
+> On Mon, 2021-03-01 at 12:32 +0100, Borislav Petkov wrote:
+> > On Tue, Mar 02, 2021 at 12:28:27AM +1300, Kai Huang wrote:
+> > > I think some script can utilize /proc/cpuinfo. For instance, admin can have
+> > > automation tool/script to deploy enclave (with sgx2) apps, and that script can check
+> > > whether platform supports sgx2 or not, before it can deploy those enclave apps. Or
+> > > enclave author may just want to check /proc/cpuinfo to know whether the machine can
+> > > be used for testing sgx2 enclave or not.
+> > 
+> > This doesn't sound like a concrete use of this. So you can hide it
+> > initially with "" until you guys have a use case. Exposing it later is
+> > always easy vs exposing it now and then not being able to change it
+> > anymore.
+> > 
 > 
-> (see below)
+> Hi Haitao, Jarkko,
 > 
-> --- cut here --- >8
-> 
-> > +	sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
-> > +	sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
-> > +	if (!sgx_12_0 || !sgx_12_1) {
-> > +		kvm_inject_gp(vcpu, 0);
-> 
-> This should probably be an emulation failure.  This code is reached iff SGX1 is
-> enabled in the guest, userspace done messed up if they enabled SGX1 without
-> defining CPUID.0x12.1.  That also makes it more obvious that burying this in a
-> helper after a bunch of other checks isn't wrong, i.e. KVM has already verified
-> that SGX1 is enabled in the guest.
-> 
-> > +		return 1;
-> > +	}
-> 
-> ---
-> 
-> > +
-> > +	if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 32, 32, &pageinfo_gva) ||
-> > +	    sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096, &secs_gva))
-> > +		return 1;
-> > +
-> > +	/*
-> > +	 * Copy the PAGEINFO to local memory, its pointers need to be
-> > +	 * translated, i.e. we need to do a deep copy/translate.
-> > +	 */
-> > +	r = kvm_read_guest_virt(vcpu, pageinfo_gva, &pageinfo,
-> > +				sizeof(pageinfo), &ex);
-> > +	if (r == X86EMUL_PROPAGATE_FAULT) {
-> > +		kvm_inject_emulated_page_fault(vcpu, &ex);
-> > +		return 1;
-> > +	} else if (r != X86EMUL_CONTINUE) {
-> > +		sgx_handle_emulation_failure(vcpu, pageinfo_gva, size);
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64, &metadata_gva) ||
-> > +	    sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
-> > +			      &contents_gva))
-> > +		return 1;
-> > +
-> > +	/*
-> > +	 * Translate the SECINFO, SOURCE and SECS pointers from GVA to GPA.
-> > +	 * Resume the guest on failure to inject a #PF.
-> > +	 */
-> > +	if (sgx_gva_to_gpa(vcpu, metadata_gva, false, &metadata_gpa) ||
-> > +	    sgx_gva_to_gpa(vcpu, contents_gva, false, &contents_gpa) ||
-> > +	    sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
-> > +		return 1;
-> > +
-> > +	/*
-> > +	 * ...and then to HVA.  The order of accesses isn't architectural, i.e.
-> > +	 * KVM doesn't have to fully process one address at a time.  Exit to
-> > +	 * userspace if a GPA is invalid.
-> > +	 */
-> > +	if (sgx_gpa_to_hva(vcpu, metadata_gpa, &metadata_hva) ||
-> > +	    sgx_gpa_to_hva(vcpu, contents_gpa, &contents_hva) ||
-> > +	    sgx_gpa_to_hva(vcpu, secs_gpa, &secs_hva))
-> > +		return 0;
-> > +	/*
-> > +	 * Copy contents into kernel memory to prevent TOCTOU attack. E.g. the
-> > +	 * guest could do ECREATE w/ SECS.SGX_ATTR_PROVISIONKEY=0, and
-> > +	 * simultaneously set SGX_ATTR_PROVISIONKEY to bypass the check to
-> > +	 * enforce restriction of access to the PROVISIONKEY.
-> > +	 */
-> > +	contents = (struct sgx_secs *)__get_free_page(GFP_KERNEL);
-> > +	if (!contents)
-> > +		return -ENOMEM;
-> 
-> --- cut here --- >8
-> 
-> > +
-> > +	/* Exit to userspace if copying from a host userspace address fails. */
-> > +	if (sgx_read_hva(vcpu, contents_hva, (void *)contents, PAGE_SIZE))
-> 
-> This, and every failure path below, will leak 'contents'.  The easiest thing is
-> probably to wrap everything in "cut here" in a separate helper.  The CPUID
-> lookups can be , e.g.
-> 
-> 	contents = (struct sgx_secs *)__get_free_page(GFP_KERNEL);
-> 	if (!contents)
-> 		return -ENOMEM;
-> 
-> 	r = __handle_encls_ecreate(vcpu, &pageinfo, secs);
-> 
-> 	free_page((unsigned long)contents);
-> 	return r;
-> 
-> And then the helper can be everything below, plus the CPUID lookup:
-> 
-> 	sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
-> 	sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
-> 	if (!sgx_12_0 || !sgx_12_1) {
-> 		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> 		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
-> 		vcpu->run->internal.ndata = 0;
-> 		return 0;
-> 	}
-> 
-> 
-> 
+> Do you have more concrete use case of needing "sgx2" in /proc/cpuinfo?
 
-Hi Sean,
+The KVM use case is to query /proc/cpuinfo to see if sgx2 can be enabled in a
+guest.
 
-I ended up with below:
+The counter-argument to that is we might want sgx2 in /proc/cpuinfo to mean sgx2
+is enabled in hardware _and_ supported by the kernel.  Userspace can grep for
+sgx in /proc/cpuinfo, and use cpuid to discover sgx2, so it's not a blocker.
 
-1) Copy contents is out of __handle_encls_ecreate(), since from my perspective it is
-more reasonable split in this way logically, that when __handle_encls_ecreate() is
-called, pageinfo is already ready, but policy enforcement still needs to be checked.
-2) Finding sgx_12_0/1 is at first in __handle_encls_ecreate(), since provisionkey bit
-check requires sgx_12_1->eax.
-3) __handle_encls_ecreate() requires secs_gva since sgx_inject_fault() requires it.
-
-Is it OK to you?
-
-+static int __handle_encls_ecreate(struct kvm_vcpu *vcpu,
-+                                 struct sgx_pageinfo *pageinfo,
-+                                 unsigned long secs_hva,
-+                                 gva_t secs_gva)
-+{
-+       struct sgx_secs *contents = (struct sgx_secs *)pageinfo->contents;
-+       struct kvm_cpuid_entry2 *sgx_12_0, *sgx_12_1;
-+       u64 attributes, xfrm, size;
-+       u32 miscselect;
-+       u8 max_size_log2;
-+       int trapnr;
-+
-+       sgx_12_0 = kvm_find_cpuid_entry(vcpu, 0x12, 0);
-+       sgx_12_1 = kvm_find_cpuid_entry(vcpu, 0x12, 1);
-+       if (!sgx_12_0 || !sgx_12_1) {
-+               vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-+               vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
-+               vcpu->run->internal.ndata = 0;
-+               return 0;
-+       }
-+
-+       miscselect = contents->miscselect;
-+       attributes = contents->attributes;
-+       xfrm = contents->xfrm;
-+       size = contents->size;
-+
-+       /* Enforce restriction of access to the PROVISIONKEY. */
-+       if (!vcpu->kvm->arch.sgx_provisioning_allowed &&
-+           (attributes & SGX_ATTR_PROVISIONKEY)) {
-+               if (sgx_12_1->eax & SGX_ATTR_PROVISIONKEY)
-+                       pr_warn_once("KVM: SGX PROVISIONKEY advertised but not
-allowed\n");
-+               kvm_inject_gp(vcpu, 0);
-+               return 1;
-+       }
-+
-+       /* Enforce CPUID restrictions on MISCSELECT, ATTRIBUTES and XFRM. */
-+       if ((u32)miscselect & ~sgx_12_0->ebx ||
-+           (u32)attributes & ~sgx_12_1->eax ||
-+           (u32)(attributes >> 32) & ~sgx_12_1->ebx ||
-+           (u32)xfrm & ~sgx_12_1->ecx ||
-+           (u32)(xfrm >> 32) & ~sgx_12_1->edx) {
-+               kvm_inject_gp(vcpu, 0);
-+               return 1;
-+       }
-+
-+       /* Enforce CPUID restriction on max enclave size. */
-+       max_size_log2 = (attributes & SGX_ATTR_MODE64BIT) ? sgx_12_0->edx >> 8 :
-+                                                           sgx_12_0->edx;
-+       if (size >= BIT_ULL(max_size_log2))
-+               kvm_inject_gp(vcpu, 0);
-+
-+       if (sgx_virt_ecreate(pageinfo, (void __user *)secs_hva, &trapnr))
-+               return sgx_inject_fault(vcpu, secs_gva, trapnr);
-+
-+       return kvm_skip_emulated_instruction(vcpu);
-+}
-+
-+static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
-+{
-+       gva_t pageinfo_gva, secs_gva;
-+       gva_t metadata_gva, contents_gva;
-+       gpa_t metadata_gpa, contents_gpa, secs_gpa;
-+       unsigned long metadata_hva, contents_hva, secs_hva;
-+       struct sgx_pageinfo pageinfo;
-+       struct sgx_secs *contents;
-+       struct x86_exception ex;
-+       int r;
-+
-+       if (sgx_get_encls_gva(vcpu, kvm_rbx_read(vcpu), 32, 32, &pageinfo_gva) ||
-+           sgx_get_encls_gva(vcpu, kvm_rcx_read(vcpu), 4096, 4096, &secs_gva))
-+               return 1;
-+
-+       /*
-+        * Copy the PAGEINFO to local memory, its pointers need to be
-+        * translated, i.e. we need to do a deep copy/translate.
-+        */
-+       r = kvm_read_guest_virt(vcpu, pageinfo_gva, &pageinfo,
-+                               sizeof(pageinfo), &ex);
-+       if (r == X86EMUL_PROPAGATE_FAULT) {
-+               kvm_inject_emulated_page_fault(vcpu, &ex);
-+               return 1;
-+       } else if (r != X86EMUL_CONTINUE) {
-+               sgx_handle_emulation_failure(vcpu, pageinfo_gva,
-+                                            sizeof(pageinfo));
-+               return 0;
-+       }
-+
-+       if (sgx_get_encls_gva(vcpu, pageinfo.metadata, 64, 64, &metadata_gva) ||
-+           sgx_get_encls_gva(vcpu, pageinfo.contents, 4096, 4096,
-+                             &contents_gva))
-+               return 1;
-+
-+       /*
-+        * Translate the SECINFO, SOURCE and SECS pointers from GVA to GPA.
-+        * Resume the guest on failure to inject a #PF.
-+        */
-+       if (sgx_gva_to_gpa(vcpu, metadata_gva, false, &metadata_gpa) ||
-+           sgx_gva_to_gpa(vcpu, contents_gva, false, &contents_gpa) ||
-+           sgx_gva_to_gpa(vcpu, secs_gva, true, &secs_gpa))
-+               return 1;
-+
-+       /*
-+        * ...and then to HVA.  The order of accesses isn't architectural, i.e.
-+        * KVM doesn't have to fully process one address at a time.  Exit to
-+        * userspace if a GPA is invalid.
-+        */
-+       if (sgx_gpa_to_hva(vcpu, metadata_gpa, &metadata_hva) ||
-+           sgx_gpa_to_hva(vcpu, contents_gpa, &contents_hva) ||
-+           sgx_gpa_to_hva(vcpu, secs_gpa, &secs_hva))
-+               return 0;
-+
-+       /*
-+        * Copy contents into kernel memory to prevent TOCTOU attack. E.g. the
-+        * guest could do ECREATE w/ SECS.SGX_ATTR_PROVISIONKEY=0, and
-+        * simultaneously set SGX_ATTR_PROVISIONKEY to bypass the check to
-+        * enforce restriction of access to the PROVISIONKEY.
-+        */
-+       contents = (struct sgx_secs *)__get_free_page(GFP_KERNEL);
-+       if (!contents)
-+               return -ENOMEM;
-+
-+       /* Exit to userspace if copying from a host userspace address fails. */
-+       if (sgx_read_hva(vcpu, contents_hva, (void *)contents, PAGE_SIZE)) {
-+               free_page((unsigned long)contents);
-+               return 0;
-+       }
-+
-+       pageinfo.metadata = metadata_hva;
-+       pageinfo.contents = (u64)contents;
-+
-+       r = __handle_encls_ecreate(vcpu, &pageinfo, secs_hva, secs_gva);
-+
-+       free_page((unsigned long)contents);
-+
-+       return r;
-+}
-
-
-
+That being said, adding some form of capability/versioning to SGX seems
+inevitable, not sure it's worth witholding sgx2 from /proc/cpuinfo.
