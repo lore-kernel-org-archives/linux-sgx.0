@@ -2,75 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D051C433E0
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D89C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0A564F31
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4229B64F32
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381985AbhCBVhT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:37:19 -0500
-Received: from mga04.intel.com ([192.55.52.120]:29018 "EHLO mga04.intel.com"
+        id S1446329AbhCBVig (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:38:36 -0500
+Received: from mga09.intel.com ([134.134.136.24]:29278 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239662AbhCBAfE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 19:35:04 -0500
-IronPort-SDR: +5S460RINKlMSk9d8lc8f8fjseZUfMVxdXWamCDzuMvjiB95H8vJJtaKiUISat76zNvwBBR2tL
- hbk0yuKAl8TQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="184202209"
+        id S232759AbhCBAvf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 19:51:35 -0500
+IronPort-SDR: BHq/Bw+iF7q/iC9AindFVLDZ23eCswXmh6KRj7oZCwH3P2eUy/RLI7YWPvpMMQlPpeRJ+2dM1k
+ +Hvm+9nGr2ww==
+X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="186760064"
 X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="184202209"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:34:11 -0800
-IronPort-SDR: wm68+FVE8fzTcwP9ORFXnGnBOjQIQpWxBr0qaCMzAxMqvx/ooSqFxg792i2nT5eSqem/BTBqhp
- /uMKKdBmUCeA==
+   d="scan'208";a="186760064"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:50:37 -0800
+IronPort-SDR: dqy3hV9UQna8YMyFddiYA90+14nnlnjcQpuU1sF7AyhwRQa6//MPQQCA9FjHlxDwOOCJKc3FCM
+ 110kEtkz034g==
 X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="427144573"
-Received: from yueliu2-mobl.amr.corp.intel.com ([10.252.139.111])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:34:03 -0800
-Message-ID: <4f12b97a49f5803af06b8a8be36d8c45094a5ab1.camel@intel.com>
-Subject: Re: [PATCH 09/25] x86/sgx: Move ENCLS leaf definitions to sgx.h
+   d="scan'208";a="397992096"
+Received: from yueliu2-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.139.111])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:50:33 -0800
+Date:   Tue, 2 Mar 2021 13:50:31 +1300
 From:   Kai Huang <kai.huang@intel.com>
 To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
+Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Date:   Tue, 02 Mar 2021 13:34:00 +1300
-In-Reply-To: <YD0VbJ1fUoZmt4Ca@google.com>
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com
+Subject: Re: [PATCH 19/25] KVM: VMX: Add basic handling of VM-Exit from SGX
+ enclave
+Message-Id: <20210302135031.afc28d2efc2d5ead57983d21@intel.com>
+In-Reply-To: <YD0bvUPfTRsxnTfT@google.com>
 References: <cover.1614590788.git.kai.huang@intel.com>
-         <e8eb1ac6272ef7698ce6fbdc43e43bf38f25c494.1614590788.git.kai.huang@intel.com>
-         <YD0VbJ1fUoZmt4Ca@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        <918aaa770de5d98cf81cce8b6cdb6faad32cbeb7.1614590788.git.kai.huang@intel.com>
+        <YD0bvUPfTRsxnTfT@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2021-03-01 at 08:25 -0800, Sean Christopherson wrote:
+On Mon, 1 Mar 2021 08:52:13 -0800 Sean Christopherson wrote:
 > On Mon, Mar 01, 2021, Kai Huang wrote:
-> > And because they're architectural.
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 50810d471462..df8e338267aa 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -1570,12 +1570,18 @@ static int vmx_rtit_ctl_check(struct kvm_vcpu *vcpu, u64 data)
+> >  
+> >  static bool vmx_can_emulate_instruction(struct kvm_vcpu *vcpu, void *insn, int insn_len)
+> >  {
+> > +	if (to_vmx(vcpu)->exit_reason.enclave_mode) {
+> > +		kvm_queue_exception(vcpu, UD_VECTOR);
 > 
-> Heh, this snarky sentence can be dropped, it was a lot more clever when these
-> were being moved to sgx_arch.h.
+> Rereading my own code, I think it would be a good idea to add a comment here
+> explaining that injecting #UD is technically wrong, but avoids giving guest
+> userspace an easy way to DoS the guest.  The EPT misconfig is a good example;
+> guest userspace could have executed a simple MOV <reg>, <mem> instruction, in
+> which case injecting a #UD is bizarre behavior.  But, the alternative is exiting
+> to userspace with KVM_INTERNAL_ERROR_EMULATION, which is all but guaranteed to
+> kill the guest.
+> 
+> If KVM, specifically handle_emulation_failure(), ever gains a more sophisticated
+> mechanism for handling userspace emulation errors, this should be updated too.
+> 
+> 	/*
+> 	 * Emulation of instructions in SGX enclaves is impossible as RIP does
+> 	 * not point  tthe failing instruction, and even if it did, the code
+> 	 * stream is inaccessible.  Inject #UD instead of exiting to userspace
+> 	 * so that guest userspace can't DoS the guest simply by triggering
+> 	 * emulation (enclaves are CPL3 only).
+> 	 */
 
-Sure. Reasonable to me.
+Agreed. Will add above comment.
 
 > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> >  arch/x86/include/asm/sgx.h      | 15 +++++++++++++++
-> >  arch/x86/kernel/cpu/sgx/encls.h | 15 ---------------
-> >  2 files changed, 15 insertions(+), 15 deletions(-)
-
-
+> > +		return false;
+> > +	}
+> >  	return true;
+> >  }
+> 
+> ...
+> 
+> > @@ -5384,6 +5415,9 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
+> >  {
+> >  	gpa_t gpa;
+> >  
+> > +	if (!vmx_can_emulate_instruction(vcpu, NULL, 0))
+> > +		return 1;
+> > +
+> >  	/*
+> >  	 * A nested guest cannot optimize MMIO vmexits, because we have an
+> >  	 * nGPA here instead of the required GPA.
+> > -- 
+> > 2.29.2
+> > 
