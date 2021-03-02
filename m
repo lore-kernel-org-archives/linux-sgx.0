@@ -2,94 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F62EC4361A
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3265C43603
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D150264F32
+	by mail.kernel.org (Postfix) with ESMTP id A369A64F0A
 	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379025AbhCBVoa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1378990AbhCBVoa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Tue, 2 Mar 2021 16:44:30 -0500
-Received: from mga09.intel.com ([134.134.136.24]:38217 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352197AbhCBS3o (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 2 Mar 2021 13:29:44 -0500
-IronPort-SDR: F5FmO9NGRuYS2Slg0aWdS2U5cYn55fgCmy/63KVrZ0Rbiv2AqydA01cXMU/+d7S3/Ib2GgkfPk
- T8FDABU0sSuA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="187046949"
-X-IronPort-AV: E=Sophos;i="5.81,217,1610438400"; 
-   d="scan'208";a="187046949"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 10:27:49 -0800
-IronPort-SDR: ESLLalIr0n5PtBs/dBpI5d96eVnKnzplKfnKNA7chNSWjgi7V6ZIMxSJPx9joDorGiO4grUraM
- XO5tho5vTqEA==
-X-IronPort-AV: E=Sophos;i="5.81,217,1610438400"; 
-   d="scan'208";a="367290439"
-Received: from ttschlue-desk2.amr.corp.intel.com ([10.251.17.34])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 10:27:44 -0800
-Message-ID: <4f31636e6155428ab69153fec8dd7ac31f888ffe.camel@intel.com>
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240809AbhCBSGP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Mar 2021 13:06:15 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C49C061225;
+        Tue,  2 Mar 2021 09:54:06 -0800 (PST)
+Received: from [10.130.51.25] (dynamic-046-114-035-025.46.114.pool.telefonica.de [46.114.35.25])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DB4B31EC0419;
+        Tue,  2 Mar 2021 18:54:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1614707643;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=++1uon9cBlN0dbDj/X3dayJGsnXBiQOjWiDUluqfe1s=;
+        b=eaceNnuTckvTP/ytCLvr+V/BqQ3H2lReO0SJtAepSie1LmVP0o8yF4yXQWitRnk/HgKeoc
+        mLAnU/4x3F6C417wjIcyqpFar2UnKVjBmWApmGZrlPAFii4klieqi3WIj9zSKHq2xGWSRf
+        7H8qjwvmvZ4IiO3oqf+rZc1eP471q6k=
+Date:   Tue, 02 Mar 2021 18:53:59 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <YD5hhah9Sgj1YGqw@google.com>
+References: <cover.1614590788.git.kai.huang@intel.com> <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com> <20210301100037.GA6699@zn.tnic> <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com> <20210301103043.GB6699@zn.tnic> <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com> <20210301105346.GC6699@zn.tnic> <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com> <20210301113257.GD6699@zn.tnic> <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com> <YD5hhah9Sgj1YGqw@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Subject: Re: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-From:   Kai Huang <kai.huang@intel.com>
-To:     Boris Petkov <bp@alien8.de>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+To:     Sean Christopherson <seanjc@google.com>,
+        Kai Huang <kai.huang@intel.com>
+CC:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
         mingo@redhat.com, hpa@zytor.com
-Date:   Wed, 03 Mar 2021 07:27:42 +1300
-In-Reply-To: <9971018C-8250-4E51-9EF9-72ED6CBD2E47@alien8.de>
-References: <cover.1614590788.git.kai.huang@intel.com>
-         <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com>
-         <20210301100037.GA6699@zn.tnic>
-         <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com>
-         <20210301103043.GB6699@zn.tnic>
-         <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com>
-         <20210301105346.GC6699@zn.tnic>
-         <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com>
-         <20210301113257.GD6699@zn.tnic>
-         <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com>
-         <YD5hhah9Sgj1YGqw@google.com>
-         <9971018C-8250-4E51-9EF9-72ED6CBD2E47@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From:   Boris Petkov <bp@alien8.de>
+Message-ID: <9971018C-8250-4E51-9EF9-72ED6CBD2E47@alien8.de>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On March 2, 2021 5:02:13 PM GMT+01:00, Sean Christopherson <seanjc@google=
+=2Ecom> wrote:
+>The KVM use case is to query /proc/cpuinfo to see if sgx2 can be
+>enabled in a
+>guest=2E
 
-On Tue, 2021-03-02 at 18:53 +0100, Boris Petkov wrote:
-> On March 2, 2021 5:02:13 PM GMT+01:00, Sean Christopherson <seanjc@google.com> wrote:
-> > The KVM use case is to query /proc/cpuinfo to see if sgx2 can be
-> > enabled in a
-> > guest.
-> 
-> You mean before the guest ia created? I sure hope there's a better way to query HV-supported features than grepping /proc/cpuinfo...
-> 
-> > The counter-argument to that is we might want sgx2 in /proc/cpuinfo to
-> > mean sgx2
-> > is enabled in hardware _and_ supported by the kernel.  Userspace can
-> > grep for
-> > sgx in /proc/cpuinfo, and use cpuid to discover sgx2, so it's not a
-> > blocker.
-> 
-> Question is, what exactly that flag should denote: that EDMM is supported in the HV and guests can do the dynamic thing of adding/rwmoving EPC pages? Is that the only feature behind SGX2?
+You mean before the guest ia created? I sure hope there's a better way to =
+query HV-supported features than grepping /proc/cpuinfo=2E=2E=2E
 
-Yes SGX2 == EDMM. Other sub-features, such as VMM oversubscription, have other CPUID
-bits.
+>The counter-argument to that is we might want sgx2 in /proc/cpuinfo to
+>mean sgx2
+>is enabled in hardware _and_ supported by the kernel=2E  Userspace can
+>grep for
+>sgx in /proc/cpuinfo, and use cpuid to discover sgx2, so it's not a
+>blocker=2E
 
-> 
-> > That being said, adding some form of capability/versioning to SGX seems
-> > inevitable, not sure it's worth witholding sgx2 from /proc/cpuinfo.
-> 
-> See what I typed earlier - no objections from me if a proper use case is identified and written down.
-> 
-> Thx.
+Question is, what exactly that flag should denote: that EDMM is supported =
+in the HV and guests can do the dynamic thing of adding/rwmoving EPC pages?=
+ Is that the only feature behind SGX2?
 
+>That being said, adding some form of capability/versioning to SGX seems
+>inevitable, not sure it's worth witholding sgx2 from /proc/cpuinfo=2E
 
+See what I typed earlier - no objections from me if a proper use case is i=
+dentified and written down=2E
+
+Thx=2E
+--=20
+Sent from a small device: formatting sux and brevity is inevitable=2E 
