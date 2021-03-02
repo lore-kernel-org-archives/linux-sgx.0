@@ -7,44 +7,41 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5041C433E6
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB2EC43381
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99A2664F0A
+	by mail.kernel.org (Postfix) with ESMTP id E494564F34
 	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350937AbhCBVkT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:40:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54116 "EHLO mail.kernel.org"
+        id S1350991AbhCBVlN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:41:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241819AbhCBCdt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 21:33:49 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A3D9B64D9C;
-        Tue,  2 Mar 2021 02:33:08 +0000 (UTC)
+        id S1835384AbhCBE5G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 23:57:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DDC9660238;
+        Tue,  2 Mar 2021 04:43:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614652389;
-        bh=2/sTuEpFwd93bBqjR0EAjn1gZBYjn5jEVQYV6u7dFpA=;
+        s=k20201202; t=1614660188;
+        bh=VO/ybizvK8GgrGUKEsnjwa7WEw7b6nZvpUw+0sSbNNI=;
         h=From:To:Cc:Subject:Date:From;
-        b=rD1yibcbaSMszD1yM2dmQRNfJ4p5XqppStQyE7CxzroWtmN8S85IOT+fP6srcl+6x
-         dWos1wnPmF9m0OF6eKaZiPV6sY8Q7vjSql7tNzhn5XF90+9oYQ3QahBnW4pEvY31Yi
-         xlGsntppQDTmgfBXoa8Xr65I6PFwUq7TAdi61ST+7IzT5VxJT0aYA3I7JciaG3/2Ek
-         7zyUyQWeexcpo6QP64YJJ4rvEPMKlWHJ2AL8drC2tEMyygMwr/JcW7bFuuLuiO8NwW
-         BZpSSa6SHj2KAUv6EmyyPGRVlzvAVhICezyuQ/pVbzeFjgu8kcTk6PGuecugbutSj8
-         +ZYNikt0cSZfQ==
+        b=dwsKS/DsTXTVBOFeQw2mm7zswcX8LRx8dPSZoYJYqDAVDjpXKQgNjBs9slcURMbo6
+         bYkp5iSyjGZdI3yc1qcK6LSQ3Yrz7y6+PBzqJjJIe/bP8AREYQKY0x+QUhcEjHD66D
+         PC0r6Rt3/HRUq/KiZn0/fVvrvQUeWrqFT2fdiZolStrf3G7dq8gWyojbWUnpQAEm/C
+         epIpiCD5GlyxnQjfBB8TDS0IXViz5t50g7xFsvM0atOBikREHpsWvJyFXHM7uMBRyh
+         RzP5JWfaGIJSIK63+ofi9Zcje0qfO6WqkV5KZov3xFFXJcuJC+Z+RdxPRdAHhD/rwY
+         l5gnSS8fUntBQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sgx: Fix a resource leak in sgx_init()
-Date:   Tue,  2 Mar 2021 04:32:42 +0200
-Message-Id: <20210302023242.112285-1-jarkko@kernel.org>
+        linux-sgx@vger.kernel.org
+Subject: [PATCH] x86/sgx: Replace section->init_laundry_list with a temp list
+Date:   Tue,  2 Mar 2021 06:42:41 +0200
+Message-Id: <20210302044241.457507-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,35 +49,208 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-If sgx_page_cache_init() fails in the middle, a trivial return statement
-causes unused memory and virtual address space reserved for the EPC
-section, not freed. Fix this by using the same rollback, as when
-sgx_page_reclaimer_init() fails.
+Build a local laundry list in sgx_init(), and transfer its ownsership to
+ksgxd for sanitization, thus getting rid of useless member in struct
+sgx_epc_section.
 
-Cc: stable@vger.kernel.org # 5.11
-Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c | 64 ++++++++++++++++++----------------
+ arch/x86/kernel/cpu/sgx/sgx.h  |  7 ----
+ 2 files changed, 34 insertions(+), 37 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8df81a3ed945..52d070fb4c9a 100644
+index 52d070fb4c9a..f4633a2b7685 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -708,8 +708,10 @@ static int __init sgx_init(void)
+@@ -30,35 +30,33 @@ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+  * Reset dirty EPC pages to uninitialized state. Laundry can be left with SECS
+  * pages whose child pages blocked EREMOVE.
+  */
+-static void sgx_sanitize_section(struct sgx_epc_section *section)
++static void sgx_sanitize_section(struct list_head *laundry)
+ {
+ 	struct sgx_epc_page *page;
+ 	LIST_HEAD(dirty);
+ 	int ret;
+ 
+ 	/* init_laundry_list is thread-local, no need for a lock: */
+-	while (!list_empty(&section->init_laundry_list)) {
++	while (!list_empty(laundry)) {
+ 		if (kthread_should_stop())
+ 			return;
+ 
+-		/* needed for access to ->page_list: */
+-		spin_lock(&section->lock);
+-
+-		page = list_first_entry(&section->init_laundry_list,
+-					struct sgx_epc_page, list);
++		page = list_first_entry(laundry, struct sgx_epc_page, list);
+ 
+ 		ret = __eremove(sgx_get_epc_virt_addr(page));
+-		if (!ret)
+-			list_move(&page->list, &section->page_list);
+-		else
++		if (!ret) {
++			/* The page is clean - move to the free list. */
++			list_del(&page->list);
++			sgx_free_epc_page(page);
++		} else {
++			/* The page is not yet clean - move to the dirty list. */
+ 			list_move_tail(&page->list, &dirty);
+-
+-		spin_unlock(&section->lock);
++		}
+ 
+ 		cond_resched();
+ 	}
+ 
+-	list_splice(&dirty, &section->init_laundry_list);
++	list_splice(&dirty, laundry);
+ }
+ 
+ static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+@@ -405,6 +403,7 @@ static bool sgx_should_reclaim(unsigned long watermark)
+ 
+ static int ksgxd(void *p)
+ {
++	struct list_head *laundry = p;
+ 	int i;
+ 
+ 	set_freezable();
+@@ -413,16 +412,13 @@ static int ksgxd(void *p)
+ 	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+ 	 * required for SECS pages, whose child pages blocked EREMOVE.
+ 	 */
+-	for (i = 0; i < sgx_nr_epc_sections; i++)
+-		sgx_sanitize_section(&sgx_epc_sections[i]);
++	sgx_sanitize_section(laundry);
++	sgx_sanitize_section(laundry);
+ 
+-	for (i = 0; i < sgx_nr_epc_sections; i++) {
+-		sgx_sanitize_section(&sgx_epc_sections[i]);
++	if (!list_empty(laundry))
++		WARN(1, "EPC section %d has unsanitized pages.\n", i);
+ 
+-		/* Should never happen. */
+-		if (!list_empty(&sgx_epc_sections[i].init_laundry_list))
+-			WARN(1, "EPC section %d has unsanitized pages.\n", i);
+-	}
++	kfree(laundry);
+ 
+ 	while (!kthread_should_stop()) {
+ 		if (try_to_freeze())
+@@ -441,11 +437,11 @@ static int ksgxd(void *p)
+ 	return 0;
+ }
+ 
+-static bool __init sgx_page_reclaimer_init(void)
++static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
+ {
+ 	struct task_struct *tsk;
+ 
+-	tsk = kthread_run(ksgxd, NULL, "ksgxd");
++	tsk = kthread_run(ksgxd, laundry, "ksgxd");
+ 	if (IS_ERR(tsk))
+ 		return false;
+ 
+@@ -619,7 +615,8 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ 
+ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 					 unsigned long index,
+-					 struct sgx_epc_section *section)
++					 struct sgx_epc_section *section,
++					 struct list_head *laundry)
+ {
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+ 	unsigned long i;
+@@ -637,13 +634,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	section->phys_addr = phys_addr;
+ 	spin_lock_init(&section->lock);
+ 	INIT_LIST_HEAD(&section->page_list);
+-	INIT_LIST_HEAD(&section->init_laundry_list);
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		section->pages[i].section = index;
+ 		section->pages[i].flags = 0;
+ 		section->pages[i].owner = NULL;
+-		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
++		list_add_tail(&section->pages[i].list, laundry);
+ 	}
+ 
+ 	section->free_cnt = nr_pages;
+@@ -661,7 +657,7 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
+ 	       ((high & GENMASK_ULL(19, 0)) << 32);
+ }
+ 
+-static bool __init sgx_page_cache_init(void)
++static bool __init sgx_page_cache_init(struct list_head *laundry)
+ {
+ 	u32 eax, ebx, ecx, edx, type;
+ 	u64 pa, size;
+@@ -684,7 +680,7 @@ static bool __init sgx_page_cache_init(void)
+ 
+ 		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
+ 
+-		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
++		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i], laundry)) {
+ 			pr_err("No free memory for an EPC section\n");
+ 			break;
+ 		}
+@@ -702,18 +698,25 @@ static bool __init sgx_page_cache_init(void)
+ 
+ static int __init sgx_init(void)
+ {
++	struct list_head *laundry;
+ 	int ret;
+ 	int i;
+ 
  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
  		return -ENODEV;
  
--	if (!sgx_page_cache_init())
--		return -ENOMEM;
-+	if (!sgx_page_cache_init()) {
-+		ret = -ENOMEM;
-+		goto err_page_cache;
-+	}
- 
- 	if (!sgx_page_reclaimer_init()) {
+-	if (!sgx_page_cache_init()) {
++	laundry = kzalloc(sizeof(*laundry), GFP_KERNEL);
++	if (!laundry)
++		return -ENOMEM;
++
++	INIT_LIST_HEAD(laundry);
++
++	if (!sgx_page_cache_init(laundry)) {
  		ret = -ENOMEM;
+ 		goto err_page_cache;
+ 	}
+ 
+-	if (!sgx_page_reclaimer_init()) {
++	if (!sgx_page_reclaimer_init(laundry)) {
+ 		ret = -ENOMEM;
+ 		goto err_page_cache;
+ 	}
+@@ -733,6 +736,7 @@ static int __init sgx_init(void)
+ 		memunmap(sgx_epc_sections[i].virt_addr);
+ 	}
+ 
++	kfree(laundry);
+ 	return ret;
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 5fa42d143feb..bc8af0428640 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -45,13 +45,6 @@ struct sgx_epc_section {
+ 	spinlock_t lock;
+ 	struct list_head page_list;
+ 	unsigned long free_cnt;
+-
+-	/*
+-	 * Pages which need EREMOVE run on them before they can be
+-	 * used.  Only safe to be accessed in ksgxd and init code.
+-	 * Not protected by locks.
+-	 */
+-	struct list_head init_laundry_list;
+ };
+ 
+ extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
 -- 
 2.30.1
 
