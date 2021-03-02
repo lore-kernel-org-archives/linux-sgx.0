@@ -2,267 +2,115 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E96CC433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 21:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B57C43332
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38DA660232
-	for <linux-sgx@archiver.kernel.org>; Mon,  1 Mar 2021 21:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 703C464F2D
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:36:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237388AbhCAV3i (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 1 Mar 2021 16:29:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44062 "EHLO mail.kernel.org"
+        id S233014AbhCBVaK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:30:10 -0500
+Received: from mga03.intel.com ([134.134.136.65]:14398 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244643AbhCAVYq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 16:24:46 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D3857600EF;
-        Mon,  1 Mar 2021 21:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614633844;
-        bh=yudPdpWA0xjWt/ApE8X46xPRZMawZSDGpWIOqFdB3Gs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qPNTHF4pDHMAvSmrWLdbjJBPycLuKEH2HvH/ODbtAXU8IrLrsUuVWM38sGefR83wZ
-         iZtnMkhDE32ipbxehpftZycA2p4XbFvCF2qXhD6yF37sGO+Uw3TWHI9KfFu5Or/xUv
-         a2XVBgK8L6szWt5KunnoKM/pohdZMdbRSTPjf+L6zcTVK55NbeXysbkSI173ykHzaw
-         V2x0nzC11ia9bZhsRWhSpYLI25/pkJA7f4xPvZTwZmBwp0zJmk5d8INWg3UpT7wLH0
-         nfX743SFT+jEypbKvE5ZvJEZ9BGB1vXg96PgM1pNems64/J68JAhLFDlkoRDmi3v2Y
-         ps4M3L/FDeRyg==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
-        dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH v4] sgx.7: New page with overview of Software Guard eXtensions (SGX)
-Date:   Mon,  1 Mar 2021 23:23:44 +0200
-Message-Id: <20210301212344.48650-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.30.1
+        id S237336AbhCBAdq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Mar 2021 19:33:46 -0500
+IronPort-SDR: ScWI6pkReyUNhoJyWYR6q/9QtWREX9efW2ALvT+4Y+eioM3XzDbBHJZlJ/1FUNy7BzP5hwvDn/
+ H88d9t/PP7Sw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="186696233"
+X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
+   d="scan'208";a="186696233"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:32:55 -0800
+IronPort-SDR: EiJGOqml+6tBJd35v1/frztJC7INs4m25setrC6aYGmT6kEVhzvIksElaghir0g1TzO7lS16eL
+ RbCBtpz6T+CA==
+X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
+   d="scan'208";a="427144227"
+Received: from yueliu2-mobl.amr.corp.intel.com ([10.252.139.111])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 16:32:51 -0800
+Message-ID: <a1f3ab9bdffe78b72b22237d46f706a3c19c2900.camel@intel.com>
+Subject: Re: [PATCH 03/25] x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()
+From:   Kai Huang <kai.huang@intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Date:   Tue, 02 Mar 2021 13:32:49 +1300
+In-Reply-To: <YD0kinxqJF1w+BZf@google.com>
+References: <cover.1614590788.git.kai.huang@intel.com>
+         <9c2c83ccc7324390bfb302bd327d9236b890c679.1614590788.git.kai.huang@intel.com>
+         <YD0kinxqJF1w+BZf@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v4:
-* Did a heavy edit trying to streamline the story a bit and focus on
-  stuff important to the user (e.g. lighten up x86 details).
-v3:
-* Overhaul based on Michael's comments. Most likely needs to be refined
-  in various places but this is at least a small step forward for sure.
-v2:
-* Fixed the semantic newlines convention and various style errors etc.
-  that were reported by Alenjandro and Michael.
-* SGX was merged to v5.
- man7/sgx.7 | 196 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 196 insertions(+)
- create mode 100644 man7/sgx.7
+On Mon, 2021-03-01 at 09:29 -0800, Sean Christopherson wrote:
+> On Mon, Mar 01, 2021, Kai Huang wrote:
+> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> > index 7449ef33f081..a7dc86e87a09 100644
+> > --- a/arch/x86/kernel/cpu/sgx/encl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> > @@ -381,6 +381,26 @@ const struct vm_operations_struct sgx_vm_ops = {
+> >  	.access = sgx_vma_access,
+> >  };
+> >  
+> > 
+> > 
+> > 
+> > +static void sgx_encl_free_epc_page(struct sgx_epc_page *epc_page)
+> > +{
+> > +	int ret;
+> > +
+> > +	WARN_ON_ONCE(epc_page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> > +
+> > +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
+> > +	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret)) {
+> 
+> This can be ENCLS_WARN, especially if you're printing a separate error message
+> about leaking the page.  That being said, I'm not sure a seperate error message
+> is a good idea.  If other stuff gets dumped to the kernel log between the WARN
+> and the pr_err_once(), it may not be clear to admins that the two events are
+> directly connected.  It's even possible the prints could come from two different
+> CPUs.
 
-diff --git a/man7/sgx.7 b/man7/sgx.7
-new file mode 100644
-index 000000000..c0b67020e
---- /dev/null
-+++ b/man7/sgx.7
-@@ -0,0 +1,196 @@
-+.\" Copyright (C) 2021 Intel Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
-+.PP
-+sgx - overview of Software Guard eXtensions
-+.SH DESCRIPTION
-+.PP
-+Intel Software Guard eXtensions (SGX) allow applications to set
-+aside private memory regions of code and data.
-+These memory regions are called enclaves.
-+.PP
-+SGX must be enabled in BIOS.
-+If SGX appears to be unsupported on a system having hardware support,
-+ensure that SGX is enabled in the BIOS.
-+If a BIOS presents a choice between \(dqEnabled\(dq and \(dqSoftware
-+Enabled\(dq modes for SGX,
-+choose \(dqEnabled\(dq.
-+.PP
-+SGX is available only if the kernel was configured and built with the
-+.B CONFIG_X86_SGX
-+option.
-+You can determine whether the hardware supports SGX by checking
-+whether "sgx" appears in the
-+.I flags
-+field in
-+.IR /proc/cpuinfo .
-+.SS Overview
-+.PP
-+An enclave is a region of address space,
-+mapping pages from Enclave Page Cache (EPC),
-+which consists of sections of non-addressable system memory.
-+They are constructed with sub-functions of the privileged (ring-0) ENCLS x86
-+instruction,
-+and interacted with sub-functions of the unprivileged (ring-3) ENCLU x86
-+instruction.
-+Any other type of memory access gets asserted by the CPU.
-+Enclaves are represented to the user space as memory-mapped files,
-+shareable by multiple processes.
-+.PP
-+An EPC page can be initialized with ENCLS sub-functions to any of the
-+following types:
-+.TP
-+SECS
-+SGX Enclave Control Structure (SECS) contains the enclave global properties
-+such as the base address,
-+size and SHA256 checksum of its contents.
-+.TP
-+REG
-+Regular (REG) pages are code and data pages of the enclave.
-+They are mapped to the enclave address space.
-+.TP
-+TCS
-+Thread Control Structure (TCS) pages describe the entry points to an enclave with
-+an offset from the base address.
-+They are mapped to the enclave address space.
-+ENCLU provides EENTER and ERESUME sub-functions,
-+which take the address of a TCS page,
-+and jump executing inside an enclave from the given offset.
-+.PP
-+An enclave can be entered only at a fixed set of entry points,
-+each defined by a TCS,
-+by invoking EENTER and ERESUME.
-+Any other type of memory access is strictly prohibited by the CPU.
-+.PP
-+A thread inside an enclave can read and write memory inside and outside the
-+enclave,
-+but any action causing execution outside the enclave is asserted by the CPU
-+with an exception,
-+and ultimately exit from the enclave.
-+A thread can cleanly exit from the enclave with EEXIT sub-function of the ENCLU,
-+to a given address outside the enclave.
-+.PP
-+Although carved out of normal DRAM,
-+enclave memory is marked in the system memory map as reserved and is not
-+managed by the Linux memory manager.
-+There may be several enclave regions spread across the system.
-+Each contiguous region is called an Enclave Page Cache (EPC) section.
-+The pages belonging to the EPC sections are encrypted when they leave the
-+Last Level Cache (LLC).
-+.SS Construction
-+.PP
-+An enclave's life-cycle starts by opening
-+.I /dev/sgx_enclave,
-+and ends when all the file descriptors have been closed.
-+After opening the enclave,
-+its contents must be populated with the
-+.BR ioctl (2)
-+interface provided by
-+.IR <asm/sgx.h> .
-+.PP
-+The are rudimentarily the steps to construct an enclave:
-+.IP 1.
-+Invoke
-+.B SGX_IOC_ENCLAVE_CREATE,
-+which takes in data for the SECS,
-+and initializes an EPC page for it.
-+SECS is used by various ENCLS sub-functions to modify the enclave state.
-+It is kept internally by the kernel,
-+and is never made available to the user space.
-+.IP 2.
-+Populate regular and TCS pages to the enclave,
-+by invoking
-+.B SGX_IOC_ENCLAVE_ADD_PAGES.
-+.IP 3.
-+Invoke
-+.B SGX_IOC_ENCLAVE_INIT,
-+which makes the enclave executable.
-+After this new pages can no longer be added.
-+.SS Access rights
-+The state of each EPC page is stored to a structure called the
-+.I Enclave Page Cache Map (EPCM),
-+which takes a portion of the EPC.
-+The state consists of page type and access rights,
-+among the other things.
-+When a page is accessed by a CPU,
-+the EPCM permissions are enforced,
-+in addition to the
-+.BR mmap(2)
-+permissions.
-+EPCM permissions are defined when invoking
-+.B SGX_IOC_ENCLAVE_ADD_PAGES,
-+by setting them to the
-+.B flags
-+field of
-+.B struct enclave_add_pages.
-+.PP
-+A memory access to an unitialized EPC page causes EPCM fault,
-+with a new SGX bit set in the error code.
-+A new power cycle invalidates the whole EPCM,
-+making all EPC pages unitialized.
-+E.g. if the system goes to sleep,
-+and then wakes up,
-+all the data is gone.
-+Thus, a user space run-time must be prepared to handle this exception,
-+at any point of time.
-+.PP
-+When the pages are mapped to memory via
-+.BR mmap (2)
-+or
-+.BR mprotect (2),
-+the EPCM permissions are compared against the declared permissions.
-+If the declared permissions have bits set that are not part of the EPCM
-+permissions,
-+the operation fails with the error
-+.B EACCES.
-+.SS Exception handling
-+These are the exceptions triggered by an enclave:
-+.IP
-+Undefined instruction (#UD) exception is triggered when executing inside an enclave,
-+for any instruction that may cause VMEXIT,
-+I/O instruction, 
-+or a change in CPU privilege levels.
-+.IP
-+Page fault (#PF) with a new SGX bit set,
-+also known as EPCM fault,
-+is triggered,
-+when accessing unitialized EPC page,
-+or when the memory access surpasses the EPCM permissions.
-+.PP
-+In order to assist the run-time,
-+the kernel provides a vDSO entry point,
-+.BR vsgx_enter_enclave,
-+which wraps the code required the enter the enclave.
-+When an exception occurs,
-+the vDSO populates
-+.B struct sgx_enclave_run 
-+with the exception data,
-+and returns to the caller.
-+.SH VERSIONS
-+The SGX feature was added in Linux 5.11.
-+.SH SEE ALSO
-+.BR ioctl (2),
-+.BR mmap() (2),
-+.BR mprotect (2)
--- 
-2.30.1
+Good point. Thanks for educating me :)
+
+> 
+> Why not dump a short blurb in the WARN itself?  The error message can be thrown
+> in a define if the line length is too obnoxious (it's ~109 chars if embedded
+> directly).
+> 
+> #define EREMOVE_ERROR_MESSAGE \
+> 	"EREMOVE returned %d (0x%x).  EPC page leaked, reboot recommended."
+> 
+> 	if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret))
+
+Will do in your way. Thanks!
+
+> 
+> > +		/*
+> > +		 * Give a message to remind EPC page is leaked, and requires
+> > +		 * machine reboot to get leaked pages back. This can be improved
+> > +		 * in the future by adding stats of leaked pages, etc.
+> > +		 */
+> > +		pr_err_once("EPC page is leaked. Require machine reboot to get leaked pages back.\n");
+> > +		return;
+> > +	}
+> > +
+> > +	sgx_free_epc_page(epc_page);
+> > +}
+> > +
+> >  /**
+> >   * sgx_encl_release - Destroy an enclave instance
+> >   * @kref:	address of a kref inside &sgx_encl
+
 
