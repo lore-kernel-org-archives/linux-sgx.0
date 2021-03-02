@@ -2,255 +2,124 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB2EC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478D8C4332B
 	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E494564F34
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D8B64F0A
+	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350991AbhCBVlN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:41:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1835384AbhCBE5G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 1 Mar 2021 23:57:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DDC9660238;
-        Tue,  2 Mar 2021 04:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614660188;
-        bh=VO/ybizvK8GgrGUKEsnjwa7WEw7b6nZvpUw+0sSbNNI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dwsKS/DsTXTVBOFeQw2mm7zswcX8LRx8dPSZoYJYqDAVDjpXKQgNjBs9slcURMbo6
-         bYkp5iSyjGZdI3yc1qcK6LSQ3Yrz7y6+PBzqJjJIe/bP8AREYQKY0x+QUhcEjHD66D
-         PC0r6Rt3/HRUq/KiZn0/fVvrvQUeWrqFT2fdiZolStrf3G7dq8gWyojbWUnpQAEm/C
-         epIpiCD5GlyxnQjfBB8TDS0IXViz5t50g7xFsvM0atOBikREHpsWvJyFXHM7uMBRyh
-         RzP5JWfaGIJSIK63+ofi9Zcje0qfO6WqkV5KZov3xFFXJcuJC+Z+RdxPRdAHhD/rwY
-         l5gnSS8fUntBQ==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S1350968AbhCBVmL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 2 Mar 2021 16:42:11 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:46778 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1347484AbhCBFSC (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Mar 2021 00:18:02 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UQ33OCN_1614661612;
+Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UQ33OCN_1614661612)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 02 Mar 2021 13:06:53 +0800
+Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
+ SGX_INVALID_SIGNATURE
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-sgx@vger.kernel.org
-Subject: [PATCH] x86/sgx: Replace section->init_laundry_list with a temp list
-Date:   Tue,  2 Mar 2021 06:42:41 +0200
-Message-Id: <20210302044241.457507-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.30.1
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
+ <YDy51R2Wva7s+k/x@kernel.org>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
+Date:   Tue, 2 Mar 2021 13:06:52 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YDy51R2Wva7s+k/x@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Build a local laundry list in sgx_init(), and transfer its ownsership to
-ksgxd for sanitization, thus getting rid of useless member in struct
-sgx_epc_section.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/main.c | 64 ++++++++++++++++++----------------
- arch/x86/kernel/cpu/sgx/sgx.h  |  7 ----
- 2 files changed, 34 insertions(+), 37 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 52d070fb4c9a..f4633a2b7685 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -30,35 +30,33 @@ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
-  * Reset dirty EPC pages to uninitialized state. Laundry can be left with SECS
-  * pages whose child pages blocked EREMOVE.
-  */
--static void sgx_sanitize_section(struct sgx_epc_section *section)
-+static void sgx_sanitize_section(struct list_head *laundry)
- {
- 	struct sgx_epc_page *page;
- 	LIST_HEAD(dirty);
- 	int ret;
- 
- 	/* init_laundry_list is thread-local, no need for a lock: */
--	while (!list_empty(&section->init_laundry_list)) {
-+	while (!list_empty(laundry)) {
- 		if (kthread_should_stop())
- 			return;
- 
--		/* needed for access to ->page_list: */
--		spin_lock(&section->lock);
--
--		page = list_first_entry(&section->init_laundry_list,
--					struct sgx_epc_page, list);
-+		page = list_first_entry(laundry, struct sgx_epc_page, list);
- 
- 		ret = __eremove(sgx_get_epc_virt_addr(page));
--		if (!ret)
--			list_move(&page->list, &section->page_list);
--		else
-+		if (!ret) {
-+			/* The page is clean - move to the free list. */
-+			list_del(&page->list);
-+			sgx_free_epc_page(page);
-+		} else {
-+			/* The page is not yet clean - move to the dirty list. */
- 			list_move_tail(&page->list, &dirty);
--
--		spin_unlock(&section->lock);
-+		}
- 
- 		cond_resched();
- 	}
- 
--	list_splice(&dirty, &section->init_laundry_list);
-+	list_splice(&dirty, laundry);
- }
- 
- static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
-@@ -405,6 +403,7 @@ static bool sgx_should_reclaim(unsigned long watermark)
- 
- static int ksgxd(void *p)
- {
-+	struct list_head *laundry = p;
- 	int i;
- 
- 	set_freezable();
-@@ -413,16 +412,13 @@ static int ksgxd(void *p)
- 	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
- 	 * required for SECS pages, whose child pages blocked EREMOVE.
- 	 */
--	for (i = 0; i < sgx_nr_epc_sections; i++)
--		sgx_sanitize_section(&sgx_epc_sections[i]);
-+	sgx_sanitize_section(laundry);
-+	sgx_sanitize_section(laundry);
- 
--	for (i = 0; i < sgx_nr_epc_sections; i++) {
--		sgx_sanitize_section(&sgx_epc_sections[i]);
-+	if (!list_empty(laundry))
-+		WARN(1, "EPC section %d has unsanitized pages.\n", i);
- 
--		/* Should never happen. */
--		if (!list_empty(&sgx_epc_sections[i].init_laundry_list))
--			WARN(1, "EPC section %d has unsanitized pages.\n", i);
--	}
-+	kfree(laundry);
- 
- 	while (!kthread_should_stop()) {
- 		if (try_to_freeze())
-@@ -441,11 +437,11 @@ static int ksgxd(void *p)
- 	return 0;
- }
- 
--static bool __init sgx_page_reclaimer_init(void)
-+static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
- {
- 	struct task_struct *tsk;
- 
--	tsk = kthread_run(ksgxd, NULL, "ksgxd");
-+	tsk = kthread_run(ksgxd, laundry, "ksgxd");
- 	if (IS_ERR(tsk))
- 		return false;
- 
-@@ -619,7 +615,8 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
- 
- static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 					 unsigned long index,
--					 struct sgx_epc_section *section)
-+					 struct sgx_epc_section *section,
-+					 struct list_head *laundry)
- {
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 	unsigned long i;
-@@ -637,13 +634,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 	section->phys_addr = phys_addr;
- 	spin_lock_init(&section->lock);
- 	INIT_LIST_HEAD(&section->page_list);
--	INIT_LIST_HEAD(&section->init_laundry_list);
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		section->pages[i].section = index;
- 		section->pages[i].flags = 0;
- 		section->pages[i].owner = NULL;
--		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
-+		list_add_tail(&section->pages[i].list, laundry);
- 	}
- 
- 	section->free_cnt = nr_pages;
-@@ -661,7 +657,7 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
- 	       ((high & GENMASK_ULL(19, 0)) << 32);
- }
- 
--static bool __init sgx_page_cache_init(void)
-+static bool __init sgx_page_cache_init(struct list_head *laundry)
- {
- 	u32 eax, ebx, ecx, edx, type;
- 	u64 pa, size;
-@@ -684,7 +680,7 @@ static bool __init sgx_page_cache_init(void)
- 
- 		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
- 
--		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
-+		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i], laundry)) {
- 			pr_err("No free memory for an EPC section\n");
- 			break;
- 		}
-@@ -702,18 +698,25 @@ static bool __init sgx_page_cache_init(void)
- 
- static int __init sgx_init(void)
- {
-+	struct list_head *laundry;
- 	int ret;
- 	int i;
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX))
- 		return -ENODEV;
- 
--	if (!sgx_page_cache_init()) {
-+	laundry = kzalloc(sizeof(*laundry), GFP_KERNEL);
-+	if (!laundry)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(laundry);
-+
-+	if (!sgx_page_cache_init(laundry)) {
- 		ret = -ENOMEM;
- 		goto err_page_cache;
- 	}
- 
--	if (!sgx_page_reclaimer_init()) {
-+	if (!sgx_page_reclaimer_init(laundry)) {
- 		ret = -ENOMEM;
- 		goto err_page_cache;
- 	}
-@@ -733,6 +736,7 @@ static int __init sgx_init(void)
- 		memunmap(sgx_epc_sections[i].virt_addr);
- 	}
- 
-+	kfree(laundry);
- 	return ret;
- }
- 
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 5fa42d143feb..bc8af0428640 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -45,13 +45,6 @@ struct sgx_epc_section {
- 	spinlock_t lock;
- 	struct list_head page_list;
- 	unsigned long free_cnt;
--
--	/*
--	 * Pages which need EREMOVE run on them before they can be
--	 * used.  Only safe to be accessed in ksgxd and init code.
--	 * Not protected by locks.
--	 */
--	struct list_head init_laundry_list;
- };
- 
- extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
--- 
-2.30.1
+On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
+> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
+>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
+> 
+> What does determine this?
+> 
+>> In this case, the valid portion of q2 is reordered reversely for
+>> little endian order, and the remaining portion is filled with zero.
+> 
+> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
+> 
+> I'm lacking these details:
+> 
+> 1. Why the length of Q2 can vary?
+> 2. Why reversing the bytes is the correct measure to counter-measure
+>     this variation?
+> 
+> /Jarkko
+> 
+
+When use openssl to generate a key instead of using the built-in 
+sign_key.pem, there is a probability that will encounter this problem.
+
+Here is a problematic key I encountered. The calculated q1 and q2 of 
+this key are both 383 bytes, If the length is not processed, the 
+hardware signature will fail.
+
+-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
+
+good luck!
+
+Tianjia
 
