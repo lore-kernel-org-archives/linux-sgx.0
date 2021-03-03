@@ -7,44 +7,41 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2BAC1551D
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4A6C1551E
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A59C464F20
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4812A64F11
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240209AbhCDAtU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:49:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42456 "EHLO mail.kernel.org"
+        id S232549AbhCDAtV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:49:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1447592AbhCCPE2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:04:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EE1F764EDB;
-        Wed,  3 Mar 2021 15:03:46 +0000 (UTC)
+        id S1447604AbhCCPEa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Mar 2021 10:04:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F35F64E02;
+        Wed,  3 Mar 2021 15:03:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614783827;
-        bh=2/sTuEpFwd93bBqjR0EAjn1gZBYjn5jEVQYV6u7dFpA=;
+        s=k20201202; t=1614783830;
+        bh=1dr+btPYpniJbMjRIotZWMFL1lmdGAXZ0F3sj1DRbOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PCW/5/jdJW6J1uDynL4hdlpdZ6QFqusywN2AfcLYm89+5uQyzo1J3JJH7s7K/XLkL
-         sgUlmcuKM3USbHFNSplhnyntUhX9OlSPbqBoFaSt/KzMLuCfslGc/M6EMMBS2WY0I9
-         uhR+Yn64UlyVFxnxRF1BqAQiF4IFpbiKBIUIz+V4WuZs1iemvODAm2JU3HjxNEfclv
-         MLLELCYqMwfFmiDOkEnxGakz1+9D2TXquyvR+HASwwyvGYVLA6yhRGQVaC6Qify45z
-         apYJt1JAQfCW4sBO0+gRfWFitJi0XqhQWIm3T25ln/QYrkZLRILCwkvX3iK+D2Bn5y
-         rW4U28ryssPqg==
+        b=acVIUdHV0Tsbgga2BOB3BhqjpZiKE3kBXXf+mqnqAMH6u8tI2Pq4rdEqsWbLR9rsi
+         lJOgQS2VyT3m8lprGDQ3l9YMzZdCvpaaM0XVQqJS9Xdfas0vewBmxinbc4FoKTZ/9M
+         h5H8XKx190w+X2e8wlt5FRiWmbikHpFjs9EvJQfrv9yteStXWQide5+4bDK9tdrqV9
+         81BszEb70u7i12YNPHIwbeAo8IbGO0HUk+MYcYGjakCoDk+uH+uEqpKPGUzMV9lrht
+         9f+Fh8r238JW4S0CnAbnFV2BE+TjYHaQ7UUEgket4HwCfx3su+AE8tDfNSAQszqAK8
+         t1rA1IlAyYnxw==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/5] x86/sgx: Fix a resource leak in sgx_init()
-Date:   Wed,  3 Mar 2021 17:03:19 +0200
-Message-Id: <20210303150323.433207-2-jarkko@kernel.org>
+Subject: [PATCH v3 2/5] x86/sgx: Use sgx_free_epc_page() in sgx_reclaim_pages()
+Date:   Wed,  3 Mar 2021 17:03:20 +0200
+Message-Id: <20210303150323.433207-3-jarkko@kernel.org>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210303150323.433207-1-jarkko@kernel.org>
 References: <20210303150323.433207-1-jarkko@kernel.org>
@@ -54,35 +51,40 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-If sgx_page_cache_init() fails in the middle, a trivial return statement
-causes unused memory and virtual address space reserved for the EPC
-section, not freed. Fix this by using the same rollback, as when
-sgx_page_reclaimer_init() fails.
+Replace the ad-hoc code with a sgx_free_epc_page(), in order to make sure
+that all the relevant checks and book keeping is done, while freeing a
+borrowed EPC page.
 
-Cc: stable@vger.kernel.org # 5.11
-Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8df81a3ed945..52d070fb4c9a 100644
+index 52d070fb4c9a..ed99c60024dc 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -708,8 +708,10 @@ static int __init sgx_init(void)
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX))
- 		return -ENODEV;
+@@ -305,7 +305,6 @@ static void sgx_reclaim_pages(void)
+ {
+ 	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
+ 	struct sgx_backing backing[SGX_NR_TO_SCAN];
+-	struct sgx_epc_section *section;
+ 	struct sgx_encl_page *encl_page;
+ 	struct sgx_epc_page *epc_page;
+ 	pgoff_t page_index;
+@@ -378,11 +377,7 @@ static void sgx_reclaim_pages(void)
+ 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+ 		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
  
--	if (!sgx_page_cache_init())
--		return -ENOMEM;
-+	if (!sgx_page_cache_init()) {
-+		ret = -ENOMEM;
-+		goto err_page_cache;
-+	}
+-		section = &sgx_epc_sections[epc_page->section];
+-		spin_lock(&section->lock);
+-		list_add_tail(&epc_page->list, &section->page_list);
+-		section->free_cnt++;
+-		spin_unlock(&section->lock);
++		sgx_free_epc_page(epc_page);
+ 	}
+ }
  
- 	if (!sgx_page_reclaimer_init()) {
- 		ret = -ENOMEM;
 -- 
 2.30.1
 
