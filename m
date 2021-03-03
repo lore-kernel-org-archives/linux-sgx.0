@@ -2,101 +2,87 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5631DC4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A18EC1551A
 	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DDDE64F11
+	by mail.kernel.org (Postfix) with ESMTP id 7202764F20
 	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240164AbhCDAtS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:49:18 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:39385 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239577AbhCCMFO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Mar 2021 07:05:14 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UQFn22N_1614772990;
-Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UQFn22N_1614772990)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 03 Mar 2021 20:03:11 +0800
-Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
- SGX_INVALID_SIGNATURE
-To:     Andy Lutomirski <luto@amacapital.net>
+        id S240188AbhCDAtU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:49:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42430 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1447580AbhCCPE1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Mar 2021 10:04:27 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3610E60240;
+        Wed,  3 Mar 2021 15:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614783824;
+        bh=Pdp8HasQTGb0k5IdZ2qjoyCInUHJAUjtkbKgyYuavoQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VmZWFuoHI5xReMJ1soS9FWVCRsTm48gQTKkc1OpGYdT0V8Z3ZgO3prlbme4fkFHDV
+         82dUpqkYJMaddLIWzyP+29+tOIP8dvWvzEJat3Ew4G2vNNHy98xASuHGrYpzrMSKzQ
+         APcGBW1s0pDNsjRUnA8LWstzhzWS/PCaFnFJZfqhPLL4FQOlVSEZPVuNuvOicGujEp
+         Ke29IeYNyWMSUCUaRu3KDJh40SuuCu5I1bF+n740gYEKfwpKFVoH25UkW3OInm4Wgp
+         OJJ+nPn4eqMKb3Zf+6eZ/DsojPnEezAD2LMhFxOHvQMvIjpuzO0/ZdK7lAMKFJs95S
+         Dc20cD4Twfdmw==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
- <YDy51R2Wva7s+k/x@kernel.org>
- <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
- <CALCETrVn_inXAULfsPrCXeHUTBet+KnL1XsxuiaR+jgG1uTJNg@mail.gmail.com>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <870e9a2e-65dd-131d-78c2-24de1ffffd31@linux.alibaba.com>
-Date:   Wed, 3 Mar 2021 20:03:10 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.1
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: [PATCH v3 0/5] x86/sgx: NUMA
+Date:   Wed,  3 Mar 2021 17:03:18 +0200
+Message-Id: <20210303150323.433207-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-In-Reply-To: <CALCETrVn_inXAULfsPrCXeHUTBet+KnL1XsxuiaR+jgG1uTJNg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+Make sgx_alloc_epc_page() more balanced among the NUMA nodes, refactoring
+hierarchical listi into a single global free list managed in FIFO fashion.
 
+Introduce NUMA node local free EPC page lists. In sgx_alloc_epc_page(), try
+first to allocate from the local free list, and fallback to global free
+list, if the local list is empty.
 
-On 3/2/21 1:54 PM, Andy Lutomirski wrote:
-> On Mon, Mar 1, 2021 at 9:06 PM Tianjia Zhang
-> <tianjia.zhang@linux.alibaba.com> wrote:
->>
->>
->>
->> On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
->>> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
->>>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
->>>
->>> What does determine this?
->>>
->>>> In this case, the valid portion of q2 is reordered reversely for
->>>> little endian order, and the remaining portion is filled with zero.
->>>
->>> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
->>>
->>> I'm lacking these details:
->>>
->>> 1. Why the length of Q2 can vary?
->>> 2. Why reversing the bytes is the correct measure to counter-measure
->>>      this variation?
->>>
->>> /Jarkko
->>>
->>
->> When use openssl to generate a key instead of using the built-in
->> sign_key.pem, there is a probability that will encounter this problem.
->>
->> Here is a problematic key I encountered. The calculated q1 and q2 of
->> this key are both 383 bytes, If the length is not processed, the
->> hardware signature will fail.
-> 
-> Presumably the issue is that some keys have parameters that have
-> enough leading 0 bits to be effectively shorter.  The openssl API
-> (and, sadly, a bunch  of the ASN.1 stuff) treats these parameters as
-> variable-size integers.
-> 
+v3:
+* Expanded into a full patch set, which also implements more balanced
+  EPC allocation among the NUMA nodes. Since none of the patches fully
+  match the previous single patch entry, included earlier change log
+  to the cover letter.
+v2:
+* s/section_list/numa_section_list/
+* s/MAX_NUMNODES//num_possible_nodes()/
+* Add more verbose inline comments that Dave provided.
+* If NUMA mapping fails, print a warning and description of the fallbck.
+  The physical address is alredy printed in pr_info(), just before the
+  mapping happens.
 
-I agree with your opinion.
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Haitao Huang <haitao.huang@linux.intel.com>
 
-Thanks,
-Tianjia
+Jarkko Sakkinen (5):
+  x86/sgx: Fix a resource leak in sgx_init()
+  x86/sgx: Use sgx_free_epc_page() in sgx_reclaim_pages()
+  x86/sgx: Replace section->init_laundry_list with a temp list
+  x86/sgx: Replace section->page_list with a global free page list
+  x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()
+
+ arch/x86/Kconfig               |   1 +
+ arch/x86/kernel/cpu/sgx/main.c | 217 +++++++++++++++++++++------------
+ arch/x86/kernel/cpu/sgx/sgx.h  |  22 ++--
+ 3 files changed, 146 insertions(+), 94 deletions(-)
+
+-- 
+2.30.1
+
