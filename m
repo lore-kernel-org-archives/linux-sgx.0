@@ -2,88 +2,107 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3265C43603
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62471C15519
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A369A64F0A
-	for <linux-sgx@archiver.kernel.org>; Tue,  2 Mar 2021 21:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 446E264F52
+	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378990AbhCBVoa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 2 Mar 2021 16:44:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240809AbhCBSGP (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 2 Mar 2021 13:06:15 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C49C061225;
-        Tue,  2 Mar 2021 09:54:06 -0800 (PST)
-Received: from [10.130.51.25] (dynamic-046-114-035-025.46.114.pool.telefonica.de [46.114.35.25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DB4B31EC0419;
-        Tue,  2 Mar 2021 18:54:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1614707643;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=++1uon9cBlN0dbDj/X3dayJGsnXBiQOjWiDUluqfe1s=;
-        b=eaceNnuTckvTP/ytCLvr+V/BqQ3H2lReO0SJtAepSie1LmVP0o8yF4yXQWitRnk/HgKeoc
-        mLAnU/4x3F6C417wjIcyqpFar2UnKVjBmWApmGZrlPAFii4klieqi3WIj9zSKHq2xGWSRf
-        7H8qjwvmvZ4IiO3oqf+rZc1eP471q6k=
-Date:   Tue, 02 Mar 2021 18:53:59 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <YD5hhah9Sgj1YGqw@google.com>
-References: <cover.1614590788.git.kai.huang@intel.com> <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com> <20210301100037.GA6699@zn.tnic> <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com> <20210301103043.GB6699@zn.tnic> <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com> <20210301105346.GC6699@zn.tnic> <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com> <20210301113257.GD6699@zn.tnic> <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com> <YD5hhah9Sgj1YGqw@google.com>
+        id S237847AbhCDAtT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:49:19 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:48432 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1356800AbhCCMNb (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 3 Mar 2021 07:13:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UQGMJow_1614773561;
+Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UQGMJow_1614773561)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 03 Mar 2021 20:12:42 +0800
+Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
+ SGX_INVALID_SIGNATURE
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
+ <YDy51R2Wva7s+k/x@kernel.org>
+ <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
+ <YD40viWEQVBPU4LW@kernel.org>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <c3c336f4-31d1-4cd0-7e7e-a014f7cf8a83@linux.alibaba.com>
+Date:   Wed, 3 Mar 2021 20:12:41 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-To:     Sean Christopherson <seanjc@google.com>,
-        Kai Huang <kai.huang@intel.com>
-CC:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-From:   Boris Petkov <bp@alien8.de>
-Message-ID: <9971018C-8250-4E51-9EF9-72ED6CBD2E47@alien8.de>
+In-Reply-To: <YD40viWEQVBPU4LW@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On March 2, 2021 5:02:13 PM GMT+01:00, Sean Christopherson <seanjc@google=
-=2Ecom> wrote:
->The KVM use case is to query /proc/cpuinfo to see if sgx2 can be
->enabled in a
->guest=2E
 
-You mean before the guest ia created? I sure hope there's a better way to =
-query HV-supported features than grepping /proc/cpuinfo=2E=2E=2E
 
->The counter-argument to that is we might want sgx2 in /proc/cpuinfo to
->mean sgx2
->is enabled in hardware _and_ supported by the kernel=2E  Userspace can
->grep for
->sgx in /proc/cpuinfo, and use cpuid to discover sgx2, so it's not a
->blocker=2E
+On 3/2/21 8:51 PM, Jarkko Sakkinen wrote:
+> Nit: "due to"
+> 
+> Start with capital letter "Fix"
+> 
 
-Question is, what exactly that flag should denote: that EDMM is supported =
-in the HV and guests can do the dynamic thing of adding/rwmoving EPC pages?=
- Is that the only feature behind SGX2?
+Will do in the next patch.
 
->That being said, adding some form of capability/versioning to SGX seems
->inevitable, not sure it's worth witholding sgx2 from /proc/cpuinfo=2E
+> On Tue, Mar 02, 2021 at 01:06:52PM +0800, Tianjia Zhang wrote:
+>>
+>>
+>> On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
+>>> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
+>>>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
+>>>
+>>> What does determine this?
+>>>
+>>>> In this case, the valid portion of q2 is reordered reversely for
+>>>> little endian order, and the remaining portion is filled with zero.
+>>>
+>>> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
+>>>
+>>> I'm lacking these details:
+>>>
+>>> 1. Why the length of Q2 can vary?
+>>> 2. Why reversing the bytes is the correct measure to counter-measure
+>>>      this variation?
+>>>
+>>> /Jarkko
+>>>
+>>
+>> When use openssl to generate a key instead of using the built-in
+>> sign_key.pem, there is a probability that will encounter this problem.
+>>
+>> Here is a problematic key I encountered. The calculated q1 and q2 of this
+>> key are both 383 bytes, If the length is not processed, the hardware
+>> signature will fail.
+> 
+> Why is reversing bytes the correct way to fix the issue?
+> 
 
-See what I typed earlier - no objections from me if a proper use case is i=
-dentified and written down=2E
+This is caused by the incorrect length of the reversed data. If the 
+length of q2 is 383 bytes, the inversion will cause the first byte to be 
+zero. For this, please refer to the signature tool in sgx sdk:
 
-Thx=2E
---=20
-Sent from a small device: formatting sux and brevity is inevitable=2E 
+https://github.com/intel/linux-sgx/blob/master/sdk/sign_tool/SignTool/sign_tool.cpp#L381
+
+If it can be repaired, it may be possible to use to generate 
+sign_key.pem key on fly instead of using the static key.
+
+Best regards,
+Tianjia
