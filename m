@@ -2,49 +2,52 @@ Return-Path: <SRS0=TB01=ID=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC21C433E0
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B45BC4332E
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5E6864D96
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A341650AC
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbhCERi1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Mar 2021 12:38:27 -0500
-Received: from mga05.intel.com ([192.55.52.43]:32194 "EHLO mga05.intel.com"
+        id S229919AbhCERi2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Mar 2021 12:38:28 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58241 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229597AbhCERiJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 5 Mar 2021 12:38:09 -0500
-IronPort-SDR: uf0CQD0lQpIw9IyvB4c/h3B2nJkv8yWRttsSC9lyiVeIkSwWWVuZhaBAvJ6NoVs1XE5j134SAZ
- jsxBhmQKUM7g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="272700461"
+        id S229642AbhCERiM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Mar 2021 12:38:12 -0500
+IronPort-SDR: DvrCTq5FMwv73MEKGiWBTbl2wwTCN+0RfrM6QWHQgYKx5uIeaLj3gWX8Pl1YDEMsO41FtaVZgT
+ cWLrm/RLMT2g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="249080299"
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="272700461"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:38:09 -0800
-IronPort-SDR: ypr/s8ZzHBnuvkgrFHZ6GS8A+fBXl/weKpW42fnni5oscP5ifcEJjc0AyzIu6i6465Rewt2JX6
- DmDQNa9uZd1g==
+   d="scan'208";a="249080299"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:38:10 -0800
+IronPort-SDR: khUqjA50TWcGwQLpQPz73qdnlZze//MLBSWvZ+4yXSK33zgPx+sNIkQ49YjNhilWyGR4mfuW9H
+ FCjlF+fhmfQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="436581435"
+   d="scan'208";a="597867960"
 Received: from viggo.jf.intel.com (HELO ray) ([10.54.77.144])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Mar 2021 09:38:09 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 05 Mar 2021 09:38:09 -0800
 Received: from [127.0.0.1] (localhost [127.0.0.1])
-        by ray (Postfix) with ESMTP id DD1DDE43D7;
-        Wed,  3 Mar 2021 15:48:46 -0800 (PST)
-Subject: Re: [PATCH v3 4/5] x86/sgx: Replace section->page_list with a global
- free page list
+        by ray (Postfix) with ESMTP id A36B9E259B;
+        Wed,  3 Mar 2021 08:56:52 -0800 (PST)
+Subject: Re: [PATCH v3 1/5] x86/sgx: Fix a resource leak in sgx_init()
 To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+Cc:     stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
         linux-kernel@vger.kernel.org
 References: <20210303150323.433207-1-jarkko@kernel.org>
- <20210303150323.433207-5-jarkko@kernel.org>
+ <20210303150323.433207-2-jarkko@kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -89,12 +92,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <49b4f4d9-3f49-efd0-ce44-c24d1ee3daa6@intel.com>
-Date:   Wed, 3 Mar 2021 15:48:46 -0800
+Message-ID: <57b33fb5-f961-5c81-72f1-ebf5e6af671c@intel.com>
+Date:   Wed, 3 Mar 2021 08:56:52 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210303150323.433207-5-jarkko@kernel.org>
+In-Reply-To: <20210303150323.433207-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -103,28 +106,37 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 3/3/21 7:03 AM, Jarkko Sakkinen wrote:
-> Background
-> ==========
-> 
-> EPC section is covered by one or more SRAT entries that are associated with
-> one and only one PXM (NUMA node). The current implementation overheats a
+> If sgx_page_cache_init() fails in the middle, a trivial return
+> statement causes unused memory and virtual address space reserved for
+> the EPC section, not freed. Fix this by using the same rollback, as
+> when sgx_page_reclaimer_init() fails.
+...
+> @@ -708,8 +708,10 @@ static int __init sgx_init(void)
+>  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
+>  		return -ENODEV;
+>  
+> -	if (!sgx_page_cache_init())
+> -		return -ENOMEM;
+> +	if (!sgx_page_cache_init()) {
+> +		ret = -ENOMEM;
+> +		goto err_page_cache;
+> +	}
 
-Overheats?
 
-> single NUMA node, because sgx_alloc_epc_page() always starts looking for
-> pages from the same EPC section everytime.
+Currently, the only way sgx_page_cache_init() can fail is in the case
+that there are no sections:
 
-"every time"
+        if (!sgx_nr_epc_sections) {
+                pr_err("There are zero EPC sections.\n");
+                return false;
+        }
 
-> Only within a section it does pick pages in FIFO fashion, i.e. the oldest
-> freed in that section is the EPC page given back to the caller.  That does
-> not do any good, as the pages in the same node are performance-wise equal.
+That only happened if all sgx_setup_epc_section() calls failed.
+sgx_setup_epc_section() never both allocates memory with vmalloc for
+section->pages *and* fails.  If sgx_setup_epc_section() has a successful
+memremap() but a failed vmalloc(), it cleans up with memunmap().
 
-I'm not sure why all of this is relevant and it doesn't really tell me
-anything about this patch's place in the *series*.
+In other words, I see how this _looks_ like a memory leak from
+sgx_init(), but I don't see an actual leak in practice.
 
-Why are we destroying all of the per-node structures just before adding
-NUMA support?
-
-> Replace local lists with a single global free page list, from which pages
-> are borrowed in FIFO fashion.
+Am I missing something?
