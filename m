@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F73C15521
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFAFC15520
 	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD58564F97
+	by mail.kernel.org (Postfix) with ESMTP id 94DA964F4C
 	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240354AbhCDAtY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:49:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43042 "EHLO mail.kernel.org"
+        id S234779AbhCDAtX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:49:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1377930AbhCCPFP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:05:15 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CAE6664EE1;
-        Wed,  3 Mar 2021 15:03:57 +0000 (UTC)
+        id S1447610AbhCCPEh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Mar 2021 10:04:37 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6BA2464EE9;
+        Wed,  3 Mar 2021 15:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614783838;
-        bh=1TQwL7i+C+Ykj3EZaItYeEh6Eb4hhLbKnyOdnj0pVr0=;
+        s=k20201202; t=1614783832;
+        bh=MO/4TL7dKn9BPVSY9M+hxMlpKkSMe6bLuTcinRADrCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HW1H83bGkrj9yuExE+YUU/1c0gs58J8m6yLlRdQ+Lyv34iTMtK1TQuQCz1kKtNGi5
-         CfgKhpmrhdiABxpgtwX8XjVEqHXCMA7xYNAdyNksnGa5+2L8oPFKlUfE2bbmKSeBca
-         JhAdBVPPHh+AtfKwqvsUi80E1urbfAWD+MGBrwulZq77b0afmUwn0Ji3Zo/eTP/FAV
-         FqROoW9wCfa44CrHRYjQ1HC0zgREz8ZfWNneyUYF2JOBzwKn0TSznwgGc7AhEGmhVr
-         wHN8w9IIIHZ8p6yjG+5UC2+RM+vdu/X8NK4VOxMZHumT0OMp3ZlTu6WtrA2IlxDTJm
-         08ABvOnlX1TWw==
+        b=iKzhxaB5TmNpFMODWSdY/R4EV5QySIRdQSeX6UofNa7UD4WmROYsBLAU3gZovwPiq
+         JcPj1m8HmhaCvtVj8hzC7U89azQ1rAxfFj3vWC1xqza6xe/cUCZ95ubIt8u6gHxlf7
+         xHSuXPpuU/NIFqWBxJv8gguEubWm3+KdS/MYLApnDHMnPD1S2VdFw7WXkHEZYSr79B
+         fiKMqPa/rogG9PvO6IVNUwg/BluQ6TXC9nS/boL2ET27Bh6BeZXjtJkjSj5hEJjyrI
+         SGsX/3+QJUrziqYnSO7XfAd2nRCR4ybM+KsNnWWt4L4HOixfb1EORqkT9ulpdlUoBi
+         sM5oj+jb6DvuA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()
-Date:   Wed,  3 Mar 2021 17:03:23 +0200
-Message-Id: <20210303150323.433207-6-jarkko@kernel.org>
+Subject: [PATCH v3 3/5] x86/sgx: Replace section->init_laundry_list with a temp list
+Date:   Wed,  3 Mar 2021 17:03:21 +0200
+Message-Id: <20210303150323.433207-4-jarkko@kernel.org>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210303150323.433207-1-jarkko@kernel.org>
 References: <20210303150323.433207-1-jarkko@kernel.org>
@@ -51,210 +51,208 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Background
-==========
+Build a local laundry list in sgx_init(), and transfer its ownsership to
+ksgxd for sanitization, thus getting rid of useless member in struct
+sgx_epc_section.
 
-EPC section is covered by one or more SRAT entries that are associated with
-one and only one PXM (NUMA node). The motivation behind this patch is to
-provide basic elements of building allocation scheme based on this premise.
-
-Solution
-========
-
-Use phys_to_target_node() to associate each NUMA node with the EPC
-sections contained within its range. In sgx_alloc_epc_page(), first try
-to allocate from the NUMA node, where the CPU is executing. If that
-fails, fallback to the legacy allocation.
-
-Link: https://lore.kernel.org/lkml/158188326978.894464.217282995221175417.stgit@dwillia2-desk3.amr.corp.intel.com/
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/Kconfig               |  1 +
- arch/x86/kernel/cpu/sgx/main.c | 84 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h  |  9 ++++
- 3 files changed, 94 insertions(+)
+ arch/x86/kernel/cpu/sgx/main.c | 64 ++++++++++++++++++----------------
+ arch/x86/kernel/cpu/sgx/sgx.h  |  7 ----
+ 2 files changed, 34 insertions(+), 37 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index a5f6a3013138..7eb1e96cfe8a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1940,6 +1940,7 @@ config X86_SGX
- 	depends on CRYPTO_SHA256=y
- 	select SRCU
- 	select MMU_NOTIFIER
-+	select NUMA_KEEP_MEMINFO if NUMA
- 	help
- 	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
- 	  that can be used by applications to set aside private regions of code
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 58474480f5be..62cc0e1f0728 100644
+index ed99c60024dc..a649010949c2 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -25,6 +25,23 @@ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
- /* The free page list lock protected variables prepend the lock. */
- static unsigned long sgx_nr_free_pages;
- static LIST_HEAD(sgx_free_page_list);
-+
-+/* Nodes with one or more EPC sections. */
-+static nodemask_t sgx_numa_mask;
-+
-+/*
-+ * Array with one list_head for each possible NUMA node.  Each
-+ * list contains all the sgx_epc_section's which are on that
-+ * node.
-+ */
-+static struct sgx_numa_node *sgx_numa_nodes;
-+
-+/*
-+ * sgx_free_epc_page() uses this to find out the correct struct sgx_numa_node,
-+ * to put the page in.
-+ */
-+static int sgx_section_to_numa_node_id[SGX_MAX_EPC_SECTIONS];
-+
- static DEFINE_SPINLOCK(sgx_free_page_list_lock);
- 
- /*
-@@ -434,6 +451,36 @@ static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
- 	return true;
- }
- 
-+static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
-+{
-+	struct sgx_epc_page *page = NULL;
-+	struct sgx_numa_node *sgx_node;
-+
-+	if (WARN_ON_ONCE(nid < 0 || nid >= num_possible_nodes()))
-+		return NULL;
-+
-+	if (!node_isset(nid, sgx_numa_mask))
-+		return NULL;
-+
-+	sgx_node = &sgx_numa_nodes[nid];
-+
-+	spin_lock(&sgx_free_page_list_lock);
-+
-+	if (list_empty(&sgx_node->free_page_list)) {
-+		spin_unlock(&sgx_free_page_list_lock);
-+		return NULL;
-+	}
-+
-+	page = list_first_entry(&sgx_node->free_page_list, struct sgx_epc_page, numa_list);
-+	list_del_init(&page->numa_list);
-+	list_del_init(&page->list);
-+	sgx_nr_free_pages--;
-+
-+	spin_unlock(&sgx_free_page_list_lock);
-+
-+	return page;
-+}
-+
- /**
-  * __sgx_alloc_epc_page() - Allocate an EPC page
-  *
-@@ -446,8 +493,14 @@ static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
+@@ -30,35 +30,33 @@ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+  * Reset dirty EPC pages to uninitialized state. Laundry can be left with SECS
+  * pages whose child pages blocked EREMOVE.
   */
- struct sgx_epc_page *__sgx_alloc_epc_page(void)
+-static void sgx_sanitize_section(struct sgx_epc_section *section)
++static void sgx_sanitize_section(struct list_head *laundry)
  {
-+	int current_nid = numa_node_id();
  	struct sgx_epc_page *page;
- 
-+	/* Try to allocate EPC from the current node, first: */
-+	page = __sgx_alloc_epc_page_from_node(current_nid);
-+	if (page)
-+		return page;
-+
- 	spin_lock(&sgx_free_page_list_lock);
- 
- 	if (list_empty(&sgx_free_page_list)) {
-@@ -456,6 +509,7 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
- 	}
- 
- 	page = list_first_entry(&sgx_free_page_list, struct sgx_epc_page, list);
-+	list_del_init(&page->numa_list);
- 	list_del_init(&page->list);
- 	sgx_nr_free_pages--;
- 
-@@ -566,6 +620,8 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
-  */
- void sgx_free_epc_page(struct sgx_epc_page *page)
- {
-+	int nid = sgx_section_to_numa_node_id[page->section];
-+	struct sgx_numa_node *sgx_node = &sgx_numa_nodes[nid];
+ 	LIST_HEAD(dirty);
  	int ret;
  
- 	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-@@ -575,7 +631,15 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
- 		return;
+ 	/* init_laundry_list is thread-local, no need for a lock: */
+-	while (!list_empty(&section->init_laundry_list)) {
++	while (!list_empty(laundry)) {
+ 		if (kthread_should_stop())
+ 			return;
  
- 	spin_lock(&sgx_free_page_list_lock);
-+
-+	/*   Enable NUMA local allocation in sgx_alloc_epc_page(). */
-+	if (!node_isset(nid, sgx_numa_mask)) {
-+		INIT_LIST_HEAD(&sgx_node->free_page_list);
-+		node_set(nid, sgx_numa_mask);
-+	}
-+
- 	list_add_tail(&page->list, &sgx_free_page_list);
-+	list_add_tail(&page->numa_list, &sgx_node->free_page_list);
- 	sgx_nr_free_pages++;
- 	spin_unlock(&sgx_free_page_list_lock);
+-		/* needed for access to ->page_list: */
+-		spin_lock(&section->lock);
+-
+-		page = list_first_entry(&section->init_laundry_list,
+-					struct sgx_epc_page, list);
++		page = list_first_entry(laundry, struct sgx_epc_page, list);
+ 
+ 		ret = __eremove(sgx_get_epc_virt_addr(page));
+-		if (!ret)
+-			list_move(&page->list, &section->page_list);
+-		else
++		if (!ret) {
++			/* The page is clean - move to the free list. */
++			list_del(&page->list);
++			sgx_free_epc_page(page);
++		} else {
++			/* The page is not yet clean - move to the dirty list. */
+ 			list_move_tail(&page->list, &dirty);
+-
+-		spin_unlock(&section->lock);
++		}
+ 
+ 		cond_resched();
+ 	}
+ 
+-	list_splice(&dirty, &section->init_laundry_list);
++	list_splice(&dirty, laundry);
  }
-@@ -626,8 +690,28 @@ static bool __init sgx_page_cache_init(struct list_head *laundry)
+ 
+ static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+@@ -400,6 +398,7 @@ static bool sgx_should_reclaim(unsigned long watermark)
+ 
+ static int ksgxd(void *p)
+ {
++	struct list_head *laundry = p;
+ 	int i;
+ 
+ 	set_freezable();
+@@ -408,16 +407,13 @@ static int ksgxd(void *p)
+ 	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+ 	 * required for SECS pages, whose child pages blocked EREMOVE.
+ 	 */
+-	for (i = 0; i < sgx_nr_epc_sections; i++)
+-		sgx_sanitize_section(&sgx_epc_sections[i]);
++	sgx_sanitize_section(laundry);
++	sgx_sanitize_section(laundry);
+ 
+-	for (i = 0; i < sgx_nr_epc_sections; i++) {
+-		sgx_sanitize_section(&sgx_epc_sections[i]);
++	if (!list_empty(laundry))
++		WARN(1, "EPC section %d has unsanitized pages.\n", i);
+ 
+-		/* Should never happen. */
+-		if (!list_empty(&sgx_epc_sections[i].init_laundry_list))
+-			WARN(1, "EPC section %d has unsanitized pages.\n", i);
+-	}
++	kfree(laundry);
+ 
+ 	while (!kthread_should_stop()) {
+ 		if (try_to_freeze())
+@@ -436,11 +432,11 @@ static int ksgxd(void *p)
+ 	return 0;
+ }
+ 
+-static bool __init sgx_page_reclaimer_init(void)
++static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
+ {
+ 	struct task_struct *tsk;
+ 
+-	tsk = kthread_run(ksgxd, NULL, "ksgxd");
++	tsk = kthread_run(ksgxd, laundry, "ksgxd");
+ 	if (IS_ERR(tsk))
+ 		return false;
+ 
+@@ -614,7 +610,8 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ 
+ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 					 unsigned long index,
+-					 struct sgx_epc_section *section)
++					 struct sgx_epc_section *section,
++					 struct list_head *laundry)
+ {
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+ 	unsigned long i;
+@@ -632,13 +629,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	section->phys_addr = phys_addr;
+ 	spin_lock_init(&section->lock);
+ 	INIT_LIST_HEAD(&section->page_list);
+-	INIT_LIST_HEAD(&section->init_laundry_list);
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		section->pages[i].section = index;
+ 		section->pages[i].flags = 0;
+ 		section->pages[i].owner = NULL;
+-		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
++		list_add_tail(&section->pages[i].list, laundry);
+ 	}
+ 
+ 	section->free_cnt = nr_pages;
+@@ -656,7 +652,7 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
+ 	       ((high & GENMASK_ULL(19, 0)) << 32);
+ }
+ 
+-static bool __init sgx_page_cache_init(void)
++static bool __init sgx_page_cache_init(struct list_head *laundry)
  {
  	u32 eax, ebx, ecx, edx, type;
  	u64 pa, size;
-+	int nid;
+@@ -679,7 +675,7 @@ static bool __init sgx_page_cache_init(void)
+ 
+ 		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
+ 
+-		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
++		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i], laundry)) {
+ 			pr_err("No free memory for an EPC section\n");
+ 			break;
+ 		}
+@@ -697,18 +693,25 @@ static bool __init sgx_page_cache_init(void)
+ 
+ static int __init sgx_init(void)
+ {
++	struct list_head *laundry;
+ 	int ret;
  	int i;
  
-+	nodes_clear(sgx_numa_mask);
-+	sgx_numa_nodes = kmalloc_array(num_possible_nodes(), sizeof(*sgx_numa_nodes), GFP_KERNEL);
+ 	if (!cpu_feature_enabled(X86_FEATURE_SGX))
+ 		return -ENODEV;
+ 
+-	if (!sgx_page_cache_init()) {
++	laundry = kzalloc(sizeof(*laundry), GFP_KERNEL);
++	if (!laundry)
++		return -ENOMEM;
 +
-+	/*
-+	 * Create NUMA node lookup table for sgx_free_epc_page() as the very
-+	 * first step, as it is used to populate the free list's during the
-+	 * initialization.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-+		nid = numa_map_to_online_node(phys_to_target_node(pa));
-+		if (nid == NUMA_NO_NODE) {
-+			/* The physical address is already printed above. */
-+			pr_warn(FW_BUG "Unable to map EPC section to online node. Fallback to the NUMA node 0.\n");
-+			nid = 0;
-+		}
++	INIT_LIST_HEAD(laundry);
 +
-+		sgx_section_to_numa_node_id[i] = nid;
-+	}
-+
- 	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
- 		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, &ebx, &ecx, &edx);
++	if (!sgx_page_cache_init(laundry)) {
+ 		ret = -ENOMEM;
+ 		goto err_page_cache;
+ 	}
+ 
+-	if (!sgx_page_reclaimer_init()) {
++	if (!sgx_page_reclaimer_init(laundry)) {
+ 		ret = -ENOMEM;
+ 		goto err_page_cache;
+ 	}
+@@ -728,6 +731,7 @@ static int __init sgx_init(void)
+ 		memunmap(sgx_epc_sections[i].virt_addr);
+ 	}
+ 
++	kfree(laundry);
+ 	return ret;
+ }
  
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 41ca045a574a..3a3c07fc0c8e 100644
+index 5fa42d143feb..bc8af0428640 100644
 --- a/arch/x86/kernel/cpu/sgx/sgx.h
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -27,6 +27,7 @@ struct sgx_epc_page {
- 	unsigned int flags;
- 	struct sgx_encl_page *owner;
- 	struct list_head list;
-+	struct list_head numa_list;
+@@ -45,13 +45,6 @@ struct sgx_epc_section {
+ 	spinlock_t lock;
+ 	struct list_head page_list;
+ 	unsigned long free_cnt;
+-
+-	/*
+-	 * Pages which need EREMOVE run on them before they can be
+-	 * used.  Only safe to be accessed in ksgxd and init code.
+-	 * Not protected by locks.
+-	 */
+-	struct list_head init_laundry_list;
  };
  
- /*
-@@ -43,6 +44,14 @@ struct sgx_epc_section {
- 
  extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
- 
-+/*
-+ * Contains the tracking data for NUMA nodes having EPC pages. Most importantly,
-+ * the free page list local to the node is stored here.
-+ */
-+struct sgx_numa_node {
-+	struct list_head free_page_list;
-+};
-+
- static inline unsigned long sgx_get_epc_phys_addr(struct sgx_epc_page *page)
- {
- 	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
 -- 
 2.30.1
 
