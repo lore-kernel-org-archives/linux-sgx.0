@@ -2,51 +2,47 @@ Return-Path: <SRS0=TB01=ID=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03229C4321A
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C52C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5160650AF
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15FFF650A4
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbhCERi2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Mar 2021 12:38:28 -0500
-Received: from mga04.intel.com ([192.55.52.120]:23772 "EHLO mga04.intel.com"
+        id S229576AbhCERpd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Mar 2021 12:45:33 -0500
+Received: from mga18.intel.com ([134.134.136.126]:54731 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229650AbhCERiM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 5 Mar 2021 12:38:12 -0500
-IronPort-SDR: bRZNx2719w98lh23hyszg9pwOV7E6UWbqrkwGpOTPfSy1MY3dSlkKkrxRP+zkC4tawDGn5+pTr
- AnYNk0UDhYXw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="185287117"
+        id S229582AbhCERpH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Mar 2021 12:45:07 -0500
+IronPort-SDR: AmyNlOqGXt3PIXnKjw/DWr0Lu52G6TlKpOcU3DIwipZQ1UhNXWAToi6ycUgUKpj1VZOeds/USY
+ 6363DE7bdXzw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="175319806"
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="185287117"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:38:10 -0800
-IronPort-SDR: uHxWCYpeWtedGHMWbpgcvY08sSKZcnhNXy65DNsFavjIAyzgZUR9vaQ79O8DNkBtax3j/XlP4b
- Qxv6LD0vk4UA==
-X-ExtLoop1: 1
+   d="scan'208";a="175319806"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:45:07 -0800
+IronPort-SDR: 2mL8NavIvwPjIY4yUi/58xPWUm2NyMEn55vffISZmeTbWzrjdlDJEve2WC0DolZPkGJi6Cr6ko
+ FOlV947p3TpQ==
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="446288785"
-Received: from viggo.jf.intel.com (HELO ray) ([10.54.77.144])
-  by orsmga001.jf.intel.com with ESMTP; 05 Mar 2021 09:38:09 -0800
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        by ray (Postfix) with ESMTP id 6AB4EE0959;
-        Wed,  3 Mar 2021 16:20:03 -0800 (PST)
-Subject: Re: [PATCH v3 5/5] x86/sgx: Add a basic NUMA allocation scheme to
- sgx_alloc_epc_page()
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20210303150323.433207-1-jarkko@kernel.org>
- <20210303150323.433207-6-jarkko@kernel.org>
+   d="scan'208";a="508138962"
+Received: from gmschinx-mobl1.amr.corp.intel.com (HELO [10.212.191.102]) ([10.212.191.102])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:45:06 -0800
 From:   Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [RFC PATCH v6 14/25] x86/sgx: Move provisioning device creation
+ out of SGX driver
+To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
+        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
+        pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+References: <cover.1614338774.git.kai.huang@intel.com>
+ <684c77211acfa1b162d8fbcf507b17d84da5ac11.1614338774.git.kai.huang@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
  oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
@@ -90,264 +86,39 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <7621d89e-9347-d8a5-a8b0-a108990d0e6d@intel.com>
-Date:   Wed, 3 Mar 2021 16:20:03 -0800
+Message-ID: <a795f7c4-9540-c06d-625f-9bb3ed14c875@intel.com>
+Date:   Fri, 5 Mar 2021 09:45:05 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210303150323.433207-6-jarkko@kernel.org>
+In-Reply-To: <684c77211acfa1b162d8fbcf507b17d84da5ac11.1614338774.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-What changed from the last patch?
-
-On 3/3/21 7:03 AM, Jarkko Sakkinen wrote:
-> Background
-> ==========
+On 2/26/21 4:15 AM, Kai Huang wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> EPC section is covered by one or more SRAT entries that are associated with
-> one and only one PXM (NUMA node). The motivation behind this patch is to
-> provide basic elements of building allocation scheme based on this premise.
-
-Just like normal RAM, enclave memory (EPC) should be covered by entries
-in the ACPI SRAT table.  These entries allow each EPC section to be
-associated with a NUMA node.
-
-Use this information to implement a simple NUMA-aware allocator for
-enclave memory.
-
-> Use phys_to_target_node() to associate each NUMA node with the EPC
-> sections contained within its range. In sgx_alloc_epc_page(), first try
-> to allocate from the NUMA node, where the CPU is executing. If that
-> fails, fallback to the legacy allocation.
-
-By "legacy", you mean the one from the last patch? :)
-
-> Link: https://lore.kernel.org/lkml/158188326978.894464.217282995221175417.stgit@dwillia2-desk3.amr.corp.intel.com/
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
->  arch/x86/Kconfig               |  1 +
->  arch/x86/kernel/cpu/sgx/main.c | 84 ++++++++++++++++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/sgx.h  |  9 ++++
->  3 files changed, 94 insertions(+)
+> And extract sgx_set_attribute() out of sgx_ioc_enclave_provision() and
+> export it as symbol for KVM to use.
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index a5f6a3013138..7eb1e96cfe8a 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1940,6 +1940,7 @@ config X86_SGX
->  	depends on CRYPTO_SHA256=y
->  	select SRCU
->  	select MMU_NOTIFIER
-> +	select NUMA_KEEP_MEMINFO if NUMA
+> Provisioning key is sensitive. SGX driver only allows to create enclave
+> which can access provisioning key when enclave creator has permission to
+> open /dev/sgx_provision.  It should apply to VM as well, as provisioning
+> key is platform specific, thus unrestricted VM can also potentially
+> compromise provisioning key.
+> 
+> Move provisioning device creation out of sgx_drv_init() to sgx_init() as
+> preparation for adding SGX virtualization support, so that even SGX
+> driver is not enabled due to flexible launch control is not available,
+> SGX virtualization can still be enabled, and use it to restrict VM's
+> capability of being able to access provisioning key.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
 
-This dependency is worth mentioning somewhere.  Why do we suddenly need
-NUMA_KEEP_MEMINFO?
-
-> +/* Nodes with one or more EPC sections. */
-> +static nodemask_t sgx_numa_mask;
-> +
-> +/*
-> + * Array with one list_head for each possible NUMA node.  Each
-> + * list contains all the sgx_epc_section's which are on that
-
-					   ^ no "'", please
-
-> + * node.
-> + */
-> +static struct sgx_numa_node *sgx_numa_nodes;
-> +
-> +/*
-> + * sgx_free_epc_page() uses this to find out the correct struct sgx_numa_node,
-> + * to put the page in.
-> + */
-> +static int sgx_section_to_numa_node_id[SGX_MAX_EPC_SECTIONS];
-
-If this is per-section, why not put it in struct sgx_epc_section?
-
->  /*
-> @@ -434,6 +451,36 @@ static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
->  	return true;
->  }
->  
-> +static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
-> +{
-> +	struct sgx_epc_page *page = NULL;
-> +	struct sgx_numa_node *sgx_node;
-> +
-> +	if (WARN_ON_ONCE(nid < 0 || nid >= num_possible_nodes()))
-> +		return NULL;
-
-This has exactly one call-site which plumbs numa_node_id() in here
-pretty directly.  Is this check worthwhile?
-
-> +	if (!node_isset(nid, sgx_numa_mask))
-> +		return NULL;
-> +
-> +	sgx_node = &sgx_numa_nodes[nid];
-> +
-> +	spin_lock(&sgx_free_page_list_lock);
-
-The glocal lock protecting a per-node structure is a bit unsightly.
-
-> +	if (list_empty(&sgx_node->free_page_list)) {
-> +		spin_unlock(&sgx_free_page_list_lock);
-> +		return NULL;
-> +	}
-> +
-> +	page = list_first_entry(&sgx_node->free_page_list, struct sgx_epc_page, numa_list);
-> +	list_del_init(&page->numa_list);
-> +	list_del_init(&page->list);
-> +	sgx_nr_free_pages--;
-> +
-> +	spin_unlock(&sgx_free_page_list_lock);
-> +
-> +	return page;
-> +}
-> +
->  /**
->   * __sgx_alloc_epc_page() - Allocate an EPC page
->   *
-> @@ -446,8 +493,14 @@ static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
->   */
->  struct sgx_epc_page *__sgx_alloc_epc_page(void)
->  {
-> +	int current_nid = numa_node_id();
->  	struct sgx_epc_page *page;
->  
-> +	/* Try to allocate EPC from the current node, first: */
-> +	page = __sgx_alloc_epc_page_from_node(current_nid);
-> +	if (page)
-> +		return page;
-> +
->  	spin_lock(&sgx_free_page_list_lock);
->  
->  	if (list_empty(&sgx_free_page_list)) {
-> @@ -456,6 +509,7 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
->  	}
->  
->  	page = list_first_entry(&sgx_free_page_list, struct sgx_epc_page, list);
-> +	list_del_init(&page->numa_list);
->  	list_del_init(&page->list);
->  	sgx_nr_free_pages--;
-
-I would much rather prefer that this does what the real page allocator
-does: kep the page on a single list.  That list is maintained
-per-NUMA-node.  Allocations try local NUMA node structures, then fall
-back to other structures (hopefully in a locality-aware fashion).
-
-I wrote you the loop that I want to see this implement in an earlier
-review.  This, basically:
-
-	page = NULL;
-	nid = numa_node_id();
-	while (true) {
-		page = __sgx_alloc_epc_page_from_node(nid);	
-		if (page)
-			break;
-
-		nid = // ... some search here, next_node_in()...
-		// check if we wrapped around:
-		if (nid == numa_node_id())
-			break;
-	}
-
-There's no global list.  You just walk around nodes trying to find one
-with space.  If you wrap around, you stop.
-
-Please implement this.  If you think it's a bad idea, or can't, let's
-talk about it in advance.  Right now, it appears that my review comments
-aren't being incorporated into newer versions.
-
->  void sgx_free_epc_page(struct sgx_epc_page *page)
->  {
-> +	int nid = sgx_section_to_numa_node_id[page->section];
-> +	struct sgx_numa_node *sgx_node = &sgx_numa_nodes[nid];
->  	int ret;
->  
->  	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> @@ -575,7 +631,15 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
->  		return;
->  
->  	spin_lock(&sgx_free_page_list_lock);
-> +
-> +	/*   Enable NUMA local allocation in sgx_alloc_epc_page(). */
-> +	if (!node_isset(nid, sgx_numa_mask)) {
-> +		INIT_LIST_HEAD(&sgx_node->free_page_list);
-> +		node_set(nid, sgx_numa_mask);
-> +	}
-> +
->  	list_add_tail(&page->list, &sgx_free_page_list);
-> +	list_add_tail(&page->numa_list, &sgx_node->free_page_list);
->  	sgx_nr_free_pages++;
->  	spin_unlock(&sgx_free_page_list_lock);
->  }
-> @@ -626,8 +690,28 @@ static bool __init sgx_page_cache_init(struct list_head *laundry)
->  {
->  	u32 eax, ebx, ecx, edx, type;
->  	u64 pa, size;
-> +	int nid;
->  	int i;
->  
-> +	nodes_clear(sgx_numa_mask);
-
-Is this really required for a variable allocated in .bss?
-
-> +	sgx_numa_nodes = kmalloc_array(num_possible_nodes(), sizeof(*sgx_numa_nodes), GFP_KERNEL);
-
-This is what I was looking for here, thanks!
-
-> +	/*
-> +	 * Create NUMA node lookup table for sgx_free_epc_page() as the very
-> +	 * first step, as it is used to populate the free list's during the
-> +	 * initialization.
-> +	 */
-> +	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-> +		nid = numa_map_to_online_node(phys_to_target_node(pa));
-> +		if (nid == NUMA_NO_NODE) {
-> +			/* The physical address is already printed above. */
-> +			pr_warn(FW_BUG "Unable to map EPC section to online node. Fallback to the NUMA node 0.\n");
-> +			nid = 0;
-> +		}
-> +
-> +		sgx_section_to_numa_node_id[i] = nid;
-> +	}
-> +
->  	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
->  		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, &ebx, &ecx, &edx);
->  
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> index 41ca045a574a..3a3c07fc0c8e 100644
-> --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -27,6 +27,7 @@ struct sgx_epc_page {
->  	unsigned int flags;
->  	struct sgx_encl_page *owner;
->  	struct list_head list;
-> +	struct list_head numa_list;
->  };
-
-I'll say it again, explicitly: Each sgx_epc_page should be on one and
-only one free list: a per-NUMA-node list.
-
->  /*
-> @@ -43,6 +44,14 @@ struct sgx_epc_section {
->  
->  extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
->  
-> +/*
-> + * Contains the tracking data for NUMA nodes having EPC pages. Most importantly,
-> + * the free page list local to the node is stored here.
-> + */
-> +struct sgx_numa_node {
-> +	struct list_head free_page_list;
-> +};
-
-I think it's unconscionable to leave this protected by a global lock.
-Please at least give us a per-node spinlock proteting this list.
-
-
+Acked-by: Dave Hansen <dave.hansen@intel.com>
