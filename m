@@ -2,39 +2,38 @@ Return-Path: <SRS0=TB01=ID=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C52C433DB
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A61C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15FFF650A4
-	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE03650A7
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbhCERpd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Mar 2021 12:45:33 -0500
-Received: from mga18.intel.com ([134.134.136.126]:54731 "EHLO mga18.intel.com"
+        id S229650AbhCERwA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Mar 2021 12:52:00 -0500
+Received: from mga03.intel.com ([134.134.136.65]:61604 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229582AbhCERpH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 5 Mar 2021 12:45:07 -0500
-IronPort-SDR: AmyNlOqGXt3PIXnKjw/DWr0Lu52G6TlKpOcU3DIwipZQ1UhNXWAToi6ycUgUKpj1VZOeds/USY
- 6363DE7bdXzw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="175319806"
+        id S229497AbhCERv5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Mar 2021 12:51:57 -0500
+IronPort-SDR: iKvMYvj3R5rZGLP8u6JqzwDicrSVIlasa3abiWin2vOOrb6EFql8i2VQskdxLe312mBwfTr9Er
+ uIlN7Yp2U1Aw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="187749196"
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="175319806"
+   d="scan'208";a="187749196"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:45:07 -0800
-IronPort-SDR: 2mL8NavIvwPjIY4yUi/58xPWUm2NyMEn55vffISZmeTbWzrjdlDJEve2WC0DolZPkGJi6Cr6ko
- FOlV947p3TpQ==
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:51:56 -0800
+IronPort-SDR: ElisNJGqinlrPMoYKxwC8rKRU1sOGJVniXBp7dnHYU0zTVrgzabI56wlw2oJY+9vV7RixfcJ24
+ Y4JIMnAWOowA==
 X-IronPort-AV: E=Sophos;i="5.81,225,1610438400"; 
-   d="scan'208";a="508138962"
+   d="scan'208";a="508140634"
 Received: from gmschinx-mobl1.amr.corp.intel.com (HELO [10.212.191.102]) ([10.212.191.102])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:45:06 -0800
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 09:51:56 -0800
 From:   Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [RFC PATCH v6 14/25] x86/sgx: Move provisioning device creation
- out of SGX driver
+Subject: Re: [RFC PATCH v6 13/25] x86/sgx: Add helpers to expose ECREATE and
+ EINIT to KVM
 To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
         kvm@vger.kernel.org, x86@kernel.org
 Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
@@ -42,7 +41,7 @@ Cc:     seanjc@google.com, jarkko@kernel.org, luto@kernel.org,
         pbonzini@redhat.com, bp@alien8.de, tglx@linutronix.de,
         mingo@redhat.com, hpa@zytor.com
 References: <cover.1614338774.git.kai.huang@intel.com>
- <684c77211acfa1b162d8fbcf507b17d84da5ac11.1614338774.git.kai.huang@intel.com>
+ <14908104a7ff5724b6fb4e4c7df6e675adafe5a7.1614338774.git.kai.huang@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
  oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
@@ -86,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <a795f7c4-9540-c06d-625f-9bb3ed14c875@intel.com>
-Date:   Fri, 5 Mar 2021 09:45:05 -0800
+Message-ID: <64a2d65f-ddf9-b42b-5b51-76bb3b79a30e@intel.com>
+Date:   Fri, 5 Mar 2021 09:51:56 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <684c77211acfa1b162d8fbcf507b17d84da5ac11.1614338774.git.kai.huang@intel.com>
+In-Reply-To: <14908104a7ff5724b6fb4e4c7df6e675adafe5a7.1614338774.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -100,25 +99,51 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 2/26/21 4:15 AM, Kai Huang wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> And extract sgx_set_attribute() out of sgx_ioc_enclave_provision() and
-> export it as symbol for KVM to use.
-> 
-> Provisioning key is sensitive. SGX driver only allows to create enclave
-> which can access provisioning key when enclave creator has permission to
-> open /dev/sgx_provision.  It should apply to VM as well, as provisioning
-> key is platform specific, thus unrestricted VM can also potentially
-> compromise provisioning key.
-> 
-> Move provisioning device creation out of sgx_drv_init() to sgx_init() as
-> preparation for adding SGX virtualization support, so that even SGX
-> driver is not enabled due to flexible launch control is not available,
-> SGX virtualization can still be enabled, and use it to restrict VM's
-> capability of being able to access provisioning key.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+> +		     int *trapnr)
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * @secs is userspace address, and it's not guaranteed @secs points at
+> +	 * an actual EPC page. 
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+There are four cases that I can think of:
+1. @secs points to an EPC page.  Good, return 0 and go on with life.
+2. @secs points to a non-EPC page.  It will fault and permanently error
+   out
+3. @secs points to a Present=0 PTE.  It will fault, but we need to call
+   the fault handler to get a page in here.
+4. @secs points to a kernel address
+
+#1 and #2 are handled and described.
+
+#4 is probably impossible because the address comes out of some
+gpa_to_hva() KVM code.  But, it still _looks_ wonky here.  I wouldn't
+hate an access_ok() check on it.
+
+	/*
+	 * @secs is an untrusted, userspace-provided address.  It comes
+         * from KVM and is assumed to point somewhere in userspace.
+ 	 * This can fault and call SGX or other fault handlers.
+	 */
+
+You can also spend a moment to describe the kinds of faults that are
+handled and what is fatal.
+
+
+> +	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
+> +	 * simpler.
+> +	 */
+
+I'd leave the justification for the changelog.
+
+> +	__uaccess_begin();
+> +	ret = __ecreate(pageinfo, (void *)secs);
+> +	__uaccess_end();
+> +
+> +	if (encls_faulted(ret)) {
+> +		*trapnr = ENCLS_TRAPNR(ret);
+> +		return -EFAULT;
+> +	}
+
