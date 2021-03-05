@@ -1,258 +1,148 @@
-Return-Path: <linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=TB01=ID=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFAFC15520
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2ADC433DB
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94DA964F4C
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Mar 2021 00:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 673E1650A3
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Mar 2021 17:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234779AbhCDAtX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:49:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42594 "EHLO mail.kernel.org"
+        id S229637AbhCERaZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Mar 2021 12:30:25 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50164 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1447610AbhCCPEh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:04:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6BA2464EE9;
-        Wed,  3 Mar 2021 15:03:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614783832;
-        bh=MO/4TL7dKn9BPVSY9M+hxMlpKkSMe6bLuTcinRADrCc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iKzhxaB5TmNpFMODWSdY/R4EV5QySIRdQSeX6UofNa7UD4WmROYsBLAU3gZovwPiq
-         JcPj1m8HmhaCvtVj8hzC7U89azQ1rAxfFj3vWC1xqza6xe/cUCZ95ubIt8u6gHxlf7
-         xHSuXPpuU/NIFqWBxJv8gguEubWm3+KdS/MYLApnDHMnPD1S2VdFw7WXkHEZYSr79B
-         fiKMqPa/rogG9PvO6IVNUwg/BluQ6TXC9nS/boL2ET27Bh6BeZXjtJkjSj5hEJjyrI
-         SGsX/3+QJUrziqYnSO7XfAd2nRCR4ybM+KsNnWWt4L4HOixfb1EORqkT9ulpdlUoBi
-         sM5oj+jb6DvuA==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] x86/sgx: Replace section->init_laundry_list with a temp list
-Date:   Wed,  3 Mar 2021 17:03:21 +0200
-Message-Id: <20210303150323.433207-4-jarkko@kernel.org>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210303150323.433207-1-jarkko@kernel.org>
-References: <20210303150323.433207-1-jarkko@kernel.org>
+        id S229465AbhCERaG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Mar 2021 12:30:06 -0500
+Received: from zn.tnic (p200300ec2f0b95001b26a1a345abd660.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:9500:1b26:a1a3:45ab:d660])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 46BFC1EC0528;
+        Fri,  5 Mar 2021 18:30:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1614965404;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=L2DznrHs2974hAtcbJbvPMJYMDAjtrQkOfNloB/J18Q=;
+        b=OwVefF93ifvJ8TJ6cAegoM4gB4nOErwB5WceW+2rX+dAgQUQoafLsfVikx7oeag4PwkqXE
+        7CNJI1j8b+qoF9/J4BaQmbdwUNvIL75wE6lfpJWn8rHt0Q8BTH7cY2Ib+FEybueqyX+poB
+        1X3SmYcjaOUtSK150JIasD4Fm+VA5YE=
+Date:   Fri, 5 Mar 2021 18:29:57 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
+        luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, jethro@fortanix.com,
+        b.thiel@posteo.de
+Subject: Re: [PATCH 06/25] x86/cpu/intel: Allow SGX virtualization without
+ Launch Control support
+Message-ID: <20210305172957.GE2685@zn.tnic>
+References: <cover.1614590788.git.kai.huang@intel.com>
+ <12541888ae9ac7f517582aa64d9153feede7aed4.1614590788.git.kai.huang@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <12541888ae9ac7f517582aa64d9153feede7aed4.1614590788.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Build a local laundry list in sgx_init(), and transfer its ownsership to
-ksgxd for sanitization, thus getting rid of useless member in struct
-sgx_epc_section.
+On Mon, Mar 01, 2021 at 10:45:02PM +1300, Kai Huang wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> The kernel will currently disable all SGX support if the hardware does
+> not support launch control.  Make it more permissive to allow SGX
+> virtualization on systems without Launch Control support.  This will
+> allow KVM to expose SGX to guests that have less-strict requirements on
+> the availability of flexible launch control.
+> 
+> Improve error message to distinguish between three cases.  There are two
+> cases where SGX support is completely disabled:
+> 1) SGX has been disabled completely by the BIOS
+> 2) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+>    of LC unavailability.  SGX virtualization is unavailable (because of
+>    Kconfig).
+> One where it is partially available:
+> 3) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+>    of LC unavailability.  SGX virtualization is supported.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Kai Huang <kai.huang@intel.com>
+> Acked-by: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+>  arch/x86/kernel/cpu/feat_ctl.c | 57 ++++++++++++++++++++++++++--------
+>  1 file changed, 44 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+> index 27533a6e04fa..96c370284913 100644
+> --- a/arch/x86/kernel/cpu/feat_ctl.c
+> +++ b/arch/x86/kernel/cpu/feat_ctl.c
+> @@ -105,7 +105,8 @@ early_param("nosgx", nosgx);
+>  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+>  {
+>  	bool tboot = tboot_enabled();
+> -	bool enable_sgx;
+> +	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
+> +	bool enable_vmx;
+>  	u64 msr;
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/main.c | 64 ++++++++++++++++++----------------
- arch/x86/kernel/cpu/sgx/sgx.h  |  7 ----
- 2 files changed, 34 insertions(+), 37 deletions(-)
+The preferred ordering of variable declarations at the beginning of a
+function is reverse fir tree order::
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index ed99c60024dc..a649010949c2 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -30,35 +30,33 @@ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
-  * Reset dirty EPC pages to uninitialized state. Laundry can be left with SECS
-  * pages whose child pages blocked EREMOVE.
-  */
--static void sgx_sanitize_section(struct sgx_epc_section *section)
-+static void sgx_sanitize_section(struct list_head *laundry)
- {
- 	struct sgx_epc_page *page;
- 	LIST_HEAD(dirty);
- 	int ret;
- 
- 	/* init_laundry_list is thread-local, no need for a lock: */
--	while (!list_empty(&section->init_laundry_list)) {
-+	while (!list_empty(laundry)) {
- 		if (kthread_should_stop())
- 			return;
- 
--		/* needed for access to ->page_list: */
--		spin_lock(&section->lock);
--
--		page = list_first_entry(&section->init_laundry_list,
--					struct sgx_epc_page, list);
-+		page = list_first_entry(laundry, struct sgx_epc_page, list);
- 
- 		ret = __eremove(sgx_get_epc_virt_addr(page));
--		if (!ret)
--			list_move(&page->list, &section->page_list);
--		else
-+		if (!ret) {
-+			/* The page is clean - move to the free list. */
-+			list_del(&page->list);
-+			sgx_free_epc_page(page);
-+		} else {
-+			/* The page is not yet clean - move to the dirty list. */
- 			list_move_tail(&page->list, &dirty);
--
--		spin_unlock(&section->lock);
-+		}
- 
- 		cond_resched();
- 	}
- 
--	list_splice(&dirty, &section->init_laundry_list);
-+	list_splice(&dirty, laundry);
- }
- 
- static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
-@@ -400,6 +398,7 @@ static bool sgx_should_reclaim(unsigned long watermark)
- 
- static int ksgxd(void *p)
- {
-+	struct list_head *laundry = p;
- 	int i;
- 
- 	set_freezable();
-@@ -408,16 +407,13 @@ static int ksgxd(void *p)
- 	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
- 	 * required for SECS pages, whose child pages blocked EREMOVE.
- 	 */
--	for (i = 0; i < sgx_nr_epc_sections; i++)
--		sgx_sanitize_section(&sgx_epc_sections[i]);
-+	sgx_sanitize_section(laundry);
-+	sgx_sanitize_section(laundry);
- 
--	for (i = 0; i < sgx_nr_epc_sections; i++) {
--		sgx_sanitize_section(&sgx_epc_sections[i]);
-+	if (!list_empty(laundry))
-+		WARN(1, "EPC section %d has unsanitized pages.\n", i);
- 
--		/* Should never happen. */
--		if (!list_empty(&sgx_epc_sections[i].init_laundry_list))
--			WARN(1, "EPC section %d has unsanitized pages.\n", i);
--	}
-+	kfree(laundry);
- 
- 	while (!kthread_should_stop()) {
- 		if (try_to_freeze())
-@@ -436,11 +432,11 @@ static int ksgxd(void *p)
- 	return 0;
- }
- 
--static bool __init sgx_page_reclaimer_init(void)
-+static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
- {
- 	struct task_struct *tsk;
- 
--	tsk = kthread_run(ksgxd, NULL, "ksgxd");
-+	tsk = kthread_run(ksgxd, laundry, "ksgxd");
- 	if (IS_ERR(tsk))
- 		return false;
- 
-@@ -614,7 +610,8 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
- 
- static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 					 unsigned long index,
--					 struct sgx_epc_section *section)
-+					 struct sgx_epc_section *section,
-+					 struct list_head *laundry)
- {
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 	unsigned long i;
-@@ -632,13 +629,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 	section->phys_addr = phys_addr;
- 	spin_lock_init(&section->lock);
- 	INIT_LIST_HEAD(&section->page_list);
--	INIT_LIST_HEAD(&section->init_laundry_list);
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		section->pages[i].section = index;
- 		section->pages[i].flags = 0;
- 		section->pages[i].owner = NULL;
--		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
-+		list_add_tail(&section->pages[i].list, laundry);
- 	}
- 
- 	section->free_cnt = nr_pages;
-@@ -656,7 +652,7 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
- 	       ((high & GENMASK_ULL(19, 0)) << 32);
- }
- 
--static bool __init sgx_page_cache_init(void)
-+static bool __init sgx_page_cache_init(struct list_head *laundry)
- {
- 	u32 eax, ebx, ecx, edx, type;
- 	u64 pa, size;
-@@ -679,7 +675,7 @@ static bool __init sgx_page_cache_init(void)
- 
- 		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
- 
--		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
-+		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i], laundry)) {
- 			pr_err("No free memory for an EPC section\n");
- 			break;
- 		}
-@@ -697,18 +693,25 @@ static bool __init sgx_page_cache_init(void)
- 
- static int __init sgx_init(void)
- {
-+	struct list_head *laundry;
- 	int ret;
- 	int i;
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX))
- 		return -ENODEV;
- 
--	if (!sgx_page_cache_init()) {
-+	laundry = kzalloc(sizeof(*laundry), GFP_KERNEL);
-+	if (!laundry)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(laundry);
-+
-+	if (!sgx_page_cache_init(laundry)) {
- 		ret = -ENOMEM;
- 		goto err_page_cache;
- 	}
- 
--	if (!sgx_page_reclaimer_init()) {
-+	if (!sgx_page_reclaimer_init(laundry)) {
- 		ret = -ENOMEM;
- 		goto err_page_cache;
- 	}
-@@ -728,6 +731,7 @@ static int __init sgx_init(void)
- 		memunmap(sgx_epc_sections[i].virt_addr);
- 	}
- 
-+	kfree(laundry);
- 	return ret;
- }
- 
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 5fa42d143feb..bc8af0428640 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -45,13 +45,6 @@ struct sgx_epc_section {
- 	spinlock_t lock;
- 	struct list_head page_list;
- 	unsigned long free_cnt;
--
--	/*
--	 * Pages which need EREMOVE run on them before they can be
--	 * used.  Only safe to be accessed in ksgxd and init code.
--	 * Not protected by locks.
--	 */
--	struct list_head init_laundry_list;
- };
- 
- extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+	struct long_struct_name *descriptive_name;
+	unsigned long foo, bar;
+	unsigned int tmp;
+	int ret;
+
+
+>  	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
+> @@ -114,13 +115,21 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+>  		return;
+>  	}
+>  
+> +	enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
+> +		     IS_ENABLED(CONFIG_KVM_INTEL);
+> +
+>  	/*
+> -	 * Enable SGX if and only if the kernel supports SGX and Launch Control
+> -	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
+> +	 * Separate out SGX driver enabling from KVM.  This allows KVM
+> +	 * guests to use SGX even if the kernel SGX driver refuses to
+> +	 * use it.  This happens if flexible Faunch Control is not
+> +	 * available.
+>  	 */
+> -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
+> -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
+> -		     IS_ENABLED(CONFIG_X86_SGX);
+> +	enable_sgx_any = cpu_has(c, X86_FEATURE_SGX) &&
+> +			 IS_ENABLED(CONFIG_X86_SGX);
+> +	enable_sgx_driver = enable_sgx_any &&
+> +			    cpu_has(c, X86_FEATURE_SGX_LC);
+> +	enable_sgx_kvm = enable_sgx_any && enable_vmx &&
+> +			  IS_ENABLED(CONFIG_X86_SGX_KVM);
+
+That enable_sgx_any use looks weird. You can get rid of it:
+
+	if (cpu_has(c, X86_FEATURE_SGX) && IS_ENABLED(CONFIG_X86_SGX)) {
+		enable_sgx_driver = cpu_has(c, X86_FEATURE_SGX_LC);
+		enable_sgx_kvm    = enable_vmx && IS_ENABLED(CONFIG_X86_SGX_KVM);
+	}
+
+and yap, let longer lines stick out.
+
+Thx.
+
 -- 
-2.30.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
