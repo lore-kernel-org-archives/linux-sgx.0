@@ -1,149 +1,78 @@
-Return-Path: <SRS0=pU6/=IE=vger.kernel.org=linux-sgx-owner@kernel.org>
+Return-Path: <SRS0=Efe7=IF=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AD1C433DB
-	for <linux-sgx@archiver.kernel.org>; Sat,  6 Mar 2021 00:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFD0C433E0
+	for <linux-sgx@archiver.kernel.org>; Sun,  7 Mar 2021 22:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C797D65081
-	for <linux-sgx@archiver.kernel.org>; Sat,  6 Mar 2021 00:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A78F56515E
+	for <linux-sgx@archiver.kernel.org>; Sun,  7 Mar 2021 22:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbhCFAVV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 5 Mar 2021 19:21:21 -0500
-Received: from mga12.intel.com ([192.55.52.136]:53491 "EHLO mga12.intel.com"
+        id S231969AbhCGWuP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 7 Mar 2021 17:50:15 -0500
+Received: from mga07.intel.com ([134.134.136.100]:48931 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229818AbhCFAVF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 5 Mar 2021 19:21:05 -0500
-IronPort-SDR: 1bRadGoNre/Y4iu0SSN1YDmxo9ewz5gGEc/zyg2CgzzVMQddmayoSdiHv7w9EDy7b+l+ombmG+
- DMtViLO7rTnQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9914"; a="167011707"
-X-IronPort-AV: E=Sophos;i="5.81,226,1610438400"; 
-   d="scan'208";a="167011707"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 16:21:04 -0800
-IronPort-SDR: i7QUPl2AxJigkWlqmhiLhr3wBCRlgLJpB3w5+mJnQTkAuaHVlty3YQHmFFAxS5nsY6YW8c1c4X
- nSq9gfVT3Duw==
-X-IronPort-AV: E=Sophos;i="5.81,226,1610438400"; 
-   d="scan'208";a="408569483"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2021 16:21:04 -0800
-From:   ira.weiny@intel.com
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5] x86: Remove unnecessary kmap() from sgx_ioc_enclave_init()
-Date:   Fri,  5 Mar 2021 16:20:58 -0800
-Message-Id: <20210306002058.303796-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
+        id S230341AbhCGWuD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 7 Mar 2021 17:50:03 -0500
+IronPort-SDR: idmNM8PHrrPE7S0CUQs1imn2m9Hef9vWn2GxtGdIKUwckAK6Hw8Uk5DSG4dDucVBUpCm4g2QJf
+ ZH5maHoxJ98Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9916"; a="251963195"
+X-IronPort-AV: E=Sophos;i="5.81,231,1610438400"; 
+   d="scan'208";a="251963195"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2021 14:50:02 -0800
+IronPort-SDR: t2TgmVgIRzyCY1eaGBDsNyFb86KvKjYMEPvb4sXTI7WgGA6ou91hu1D/wvrfFWXhRpmexM3YlI
+ LUMqFt4tCZ3Q==
+X-IronPort-AV: E=Sophos;i="5.81,231,1610438400"; 
+   d="scan'208";a="402595373"
+Received: from ggkanher-mobl4.amr.corp.intel.com ([10.252.142.177])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2021 14:49:58 -0800
+Message-ID: <df1986285d014837dce015003e3c2d5675c891bd.camel@intel.com>
+Subject: Re: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
+From:   Kai Huang <kai.huang@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
+        luto@kernel.org, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Date:   Mon, 08 Mar 2021 11:49:43 +1300
+In-Reply-To: <22f8a4be-b0ec-dfc5-cf05-a2586ce7557c@intel.com>
+References: <cover.1614590788.git.kai.huang@intel.com>
+         <bbfc8c833a62e4b55220834320829df1e17aff41.1614590788.git.kai.huang@intel.com>
+         <20210301100037.GA6699@zn.tnic>
+         <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com>
+         <20210301103043.GB6699@zn.tnic>
+         <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com>
+         <20210301105346.GC6699@zn.tnic>
+         <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com>
+         <20210301113257.GD6699@zn.tnic>
+         <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com>
+         <op.0zmwm1ogwjvjmi@arkane-mobl1.gar.corp.intel.com>
+         <22f8a4be-b0ec-dfc5-cf05-a2586ce7557c@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Tue, 2021-03-02 at 07:58 -0800, Dave Hansen wrote:
+> On 3/2/21 7:48 AM, Haitao Huang wrote:
+> > 
+> > Hi Haitao, Jarkko,
+> > 
+> > Do you have more concrete use case of needing "sgx2" in /proc/cpuinfo?
+> 
+> Kai, please remove it from your series.  I'm not hearing any arguments
+> remotely close enough to what Boris would require in order to keep it.
 
-kmap is inefficient and we are trying to reduce the usage in the kernel.
-There is no readily apparent reason why initp_page needs to be allocated
-and kmap'ed() but sigstruct needs to be page aligned and token
-512 byte aligned.
-
-kmalloc() can give us this alignment but we need to allocate PAGE_SIZE
-bytes to do so.  Rather than change this kmap() to kmap_local_page() use
-kmalloc() instead.
-
-Remove the alloc_page()/kmap() and replace with kmalloc(PAGE_SIZE, ...)
-to get a page aligned kernel address to use.
-
-In addition add a comment to document the alignment requirements so that
-others like myself don't attempt to 'fix' this again.
-
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Jethro Beekman <jethro@fortanix.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
----
-Changes from v4[4]:
-	Add Ack and Reviews
-	Send to the correct maintainers
-
-Changes from v3[3]:
-	Remove BUILD_BUG_ONs
-
-Changes from v2[2]:
-        When allocating a power of 2 size kmalloc() now guarantees the
-        alignment of the respective size.  So go back to using kmalloc() but
-        with a PAGE_SIZE allocation to get the alignment.  This also follows
-        the pattern in sgx_ioc_enclave_create()
-
-Changes from v1[1]:
-	Use page_address() instead of kcmalloc() to ensure sigstruct is
-	page aligned
-	Use BUILD_BUG_ON to ensure token and sigstruct don't collide.
-
-[1] https://lore.kernel.org/lkml/20210129001459.1538805-1-ira.weiny@intel.com/
-[2] https://lore.kernel.org/lkml/20210202013725.3514671-1-ira.weiny@intel.com/
-[3] https://lore.kernel.org/lkml/20210205050850.GC5033@iweiny-DESK2.sc.intel.com/#t
-[4] https://lore.kernel.org/lkml/YCBY02iEKLVyj7Ix@kernel.org/
-
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf76939..38e540de5e2a 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -604,7 +604,6 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- {
- 	struct sgx_sigstruct *sigstruct;
- 	struct sgx_enclave_init init_arg;
--	struct page *initp_page;
- 	void *token;
- 	int ret;
- 
-@@ -615,11 +614,14 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	if (copy_from_user(&init_arg, arg, sizeof(init_arg)))
- 		return -EFAULT;
- 
--	initp_page = alloc_page(GFP_KERNEL);
--	if (!initp_page)
-+	/*
-+	 * sigstruct must be on a page boundry and token on a 512 byte boundry
-+	 * kmalloc() gives us this alignment when allocating PAGE_SIZE bytes
-+	 */
-+	sigstruct = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!sigstruct)
- 		return -ENOMEM;
- 
--	sigstruct = kmap(initp_page);
- 	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
- 	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
- 
-@@ -645,8 +647,7 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	ret = sgx_encl_init(encl, sigstruct, token);
- 
- out:
--	kunmap(initp_page);
--	__free_page(initp_page);
-+	kfree(sigstruct);
- 	return ret;
- }
- 
--- 
-2.28.0.rc0.12.gb6a658bd00c9
+Yes I will do. Thanks.
 
