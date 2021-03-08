@@ -2,54 +2,50 @@ Return-Path: <SRS0=Hs9e=IG=vger.kernel.org=linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A13FC433E0
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Mar 2021 00:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B57C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Mar 2021 09:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 185EA65155
-	for <linux-sgx@archiver.kernel.org>; Mon,  8 Mar 2021 00:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E639651B9
+	for <linux-sgx@archiver.kernel.org>; Mon,  8 Mar 2021 09:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233092AbhCHATt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 7 Mar 2021 19:19:49 -0500
-Received: from mga09.intel.com ([134.134.136.24]:24347 "EHLO mga09.intel.com"
+        id S229551AbhCHJag (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Mar 2021 04:30:36 -0500
+Received: from mga05.intel.com ([192.55.52.43]:4791 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233140AbhCHATs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 7 Mar 2021 19:19:48 -0500
-IronPort-SDR: a/M46oz+X+wyWfD+ZWC7Bup7D8ye69tnBy3yJyUd6zT4m972BCH+qxufcDmbq58HhvwZLvZ0Ni
- 4LXiJE6fVN6Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9916"; a="188050462"
-X-IronPort-AV: E=Sophos;i="5.81,231,1610438400"; 
-   d="scan'208";a="188050462"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2021 16:19:47 -0800
-IronPort-SDR: UtVXiISl8EFaf9+qhQXIn/32pNp9zHSWSlUG76nsU+B2jJrKNXBfUs5ddH62ZfxOMcKsedkr16
- kim8wm8e3Yew==
-X-IronPort-AV: E=Sophos;i="5.81,231,1610438400"; 
-   d="scan'208";a="402615283"
+        id S229671AbhCHJaQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Mar 2021 04:30:16 -0500
+IronPort-SDR: xcu7sOWR1fLJJJ6A5YCgKmTJYrmnJQrAG4gpht/uR2v6HLfQxU3XczRYpRMBVxn/1T3g7jp7kK
+ yWij/Oi+HDKQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9916"; a="273022005"
+X-IronPort-AV: E=Sophos;i="5.81,232,1610438400"; 
+   d="scan'208";a="273022005"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 01:30:12 -0800
+IronPort-SDR: diR/365hAgy68dFnjcy7Th7jZpHdZg1MAB0kVgUqPyV0CEA4aodHtYvTj3uQv6TJFd4hlRGmhh
+ 7ul4jOAyM+1A==
+X-IronPort-AV: E=Sophos;i="5.81,232,1610438400"; 
+   d="scan'208";a="437333253"
 Received: from ggkanher-mobl4.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.142.177])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2021 16:19:43 -0800
-Date:   Mon, 8 Mar 2021 13:19:41 +1300
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 01:30:08 -0800
+Date:   Mon, 8 Mar 2021 22:30:06 +1300
 From:   Kai Huang <kai.huang@intel.com>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>, <kvm@vger.kernel.org>,
-        <x86@kernel.org>, <linux-sgx@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <seanjc@google.com>,
-        <jarkko@kernel.org>, <luto@kernel.org>, <dave.hansen@intel.com>,
-        <rick.p.edgecombe@intel.com>, <haitao.huang@intel.com>,
-        <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <jethro@fortanix.com>, <b.thiel@posteo.de>
-Subject: Re: [PATCH 06/25] x86/cpu/intel: Allow SGX virtualization without
- Launch Control support
-Message-Id: <20210308131941.56eacf7b318c7e1ae96f295a@intel.com>
-In-Reply-To: <20210308125026.08ece7c1f99406a14812715e@intel.com>
-References: <cover.1614590788.git.kai.huang@intel.com>
-        <12541888ae9ac7f517582aa64d9153feede7aed4.1614590788.git.kai.huang@intel.com>
-        <20210305172957.GE2685@zn.tnic>
-        <20210308125026.08ece7c1f99406a14812715e@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     <linux-sgx@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <x86@kernel.org>, <seanjc@google.com>, <jarkko@kernel.org>,
+        <luto@kernel.org>, <rick.p.edgecombe@intel.com>,
+        <haitao.huang@intel.com>, <pbonzini@redhat.com>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>
+Subject: Re: [RFC PATCH v6 13/25] x86/sgx: Add helpers to expose ECREATE and
+ EINIT to KVM
+Message-Id: <20210308223006.5610bc084eb17844f43c0b27@intel.com>
+In-Reply-To: <64a2d65f-ddf9-b42b-5b51-76bb3b79a30e@intel.com>
+References: <cover.1614338774.git.kai.huang@intel.com>
+        <14908104a7ff5724b6fb4e4c7df6e675adafe5a7.1614338774.git.kai.huang@intel.com>
+        <64a2d65f-ddf9-b42b-5b51-76bb3b79a30e@intel.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -58,116 +54,59 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 8 Mar 2021 12:50:26 +1300 Kai Huang wrote:
-> On Fri, 5 Mar 2021 18:29:57 +0100 Borislav Petkov wrote:
-> > On Mon, Mar 01, 2021 at 10:45:02PM +1300, Kai Huang wrote:
-> > > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > 
-> > > The kernel will currently disable all SGX support if the hardware does
-> > > not support launch control.  Make it more permissive to allow SGX
-> > > virtualization on systems without Launch Control support.  This will
-> > > allow KVM to expose SGX to guests that have less-strict requirements on
-> > > the availability of flexible launch control.
-> > > 
-> > > Improve error message to distinguish between three cases.  There are two
-> > > cases where SGX support is completely disabled:
-> > > 1) SGX has been disabled completely by the BIOS
-> > > 2) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
-> > >    of LC unavailability.  SGX virtualization is unavailable (because of
-> > >    Kconfig).
-> > > One where it is partially available:
-> > > 3) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
-> > >    of LC unavailability.  SGX virtualization is supported.
-> > > 
-> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > Co-developed-by: Kai Huang <kai.huang@intel.com>
-> > > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > ---
-> > >  arch/x86/kernel/cpu/feat_ctl.c | 57 ++++++++++++++++++++++++++--------
-> > >  1 file changed, 44 insertions(+), 13 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-> > > index 27533a6e04fa..96c370284913 100644
-> > > --- a/arch/x86/kernel/cpu/feat_ctl.c
-> > > +++ b/arch/x86/kernel/cpu/feat_ctl.c
-> > > @@ -105,7 +105,8 @@ early_param("nosgx", nosgx);
-> > >  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
-> > >  {
-> > >  	bool tboot = tboot_enabled();
-> > > -	bool enable_sgx;
-> > > +	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
-> > > +	bool enable_vmx;
-> > >  	u64 msr;
-> > 
-> > The preferred ordering of variable declarations at the beginning of a
-> > function is reverse fir tree order::
-> > 
-> > 	struct long_struct_name *descriptive_name;
-> > 	unsigned long foo, bar;
-> > 	unsigned int tmp;
-> > 	int ret;
-> > 
+On Fri, 5 Mar 2021 09:51:56 -0800 Dave Hansen wrote:
+> On 2/26/21 4:15 AM, Kai Huang wrote:
+> > +int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+> > +		     int *trapnr)
+> > +{
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * @secs is userspace address, and it's not guaranteed @secs points at
+> > +	 * an actual EPC page. 
 > 
-> Will do.
+> There are four cases that I can think of:
+> 1. @secs points to an EPC page.  Good, return 0 and go on with life.
+> 2. @secs points to a non-EPC page.  It will fault and permanently error
+>    out
+> 3. @secs points to a Present=0 PTE.  It will fault, but we need to call
+>    the fault handler to get a page in here.
+> 4. @secs points to a kernel address
 > 
-> Since as you suggested, enable_sgx_any will be removed, and initializing
-> enable_sgx_driver/kvm will be moved into the if () statement, I think we should
-> explicitly initialize them here. How about below?
+> #1 and #2 are handled and described.
 > 
-> 	bool enable_sgx_kvm = enable_sgx_driver = false;
+> #4 is probably impossible because the address comes out of some
+> gpa_to_hva() KVM code.  But, it still _looks_ wonky here.  I wouldn't
+> hate an access_ok() check on it.
+> 
+> 	/*
+> 	 * @secs is an untrusted, userspace-provided address.  It comes
+>          * from KVM and is assumed to point somewhere in userspace.
+>  	 * This can fault and call SGX or other fault handlers.
+> 	 */
+> 
+> You can also spend a moment to describe the kinds of faults that are
+> handled and what is fatal.
 
-Sorry my bad, should be:
+Thanks Dave for the comments. I'll refine accordingly.
 
-	bool enable_sgx_kvm = false, enable_sgx_driver = false;
+> 
+> 
+> > +	 * to physical EPC page by resolving PFN but using __uaccess_xx() is
+> > +	 * simpler.
+> > +	 */
+> 
+> I'd leave the justification for the changelog.
 
-> 	bool tboot = tboot_enabled();
-> 	bool enable_vmx;
-> 	...
+Will do.
+
 > 
-> > 
-> > >  	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
-> > > @@ -114,13 +115,21 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
-> > >  		return;
-> > >  	}
-> > >  
-> > > +	enable_vmx = cpu_has(c, X86_FEATURE_VMX) &&
-> > > +		     IS_ENABLED(CONFIG_KVM_INTEL);
-> > > +
-> > >  	/*
-> > > -	 * Enable SGX if and only if the kernel supports SGX and Launch Control
-> > > -	 * is supported, i.e. disable SGX if the LE hash MSRs can't be written.
-> > > +	 * Separate out SGX driver enabling from KVM.  This allows KVM
-> > > +	 * guests to use SGX even if the kernel SGX driver refuses to
-> > > +	 * use it.  This happens if flexible Faunch Control is not
-> > > +	 * available.
-> > >  	 */
-> > > -	enable_sgx = cpu_has(c, X86_FEATURE_SGX) &&
-> > > -		     cpu_has(c, X86_FEATURE_SGX_LC) &&
-> > > -		     IS_ENABLED(CONFIG_X86_SGX);
-> > > +	enable_sgx_any = cpu_has(c, X86_FEATURE_SGX) &&
-> > > +			 IS_ENABLED(CONFIG_X86_SGX);
-> > > +	enable_sgx_driver = enable_sgx_any &&
-> > > +			    cpu_has(c, X86_FEATURE_SGX_LC);
-> > > +	enable_sgx_kvm = enable_sgx_any && enable_vmx &&
-> > > +			  IS_ENABLED(CONFIG_X86_SGX_KVM);
-> > 
-> > That enable_sgx_any use looks weird. You can get rid of it:
-> > 
-> > 	if (cpu_has(c, X86_FEATURE_SGX) && IS_ENABLED(CONFIG_X86_SGX)) {
-> > 		enable_sgx_driver = cpu_has(c, X86_FEATURE_SGX_LC);
-> > 		enable_sgx_kvm    = enable_vmx && IS_ENABLED(CONFIG_X86_SGX_KVM);
-> > 	}
-> > 
-> > and yap, let longer lines stick out.
+> > +	__uaccess_begin();
+> > +	ret = __ecreate(pageinfo, (void *)secs);
+> > +	__uaccess_end();
+> > +
+> > +	if (encls_faulted(ret)) {
+> > +		*trapnr = ENCLS_TRAPNR(ret);
+> > +		return -EFAULT;
+> > +	}
 > 
-> Thanks. Will do.
-> 
-> > 
-> > Thx.
-> > 
-> > -- 
-> > Regards/Gruss,
-> >     Boris.
-> > 
-> > https://people.kernel.org/tglx/notes-about-netiquette
