@@ -2,69 +2,30 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E573C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 00:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1980C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B01C64F7C
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 00:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D6B665244
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbhCIAkq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Mar 2021 19:40:46 -0500
-Received: from mga12.intel.com ([192.55.52.136]:23575 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230301AbhCIAk1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Mar 2021 19:40:27 -0500
-IronPort-SDR: r0t1ehaWpEdcpsapiGs8l4OfqB+Rzf3AXpv2eQiYney2qPUIBiDeUeW8fzS6+0zFc07Eq5qgPz
- HrYFDbEVjuOA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="167400567"
-X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="167400567"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 16:40:26 -0800
-IronPort-SDR: 6gNcOCvhJki5z5np+3Wy3sRHRjCFuYYBCFIX5zuweeJNHM9hXC4/zI/I6CR1b8sJW5TNG+yKn0
- VqrrPISAcxMA==
-X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="386038115"
-Received: from hamidadx-mobl.amr.corp.intel.com (HELO [10.209.33.54]) ([10.209.33.54])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 16:40:26 -0800
-Subject: SGX Performance Creep
-To:     "Vij, Mona" <mona.vij@intel.com>,
-        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
-        "Kumar, Deepak1" <deepak1.kumar@intel.com>,
-        "Helm, Kent" <kent.helm@intel.com>,
-        "Narjala, Ranjit S" <ranjit.s.narjala@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Mathew, Shama" <shama.mathew@intel.com>,
-        "Hossain, Md Iqbal" <md.iqbal.hossain@intel.com>,
-        "Saffores, Ryan D" <ryan.d.saffores@intel.com>,
-        "Jaramillo, Alex V" <alex.v.jaramillo@intel.com>,
-        "Kuvaiskii, Dmitrii" <dmitrii.kuvaiskii@intel.com>,
-        "Mahalingam, Ganesh" <ganesh.mahalingam@intel.com>
-Cc:     "Sterrett, Craig" <craig.sterrett@intel.com>,
-        "Macieira, Thiago" <thiago.macieira@intel.com>,
-        "Salunke, Manoj" <manoj.salunke@intel.com>,
-        "Gandhi, Jinen" <jinen.gandhi@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-References: <BYAPR11MB274479307F08C6AE305FB9A8F2BA9@BYAPR11MB2744.namprd11.prod.outlook.com>
- <MWHPR11MB19048655E5942E21F4D78983DA819@MWHPR11MB1904.namprd11.prod.outlook.com>
- <edb58aeb-6f6a-236c-046d-b692377cc550@intel.com>
- <BYAPR11MB274441F17146490289EED9A3F2819@BYAPR11MB2744.namprd11.prod.outlook.com>
- <DM6PR11MB4723CB5D0DF41F38FB59154399819@DM6PR11MB4723.namprd11.prod.outlook.com>
- <d5d851d7-ebb0-df51-2684-b916f2b47432@intel.com>
- <BYAPR11MB2744D84CAB45A321D7B83389F2819@BYAPR11MB2744.namprd11.prod.outlook.com>
- <BYAPR11MB2744212BCA03E628DA29D2C8F2809@BYAPR11MB2744.namprd11.prod.outlook.com>
- <MW3PR11MB468192CCAC4C2B12DFF7EC99F9809@MW3PR11MB4681.namprd11.prod.outlook.com>
- <MW3PR11MB46012C10D9526DE48641512FB6809@MW3PR11MB4601.namprd11.prod.outlook.com>
- <MW3PR11MB47295620E26A7612D81FCB2899809@MW3PR11MB4729.namprd11.prod.outlook.com>
- <b9bb309e2385537e02bac93ad29d43b8b86e5143.camel@intel.com>
- <MW3PR11MB47295461B3E28FEEA28AE8A1999F9@MW3PR11MB4729.namprd11.prod.outlook.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
+        id S229611AbhCIBEG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Mar 2021 20:04:06 -0500
+Received: from www.sr71.net ([198.145.64.142]:58632 "EHLO blackbird.sr71.net"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S229517AbhCIBEB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Mar 2021 20:04:01 -0500
+Received: from [0.0.0.0] (unknown [50.53.169.119])
+        (Authenticated sender: dave)
+        by blackbird.sr71.net (Postfix) with ESMTPSA id F3C71FA879
+        for <linux-sgx@vger.kernel.org>; Mon,  8 Mar 2021 17:04:03 -0800 (PST)
+To:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+From:   Dave Hansen <dave@sr71.net>
+Subject: SGX Linux-Compatible Hardware
+Autocrypt: addr=dave@sr71.net; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
  oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
  2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
@@ -107,101 +68,42 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <990a55e9-5160-c2ae-08ab-7e1d277bd310@intel.com>
-Date:   Mon, 8 Mar 2021 16:40:20 -0800
+Message-ID: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
+Date:   Mon, 8 Mar 2021 17:04:00 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <MW3PR11MB47295461B3E28FEEA28AE8A1999F9@MW3PR11MB4729.namprd11.prod.outlook.com>
-Content-Type: multipart/mixed;
- boundary="------------6FB37D7EEFB111786F022075"
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------6FB37D7EEFB111786F022075
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+As everyone probably knows, the upstream kernel SGX support refuses to
+run on some SGX hardware.  Linux requires that the Launch Control MSRs
+be writable, which is sometimes known as "Flexible Launch Control"
+support.  If those MSRs are not writable, Linux will ignore the presence
+of otherwise SGX-capable hardware.
 
-I got my hands on a NUC7CJYH, which is the first piece of functional
-Flexible Launch Control hardware I've actually laid my hands on.
+It can be somewhat challenging to find hardware which works.  For
+instance I've got a i7-8086K which has all of the processor support
+required for SGX, but the system firmware still opts to lock the Launch
+Control MSRs.
 
-I went looking for any "performance creep".  I tried a very simple test:
-Create and run an enclave that touches a 64MB statically-allocated
-buffer.  (The patch to the kernel selftest to do this is attached).
+I wanted to report that an Intel NUC7CJYH successfully runs enclaves on
+Linux out of the box.  The Intel hardware compatibility list[1] is a bit
+scary, so I've also included a link to the exact memory that I got.
+16GB of RAM seems to work just fine despite what the Intel Ark pages on
+the CPU says[2].
 
-tl;dr: I'm not seeing any meaningful change in runtimes, even after
-running and tearing down the enclave for 6-7 hours.
+One little annoyance is that although it came with an A/C adapter, it
+didn't come with a power cord.  There's a link to one of those below too.
 
-I'm running the selftest like this, creating a log file with /usr/bin/time:
+> https://www.newegg.com/intel-boxnuc7cjyh/p/1VK-004K-001W5
+> https://www.newegg.com/g-skill-16gb-260-pin-ddr4-so-dimm/p/N82E16820232154?Item=N82E16820232154
+> https://www.newegg.com/startech-3-ft-black-standard-power-cord/p/N82E16812400031
 
-NOW=$(date +%s); make && while true; do /usr/bin/time ./test_sgx >>
-$NOW.log 2>> $NOW.timelog || break; done
-
-This lets me do a quick and dirty histogram of the runtimes.  Note that
-there's a single, nice peak.  It's not "smeared" like I would expect
-from slowly-degrading run times.
-
-$ cat 1615229976.timelog  | grep elapsed | awk '{print $1}' | sort | uniq -c
-      4 2.08user
-     14 2.09user
-    106 2.10user
-    403 2.11user
-   1055 2.12user
-   1518 2.13user
-   1268 2.14user
-    726 2.15user
-    302 2.16user
-     96 2.17user
-     23 2.18user
-      8 2.19user
-      1 2.20user
-
-I'll run for another day or two and see if anything interesting shows
-up.  But, for now, nothing interesting is happening.  Whatever folks are
-seeing, it doesn't seem to be present on my little simple test case, or
-this Atom-based hardware.
-
-The kernel is: stock 5.12.0-rc2.
-The CPU is: Intel(R) Celeron(R) J4005 CPU @ 2.00GHz
-
-
---------------6FB37D7EEFB111786F022075
-Content-Type: text/x-patch; charset=UTF-8;
- name="64mb-enclave.patch"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="64mb-enclave.patch"
-
-diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/self=
-tests/sgx/test_encl.c
-index cf25b5dc1e03..dd45a72a1b42 100644
---- a/tools/testing/selftests/sgx/test_encl.c
-+++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -14,7 +14,21 @@ static void *memcpy(void *dest, const void *src, size_=
-t n)
- 	return dest;
- }
-=20
-+#define DATA_LEN (64 * 1<<20)
-+static unsigned char data[DATA_LEN] =3D { 0x12 };
-+
- void encl_body(void *rdi, void *rsi)
- {
-+	int i;
-+	int j;
-+	int len =3D DATA_LEN;
-+	int loops =3D 2;
-+
-+	for (j =3D 0; j < loops; j++) {
-+		for (i =3D 0; i < len; i++) {
-+			data[i] =3D (unsigned long)rdi;
-+		}
-+	}
-+
- 	memcpy(rsi, rdi, 8);
- }
-
---------------6FB37D7EEFB111786F022075--
+1. https://compatibleproducts.intel.com/ProductDetails?EPMID=126135
+2.
+https://ark.intel.com/content/www/us/en/ark/products/128992/intel-celeron-j4005-processor-4m-cache-up-to-2-70-ghz.html
