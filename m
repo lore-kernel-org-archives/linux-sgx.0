@@ -2,108 +2,87 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1980C433DB
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D497C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D6B665244
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:04:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E9865252
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbhCIBEG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Mar 2021 20:04:06 -0500
-Received: from www.sr71.net ([198.145.64.142]:58632 "EHLO blackbird.sr71.net"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S229517AbhCIBEB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Mar 2021 20:04:01 -0500
-Received: from [0.0.0.0] (unknown [50.53.169.119])
-        (Authenticated sender: dave)
-        by blackbird.sr71.net (Postfix) with ESMTPSA id F3C71FA879
-        for <linux-sgx@vger.kernel.org>; Mon,  8 Mar 2021 17:04:03 -0800 (PST)
-To:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-From:   Dave Hansen <dave@sr71.net>
-Subject: SGX Linux-Compatible Hardware
-Autocrypt: addr=dave@sr71.net; keydata=
- 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
- z5cecg==
-Message-ID: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
-Date:   Mon, 8 Mar 2021 17:04:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229688AbhCIBWA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Mar 2021 20:22:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57492 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230403AbhCIBVv (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 8 Mar 2021 20:21:51 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7CEFC06174A
+        for <linux-sgx@vger.kernel.org>; Mon,  8 Mar 2021 17:21:51 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id k2so12165139ioh.5
+        for <linux-sgx@vger.kernel.org>; Mon, 08 Mar 2021 17:21:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SBgaCx4Kgy4zSOnyXBRYaY7wtExb8F1UAm82JRel65I=;
+        b=UkBDGOfxnT8tG4TtZZHWkkYHKlW9INiQ3r+pwTpoUgI/0I1AKf3pA8SQbyJbK/sne8
+         +L4OzmKtV7b9OU14U4yNk64bIgVaVX9eBBwHvqqJUDXvmValk2BhgQlvbSsCWBooCT8S
+         i1Im/fli15oyFHF2nFiiw/Hof9h2cLEIlX08MXJEWaL+5OItzN31pjVl88GJyQQbAjpC
+         NKhO/RBEBQLHb6EI1bziMCvEVZbsKY3m7P2pCJOIH+GXdrKVzMqC3fL+rRFJKpc/qJg3
+         GWr7eUbvSnXPEytRQFJJwGURHS99jbAAirzmaKQNjzBUvyoFLn0blGP2UhJr7eqZICpF
+         Q0lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SBgaCx4Kgy4zSOnyXBRYaY7wtExb8F1UAm82JRel65I=;
+        b=tYb1ilFBcR7Y5zwA+K5+nGPS/mjdW+d/BfEubqBGH+cYU59+2S00zHJJ2ePQPOyHhE
+         J9X6gloGPyYriVl3hirguoSDDnsd0tWI0bHcMGjTt6RYHnoK6yvsnyC+ZDruGLBDzC1w
+         cllCdn9sojo/Fn1CYbrp2kFfgSTigVjI7R2XOv34bxwUBpcAWxTStb0h7H3/PlI5PXsq
+         QyNWqM3DjqcrLDNBCEf/7cosHtVAs/TiVvS4O09+Szal/9JyKSdo3GfkHAMEordHbLWJ
+         U2xwQkvtm0XSxhZRkMoaCf0X3QlsfG7Mk9qcmcl0FU0fSAar1iBoiQzLQmWCBBXFMCsn
+         bAzg==
+X-Gm-Message-State: AOAM532mDv+EjvZu+w/HDSSBiQyK3ZSH/fq9/mG8lH2VF1s9mHRXdelv
+        mKEWQJlDnpZwZ0ERv1fEKSkjMBARqoV64q8X+eeP1/wZvZUEbw==
+X-Google-Smtp-Source: ABdhPJylw6gTPWvxkpZIzajxGqGvlH//PeCyb3ZJ8+20LjjvPRdThWCOoscjV0hYKLBK4tms0vHttlwzCbd2QQMfnds=
+X-Received: by 2002:a02:6a0b:: with SMTP id l11mr26177218jac.82.1615252910995;
+ Mon, 08 Mar 2021 17:21:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
+In-Reply-To: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
+From:   Joman Chu <jomanchu@gmail.com>
+Date:   Mon, 8 Mar 2021 20:21:12 -0500
+Message-ID: <CABjqtEG5yL3aCnr8Kk8ZOJDDa49K=ESx6-mgm_EnYcCDcYpDCg@mail.gmail.com>
+Subject: Re: SGX Linux-Compatible Hardware
+To:     Dave Hansen <dave@sr71.net>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-As everyone probably knows, the upstream kernel SGX support refuses to
-run on some SGX hardware.  Linux requires that the Launch Control MSRs
-be writable, which is sometimes known as "Flexible Launch Control"
-support.  If those MSRs are not writable, Linux will ignore the presence
-of otherwise SGX-capable hardware.
+On Mon, Mar 8, 2021 at 8:04 PM Dave Hansen <dave@sr71.net> wrote:
+>
+> It can be somewhat challenging to find hardware which works.  For
+> instance I've got a i7-8086K which has all of the processor support
+> required for SGX, but the system firmware still opts to lock the Launch
+> Control MSRs.
 
-It can be somewhat challenging to find hardware which works.  For
-instance I've got a i7-8086K which has all of the processor support
-required for SGX, but the system firmware still opts to lock the Launch
-Control MSRs.
+In my experience there isn=E2=80=99t much hardware that supports Flexible
+Launch Control (FLC). The Intel blog post from 2018 that announces FLC
+lists two NUCs (NUC7CJYH and NUC7PJYH) and the Xeon E processors.[1]
 
-I wanted to report that an Intel NUC7CJYH successfully runs enclaves on
-Linux out of the box.  The Intel hardware compatibility list[1] is a bit
-scary, so I've also included a link to the exact memory that I got.
-16GB of RAM seems to work just fine despite what the Intel Ark pages on
-the CPU says[2].
+The feature also requires BIOS enablement so you might have to confirm
+with an OEM. Last time I researched this in July 2020, Dell and
+Supermicro had single-processor platforms that claimed to support it,
+but I never followed through with actual hardware.
 
-One little annoyance is that although it came with an A/C adapter, it
-didn't come with a power cord.  There's a link to one of those below too.
+My apologies if you got this message twice, had an email client issue.
 
-> https://www.newegg.com/intel-boxnuc7cjyh/p/1VK-004K-001W5
-> https://www.newegg.com/g-skill-16gb-260-pin-ddr4-so-dimm/p/N82E16820232154?Item=N82E16820232154
-> https://www.newegg.com/startech-3-ft-black-standard-power-cord/p/N82E16812400031
-
-1. https://compatibleproducts.intel.com/ProductDetails?EPMID=126135
-2.
-https://ark.intel.com/content/www/us/en/ark/products/128992/intel-celeron-j4005-processor-4m-cache-up-to-2-70-ghz.html
+[1]: https://software.intel.com/content/www/us/en/develop/blogs/an-update-o=
+n-3rd-party-attestation.html
