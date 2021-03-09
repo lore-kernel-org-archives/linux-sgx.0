@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35BCC4332D
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A23C4361A
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D72E6529E
-	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A296527E
+	for <linux-sgx@archiver.kernel.org>; Tue,  9 Mar 2021 01:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231630AbhCIBlS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 8 Mar 2021 20:41:18 -0500
-Received: from mga04.intel.com ([192.55.52.120]:51718 "EHLO mga04.intel.com"
+        id S231382AbhCIBlQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 8 Mar 2021 20:41:16 -0500
+Received: from mga18.intel.com ([134.134.136.126]:36447 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231814AbhCIBlK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 8 Mar 2021 20:41:10 -0500
-IronPort-SDR: nPK85JQGY9871SAigkpx3pbjnhr5IrBOGGvnXB7NhgqLb9vjZ+911J5INHk0zJPmJBmCgF6fY8
- nzq6/YxSM7/Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="185751166"
+        id S231414AbhCIBku (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 8 Mar 2021 20:40:50 -0500
+IronPort-SDR: 26jiULJnfu6UFTadjewMLr9uc/P+SLbRDtcwIPxAGsNM7ti13YSjwylR/4vWOoDatViPDNHHo9
+ Lh8Od04KTdyg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="175749516"
 X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="185751166"
+   d="scan'208";a="175749516"
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 17:41:10 -0800
-IronPort-SDR: I00bXIu9Mm6IW8vxRG4TpHbfFfLCH6RHMZQUnqxnHuKOOsSqh5N/cLvKqGB2pimSBHNxuYSqSe
- gPslEz18qGDw==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 17:40:49 -0800
+IronPort-SDR: l45DYAjqVqae27MWrpBfCjnGduCbOh95QhDzz4ALqwVGoMs247L82eQYLflUi9U7i8euuLFUe0
+ B7xFsJSidB3A==
 X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="447327718"
+   d="scan'208";a="447327642"
 Received: from kzliu-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.128.38])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 17:41:05 -0800
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 17:40:44 -0800
 From:   Kai Huang <kai.huang@intel.com>
 To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
@@ -40,9 +40,9 @@ Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
         wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
-Subject: [PATCH v2 20/25] KVM: VMX: Frame in ENCLS handler for SGX virtualization
-Date:   Tue,  9 Mar 2021 14:40:27 +1300
-Message-Id: <edee54c752cb9d2950acf73646895c6d706e5f9c.1615250634.git.kai.huang@intel.com>
+Subject: [PATCH v2 16/25] KVM: x86: Define new #PF SGX error code bit
+Date:   Tue,  9 Mar 2021 14:40:23 +1300
+Message-Id: <af08f138b1a05d61ec27599020bb04129678d159.1615250634.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1615250634.git.kai.huang@intel.com>
 References: <cover.1615250634.git.kai.huang@intel.com>
@@ -54,146 +54,39 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Introduce sgx.c and sgx.h, along with the framework for handling ENCLS
-VM-Exits.  Add a bool, enable_sgx, that will eventually be wired up to a
-module param to control whether or not SGX virtualization is enabled at
-runtime.
+Page faults that are signaled by the SGX Enclave Page Cache Map (EPCM),
+as opposed to the traditional IA32/EPT page tables, set an SGX bit in
+the error code to indicate that the #PF was induced by SGX.  KVM will
+need to emulate this behavior as part of its trap-and-execute scheme for
+virtualizing SGX Launch Control, e.g. to inject SGX-induced #PFs if
+EINIT faults in the host, and to support live migration.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kvm/Makefile  |  2 ++
- arch/x86/kvm/vmx/sgx.c | 50 ++++++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/vmx/sgx.h | 15 +++++++++++++
- arch/x86/kvm/vmx/vmx.c |  9 +++++---
- 4 files changed, 73 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/kvm/vmx/sgx.c
- create mode 100644 arch/x86/kvm/vmx/sgx.h
+ arch/x86/include/asm/kvm_host.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-index 1b4766fe1de2..87f514c36eae 100644
---- a/arch/x86/kvm/Makefile
-+++ b/arch/x86/kvm/Makefile
-@@ -23,6 +23,8 @@ kvm-$(CONFIG_KVM_XEN)	+= xen.o
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 877a4025d8da..79b56eccb28f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -227,6 +227,7 @@ enum x86_intercept_stage;
+ #define PFERR_RSVD_BIT 3
+ #define PFERR_FETCH_BIT 4
+ #define PFERR_PK_BIT 5
++#define PFERR_SGX_BIT 15
+ #define PFERR_GUEST_FINAL_BIT 32
+ #define PFERR_GUEST_PAGE_BIT 33
  
- kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o \
- 			   vmx/evmcs.o vmx/nested.o vmx/posted_intr.o
-+kvm-intel-$(CONFIG_X86_SGX_KVM)	+= vmx/sgx.o
-+
- kvm-amd-y		+= svm/svm.o svm/vmenter.o svm/pmu.o svm/nested.o svm/avic.o svm/sev.o
+@@ -236,6 +237,7 @@ enum x86_intercept_stage;
+ #define PFERR_RSVD_MASK (1U << PFERR_RSVD_BIT)
+ #define PFERR_FETCH_MASK (1U << PFERR_FETCH_BIT)
+ #define PFERR_PK_MASK (1U << PFERR_PK_BIT)
++#define PFERR_SGX_MASK (1U << PFERR_SGX_BIT)
+ #define PFERR_GUEST_FINAL_MASK (1ULL << PFERR_GUEST_FINAL_BIT)
+ #define PFERR_GUEST_PAGE_MASK (1ULL << PFERR_GUEST_PAGE_BIT)
  
- obj-$(CONFIG_KVM)	+= kvm.o
-diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
-new file mode 100644
-index 000000000000..f68adbe38750
---- /dev/null
-+++ b/arch/x86/kvm/vmx/sgx.c
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*  Copyright(c) 2021 Intel Corporation. */
-+
-+#include <asm/sgx.h>
-+
-+#include "cpuid.h"
-+#include "kvm_cache_regs.h"
-+#include "sgx.h"
-+#include "vmx.h"
-+#include "x86.h"
-+
-+bool __read_mostly enable_sgx;
-+
-+static inline bool encls_leaf_enabled_in_guest(struct kvm_vcpu *vcpu, u32 leaf)
-+{
-+	if (!enable_sgx || !guest_cpuid_has(vcpu, X86_FEATURE_SGX))
-+		return false;
-+
-+	if (leaf >= ECREATE && leaf <= ETRACK)
-+		return guest_cpuid_has(vcpu, X86_FEATURE_SGX1);
-+
-+	if (leaf >= EAUG && leaf <= EMODT)
-+		return guest_cpuid_has(vcpu, X86_FEATURE_SGX2);
-+
-+	return false;
-+}
-+
-+static inline bool sgx_enabled_in_guest_bios(struct kvm_vcpu *vcpu)
-+{
-+	const u64 bits = FEAT_CTL_SGX_ENABLED | FEAT_CTL_LOCKED;
-+
-+	return (to_vmx(vcpu)->msr_ia32_feature_control & bits) == bits;
-+}
-+
-+int handle_encls(struct kvm_vcpu *vcpu)
-+{
-+	u32 leaf = (u32)vcpu->arch.regs[VCPU_REGS_RAX];
-+
-+	if (!encls_leaf_enabled_in_guest(vcpu, leaf)) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+	} else if (!sgx_enabled_in_guest_bios(vcpu)) {
-+		kvm_inject_gp(vcpu, 0);
-+	} else {
-+		WARN(1, "KVM: unexpected exit on ENCLS[%u]", leaf);
-+		vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
-+		vcpu->run->hw.hardware_exit_reason = EXIT_REASON_ENCLS;
-+		return 0;
-+	}
-+	return 1;
-+}
-diff --git a/arch/x86/kvm/vmx/sgx.h b/arch/x86/kvm/vmx/sgx.h
-new file mode 100644
-index 000000000000..6e17ecd4aca3
---- /dev/null
-+++ b/arch/x86/kvm/vmx/sgx.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __KVM_X86_SGX_H
-+#define __KVM_X86_SGX_H
-+
-+#include <linux/kvm_host.h>
-+
-+#ifdef CONFIG_X86_SGX_KVM
-+extern bool __read_mostly enable_sgx;
-+
-+int handle_encls(struct kvm_vcpu *vcpu);
-+#else
-+#define enable_sgx 0
-+#endif
-+
-+#endif /* __KVM_X86_SGX_H */
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index e36ab9e91d08..39ce1d40a2ea 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -57,6 +57,7 @@
- #include "mmu.h"
- #include "nested.h"
- #include "pmu.h"
-+#include "sgx.h"
- #include "trace.h"
- #include "vmcs.h"
- #include "vmcs12.h"
-@@ -5673,16 +5674,18 @@ static int handle_vmx_instruction(struct kvm_vcpu *vcpu)
- 	return 1;
- }
- 
-+#ifndef CONFIG_X86_SGX_KVM
- static int handle_encls(struct kvm_vcpu *vcpu)
- {
- 	/*
--	 * SGX virtualization is not yet supported.  There is no software
--	 * enable bit for SGX, so we have to trap ENCLS and inject a #UD
--	 * to prevent the guest from executing ENCLS.
-+	 * SGX virtualization is disabled.  There is no software enable bit for
-+	 * SGX, so KVM intercepts all ENCLS leafs and injects a #UD to prevent
-+	 * the guest from executing ENCLS (when SGX is supported by hardware).
- 	 */
- 	kvm_queue_exception(vcpu, UD_VECTOR);
- 	return 1;
- }
-+#endif /* CONFIG_X86_SGX_KVM */
- 
- static int handle_bus_lock_vmexit(struct kvm_vcpu *vcpu)
- {
 -- 
 2.29.2
 
