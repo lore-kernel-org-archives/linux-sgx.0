@@ -2,80 +2,130 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF403C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 11:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0569FC433E9
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 12:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6402164FE1
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 11:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1F5264FF2
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 12:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhCJLrq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 06:47:46 -0500
-Received: from out0-154.mail.aliyun.com ([140.205.0.154]:34650 "EHLO
-        out0-154.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbhCJLrS (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 10 Mar 2021 06:47:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=alibaba-inc.com; s=default;
-        t=1615376836; h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type;
-        bh=qF6h6Aqqj5613OVgkmhwFm/OnbZiDOkwrkWlxUm5rtc=;
-        b=Oe8aLgBy7Iy/i9WCLoJ/bxIoViofofp0UrJsfFVlHFRYKbc/fY69EpFkiumHy4B441HtjZS71xJdaPZfl5VyItqIfse/sOwM6TlkPJ3IWGTvkJewZeeAqRlcyzJjECbin9dEGXIeNBWEdw/atWdgjZ0Q+VK4o0V8sbS03hupM/0=
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047193;MF=qianyue.zj@alibaba-inc.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.JizUs3N_1615376834;
-Received: from ali-6c96cfd98fb5.local(mailfrom:qianyue.zj@alibaba-inc.com fp:SMTPD_---.JizUs3N_1615376834)
+        id S231993AbhCJMpK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 07:45:10 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:37202 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229948AbhCJMos (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 10 Mar 2021 07:44:48 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0URK2fWn_1615380284;
+Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0URK2fWn_1615380284)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 10 Mar 2021 19:47:14 +0800
-Subject: Re: SGX Linux-Compatible Hardware
-To:     Dave Hansen <dave@sr71.net>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-References: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
-From:   "=?UTF-8?B?5Lm+6LaK?=" <qianyue.zj@alibaba-inc.com>
-Message-ID: <50a49b71-175a-8d30-ab83-62bd8049982b@alibaba-inc.com>
-Date:   Wed, 10 Mar 2021 19:47:14 +0800
+          Wed, 10 Mar 2021 20:44:45 +0800
+Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
+ SGX_INVALID_SIGNATURE
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
+ <YDy51R2Wva7s+k/x@kernel.org>
+ <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
+ <CALCETrVn_inXAULfsPrCXeHUTBet+KnL1XsxuiaR+jgG1uTJNg@mail.gmail.com>
+ <YD5B7P++T6jLoWBR@kernel.org>
+From:   Jia Zhang <zhang.jia@linux.alibaba.com>
+Message-ID: <1f5c2375-39e2-65a8-3ad3-8dc43422f568@linux.alibaba.com>
+Date:   Wed, 10 Mar 2021 20:44:44 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:78.0)
  Gecko/20100101 Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
+In-Reply-To: <YD5B7P++T6jLoWBR@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-https://github.com/ayeks/SGX-hardware provides a nice tool to check the
-sgx capability. It
-reported 2 SGX2 platforms with FLC support.
+
+
+On 2021/3/2 下午9:47, Jarkko Sakkinen wrote:
+> On Mon, Mar 01, 2021 at 09:54:37PM -0800, Andy Lutomirski wrote:
+>> On Mon, Mar 1, 2021 at 9:06 PM Tianjia Zhang
+>> <tianjia.zhang@linux.alibaba.com> wrote:
+>>>
+>>>
+>>>
+>>> On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
+>>>> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
+>>>>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
+>>>>
+>>>> What does determine this?
+>>>>
+>>>>> In this case, the valid portion of q2 is reordered reversely for
+>>>>> little endian order, and the remaining portion is filled with zero.
+>>>>
+>>>> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
+>>>>
+>>>> I'm lacking these details:
+>>>>
+>>>> 1. Why the length of Q2 can vary?
+>>>> 2. Why reversing the bytes is the correct measure to counter-measure
+>>>>     this variation?
+>>>>
+>>>> /Jarkko
+>>>>
+>>>
+>>> When use openssl to generate a key instead of using the built-in
+>>> sign_key.pem, there is a probability that will encounter this problem.
+>>>
+>>> Here is a problematic key I encountered. The calculated q1 and q2 of
+>>> this key are both 383 bytes, If the length is not processed, the
+>>> hardware signature will fail.
+>>
+>> Presumably the issue is that some keys have parameters that have
+>> enough leading 0 bits to be effectively shorter.  The openssl API
+>> (and, sadly, a bunch  of the ASN.1 stuff) treats these parameters as
+>> variable-size integers.
+> 
+> But the test uses a static key. It used to generate a key on fly but
+
+IMO even though the test code, it comes from the linux kernel, meaning
+that its quality has a certain guarantee and it is a good reference, so
+the test code still needs to ensure its correctness.
 
 Jia
 
-On 2021/3/9 上午9:04, Dave Hansen wrote:
-> As everyone probably knows, the upstream kernel SGX support refuses to
-> run on some SGX hardware.  Linux requires that the Launch Control MSRs
-> be writable, which is sometimes known as "Flexible Launch Control"
-> support.  If those MSRs are not writable, Linux will ignore the presence
-> of otherwise SGX-capable hardware.
->
-> It can be somewhat challenging to find hardware which works.  For
-> instance I've got a i7-8086K which has all of the processor support
-> required for SGX, but the system firmware still opts to lock the Launch
-> Control MSRs.
->
-> I wanted to report that an Intel NUC7CJYH successfully runs enclaves on
-> Linux out of the box.  The Intel hardware compatibility list[1] is a bit
-> scary, so I've also included a link to the exact memory that I got.
-> 16GB of RAM seems to work just fine despite what the Intel Ark pages on
-> the CPU says[2].
->
-> One little annoyance is that although it came with an A/C adapter, it
-> didn't come with a power cord.  There's a link to one of those below too.
->
->> https://www.newegg.com/intel-boxnuc7cjyh/p/1VK-004K-001W5
->> https://www.newegg.com/g-skill-16gb-260-pin-ddr4-so-dimm/p/N82E16820232154?Item=N82E16820232154
->> https://www.newegg.com/startech-3-ft-black-standard-power-cord/p/N82E16812400031
-> 1. https://compatibleproducts.intel.com/ProductDetails?EPMID=126135
-> 2.
-> https://ark.intel.com/content/www/us/en/ark/products/128992/intel-celeron-j4005-processor-4m-cache-up-to-2-70-ghz.html
+> in some of the last versions I replaced key generation with a static
+> key:
+> 
+> static RSA *gen_sign_key(void)
+> {
+> 	unsigned long sign_key_length;
+> 	BIO *bio;
+> 	RSA *key;
+> 
+> 	sign_key_length = (unsigned long)&sign_key_end -
+> 			  (unsigned long)&sign_key;
+> 
+> 	bio = BIO_new_mem_buf(&sign_key, sign_key_length);
+> 	if (!bio)
+> 		return NULL;
+> 
+> 	key = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
+> 	BIO_free(bio);
+> 
+> 	return key;
+> }
+> 
+> /Jarkko
+> 
