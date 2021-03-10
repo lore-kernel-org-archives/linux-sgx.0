@@ -2,89 +2,251 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FFFC433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 14:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531DEC433E6
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 14:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D31BF64EF9
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 14:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1834264EF9
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 14:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232295AbhCJOpq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 09:45:46 -0500
-Received: from out0-143.mail.aliyun.com ([140.205.0.143]:36019 "EHLO
-        out0-143.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232147AbhCJOpe (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 10 Mar 2021 09:45:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=alibaba-inc.com; s=default;
-        t=1615387531; h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type;
-        bh=hHatkGniLslJeYxXGOlyADK+xZOxI12yM9ZZKa5RhKo=;
-        b=JtKMgxBrt3odvZtEbN2/zcyJKZSojExCxZvCFt3k4HzL1l47rAOTh8pmPeTuqfc/GhklDjGNLT4teVOQjM4AueTCKIoKWwrnbE8jjkVPGKaZJSSMdtYg8cCnbOYjDHv43fxfXNn4dhMzFm//vpnFQLbdgCcQFDnkR707mNmb9wo=
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047205;MF=qianyue.zj@alibaba-inc.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.Jj.ElHV_1615387530;
-Received: from ali-6c96cfd98fb5.local(mailfrom:qianyue.zj@alibaba-inc.com fp:SMTPD_---.Jj.ElHV_1615387530)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 10 Mar 2021 22:45:30 +0800
-Subject: Re: SGX Linux-Compatible Hardware
-To:     Dave Hansen <dave@sr71.net>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-References: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
-From:   "=?UTF-8?B?5Lm+6LaK?=" <qianyue.zj@alibaba-inc.com>
-Message-ID: <eb45298f-cd6d-3a60-49b7-2d7c07d14ca0@alibaba-inc.com>
-Date:   Wed, 10 Mar 2021 22:45:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.0
+        id S232733AbhCJOvI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 09:51:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230341AbhCJOu5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Mar 2021 09:50:57 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 299C764EFD;
+        Wed, 10 Mar 2021 14:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615387856;
+        bh=1W0zXMyR7sXLPJ1vtPcoz7OuZT3ZKhmd9XfK3FbOSAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=og1Dk20ZdthFg1cvoZN1TUA40KQ+ByDaEV3AmoUxPYLBKPKrRb2KGGwbCqs+zArti
+         uxAO65gRnRY3oguoeoaIr+tC9i03YhgQNPA8/u/Hly5GJZPqEnqnYL355LjWYRR/8f
+         KBZUwAaguHwALUsLov1cnQO3zjGcRxrWIxKofEHlLooi9u6bFP+E1dCs339hIA9DNh
+         EkdvcsFFLFvaewK5qlBOmNaENkAmJhRZs7MUJ8KE1hmFTd5iFX8nw6GXd62xNNCIFX
+         KprxgKUZXv8wpwWh/gTm8TVitF1Ml5lLGRVaBp5wbrBSuu+yFK8vfB2pmKKmAfJdxk
+         Jra6Q5XZa00Og==
+Date:   Wed, 10 Mar 2021 16:50:32 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] x86/sgx: Replace section->init_laundry_list with
+ a temp list
+Message-ID: <YEjcuFRHqgF/nMg3@kernel.org>
+References: <20210303150323.433207-1-jarkko@kernel.org>
+ <20210303150323.433207-4-jarkko@kernel.org>
+ <5f0c773f-4da1-7418-be42-e11427c2f137@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <399c5f27-1387-55c5-e147-f7885bf86df5@sr71.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f0c773f-4da1-7418-be42-e11427c2f137@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On Wed, Mar 03, 2021 at 10:02:27AM -0800, Dave Hansen wrote:
+> ...
+> > -static void sgx_sanitize_section(struct sgx_epc_section *section)
+> > +static void sgx_sanitize_section(struct list_head *laundry)
+> >  {
+> 
+> Does this need a better function name now that it's not literally
+> dealing with sections at *all*?
+> 
+> 	sgx_sanitize_pages()
+> 
+> perhaps.
 
-On 2021/3/9 上午9:04, Dave Hansen wrote:
-> As everyone probably knows, the upstream kernel SGX support refuses to
-> run on some SGX hardware.  Linux requires that the Launch Control MSRs
-> be writable, which is sometimes known as "Flexible Launch Control"
-> support.  If those MSRs are not writable, Linux will ignore the presence
-> of otherwise SGX-capable hardware.
->
-> It can be somewhat challenging to find hardware which works.  For
-> instance I've got a i7-8086K which has all of the processor support
-> required for SGX, but the system firmware still opts to lock the Launch
-> Control MSRs.
+Makes sense to me.
 
-Yes. I understand the necessairty of the removal of no-flc support
-occurred in v25, but actually there
-are still non-trivial number of systems without FLC support.
+> >  	struct sgx_epc_page *page;
+> >  	LIST_HEAD(dirty);
+> >  	int ret;
+> >  
+> >  	/* init_laundry_list is thread-local, no need for a lock: */
+> > -	while (!list_empty(&section->init_laundry_list)) {
+> > +	while (!list_empty(laundry)) {
+> >  		if (kthread_should_stop())
+> >  			return;
+> >  
+> > -		/* needed for access to ->page_list: */
+> > -		spin_lock(&section->lock);
+> > -
+> > -		page = list_first_entry(&section->init_laundry_list,
+> > -					struct sgx_epc_page, list);
+> > +		page = list_first_entry(laundry, struct sgx_epc_page, list);
+> >  
+> >  		ret = __eremove(sgx_get_epc_virt_addr(page));
+> > -		if (!ret)
+> > -			list_move(&page->list, &section->page_list);
+> > -		else
+> > +		if (!ret) {
+> > +			/* The page is clean - move to the free list. */
+> > +			list_del(&page->list);
+> > +			sgx_free_epc_page(page);
+> > +		} else {
+> > +			/* The page is not yet clean - move to the dirty list. */
+> >  			list_move_tail(&page->list, &dirty);
+> > -
+> > -		spin_unlock(&section->lock);
+> > +		}
+> >  
+> >  		cond_resched();
+> >  	}
+> >  
+> > -	list_splice(&dirty, &section->init_laundry_list);
+> > +	list_splice(&dirty, laundry);
+> >  }
+> >  
+> >  static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+> > @@ -400,6 +398,7 @@ static bool sgx_should_reclaim(unsigned long watermark)
+> >  
+> >  static int ksgxd(void *p)
+> >  {
+> > +	struct list_head *laundry = p;
+> >  	int i;
+> >  
+> >  	set_freezable();
+> > @@ -408,16 +407,13 @@ static int ksgxd(void *p)
+> >  	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+> >  	 * required for SECS pages, whose child pages blocked EREMOVE.
+> >  	 */
+> > -	for (i = 0; i < sgx_nr_epc_sections; i++)
+> > -		sgx_sanitize_section(&sgx_epc_sections[i]);
+> > +	sgx_sanitize_section(laundry);
+> > +	sgx_sanitize_section(laundry);
+> 
+> Did you intend to call this twice?
 
-This page contains the information about the supports for no-FLC machines:
-https://github.com/alibaba/inclavare-containers/tree/master/hack/no-sgx-flc
+Yes, see the inline comment above.
 
-Someone may still need it.
+> > -	for (i = 0; i < sgx_nr_epc_sections; i++) {
+> > -		sgx_sanitize_section(&sgx_epc_sections[i]);
+> > +	if (!list_empty(laundry))
+> > +		WARN(1, "EPC section %d has unsanitized pages.\n", i);
+> >  
+> > -		/* Should never happen. */
+> > -		if (!list_empty(&sgx_epc_sections[i].init_laundry_list))
+> > -			WARN(1, "EPC section %d has unsanitized pages.\n", i);
+> > -	}
+> > +	kfree(laundry);
+> 
+> This is a bit unfortunate.  'laundry' is allocated up in another thread
+> and the lifetime isn't obvious.  It's just 32 bytes, but this is just
+> asking to be leaked.
+> >  	while (!kthread_should_stop()) {
+> >  		if (try_to_freeze())
+> > @@ -436,11 +432,11 @@ static int ksgxd(void *p)
+> >  	return 0;
+> >  }
+> >  
+> > -static bool __init sgx_page_reclaimer_init(void)
+> > +static bool __init sgx_page_reclaimer_init(struct list_head *laundry)
+> >  {
+> >  	struct task_struct *tsk;
+> >  
+> > -	tsk = kthread_run(ksgxd, NULL, "ksgxd");
+> > +	tsk = kthread_run(ksgxd, laundry, "ksgxd");
+> >  	if (IS_ERR(tsk))
+> >  		return false;
+> >  
+> > @@ -614,7 +610,8 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+> >  
+> >  static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+> >  					 unsigned long index,
+> > -					 struct sgx_epc_section *section)
+> > +					 struct sgx_epc_section *section,
+> > +					 struct list_head *laundry)
+> >  {
+> 
+> I think this at least need a comment somewhere about what this function
+> is doing with 'laundry'.
 
-Cheers,
-Jia
+Ok.
 
+> >  	unsigned long nr_pages = size >> PAGE_SHIFT;
+> >  	unsigned long i;
+> > @@ -632,13 +629,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+> >  	section->phys_addr = phys_addr;
+> >  	spin_lock_init(&section->lock);
+> >  	INIT_LIST_HEAD(&section->page_list);
+> > -	INIT_LIST_HEAD(&section->init_laundry_list);
+> >  
+> >  	for (i = 0; i < nr_pages; i++) {
+> >  		section->pages[i].section = index;
+> >  		section->pages[i].flags = 0;
+> >  		section->pages[i].owner = NULL;
+> > -		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
+> > +		list_add_tail(&section->pages[i].list, laundry);
+> >  	}
+> >  
+> >  	section->free_cnt = nr_pages;
+> > @@ -656,7 +652,7 @@ static inline u64 __init sgx_calc_section_metric(u64 low, u64 high)
+> >  	       ((high & GENMASK_ULL(19, 0)) << 32);
+> >  }
+> >  
+> > -static bool __init sgx_page_cache_init(void)
+> > +static bool __init sgx_page_cache_init(struct list_head *laundry)
+> >  {
+> >  	u32 eax, ebx, ecx, edx, type;
+> >  	u64 pa, size;
+> > @@ -679,7 +675,7 @@ static bool __init sgx_page_cache_init(void)
+> >  
+> >  		pr_info("EPC section 0x%llx-0x%llx\n", pa, pa + size - 1);
+> >  
+> > -		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i])) {
+> > +		if (!sgx_setup_epc_section(pa, size, i, &sgx_epc_sections[i], laundry)) {
+> >  			pr_err("No free memory for an EPC section\n");
+> >  			break;
+> >  		}
+> 
+> This is a great place for a comment about what is coming back on 'laundry'.
+> 
+> > @@ -697,18 +693,25 @@ static bool __init sgx_page_cache_init(void)
+> >  
+> >  static int __init sgx_init(void)
+> >  {
+> > +	struct list_head *laundry;
+> >  	int ret;
+> >  	int i;
+> >  
+> >  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
+> >  		return -ENODEV;
+> >  
+> > -	if (!sgx_page_cache_init()) {
+> > +	laundry = kzalloc(sizeof(*laundry), GFP_KERNEL);
+> > +	if (!laundry)
+> > +		return -ENOMEM;
+> > +
+> > +	INIT_LIST_HEAD(laundry);
+> > +
+> > +	if (!sgx_page_cache_init(laundry)) {
+> >  		ret = -ENOMEM;
+> >  		goto err_page_cache;
+> >  	}
+> >  
+> > -	if (!sgx_page_reclaimer_init()) {
+> > +	if (!sgx_page_reclaimer_init(laundry)) {
+> >  		ret = -ENOMEM;
+> >  		goto err_page_cache;
+> >  	}
+> 
+> I really don't like this being dynamically allocated, especially since
+> it's freed in another task in a non-obvious place.
+> 
+> Wouldn't this all just be a lot simpler if we had a global list_head?
+> That will eat a whopping 16 bytes of space.
 
->
-> I wanted to report that an Intel NUC7CJYH successfully runs enclaves on
-> Linux out of the box.  The Intel hardware compatibility list[1] is a bit
-> scary, so I've also included a link to the exact memory that I got.
-> 16GB of RAM seems to work just fine despite what the Intel Ark pages on
-> the CPU says[2].
->
-> One little annoyance is that although it came with an A/C adapter, it
-> didn't come with a power cord.  There's a link to one of those below too.
->
->> https://www.newegg.com/intel-boxnuc7cjyh/p/1VK-004K-001W5
->> https://www.newegg.com/g-skill-16gb-260-pin-ddr4-so-dimm/p/N82E16820232154?Item=N82E16820232154
->> https://www.newegg.com/startech-3-ft-black-standard-power-cord/p/N82E16812400031
-> 1. https://compatibleproducts.intel.com/ProductDetails?EPMID=126135
-> 2.
-> https://ark.intel.com/content/www/us/en/ark/products/128992/intel-celeron-j4005-processor-4m-cache-up-to-2-70-ghz.html
+Yeah, why not. It's just then one global instead of per-struct field, which
+is quite ugly.
+
+/Jarkko
