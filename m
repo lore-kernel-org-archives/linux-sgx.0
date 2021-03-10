@@ -2,75 +2,109 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EDFC433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24959C433E6
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7161964F8B
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E983C64FBC
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231790AbhCJPag (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 10:30:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50064 "EHLO mail.kernel.org"
+        id S231244AbhCJPdS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 10:33:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232408AbhCJPae (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Mar 2021 10:30:34 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AA67964F95;
-        Wed, 10 Mar 2021 15:30:33 +0000 (UTC)
+        id S233093AbhCJPc6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Mar 2021 10:32:58 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1517464F98;
+        Wed, 10 Mar 2021 15:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615390234;
-        bh=bLPrYJC1BcpB13zDjdG1OkrEvZsw6ZD+RF8inzAoyb0=;
+        s=k20201202; t=1615390377;
+        bh=mVVLhBBsU5qZlMYB4KOflh2qpOSUHlTOvz5Dlwno1ug=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rS8nxjbC7V0QP/QlY8hu9UamkqcjcKZOGcI+RsvFq4L2b4qyKIKKJcxnLlNcK6Gko
-         5dmG9WbzRb02cpPpTZ2uedXsKUb05mmuGEctHq8yBU8f1mKBziEgeIJ6yEPGk48OGz
-         dxGh1qNy+on5/Og3UmM9cw3HPmU8xk1OfbZciEEn3XJRnySKSkaED2UFp8U4Ig+JHM
-         7FYrxP1GcFm9MKimBYFTEx4ny7DxCXbjdn+CaBqQpJKvtdWIAx5vMVQopPmFepNawX
-         mdvEYGD2Toy8bC19dhfF0w2Y3eSUaWE9vINBAafpTzDxdluVJhtgAYLTs3ct/J4Uuq
-         T81Lv7/KORdwQ==
-Date:   Wed, 10 Mar 2021 17:30:09 +0200
+        b=jZkzMnhpI+2gyubsbPr2NOX9QtAZXPK9kgOuMlbNt86zORB4LL6vMzPMQQLvSOh0t
+         xPcv3bUWT+fRdcpuL4PRH3cL2CnoEnrUA7OCDI5v/atsX/tzR8TLsw4x3oEUBD6UNc
+         /Lj7COY/OJoglSC4NVqtSPt75dHj9TFYwrTsXmXNhe9R8favdVqDbgv2p+pey8v+50
+         DzryozBL+VuzUPHYesPMVmiDpv8Dpkn6J9d4XXXbl9MsGiIyPThMvmQ4OQDBv8IuIL
+         /4C2LhXVjqXTCH4fA4VoNi1supv4muL1FtVwKiXwDyGTFNjM73c5IpehWAATm6D181
+         OSH4jMcmUS9RQ==
+Date:   Wed, 10 Mar 2021 17:32:33 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
         x86@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org, seanjc@google.com, luto@kernel.org,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com
-Subject: Re: [PATCH 02/25] x86/cpufeatures: Add SGX1 and SGX2 sub-features
-Message-ID: <YEjmARc/e/TQoGAg@kernel.org>
-References: <20210301100037.GA6699@zn.tnic>
- <3fce1dd2abd42597bde7ae9496bde7b9596b2797.camel@intel.com>
- <20210301103043.GB6699@zn.tnic>
- <7603ef673997b6674f785d333a4f263c749d2cf3.camel@intel.com>
- <20210301105346.GC6699@zn.tnic>
- <e509c6c1e3644861edafb18e4045b813f9f344b3.camel@intel.com>
- <20210301113257.GD6699@zn.tnic>
- <0adc41774945bf9d6e6a72a93b83c80aa8c59544.camel@intel.com>
- <op.0zmwm1ogwjvjmi@arkane-mobl1.gar.corp.intel.com>
- <22f8a4be-b0ec-dfc5-cf05-a2586ce7557c@intel.com>
+        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, jethro@fortanix.com,
+        b.thiel@posteo.de
+Subject: Re: [PATCH 06/25] x86/cpu/intel: Allow SGX virtualization without
+ Launch Control support
+Message-ID: <YEjmkadk7azp53f4@kernel.org>
+References: <cover.1614590788.git.kai.huang@intel.com>
+ <12541888ae9ac7f517582aa64d9153feede7aed4.1614590788.git.kai.huang@intel.com>
+ <20210305172957.GE2685@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <22f8a4be-b0ec-dfc5-cf05-a2586ce7557c@intel.com>
+In-Reply-To: <20210305172957.GE2685@zn.tnic>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 02, 2021 at 07:58:37AM -0800, Dave Hansen wrote:
-> On 3/2/21 7:48 AM, Haitao Huang wrote:
+On Fri, Mar 05, 2021 at 06:29:57PM +0100, Borislav Petkov wrote:
+> On Mon, Mar 01, 2021 at 10:45:02PM +1300, Kai Huang wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > > 
-> > Hi Haitao, Jarkko,
+> > The kernel will currently disable all SGX support if the hardware does
+> > not support launch control.  Make it more permissive to allow SGX
+> > virtualization on systems without Launch Control support.  This will
+> > allow KVM to expose SGX to guests that have less-strict requirements on
+> > the availability of flexible launch control.
 > > 
-> > Do you have more concrete use case of needing "sgx2" in /proc/cpuinfo?
+> > Improve error message to distinguish between three cases.  There are two
+> > cases where SGX support is completely disabled:
+> > 1) SGX has been disabled completely by the BIOS
+> > 2) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+> >    of LC unavailability.  SGX virtualization is unavailable (because of
+> >    Kconfig).
+> > One where it is partially available:
+> > 3) SGX LC is locked by the BIOS.  Bare-metal support is disabled because
+> >    of LC unavailability.  SGX virtualization is supported.
+> > 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Kai Huang <kai.huang@intel.com>
+> > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/feat_ctl.c | 57 ++++++++++++++++++++++++++--------
+> >  1 file changed, 44 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+> > index 27533a6e04fa..96c370284913 100644
+> > --- a/arch/x86/kernel/cpu/feat_ctl.c
+> > +++ b/arch/x86/kernel/cpu/feat_ctl.c
+> > @@ -105,7 +105,8 @@ early_param("nosgx", nosgx);
+> >  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+> >  {
+> >  	bool tboot = tboot_enabled();
+> > -	bool enable_sgx;
+> > +	bool enable_sgx_any, enable_sgx_kvm, enable_sgx_driver;
+> > +	bool enable_vmx;
+> >  	u64 msr;
 > 
-> Kai, please remove it from your series.  I'm not hearing any arguments
-> remotely close enough to what Boris would require in order to keep it.
+> The preferred ordering of variable declarations at the beginning of a
+> function is reverse fir tree order::
+> 
+> 	struct long_struct_name *descriptive_name;
+> 	unsigned long foo, bar;
+> 	unsigned int tmp;
+> 	int ret;
 
-Agreed.
+IMHO here declaring separate lines would make also sense, given
+how long the local variable names are.
 
-/Jarkko
+ /Jarkko
