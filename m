@@ -2,168 +2,124 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B345CC433E6
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D938C433E6
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76A6D64FD6
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBB7064FD0
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231935AbhCJVtQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 16:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44176 "EHLO mail.kernel.org"
+        id S231575AbhCJVxe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 16:53:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232206AbhCJVtO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Mar 2021 16:49:14 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C825064FAB;
-        Wed, 10 Mar 2021 21:49:13 +0000 (UTC)
+        id S231267AbhCJVxE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Mar 2021 16:53:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0CE8864FC4;
+        Wed, 10 Mar 2021 21:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615412954;
-        bh=+oOFNv56O7sMY7qolB4gLqf1KbVTKbHQJ69T+KpnJ2A=;
+        s=k20201202; t=1615413184;
+        bh=EwsKrrbncZeCnhMF4JXbIPhZYAxrRS99Wmz783LaGa4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZLvuUQ+VxNtzXtc89ljBECwuc81VfHAHA8rI1rEkpff+j5Lh2nAl3YUvNMMJF+h1j
-         c34KzybBRtUBywyrFAU1zoimW8MV+mS1Y5SXSS7l5y5he3UokpYm6LpI2NhrKTaD9B
-         bIP1j5KU5103Rf5gxy62v9VxHH+IVSW4lyI4VbaHx/3tt+w2LufwFwLNomu0tXESO5
-         wpbLMZQqVZhZ0CDgEMOxXe/zNKXKvHJcLyylS4cypnPtnGlN2wEoKRGli5Vpo5kmFL
-         rj15DNdq1YnHBEwpPbAlcik68D+RnYURpExd9pKrY4ERqdV52KXNFTiIvfZjnNgiZr
-         TcidJ4eOx2wvA==
-Date:   Wed, 10 Mar 2021 23:48:50 +0200
+        b=P3zXB+SDDs+GqkX8ZZn8CDmAPTB3lj8wYot8pek1kUSzwqGGnxG/koXowN6ck1vW8
+         JjtFM3jHbuui53lbZ6zBIyeAyiburKmnfCnHwoZdLVrI4ezLG7mk7CYnT3VaV739U1
+         cSWqitRuqewagfIxCcOYuvVQ7Mz811iSOSM+UNj6PtMnul/XYZiHQelDOPV+GH601D
+         3mmX+LstY2uy04ZRW7fgwCdyTZc3uu8xf6Dvz0jKc6xKqtvRXxL19Rec7fw7aCIv2G
+         FJLoQBi69//Nrng8UgKF6zHQEqdOCs81eOBHzCemqwHOwI/F1JDN3RMOL1eWzgaGO7
+         ds8lKDjlLZpJA==
+Date:   Wed, 10 Mar 2021 23:52:40 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-sgx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] x86/sgx: Add a basic NUMA allocation scheme to
- sgx_alloc_epc_page()
-Message-ID: <YEk+wpHbSrHBZeKn@kernel.org>
+Subject: Re: [PATCH v3 1/5] x86/sgx: Fix a resource leak in sgx_init()
+Message-ID: <YEk/qNwCkL63CYFy@kernel.org>
 References: <20210303150323.433207-1-jarkko@kernel.org>
- <20210303150323.433207-6-jarkko@kernel.org>
- <7621d89e-9347-d8a5-a8b0-a108990d0e6d@intel.com>
- <YEitzCiXd02/Pxy1@kernel.org>
- <c710eea8-a0ea-70b6-6521-0dd685adbb06@intel.com>
+ <20210303150323.433207-2-jarkko@kernel.org>
+ <57b33fb5-f961-5c81-72f1-ebf5e6af671c@intel.com>
+ <YEjfEzDfRdd0fK88@kernel.org>
+ <YEjqieABvycpGn0h@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c710eea8-a0ea-70b6-6521-0dd685adbb06@intel.com>
+In-Reply-To: <YEjqieABvycpGn0h@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 07:44:39AM -0800, Dave Hansen wrote:
-> >>> + * node.
-> >>> + */
-> >>> +static struct sgx_numa_node *sgx_numa_nodes;
-> >>> +
-> >>> +/*
-> >>> + * sgx_free_epc_page() uses this to find out the correct struct sgx_numa_node,
-> >>> + * to put the page in.
-> >>> + */
-> >>> +static int sgx_section_to_numa_node_id[SGX_MAX_EPC_SECTIONS];
-> >>
-> >> If this is per-section, why not put it in struct sgx_epc_section?
+On Wed, Mar 10, 2021 at 07:49:29AM -0800, Sean Christopherson wrote:
+> On Wed, Mar 10, 2021, Jarkko Sakkinen wrote:
+> > On Wed, Mar 03, 2021 at 08:56:52AM -0800, Dave Hansen wrote:
+> > > On 3/3/21 7:03 AM, Jarkko Sakkinen wrote:
+> > > > If sgx_page_cache_init() fails in the middle, a trivial return
+> > > > statement causes unused memory and virtual address space reserved for
+> > > > the EPC section, not freed. Fix this by using the same rollback, as
+> > > > when sgx_page_reclaimer_init() fails.
+> > > ...
+> > > > @@ -708,8 +708,10 @@ static int __init sgx_init(void)
+> > > >  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
+> > > >  		return -ENODEV;
+> > > >  
+> > > > -	if (!sgx_page_cache_init())
+> > > > -		return -ENOMEM;
+> > > > +	if (!sgx_page_cache_init()) {
+> > > > +		ret = -ENOMEM;
+> > > > +		goto err_page_cache;
+> > > > +	}
+> > > 
+> > > 
+> > > Currently, the only way sgx_page_cache_init() can fail is in the case
+> > > that there are no sections:
+> > > 
+> > >         if (!sgx_nr_epc_sections) {
+> > >                 pr_err("There are zero EPC sections.\n");
+> > >                 return false;
+> > >         }
+> > > 
+> > > That only happened if all sgx_setup_epc_section() calls failed.
+> > > sgx_setup_epc_section() never both allocates memory with vmalloc for
+> > > section->pages *and* fails.  If sgx_setup_epc_section() has a successful
+> > > memremap() but a failed vmalloc(), it cleans up with memunmap().
+> > > 
+> > > In other words, I see how this _looks_ like a memory leak from
+> > > sgx_init(), but I don't see an actual leak in practice.
+> > > 
+> > > Am I missing something?
 > > 
-> > Because struct sgx_epc_page does not contain a pointer to
-> > struct sgx_epc_section.
-> 
-> Currently, we have epc_page->section.  That's not changing.  But, with
-> the free list moving from sgx_epc_section to sgx_numa_node, we need a
-> way to get from page->node, not just page->section.
-> 
-> We can either add that to:
-> 
-> 	struct sgx_epc_section {
-> 		...
-> +		struct sgx_numa_node *node;
-> 	}
-> 
-> so we can do epc_page->section->node to find the epc_page's free list,
-> or we could just do:
-> 
->  struct sgx_epc_page {
-> - 	unsigned int section;
-> + 	unsigned int node;
->  	unsigned int flags;
->  	struct sgx_encl_page *owner;
->  	struct list_head list;
-> 	struct list_head numa_list;
->  };
-> 
-> and go from page->node directly.
-
-OK, I buy this, thanks.
-
-> >>>  	page = list_first_entry(&sgx_free_page_list, struct sgx_epc_page, list);
-> >>> +	list_del_init(&page->numa_list);
-> >>>  	list_del_init(&page->list);
-> >>>  	sgx_nr_free_pages--;
-> >>
-> >> I would much rather prefer that this does what the real page allocator
-> >> does: kep the page on a single list.  That list is maintained
-> >> per-NUMA-node.  Allocations try local NUMA node structures, then fall
-> >> back to other structures (hopefully in a locality-aware fashion).
-> >>
-> >> I wrote you the loop that I want to see this implement in an earlier
-> >> review.  This, basically:
-> >>
-> >> 	page = NULL;
-> >> 	nid = numa_node_id();
-> >> 	while (true) {
-> >> 		page = __sgx_alloc_epc_page_from_node(nid);	
-> >> 		if (page)
-> >> 			break;
-> >>
-> >> 		nid = // ... some search here, next_node_in()...
-> >> 		// check if we wrapped around:
-> >> 		if (nid == numa_node_id())
-> >> 			break;
-> >> 	}
-> >>
-> >> There's no global list.  You just walk around nodes trying to find one
-> >> with space.  If you wrap around, you stop.
-> >>
-> >> Please implement this.  If you think it's a bad idea, or can't, let's
-> >> talk about it in advance.  Right now, it appears that my review comments
-> >> aren't being incorporated into newer versions.
+> > In sgx_setup_epc_section():
 > > 
-> > How I interpreted your earlier comments is that the fallback is unfair and
-> > this patch set version does fix that. 
 > > 
-> > I can buy the above allocation scheme, but I don't think this patch set
-> > version is a step backwards. The things done to struct sgx_epc_section
-> > are exactly what should be done to it.
+> > 	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
+> > 	if (!section->pages) {
+> > 		memunmap(section->virt_addr);
+> > 		return false;
+> > 	}
+> > 
+> > I.e. this rollback does not happen without this fix applied:
+> > 
+> > 	for (i = 0; i < sgx_nr_epc_sections; i++) {
+> > 		vfree(sgx_epc_sections[i].pages);
+> > 		memunmap(sgx_epc_sections[i].virt_addr);
+> > 	}
 > 
-> To me, it's a step backwards.  It regresses in that it falls back to an
-> entirely non-NUMA aware allocation mechanism.  The global list is
-> actually likely to be even worse than the per-section searches because
-> it has a global lock as opposed to the at per-section locks.  It also
-> has the overhead of managing two lists instead of one.
+> Dave is pointing out that sgx_page_cache_init() fails if and only if _all_
+> sections fail sgx_setup_epc_section(), and if all sections fail then
+> sgx_nr_epc_sections is '0' and the above is a nop.
 > 
-> So, yes, it is *fair* in terms of NUMA node pressure.  But being fair in
-> a NUMA-aware allocator by simply not doing NUMA at all is a regression.
+> That behavior is by design, as we didn't want to kill SGX if a single section
+> failed to initialize for whatever reason.
 
-The code is structured now in a way that is trivial to remove the global
-list and move on to just node lists. I.e. nasty section lists have been
-wiped away. Refactoring global list out is a trivial step.  
+My bad. You're correct. I got mixed up by the rollback :-) Thanks!
 
-That way this is a step forwards, even if having a global list would
-be step backwards:-)
-
-> > Implementation-wise you are asking me to squash 4/5 and 5/5 into a single
-> > patch, and remove global list. It's a tiny iteration from this patch
-> > version and I can do it.
-> 
-> Sounds good.
-
-I'll dissolve your feedback and come with the new version, which I'll
-put out tomorrow.
-
-PS. If you don't here of me after you have given feedback to the next
-version, please ping privately. It looks like things are getting through
-again fast but better be sure than sorry...
+I'll just drop the whole patch.
 
 /Jarkko
