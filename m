@@ -4,108 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10158C433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D957DC433E0
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C428E64E38
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A214164F60
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231282AbhCJPBT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 10:01:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
+        id S231584AbhCJPMB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 10:12:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229602AbhCJPBA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Mar 2021 10:01:00 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 77B7764EFE;
-        Wed, 10 Mar 2021 15:00:59 +0000 (UTC)
+        id S232405AbhCJPLf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Mar 2021 10:11:35 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 79FB364F4C;
+        Wed, 10 Mar 2021 15:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615388460;
-        bh=1cf22zRqKYkUMXPfWyA63RDLMOreSLGYDa97S769FvY=;
+        s=k20201202; t=1615389095;
+        bh=GrnU7hctx6M3VdWoZiGqdmasQZGYP8izzqK/3P5/BYY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b1o0J0ci823rHynKGMs7SfrHjNj3bi0okmEbLl1j0NbMMAU1MUNOnXDhDp7/VrN+Y
-         Nr6giB/Qciu2OdoI5jzTtWiMfhm+okheWvW/TiUVGzXGmG4Qj4Qk+RsY3o1FhiIF6h
-         BjP97yq3Zx8G4uPk0leTAojOBDVFAlWQUXxRO1MkrFestMfiYYEntCyXMprt8wnNqO
-         uBj78/j6ezZBce3G1ZKetq9TPrE4J/+1k8PqQBUZLWcy4JOSH1g/jbyafMSIrGF8s6
-         ScPDmBCyLIQQfenFnjkP16oOQfhgSKqPH6Tq84v0LTsP8e7LS3YSXk2J/VzzvxEFGJ
-         c7gFjLl3/4Whg==
-Date:   Wed, 10 Mar 2021 17:00:35 +0200
+        b=kSQVsW7ohF2rlCLhswvfcBGIb8wDMAngSd4+oMyCLngilh5Mfddkh2PvC65FniR1P
+         YHNSUyllKFGbTdug0H0NcB5LmXhYW3YJhu/1MwDgaB850ho9Jjg33QrHMyknYuEjQW
+         6RkxoWpFc185+C5VpkVhcQnfX+Dms6GQKOftBenzeYxLlN95srjMlQop0GXzVNUnk2
+         SQC59UYLMZTfCg4YAyADctetIa9sHcIisk93RUtUWFAjrjlyhpvWtPsZEFuH4f6TI+
+         dSKbMQnvNvXee5KTerjyNWAQPFhd7F8pUuuj//cOOPXPYja6P8ncB7Gnyqy572t85U
+         +Vzcd5cS/KlEQ==
+Date:   Wed, 10 Mar 2021 17:11:10 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-sgx@vger.kernel.org, stable@vger.kernel.org,
+Cc:     linux-sgx@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] x86/sgx: Fix a resource leak in sgx_init()
-Message-ID: <YEjfEzDfRdd0fK88@kernel.org>
+Subject: Re: [PATCH v3 2/5] x86/sgx: Use sgx_free_epc_page() in
+ sgx_reclaim_pages()
+Message-ID: <YEjhjhBpYJ6i6EFD@kernel.org>
 References: <20210303150323.433207-1-jarkko@kernel.org>
- <20210303150323.433207-2-jarkko@kernel.org>
- <57b33fb5-f961-5c81-72f1-ebf5e6af671c@intel.com>
+ <20210303150323.433207-3-jarkko@kernel.org>
+ <b223ea92-8b20-def3-7bd0-2cc44474bd78@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57b33fb5-f961-5c81-72f1-ebf5e6af671c@intel.com>
+In-Reply-To: <b223ea92-8b20-def3-7bd0-2cc44474bd78@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 03, 2021 at 08:56:52AM -0800, Dave Hansen wrote:
+On Wed, Mar 03, 2021 at 08:59:17AM -0800, Dave Hansen wrote:
 > On 3/3/21 7:03 AM, Jarkko Sakkinen wrote:
-> > If sgx_page_cache_init() fails in the middle, a trivial return
-> > statement causes unused memory and virtual address space reserved for
-> > the EPC section, not freed. Fix this by using the same rollback, as
-> > when sgx_page_reclaimer_init() fails.
-> ...
-> > @@ -708,8 +708,10 @@ static int __init sgx_init(void)
-> >  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
-> >  		return -ENODEV;
+> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > index 52d070fb4c9a..ed99c60024dc 100644
+> > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > @@ -305,7 +305,6 @@ static void sgx_reclaim_pages(void)
+> >  {
+> >  	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
+> >  	struct sgx_backing backing[SGX_NR_TO_SCAN];
+> > -	struct sgx_epc_section *section;
+> >  	struct sgx_encl_page *encl_page;
+> >  	struct sgx_epc_page *epc_page;
+> >  	pgoff_t page_index;
+> > @@ -378,11 +377,7 @@ static void sgx_reclaim_pages(void)
+> >  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+> >  		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
 > >  
-> > -	if (!sgx_page_cache_init())
-> > -		return -ENOMEM;
-> > +	if (!sgx_page_cache_init()) {
-> > +		ret = -ENOMEM;
-> > +		goto err_page_cache;
-> > +	}
+> > -		section = &sgx_epc_sections[epc_page->section];
+> > -		spin_lock(&section->lock);
+> > -		list_add_tail(&epc_page->list, &section->page_list);
+> > -		section->free_cnt++;
+> > -		spin_unlock(&section->lock);
+> > +		sgx_free_epc_page(epc_page);
+> >  	}
+> >  }
 > 
-> 
-> Currently, the only way sgx_page_cache_init() can fail is in the case
-> that there are no sections:
-> 
->         if (!sgx_nr_epc_sections) {
->                 pr_err("There are zero EPC sections.\n");
->                 return false;
->         }
-> 
-> That only happened if all sgx_setup_epc_section() calls failed.
-> sgx_setup_epc_section() never both allocates memory with vmalloc for
-> section->pages *and* fails.  If sgx_setup_epc_section() has a successful
-> memremap() but a failed vmalloc(), it cleans up with memunmap().
-> 
-> In other words, I see how this _looks_ like a memory leak from
-> sgx_init(), but I don't see an actual leak in practice.
-> 
-> Am I missing something?
+> In current upstream (3fb6d0e00e), sgx_free_epc_page() calls __eremove().
+>  This code does not call __eremove().  That seems to be changing
+> behavior where none was intended.
 
-In sgx_setup_epc_section():
+EREMOVE does not matter here, as it doesn't in almost all most of the sites
+where sgx_free_epc_page() is used in the driver. It does nothing to an
+uninitialized pages.
 
+The two patches that I posted originally for Kai's series took EREMOVE out
+of sgx_free_epc_page() and put an explicit EREMOVE where it is actually
+needed, but for reasons unknown to me, that change is gone.
 
-	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
-	if (!section->pages) {
-		memunmap(section->virt_addr);
-		return false;
-	}
+Replacing the ad-hoc code with sgx_free_epc_page() is absolutely the right
+action to take because it follows the pattern how sgx_free_epc_page() is
+used in the driver.
 
-I.e. this rollback does not happen without this fix applied:
+For reference:
 
-	for (i = 0; i < sgx_nr_epc_sections; i++) {
-		vfree(sgx_epc_sections[i].pages);
-		memunmap(sgx_epc_sections[i].virt_addr);
-	}
+https://lore.kernel.org/linux-sgx/20210113233541.17669-1-jarkko@kernel.org/
+
+> Was this, perhaps, based on top of Kai's series that changes the
+> behavior of sgx_free_epc_page()?
+
+I did not refer to that patch series.
 
 /Jarkko
