@@ -6,110 +6,164 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A27E8C433E6
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B345CC433E6
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65D9364E33
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76A6D64FD6
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 21:49:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbhCJVkE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 16:40:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42384 "EHLO mail.kernel.org"
+        id S231935AbhCJVtQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 16:49:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229563AbhCJVjg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Mar 2021 16:39:36 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3D14864FC4;
-        Wed, 10 Mar 2021 21:39:35 +0000 (UTC)
+        id S232206AbhCJVtO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Mar 2021 16:49:14 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C825064FAB;
+        Wed, 10 Mar 2021 21:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615412375;
-        bh=UdFxVt64TzjKasA+NMSYVTgOVpISnwKFURrW8ppuVck=;
+        s=k20201202; t=1615412954;
+        bh=+oOFNv56O7sMY7qolB4gLqf1KbVTKbHQJ69T+KpnJ2A=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=El7iw81ezSJi4ARA7ejwk5ECH5c2j22Aay12Zi77N7B5T7/Fdw7c3wOJk35JlyBBW
-         H8WtGS3rFYrYVYZcXQBFzQXDoeYjMeQ0/ElxndxpDnp1HpkvBz4CVjJ5952mcg7tgn
-         LFZ9hXoZuTr4QdTJU7dhoKWkgOR2hOpRdFhAu/XGuywTu87XwgQhE7/37TEDLe92/Y
-         +W762Xh/CO/ZL4zcdqk7e6VMUgL2uy4RpzpNeeVfTVLHhuh5UcUUNTSH1RGuoyMweZ
-         sDCpsIkSFxOruGMEWq92/6GdUo/G748CQ/UqHa06QogWLJ/SqVhsm3M93XDkKmBOMJ
-         vODf01DZHbIog==
-Date:   Wed, 10 Mar 2021 23:39:11 +0200
+        b=ZLvuUQ+VxNtzXtc89ljBECwuc81VfHAHA8rI1rEkpff+j5Lh2nAl3YUvNMMJF+h1j
+         c34KzybBRtUBywyrFAU1zoimW8MV+mS1Y5SXSS7l5y5he3UokpYm6LpI2NhrKTaD9B
+         bIP1j5KU5103Rf5gxy62v9VxHH+IVSW4lyI4VbaHx/3tt+w2LufwFwLNomu0tXESO5
+         wpbLMZQqVZhZ0CDgEMOxXe/zNKXKvHJcLyylS4cypnPtnGlN2wEoKRGli5Vpo5kmFL
+         rj15DNdq1YnHBEwpPbAlcik68D+RnYURpExd9pKrY4ERqdV52KXNFTiIvfZjnNgiZr
+         TcidJ4eOx2wvA==
+Date:   Wed, 10 Mar 2021 23:48:50 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
- SGX_INVALID_SIGNATURE
-Message-ID: <YEk8f/29icpsUhas@kernel.org>
-References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
- <YDy51R2Wva7s+k/x@kernel.org>
- <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
- <CALCETrVn_inXAULfsPrCXeHUTBet+KnL1XsxuiaR+jgG1uTJNg@mail.gmail.com>
- <YD5B7P++T6jLoWBR@kernel.org>
- <1f5c2375-39e2-65a8-3ad3-8dc43422f568@linux.alibaba.com>
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] x86/sgx: Add a basic NUMA allocation scheme to
+ sgx_alloc_epc_page()
+Message-ID: <YEk+wpHbSrHBZeKn@kernel.org>
+References: <20210303150323.433207-1-jarkko@kernel.org>
+ <20210303150323.433207-6-jarkko@kernel.org>
+ <7621d89e-9347-d8a5-a8b0-a108990d0e6d@intel.com>
+ <YEitzCiXd02/Pxy1@kernel.org>
+ <c710eea8-a0ea-70b6-6521-0dd685adbb06@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1f5c2375-39e2-65a8-3ad3-8dc43422f568@linux.alibaba.com>
+In-Reply-To: <c710eea8-a0ea-70b6-6521-0dd685adbb06@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 08:44:44PM +0800, Jia Zhang wrote:
-> 
-> 
-> On 2021/3/2 下午9:47, Jarkko Sakkinen wrote:
-> > On Mon, Mar 01, 2021 at 09:54:37PM -0800, Andy Lutomirski wrote:
-> >> On Mon, Mar 1, 2021 at 9:06 PM Tianjia Zhang
-> >> <tianjia.zhang@linux.alibaba.com> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
-> >>>> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
-> >>>>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
-> >>>>
-> >>>> What does determine this?
-> >>>>
-> >>>>> In this case, the valid portion of q2 is reordered reversely for
-> >>>>> little endian order, and the remaining portion is filled with zero.
-> >>>>
-> >>>> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
-> >>>>
-> >>>> I'm lacking these details:
-> >>>>
-> >>>> 1. Why the length of Q2 can vary?
-> >>>> 2. Why reversing the bytes is the correct measure to counter-measure
-> >>>>     this variation?
-> >>>>
-> >>>> /Jarkko
-> >>>>
-> >>>
-> >>> When use openssl to generate a key instead of using the built-in
-> >>> sign_key.pem, there is a probability that will encounter this problem.
-> >>>
-> >>> Here is a problematic key I encountered. The calculated q1 and q2 of
-> >>> this key are both 383 bytes, If the length is not processed, the
-> >>> hardware signature will fail.
+On Wed, Mar 10, 2021 at 07:44:39AM -0800, Dave Hansen wrote:
+> >>> + * node.
+> >>> + */
+> >>> +static struct sgx_numa_node *sgx_numa_nodes;
+> >>> +
+> >>> +/*
+> >>> + * sgx_free_epc_page() uses this to find out the correct struct sgx_numa_node,
+> >>> + * to put the page in.
+> >>> + */
+> >>> +static int sgx_section_to_numa_node_id[SGX_MAX_EPC_SECTIONS];
 > >>
-> >> Presumably the issue is that some keys have parameters that have
-> >> enough leading 0 bits to be effectively shorter.  The openssl API
-> >> (and, sadly, a bunch  of the ASN.1 stuff) treats these parameters as
-> >> variable-size integers.
+> >> If this is per-section, why not put it in struct sgx_epc_section?
 > > 
-> > But the test uses a static key. It used to generate a key on fly but
+> > Because struct sgx_epc_page does not contain a pointer to
+> > struct sgx_epc_section.
 > 
-> IMO even though the test code, it comes from the linux kernel, meaning
-> that its quality has a certain guarantee and it is a good reference, so
-> the test code still needs to ensure its correctness.
+> Currently, we have epc_page->section.  That's not changing.  But, with
+> the free list moving from sgx_epc_section to sgx_numa_node, we need a
+> way to get from page->node, not just page->section.
+> 
+> We can either add that to:
+> 
+> 	struct sgx_epc_section {
+> 		...
+> +		struct sgx_numa_node *node;
+> 	}
+> 
+> so we can do epc_page->section->node to find the epc_page's free list,
+> or we could just do:
+> 
+>  struct sgx_epc_page {
+> - 	unsigned int section;
+> + 	unsigned int node;
+>  	unsigned int flags;
+>  	struct sgx_encl_page *owner;
+>  	struct list_head list;
+> 	struct list_head numa_list;
+>  };
+> 
+> and go from page->node directly.
 
-Hmm... what is working incorrectly then?
+OK, I buy this, thanks.
+
+> >>>  	page = list_first_entry(&sgx_free_page_list, struct sgx_epc_page, list);
+> >>> +	list_del_init(&page->numa_list);
+> >>>  	list_del_init(&page->list);
+> >>>  	sgx_nr_free_pages--;
+> >>
+> >> I would much rather prefer that this does what the real page allocator
+> >> does: kep the page on a single list.  That list is maintained
+> >> per-NUMA-node.  Allocations try local NUMA node structures, then fall
+> >> back to other structures (hopefully in a locality-aware fashion).
+> >>
+> >> I wrote you the loop that I want to see this implement in an earlier
+> >> review.  This, basically:
+> >>
+> >> 	page = NULL;
+> >> 	nid = numa_node_id();
+> >> 	while (true) {
+> >> 		page = __sgx_alloc_epc_page_from_node(nid);	
+> >> 		if (page)
+> >> 			break;
+> >>
+> >> 		nid = // ... some search here, next_node_in()...
+> >> 		// check if we wrapped around:
+> >> 		if (nid == numa_node_id())
+> >> 			break;
+> >> 	}
+> >>
+> >> There's no global list.  You just walk around nodes trying to find one
+> >> with space.  If you wrap around, you stop.
+> >>
+> >> Please implement this.  If you think it's a bad idea, or can't, let's
+> >> talk about it in advance.  Right now, it appears that my review comments
+> >> aren't being incorporated into newer versions.
+> > 
+> > How I interpreted your earlier comments is that the fallback is unfair and
+> > this patch set version does fix that. 
+> > 
+> > I can buy the above allocation scheme, but I don't think this patch set
+> > version is a step backwards. The things done to struct sgx_epc_section
+> > are exactly what should be done to it.
+> 
+> To me, it's a step backwards.  It regresses in that it falls back to an
+> entirely non-NUMA aware allocation mechanism.  The global list is
+> actually likely to be even worse than the per-section searches because
+> it has a global lock as opposed to the at per-section locks.  It also
+> has the overhead of managing two lists instead of one.
+> 
+> So, yes, it is *fair* in terms of NUMA node pressure.  But being fair in
+> a NUMA-aware allocator by simply not doing NUMA at all is a regression.
+
+The code is structured now in a way that is trivial to remove the global
+list and move on to just node lists. I.e. nasty section lists have been
+wiped away. Refactoring global list out is a trivial step.  
+
+That way this is a step forwards, even if having a global list would
+be step backwards:-)
+
+> > Implementation-wise you are asking me to squash 4/5 and 5/5 into a single
+> > patch, and remove global list. It's a tiny iteration from this patch
+> > version and I can do it.
+> 
+> Sounds good.
+
+I'll dissolve your feedback and come with the new version, which I'll
+put out tomorrow.
+
+PS. If you don't here of me after you have given feedback to the next
+version, please ping privately. It looks like things are getting through
+again fast but better be sure than sorry...
 
 /Jarkko
