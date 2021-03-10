@@ -2,141 +2,131 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11884C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A1FC433E0
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6C8B64FD4
-	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:50:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF0C64F4C
+	for <linux-sgx@archiver.kernel.org>; Wed, 10 Mar 2021 15:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbhCJPtx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 10:49:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233186AbhCJPth (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 10 Mar 2021 10:49:37 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EFF9C061762
-        for <linux-sgx@vger.kernel.org>; Wed, 10 Mar 2021 07:49:37 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id u18so8649411plc.12
-        for <linux-sgx@vger.kernel.org>; Wed, 10 Mar 2021 07:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rQ93tMEwr6U526k1fsxQ9/WZUiZ2ng9jqDwoo0eooT4=;
-        b=herUCoWwqCzMUdp2VEF/vl0v0bCdyOxs5i841tz1i82yeAqnIMGWUVavassvGe5JaS
-         q69Bx0+wVVYKr1Qt4ZY8s6Sraw6q4M1vVwJZpM0WRcFEshEASOv5Li9VRs/5pkoKM2we
-         l0sXIv3wjP1C/rr138wXDLkkVTOJkWWrBWjMCUCJDfDEtoGH9or1r4zUYikuYEousYLM
-         3IUnxhLrWe9GlVwRqCNzpZnbPv8fg5XBLOXrVWNfdwk8H4rEXW9/faUqrsvDLbwY5cds
-         IKGRDGXbELux+bFuzGj5iOU6OLLuALPGXOmyNb3BCAGV4ush+T35hFOnsAdNyyWR+Ohr
-         UJSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rQ93tMEwr6U526k1fsxQ9/WZUiZ2ng9jqDwoo0eooT4=;
-        b=Nb6d6TxN60/V0E7hw8eGhs+I9ElRDkOvMtpiQfGWLpp0kn7kuwYNxYyfAoA1kQNZbY
-         a2d00y0m0w/FFIq90lO5xQOgY9ePhCqgnJXlAdH3vlGhn9RA++S7nG6quKVi+QvC+Ceh
-         mbw5GGpi8AGPd1PQL9UhMCW4FKllVnZGgS81vTc8qdSETU7bv2v8b0HgLZnOxWucq4gI
-         ZtUr3SVDqPGnXdATc5dVq/blaFFT6XELklkSWzoWKACEGJgcHZMCWNMuTgVoR8qtAWC2
-         n9mOF97t9/9JRm8BzUemwEgUmHcK7O5DR2tBVAeOkG92DJHJjJQPQRf5dnOu/YpWkBPg
-         zxDA==
-X-Gm-Message-State: AOAM533xo+4hUpDwz9ilb1JnfjszGmEnMJHaVJ7KdCY7sSPF73FtaV6+
-        hi0Lroxw6reYOD559S+6WtZtBQ==
-X-Google-Smtp-Source: ABdhPJzZu6TIEnXdFU/SB8ODEVOTSc2aZia3Rsr9rUPRVgXCW9Nh7jwnYvZUVFJ68biB8WS/mXbITw==
-X-Received: by 2002:a17:902:7d8d:b029:e6:4061:b767 with SMTP id a13-20020a1709027d8db02900e64061b767mr3690837plm.32.1615391376577;
-        Wed, 10 Mar 2021 07:49:36 -0800 (PST)
-Received: from google.com ([2620:15c:f:10:e4dd:6c31:9463:f8da])
-        by smtp.gmail.com with ESMTPSA id y9sm18620pgc.9.2021.03.10.07.49.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 07:49:35 -0800 (PST)
-Date:   Wed, 10 Mar 2021 07:49:29 -0800
-From:   Sean Christopherson <seanjc@google.com>
+        id S232940AbhCJPzu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 10:55:50 -0500
+Received: from mga12.intel.com ([192.55.52.136]:31547 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229790AbhCJPzg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 10 Mar 2021 10:55:36 -0500
+IronPort-SDR: G4wowIapEP0reN+ThdPUhXx0BkRgykSgaa4LsHyw/YmfILUQpuUe1jMLDW01KtmltKR9STgpdm
+ HK9fNpgplfCQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9919"; a="167769240"
+X-IronPort-AV: E=Sophos;i="5.81,237,1610438400"; 
+   d="scan'208";a="167769240"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2021 07:55:36 -0800
+IronPort-SDR: prqA15s0rTEfiGDuHgh+fqsTp09XhcjS54WhF5ZUaqqkRmNkOlL08ydWfXbC335bQIBi51cWj5
+ Kk63cqENLULg==
+X-IronPort-AV: E=Sophos;i="5.81,237,1610438400"; 
+   d="scan'208";a="431260572"
+Received: from umalluga-mobl.amr.corp.intel.com (HELO [10.209.90.191]) ([10.209.90.191])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2021 07:55:35 -0800
+Subject: Re: [PATCH v3 2/5] x86/sgx: Use sgx_free_epc_page() in
+ sgx_reclaim_pages()
 To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] x86/sgx: Fix a resource leak in sgx_init()
-Message-ID: <YEjqieABvycpGn0h@google.com>
 References: <20210303150323.433207-1-jarkko@kernel.org>
- <20210303150323.433207-2-jarkko@kernel.org>
- <57b33fb5-f961-5c81-72f1-ebf5e6af671c@intel.com>
- <YEjfEzDfRdd0fK88@kernel.org>
+ <20210303150323.433207-3-jarkko@kernel.org>
+ <b223ea92-8b20-def3-7bd0-2cc44474bd78@intel.com>
+ <YEjhjhBpYJ6i6EFD@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b1b11501-805d-fcfd-4978-18d4b252510a@intel.com>
+Date:   Wed, 10 Mar 2021 07:55:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YEjfEzDfRdd0fK88@kernel.org>
+In-Reply-To: <YEjhjhBpYJ6i6EFD@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 10, 2021, Jarkko Sakkinen wrote:
-> On Wed, Mar 03, 2021 at 08:56:52AM -0800, Dave Hansen wrote:
-> > On 3/3/21 7:03 AM, Jarkko Sakkinen wrote:
-> > > If sgx_page_cache_init() fails in the middle, a trivial return
-> > > statement causes unused memory and virtual address space reserved for
-> > > the EPC section, not freed. Fix this by using the same rollback, as
-> > > when sgx_page_reclaimer_init() fails.
-> > ...
-> > > @@ -708,8 +708,10 @@ static int __init sgx_init(void)
-> > >  	if (!cpu_feature_enabled(X86_FEATURE_SGX))
-> > >  		return -ENODEV;
-> > >  
-> > > -	if (!sgx_page_cache_init())
-> > > -		return -ENOMEM;
-> > > +	if (!sgx_page_cache_init()) {
-> > > +		ret = -ENOMEM;
-> > > +		goto err_page_cache;
-> > > +	}
-> > 
-> > 
-> > Currently, the only way sgx_page_cache_init() can fail is in the case
-> > that there are no sections:
-> > 
-> >         if (!sgx_nr_epc_sections) {
-> >                 pr_err("There are zero EPC sections.\n");
-> >                 return false;
-> >         }
-> > 
-> > That only happened if all sgx_setup_epc_section() calls failed.
-> > sgx_setup_epc_section() never both allocates memory with vmalloc for
-> > section->pages *and* fails.  If sgx_setup_epc_section() has a successful
-> > memremap() but a failed vmalloc(), it cleans up with memunmap().
-> > 
-> > In other words, I see how this _looks_ like a memory leak from
-> > sgx_init(), but I don't see an actual leak in practice.
-> > 
-> > Am I missing something?
+On 3/10/21 7:11 AM, Jarkko Sakkinen wrote:
+>>> -		section = &sgx_epc_sections[epc_page->section];
+>>> -		spin_lock(&section->lock);
+>>> -		list_add_tail(&epc_page->list, &section->page_list);
+>>> -		section->free_cnt++;
+>>> -		spin_unlock(&section->lock);
+>>> +		sgx_free_epc_page(epc_page);
+>>>  	}
+>>>  }
+>> In current upstream (3fb6d0e00e), sgx_free_epc_page() calls __eremove().
+>>  This code does not call __eremove().  That seems to be changing
+>> behavior where none was intended.
+> EREMOVE does not matter here, as it doesn't in almost all most of the sites
+> where sgx_free_epc_page() is used in the driver. It does nothing to an
+> uninitialized pages.
 > 
-> In sgx_setup_epc_section():
+> The two patches that I posted originally for Kai's series took EREMOVE out
+> of sgx_free_epc_page() and put an explicit EREMOVE where it is actually
+> needed, but for reasons unknown to me, that change is gone.
 > 
-> 
-> 	section->pages = vmalloc(nr_pages * sizeof(struct sgx_epc_page));
-> 	if (!section->pages) {
-> 		memunmap(section->virt_addr);
-> 		return false;
-> 	}
-> 
-> I.e. this rollback does not happen without this fix applied:
-> 
-> 	for (i = 0; i < sgx_nr_epc_sections; i++) {
-> 		vfree(sgx_epc_sections[i].pages);
-> 		memunmap(sgx_epc_sections[i].virt_addr);
-> 	}
+> Replacing the ad-hoc code with sgx_free_epc_page() is absolutely the right
+> action to take because it follows the pattern how sgx_free_epc_page() is
+> used in the driver.
 
-Dave is pointing out that sgx_page_cache_init() fails if and only if _all_
-sections fail sgx_setup_epc_section(), and if all sections fail then
-sgx_nr_epc_sections is '0' and the above is a nop.
+That sounds generally fine.  But, this is a functional change.  Where
+there are functional changes, I always hope to see some mention of the
+change in the changelog.
 
-That behavior is by design, as we didn't want to kill SGX if a single section
-failed to initialize for whatever reason.
+Could you add some of this to the next changelog, please?
