@@ -2,78 +2,152 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B01F7C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Mar 2021 02:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC1FC433DB
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Mar 2021 02:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4984C64FAF
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Mar 2021 02:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A6E64FC0
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Mar 2021 02:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbhCKCGK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Mar 2021 21:06:10 -0500
-Received: from mga09.intel.com ([134.134.136.24]:11748 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229483AbhCKCFj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Mar 2021 21:05:39 -0500
-IronPort-SDR: PQzxYWTbtAXBscr0rfysBe4uRsrZfzcsHs4Uk6UH3YJHuj4RQEka0EGaeliwCl3tJSn14vhrTt
- VRormKLFx2zg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9919"; a="188697240"
-X-IronPort-AV: E=Sophos;i="5.81,238,1610438400"; 
-   d="scan'208";a="188697240"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2021 18:05:37 -0800
-IronPort-SDR: q48dR3kVgGtxcmi9QBxCY9R6f15dk8DY6svngvGn3PyQQE/VcdF1dMSRab+qtGj8dgDMcx1Nv9
- LPn2ICiqJqKw==
-X-IronPort-AV: E=Sophos;i="5.81,238,1610438400"; 
-   d="scan'208";a="603342257"
-Received: from xuhuiliu-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.31.67])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2021 18:05:32 -0800
-Date:   Thu, 11 Mar 2021 15:05:29 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
-        luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, jethro@fortanix.com,
-        b.thiel@posteo.de, jmattson@google.com, joro@8bytes.org,
-        vkuznets@redhat.com, wanpengli@tencent.com, corbet@lwn.net
-Subject: Re: [PATCH v2 00/25] KVM SGX virtualization support
-Message-Id: <20210311150529.4bf07611d074b654297cfd92@intel.com>
-In-Reply-To: <20210310132948.GE23521@zn.tnic>
-References: <cover.1615250634.git.kai.huang@intel.com>
-        <20210309093037.GA699@zn.tnic>
-        <76cb4216a7a689883c78b4622c86bd9c3faaa465.camel@intel.com>
-        <20210310132948.GE23521@zn.tnic>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S229546AbhCKCsd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 10 Mar 2021 21:48:33 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:34259 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229469AbhCKCry (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 10 Mar 2021 21:47:54 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0URMi9aJ_1615430870;
+Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0URMi9aJ_1615430870)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 11 Mar 2021 10:47:50 +0800
+Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
+ SGX_INVALID_SIGNATURE
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
+ <YDy51R2Wva7s+k/x@kernel.org>
+ <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
+ <CALCETrVn_inXAULfsPrCXeHUTBet+KnL1XsxuiaR+jgG1uTJNg@mail.gmail.com>
+ <YD5B7P++T6jLoWBR@kernel.org>
+ <1f5c2375-39e2-65a8-3ad3-8dc43422f568@linux.alibaba.com>
+ <YEk8f/29icpsUhas@kernel.org>
+From:   Jia Zhang <zhang.jia@linux.alibaba.com>
+Message-ID: <20ef1254-007d-04ce-8df5-5122ffd4d8d3@linux.alibaba.com>
+Date:   Thu, 11 Mar 2021 10:47:50 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:78.0)
+ Gecko/20100101 Thunderbird/78.8.0
+MIME-Version: 1.0
+In-Reply-To: <YEk8f/29icpsUhas@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 10 Mar 2021 14:29:48 +0100 Borislav Petkov wrote:
-> On Wed, Mar 10, 2021 at 10:27:05PM +1300, Kai Huang wrote:
-> > Sorry for the mistake. I will send out another version with that fixed.
+
+
+On 2021/3/11 上午5:39, Jarkko Sakkinen wrote:
+> On Wed, Mar 10, 2021 at 08:44:44PM +0800, Jia Zhang wrote:
+>>
+>>
+>> On 2021/3/2 下午9:47, Jarkko Sakkinen wrote:
+>>> On Mon, Mar 01, 2021 at 09:54:37PM -0800, Andy Lutomirski wrote:
+>>>> On Mon, Mar 1, 2021 at 9:06 PM Tianjia Zhang
+>>>> <tianjia.zhang@linux.alibaba.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
+>>>>>> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
+>>>>>>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
+>>>>>>
+>>>>>> What does determine this?
+>>>>>>
+>>>>>>> In this case, the valid portion of q2 is reordered reversely for
+>>>>>>> little endian order, and the remaining portion is filled with zero.
+>>>>>>
+>>>>>> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
+>>>>>>
+>>>>>> I'm lacking these details:
+>>>>>>
+>>>>>> 1. Why the length of Q2 can vary?
+>>>>>> 2. Why reversing the bytes is the correct measure to counter-measure
+>>>>>>     this variation?
+>>>>>>
+>>>>>> /Jarkko
+>>>>>>
+>>>>>
+>>>>> When use openssl to generate a key instead of using the built-in
+>>>>> sign_key.pem, there is a probability that will encounter this problem.
+>>>>>
+>>>>> Here is a problematic key I encountered. The calculated q1 and q2 of
+>>>>> this key are both 383 bytes, If the length is not processed, the
+>>>>> hardware signature will fail.
+>>>>
+>>>> Presumably the issue is that some keys have parameters that have
+>>>> enough leading 0 bits to be effectively shorter.  The openssl API
+>>>> (and, sadly, a bunch  of the ASN.1 stuff) treats these parameters as
+>>>> variable-size integers.
+>>>
+>>> But the test uses a static key. It used to generate a key on fly but
+>>
+>> IMO even though the test code, it comes from the linux kernel, meaning
+>> that its quality has a certain guarantee and it is a good reference, so
+>> the test code still needs to ensure its correctness.
 > 
-> If patch 3 is the only one which needs to change, you can send only that
-> one as a reply to the original patch 3 message...
+> Hmm... what is working incorrectly then?
+
+In current implementation, it is working well, after all the static key
+can derive the full 384-byte length of q1 and q2. As mentioned above, if
+someone refers to the design of signing tool from selftest code, it is
+quite possible that the actual implementation will use dynamical or
+external signing key deriving shorter q1 and/or q2 in length.
+
+Going back the technical background, I'm not a crypto expert, so I
+choose to check the code, doc and make experiment.
+
+Accorindg to intel sdm vol3 37.14:
+
+```
+SIGSTRUCT includes four 3072-bit integers (MODULUS, SIGNATURE, Q1, Q2).
+Each such integer is represented as a byte strings of length 384, with
+the most significant byte at the position “offset + 383”, and the least
+significant byte at position “offset”.
+
+...
+
+The 3072-bit integers Q1 and Q2 are defined by:
+q1 = floor(Signature^2 / Modulus);
+q2 = floor((Signature^3 - q1 * Signature * Modulus) / Modulus);
+```
+
+and the implementation of singing tool from Intel SGX SDK
+(https://github.com/intel/linux-sgx/blob/master/sdk/sign_tool/SignTool/sign_tool.cpp#L381
+), the most significant byte shuld be at the position “offset +
+q1/q2_actuall_len”, and the padding portion should be filled with zero,
+and don't involve the order reverse, but the selftest code always does.
+This is the root cause of SGX_INVALID_SIGNATURE.
+
+Just simplily enforce size_q1 and size_q2 to SE_KEY_SIZE, and generate
+randome siging key with `openssl genrsa -3 -out signing_key.pem 3072`,
+the SGX_INVALID_SIGNATURE error will appear up quickly.
+
+Jia
+
 > 
-> Thx.
-
-Hi Boris,
-
-Yes it is the only patch needs change. I have send out updated v3 patch 3.
-
-I provided some changelog history to explain and also added Jarkko's Acked-by in
-the new patch. Sorry for the trouble.
-
-Hi Sean,
-
-If you see this, could you take another check on whether this series is OK?
-
-Thanks in advance.
+> /Jarkko
+> 
