@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DBDC433E0
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Mar 2021 21:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3766CC433E0
+	for <linux-sgx@archiver.kernel.org>; Fri, 12 Mar 2021 21:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6335264F73
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Mar 2021 21:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A34264DFB
+	for <linux-sgx@archiver.kernel.org>; Fri, 12 Mar 2021 21:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235313AbhCLVpI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 12 Mar 2021 16:45:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
+        id S235409AbhCLV7A (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 12 Mar 2021 16:59:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235336AbhCLVpH (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 12 Mar 2021 16:45:07 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF23C061761
-        for <linux-sgx@vger.kernel.org>; Fri, 12 Mar 2021 13:45:06 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id b23so2746263pfo.8
-        for <linux-sgx@vger.kernel.org>; Fri, 12 Mar 2021 13:45:06 -0800 (PST)
+        with ESMTP id S235417AbhCLV6t (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 12 Mar 2021 16:58:49 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C494CC061574
+        for <linux-sgx@vger.kernel.org>; Fri, 12 Mar 2021 13:58:48 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id gb6so5803169pjb.0
+        for <linux-sgx@vger.kernel.org>; Fri, 12 Mar 2021 13:58:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=x7D4wx4txlNBgp7gkpJLfngOVwKdjZaDmVpicz7DAY4=;
-        b=pTf4mbw4jbXZjOuoMn+tuTw2O1Xj6MyUg3SqxwF+JQIgEmgVKFNOCGgWa1Dd4VCcb8
-         6BMMguTPhhRaFTFymZJX0yquozaGXf1z1uJYCse9BWNAanT+JBAxgK5n5wZS6Nua0woM
-         ylv9h5+iTKYi7PKfmQ6An+a7xYiI4XRFPACp5H5QQpFdLlbBuGbH6+ZFmc9ZNXRvabxj
-         XryOlDtxv0bQGACGkWfy33nZlkRY5zWpUEbjzDBP6/CrpuDlAC1kuNd+fh1GErieAZGm
-         mFZgG5FqNSLpqK9p5GgpSTiaTXYflbwB8YDPVYaClUXFs9tMHrGZ7AlKNb8EBei85cSx
-         5uow==
+        bh=4OFD8awhbCRVBvVU9tfirA58NlHooGhkMV6gA+cq84s=;
+        b=tDMJxJ5FrubHWo19Sz0IePFOH5w/q6dR0/vttN27lil10pm+qsTDmK6HgZ7IE/pWFQ
+         SVtvUn/DFot9H4uNZQc0/XT36tF3V4Y/LTsowBWud9C0+po1q0rzhjNts/UuxPq9545H
+         3DFdopnfFKvRyLblthSXmV6qnWT+i4x4kAQ3pdaE1TVAQvldKvkP2dSZAi4WuDB7gVt2
+         KPHHDOdF+OP4e3K9NegPDL29eJ0mVs2/iFaC+Ae6CluYLKKSUpzz31snkZDi2Rin9Fv5
+         xHg4gqLKxBcZGbKuGwuMoAN6TGb4tBC0UuQC610M4J2Eq6HMXvmUNQWKc9310/6ZO3Lq
+         RuOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=x7D4wx4txlNBgp7gkpJLfngOVwKdjZaDmVpicz7DAY4=;
-        b=J0mX881D4e0c+DE7+iDDl3DG71c9gH61vnMH3/8sYSzvvkC+3w+DZDFfH5KWE9K3CY
-         Zsiymqf3a/NnxuentLcvEYEP5u6c7YbwBX3LrYOxrmVzw/yqm4pf9Gi3HvAPNOOG8x1J
-         l/jdawktYJ/xZkRwu2WjmhOB7bVa42RJypWdcF83+QoBYQDf8quv6OcYMcobEXW6P62w
-         WNfV8J258vrBIdvCotQH1YoVwNa8Fm86qtVbacP7s47OX3TpSoxyIfoJ3yoDAb0xzMcb
-         vPQsGyaM00x1r1k1MF8LtKIZgdHJZov5kB+Icpxbk+hAPvuZX8kJye0OuXo1HZylJPuD
-         +Wdg==
-X-Gm-Message-State: AOAM532cszmF4M9LFKhXiz1o13LgKNmF/dG/WNhpy/t4xmtnyT4V4yBf
-        5257dxot4tbXWK9Ayyh5Oo2N+g==
-X-Google-Smtp-Source: ABdhPJxnN/QGTf+wnEPW4XpmbpqhI2bE/23csUm9gWJ18Ute1hlfIiSxwTfb/12TMRKVrMDgCRq0cg==
-X-Received: by 2002:aa7:92d9:0:b029:1bb:b6de:c872 with SMTP id k25-20020aa792d90000b02901bbb6dec872mr177679pfa.68.1615585506293;
-        Fri, 12 Mar 2021 13:45:06 -0800 (PST)
+        bh=4OFD8awhbCRVBvVU9tfirA58NlHooGhkMV6gA+cq84s=;
+        b=hcNhXCAITBUoVEjlXUthWFdCYbqHP/qlhCs77HTmI2AN9utBoZf4tB6FcsVD+Dtf26
+         QnN1ak21MChbjrJ44EcPvQ4ksLUpVo5fKuK8pUGZTugDyHpYmIWqUpil8AB3fw8aQ/bv
+         lQKME47auI9hPo0iCkRz0whmWNTRDgGQzGuugnoqR2UTPBuZWAKsyOJWqJY5LIxyhG2N
+         Xwz1Eu2+FAWkMpg4hEpmRDQBreaal9tycYAOtRuiDfHjJx0dmdWymkzoMuvX8JEBsnZ5
+         z46dUuiRq6rBzLZCprdNJb0dLk0DUuqmU0KUk20RWchhGLIsxRelS8VY1TFzLkBKdZ3K
+         jQCw==
+X-Gm-Message-State: AOAM532y+gNvPsC942aUgXHT6sJKDeTlmlJ8Y19G7oUIUrKBfOzCzH5c
+        ARPXiMpbcGMvoQUaVIdfZkl9Tg==
+X-Google-Smtp-Source: ABdhPJzGp7R9OzNgnOWxM+HqJ9PI2076zNWqVW9t/2x1zcXK8tqTZxAJLrk8vfyoxVmx+X/WqMkFFw==
+X-Received: by 2002:a17:90a:fd0b:: with SMTP id cv11mr332099pjb.183.1615586328229;
+        Fri, 12 Mar 2021 13:58:48 -0800 (PST)
 Received: from google.com ([2620:15c:f:10:e1a6:2eeb:4e45:756])
-        by smtp.gmail.com with ESMTPSA id x7sm3003749pjr.7.2021.03.12.13.45.04
+        by smtp.gmail.com with ESMTPSA id w2sm6540983pgh.54.2021.03.12.13.58.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 13:45:05 -0800 (PST)
-Date:   Fri, 12 Mar 2021 13:44:58 -0800
+        Fri, 12 Mar 2021 13:58:47 -0800 (PST)
+Date:   Fri, 12 Mar 2021 13:58:40 -0800
 From:   Sean Christopherson <seanjc@google.com>
 To:     Kai Huang <kai.huang@intel.com>
 Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
@@ -64,58 +64,85 @@ Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v2 07/25] x86/sgx: Initialize virtual EPC driver even
- when SGX driver is disabled
-Message-ID: <YEvg2vNfiDYoc9u3@google.com>
+Subject: Re: [PATCH v2 08/25] x86/sgx: Expose SGX architectural definitions
+ to the kernel
+Message-ID: <YEvkEJkM0D7oZWE3@google.com>
 References: <cover.1615250634.git.kai.huang@intel.com>
- <d2ebcffeb9193d26a1305e08fe1aa1347feb1c62.1615250634.git.kai.huang@intel.com>
+ <b60e1d665c17ed6430166d659bd0f547a53aea0f.1615250634.git.kai.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d2ebcffeb9193d26a1305e08fe1aa1347feb1c62.1615250634.git.kai.huang@intel.com>
+In-Reply-To: <b60e1d665c17ed6430166d659bd0f547a53aea0f.1615250634.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Tue, Mar 09, 2021, Kai Huang wrote:
-> Modify sgx_init() to always try to initialize the virtual EPC driver,
-> even if the SGX driver is disabled.  The SGX driver might be disabled
-> if SGX Launch Control is in locked mode, or not supported in the
-> hardware at all.  This allows (non-Linux) guests that support non-LC
-> configurations to use SGX.
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
+> Expose SGX architectural structures, as KVM will use many of the
+> architectural constants and structs to virtualize SGX.
+> 
+> Name the new header file as asm/sgx.h, rather than asm/sgx_arch.h, to
+> have single header to provide SGX facilities to share with other kernel
+> componments.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Kai Huang <kai.huang@intel.com>
 > Acked-by: Dave Hansen <dave.hansen@intel.com>
+
+Same checkpatch warning.  Probably doesn't matter.
+
 > Signed-off-by: Kai Huang <kai.huang@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/main.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  .../cpu/sgx/arch.h => include/asm/sgx.h}      | 20 ++++++++++++++-----
+>  arch/x86/kernel/cpu/sgx/encl.c                |  2 +-
+>  arch/x86/kernel/cpu/sgx/sgx.h                 |  2 +-
+>  tools/testing/selftests/sgx/defines.h         |  2 +-
+>  4 files changed, 18 insertions(+), 8 deletions(-)
+>  rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx.h} (95%)
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 44fe91a5bfb3..8c922e68274d 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -712,7 +712,15 @@ static int __init sgx_init(void)
->  		goto err_page_cache;
->  	}
+> diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/include/asm/sgx.h
+> similarity index 95%
+> rename from arch/x86/kernel/cpu/sgx/arch.h
+> rename to arch/x86/include/asm/sgx.h
+> index abf99bb71fdc..d4ad35f6319a 100644
+> --- a/arch/x86/kernel/cpu/sgx/arch.h
+> +++ b/arch/x86/include/asm/sgx.h
+> @@ -2,15 +2,20 @@
+>  /**
+>   * Copyright(c) 2016-20 Intel Corporation.
+>   *
+> - * Contains data structures defined by the SGX architecture.  Data structures
+> - * defined by the Linux software stack should not be placed here.
+> + * Intel Software Guard Extensions (SGX) support.
+>   */
+> -#ifndef _ASM_X86_SGX_ARCH_H
+> -#define _ASM_X86_SGX_ARCH_H
+> +#ifndef _ASM_X86_SGX_H
+> +#define _ASM_X86_SGX_H
 >  
-> -	ret = sgx_drv_init();
-> +	/*
-> +	 * Always try to initialize the native *and* KVM drivers.
-> +	 * The KVM driver is less picky than the native one and
-> +	 * can function if the native one is not supported on the
-> +	 * current system or fails to initialize.
-> +	 *
-> +	 * Error out only if both fail to initialize.
-> +	 */
-> +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-
-I love this code.
-
-Reviewed-by: Sean Christopherson <seanjc@google.com>
-
->  	if (ret)
->  		goto err_kthread;
+>  #include <linux/bits.h>
+>  #include <linux/types.h>
 >  
-> -- 
-> 2.29.2
-> 
+> +/*
+> + * This file contains both data structures defined by SGX architecture and Linux
+> + * defined software data structures and functions.  The two should not be mixed
+> + * together for better readibility.  The architectural definitions come first.
+> + */
+> +
+>  /* The SGX specific CPUID function. */
+>  #define SGX_CPUID		0x12
+>  /* EPC enumeration. */
+> @@ -337,4 +342,9 @@ struct sgx_sigstruct {
+>  
+>  #define SGX_LAUNCH_TOKEN_SIZE 304
+>  
+> -#endif /* _ASM_X86_SGX_ARCH_H */
+> +/*
+> + * Do not put any hardware-defined SGX structure representations below this
+> + * line!
+
+Heh, which line?  Yep, it's Friday afternoon...
+
+> + */
