@@ -2,32 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CFBC433E6
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Mar 2021 05:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE1BC433E9
+	for <linux-sgx@archiver.kernel.org>; Fri, 12 Mar 2021 16:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3E464F9F
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Mar 2021 05:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC60B6502F
+	for <linux-sgx@archiver.kernel.org>; Fri, 12 Mar 2021 16:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbhCKF4X (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 11 Mar 2021 00:56:23 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:29126 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229637AbhCKFzx (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 11 Mar 2021 00:55:53 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0URPRUq5_1615442150;
-Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0URPRUq5_1615442150)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 11 Mar 2021 13:55:51 +0800
-Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
- SGX_INVALID_SIGNATURE
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        id S232577AbhCLQx7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 12 Mar 2021 11:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232283AbhCLQxb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 12 Mar 2021 11:53:31 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C58E764FD9;
+        Fri, 12 Mar 2021 16:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615568011;
+        bh=aF/mMRBTJBBXplInmQ4Ie8yBGvNGzPk48GM4ArjgNIE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q3JXi+S0hFtM7MxJAZcxykl+OYDBOkih6O6UNKQGYBMLG+PAiy2VR2W9zXtkpEYKk
+         V8fftnIRLe65q1nHXjfuYR77hVjdPJ5LEMzH6nYNY0szn8mWyK+Yc4LeGJEkY1Igla
+         nDw0M+TJSTqdj76HRi4mcpWJsutWWz6BMlVLvx47h2E3yOH41kKXa/XtQOYhX4r3V0
+         tdwR02tvj109O1T6FwoJE7EZLIFlegiMwY9PC0xI13FDMWyAdZaUugZNFStpVQ1xa9
+         nqXM5QuRmRuNqjDLqMs87v4NQcw0untqVeetygnm6pwYoyVmbxQ9KR920fw+EkmzZ5
+         2FJC+04lDPyzw==
+Date:   Fri, 12 Mar 2021 18:53:06 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Jia Zhang <zhang.jia@linux.alibaba.com>,
+        Andy Lutomirski <luto@amacapital.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -37,6 +44,9 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests/sgx: fix EINIT failure dueto
+ SGX_INVALID_SIGNATURE
+Message-ID: <YEuccsOIBlACqG6A@kernel.org>
 References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
  <YDy51R2Wva7s+k/x@kernel.org>
  <3bcdcf04-4bed-ed95-84b6-790675f18240@linux.alibaba.com>
@@ -46,128 +56,87 @@ References: <20210301051836.30738-1-tianjia.zhang@linux.alibaba.com>
  <YEk8f/29icpsUhas@kernel.org>
  <20ef1254-007d-04ce-8df5-5122ffd4d8d3@linux.alibaba.com>
  <YEmRlQ8vL2inziEK@kernel.org>
-From:   Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <1c1c5b03-883d-8d37-aed1-cdad230d87e4@linux.alibaba.com>
-Date:   Thu, 11 Mar 2021 13:55:50 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.0
+ <710b65d6-e492-ae24-f2af-6973e1df1b85@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <YEmRlQ8vL2inziEK@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <710b65d6-e492-ae24-f2af-6973e1df1b85@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-
-
-On 2021/3/11 上午11:42, Jarkko Sakkinen wrote:
-> On Thu, Mar 11, 2021 at 10:47:50AM +0800, Jia Zhang wrote:
->>
->>
->> On 2021/3/11 上午5:39, Jarkko Sakkinen wrote:
->>> On Wed, Mar 10, 2021 at 08:44:44PM +0800, Jia Zhang wrote:
->>>>
->>>>
->>>> On 2021/3/2 下午9:47, Jarkko Sakkinen wrote:
->>>>> On Mon, Mar 01, 2021 at 09:54:37PM -0800, Andy Lutomirski wrote:
->>>>>> On Mon, Mar 1, 2021 at 9:06 PM Tianjia Zhang
->>>>>> <tianjia.zhang@linux.alibaba.com> wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
->>>>>>>> On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
->>>>>>>>> q2 is not always 384-byte length. Sometimes it only has 383-byte.
->>>>>>>>
->>>>>>>> What does determine this?
->>>>>>>>
->>>>>>>>> In this case, the valid portion of q2 is reordered reversely for
->>>>>>>>> little endian order, and the remaining portion is filled with zero.
->>>>>>>>
->>>>>>>> I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
->>>>>>>>
->>>>>>>> I'm lacking these details:
->>>>>>>>
->>>>>>>> 1. Why the length of Q2 can vary?
->>>>>>>> 2. Why reversing the bytes is the correct measure to counter-measure
->>>>>>>>     this variation?
->>>>>>>>
->>>>>>>> /Jarkko
->>>>>>>>
->>>>>>>
->>>>>>> When use openssl to generate a key instead of using the built-in
->>>>>>> sign_key.pem, there is a probability that will encounter this problem.
->>>>>>>
->>>>>>> Here is a problematic key I encountered. The calculated q1 and q2 of
->>>>>>> this key are both 383 bytes, If the length is not processed, the
->>>>>>> hardware signature will fail.
->>>>>>
->>>>>> Presumably the issue is that some keys have parameters that have
->>>>>> enough leading 0 bits to be effectively shorter.  The openssl API
->>>>>> (and, sadly, a bunch  of the ASN.1 stuff) treats these parameters as
->>>>>> variable-size integers.
->>>>>
->>>>> But the test uses a static key. It used to generate a key on fly but
->>>>
->>>> IMO even though the test code, it comes from the linux kernel, meaning
->>>> that its quality has a certain guarantee and it is a good reference, so
->>>> the test code still needs to ensure its correctness.
->>>
->>> Hmm... what is working incorrectly then?
->>
->> In current implementation, it is working well, after all the static key
->> can derive the full 384-byte length of q1 and q2. As mentioned above, if
->> someone refers to the design of signing tool from selftest code, it is
->> quite possible that the actual implementation will use dynamical or
->> external signing key deriving shorter q1 and/or q2 in length.
+On Thu, Mar 11, 2021 at 12:53:49PM +0800, Tianjia Zhang wrote:
 > 
-> A self-test needs is not meant to be generic to be directly used in 3rd
-> party code. With the current key there is not issue => there is no issue.
-
-Alright. So what we should do is to add a comment to explain why the
-selfcode does something wrong and essentially it is intended.
-
-Jia
-
 > 
->>
->> Going back the technical background, I'm not a crypto expert, so I
->> choose to check the code, doc and make experiment.
->>
->> Accorindg to intel sdm vol3 37.14:
->>
->> ```
->> SIGSTRUCT includes four 3072-bit integers (MODULUS, SIGNATURE, Q1, Q2).
->> Each such integer is represented as a byte strings of length 384, with
->> the most significant byte at the position “offset + 383”, and the least
->> significant byte at position “offset”.
->>
->> ...
->>
->> The 3072-bit integers Q1 and Q2 are defined by:
->> q1 = floor(Signature^2 / Modulus);
->> q2 = floor((Signature^3 - q1 * Signature * Modulus) / Modulus);
->> ```
->>
->> and the implementation of singing tool from Intel SGX SDK
->> (https://github.com/intel/linux-sgx/blob/master/sdk/sign_tool/SignTool/sign_tool.cpp#L381
->> ), the most significant byte shuld be at the position “offset +
->> q1/q2_actuall_len”, and the padding portion should be filled with zero,
->> and don't involve the order reverse, but the selftest code always does.
->> This is the root cause of SGX_INVALID_SIGNATURE.
->>
->> Just simplily enforce size_q1 and size_q2 to SE_KEY_SIZE, and generate
->> randome siging key with `openssl genrsa -3 -out signing_key.pem 3072`,
->> the SGX_INVALID_SIGNATURE error will appear up quickly.
->>
->> Jia
->>
->>>
->>> /Jarkko
->>>
->>
+> On 3/11/21 11:42 AM, Jarkko Sakkinen wrote:
+> > On Thu, Mar 11, 2021 at 10:47:50AM +0800, Jia Zhang wrote:
+> > > 
+> > > 
+> > > On 2021/3/11 上午5:39, Jarkko Sakkinen wrote:
+> > > > On Wed, Mar 10, 2021 at 08:44:44PM +0800, Jia Zhang wrote:
+> > > > > 
+> > > > > 
+> > > > > On 2021/3/2 下午9:47, Jarkko Sakkinen wrote:
+> > > > > > On Mon, Mar 01, 2021 at 09:54:37PM -0800, Andy Lutomirski wrote:
+> > > > > > > On Mon, Mar 1, 2021 at 9:06 PM Tianjia Zhang
+> > > > > > > <tianjia.zhang@linux.alibaba.com> wrote:
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > On 3/1/21 5:54 PM, Jarkko Sakkinen wrote:
+> > > > > > > > > On Mon, Mar 01, 2021 at 01:18:36PM +0800, Tianjia Zhang wrote:
+> > > > > > > > > > q2 is not always 384-byte length. Sometimes it only has 383-byte.
+> > > > > > > > > 
+> > > > > > > > > What does determine this?
+> > > > > > > > > 
+> > > > > > > > > > In this case, the valid portion of q2 is reordered reversely for
+> > > > > > > > > > little endian order, and the remaining portion is filled with zero.
+> > > > > > > > > 
+> > > > > > > > > I'm presuming that you want to say "In this case, q2 needs to be reversed because...".
+> > > > > > > > > 
+> > > > > > > > > I'm lacking these details:
+> > > > > > > > > 
+> > > > > > > > > 1. Why the length of Q2 can vary?
+> > > > > > > > > 2. Why reversing the bytes is the correct measure to counter-measure
+> > > > > > > > >      this variation?
+> > > > > > > > > 
+> > > > > > > > > /Jarkko
+> > > > > > > > > 
+> > > > > > > > 
+> > > > > > > > When use openssl to generate a key instead of using the built-in
+> > > > > > > > sign_key.pem, there is a probability that will encounter this problem.
+> > > > > > > > 
+> > > > > > > > Here is a problematic key I encountered. The calculated q1 and q2 of
+> > > > > > > > this key are both 383 bytes, If the length is not processed, the
+> > > > > > > > hardware signature will fail.
+> > > > > > > 
+> > > > > > > Presumably the issue is that some keys have parameters that have
+> > > > > > > enough leading 0 bits to be effectively shorter.  The openssl API
+> > > > > > > (and, sadly, a bunch  of the ASN.1 stuff) treats these parameters as
+> > > > > > > variable-size integers.
+> > > > > > 
+> > > > > > But the test uses a static key. It used to generate a key on fly but
+> > > > > 
+> > > > > IMO even though the test code, it comes from the linux kernel, meaning
+> > > > > that its quality has a certain guarantee and it is a good reference, so
+> > > > > the test code still needs to ensure its correctness.
+> > > > 
+> > > > Hmm... what is working incorrectly then?
+> > > 
+> > > In current implementation, it is working well, after all the static key
+> > > can derive the full 384-byte length of q1 and q2. As mentioned above, if
+> > > someone refers to the design of signing tool from selftest code, it is
+> > > quite possible that the actual implementation will use dynamical or
+> > > external signing key deriving shorter q1 and/or q2 in length.
+> > 
+> > A self-test needs is not meant to be generic to be directly used in 3rd
+> > party code. With the current key there is not issue => there is no issue.
+> > 
 > 
-> /Jarkko
-> 
+> For keys generated on fly, self-test does not work properly, this experience
+> is really worse.
+
+It does not generate keys on fly. There's a static key.
+
+/Jarkko
