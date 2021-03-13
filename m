@@ -2,94 +2,95 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61B5C433E0
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Mar 2021 10:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595B6C433E6
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Mar 2021 16:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA45B64F1B
-	for <linux-sgx@archiver.kernel.org>; Sat, 13 Mar 2021 10:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163AE64F21
+	for <linux-sgx@archiver.kernel.org>; Sat, 13 Mar 2021 16:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233389AbhCMKqa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 13 Mar 2021 05:46:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42030 "EHLO mail.kernel.org"
+        id S233570AbhCMQCD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 13 Mar 2021 11:02:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233761AbhCMKqT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 13 Mar 2021 05:46:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 88D6464F1C;
-        Sat, 13 Mar 2021 10:46:18 +0000 (UTC)
+        id S233868AbhCMQBu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sat, 13 Mar 2021 11:01:50 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B59264F1E;
+        Sat, 13 Mar 2021 16:01:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615632379;
-        bh=qAaJYRNOuNIk1PDV0g7I91KX2FFogaJhE/pcVuFhjKk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FOean60Xw4PRLx+aSGJgUzFjL/7NZKisHmr5TiQ7H07Y3VmAINhrFg9yWpEkaMkwD
-         ymCqO1ZtITZqtjKrtB4Ro/EoeVf3Mw5g6UGKncF5FKI3Nw/vQYQPKutm/0H7EMFMs2
-         Ul6ncBkdQ57FuFmkVfpXs7FmRR7nJO2w4kmWBuz1SNMNt3HMvzzNjeAH95ayD5BPLA
-         wNQFCGJ653edFu7YYKnVZtpp4SxlT2liIx14kTNUgohQSkWgflPpaqyMdBZm0wXg8o
-         92OR9b/J2kUaKEmGGAxQ67dsxuVGbVSMwEU5zFyH045EV9pQaLFTq/KQgB6PkjIjZ0
-         qM8ucwdbXCsQA==
-Date:   Sat, 13 Mar 2021 12:45:53 +0200
+        s=k20201202; t=1615651310;
+        bh=HuaFV7Aup5s4tI28aR1o2B7ZXch9cKa+janu7Y/uWDY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=en7Bcj1pJwbSqsmCJ3hY0FkQ2tA65N1v8h+pQqIOAMKD9CMHRLbQSmwYKoQrJ1jUN
+         31Y+f9I9Y0cML9AR0oOayF1C6ZViKrjIdm+3Rr3lN8qLuC02UoZ8/J1B1M5aDpMkyn
+         Q3jfqUq9u8GoMPpesYwT3B++ReS2f2dgmKLb1+ZUhLwde+ItegYIxTvYK+u22Q0sHv
+         7oit2HVyPrJDRFw+4UBGXObbAOcqIbub511CUYCOPYG64MNnWw6WR6Z+nT7PRYEd0L
+         4qPKSFbwvENY9uuFOCtH8Y7ccPLRJQTN+cF/17NyiH2yChUOpoIRQo+hoamUx/YAqn
+         y32Rv0nQ7DFfg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v3 03/25] x86/sgx: Wipe out EREMOVE from
- sgx_free_epc_page()
-Message-ID: <YEyX4V7BcS3MZNzp@kernel.org>
-References: <e1ca4131bc9f98cf50a1200efcf46080d6512fe7.1615250634.git.kai.huang@intel.com>
- <20210311020142.125722-1-kai.huang@intel.com>
- <YEvbcrTZyiUAxZAu@google.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/3] x86/sgx: Use sgx_free_epc_page() in sgx_reclaim_pages()
+Date:   Sat, 13 Mar 2021 18:01:17 +0200
+Message-Id: <20210313160119.1318533-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210313160119.1318533-1-jarkko@kernel.org>
+References: <20210313160119.1318533-1-jarkko@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YEvbcrTZyiUAxZAu@google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 12, 2021 at 01:21:54PM -0800, Sean Christopherson wrote:
-> On Thu, Mar 11, 2021, Kai Huang wrote:
-> > From: Jarkko Sakkinen <jarkko@kernel.org>
-> > 
-> > EREMOVE takes a page and removes any association between that page and
-> > an enclave.  It must be run on a page before it can be added into
-> > another enclave.  Currently, EREMOVE is run as part of pages being freed
-> > into the SGX page allocator.  It is not expected to fail.
-> > 
-> > KVM does not track how guest pages are used, which means that SGX
-> > virtualization use of EREMOVE might fail.
-> > 
-> > Break out the EREMOVE call from the SGX page allocator.  This will allow
-> > the SGX virtualization code to use the allocator directly.  (SGX/KVM
-> > will also introduce a more permissive EREMOVE helper).
-> > 
-> > Implement original sgx_free_epc_page() as sgx_encl_free_epc_page() to be
-> > more specific that it is used to free EPC page assigned to one enclave.
-> > Print an error message when EREMOVE fails to explicitly call out EPC
-> > page is leaked, and requires machine reboot to get leaked pages back.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > Co-developed-by: Kai Huang <kai.huang@intel.com>
-> > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> > v2->v3:
-> > 
-> >  - Fixed bug during copy/paste which results in SECS page and va pages are not
-> >    correctly freed in sgx_encl_release() (sorry for the mistake).
-> >  - Added Jarkko's Acked-by.
-> 
-> That Acked-by should either be dropped or moved above Co-developed-by to make
-> checkpatch happy.
-> 
-> Reviewed-by: Sean Christopherson <seanjc@google.com>
+Replace the ad-hoc code with a sgx_free_epc_page(), in order to make sure
+that all the relevant checks and book keeping is done, while freeing a
+borrowed EPC page, and remove redundant code. EREMOVE inside
+sgx_free_epc_page() does not change the semantics, as EREMOVE to an
+uninitialize pages is a nop.
 
-Oops, my bad. Yup, ack should be removed.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
 
-/Jarkko
+v4:
+* Rewrote the commit message.
+
+ arch/x86/kernel/cpu/sgx/main.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8df81a3ed945..65004fb8a91f 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -305,7 +305,6 @@ static void sgx_reclaim_pages(void)
+ {
+ 	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
+ 	struct sgx_backing backing[SGX_NR_TO_SCAN];
+-	struct sgx_epc_section *section;
+ 	struct sgx_encl_page *encl_page;
+ 	struct sgx_epc_page *epc_page;
+ 	pgoff_t page_index;
+@@ -378,11 +377,7 @@ static void sgx_reclaim_pages(void)
+ 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+ 		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+ 
+-		section = &sgx_epc_sections[epc_page->section];
+-		spin_lock(&section->lock);
+-		list_add_tail(&epc_page->list, &section->page_list);
+-		section->free_cnt++;
+-		spin_unlock(&section->lock);
++		sgx_free_epc_page(epc_page);
+ 	}
+ }
+ 
+-- 
+2.30.2
+
