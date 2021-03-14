@@ -2,115 +2,388 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D968CC433E0
-	for <linux-sgx@archiver.kernel.org>; Sun, 14 Mar 2021 11:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2ADC433E0
+	for <linux-sgx@archiver.kernel.org>; Sun, 14 Mar 2021 11:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1DF64EB7
-	for <linux-sgx@archiver.kernel.org>; Sun, 14 Mar 2021 11:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0375464EC0
+	for <linux-sgx@archiver.kernel.org>; Sun, 14 Mar 2021 11:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235250AbhCNLQz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 14 Mar 2021 07:16:55 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37806 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235115AbhCNLQ0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 14 Mar 2021 07:16:26 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0URqdWtn_1615720581;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0URqdWtn_1615720581)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 14 Mar 2021 19:16:22 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S235100AbhCNL5t (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 14 Mar 2021 07:57:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234904AbhCNL5Z (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 14 Mar 2021 07:57:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 324DF64EBE;
+        Sun, 14 Mar 2021 11:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615723044;
+        bh=t/BNalSuzRKSzSA72RQli7xkdl80DqHHcPCdt2tmIQ0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gYMn9NXmVzfllukrCnMGQHyFa16uphV1nT4GGsfIKYBSENnUjnShvJZTS7fekzKIy
+         8sVZI3/uBC9/yv1PennV99gMOPddcMrFnil3LvOEnRckEb2TUE0UHnWUKrQv87AR8c
+         YLIjnYfobiGmSXh3LJp3cchOe/c/OgDehdcDpaUYEVXVIhbgXr30bCyR5S91vzQjEm
+         3CYPDIpGRgdZQdYrPiVcQnHXZPAUFrb4HPt4YM+iG9Qu7n+xwMk4qrHO7C7vmjy0e7
+         u/y5DFTKgpjr6t4/yPGLvWP5LN4D0bo2/9p/Qm1QS9pZ95nZL3QvuDCVXSIM6aQxgf
+         o209RJ7eOkwsg==
+Date:   Sun, 14 Mar 2021 13:56:59 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v6] selftests/x86: Use getauxval() to simplify the code in sgx
-Date:   Sun, 14 Mar 2021 19:16:21 +0800
-Message-Id: <20210314111621.68428-1-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] x86/sgx: Add a basic NUMA allocation scheme to
+ sgx_alloc_epc_page()
+Message-ID: <YE36C4osHaOp2OGY@kernel.org>
+References: <20210313160119.1318533-1-jarkko@kernel.org>
+ <20210313160119.1318533-4-jarkko@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210313160119.1318533-4-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Simplify the sgx code implemntation by using library function
-getauxval() instead of a custom function to get the base address
-of vDSO.
+On Sat, Mar 13, 2021 at 06:01:19PM +0200, Jarkko Sakkinen wrote:
+> Background
+> ==========
+> 
+> EPC section is covered by one or more SRAT entries that are associated with
+> one and only one PXM (NUMA node). The motivation behind this patch is to
+> provide basic elements of building allocation scheme based on this premise.
+> 
+> Just like normal RAM, enclave memory (EPC) should be covered by entries
+> in the ACPI SRAT table.  These entries allow each EPC section to be
+> associated with a NUMA node.
+> 
+> Use this information to implement a simple NUMA-aware allocator for
+> enclave memory.
+> 
+> Solution
+> ========
+> 
+> Use phys_to_target_node() to associate each NUMA node with the EPC
+> sections contained within its range. In sgx_alloc_epc_page(), first try
+> to allocate from the NUMA node, where the CPU is executing. If that
+> fails, allocate from other nodes, iterating them from the current node
+> in order.
+> 
+> Other
+> =====
+> 
+> NUMA_KEEP_MEMINFO dependency is required for phys_to_target_node().
+> 
+> Link: https://lore.kernel.org/lkml/158188326978.894464.217282995221175417.stgit@dwillia2-desk3.amr.corp.intel.com/
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
----
- tools/testing/selftests/sgx/main.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+We *can* have also epc_page->node by:
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 724cec700926..5167505fbb46 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -15,6 +15,7 @@
- #include <sys/stat.h>
- #include <sys/time.h>
- #include <sys/types.h>
-+#include <sys/auxv.h>
- #include "defines.h"
- #include "main.h"
- #include "../kselftest.h"
-@@ -28,24 +29,6 @@ struct vdso_symtab {
- 	Elf64_Word *elf_hashtab;
- };
- 
--static void *vdso_get_base_addr(char *envp[])
--{
--	Elf64_auxv_t *auxv;
--	int i;
--
--	for (i = 0; envp[i]; i++)
--		;
--
--	auxv = (Elf64_auxv_t *)&envp[i + 1];
--
--	for (i = 0; auxv[i].a_type != AT_NULL; i++) {
--		if (auxv[i].a_type == AT_SYSINFO_EHDR)
--			return (void *)auxv[i].a_un.a_val;
--	}
--
--	return NULL;
--}
--
- static Elf64_Dyn *vdso_get_dyntab(void *addr)
- {
- 	Elf64_Ehdr *ehdr = addr;
-@@ -162,7 +145,7 @@ static int user_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r
- 	return 0;
- }
- 
--int main(int argc, char *argv[], char *envp[])
-+int main(int argc, char *argv[])
- {
- 	struct sgx_enclave_run run;
- 	struct vdso_symtab symtab;
-@@ -203,7 +186,8 @@ int main(int argc, char *argv[], char *envp[])
- 	memset(&run, 0, sizeof(run));
- 	run.tcs = encl.encl_base;
- 
--	addr = vdso_get_base_addr(envp);
-+	/* Get vDSO base address */
-+	addr = (void *)getauxval(AT_SYSINFO_EHDR);
- 	if (!addr)
- 		goto err;
- 
--- 
-2.19.1.3.ge56e4f7
+- Considering the first section as the EPC of that node.
+- Printing a warning if more sections hit the same node, and
+  ignoring them.
+- Merging sgx_numa_node and sgx_epc_section
 
+I think this would be a decent idea. I think it's a sane assumption that
+a node has a single EPC section, but it's good to have that warning just
+in case.
+
+I did not want to do this into this version because it's faster for me
+to refactor into this assumption than revert back.
+
+/Jarkko
+
+> ---
+> 
+> v4:
+> * Cycle nodes instead of a global page list, starting from the node
+>   of the current thread.
+> * Documented NUMA_KEEP_MEMINFO dependency to the commit message.
+> * Added NUMA node pointer to struct sgx_epc_section. EPC page should
+>   reference to a section, since potentially a node could have multiple
+>   sections (Intel SDM does not say anything explicit about this).
+>   This the safest play.
+> * Remove nodes_clear(sgx_numa_node_mask).
+> * Appended Dave's additions to the commit message for the background
+>   section.
+> 
+>  arch/x86/Kconfig               |   1 +
+>  arch/x86/kernel/cpu/sgx/main.c | 117 ++++++++++++++++++++-------------
+>  arch/x86/kernel/cpu/sgx/sgx.h  |  16 +++--
+>  3 files changed, 84 insertions(+), 50 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 513895af8ee7..3e6152a8dd2b 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1930,6 +1930,7 @@ config X86_SGX
+>  	depends on CRYPTO_SHA256=y
+>  	select SRCU
+>  	select MMU_NOTIFIER
+> +	select NUMA_KEEP_MEMINFO if NUMA
+>  	help
+>  	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
+>  	  that can be used by applications to set aside private regions of code
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index cb4561444b96..3b524a1361d6 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -18,14 +18,23 @@ static int sgx_nr_epc_sections;
+>  static struct task_struct *ksgxd_tsk;
+>  static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+>  
+> -/*
+> - * These variables are part of the state of the reclaimer, and must be accessed
+> - * with sgx_reclaimer_lock acquired.
+> - */
+> +/* The reclaimer lock protected variables prepend the lock. */
+>  static LIST_HEAD(sgx_active_page_list);
+> -
+>  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+>  
+> +/* The free page list lock protected variables prepend the lock. */
+> +static unsigned long sgx_nr_free_pages;
+> +
+> +/* Nodes with one or more EPC sections. */
+> +static nodemask_t sgx_numa_mask;
+> +
+> +/*
+> + * Array with one list_head for each possible NUMA node.  Each
+> + * list contains all the sgx_epc_section's which are on that
+> + * node.
+> + */
+> +static struct sgx_numa_node *sgx_numa_nodes;
+> +
+>  /*
+>   * When the driver initialized, EPC pages go first here, as they could be
+>   * initialized to an active enclave, on kexec entry.
+> @@ -352,21 +361,9 @@ static void sgx_reclaim_pages(void)
+>  	}
+>  }
+>  
+> -static unsigned long sgx_nr_free_pages(void)
+> -{
+> -	unsigned long cnt = 0;
+> -	int i;
+> -
+> -	for (i = 0; i < sgx_nr_epc_sections; i++)
+> -		cnt += sgx_epc_sections[i].free_cnt;
+> -
+> -	return cnt;
+> -}
+> -
+>  static bool sgx_should_reclaim(unsigned long watermark)
+>  {
+> -	return sgx_nr_free_pages() < watermark &&
+> -	       !list_empty(&sgx_active_page_list);
+> +	return sgx_nr_free_pages < watermark && !list_empty(&sgx_active_page_list);
+>  }
+>  
+>  static int ksgxd(void *p)
+> @@ -443,50 +440,63 @@ static bool __init sgx_page_reclaimer_init(void)
+>  	return true;
+>  }
+>  
+> -static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_section *section)
+> +static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+>  {
+> -	struct sgx_epc_page *page;
+> +	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
+> +	struct sgx_epc_page *page = NULL;
+> +
+> +	if (!node_isset(nid, sgx_numa_mask))
+> +		return NULL;
+>  
+> -	spin_lock(&section->lock);
+> +	spin_lock(&node->lock);
+>  
+> -	if (list_empty(&section->page_list)) {
+> -		spin_unlock(&section->lock);
+> +	if (list_empty(&node->free_page_list)) {
+> +		spin_unlock(&node->lock);
+>  		return NULL;
+>  	}
+>  
+> -	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
+> +	page = list_first_entry(&node->free_page_list, struct sgx_epc_page, list);
+>  	list_del_init(&page->list);
+> -	section->free_cnt--;
+> +	sgx_nr_free_pages--;
+> +
+> +	spin_unlock(&node->lock);
+>  
+> -	spin_unlock(&section->lock);
+>  	return page;
+>  }
+>  
+>  /**
+>   * __sgx_alloc_epc_page() - Allocate an EPC page
+>   *
+> - * Iterate through EPC sections and borrow a free EPC page to the caller. When a
+> - * page is no longer needed it must be released with sgx_free_epc_page().
+> + * Iterate through NUMA nodes and borrow a free EPC page to the caller. When a
+> + * page is no longer needed it must be released with sgx_free_epc_page(). Start
+> + * from the NUMA node, where the caller is executing.
+>   *
+>   * Return:
+> - *   an EPC page,
+> - *   -errno on error
+> + * - an EPC page:	Free EPC pages were available.
+> + * - ERR_PTR(-ENOMEM):	Run out of EPC pages.
+>   */
+>  struct sgx_epc_page *__sgx_alloc_epc_page(void)
+>  {
+> -	struct sgx_epc_section *section;
+>  	struct sgx_epc_page *page;
+> -	int i;
+> +	int nid = numa_node_id();
+>  
+> -	for (i = 0; i < sgx_nr_epc_sections; i++) {
+> -		section = &sgx_epc_sections[i];
+> +	/* Try to allocate EPC from the current node, first: */
+> +	page = __sgx_alloc_epc_page_from_node(nid);
+> +	if (page)
+> +		return page;
+>  
+> -		page = __sgx_alloc_epc_page_from_section(section);
+> +	/* Then, go through the other nodes: */
+> +	while (true) {
+> +		nid = next_node_in(nid, sgx_numa_mask);
+> +		if (nid == numa_node_id())
+> +			break;
+> +
+> +		page = __sgx_alloc_epc_page_from_node(nid);
+>  		if (page)
+> -			return page;
+> +			break;
+>  	}
+>  
+> -	return ERR_PTR(-ENOMEM);
+> +	return page;
+>  }
+>  
+>  /**
+> @@ -592,6 +602,7 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+>  void sgx_free_epc_page(struct sgx_epc_page *page)
+>  {
+>  	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
+> +	struct sgx_numa_node *node = section->node;
+>  	int ret;
+>  
+>  	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> @@ -600,10 +611,12 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+>  	if (WARN_ONCE(ret, "EREMOVE returned %d (0x%x)", ret, ret))
+>  		return;
+>  
+> -	spin_lock(&section->lock);
+> -	list_add_tail(&page->list, &section->page_list);
+> -	section->free_cnt++;
+> -	spin_unlock(&section->lock);
+> +	spin_lock(&node->lock);
+> +
+> +	list_add_tail(&page->list, &node->free_page_list);
+> +	sgx_nr_free_pages++;
+> +
+> +	spin_unlock(&node->lock);
+>  }
+>  
+>  static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+> @@ -624,8 +637,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+>  	}
+>  
+>  	section->phys_addr = phys_addr;
+> -	spin_lock_init(&section->lock);
+> -	INIT_LIST_HEAD(&section->page_list);
+>  
+>  	for (i = 0; i < nr_pages; i++) {
+>  		section->pages[i].section = index;
+> @@ -634,7 +645,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+>  		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+>  	}
+>  
+> -	section->free_cnt = nr_pages;
+> +	sgx_nr_free_pages += nr_pages;
+>  	return true;
+>  }
+>  
+> @@ -653,8 +664,11 @@ static bool __init sgx_page_cache_init(void)
+>  {
+>  	u32 eax, ebx, ecx, edx, type;
+>  	u64 pa, size;
+> +	int nid;
+>  	int i;
+>  
+> +	sgx_numa_nodes = kmalloc_array(num_possible_nodes(), sizeof(*sgx_numa_nodes), GFP_KERNEL);
+> +
+>  	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
+>  		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, &ebx, &ecx, &edx);
+>  
+> @@ -677,6 +691,21 @@ static bool __init sgx_page_cache_init(void)
+>  			break;
+>  		}
+>  
+> +		nid = numa_map_to_online_node(phys_to_target_node(pa));
+> +		if (nid == NUMA_NO_NODE) {
+> +			/* The physical address is already printed above. */
+> +			pr_warn(FW_BUG "Unable to map EPC section to online node. Fallback to the NUMA node 0.\n");
+> +			nid = 0;
+> +		}
+> +
+> +		if (!node_isset(nid, sgx_numa_mask)) {
+> +			spin_lock_init(&sgx_numa_nodes[nid].lock);
+> +			INIT_LIST_HEAD(&sgx_numa_nodes[nid].free_page_list);
+> +			node_set(nid, sgx_numa_mask);
+> +		}
+> +
+> +		sgx_epc_sections[i].node =  &sgx_numa_nodes[nid];
+> +
+>  		sgx_nr_epc_sections++;
+>  	}
+>  
+> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+> index bc8af0428640..653af8ca1a25 100644
+> --- a/arch/x86/kernel/cpu/sgx/sgx.h
+> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+> @@ -29,22 +29,26 @@ struct sgx_epc_page {
+>  	struct list_head list;
+>  };
+>  
+> +/*
+> + * Contains the tracking data for NUMA nodes having EPC pages. Most importantly,
+> + * the free page list local to the node is stored here.
+> + */
+> +struct sgx_numa_node {
+> +	struct list_head free_page_list;
+> +	spinlock_t lock;
+> +};
+> +
+>  /*
+>   * The firmware can define multiple chunks of EPC to the different areas of the
+>   * physical memory e.g. for memory areas of the each node. This structure is
+>   * used to store EPC pages for one EPC section and virtual memory area where
+>   * the pages have been mapped.
+> - *
+> - * 'lock' must be held before accessing 'page_list' or 'free_cnt'.
+>   */
+>  struct sgx_epc_section {
+>  	unsigned long phys_addr;
+>  	void *virt_addr;
+>  	struct sgx_epc_page *pages;
+> -
+> -	spinlock_t lock;
+> -	struct list_head page_list;
+> -	unsigned long free_cnt;
+> +	struct sgx_numa_node *node;
+>  };
+>  
+>  extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> -- 
+> 2.30.2
+> 
