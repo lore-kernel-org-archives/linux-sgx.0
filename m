@@ -2,66 +2,161 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FC7C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 13:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FB6C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 13:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1009D64ED2
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 13:03:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8AF64E31
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 13:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbhCONC6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Mar 2021 09:02:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
+        id S229675AbhCONFl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Mar 2021 09:05:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229518AbhCONC1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:02:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4281A64EB6;
-        Mon, 15 Mar 2021 13:02:26 +0000 (UTC)
+        id S229893AbhCONFX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 15 Mar 2021 09:05:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 28C6764E31;
+        Mon, 15 Mar 2021 13:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615813346;
-        bh=NUE6PgSeEbJexnyjtZ5o2zre1gcGihFeOE0jUFx/AtM=;
+        s=k20201202; t=1615813522;
+        bh=2zvipEuFRymKKveDWMdm4mmGjx/+5QCxu0cgGTFuWlk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bRI8gBCIo3Gn+czcoeQLAdZ0QoItezhVswJGrLE/tVyAQpt5jpPLGAzx01hlC8yYt
-         h+Vy8SC1H22hMjo1lfiGZ6dHxDXlTN3Bxphr4mOy61PgHx6P+5RmK8uEOkGnbirH34
-         LTqGJ/J7y1xbTzJRzpCvsDL+eHaCcZTJlpS4vKQtEe0iFKRQvMjqZVYNlwa8aT6ir4
-         cPuidHERJ4V3uXwJcoXY2tUhr1h/mYIU/amiWXZldxrzlC2jN0ph/sY2yq4B4ukN2P
-         AyWd64aV8cGV3zUNsEEMHicdRP9V4qWOjvN5ANeYM+LcJnFyIXqrk2euYrr2HHEXq7
-         6KzLXplRUZnoQ==
-Date:   Mon, 15 Mar 2021 15:02:00 +0200
+        b=l5Ejjh9gc44bLgw8SQRxaVShJWv7XzNJriRaao+YqYhlBo8shqwGL4FoxqRon/TF/
+         5bYz87q/0eqeAhspC21V6BnDAfPZmcl6xgeeO1NeyTug/HK9jTAqqxxmVh5Il+0yPj
+         cvc9Lxso2U2og7D3Sui4Q9Nkq93X3HjZH3Ml9ac87jR8kKHf2+Mb7z+Y7z06n8DJAK
+         RowIK2Q4bARsP86C94WsteBz80yhpo6h7mUJ19qMWNzxDwKP6pAyqQT+vi1ifRkkbg
+         z1sYwzpeMmBPzsZZHcQZYow6rwXOckZeduyFOgFS8ts4OeokNHCOdNvoJOFYroiADK
+         ANR9nOf5eMUJA==
+Date:   Mon, 15 Mar 2021 15:04:56 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v6] selftests/x86: Use getauxval() to simplify the code
- in sgx
-Message-ID: <YE9ayBnFIpwGiVVr@kernel.org>
-References: <20210314111621.68428-1-tianjia.zhang@linux.alibaba.com>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+        linux-sgx@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Subject: Re: [PATCH v2 07/25] x86/sgx: Initialize virtual EPC driver even
+ when SGX driver is disabled
+Message-ID: <YE9beKYDaG1sMWq+@kernel.org>
+References: <cover.1615250634.git.kai.huang@intel.com>
+ <d2ebcffeb9193d26a1305e08fe1aa1347feb1c62.1615250634.git.kai.huang@intel.com>
+ <YEvg2vNfiDYoc9u3@google.com>
+ <YE0M/VoETPw7YZIy@kernel.org>
+ <YE0NeChRjBlldQ8H@kernel.org>
+ <YE4M8JGGl9Xyx51/@kernel.org>
+ <YE4rVnfQ9y7CnVvr@kernel.org>
+ <20210315161317.9c72479dfcde4e22078abcd2@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210314111621.68428-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20210315161317.9c72479dfcde4e22078abcd2@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Mar 14, 2021 at 07:16:21PM +0800, Tianjia Zhang wrote:
-> Simplify the sgx code implemntation by using library function
-> getauxval() instead of a custom function to get the base address
-> of vDSO.
+On Mon, Mar 15, 2021 at 04:13:17PM +1300, Kai Huang wrote:
+> On Sun, 14 Mar 2021 17:27:18 +0200 Jarkko Sakkinen wrote:
+> > On Sun, Mar 14, 2021 at 05:25:26PM +0200, Jarkko Sakkinen wrote:
+> > > On Sat, Mar 13, 2021 at 09:07:36PM +0200, Jarkko Sakkinen wrote:
+> > > > On Sat, Mar 13, 2021 at 09:05:36PM +0200, Jarkko Sakkinen wrote:
+> > > > > On Fri, Mar 12, 2021 at 01:44:58PM -0800, Sean Christopherson wrote:
+> > > > > > On Tue, Mar 09, 2021, Kai Huang wrote:
+> > > > > > > Modify sgx_init() to always try to initialize the virtual EPC driver,
+> > > > > > > even if the SGX driver is disabled.  The SGX driver might be disabled
+> > > > > > > if SGX Launch Control is in locked mode, or not supported in the
+> > > > > > > hardware at all.  This allows (non-Linux) guests that support non-LC
+> > > > > > > configurations to use SGX.
+> > > > > > > 
+> > > > > > > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > > > > > > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > > > > > > ---
+> > > > > > >  arch/x86/kernel/cpu/sgx/main.c | 10 +++++++++-
+> > > > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > > > > > > 
+> > > > > > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > > > > > > index 44fe91a5bfb3..8c922e68274d 100644
+> > > > > > > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > > > > > > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > > > > > > @@ -712,7 +712,15 @@ static int __init sgx_init(void)
+> > > > > > >  		goto err_page_cache;
+> > > > > > >  	}
+> > > > > > >  
+> > > > > > > -	ret = sgx_drv_init();
+> > > > > > > +	/*
+> > > > > > > +	 * Always try to initialize the native *and* KVM drivers.
+> > > > > > > +	 * The KVM driver is less picky than the native one and
+> > > > > > > +	 * can function if the native one is not supported on the
+> > > > > > > +	 * current system or fails to initialize.
+> > > > > > > +	 *
+> > > > > > > +	 * Error out only if both fail to initialize.
+> > > > > > > +	 */
+> > > > > > > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
+> > > > > > 
+> > > > > > I love this code.
+> > > > > > 
+> > > > > > Reviewed-by: Sean Christopherson <seanjc@google.com>
+> > > > > 
+> > > > > I'm still wondering why this code let's go through when sgx_drv_init()
+> > > > > succeeds and sgx_vepc_init() fails.
+> > > > > 
+> > > > > The inline comment explains only the mirrored case (which does make
+> > > > > sense).
+> > > > 
+> > > > I.e. if sgx_drv_init() succeeds, I'd expect that sgx_vepc_init() must
+> > > > succeed. Why expect legitly anything else?
+> > >  
+> > > Apologies coming with these ideas at this point, but here is what this
+> > > led me.
+> > > 
+> > > I think that the all this complexity comes from a bad code structure.
+> > > 
+> > > So, what is essentially happening here:
+> > > 
+> > > - We essentially want to make EPC always work.
+> > > - Driver optionally.
+> > > 
+> > > So what this sums to is something like:
+> > > 
+> > >         ret = sgx_epc_init();
+> > >         if (ret) {
+> > >                 pr_err("EPC initialization failed.\n");
+> > >                 return ret;
+> > >         }
+> > > 
+> > >         ret = sgx_drv_init();
+> > >         if (ret)
+> > >                 pr_info("Driver could not be initialized.\n");
+> > > 
+> > >         /* continue */
+> > > 
+> > > I.e. I think there should be a single EPC init, which does both EPC
+> > > bootstrapping and vepc, and driver initialization comes after that.
+> > 
+> > In other words, from SGX point of view, the thing that KVM needs is
+> > to cut out EPC and driver part into different islands. How this is now
+> > implemented in the current patch set is half-way there but not yet what
+> > it should be.
 > 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+> Well conceptually, SGX virtualization and SGX driver are two independently
+> functionalities can be enabled separately, although they both requires some
+> come functionalities, such as /dev/sgx_provision, which we have moved to
+> sgx/main.c exactly for this purpose. THerefore, conceptually, it is bad to make
+> assumption that, if SGX virtualization initialization succeeded, SGX driver
+> must succeed -- we can potentially add more staff in SGX virtualization in the
+> future..
+> 
+> If the name sgx_vepc_init() confuses you, I can rename it to sgx_virt_init().
 
-Shuah, Boris, which tree this should be picked?
+I don't understand what would be the bad thing here. Can you open that
+up please? I'm neither capable of predicting the future...
 
+> 
+> 
+> Please let us know if you have comments.
+> 
 /Jarkko
