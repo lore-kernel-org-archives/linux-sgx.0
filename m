@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE32C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 03:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FB0C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 03:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 892FF64E77
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 03:14:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5096864E46
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 03:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229748AbhCODNv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 14 Mar 2021 23:13:51 -0400
-Received: from mga06.intel.com ([134.134.136.31]:58290 "EHLO mga06.intel.com"
+        id S229804AbhCODhX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 14 Mar 2021 23:37:23 -0400
+Received: from mga01.intel.com ([192.55.52.88]:57989 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229747AbhCODNa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 14 Mar 2021 23:13:30 -0400
-IronPort-SDR: B39+thwy6Ux1i4cGSmKM+ioznOoMk3Thf9T1VuaCKy9MiFlRKXKJhlnuOznBZYrhzqv5JJjand
- xm3a6mu0HeAw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9923"; a="250395008"
+        id S229599AbhCODhK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 14 Mar 2021 23:37:10 -0400
+IronPort-SDR: e1r5JljvBOPGx4ajwvWAGHSN4QFUUiPzsOOpjvJ4s2FDYiBwDaPJWSHQ3FsMoxJJ+pfJqpOtbW
+ TjGK9HhpZgOg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9923"; a="208925243"
 X-IronPort-AV: E=Sophos;i="5.81,249,1610438400"; 
-   d="scan'208";a="250395008"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:13:24 -0700
-IronPort-SDR: p8LbPsQcux8hrC2l1EGDiqITPv19SPhk0nZDYEJES0jLJ7AHA6zjXX6ywiY+GcQjVOe0WknA/6
- l8SZGUUnxGIg==
+   d="scan'208";a="208925243"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:37:04 -0700
+IronPort-SDR: Ua5HwDV6UApRMkS6GpJy7024IbgwWZvc1n8Z/1mrpqRZNPs1sKhl2ZRqge/8Z4VBlDlGrBCv8O
+ T3kDvZ9X2FlQ==
 X-IronPort-AV: E=Sophos;i="5.81,249,1610438400"; 
-   d="scan'208";a="604695617"
+   d="scan'208";a="371499675"
 Received: from avaldezb-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.229.198])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:13:19 -0700
-Date:   Mon, 15 Mar 2021 16:13:17 +1300
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:36:59 -0700
+Date:   Mon, 15 Mar 2021 16:36:56 +1300
 From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v2 07/25] x86/sgx: Initialize virtual EPC driver even
- when SGX driver is disabled
-Message-Id: <20210315161317.9c72479dfcde4e22078abcd2@intel.com>
-In-Reply-To: <YE4rVnfQ9y7CnVvr@kernel.org>
+Subject: Re: [PATCH v2 08/25] x86/sgx: Expose SGX architectural definitions
+ to the kernel
+Message-Id: <20210315163656.df89c4f52573724e492cc11d@intel.com>
+In-Reply-To: <YEvkEJkM0D7oZWE3@google.com>
 References: <cover.1615250634.git.kai.huang@intel.com>
-        <d2ebcffeb9193d26a1305e08fe1aa1347feb1c62.1615250634.git.kai.huang@intel.com>
-        <YEvg2vNfiDYoc9u3@google.com>
-        <YE0M/VoETPw7YZIy@kernel.org>
-        <YE0NeChRjBlldQ8H@kernel.org>
-        <YE4M8JGGl9Xyx51/@kernel.org>
-        <YE4rVnfQ9y7CnVvr@kernel.org>
+        <b60e1d665c17ed6430166d659bd0f547a53aea0f.1615250634.git.kai.huang@intel.com>
+        <YEvkEJkM0D7oZWE3@google.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -60,98 +55,78 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, 14 Mar 2021 17:27:18 +0200 Jarkko Sakkinen wrote:
-> On Sun, Mar 14, 2021 at 05:25:26PM +0200, Jarkko Sakkinen wrote:
-> > On Sat, Mar 13, 2021 at 09:07:36PM +0200, Jarkko Sakkinen wrote:
-> > > On Sat, Mar 13, 2021 at 09:05:36PM +0200, Jarkko Sakkinen wrote:
-> > > > On Fri, Mar 12, 2021 at 01:44:58PM -0800, Sean Christopherson wrote:
-> > > > > On Tue, Mar 09, 2021, Kai Huang wrote:
-> > > > > > Modify sgx_init() to always try to initialize the virtual EPC driver,
-> > > > > > even if the SGX driver is disabled.  The SGX driver might be disabled
-> > > > > > if SGX Launch Control is in locked mode, or not supported in the
-> > > > > > hardware at all.  This allows (non-Linux) guests that support non-LC
-> > > > > > configurations to use SGX.
-> > > > > > 
-> > > > > > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > > > > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > > > > ---
-> > > > > >  arch/x86/kernel/cpu/sgx/main.c | 10 +++++++++-
-> > > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > > > > > index 44fe91a5bfb3..8c922e68274d 100644
-> > > > > > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > > > > > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > > > > > @@ -712,7 +712,15 @@ static int __init sgx_init(void)
-> > > > > >  		goto err_page_cache;
-> > > > > >  	}
-> > > > > >  
-> > > > > > -	ret = sgx_drv_init();
-> > > > > > +	/*
-> > > > > > +	 * Always try to initialize the native *and* KVM drivers.
-> > > > > > +	 * The KVM driver is less picky than the native one and
-> > > > > > +	 * can function if the native one is not supported on the
-> > > > > > +	 * current system or fails to initialize.
-> > > > > > +	 *
-> > > > > > +	 * Error out only if both fail to initialize.
-> > > > > > +	 */
-> > > > > > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-> > > > > 
-> > > > > I love this code.
-> > > > > 
-> > > > > Reviewed-by: Sean Christopherson <seanjc@google.com>
-> > > > 
-> > > > I'm still wondering why this code let's go through when sgx_drv_init()
-> > > > succeeds and sgx_vepc_init() fails.
-> > > > 
-> > > > The inline comment explains only the mirrored case (which does make
-> > > > sense).
-> > > 
-> > > I.e. if sgx_drv_init() succeeds, I'd expect that sgx_vepc_init() must
-> > > succeed. Why expect legitly anything else?
-> >  
-> > Apologies coming with these ideas at this point, but here is what this
-> > led me.
+On Fri, 12 Mar 2021 13:58:40 -0800 Sean Christopherson wrote:
+> On Tue, Mar 09, 2021, Kai Huang wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > > 
-> > I think that the all this complexity comes from a bad code structure.
+> > Expose SGX architectural structures, as KVM will use many of the
+> > architectural constants and structs to virtualize SGX.
 > > 
-> > So, what is essentially happening here:
+> > Name the new header file as asm/sgx.h, rather than asm/sgx_arch.h, to
+> > have single header to provide SGX facilities to share with other kernel
+> > componments.
 > > 
-> > - We essentially want to make EPC always work.
-> > - Driver optionally.
-> > 
-> > So what this sums to is something like:
-> > 
-> >         ret = sgx_epc_init();
-> >         if (ret) {
-> >                 pr_err("EPC initialization failed.\n");
-> >                 return ret;
-> >         }
-> > 
-> >         ret = sgx_drv_init();
-> >         if (ret)
-> >                 pr_info("Driver could not be initialized.\n");
-> > 
-> >         /* continue */
-> > 
-> > I.e. I think there should be a single EPC init, which does both EPC
-> > bootstrapping and vepc, and driver initialization comes after that.
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Kai Huang <kai.huang@intel.com>
+> > Acked-by: Dave Hansen <dave.hansen@intel.com>
 > 
-> In other words, from SGX point of view, the thing that KVM needs is
-> to cut out EPC and driver part into different islands. How this is now
-> implemented in the current patch set is half-way there but not yet what
-> it should be.
+> Same checkpatch warning.  Probably doesn't matter.
 
-Well conceptually, SGX virtualization and SGX driver are two independently
-functionalities can be enabled separately, although they both requires some
-come functionalities, such as /dev/sgx_provision, which we have moved to
-sgx/main.c exactly for this purpose. THerefore, conceptually, it is bad to make
-assumption that, if SGX virtualization initialization succeeded, SGX driver
-must succeed -- we can potentially add more staff in SGX virtualization in the
-future..
+Will change order to make checkpatch happy for this whole series.
 
-If the name sgx_vepc_init() confuses you, I can rename it to sgx_virt_init().
+Thanks for pointing out.
 
-Hi Sean,
+> 
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> >  .../cpu/sgx/arch.h => include/asm/sgx.h}      | 20 ++++++++++++++-----
+> >  arch/x86/kernel/cpu/sgx/encl.c                |  2 +-
+> >  arch/x86/kernel/cpu/sgx/sgx.h                 |  2 +-
+> >  tools/testing/selftests/sgx/defines.h         |  2 +-
+> >  4 files changed, 18 insertions(+), 8 deletions(-)
+> >  rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx.h} (95%)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/include/asm/sgx.h
+> > similarity index 95%
+> > rename from arch/x86/kernel/cpu/sgx/arch.h
+> > rename to arch/x86/include/asm/sgx.h
+> > index abf99bb71fdc..d4ad35f6319a 100644
+> > --- a/arch/x86/kernel/cpu/sgx/arch.h
+> > +++ b/arch/x86/include/asm/sgx.h
+> > @@ -2,15 +2,20 @@
+> >  /**
+> >   * Copyright(c) 2016-20 Intel Corporation.
+> >   *
+> > - * Contains data structures defined by the SGX architecture.  Data structures
+> > - * defined by the Linux software stack should not be placed here.
+> > + * Intel Software Guard Extensions (SGX) support.
+> >   */
+> > -#ifndef _ASM_X86_SGX_ARCH_H
+> > -#define _ASM_X86_SGX_ARCH_H
+> > +#ifndef _ASM_X86_SGX_H
+> > +#define _ASM_X86_SGX_H
+> >  
+> >  #include <linux/bits.h>
+> >  #include <linux/types.h>
+> >  
+> > +/*
+> > + * This file contains both data structures defined by SGX architecture and Linux
+> > + * defined software data structures and functions.  The two should not be mixed
+> > + * together for better readibility.  The architectural definitions come first.
+> > + */
+> > +
+> >  /* The SGX specific CPUID function. */
+> >  #define SGX_CPUID		0x12
+> >  /* EPC enumeration. */
+> > @@ -337,4 +342,9 @@ struct sgx_sigstruct {
+> >  
+> >  #define SGX_LAUNCH_TOKEN_SIZE 304
+> >  
+> > -#endif /* _ASM_X86_SGX_ARCH_H */
+> > +/*
+> > + * Do not put any hardware-defined SGX structure representations below this
+> > + * line!
+> 
+> Heh, which line?  Yep, it's Friday afternoon...
 
-Please let us know if you have comments.
+Hmm.. I will change to below this comment. :)
