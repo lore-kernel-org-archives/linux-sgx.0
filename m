@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2274C433E0
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 15:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15098C433E9
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 16:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 748DC64D99
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 15:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC09464EE9
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 16:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231598AbhCOPcP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Mar 2021 11:32:15 -0400
-Received: from mga14.intel.com ([192.55.52.115]:5241 "EHLO mga14.intel.com"
+        id S233556AbhCOQDr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Mar 2021 12:03:47 -0400
+Received: from mga18.intel.com ([134.134.136.126]:37616 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232793AbhCOPcO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 15 Mar 2021 11:32:14 -0400
-IronPort-SDR: mjwp7xOpTr0jK5nG0ii5deEU4Aul8gcGZo4s51S0JXcxD65t/BZ0Hw0OkjS3Xz6u6B2HdEozLo
- cnXW5S5UuSkg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9924"; a="188466643"
+        id S231995AbhCOQDX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 15 Mar 2021 12:03:23 -0400
+IronPort-SDR: KgqixJFJGa/vFk24lsNIh+S6pI+yqy6Y8UeTJKHolwHqsjGTJ9Fr3vTsudri9Go1XLjvh8ar0j
+ II6iRWL4zXtA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9924"; a="176707007"
 X-IronPort-AV: E=Sophos;i="5.81,249,1610438400"; 
-   d="scan'208";a="188466643"
+   d="scan'208";a="176707007"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 08:32:14 -0700
-IronPort-SDR: P9k0Zu1em/slh/Vz8PXHSsk9pinyZZzyhknTEKvwEIvc/z0vqPmDw0Qy/t4KIHpUX2aEBo5ZS7
- Cner+rNUoyNA==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 09:03:22 -0700
+IronPort-SDR: iFfO3e2NKZ7Zv28ata6VSNp3ghnX8s8Ad5CZDnPnA9JowPFueihUZ6yMqjOS7uBTBcfVrFbXdh
+ BXyJNCgJpOow==
 X-IronPort-AV: E=Sophos;i="5.81,249,1610438400"; 
-   d="scan'208";a="601463686"
+   d="scan'208";a="601474008"
 Received: from lguadamu-mobl1.amr.corp.intel.com (HELO [10.213.176.188]) ([10.213.176.188])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 08:32:14 -0700
-Subject: Re: [PATCH v4 1/3] x86/sgx: Use sgx_free_epc_page() in
- sgx_reclaim_pages()
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 09:03:21 -0700
+Subject: Re: [PATCH v4 2/3] x86/sgx: Replace section local dirty page lists
+ with a global list
 To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -41,7 +41,7 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         linux-kernel@vger.kernel.org
 References: <20210313160119.1318533-1-jarkko@kernel.org>
- <20210313160119.1318533-2-jarkko@kernel.org>
+ <20210313160119.1318533-3-jarkko@kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <ab40db7a-234e-b28e-c235-0c720d2d6a5f@intel.com>
-Date:   Mon, 15 Mar 2021 08:32:13 -0700
+Message-ID: <b2a02fa6-8076-9fe4-59b7-91a91f44aaf7@intel.com>
+Date:   Mon, 15 Mar 2021 09:03:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210313160119.1318533-2-jarkko@kernel.org>
+In-Reply-To: <20210313160119.1318533-3-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -100,50 +100,183 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 3/13/21 8:01 AM, Jarkko Sakkinen wrote:
-> Replace the ad-hoc code with a sgx_free_epc_page(), in order to make sure
-> that all the relevant checks and book keeping is done, while freeing a
-> borrowed EPC page, and remove redundant code. EREMOVE inside
-> sgx_free_epc_page() does not change the semantics, as EREMOVE to an
-> uninitialize pages is a nop.
+> Reset initialized EPC pages in sgx_dirty_page_list to uninitialized state,
+> and free them using sgx_free_epc_page(). Do two passes, as for SECS pages
+> the first round can fail, if all child pages have not yet been removed.
+> The driver puts all pages on startup first to sgx_dirty_page_list, as the
+> initialization could be triggered by kexec(), meaning that pages have been
+> reserved for active enclaves before the operation.
+> 
+> The section local lists are redundant, as sgx_free_epc_page() figures
+> out the correction by using epc_page->section.
 
-  ^ uninitialized
+During normal runtime, the "ksgxd" daemon behaves like a  version of
+kswapd just for SGX.  But, its first job is to initialize enclave
+memory.  This is done in a a separate thread because this initialization
+can be quite slow.
 
-I know this is a short patch, but this changelog still falls a bit short
-for me.
+Currently, the SGX boot code places each enclave page on a
+sgx_section-local list (init_laundry_list).  Once it starts up, the
+ksgxd code walks over that list and populates the actual SGX page allocator.
 
-Why is this patch a part of _this_ series?  What *problem* does it
-solve, related to this series?
-
-It would also be nice to remind me why the EREMOVE is redundant.  Why
-didn't we need one before?  What put the page in the uninitialized
-state?  Is EREMOVE guaranteed to do nothing?  How expensive is it?
-
-
+However, the per-section structures are going away to make way for the
+SGX NUMA allocator.  There's also little need to have a per-section
+structure; the enclave pages are all treated identically, and they can
+be placed on the correct allocator list from metadata stoered in the
+enclave page itself.
 
 > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 8df81a3ed945..65004fb8a91f 100644
+> index 65004fb8a91f..cb4561444b96 100644
 > --- a/arch/x86/kernel/cpu/sgx/main.c
 > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -305,7 +305,6 @@ static void sgx_reclaim_pages(void)
->  {
->  	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
->  	struct sgx_backing backing[SGX_NR_TO_SCAN];
-> -	struct sgx_epc_section *section;
->  	struct sgx_encl_page *encl_page;
->  	struct sgx_epc_page *epc_page;
->  	pgoff_t page_index;
-> @@ -378,11 +377,7 @@ static void sgx_reclaim_pages(void)
->  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
->  		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+> @@ -27,39 +27,10 @@ static LIST_HEAD(sgx_active_page_list);
+>  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
 >  
-> -		section = &sgx_epc_sections[epc_page->section];
+>  /*
+> - * Reset dirty EPC pages to uninitialized state. Laundry can be left with SECS
+> - * pages whose child pages blocked EREMOVE.
+> + * When the driver initialized, EPC pages go first here, as they could be
+> + * initialized to an active enclave, on kexec entry.
+>   */
+> -static void sgx_sanitize_section(struct sgx_epc_section *section)
+> -{
+> -	struct sgx_epc_page *page;
+> -	LIST_HEAD(dirty);
+> -	int ret;
+> -
+> -	/* init_laundry_list is thread-local, no need for a lock: */
+> -	while (!list_empty(&section->init_laundry_list)) {
+> -		if (kthread_should_stop())
+> -			return;
+> -
+> -		/* needed for access to ->page_list: */
 > -		spin_lock(&section->lock);
-> -		list_add_tail(&epc_page->list, &section->page_list);
-> -		section->free_cnt++;
+> -
+> -		page = list_first_entry(&section->init_laundry_list,
+> -					struct sgx_epc_page, list);
+> -
+> -		ret = __eremove(sgx_get_epc_virt_addr(page));
+> -		if (!ret)
+> -			list_move(&page->list, &section->page_list);
+> -		else
+> -			list_move_tail(&page->list, &dirty);
+> -
 > -		spin_unlock(&section->lock);
-> +		sgx_free_epc_page(epc_page);
->  	}
->  }
+> -
+> -		cond_resched();
+> -	}
+> -
+> -	list_splice(&dirty, &section->init_laundry_list);
+> -}
+> +static LIST_HEAD(sgx_dirty_page_list);
 >  
-> 
+>  static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+>  {
+> @@ -400,25 +371,48 @@ static bool sgx_should_reclaim(unsigned long watermark)
+>  
+>  static int ksgxd(void *p)
+>  {
+> -	int i;
+> +	struct sgx_epc_page *page;
+> +	LIST_HEAD(dirty);
+> +	int i, ret;
+>  
+>  	set_freezable();
+>  
+>  	/*
+> -	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+> -	 * required for SECS pages, whose child pages blocked EREMOVE.
+> +	 * Reset initialized EPC pages in sgx_dirty_page_list to uninitialized state,
+> +	 * and free them using sgx_free_epc_page(). 
 
+I'm not a fan of comments that tell us verbatim what the code does.
+
+>							Do two passes, as for SECS pages the
+> +	 * first round can fail, if all child pages have not yet been removed.  The
+> +	 * driver puts all pages on startup first to sgx_dirty_page_list, as the
+> +	 * initialization could be triggered by kexec(), meaning that pages have been
+> +	 * reserved for active enclaves before the operation.
+>  	 */
+
+
+
+> -	for (i = 0; i < sgx_nr_epc_sections; i++)
+> -		sgx_sanitize_section(&sgx_epc_sections[i]);
+>  
+> -	for (i = 0; i < sgx_nr_epc_sections; i++) {
+> -		sgx_sanitize_section(&sgx_epc_sections[i]);
+
+FWIW, I don't like the removal of the helper here.  I really like kernel
+threads' top-level function to be very understandable and clean.  This
+makes it quite a bit harder to figure out what is going on.
+
+For instance, we could just have a sgx_sanitize_pages() which has a
+local dirty list and just calls:
+
+void sgx_santitize_pages(void)
+{
+	LIST_HEAD(dirty);
+
+	/*
+	 * Comment about two passes
+	 */
+	__sgx_sanitize_pages(&dirty)
+	__sgx_sanitize_pages(&dirty)
+}
+
+> +	/* sgx_dirty_page_list is thread-local to ksgxd, no need for a lock: */
+> +	for (i = 0; i < 2 && !list_empty(&sgx_dirty_page_list); i++) {
+> +		while (!list_empty(&sgx_dirty_page_list)) {
+> +			if (kthread_should_stop())
+> +				return 0;
+> +
+> +			page = list_first_entry(&sgx_dirty_page_list, struct sgx_epc_page, list);
+> +
+> +			ret = __eremove(sgx_get_epc_virt_addr(page));
+> +			if (!ret) {
+> +				/* The page is clean - move to the free list. */
+
+I'd even say:
+				/*
+				 * page is now sanitized.  Make it
+				 * available via the SGX page allocator:
+				 */
+
+See what that does?  It actually links the "cleaning" to the freeing.
+
+> +				list_del(&page->list);
+> +				sgx_free_epc_page(page);
+> +			} else {
+> +				/* The page is not yet clean - move to the dirty list. */
+> +				list_move_tail(&page->list, &dirty);
+> +			}
+> +
+> +			cond_resched();
+> +		}
+>  
+> -		/* Should never happen. */
+> -		if (!list_empty(&sgx_epc_sections[i].init_laundry_list))
+> -			WARN(1, "EPC section %d has unsanitized pages.\n", i);
+> +		list_splice(&dirty, &sgx_dirty_page_list);
+>  	}
+>  
+> +	if (!list_empty(&sgx_dirty_page_list))
+> +		WARN(1, "EPC section %d has unsanitized pages.\n", i);
+> +
+>  	while (!kthread_should_stop()) {
+>  		if (try_to_freeze())
+>  			continue;
+> @@ -632,13 +626,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+>  	section->phys_addr = phys_addr;
+>  	spin_lock_init(&section->lock);
+>  	INIT_LIST_HEAD(&section->page_list);
+> -	INIT_LIST_HEAD(&section->init_laundry_list);
+>  
+>  	for (i = 0; i < nr_pages; i++) {
+>  		section->pages[i].section = index;
+>  		section->pages[i].flags = 0;
+>  		section->pages[i].owner = NULL;
+> -		list_add_tail(&section->pages[i].list, &section->init_laundry_list);
+> +		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+>  	}
+...
