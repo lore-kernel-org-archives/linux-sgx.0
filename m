@@ -2,127 +2,66 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6CDC433E9
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 07:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FC7C433E0
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 13:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A38B64E64
-	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 07:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1009D64ED2
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Mar 2021 13:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbhCOHMt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Mar 2021 03:12:49 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44005 "EHLO mga06.intel.com"
+        id S229602AbhCONC6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Mar 2021 09:02:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229742AbhCOHMp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 15 Mar 2021 03:12:45 -0400
-IronPort-SDR: Fkm8yRu0NqpSJT5XOu3E1vQT/OFES5HKdKzvBC1JUBNxPTVUoAU1QGGAdSVBiLa1yUGcG1Awlq
- qHU/+LbNqzBw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9923"; a="250412051"
-X-IronPort-AV: E=Sophos;i="5.81,249,1610438400"; 
-   d="scan'208";a="250412051"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 00:12:43 -0700
-IronPort-SDR: wmmKrUp01QfEm37nbP7Fnmn3SPZZPjpbOddpGqS18vjjleOpRRiR2Tix7BL1UMGF/3bsFqKxFi
- eG698GUGE5UA==
-X-IronPort-AV: E=Sophos;i="5.81,249,1610438400"; 
-   d="scan'208";a="388012988"
-Received: from avaldezb-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.229.198])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 00:12:39 -0700
-Date:   Mon, 15 Mar 2021 20:12:36 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v3 03/25] x86/sgx: Wipe out EREMOVE from
- sgx_free_epc_page()
-Message-Id: <20210315201236.de3cd9389f853a418ec53e86@intel.com>
-In-Reply-To: <YEyX4V7BcS3MZNzp@kernel.org>
-References: <e1ca4131bc9f98cf50a1200efcf46080d6512fe7.1615250634.git.kai.huang@intel.com>
-        <20210311020142.125722-1-kai.huang@intel.com>
-        <YEvbcrTZyiUAxZAu@google.com>
-        <YEyX4V7BcS3MZNzp@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S229518AbhCONC1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 15 Mar 2021 09:02:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4281A64EB6;
+        Mon, 15 Mar 2021 13:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615813346;
+        bh=NUE6PgSeEbJexnyjtZ5o2zre1gcGihFeOE0jUFx/AtM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bRI8gBCIo3Gn+czcoeQLAdZ0QoItezhVswJGrLE/tVyAQpt5jpPLGAzx01hlC8yYt
+         h+Vy8SC1H22hMjo1lfiGZ6dHxDXlTN3Bxphr4mOy61PgHx6P+5RmK8uEOkGnbirH34
+         LTqGJ/J7y1xbTzJRzpCvsDL+eHaCcZTJlpS4vKQtEe0iFKRQvMjqZVYNlwa8aT6ir4
+         cPuidHERJ4V3uXwJcoXY2tUhr1h/mYIU/amiWXZldxrzlC2jN0ph/sY2yq4B4ukN2P
+         AyWd64aV8cGV3zUNsEEMHicdRP9V4qWOjvN5ANeYM+LcJnFyIXqrk2euYrr2HHEXq7
+         6KzLXplRUZnoQ==
+Date:   Mon, 15 Mar 2021 15:02:00 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH v6] selftests/x86: Use getauxval() to simplify the code
+ in sgx
+Message-ID: <YE9ayBnFIpwGiVVr@kernel.org>
+References: <20210314111621.68428-1-tianjia.zhang@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210314111621.68428-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, 13 Mar 2021 12:45:53 +0200 Jarkko Sakkinen wrote:
-> On Fri, Mar 12, 2021 at 01:21:54PM -0800, Sean Christopherson wrote:
-> > On Thu, Mar 11, 2021, Kai Huang wrote:
-> > > From: Jarkko Sakkinen <jarkko@kernel.org>
-> > > 
-> > > EREMOVE takes a page and removes any association between that page and
-> > > an enclave.  It must be run on a page before it can be added into
-> > > another enclave.  Currently, EREMOVE is run as part of pages being freed
-> > > into the SGX page allocator.  It is not expected to fail.
-> > > 
-> > > KVM does not track how guest pages are used, which means that SGX
-> > > virtualization use of EREMOVE might fail.
-> > > 
-> > > Break out the EREMOVE call from the SGX page allocator.  This will allow
-> > > the SGX virtualization code to use the allocator directly.  (SGX/KVM
-> > > will also introduce a more permissive EREMOVE helper).
-> > > 
-> > > Implement original sgx_free_epc_page() as sgx_encl_free_epc_page() to be
-> > > more specific that it is used to free EPC page assigned to one enclave.
-> > > Print an error message when EREMOVE fails to explicitly call out EPC
-> > > page is leaked, and requires machine reboot to get leaked pages back.
-> > > 
-> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > Co-developed-by: Kai Huang <kai.huang@intel.com>
-> > > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > ---
-> > > v2->v3:
-> > > 
-> > >  - Fixed bug during copy/paste which results in SECS page and va pages are not
-> > >    correctly freed in sgx_encl_release() (sorry for the mistake).
-> > >  - Added Jarkko's Acked-by.
-> > 
-> > That Acked-by should either be dropped or moved above Co-developed-by to make
-> > checkpatch happy.
-> > 
-> > Reviewed-by: Sean Christopherson <seanjc@google.com>
+On Sun, Mar 14, 2021 at 07:16:21PM +0800, Tianjia Zhang wrote:
+> Simplify the sgx code implemntation by using library function
+> getauxval() instead of a custom function to get the base address
+> of vDSO.
 > 
-> Oops, my bad. Yup, ack should be removed.
-> 
-> /Jarkko
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Hi Jarkko,
+Shuah, Boris, which tree this should be picked?
 
-Your reply of your concern of this patch to the cover-letter
-
-https://lore.kernel.org/lkml/YEkJXu262YDa8ZaK@kernel.org/
-
-reminds me to do more sanity check of whether removing EREMOVE in
-sgx_free_epc_page() will impact other code path or not, and I think
-sgx_encl_release() is not the only place should be changed:
-
-- sgx_encl_shrink() needs to call sgx_encl_free_epc_page(), since when this is
-called, the VA page can be already valid -- there are other failures can
-trigger sgx_encl_shrink().
-
-- sgx_encl_add_page() should call sgx_encl_free_epc_page() in "err_out_free:"
-label, since the EPC page can be already valid when error happened, i.e. when
-EEXTEND fails.
-
-Other places should be OK per my check, but I'd prefer to just replacing all
-sgx_free_epc_page() call sites in driver with sgx_encl_free_epc_page(), with
-one exception: sgx_alloc_va_page(), which calls sgx_free_epc_page() when EPA
-fails, in which case EREMOVE is not required for sure.
-
-Your idea, please?
-
-Btw, introducing a driver wrapper of sgx_free_epc_page() does make sense to me,
-because virtualization has a counterpart in sgx/virt.c too.
+/Jarkko
