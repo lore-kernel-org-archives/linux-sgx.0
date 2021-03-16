@@ -6,88 +6,103 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4CCC433DB
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Mar 2021 12:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E216AC433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Mar 2021 12:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7238465046
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Mar 2021 12:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1C5265057
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Mar 2021 12:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232830AbhCPMrn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Mar 2021 08:47:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56422 "EHLO mail.kernel.org"
+        id S233564AbhCPMu4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Mar 2021 08:50:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232844AbhCPMqb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Mar 2021 08:46:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7914165039;
-        Tue, 16 Mar 2021 12:46:30 +0000 (UTC)
+        id S233343AbhCPMu3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Mar 2021 08:50:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E9A8165040;
+        Tue, 16 Mar 2021 12:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615898791;
-        bh=Ur86/kQH+7n2c1T3Xl1ln8o4FtX9RoHOK0NxalNWD8I=;
+        s=k20201202; t=1615899029;
+        bh=KO/dG7XN2AjZk+eZJx7OeL4H10cvuiyRY0B8DPBHjpA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=csjAgYsd3yGhqD4TtqAl+ZYjIzLIQDBHXkXrWz2H8IONUDfMqhqdUqtQcOyKR1I/O
-         LkN3e5KvxbgC7R3Wi4zyjdAMeRk3YRGHNDNzDf4umO+OQID0waSfjE6/MsrVmudg2V
-         tCPUcx6kWN/9ZhMCXRjxzAJHfyrM63FaKSLZ1M/ORSJlB+o9qtNbAxvmWXIebLryAR
-         4X12nAzSlOeFN+vVYdeIpzYZk1c+Rhb+XzO7MT7LCLp6HPjuTTXSAbV/yyIKq8Prrz
-         3+sfbo6UVDxz8s8WsVwWbLaKOT7qG10FHFfi8XmTrfdWUyYDko7UqowSZyZWM3YBtK
-         NQM5dtN3ORBwQ==
-Date:   Tue, 16 Mar 2021 14:46:05 +0200
+        b=hybklB11Uv8NkUXqIcHKuPzKs1AoKjKn3TtJKWzdtsU3/RrxSrP/4Eesr//Ov0Xup
+         Q44YLtTFfzfozhbxIcb4H8MiZpyJuL1atBfXBa3zgbW5gILMaHHHjHq8MuuiGScE4l
+         yLEN1MkVIsJ2qPlc2N1jqtp+CgtgXOBTdio25DfTQtiwEr69ZDLB38q7m1T5//TCCc
+         LXxIvPI6GfIg0zP4vdPFNLSN4PMgEa7lj0R1cmoHYCIYSgBmgca67znE4gX3mA0x7u
+         S7OV6348nhhpRtVCn4IAk4ILpI28ICU5/nfXLFNKzELroNe9G22ezy5dn8Ki9qCD2T
+         X+K5ubDsi7MLw==
+Date:   Tue, 16 Mar 2021 14:50:04 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v2 07/25] x86/sgx: Initialize virtual EPC driver even
- when SGX driver is disabled
-Message-ID: <YFCojQmyM8fdGmnl@kernel.org>
-References: <YE0NeChRjBlldQ8H@kernel.org>
- <YE4M8JGGl9Xyx51/@kernel.org>
- <YE4rVnfQ9y7CnVvr@kernel.org>
- <20210315161317.9c72479dfcde4e22078abcd2@intel.com>
- <YE9beKYDaG1sMWq+@kernel.org>
- <YE9mVUF0KOPNSfA9@kernel.org>
- <20210316094859.7b5947b743a81dff7434615c@intel.com>
- <YE/oHt92suFDHJ7Z@kernel.org>
- <YE/o/IGBAB8N+fnt@kernel.org>
- <YFAGUWDYacz1zroI@google.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] x86/sgx: Use sgx_free_epc_page() in
+ sgx_reclaim_pages()
+Message-ID: <YFCpfEaE8k3EzHbt@kernel.org>
+References: <20210313160119.1318533-1-jarkko@kernel.org>
+ <20210313160119.1318533-2-jarkko@kernel.org>
+ <ab40db7a-234e-b28e-c235-0c720d2d6a5f@intel.com>
+ <YE+wMvw4YuDKu1xx@kernel.org>
+ <YE+1BPyK5SsizhEi@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YFAGUWDYacz1zroI@google.com>
+In-Reply-To: <YE+1BPyK5SsizhEi@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 06:13:53PM -0700, Sean Christopherson wrote:
-> On Tue, Mar 16, 2021, Jarkko Sakkinen wrote:
-> > On Tue, Mar 16, 2021 at 01:05:05AM +0200, Jarkko Sakkinen wrote:
-> > > The way I've understood it is that given that KVM can support SGX
-> > > without FLC, vEPC should be available even if driver cannot be
-> > > enabled.
+On Mon, Mar 15, 2021 at 09:27:00PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Mar 15, 2021 at 09:06:29PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Mar 15, 2021 at 08:32:13AM -0700, Dave Hansen wrote:
+> > > On 3/13/21 8:01 AM, Jarkko Sakkinen wrote:
+> > > > Replace the ad-hoc code with a sgx_free_epc_page(), in order to make sure
+> > > > that all the relevant checks and book keeping is done, while freeing a
+> > > > borrowed EPC page, and remove redundant code. EREMOVE inside
+> > > > sgx_free_epc_page() does not change the semantics, as EREMOVE to an
+> > > > uninitialize pages is a nop.
 > > > 
-> > > This is also exactly what the short summary states.
+> > >   ^ uninitialized
 > > > 
-> > > "Initialize virtual EPC driver even when SGX driver is disabled"
+> > > I know this is a short patch, but this changelog still falls a bit short
+> > > for me.
 > > > 
-> > > It *does not* state:
-> > > 
-> > > "Initialize SGX driver even when vEPC driver is disabled"
-> > > 
-> > > Also, this is how I interpret the inline comment.
-> > > 
-> > > All this considered, the other direction is undocumented functionality.
+> > > Why is this patch a part of _this_ series?  What *problem* does it
+> > > solve, related to this series?
 > > 
-> > Also:
+> > I'm thinking of merging sgx_epc_section and sgx_numa_node. That's why I
+> > kept it as part of the series. 
 > > 
-> > 1. There is *zero* good practical reasons to support the "2nd direction".
+> > Also, in any case it's better to clean up duplicate functionality. The
+> > code is essentially open coded implementation of sgx_free_epc_page()
+> > without EREMOVE.
+> > 
+> > > It would also be nice to remind me why the EREMOVE is redundant.  Why
+> > > didn't we need one before?  What put the page in the uninitialized
+> > > state?  Is EREMOVE guaranteed to do nothing?  How expensive is it?
+> > 
+> > EREMOVE gets removed by KVM series from sgx_free_epc_page() anyway.
+> > 
+> > Maybe should re-send this patch, or series, after KVM series is merged.
+> > Then there is no explaining with EREMOVE, as sgx_free_epc_page() won't
+> > contain it.
 > 
-> Uh, yes there is.  CONFIG_KVM_INTEL=n and X86_FEATURE_VMX=n, either of which
-> will cause vEPC initialization to fail.  The former is obvious, the latter is
-> possible via BIOS configuration.
+> Anyway, forgot to put the end statement: I'm cool with dropping this but
+> I'll also send this right after KVM SGX series has landed as separate
+> patch, if I drop this now.
 
-Hmm... So you make the checks as if ret != -ENODEV? That's the sane way to
-deal with that situation IMHO.
+HOLD ON :-)
+
+I recalled why I added this patch to this patch set. I had a reason for
+it.
+
+It's because of the NUMA patch. I have duplicate all the NUMA changes
+here if I don't refactor this somewhat redundant code out.
+
+So, if I add a note about this to the commit message? IMHO, this is good
+enough reason to carry the patch.
 
 /Jarkko
