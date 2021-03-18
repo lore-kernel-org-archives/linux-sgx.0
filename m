@@ -2,127 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767DEC433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 00:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADF5C433E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 17:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16BEA64F21
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 00:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7515A64F30
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 17:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbhCRAFN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 17 Mar 2021 20:05:13 -0400
-Received: from mga03.intel.com ([134.134.136.65]:8467 "EHLO mga03.intel.com"
+        id S232128AbhCRRkm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 18 Mar 2021 13:40:42 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50794 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229562AbhCRAEm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 17 Mar 2021 20:04:42 -0400
-IronPort-SDR: Sdq4axED8jAW44mjiF0G0btHCXOrfRTiP9UvxyjBxXkS6KrnJBMFXWFIGc981jf4iP+aPbU2Ni
- VDvlpF7Azalg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9926"; a="189616265"
-X-IronPort-AV: E=Sophos;i="5.81,257,1610438400"; 
-   d="scan'208";a="189616265"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 17:04:41 -0700
-IronPort-SDR: 90z7G9OzJqazdvZZK4s4do097MALZckYL92A89LgmUp8nt6fbBdXZnmAPQYuBalaJfe3z6dcJD
- hmiGamQMQkFg==
-X-IronPort-AV: E=Sophos;i="5.81,257,1610438400"; 
-   d="scan'208";a="389029351"
-Received: from salemhax-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.143.20])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 17:04:37 -0700
-Date:   Thu, 18 Mar 2021 13:04:35 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v2 07/25] x86/sgx: Initialize virtual EPC driver even
- when SGX driver is disabled
-Message-Id: <20210318130435.4cf6142368bb1837c585b447@intel.com>
-In-Reply-To: <YFCojQmyM8fdGmnl@kernel.org>
-References: <YE0NeChRjBlldQ8H@kernel.org>
-        <YE4M8JGGl9Xyx51/@kernel.org>
-        <YE4rVnfQ9y7CnVvr@kernel.org>
-        <20210315161317.9c72479dfcde4e22078abcd2@intel.com>
-        <YE9beKYDaG1sMWq+@kernel.org>
-        <YE9mVUF0KOPNSfA9@kernel.org>
-        <20210316094859.7b5947b743a81dff7434615c@intel.com>
-        <YE/oHt92suFDHJ7Z@kernel.org>
-        <YE/o/IGBAB8N+fnt@kernel.org>
-        <YFAGUWDYacz1zroI@google.com>
-        <YFCojQmyM8fdGmnl@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S231952AbhCRRkf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 18 Mar 2021 13:40:35 -0400
+Received: from zn.tnic (p200300ec2f0fad00070f6d4b275c681b.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:ad00:70f:6d4b:275c:681b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 077CB1EC0249;
+        Thu, 18 Mar 2021 18:40:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1616089234;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=5HUi4f5dejF+zrDWqEx6xSCL/wddRn6cotJCPEsJDjc=;
+        b=MnvJO+hRdyGGJWjcUH7ef8qvOmnp5N7CkLRWm0fMaAj8AEYXcaQ8YG1YUHanwbMTi8nrEF
+        uJvBuzpW2Ccg6pZrGTvGB29D6zr08TifaTfPtWOKDJ/wPVFHSby1WBb0EzvvpjRk5yrFE/
+        fPikY0QsWlSvh8qW45Yavi4Sx4wzs4g=
+Date:   Thu, 18 Mar 2021 18:40:32 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@intel.com>
+Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] x86/sgx: Replace section->init_laundry_list with
+ sgx_dirty_page_list
+Message-ID: <20210318174032.GI19570@zn.tnic>
+References: <20210317235332.362001-1-jarkko.sakkinen@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210317235332.362001-1-jarkko.sakkinen@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 16 Mar 2021 14:46:05 +0200 Jarkko Sakkinen wrote:
-> On Mon, Mar 15, 2021 at 06:13:53PM -0700, Sean Christopherson wrote:
-> > On Tue, Mar 16, 2021, Jarkko Sakkinen wrote:
-> > > On Tue, Mar 16, 2021 at 01:05:05AM +0200, Jarkko Sakkinen wrote:
-> > > > The way I've understood it is that given that KVM can support SGX
-> > > > without FLC, vEPC should be available even if driver cannot be
-> > > > enabled.
-> > > > 
-> > > > This is also exactly what the short summary states.
-> > > > 
-> > > > "Initialize virtual EPC driver even when SGX driver is disabled"
-> > > > 
-> > > > It *does not* state:
-> > > > 
-> > > > "Initialize SGX driver even when vEPC driver is disabled"
-> > > > 
-> > > > Also, this is how I interpret the inline comment.
-> > > > 
-> > > > All this considered, the other direction is undocumented functionality.
-> > > 
-> > > Also:
-> > > 
-> > > 1. There is *zero* good practical reasons to support the "2nd direction".
-> > 
-> > Uh, yes there is.  CONFIG_KVM_INTEL=n and X86_FEATURE_VMX=n, either of which
-> > will cause vEPC initialization to fail.  The former is obvious, the latter is
-> > possible via BIOS configuration.
+On Thu, Mar 18, 2021 at 01:53:30AM +0200, Jarkko Sakkinen wrote:
+> From: Jarkko Sakkinen <jarkko@kernel.org>
 > 
-> Hmm... So you make the checks as if ret != -ENODEV? That's the sane way to
-> deal with that situation IMHO.
+> During normal runtime, the "ksgxd" daemon behaves like a  version of
+> kswapd just for SGX.  But, before it starts acting like kswapd, its
+> first job is to initialize enclave memory.
 > 
-> /Jarkko
+> Currently, the SGX boot code places each enclave page on a
+> epc_section->init_laundry_list.  Once it starts up, the ksgxd code walks
+> over that list and populates the actual SGX page allocator.
+> 
+> However, the per-section structures are going away to make way for the SGX
+> NUMA allocator.  There's also little need to have a per-section structure;
+> the enclave pages are all treated identically, and they can be placed on
+> the correct allocator list from metadata stored in the enclave page
+> (struct sgx_epc_page) itself.
+> 
+> Modify sgx_sanitize_section() to take a single page list instead of taking
+> a section and deriving the list from there.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> ---
+> 
+> v5
+> * Refine the commit message.
+> * Refine inline comments.
+> * Encapsulate a sanitization pass into __sgx_sanitize_pages().
+> 
+> v4:
+> * Open coded sgx_santize_section() to ksgxd().
+> * Rewrote the commit message.
+> 
+>  arch/x86/kernel/cpu/sgx/main.c | 54 ++++++++++++++++------------------
+>  arch/x86/kernel/cpu/sgx/sgx.h  |  7 -----
+>  2 files changed, 25 insertions(+), 36 deletions(-)
 
-OK. I actually wrote the code to show your idea:
+So both patches look ok to me but the sgx test case fails on -rc3 with and
+without those patches on my box:
 
--       ret = sgx_drv_init();
--       if (ret)
-+       /*
-+        * Only continue to initialize SGX driver when SGX virtualization
-+        * initialization is successful, or is not supported (-ENODEV), since
-+        * any other initialization failure means SGX driver is unlikely to be
-+        * initialized successfully.
-+        */
-+       ret = sgx_vepc_init();
-+       if (ret && ret != -ENODEV)
-                goto err_kthread;
- 
-+       if (sgx_drv_init()) {
-+               /*
-+                * Cleanup when *both* SGX virtualization and SGX driver are
-+                * not enabled, due to either not supported (-ENODEV), or
-+                * somehow fail to initialize.
-+                */
-+               if (ret && ret != -ENODEV)
-+                       goto err_kthread;
-+       }
-+
-        return 0;
- 
- err_kthread:
+./test_sgx 
+0x0000000000000000 0x0000000000002000 0x03
+0x0000000000002000 0x0000000000001000 0x05
+0x0000000000003000 0x0000000000003000 0x03
+mmap() failed, errno=1.
 
+Box is:
 
-Is this the code you want?
+[    0.138402] smpboot: CPU0: Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz (family: 0x6, model: 0x9e, stepping: 0xc)
+[    0.693947] sgx: EPC section 0x80200000-0x85ffffff
+
+And AFAIR that test used to pass there...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
