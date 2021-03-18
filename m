@@ -2,112 +2,117 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADF5C433E0
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 17:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4ECC433DB
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 18:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7515A64F30
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 17:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BC916023B
+	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 18:35:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232128AbhCRRkm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 18 Mar 2021 13:40:42 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50794 "EHLO mail.skyhub.de"
+        id S232292AbhCRSej (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 18 Mar 2021 14:34:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:52391 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231952AbhCRRkf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 18 Mar 2021 13:40:35 -0400
-Received: from zn.tnic (p200300ec2f0fad00070f6d4b275c681b.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:ad00:70f:6d4b:275c:681b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 077CB1EC0249;
-        Thu, 18 Mar 2021 18:40:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1616089234;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=5HUi4f5dejF+zrDWqEx6xSCL/wddRn6cotJCPEsJDjc=;
-        b=MnvJO+hRdyGGJWjcUH7ef8qvOmnp5N7CkLRWm0fMaAj8AEYXcaQ8YG1YUHanwbMTi8nrEF
-        uJvBuzpW2Ccg6pZrGTvGB29D6zr08TifaTfPtWOKDJ/wPVFHSby1WBb0EzvvpjRk5yrFE/
-        fPikY0QsWlSvh8qW45Yavi4Sx4wzs4g=
-Date:   Thu, 18 Mar 2021 18:40:32 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@intel.com>
+        id S232645AbhCRSeM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 18 Mar 2021 14:34:12 -0400
+IronPort-SDR: eF5Y8t430EeRaphwCG3DKiETCu75tLjRTGCwHsSqZbv+0kTQFs0k/5dxjAiw48mSkDRzIgT0o1
+ ZVY0QIKBYr7Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9927"; a="251101912"
+X-IronPort-AV: E=Sophos;i="5.81,259,1610438400"; 
+   d="scan'208";a="251101912"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2021 11:34:11 -0700
+IronPort-SDR: 2hX9qqUCQSxKKOq5GKwfV2M5lOztI+aVgu4Q2x8kbkIODyPe7/F9fkQkfuhQ1PK6B/vF+eE/kD
+ xBgF18/gycGA==
+X-IronPort-AV: E=Sophos;i="5.81,259,1610438400"; 
+   d="scan'208";a="512235625"
+Received: from jkolson-mobl2.amr.corp.intel.com (HELO [10.209.159.237]) ([10.209.159.237])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2021 11:34:11 -0700
+Subject: Re: [PATCH 1/2] x86/sgx: Replace section->init_laundry_list with
+ sgx_dirty_page_list
+To:     Borislav Petkov <bp@alien8.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@intel.com>
 Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/sgx: Replace section->init_laundry_list with
- sgx_dirty_page_list
-Message-ID: <20210318174032.GI19570@zn.tnic>
 References: <20210317235332.362001-1-jarkko.sakkinen@intel.com>
+ <20210318174032.GI19570@zn.tnic>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <1269283f-ddad-9049-dcf5-818a6ecbbc53@intel.com>
+Date:   Thu, 18 Mar 2021 11:34:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210318174032.GI19570@zn.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210317235332.362001-1-jarkko.sakkinen@intel.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 01:53:30AM +0200, Jarkko Sakkinen wrote:
-> From: Jarkko Sakkinen <jarkko@kernel.org>
+On 3/18/21 10:40 AM, Borislav Petkov wrote:
+> So both patches look ok to me but the sgx test case fails on -rc3 with and
+> without those patches on my box:
 > 
-> During normal runtime, the "ksgxd" daemon behaves like a  version of
-> kswapd just for SGX.  But, before it starts acting like kswapd, its
-> first job is to initialize enclave memory.
-> 
-> Currently, the SGX boot code places each enclave page on a
-> epc_section->init_laundry_list.  Once it starts up, the ksgxd code walks
-> over that list and populates the actual SGX page allocator.
-> 
-> However, the per-section structures are going away to make way for the SGX
-> NUMA allocator.  There's also little need to have a per-section structure;
-> the enclave pages are all treated identically, and they can be placed on
-> the correct allocator list from metadata stored in the enclave page
-> (struct sgx_epc_page) itself.
-> 
-> Modify sgx_sanitize_section() to take a single page list instead of taking
-> a section and deriving the list from there.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> ---
-> 
-> v5
-> * Refine the commit message.
-> * Refine inline comments.
-> * Encapsulate a sanitization pass into __sgx_sanitize_pages().
-> 
-> v4:
-> * Open coded sgx_santize_section() to ksgxd().
-> * Rewrote the commit message.
-> 
->  arch/x86/kernel/cpu/sgx/main.c | 54 ++++++++++++++++------------------
->  arch/x86/kernel/cpu/sgx/sgx.h  |  7 -----
->  2 files changed, 25 insertions(+), 36 deletions(-)
+> ./test_sgx 
+> 0x0000000000000000 0x0000000000002000 0x03
+> 0x0000000000002000 0x0000000000001000 0x05
+> 0x0000000000003000 0x0000000000003000 0x03
+> mmap() failed, errno=1.
 
-So both patches look ok to me but the sgx test case fails on -rc3 with and
-without those patches on my box:
+I usually get that after I reboot.  I have to do this:
 
-./test_sgx 
-0x0000000000000000 0x0000000000002000 0x03
-0x0000000000002000 0x0000000000001000 0x05
-0x0000000000003000 0x0000000000003000 0x03
-mmap() failed, errno=1.
+	chmod 755 /dev/sgx_enclave
+	mount -o remount,exec /dev
 
-Box is:
-
-[    0.138402] smpboot: CPU0: Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz (family: 0x6, model: 0x9e, stepping: 0xc)
-[    0.693947] sgx: EPC section 0x80200000-0x85ffffff
-
-And AFAIR that test used to pass there...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+BTW, that *IS* going to get tripped over all the time.  The selftest
+needs a better error message.  I'll send a patch.
