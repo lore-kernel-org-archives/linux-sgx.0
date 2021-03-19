@@ -5,86 +5,101 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C40C433DB
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 21:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B586C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Mar 2021 04:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1C664F38
-	for <linux-sgx@archiver.kernel.org>; Thu, 18 Mar 2021 21:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 317946157F
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Mar 2021 04:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbhCRVvz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 18 Mar 2021 17:51:55 -0400
-Received: from mga11.intel.com ([192.55.52.93]:63077 "EHLO mga11.intel.com"
+        id S230459AbhCSEG7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 19 Mar 2021 00:06:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60155 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230177AbhCRVvf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 18 Mar 2021 17:51:35 -0400
-IronPort-SDR: Xgh6PCtAW4FsT2qblHLTO1ELx3Qi9nKGpytzoL2epu2yh2DStRYTbY8OmlYVzHSkqaBaRXOzZ3
- Xrd5CBz/V+Hw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9927"; a="186423628"
+        id S233640AbhCSEGc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 19 Mar 2021 00:06:32 -0400
+IronPort-SDR: Tets64KEt0y6m+PyjoWctdcp4+m4QcTe3nXx7q80+vFHfK7KXHnYtXi+tfuh79/SzGeURJDur+
+ 8S/kKWntT/gw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9927"; a="186471728"
 X-IronPort-AV: E=Sophos;i="5.81,259,1610438400"; 
-   d="scan'208";a="186423628"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2021 14:51:35 -0700
-IronPort-SDR: HkWjNgs2L56YN6H5TehQTy8u8i1nWoURlU59FW4Vk37B71HGWd6Vr+auyCIDW3emB/SWpi3xIF
- H9T77LU/rIcQ==
-X-ExtLoop1: 1
+   d="scan'208";a="186471728"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2021 21:06:31 -0700
+IronPort-SDR: kbyxE+5AtLjLyENpcbJzxr0GaaK7xtFZSCp0v84pClHqUm20XPQzlBZxAol9cSKoMoPuDVmtCd
+ YYRP7gAdE+uQ==
 X-IronPort-AV: E=Sophos;i="5.81,259,1610438400"; 
-   d="scan'208";a="441070893"
-Received: from viggo.jf.intel.com ([10.54.77.144])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Mar 2021 14:51:35 -0700
-From:   Dave Hansen <dave.hansen@intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Subject: [PATCH] x86/sgx: fix uninitialized 'nid' variable
-Date:   Thu, 18 Mar 2021 14:49:33 -0700
-Message-Id: <20210318214933.29341-1-dave.hansen@intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <202103190514.xH7IrKMe-lkp@intel.com>
-References: <202103190514.xH7IrKMe-lkp@intel.com>
+   d="scan'208";a="406620937"
+Received: from dharorix-mobl2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.142.226])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2021 21:06:29 -0700
+From:   Kai Huang <kai.huang@intel.com>
+To:     x86@kernel.org, linux-sgx@vger.kernel.org
+Cc:     bp@alien8.de, jarkko@kernel.org, dave.hansen@linux.intel.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        Kai Huang <kai.huang@intel.com>
+Subject: [PATCH] x86/sgx: Avoid returning NULL in __sgx_alloc_epc_page()
+Date:   Fri, 19 Mar 2021 17:06:02 +1300
+Message-Id: <20210319040602.178558-1-kai.huang@intel.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The NUMA fallback in __sgx_alloc_epc_page() recently grew an
-additional 'nid' variable to prevent extra trips through the
-fallback loop in case where the thread is migrated around.
+Below kernel bug happened when running simple SGX application when EPC
+is under pressure.  The root cause is with commit 5b8719504e3a
+("x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()"),
+__sgx_alloc_epc_page() returns NULL when there's no free EPC page can be
+allocated, while old behavior was it always returned ERR_PTR(-ENOMEM) in
+such case.
 
-But, the new copy is not properly initialized.  Fix it.
+Fix by directly returning the page if __sgx_alloc_epc_page_from_node()
+allocates a valid page in fallback to non-local allocation, and always
+returning ERR_PTR(-ENOMEM) if no EPC page can be allocated.
 
-This was found by some fancy clang that 0day runs.  My gcc
-does not detect it.
+[  253.474764] BUG: kernel NULL pointer dereference, address: 0000000000000008
+[  253.500101] #PF: supervisor write access in kernel mode
+[  253.525462] #PF: error_code(0x0002) - not-present page
+...
+[  254.102041] Call Trace:
+[  254.126699]  sgx_ioc_enclave_add_pages+0x241/0x770
+[  254.151305]  sgx_ioctl+0x194/0x4b0
+[  254.174976]  ? handle_mm_fault+0xd0/0x260
+[  254.198470]  ? do_user_addr_fault+0x1ef/0x570
+[  254.221827]  __x64_sys_ioctl+0x91/0xc0
+[  254.244546]  do_syscall_64+0x38/0x90
+[  254.266728]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  254.289232] RIP: 0033:0x7fdc4cf4031b
+...
+[  254.711480] CR2: 0000000000000008
+[  254.735494] ---[ end trace 970dce6d4cdf7f64 ]---
+[  254.759915] RIP: 0010:sgx_alloc_epc_page+0x46/0x152
+...
 
-Fixes: 5b8719504e3a ("x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org
-Cc: linux-sgx@vger.kernel.org
+Fixes: 5b8719504e3a("x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()")
+Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 2a0031e4a4dc..1b4d8a0e0915 100644
+index fe26e7e91c25..7105e34da530 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -489,7 +489,7 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
- {
- 	struct sgx_epc_page *page;
- 	int nid_of_current = numa_node_id();
--	int nid;
-+	int nid = nid_of_current;
+@@ -508,10 +508,10 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
  
- 	if (node_isset(nid_of_current, sgx_numa_mask)) {
- 		page = __sgx_alloc_epc_page_from_node(nid_of_current);
+ 		page = __sgx_alloc_epc_page_from_node(nid);
+ 		if (page)
+-			break;
++			return page;
+ 	}
+ 
+-	return page;
++	return ERR_PTR(-ENOMEM);
+ }
+ 
+ /**
 -- 
-2.19.1
+2.30.2
 
