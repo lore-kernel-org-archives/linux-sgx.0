@@ -4,44 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD000C4360C
-	for <linux-sgx@archiver.kernel.org>; Fri, 19 Mar 2021 07:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B363C433DB
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Mar 2021 07:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF83F64F7A
-	for <linux-sgx@archiver.kernel.org>; Fri, 19 Mar 2021 07:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DD8E64F68
+	for <linux-sgx@archiver.kernel.org>; Fri, 19 Mar 2021 07:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234237AbhCSHYB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 19 Mar 2021 03:24:01 -0400
-Received: from mga05.intel.com ([192.55.52.43]:22827 "EHLO mga05.intel.com"
+        id S234416AbhCSHYc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 19 Mar 2021 03:24:32 -0400
+Received: from mga12.intel.com ([192.55.52.136]:44045 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234285AbhCSHXg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 19 Mar 2021 03:23:36 -0400
-IronPort-SDR: Zpe1/hQKB1c2/ylGyoaKk7d4FSih6UOtsUiSD1SvdcjZTrJ929esn4h73d81wPnYwFfu95gbI/
- PEdtbTDrOKLQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9927"; a="274910910"
+        id S234338AbhCSHYA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 19 Mar 2021 03:24:00 -0400
+IronPort-SDR: lCPJvSA/xP09BD7mO1STJ+lBRrA5YRZNtmVJQqLglibrD6kloLIdDcT+IB6LZS/w8vepcJY4ld
+ ojxoPt4gps/g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9927"; a="169143671"
 X-IronPort-AV: E=Sophos;i="5.81,261,1610438400"; 
-   d="scan'208";a="274910910"
+   d="scan'208";a="169143671"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2021 00:23:36 -0700
-IronPort-SDR: 60LqFQmAQbDA524H3zfh4jbz31T4Du4E/CSVtwYVErxUzhWVWoWyjSgFW0QJ+Q6Va0PvpeAk04
- yT+OakuzVwHw==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2021 00:24:00 -0700
+IronPort-SDR: Fcqq+fniPhenlhk5eqgER+QdjlKOr5WDZf7DfRcRQB1wLRNEy5CLFJTsIw1JGn0oI4r9hl6rCx
+ Lxbesx+vO4sg==
 X-IronPort-AV: E=Sophos;i="5.81,261,1610438400"; 
-   d="scan'208";a="413409539"
+   d="scan'208";a="413409809"
 Received: from dlmeisen-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.229.165])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2021 00:23:31 -0700
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2021 00:23:55 -0700
 From:   Kai Huang <kai.huang@intel.com>
-To:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org
+To:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, bp@alien8.de,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        Kai Huang <kai.huang@intel.com>
-Subject: [PATCH v3 11/25] x86/sgx: Add encls_faulted() helper
-Date:   Fri, 19 Mar 2021 20:23:06 +1300
-Message-Id: <c1f955898110de2f669da536fc6cf62e003dff88.1616136308.git.kai.huang@intel.com>
+        jmattson@google.com, joro@8bytes.org, vkuznets@redhat.com,
+        wanpengli@tencent.com, Kai Huang <kai.huang@intel.com>
+Subject: [PATCH v3 15/25] KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for SGX (VMX)
+Date:   Fri, 19 Mar 2021 20:23:39 +1300
+Message-Id: <2d499bb53ec1811c60497fa15f1ee5830324d189.1616136308.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1616136307.git.kai.huang@intel.com>
 References: <cover.1616136307.git.kai.huang@intel.com>
@@ -53,64 +54,48 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add a helper to extract the fault indicator from an encoded ENCLS return
-value.  SGX virtualization will also need to detect ENCLS faults.
+Export the gva_to_gpa() helpers for use by SGX virtualization when
+executing ENCLS[ECREATE] and ENCLS[EINIT] on behalf of the guest.
+To execute ECREATE and EINIT, KVM must obtain the GPA of the target
+Secure Enclave Control Structure (SECS) in order to get its
+corresponding HVA.
+
+Because the SECS must reside in the Enclave Page Cache (EPC), copying
+the SECS's data to a host-controlled buffer via existing exported
+helpers is not a viable option as the EPC is not readable or writable
+by the kernel.
+
+SGX virtualization will also use gva_to_gpa() to obtain HVAs for
+non-EPC pages in order to pass user pointers directly to ECREATE and
+EINIT, which avoids having to copy pages worth of data into the kernel.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
 Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Kai Huang <kai.huang@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encls.h | 15 ++++++++++++++-
- arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index be5c49689980..9b204843b78d 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -40,6 +40,19 @@
- 	} while (0);							  \
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 47e021bdcc94..d2da5abcf395 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5959,6 +5959,7 @@ gpa_t kvm_mmu_gva_to_gpa_read(struct kvm_vcpu *vcpu, gva_t gva,
+ 	u32 access = (static_call(kvm_x86_get_cpl)(vcpu) == 3) ? PFERR_USER_MASK : 0;
+ 	return vcpu->arch.walk_mmu->gva_to_gpa(vcpu, gva, access, exception);
  }
++EXPORT_SYMBOL_GPL(kvm_mmu_gva_to_gpa_read);
  
-+/*
-+ * encls_faulted() - Check if an ENCLS leaf faulted given an error code
-+ * @ret:	the return value of an ENCLS leaf function call
-+ *
-+ * Return:
-+ * - true:	ENCLS leaf faulted.
-+ * - false:	Otherwise.
-+ */
-+static inline bool encls_faulted(int ret)
-+{
-+	return ret & ENCLS_FAULT_FLAG;
-+}
-+
- /**
-  * encls_failed() - Check if an ENCLS function failed
-  * @ret:	the return value of an ENCLS function call
-@@ -50,7 +63,7 @@
-  */
- static inline bool encls_failed(int ret)
- {
--	if (ret & ENCLS_FAULT_FLAG)
-+	if (encls_faulted(ret))
- 		return ENCLS_TRAPNR(ret) != X86_TRAP_PF;
+  gpa_t kvm_mmu_gva_to_gpa_fetch(struct kvm_vcpu *vcpu, gva_t gva,
+ 				struct x86_exception *exception)
+@@ -5975,6 +5976,7 @@ gpa_t kvm_mmu_gva_to_gpa_write(struct kvm_vcpu *vcpu, gva_t gva,
+ 	access |= PFERR_WRITE_MASK;
+ 	return vcpu->arch.walk_mmu->gva_to_gpa(vcpu, gva, access, exception);
+ }
++EXPORT_SYMBOL_GPL(kvm_mmu_gva_to_gpa_write);
  
- 	return !!ret;
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 772b9c648cf1..dc18ced04ad8 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -568,7 +568,7 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
- 		}
- 	}
- 
--	if (ret & ENCLS_FAULT_FLAG) {
-+	if (encls_faulted(ret)) {
- 		if (encls_failed(ret))
- 			ENCLS_WARN(ret, "EINIT");
- 
+ /* uses this to access any guest's mapped memory without checking CPL */
+ gpa_t kvm_mmu_gva_to_gpa_system(struct kvm_vcpu *vcpu, gva_t gva,
 -- 
 2.30.2
 
