@@ -6,62 +6,88 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CF4C433DB
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Mar 2021 10:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FA3C433DB
+	for <linux-sgx@archiver.kernel.org>; Mon, 22 Mar 2021 18:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0117619A3
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Mar 2021 10:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFAD461983
+	for <linux-sgx@archiver.kernel.org>; Mon, 22 Mar 2021 18:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbhCVKch (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 22 Mar 2021 06:32:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33994 "EHLO mail.skyhub.de"
+        id S229870AbhCVSRB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 22 Mar 2021 14:17:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:34438 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230173AbhCVKbo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 22 Mar 2021 06:31:44 -0400
-Received: from zn.tnic (p200300ec2f06670063ce2fe2d87b4e47.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:6700:63ce:2fe2:d87b:4e47])
+        id S229591AbhCVSQu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 22 Mar 2021 14:16:50 -0400
+Received: from zn.tnic (p200300ec2f066700d1873920611831f8.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:6700:d187:3920:6118:31f8])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D6BE41EC04D1;
-        Mon, 22 Mar 2021 11:31:38 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 59C821EC030E;
+        Mon, 22 Mar 2021 19:16:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1616409098;
+        t=1616437008;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=A7X6xqWwvrumHxCzhE/jGhlXXWmEGnnV8W9n3h7zfrM=;
-        b=fj4dFah2LjRf9lhNjzR/HlbwH48kifin9iJOUdTZmYEdAiilXgsbAeb5WHR8m96PB7Sn0L
-        lHKxRt3adznDjYY6mQ7MGn3t68KdPDS8Ezj8B8o5waytw+6P6DI6iv8YzvEp1MOijTLE6e
-        Hu/AHI4jQw9pBhZf2S2ejjsBZpxCJ+A=
-Date:   Mon, 22 Mar 2021 11:31:37 +0100
+        bh=3sq6YdCU8BJZWUhxdT9joEhe9PvoQnzQQ2RK2v1z+H8=;
+        b=MoGcW+JDPtktaezfhT++xmj2lP8G5368TPMntW8qBgd6Sg5cnyKC89vcO88q8oR947Fq77
+        TJn8olrWVfII8AgT1V6ZcEWU7V9+iXkS/qd+Ljh5T8ks4vu1ybVGvmEXHSNCOKkOcDjLcd
+        dSOB057xAfY8CmwzZ/y9v7i4Je+5gTY=
+Date:   Mon, 22 Mar 2021 19:16:46 +0100
 From:   Borislav Petkov <bp@alien8.de>
 To:     Kai Huang <kai.huang@intel.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, kvm@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, seanjc@google.com, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
+Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
+        luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, jethro@fortanix.com,
-        b.thiel@posteo.de, jmattson@google.com, joro@8bytes.org,
-        vkuznets@redhat.com, wanpengli@tencent.com, corbet@lwn.net
-Subject: Re: [PATCH v3 00/25] KVM SGX virtualization support
-Message-ID: <20210322103137.GB6481@zn.tnic>
+        mingo@redhat.com, hpa@zytor.com
+Subject: Re: [PATCH v3 03/25] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+Message-ID: <20210322181646.GG6481@zn.tnic>
 References: <cover.1616136307.git.kai.huang@intel.com>
- <YFS6kTe1SuAjiMFN@kernel.org>
- <d876e5abb1a7e4fce160bfcb217bf3ab675f44a8.camel@intel.com>
+ <062acb801926b2ade2f9fe1672afb7113453a741.1616136308.git.kai.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d876e5abb1a7e4fce160bfcb217bf3ab675f44a8.camel@intel.com>
+In-Reply-To: <062acb801926b2ade2f9fe1672afb7113453a741.1616136308.git.kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 11:03:28PM +1300, Kai Huang wrote:
-> If there's no other comments, should I send another version
+On Fri, Mar 19, 2021 at 08:22:19PM +1300, Kai Huang wrote:
+> +/**
+> + * sgx_encl_free_epc_page - free EPC page assigned to an enclave
+> + * @page:	EPC page to be freed
+> + *
+> + * Free EPC page assigned to an enclave.  It does EREMOVE for the page, and
+> + * only upon success, it puts the page back to free page list.  Otherwise, it
+> + * gives a WARNING to indicate page is leaked, and require reboot to retrieve
+> + * leaked pages.
+> + */
+> +void sgx_encl_free_epc_page(struct sgx_epc_page *page)
+> +{
+> +	int ret;
+> +
+> +	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> +
+> +	/*
+> +	 * Give a message to remind EPC page is leaked when EREMOVE fails,
+> +	 * and requires machine reboot to get leaked pages back. This can
+> +	 * be improved in future by adding stats of leaked pages, etc.
+> +	 */
+> +#define EREMOVE_ERROR_MESSAGE \
+> +	"EREMOVE returned %d (0x%x).  EPC page leaked.  Reboot required to retrieve leaked pages."
 
-No need.
+A reboot? Seriously? Why?
 
-Thx.
+How are you going to explain to cloud people that they need to reboot
+their fat server? The same cloud people who want to make sure Intel
+supports late microcode loading no matter the effort just so to avoid
+rebooting the machine.
+
+But now all of a sudden, if they wanna have SGX enclaves in guests, they
+need to get prepared for potential rebooting.
+
+I sure hope I'm missing something...
 
 -- 
 Regards/Gruss,
