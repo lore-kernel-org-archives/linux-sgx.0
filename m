@@ -2,122 +2,72 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DAEC433DB
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Mar 2021 23:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3730C433DB
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Mar 2021 03:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E760619AC
-	for <linux-sgx@archiver.kernel.org>; Mon, 22 Mar 2021 23:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92721619B2
+	for <linux-sgx@archiver.kernel.org>; Tue, 23 Mar 2021 03:09:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbhCVXRL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 22 Mar 2021 19:17:11 -0400
-Received: from mga06.intel.com ([134.134.136.31]:20855 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229871AbhCVXQu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 22 Mar 2021 19:16:50 -0400
-IronPort-SDR: fWTRcO6Qf6hdgFX6REFdnHRICh7UmZu9omvZaXbMWJn64CXkq7F4Rg8m586phPVc/oy7L+AY8X
- nv34lL+YbArQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9931"; a="251719787"
-X-IronPort-AV: E=Sophos;i="5.81,269,1610438400"; 
-   d="scan'208";a="251719787"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2021 16:16:49 -0700
-IronPort-SDR: I7UDdE7X3uLUmkkEj1gju/L3cDboU6/HlBwuNylH8RJ/obg75rLKDw0Xtx9j00017GNiqw95EK
- y29bMBN91acw==
-X-IronPort-AV: E=Sophos;i="5.81,269,1610438400"; 
-   d="scan'208";a="513480903"
-Received: from rmarinax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.143.198])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2021 16:16:45 -0700
-Date:   Tue, 23 Mar 2021 12:16:43 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
-        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v3 03/25] x86/sgx: Wipe out EREMOVE from
- sgx_free_epc_page()
-Message-Id: <20210323121643.e06403a1bc7819bab7c15d95@intel.com>
-In-Reply-To: <20210322223726.GJ6481@zn.tnic>
-References: <cover.1616136307.git.kai.huang@intel.com>
-        <062acb801926b2ade2f9fe1672afb7113453a741.1616136308.git.kai.huang@intel.com>
-        <20210322181646.GG6481@zn.tnic>
-        <YFjoZQwB7e3oQW8l@google.com>
-        <20210322191540.GH6481@zn.tnic>
-        <YFjx3vixDURClgcb@google.com>
-        <20210322210645.GI6481@zn.tnic>
-        <20210323110643.f29e214ebe8ec7a4a3d0bc2e@intel.com>
-        <20210322223726.GJ6481@zn.tnic>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S229647AbhCWDIl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 22 Mar 2021 23:08:41 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:40940 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229545AbhCWDIa (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 22 Mar 2021 23:08:30 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0UT12C85_1616468905;
+Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UT12C85_1616468905)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 23 Mar 2021 11:08:26 +0800
+Subject: Re: [PATCH v6] selftests/x86: Use getauxval() to simplify the code in
+ sgx
+To:     Shuah Khan <shuah@kernel.org>, Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Shuah Khan <shuah@kernel.org>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+References: <20210314111621.68428-1-tianjia.zhang@linux.alibaba.com>
+ <YE9ayBnFIpwGiVVr@kernel.org>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <53c94119-bdc3-a24c-91be-6d0444c46d64@linux.alibaba.com>
+Date:   Tue, 23 Mar 2021 11:08:25 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.1
+MIME-Version: 1.0
+In-Reply-To: <YE9ayBnFIpwGiVVr@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 22 Mar 2021 23:37:26 +0100 Borislav Petkov wrote:
-> On Tue, Mar 23, 2021 at 11:06:43AM +1300, Kai Huang wrote:
-> > This path is called by host SGX driver only, so yes this leaking is done by
-> > host enclaves only.
-> 
-> Yes, so I was told.
-> 
-> > This patch is purpose is to break EREMOVE out of sgx_free_epc_page() so virtual
-> > EPC code can use sgx_free_epc_page(), and handle EREMOVE logic differently.
-> > This patch doesn't have intention to bring functional change.  I changed the
-> > error msg because Dave said it worth to give a message saying EPC page is
-> > leaked, and I thought this minor change won't break anything.
-> 
-> I read that already - you don't have to repeat it.
-> 
-> > btw, currently virtual EPC code (patch 5) handles in similar way: There's one
-> > EREMOVE error is expected and virtual EPC code can handle, but for other
-> > errors, it means kernel bug, and virtual EPC code gives a WARN(), and that EPC
-> > page is leaked too:
-> > 
-> > +		WARN_ONCE(ret != SGX_CHILD_PRESENT,
-> > +			  "EREMOVE (EPC page 0x%lx): unexpected error: %d\n",
-> > +			  sgx_get_epc_phys_addr(epc_page), ret);
-> > +		return ret;
-> > 
-> > So to me they are just WARN() to catch kernel bug.
-> 
-> You don't care about users, do you? Because when that error happens,
-> they won't come crying to you to fix it.
-> 
-> Lemme save you some trouble: we don't take half-baked code into the
-> kernel until stuff has been discussed and analyzed properly. So instead
-> of trying to downplay this, try answering my questions.
-> 
-> Here's another one: when does EREMOVE fail?
-> 
-> /me goes and looks it up
-> 
-> "The instruction fails if the operand is not properly aligned or does
-> not refer to an EPC page or the page is in use by another thread, or
-> other threads are running in the enclave to which the page belongs. In
-> addition the instruction fails if the operand refers to an SECS with
-> associations."
-> 
-> And I guess those conditions will become more in the future.
-> 
-> Now, let's play. I'm the cloud admin and you're cloud OS customer
-> support. I say:
-> 
-> "I got this scary error message while running enclaves on my server
-> 
-> "EREMOVE returned ... .  EPC page leaked.  Reboot required to retrieve leaked pages."
-> 
-> but I cannot reboot that machine because there are guests running on it
-> and I'm getting paid for those guests and I might get sued if I do?"
-> 
-> Your turn, go wild.
+Hi,
 
-I suppose admin can migrate those VMs, and then engineers can analyse the root
-cause of such failure, and then fix it.
+On 3/15/21 9:02 PM, Jarkko Sakkinen wrote:
+> On Sun, Mar 14, 2021 at 07:16:21PM +0800, Tianjia Zhang wrote:
+>> Simplify the sgx code implemntation by using library function
+>> getauxval() instead of a custom function to get the base address
+>> of vDSO.
+>>
+>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+> 
+> Shuah, Boris, which tree this should be picked?
+> 
+> /Jarkko
+> 
+
+Take time to look at this.
+
+Best regards,
+Tianjia
