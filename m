@@ -2,155 +2,132 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CF1C433E0
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Mar 2021 18:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2B1C433DB
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Mar 2021 18:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2611461A26
-	for <linux-sgx@archiver.kernel.org>; Wed, 24 Mar 2021 18:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFDD361A21
+	for <linux-sgx@archiver.kernel.org>; Wed, 24 Mar 2021 18:25:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbhCXSXI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Mar 2021 14:23:08 -0400
-Received: from mga18.intel.com ([134.134.136.126]:18139 "EHLO mga18.intel.com"
+        id S237547AbhCXSYp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Mar 2021 14:24:45 -0400
+Received: from mga09.intel.com ([134.134.136.24]:16715 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237494AbhCXSWu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 24 Mar 2021 14:22:50 -0400
-IronPort-SDR: 0qB9NNC4zoSv4Rhb/u4FlOrDM005zy2w9wCC2RGwsNJqcyYHly2C1PSZnWWDarNH+DGAGdFnot
- 5CYlrkio+5MA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="178317414"
+        id S237298AbhCXSYZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 24 Mar 2021 14:24:25 -0400
+IronPort-SDR: u0BXAHGzOwwtHi+J0WuD0hauc5P3vEw3lxRRv8ZSlpY/zLLge78r0pxCyli4dCNRDgnxVumjOK
+ +2tDcyNNJ+yw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="190857221"
 X-IronPort-AV: E=Sophos;i="5.81,275,1610438400"; 
-   d="scan'208";a="178317414"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 11:22:49 -0700
-IronPort-SDR: bPLVKBIfX2/fZ67H6twLVC/PqUgyY/DB2F/TjiylyJ29z2f1ThOXUR6F1ClcFH6RKrMDaWJR+n
- 5xcRcViKFEjg==
+   d="scan'208";a="190857221"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 11:24:23 -0700
+IronPort-SDR: H8fKkRDL6KDXqfGvIm5i/rDyWLDoiuYZ4U3ghKa7SfHZ8PkFVBZolHrPcKfXz3YJPYnLU4gbQW
+ lA14730w3S1A==
 X-IronPort-AV: E=Sophos;i="5.81,275,1610438400"; 
-   d="scan'208";a="415604529"
+   d="scan'208";a="408967340"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 11:22:49 -0700
-From:   ira.weiny@intel.com
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>,
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 11:24:23 -0700
+Date:   Wed, 24 Mar 2021 11:24:22 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Sean Christopherson <seanjc@google.com>,
         Jethro Beekman <jethro@fortanix.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sgx: Remove unnecessary kmap() from sgx_ioc_enclave_init()
-Date:   Wed, 24 Mar 2021 11:22:46 -0700
-Message-Id: <20210324182246.2484875-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
+Subject: Re: [PATCH v5] x86: Remove unnecessary kmap() from
+ sgx_ioc_enclave_init()
+Message-ID: <20210324182422.GU3014244@iweiny-DESK2.sc.intel.com>
+References: <20210306002058.303796-1-ira.weiny@intel.com>
+ <20210324094720.GA5010@zn.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210324094720.GA5010@zn.tnic>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Wed, Mar 24, 2021 at 10:47:20AM +0100, Borislav Petkov wrote:
+> On Fri, Mar 05, 2021 at 04:20:58PM -0800, ira.weiny@intel.com wrote:
+> 
+> > Subject: Re: [PATCH v5] x86: Remove unnecessary kmap() from  sgx_ioc_enclave_init()
+> 
+> The tip tree preferred format for patch subject prefixes is
+> 'subsys/component:', e.g. 'x86/apic:', 'x86/mm/fault:', 'sched/fair:',
+> 'genirq/core:'. Please do not use file names or complete file paths as
+> prefix. 'git log path/to/file' should give you a reasonable hint in most
+> cases.
 
-kmap is inefficient and is being replaced by kmap_local_page(), if
-possible.
+Fixed.
 
-That said, there is no readily apparent reason why initp_page needs to
-be allocated and kmap'ed() except that 'sigstruct' needs to be page
-aligned and 'token' 512 byte aligned.
+> 
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > kmap is inefficient and we are trying to reduce the usage in the kernel.
+> 
+> Please use passive voice in your commit message: no "we" or "I", etc,
+> and describe your changes in imperative mood.
+> 
+> Also, pls read section "2) Describe your changes" in
+> Documentation/process/submitting-patches.rst for more details.
+> 
+> Bottom line is: personal pronouns are ambiguous in text, especially with
+> so many parties/companies/etc developing the kernel so let's avoid them
+> please.
 
-Rather than change this kmap() to kmap_local_page() use kmalloc()
-instead because kmalloc() can gives this alignment when allocating
-PAGE_SIZE bytes.
+Fixed.
 
-Remove the alloc_page()/kmap() and replace with kmalloc(PAGE_SIZE, ...)
-to get a page aligned kernel address.
+> 
+> > @@ -615,11 +614,14 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+> >  	if (copy_from_user(&init_arg, arg, sizeof(init_arg)))
+> >  		return -EFAULT;
+> >  
+> > -	initp_page = alloc_page(GFP_KERNEL);
+> > -	if (!initp_page)
+> > +	/*
+> > +	 * sigstruct must be on a page boundry and token on a 512 byte boundry
+> > +	 * kmalloc() gives us this alignment when allocating PAGE_SIZE bytes
+> 
+> Please integrate scripts/checkpatch.pl into your patch creation
+> workflow. Some of the warnings/errors *actually* make sense.
+> 
+> WARNING: 'boundry' may be misspelled - perhaps 'boundary'?
+> #90: FILE: arch/x86/kernel/cpu/sgx/ioctl.c:618:
+> +        * sigstruct must be on a page boundry and token on a 512 byte boundry
+>                                        ^^^^^^^
+> 
+> WARNING: 'boundry' may be misspelled - perhaps 'boundary'?
+> #90: FILE: arch/x86/kernel/cpu/sgx/ioctl.c:618:
+> +        * sigstruct must be on a page boundry and token on a 512 byte boundry
+>                                                                        ^^^^^^^
+> 
+> Also, do you see how other comments in this file are proper sentences?
+> Please formulate yours this way too.
 
-In addition add a comment to document the alignment requirements so that
-others don't attempt to 'fix' this again.
+Thanks fixed.
 
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Jethro Beekman <jethro@fortanix.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> The change itself looks ok.
 
----
-Changes from v5[5]:
-	From Boris
-		Clean up commit msg and comment
+Thanks, new version 5 sent.
 
-Changes from v4[4]:
-        Add Ack and Reviews
-        Send to the correct maintainers
+Ira
 
-Changes from v3[3]:
-	Remove BUILD_BUG_ONs
-
-Changes from v2[2]:
-        When allocating a power of 2 size kmalloc() now guarantees the
-        alignment of the respective size.  So go back to using kmalloc() but
-        with a PAGE_SIZE allocation to get the alignment.  This also follows
-        the pattern in sgx_ioc_enclave_create()
-
-Changes from v1[1]:
-	Use page_address() instead of kcmalloc() to ensure sigstruct is
-	page aligned
-	Use BUILD_BUG_ON to ensure token and sigstruct don't collide.
-
-[1] https://lore.kernel.org/lkml/20210129001459.1538805-1-ira.weiny@intel.com/
-[2] https://lore.kernel.org/lkml/20210202013725.3514671-1-ira.weiny@intel.com/
-[3] https://lore.kernel.org/lkml/20210205050850.GC5033@iweiny-DESK2.sc.intel.com/#t
-[4] https://lore.kernel.org/lkml/YCBY02iEKLVyj7Ix@kernel.org/
-[5] https://lore.kernel.org/lkml/20210306002058.303796-1-ira.weiny@intel.com/
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf76939..2e10367ea66c 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -604,7 +604,6 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- {
- 	struct sgx_sigstruct *sigstruct;
- 	struct sgx_enclave_init init_arg;
--	struct page *initp_page;
- 	void *token;
- 	int ret;
- 
-@@ -615,11 +614,15 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	if (copy_from_user(&init_arg, arg, sizeof(init_arg)))
- 		return -EFAULT;
- 
--	initp_page = alloc_page(GFP_KERNEL);
--	if (!initp_page)
-+	/*
-+	 * 'sigstruct' must be on a page boundary and 'token' on a 512 byte
-+	 * boundary.  kmalloc() will give this alignment when allocating
-+	 * PAGE_SIZE bytes.
-+	 */
-+	sigstruct = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!sigstruct)
- 		return -ENOMEM;
- 
--	sigstruct = kmap(initp_page);
- 	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
- 	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
- 
-@@ -645,8 +648,7 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	ret = sgx_encl_init(encl, sigstruct, token);
- 
- out:
--	kunmap(initp_page);
--	__free_page(initp_page);
-+	kfree(sigstruct);
- 	return ret;
- }
- 
--- 
-2.28.0.rc0.12.gb6a658bd00c9
-
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
