@@ -6,46 +6,56 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FEEC433C1
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Mar 2021 09:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BA9C433DB
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Mar 2021 09:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D49BE619E3
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Mar 2021 09:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F42F61A14
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Mar 2021 09:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhCYJhF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Mar 2021 05:37:05 -0400
-Received: from mga14.intel.com ([192.55.52.115]:36885 "EHLO mga14.intel.com"
+        id S229933AbhCYJim (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Mar 2021 05:38:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:18947 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229716AbhCYJgg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 25 Mar 2021 05:36:36 -0400
-IronPort-SDR: Zfcmp/c37s+hrRD6WnINh7nMLaW98I6yP1K9OchdhGL2ejcbocD5oZEGLtxlBeheBTLYj2Xr5i
- mEqdQ46N1IRw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="190316892"
+        id S230094AbhCYJiT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 25 Mar 2021 05:38:19 -0400
+IronPort-SDR: SGauGk6ApO6mi6JkjJt1DZGOTWMx0j2h9H+EyH7SZzO2EU70DO3rEmE3Gn56OMGv98rLnCXTYs
+ RUlUKqABn4Ww==
+X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="170870908"
 X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
-   d="scan'208";a="190316892"
+   d="scan'208";a="170870908"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 02:36:32 -0700
-IronPort-SDR: 9myTIJq0f1tCIy0NWElSFm44pXiiHB7ggH9dUXwTQZVYKyhSOlw4ECcDU6xPh8am7afnUIAgAa
- /tX/6EsccC0w==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 02:38:18 -0700
+IronPort-SDR: tA3Bge5c+pwXbvzz43HtmiT5cWh/fKRQlTCMjbwrkGQ7hfNQM1UqRp8rrT99TOVSqKYZi0DaqP
+ EmvueFcSl1kQ==
 X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
-   d="scan'208";a="443325855"
+   d="scan'208";a="443326428"
 Received: from phanl-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.4.149])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 02:36:28 -0700
-Date:   Thu, 25 Mar 2021 22:36:25 +1300
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 02:38:15 -0700
+Date:   Thu, 25 Mar 2021 22:38:13 +1300
 From:   Kai Huang <kai.huang@intel.com>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     <kvm@vger.kernel.org>, <x86@kernel.org>,
-        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <seanjc@google.com>, <jarkko@kernel.org>, <luto@kernel.org>,
-        <dave.hansen@intel.com>, <rick.p.edgecombe@intel.com>,
-        <haitao.huang@intel.com>, <pbonzini@redhat.com>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>
-Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-Id: <20210325223625.f46ad939c72674830c1ecc53@intel.com>
-In-Reply-To: <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
-References: <cover.1616136307.git.kai.huang@intel.com>
-        <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+        x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
+        dave.hansen@intel.com, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com
+Subject: Re: [PATCH v3 03/25] x86/sgx: Wipe out EREMOVE from
+ sgx_free_epc_page()
+Message-Id: <20210325223813.2397c0f3f035fbc2b809d558@intel.com>
+In-Reply-To: <20210325084241.GA31322@zn.tnic>
+References: <20210323121643.e06403a1bc7819bab7c15d95@intel.com>
+        <YFoNCvBYS2lIYjjc@google.com>
+        <20210323160604.GB4729@zn.tnic>
+        <YFoVmxIFjGpqM6Bk@google.com>
+        <20210323163258.GC4729@zn.tnic>
+        <b35f66a10ecc07a1eecb829912d5664886ca169b.camel@intel.com>
+        <236c0aa9-92f2-97c8-ab11-d55b9a98c931@redhat.com>
+        <20210325122343.008120ef70c1a1b16b5657ca@intel.com>
+        <8e833f7c-ea24-1044-4c69-780a84b47ce1@redhat.com>
+        <20210325124611.a9dce500b0bcbb1836580719@intel.com>
+        <20210325084241.GA31322@zn.tnic>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -54,52 +64,17 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+On Thu, 25 Mar 2021 09:42:41 +0100 Borislav Petkov wrote:
+> ... so you could send the final version of this patch as a reply to this
+> thread, now that everyone agrees, so that I can continue going through
+> the rest.
+> 
 
-> +
-> +static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * Take a previously guest-owned EPC page and return it to the
-> +	 * general EPC page pool.
-> +	 *
-> +	 * Guests can not be trusted to have left this page in a good
-> +	 * state, so run EREMOVE on the page unconditionally.  In the
-> +	 * case that a guest properly EREMOVE'd this page, a superfluous
-> +	 * EREMOVE is harmless.
-> +	 */
-> +	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-> +	if (ret) {
-> +		/*
-> +		 * Only SGX_CHILD_PRESENT is expected, which is because of
-> +		 * EREMOVE'ing an SECS still with child, in which case it can
-> +		 * be handled by EREMOVE'ing the SECS again after all pages in
-> +		 * virtual EPC have been EREMOVE'd. See comments in below in
-> +		 * sgx_vepc_release().
-> +		 *
-> +		 * The user of virtual EPC (KVM) needs to guarantee there's no
-> +		 * logical processor is still running in the enclave in guest,
-> +		 * otherwise EREMOVE will get SGX_ENCLAVE_ACT which cannot be
-> +		 * handled here.
-> +		 */
-> +		WARN_ONCE(ret != SGX_CHILD_PRESENT,
-> +			  "EREMOVE (EPC page 0x%lx): unexpected error: %d\n",
-> +			  sgx_get_epc_phys_addr(epc_page), ret);
+I have sent it by replying to this patch.
 
-Hi Boris,
+[PATCH v4 03/25] x86/sgx: Wipe out EREMOVE from sgx_free_epc_page()
 
-With the change to patch 3, I think perhaps this WARN_ONCE() should also be
-changed to:
+Btw, with this patch being changed, I think there's a place in patch 5 should
+also be changed. I have replied patch 5. Please take a look.
 
-                WARN_ONCE(ret != SGX_CHILD_PRESENT, EREMOVE_ERROR_MESSAGE,
-                                ret, ret);
-
-> +		return ret;
-> +	}
-> +
-> +	sgx_free_epc_page(epc_page);
-> +
-> +	return 0;
-> +}
->
+Thanks.
