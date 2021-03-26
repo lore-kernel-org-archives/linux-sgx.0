@@ -2,74 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1211C433C1
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Mar 2021 17:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F88C433C1
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Mar 2021 19:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6A7361A45
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Mar 2021 17:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E97161A02
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Mar 2021 19:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbhCZRC2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 26 Mar 2021 13:02:28 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36396 "EHLO mail.skyhub.de"
+        id S230106AbhCZTqM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 26 Mar 2021 15:46:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230198AbhCZRC1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 26 Mar 2021 13:02:27 -0400
-Received: from zn.tnic (p200300ec2f075f00aa13db561e4cebd5.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:5f00:aa13:db56:1e4c:ebd5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 654371EC0535;
-        Fri, 26 Mar 2021 18:02:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1616778145;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=sHOGguuzDH6sV8Z2HSE7+eZGYEGC0SLY0CFm8dGQwks=;
-        b=j13EEC6IU5Z7bV6rdxof2YU+QNTvItS+gCGT4HsJ0ePPAo2I3SEXRZgyflHMFSFRsY2/ra
-        o+zabsZWlRpEIirMjY8sxtLsjHZBWmr1MNQ67/RZCB4MlLhonYZWDNJgqmBy8DuWjZN1X5
-        4clLSOp+IzGinwRsvBxXOm3rGQ/AboU=
-Date:   Fri, 26 Mar 2021 18:02:23 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     seanjc@google.com, Kai Huang <kai.huang@intel.com>,
-        kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com
-Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-ID: <20210326170223.GH25229@zn.tnic>
-References: <cover.1616136307.git.kai.huang@intel.com>
- <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
- <20210326150320.GF25229@zn.tnic>
- <db27d34f-60f9-a8e8-270e-7152bce81a12@intel.com>
- <20210326152931.GG25229@zn.tnic>
- <dc7ac02e-857a-b1ce-f444-0d244405a099@intel.com>
+        id S230240AbhCZTpy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 26 Mar 2021 15:45:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D7C05619C7;
+        Fri, 26 Mar 2021 19:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616787954;
+        bh=ZTDhus6muL1m6rBYPHTfl1mHLrPDAxL3zd4m78f4VF8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XDKADaIVj6lm9xgwj12JdNAz7sXs8A6z6taZmu2Xqfqqn8shKYW/8CT2Qjskiehi6
+         qYbFKtl86ZtxJk1/tvsWMnIU2e86EfqTdywutPq61w7QJ4tU8VoyH+eQp62Pz9RgT1
+         OvxMNfXMf0xgdkLRbdcBYNBKiuEwrEGKQRp/1l9c4veZAJd75e33n7zu3lsmeO3cJ8
+         FoMMme7VDYQn8gpROOl3YCHWDz55J0NqWuP+6AXJa/lVOS9PFbxmwqCnFYT+Fb8A57
+         SUmMJPhLioZGkLCfulhYxhZBGGqVkLTambNDZBq/7IdPeY285nxZXYVP4FfwFkWNDt
+         F2uOwAddfYBQQ==
+Date:   Fri, 26 Mar 2021 21:45:24 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     ira.weiny@intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Remove unnecessary kmap() from
+ sgx_ioc_enclave_init()
+Message-ID: <YF451PGNd8x/i56z@kernel.org>
+References: <20210324182246.2484875-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc7ac02e-857a-b1ce-f444-0d244405a099@intel.com>
+In-Reply-To: <20210324182246.2484875-1-ira.weiny@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 08:35:34AM -0700, Dave Hansen wrote:
-> We could do it in the SGX core, but I think what we end up with will end
-> up looking a lot like a cgroup controller.  It seems like overkill, but
-> I think there's enough infrastructure to leverage that it's simpler to
-> do it with cgroups versus anything else.
+On Wed, Mar 24, 2021 at 11:22:46AM -0700, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> kmap is inefficient and is being replaced by kmap_local_page(), if
+> possible.
 
-Right.
+Nit: just saying that something is inefficient is not enough. Always
+should have something to back it up.
 
-Thx.
+> That said, there is no readily apparent reason why initp_page needs to
+> be allocated and kmap'ed() except that 'sigstruct' needs to be page
+> aligned and 'token' 512 byte aligned.
+> 
+> Rather than change this kmap() to kmap_local_page() use kmalloc()
+> instead because kmalloc() can gives this alignment when allocating
+> PAGE_SIZE bytes.
+> 
+> Remove the alloc_page()/kmap() and replace with kmalloc(PAGE_SIZE, ...)
+> to get a page aligned kernel address.
+> 
+> In addition add a comment to document the alignment requirements so that
+> others don't attempt to 'fix' this again.
 
--- 
-Regards/Gruss,
-    Boris.
+I'm a bit confused based on this commit message. Why is kmap_local_page()
+better, and why kmalloc() is the ultimate choice of all three options?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> Cc: Sean Christopherson <seanjc@google.com>
+> Cc: Jethro Beekman <jethro@fortanix.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+ 
+/Jarkko
