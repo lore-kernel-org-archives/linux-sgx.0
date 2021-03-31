@@ -2,70 +2,68 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300C0C433C1
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 07:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7483C433C1
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 08:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E58F6619D3
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 07:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C1A8619AA
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 08:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234188AbhCaHpL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Mar 2021 03:45:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42660 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234224AbhCaHoo (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Mar 2021 03:44:44 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB5DC061574;
-        Wed, 31 Mar 2021 00:44:44 -0700 (PDT)
-Received: from [10.164.192.140] (dynamic-002-247-240-140.2.247.pool.telefonica.de [2.247.240.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF60E1EC0512;
-        Wed, 31 Mar 2021 09:44:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1617176683;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X0sjup1HhLFjq9eGLjnKOtMxmpb/aQzFdHA8EPf63HQ=;
-        b=N0uYgy88Cx/7tovViP1CjiDB/FlFv1/1Rb3DW6kLjSwpHPaKP7NS/qRGaHHmBZ/gfFt3oL
-        d6MfYmOlMzpQR8fMqiKphXc+5swr2F3/ZwdLJEbnN3eRQLLRk2xAMcv4o6pztt0MMtMSRy
-        ahvXFAKewT2jvjkOvm2Vu4CxReIATGk=
-Date:   Wed, 31 Mar 2021 09:44:39 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20210331195138.2af97ec1bb4b5e4202f2600d@intel.com>
-References: <cover.1616136307.git.kai.huang@intel.com> <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com> <20210326150320.GF25229@zn.tnic> <20210331141032.db59586da8ba2cccf7b46f77@intel.com> <D4ECF8D3-C483-4E75-AD41-2CEFDF56B12D@alien8.de> <20210331195138.2af97ec1bb4b5e4202f2600d@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM guests
-To:     Kai Huang <kai.huang@intel.com>
-CC:     seanjc@google.com, kvm@vger.kernel.org, x86@kernel.org,
+        id S234525AbhCaIyV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Mar 2021 04:54:21 -0400
+Received: from mga05.intel.com ([192.55.52.43]:12573 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234519AbhCaIxv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 31 Mar 2021 04:53:51 -0400
+IronPort-SDR: 2P39R65TkXVRbemtAZ3fh4L3gxwoD0LqwhDLrIVo1ecUiLoPCOItCEHJpedQle6yWm6M7IrRxJ
+ 6GuOSaNHpe3g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9939"; a="277135452"
+X-IronPort-AV: E=Sophos;i="5.81,293,1610438400"; 
+   d="scan'208";a="277135452"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2021 01:53:50 -0700
+IronPort-SDR: WeRnFS6jgJiJDuvdm6IgUzJh+9zCe1khGfh4s0adCb3r6x4gQy/mO0/mZMcJlQ2Dz8TqICzNtT
+ 29FuOSxV7voA==
+X-IronPort-AV: E=Sophos;i="5.81,293,1610438400"; 
+   d="scan'208";a="455391755"
+Received: from mwamucix-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.24.224])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2021 01:53:47 -0700
+Date:   Wed, 31 Mar 2021 21:53:45 +1300
+From:   Kai Huang <kai.huang@intel.com>
+To:     Boris Petkov <bp@alien8.de>
+Cc:     seanjc@google.com, kvm@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         jarkko@kernel.org, luto@kernel.org, dave.hansen@intel.com,
         rick.p.edgecombe@intel.com, haitao.huang@intel.com,
         pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
         hpa@zytor.com
-From:   Boris Petkov <bp@alien8.de>
-Message-ID: <3889C4C6-48E2-4C97-A074-180EB18BDA29@alien8.de>
+Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
+ guests
+Message-Id: <20210331215345.cad098cfcfcaabf489243807@intel.com>
+In-Reply-To: <3889C4C6-48E2-4C97-A074-180EB18BDA29@alien8.de>
+References: <cover.1616136307.git.kai.huang@intel.com>
+        <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
+        <20210326150320.GF25229@zn.tnic>
+        <20210331141032.db59586da8ba2cccf7b46f77@intel.com>
+        <D4ECF8D3-C483-4E75-AD41-2CEFDF56B12D@alien8.de>
+        <20210331195138.2af97ec1bb4b5e4202f2600d@intel.com>
+        <3889C4C6-48E2-4C97-A074-180EB18BDA29@alien8.de>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On March 31, 2021 8:51:38 AM GMT+02:00, Kai Huang <kai=2Ehuang@intel=2Ecom>=
- wrote:
->How about adding explanation to Documentation/x86/sgx=2Erst?
+On Wed, 31 Mar 2021 09:44:39 +0200 Boris Petkov wrote:
+> On March 31, 2021 8:51:38 AM GMT+02:00, Kai Huang <kai.huang@intel.com> wrote:
+> >How about adding explanation to Documentation/x86/sgx.rst?
+> 
+> Sure, and then we should point users at it. The thing is also indexed by search engines so hopefully people will find it.
 
-Sure, and then we should point users at it=2E The thing is also indexed by=
- search engines so hopefully people will find it=2E
+Thanks. Will do and send out new patch for review.
 
-Thx=2E
-
---=20
-Sent from a small device: formatting sux and brevity is inevitable=2E 
