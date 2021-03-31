@@ -2,79 +2,54 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=BAYES_50,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F69C433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 06:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331A5C433FB
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 07:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9C4C619BC
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 06:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1794F619CF
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 07:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233935AbhCaGwK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Mar 2021 02:52:10 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32931 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233801AbhCaGvo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 31 Mar 2021 02:51:44 -0400
-IronPort-SDR: nT8LELN3J8FAXvFlH/4IFBdY0MQjkci5evUlIgUeLdxbzudcj8Heo4626yNw0duArmBBqpqx5R
- ss0NEUx0PsjQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9939"; a="188671798"
-X-IronPort-AV: E=Sophos;i="5.81,293,1610438400"; 
-   d="scan'208";a="188671798"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2021 23:51:44 -0700
-IronPort-SDR: iW1q8JeezhyiUx+5NiGB4Y/MpMVn6fxdop4H0aMl8EVidsEQMkTEu3WTOsNdV5Gy5Jl6bYl5zw
- 5ZJFeX3zcRmg==
-X-IronPort-AV: E=Sophos;i="5.81,293,1610438400"; 
-   d="scan'208";a="527648485"
-Received: from mwamucix-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.24.224])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2021 23:51:40 -0700
-Date:   Wed, 31 Mar 2021 19:51:38 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Boris Petkov <bp@alien8.de>
-Cc:     seanjc@google.com, kvm@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jarkko@kernel.org, luto@kernel.org, dave.hansen@intel.com,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com
-Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-Id: <20210331195138.2af97ec1bb4b5e4202f2600d@intel.com>
-In-Reply-To: <D4ECF8D3-C483-4E75-AD41-2CEFDF56B12D@alien8.de>
-References: <cover.1616136307.git.kai.huang@intel.com>
-        <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
-        <20210326150320.GF25229@zn.tnic>
-        <20210331141032.db59586da8ba2cccf7b46f77@intel.com>
-        <D4ECF8D3-C483-4E75-AD41-2CEFDF56B12D@alien8.de>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S234064AbhCaHaO convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Mar 2021 03:30:14 -0400
+Received: from bizcloud-power.sawafuji.co.jp ([128.199.220.203]:47845 "EHLO
+        mta0.sawafuji.co.jp" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234075AbhCaHaI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Mar 2021 03:30:08 -0400
+X-Greylist: delayed 635 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Mar 2021 03:30:07 EDT
+From:   Albert Bourla <info@universalautomation.com.pk>
+To:     linux-sgx@vger.kernel.org
+Subject: Bidding invitation
+Date:   31 Mar 2021 09:13:58 +0200
+Message-ID: <20210331091358.BA756A4ABD0EF52E@universalautomation.com.pk>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 31 Mar 2021 08:44:23 +0200 Boris Petkov wrote:
-> On March 31, 2021 3:10:32 AM GMT+02:00, Kai Huang <kai.huang@intel.com> wrote: 
-> 
-> > The admin will be aware of
-> >such EPC
-> >allocation disjoint situation, and deploy host enclaves/KVM SGX guests
-> >accordingly.
-> 
-> The admin will be aware because...
-> 
-> 1) he's following our discussion?
-> 
-> 2) he'll read the commit messages and hopefully understand?
-> 
-> 3) we *actually* have documentation somewhere explaining how we envision that stuff to be used?
-> 
-> Or none of the above and he'll end up doing whatever and then he'll eventually figure out that we don't support that use case but he's doing it already anyway and we don't break userspace so we have to support it now and we're stuck somewhere between a rock and a hard place?
-> 
-> Hmm, I think we have enough misguided use cases as it is - don't need another one.
+Good Day Sir/Ms,
 
-How about adding explanation to Documentation/x86/sgx.rst?
+We are please to invite you or your company to quote the 
+following item listed below:
+ 
+Product/Model No: A702TH FYNE PRESSURE REGULATOR
+Model Number: A702TH
+Qty. 30 units
+
+
+Compulsory,Kindly send your quotation to: 
+quotation@pfizerbvsupply.com 
+for immediate approval.
+
+Kind Regards,
+Albert Bourla
+PFIZER B.V Supply Chain Manager
+Tel: +31(0)208080 880
+ADDRESS: Rivium Westlaan 142, 2909 LD
+Capelle aan den IJssel, Netherlands
