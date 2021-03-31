@@ -2,172 +2,108 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E519FC433DB
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 01:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE4DC433DB
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 02:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2ED5619CB
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 01:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DD0619D7
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Mar 2021 02:57:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233410AbhCaBLB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 30 Mar 2021 21:11:01 -0400
-Received: from mga11.intel.com ([192.55.52.93]:64188 "EHLO mga11.intel.com"
+        id S230160AbhCaC4c (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 30 Mar 2021 22:56:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233291AbhCaBKk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 30 Mar 2021 21:10:40 -0400
-IronPort-SDR: Lqp5T6GQbF2PSUzxALBf45gb6V2bX4WkgDYHS3a6AbbPjJNTxVo7QPz7DlZfIhk8TIgAzChDUx
- GGi/0KX9zdsA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9939"; a="188629376"
-X-IronPort-AV: E=Sophos;i="5.81,291,1610438400"; 
-   d="scan'208";a="188629376"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2021 18:10:39 -0700
-IronPort-SDR: FOQAzg6DPIMvG9IhpJ+6slfBE/vnf0omu5LI+4YvHEt7AGxhDI7n8aABrT12l5lB2q/c2CVZfw
- jdZLQLNKNvZA==
-X-IronPort-AV: E=Sophos;i="5.81,291,1610438400"; 
-   d="scan'208";a="411890393"
-Received: from mwamucix-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.251.24.224])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2021 18:10:35 -0700
-Date:   Wed, 31 Mar 2021 14:10:32 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     seanjc@google.com, kvm@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jarkko@kernel.org, luto@kernel.org, dave.hansen@intel.com,
-        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
-        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com
-Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-Id: <20210331141032.db59586da8ba2cccf7b46f77@intel.com>
-In-Reply-To: <20210326150320.GF25229@zn.tnic>
-References: <cover.1616136307.git.kai.huang@intel.com>
-        <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
-        <20210326150320.GF25229@zn.tnic>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S233340AbhCaC4V (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 30 Mar 2021 22:56:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0C159619D8;
+        Wed, 31 Mar 2021 02:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617159380;
+        bh=u773bDbsKRyPswjZDFIZbgSjt0NBivr0gD8iiCtpke0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=atRZlUClz2KWQhd2L7kr8ViPVzNOyxB7TFuVTEz33kBF3GObAwPE4tSucGLgYpMEJ
+         dgFTw4zsx3RclH0+S5IkneNsawvFPqtZOTb+UCJrXY2KuhSenPdW6/4PaP8+bXhljE
+         qmHRzfaGB863IsXwKCHmw6V8gVidqRLKgx5Cus5PXItXhrKzmyUi75s3sQ/tmFriIU
+         R7h2fd+cjKBYsCxWHgXzHW4EqO94ZOwgfPU6xHOxkjF7Gtk8pOiEJCKT1v6EonieAW
+         vUM2+KQsdJnLgVklRQXB6Yhs0z5O1WqHW5833hY2Mp7HmqTvngobWS5tBelHCXQ8t5
+         J/4Z5dspEhXiA==
+Date:   Wed, 31 Mar 2021 05:56:18 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Aditya Srivastava <yashsri421@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com,
+        rdunlap@infradead.org, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, linux-sgx@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: fix incorrect kernel-doc comment syntax in files
+Message-ID: <YGPk0h8OikOdRnyb@kernel.org>
+References: <20210330211813.28030-1-yashsri421@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210330211813.28030-1-yashsri421@gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, 26 Mar 2021 16:03:55 +0100 Borislav Petkov wrote:
-> On Fri, Mar 19, 2021 at 08:22:21PM +1300, Kai Huang wrote:
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> > 
-> > Add a misc device /dev/sgx_vepc to allow userspace to allocate "raw" EPC
-> > without an associated enclave.  The intended and only known use case for
-> > raw EPC allocation is to expose EPC to a KVM guest, hence the 'vepc'
-> > moniker, virt.{c,h} files and X86_SGX_KVM Kconfig.
-> > 
-> > SGX driver uses misc device /dev/sgx_enclave to support userspace to
-> > create enclave.  Each file descriptor from opening /dev/sgx_enclave
-> > represents an enclave.  Unlike SGX driver, KVM doesn't control how guest
-> > uses EPC, therefore EPC allocated to KVM guest is not associated to an
-> > enclave, and /dev/sgx_enclave is not suitable for allocating EPC for KVM
-> > guest.
-> > 
-> > Having separate device nodes for SGX driver and KVM virtual EPC also
-> > allows separate permission control for running host SGX enclaves and
-> > KVM SGX guests.
+On Wed, Mar 31, 2021 at 02:48:13AM +0530, Aditya Srivastava wrote:
+> The opening comment mark '/**' is used for highlighting the beginning of
+> kernel-doc comments.
+> There are certain files in arch/x86/kernel/cpu/sgx, which follow this
+> syntax, but the content inside does not comply with kernel-doc.
+> Such lines were probably not meant for kernel-doc parsing, but are parsed
+> due to the presence of kernel-doc like comment syntax(i.e, '/**'), which
+> causes unexpected warnings from kernel-doc.
 > 
-> Hmm, just a question on the big picture here - that might've popped up
-> already:
+> E.g., presence of kernel-doc like comment in the header lines for
+> arch/x86/kernel/cpu/sgx/encl.h causes this warning:
+> "warning: expecting prototype for 2016(). Prototype was for _X86_ENCL_H() instead"
 > 
-> So baremetal uses /dev/sgx_enclave and KVM uses /dev/sgx_vepc. Who's
-> deciding which of the two has priority?
-
-Hi Boris,
-
-Sorry the late response (I saw Dave was replying. Thanks Dave :)).
-
-Ultimately the admin, or the user decides, or the two don't have priority, from
-EPC page allocation's perspective. SGX driver's EPC page reclaiming won't be
-able to reclaim pages that have been allocated to KVM guests, and virtual EPC
-fault handler won't try to reclaim page that has been allocated to host enclaves
-either, when it tries to allocate EPC page.
-
-For instance, in case of cloud, where KVM SGX is the main usage, SGX driver in
-host either won't be used, or very minimal, specific and well-defined workloads
-will be deployed in host (for instance, Quoting enclave and architecture
-enclaves that are used for attestation). The admin will be aware of such EPC
-allocation disjoint situation, and deploy host enclaves/KVM SGX guests
-accordingly.
-
+> Similarly for arch/x86/kernel/cpu/sgx/arch.h too.
 > 
-> Let's say all guests start using enclaves and baremetal cannot start any
-> new ones anymore due to no more memory. Are we ok with that?
+> Provide a simple fix by replacing these occurrences with general comment
+> format, i.e. '/*', to prevent kernel-doc from parsing it.
 > 
-> What if baremetal creates a big fat enclave and starves guests all of a
-> sudden. Are we ok with that either?
-
-Yes to both above questions.
-
+> Signed-off-by: Aditya Srivastava <yashsri421@gmail.com>
+> ---
+> * Applies perfectly on next-20210326
 > 
-> In general, having two disjoint things give out SGX resources separately
-> sounds like trouble to me.
+>  arch/x86/kernel/cpu/sgx/arch.h | 2 +-
+>  arch/x86/kernel/cpu/sgx/encl.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> IOW, why don't all virt allocations go through /dev/sgx_enclave too, so
-> that you can have a single place to control all resource allocations?
-
-Overall, there are two reasons (also mentioned in the commit msg of this patch):
-
-1) /dev/sgx_enclave, by its name, implies EPC pages allocated to it are
-associated to an host enclave, so it is not suitable for virtual EPC, since EPC
-allocated to KVM guest won't have an enclave associated. It's possible to
-modify SGX driver (such as deferring 'struct sgx_encl' allocation from open to
-CREATE_ENCLAVE ioctl, modifying majority code flows to cover both cases, etc),
-but even with that, we'd still better to change /dev/sgx_enclave
-to, for instance, /dev/sgx_epc, so it doesn't imply the fd opened from it is
-an host enclave, but some raw EPC. However this is userspace ABI change. 
-2) Having separate /dev/sgx_enclave, and /dev/sgx_vepc, allows admin to have
-different permission control, if required.
-
-So based on above reasons, we agreed it's better to have two device nodes.
-
-Please see previous discussion for RFC v4:
-https://lore.kernel.org/linux-sgx/c50ffb557166132cf73d0e838d3a5c1f653b28b7.camel@intel.com/
-
+> diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
+> index 26315bea1cb4..70b84bbdaa1d 100644
+> --- a/arch/x86/kernel/cpu/sgx/arch.h
+> +++ b/arch/x86/kernel/cpu/sgx/arch.h
+> @@ -1,5 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> -/**
+> +/*
+>   * Copyright(c) 2016-20 Intel Corporation.
+>   *
+>   * Contains data structures defined by the SGX architecture.  Data structures
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+> index d8d30ccbef4c..76b9bc1c5c30 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.h
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -1,5 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> -/**
+> +/*
+>   * Copyright(c) 2016-20 Intel Corporation.
+>   *
+>   * Contains the software defined data structures for enclaves.
+> -- 
+> 2.17.1
 > 
-> > To use /dev/sgx_vepc to allocate a virtual EPC instance with particular
-> > size, the userspace hypervisor opens /dev/sgx_vepc, and uses mmap()
-> > with the intended size to get an address range of virtual EPC.  Then
-> > it may use the address range to create one KVM memory slot as virtual
-> > EPC for guest.
-> > 
-> > Implement the "raw" EPC allocation in the x86 core-SGX subsystem via
-> > /dev/sgx_vepc rather than in KVM. Doing so has two major advantages:
-> > 
-> >   - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
-> >     just another memory backend for guests.
-> > 
-> >   - EPC management is wholly contained in the SGX subsystem, e.g. SGX
-> >     does not have to export any symbols, changes to reclaim flows don't
-> >     need to be routed through KVM, SGX's dirty laundry doesn't have to
-> >     get aired out for the world to see,
 > 
-> Good one. :-)
-> 
-> > and so on and so forth.
-> 
-> > The virtual EPC pages allocated to guests are currently not reclaimable.
-> > Reclaiming EPC page used by enclave requires a special reclaim mechanism
-> > separate from normal page reclaim, and that mechanism is not supported
-> > for virutal EPC pages.  Due to the complications of handling reclaim
-> > conflicts between guest and host, reclaiming virtual EPC pages is
-> > significantly more complex than basic support for SGX virtualization.
-> 
-> What happens if someone in the future wants to change that? Someone
-> needs to write patches or there's a more fundamental stopper issue
-> involved?
 
-Sorry I am not following. Do you mean if someone wants to support "reclaiming
-EPC page from KVM guests"? If so yes someone needs to write patches (we
-internally have some, actually), but could you elaborate why there will be a
-more fundamental stopper issue involved?
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-
+/Jarkko
