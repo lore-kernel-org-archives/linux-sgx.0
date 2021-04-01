@@ -2,124 +2,486 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A579C433B4
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Apr 2021 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECECC433ED
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Apr 2021 19:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0348860FED
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Apr 2021 18:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE94A61001
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Apr 2021 19:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236647AbhDASpt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:45:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:4759 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239215AbhDASkF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:40:05 -0400
-IronPort-SDR: kGV+xrUfzUcRU90RmrdOurEym6yVXlsqiPPviIJFOq+OU1buPeQ6KYYFPJuoJCm9sJ8uCihQuZ
- ghmvOqhtNMhQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9941"; a="256291142"
-X-IronPort-AV: E=Sophos;i="5.81,296,1610438400"; 
-   d="scan'208";a="256291142"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2021 11:40:05 -0700
-IronPort-SDR: eWJiAyfh1NywKgKGQy4LN84mDTgDltrSsyqUzMOQRtWXWhguJHFj/WfnYXRaETLkn2up+Tx6Ja
- ubRtN+B4wHMg==
-X-IronPort-AV: E=Sophos;i="5.81,296,1610438400"; 
-   d="scan'208";a="611024852"
-Received: from pzlai-mobl.amr.corp.intel.com (HELO [10.213.169.242]) ([10.213.169.242])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2021 11:40:04 -0700
-Subject: Re: [PATCH RESEND 0/3] x86/sgx: eextend ioctl
-To:     Raoul Strackx <raoul.strackx@fortanix.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <9688abee-6ba7-e1d9-701e-a5cabac36269@fortanix.com>
- <c7b19652-3b5a-e864-1e0e-3e3d26944398@intel.com>
- <ece49a38-c84d-dba7-6039-b409511e7303@fortanix.com>
- <0498080e-6fdc-ed6d-8efa-d9c3265fe7e5@intel.com>
- <9d15aae0-078a-ed72-6c14-155cd1bf27c5@fortanix.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <247ffbee-0ef6-1b6f-75aa-2dc06df42d5d@intel.com>
-Date:   Thu, 1 Apr 2021 11:40:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S234764AbhDATYO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Apr 2021 15:24:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234702AbhDATX6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Apr 2021 15:23:58 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB921C08EC8A;
+        Thu,  1 Apr 2021 11:32:00 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0887008b9ed797a9a7b7e1.dip0.t-ipconnect.de [IPv6:2003:ec:2f08:8700:8b9e:d797:a9a7:b7e1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 060841EC050F;
+        Thu,  1 Apr 2021 20:31:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1617301919;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Z+AZHR2xY01OQysKb5tjqq1wDfFvfRj53C9yBpdSXmg=;
+        b=NRmyO7nnFl/BbSYjI1TDXOT82zZ3KqRVDYJSdUzyzP4PSf5ZrBB4OXf7XN+n5YlbDbP/eI
+        FhKB2rI7icxYUbnhjlFuBIIzlwAspBxZe/W8WEJMqceDYufg+asheNpKoDYBiJsO11Jfk4
+        N4dv0L+iO/5aDmc87BXv+b6xQ0y3JuI=
+Date:   Thu, 1 Apr 2021 20:31:59 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     seanjc@google.com, kvm@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jarkko@kernel.org, luto@kernel.org, dave.hansen@intel.com,
+        rick.p.edgecombe@intel.com, haitao.huang@intel.com,
+        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com
+Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
+ guests
+Message-ID: <20210401183159.GD28954@zn.tnic>
+References: <cover.1616136307.git.kai.huang@intel.com>
+ <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
+ <20210326150320.GF25229@zn.tnic>
+ <20210331141032.db59586da8ba2cccf7b46f77@intel.com>
+ <D4ECF8D3-C483-4E75-AD41-2CEFDF56B12D@alien8.de>
+ <20210331195138.2af97ec1bb4b5e4202f2600d@intel.com>
+ <3889C4C6-48E2-4C97-A074-180EB18BDA29@alien8.de>
+ <20210331215345.cad098cfcfcaabf489243807@intel.com>
+ <20210401012039.c78f02ea2ba9f1e5fd504621@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <9d15aae0-078a-ed72-6c14-155cd1bf27c5@fortanix.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20210401012039.c78f02ea2ba9f1e5fd504621@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 4/1/21 10:49 AM, Raoul Strackx wrote:
-> On 4/1/21 6:11 PM, Dave Hansen wrote:
->> On 4/1/21 7:56 AM, Raoul Strackx wrote:
->>> SOLUTION OF THIS PATCH
->>> This patch adds a new ioctl to enable userspace to execute EEXTEND leaf 
->>> functions per 256 bytes of enclave memory. This enables enclaves to be 
->>> build as specified by enclave providers.
->> I think tying the user ABI to the SGX architecture this closely is a
->> mistake.
->>
->> Do we need another ioctl() or can we just relax the existing add_pages
->> ioctl() to allow unaligned addresses?
->>
-> I've considered this. In order to do an EEXTEND without an EADD, we'd
-> need to add a flag DONT_ADD_PAGES flag to `add_pages` ioctl as well. Two
-> separate ioctls, one for adding, another for extending made more sense
-> to me.
+On Thu, Apr 01, 2021 at 01:20:39AM +1300, Kai Huang wrote:
+> Could you help to review whether below change is OK?
 
-So, we're talking here about pages that have been EEADDED, but for which
-we do not want to include the entire contents of the page?  Do these
-contents always include the beginning of the page, or can the holes be
-anywhere?
+I ended up applying this:
+
+---
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+Date: Fri, 19 Mar 2021 20:22:21 +1300
+Subject: [PATCH] x86/sgx: Introduce virtual EPC for use by KVM guests
+
+Add a misc device /dev/sgx_vepc to allow userspace to allocate "raw"
+Enclave Page Cache (EPC) without an associated enclave. The intended
+and only known use case for raw EPC allocation is to expose EPC to a
+KVM guest, hence the 'vepc' moniker, virt.{c,h} files and X86_SGX_KVM
+Kconfig.
+
+The SGX driver uses the misc device /dev/sgx_enclave to support
+userspace in creating an enclave. Each file descriptor returned from
+opening /dev/sgx_enclave represents an enclave. Unlike the SGX driver,
+KVM doesn't control how the guest uses the EPC, therefore EPC allocated
+to a KVM guest is not associated with an enclave, and /dev/sgx_enclave
+is not suitable for allocating EPC for a KVM guest.
+
+Having separate device nodes for the SGX driver and KVM virtual EPC also
+allows separate permission control for running host SGX enclaves and KVM
+SGX guests.
+
+To use /dev/sgx_vepc to allocate a virtual EPC instance with particular
+size, the hypervisor opens /dev/sgx_vepc, and uses mmap() with the
+intended size to get an address range of virtual EPC. Then it may use
+the address range to create one KVM memory slot as virtual EPC for
+a guest.
+
+Implement the "raw" EPC allocation in the x86 core-SGX subsystem via
+/dev/sgx_vepc rather than in KVM. Doing so has two major advantages:
+
+  - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
+    just another memory backend for guests.
+
+  - EPC management is wholly contained in the SGX subsystem, e.g. SGX
+    does not have to export any symbols, changes to reclaim flows don't
+    need to be routed through KVM, SGX's dirty laundry doesn't have to
+    get aired out for the world to see, and so on and so forth.
+
+The virtual EPC pages allocated to guests are currently not reclaimable.
+Reclaiming an EPC page used by enclave requires a special reclaim
+mechanism separate from normal page reclaim, and that mechanism is not
+supported for virutal EPC pages. Due to the complications of handling
+reclaim conflicts between guest and host, reclaiming virtual EPC pages
+is significantly more complex than basic support for SGX virtualization.
+
+ [ bp:
+   - Massage commit message and comments
+   - use cpu_feature_enabled()
+   - vertically align struct members init
+   - massage Virtual EPC clarification text ]
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Link: https://lkml.kernel.org/r/0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com
+---
+ Documentation/x86/sgx.rst        |  16 ++
+ arch/x86/Kconfig                 |  12 ++
+ arch/x86/kernel/cpu/sgx/Makefile |   1 +
+ arch/x86/kernel/cpu/sgx/sgx.h    |   9 ++
+ arch/x86/kernel/cpu/sgx/virt.c   | 259 +++++++++++++++++++++++++++++++
+ 5 files changed, 297 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/sgx/virt.c
+
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+index f90076e67cde..dd0ac96ff9ef 100644
+--- a/Documentation/x86/sgx.rst
++++ b/Documentation/x86/sgx.rst
+@@ -234,3 +234,19 @@ As a result, when this happpens, user should stop running any new
+ SGX workloads, (or just any new workloads), and migrate all valuable
+ workloads. Although a machine reboot can recover all EPC memory, the bug
+ should be reported to Linux developers.
++
++
++Virtual EPC
++===========
++
++The implementation has also a virtual EPC driver to support SGX enclaves
++in guests. Unlike the SGX driver, an EPC page allocated by the virtual
++EPC driver doesn't have a specific enclave associated with it. This is
++because KVM doesn't track how a guest uses EPC pages.
++
++As a result, the SGX core page reclaimer doesn't support reclaiming EPC
++pages allocated to KVM guests through the virtual EPC driver. If the
++user wants to deploy SGX applications both on the host and in guests
++on the same machine, the user should reserve enough EPC (by taking out
++total virtual EPC size of all SGX VMs from the physical EPC size) for
++host SGX applications so they can run with acceptable performance.
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 35391e94bd22..007912f67a06 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1942,6 +1942,18 @@ config X86_SGX
+ 
+ 	  If unsure, say N.
+ 
++config X86_SGX_KVM
++	bool "Software Guard eXtensions (SGX) Virtualization"
++	depends on X86_SGX && KVM_INTEL
++	help
++
++	  Enables KVM guests to create SGX enclaves.
++
++	  This includes support to expose "raw" unreclaimable enclave memory to
++	  guests via a device node, e.g. /dev/sgx_vepc.
++
++	  If unsure, say N.
++
+ config EFI
+ 	bool "EFI runtime service support"
+ 	depends on ACPI
+diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+index 91d3dc784a29..9c1656779b2a 100644
+--- a/arch/x86/kernel/cpu/sgx/Makefile
++++ b/arch/x86/kernel/cpu/sgx/Makefile
+@@ -3,3 +3,4 @@ obj-y += \
+ 	encl.o \
+ 	ioctl.o \
+ 	main.o
++obj-$(CONFIG_X86_SGX_KVM)	+= virt.o
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 4aa40c627819..4854f3980edd 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -84,4 +84,13 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
+ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
+ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
+ 
++#ifdef CONFIG_X86_SGX_KVM
++int __init sgx_vepc_init(void);
++#else
++static inline int __init sgx_vepc_init(void)
++{
++	return -ENODEV;
++}
++#endif
++
+ #endif /* _X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+new file mode 100644
+index 000000000000..259cc46ad78c
+--- /dev/null
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -0,0 +1,259 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device driver to expose SGX enclave memory to KVM guests.
++ *
++ * Copyright(c) 2021 Intel Corporation.
++ */
++
++#include <linux/miscdevice.h>
++#include <linux/mm.h>
++#include <linux/mman.h>
++#include <linux/sched/mm.h>
++#include <linux/sched/signal.h>
++#include <linux/slab.h>
++#include <linux/xarray.h>
++#include <asm/sgx.h>
++#include <uapi/asm/sgx.h>
++
++#include "encls.h"
++#include "sgx.h"
++
++struct sgx_vepc {
++	struct xarray page_array;
++	struct mutex lock;
++};
++
++/*
++ * Temporary SECS pages that cannot be EREMOVE'd due to having child in other
++ * virtual EPC instances, and the lock to protect it.
++ */
++static struct mutex zombie_secs_pages_lock;
++static struct list_head zombie_secs_pages;
++
++static int __sgx_vepc_fault(struct sgx_vepc *vepc,
++			    struct vm_area_struct *vma, unsigned long addr)
++{
++	struct sgx_epc_page *epc_page;
++	unsigned long index, pfn;
++	int ret;
++
++	WARN_ON(!mutex_is_locked(&vepc->lock));
++
++	/* Calculate index of EPC page in virtual EPC's page_array */
++	index = vma->vm_pgoff + PFN_DOWN(addr - vma->vm_start);
++
++	epc_page = xa_load(&vepc->page_array, index);
++	if (epc_page)
++		return 0;
++
++	epc_page = sgx_alloc_epc_page(vepc, false);
++	if (IS_ERR(epc_page))
++		return PTR_ERR(epc_page);
++
++	ret = xa_err(xa_store(&vepc->page_array, index, epc_page, GFP_KERNEL));
++	if (ret)
++		goto err_free;
++
++	pfn = PFN_DOWN(sgx_get_epc_phys_addr(epc_page));
++
++	ret = vmf_insert_pfn(vma, addr, pfn);
++	if (ret != VM_FAULT_NOPAGE) {
++		ret = -EFAULT;
++		goto err_delete;
++	}
++
++	return 0;
++
++err_delete:
++	xa_erase(&vepc->page_array, index);
++err_free:
++	sgx_free_epc_page(epc_page);
++	return ret;
++}
++
++static vm_fault_t sgx_vepc_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct sgx_vepc *vepc = vma->vm_private_data;
++	int ret;
++
++	mutex_lock(&vepc->lock);
++	ret = __sgx_vepc_fault(vepc, vma, vmf->address);
++	mutex_unlock(&vepc->lock);
++
++	if (!ret)
++		return VM_FAULT_NOPAGE;
++
++	if (ret == -EBUSY && (vmf->flags & FAULT_FLAG_ALLOW_RETRY)) {
++		mmap_read_unlock(vma->vm_mm);
++		return VM_FAULT_RETRY;
++	}
++
++	return VM_FAULT_SIGBUS;
++}
++
++const struct vm_operations_struct sgx_vepc_vm_ops = {
++	.fault = sgx_vepc_fault,
++};
++
++static int sgx_vepc_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	struct sgx_vepc *vepc = file->private_data;
++
++	if (!(vma->vm_flags & VM_SHARED))
++		return -EINVAL;
++
++	vma->vm_ops = &sgx_vepc_vm_ops;
++	/* Don't copy VMA in fork() */
++	vma->vm_flags |= VM_PFNMAP | VM_IO | VM_DONTDUMP | VM_DONTCOPY;
++	vma->vm_private_data = vepc;
++
++	return 0;
++}
++
++static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
++{
++	int ret;
++
++	/*
++	 * Take a previously guest-owned EPC page and return it to the
++	 * general EPC page pool.
++	 *
++	 * Guests can not be trusted to have left this page in a good
++	 * state, so run EREMOVE on the page unconditionally.  In the
++	 * case that a guest properly EREMOVE'd this page, a superfluous
++	 * EREMOVE is harmless.
++	 */
++	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
++	if (ret) {
++		/*
++		 * Only SGX_CHILD_PRESENT is expected, which is because of
++		 * EREMOVE'ing an SECS still with child, in which case it can
++		 * be handled by EREMOVE'ing the SECS again after all pages in
++		 * virtual EPC have been EREMOVE'd. See comments in below in
++		 * sgx_vepc_release().
++		 *
++		 * The user of virtual EPC (KVM) needs to guarantee there's no
++		 * logical processor is still running in the enclave in guest,
++		 * otherwise EREMOVE will get SGX_ENCLAVE_ACT which cannot be
++		 * handled here.
++		 */
++		WARN_ONCE(ret != SGX_CHILD_PRESENT, EREMOVE_ERROR_MESSAGE,
++			  ret, ret);
++		return ret;
++	}
++
++	sgx_free_epc_page(epc_page);
++
++	return 0;
++}
++
++static int sgx_vepc_release(struct inode *inode, struct file *file)
++{
++	struct sgx_vepc *vepc = file->private_data;
++	struct sgx_epc_page *epc_page, *tmp, *entry;
++	unsigned long index;
++
++	LIST_HEAD(secs_pages);
++
++	xa_for_each(&vepc->page_array, index, entry) {
++		/*
++		 * Remove all normal, child pages.  sgx_vepc_free_page()
++		 * will fail if EREMOVE fails, but this is OK and expected on
++		 * SECS pages.  Those can only be EREMOVE'd *after* all their
++		 * child pages. Retries below will clean them up.
++		 */
++		if (sgx_vepc_free_page(entry))
++			continue;
++
++		xa_erase(&vepc->page_array, index);
++	}
++
++	/*
++	 * Retry EREMOVE'ing pages.  This will clean up any SECS pages that
++	 * only had children in this 'epc' area.
++	 */
++	xa_for_each(&vepc->page_array, index, entry) {
++		epc_page = entry;
++		/*
++		 * An EREMOVE failure here means that the SECS page still
++		 * has children.  But, since all children in this 'sgx_vepc'
++		 * have been removed, the SECS page must have a child on
++		 * another instance.
++		 */
++		if (sgx_vepc_free_page(epc_page))
++			list_add_tail(&epc_page->list, &secs_pages);
++
++		xa_erase(&vepc->page_array, index);
++	}
++
++	/*
++	 * SECS pages are "pinned" by child pages, and "unpinned" once all
++	 * children have been EREMOVE'd.  A child page in this instance
++	 * may have pinned an SECS page encountered in an earlier release(),
++	 * creating a zombie.  Since some children were EREMOVE'd above,
++	 * try to EREMOVE all zombies in the hopes that one was unpinned.
++	 */
++	mutex_lock(&zombie_secs_pages_lock);
++	list_for_each_entry_safe(epc_page, tmp, &zombie_secs_pages, list) {
++		/*
++		 * Speculatively remove the page from the list of zombies,
++		 * if the page is successfully EREMOVE'd it will be added to
++		 * the list of free pages.  If EREMOVE fails, throw the page
++		 * on the local list, which will be spliced on at the end.
++		 */
++		list_del(&epc_page->list);
++
++		if (sgx_vepc_free_page(epc_page))
++			list_add_tail(&epc_page->list, &secs_pages);
++	}
++
++	if (!list_empty(&secs_pages))
++		list_splice_tail(&secs_pages, &zombie_secs_pages);
++	mutex_unlock(&zombie_secs_pages_lock);
++
++	kfree(vepc);
++
++	return 0;
++}
++
++static int sgx_vepc_open(struct inode *inode, struct file *file)
++{
++	struct sgx_vepc *vepc;
++
++	vepc = kzalloc(sizeof(struct sgx_vepc), GFP_KERNEL);
++	if (!vepc)
++		return -ENOMEM;
++	mutex_init(&vepc->lock);
++	xa_init(&vepc->page_array);
++
++	file->private_data = vepc;
++
++	return 0;
++}
++
++static const struct file_operations sgx_vepc_fops = {
++	.owner		= THIS_MODULE,
++	.open		= sgx_vepc_open,
++	.release	= sgx_vepc_release,
++	.mmap		= sgx_vepc_mmap,
++};
++
++static struct miscdevice sgx_vepc_dev = {
++	.minor		= MISC_DYNAMIC_MINOR,
++	.name		= "sgx_vepc",
++	.nodename	= "sgx_vepc",
++	.fops		= &sgx_vepc_fops,
++};
++
++int __init sgx_vepc_init(void)
++{
++	/* SGX virtualization requires KVM to work */
++	if (!cpu_feature_enabled(X86_FEATURE_VMX))
++		return -ENODEV;
++
++	INIT_LIST_HEAD(&zombie_secs_pages);
++	mutex_init(&zombie_secs_pages_lock);
++
++	return misc_register(&sgx_vepc_dev);
++}
+-- 
+2.29.2
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
