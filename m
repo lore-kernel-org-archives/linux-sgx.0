@@ -2,39 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618C0C433ED
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 11:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F26C433ED
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 11:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2602B610D2
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 11:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407A461107
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 11:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231160AbhDBLIR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 2 Apr 2021 07:08:17 -0400
-Received: from mga09.intel.com ([134.134.136.24]:39097 "EHLO mga09.intel.com"
+        id S229932AbhDBLWj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 2 Apr 2021 07:22:39 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:44384 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229599AbhDBLIR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 2 Apr 2021 07:08:17 -0400
-IronPort-SDR: 3+Kdk1xmCRa5pSL/q/bOu+2xwf0kw/4H3ysUpSRamcTuLCNxnenk9vCERZmbBQFQOq/bV7DGBv
- VIDnBV1jNiJw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9941"; a="192555966"
-X-IronPort-AV: E=Sophos;i="5.81,299,1610438400"; 
-   d="scan'208";a="192555966"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2021 04:08:15 -0700
-IronPort-SDR: NwU8M5JlLTfotf2r12z+He4NyM1mN4GZsxhIruZUmM/XBhStJ4ig7gvf/Rn31aUDDdDFpZh/AB
- 4Yf+aDfxVN5g==
-X-IronPort-AV: E=Sophos;i="5.81,299,1610438400"; 
-   d="scan'208";a="456395777"
-Received: from nnafsin-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.255.231.190])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2021 04:08:12 -0700
-Date:   Sat, 3 Apr 2021 00:08:10 +1300
-From:   Kai Huang <kai.huang@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
+        id S229599AbhDBLWj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 2 Apr 2021 07:22:39 -0400
+Received: from zn.tnic (p200300ec2f0a2000d08570fd96272a9c.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:2000:d085:70fd:9627:2a9c])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9B491EC04C2;
+        Fri,  2 Apr 2021 13:22:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1617362556;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=XNJt2Jt+xM+DSW82BdVmvQI5O4/vZHzsbF5tnI5RPtE=;
+        b=b/4fkw1pYEcD57bfSztxDerHvkWeDb9CAeH9a/pVGbP4K0Zq295yEWeGGGdhjaJZe+mMdv
+        +4ONt+N8EcwKReVAfRrr/Ix+3oV0nnAiYRIAGdFmU1o2ezpNgTCBTMB0veQkVNLTKj0RUP
+        b2SrW5mY7sZKgaFRw+7HgwajEUPkIjA=
+Date:   Fri, 2 Apr 2021 13:22:35 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kai Huang <kai.huang@intel.com>
 Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
         linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
         luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
@@ -42,60 +42,29 @@ Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
         mingo@redhat.com, hpa@zytor.com
 Subject: Re: [PATCH v3 07/25] x86/sgx: Initialize virtual EPC driver even
  when SGX driver is disabled
-Message-Id: <20210403000810.93638fb4b468ab28faaf11fd@intel.com>
-In-Reply-To: <20210402094816.GC28499@zn.tnic>
+Message-ID: <20210402112235.GF28499@zn.tnic>
 References: <cover.1616136307.git.kai.huang@intel.com>
-        <d35d17a02bbf8feef83a536cec8b43746d4ea557.1616136308.git.kai.huang@intel.com>
-        <20210402094816.GC28499@zn.tnic>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <d35d17a02bbf8feef83a536cec8b43746d4ea557.1616136308.git.kai.huang@intel.com>
+ <20210402094816.GC28499@zn.tnic>
+ <20210403000810.93638fb4b468ab28faaf11fd@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210403000810.93638fb4b468ab28faaf11fd@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, 2 Apr 2021 11:48:16 +0200 Borislav Petkov wrote:
-> On Fri, Mar 19, 2021 at 08:23:02PM +1300, Kai Huang wrote:
-> > Modify sgx_init() to always try to initialize the virtual EPC driver,
-> > even if the SGX driver is disabled.  The SGX driver might be disabled
-> > if SGX Launch Control is in locked mode, or not supported in the
-> > hardware at all.  This allows (non-Linux) guests that support non-LC
-> > configurations to use SGX.
-> > 
-> > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > Reviewed-by: Sean Christopherson <seanjc@google.com>
-> > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> >  arch/x86/kernel/cpu/sgx/main.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index 6a734f484aa7..b73114150ff8 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -743,7 +743,15 @@ static int __init sgx_init(void)
-> >  		goto err_page_cache;
-> >  	}
-> >  
-> > -	ret = sgx_drv_init();
-> > +	/*
-> > +	 * Always try to initialize the native *and* KVM drivers.
-> > +	 * The KVM driver is less picky than the native one and
-> > +	 * can function if the native one is not supported on the
-> > +	 * current system or fails to initialize.
-> > +	 *
-> > +	 * Error out only if both fail to initialize.
-> > +	 */
-> > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-> 
-> This is a silly way of writing:
-> 
->         if (sgx_drv_init() && sgx_vepc_init())
->                 goto err_kthread;
-> 
-> methinks.
+On Sat, Apr 03, 2021 at 12:08:10AM +1300, Kai Huang wrote:
+> Do you want me to send updated patch?
 
-Works for me. Thanks.
+No need. If I do, I'll ask kindly, otherwise you don't have to do
+anything.
 
-Do you want me to send updated patch?
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
