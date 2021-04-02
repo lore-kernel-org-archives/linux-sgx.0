@@ -2,40 +2,43 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C57C43460
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 19:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F24C43461
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 19:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8808161155
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 19:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7639161168
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Apr 2021 19:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236317AbhDBTIi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 2 Apr 2021 15:08:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:2092 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236301AbhDBTIi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 2 Apr 2021 15:08:38 -0400
-IronPort-SDR: 6V3AHgnvbbHADYhtMZ6NOE6Fs4NFcSZmbUHFTsgxueruuFBHtldxrLBttNnUoYUiDLZ5HrHGrU
- rsD59j7DJJ+g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9942"; a="253854155"
-X-IronPort-AV: E=Sophos;i="5.81,300,1610438400"; 
-   d="scan'208";a="253854155"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2021 12:08:36 -0700
-IronPort-SDR: QsxsuFpcnsvuimRxOw4HUitLjgOv8nzSOTJwS8XCg3d0mdhA/nj8aeEDhQzNpWTfaa4s/MJBAS
- pGXf9Qhuyg7w==
-X-IronPort-AV: E=Sophos;i="5.81,300,1610438400"; 
-   d="scan'208";a="446910313"
-Received: from hvijayak-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.252.132.133])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2021 12:08:26 -0700
-Date:   Sat, 3 Apr 2021 08:08:24 +1300
-From:   Kai Huang <kai.huang@intel.com>
+        id S235659AbhDBTUG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 2 Apr 2021 15:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231149AbhDBTUF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 2 Apr 2021 15:20:05 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44DFCC0613E6;
+        Fri,  2 Apr 2021 12:20:04 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0a2000165287017d4f49d2.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:2000:1652:8701:7d4f:49d2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E6F1B1EC04C2;
+        Fri,  2 Apr 2021 21:19:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1617391200;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=BBb1WFTTL1Y0lhiyA/54Ap1qMu86ye47+4aQrqQz0uk=;
+        b=VR1KOLwAW2D5e1sm93ntpGCzVUxIwm1OAZV4s4hwIN2+KprPvS3OkXNSV38pTBfNgWxYM5
+        nmkRIND+04d00MEqJsH40catVPs4tkph7ePmokb769pAs1f8/gHkHW0aC5e7VzSLWf1p0+
+        KJBWUTzzu5wWrgOoNVezgSgJXI914sA=
+Date:   Fri, 2 Apr 2021 21:19:57 +0200
+From:   Borislav Petkov <bp@alien8.de>
 To:     Sean Christopherson <seanjc@google.com>
-Cc:     Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
+Cc:     Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
         linux-sgx@vger.kernel.org, x86@kernel.org,
         linux-kernel@vger.kernel.org, jarkko@kernel.org, luto@kernel.org,
         dave.hansen@intel.com, rick.p.edgecombe@intel.com,
@@ -43,64 +46,41 @@ Cc:     Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
         mingo@redhat.com, hpa@zytor.com
 Subject: Re: [PATCH v3 07/25] x86/sgx: Initialize virtual EPC driver even
  when SGX driver is disabled
-Message-Id: <20210403080824.d8bdb4c8f3c826c934acc53d@intel.com>
-In-Reply-To: <YGc7ezLWEu/ZvUOu@google.com>
+Message-ID: <20210402191946.GL28499@zn.tnic>
 References: <cover.1616136307.git.kai.huang@intel.com>
-        <d35d17a02bbf8feef83a536cec8b43746d4ea557.1616136308.git.kai.huang@intel.com>
-        <20210402094816.GC28499@zn.tnic>
-        <YGc7ezLWEu/ZvUOu@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <d35d17a02bbf8feef83a536cec8b43746d4ea557.1616136308.git.kai.huang@intel.com>
+ <20210402094816.GC28499@zn.tnic>
+ <YGc7ezLWEu/ZvUOu@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YGc7ezLWEu/ZvUOu@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, 2 Apr 2021 15:42:51 +0000 Sean Christopherson wrote:
-> On Fri, Apr 02, 2021, Borislav Petkov wrote:
-> > On Fri, Mar 19, 2021 at 08:23:02PM +1300, Kai Huang wrote:
-> > > Modify sgx_init() to always try to initialize the virtual EPC driver,
-> > > even if the SGX driver is disabled.  The SGX driver might be disabled
-> > > if SGX Launch Control is in locked mode, or not supported in the
-> > > hardware at all.  This allows (non-Linux) guests that support non-LC
-> > > configurations to use SGX.
-> > > 
-> > > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > > Reviewed-by: Sean Christopherson <seanjc@google.com>
-> > > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> > > ---
-> > >  arch/x86/kernel/cpu/sgx/main.c | 10 +++++++++-
-> > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > > index 6a734f484aa7..b73114150ff8 100644
-> > > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > > @@ -743,7 +743,15 @@ static int __init sgx_init(void)
-> > >  		goto err_page_cache;
-> > >  	}
-> > >  
-> > > -	ret = sgx_drv_init();
-> > > +	/*
-> > > +	 * Always try to initialize the native *and* KVM drivers.
-> > > +	 * The KVM driver is less picky than the native one and
-> > > +	 * can function if the native one is not supported on the
-> > > +	 * current system or fails to initialize.
-> > > +	 *
-> > > +	 * Error out only if both fail to initialize.
-> > > +	 */
-> > > +	ret = !!sgx_drv_init() & !!sgx_vepc_init();
-> > 
-> > This is a silly way of writing:
-> > 
-> >         if (sgx_drv_init() && sgx_vepc_init())
-> >                 goto err_kthread;
-> > 
-> > methinks.
-> 
+On Fri, Apr 02, 2021 at 03:42:51PM +0000, Sean Christopherson wrote:
 > Nope!  That's wrong, as sgx_epc_init() will not be called if sgx_drv_init()
 > succeeds.  And writing it as "if (sgx_drv_init() || sgx_vepc_init())" is also
 > wrong since that would kill SGX when one of the drivers is alive and well.
 
-Right. Thanks for pointing out.
+Bah, right you are.
+
+How about:
+
+	/* Error out only if both fail to initialize. */
+        ret = sgx_drv_init();
+
+        if (sgx_vepc_init() && ret)
+                goto err_kthread;
+
+And yah, this looks strange so it needs the comment to explain what's
+going on here.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
