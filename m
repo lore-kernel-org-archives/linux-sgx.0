@@ -2,78 +2,76 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BA6C433ED
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Apr 2021 21:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735D9C433ED
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Apr 2021 23:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B185613C0
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Apr 2021 21:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D85613E1
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Apr 2021 23:27:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241356AbhDEVrB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Apr 2021 17:47:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:64591 "EHLO mga17.intel.com"
+        id S235557AbhDEX1H (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Apr 2021 19:27:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241284AbhDEVrA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 5 Apr 2021 17:47:00 -0400
-IronPort-SDR: /dBplj1ylxTHTMmey/ZaKyEIsoNuPpcFUdsLQAdOt7h+BIJhvse0gIuY16yKL12mzG3/uz+a/c
- 9cWqiF4SWkzQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9945"; a="173001649"
-X-IronPort-AV: E=Sophos;i="5.81,307,1610438400"; 
-   d="scan'208";a="173001649"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2021 14:46:39 -0700
-IronPort-SDR: YjOMnsFhrCglXG2g//O3Z+n6Da8xWPYYfk3ApwPh2xIvW2W1JbnuogdzuJ8+jxLd7AtSpTlo3d
- /4KF75vNK+kA==
-X-IronPort-AV: E=Sophos;i="5.81,307,1610438400"; 
-   d="scan'208";a="457568941"
-Received: from lddickin-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.112.181])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2021 14:46:36 -0700
-Date:   Tue, 6 Apr 2021 09:46:34 +1200
-From:   Kai Huang <kai.huang@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     kvm@vger.kernel.org, x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
-        luto@kernel.org, dave.hansen@intel.com, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Subject: Re: [PATCH v3 05/25] x86/sgx: Introduce virtual EPC for use by KVM
- guests
-Message-Id: <20210406094634.9f5e8c9d6bd2b61690c887cf@intel.com>
-In-Reply-To: <20210405090151.GA19485@zn.tnic>
-References: <cover.1616136307.git.kai.huang@intel.com>
-        <0c38ced8c8e5a69872db4d6a1c0dabd01e07cad7.1616136308.git.kai.huang@intel.com>
-        <20210405090151.GA19485@zn.tnic>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S232988AbhDEX1G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Apr 2021 19:27:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A5BA0613D4;
+        Mon,  5 Apr 2021 23:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617665219;
+        bh=DVhvbkayKQRZoHCJPwVZHRfMdZrxAA8cxJGn4nwa/Jg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QpwbXQmePDuOFJddLo6vDkzrq2UTSayFH3JhJCtZS84vOr+JtF6R6vUL1gfB1VpOB
+         X3pp11Ug23r7ZlilfMD2Bw0NdWVXCsTu/TZfHgI307K52VXdxMATQ7lerYiWURHD9d
+         tXGzC3KFyTotbP8+NWVSVCnIJtocHiqkZVbQVA0L8NLLSQkkSA2CtTkTh0Xt/c/6zm
+         kY4SpT6BmZOxpowBbZaEGx0AkWsc2r8rC4zJSfi1VQrrbOKqwssGXQneeKP3KLV6m1
+         gvkraNJwDM5ZiEOj+rNq2zZ5qP6j7N8mea3N6DIqQHr/bzvILGv9yDxbYhazQiw38+
+         n9shKWejfZ8Nw==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] x86/sgx: Do not update sgx_nr_free_pages in sgx_setup_epc_section()
+Date:   Tue,  6 Apr 2021 02:26:52 +0300
+Message-Id: <20210405232653.33680-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 5 Apr 2021 11:01:51 +0200 Borislav Petkov wrote:
-> On Fri, Mar 19, 2021 at 08:22:21PM +1300, Kai Huang wrote:
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index 35391e94bd22..007912f67a06 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -1942,6 +1942,18 @@ config X86_SGX
-> >  
-> >  	  If unsure, say N.
-> >  
-> > +config X86_SGX_KVM
-> > +	bool "Software Guard eXtensions (SGX) Virtualization"
-> > +	depends on X86_SGX && KVM_INTEL
-> > +	help
-> 
-> It seems to me this would fit better under "Virtualization" because even
-> if I want to enable it, I have to go enable KVM_INTEL first and then
-> return back here to turn it on too.
-> 
-> And under "Virtualization" is where we enable all kinds of aspects which
-> belong to it.
+Now that the sanitization process will make pages available by calling
+sgx_free_epc_page(), sgx_setup_epc_section() should not touch to
+sgx_nr_free_pages. This will result sgx_nr_free_pages to contain 2x the
+number of actual free pages. Simply, remove the statement.
 
-Fine to me. Please let me know if you want me to resend patches. Thanks.
+Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 13a7599ce7d4..7df7048cb1c9 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -657,7 +657,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+ 	}
+ 
+-	sgx_nr_free_pages += nr_pages;
+ 	return true;
+ }
+ 
+-- 
+2.31.1
+
