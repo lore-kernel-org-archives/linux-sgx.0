@@ -7,33 +7,36 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E433C43460
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Apr 2021 15:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC35C433ED
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Apr 2021 15:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38C23610C7
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Apr 2021 15:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B697761382
+	for <linux-sgx@archiver.kernel.org>; Wed,  7 Apr 2021 15:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353844AbhDGPuK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Apr 2021 11:50:10 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:53810 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353957AbhDGPtq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Apr 2021 11:49:46 -0400
+        id S1347463AbhDGP4n (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 7 Apr 2021 11:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234745AbhDGP4n (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 7 Apr 2021 11:56:43 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC91C061756;
+        Wed,  7 Apr 2021 08:56:33 -0700 (PDT)
 Received: from zn.tnic (p200300ec2f08fb00aad493ab6ea3c721.dip0.t-ipconnect.de [IPv6:2003:ec:2f08:fb00:aad4:93ab:6ea3:c721])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 127181EC0301;
-        Wed,  7 Apr 2021 17:49:35 +0200 (CEST)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6920B1EC0246;
+        Wed,  7 Apr 2021 17:56:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1617810575;
+        t=1617810992;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=d1Opu7AKJgNAtUx5a3eSNKbEBw8Cs3g1lPL7E4oO9mE=;
-        b=INpuBN5dtpg+hBiXg2WZP+vbIXyHD/tZNAyqyR8gnO1tRsm/D9Xk0fk0OC3Pmu2UAUt6Tu
-        FPIUd3/PBmgUYC/+8AMBGD/athVrnrY0/RHYHOVZ7GaNDCl29eeD+1ncAskSoNx8cNjfS6
-        6MLJ39hZwn+gcGWuNLEwgMcytzow0qQ=
-Date:   Wed, 7 Apr 2021 17:49:34 +0200
+        bh=2zy9HaPp5QLTjnLtg7mOMCS8VHEuMJmllA5VVq4pXfA=;
+        b=SGUPhPZooTM09vE1dvF+pLLS/ShXMuXgmoIl0QilN7iqvo9i1/02XNw9Qgip2vA0vhWno0
+        CYY+AarzAw07VwmfQIPxeTpFGeMlM/JP9NATAEj2QEVx/owxEPuTHHSFFqA+nsd94tHE85
+        CLZQ4eaPelqxZwjTQf7IKOaxnmVr1lU=
+Date:   Wed, 7 Apr 2021 17:56:36 +0200
 From:   Borislav Petkov <bp@alien8.de>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     linux-sgx@vger.kernel.org,
@@ -41,67 +44,86 @@ Cc:     linux-sgx@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] x86/sgx: Do not update sgx_nr_free_pages in
- sgx_setup_epc_section()
-Message-ID: <20210407154934.GF25319@zn.tnic>
+Subject: Re: [PATCH v2 2/2] x86/sgx: Add sgx_nr_{all, free}_pages to the
+ debugfs
+Message-ID: <20210407155636.GG25319@zn.tnic>
 References: <20210405232653.33680-1-jarkko@kernel.org>
+ <20210405232653.33680-2-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210405232653.33680-1-jarkko@kernel.org>
+In-Reply-To: <20210405232653.33680-2-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 02:26:52AM +0300, Jarkko Sakkinen wrote:
-> Now that the sanitization process will make pages available by calling
-> sgx_free_epc_page(), sgx_setup_epc_section() should not touch to
-> sgx_nr_free_pages. This will result sgx_nr_free_pages to contain 2x the
-> number of actual free pages. Simply, remove the statement.
+On Tue, Apr 06, 2021 at 02:26:53AM +0300, Jarkko Sakkinen wrote:
+> Add two debugs attributes:
 > 
-> Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list")
+> * /sys/kernel/debug/x86/sgx_nr_all_pages
+> * /sys/kernel/debug/x86/sgx_nr_free_pages
+
+Definitely under /sys/kernel/debug/x86/sgx/...
+				      ^^^^^^
+
+> These provide useful statistics for testing purposes.
+
+Testing what exactly?
+
+Also, if those are EPC pages, why isn't "epc" in the name?
+
+> E.g. on a NUC7CJYH2, when no enclaves are running, and EPC set to 32 MB:
+> 
+> $ sudo cat /sys/kernel/debug/x86/sgx_nr_all_pages
+> 5632
+> 
+> $ sudo cat /sys/kernel/debug/x86/sgx_nr_free_pages
+> 5632
+
+I have no clue what that is useful for. You want to account how many of
+the EPC pages on all nodes are in use? What for?
+
+Are those globally useful for people? If so, they need to go to sysfs
+along with documentation what they do.
+
+If not, you can keep this patch in your tree for your own testing.
+
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > ---
->  arch/x86/kernel/cpu/sgx/main.c | 1 -
->  1 file changed, 1 deletion(-)
+> 
+> v2:
+> * Use debugfs_create_ulong():
+>   https://lore.kernel.org/linux-sgx/57c18e08-3e36-b5b3-aaba-9a21b75a1613@intel.com/
+> 
+>  arch/x86/kernel/cpu/sgx/main.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 > 
 > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 13a7599ce7d4..7df7048cb1c9 100644
+> index 7df7048cb1c9..07bad864c531 100644
 > --- a/arch/x86/kernel/cpu/sgx/main.c
 > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -657,7 +657,6 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
->  		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
->  	}
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*  Copyright(c) 2016-20 Intel Corporation. */
 >  
-> -	sgx_nr_free_pages += nr_pages;
->  	return true;
->  }
+> +#include <linux/debugfs.h>
+>  #include <linux/freezer.h>
+>  #include <linux/highmem.h>
+>  #include <linux/kthread.h>
+> @@ -25,7 +26,10 @@ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+>  static LIST_HEAD(sgx_active_page_list);
+>  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
 >  
+> -/* The free page list lock protected variables prepend the lock. */
+> +/* The number of EPC pages in total in all nodes. */
+> +static unsigned long sgx_nr_all_pages;
+> +
+> +/* The number of free EPC pages in all nodes. */
+>  static unsigned long sgx_nr_free_pages;
 
-First of all, I don't know how I didn't catch this:
+Ok, you're fixing the comment here. Good.
 
-/* The free page list lock protected variables prepend the lock. */
-static unsigned long sgx_nr_free_pages;
-
-I need some sort of translator to understand what this comment means. I
-can guess what is trying to tell me.
-
-Which leads to my question: what is sgx_nr_free_pages supposed to denote?
-
-Because I understand the callpath
-
-sgx_page_cache_init
-...
-for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-	...
-	sgx_setup_epc_section
-	...
-		sgx_nr_free_pages += nr_pages;
-
-as adding the number of pages of each new EPC section to the total
-number of the free pages. Unless that variable accounts something else.
-
-So what does this variable actually mean?
+Thx.
 
 -- 
 Regards/Gruss,
