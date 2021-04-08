@@ -2,39 +2,37 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D362EC433B4
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 09:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083CDC433B4
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 09:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A29661132
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 09:01:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C60D26113C
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 09:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbhDHJBP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Apr 2021 05:01:15 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52016 "EHLO mail.skyhub.de"
+        id S229672AbhDHJNh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Apr 2021 05:13:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229588AbhDHJBP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Apr 2021 05:01:15 -0400
-Received: from zn.tnic (p200300ec2f095000c11580856fe05acf.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:5000:c115:8085:6fe0:5acf])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 172731EC04AD;
-        Thu,  8 Apr 2021 11:01:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1617872463;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mMKQDX46gWFovobhQ6Op7YV74zzVD+ANMpYkTG8izmo=;
-        b=bpeEJYP+zVTFhCDj6lkFAJH3ru6YBF4AJvXC+aowJ4QG2GfxqvwN++WSMRDzYyoK8UC3Ck
-        BIyqImM7h8S/oLoCKkQCh6Uma1K4LxK+c2c+d6PaxEVpwB6SRtwMaYod/10wICuzQTLwHc
-        wfyaMue8NjFX+tmO2ZbR0dvGtOJQx4w=
-Date:   Thu, 8 Apr 2021 11:01:07 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
+        id S229600AbhDHJNf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 8 Apr 2021 05:13:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2342A61139;
+        Thu,  8 Apr 2021 09:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617873204;
+        bh=IA8YeQSQMF656fftKdEwivWEWH0wFHjXTX1AVRohL2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YCyoCmIs/ZN+DG+/SWUZ4ugJ1sM8jUq6BI2dHCJDbPUUcN1mGxlJiNSPEmsvZx7k1
+         n8g0FQV9QPuB4tWnlg24zJSNIrszeqrjVKwUTUFc8a21Cy0Q6dsjzLW5MgP1kB5GNg
+         //SqRqA6LpQ9XwuAVX5SeqHY4Sy1JSrFZrxtW0WmPthrTtbL7jUgE5CLytp5H2d+3Y
+         ZwpKFNtPUb+LyU7GUKd6BPFnp0Zl1un9yiYmFblp1d0Bw9h7nQPCc0wqkyRx6iFiuY
+         vZDfhBvX+wvEhmOnR0LPt+udmn8hkUygr6LOB7E0wMcDkW5u+cmwCy8ainA1xaka/6
+         eDfvUONGV0FeA==
+Date:   Thu, 8 Apr 2021 12:13:21 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
 Cc:     linux-sgx@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -42,7 +40,7 @@ Cc:     linux-sgx@vger.kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 2/2] x86/sgx: Add sgx_nr_{all, free}_pages to the
  debugfs
-Message-ID: <20210408090107.GE10192@zn.tnic>
+Message-ID: <YG7JMc6b+HZIZqxM@kernel.org>
 References: <20210405232653.33680-1-jarkko@kernel.org>
  <20210405232653.33680-2-jarkko@kernel.org>
  <20210407155636.GG25319@zn.tnic>
@@ -50,7 +48,7 @@ References: <20210405232653.33680-1-jarkko@kernel.org>
  <20210407161533.GJ25319@zn.tnic>
  <YG7EWDXmwC9ai38k@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <YG7EWDXmwC9ai38k@kernel.org>
 Precedence: bulk
@@ -58,16 +56,24 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Thu, Apr 08, 2021 at 11:52:40AM +0300, Jarkko Sakkinen wrote:
+> On Wed, Apr 07, 2021 at 06:15:33PM +0200, Borislav Petkov wrote:
+> > On Wed, Apr 07, 2021 at 07:09:11PM +0300, Jarkko Sakkinen wrote:
+> > > I left out "epc" because they are already prefixed with "sgx_".
+> > 
+> > Are there any other "page" types which are going to be figurating in
+> > some pseudofs or is "sgx" == "epc" in this case?
+> > 
+> > > debugfs was my first shot, but for sure these could be sysfs.
+> > 
+> > Ok, let's keep it in debugfs for now, it can always be made an ABI later
+> > and moved to sysfs. But pls document what those are and what they do and
+> > that when in debugfs, there are no guarantees that these interfaces will
+> > be there in the future.
+> 
 > I think these attributes are quite useful information to have available so
 > I'd go actually doing sysfs attributes and create
 > Documentation/ABI/stable/sysfs-driver-sgx to document them.
-
-  testing/
-        This directory documents interfaces that are felt to be stable,
-        as the main development of this interface has been completed.
-
-This sounds better for a start. From Documentation/ABI/README.
-
+> 
 > Given that they would go then to the sysfs directory of the driver, then
 > probably the legit names for the attributes ought to be:
 > 
@@ -76,20 +82,36 @@ This sounds better for a start. From Documentation/ABI/README.
 > 
 > What do you think?
 
-Sounds ok to me.
+Actually I think read-only sysctl attributes would be a better idea.
 
-> PS. One useful case that I forgot to mention is that I use these to give
-> idea what I gave EPC size in the BIOS. Now my EPC is set to 32 MB, and
-> these report 20 MB of EPC pages. It's because other metadata (e.g. EPCM
-> containing page attributes) is also stored in this area.
+The rationale for this is that we have two misc devices sgx_enclave and
+sgx_provision, and these are global attributes even applicable to KVM.
 
-Just remember to put yourself in the user's shoes and think whether they
-make sense to her/him.
+It does not matter functionality-wise, but API-wise it'd look stupid to
+directly associate to sgx_enclave.
 
-Thx.
+I.e. I'd add something along the lines of 
 
--- 
-Regards/Gruss,
-    Boris.
+static struct ctl_path x86_sysctl_path[] = {
+        { .procname = "kernel", },
+	{ .procname = "x86", },
+	{ }
+};
 
-https://people.kernel.org/tglx/notes-about-netiquette
+static struct ctl_table x86_sysctl_table[] = {
+	{
+		.procname       = "sgx_nr_all_pages",
+		.mode           = 0444,
+                /* rest ... */
+	},
+	{
+		.procname       = "sgx_nr_free_pages",
+		.mode           = 0444,
+                /* rest ... */
+	},
+	{ }
+};
+
+And write Documentation/x86/proc.rst.
+
+/Jarkko
