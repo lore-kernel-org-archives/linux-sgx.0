@@ -2,152 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D655FC433ED
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Apr 2021 23:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4096EC433ED
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 08:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B648E611C9
-	for <linux-sgx@archiver.kernel.org>; Wed,  7 Apr 2021 23:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD2E61168
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 08:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbhDGXIl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 7 Apr 2021 19:08:41 -0400
-Received: from mga11.intel.com ([192.55.52.93]:17067 "EHLO mga11.intel.com"
+        id S229689AbhDHItC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Apr 2021 04:49:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229460AbhDGXIk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 7 Apr 2021 19:08:40 -0400
-IronPort-SDR: B+Dyx+YO5AsOEipP30BeWxze4YzXdoHVsStRImhYcKchRCgAxqs35PaO2mYkDN8drSmys44D2S
- PCt8TTXJ1FNw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9947"; a="190210375"
-X-IronPort-AV: E=Sophos;i="5.82,204,1613462400"; 
-   d="scan'208";a="190210375"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2021 16:08:29 -0700
-IronPort-SDR: hStFPeCgbJk4r/aUIlTY7MJQELyHan1TrMB858f8ZSh9MigJ9FHXURGmupxHvlv5DWR5CM0osb
- jElOjbivFA4w==
-X-IronPort-AV: E=Sophos;i="5.82,204,1613462400"; 
-   d="scan'208";a="415479328"
-Received: from tkokeray-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.113.100])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2021 16:08:26 -0700
-Date:   Thu, 8 Apr 2021 11:08:24 +1200
-From:   Kai Huang <kai.huang@intel.com>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     <kvm@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
-        <seanjc@google.com>, <pbonzini@redhat.com>, <bp@alien8.de>,
-        <jarkko@kernel.org>, <dave.hansen@intel.com>, <luto@kernel.org>,
-        <rick.p.edgecombe@intel.com>, <haitao.huang@intel.com>
-Subject: Re: [PATCH v4 00/11] KVM SGX virtualization support (KVM part)
-Message-Id: <20210408110824.555ffa5eb664fb5efffab070@intel.com>
-In-Reply-To: <cover.1617825858.git.kai.huang@intel.com>
-References: <cover.1617825858.git.kai.huang@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S229588AbhDHItA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 8 Apr 2021 04:49:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A3F27610CF;
+        Thu,  8 Apr 2021 08:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617871729;
+        bh=P19ARu+VzLED5pOwAOMynXeUE5WCD1NGG6yt2KArmgc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jCeBV5SLTxof87P9PyTbveiHBTCRyqv22JLar956SDI81PsqG2uHXTiCRqlcjZTZ7
+         U3aAxEDwWCRRnFeLpvCnSsLz3bpLrSWgSfkqgHvBSJYivJ99Q0b9asFFV2fHx270Hk
+         zFucLLf/zgqzwZSwkp6If1ejFudDWpodIAvfsOKwvW4NlUXu3dckWhLz5cPmpeSSHJ
+         CizYHlPbifWNQgoiJf3HUxJ0ceOTSI7jUvqZmjyqCeqZpqaZe1boRXb/S/aZXN/X7S
+         DFys/3xYPMHkvQwWyMcEJwep/AjAjDNg8OKASrN8xZBjBlD9vfv/rpp5u95laNTDMU
+         3K3K14u3ABtWw==
+Date:   Thu, 8 Apr 2021 11:48:46 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] x86/sgx: Do not update sgx_nr_free_pages in
+ sgx_setup_epc_section()
+Message-ID: <YG7DbunDoPocsEzZ@kernel.org>
+References: <20210405232653.33680-1-jarkko@kernel.org>
+ <20210407154934.GF25319@zn.tnic>
+ <YG3X454GI4U2BZVU@kernel.org>
+ <20210407161811.GK25319@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210407161811.GK25319@zn.tnic>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 8 Apr 2021 08:49:24 +1200 Kai Huang wrote:
-> Hi Paolo, Sean,
+On Wed, Apr 07, 2021 at 06:18:11PM +0200, Borislav Petkov wrote:
+> On Wed, Apr 07, 2021 at 07:03:47PM +0300, Jarkko Sakkinen wrote:
+> > > Which leads to my question: what is sgx_nr_free_pages supposed to denote?
+> > > 
+> > > Because I understand the callpath
+> > > 
+> > > sgx_page_cache_init
+> > > ...
+> > > for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
+> > > 	...
+> > > 	sgx_setup_epc_section
+> > > 	...
+> > > 		sgx_nr_free_pages += nr_pages;
+> > > 
+> > > as adding the number of pages of each new EPC section to the total
+> > > number of the free pages. Unless that variable accounts something else.
+> > > 
+> > > So what does this variable actually mean?
+> > 
+> > It's used for only to trigger watermark for reclaiming. I.e. causes
+> > ksgxd to trigger. And it gives the number of total free EPC pages in
+> > all NUMA nodes.
 > 
-> Boris has merged x86 part patches to the tip/x86/sgx. This series is KVM part
-> patches. Due to some code change in x86 part patches, two KVM patches need
-> update so this is the new version. Please help to review. Thanks!
+> So the callpath I laid out above is adding the number of pages of each
+> section to the total free EPC pages number.
 > 
-> Specifically, x86 patch (x86/sgx: Add helpers to expose ECREATE and EINIT to
-> KVM) was changed to return -EINVAL directly w/o setting trapnr when 
-> access_ok()s fail on any user pointers, so KVM patches:
-> 
-> KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
-> KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
-> 
-> were updated to handle this case.
-> 
-> This seris is still based on tip/x86/sgx (which is based on 5.12-rc3), since it
-> requires x86 patches to work. I tried to rebase them to latest kvm/queue, but
-> found patch 
-> 
-> KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
-> KVM: x86: Add capability to grant VM access to privileged SGX aattribute
-> 
-> have merge conflict, but the conflict is quite easy to resolve, so I didn't sent
-> out the resolved version. Please let me know how would you like to proceed.
+> Why is that wrong and why is your patch needed?
+ 
+As part of "x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list"
+pages are processed from a global list by ksgxd.
 
-Hi Paolo, Sean,
+This in turn introduces change to sanitization:
 
-Be more specifically, the first merge conflict is in patch (KVM: VMX: Add
-emulation of SGX Launch Control LE hash MSRs) (sorry I made a mistake about
-which patch above). The new added msr_ia32_sgxlepubkeyhash[4] to struct
-vcpu_vmx{} conflicts with hyperv's hv_root_ept:
+-		if (!ret)
+-			list_move(&page->list, &section->page_list);
+-		else
++		if (!ret) {
++			/*
++			 * page is now sanitized.  Make it available via the SGX
++			 * page allocator:
++			 */
++			list_del(&page->list);
++			sgx_free_epc_page(page);
++		} else {
++			/* The page is not yet clean - move to the dirty list. */
+ 			list_move_tail(&page->list, &dirty);
+-
+-		spin_unlock(&section->lock);
++		}
 
-++<<<<<<< HEAD
- +#if IS_ENABLED(CONFIG_HYPERV)
- +      u64 hv_root_ept;
- +#endif
-++=======
-+       /* SGX Launch Control public key hash */
-+       u64 msr_ia32_sgxlepubkeyhash[4];
-+       u64 ept_pointer;
-++>>>>>>> ebe348a4bbc1 (KVM: VMX: Add emulation of SGX Launch Control LE hash
-MSRs)
+This is done for the reason that it is best to keep the logic to assign
+available-for-use EPC pages to correct NUMA lists in a single location.
 
-The second conflict is the last patch (KVM: x86: Add capability to grant VM
-access to privileged SGX aattribute), due to new added
-KVM_CAP_VM_COPY_ENC_CONTEXT_FROM capability conflicts with
-KVM_CAP_SGX_ATTRIBUTE.
+The regression is that the sgx_nr_free_pages is also incremented by
+sgx_free_epc_pages(), and thus it ends up having double the number of
+pages available.
 
-They are both easy to resolve.
-
-For the next version, I think I can do:
-
-1) grab SGX x86 part patches from tip/x86/sgx, and rebase all patches to
-kvm/queue (basically rebase tip/x86/sgx to kvm/queue + new KVM patches), and
-send out the rebased patches.
-2) Still base on existing tip/x86/sgx, and let you to handle merge conflict.
-
-Which way do you prefer? Do you have any other suggestions?
-
-> 
-> Thank you all guys!
-> 
-> Sean Christopherson (11):
->   KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for SGX (VMX)
->   KVM: x86: Define new #PF SGX error code bit
->   KVM: x86: Add support for reverse CPUID lookup of scattered features
->   KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
->   KVM: VMX: Add basic handling of VM-Exit from SGX enclave
->   KVM: VMX: Frame in ENCLS handler for SGX virtualization
->   KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
->   KVM: VMX: Add emulation of SGX Launch Control LE hash MSRs
->   KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
->   KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
->   KVM: x86: Add capability to grant VM access to privileged SGX
->     attribute
-> 
->  Documentation/virt/kvm/api.rst  |  23 ++
->  arch/x86/include/asm/kvm_host.h |   5 +
->  arch/x86/include/asm/vmx.h      |   1 +
->  arch/x86/include/uapi/asm/vmx.h |   1 +
->  arch/x86/kvm/Makefile           |   2 +
->  arch/x86/kvm/cpuid.c            |  89 +++++-
->  arch/x86/kvm/cpuid.h            |  50 +++-
->  arch/x86/kvm/vmx/nested.c       |  28 +-
->  arch/x86/kvm/vmx/nested.h       |   5 +
->  arch/x86/kvm/vmx/sgx.c          | 500 ++++++++++++++++++++++++++++++++
->  arch/x86/kvm/vmx/sgx.h          |  34 +++
->  arch/x86/kvm/vmx/vmcs12.c       |   1 +
->  arch/x86/kvm/vmx/vmcs12.h       |   4 +-
->  arch/x86/kvm/vmx/vmx.c          | 109 ++++++-
->  arch/x86/kvm/vmx/vmx.h          |   2 +
->  arch/x86/kvm/x86.c              |  23 ++
->  include/uapi/linux/kvm.h        |   1 +
->  17 files changed, 855 insertions(+), 23 deletions(-)
->  create mode 100644 arch/x86/kvm/vmx/sgx.c
->  create mode 100644 arch/x86/kvm/vmx/sgx.h
-> 
-> -- 
-> 2.30.2
-> 
+/Jarkko
