@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4096EC433ED
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 08:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D606FC433ED
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 08:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCD2E61168
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 08:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9735E61176
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 08:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbhDHItC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Apr 2021 04:49:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46790 "EHLO mail.kernel.org"
+        id S229686AbhDHIwz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Apr 2021 04:52:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229588AbhDHItA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Apr 2021 04:49:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A3F27610CF;
-        Thu,  8 Apr 2021 08:48:48 +0000 (UTC)
+        id S229600AbhDHIwy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 8 Apr 2021 04:52:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A4176113A;
+        Thu,  8 Apr 2021 08:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617871729;
-        bh=P19ARu+VzLED5pOwAOMynXeUE5WCD1NGG6yt2KArmgc=;
+        s=k20201202; t=1617871963;
+        bh=MYMnMOl8XRwaeMn7oYUI3S8PUiMUgCGtoY6/t9GkuTo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jCeBV5SLTxof87P9PyTbveiHBTCRyqv22JLar956SDI81PsqG2uHXTiCRqlcjZTZ7
-         U3aAxEDwWCRRnFeLpvCnSsLz3bpLrSWgSfkqgHvBSJYivJ99Q0b9asFFV2fHx270Hk
-         zFucLLf/zgqzwZSwkp6If1ejFudDWpodIAvfsOKwvW4NlUXu3dckWhLz5cPmpeSSHJ
-         CizYHlPbifWNQgoiJf3HUxJ0ceOTSI7jUvqZmjyqCeqZpqaZe1boRXb/S/aZXN/X7S
-         DFys/3xYPMHkvQwWyMcEJwep/AjAjDNg8OKASrN8xZBjBlD9vfv/rpp5u95laNTDMU
-         3K3K14u3ABtWw==
-Date:   Thu, 8 Apr 2021 11:48:46 +0300
+        b=QGuE1cVGIsBT4Fp8CzAnU4HchMwCsBjgEi9big/zO4pAlexrojWJv/0ByiXDQ64QP
+         erRqAaCNyPip776bwthQZP0pg0N5WEiBF8snNJxLvAcOUk5ljKaehmN0tgEx20ykM8
+         EhLwSEytbLydUvoced/8Qd47ENJ3/PIrF8jd24oUi0sPyajO3gCj+7jOg30JOWb+y1
+         5b/8zoiAG4LlqdD/7wHC75ARUxogcJCxM87HPcqcKIpfjAcow/jOxI05tHe/rkLG8L
+         LwnpVYd/lq2y3S6MXNYh+/Ld4W8bSilRP6XRB97FGx2G+TSzcFGFkQHmvW33vR91sZ
+         WSzVJOOAQK6iA==
+Date:   Thu, 8 Apr 2021 11:52:40 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     linux-sgx@vger.kernel.org,
@@ -38,76 +38,51 @@ Cc:     linux-sgx@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] x86/sgx: Do not update sgx_nr_free_pages in
- sgx_setup_epc_section()
-Message-ID: <YG7DbunDoPocsEzZ@kernel.org>
+Subject: Re: [PATCH v2 2/2] x86/sgx: Add sgx_nr_{all, free}_pages to the
+ debugfs
+Message-ID: <YG7EWDXmwC9ai38k@kernel.org>
 References: <20210405232653.33680-1-jarkko@kernel.org>
- <20210407154934.GF25319@zn.tnic>
- <YG3X454GI4U2BZVU@kernel.org>
- <20210407161811.GK25319@zn.tnic>
+ <20210405232653.33680-2-jarkko@kernel.org>
+ <20210407155636.GG25319@zn.tnic>
+ <YG3ZJyMB+S5LcUso@kernel.org>
+ <20210407161533.GJ25319@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210407161811.GK25319@zn.tnic>
+In-Reply-To: <20210407161533.GJ25319@zn.tnic>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 06:18:11PM +0200, Borislav Petkov wrote:
-> On Wed, Apr 07, 2021 at 07:03:47PM +0300, Jarkko Sakkinen wrote:
-> > > Which leads to my question: what is sgx_nr_free_pages supposed to denote?
-> > > 
-> > > Because I understand the callpath
-> > > 
-> > > sgx_page_cache_init
-> > > ...
-> > > for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-> > > 	...
-> > > 	sgx_setup_epc_section
-> > > 	...
-> > > 		sgx_nr_free_pages += nr_pages;
-> > > 
-> > > as adding the number of pages of each new EPC section to the total
-> > > number of the free pages. Unless that variable accounts something else.
-> > > 
-> > > So what does this variable actually mean?
-> > 
-> > It's used for only to trigger watermark for reclaiming. I.e. causes
-> > ksgxd to trigger. And it gives the number of total free EPC pages in
-> > all NUMA nodes.
+On Wed, Apr 07, 2021 at 06:15:33PM +0200, Borislav Petkov wrote:
+> On Wed, Apr 07, 2021 at 07:09:11PM +0300, Jarkko Sakkinen wrote:
+> > I left out "epc" because they are already prefixed with "sgx_".
 > 
-> So the callpath I laid out above is adding the number of pages of each
-> section to the total free EPC pages number.
+> Are there any other "page" types which are going to be figurating in
+> some pseudofs or is "sgx" == "epc" in this case?
 > 
-> Why is that wrong and why is your patch needed?
- 
-As part of "x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list"
-pages are processed from a global list by ksgxd.
+> > debugfs was my first shot, but for sure these could be sysfs.
+> 
+> Ok, let's keep it in debugfs for now, it can always be made an ABI later
+> and moved to sysfs. But pls document what those are and what they do and
+> that when in debugfs, there are no guarantees that these interfaces will
+> be there in the future.
 
-This in turn introduces change to sanitization:
+I think these attributes are quite useful information to have available so
+I'd go actually doing sysfs attributes and create
+Documentation/ABI/stable/sysfs-driver-sgx to document them.
 
--		if (!ret)
--			list_move(&page->list, &section->page_list);
--		else
-+		if (!ret) {
-+			/*
-+			 * page is now sanitized.  Make it available via the SGX
-+			 * page allocator:
-+			 */
-+			list_del(&page->list);
-+			sgx_free_epc_page(page);
-+		} else {
-+			/* The page is not yet clean - move to the dirty list. */
- 			list_move_tail(&page->list, &dirty);
--
--		spin_unlock(&section->lock);
-+		}
+Given that they would go then to the sysfs directory of the driver, then
+probably the legit names for the attributes ought to be:
 
-This is done for the reason that it is best to keep the logic to assign
-available-for-use EPC pages to correct NUMA lists in a single location.
+- nr_all_epc_pages
+- nr_free_epc_pages
 
-The regression is that the sgx_nr_free_pages is also incremented by
-sgx_free_epc_pages(), and thus it ends up having double the number of
-pages available.
+What do you think?
+
+PS. One useful case that I forgot to mention is that I use these to give
+idea what I gave EPC size in the BIOS. Now my EPC is set to 32 MB, and
+these report 20 MB of EPC pages. It's because other metadata (e.g. EPCM
+containing page attributes) is also stored in this area.
 
 /Jarkko
