@@ -2,84 +2,111 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EB3C43460
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 16:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B7FC433B4
+	for <linux-sgx@archiver.kernel.org>; Mon, 12 Apr 2021 04:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC88161181
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Apr 2021 16:27:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CC126121D
+	for <linux-sgx@archiver.kernel.org>; Mon, 12 Apr 2021 04:21:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232248AbhDHQ1i (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Apr 2021 12:27:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60026 "EHLO mail.kernel.org"
+        id S229669AbhDLEWK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 12 Apr 2021 00:22:10 -0400
+Received: from mga07.intel.com ([134.134.136.100]:53368 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232240AbhDHQ1h (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Apr 2021 12:27:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 133F5610FA;
-        Thu,  8 Apr 2021 16:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617899246;
-        bh=XgIz3E6DVRyqNfRyqK/14b+Wtb8Dfx2r6YRrKwYJOeA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nASy4t/iCagZZUHEGaUr3t9xuStEQH8cbOY5O/HJ7bj3GOnB9CicfOZ6S55RdTDUu
-         2jCkNYWrk+pQyaQqOu187CnEV8zhAOlFTYwKB8aK/8A2K0b7PQhqjMGjk6Vmys1gPC
-         t72LRPGb9X7FvUjE99pUAahA5gK1ElGcJwk9XTeQWJ8z7H9jzhxyAaa2t6So6XsCK3
-         0t4F36EvAUG65WHeqgke/HYIXdfJJnXn0ebzXPtYAH5Ph6aYQqQvtju7C53XJfUWPm
-         QIP+U/pDa6PflTmvz8S+2UfLRcDIknlBedjw3scdY0pvWZ4azW5Ny8mEzXoooUdCQR
-         M/dn2bkRQyaBA==
-Date:   Thu, 8 Apr 2021 19:27:24 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] x86/sgx: Add sgx_nr_{all, free}_pages to the
- debugfs
-Message-ID: <YG8u7BtcJ43Hao3t@kernel.org>
-References: <20210405232653.33680-1-jarkko@kernel.org>
- <20210405232653.33680-2-jarkko@kernel.org>
- <20210407155636.GG25319@zn.tnic>
- <YG3ZJyMB+S5LcUso@kernel.org>
- <20210407161533.GJ25319@zn.tnic>
- <YG7EWDXmwC9ai38k@kernel.org>
- <YG7JMc6b+HZIZqxM@kernel.org>
- <20210408093223.GG10192@zn.tnic>
+        id S229448AbhDLEWJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 12 Apr 2021 00:22:09 -0400
+IronPort-SDR: FoYqkzv/LFzzJ+QB1ew3CltJuopGb2eqWcnF/1yzIQDeZ+JeGaK4o0o7Z2+11bi8ic/5lfItNh
+ iqRycluaGVzQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9951"; a="258083736"
+X-IronPort-AV: E=Sophos;i="5.82,214,1613462400"; 
+   d="scan'208";a="258083736"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2021 21:21:51 -0700
+IronPort-SDR: T3JTS6xv/VQ4UVbj73NncAbScptLx2jk2XAtoh50u0vb/bK0hBltG4Ks9TM/xIQDTNjE9k447z
+ sqIGwDVpVPrw==
+X-IronPort-AV: E=Sophos;i="5.82,214,1613462400"; 
+   d="scan'208";a="521030335"
+Received: from rutujajo-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.212.194.203])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2021 21:21:48 -0700
+From:   Kai Huang <kai.huang@intel.com>
+To:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org
+Cc:     seanjc@google.com, pbonzini@redhat.com, bp@alien8.de,
+        jarkko@kernel.org, dave.hansen@intel.com, luto@kernel.org,
+        rick.p.edgecombe@intel.com, haitao.huang@intel.com
+Subject: [PATCH v5 00/11] KVM SGX virtualization support (KVM part)
+Date:   Mon, 12 Apr 2021 16:21:32 +1200
+Message-Id: <cover.1618196135.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210408093223.GG10192@zn.tnic>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 11:32:23AM +0200, Borislav Petkov wrote:
-> On Thu, Apr 08, 2021 at 12:13:21PM +0300, Jarkko Sakkinen wrote:
-> > Actually I think read-only sysctl attributes would be a better idea.
-> 
-> I still think debugfs is the right *start* for this: you play with them,
-> see what makes sense and what not, tweak them, etc, and then you cast
-> them in stone.
+Hi Paolo, Sean,
 
-Yup. Also better to see what makes sense in the context of virtualization.
-Too many (unknown) unknowns to make the right call.
+Boris has merged x86 part patches to the tip/x86/sgx. This series is KVM part
+patches. Due to some code change in x86 part patches, two KVM patches need
+update so this is the new version. Please help to review. Thanks!
 
-> Not cast them in stone and see if anyone is even interested. So pls keep
-> them in debugfs for now - you can always do whatever, later, when it
-> turns out that those are useful.
+Specifically, x86 patch (x86/sgx: Add helpers to expose ECREATE and EINIT to
+KVM) was changed to return -EINVAL directly w/o setting trapnr when 
+access_ok()s fail on any user pointers, so KVM patches:
 
-I'll do that.
+KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+were updated to handle this case.
 
-/Jarkko
+This seris was firstly based on tip/x86/sgx, and then rebased to latest
+kvm/queue, so it can be applied to kvm/queue directly now.
+
+Changelog:
+
+(Please see individual patch for changelog for specific patch)
+
+v4->v5:
+ - Addressed Sean's comments (patch 06, 07, 09 were slightly updated).
+ - Rebased to latest kvm/queue (patch 08, 11 were updated to resolve conflict).
+
+Sean Christopherson (11):
+  KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for SGX (VMX)
+  KVM: x86: Define new #PF SGX error code bit
+  KVM: x86: Add support for reverse CPUID lookup of scattered features
+  KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
+  KVM: VMX: Add basic handling of VM-Exit from SGX enclave
+  KVM: VMX: Frame in ENCLS handler for SGX virtualization
+  KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+  KVM: VMX: Add emulation of SGX Launch Control LE hash MSRs
+  KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
+  KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
+  KVM: x86: Add capability to grant VM access to privileged SGX
+    attribute
+
+ Documentation/virt/kvm/api.rst  |  23 ++
+ arch/x86/include/asm/kvm_host.h |   5 +
+ arch/x86/include/asm/vmx.h      |   1 +
+ arch/x86/include/uapi/asm/vmx.h |   1 +
+ arch/x86/kvm/Makefile           |   2 +
+ arch/x86/kvm/cpuid.c            |  89 +++++-
+ arch/x86/kvm/cpuid.h            |  50 +++-
+ arch/x86/kvm/vmx/nested.c       |  28 +-
+ arch/x86/kvm/vmx/nested.h       |   5 +
+ arch/x86/kvm/vmx/sgx.c          | 502 ++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/sgx.h          |  34 +++
+ arch/x86/kvm/vmx/vmcs12.c       |   1 +
+ arch/x86/kvm/vmx/vmcs12.h       |   4 +-
+ arch/x86/kvm/vmx/vmx.c          | 109 ++++++-
+ arch/x86/kvm/vmx/vmx.h          |   3 +
+ arch/x86/kvm/x86.c              |  23 ++
+ include/uapi/linux/kvm.h        |   1 +
+ 17 files changed, 858 insertions(+), 23 deletions(-)
+ create mode 100644 arch/x86/kvm/vmx/sgx.c
+ create mode 100644 arch/x86/kvm/vmx/sgx.h
+
+-- 
+2.30.2
+
