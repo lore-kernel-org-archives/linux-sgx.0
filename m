@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF453C433B4
-	for <linux-sgx@archiver.kernel.org>; Mon, 12 Apr 2021 09:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A69FC433B4
+	for <linux-sgx@archiver.kernel.org>; Mon, 12 Apr 2021 09:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C57F0613AE
-	for <linux-sgx@archiver.kernel.org>; Mon, 12 Apr 2021 09:06:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 310B7613B1
+	for <linux-sgx@archiver.kernel.org>; Mon, 12 Apr 2021 09:07:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238696AbhDLJGq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 12 Apr 2021 05:06:46 -0400
-Received: from mail-dm6nam12on2125.outbound.protection.outlook.com ([40.107.243.125]:21408
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        id S239647AbhDLJH4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 12 Apr 2021 05:07:56 -0400
+Received: from mail-bn7nam10on2137.outbound.protection.outlook.com ([40.107.92.137]:11584
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S240142AbhDLJFA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:05:00 -0400
+        id S240380AbhDLJFw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 12 Apr 2021 05:05:52 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DsrG9CgZEgtLMhfspBfiPumfuXSle4uhoZy5pRMaIy+XiuGD8wRlCHjm/VS3lkvRDkFp+piSdMIHz/bb4Z8UO5quEqkcKyvp6Fn0rkzfhnQh18z+s8AiR/OeBYzTZEusgmUVjd3LzhYKNF0mxmNOo5Ak8K7qQAq6nJWVxBPnHWjhEwtfulhQWI/Cbzvlyr5VJ6tiirj+4/MBnOluIF3RZlaKz9P1wdf+8XPz1MkqEd9h9OPEzoTFtkjg9vQbwRdGgIQr3NJBhxMzIJ6ylGKDy/y1sePULsntG4PjcqLCVR3Rw6RHI/NZxgsTKzsalw/1qpdbO58KT1BQzoTjVgrBrA==
+ b=kNnIZFtZfAlmJwcY60gM5zGHEkdJgsMbPccWu5Ko/BdwbZxGRYyJkzu1Z+jVU4FvBws7zPanPLo0u8VHRXwVtvIxJIRIo+fAL2bFJn4gFbZenYqY8HZKp/xRp+5kkk0GL646NjUq0+h9oYDls7nGyYTTc6HeV+4JB1XRdjB3WpTgCz2Uqsr8Pyw2/h0+zdy5TJF3rjFXVETM4R50brLf5hnaKiyGNWrMgIa7z1dowYBLym2kbdg/90fNe2AETeWLrr15JgWpo6Hgdon5kRAYDM0tzGeGNusOk/PLqryjt6WHvuvJ0Z5UWSH1Hp5prKDXeZChU3IG4lHBZEqoFqn0rA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fc8Kck0rI90sPNfPmxxpUXA58/NsgLxjYBmzfGOsevI=;
- b=X5u/Q74AlxjvPxMvmMSoDk4zl63Ejg4M049kb4o0m7oYcjWNQymtMr6b1q4t2DCbyVo0TgwKGfO/nVND8CPd62f0pfcf236BbUnZKOffKcHfPjEYU9qwAhlgs5nlWNQnO7NMyUvCNrRBJQ6rUBPsr/+Gw/h6NgUVK5c+siT38jWrpnDZ8s0fhXyyO3PVplPOYQA7yDQZL/w5jHzduIKYU811L5YBvQ0u/Y7xsawLuwlkNh//6R6WFKKPapVYyGrxEJlLLnSyMRVmtgYXpP3rAKhMJAp8rTlrIUGw59iJwKPTn3lg9/mjPJRwmB+vjfjaM7A4P3GW3pGn97tHd71pMg==
+ bh=WJWBrtQh9aORyFSZJY28iwxDc+kXJPC8VEn56mdRRkA=;
+ b=F2oe4qVRjDhg9Mwm3lYNdZnBkaywbln26AZOulJ4eKa+2atBZlIfo1S7pmfqR9pSLZ8ywp2+zZVqFkC9ujeDR7721EdRDuSGF5smbkrwA7oIi5noTQx7R5zHIgw633YbIoG0kcT2KvOr3swE1m8bl7k63kYpCQChTP8t3zEvWLBnljcEYfHURmxXQEM+XYPd7y130WNKGAnw9QVYeeLttk3ITA0YOZ28EzpaFkL7Ic7hL8va/vRU40Ogbd5+I8fg4xK9EAmkLATTwFSAtqBD3IwOjFg12cw4PneZcDBBCGQiEjv2lxCo88vQQn0ZI4SpMowHLdh74Tev8tII+p11Ig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
  dkim=pass header.d=fortanix.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fc8Kck0rI90sPNfPmxxpUXA58/NsgLxjYBmzfGOsevI=;
- b=Izj3WrK3lQkMI+/RoDtEjbTHBxJix/FBj33BsMeM+vBjDfkv3TuGgDbZNehlub0+QXxN9kaNRWzlGolz7Fg7a1Zenic1tWUW1deVXs8rtZKQgr7oporaN5uMYcY6RZRw7hUwNCH1dTeeieV4Gl/SyMqe9ZIJifEvBActT6dgHsI=
+ bh=WJWBrtQh9aORyFSZJY28iwxDc+kXJPC8VEn56mdRRkA=;
+ b=TD1Dev/03+19oKHqvjeDQ+bFNe4jiCyeZodB6mFcGeropcg6zNwvCE5iKgBCRFYHU1zFP0cByRiKVLnIqFQSt868229UjwrVjmWiQnfV+5eFXYVMAhKu5auIQfX+gegwR2z8OxzthPJFXWJ6TimOlidBitkpR4iE7oOdXBZSaSA=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none
  header.from=fortanix.com;
@@ -42,13 +42,13 @@ Received: from CY4PR11MB1783.namprd11.prod.outlook.com (2603:10b6:903:11d::20)
  by CY4PR11MB1384.namprd11.prod.outlook.com (2603:10b6:903:2c::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.21; Mon, 12 Apr
- 2021 09:04:41 +0000
+ 2021 09:05:01 +0000
 Received: from CY4PR11MB1783.namprd11.prod.outlook.com
  ([fe80::f052:14fe:c2a9:5fb1]) by CY4PR11MB1783.namprd11.prod.outlook.com
  ([fe80::f052:14fe:c2a9:5fb1%3]) with mapi id 15.20.4020.022; Mon, 12 Apr 2021
- 09:04:41 +0000
+ 09:05:01 +0000
 From:   Raoul Strackx <raoul.strackx@fortanix.com>
-Subject: [PATCH v2 1/3] x86/sgx: Adding eextend ioctl
+Subject: [PATCH v2 2/3] x86/sgx: Fix compatibility issue with OPENSSL < 1.1.0
 To:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -115,8 +115,8 @@ Autocrypt: addr=raoul.strackx@fortanix.com; keydata=
  a09GWTRLRUxOeVYrV01PK2lXRHpZS21tTUxnUkVXNitqZk5jMzhrYWhaQjI2RmJOZTh6QmxU
  cVpPCmhxYmNZR1ZZNW9Ec004YSthbkwyZDhmaStnPT0KPW9ZT0QKLS0tLS1FTkQgUEdQIFBV
  QkxJQyBLRVkgQkxPQ0stLS0tLQo=
-Message-ID: <67471818-fe87-32a9-ae9e-26a21ebd37e4@fortanix.com>
-Date:   Mon, 12 Apr 2021 11:04:34 +0200
+Message-ID: <92282c72-5849-70d0-1553-548130fba2bd@fortanix.com>
+Date:   Mon, 12 Apr 2021 11:04:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 In-Reply-To: <da7ae1e7-59b8-63db-a9f1-607b4e529639@fortanix.com>
@@ -124,236 +124,91 @@ Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [81.164.43.210]
-X-ClientProxiedBy: AM0PR10CA0057.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:150::37) To CY4PR11MB1783.namprd11.prod.outlook.com
+X-ClientProxiedBy: AM0PR10CA0040.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:150::20) To CY4PR11MB1783.namprd11.prod.outlook.com
  (2603:10b6:903:11d::20)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (81.164.43.210) by AM0PR10CA0057.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:150::37) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.16 via Frontend Transport; Mon, 12 Apr 2021 09:04:39 +0000
+Received: from [192.168.1.101] (81.164.43.210) by AM0PR10CA0040.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:150::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17 via Frontend Transport; Mon, 12 Apr 2021 09:04:59 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a48bbbfa-6622-416e-e440-08d8fd9201d2
+X-MS-Office365-Filtering-Correlation-Id: 7e93b891-217c-4247-3132-08d8fd920de4
 X-MS-TrafficTypeDiagnostic: CY4PR11MB1384:
-X-Microsoft-Antispam-PRVS: <CY4PR11MB1384D1FD15AF130B20D8EF358B709@CY4PR11MB1384.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:248;
+X-Microsoft-Antispam-PRVS: <CY4PR11MB1384A3F903F5F34AA2AFEE748B709@CY4PR11MB1384.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1360;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: d567Lp/2nVNeNeSiwaodXrzhIHFUU1xjs00nMayB1kkxlqWB5C+w56f3qK+QdqrkDUBVUmNl7Ejv14PxltB58XEF3krY73eSsrWpBwWh4B9e3Xu0l8YryWzstR59oxGwhydBA96TZ8KpSJrYOesavEkB48LDh/ujlQNrm7e8idVkru2UwRlAVFyNrneBq4TOcZmBOPHF0ow7gPsVdiTgYdQkJjLXw4beU2uV4qRZXYmDU75Wd/G6roIc/aNjrAVvZKze6KesDWekUk4IO+9Ybs3nRrlvm9qRckRrwx1M7ihXRURYMVvzTyRtEnca2K6FSCbpt2wtjLhoA3Pe8vETCvQidvP/V9otnldtSjXuiPNHWXQWVG86wh+rNxvJcPwq4WdrIlDQk1jy+3sdYZXhEJLV2+Jmn3sfSop4dO54nc3MCqd8P0OMFFx5x5lB3kro+AK/NrTY3o2+PSDeKagNelxu4CUH3xESLRilhxIZ3egZ2Pb4cOeK0GcSSVVOqlqx990mYzZkzUpBuEBcTFpEf6B8zkHWC3tAFc5tT9U8sCGrNZ9dX5p98QShPvw/OJ3KM7m1CTvW8ghw5sk2WEtSG3UuHremTsDBhJNkCQfpk7QxzilDVcCly33VSIYlQR/SGKbY0BTdPOzvYBGhkMTb3o3n1W0sco2+TePdcD5reEWS+TlLN5qO5O980oxsDkHN2kJzb50FVo/M/rd/VIg0C9mM6Al6cLCJn/hAXyj/XVE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB1783.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(39830400003)(376002)(136003)(396003)(366004)(26005)(66476007)(6486002)(186003)(16526019)(66556008)(44832011)(5660300002)(2616005)(38350700002)(316002)(86362001)(6666004)(956004)(66946007)(52116002)(31686004)(8936002)(8676002)(110136005)(36756003)(16576012)(2906002)(83380400001)(478600001)(38100700002)(31696002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?YndpMTZoVXFwaWpjaVo5VG5Eb1g1a1NRdVJkSWRBSVJaS2lGa0pPeXkyZk9a?=
- =?utf-8?B?OTBxSzBHVWxpRExiVk1oUEROakg4b1VCWW9OOWFnekE4RVRLMmRHWVBiMzVU?=
- =?utf-8?B?WGtDSmlSNmkrTUVGbmp3U0drM1VFTld1dmZlbndsVnBiNFB2NFJ5WFNtVnQr?=
- =?utf-8?B?T3drMkMrZE4zT1JKTEcyaEpaY2IzQ3ZkRzZvZjlKUGpXaHlRWUxTOEV6Tzkr?=
- =?utf-8?B?U2NSOGlhQVI2aHRnRUdQYk5pU2h6TE5mMW85MDNjak5CcVczQ3lPYlc1QTFj?=
- =?utf-8?B?ZnQ3OE05ckRkanhEakw5UzV5STl4RHFudktjeThZNmFRZi9ySmZ0QlBtQ0VP?=
- =?utf-8?B?UjhvZ0NXcTJsQVB2b28zQ0JmQVBaQTFvNGlmUFVFTXd1ZlNBOWpYbmpjRVZy?=
- =?utf-8?B?UmIxbURMZ1UxNEY3VkNXdzh3VFMxY2R5dFhkZzJpeElndGtlVHQ2cG53VFNn?=
- =?utf-8?B?bmZsU0s2UzdUMVVSbk00L2RrcWZLQXo0NG5uTloyUisyYkt3NGN1VWRtV1E4?=
- =?utf-8?B?UW9uamU3NTRqMzlucVFzNzFuZ011ays5MXpuOU9aVmYwaUFyMDdmQ3l1bkJD?=
- =?utf-8?B?Vnk1anFpdlRWQXJKVmhFWGhmQ1U0QStMdG10UlFzWDFuYnNaS2x0dGk1eWNh?=
- =?utf-8?B?NGt3eE1sTk1Zc1Q1dWRuckU0Tlg1NENNZ2NhcC9zb1hmWVdhT3dMQitGNkpm?=
- =?utf-8?B?dEVIZ3M1OTdxN0dnUGxXTDlubTJxT1hFcWQrTFJjMjlkanNmYSsvU21DTXBB?=
- =?utf-8?B?MGJabzlEekY3YnlSQ1l5WEJqZ1VTVzEyc0VSTENPTDQ3b1BOamlndHZ3Zlh3?=
- =?utf-8?B?cUdHNUlJak15ZUNsZFd4bCsxend4eGgrZFFqd3JpMW9rc0NFTHJLejQxVkNp?=
- =?utf-8?B?SFp1ZGljRHVDN0hueDM0VHlpR0ROTldNdmk4ZkZFU0RPdlE0dDFZYUd6YlQ3?=
- =?utf-8?B?Z2tGdVJaamRCYzZTLytzanlYMG0vbW1zclgyWFBQNmVsMCtTN3YwaXNTTkdn?=
- =?utf-8?B?NTc1TXpxeDgrYlNQd2RMbFV4R2UwQmVGYUdUdTFUVHdqeld6cmRTSFZlbFdQ?=
- =?utf-8?B?NGIwYVZObUR1NTgyb3gzSVBhSGl0NU9hbGp0NGRSL3loUDkvdmUxQnhtZW9u?=
- =?utf-8?B?dWNiWDk4dk94TE9SYnlzQS85dEs2UzFTb2pYbXpJMU1tdlZNOWtNSVZMNFB0?=
- =?utf-8?B?cUJ2TUw5eUJkMGVBY2FRa1JldEdsSmFrVTdwVjlST0hLc2pZaDEycUVCQVpn?=
- =?utf-8?B?NURRUkcxamp5d3JIb2dCQW9UNGNVNVFlQXlmc2FKTEtBMHkvaGZ3YW5UTFo4?=
- =?utf-8?B?WUF2Nk43dnJrSVBXRDJTbG9qSEFBZy9LMjc2NXN5a1gvRjJLdmd1bGNJMGp4?=
- =?utf-8?B?STJnN1FVa0t0SThCSzF3d283NC9heWN2Qkg5OVYvaTNCSmxvYkU0ajEyMGhL?=
- =?utf-8?B?WGRTV3NMWHdVMW1hQW5jRWEzRDYwN1g2cCtuOXpSSEJGclBNTlRHRXFHemt2?=
- =?utf-8?B?NDhyd05EMEU5UklQNy8wcVloTDBWK0dTZFpLMmN1L0g2YUJGK2IyeURHR2kw?=
- =?utf-8?B?enI0VzNVRlBmQzZUb3RPTnNrV0x5YzhkRHdCaFFmbDljTWIrUngyckRTMk5E?=
- =?utf-8?B?L0JnQ3gyMURVNVFiTStLLzJ6Q3Jwb3IvcHpiaSs0dnpXTE50WkhST01LTkFY?=
- =?utf-8?B?cEszUlNWaGI5T2lwa2Z6RWtkenlFaExwVXJMSkc0WXBHc0lDL0VVZForMVRC?=
- =?utf-8?Q?QqUDYjcm7XqAlHkuSzvx/GgT9DvBqHrus+UZTob?=
+X-Microsoft-Antispam-Message-Info: RUcQfen7JDgN1mrV4c2OmpZsU06JmgAqSlR8Yw6jEG0919kNgCHeXsmWdCk2gqLZfPDmAGhPxJXTB43k2E/mfKcNwM616fio4Le5ySrodKaPHaP6W3cuAdOP3HT/Ql0FZ8v7RMXbQn2fbd5uLI4/FpOit18IB8HZrDV8zzZSdouQiHQmtf0QI0BgJDnx6KsTvw9CKYmgOc+jFxtoNLL4reEBk9s96uNtH+B15hq6NClrR/OZit4ksNWMiF7gjjSnWq3mqViV0IVhd5Pw++pzTUzZwAzO5cPYvBjEikp5ygGH/M6aitvq2R9z5ZPn00ClUc2baykTDCIAGhS4Gt7QOL5gn16uTXQhD3xlPRkg+fYf8R7S+BsQFAb3/y9715v+Sj80NpMOZNjkjVcId+dnvUVfphUwRSFKwEN1TI9HkgIC71N9QNduu2mkTXsR5uZ/ca0dxYcxOZR7TRqcGVHYjoonNIA0QJtfmYWiCkO98CYfkwC47cw8tg7hXj1PQ2+WsCQ5iLC+xgOMnbrT3JzFc2psM5ZWebxvamuZYo/6g7RrG8TjxcLeXITz5xxpomkBGZoRRNZh2BHvpZLwd+NWEgyqajoRwGm0TX+w5xPGfjDVeeDUD0gVYtAkgo1oH+/Somt6z2+bvInXKB9pIkg/KDz2XyRRLJvcXCA8iYlgqyB12DeCr0sPcTMRRur6FPPbnUa3wHI16HEJ34geitNf8OnAu28RpZ+kJfrgQG4MPKw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB1783.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(39830400003)(376002)(136003)(396003)(366004)(26005)(66476007)(4744005)(6486002)(186003)(16526019)(66556008)(44832011)(5660300002)(2616005)(38350700002)(316002)(86362001)(6666004)(956004)(66946007)(52116002)(31686004)(8936002)(8676002)(110136005)(36756003)(16576012)(2906002)(83380400001)(478600001)(38100700002)(31696002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?bTRHUmh4RksxZ3JvTTF5UGRlendVWjZobE5CTW9lU1cyMzZBYzB1UTdyUFhi?=
+ =?utf-8?B?dlVaUU0xcjNQcUFKRWJhR1RmUzFaMnlpaWVVKzBORW13aWNGM2FyQW5tOHYz?=
+ =?utf-8?B?aFNYVGhocmFrZVZUYUZVYWNzN3Z4TURndzlkZ0Z1WjZUVHI2OUxvaXVlaHRX?=
+ =?utf-8?B?TExaalZsUFlQekJNajNVa0w5TUpxRGV2N1djaVg4c0pWaldjNFBGbEdRb0dh?=
+ =?utf-8?B?Y1g5U1l0TFJtalB2M1BCYVBQM3p4dkhTWmVWT0lHYk9waWxVcmZ2dCsvamVr?=
+ =?utf-8?B?eFBvNUpRS0FKU0JXZ0ZEOGs0c1hqdUFOUXQzdkFZWnQ5ZlBmeHBmNUVUUHJJ?=
+ =?utf-8?B?U1F5UFNLS09Ob3VOcy9FVUFaQXdEQ3A4VDZ2bmhlc1AxQUs4MkQ2OFF2M3JB?=
+ =?utf-8?B?WGxnazQyZWphOUl5SmJHL09TR2JmS3pqUU15ZWw3L2xGRlgxVEx5K0dCOVda?=
+ =?utf-8?B?WGN3dGdMWnNLQXRKZ3ZRV3pjSC8wUkdaN3FaRlVWM3ErRzJBYTV3RmthNzNN?=
+ =?utf-8?B?dkNHbFdWU293a1VZVytZLzRPcDFsVzl5elhFR09UOFNGaE0xUE5CdXk1QTJk?=
+ =?utf-8?B?T2tmQmRuMUs2WlVZSXNvN1lVM2FYSHJySlRDK1VpUmZvcXZqWjBJTFhTampW?=
+ =?utf-8?B?UUZTMVlyUXBrYThwdDNtZk9pL29jOXc4Q2R5NlI0R2hDY0JUR1J5cTZwYytH?=
+ =?utf-8?B?MjIxMTc0SWFwWUZBd1Z5c1RySXlUY0J6dXRhWnh6c2dDblBDaE9QWjNZMjBV?=
+ =?utf-8?B?SEQ5TjdCZUJqU1dTU1gvcExWdGU3RUZHZkJKYXhFVUIwTDBQdVk2c0kvYnBT?=
+ =?utf-8?B?ZHZha3VDUE9ZS21lbGh6UUFMVW1oWmVKN3lhMW9rb21JcDJqR00wU2NtZ0w3?=
+ =?utf-8?B?aHBQeW0xY1RXWWh0TjNzUDU0M2l3TVlKWTlsQ2lFTHE5ZDlLSUhBQzM5NFZR?=
+ =?utf-8?B?QmJpdVlkVXJaZEZKcmpJUDg1RUYwNkNhNFhBcEc2ek4vYkZFdWpFRUpzWFBo?=
+ =?utf-8?B?bW8vL2U0TWd0Vnd3RjVOQk1XMktWU1ZncTJIT3UzOStJRWRickUyRFdGZE5w?=
+ =?utf-8?B?clgrVkpmcFczdGdMSTRqZi9VL0c2b2hvWDAvNVdsRU9QcjY0WU9zZFlLZi95?=
+ =?utf-8?B?ZFZZZVVCeVdrWXZ4Z3Y4N0ZxQ0JRS1FENmltb3BVWnlHOTZnZDBVaDE1cEVW?=
+ =?utf-8?B?aS9XM2duV0xqaWZWMzRTWHFXOEVzWU1IUGd6NS9La1RrNFdTY3ZVdEV5ZU5z?=
+ =?utf-8?B?YW1rZndESi8vT3ZnQnFBS1lqZHFDVCtETCtFTnUrTU5ISXZHZ0pTaGx0ankz?=
+ =?utf-8?B?cWZJeEJ1MkM5bnpQb1JUdGNzSE9ONTdQekxKRXE3S0hWcDhqZ1hrSittWlhI?=
+ =?utf-8?B?UEozaTRzOWtKeXRSTUZRbUpud3ErWmJPUFlGem5PM08vK0xXTlB6VkptbDlZ?=
+ =?utf-8?B?KzlOTkgzUkZSaHplWW8xTmIxdzdqYUJob0hkSVRhL0h3T2VVWlYyblhNUnNO?=
+ =?utf-8?B?V1Q2RlpDVUNzOWlNT2tpWmZtU0l2MlMvcnVXZElpSTlWLzNheThjaWpUMStY?=
+ =?utf-8?B?NUxxODZPbTJ4TVBhdm05RkJUZm5UbWt4UDBnVzRwZ25WVkw2dXdjVWFCVzd5?=
+ =?utf-8?B?eFRxbG9rZFpGTm8rS3FKc3Qrc2lzbk9NaEhLbUp3dzNLU3d4bmh2bGNRK0Vx?=
+ =?utf-8?B?cGRCQXNtK05jVm91K1NwK0t6OWNEL0ZoUFRJVDVRcXhQbU5PWkVlVHUxTHp0?=
+ =?utf-8?Q?sjHdkXUhmhQtHNQmosK8y0Ba+d1Fip6MfvM3bFj?=
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a48bbbfa-6622-416e-e440-08d8fd9201d2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e93b891-217c-4247-3132-08d8fd920de4
 X-MS-Exchange-CrossTenant-AuthSource: CY4PR11MB1783.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2021 09:04:41.2844
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2021 09:05:01.4995
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0LqDf0WIXnGLkM06rTrMaRDECPCCIbZYKpp20cFBWYqICgxGzlIICGj6g6pUwd1IlucZCqt+As37KOLa2riz54xz6c9s+mUT4045PCi4tic=
+X-MS-Exchange-CrossTenant-UserPrincipalName: lLpcjU9NpimaF4e0jb4yQWYBwCay6QHYjbGKeW2Fve0mnhoJ9hYKwKMc5KHDP52L4SaNw1JytSiT2i7f2FqqEnODusFE4g7br2VCNvYusOM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1384
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGXv1 enclaves can be created by an ECREATE, followed by any number of
-EADD and EEXTEND functions. It is finalized by an EINIT. The SGX enclave
-vendor defines the order of these invocations when the enclave is being
-developed, and cannot be changed later on. Currently enclave measurements
-can only be extended per 4K measurements immediately after the page has
-been added by the EADD instruction. This commit adds a new ioctl to
-execute the EEXTEND leaf function per 256 bytes of enclave memory. In
-combination with the SGX_IOC_ENCLAVE_ADD_PAGES ioctl (without the
-SGX_PAGE_MEASURE flag), this enables the driver to load all SGXv1
-compatible enclaves.
+The `RSA_get0_key` function only got introduced in OpenSSL 1.1.0. This
+makes compilation fail with older versions.
 
 Signed-off-by: Raoul Strackx <raoul.strackx@fortanix.com>
 ---
- arch/x86/include/uapi/asm/sgx.h | 11 ++++++
- arch/x86/kernel/cpu/sgx/ioctl.c | 81 +++++++++++++++++++++++++++++++++++------
- 2 files changed, 81 insertions(+), 11 deletions(-)
+ tools/testing/selftests/sgx/sigstruct.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 9034f30..121ca5f 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -27,6 +27,8 @@ enum sgx_page_flags {
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
- #define SGX_IOC_ENCLAVE_PROVISION \
- 	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
-+#define SGX_IOC_ENCLAVE_EXTEND \
-+	_IOW(SGX_MAGIC, 0x04, struct sgx_enclave_extend)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -57,6 +59,15 @@ struct sgx_enclave_add_pages {
- };
- 
- /**
-+ * struct sgx_enclave_extend - parameter structure for the
-+ *                             %SGX_IOC_ENCLAVE_MEASURE ioctl
-+ * @offset:	offset of the data from the start address for the data
-+ */
-+struct sgx_enclave_extend {
-+	__u64 offset;
-+};
-+
-+/**
-  * struct sgx_enclave_init - parameter structure for the
-  *                           %SGX_IOC_ENCLAVE_INIT ioctl
-  * @sigstruct:	address for the SIGSTRUCT data
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 90a5caf..69521e9 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -261,20 +261,20 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
- 	return ret ? -EIO : 0;
- }
- 
--/*
-- * If the caller requires measurement of the page as a proof for the content,
-- * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
-- * operation until the entire page is measured."
-- */
--static int __sgx_encl_extend(struct sgx_encl *encl,
--			     struct sgx_epc_page *epc_page)
-+static int __sgx_encl_extend_chunk(struct sgx_encl *encl,
-+				   void *chunk, unsigned long size)
+diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
+index dee7a3d..aac9cbc 100644
+--- a/tools/testing/selftests/sgx/sigstruct.c
++++ b/tools/testing/selftests/sgx/sigstruct.c
+@@ -128,8 +128,11 @@ static bool check_crypto_errors(void)
+ static inline const BIGNUM *get_modulus(RSA *key)
  {
- 	unsigned long offset;
- 	int ret;
-+	void *secs_addr;
- 
--	for (offset = 0; offset < PAGE_SIZE; offset += SGX_EEXTEND_BLOCK_SIZE) {
--		ret = __eextend(sgx_get_epc_virt_addr(encl->secs.epc_page),
--				sgx_get_epc_virt_addr(epc_page) + offset);
-+	if (!size || !IS_ALIGNED(size, SGX_EEXTEND_BLOCK_SIZE))
-+		return -EINVAL;
-+
-+	secs_addr = sgx_get_epc_virt_addr(encl->secs.epc_page);
-+	for (offset = 0; offset < size; offset += SGX_EEXTEND_BLOCK_SIZE) {
-+		ret = __eextend(secs_addr,
-+				chunk + offset);
- 		if (ret) {
- 			if (encls_failed(ret))
- 				ENCLS_WARN(ret, "EEXTEND");
-@@ -286,6 +286,19 @@ static int __sgx_encl_extend(struct sgx_encl *encl,
- 	return 0;
+ 	const BIGNUM *n;
+-
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+ 	RSA_get0_key(key, &n, NULL, NULL);
++#else
++	n = key->n;
++#endif
+ 	return n;
  }
  
-+/*
-+ * If the caller requires measurement of the page as a proof for the content,
-+ * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
-+ * operation until the entire page is measured."
-+ */
-+static int __sgx_encl_extend_page(struct sgx_encl *encl,
-+			     struct sgx_epc_page *epc_page)
-+{
-+	void *chunk = sgx_get_epc_virt_addr(epc_page);
-+
-+	return __sgx_encl_extend_chunk(encl, chunk, PAGE_SIZE);
-+}
-+
- static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
- 			     unsigned long offset, struct sgx_secinfo *secinfo,
- 			     unsigned long flags)
-@@ -346,7 +359,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
- 	encl->secs_child_cnt++;
- 
- 	if (flags & SGX_PAGE_MEASURE) {
--		ret = __sgx_encl_extend(encl, epc_page);
-+		ret = __sgx_encl_extend_page(encl, epc_page);
- 		if (ret)
- 			goto err_out;
- 	}
-@@ -466,6 +479,49 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+static long sgx_ioc_enclave_extend(struct sgx_encl *encl, void __user *user_arg)
-+{
-+	struct sgx_enclave_extend arg;
-+	struct sgx_encl_page *encl_page;
-+	void *chunk;
-+	long ret = 0;
-+
-+	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
-+	    test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&arg, user_arg, sizeof(arg)))
-+		return -EFAULT;
-+
-+	if (!arg.offset || !IS_ALIGNED(arg.offset, SGX_EEXTEND_BLOCK_SIZE)) {
-+		pr_info("offset not a multiple of 256: %llu\n", arg.offset);
-+		return -EINVAL;
-+	}
-+
-+	encl_page = xa_load(&encl->page_array, PFN_DOWN(encl->base + arg.offset));
-+
-+	if (!encl_page) {
-+		pr_info("enc page not found\n");
-+		return -EFAULT;
-+	}
-+
-+	mmap_read_lock(current->mm);
-+	mutex_lock(&encl->lock);
-+	sgx_unmark_page_reclaimable(encl_page->epc_page);
-+
-+	chunk = sgx_get_epc_virt_addr(encl_page->epc_page) + (arg.offset & (PAGE_SIZE - 1));
-+
-+	if (__sgx_encl_extend_chunk(encl, chunk, SGX_EEXTEND_BLOCK_SIZE)) {
-+		pr_info("extend returned an error\n");
-+		ret = -EFAULT;
-+	}
-+
-+	sgx_mark_page_reclaimable(encl_page->epc_page);
-+	mutex_unlock(&encl->lock);
-+	mmap_read_unlock(current->mm);
-+	return ret;
-+}
-+
- static int __sgx_get_key_hash(struct crypto_shash *tfm, const void *modulus,
- 			      void *hash)
- {
-@@ -706,6 +762,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_PROVISION:
- 		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_EXTEND:
-+		ret = sgx_ioc_enclave_extend(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
 -- 
 2.7.4
 
