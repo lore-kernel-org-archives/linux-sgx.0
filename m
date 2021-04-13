@@ -2,67 +2,62 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC26CC433ED
-	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 15:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8320CC433ED
+	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 21:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98E59613BD
-	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 15:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5348761222
+	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 21:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243845AbhDMPB4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 13 Apr 2021 11:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38414 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240004AbhDMPBz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 13 Apr 2021 11:01:55 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959B4C061574;
-        Tue, 13 Apr 2021 08:01:32 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0b8400dc5952bb5bba9b51.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:8400:dc59:52bb:5bba:9b51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2F1B91EC0118;
-        Tue, 13 Apr 2021 17:01:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1618326091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Rgu+Cztzm/QTdXWjkbl/CCFYenDdTL3HxoCYfRG+5XI=;
-        b=Q2uTda9mi5ew6HFTPtwm7P+8/hqmvN5HQx2zTWVeVz/gILCgGRlGz5cR8vOMd/Msfpgo2w
-        7ikDzWB3tBeMk5PELcnZve20Ii4st7NZPgSA/USMWZfK2RedTFKI2dlZILoNzqxIpURiMK
-        yYtheow6RizhXWRVHf6nktOgmGBo8BM=
-Date:   Tue, 13 Apr 2021 17:01:34 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
-        linux-sgx@vger.kernel.org, seanjc@google.com, jarkko@kernel.org,
-        dave.hansen@intel.com, luto@kernel.org, rick.p.edgecombe@intel.com,
-        haitao.huang@intel.com
+        id S1346447AbhDMVrq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 13 Apr 2021 17:47:46 -0400
+Received: from mga06.intel.com ([134.134.136.31]:32108 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344381AbhDMVro (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 13 Apr 2021 17:47:44 -0400
+IronPort-SDR: PbFT9HorFWjQuLYoP7972bEmzUWxnwNTSXPD5t1mmpNPRCnDuYSDUjigVq6A/Gvn+A+J5a2qHI
+ xIb1nmOraPfQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,9953"; a="255824464"
+X-IronPort-AV: E=Sophos;i="5.82,220,1613462400"; 
+   d="scan'208";a="255824464"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2021 14:47:17 -0700
+IronPort-SDR: mrWMdXsmnXIHUGdiCpm4ZokDyzwi8JsB/QuReg4s726ca82N4IpATBa0Ep5ccWkoCHCGoVlvzw
+ liqHFGgjb25Q==
+X-IronPort-AV: E=Sophos;i="5.82,220,1613462400"; 
+   d="scan'208";a="418024805"
+Received: from spmishra-mobl.amr.corp.intel.com ([10.209.34.28])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2021 14:47:13 -0700
+Message-ID: <811afa1d379d8665eee698d85ce76861d04af3a6.camel@intel.com>
 Subject: Re: [PATCH v5 00/11] KVM SGX virtualization support (KVM part)
-Message-ID: <20210413150134.GH16519@zn.tnic>
+From:   Kai Huang <kai.huang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>, Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-sgx@vger.kernel.org, seanjc@google.com,
+        jarkko@kernel.org, dave.hansen@intel.com, luto@kernel.org,
+        rick.p.edgecombe@intel.com, haitao.huang@intel.com
+Date:   Wed, 14 Apr 2021 09:47:09 +1200
+In-Reply-To: <20210413150134.GH16519@zn.tnic>
 References: <cover.1618196135.git.kai.huang@intel.com>
- <af16a973-29cd-3df0-55c6-260be5db8b12@redhat.com>
+         <af16a973-29cd-3df0-55c6-260be5db8b12@redhat.com>
+         <20210413150134.GH16519@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <af16a973-29cd-3df0-55c6-260be5db8b12@redhat.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 04:51:50PM +0200, Paolo Bonzini wrote:
-> Boris, can you confirm that tip/x86/sgx has stable commit hashes?
+On Tue, 2021-04-13 at 17:01 +0200, Borislav Petkov wrote:
+> On Tue, Apr 13, 2021 at 04:51:50PM +0200, Paolo Bonzini wrote:
+> > Boris, can you confirm that tip/x86/sgx has stable commit hashes?
+> 
+> Yap, you can go ahead and merge it.
+> 
+> Thx.
+> 
+Thank you Boris, Paolo!
 
-Yap, you can go ahead and merge it.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
