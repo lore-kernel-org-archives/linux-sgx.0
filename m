@@ -2,75 +2,154 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200C4C433ED
-	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 07:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD25EC433ED
+	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 14:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F02D5613BB
-	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 07:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE8160551
+	for <linux-sgx@archiver.kernel.org>; Tue, 13 Apr 2021 14:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231932AbhDMHUN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 13 Apr 2021 03:20:13 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3526 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237809AbhDMHUN (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 13 Apr 2021 03:20:13 -0400
-Received: from DGGEML403-HUB.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FKH4V6DRqzRcCx;
-        Tue, 13 Apr 2021 15:17:46 +0800 (CST)
-Received: from dggeml709-chm.china.huawei.com (10.3.17.139) by
- DGGEML403-HUB.china.huawei.com (10.3.17.33) with Microsoft SMTP Server (TLS)
- id 14.3.498.0; Tue, 13 Apr 2021 15:19:51 +0800
-Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
- dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Tue, 13 Apr 2021 15:19:51 +0800
-Received: from dggeml759-chm.china.huawei.com ([10.1.199.138]) by
- dggeml759-chm.china.huawei.com ([10.1.199.138]) with mapi id 15.01.2106.013;
- Tue, 13 Apr 2021 15:19:51 +0800
-From:   "weiyongjun (A)" <weiyongjun1@huawei.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        pmail_hulkci <hulkci@huawei.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggLW5leHRdIHg4Ni9zZ3g6IE1ha2Ugc3ltYm9sICdz?=
- =?utf-8?B?Z3hfdmVwY192bV9vcHMnIHN0YXRpYw==?=
-Thread-Topic: [PATCH -next] x86/sgx: Make symbol 'sgx_vepc_vm_ops' static
-Thread-Index: AQHXL7OSMHyqG4YsjEG7qN2oEumJnqqwoh2AgAFo8DA=
-Date:   Tue, 13 Apr 2021 07:19:51 +0000
-Message-ID: <49155f7aa87a49c79fdfa079bc69ec89@huawei.com>
-References: <20210412160023.193850-1-weiyongjun1@huawei.com>
- <20210412174649.GG24283@zn.tnic>
-In-Reply-To: <20210412174649.GG24283@zn.tnic>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.174.178.48]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S231229AbhDMOwP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 13 Apr 2021 10:52:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33946 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231225AbhDMOwP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 13 Apr 2021 10:52:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618325515;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Uiuspi3kAcJpSAV4ULt0j0WV8oWELu9JdJSm5DjVPIw=;
+        b=ixs//s62Ij0Apc0RBO2L/C2yO9a5ikCic4PM1Ruo7pV/T++t2H89Y5q66WcBoeozUYsoVe
+        k3cDOki9QcSOkRcpP0fnnXkVlRXNrqSDhe9lBRdJiSswhXeRubeJpsZyxK1ohRV/TQyvWc
+        hOoT92B52XTMdIZhpl9cmnIi9+HaVtA=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-97-YGMBXH7RP0SGIpH5sm6svg-1; Tue, 13 Apr 2021 10:51:53 -0400
+X-MC-Unique: YGMBXH7RP0SGIpH5sm6svg-1
+Received: by mail-ej1-f72.google.com with SMTP id d25so4687033ejb.14
+        for <linux-sgx@vger.kernel.org>; Tue, 13 Apr 2021 07:51:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Uiuspi3kAcJpSAV4ULt0j0WV8oWELu9JdJSm5DjVPIw=;
+        b=WFGuGlF+fnviHQvGlllO5EueynybPnegJqk4s6P2d8+9v404d5MNe2Y05ZdlWH4cr+
+         VPpgLeTVtU4qivSD20UZaYSZYdj+6SYTF6RHs3mnElmOwcc/4ndTSfBOIB/PDhuCBBca
+         SpqpDHCi7LJHKrDLgJqEs0PKT/WSuY9fuvR57e5C/RLvcjT4B8wbbvyyUbKTiy2hWO42
+         HgWpBiDPvZmDHhDwGbuvuF43bHX885+M7cEJl4il8/j7xjAOVdaqVwoVetIVKyGlOozC
+         alR8Ygg3w8gULI3qaLk7Ry/1BAJgbJ8Yf37gJ7vIH1tJJtkPL5CGioryqJttCxQXcs4s
+         1vCQ==
+X-Gm-Message-State: AOAM531L8R2m/Rvm7jXNzTZvY9l4jvGAcCzJfv+VWd1d8NOlHzraK2Wg
+        c9H5CkGxGmH0LBWZZlD1BveIZNd11uyyC7ir+YYgHBsvLDPIjrC5I7NQm/BlXmJ0g8Mqc8WYCjn
+        CCr0hU88VlXwl3FWbEXXm
+X-Received: by 2002:aa7:c952:: with SMTP id h18mr35907670edt.269.1618325512516;
+        Tue, 13 Apr 2021 07:51:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzRAwGGF6rKAliD+NJrnoocig9lgh+NcU4AX5RI2IW0+VGKaBsyF+IPo/gcPpyvEJKNK5UN0Q==
+X-Received: by 2002:aa7:c952:: with SMTP id h18mr35907643edt.269.1618325512305;
+        Tue, 13 Apr 2021 07:51:52 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.gmail.com with ESMTPSA id t14sm7995787ejc.121.2021.04.13.07.51.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Apr 2021 07:51:51 -0700 (PDT)
+Subject: Re: [PATCH v5 00/11] KVM SGX virtualization support (KVM part)
+To:     Kai Huang <kai.huang@intel.com>, kvm@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     seanjc@google.com, bp@alien8.de, jarkko@kernel.org,
+        dave.hansen@intel.com, luto@kernel.org, rick.p.edgecombe@intel.com,
+        haitao.huang@intel.com
+References: <cover.1618196135.git.kai.huang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <af16a973-29cd-3df0-55c6-260be5db8b12@redhat.com>
+Date:   Tue, 13 Apr 2021 16:51:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <cover.1618196135.git.kai.huang@intel.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiANCj4gT24gTW9uLCBBcHIgMTIsIDIwMjEgYXQgMDQ6MDA6MjNQTSArMDAwMCwgV2VpIFlvbmdq
-dW4gd3JvdGU6DQo+ID4gVGhlIHNwYXJzZSB0b29sIGNvbXBsYWlucyBhcyBmb2xsb3dzOg0KPiA+
-DQo+ID4gYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvdmlydC5jOjk1OjM1OiB3YXJuaW5nOg0KPiA+
-ICBzeW1ib2wgJ3NneF92ZXBjX3ZtX29wcycgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJl
-IHN0YXRpYz8NCj4gPg0KPiA+IFRoaXMgc3ltYm9sIGlzIG5vdCB1c2VkIG91dHNpZGUgb2Ygdmly
-dC5jLCBzbyB0aGlzIGNvbW1pdCBtYXJrcyBpdA0KPiA+IHN0YXRpYy4NCj4gDQo+IEZvciB0aGUg
-ZnV0dXJlOg0KPiANCj4gQXZvaWQgaGF2aW5nICJUaGlzIHBhdGNoIiBvciAiVGhpcyBjb21taXQi
-IGluIHRoZSBjb21taXQgbWVzc2FnZS4gSXQgaXMgdGF1dG9sb2dpY2FsbHkgdXNlbGVzcy4NCj4g
-DQo+IEFsc28sIGRvDQo+IA0KPiAkIGdpdCBncmVwICdUaGlzIHBhdGNoJyBEb2N1bWVudGF0aW9u
-L3Byb2Nlc3MNCj4gDQo+IGZvciBtb3JlIGRldGFpbHMuDQo+IA0KPiBUaHguDQoNCg0KR290IGl0
-LCB0aGFua3MuDQoNClJlZ2FyZHMsDQpXZWkgWW9uZ2p1bg0KDQo=
+On 12/04/21 06:21, Kai Huang wrote:
+> Hi Paolo, Sean,
+> 
+> Boris has merged x86 part patches to the tip/x86/sgx. This series is KVM part
+> patches. Due to some code change in x86 part patches, two KVM patches need
+> update so this is the new version. Please help to review. Thanks!
+> 
+> Specifically, x86 patch (x86/sgx: Add helpers to expose ECREATE and EINIT to
+> KVM) was changed to return -EINVAL directly w/o setting trapnr when
+> access_ok()s fail on any user pointers, so KVM patches:
+> 
+> KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+> KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
+> 
+> were updated to handle this case.
+> 
+> This seris was firstly based on tip/x86/sgx, and then rebased to latest
+> kvm/queue, so it can be applied to kvm/queue directly now.
+
+Boris, can you confirm that tip/x86/sgx has stable commit hashes?
+
+Thanks,
+
+Paolo
+
+> Changelog:
+> 
+> (Please see individual patch for changelog for specific patch)
+> 
+> v4->v5:
+>   - Addressed Sean's comments (patch 06, 07, 09 were slightly updated).
+>   - Rebased to latest kvm/queue (patch 08, 11 were updated to resolve conflict).
+> 
+> Sean Christopherson (11):
+>    KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for SGX (VMX)
+>    KVM: x86: Define new #PF SGX error code bit
+>    KVM: x86: Add support for reverse CPUID lookup of scattered features
+>    KVM: x86: Add reverse-CPUID lookup support for scattered SGX features
+>    KVM: VMX: Add basic handling of VM-Exit from SGX enclave
+>    KVM: VMX: Frame in ENCLS handler for SGX virtualization
+>    KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+>    KVM: VMX: Add emulation of SGX Launch Control LE hash MSRs
+>    KVM: VMX: Add ENCLS[EINIT] handler to support SGX Launch Control (LC)
+>    KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
+>    KVM: x86: Add capability to grant VM access to privileged SGX
+>      attribute
+> 
+>   Documentation/virt/kvm/api.rst  |  23 ++
+>   arch/x86/include/asm/kvm_host.h |   5 +
+>   arch/x86/include/asm/vmx.h      |   1 +
+>   arch/x86/include/uapi/asm/vmx.h |   1 +
+>   arch/x86/kvm/Makefile           |   2 +
+>   arch/x86/kvm/cpuid.c            |  89 +++++-
+>   arch/x86/kvm/cpuid.h            |  50 +++-
+>   arch/x86/kvm/vmx/nested.c       |  28 +-
+>   arch/x86/kvm/vmx/nested.h       |   5 +
+>   arch/x86/kvm/vmx/sgx.c          | 502 ++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/vmx/sgx.h          |  34 +++
+>   arch/x86/kvm/vmx/vmcs12.c       |   1 +
+>   arch/x86/kvm/vmx/vmcs12.h       |   4 +-
+>   arch/x86/kvm/vmx/vmx.c          | 109 ++++++-
+>   arch/x86/kvm/vmx/vmx.h          |   3 +
+>   arch/x86/kvm/x86.c              |  23 ++
+>   include/uapi/linux/kvm.h        |   1 +
+>   17 files changed, 858 insertions(+), 23 deletions(-)
+>   create mode 100644 arch/x86/kvm/vmx/sgx.c
+>   create mode 100644 arch/x86/kvm/vmx/sgx.h
+> 
+
