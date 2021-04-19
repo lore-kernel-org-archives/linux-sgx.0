@@ -2,100 +2,132 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CBFC433B4
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Apr 2021 11:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334EDC433B4
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Apr 2021 15:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 328126127C
-	for <linux-sgx@archiver.kernel.org>; Mon, 19 Apr 2021 11:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B3A61007
+	for <linux-sgx@archiver.kernel.org>; Mon, 19 Apr 2021 15:16:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbhDSLou (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 19 Apr 2021 07:44:50 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6729 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232530AbhDSLot (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 19 Apr 2021 07:44:49 -0400
-IronPort-SDR: GfaJ/B6LuCsr286pOew442ZcbbfdmLxIjRKL8HF85IR4pJ47OhvQ4fPFCs96eqMYctMIOdTKsu
- G9Tng2JSIFpg==
-X-IronPort-AV: E=McAfee;i="6200,9189,9958"; a="174799633"
-X-IronPort-AV: E=Sophos;i="5.82,234,1613462400"; 
-   d="scan'208";a="174799633"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2021 04:44:20 -0700
-IronPort-SDR: 9/tjO/HwJm57vhHJbzRUUvfTb0gc45dvntD9P+C1Sbjv/vPmN3AnNPIji+MSFwAB+JNs5eNos8
- ht3JS53D7rzQ==
-X-IronPort-AV: E=Sophos;i="5.82,234,1613462400"; 
-   d="scan'208";a="419968835"
-Received: from nmpepper-mobl1.amr.corp.intel.com ([10.254.115.49])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2021 04:44:16 -0700
-Message-ID: <3d376fef419077376eecb017ab494ba7ffc393a7.camel@intel.com>
-Subject: Re: [PATCH v5 10/11] KVM: VMX: Enable SGX virtualization for SGX1,
- SGX2 and LC
-From:   Kai Huang <kai.huang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     seanjc@google.com, bp@alien8.de, jarkko@kernel.org,
+        id S240927AbhDSPRO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 19 Apr 2021 11:17:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240909AbhDSPRN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 19 Apr 2021 11:17:13 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12026C06174A
+        for <linux-sgx@vger.kernel.org>; Mon, 19 Apr 2021 08:16:44 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id e2so13575432plh.8
+        for <linux-sgx@vger.kernel.org>; Mon, 19 Apr 2021 08:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=vbmx1/41jC8YgU5iYwhJ4h7BEVgLwcoyeVabbKhD8m8=;
+        b=pzGd/yTcYcZmnxk3pwk3iyingnb595aJwWCHkV4XhSfkNolZX+m+uJPMbfxiSuqCqM
+         g/E1hFiTaLK8TLFW7av16sW6uSDxJrMRFgXFAoiq1QwkwHsBgDKrhZNaDg20dRo6uaG9
+         Jg2nbNgeHl5mcmR2b/yEEddSRV9BLOGArtUSyrwiyq3GRuH8SiA1bGGMGNDbuzCz6QXn
+         LGRa9OTtlPyA/ZeFBYTQ9veVEKGX0STl47b7FgtRo03jDWMihtlsjojCEB0fmUuFvyNI
+         dqtOX2NI9aa5L0+OlRlnfCHeMu29qJaE2ErleHWFykzE10PAVUlJkBDAcV4meAHdvFLh
+         gA4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=vbmx1/41jC8YgU5iYwhJ4h7BEVgLwcoyeVabbKhD8m8=;
+        b=b4tO6Ru68SOe/zmJzLr2cTW0C9nWFAoLIlKyfXSfg3WLTwILVEjm3SECfJqNFF4EEo
+         FMWmhesughZNHL5LzW0g454EJ/IaHg119IlUc7iFv+EUUV03aiDUypiH2cdzMoX/A3rJ
+         dPU87xefg9Jzmyjbc2YSNlTn7Oo+PP0OamPAEE8JuEcvkCSHiMTCMK50m5y7Cutel0sF
+         vXeH6ZrRby09cjWAcMQhOlEGB5JlNU1QEXx+qs9tfobEHJ4KFbttZdRI4ikGLCVIJNx/
+         w73amTfw2AS1P3R9onkPwE+eYK5hZ3MsHPmdTS2rT+uMun9091dzrfetLprjuob+xTuc
+         6P1w==
+X-Gm-Message-State: AOAM533A8NT6iW4Sx/4OKRu9ty3tT23KaD9rdhNw4VFDSwwNZzXZOelJ
+        Ljh4eRLJSE2P6RTX7NPk+IBaIg==
+X-Google-Smtp-Source: ABdhPJxdS1y+qwekLPWuRqliFP8PKQh8SUCaMcSUQkSfWWnas0M7+FlE/LbZ/zigohEi3ykTlwiMEg==
+X-Received: by 2002:a17:902:b40e:b029:e6:837f:711 with SMTP id x14-20020a170902b40eb02900e6837f0711mr23648247plr.2.1618845403507;
+        Mon, 19 Apr 2021 08:16:43 -0700 (PDT)
+Received: from google.com (240.111.247.35.bc.googleusercontent.com. [35.247.111.240])
+        by smtp.gmail.com with ESMTPSA id y24sm12058331pjp.26.2021.04.19.08.16.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Apr 2021 08:16:42 -0700 (PDT)
+Date:   Mon, 19 Apr 2021 15:16:38 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-sgx@vger.kernel.org, bp@alien8.de, jarkko@kernel.org,
         dave.hansen@intel.com, luto@kernel.org, rick.p.edgecombe@intel.com,
         haitao.huang@intel.com
-Date:   Mon, 19 Apr 2021 23:44:14 +1200
-In-Reply-To: <9f568584-8b09-afe6-30a1-cbe280749f5d@redhat.com>
+Subject: Re: [PATCH v5 10/11] KVM: VMX: Enable SGX virtualization for SGX1,
+ SGX2 and LC
+Message-ID: <YH2e1lIckOBY2OGa@google.com>
 References: <cover.1618196135.git.kai.huang@intel.com>
-         <a99e9c23310c79f2f4175c1af4c4cbcef913c3e5.1618196135.git.kai.huang@intel.com>
-         <9f568584-8b09-afe6-30a1-cbe280749f5d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+ <a99e9c23310c79f2f4175c1af4c4cbcef913c3e5.1618196135.git.kai.huang@intel.com>
+ <9f568584-8b09-afe6-30a1-cbe280749f5d@redhat.com>
+ <3d376fef419077376eecb017ab494ba7ffc393a7.camel@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d376fef419077376eecb017ab494ba7ffc393a7.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, 2021-04-17 at 16:11 +0200, Paolo Bonzini wrote:
-> On 12/04/21 06:21, Kai Huang wrote:
-> > @@ -4377,6 +4380,15 @@ static void vmx_compute_secondary_exec_control(struct vcpu_vmx *vmx)
-> > Â Â 	if (!vcpu->kvm->arch.bus_lock_detection_enabled)
-> > Â Â 		exec_control &= ~SECONDARY_EXEC_BUS_LOCK_DETECTION;
-> > Â Â 
+On Mon, Apr 19, 2021, Kai Huang wrote:
+> On Sat, 2021-04-17 at 16:11 +0200, Paolo Bonzini wrote:
+> > On 12/04/21 06:21, Kai Huang wrote:
+> > > @@ -4377,6 +4380,15 @@ static void vmx_compute_secondary_exec_control(struct vcpu_vmx *vmx)
+> > >   	if (!vcpu->kvm->arch.bus_lock_detection_enabled)
+> > >   		exec_control &= ~SECONDARY_EXEC_BUS_LOCK_DETECTION;
+> > >   
+> > > 
+> > > +	if (cpu_has_vmx_encls_vmexit() && nested) {
+> > > +		if (guest_cpuid_has(vcpu, X86_FEATURE_SGX))
+> > > +			vmx->nested.msrs.secondary_ctls_high |=
+> > > +				SECONDARY_EXEC_ENCLS_EXITING;
+> > > +		else
+> > > +			vmx->nested.msrs.secondary_ctls_high &=
+> > > +				~SECONDARY_EXEC_ENCLS_EXITING;
+> > > +	}
+> > > +
 > > 
-> > +	if (cpu_has_vmx_encls_vmexit() && nested) {
-> > +		if (guest_cpuid_has(vcpu, X86_FEATURE_SGX))
-> > +			vmx->nested.msrs.secondary_ctls_high |=
-> > +				SECONDARY_EXEC_ENCLS_EXITING;
-> > +		else
-> > +			vmx->nested.msrs.secondary_ctls_high &=
-> > +				~SECONDARY_EXEC_ENCLS_EXITING;
-> > +	}
-> > +
-> 
-> This is incorrect, I've removed it.  The MSRs can only be written by 
-> userspace.
-> 
-> If SGX is disabled in the guest CPUID, nested_vmx_exit_handled_encls can 
-> just do:
-> 
-> 	if (!guest_cpuid_has(vcpu, X86_FEATURE_SGX) ||
-> 	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_ENCLS_EXITING))
-> 		return false;
-> 
-> and the useless ENCLS exiting bitmap in vmcs12 will be ignored.
-> 
-> Paolo
-> 
+> > This is incorrect, I've removed it.  The MSRs can only be written by 
+> > userspace.
 
-Thanks for queuing this series!
+vmx_compute_secondary_exec_control() violates that left, right, and center, it's
+just buried down in vmx_adjust_secondary_exec_control().  This is an open coded
+version of that helper, sans the actual update to exec_control since ENCLS needs
+to be conditionally intercepted even when it's exposed to the guest.
 
-Looks good to me. However if I read code correctly, in this way a side effect would be
-vmx->nested.msrs.secondary_ctls_high will always have SECONDARY_EXEC_ENCLS_EXITING bit
-set, even SGX is not exposed to guest, which means a guest can set this even SGX is not
-present, but I think it is OK since ENCLS exiting bitmap in vmcs12 will be ignored anyway
-in nested_vmx_exit_handled_encls() as you mentioned above.
-
-Anyway, I have tested this code and it works at my side (by creating L2 with SGX support
-and running SGX workloads inside it).
-
-Sean, please also comment if you have any.
-
-
+> > If SGX is disabled in the guest CPUID, nested_vmx_exit_handled_encls can 
+> > just do:
+> > 
+> > 	if (!guest_cpuid_has(vcpu, X86_FEATURE_SGX) ||
+> > 	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_ENCLS_EXITING))
+> > 		return false;
+> > 
+> > and the useless ENCLS exiting bitmap in vmcs12 will be ignored.
+> > 
+> > Paolo
+> > 
+> 
+> Thanks for queuing this series!
+> 
+> Looks good to me. However if I read code correctly, in this way a side effect would be
+> vmx->nested.msrs.secondary_ctls_high will always have SECONDARY_EXEC_ENCLS_EXITING bit
+> set, even SGX is not exposed to guest, which means a guest can set this even SGX is not
+> present, but I think it is OK since ENCLS exiting bitmap in vmcs12 will be ignored anyway
+> in nested_vmx_exit_handled_encls() as you mentioned above.
+> 
+> Anyway, I have tested this code and it works at my side (by creating L2 with SGX support
+> and running SGX workloads inside it).
+> 
+> Sean, please also comment if you have any.
+> 
+> 
