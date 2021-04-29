@@ -2,175 +2,514 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77737C433B4
-	for <linux-sgx@archiver.kernel.org>; Wed, 28 Apr 2021 10:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882DEC433B4
+	for <linux-sgx@archiver.kernel.org>; Thu, 29 Apr 2021 06:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44DD660E0C
-	for <linux-sgx@archiver.kernel.org>; Wed, 28 Apr 2021 10:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB6B61434
+	for <linux-sgx@archiver.kernel.org>; Thu, 29 Apr 2021 06:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239230AbhD1KZg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 28 Apr 2021 06:25:36 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:47592 "EHLO wind.enjellic.com"
+        id S230309AbhD2GKV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 29 Apr 2021 02:10:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239185AbhD1KZf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 28 Apr 2021 06:25:35 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 13SAOXs9024822;
-        Wed, 28 Apr 2021 05:24:34 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 13SAOWS3024821;
-        Wed, 28 Apr 2021 05:24:32 -0500
-Date:   Wed, 28 Apr 2021 05:24:32 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: Re: SGX feature extensions patch.
-Message-ID: <20210428102432.GA24783@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20210426094538.GA8264@wind.enjellic.com> <7d8cc81d-79cb-469f-24dd-30905c7e6e0a@linux.alibaba.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d8cc81d-79cb-469f-24dd-30905c7e6e0a@linux.alibaba.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 28 Apr 2021 05:24:34 -0500 (CDT)
+        id S229814AbhD2GKV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 29 Apr 2021 02:10:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C6E261090;
+        Thu, 29 Apr 2021 06:09:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619676575;
+        bh=BIr970h/sDdUlMODpFXSSKG9suMh1F7ASlFvGhDa77k=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Fpv6kJz/ovdJqspJjsqNWLN5TI2H4xnw74wsqlGrAPkFTXRAQdb49C+WfoVojypgp
+         nWFOrntXodj9t+LpxlWW+NmGtUHXYq7TNVWffGkVGoCObWwfru5009t/6kySTNeKt1
+         4iEkmXz6OA4NUrl6TZfHU25FDMxEvcAnOxbdjzcQHIu/+yGmuMzCZYw3H+y83FFedm
+         EUpSRR36StNC/vpw0pUWhgfc2sqMFyUDUVAGNuHqbOoqryyUfvjOfHrEAosImjJ4X+
+         /EIAorBOZESxodwThGWiNcg0lHTNz8+2nWl+1HOrm7TeveCAxyAzYllVGnzD3E8WtP
+         2xYkC+fBohO9w==
+Message-ID: <1be0ac000492fd115b86056291c4d678423b0d06.camel@kernel.org>
+Subject: Re: [PATCH v4] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@linux.intel.com
+Date:   Thu, 29 Apr 2021 09:09:32 +0300
+In-Reply-To: <1413b770-a89e-2ddd-d8bd-21adc8a376cf@gmail.com>
+References: <20210301212344.48650-1-jarkko@kernel.org>
+         <1413b770-a89e-2ddd-d8bd-21adc8a376cf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.40.0 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 11:07:34AM +0800, Jia Zhang wrote:
+On Mon, 2021-04-05 at 16:20 +0200, Michael Kerrisk (man-pages) wrote:
+> Hello Jarkko,
+>=20
+> Sorry for the delayed response... Thank you for the revisions.
+> More comments below :-).
+>=20
+> On 3/1/21 10:23 PM, Jarkko Sakkinen wrote:
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v4:
+> > * Did a heavy edit trying to streamline the story a bit and focus on
+> > =C2=A0 stuff important to the user (e.g. lighten up x86 details).
+> > v3:
+> > * Overhaul based on Michael's comments. Most likely needs to be
+> > refined
+> > =C2=A0 in various places but this is at least a small step forward for
+> > sure.
+> > v2:
+> > * Fixed the semantic newlines convention and various style errors
+> > etc.
+> > =C2=A0 that were reported by Alenjandro and Michael.
+> > * SGX was merged to v5.
+> > =C2=A0man7/sgx.7 | 196
+> > +++++++++++++++++++++++++++++++++++++++++++++++++++++
+> > =C2=A01 file changed, 196 insertions(+)
+> > =C2=A0create mode 100644 man7/sgx.7
+> >=20
+> > diff --git a/man7/sgx.7 b/man7/sgx.7
+> > new file mode 100644
+> > index 000000000..c0b67020e
+> > --- /dev/null
+> > +++ b/man7/sgx.7
+> > @@ -0,0 +1,196 @@
+> > +.\" Copyright (C) 2021 Intel Corporation
+> > +.\"
+> > +.\" %%%LICENSE_START(VERBATIM)
+> > +.\" Permission is granted to make and distribute verbatim copies of
+> > this
+> > +.\" manual provided the copyright notice and this permission notice
+> > are
+> > +.\" preserved on all copies.
+> > +.\"
+> > +.\" Permission is granted to copy and distribute modified versions
+> > of this
+> > +.\" manual under the conditions for verbatim copying, provided that
+> > the
+> > +.\" entire resulting derived work is distributed under the terms of
+> > a
+> > +.\" permission notice identical to this one.
+> > +.\"
+> > +.\" Since the Linux kernel and libraries are constantly changing,
+> > this
+> > +.\" manual page may be incorrect or out-of-date.=C2=A0 The author(s)
+> > assume no
+> > +.\" responsibility for errors or omissions, or for damages resulting
+> > from
+> > +.\" the use of the information contained herein.=C2=A0 The author(s) m=
+ay
+> > not
+> > +.\" have taken the same level of care in the production of this
+> > manual,
+> > +.\" which is licensed free of charge, as they might when working
+> > +.\" professionally.
+> > +.\"
+> > +.\" Formatted or processed versions of this manual, if unaccompanied
+> > by
+> > +.\" the source, must acknowledge the copyright and authors of this
+> > work.
+> > +.\" %%%LICENSE_END
+> > +.\"
+> > +.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
+> > +.PP
+> > +sgx - overview of Software Guard eXtensions
+> > +.SH DESCRIPTION
+> > +.PP
+> > +Intel Software Guard eXtensions (SGX) allow applications to set
+> > +aside private memory regions of code and data.
+> > +These memory regions are called enclaves.
+> > +.PP
+> > +SGX must be enabled in BIOS.
+> > +If SGX appears to be unsupported on a system having hardware
+> > support,
+> > +ensure that SGX is enabled in the BIOS.
+> > +If a BIOS presents a choice between \(dqEnabled\(dq and \(dqSoftware
+> > +Enabled\(dq modes for SGX,
+> > +choose \(dqEnabled\(dq.
+> > +.PP
+> > +SGX is available only if the kernel was configured and built with
+> > the
+> > +.B CONFIG_X86_SGX
+> > +option.
+> > +You can determine whether the hardware supports SGX by checking
+> > +whether "sgx" appears in the
+> > +.I flags
+> > +field in
+> > +.IR /proc/cpuinfo .
+> > +.SS Overview
+> > +.PP
+> > +An enclave is a region of address space,
+> > +mapping pages from Enclave Page Cache (EPC),
+>=20
+> s/from/from the/
+>=20
+> > +which consists of sections of non-addressable system memory.
+> > +They are constructed with sub-functions of the privileged (ring-0)
+> > ENCLS x86
+>=20
+> The reference of "They" is unclear. Should it be
+>=20
+> "The EPC is constructed using subfunctions..."?
+>=20
+> > +instruction,
+> > +and interacted with sub-functions of the unprivileged (ring-3) ENCLU
+> > x86
+>=20
+> Wording problem...
+> s/with/with using/?
+>=20
+> > +instruction.
+> > +Any other type of memory access gets asserted by the CPU.
+>=20
+> I think it would be good to add a few words to explain what=20
+> is meant by "asserted by the CPU". (I realize that "asserted" is a
+> technical term that may be quite normal for you, but not necessarily
+> for all of the readers...)
+>=20
+> But, there's also another problem: how does this sentence
+> fit into the surrounding paragraph? It seems somehow out of place.
+>=20
+>=20
+> > +Enclaves are represented to the user space as memory-mapped files,
+>=20
+> s/to the user space/to user-space/
+>=20
+> > +shareable by multiple processes.
+> > +.PP
+> > +An EPC page can be initialized with ENCLS sub-functions to any of
+> > the
+> > +following types:
+> > +.TP
+> > +SECS
+> > +SGX Enclave Control Structure (SECS) contains the enclave global
+> > properties
+>=20
+> s/SGX/The SGX/
+>=20
+> > +such as the base address,
+> > +size and SHA256 checksum of its contents.
+> > +.TP
+> > +REG
+> > +Regular (REG) pages are code and data pages of the enclave.
+> > +They are mapped to the enclave address space.
+> > +.TP
+> > +TCS
+> > +Thread Control Structure (TCS) pages describe the entry points to an
+> > enclave with
+> > +an offset from the base address.
+> > +They are mapped to the enclave address space.
+> > +ENCLU provides EENTER and ERESUME sub-functions,
+> > +which take the address of a TCS page,
+> > +and jump executing inside an enclave from the given offset.
+>=20
+> The wording here seems a bit off. What do you mean by "jump=20
+> executing"? Can you reword/explain in a bit more detail?
+>=20
+> > +.PP
+> > +An enclave can be entered only at a fixed set of entry points,
+>=20
+> You do not explain what you mean by "enter". I presume it means that=20
+> you can only jump into code at specific addresses (defined by a TCS)=20
+> in the enclave. If that's correct, I think it would be helpful
+> to have add some words to make that point explicit.
+>=20
+> > +each defined by a TCS,
+> > +by invoking EENTER and ERESUME.
+> > +Any other type of memory access is strictly prohibited by the CPU.
+>=20
+> Maybe it would be helpful to add (inside parentheses) one or
+> two examples of types of memory access that are prohibited?
+>=20
+> > +.PP
+> > +A thread inside an enclave can read and write memory inside and
+> > outside the
+>=20
+> s/A thread inside an enclave can...
+> =C2=A0 /While executing inside an enclave, a thread can.../ ?
+>=20
+> > +enclave,
+> > +but any action causing execution outside the enclave is asserted by
+> > the CPU
+> > +with an exception,
+> > +and ultimately exit from the enclave.
+>=20
+> What does "ultimateley exit from the enclave" mean? It's not quite
+> clear.
+>=20
+> > +A thread can cleanly exit from the enclave with EEXIT sub-function
+> > of the ENCLU,
+>=20
+> s/EEXIT/the EEXIT/
+>=20
+> > +to a given address outside the enclave.
+> > +.PP
+> > +Although carved out of normal DRAM,
+> > +enclave memory is marked in the system memory map as reserved and is
+> > not
+> > +managed by the Linux memory manager.
+> > +There may be several enclave regions spread across the system.
+> > +Each contiguous region is called an Enclave Page Cache (EPC)
+> > section.
+> > +The pages belonging to the EPC sections are encrypted when they
+> > leave the
+> > +Last Level Cache (LLC).
 
-> Hi Dr.Greg,
+I rewrote "Overview" simply as:
 
-Good morning Jia, I hope this note finds your day going well.
+.SS Overview
+Enclave is an executable object in non-addressable system memory.
+The interaction happens always through ENCLS and ENCLU CPU
+instructions.
+An enclave can be entered at a fixed set of entry points,
+by using ENCLU.
+If a process does any other type of memory access,
+it receives a
+.BR SIGSEGV
+signal.
+The details of enclave's internal structure and interaction can be
+found in the Intel Software Developers Manual.
+.SS Construction
+Kernel represents enclaves to the user space as memory-mapped files,
+shareable by multiple processes.
 
-> Thanks for your great job! I have a question about how do you work
-> out psw for non-flc platforms?
->
-> The background is that we (inclavare containers project:
-> https://github.com/alibaba/inclavare-containers)
->
-> also attempt to resolve the conflict between non-flc platform and sgx
-> in-tree driver.
->
-> Our work is available at
-> https://github.com/alibaba/inclavare-containers/tree/master/hack/no-sgx-flc
+I think the detailed low-level information does not really belong to
+the man page.
 
-Thank you, I'm pleased that, as a major SGX user, you see utility in
-the work.
 
-We just finished unit testing of the feature patch against the
-recently released 5.12 kernel and we will be making that available in
-the next day or so.
+> > +.SS Construction
+> > +.PP
+>=20
+> Remove the preceding ".PP" (it's not needed, and produces linter
+> errors).
+>=20
+> > +An enclave's life-cycle starts by opening
+> > +.I /dev/sgx_enclave,
+>=20
+> .IR /dev/sgx_enclave ,
+>=20
+> > +and ends when all the file descriptors have been closed.
+> > +After opening the enclave,
+> > +its contents must be populated with the
+> > +.BR ioctl (2)
+> > +interface provided by
+> > +.IR <asm/sgx.h> .
+> > +.PP
+> > +The are rudimentarily the steps to construct an enclave:
+>=20
+> s/The/These/
+> s/rudimentarily the/key/
+>=20
+> > +.IP 1.
+> > +Invoke
+> > +.B SGX_IOC_ENCLAVE_CREATE,
+>=20
+> .BR SGX_IOC_ENCLAVE_CREATE ,
+>=20
+> > +which takes in data for the SECS,
+> > +and initializes an EPC page for it.
+> > +SECS is used by various ENCLS sub-functions to modify the enclave
+> > state.
+> > +It is kept internally by the kernel,
+> > +and is never made available to the user space.
+>=20
+> s/the user space/user space/
+>=20
+> > +.IP 2.
+> > +Populate regular and TCS pages to the enclave,
+> > +by invoking
+> > +.B SGX_IOC_ENCLAVE_ADD_PAGES.
+>=20
+> .BR SGX_IOC_ENCLAVE_ADD_PAGES .
+>=20
+> > +.IP 3.
+> > +Invoke
+> > +.B SGX_IOC_ENCLAVE_INIT,
+>=20
+> .BR SGX_IOC_ENCLAVE_INIT ,
+>=20
+> > +which makes the enclave executable.
+> > +After this new pages can no longer be added.
+>=20
+> s/After this/After this step,/
+> s/added/added to the enclave/
+>=20
+>=20
+> > +.SS Access rights
+> > +The state of each EPC page is stored to a structure called the
+>=20
+> s/to/in/
+>=20
+> > +.I Enclave Page Cache Map (EPCM),
+> > +which takes a portion of the EPC.
+>=20
+> Better: s/takes/occupies/ ?
+>=20
+> > +The state consists of page type and access rights,
+>=20
+> s/state/state information of an EPC page/
+> s/page type/the page type/
+>=20
+> > +among the other things.
+> > +When a page is accessed by a CPU,
+> > +the EPCM permissions are enforced,
+> > +in addition to the
+> > +.BR mmap(2)
+>=20
+> .BR mmap (2)
+>=20
+> > +permissions.
+> > +EPCM permissions are defined when invoking
+> > +.B SGX_IOC_ENCLAVE_ADD_PAGES,
+>=20
+> .BR SGX_IOC_ENCLAVE_ADD_PAGES ,
+>=20
+> > +by setting them to the
+> > +.B flags
+>=20
+> s/.B/.I/
+>=20
+> > +field of
+> > +.B struct enclave_add_pages.
+>=20
+> .IR struct enclave_add_pages .
+>=20
+> > +.PP
+> > +A memory access to an unitialized EPC page causes EPCM fault,
+>=20
+> s/unitialized/uninitialized/
+> s/EPCM/an EPCM/
+>=20
+> > +with a new SGX bit set in the error code.
+> > +A new power cycle invalidates the whole EPCM,
+> > +making all EPC pages unitialized.
+>=20
+> s/unitialized/uninitialized/
+>=20
+> > +E.g. if the system goes to sleep,
+>=20
+> s/E.g./For example,/
+>=20
+> > +and then wakes up,
+> > +all the data is gone.
+> > +Thus, a user space run-time must be prepared to handle this
+> > exception,
+> > +at any point of time.
+>=20
+> s/of/in/
+>=20
+> > +.PP
+> > +When the pages are mapped to memory via
+> > +.BR mmap (2)
+> > +or
+> > +.BR mprotect (2),
+>=20
+> This last does not seem right. mprotect(2) sets memory protections,
+> whereas you start the sentence by talking about mapping pages. I'm
+> not
+> sure what the fix should be. Maybe:
+>=20
+> =C2=A0=C2=A0=C2=A0 When the pages are mapped by mmap(2) or page protectio=
+ns
+> =C2=A0=C2=A0=C2=A0 are changed vi mprotect(2)...
+>=20
+> > +the EPCM permissions are compared against the declared
+> > permissions.
+>=20
+> By "declared permissions", do you mean the 'prot' argument
+> of mmap()/mprotect? If so, I think it would be good to say=20
+> this more explicitly.
+>=20
+> > +If the declared permissions have bits set that are not part of the
+> > EPCM
+> > +permissions,
+> > +the operation fails with the error
+> > +.B EACCES.
+>=20
+> .BR EACCES .
+>=20
+> > +.SS Exception handling
+> > +These are the exceptions triggered by an enclave:
+> > +.IP
+> > +Undefined instruction (#UD) exception is triggered when executing
+> > inside an enclave,
+>=20
+> s/Undefined/An undefined/
+>=20
+> > +for any instruction that may cause VMEXIT,
+> > +I/O instruction,=20
+> > +or a change in CPU privilege levels.
+>=20
+> s/CPU privilege levels/the CPU privilege level/ ?
+>=20
+> > +.IP
+> > +Page fault (#PF) with a new SGX bit set,
+>=20
+> s/Page/A page/
+>=20
+> > +also known as EPCM fault,
+>=20
+> s/EPCM/an EPCM/
+>=20
+> > +is triggered,
+> > +when accessing unitialized EPC page,
+>=20
+> s/unitialized/an uninitialized/
+>=20
+> > +or when the memory access surpasses the EPCM permissions.
+>=20
+> s/surpasses/violates/?
+>=20
+> > +.PP
+> > +In order to assist the run-time,
+> > +the kernel provides a vDSO entry point,
+> > +.BR vsgx_enter_enclave,
+>=20
+> .BR vsgx_enter_enclave ,
+>=20
+> > +which wraps the code required the enter the enclave.
+> > +When an exception occurs,
+> > +the vDSO populates
+>=20
+> s/the vDSO/vsgx_enter_enclave/ ?
+>=20
+> > +.B struct sgx_enclave_run=20
+>=20
+> This is the first time you mention "struct sgx_enclave_run".
+> What is it? Where is it? (Is it in the vDSO?) Some explanation=20
+> is needed here, I thi9nk.
 
-Please feel free to include our patch in your work or provide a
-reference to it if it facilitates your initiatives.  Our approaches
-are similar but non-FLC platforms will need the cryptographic policy
-controls that we implement in order to get full functionality.
 
-> In addition, I compare the different parts between us for non-flc
-> support part:
->
-> - Use different ioctl cmd to support init-token ioctl with token
-> supplied by caller
->
-> - Use different init-token ioctl structure (w/ vs w/o address parameter
-> in ELRANGE)
+Agreed. Now that I understand better what I should have, and more
+importantly, what I should not have in the man page, I think I can
+address filling the missing bits. Before, I was a bit lost what was
+and was not missing.
 
-We deliberated at significant length on how to approach this problem,
-in the end, using a separate ioctl with its own index number, seemed
-to be the approach that would offer the best path forward with respect
-to those of us developing SGX runtimes.
+I'll tackle also other issues mentioned above.
 
-The separate ioctl call we implemented acts in a manner identical to
-the standard ioctl, if a NULL pointer value is passed as the address
-of the EINITTOKEN block.  Thus the ioctl will work on both FLC and
-non-FLC platforms and can be used exclusively by runtimes that support
-both types of hardware.
+> > +with the exception data,
+> > +and returns to the caller.
+> > +.SH VERSIONS
+> > +The SGX feature was added in Linux 5.11.
+> > +.SH SEE ALSO
+> > +.BR ioctl (2),
+> > +.BR mmap() (2),
+> > +.BR mprotect (2)
+>=20
+> Thanks,
+>=20
+> Michael
+>=20
 
-A review of the kernel archives will show that I advocated rather
-aggressively for the mainline driver to include the pointer in its
-EINIT ioctl structure and have the in-kernel ioctl ignore that
-pointer.  Unfortunately, the design of the driver was driven by
-politics, and not by technology and the needs of the individuals that
-will be actually using the driver.
+Thank you!
 
-> We did the testing on sgx1 machine and found it is required to modify
-> psw. See https://github.com/alibaba/inclavare-containers/blob/master/hack/no-sgx-flc/Linux-SGX-PSW-2.13-Support-SGX1-machine-with-SGX-in-tree-driver.patch
->
-> So we are interested how do you avoid to modify PSW to work out.
-
-By definition, the SGX runtimes will need to be modified in order to
-make all of work for the user community.  I believe the approach that
-we ended up using, with a separate ioctl index, will minimize the
-changes that are needed and allow the runtimes to work on both FLC and
-non-FLC hardware with minimal changes.
-
-I'm quite familiar with the Intel SDK/PSW, since we did a complete
-C-only re-implementation of the PSW, however, I don't have a platform
-right now that will build the Intel stack.  I'm assuming you do, so if
-you are interested we could collaborate on making the necessary
-changes.
-
-The basic strategy would be as follows:
-
-Modify the sgx_enclave_init_in_kernel structure definition in the
-following file:
-
-psw/urts/linux/isgx.h
-
-To include a __u64 token structure element.
-
-Modify the following function
-
-psw/enclave_common/sgx_common_enclave.cpp:enclave_initialize()
-
-So that the terminal 'else' clause that ends up handling the
-SGX_DRIVER_IN_KERNEL path initializes both pointer values to NULL.
-
-I would lift the code in the first 'if' clause, that loads the launch
-token for the out-of-tree driver, into a separate function to avoid
-code replication.
-
-In the SGX_DRIVER_IN_KERNEL path use the call that you implemented in
-your initial PSW modification, to check on the status of FLC support,
-to gate calling the token generation code on a non-FLC platform and
-set the token value of the sgx_enclave_init_in_kernel structure to the
-address of the token block that the function returns.
-
-That should produce a PSW that initializes enclaves on both non-FLC
-and FLC platforms.
-
-If you are interested I can work up a basic outline patch that you can
-work from if you are interested.
-
-Obviously, for completeness, the PSW should probe for the existence of
-the new ioctl if the in-kernel driver is detected, but that type of
-functionality can be added after the basics are working.
-
-> Cheers,
-> Jia
-
-Let me know your thoughts and we will go from there.
-
-Best wishes for a productive remainder of the week.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
-Enjellic Systems Development, LLC     IOT platforms and edge devices.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Man, despite his artistic pretensions, his sophistication and many
- accomplishments, owes the fact of his existence to a six-inch layer of
- topsoil and the fact that it rains."
-                                -- Anonymous writer on perspective.
-                                   GAUSSIAN quote.
+/Jarkko
