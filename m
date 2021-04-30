@@ -2,126 +2,141 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C32EC433B4
-	for <linux-sgx@archiver.kernel.org>; Thu, 29 Apr 2021 18:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FD0C433B4
+	for <linux-sgx@archiver.kernel.org>; Fri, 30 Apr 2021 09:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BFB76143E
-	for <linux-sgx@archiver.kernel.org>; Thu, 29 Apr 2021 18:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900DA6145D
+	for <linux-sgx@archiver.kernel.org>; Fri, 30 Apr 2021 09:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233797AbhD2S4M (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 29 Apr 2021 14:56:12 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58918 "EHLO mga04.intel.com"
+        id S231600AbhD3J0u (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 30 Apr 2021 05:26:50 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:47762 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233676AbhD2S4L (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 29 Apr 2021 14:56:11 -0400
-IronPort-SDR: am6zbRL5HxdX7NNDScBEeNo1hxvDkzAJp3jnbSIP+bLCzn0VEwdFLsbtBdreUrVD1EEhnA3bLE
- ZnhxPYrWw5Mg==
-X-IronPort-AV: E=McAfee;i="6200,9189,9969"; a="194979346"
-X-IronPort-AV: E=Sophos;i="5.82,260,1613462400"; 
-   d="scan'208";a="194979346"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2021 11:55:23 -0700
-IronPort-SDR: 0VCEQ2ZfmZ8L3iRIOpJqFbgJSa48jroB5YT/MW8eBg1WOYX1z7WtBeXA/b1rXPHXg1nZD7j8L3
- SFZmAkWLhhQA==
-X-IronPort-AV: E=Sophos;i="5.82,260,1613462400"; 
-   d="scan'208";a="387055834"
-Received: from ndutta-mobl.amr.corp.intel.com (HELO [10.212.215.226]) ([10.212.215.226])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2021 11:55:23 -0700
+        id S229760AbhD3J0t (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 30 Apr 2021 05:26:49 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 13U9PdY5006270;
+        Fri, 30 Apr 2021 04:25:39 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 13U9PcEj006269;
+        Fri, 30 Apr 2021 04:25:38 -0500
+Date:   Fri, 30 Apr 2021 04:25:38 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Tim Gardner <tim.gardner@canonical.com>,
+        dave.hansen@linux.intel.com, jarkko@kernel.org, shuah@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: Subject: [PATCH 0/1] SGX self test fails
-To:     Tim Gardner <tim.gardner@canonical.com>,
-        dave.hansen@linux.intel.com
-Cc:     jarkko@kernel.org, shuah@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210429183952.22797-1-tim.gardner@canonical.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <c0725600-0a00-31dd-2ec3-20d4a86b33c5@intel.com>
-Date:   Thu, 29 Apr 2021 11:55:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210429183952.22797-1-tim.gardner@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <20210430092538.GA5887@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20210429183952.22797-1-tim.gardner@canonical.com> <c0725600-0a00-31dd-2ec3-20d4a86b33c5@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0725600-0a00-31dd-2ec3-20d4a86b33c5@intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 30 Apr 2021 04:25:39 -0500 (CDT)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 4/29/21 11:39 AM, Tim Gardner wrote:
-> I'm just starting my learning curve on SGX, so I don't know if I've missed
-> some setup for the SGX device entries. After looking at arch/x86/kernel/cpu/sgx/driver.c
-> I see that there is no mode value for either sgx_dev_enclave or sgx_dev_provision.
+On Thu, Apr 29, 2021 at 11:55:23AM -0700, Dave Hansen wrote:
+
+Good morning, I hope the end of the week is going well for everyone.
+
+> On 4/29/21 11:39 AM, Tim Gardner wrote:
+> > I'm just starting my learning curve on SGX, so I don't know if
+> > I've missed some setup for the SGX device entries. After looking
+> > at arch/x86/kernel/cpu/sgx/driver.c I see that there is no mode
+> > value for either sgx_dev_enclave or sgx_dev_provision.
+> >
+> > With this patch I can get the SGX self test to complete:
+> > 
+> > sudo ./test_sgx
+> > Warning: no execute permissions on device file /dev/sgx_enclave
+> > 0x0000000000000000 0x0000000000002000 0x03
+> > 0x0000000000002000 0x0000000000001000 0x05
+> > 0x0000000000003000 0x0000000000003000 0x03
+> > SUCCESS
+> > 
+> > Is the warning even necessary ?
 > 
-> With this patch I can get the SGX self test to complete:
+> Dang, I just added that warning.  I thought it was necessary, but I
+> guess not:
 > 
-> sudo ./test_sgx
-> Warning: no execute permissions on device file /dev/sgx_enclave
+> $ ls -l /dev/sgx_enclave
+> crw------- 1 dave dave 10, 125 Apr 28 11:32 /dev/sgx_enclave
+> $ ./test_sgx
 > 0x0000000000000000 0x0000000000002000 0x03
 > 0x0000000000002000 0x0000000000001000 0x05
 > 0x0000000000003000 0x0000000000003000 0x03
 > SUCCESS
 > 
-> Is the warning even necessary ?
+> *But*, is that OK?  Should we be happily creating a PROT_EXEC mapping on
+> a ugo-x file?  Why were we respecting noexec on the filesystem but not
+> ugo-x on the file?
 
-Dang, I just added that warning.  I thought it was necessary, but I
-guess not:
+Because no one placed any explicit executable mode bit checks on the
+inode that is underlying the character device file in
+arch/x86/kernel/cpu/sgx/driver.c:sgx_open() and the controls on
+executable virtual memory are implemented in the mm/mmap.c:do_mmap()
+path when the mmap system call is executed.
 
-$ ls -l /dev/sgx_enclave
-crw------- 1 dave dave 10, 125 Apr 28 11:32 /dev/sgx_enclave
-$ ./test_sgx
-0x0000000000000000 0x0000000000002000 0x03
-0x0000000000002000 0x0000000000001000 0x05
-0x0000000000003000 0x0000000000003000 0x03
-SUCCESS
+The notion of using discretionary access controls, and arguably MAC's,
+since the true identity of a file is its inode label, to gate
+executable permissions by a user on the contents of a file are a
+function of the exec* system calls.
 
-*But*, is that OK?  Should we be happily creating a PROT_EXEC mapping on
-a ugo-x file?  Why were we respecting noexec on the filesystem but not
-ugo-x on the file?
+The notion of whether or not it is 'OK' to not allow system
+administrators the ability to control SGX usage with file level exec
+privileges would seem to be more philosophical then practical.  The
+SGX device node does not represent an executable entity, it represents
+a gateway to the right to create and then populate anonymous
+executable memory.
 
+From the standpoint of current systems administration practice, the
+notion and need for executable bits being important on device nodes is
+foreign, and violates the concept of least surprise.  As we have
+already seen with the issue of noexec on /dev, the historical notion
+of security has been that executable files should not be allowed in
+the /dev heirarchy.
+
+With that mindset, the notion of gating SGX permissions with only the
+write bit on the character device would seem to make conceptual sense.
+It does, however, limit the utility of using the bprm* LSM hooks to
+implement whatever LSM controls over SGX that are envisioned for the
+future.
+
+At the risk of fanning dormant embers into flame, the relevance of all
+of this needs to be considered in a future that will include Enclave
+Dynamic Memory Management (EDMM).  At that point in time, access to
+the SGX device node, gated through either discretionary or mandatory
+access controls, means that an eligible entity will have unrestricted
+rights to load completely anonymous, in fact cryptographically
+anonymous, text into memory and execute it.
+
+The utility of anything but yes/no decisions needs to be made with
+that concept in mind.
+
+To avoid the risk of being classified as a blatherer, I will return to
+my work on maintaining support for cryptographic access controls on
+all of this... :-)
+
+Best wishes for a pleasant spring weekend to everyone.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Everything should be made as simple as possible, but not simpler."
+                                -- Albert Einstein
