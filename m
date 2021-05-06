@@ -2,85 +2,163 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A65C433ED
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 May 2021 22:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F41C433B4
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 May 2021 01:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCF1761364
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 May 2021 22:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0D18613B4
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 May 2021 01:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbhECWh6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 3 May 2021 18:37:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38126 "EHLO mail.kernel.org"
+        id S230185AbhEFBdO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 May 2021 21:33:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229497AbhECWh6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 3 May 2021 18:37:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DA3DE61208;
-        Mon,  3 May 2021 22:37:03 +0000 (UTC)
+        id S229465AbhEFBdN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 5 May 2021 21:33:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 924F36139A;
+        Thu,  6 May 2021 01:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620081424;
-        bh=VmWSfADQetC3TgPVzlYh/EnoLCaaymJ111Jp5fZ0ZE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TXISMs4t/u0VAJHE11vmDsML8XIBsyHzbUA6YQOzjpOO+EMEs9VV6lsjm32ke+tV1
-         QiO9yWXal56C0yBZk42Ynfr8h9xeb1up2oJz6NLfB5I5w+5meiqmmVN1Slfw+d1Dfp
-         odTR3OmtSCNvUNUL8IkQtzPn//dgPRDQms+2lCS6gc+4wCP++Xrn6z+2CcM7cwvp0T
-         9bsbS+vvuyy59TLg08zdY5pQVrG0OnyAMNlh0D3ypbCbArnkvWjjI/1Cxy/QqiLTWm
-         xF9RZyPnhKtOV/CuBvfb1M1+UyLQNX2haAfA/QRyGOe64x/9TpCfSTh/yVpSkb7psX
-         AMANAmdFvqF/A==
-Date:   Tue, 4 May 2021 01:37:01 +0300
+        s=k20201202; t=1620264736;
+        bh=1xn40oQKUVwuTZyaZSO40QqkHHGTwn9D+xdZOmEckzU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oUcy/DaH57sYVYz+CNC2vAcDU14jVTt5wtNG8jvdUx6a/pyHxqo03FQPbaHPbPEN0
+         RHjdntUCFmJwoGZiAtitMEHtTdBi1zsfHxdjUqeYik2niogqluAClU4Clz2NvhFi7P
+         fuPd5QaB+U0vOpQ1I0G3ZkH4zBgVKDjjZ+YyZFMU9QdtjDtRImRueELQXSDtDM/x0E
+         oZQ7nWs0c5W+j4+MBpaLjXjy7soUrdYLx2dVxLSKgTHr50ikXItvX9Yx65SNH0bBG3
+         sHsc+yzHuPJY52861ZTo64bkk+Y5sZqnzKTYetDIlpqlACuLXvvyPFmFYhwB7ZAdC7
+         SZH13mvUXQ58Q==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Tim Gardner <tim.gardner@canonical.com>,
-        dave.hansen@linux.intel.com, shuah@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Subject: [PATCH 0/1] SGX self test fails
-Message-ID: <YJB7DZHDeNujIY+F@kernel.org>
-References: <20210429183952.22797-1-tim.gardner@canonical.com>
- <c0725600-0a00-31dd-2ec3-20d4a86b33c5@intel.com>
- <YJAZjP2k6Aff7wgk@kernel.org>
- <6645d579-57f9-7adf-8a3d-f4fb2316b324@intel.com>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] selftests/sgx: Rename 'eenter' and 'sgx_call_vdso'
+Date:   Thu,  6 May 2021 04:31:59 +0300
+Message-Id: <20210506013201.126612-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6645d579-57f9-7adf-8a3d-f4fb2316b324@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, May 03, 2021 at 09:39:05AM -0700, Dave Hansen wrote:
-> On 5/3/21 8:41 AM, Jarkko Sakkinen wrote:
-> >> $ ls -l /dev/sgx_enclave
-> >> crw------- 1 dave dave 10, 125 Apr 28 11:32 /dev/sgx_enclave
-> >> $ ./test_sgx
-> >> 0x0000000000000000 0x0000000000002000 0x03
-> >> 0x0000000000002000 0x0000000000001000 0x05
-> >> 0x0000000000003000 0x0000000000003000 0x03
-> >> SUCCESS
-> >>
-> >> *But*, is that OK?  Should we be happily creating a PROT_EXEC mapping on
-> >> a ugo-x file?  Why were we respecting noexec on the filesystem but not
-> >> ugo-x on the file?
-> > Yeah, this supports my earlier response:
-> > 
-> > "EPERM  The prot argument asks for PROT_EXEC but the mapped area
-> >  belongs to a file on a filesystem that was mounted no-exec."
-> > https://man7.org/linux/man-pages/man2/mmap.2.html
-> > 
-> > I guess the right model is to think just as "anonymous memory"
-> > with equivalent access control semantics after succesfully
-> > opened for read and write.
-> 
-> I guess I'll answer my own question: The "x" bit on file permissions
-> really only controls the ability for the file to be execve()'d, but has
-> no bearing on the ability for an executable *mapping* to be created.
-> This is existing VFS behavior and is not specific to SGX.
+Rename 'eenter' as 'sgx_enter_enclave', and 'sgx_call_vdso' as
+'sgx_enter_enclave_unclobbered', in order to better self-describe the
+meaning and purpose of the symbols.
 
-Yeah, that's nicely put it into one sentence :-)
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ tools/testing/selftests/sgx/call.S |  6 +++---
+ tools/testing/selftests/sgx/main.c | 25 +++++++++++++------------
+ tools/testing/selftests/sgx/main.h |  4 ++--
+ 3 files changed, 18 insertions(+), 17 deletions(-)
 
-> I think I'll just send a patch to pull that warning out.
+diff --git a/tools/testing/selftests/sgx/call.S b/tools/testing/selftests/sgx/call.S
+index 4ecadc7490f4..71865302119c 100644
+--- a/tools/testing/selftests/sgx/call.S
++++ b/tools/testing/selftests/sgx/call.S
+@@ -5,8 +5,8 @@
+ 
+ 	.text
+ 
+-	.global sgx_call_vdso
+-sgx_call_vdso:
++	.global sgx_enter_enclave_unclobbered
++sgx_enter_enclave_unclobbered:
+ 	.cfi_startproc
+ 	push	%r15
+ 	.cfi_adjust_cfa_offset	8
+@@ -27,7 +27,7 @@ sgx_call_vdso:
+ 	.cfi_adjust_cfa_offset	8
+ 	push	0x38(%rsp)
+ 	.cfi_adjust_cfa_offset	8
+-	call	*eenter(%rip)
++	call	*sgx_enter_enclave(%rip)
+ 	add	$0x10, %rsp
+ 	.cfi_adjust_cfa_offset	-0x10
+ 	pop	%rbx
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index d304a4044eb9..d3e1db9ee4bc 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -21,7 +21,7 @@
+ #include "../kselftest.h"
+ 
+ static const uint64_t MAGIC = 0x1122334455667788ULL;
+-vdso_sgx_enter_enclave_t eenter;
++vdso_sgx_enter_enclave_t sgx_enter_enclave;
+ 
+ struct vdso_symtab {
+ 	Elf64_Sym *elf_symtab;
+@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
+ {
+ 	struct sgx_enclave_run run;
+ 	struct vdso_symtab symtab;
+-	Elf64_Sym *eenter_sym;
++	Elf64_Sym *sgx_enter_enclave_sym;
+ 	uint64_t result = 0;
+ 	struct encl encl;
+ 	unsigned int i;
+@@ -194,29 +194,30 @@ int main(int argc, char *argv[])
+ 	if (!vdso_get_symtab(addr, &symtab))
+ 		goto err;
+ 
+-	eenter_sym = vdso_symtab_get(&symtab, "__vdso_sgx_enter_enclave");
+-	if (!eenter_sym)
++	sgx_enter_enclave_sym = vdso_symtab_get(&symtab, "__vdso_sgx_enter_enclave");
++	if (!sgx_enter_enclave_sym)
+ 		goto err;
+ 
+-	eenter = addr + eenter_sym->st_value;
++	sgx_enter_enclave = addr + sgx_enter_enclave_sym->st_value;
+ 
+-	ret = sgx_call_vdso((void *)&MAGIC, &result, 0, EENTER, NULL, NULL, &run);
+-	if (!report_results(&run, ret, result, "sgx_call_vdso"))
++	ret = sgx_enter_enclave_unclobbered((void *)&MAGIC, &result, 0, EENTER,
++					    NULL, NULL, &run);
++	if (!report_results(&run, ret, result, "sgx_enter_enclave_unclobbered"))
+ 		goto err;
+ 
+ 
+ 	/* Invoke the vDSO directly. */
+ 	result = 0;
+-	ret = eenter((unsigned long)&MAGIC, (unsigned long)&result, 0, EENTER,
+-		     0, 0, &run);
+-	if (!report_results(&run, ret, result, "eenter"))
++	ret = sgx_enter_enclave((unsigned long)&MAGIC, (unsigned long)&result,
++				0, EENTER, 0, 0, &run);
++	if (!report_results(&run, ret, result, "sgx_enter_enclave"))
+ 		goto err;
+ 
+ 	/* And with an exit handler. */
+ 	run.user_handler = (__u64)user_handler;
+ 	run.user_data = 0xdeadbeef;
+-	ret = eenter((unsigned long)&MAGIC, (unsigned long)&result, 0, EENTER,
+-		     0, 0, &run);
++	ret = sgx_enter_enclave((unsigned long)&MAGIC, (unsigned long)&result,
++				0, EENTER, 0, 0, &run);
+ 	if (!report_results(&run, ret, result, "user_handler"))
+ 		goto err;
+ 
+diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
+index 67211a708f04..13479837f6eb 100644
+--- a/tools/testing/selftests/sgx/main.h
++++ b/tools/testing/selftests/sgx/main.h
+@@ -35,7 +35,7 @@ bool encl_load(const char *path, struct encl *encl);
+ bool encl_measure(struct encl *encl);
+ bool encl_build(struct encl *encl);
+ 
+-int sgx_call_vdso(void *rdi, void *rsi, long rdx, u32 function, void *r8, void *r9,
+-		  struct sgx_enclave_run *run);
++int sgx_enter_enclave_unclobbered(void *rdi, void *rsi, long rdx, u32 function, void *r8, void *r9,
++				  struct sgx_enclave_run *run);
+ 
+ #endif /* MAIN_H */
+-- 
+2.31.1
 
-/Jarkko
