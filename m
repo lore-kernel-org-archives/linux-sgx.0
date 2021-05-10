@@ -2,70 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D737AC43460
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 17:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF83C4361A
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 19:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94660614A5
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 17:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3127D61584
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 19:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232760AbhEJRes (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 May 2021 13:34:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233149AbhEJReR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 10 May 2021 13:34:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B04DC61108;
-        Mon, 10 May 2021 17:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620667992;
-        bh=OihwLjYhFxpIKVWk1w1YOQ6XDbFRdt9ImR5C52cpPrI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BPQMsGt0zB+fo8qmd+KTlPgbfTulR2lovBFtjlgJqJWD2hB3lMNeWQRUzpBSrDsmz
-         2AQPPDSgrJJtOEGzkz6thwdBlk6gg7MDNQfvxMW272+fGdDZ1MK/XRe9nhy7KXYK12
-         nJPXELX+7l4p/3rpGF/DQbfKc9a3RaoJuQd8OKYa+QJhqqLYr3zGQrdXZ7gFO9MCqw
-         gnM84PW79PQK9MIgAuj9mZ4WaIrOuifP2Cawe8CGa8YkuDOc0yrXg2NQxCOtTObkzt
-         mnXSBzFlMJIIdbCSFNyufvt3p6jHow2nSyMXaCAJc4l65+wyNk/Hgp79U531OUumP6
-         JsUqam24eWKMA==
-Date:   Mon, 10 May 2021 20:33:09 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com
-Subject: Re: [PATCH v5] sgx.7: New page with overview of Software Guard
- eXtensions (SGX)
-Message-ID: <YJluVfQ2TeO1N/KZ@kernel.org>
-References: <20210510145235.8056-1-jarkko@kernel.org>
- <3072f586-4200-a0a1-8c85-fca0102e7913@intel.com>
+        id S233370AbhEJTXy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 May 2021 15:23:54 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47815 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S233208AbhEJTXt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 10 May 2021 15:23:49 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 14AJM3dI013584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 10 May 2021 15:22:05 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id F267215C3CD9; Mon, 10 May 2021 15:22:02 -0400 (EDT)
+Date:   Mon, 10 May 2021 15:22:02 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        alsa-devel@alsa-project.org, coresight@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        intel-wired-lan@lists.osuosl.org, keyrings@vger.kernel.org,
+        kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fpga@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sgx@vger.kernel.org, linux-usb@vger.kernel.org,
+        mjpeg-users@lists.sourceforge.net, netdev@vger.kernel.org,
+        rcu@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 00/53] Get rid of UTF-8 chars that can be mapped as ASCII
+Message-ID: <YJmH2irxoRsyNudb@mit.edu>
+References: <cover.1620641727.git.mchehab+huawei@kernel.org>
+ <2ae366fdff4bd5910a2270823e8da70521c859af.camel@infradead.org>
+ <20210510135518.305cc03d@coco.lan>
+ <de6d1fa5b7934f4afd61370d9c58502bef588466.camel@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3072f586-4200-a0a1-8c85-fca0102e7913@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de6d1fa5b7934f4afd61370d9c58502bef588466.camel@infradead.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, May 10, 2021 at 07:58:27AM -0700, Dave Hansen wrote:
-> On 5/10/21 7:52 AM, Jarkko Sakkinen wrote:
-> > +This can lead to reserving a large region than required by the payload,
-> > +but the address space can be obviously trimmed after the enclave has been
-> > +constructed on,
-> > +with a sequence of
-> > +.BR mmap(MAP_FIXED)
-> > +calls.
+On Mon, May 10, 2021 at 02:49:44PM +0100, David Woodhouse wrote:
+> On Mon, 2021-05-10 at 13:55 +0200, Mauro Carvalho Chehab wrote:
+> > This patch series is doing conversion only when using ASCII makes
+> > more sense than using UTF-8. 
+> > 
+> > See, a number of converted documents ended with weird characters
+> > like ZERO WIDTH NO-BREAK SPACE (U+FEFF) character. This specific
+> > character doesn't do any good.
+> > 
+> > Others use NO-BREAK SPACE (U+A0) instead of 0x20. Harmless, until
+> > someone tries to use grep[1].
 > 
-> Sorry if I missed this previously.
-> 
-> But, do we really intend to suggest the use of mmap(MAP_FIXED) for this?
->  What's the harm in leaving a non-populated piece of address space of
-> mmap()'d /dev/sgx_enclave?
+> Replacing those makes sense. But replacing emdashes — which are a
+> distinct character that has no direct replacement in ASCII and which
+> people do *deliberately* use instead of hyphen-minus — does not.
 
-Probably most of the time: not much. Especially since we support 64-bit
-only.
+I regularly use --- for em-dashes and -- for en-dashes.  Markdown will
+automatically translate 3 ASCII hypens to em-dashes, and 2 ASCII
+hyphens to en-dashes.  It's much, much easier for me to type 2 or 3
+hypens into my text editor of choice than trying to enter the UTF-8
+characters.  If we can make sphinx do this translation, maybe that's
+the best way of dealing with these two characters?
 
-Maybe it should be relaxed a bit?
+Cheers,
 
-/Jarkko
+					- Ted
