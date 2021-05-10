@@ -2,38 +2,63 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C897AC43611
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 13:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FC8C4361B
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 13:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3F46128B
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 13:22:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C5BD6157F
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 13:22:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238555AbhEJNXF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 May 2021 09:23:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243600AbhEJL4e (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 10 May 2021 07:56:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 383C061260;
-        Mon, 10 May 2021 11:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620647729;
-        bh=dyIPtb49LgFnCoKazyq+bQhPSj3PCobNssG21KHdoK4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S4cpkndG9UuTYGkhKfO3hJLbYIHDWve5Su3QQFRXInDkMRoAu9bVjsNPKBQQExFiA
-         MH/LvEqboPFe5Mg323DsrqgW7WJPZfjJ5OWh3KcGd7Kzb/Ed/OuhsjfzebDsCLf+jo
-         Z2y3h21hX1f0r0znndE/gsvI3+7MfvcFNE3R9vJ3F6eSaoK3rYc9HAxpysQKCzq2nw
-         XliTZNXkMCNQpYy6ormSrp00pDOW21OImF+xXBpjWC/JIXAZfq/wrXo3rh38peS5/g
-         BQeri8Wl+fs0ihvm/Fcaw0vxpMvqk7Fkm7kctYIMuGKithMKv3Kd8J2NMAGsk2M1IJ
-         Z8/9XzwZufeKA==
-Date:   Mon, 10 May 2021 13:55:18 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     David Woodhouse <dwmw2@infradead.org>
+        id S240802AbhEJNXH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 May 2021 09:23:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236863AbhEJNR0 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 10 May 2021 09:17:26 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED3A6C06138C;
+        Mon, 10 May 2021 06:16:19 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 82-20020a1c01550000b0290142562ff7c9so8868251wmb.3;
+        Mon, 10 May 2021 06:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Sh4i9feljTPFrIfpR/IU/E8n0D3Fda88xyQfypmum7w=;
+        b=GfQpYA/u/ESXNzCwhJN35I1L0Sb2vRVeukRNG83W8xG2OMlDA6+i5W0OODo/+LWE9E
+         ivWW5//Dci3M+PXPgJnH/odM7KtTO7yjQKrEe7KAvh4E7fvrd/ZuLkJAZP62sWtsDMuB
+         AIqgCRqoTLZzj0iGC6/REa3QuGlmZjiRxifV0mZYrMLJSap8JjiujnvbMmFTzTlx+O95
+         x9XnwiLNDr5qqWcsdoyW+ETG1hWAlzA+FW12aKJEwh2j5DlnppfpjkE6ahf9DAyZ8V+v
+         c4HLN0tsaWZM2+zfMzrOFU3u/mXI98pyg6LlDYSgFBtDuHlk1DmX0lhge4HX1KOLhtwA
+         z+4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Sh4i9feljTPFrIfpR/IU/E8n0D3Fda88xyQfypmum7w=;
+        b=cYGoVbnuzC8qi/rSzJ+ExaPcPY6WDiRnoQYrUOJUW/LDLaupeK70YlIz31CC6DpEIO
+         YjQqqXw2K1KRvLE2EmkMqZgmSNaOqjLw3WgaQER7nKYN78smSnUQvql/Lq9C3BYIAbbS
+         A89hiMUo84LxHpIIH5PXWbH2rmZnREpJ+CAq/H0QPEPvY3481ifRRLSpOK8Cv3AHyzwB
+         Y9C4Y5kQCgYC6MsNt9LSL+mATP7JJWBNR9KZjed7REYhOTmkJTYOrQnd1aSrwgzazjvo
+         Ixtv6yd4OPdU4nF7WYCxOtY9Watsai28mxpDWeEFK5xhy198jgxuKAvRFJqigderRiYZ
+         zU/w==
+X-Gm-Message-State: AOAM5320WfRdSTq1VXESkXjcB7G2WrDl9rtLEDxZcnwiFr7WOtK+XUaU
+        ikYqT3CuD1N4pbhEXWdxDhI=
+X-Google-Smtp-Source: ABdhPJysoQ4YBpE1J87NsTC/Z24p8NQqGLKPSudpVCmtLwZFhM2Wy0R7/k0aKiXMKdpTI23nPdYVEw==
+X-Received: by 2002:a05:600c:47d7:: with SMTP id l23mr36980376wmo.95.1620652578722;
+        Mon, 10 May 2021 06:16:18 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159425-cmbg20-2-0-cust403.5-4.cable.virginm.net. [86.7.189.148])
+        by smtp.gmail.com with ESMTPSA id s1sm27945073wmj.8.2021.05.10.06.16.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 May 2021 06:16:17 -0700 (PDT)
+Subject: Re: [PATCH 00/53] Get rid of UTF-8 chars that can be mapped as ASCII
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>
 Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         alsa-devel@alsa-project.org, coresight@lists.linaro.org,
@@ -50,141 +75,64 @@ Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         linux-sgx@vger.kernel.org, linux-usb@vger.kernel.org,
         mjpeg-users@lists.sourceforge.net, netdev@vger.kernel.org,
         rcu@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 00/53] Get rid of UTF-8 chars that can be mapped as
- ASCII
-Message-ID: <20210510135518.305cc03d@coco.lan>
-In-Reply-To: <2ae366fdff4bd5910a2270823e8da70521c859af.camel@infradead.org>
 References: <cover.1620641727.git.mchehab+huawei@kernel.org>
-        <2ae366fdff4bd5910a2270823e8da70521c859af.camel@infradead.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+ <2ae366fdff4bd5910a2270823e8da70521c859af.camel@infradead.org>
+ <20210510135518.305cc03d@coco.lan>
+From:   Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <df6b4567-030c-a480-c5a6-fe579830e8c0@gmail.com>
+Date:   Mon, 10 May 2021 14:16:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210510135518.305cc03d@coco.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi David,
+On 10/05/2021 12:55, Mauro Carvalho Chehab wrote:
+> The main point on this series is to replace just the occurrences
+> where ASCII represents the symbol equally well
 
-Em Mon, 10 May 2021 11:54:02 +0100
-David Woodhouse <dwmw2@infradead.org> escreveu:
+> 	- U+2014 ('—'): EM DASH
+Em dash is not the same thing as hyphen-minus, and the latter does not
+ serve 'equally well'.  People use em dashes because — even in
+ monospace fonts — they make text easier to read and comprehend, when
+ used correctly.
+I accept that some of the other distinctions — like en dashes — are
+ needlessly pedantic (though I don't doubt there is someone out there
+ who will gladly defend them with the same fervour with which I argue
+ for the em dash) and I wouldn't take the trouble to use them myself;
+ but I think there is a reasonable assumption that when someone goes
+ to the effort of using a Unicode punctuation mark that is semantic
+ (rather than merely typographical), they probably had a reason for
+ doing so.
 
-> On Mon, 2021-05-10 at 12:26 +0200, Mauro Carvalho Chehab wrote:
-> > There are several UTF-8 characters at the Kernel's documentation.
-> >=20
-> > Several of them were due to the process of converting files from
-> > DocBook, LaTeX, HTML and Markdown. They were probably introduced
-> > by the conversion tools used on that time.
-> >=20
-> > Other UTF-8 characters were added along the time, but they're easily
-> > replaceable by ASCII chars.
-> >=20
-> > As Linux developers are all around the globe, and not everybody has UTF=
--8
-> > as their default charset, better to use UTF-8 only on cases where it is=
- really
-> > needed. =20
->=20
-> No, that is absolutely the wrong approach.
->=20
-> If someone has a local setup which makes bogus assumptions about text
-> encodings, that is their own mistake.
->=20
-> We don't do them any favours by trying to *hide* it in the common case
-> so that they don't notice it for longer.
->=20
-> There really isn't much excuse for such brokenness, this far into the
-> 21st century.
->=20
-> Even *before* UTF-8 came along in the final decade of the last
-> millennium, it was important to know which character set a given piece
-> of text was encoded in.
->=20
-> In fact it was even *more* important back then, we couldn't just assume
-> UTF-8 everywhere like we can in modern times.
->=20
-> Git can already do things like CRLF conversion on checking files out to
-> match local conventions; if you want to teach it to do character set
-> conversions too then I suppose that might be useful to a few developers
-> who've fallen through a time warp and still need it. But nobody's ever
-> bothered before because it just isn't necessary these days.
->=20
-> Please *don't* attempt to address this anachronistic and esoteric
-> "requirement" by dragging the kernel source back in time by three
-> decades.
+> 	- U+2018 ('‘'): LEFT SINGLE QUOTATION MARK
+> 	- U+2019 ('’'): RIGHT SINGLE QUOTATION MARK
+> 	- U+201c ('“'): LEFT DOUBLE QUOTATION MARK
+> 	- U+201d ('”'): RIGHT DOUBLE QUOTATION MARK
+(These are purely typographic, I have no problem with dumping them.)
 
-No. The idea is not to go back three decades ago.=20
+> 	- U+00d7 ('×'): MULTIPLICATION SIGN
+Presumably this is appearing in mathematical formulae, in which case
+ changing it to 'x' loses semantic information.
 
-The goal is just to avoid use UTF-8 where it is not needed. See, the vast
-majority of UTF-8 chars are kept:
+> Using the above symbols will just trick tools like grep for no good
+> reason.
+NBSP, sure.  That one's probably an artefact of some document format
+ conversion somewhere along the line, anyway.
+But what kinds of things with × or — in are going to be grept for?
 
-	- Non-ASCII Latin and Greek chars;
-	- Box drawings;
-	- arrows;
-	- most symbols.
+If there are em dashes lying around that semantically _should_ be
+ hyphen-minus (one of your patches I've seen, for instance, fixes an
+ *en* dash moonlighting as the option character in an `ethtool`
+ command line), then sure, convert them.
+But any time someone is using a Unicode character to *express
+ semantics*, even if you happen to think the semantic distinction
+ involved is a pedantic or unimportant one, I think you need an
+ explicit grep case to justify ASCIIfying it.
 
-There, it makes perfect sense to keep using UTF-8.
-
-We should keep using UTF-8 on Kernel. This is something that it shouldn't
-be changed.
-
----
-
-This patch series is doing conversion only when using ASCII makes
-more sense than using UTF-8.=20
-
-See, a number of converted documents ended with weird characters
-like ZERO WIDTH NO-BREAK SPACE (U+FEFF) character. This specific
-character doesn't do any good.
-
-Others use NO-BREAK SPACE (U+A0) instead of 0x20. Harmless, until
-someone tries to use grep[1].
-
-[1] try to run:
-
-    $ git grep "CPU 0 has been" Documentation/RCU/
-
-    it will return nothing with current upstream.
-
-    But it will work fine after the series is applied:
-
-    $ git grep "CPU 0 has been" Documentation/RCU/
-      Documentation/RCU/Design/Data-Structures/Data-Structures.rst:| #. CPU=
- 0 has been in dyntick-idle mode for quite some time. When it   |
-      Documentation/RCU/Design/Data-Structures/Data-Structures.rst:|    not=
-ices that CPU 0 has been in dyntick idle mode, which qualifies  |
-
-The main point on this series is to replace just the occurrences
-where ASCII represents the symbol equally well, e. g. it is limited
-for those chars:
-
-	- U+2010 ('=E2=80=90'): HYPHEN
-	- U+00ad ('=C2=AD'): SOFT HYPHEN
-	- U+2013 ('=E2=80=93'): EN DASH
-	- U+2014 ('=E2=80=94'): EM DASH
-
-	- U+2018 ('=E2=80=98'): LEFT SINGLE QUOTATION MARK
-	- U+2019 ('=E2=80=99'): RIGHT SINGLE QUOTATION MARK
-	- U+00b4 ('=C2=B4'): ACUTE ACCENT
-
-	- U+201c ('=E2=80=9C'): LEFT DOUBLE QUOTATION MARK
-	- U+201d ('=E2=80=9D'): RIGHT DOUBLE QUOTATION MARK
-
-	- U+00d7 ('=C3=97'): MULTIPLICATION SIGN
-	- U+2212 ('=E2=88=92'): MINUS SIGN
-
-	- U+2217 ('=E2=88=97'): ASTERISK OPERATOR
-	  (this one used as a pointer reference like "*foo" on C code
-	   example inside a document converted from LaTeX)
-
-	- U+00bb ('=C2=BB'): RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
-	  (this one also used wrongly on an ABI file, meaning '>')
-
-	- U+00a0 ('=C2=A0'): NO-BREAK SPACE
-	- U+feff ('=EF=BB=BF'): ZERO WIDTH NO-BREAK SPACE
-
-Using the above symbols will just trick tools like grep for no good
-reason.
-
-Thanks,
-Mauro
+-ed
