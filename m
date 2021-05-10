@@ -2,100 +2,196 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DB2C433B4
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 14:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E10F7C43460
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 14:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29FCE6145F
-	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 14:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3BC561285
+	for <linux-sgx@archiver.kernel.org>; Mon, 10 May 2021 14:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239329AbhEJOkg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 10 May 2021 10:40:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235503AbhEJOhY (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 10 May 2021 10:37:24 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D84CC08E8A9;
-        Mon, 10 May 2021 07:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=i6vAxLOytNOYwyM1NYfARO0i+7jkuFK7y9pYt7pXuwE=; b=djb3CWn/LU378IzapvABLkn8Gd
-        Mp82QkScestEUeQW2L+zqtEN7XvYp31eFRebvjBEITr//+6YOo6+SYheq9BxF7YMTeqbS+RN1ORYU
-        WcTwnub1JAhAEwo1EbdH4ZtDbzKRVhVt7KKBx8eH43WzT6ZsZkO7OQPiITlB671P2UStmst5kwHpO
-        oLDGkct+Pf7s4vCchonkHPjgJ2dHAgGdY9eEvhnNfgt0nMzg4EJ/N8O7mpCEUjiq1yDlLopkoOUQy
-        tCb7mahOMAZ84vugzBeIjfIYkNlViOtJdTlUAmJVQy5eePLrQct4R8yXLPW7Hy+DjovMg5jAZGdoa
-        yuW/o03A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lg6RA-006DIB-7H; Mon, 10 May 2021 13:59:19 +0000
-Date:   Mon, 10 May 2021 14:59:08 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Edward Cree <ecree.xilinx@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        alsa-devel@alsa-project.org, coresight@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        intel-wired-lan@lists.osuosl.org, keyrings@vger.kernel.org,
-        kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fpga@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sgx@vger.kernel.org, linux-usb@vger.kernel.org,
-        mjpeg-users@lists.sourceforge.net, netdev@vger.kernel.org,
-        rcu@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 00/53] Get rid of UTF-8 chars that can be mapped as ASCII
-Message-ID: <YJk8LMFViV7Z3Uu7@casper.infradead.org>
-References: <cover.1620641727.git.mchehab+huawei@kernel.org>
- <2ae366fdff4bd5910a2270823e8da70521c859af.camel@infradead.org>
- <20210510135518.305cc03d@coco.lan>
- <df6b4567-030c-a480-c5a6-fe579830e8c0@gmail.com>
+        id S239302AbhEJOzV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 10 May 2021 10:55:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240259AbhEJOxr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 10 May 2021 10:53:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 47A4561285;
+        Mon, 10 May 2021 14:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620658361;
+        bh=wvCtPiG4DUjaMhc2IQ+bK/Ksak8Pcm3gw+tCQA74m3k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CbmHRFpJa7KHrFH+00tG0uJL3xF1rzAWxEt3zbom8ARPJoIN4dyDq2iVHav0qfOQB
+         dLz4K+sDD5E1K4T8NNniik9i1FbbdW2VVBxxTVdPF/PhvKZkMkVjVRjTwwh2Y2NnRw
+         i8SzPnSyaLQULSav4lYx+UtZglGj36pG8ksBDnNAKZnhtT1kbseIWc/atg2aawqQ0f
+         LiaS2bBaYXQJMwu6QLq+pCVCskvujIrkXV0aSqINb70UqoJ7NxwbihWZjTRfNhBbel
+         SalHPbX6eE1gu2hmZE6TJNZP9qAR6HQzstiMr+FkgRS5IMeKQQ7EhLJfO1NS34OFfv
+         UlkUuaBT8v2Tg==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     mtk.manpages@gmail.com
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH v5] sgx.7: New page with overview of Software Guard eXtensions (SGX)
+Date:   Mon, 10 May 2021 17:52:35 +0300
+Message-Id: <20210510145235.8056-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <df6b4567-030c-a480-c5a6-fe579830e8c0@gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, May 10, 2021 at 02:16:16PM +0100, Edward Cree wrote:
-> On 10/05/2021 12:55, Mauro Carvalho Chehab wrote:
-> > The main point on this series is to replace just the occurrences
-> > where ASCII represents the symbol equally well
-> 
-> > 	- U+2014 ('—'): EM DASH
-> Em dash is not the same thing as hyphen-minus, and the latter does not
->  serve 'equally well'.  People use em dashes because — even in
->  monospace fonts — they make text easier to read and comprehend, when
->  used correctly.
-> I accept that some of the other distinctions — like en dashes — are
->  needlessly pedantic (though I don't doubt there is someone out there
->  who will gladly defend them with the same fervour with which I argue
->  for the em dash) and I wouldn't take the trouble to use them myself;
->  but I think there is a reasonable assumption that when someone goes
->  to the effort of using a Unicode punctuation mark that is semantic
->  (rather than merely typographical), they probably had a reason for
->  doing so.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
 
-I think you're overestimating the amount of care and typographical
-knowledge that your average kernel developer has.  Most of these
-UTF-8 characters come from latex conversions and really aren't
-necessary (and are being used incorrectly).
+v5:
+* Taking away hardware concepts and focusing more on the interface.
+v4:
+* Did a heavy edit trying to streamline the story a bit and focus on
+  stuff important to the user (e.g. lighten up x86 details).
+v3:
+* Overhaul based on Michael's comments. Most likely needs to be refined
+  in various places but this is at least a small step forward for sure.
+v2:
+* Fixed the semantic newlines convention and various style errors etc.
+  that were reported by Alenjandro and Michael.
+* SGX was merged to v5.
 
-You seem quite knowedgeable about the various differences.  Perhaps
-you'd be willing to write a document for Documentation/doc-guide/
-that provides guidance for when to use which kinds of horizontal
-line?  https://www.punctuationmatters.com/hyphen-dash-n-dash-and-m-dash/
-talks about it in the context of publications, but I think we need
-something more suited to our needs for kernel documentation.
+ man7/sgx.7 | 121 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 121 insertions(+)
+ create mode 100644 man7/sgx.7
+
+diff --git a/man7/sgx.7 b/man7/sgx.7
+new file mode 100644
+index 000000000..b93b0510e
+--- /dev/null
++++ b/man7/sgx.7
+@@ -0,0 +1,121 @@
++.\" Copyright (C) 2021 Intel Corporation
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
++.PP
++sgx - overview of Software Guard eXtensions
++.SH DESCRIPTION
++.SS Overview
++Intel Software Guard eXtensions (SGX) allow applications to host
++protected executable objects in memory,
++also known as
++.I enclaves.
++They are constructed with
++.BR mmap (2)
++and
++.BR ioctl (2)
++applied to
++.I /dev/sgx_enclave.
++The details of enclave's memory structure can be found in
++the Intel Software Developers Manual.
++.PP
++SGX must be enabled in BIOS.
++If SGX appears to be unsupported on a system having hardware support,
++ensure that SGX is enabled in the BIOS.
++If a BIOS presents a choice between
++.I Enabled
++and
++.I Software Enabled
++modes for SGX,
++choose
++.I Enabled.
++.PP
++SGX is available only if the kernel was configured and built with the
++.B CONFIG_X86_SGX
++option.
++You can determine whether both the kernel and hardware together support SGX by
++checking whether "sgx" appears in the
++.I flags
++field in
++.IR /proc/cpuinfo .
++.SS Construction
++A process can create an enclave by using the
++.BR ioctl (2)
++interface provided and documented by
++.IR <asm/sgx.h>
++to
++.I /dev/sgx_enclave.
++.PP
++An enclave's base address is fixed during the build time:
++it is given to
++.B SGX_IOC_ENCLAVE_CREATE,
++which initiates the whole enclave build process.
++.PP
++As a consequence,
++.BR mmap (2)
++must be used to reserve a reasonable piece of the process address space,
++before the build process can begin.
++There is a hardware constraint that the enclave size must be a power of two,
++and the base address must be a multiple of the size.
++This can lead to reserving a large region than required by the payload,
++but the address space can be obviously trimmed after the enclave has been
++constructed on,
++with a sequence of
++.BR mmap(MAP_FIXED)
++calls.
++.PP
++A process can access enclave by entering into its address space through
++a set of entry points,
++which must be defined during the construction process.
++This requires a complex sequence of CPU instructions,
++and kernel assisted exception handling,
++encapsulated into
++.BR vsgx_enter_enclave
++vDSO interface,
++provided and documented by
++.IR <asm/sgx.h>.
++.SS Permissions
++In order to build an enclave, a process must be able to call
++.IR mmap (2)
++with
++.IR PROT_EXEC
++set.
++Like for any other type of executable,
++the page permissions must be set appropriately.
++For this reason,
++.I /dev/sgx_enclave
++must reside in a partition,
++which is not mounted as no-exec,
++in order to be usable,
++as
++.IR mmap(2)
++denies
++.IR PROT_EXEC
++otherwise.
++.SH VERSIONS
++The SGX feature was added in Linux 5.11.
++.SH SEE ALSO
++.BR ioctl (2),
++.BR mmap() (2),
++.BR mprotect (2)
+-- 
+2.31.1
+
