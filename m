@@ -6,109 +6,119 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19648C433B4
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 May 2021 18:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A486C433ED
+	for <linux-sgx@archiver.kernel.org>; Tue, 11 May 2021 20:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE45B61433
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 May 2021 18:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43EC261585
+	for <linux-sgx@archiver.kernel.org>; Tue, 11 May 2021 20:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbhEKSua (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 11 May 2021 14:50:30 -0400
-Received: from mga03.intel.com ([134.134.136.65]:20626 "EHLO mga03.intel.com"
+        id S229871AbhEKUXX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 11 May 2021 16:23:23 -0400
+Received: from mga09.intel.com ([134.134.136.24]:39584 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231329AbhEKSua (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 11 May 2021 14:50:30 -0400
-IronPort-SDR: 5bG1xV5MADV8x2fP2KvTY9zC/JLlmH2mwLspO9zXTNLTuiyTr4YXbGDoUKpNu0LKaL/haL6DZO
- PqqPNywr1nLQ==
-X-IronPort-AV: E=McAfee;i="6200,9189,9981"; a="199571726"
+        id S229548AbhEKUXV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 11 May 2021 16:23:21 -0400
+IronPort-SDR: rdFXUdc+eMIqEJp5kt4wIoRX2ZzCVIKoUgKdHue7KuRbdr0927Nj9/kvAuS117bhCTWmV+LtSL
+ cR4bIuquIGzA==
+X-IronPort-AV: E=McAfee;i="6200,9189,9981"; a="199602897"
 X-IronPort-AV: E=Sophos;i="5.82,291,1613462400"; 
-   d="scan'208";a="199571726"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 11:49:21 -0700
-IronPort-SDR: g/6HA7HGuYOFSjH5GwqUBU8S4ZvI4u5siKlRB6H26tK+Qfw8nB3CX8va/wYyVzHH/647v+GHP5
- g33RV0hl2iyg==
+   d="scan'208";a="199602897"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 13:22:11 -0700
+IronPort-SDR: P/vh1OHrEYTZYJZ+0Bs+YAv0LKrg+VjRlPEcA49dRKaf139zst6pC60YZisWtD2gVdEIz+TGHD
+ rSNUQExFKgcg==
 X-IronPort-AV: E=Sophos;i="5.82,291,1613462400"; 
-   d="scan'208";a="537140914"
-Received: from unknown (HELO [10.251.0.45]) ([10.251.0.45])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 11:49:21 -0700
-Subject: Re: [PATCH v4 1/2] selftests/sgx: Rename 'eenter' and 'sgx_call_vdso'
-To:     Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc:     linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        reinette.chatre@intel.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210508035648.18176-1-jarkko@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <4b8d9604-8d35-eefe-41cb-511b92a3f086@intel.com>
-Date:   Tue, 11 May 2021 11:49:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+   d="scan'208";a="436826429"
+Received: from rchatre-mobl3.amr.corp.intel.com (HELO [10.255.230.234]) ([10.255.230.234])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 13:22:11 -0700
+Subject: Re: [PATCH v5] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+To:     Jarkko Sakkinen <jarkko@kernel.org>, mtk.manpages@gmail.com
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@linux.intel.com
+References: <20210510145235.8056-1-jarkko@kernel.org>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <7ea35a75-a75d-4071-cbf7-f43c672a5a45@intel.com>
+Date:   Tue, 11 May 2021 13:22:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20210508035648.18176-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210510145235.8056-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 5/7/21 8:56 PM, Jarkko Sakkinen wrote:
-> Rename symbols for better clarity:
+Hi Jarkko,
+
+On 5/10/2021 7:52 AM, Jarkko Sakkinen wrote:
+
+...
+
+> +There is a hardware constraint that the enclave size must be a power of two,
+> +and the base address must be a multiple of the size.
+> +This can lead to reserving a large region than required by the payload,
+
+a large region than required -> a larger region than required ?
+
+> +but the address space can be obviously trimmed after the enclave has been
+
+can be obviously trimmed -> can be trimmed ?
+
+> +constructed on,
+
+constructed on -> constructed ?
+
+> +with a sequence of
+> +.BR mmap(MAP_FIXED)
+> +calls.
+> +.PP
+> +A process can access enclave by entering into its address space through
+> +a set of entry points,
+> +which must be defined during the construction process.
+> +This requires a complex sequence of CPU instructions,
+> +and kernel assisted exception handling,
+> +encapsulated into
+> +.BR vsgx_enter_enclave
+> +vDSO interface,
+> +provided and documented by
+> +.IR <asm/sgx.h>.
+
+This is not clear to me. This is written as though vsgx_enter_enclave is 
+something very specific that is documented in <asm/sgx.h>. Should it 
+perhaps be vdso_sgx_enter_enclave_t instead? Am I missing where 
+vsgx_enter_enclave is defined? I expect a reader of this man page may 
+want to search for the term "vsgx_enter_enclave" after reading the above.
+
+> +.SS Permissions
+> +In order to build an enclave, a process must be able to call
+> +.IR mmap (2)
+> +with
+> +.IR PROT_EXEC
+> +set.
+> +Like for any other type of executable,
+> +the page permissions must be set appropriately.
+> +For this reason,
+> +.I /dev/sgx_enclave
+> +must reside in a partition,
+> +which is not mounted as no-exec,
+> +in order to be usable,
+> +as
+> +.IR mmap(2)
+> +denies
+> +.IR PROT_EXEC
+> +otherwise.
+> +.SH VERSIONS
+> +The SGX feature was added in Linux 5.11.
+> +.SH SEE ALSO
+> +.BR ioctl (2),
+> +.BR mmap() (2),
+
+mmap() (2) -> mmap (2) ?
+
+> +.BR mprotect (2)
 > 
-> * 'eenter' -> 'vdso_sgx_enter_enclave'
-> * 'sgx_call_vdso' -> 'sgx_enter_enclave'
 
-Another sentence or two here would do wonders:
-
-'eenter' might be confused for directly calling ENCLU[EENTER].  It does
-not.  It calls into the VDSO, which actually has the EENTER instruction.
-
-'sgx_call_vdso' is *only* used for entering the enclave.  It's not some
-generic SGX call into the VDSO.
-
-Make the naming reflect that.
-
-Right?
+Reinette
