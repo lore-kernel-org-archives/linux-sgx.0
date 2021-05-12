@@ -2,106 +2,106 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_NONE,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62196C2B9F6
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 15:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99F9C43461
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 16:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA5661482
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 15:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A585B61C94
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 16:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234753AbhELPwB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 May 2021 11:52:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49178 "EHLO mail.kernel.org"
+        id S235581AbhELQVN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 May 2021 12:21:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17410 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235091AbhELPfS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 12 May 2021 11:35:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 455F961C3E;
-        Wed, 12 May 2021 15:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620832672;
-        bh=zB2G4t5ozyJ72g68BGRplKf2lQRTS6CtRvJ7FVX3NWE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DBjrvZcbfODq6o/u3ovhcKp34o3mQ/2g2kqOKbw7rqi0UbJcuDmNkgLMMy0M05dFs
-         mwfV7fdqIvkaHvs5FkFIxP3pQ5mW2wuelKsM0Zg1XI928MZ1g6hDtwlC/lZ6mTYtDn
-         L0yXyxJPdKzjgMXD6Vs/vdQOXuvQV+DBBKSwRDhM/LlZ9x9/DV6Qnq7MjBym4Ue3He
-         LklNFflnfSaW1SCikrvqRJriPDliUiNhIaGm2pb/3nXItDzT/4/obeOPpO0NPN/v0m
-         Pwish5sD0axq4vDEIuCSUJZyKrnPcy3P6Nd30IKN+fHXybC5E+QSyK+xdLgaNeWw/l
-         +EUyGcBOd8VUw==
-Date:   Wed, 12 May 2021 17:17:41 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        alsa-devel@alsa-project.org, coresight@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        intel-wired-lan@lists.osuosl.org, keyrings@vger.kernel.org,
-        kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-usb@vger.kernel.org,
-        mjpeg-users@lists.sourceforge.net, netdev@vger.kernel.org,
-        rcu@vger.kernel.org
-Subject: Re: [PATCH v2 00/40] Use ASCII subset instead of UTF-8 alternate
- symbols
-Message-ID: <20210512171741.2870bcbc@coco.lan>
-In-Reply-To: <YJvi1L2ss5Tfi+My@mit.edu>
-References: <cover.1620823573.git.mchehab+huawei@kernel.org>
-        <YJvi1L2ss5Tfi+My@mit.edu>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        id S238059AbhELP5O (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 May 2021 11:57:14 -0400
+IronPort-SDR: 7+Axw4a2GdTdJZYGr5p+xK+EevTTfQcb2LyJ34mdjWtG82rszEa9lKmLiCK/oMKVeRgKQvmVdi
+ Hmv7vfvJGpeA==
+X-IronPort-AV: E=McAfee;i="6200,9189,9982"; a="196646154"
+X-IronPort-AV: E=Sophos;i="5.82,293,1613462400"; 
+   d="scan'208";a="196646154"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2021 08:56:05 -0700
+IronPort-SDR: UWeTj3jQdhWF1YEWQNpBm0lw4wCt6SSJLjjdVbtjgKaH+1h5T0zsfunZVjXASgzqZfYXdSAkpD
+ 6nq/IoMY81KA==
+X-IronPort-AV: E=Sophos;i="5.82,293,1613462400"; 
+   d="scan'208";a="392799988"
+Received: from rchatre-mobl3.amr.corp.intel.com (HELO [10.251.0.238]) ([10.251.0.238])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2021 08:56:04 -0700
+Subject: Re: [PATCH v4 2/2] selftests/sgx: Migrate to kselftest harness
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210508035648.18176-1-jarkko@kernel.org>
+ <20210508035648.18176-2-jarkko@kernel.org>
+ <960f1cd8-d805-8ed8-6af0-eed1f49e3c65@intel.com>
+ <YJsrDc34d2vbc+At@kernel.org>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <0b68cf8e-994d-3c85-cb93-5701722d9336@intel.com>
+Date:   Wed, 12 May 2021 08:56:03 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YJsrDc34d2vbc+At@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Em Wed, 12 May 2021 10:14:44 -0400
-"Theodore Ts'o" <tytso@mit.edu> escreveu:
+Hi Jarkko,
 
-> On Wed, May 12, 2021 at 02:50:04PM +0200, Mauro Carvalho Chehab wrote:
-> > v2:
-> > - removed EM/EN DASH conversion from this patchset; =20
->=20
-> Are you still thinking about doing the
->=20
-> EN DASH --> "--"
-> EM DASH --> "---"
->=20
-> conversion? =20
+On 5/11/2021 6:10 PM, Jarkko Sakkinen wrote:
+> On Tue, May 11, 2021 at 11:42:49AM -0700, Reinette Chatre wrote:
+>> Hi Jarkko,
+>>
+>> On 5/7/2021 8:56 PM, Jarkko Sakkinen wrote:
+>>> Migrate to kselftest harness. Use a fixture test with enclave initialized
+>>> and de-initialized for each of the existing three tests, in other words:
+>>>
+>>> 1. One FIXTURE() for managing the enclave life-cycle.
+>>> 2. Three TEST_F()'s, one for each test case.
+>>
+>> These changes make it easier to add tests and I think it is a valuable
+>> addition.
+>>
+>>>
+>>> This gives a leaps better reporting than before. Here's an example
+>>> transcript:
+>>>
+>>> TAP version 13
+>>> 1..3
+>>> 0x0000000000000000 0x0000000000002000 0x03
+>>> 0x0000000000002000 0x0000000000001000 0x05
+>>> 0x0000000000003000 0x0000000000003000 0x03
+>>> ok 1 enclave.unclobbered_vdso
+>>> 0x0000000000000000 0x0000000000002000 0x03
+>>> 0x0000000000002000 0x0000000000001000 0x05
+>>> 0x0000000000003000 0x0000000000003000 0x03
+>>> ok 2 enclave.clobbered_vdso
+>>> 0x0000000000000000 0x0000000000002000 0x03
+>>> 0x0000000000002000 0x0000000000001000 0x05
+>>> 0x0000000000003000 0x0000000000003000 0x03
+>>> ok 3 enclave.clobbered_vdso_and_user_function
+>>>
+>>
+>> The output claims to conform to TAP13 but it does not seem as though all of
+>> the output conforms to TAP13. I assume such output would confuse automated
+>> systems.
+> 
+> You mean
+> 
+> 0x0000000000000000 0x0000000000002000 0x03
+> 0x0000000000002000 0x0000000000001000 0x05
+> 0x0000000000003000 0x0000000000003000 0x03
+> 
+> ?
 
-Yes, but I intend to submit it on a separate patch series, probably after
-having this one merged. Let's first cleanup the large part of the=20
-conversion-generated UTF-8 char noise ;-)
+Yes
 
-> That's not going to change what the documentation will
-> look like in the HTML and PDF output forms, and I think it would make
-> life easier for people are reading and editing the Documentation/*
-> files in text form.
-
-Agreed. I'm also considering to add a couple of cases of this char:
-
-	- U+2026 ('=E2=80=A6'): HORIZONTAL ELLIPSIS
-
-As Sphinx also replaces "..." into HORIZONTAL ELLIPSIS.
-
--
-
-Anyway, I'm opting to submitting those in separate because it seems
-that at least some maintainers added EM/EN DASH intentionally.
-
-So, it may generate case-per-case discussions.
-
-Also, IMO, at least a couple of EN/EM DASH cases would be better served=20
-with a single hyphen.
-
-Thanks,
-Mauro
+Reinette
