@@ -4,218 +4,323 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C682C433B4
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 21:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AD0C433ED
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 23:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 597E2613EB
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 21:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5FE613EB
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 23:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347068AbhELV2L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 May 2021 17:28:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43944 "EHLO mail.kernel.org"
+        id S233178AbhELXMA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 May 2021 19:12:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1385221AbhELVPb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 12 May 2021 17:15:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 32B8D610CA;
-        Wed, 12 May 2021 21:14:20 +0000 (UTC)
+        id S1347659AbhELVyv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 May 2021 17:54:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9989C613BD;
+        Wed, 12 May 2021 21:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620854060;
-        bh=tpPd1GAWy99yDPj1UmWZAV6cslrdAU7/bxDhl731x7M=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PJsI+5RgvbCPoHAtzVbVDnu06//tx4dgqlnQJqKk01Gm7SQhZJ8aZgQw8LhPOlf6f
-         sJHcwbTveCW+CuOSlcw67BIhB0BPv9pwRK4s3Cf/9qvYS7F39kL53Y65tI1tb3K5yf
-         efbo5+sI0i0KtbFIwXyDi6PYdKOpyZ+zjj0Tk1Tjp0sU5DejEqR5HgxyMeoUgBOk8y
-         YTx46Yjq+KhIbYmIot3IcWm5Afpxyzz132I8ZeFpkT7nwLtQMsVgoxe+QWY9bRxKkq
-         cFoxDjzJymPXjxupVUu5Ou/pCmoeMp3E1lAGVfRkgSK+VZpHZ1nQv/gbxJmbOi5ZDJ
-         85oX1kzsLWCsw==
+        s=k20201202; t=1620856419;
+        bh=E5lvyrlrcxx/jGyE3lihbWzxiqC8Lw5xS1SIkXGygZk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iFpAe//xKIYEikCEjwaOeXDRBM841qfPpk8OVCt/9mFkT+eHGkdDJjZYkw4sOYT+H
+         MF+fOr0eCY3bLX+rDHdqVG8A77Ca3+q5QcVYeP1acDMCEJgC7Gw37w2bXDSqAiVig8
+         XIT70na5ETg5zbtxJZTH/9GROBaKrpQohE1vXzquIlcaXhgFSClGzG+YIF7IBh7+6r
+         m03xdJvzutbfrf5Y9274rZxu642P6FLhKMGQADXUFlDbW3mplYVvqVQZSn4hw/7tZh
+         5wrCs4CVIgzAGLrJ4dlKJRqoAR/7KDFXbugWA0oN0va+Dy/a46lbXs7QFuMsKwEFKp
+         zH4JXI3/OLaNQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
-        dave.hansen@linux.intel.com,
+To:     shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH v6, RESEND] sgx.7: New page with overview of Software Guard eXtensions (SGX)
-Date:   Thu, 13 May 2021 00:14:14 +0300
-Message-Id: <20210512211414.416860-1-jarkko@kernel.org>
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 2/2] selftests/sgx: Migrate to kselftest harness
+Date:   Thu, 13 May 2021 00:53:23 +0300
+Message-Id: <20210512215323.420639-2-jarkko@kernel.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210512215323.420639-1-jarkko@kernel.org>
+References: <20210512215323.420639-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+Migrate to kselftest harness. Use a fixture test with enclave initialized
+and de-initialized for each of the existing three tests, in other words:
+
+1. One FIXTURE() for managing the enclave life-cycle.
+2. Three TEST_F()'s, one for each test case.
+
+This gives a leaps better reporting than before. Here's an example
+transcript:
+
+TAP version 13
+1..3
+
+ok 1 enclave.unclobbered_vdso
+
+ok 2 enclave.clobbered_vdso
+
+ok 3 enclave.clobbered_vdso_and_user_function
+
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
 
-v6:
-* Oops, sorry, forgot to move the log over here. That's the reason for
-  resend.
-* Small fixes based on Dave's and Reinette's feedback.
-* Extended the "Permissions" section to cover mmap()
-5:
-* Taking away hardware concepts and focusing more on the interface.
+v5:
+* Use TH_LOG() for printing enclave address ranges instead of printf(),
+  based on Reinette's remark.
+
 v4:
-* Did a heavy edit trying to streamline the story a bit and focus on
-  stuff important to the user (e.g. lighten up x86 details).
+* Refine to take better use of the kselftest harness macros.
+* Fix: TCS base address was not initialized for a run struct.
+
 v3:
-* Overhaul based on Michael's comments. Most likely needs to be refined
-  in various places but this is at least a small step forward for sure.
+* Use helper macros.
+
 v2:
-* Fixed the semantic newlines convention and various style errors etc.
-  that were reported by Alenjandro and Michael.
-* SGX was merged to v5.
+* Add the missing string argument to ksft_test_result_pass() and
+  ksft_test_result_fail() calls.
 
- man7/sgx.7 | 138 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 138 insertions(+)
- create mode 100644 man7/sgx.7
+ tools/testing/selftests/sgx/load.c |   3 -
+ tools/testing/selftests/sgx/main.c | 170 ++++++++++++++---------------
+ 2 files changed, 85 insertions(+), 88 deletions(-)
 
-diff --git a/man7/sgx.7 b/man7/sgx.7
-new file mode 100644
-index 000000000..b5bd1327e
---- /dev/null
-+++ b/man7/sgx.7
-@@ -0,0 +1,138 @@
-+.\" Copyright (C) 2021 Intel Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
-+.PP
-+sgx - overview of Software Guard eXtensions
-+.SH DESCRIPTION
-+.SS Overview
-+Intel Software Guard eXtensions (SGX) allow applications to host
-+protected executable objects in memory,
-+also known as
-+.I enclaves.
-+They are constructed with
-+.BR mmap (2)
-+and
-+.BR ioctl (2)
-+applied to
-+.I /dev/sgx_enclave.
-+The details of enclave's memory structure can be found in
-+the Intel Software Developers Manual.
-+.PP
-+SGX must be enabled in BIOS.
-+If SGX appears to be unsupported on a system having hardware support,
-+ensure that SGX is enabled in the BIOS.
-+If a BIOS presents a choice between
-+.I Enabled
-+and
-+.I Software Enabled
-+modes for SGX,
-+choose
-+.I Enabled.
-+.PP
-+SGX is available only if the kernel was configured and built with the
-+.B CONFIG_X86_SGX
-+option.
-+You can determine whether both the kernel and hardware together support SGX by
-+checking whether "sgx" appears in the
-+.I flags
-+field in
-+.IR /proc/cpuinfo .
-+.SS Construction
-+A process can build an enclave by applying the
-+.BR ioctl (2)
-+interface provided by
-+.IR <asm/sgx.h>
-+to
-+.I /dev/sgx_enclave.
-+.PP
-+An enclave's base address is fixed during the build time:
-+it is given to
-+.BR ioctl(SGX_IOC_ENCLAVE_CREATE),
-+which initiates the whole enclave build process.
-+.PP
-+As a consequence,
-+.BR mmap (2)
-+must be used to reserve a reasonable piece of the process address space,
-+before the build process can begin.
-+There is a hardware constraint that the enclave size must be a power of two,
-+and the base address must be a multiple of the size.
-+This often leads to reserving a larger region than required by the payload.
-+If the address space size is an issue,
-+it can be obviously trimmed with
-+.BR mmap(MAP_FIXED)
-+calls,
-+after the enclave has been constructed.
-+.PP
-+A process can access enclave by entering into its address space through
-+a set of entry points,
-+which must be defined during the construction process.
-+This requires a complex sequence of CPU instructions,
-+and kernel assisted exception handling.
-+For these reasons,
-+it is encapsulated into
-+vDSO interface,
-+provided by
-+.BR vdso_sgx_enter_enclave_t,
-+which is located in
-+.IR <asm/sgx.h>.
-+.SS Permissions
-+In order to build an enclave, a process must be able to call
-+.IR mmap (2)
-+with
-+.IR PROT_EXEC
-+set,
-+because like for any other type of executable,
-+the page table permissions must be set appropriately.
-+Therefore,
-+.I /dev/sgx_enclave
-+must reside in a partition,
-+which is not mounted with
-+.B noexec
-+set in the mount options.
-+.PP
-+During the build process each enclave page is assigned protection bits,
-+as part of
-+.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES).
-+These permissions are also the maximum permissions to which the page can be be mapped.
-+If
-+.BR mmap (2)
-+is called with surpassing permissions,
-+it will return
-+.B -EACCES.
-+If
-+.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES)
-+is called after
-+.BR mmap (2)
-+with lower permissions,
-+the process will eventually receive a
-+.BR SIGBUS
-+signal,
-+once it accesses the page for the first time.
-+.SH VERSIONS
-+The SGX feature was added in Linux 5.11.
-+.SH SEE ALSO
-+.BR ioctl (2),
-+.BR mmap (2),
-+.BR mprotect (2)
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index f441ac34b4d4..00928be57fc4 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -239,9 +239,6 @@ bool encl_load(const char *path, struct encl *encl)
+ 		seg->offset = (phdr->p_offset & PAGE_MASK) - src_offset;
+ 		seg->size = (phdr->p_filesz + PAGE_SIZE - 1) & PAGE_MASK;
+ 
+-		printf("0x%016lx 0x%016lx 0x%02x\n", seg->offset, seg->size,
+-		       seg->prot);
+-
+ 		j++;
+ 	}
+ 
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 43da68388e25..78b2c8b27e07 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -17,8 +17,8 @@
+ #include <sys/types.h>
+ #include <sys/auxv.h>
+ #include "defines.h"
++#include "../kselftest_harness.h"
+ #include "main.h"
+-#include "../kselftest.h"
+ 
+ static const uint64_t MAGIC = 0x1122334455667788ULL;
+ vdso_sgx_enter_enclave_t vdso_sgx_enter_enclave;
+@@ -107,85 +107,49 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
+ 	return NULL;
+ }
+ 
+-bool report_results(struct sgx_enclave_run *run, int ret, uint64_t result,
+-		  const char *test)
+-{
+-	bool valid = true;
+-
+-	if (ret) {
+-		printf("FAIL: %s() returned: %d\n", test, ret);
+-		valid = false;
+-	}
+-
+-	if (run->function != EEXIT) {
+-		printf("FAIL: %s() function, expected: %u, got: %u\n", test, EEXIT,
+-		       run->function);
+-		valid = false;
+-	}
+-
+-	if (result != MAGIC) {
+-		printf("FAIL: %s(), expected: 0x%lx, got: 0x%lx\n", test, MAGIC,
+-		       result);
+-		valid = false;
+-	}
+-
+-	if (run->user_data) {
+-		printf("FAIL: %s() user data, expected: 0x0, got: 0x%llx\n",
+-		       test, run->user_data);
+-		valid = false;
+-	}
+-
+-	return valid;
+-}
+-
+-static int user_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r9,
+-			struct sgx_enclave_run *run)
+-{
+-	run->user_data = 0;
+-	return 0;
+-}
++FIXTURE(enclave) {
++	struct encl encl;
++	struct sgx_enclave_run run;
++};
+ 
+-int main(int argc, char *argv[])
++FIXTURE_SETUP(enclave)
+ {
+-	struct sgx_enclave_run run;
++	Elf64_Sym *sgx_enter_enclave_sym = NULL;
+ 	struct vdso_symtab symtab;
+-	Elf64_Sym *sgx_enter_enclave_sym;
+-	uint64_t result = 0;
+-	struct encl encl;
++	struct encl_segment *seg;
+ 	unsigned int i;
+ 	void *addr;
+-	int ret;
+-
+-	memset(&run, 0, sizeof(run));
+ 
+-	if (!encl_load("test_encl.elf", &encl)) {
+-		encl_delete(&encl);
++	if (!encl_load("test_encl.elf", &self->encl)) {
++		encl_delete(&self->encl);
+ 		ksft_exit_skip("cannot load enclaves\n");
+ 	}
+ 
+-	if (!encl_measure(&encl))
++	for (i = 0; i < self->encl.nr_segments; i++) {
++		seg = &self->encl.segment_tbl[i];
++
++		TH_LOG("0x%016lx 0x%016lx 0x%02x\n", seg->offset, seg->size, seg->prot);
++	}
++
++	if (!encl_measure(&self->encl))
+ 		goto err;
+ 
+-	if (!encl_build(&encl))
++	if (!encl_build(&self->encl))
+ 		goto err;
+ 
+ 	/*
+ 	 * An enclave consumer only must do this.
+ 	 */
+-	for (i = 0; i < encl.nr_segments; i++) {
+-		struct encl_segment *seg = &encl.segment_tbl[i];
+-
+-		addr = mmap((void *)encl.encl_base + seg->offset, seg->size,
+-			    seg->prot, MAP_SHARED | MAP_FIXED, encl.fd, 0);
+-		if (addr == MAP_FAILED) {
+-			perror("mmap() segment failed");
+-			exit(KSFT_FAIL);
+-		}
++	for (i = 0; i < self->encl.nr_segments; i++) {
++		struct encl_segment *seg = &self->encl.segment_tbl[i];
++
++		addr = mmap((void *)self->encl.encl_base + seg->offset, seg->size,
++			    seg->prot, MAP_SHARED | MAP_FIXED, self->encl.fd, 0);
++		EXPECT_NE(addr, MAP_FAILED);
++		if (addr == MAP_FAILED)
++			goto err;
+ 	}
+ 
+-	memset(&run, 0, sizeof(run));
+-	run.tcs = encl.encl_base;
+-
+ 	/* Get vDSO base address */
+ 	addr = (void *)getauxval(AT_SYSINFO_EHDR);
+ 	if (!addr)
+@@ -200,32 +164,68 @@ int main(int argc, char *argv[])
+ 
+ 	vdso_sgx_enter_enclave = addr + sgx_enter_enclave_sym->st_value;
+ 
+-	ret = sgx_enter_enclave((void *)&MAGIC, &result, 0, EENTER,
+-					    NULL, NULL, &run);
+-	if (!report_results(&run, ret, result, "sgx_enter_enclave_unclobbered"))
+-		goto err;
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
+ 
++err:
++	if (!sgx_enter_enclave_sym)
++		encl_delete(&self->encl);
+ 
+-	/* Invoke the vDSO directly. */
+-	result = 0;
+-	ret = vdso_sgx_enter_enclave((unsigned long)&MAGIC, (unsigned long)&result,
+-				     0, EENTER, 0, 0, &run);
+-	if (!report_results(&run, ret, result, "sgx_enter_enclave"))
+-		goto err;
++	ASSERT_NE(sgx_enter_enclave_sym, NULL);
++}
+ 
+-	/* And with an exit handler. */
+-	run.user_handler = (__u64)user_handler;
+-	run.user_data = 0xdeadbeef;
+-	ret = vdso_sgx_enter_enclave((unsigned long)&MAGIC, (unsigned long)&result,
+-				     0, EENTER, 0, 0, &run);
+-	if (!report_results(&run, ret, result, "user_handler"))
+-		goto err;
++FIXTURE_TEARDOWN(enclave)
++{
++	encl_delete(&self->encl);
++	vdso_sgx_enter_enclave = NULL;
++}
+ 
+-	printf("SUCCESS\n");
+-	encl_delete(&encl);
+-	exit(KSFT_PASS);
+ 
+-err:
+-	encl_delete(&encl);
+-	exit(KSFT_FAIL);
++TEST_F(enclave, unclobbered_vdso)
++{
++	uint64_t result = 0;
++
++	EXPECT_EQ(sgx_enter_enclave((void *)&MAGIC, &result, 0, EENTER, NULL, NULL, &self->run), 0);
++
++	EXPECT_EQ(result, MAGIC);
++	EXPECT_EQ(self->run.function, EEXIT);
++	EXPECT_EQ(self->run.user_data, 0);
++}
++
++TEST_F(enclave, clobbered_vdso)
++{
++	uint64_t result = 0;
++
++	EXPECT_EQ(vdso_sgx_enter_enclave((unsigned long)&MAGIC, (unsigned long)&result, 0,
++					 EENTER, 0, 0, &self->run), 0);
++
++
++	EXPECT_EQ(result, MAGIC);
++	EXPECT_EQ(self->run.function, EEXIT);
++	EXPECT_EQ(self->run.user_data, 0);
+ }
++
++static int test_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r9,
++			struct sgx_enclave_run *run)
++{
++	run->user_data = 0;
++
++	return 0;
++}
++
++TEST_F(enclave, clobbered_vdso_and_user_function)
++{
++	uint64_t result = 0;
++
++	self->run.user_handler = (__u64)test_handler;
++	self->run.user_data = 0xdeadbeef;
++
++	EXPECT_EQ(vdso_sgx_enter_enclave((unsigned long)&MAGIC, (unsigned long)&result, 0,
++					 EENTER, 0, 0, &self->run), 0);
++
++	EXPECT_EQ(result, MAGIC);
++	EXPECT_EQ(self->run.function, EEXIT);
++	EXPECT_EQ(self->run.user_data, 0);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.31.1
 
