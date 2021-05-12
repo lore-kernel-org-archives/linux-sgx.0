@@ -2,123 +2,97 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A486C433ED
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 May 2021 20:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D991C433B4
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 01:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43EC261585
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 May 2021 20:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 397526192E
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 May 2021 01:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbhEKUXX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 11 May 2021 16:23:23 -0400
-Received: from mga09.intel.com ([134.134.136.24]:39584 "EHLO mga09.intel.com"
+        id S229784AbhELBLr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 11 May 2021 21:11:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229548AbhEKUXV (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 11 May 2021 16:23:21 -0400
-IronPort-SDR: rdFXUdc+eMIqEJp5kt4wIoRX2ZzCVIKoUgKdHue7KuRbdr0927Nj9/kvAuS117bhCTWmV+LtSL
- cR4bIuquIGzA==
-X-IronPort-AV: E=McAfee;i="6200,9189,9981"; a="199602897"
-X-IronPort-AV: E=Sophos;i="5.82,291,1613462400"; 
-   d="scan'208";a="199602897"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 13:22:11 -0700
-IronPort-SDR: P/vh1OHrEYTZYJZ+0Bs+YAv0LKrg+VjRlPEcA49dRKaf139zst6pC60YZisWtD2gVdEIz+TGHD
- rSNUQExFKgcg==
-X-IronPort-AV: E=Sophos;i="5.82,291,1613462400"; 
-   d="scan'208";a="436826429"
-Received: from rchatre-mobl3.amr.corp.intel.com (HELO [10.255.230.234]) ([10.255.230.234])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 13:22:11 -0700
-Subject: Re: [PATCH v5] sgx.7: New page with overview of Software Guard
- eXtensions (SGX)
-To:     Jarkko Sakkinen <jarkko@kernel.org>, mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
-        dave.hansen@linux.intel.com
-References: <20210510145235.8056-1-jarkko@kernel.org>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <7ea35a75-a75d-4071-cbf7-f43c672a5a45@intel.com>
-Date:   Tue, 11 May 2021 13:22:10 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S229637AbhELBLr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 11 May 2021 21:11:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 75B746191C;
+        Wed, 12 May 2021 01:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620781840;
+        bh=MiFiwv59iLa8fHDH6J32sia/o6DCitrl053+nXGCPxk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kwf0rn3YKIpklZd2FA0ZRWPYz788mBaRt2ZaPgwhmECO9TQh2Mqh3FVvSsRqlOzs7
+         ldB/OQul7lHfVUd8H2jSpDsk0KN84rwKmG5p0aqzKP6fidOHtZE+LzjHxHzcnoe8Zj
+         CdIg388pOjD7BDmACvvptzoVmNkZd9ZWFzU89amioAxZiD45SwQ7DUaoRMhtfZ58vV
+         Kxs+nzU3v8YQ7/lj+kvZRbdloBLoeOzXDY/kh45XHCmOV65JqJh8kJfkd4Y55e5s3M
+         MLlvrZ1RJ647PY+8x8MSGuguitVJ5mkBS9/aHYzDzIXmISm96xKfAX4d5nzkY3BZmY
+         Mue7hIciTpONA==
+Date:   Wed, 12 May 2021 04:10:37 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] selftests/sgx: Migrate to kselftest harness
+Message-ID: <YJsrDc34d2vbc+At@kernel.org>
+References: <20210508035648.18176-1-jarkko@kernel.org>
+ <20210508035648.18176-2-jarkko@kernel.org>
+ <960f1cd8-d805-8ed8-6af0-eed1f49e3c65@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20210510145235.8056-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <960f1cd8-d805-8ed8-6af0-eed1f49e3c65@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
-
-On 5/10/2021 7:52 AM, Jarkko Sakkinen wrote:
-
-...
-
-> +There is a hardware constraint that the enclave size must be a power of two,
-> +and the base address must be a multiple of the size.
-> +This can lead to reserving a large region than required by the payload,
-
-a large region than required -> a larger region than required ?
-
-> +but the address space can be obviously trimmed after the enclave has been
-
-can be obviously trimmed -> can be trimmed ?
-
-> +constructed on,
-
-constructed on -> constructed ?
-
-> +with a sequence of
-> +.BR mmap(MAP_FIXED)
-> +calls.
-> +.PP
-> +A process can access enclave by entering into its address space through
-> +a set of entry points,
-> +which must be defined during the construction process.
-> +This requires a complex sequence of CPU instructions,
-> +and kernel assisted exception handling,
-> +encapsulated into
-> +.BR vsgx_enter_enclave
-> +vDSO interface,
-> +provided and documented by
-> +.IR <asm/sgx.h>.
-
-This is not clear to me. This is written as though vsgx_enter_enclave is 
-something very specific that is documented in <asm/sgx.h>. Should it 
-perhaps be vdso_sgx_enter_enclave_t instead? Am I missing where 
-vsgx_enter_enclave is defined? I expect a reader of this man page may 
-want to search for the term "vsgx_enter_enclave" after reading the above.
-
-> +.SS Permissions
-> +In order to build an enclave, a process must be able to call
-> +.IR mmap (2)
-> +with
-> +.IR PROT_EXEC
-> +set.
-> +Like for any other type of executable,
-> +the page permissions must be set appropriately.
-> +For this reason,
-> +.I /dev/sgx_enclave
-> +must reside in a partition,
-> +which is not mounted as no-exec,
-> +in order to be usable,
-> +as
-> +.IR mmap(2)
-> +denies
-> +.IR PROT_EXEC
-> +otherwise.
-> +.SH VERSIONS
-> +The SGX feature was added in Linux 5.11.
-> +.SH SEE ALSO
-> +.BR ioctl (2),
-> +.BR mmap() (2),
-
-mmap() (2) -> mmap (2) ?
-
-> +.BR mprotect (2)
+On Tue, May 11, 2021 at 11:42:49AM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
+> On 5/7/2021 8:56 PM, Jarkko Sakkinen wrote:
+> > Migrate to kselftest harness. Use a fixture test with enclave initialized
+> > and de-initialized for each of the existing three tests, in other words:
+> > 
+> > 1. One FIXTURE() for managing the enclave life-cycle.
+> > 2. Three TEST_F()'s, one for each test case.
+> 
+> These changes make it easier to add tests and I think it is a valuable
+> addition.
+> 
+> > 
+> > This gives a leaps better reporting than before. Here's an example
+> > transcript:
+> > 
+> > TAP version 13
+> > 1..3
+> > 0x0000000000000000 0x0000000000002000 0x03
+> > 0x0000000000002000 0x0000000000001000 0x05
+> > 0x0000000000003000 0x0000000000003000 0x03
+> > ok 1 enclave.unclobbered_vdso
+> > 0x0000000000000000 0x0000000000002000 0x03
+> > 0x0000000000002000 0x0000000000001000 0x05
+> > 0x0000000000003000 0x0000000000003000 0x03
+> > ok 2 enclave.clobbered_vdso
+> > 0x0000000000000000 0x0000000000002000 0x03
+> > 0x0000000000002000 0x0000000000001000 0x05
+> > 0x0000000000003000 0x0000000000003000 0x03
+> > ok 3 enclave.clobbered_vdso_and_user_function
+> > 
+> 
+> The output claims to conform to TAP13 but it does not seem as though all of
+> the output conforms to TAP13. I assume such output would confuse automated
+> systems.
 
-Reinette
+You mean
+
+0x0000000000000000 0x0000000000002000 0x03
+0x0000000000002000 0x0000000000001000 0x05
+0x0000000000003000 0x0000000000003000 0x03
+
+?
+
+/Jarkko
+>
