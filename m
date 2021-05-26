@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B32C4708A
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 May 2021 04:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270E7C4708D
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 May 2021 12:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8583C613C9
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 May 2021 04:47:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 043836113D
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 May 2021 12:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbhEZEsd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 26 May 2021 00:48:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37216 "EHLO mail.kernel.org"
+        id S234557AbhEZMw2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 May 2021 08:52:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230075AbhEZEsc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 26 May 2021 00:48:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B70F56143B;
-        Wed, 26 May 2021 04:47:00 +0000 (UTC)
+        id S234906AbhEZMt0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 26 May 2021 08:49:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D075613E6;
+        Wed, 26 May 2021 12:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622004421;
-        bh=1uFv2VyJz6esoDem7stUbj9D1cON4Q48LBPPv+L2n/A=;
+        s=k20201202; t=1622033274;
+        bh=8X2I+f5PJ7kkjivmgwzIimvrHxn47XP2IMrRBWyux0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qc0Fpd31890mwNY6MeQPSqYksY9UxWzK4quYJlpcieunEVxcvSjrqJqIocktNbg7V
-         a5kEf+35hGqArZEy4sREstwopNjpkVVZB0rLcVfTCXSTm9sAlZuL9N5cA6QQNZpahf
-         Mjvtdq3LExISjWQ+2wZ8AY2b1kRNlTEw1FDIPs6TXM0zkhFU/jM+MrwfOFy13atfmA
-         3RBiYmfp7Os5kPnFtwlPjguSX/aXoQEQvlN5VI4u0d9h55D8fuYV4vmcRubcOBnxx5
-         1f1NzsUyDyp3c2twVic0z3M+Sr0A/cfECZyRIVKejtXQJQSBWImRfOHabzgfESKfpd
-         pVMUZAF2forqw==
+        b=KTc+LAWZrmDrLwN74VDAQIB3dwNTMBujw5i9klqZDqOkS1QLlD6C2dqgHUHAzvAFQ
+         czQljDKN6erb3bIkP5+6TGKpD2CKlnVpzGwMpF+m3h69f4iINNbGaFj0An46Soo33J
+         xzZKNvsrrYV5pTi9wUTGgme0yb9yXZ9Datq3H5Mz10ZyBzyEAr0OobwskAwaSkpTPJ
+         U2V5/cu83Zd2KeqV32EBTBBcgxFLHg5TZuEHY/Rik8EvPeFxcyIO428JPGfbGcsZnf
+         O5nxU5gu/IV1yJEFc56OzmHxnQstUvQASZE5E3CrdZIAgMfMMY5TNQLCxNlDjNneC1
+         QzoDapnOYRqbg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     shuah@kernel.org
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
@@ -38,60 +38,74 @@ Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/3] selftests/sgx: Dump enclave memory map
-Date:   Wed, 26 May 2021 07:46:49 +0300
-Message-Id: <20210526044649.988789-3-jarkko@kernel.org>
+Subject: [PATCH v7 4/4] selftests/sgx: Add EXPECT_EEXIT() macro
+Date:   Wed, 26 May 2021 15:47:40 +0300
+Message-Id: <20210526124740.16783-4-jarkko@kernel.org>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210526044649.988789-1-jarkko@kernel.org>
-References: <20210526044649.988789-1-jarkko@kernel.org>
+In-Reply-To: <20210526124740.16783-1-jarkko@kernel.org>
+References: <20210526124740.16783-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Often, it's useful to check whether /proc/self/maps looks sane when
-dealing with memory mapped objects, especially when they are JIT'ish
-dynamically constructed objects. Therefore, dump "/dev/sgx_enclave"
-matching lines from the memory map in FIXTURE_SETUP().
+Add EXPECT_EEXIT() macro, which will conditionally print the exception
+information, in addition to
+
+  EXPECT_EQ(self->run.function, EEXIT);
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- tools/testing/selftests/sgx/main.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ tools/testing/selftests/sgx/main.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 0a2f20326c66..27e43870a9a1 100644
+index d658882b5dd2..86d4283f9c61 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -117,6 +117,8 @@ FIXTURE_SETUP(enclave)
- 	Elf64_Sym *sgx_enter_enclave_sym = NULL;
- 	struct vdso_symtab symtab;
- 	struct encl_segment *seg;
-+	char maps_line[256];
-+	FILE *maps_file;
- 	unsigned int i;
- 	void *addr;
+@@ -207,6 +207,14 @@ static inline int encl_call(const void *in, void *out, struct sgx_enclave_run *r
+ 	return ret;
+ }
  
-@@ -167,6 +169,18 @@ FIXTURE_SETUP(enclave)
- 	memset(&self->run, 0, sizeof(self->run));
- 	self->run.tcs = self->encl.encl_base;
++#define EXPECT_EEXIT(run) \
++	do { \
++		EXPECT_EQ((run)->function, EEXIT); \
++		if ((run)->function != EEXIT) \
++			TH_LOG("0x%02x 0x%02x 0x%16llx", (run)->exception_vector, \
++			       (run)->exception_error_code, (run)->exception_addr); \
++	} while (0)
++
+ TEST_F(enclave, unclobbered_vdso)
+ {
+ 	uint64_t result = 0;
+@@ -214,7 +222,7 @@ TEST_F(enclave, unclobbered_vdso)
+ 	EXPECT_EQ(encl_call(&MAGIC, &result, &self->run, false), 0);
  
-+	maps_file = fopen("/proc/self/maps", "r");
-+	if (maps_file != NULL)  {
-+		while (fgets(maps_line, sizeof(maps_line), maps_file) != NULL) {
-+			maps_line[strlen(maps_line) - 1] = '\0';
-+
-+			if (strstr(maps_line, "/dev/sgx_enclave"))
-+				TH_LOG("%s", maps_line);
-+		}
-+
-+		fclose(maps_file);
-+	}
-+
- err:
- 	if (!sgx_enter_enclave_sym)
- 		encl_delete(&self->encl);
+ 	EXPECT_EQ(result, MAGIC);
+-	EXPECT_EQ(self->run.function, EEXIT);
++	EXPECT_EEXIT(&self->run);
+ 	EXPECT_EQ(self->run.user_data, 0);
+ }
+ 
+@@ -225,7 +233,7 @@ TEST_F(enclave, clobbered_vdso)
+ 	EXPECT_EQ(encl_call(&MAGIC, &result, &self->run, true), 0);
+ 
+ 	EXPECT_EQ(result, MAGIC);
+-	EXPECT_EQ(self->run.function, EEXIT);
++	EXPECT_EEXIT(&self->run);
+ 	EXPECT_EQ(self->run.user_data, 0);
+ }
+ 
+@@ -247,7 +255,7 @@ TEST_F(enclave, clobbered_vdso_and_user_function)
+ 	EXPECT_EQ(encl_call(&MAGIC, &result, &self->run, true), 0);
+ 
+ 	EXPECT_EQ(result, MAGIC);
+-	EXPECT_EQ(self->run.function, EEXIT);
++	EXPECT_EEXIT(&self->run);
+ 	EXPECT_EQ(self->run.user_data, 0);
+ }
+ 
 -- 
 2.31.1
 
