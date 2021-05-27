@@ -2,98 +2,102 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1964DC47089
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 May 2021 22:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2573DC47089
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 May 2021 23:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E524E613BF
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 May 2021 22:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 089DE6113B
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 May 2021 23:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235781AbhE0Wxk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 27 May 2021 18:53:40 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:37420 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233203AbhE0Wxk (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 May 2021 18:53:40 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1622155923;
+        id S236602AbhE0XXI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 27 May 2021 19:23:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20307 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236631AbhE0XXF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 May 2021 19:23:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622157691;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uAIoLlMtrjzvrcsBxWhaicEwWt4fesWA8JrISGhrLd8=;
-        b=XK0pzWuM+eObk9PdHaBYcRiPNn68IG5lkkSx+/M1IFv1KJVDo4XGjreMmYtvfcptFdJaMK
-        o8SAPmC2vpJsvRPrME1koGoJpxNT6UHo6MNWwTVoUwCCdTjyFu2gEKbVN3gcCQ1uAWpKn2
-        eMP0WdUIgfjHREIlP0+JcDkIW057x0G6Nzuk+8V0P741kSHsc8BdMuqlCin/skeHZ1v9tl
-        d57tofIlP/91yyXfeHbJcEQb4au943NVBZRydPidUONCE+/77OLFVbPnRAffEEYUhuqdE1
-        1OVM4filzuJMq3TAb9snPrtMAq5hUXBcXu/CpEd4kL/ZC/dDScu36YsxvKFbiw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1622155923;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uAIoLlMtrjzvrcsBxWhaicEwWt4fesWA8JrISGhrLd8=;
-        b=NgIBE2poQuAfCdybmeEvdWm3RcgZ7+Cwxqm+Hlou0f5BLGQUi1m1uWytGTEfuproQ+/nss
-        kUTkS29UD5CGimCw==
-To:     syzbot <syzbot+71271244f206d17f6441@syzkaller.appspotmail.com>,
+        bh=nCWKzoy9kj1pT7s/LMAs2R0z3NMNhJpdEi2dqYprz/8=;
+        b=AOKA4Sk6x1T+F8ZHPC2QSGD6sjwIhMjgKTUKZcDPAWJTAX0AvzjuSQfBJpSuUTQ15BNrp5
+        V7JzX/J/Lde8johbmdW9QncVERnZbjVdj1DN9hflcFyU0FtDth9Yg619YNnz8F8enVjPoj
+        +1/S9fCZH4Adm/83ku4jp4kyRa8ond0=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-21-V2j0xtPDPPyDuwNayJLSuQ-1; Thu, 27 May 2021 19:21:27 -0400
+X-MC-Unique: V2j0xtPDPPyDuwNayJLSuQ-1
+Received: by mail-ej1-f72.google.com with SMTP id w13-20020a170906384db02903d9ad6b26d8so645775ejc.0
+        for <linux-sgx@vger.kernel.org>; Thu, 27 May 2021 16:21:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nCWKzoy9kj1pT7s/LMAs2R0z3NMNhJpdEi2dqYprz/8=;
+        b=NE+/PbpKpvoW58ccZSEWl5Tr02Y2XKLQae7c+0+3ZOTjdZ9TCzoA5BDuypWWFP0HKz
+         574gcIHmZALERgunEUSeqhj76TFgFSnCQFgJpHAPj6f3qbzGwc7+kEBinTkmX4DOwUUC
+         IO5CpGmBz0S53pJ6Axi2t9b80q5uHXtmUZit3Pzj8LJyBJRvIOIFBDfjd1sNMAnV7yz9
+         kxUZQdHdZskZ5MghxhSnUEqhZFO7i7pO1RKtqdGY8Mbai0AshnUz/ikUDVGjiUKSkT3V
+         585z29Jsg352is4ob6dD4Pq8j9Hp49S+q0Dodxakqct3qmkr7NgU5qBRHQAVZG42wgUt
+         MUQA==
+X-Gm-Message-State: AOAM531NnttInqJVw0uiXDVoCdipwwfyEyi4pFVaDpJkiL7Ksqgxhdi0
+        9og9LEDNZUhMP0o1DMMzFZqgfEIZeB8m0A6addTUkltKPccHge6mSNJHcwxRYMBaBhWk1mHZWVo
+        oNcQA44aOEagtVQX/mIIb
+X-Received: by 2002:a17:906:68c:: with SMTP id u12mr6263659ejb.470.1622157686503;
+        Thu, 27 May 2021 16:21:26 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzzgiXFMi0YlkhIN3byuem1Kgwi4TTcVzAYR+6zTso/Cq/N5U9JF7ehTOA7isPY90/EHZ2CWQ==
+X-Received: by 2002:a17:906:68c:: with SMTP id u12mr6263641ejb.470.1622157686347;
+        Thu, 27 May 2021 16:21:26 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.gmail.com with ESMTPSA id e22sm1889267edu.35.2021.05.27.16.21.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 May 2021 16:21:25 -0700 (PDT)
+Subject: Re: [syzbot] WARNING in x86_emulate_instruction
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        syzbot <syzbot+71271244f206d17f6441@syzkaller.appspotmail.com>,
         bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
         jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
         kan.liang@linux.intel.com, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        seanjc@google.com, steve.wahl@hpe.com,
-        syzkaller-bugs@googlegroups.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, x86@kernel.org
-Subject: Re: [syzbot] WARNING in x86_emulate_instruction
-In-Reply-To: <000000000000f3fc9305c2e24311@google.com>
+        mingo@redhat.com, peterz@infradead.org, seanjc@google.com,
+        steve.wahl@hpe.com, syzkaller-bugs@googlegroups.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
 References: <000000000000f3fc9305c2e24311@google.com>
-Date:   Fri, 28 May 2021 00:52:03 +0200
-Message-ID: <87v9737pt8.ffs@nanos.tec.linutronix.de>
+ <87v9737pt8.ffs@nanos.tec.linutronix.de>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <0f6e6423-f93a-5d96-f452-4e08dbad9b23@redhat.com>
+Date:   Fri, 28 May 2021 01:21:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <87v9737pt8.ffs@nanos.tec.linutronix.de>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, May 21 2021 at 19:52, syzbot wrote:
+On 28/05/21 00:52, Thomas Gleixner wrote:
+> 
+> So this is stale for a week now. It's fully reproducible and nobody
+> can't be bothered to look at that?
+> 
+> What's wrong with you people?
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    8ac91e6c Merge tag 'for-5.13-rc2-tag' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16a80fc7d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dddb87edd6431081
-> dashboard link: https://syzkaller.appspot.com/bug?extid=71271244f206d17f6441
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d1f89bd00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134683fdd00000
->
-> The issue was bisected to:
->
-> commit 9a7832ce3d920426a36cdd78eda4b3568d4d09e3
-> Author: Steve Wahl <steve.wahl@hpe.com>
-> Date:   Fri Jan 8 15:35:49 2021 +0000
->
->     perf/x86/intel/uncore: With > 8 nodes, get pci bus die id from NUMA info
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152bf9b3d00000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=172bf9b3d00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=132bf9b3d00000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+71271244f206d17f6441@syzkaller.appspotmail.com
-> Fixes: 9a7832ce3d92 ("perf/x86/intel/uncore: With > 8 nodes, get pci bus die id from NUMA info")
+Actually there's a patch on list ("KVM: X86: Fix warning caused by stale 
+emulation context").  Take care.
 
-So this is stale for a week now. It's fully reproducible and nobody
-can't be bothered to look at that?
+Paolo
 
-What's wrong with you people?
-
-Thanks,
-
-        tglx
