@@ -4,133 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A227BC47082
-	for <linux-sgx@archiver.kernel.org>; Thu,  3 Jun 2021 21:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9627C47082
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Jun 2021 10:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CBA1611C9
-	for <linux-sgx@archiver.kernel.org>; Thu,  3 Jun 2021 21:38:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2290611BD
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Jun 2021 10:35:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbhFCVkm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 3 Jun 2021 17:40:42 -0400
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:34482 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhFCVkl (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 3 Jun 2021 17:40:41 -0400
-Received: by mail-pf1-f174.google.com with SMTP id g6so5924498pfq.1
-        for <linux-sgx@vger.kernel.org>; Thu, 03 Jun 2021 14:38:56 -0700 (PDT)
+        id S230522AbhFGKgv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Jun 2021 06:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57264 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230519AbhFGKgt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Jun 2021 06:36:49 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74CD4C061789
+        for <linux-sgx@vger.kernel.org>; Mon,  7 Jun 2021 03:34:43 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id c124so16084861qkd.8
+        for <linux-sgx@vger.kernel.org>; Mon, 07 Jun 2021 03:34:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=J7/cYQsiXvpqSV2tQbCfoC6ebqxSgkCINGphYDn/1Os=;
-        b=W4baS+H1S1TCvwuJoHXRL04rduN16avTj9sEMDAkuRWrfjhiZkpFhChvZI+XS8tl2c
-         gMD+/hybxCOvpJ+CxJFoFFqar5wlpa6DZohkYo30mzsSCW5H1h6IQCWJf00j3e+pqAtF
-         6S5ONRiak5m4FTReStXLqUHYuxKP2AcrChcJInbWctBRIsS/z/9Tav9eRsaEaNNc3PNM
-         qq5Uc8KPn2ptlND57hKNSxz6aDQU6yhrtw8WAslAcZwgyYhlupELBSw9vIjlfJ3tjRqT
-         GKq81YAdBKdzqCXxveWBzafTajgJFIlxOZotrpkbkEPIFSOwrG+9BB/J5gEF7xuYXvZt
-         mhlA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W1Z9gEhrO+dFGwff9bZiaB/Edk6g694l5FTvX8TnmqE=;
+        b=iTtdkG5oAQc1PJs6q76R+08BA/t3w7Wq0B5q0H3ufJUid+AhdIEg3Y7fEh5tvg+XdW
+         59gjhb2UQezoRRcs6jsnQry+7KjS/8g6IMni8HGD16dE51trmOBjXRtipOnNlpsv21H/
+         4gB311yqb4F57DW8p98BkOuLBxbWB/QMW/ct8ycdrOesNpXpOqGaHtOf//MeCDDjrH5q
+         uF0ze7KA5EuIxV5OEmz2vTKb7IYQSVhse9ZIsA0utfTlmx1u3ZfETfQW9jpk4VhCu02/
+         unJalB4bnrHV3OiWEs7dCHEm4b8l0JftUBB4lDcwiHZZ79ZbMqv7OGCPzQTCU5xdEPmM
+         dSig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=J7/cYQsiXvpqSV2tQbCfoC6ebqxSgkCINGphYDn/1Os=;
-        b=Up6sIU3WJHt27YlxMOqYnAYp7hmdWUVKrXbW/tfA8x2VI29C/Xxfq9+VJkqIWNEyh/
-         ROEHM5KG6oZXcFa6DMPVSHsqqp5e8XHHOmEiWixyr2wl5tyt4YpaZj9Cxz+mwUeZbWKs
-         NVQtxRXyMuu1DhRO7kCqOqHkTn1ufynE7wIu6eqR7nOkWTNu1+aaF5/Noy4+TgPJnK9n
-         c5/qVIb+SHWvje6sGlJxxbdPp3whTtpXQWXwfLtR/KPY8kqBnP6Z5qkR0e6GA39lRlVO
-         jPpuSkxM0pX2mrnpOqnueFibl8XuqxmJ/Pxo/MoWui1H7N2YKpQw06iNg++T+tXYbaLk
-         8V6g==
-X-Gm-Message-State: AOAM531R3DRnSRM99yGcUTEsaRRidqeMguGpREScYm/JnJ8DuQSofJDO
-        N3AQiDU3YgP1st2+5KX345lwQQ==
-X-Google-Smtp-Source: ABdhPJzKsrT3xEgAPoFtROl7fj+826V3GD9hN5d40VJsQ4tPO8Emq5XD5X9Fz66vCMsYtYoQRpvMGw==
-X-Received: by 2002:a63:f40d:: with SMTP id g13mr1515544pgi.290.1622756276354;
-        Thu, 03 Jun 2021 14:37:56 -0700 (PDT)
-Received: from google.com (240.111.247.35.bc.googleusercontent.com. [35.247.111.240])
-        by smtp.gmail.com with ESMTPSA id c15sm50013pgt.68.2021.06.03.14.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jun 2021 14:37:55 -0700 (PDT)
-Date:   Thu, 3 Jun 2021 21:37:52 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Du Cheng <ducheng2@gmail.com>, linux-sgx@vger.kernel.org,
-        kai.huang@intel.com, dave.hansen@intel.com
-Subject: Re: [BUG] bug report on x86/sgx: ksgxd()
-Message-ID: <YLlLsJQAQ5uQk+hf@google.com>
-References: <YLb8y5YMFAsRKJMg@nuc>
- <20210603065745.v3iupi3k3oxea424@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W1Z9gEhrO+dFGwff9bZiaB/Edk6g694l5FTvX8TnmqE=;
+        b=ObIHDA93DAiv+jeUy8Kf25+OcW34FPHd/rO+iNrGcYV1NXHncpDJYFlWW4e6ZMMxiu
+         rm+UdTUbk1kTglO87mIjMJDASbRnbD1YnB87QiwUabB/f1nQfsKtDLdwnzrVRHMwN8up
+         aNH6uBD5nOr48KMHQE9/NMja+2KPlxts8wRWc3TraNYin2gqEvg9yF/SB0q99mfXijzS
+         YqOq3JIjM6UBQ/p3219NjIjrXFCaFYSqEZ3MrLTcS8bapXFbowOmwGTVQv+siVJElx9/
+         GUAKm5R4n6KMkzC3OkUzKsuH2bNMg9ZNQaYDHgRNrNCyEJQwghSUs0VeyeCjv/sy7EnB
+         MZuA==
+X-Gm-Message-State: AOAM530BoPeCO97AbZbUBMyf60MC613LRRNw+n7zd5p4KXBdcKpkeFj7
+        2BqK86vxHqmwH1jD9Frjq707YWdSg18ROsc0u5/UAA==
+X-Google-Smtp-Source: ABdhPJzTaPg9Os78/lByEqsfjEnL/w2wMnrVZ00vCZM9WGJQ9q3qi9YoIFwEozZ90r1enDNg908KqoHmNpKV1LanaKs=
+X-Received: by 2002:a37:4694:: with SMTP id t142mr16089543qka.265.1623062081807;
+ Mon, 07 Jun 2021 03:34:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210603065745.v3iupi3k3oxea424@kernel.org>
+References: <000000000000f3fc9305c2e24311@google.com> <87v9737pt8.ffs@nanos.tec.linutronix.de>
+ <0f6e6423-f93a-5d96-f452-4e08dbad9b23@redhat.com> <87sg277muh.ffs@nanos.tec.linutronix.de>
+ <CANRm+CxaJ2Wu-f0Ys-1Fi7mo4FY9YBXNymdt142poSuND-K36A@mail.gmail.com>
+In-Reply-To: <CANRm+CxaJ2Wu-f0Ys-1Fi7mo4FY9YBXNymdt142poSuND-K36A@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 7 Jun 2021 12:34:30 +0200
+Message-ID: <CACT4Y+YDtBf1GebeAA=twsfuv9e0HN+w7Lt5ZqDJhMJ5-PWYXQ@mail.gmail.com>
+Subject: Re: [syzbot] WARNING in x86_emulate_instruction
+To:     Wanpeng Li <kernellwp@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        syzkaller <syzkaller@googlegroups.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        syzbot <syzbot+71271244f206d17f6441@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, jarkko@kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kan.liang@linux.intel.com,
+        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sean Christopherson <seanjc@google.com>, steve.wahl@hpe.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jun 03, 2021, Jarkko Sakkinen wrote:
-> On Wed, Jun 02, 2021 at 11:36:43AM +0800, Du Cheng wrote:
-> > Hi,
-> > 
-> > I like to report a bug on my linux box running the mainline linux of version:
-> > commit 8124c8a6b35386f73523d27eacb71b5364a68c4c tag: v5.13-rc4
-> > 
-> > After it boots on my intel NUC, I encounter this error in the console log, I
-> > believe it is triggered by a WARN_ON():
-> > 
-> > [    0.628094] sgx: EPC section 0x30200000-0x35f7ffff
-> > [    0.628503] ------------[ cut here ]------------
-> > [    0.628506] WARNING: CPU: 6 PID: 127 at arch/x86/kernel/cpu/sgx/main.c:428 ksgxd+0x1c8/0x1e0
-> > 
-> > 
-> > I have attached my config file with which I compiled the kernel, just in case it is helpful.
-> > 
-> > I am running on ubuntu 21.04 with mainline kernel, and my box is intel NUC:
-> > 
-> > 	Product Name: NUC10i5FNH
-> > 	SKU Number: BXNUC10i5FNH
-> > 	Product Name: NUC10i5FNB
-> 
-> Is it possible to test with 5.12?
-> 
-> Linux does not support that hardware, except for KVM VM's, which was
-> added in 5.13.
+On Fri, May 28, 2021 at 2:34 AM Wanpeng Li <kernellwp@gmail.com> wrote:
+>
+> On Fri, 28 May 2021 at 08:31, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > On Fri, May 28 2021 at 01:21, Paolo Bonzini wrote:
+> > > On 28/05/21 00:52, Thomas Gleixner wrote:
+> > >>
+> > >> So this is stale for a week now. It's fully reproducible and nobody
+> > >> can't be bothered to look at that?
+> > >>
+> > >> What's wrong with you people?
+> > >
+> > > Actually there's a patch on list ("KVM: X86: Fix warning caused by stale
+> > > emulation context").  Take care.
+> >
+> > That's useful, but does not change the fact that nobody bothered to
+> > reply to this report ...
+>
+> Will do it next time. Have a nice evening, guys!
 
-I'm pretty sure that the issue is kthread_stop() being called on ksgxd before
-__sgx_sanitize_pages() completes, and that lack of launch control is what is
-exposing the bug.
+There was an idea to do this automatically by syzbot:
 
-Prior to adding KVM support, sgx_init() bailed immediately because
-X86_FEATURE_SGX was cleared if X86_FEATURE_SGX_LC was unsupported.
+dashboard/app: notify bug report about fix patches
+https://github.com/google/syzkaller/issues/1574
 
-With KVM support, sgx_drv_init() handles the X86_FEATURE_SGX_LC check manually,
-so now there's any easy-to-hit case where sgx_init() will spawn ksgxd and _then_
-fails to initialize, which results in sgx_init() stopping ksgxd before it finishes
-sanitizing the EPC.
-
-The bug existed before KVM support, it was just much harder to hit because it
-basically required char device registration to fail.
-
-This should suppress the WARN if ksgxd is stopped early.
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 63d3de02bbcc..bdf31ddfb10d 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -425,7 +425,7 @@ static int ksgxd(void *p)
-        __sgx_sanitize_pages(&sgx_dirty_page_list);
-
-        /* sanity check: */
--       WARN_ON(!list_empty(&sgx_dirty_page_list));
-+       WARN_ON(!list_empty(&sgx_dirty_page_list) && !kthread_should_stop());
-
-        while (!kthread_should_stop()) {
-                if (try_to_freeze())
-
-
-If that works, then
-
-  Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-
-is probably most appropriate.
+Namely: if syzbot discovers a fix anywhere (by the hash), it could
+send a notification email to the bug report email thread.
+The downside is that the robot sends even more emails, so I am not
+sure how it will be accepted. Any opinions?
