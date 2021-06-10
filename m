@@ -2,86 +2,113 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDFCC48BCF
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Jun 2021 21:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85923C47094
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Jun 2021 07:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA0A613EE
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Jun 2021 21:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D15613DF
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Jun 2021 07:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbhFIVEB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Jun 2021 17:04:01 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31842 "EHLO mga04.intel.com"
+        id S229823AbhFJHXX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Jun 2021 03:23:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229527AbhFIVEB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 9 Jun 2021 17:04:01 -0400
-IronPort-SDR: yEL0uN0AFKMIk7vSjLiDQAonYoh9ocREkYIn8SaAgwl1BCo5qDWuMXp6EY7pcnr+w9zN2Ygyww
- 5lUrN2z5NaDg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10010"; a="203318086"
-X-IronPort-AV: E=Sophos;i="5.83,261,1616482800"; 
-   d="scan'208";a="203318086"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2021 14:02:03 -0700
-IronPort-SDR: jHK67i9aVAMOUFtnOpvYzyujkhLXNudEvJVUQ2XksTgiVkFABi3gEh1Y8kAZDcstheXu0bKGPe
- Uzb3PnyrXPnA==
-X-IronPort-AV: E=Sophos;i="5.83,261,1616482800"; 
-   d="scan'208";a="448438389"
-Received: from rchatre-mobl3.amr.corp.intel.com (HELO [10.209.9.119]) ([10.209.9.119])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2021 14:02:01 -0700
-Subject: Re: [PATCH v7 1/4] selftests/sgx: Rename 'eenter' and 'sgx_call_vdso'
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     shuah@kernel.org, linux-kselftest@vger.kernel.org,
-        linux-sgx@vger.kernel.org,
+        id S229792AbhFJHXX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 10 Jun 2021 03:23:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DD9EC61359;
+        Thu, 10 Jun 2021 07:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623309687;
+        bh=gsCKKhZ6WQSwauiR72OkaiDwBsMu3zcmcFITrH04hTE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RQaOGawf7w8c61hoHCcNjLiOe975pvO9BT5oGxKXCfvr5B9OHECRw98dPmJI4P3iv
+         s41yPzyHDyxT647NGI4KRJMEKaFQXcKVO+2+hhAywBBHZbARzzFrioUSA9di9AItHa
+         KjdK5H363t1FXzHpmyn5QqDwa6OD+I1mMDZaMPDse2+kBHl0aFQTBXsCNbt7YEk72r
+         fSu1q6M3DL7NpdFIqjAh179UmpxG+1C3hgA2upZXToblhk3esgZkEBdee4UXfzV+UJ
+         IOYz1VSC1q3Key7vqpBAkLh09aKETTyMtWFMdIa8SdTW9AURiDkrZipCvxbiSnE2jh
+         eUDvOPNmvIncw==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         linux-kernel@vger.kernel.org
-References: <20210526124740.16783-1-jarkko@kernel.org>
- <dddeda6a-0f76-8e5a-6ca8-2ad67f6411ea@intel.com>
- <20210609130030.34jkpz5pq2iumzkj@kernel.org>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <845b4145-6990-c466-86e7-93011777556c@intel.com>
-Date:   Wed, 9 Jun 2021 14:02:00 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+Subject: [PATCH] x86/sgx: Add SGX_PAGE_REPEAT flag for SGX_IOC_ENCLAVE_ADD_PAGES
+Date:   Thu, 10 Jun 2021 10:21:17 +0300
+Message-Id: <20210610072117.76987-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210609130030.34jkpz5pq2iumzkj@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
+For uninitialized data, there's a need to add the same page multiple times,
+e.g. a zero page, instead of traversing the source memory forward. With the
+current API, this requires to call SGX_IOC_ENCLAVE_ADD_PAGES multiple
+times, once per page, which is not very efficient.
 
-On 6/9/2021 6:00 AM, Jarkko Sakkinen wrote:
-> On Mon, Jun 07, 2021 at 09:28:56AM -0700, Reinette Chatre wrote:
->> Hi Jarkko,
->>
->> On 5/26/2021 5:47 AM, Jarkko Sakkinen wrote:
->>> diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
->>> index 67211a708f04..68672fd86cf9 100644
->>> --- a/tools/testing/selftests/sgx/main.h
->>> +++ b/tools/testing/selftests/sgx/main.h
->>> @@ -35,7 +35,7 @@ bool encl_load(const char *path, struct encl *encl);
->>>    bool encl_measure(struct encl *encl);
->>>    bool encl_build(struct encl *encl);
->>> -int sgx_call_vdso(void *rdi, void *rsi, long rdx, u32 function, void *r8, void *r9,
->>> -		  struct sgx_enclave_run *run);
->>> +int sgx_enter_enclave(void *rdi, void *rsi, long rdx, u32 function, void *r8, void *r9,
->>> +		      struct sgx_enclave_run *run);
->>
->> Is there a reason why all registers except rdx are "void *"?
-> 
-> Evolution? It's test code.
-> 
-> There's neither reason to change this for no reason.
-> 
+Add a new SGX_PAGE_REPEAT flag to resolve the issue. When this flag is set
+to the 'flags' field of struct sgx_enclave_pages, the ioctl will apply the
+page at 'src' multiple times, instead of moving forward in the address
+space.
 
-One reason would be to make the code consistent. This would reduce 
-confusion.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/include/uapi/asm/sgx.h | 3 +++
+ arch/x86/kernel/cpu/sgx/ioctl.c | 9 +++++++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-Reinette
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 9690d6899ad9..d20fd54fa250 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -12,9 +12,12 @@
+  * enum sgx_page_flags - page control flags
+  * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
+  *			ENCLS[EEXTEND] operations.
++ * %SGX_PAGE_REPEAT:	Read the same page at 'src' multiple times,
++ *			instead of traversing the memory forward.
+  */
+ enum sgx_page_flags {
+ 	SGX_PAGE_MEASURE	= 0x01,
++	SGX_PAGE_REPEAT		= 0x02,
+ };
+ 
+ #define SGX_MAGIC 0xA4
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 83df20e3e633..d81bb257bad0 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -415,6 +415,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ {
+ 	struct sgx_enclave_add_pages add_arg;
+ 	struct sgx_secinfo secinfo;
++	unsigned long src;
+ 	unsigned long c;
+ 	int ret;
+ 
+@@ -453,8 +454,12 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 		if (need_resched())
+ 			cond_resched();
+ 
+-		ret = sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
+-					&secinfo, add_arg.flags);
++		if (add_arg.flags & SGX_PAGE_REPEAT)
++			src = add_arg.src;
++		else
++			src = add_arg.src + c;
++
++		ret = sgx_encl_add_page(encl, src, add_arg.offset + c, &secinfo, add_arg.flags);
+ 		if (ret)
+ 			break;
+ 	}
+-- 
+2.31.1
+
