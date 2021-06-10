@@ -7,41 +7,38 @@ X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61553C47094
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Jun 2021 14:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08D6C48BE0
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Jun 2021 15:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 479D661362
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Jun 2021 14:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFAAC61414
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Jun 2021 15:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbhFJON5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Jun 2021 10:13:57 -0400
-Received: from mga09.intel.com ([134.134.136.24]:10248 "EHLO mga09.intel.com"
+        id S231868AbhFJPrh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Jun 2021 11:47:37 -0400
+Received: from mga17.intel.com ([192.55.52.151]:16588 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229941AbhFJON5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 10 Jun 2021 10:13:57 -0400
-IronPort-SDR: FVX2qOIATxV6C7F2YXmR41O8TVUDjvpcau2KTbyX3lShMCNhSU+GxY42PAUlP6qtm2uRvYKIwt
- iKzInbpDnAyA==
-X-IronPort-AV: E=McAfee;i="6200,9189,10011"; a="205263939"
+        id S231807AbhFJPrU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 10 Jun 2021 11:47:20 -0400
+IronPort-SDR: O7e/JxYBl9Pm+wqz/L0jWtfSn3T+8o8bvRYldbVfzjnyQjSw9QuTxF31zowcwZLIjAlFr0aK2g
+ 5B1yQfGg4g9A==
+X-IronPort-AV: E=McAfee;i="6200,9189,10011"; a="185697739"
 X-IronPort-AV: E=Sophos;i="5.83,263,1616482800"; 
-   d="scan'208";a="205263939"
+   d="scan'208";a="185697739"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 07:11:57 -0700
-IronPort-SDR: E3MrmeB2YTpMfYauGwnnsk1kR17kb26+D2Za+OzL22M1XKUUiCTkKvLLPSgO1Kq8FbkiI5qiXn
- 9dIMxTZh2iag==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 08:45:24 -0700
+IronPort-SDR: BVf/NabkpGQFZsvA5q89bpS44643qaJLx1GuC6GwdB8BnFl3CXT9XJ6McQ3vOYuOPUmdI+KR3X
+ iXnQvGCou3pQ==
 X-IronPort-AV: E=Sophos;i="5.83,263,1616482800"; 
-   d="scan'208";a="450389916"
+   d="scan'208";a="450419341"
 Received: from rpshah-mobl1.amr.corp.intel.com (HELO [10.255.230.181]) ([10.255.230.181])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 07:11:56 -0700
-Subject: Re: [PATCH] x86/sgx: Add SGX_PAGE_REPEAT flag for
- SGX_IOC_ENCLAVE_ADD_PAGES
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 08:45:23 -0700
+Subject: Re: [PATCH v8 1/5] selftests/sgx: Rename 'eenter' and 'sgx_call_vdso'
+To:     Jarkko Sakkinen <jarkko@kernel.org>, shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-References: <20210610072117.76987-1-jarkko@kernel.org>
- <20210610090134.xetwllckm4dugg5c@kernel.org>
+References: <20210610083021.392269-1-jarkko@kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,12 +83,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <a5d4b6e4-7caa-06b3-a73b-b3869a92dbb5@intel.com>
-Date:   Thu, 10 Jun 2021 07:11:53 -0700
+Message-ID: <b5e06639-8bf4-c267-0aa7-b6c110767edc@intel.com>
+Date:   Thu, 10 Jun 2021 08:45:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210610090134.xetwllckm4dugg5c@kernel.org>
+In-Reply-To: <20210610083021.392269-1-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,40 +96,18 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/10/21 2:01 AM, Jarkko Sakkinen wrote:
-> On Thu, Jun 10, 2021 at 10:21:17AM +0300, Jarkko Sakkinen wrote:
->> For uninitialized data, there's a need to add the same page multiple times,
->> e.g. a zero page, instead of traversing the source memory forward. With the
->> current API, this requires to call SGX_IOC_ENCLAVE_ADD_PAGES multiple
->> times, once per page, which is not very efficient.
->>
->> Add a new SGX_PAGE_REPEAT flag to resolve the issue. When this flag is set
->> to the 'flags' field of struct sgx_enclave_pages, the ioctl will apply the
->> page at 'src' multiple times, instead of moving forward in the address
->> space.
->>
->> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> After sending this, I started to think that maybe it would actually better
-> to just add SGX_PAGE_ZERO flag, i.e. add zero pages and ignore src. That's
-> the main use case right now, and saves the user space from extra trouble of
-> having to do such page by hand.
+On 6/10/21 1:30 AM, Jarkko Sakkinen wrote:
+> Rename symbols for better clarity:
 > 
-> That neither does prevent adding SGX_PAGE_REPEAT later on. I just see no
-> point of that generic functionality right now. It only makes simple use
-> case more complex.
+> * 'eenter' might be confused for directly calling ENCLU[EENTER].  It does
+>   not.  It calls into the VDSO, which actually has the EENTER instruction.
+> * 'sgx_call_vdso' is *only* used for entering the enclave.  It's not some
+>   generic SGX call into the VDSO.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Is the main argument behind this new ABI that it increases efficiency?
+These all look fine to me.  Feel free to add my ack on them.
 
-Let's say I want to add 1MB of 0'd pages to an enclave.  Won't this do it?
-
-	zeros = mmap(NULL, size, PROT_READ, MAP_ANONYMOUS|MAP_PRIVATE,
-		     -1, 0);
-	ioctl(SGX_IOC_ENCLAVE_ADD_PAGES, zeros, size);
-
-Sure, you'll pay the cost of faulting in the zero page size/PAGE_SIZE
-times.  But, that's pretty minuscule.  This zeros buffer can also be
-reused without faulting again.  It can be as big or small as you want.
-Heck, it could even be 2MB in size and use the transparent huge page.
-
-I agree that there's definitely some optimization work to do.  But, I'm
-a bit hesitant to turn to new ABI to do it.
+Since these are pure x86 selftests and the initial code went through the
+x86 maintainers, should these got through them as well?  Or, since this
+is only selftest code, should Shuah pick them up?
