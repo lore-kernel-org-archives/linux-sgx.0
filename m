@@ -2,71 +2,74 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9FDC48BD1
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Jun 2021 17:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD220C48BD1
+	for <linux-sgx@archiver.kernel.org>; Fri, 11 Jun 2021 22:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69BA36136D
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Jun 2021 17:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9597F613F0
+	for <linux-sgx@archiver.kernel.org>; Fri, 11 Jun 2021 22:45:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230301AbhFKRio (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 11 Jun 2021 13:38:44 -0400
-Received: from mail-il1-f169.google.com ([209.85.166.169]:44889 "EHLO
-        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230083AbhFKRin (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 11 Jun 2021 13:38:43 -0400
-Received: by mail-il1-f169.google.com with SMTP id i17so5871707ilj.11
-        for <linux-sgx@vger.kernel.org>; Fri, 11 Jun 2021 10:36:45 -0700 (PDT)
+        id S230396AbhFKWrg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 11 Jun 2021 18:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51014 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230377AbhFKWrg (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 11 Jun 2021 18:47:36 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21584C0613A2
+        for <linux-sgx@vger.kernel.org>; Fri, 11 Jun 2021 15:45:22 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id b25so32791722iot.5
+        for <linux-sgx@vger.kernel.org>; Fri, 11 Jun 2021 15:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nfvuYmRSsrqKkyjyEJwVlbMYo9k7O1ojDR6LlSwhXjU=;
-        b=XfOj3FwiQP8K/u3OJsZnizHlOFJfxR7Bd2wdLmqLUvqlqgrZvJaPzxA4nbAOh/LRXA
-         +AAy3TtUD6/9mkfjBi8aXfYt1c1ZlTu5t0evVr5bNT900vs1SkvBBZ703Xd+DIH6qSe7
-         bBkogkR7NRSQtJdE8ad0j27TtzS1+/ksNmO1I=
+        bh=xXgtc2a812WbOwUgteqiwpKHqvHn2zU6NCj+s0gCiUg=;
+        b=c0SIGJ88ohLjl2HfT/CDCCzhoHvhw3vQcijzfAgxaGj3ziLqY98ylpNEdwyi4ZYiIy
+         AN0qrHAWRuW/XwqBAmfWqM0qvIxmluzT2W36dx5Mc6WfXpe73C7CvoHRAhx2UDdMCTc1
+         OW5UVN805paBVZcr5p3G5s+etr34liykK6wbk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nfvuYmRSsrqKkyjyEJwVlbMYo9k7O1ojDR6LlSwhXjU=;
-        b=o7sy3dn2cW3ApzXvES38vqO+Cj6awwJKMOfOw3CfvgAHOj+rR8lyMo7RAgvRgQiMW/
-         1Hj20Chnbe62/jDbmQIdb+tSMIqUa3ztwQLw5B7rg2HrU3YqiACjSFjS69x194xOagDe
-         NNtDFgEojr3/gWzGTHHSHtcOv7Bx3h8UVT+jWyY3sGOGmJM4ZjtMGq7qMkWjWubFZKR8
-         NhzmBcbKGcQYMp2C2ydgqj+M4MMeXyJx0R19yXAt6maC3cTgqPWnMl69gwvSPMMWJs6R
-         08slHFioHXh1hqgzWX5/3GKAGftnRHfFafwFPB9o+AjIiXkfnxdrtqhKHVsa4OX61dXS
-         eH1w==
-X-Gm-Message-State: AOAM531l0TCoINLzzpT9m3/UCdQ7uxFUdK7aQfhOqukhFJs1rPK/XR0V
-        0I9dTYL9d3MsQqK0BfsDsR1R4g==
-X-Google-Smtp-Source: ABdhPJz2zS1moGpo4B3D+0PtoX9xhcuTLbzySQZz0s0BhV0VneF0Gb0XIcx3oyV4Aos51v9UFu1y2g==
-X-Received: by 2002:a05:6e02:20c8:: with SMTP id 8mr3946175ilq.67.1623432945447;
-        Fri, 11 Jun 2021 10:35:45 -0700 (PDT)
+        bh=xXgtc2a812WbOwUgteqiwpKHqvHn2zU6NCj+s0gCiUg=;
+        b=iNiWLh4+720SzrQnlPhAvm9nL0a9pKm+tL0VQ1wmBCgSPSMt/aTi6zxIZE/YlnwS0c
+         oQ7PbJPvBmAmZmjZyfq4JxP4MVt6Q5s4pgAQiaewodKUunmtNPfHEb9cPiGBviw3jUNd
+         mCgE9b/a4804AuxAGp8AIIpcXRMIcTXYNulxww2Dv7QKIt1HgCc2KXrUx/6cRn/IiJnS
+         IZnmB3QOOlIjwtS3Um7caX9R+Ey5ACzeuIEiweFyeuFafbNEEl+JcUYSgpVEJHQLSypY
+         RHmvisypDkQtN9zSjSRC0VkCmPygUxr4fUJlEX9nii79iGft4kXEI2yNyE5Z0+KJ6bGc
+         jVRQ==
+X-Gm-Message-State: AOAM532yLFzioPXnYT261a+F63gcer0cZzUthTMm3+Plt8+2nRBG6GUr
+        BPt0vx+VuxKSqGmSBVVnmyxDhQ==
+X-Google-Smtp-Source: ABdhPJxJJIF6snEw4w1Ne6eoIiotz2QkFrb9tZBQiqNlnwUb9VM1XLwMIR49Ra7s9SAVqwiRp7eYyw==
+X-Received: by 2002:a05:6602:1234:: with SMTP id z20mr5007745iot.167.1623451521393;
+        Fri, 11 Jun 2021 15:45:21 -0700 (PDT)
 Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id p10sm3980850ile.35.2021.06.11.10.35.44
+        by smtp.gmail.com with ESMTPSA id q23sm4416936ior.46.2021.06.11.15.45.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jun 2021 10:35:44 -0700 (PDT)
-Subject: Re: [PATCH v8 1/5] selftests/sgx: Rename 'eenter' and 'sgx_call_vdso'
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>, shuah@kernel.org
+        Fri, 11 Jun 2021 15:45:20 -0700 (PDT)
+Subject: Re: [PATCH v8 3/5] selftests/sgx: Dump enclave memory map
+To:     Jarkko Sakkinen <jarkko@kernel.org>, shuah@kernel.org
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org,
         Shuah Khan <skhan@linuxfoundation.org>
 References: <20210610083021.392269-1-jarkko@kernel.org>
- <b5e06639-8bf4-c267-0aa7-b6c110767edc@intel.com>
+ <20210610083021.392269-3-jarkko@kernel.org>
 From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <8d071d3f-604f-1876-05bb-91568dd3c563@linuxfoundation.org>
-Date:   Fri, 11 Jun 2021 11:35:44 -0600
+Message-ID: <bb39b6af-5921-64e8-793b-5ef4b150153e@linuxfoundation.org>
+Date:   Fri, 11 Jun 2021 16:45:19 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <b5e06639-8bf4-c267-0aa7-b6c110767edc@intel.com>
+In-Reply-To: <20210610083021.392269-3-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,25 +77,40 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/10/21 9:45 AM, Dave Hansen wrote:
-> On 6/10/21 1:30 AM, Jarkko Sakkinen wrote:
->> Rename symbols for better clarity:
->>
->> * 'eenter' might be confused for directly calling ENCLU[EENTER].  It does
->>    not.  It calls into the VDSO, which actually has the EENTER instruction.
->> * 'sgx_call_vdso' is *only* used for entering the enclave.  It's not some
->>    generic SGX call into the VDSO.
->>
->> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On 6/10/21 2:30 AM, Jarkko Sakkinen wrote:
+> Often, it's useful to check whether /proc/self/maps looks sane when
+> dealing with memory mapped objects, especially when they are JIT'ish
+> dynamically constructed objects. Therefore, dump "/dev/sgx_enclave"
+> matching lines from the memory map in FIXTURE_SETUP().
 > 
-> These all look fine to me.  Feel free to add my ack on them.
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>   tools/testing/selftests/sgx/main.c | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
 > 
-> Since these are pure x86 selftests and the initial code went through the
-> x86 maintainers, should these got through them as well?  Or, since this
-> is only selftest code, should Shuah pick them up?
-> 
+> diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+> index 6da19b6bf287..14030f8b85ff 100644
+> --- a/tools/testing/selftests/sgx/main.c
+> +++ b/tools/testing/selftests/sgx/main.c
+> @@ -117,6 +117,8 @@ FIXTURE_SETUP(enclave)
+>   	Elf64_Sym *sgx_enter_enclave_sym = NULL;
+>   	struct vdso_symtab symtab;
+>   	struct encl_segment *seg;
+> +	char maps_line[256];
+> +	FILE *maps_file;
+>   	unsigned int i;
+>   	void *addr;
+>   
+> @@ -167,6 +169,18 @@ FIXTURE_SETUP(enclave)
+>   	memset(&self->run, 0, sizeof(self->run));
+>   	self->run.tcs = self->encl.encl_base;
+>   
+> +	maps_file = fopen("/proc/self/maps", "r");
 
-I will queue these up for 5.14-rc1
+I almost applied these. Does this require root access, if so,
+please add logic to skip the test if non-root user runs it.
+
+Same comments for all other paths that might require root access.
 
 thanks,
 -- Shuah
