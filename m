@@ -2,109 +2,114 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F40EC48BD1
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Jun 2021 22:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBC8C48BE5
+	for <linux-sgx@archiver.kernel.org>; Sat, 12 Jun 2021 00:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2C506124B
-	for <linux-sgx@archiver.kernel.org>; Fri, 11 Jun 2021 22:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1C8B613D9
+	for <linux-sgx@archiver.kernel.org>; Sat, 12 Jun 2021 00:34:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbhFKWun (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 11 Jun 2021 18:50:43 -0400
-Received: from mail-io1-f48.google.com ([209.85.166.48]:34380 "EHLO
-        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbhFKWun (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 11 Jun 2021 18:50:43 -0400
-Received: by mail-io1-f48.google.com with SMTP id 5so32829142ioe.1
-        for <linux-sgx@vger.kernel.org>; Fri, 11 Jun 2021 15:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rQPaBTxH6zmCmow24Ez/25u3aT/BbkT5Z3FMYjKkQD4=;
-        b=foHbHgWLRUOeDdrUUtQo5W+xDkKSaogccxeI9Y3GB8DlJwljzOJ+Lg597umTqeTMTb
-         fY8gJ47PnGJQo/RVPEvNf5PdZaDGNecOGl19KtekqED2TDtZX43KUTLiorhzUp/6lBt2
-         oz5w8QecWW942LM1RxHrObEkHehi60fovjjJM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rQPaBTxH6zmCmow24Ez/25u3aT/BbkT5Z3FMYjKkQD4=;
-        b=eUmUon33zgeenrUioEEIcdYnuzKS7lEYiLa7eT6hd0tyoCbS538Oj5BfCuuV9AQwoS
-         JTMN1SDhvBMN9UW7TpmD+CdaxoUFZL7KA8MjNZMqNcTA6SYxah54K+0OZWu9UbIeeKCZ
-         OAXdYWt8aaCdxSo1OMhhGriYC6OUoK4MHnYnrn20KMOiN0vziwcvi74v7z3nofafGD6b
-         RCPEnRqH8lTAQzJPG4MRd5NlHFzn3osHLq5sPZuQH0CfTiZ/OiBZvfBr5MbxckP0GVs8
-         q4umcdNGjGWa8WTp/0CbsGNKtD/yqQPk7y5wfe14Vwmp2XkyrGmJbld73r/sqaHj+X5v
-         K+tw==
-X-Gm-Message-State: AOAM532oA8qlD8kU3qfIROMLkVl3l4D4gbusXotLFx0wcAYOIjgr9hYn
-        b9EKoFb5l/PZtRyhFSj7vvRsbQ==
-X-Google-Smtp-Source: ABdhPJzYhIxyLeAPQfmBQvodXCR2Xj9xHbnPvzsaxcBbNu4D4KPVCTAAKGS5ajq24bteysnPjY0wXg==
-X-Received: by 2002:a5d:9c88:: with SMTP id p8mr5082265iop.31.1623451651344;
-        Fri, 11 Jun 2021 15:47:31 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id y17sm4160145ilb.60.2021.06.11.15.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jun 2021 15:47:31 -0700 (PDT)
-Subject: Re: [PATCH v8 1/5] selftests/sgx: Rename 'eenter' and 'sgx_call_vdso'
-To:     Dave Hansen <dave.hansen@intel.com>,
+        id S230267AbhFLAgm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 11 Jun 2021 20:36:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:11529 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229584AbhFLAgl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 11 Jun 2021 20:36:41 -0400
+IronPort-SDR: Aia5AvZpTkz+8wpFZEiDEAiWFP+UMq1+mdULKi/7j9NGyqM0/h5LnlCBCiCDHk6e+jtH4wCH3e
+ cou+8O35rJlg==
+X-IronPort-AV: E=McAfee;i="6200,9189,10012"; a="266783225"
+X-IronPort-AV: E=Sophos;i="5.83,267,1616482800"; 
+   d="scan'208";a="266783225"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2021 17:34:41 -0700
+IronPort-SDR: 1J4nclyDz9Ncrq4EjuDR2bN8196DUcFI3KZYaQyYWjQQxCaOAd3V2IWo0GlbXIvn8c8t14PRoM
+ 3cRi40NLAJBQ==
+X-IronPort-AV: E=Sophos;i="5.83,267,1616482800"; 
+   d="scan'208";a="486782447"
+Received: from svkandu1-mobl1.amr.corp.intel.com (HELO [10.251.4.209]) ([10.251.4.209])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2021 17:34:40 -0700
+Subject: Re: [PATCH v8 3/5] selftests/sgx: Dump enclave memory map
+To:     Shuah Khan <skhan@linuxfoundation.org>,
         Jarkko Sakkinen <jarkko@kernel.org>, shuah@kernel.org
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
+        linux-kernel@vger.kernel.org
 References: <20210610083021.392269-1-jarkko@kernel.org>
- <b5e06639-8bf4-c267-0aa7-b6c110767edc@intel.com>
- <8d071d3f-604f-1876-05bb-91568dd3c563@linuxfoundation.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <6378d2a9-9f55-18f8-ce46-7ea954ac159c@linuxfoundation.org>
-Date:   Fri, 11 Jun 2021 16:47:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ <20210610083021.392269-3-jarkko@kernel.org>
+ <bb39b6af-5921-64e8-793b-5ef4b150153e@linuxfoundation.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b04fa04a-7a5e-94b3-7c72-d6c96f25b49f@intel.com>
+Date:   Fri, 11 Jun 2021 17:34:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <8d071d3f-604f-1876-05bb-91568dd3c563@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <bb39b6af-5921-64e8-793b-5ef4b150153e@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/11/21 11:35 AM, Shuah Khan wrote:
-> On 6/10/21 9:45 AM, Dave Hansen wrote:
->> On 6/10/21 1:30 AM, Jarkko Sakkinen wrote:
->>> Rename symbols for better clarity:
->>>
->>> * 'eenter' might be confused for directly calling ENCLU[EENTER].  It 
->>> does
->>>    not.  It calls into the VDSO, which actually has the EENTER 
->>> instruction.
->>> * 'sgx_call_vdso' is *only* used for entering the enclave.  It's not 
->>> some
->>>    generic SGX call into the VDSO.
->>>
->>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On 6/11/21 3:45 PM, Shuah Khan wrote:
 >>
->> These all look fine to me.  Feel free to add my ack on them.
->>
->> Since these are pure x86 selftests and the initial code went through the
->> x86 maintainers, should these got through them as well?  Or, since this
->> is only selftest code, should Shuah pick them up?
->>
+>>   @@ -167,6 +169,18 @@ FIXTURE_SETUP(enclave)
+>>       memset(&self->run, 0, sizeof(self->run));
+>>       self->run.tcs = self->encl.encl_base;
+>>   +    maps_file = fopen("/proc/self/maps", "r");
 > 
-> I will queue these up for 5.14-rc1
+> I almost applied these. Does this require root access, if so,
+> please add logic to skip the test if non-root user runs it.
 > 
+> Same comments for all other paths that might require root access.
 
-I almost applied these. Does this require root access, if so,
-please add logic to skip the test if non-root user runs it.
-
-Please check for code paths that require root access and skip
-the tests.
-
-thanks,
--- Shuah
+This specifically doesn't require root.  Anything can read its own
+/proc/self/maps file.
