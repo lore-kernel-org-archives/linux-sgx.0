@@ -2,84 +2,113 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA1CC48BE5
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Jun 2021 13:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAE7C48BDF
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Jun 2021 15:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A7C961474
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Jun 2021 13:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AFC16157E
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Jun 2021 15:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbhFONWI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Jun 2021 09:22:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41126 "EHLO mail.kernel.org"
+        id S230352AbhFOPlr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Jun 2021 11:41:47 -0400
+Received: from mga07.intel.com ([134.134.136.100]:23954 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230288AbhFONWI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 15 Jun 2021 09:22:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CED1661465;
-        Tue, 15 Jun 2021 13:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623763204;
-        bh=OcP4vYJ90ya1m4qnaGcSBxiNo8C9gncyaFzfEYJ21Ak=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ARLiQxWHLeRLe+TGPlYNOQKxxrQQ9Pco4n9l9cg3skZXE1CtqLVV1ePbjuqHqSfHX
-         VRY++wpBZ3iuKmVj8wg7ymFFnneg73CcrDTqH3RpQ3MySB5jhKjldRNWOvZin5UOkA
-         1r60aNbAxmKFHqmklsJg1IKEJuczGJtrokgCpfDfEWNteVuj1t0qu8eruziSxWB4m+
-         mWntFShrnIWKWQE7eLkYLhxSNSz5P3llKBPPZXACBzeVkR3NZAoz0ZpyPdmBBo+DzF
-         1gsdwltxGqsTfOgN6aKPHzbtnDYgbKrzSdiHkMUFrGQ5c4uao8lR2XLDooFqlqcAwi
-         oepcF9e62swYg==
-Date:   Tue, 15 Jun 2021 16:20:01 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kai Huang <kai.huang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bp@alien8.de, seanjc@google.com,
-        dave.hansen@intel.com, tglx@linutronix.de, mingo@redhat.com,
-        Yang Zhong <yang.zhong@intel.com>
+        id S231710AbhFOPlq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 15 Jun 2021 11:41:46 -0400
+IronPort-SDR: j+xVz7YG42gX1G4tYmG92qCNLxCjZc/hLAzo4hqQ30f5kheWXMRs4pX2gVNU2tr7XEDGuzAq/C
+ QDPttbTvu1pw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10016"; a="269863634"
+X-IronPort-AV: E=Sophos;i="5.83,275,1616482800"; 
+   d="scan'208";a="269863634"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2021 08:39:40 -0700
+IronPort-SDR: I6qi31Hn+J/PaU33aOsMTIMHIhHSR9WLEfNLflvesg8MAkSALUVvQx1CGPpOBlZzuPGe/SjCZm
+ CNOWylnD7LlQ==
+X-IronPort-AV: E=Sophos;i="5.83,275,1616482800"; 
+   d="scan'208";a="404262004"
+Received: from habdelma-mobl.amr.corp.intel.com (HELO [10.209.8.208]) ([10.209.8.208])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2021 08:39:38 -0700
 Subject: Re: [PATCH] x86/sgx: Add missing xa_destroy() when virtual EPC is
  destroyed
-Message-ID: <20210615132001.kd6cuktq37dvoq3l@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>, linux-sgx@vger.kernel.org,
+        x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, bp@alien8.de, seanjc@google.com,
+        jarkko@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        Yang Zhong <yang.zhong@intel.com>
 References: <20210615101639.291929-1-kai.huang@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <89b29a2b-0050-cef4-8bf7-0b3bc2f5c170@intel.com>
+Date:   Tue, 15 Jun 2021 08:39:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20210615101639.291929-1-kai.huang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 10:16:39PM +1200, Kai Huang wrote:
+On 6/15/21 3:16 AM, Kai Huang wrote:
 > xa_destroy() needs to be called to destroy virtual EPC's page arra
-                                                                    y
-
 > before calling kfree() to free the virtual EPC.  Currently it is not
 > calaled.  Add the missing xa_destroy() to fix.
-  called
 
-> Fixes: 540745ddbc70 ("x86/sgx: Introduce virtual EPC for use by KVM guests")
-> Tested-by: Yang Zhong <yang.zhong@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/virt.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-> index 6ad165a5c0cc..64511c4a5200 100644
-> --- a/arch/x86/kernel/cpu/sgx/virt.c
-> +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> @@ -212,6 +212,7 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
->  		list_splice_tail(&secs_pages, &zombie_secs_pages);
->  	mutex_unlock(&zombie_secs_pages_lock);
->  
-> +	xa_destroy(&vepc->page_array);
->  	kfree(vepc);
->  
->  	return 0;
-> -- 
-> 2.31.1
-> 
-> 
+Looks good Kai, thanks for fixing this.
 
-/Jarkko
+Could you please take a good look through the sgx_release() and the vpec
+equivalent and see if anything else stands out as possibly being missed?
+ Also, is this the kind of thing that a simple open/add/close selftest
+might have found?
+
+Maybe we should beef up the selftests a bit.
+
+Acked-by: Dave Hansen <dave.hansen@intel.com>
