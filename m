@@ -2,125 +2,139 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E182FC48BE5
-	for <linux-sgx@archiver.kernel.org>; Thu, 17 Jun 2021 16:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12797C2B9F4
+	for <linux-sgx@archiver.kernel.org>; Thu, 17 Jun 2021 19:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA33A613F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 17 Jun 2021 16:45:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EABBB613D8
+	for <linux-sgx@archiver.kernel.org>; Thu, 17 Jun 2021 19:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbhFQQsG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 17 Jun 2021 12:48:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230343AbhFQQsG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Jun 2021 12:48:06 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D817C061574;
-        Thu, 17 Jun 2021 09:45:58 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0eb200a2ba6960566addd7.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:b200:a2ba:6960:566a:ddd7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01AC81EC056D;
-        Thu, 17 Jun 2021 18:45:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1623948357;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=KFh/6rBf6SzM2VUxNtLAtGp5uhos/qKeopubwm+bLmY=;
-        b=hf7bWtOuDWMMxOa8xQLjMoSg8RGz62emzpsmp6i3L/b3nrfmnH3p99YWsIlkM31i04PiuH
-        dxQwZv2GUFnadx/X2HDWyAs5BNNly65+M8RlAEudjKFqDSdJH6t5Hqg/ksuvUzJaJG2RMR
-        bGnNeUcWZTaDq7vjXeZXDsjF616GXJY=
-Date:   Thu, 17 Jun 2021 18:45:46 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Du Cheng <ducheng2@gmail.com>
-Subject: Re: [PATCH] x86/sgx: Suppress WARN on inability to sanitize EPC if
- ksgxd is stopped
-Message-ID: <YMt8Orz6KdF3GqZv@zn.tnic>
-References: <20210616004458.2192889-1-seanjc@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210616004458.2192889-1-seanjc@google.com>
+        id S232575AbhFQTtb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 17 Jun 2021 15:49:31 -0400
+Received: from mga17.intel.com ([192.55.52.151]:23303 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233057AbhFQTta (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 17 Jun 2021 15:49:30 -0400
+IronPort-SDR: TR8lXcpHxbed9EszQJjZtbQ5y1D/jGbZNZu7jSPcy8FX0QTeNspHc7D3SGqn1385pfDrr257Jc
+ 0s4aWtQ3VMbw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10018"; a="186818419"
+X-IronPort-AV: E=Sophos;i="5.83,281,1616482800"; 
+   d="scan'208";a="186818419"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2021 12:47:22 -0700
+IronPort-SDR: MprMayKO8/gtCYVlX9IaZQPRQFqztxrVqbt9byaOD2vrPghqLKIFyolw41o5ztTnoG0BFK0kX9
+ niEzMGYN8+pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,281,1616482800"; 
+   d="scan'208";a="443343800"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by orsmga007.jf.intel.com with ESMTP; 17 Jun 2021 12:47:21 -0700
+Subject: [PATCH] x86/mm: avoid truncating memblocks for SGX memory
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>, fan.du@intel.com,
+        reinette.chatre@intel.com, jarkko@kernel.org,
+        dan.j.williams@intel.com, dave.hansen@intel.com, x86@kernel.org,
+        linux-sgx@vger.kernel.org, luto@kernel.org, peterz@infradead.org
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Thu, 17 Jun 2021 12:46:57 -0700
+Message-Id: <20210617194657.0A99CB22@viggo.jf.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 05:44:58PM -0700, Sean Christopherson wrote:
-> Don't WARN on having unsanitized EPC pages if ksgxd is stopped early,
-> e.g. if sgx_init() realizes there will be no downstream consumers of EPC.
-> If ksgxd is stopped early, EPC pages may be left on the dirty list, but
-> that's ok because ksgxd is only stopped if SGX initialization failed or
-> if the kernel is going down.  In either case, the EPC won't be used.
-> 
-> This bug was exposed by the addition of KVM support, but has existed and
-> was hittable since the original sanitization code was added.  Prior to
-> adding KVM support, if Launch Control was not fully enabled, e.g. when
-> running on older hardware, sgx_init() bailed immediately before spawning
-> ksgxd because X86_FEATURE_SGX was cleared if X86_FEATURE_SGX_LC was
-> unsupported.
-> 
-> With KVM support, sgx_drv_init() handles the X86_FEATURE_SGX_LC check
-> manually, so now there's any easy-to-hit case where sgx_init() will spawn
-> ksgxd and _then_ fail to initialize, which results in sgx_init() stopping
-> ksgxd before it finishes sanitizing the EPC.
-> 
-> Prior to KVM support, the bug was much harder to hit because it basically
-> required char device registration to fail.
-> 
-> Reported-by: Du Cheng <ducheng2@gmail.com>
-> Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
-> 
-> Lightly tested due to lack of hardware.  I hacked the flow to verify that
-> stopping early will leave work pending, and that rechecking should_stop()
-> suppress the resulting WARN.
-> 
->  arch/x86/kernel/cpu/sgx/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index ad904747419e..fbad2b9625a5 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -425,7 +425,7 @@ static int ksgxd(void *p)
->  	__sgx_sanitize_pages(&sgx_dirty_page_list);
->  
->  	/* sanity check: */
-> -	WARN_ON(!list_empty(&sgx_dirty_page_list));
-> +	WARN_ON(!list_empty(&sgx_dirty_page_list) && !kthread_should_stop());
->  
->  	while (!kthread_should_stop()) {
->  		if (try_to_freeze())
-> -- 
 
-Hmm, this looks weird. Why aren't we starting ksgxd only after
-*everything* has initialized successfully? I.e., after both kvm and
-native drivers' init functions have succeeded?
+From: Fan Du <fan.du@intel.com>
 
-Then you won't have to do this kthread_should_stop() thing after the
-fact.
+tl;dr:
 
-Btw, you have the same thing in the while loop's termination condition
-two lines down which, if I have to look at it later, would make me
-scratch head as to what TH is going on here.
+Several SGX users reported seeing the following message on NUMA systems:
 
-Thx.
+	sgx: [Firmware Bug]: Unable to map EPC section to online node. Fallback to the NUMA node 0.
 
--- 
-Regards/Gruss,
-    Boris.
+This turned out to be the 'memblock' code mistakenly throwing away
+SGX memory.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+=== Full Changelog ===
+
+The 'max_pfn' variable represents the highest known RAM address.  It can
+be used, for instance, to quickly determine for which physical addresses
+there is mem_map[] space allocated.  The numa_meminfo code makes an
+effort to throw out ("trim") all memory blocks which are above 'max_pfn'.
+
+SGX memory is not considered RAM (it is marked as "Reserved" in the
+e820) and is not taken into account by max_pfn.  Despite this, SGX
+memory areas have NUMA affinity and are enumerated in the ACPI SRAT.
+The existing SGX code uses the numa_meminfo mechanism to look up the
+NUMA affinity for its memory areas.
+
+In cases where SGX memory was above max_pfn (usually just the one EPC
+section in the last highest NUMA node), the numa_memblock is truncated
+at 'max_pfn', which is below the SGX memory.  When the SGX code tries to
+look up the affinity of this memory, it fails and produces an error message:
+
+	sgx: [Firmware Bug]: Unable to map EPC section to online node. Fallback to the NUMA node 0.
+
+and assigns the memory to NUMA node 0.
+
+Instead of silently truncating the memory block at 'max_pfn' and
+dropping the SGX memory, add the truncated portion to
+'numa_reserved_meminfo'.  This allows the SGX code to later determine
+the NUMA affinity of its 'Reserved' area.
+
+Without this patch, numa_meminfo looks like this (from 'crash'):
+
+  blk = { start =          0x0, end = 0x2080000000, nid = 0x0 }
+        { start = 0x2080000000, end = 0x4000000000, nid = 0x1 }
+
+numa_reserved_meminfo is empty.
+
+After the patch, numa_meminfo looks like this:
+
+  blk = { start =          0x0, end = 0x2080000000, nid = 0x0 }
+        { start = 0x2080000000, end = 0x4000000000, nid = 0x1 }
+
+and numa_reserved_meminfo has an entry for node 1's SGX memory:
+
+  blk =  { start = 0x4000000000, end = 0x4080000000, nid = 0x1 }
+
+ [ daveh: completely rewrote/reworked changelog ]
+
+Signed-off-by: Fan Du <fan.du@intel.com>
+Reported-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Fixes: 5d30f92e7631 ("x86/NUMA: Provide a range-to-target_node lookup facility")
+Cc: x86@kernel.org
+Cc: linux-sgx@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+---
+
+ b/arch/x86/mm/numa.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff -puN arch/x86/mm/numa.c~sgx-srat arch/x86/mm/numa.c
+--- a/arch/x86/mm/numa.c~sgx-srat	2021-06-17 11:23:05.116159990 -0700
++++ b/arch/x86/mm/numa.c	2021-06-17 11:55:46.117155100 -0700
+@@ -254,7 +254,13 @@ int __init numa_cleanup_meminfo(struct n
+ 
+ 		/* make sure all non-reserved blocks are inside the limits */
+ 		bi->start = max(bi->start, low);
+-		bi->end = min(bi->end, high);
++
++		/* preserve info for non-RAM areas above 'max_pfn': */
++		if (bi->end > high) {
++			numa_add_memblk_to(bi->nid, high, bi->end,
++					   &numa_reserved_meminfo);
++			bi->end = high;
++		}
+ 
+ 		/* and there's no empty block */
+ 		if (bi->start >= bi->end)
+_
