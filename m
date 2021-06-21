@@ -2,122 +2,113 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C61C48BDF
-	for <linux-sgx@archiver.kernel.org>; Fri, 18 Jun 2021 15:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9548C4743C
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 19:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C89561351
-	for <linux-sgx@archiver.kernel.org>; Fri, 18 Jun 2021 15:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE76261289
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 19:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235580AbhFRPni (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 18 Jun 2021 11:43:38 -0400
-Received: from mga01.intel.com ([192.55.52.88]:8805 "EHLO mga01.intel.com"
+        id S230165AbhFUTIw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Jun 2021 15:08:52 -0400
+Received: from mga17.intel.com ([192.55.52.151]:60414 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230334AbhFRPni (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 18 Jun 2021 11:43:38 -0400
-IronPort-SDR: 8AzzueQucBj/AynsG4tI3u5SvnYScx1uhJf3eT9jecCG/RuuUL1aphk9eNveVqzr9I12mOBgUJ
- 8KtkXBj/aRMw==
-X-IronPort-AV: E=McAfee;i="6200,9189,10019"; a="228101784"
-X-IronPort-AV: E=Sophos;i="5.83,284,1616482800"; 
-   d="scan'208";a="228101784"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2021 08:41:24 -0700
-IronPort-SDR: gq5tTQh+yktvAOnoe+4Fx5WopWiz9CMdXC/dPgOfFxCHFNrVaurn0BPvcDgK5m9R/G2ZSb9hmp
- bTRDjo0V/tAw==
-X-IronPort-AV: E=Sophos;i="5.83,284,1616482800"; 
-   d="scan'208";a="451431532"
-Received: from mahmoo2x-mobl.amr.corp.intel.com (HELO [10.252.143.210]) ([10.252.143.210])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2021 08:41:23 -0700
-Subject: Re: [PATCH] x86/sgx: Suppress WARN on inability to sanitize EPC if
- ksgxd is stopped
-To:     Borislav Petkov <bp@alien8.de>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        id S229897AbhFUTIw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Jun 2021 15:08:52 -0400
+IronPort-SDR: cXHMRXQz4mGFt8clh0K/+U60tuEvJGnG9o8q3y2PDpQeeAg/J21wpyRflPDzQwN1gIFu7q8Bjq
+ gvhORtvMmfcg==
+X-IronPort-AV: E=McAfee;i="6200,9189,10022"; a="187293641"
+X-IronPort-AV: E=Sophos;i="5.83,289,1616482800"; 
+   d="scan'208";a="187293641"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 12:06:37 -0700
+IronPort-SDR: z75lA64KpVlDa81rKjUVEAaNoYT9JJwKTUEy4mZGDOJKS4BvtY3G4Ps0S59j1/vwGbGelPPs2N
+ 16KUGjrgClIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,289,1616482800"; 
+   d="scan'208";a="405721024"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by orsmga006.jf.intel.com with ESMTP; 21 Jun 2021 12:06:36 -0700
+Subject: [PATCH] selftests/sgx: remove checks for file execute permissions
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Du Cheng <ducheng2@gmail.com>
-References: <20210616004458.2192889-1-seanjc@google.com>
- <YMt8Orz6KdF3GqZv@zn.tnic>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <3b7b7c4e-968b-530e-90f7-e13470f8b116@intel.com>
-Date:   Fri, 18 Jun 2021 08:41:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <YMt8Orz6KdF3GqZv@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        tim.gardner@canonical.com, jarkko@kernel.org,
+        reinette.chatre@intel.com, shuah@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Mon, 21 Jun 2021 12:05:56 -0700
+Message-Id: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/17/21 9:45 AM, Borislav Petkov wrote:
-> Hmm, this looks weird. Why aren't we starting ksgxd only after
-> *everything* has initialized successfully? I.e., after both kvm and
-> native drivers' init functions have succeeded?
 
-ksgxd has two roles.  I think that's why it looks weird.
+The SGX selftests can fail for a bunch of non-obvious reasons
+like 'noexec' permissions on /dev (which is the default *EVERYWHERE*
+it seems).
 
-The obvious role is its use as the kswapd equivalent for SGX.
+A new test mistakenly also looked for +x permission on the
+/dev/sgx_enclave.  File execute permissions really only apply to
+the ability of execve() to work on a file, *NOT* on the ability
+for an application to map the file with PROT_EXEC.  SGX needs to
+mmap(PROT_EXEC), but doesn't need to execve() the device file.
 
-But, it's also used to speed up SGX initialization.  It "sanitizes" the
-EPC asynchronously because it can take quite a while.  That's why it
-gets launched off early.  If it gets interrupted, that's when this
-warning can trigger.
+Remove the check.
 
-I think you're suggesting that we just defer starting ksgxd until we
-*know* it won't be interrupted, basically moving
-sgx_page_reclaimer_init() down below sgx_drv_init() and sgx_vepc_init().
+Fixes: 4284f7acb78b ("selftests/sgx: Improve error detection and messages")
+Reported-by: Tim Gardner <tim.gardner@canonical.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-sgx@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-While I can see why it's best to get it going as early as possible, I
-don't see much going on in those init functions that would justify
-needing to fork off ksgx earlier.  Am I missing anything?
+---
+
+ b/tools/testing/selftests/sgx/load.c |   16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff -puN tools/testing/selftests/sgx/load.c~sgx-no-file-exec tools/testing/selftests/sgx/load.c
+--- a/tools/testing/selftests/sgx/load.c~sgx-no-file-exec	2021-06-21 11:48:25.226294281 -0700
++++ b/tools/testing/selftests/sgx/load.c	2021-06-21 12:03:28.023292029 -0700
+@@ -150,16 +150,6 @@ bool encl_load(const char *path, struct
+ 		goto err;
+ 	}
+ 
+-	/*
+-	 * This just checks if the /dev file has these permission
+-	 * bits set.  It does not check that the current user is
+-	 * the owner or in the owning group.
+-	 */
+-	if (!(sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+-		fprintf(stderr, "no execute permissions on device file %s\n", device_path);
+-		goto err;
+-	}
+-
+ 	ptr = mmap(NULL, PAGE_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+ 	if (ptr == (void *)-1) {
+ 		perror("mmap for read");
+@@ -169,13 +159,13 @@ bool encl_load(const char *path, struct
+ 
+ #define ERR_MSG \
+ "mmap() succeeded for PROT_READ, but failed for PROT_EXEC.\n" \
+-" Check that current user has execute permissions on %s and \n" \
+-" that /dev does not have noexec set: mount | grep \"/dev .*noexec\"\n" \
++" Check that /dev does not have noexec set:\n" \
++" \tmount | grep \"/dev .*noexec\"\n" \
+ " If so, remount it executable: mount -o remount,exec /dev\n\n"
+ 
+ 	ptr = mmap(NULL, PAGE_SIZE, PROT_EXEC, MAP_SHARED, fd, 0);
+ 	if (ptr == (void *)-1) {
+-		fprintf(stderr, ERR_MSG, device_path);
++		fprintf(stderr, ERR_MSG);
+ 		goto err;
+ 	}
+ 	munmap(ptr, PAGE_SIZE);
+_
