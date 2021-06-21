@@ -2,113 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9548C4743C
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 19:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FCFC4743C
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 21:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE76261289
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 19:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A876128A
+	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 21:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbhFUTIw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Jun 2021 15:08:52 -0400
-Received: from mga17.intel.com ([192.55.52.151]:60414 "EHLO mga17.intel.com"
+        id S231241AbhFUVK2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 21 Jun 2021 17:10:28 -0400
+Received: from mga06.intel.com ([134.134.136.31]:56921 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229897AbhFUTIw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Jun 2021 15:08:52 -0400
-IronPort-SDR: cXHMRXQz4mGFt8clh0K/+U60tuEvJGnG9o8q3y2PDpQeeAg/J21wpyRflPDzQwN1gIFu7q8Bjq
- gvhORtvMmfcg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10022"; a="187293641"
+        id S230102AbhFUVK2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 21 Jun 2021 17:10:28 -0400
+IronPort-SDR: WuhYj42CvR6r6tHcKr6HRF3sFsSALUoS8f8nrZnRxquolAQVHVhX7Uvf/ukjw63NzwhkDVYWE6
+ 1ojXFWVfL+8A==
+X-IronPort-AV: E=McAfee;i="6200,9189,10022"; a="268071701"
 X-IronPort-AV: E=Sophos;i="5.83,289,1616482800"; 
-   d="scan'208";a="187293641"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 12:06:37 -0700
-IronPort-SDR: z75lA64KpVlDa81rKjUVEAaNoYT9JJwKTUEy4mZGDOJKS4BvtY3G4Ps0S59j1/vwGbGelPPs2N
- 16KUGjrgClIw==
-X-ExtLoop1: 1
+   d="scan'208";a="268071701"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 14:08:12 -0700
+IronPort-SDR: gv+kbT/6xrIRu6Aj0NTA+IYfXiwZkvL1IxfnNUMdZmsBNVlBju5yeQfdOUZXXkWL+5eaZp8tYs
+ KnFhUKR1xQjg==
 X-IronPort-AV: E=Sophos;i="5.83,289,1616482800"; 
-   d="scan'208";a="405721024"
-Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga006.jf.intel.com with ESMTP; 21 Jun 2021 12:06:36 -0700
-Subject: [PATCH] selftests/sgx: remove checks for file execute permissions
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        tim.gardner@canonical.com, jarkko@kernel.org,
-        reinette.chatre@intel.com, shuah@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Mon, 21 Jun 2021 12:05:56 -0700
-Message-Id: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
+   d="scan'208";a="473545889"
+Received: from rchatre-mobl3.amr.corp.intel.com (HELO [10.212.236.132]) ([10.212.236.132])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 14:08:11 -0700
+Subject: Re: [PATCH] selftests/sgx: remove checks for file execute permissions
+To:     Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, tim.gardner@canonical.com,
+        jarkko@kernel.org, shuah@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <121f7215-f11d-2533-b736-9f18516c3220@intel.com>
+Date:   Mon, 21 Jun 2021 14:08:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+Hi Dave,
 
-The SGX selftests can fail for a bunch of non-obvious reasons
-like 'noexec' permissions on /dev (which is the default *EVERYWHERE*
-it seems).
+On 6/21/2021 12:05 PM, Dave Hansen wrote:
+> 
+> The SGX selftests can fail for a bunch of non-obvious reasons
+> like 'noexec' permissions on /dev (which is the default *EVERYWHERE*
+> it seems).
+> 
+> A new test mistakenly also looked for +x permission on the
+> /dev/sgx_enclave.  File execute permissions really only apply to
+> the ability of execve() to work on a file, *NOT* on the ability
+> for an application to map the file with PROT_EXEC.  SGX needs to
+> mmap(PROT_EXEC), but doesn't need to execve() the device file.
+> 
+> Remove the check.
+> 
+> Fixes: 4284f7acb78b ("selftests/sgx: Improve error detection and messages")
+> Reported-by: Tim Gardner <tim.gardner@canonical.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Reinette Chatre <reinette.chatre@intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-sgx@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
 
-A new test mistakenly also looked for +x permission on the
-/dev/sgx_enclave.  File execute permissions really only apply to
-the ability of execve() to work on a file, *NOT* on the ability
-for an application to map the file with PROT_EXEC.  SGX needs to
-mmap(PROT_EXEC), but doesn't need to execve() the device file.
+Thank you very much for fixing this. With this applied the SGX tests are 
+able to run again on my system.
 
-Remove the check.
+Tested-by: Reinette Chatre <reinette.chatre@intel.com>
 
-Fixes: 4284f7acb78b ("selftests/sgx: Improve error detection and messages")
-Reported-by: Tim Gardner <tim.gardner@canonical.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-sgx@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+I think it is missing a "Signed-off-by".
 
----
-
- b/tools/testing/selftests/sgx/load.c |   16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
-
-diff -puN tools/testing/selftests/sgx/load.c~sgx-no-file-exec tools/testing/selftests/sgx/load.c
---- a/tools/testing/selftests/sgx/load.c~sgx-no-file-exec	2021-06-21 11:48:25.226294281 -0700
-+++ b/tools/testing/selftests/sgx/load.c	2021-06-21 12:03:28.023292029 -0700
-@@ -150,16 +150,6 @@ bool encl_load(const char *path, struct
- 		goto err;
- 	}
- 
--	/*
--	 * This just checks if the /dev file has these permission
--	 * bits set.  It does not check that the current user is
--	 * the owner or in the owning group.
--	 */
--	if (!(sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
--		fprintf(stderr, "no execute permissions on device file %s\n", device_path);
--		goto err;
--	}
--
- 	ptr = mmap(NULL, PAGE_SIZE, PROT_READ, MAP_SHARED, fd, 0);
- 	if (ptr == (void *)-1) {
- 		perror("mmap for read");
-@@ -169,13 +159,13 @@ bool encl_load(const char *path, struct
- 
- #define ERR_MSG \
- "mmap() succeeded for PROT_READ, but failed for PROT_EXEC.\n" \
--" Check that current user has execute permissions on %s and \n" \
--" that /dev does not have noexec set: mount | grep \"/dev .*noexec\"\n" \
-+" Check that /dev does not have noexec set:\n" \
-+" \tmount | grep \"/dev .*noexec\"\n" \
- " If so, remount it executable: mount -o remount,exec /dev\n\n"
- 
- 	ptr = mmap(NULL, PAGE_SIZE, PROT_EXEC, MAP_SHARED, fd, 0);
- 	if (ptr == (void *)-1) {
--		fprintf(stderr, ERR_MSG, device_path);
-+		fprintf(stderr, ERR_MSG);
- 		goto err;
- 	}
- 	munmap(ptr, PAGE_SIZE);
-_
+Reinette
