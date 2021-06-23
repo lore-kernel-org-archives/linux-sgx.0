@@ -4,125 +4,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E9BC48BC2
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Jun 2021 13:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9983C48BC2
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Jun 2021 13:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA75B6113B
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Jun 2021 13:32:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE43E610A0
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Jun 2021 13:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231348AbhFWNet (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Jun 2021 09:34:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43598 "EHLO mail.kernel.org"
+        id S230286AbhFWNoK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Jun 2021 09:44:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231238AbhFWNej (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 23 Jun 2021 09:34:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5FD1561076;
-        Wed, 23 Jun 2021 13:32:21 +0000 (UTC)
+        id S230061AbhFWNoJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 23 Jun 2021 09:44:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C12CF61076;
+        Wed, 23 Jun 2021 13:41:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624455141;
-        bh=Tfy4Kcl1G/62IHsG83uwh+nanQpJpW+dZHtJIAsstRk=;
+        s=k20201202; t=1624455712;
+        bh=ahAIQzGeIV5bSA+izmWMgZyiMYHJ37sy5dm5nG35WsY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aaC5aBQGG9oOd0TrvI+dVAmmjAlInqOJnfdrBcfrhVFc8HQL7MvQqQpeWCWDkgkEj
-         Zkg5806GK0IJU0VDsc2iY2Yd1F/aSQQfwB03j8ca2P7AevQR4nY++R+5eBy4ZjdmVZ
-         8GUVtWy1tTv5w5rAqmQ9RyNWQDXtmzyXMoc2GtQ0jmu0IUqlkvwni8ZWTJoqyZf4oZ
-         cU1MEDNpUeWjsqoaExkMcNFI6ztE0sp1pfbAvVcbfbFOIXTl7yk3A+BqfXo2ZApsR0
-         yvcAOfB5UWQGhWlD5+cSZ3w4Qb+pZZSamsIYQWzxgDcvuJ2oXXLTOB2HUg6hK2X588
-         edtostLAVEdMw==
-Date:   Wed, 23 Jun 2021 16:32:19 +0300
+        b=Q2fs3xfj1k5ez23+zg+C8YgfDHiuth2aI+p7UqiOQwWK2sSAqUXxaqnpFRxiPL+Vu
+         yrIX6Ii4gw63FUm9vIRgoLmKYmuxHFoLda7MqkRAbTnqhzc8v3FehQkcyzXhtl1rlC
+         Vbk1eDjCtC15gwnY0osT+KmneZmHey/NlU4Kb5RG3t5fnUlFwxQ9Ybknkx4qBd74jn
+         BLx467xAqWjRurwe/dOHVwf+46JGH25SbcJFgG0mKWWOQWaCgqezEYEFGPFPTNi4X1
+         zIvAmd7tAe+ovpIG9dYW6RilEpCxGJiBD3U9PxvlYX2rh7w/At/AArTHZ1JuWpbVh6
+         867z2BiQTgPkQ==
+Date:   Wed, 23 Jun 2021 16:41:50 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Du Cheng <ducheng2@gmail.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/sgx: Suppress WARN on inability to sanitize EPC if
- ksgxd is stopped
-Message-ID: <20210623133219.v6c62zwtj5qowib3@kernel.org>
-References: <20210616004458.2192889-1-seanjc@google.com>
- <YMmUHRGwXSIYJTDf@nuc>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        tim.gardner@canonical.com, reinette.chatre@intel.com,
+        shuah@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests/sgx: remove checks for file execute permissions
+Message-ID: <20210623134150.j4qjhcepmtohsxdo@kernel.org>
+References: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YMmUHRGwXSIYJTDf@nuc>
+In-Reply-To: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 02:03:09PM +0800, Du Cheng wrote:
-> Le Tue, Jun 15, 2021 at 05:44:58PM -0700, Sean Christopherson a écrit :
-> > Don't WARN on having unsanitized EPC pages if ksgxd is stopped early,
-> > e.g. if sgx_init() realizes there will be no downstream consumers of EPC.
-> > If ksgxd is stopped early, EPC pages may be left on the dirty list, but
-> > that's ok because ksgxd is only stopped if SGX initialization failed or
-> > if the kernel is going down.  In either case, the EPC won't be used.
-> > 
-> > This bug was exposed by the addition of KVM support, but has existed and
-> > was hittable since the original sanitization code was added.  Prior to
-> > adding KVM support, if Launch Control was not fully enabled, e.g. when
-> > running on older hardware, sgx_init() bailed immediately before spawning
-> > ksgxd because X86_FEATURE_SGX was cleared if X86_FEATURE_SGX_LC was
-> > unsupported.
-> > 
-> > With KVM support, sgx_drv_init() handles the X86_FEATURE_SGX_LC check
-> > manually, so now there's any easy-to-hit case where sgx_init() will spawn
-> > ksgxd and _then_ fail to initialize, which results in sgx_init() stopping
-> > ksgxd before it finishes sanitizing the EPC.
-> > 
-> > Prior to KVM support, the bug was much harder to hit because it basically
-> > required char device registration to fail.
-> > 
-> > Reported-by: Du Cheng <ducheng2@gmail.com>
-> > Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> > 
-> > Lightly tested due to lack of hardware.  I hacked the flow to verify that
-> > stopping early will leave work pending, and that rechecking should_stop()
-> > suppress the resulting WARN.
-> > 
-> >  arch/x86/kernel/cpu/sgx/main.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index ad904747419e..fbad2b9625a5 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -425,7 +425,7 @@ static int ksgxd(void *p)
-> >  	__sgx_sanitize_pages(&sgx_dirty_page_list);
-> >  
-> >  	/* sanity check: */
-> > -	WARN_ON(!list_empty(&sgx_dirty_page_list));
-> > +	WARN_ON(!list_empty(&sgx_dirty_page_list) && !kthread_should_stop());
-> >  
-> >  	while (!kthread_should_stop()) {
-> >  		if (try_to_freeze())
-> > -- 
-> > 2.32.0.272.g935e593368-goog
-> > 
+On Mon, Jun 21, 2021 at 12:05:56PM -0700, Dave Hansen wrote:
 > 
-> I applied this patch on 5.13-rc6, and it no longer causes to trigger WARN_ON()
-> on my NUC:
+> The SGX selftests can fail for a bunch of non-obvious reasons
+> like 'noexec' permissions on /dev (which is the default *EVERYWHERE*
+> it seems).
 > 
-> ```
+> A new test mistakenly also looked for +x permission on the
+> /dev/sgx_enclave.  File execute permissions really only apply to
+> the ability of execve() to work on a file, *NOT* on the ability
+> for an application to map the file with PROT_EXEC.  SGX needs to
+> mmap(PROT_EXEC), but doesn't need to execve() the device file.
 > 
-> [    0.669411] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
-> [    0.669412] software IO TLB: mapped [mem 0x0000000017cb9000-0x000000001bcb9000] (64MB)
-> [    0.672788] platform rtc_cmos: registered platform RTC device (no PNP device found)
-> [    0.672805] sgx: EPC section 0x30200000-0x35f7ffff
-> [    0.674239] Initialise system trusted keyrings
-> [    0.674254] Key type blacklist registered
+> Remove the check.
 > 
-> ```
+> Fixes: 4284f7acb78b ("selftests/sgx: Improve error detection and messages")
+> Reported-by: Tim Gardner <tim.gardner@canonical.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Reinette Chatre <reinette.chatre@intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-sgx@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 > 
-> Regards,
-> Du Cheng
+> ---
+> 
+>  b/tools/testing/selftests/sgx/load.c |   16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
+> 
+> diff -puN tools/testing/selftests/sgx/load.c~sgx-no-file-exec tools/testing/selftests/sgx/load.c
+> --- a/tools/testing/selftests/sgx/load.c~sgx-no-file-exec	2021-06-21 11:48:25.226294281 -0700
+> +++ b/tools/testing/selftests/sgx/load.c	2021-06-21 12:03:28.023292029 -0700
+> @@ -150,16 +150,6 @@ bool encl_load(const char *path, struct
+>  		goto err;
+>  	}
+>  
+> -	/*
+> -	 * This just checks if the /dev file has these permission
+> -	 * bits set.  It does not check that the current user is
+> -	 * the owner or in the owning group.
+> -	 */
+> -	if (!(sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+> -		fprintf(stderr, "no execute permissions on device file %s\n", device_path);
+> -		goto err;
+> -	}
+> -
+>  	ptr = mmap(NULL, PAGE_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+>  	if (ptr == (void *)-1) {
+>  		perror("mmap for read");
+> @@ -169,13 +159,13 @@ bool encl_load(const char *path, struct
+>  
+>  #define ERR_MSG \
+>  "mmap() succeeded for PROT_READ, but failed for PROT_EXEC.\n" \
+> -" Check that current user has execute permissions on %s and \n" \
+> -" that /dev does not have noexec set: mount | grep \"/dev .*noexec\"\n" \
+> +" Check that /dev does not have noexec set:\n" \
+> +" \tmount | grep \"/dev .*noexec\"\n" \
+>  " If so, remount it executable: mount -o remount,exec /dev\n\n"
+>  
+>  	ptr = mmap(NULL, PAGE_SIZE, PROT_EXEC, MAP_SHARED, fd, 0);
+>  	if (ptr == (void *)-1) {
+> -		fprintf(stderr, ERR_MSG, device_path);
+> +		fprintf(stderr, ERR_MSG);
+>  		goto err;
+>  	}
+>  	munmap(ptr, PAGE_SIZE);
+> _
+> 
 
-Can you thus give a tested-by for this?
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 /Jarkko
