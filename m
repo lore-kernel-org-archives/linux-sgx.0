@@ -2,113 +2,91 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8EBC48BC2
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 21:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEF1C4743C
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Jun 2021 13:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66EDB61351
-	for <linux-sgx@archiver.kernel.org>; Mon, 21 Jun 2021 21:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16EBD61351
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Jun 2021 13:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbhFUVUv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Jun 2021 17:20:51 -0400
-Received: from mga01.intel.com ([192.55.52.88]:28896 "EHLO mga01.intel.com"
+        id S230415AbhFWNbE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Jun 2021 09:31:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229890AbhFUVUu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 21 Jun 2021 17:20:50 -0400
-IronPort-SDR: GNrydWMuiPlDIdfKTwa7xq/nobOAqPSeETizp407JHiV93lJ7CcFwsrCwn3rcSEs8V2CawZtIr
- e3t/2spVI9UQ==
-X-IronPort-AV: E=McAfee;i="6200,9189,10022"; a="228487278"
-X-IronPort-AV: E=Sophos;i="5.83,289,1616482800"; 
-   d="scan'208";a="228487278"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 14:18:36 -0700
-IronPort-SDR: iURLcX2X/l1I+WenSKlRwrlBmsndlHc0zgVDKu/bxMZJX0OSYHjJNZaxrLP1w5ffUGiDtgQ3Pw
- fdwOYhqGAPEw==
-X-IronPort-AV: E=Sophos;i="5.83,289,1616482800"; 
-   d="scan'208";a="423082471"
-Received: from bhooglan-mobl1.amr.corp.intel.com (HELO [10.255.228.227]) ([10.255.228.227])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 14:18:35 -0700
-Subject: Re: [PATCH] selftests/sgx: remove checks for file execute permissions
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, tim.gardner@canonical.com,
-        jarkko@kernel.org, shuah@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-References: <20210621190556.4B5DCBB1@viggo.jf.intel.com>
- <121f7215-f11d-2533-b736-9f18516c3220@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <1f46324e-2cbe-f4a7-65d5-24b22a8b36b1@intel.com>
-Date:   Mon, 21 Jun 2021 14:18:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230392AbhFWNbE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 23 Jun 2021 09:31:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5544761075;
+        Wed, 23 Jun 2021 13:28:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624454926;
+        bh=upqSmdlxULGclKN0RnNpYjn/h2h0AC6b/GP82iBreOI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZbeERsVc2rDvbpmqhDP/cMdTvV/v+foZuspnwziFzCuY9HIdkFHlIzF6aJLlApiXO
+         z4t1fL+71kgzOedoPlDIXxLXgFT+aUDEEfHx+A9TA13VcfHpLtVXozNIgbGrrgH13Y
+         P1yeLOua+keo1sTjUQmW7NWVJo/wekxLxg3RWE8i0UQHLUew4tFkPB5ozito+h8ksr
+         sUxP5c5bwcRMbxFklNwjyitZnf8JRJhdoBceUzeOks7goeGRr0yXqLLnf3YKWTTYYX
+         MGLVGI4daOYjoCF9D0yRIfXwE5k8ENwriGN7VLMSk3XjkXX6Y0K1FhOKmns7X9IY1y
+         LkssBkHadEdgQ==
+Date:   Wed, 23 Jun 2021 16:28:44 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     linux-sgx@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, bp@alien8.de, seanjc@google.com,
+        dave.hansen@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        Yang Zhong <yang.zhong@intel.com>
+Subject: Re: [PATCH v2] x86/sgx: Add missing xa_destroy() when virtual EPC is
+ destroyed
+Message-ID: <20210623132844.heleuoxogrpz3cpm@kernel.org>
+References: <20210616003634.320206-1-kai.huang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <121f7215-f11d-2533-b736-9f18516c3220@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210616003634.320206-1-kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/21/21 2:08 PM, Reinette Chatre wrote:
+On Wed, Jun 16, 2021 at 12:36:34PM +1200, Kai Huang wrote:
+> xa_destroy() needs to be called to destroy virtual EPC's page array
+> before calling kfree() to free the virtual EPC.  Currently it is not
+> called.  Add the missing xa_destroy() to fix.
 > 
-> Thank you very much for fixing this. With this applied the SGX tests are
-> able to run again on my system.
+> Fixes: 540745ddbc70 ("x86/sgx: Introduce virtual EPC for use by KVM guests")
+> Tested-by: Yang Zhong <yang.zhong@intel.com>
+> Acked-by: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+> ---
+> v1->v2:
 > 
-> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
+>  - Fixed typo in commit msg
+>  - Added Dave's Acked-by
+> ---
+>  arch/x86/kernel/cpu/sgx/virt.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I think it is missing a "Signed-off-by".
+> diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+> index 6ad165a5c0cc..64511c4a5200 100644
+> --- a/arch/x86/kernel/cpu/sgx/virt.c
+> +++ b/arch/x86/kernel/cpu/sgx/virt.c
+> @@ -212,6 +212,7 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
+>  		list_splice_tail(&secs_pages, &zombie_secs_pages);
+>  	mutex_unlock(&zombie_secs_pages_lock);
+>  
+> +	xa_destroy(&vepc->page_array);
+>  	kfree(vepc);
+>  
+>  	return 0;
+> -- 
+> 2.31.1
+> 
+> 
 
-Right you are.  I think I've done this twice in a row for one-off
-patches.  Sheesh.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-
-If anyone wants a resend with this included, please let me know.
+/Jarkko
