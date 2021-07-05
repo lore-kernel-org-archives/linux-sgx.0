@@ -2,92 +2,158 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901ADC11F67
-	for <linux-sgx@archiver.kernel.org>; Tue, 29 Jun 2021 20:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59226C07E98
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Jul 2021 05:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 641AE61DC2
-	for <linux-sgx@archiver.kernel.org>; Tue, 29 Jun 2021 20:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E459610A5
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Jul 2021 05:02:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234073AbhF2UZZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 29 Jun 2021 16:25:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
+        id S229700AbhGEFFX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 5 Jul 2021 01:05:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233801AbhF2UZY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 29 Jun 2021 16:25:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 84EE261D8C;
-        Tue, 29 Jun 2021 20:22:56 +0000 (UTC)
+        id S229447AbhGEFFW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 5 Jul 2021 01:05:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C8747613C8;
+        Mon,  5 Jul 2021 05:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624998177;
-        bh=tsoOj4FHpTgG9n3oYTCQ0vOW65Ii2XKzPal5jiN2p4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WKDd7Z7+9X2kGG7UQFlL+hzU+/TRtWZZ1f/i7vUhHE27Pf0pRCxiA7bqyqqq4LkcD
-         zLRDWxUulv8WXTVzt+/3Rn55kKbNH1yAsRl9uqkYHikoLdfRzEM2rhE4lUNM+sh5wU
-         r1M1ok5jV3hTkG8wlewU8FY23ZLEzB348oHIk9NGVa/TUwpyNhRYDQZmWYY2wKELw1
-         mRl85LSG2fkmGISh/egvALRDrhqM3Aq/bVJYzASbdqjmWm703mIWiNvf+zmix/x3D/
-         G3TR528xUbdnjyjZPDRRMES6UOKGJUGaWu6UTip9u1I9JO7x9CoSwb6rc9fSr+ON2W
-         kwMw/2yZSQIUg==
-Date:   Tue, 29 Jun 2021 23:22:53 +0300
+        s=k20201202; t=1625461366;
+        bh=zH8QyVNRpzQzn5HVPrOanQh9jYK7M7SHHxYoIiZK8tg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G4a5/0srD+lqffD1gph0y1n7lGvJL2sOWMdF9K7UdeD9W5jQNU3Vdt1YYkahPCNm3
+         LcUnLA8ejvm9lUnvGtX9Tdk0MSyffLoPyjaSOVW1F+rRYc5DzB/7Kp8/RjuPBi0mn/
+         fc855jkoNWC/AAMcntWeL/uK83m/lyObr2gJ0N8W5gZh0bPUea1jndkVu3OPlVCNE7
+         usZSIzNQe8XU7UPJXJsK5KfSiubhJcz2EbvebKKsUmLC57yBJ1WgNaeeWwEABMBRPC
+         Td4ihoupTvKOiQP390mumaZ77Qss7+7GYdq/3F9cyNPiTx/iNvSTHfU0aSqhjmGbvK
+         gqEsfKIhURAUA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-sgx@vger.kernel.org
-Subject: Re: [PATCH] x86/SGX: drop spurious kernel-doc notation
-Message-ID: <20210629202253.qwqpaqoauz4usgle@kernel.org>
-References: <20210627223639.27714-1-rdunlap@infradead.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/sgx: Fix Q1 and Q2 calculation in sigstruct.c
+Date:   Mon,  5 Jul 2021 08:02:38 +0300
+Message-Id: <20210705050238.63064-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210627223639.27714-1-rdunlap@infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Jun 27, 2021 at 03:36:39PM -0700, Randy Dunlap wrote:
-> Drop mistaken kernel-doc notation where plain C comments
-> should be used instead.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: linux-sgx@vger.kernel.org
+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 
-"x86/SGX" -> "x86/sgx"
+Q1 and Q2 are numbers with *maximum* length of 384 bytes. If the calculated
+length of Q1 and Q2 is less than 384 bytes, things will go wrong.
 
-Anyway,
+E.g. if Q2 is 383 bytes, then
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@kernel.org>
+1. The bytes of q2 are copied to sigstruct->q2 in calc_q1q2().
+2. The entire sigstruct->q2 is reversed, which results it being
+   256 * Q2, given that the last byte of sigstruct->q2 is added
+   to before the bytes given by calc_q1q2().
 
-> ---
->  arch/x86/kernel/cpu/sgx/encl.h  |    2 +-
->  arch/x86/kernel/cpu/sgx/encls.h |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- linux-next-20210625.orig/arch/x86/kernel/cpu/sgx/encl.h
-> +++ linux-next-20210625/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -1,5 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> -/**
-> +/*
->   * Copyright(c) 2016-20 Intel Corporation.
->   *
->   * Contains the software defined data structures for enclaves.
-> --- linux-next-20210625.orig/arch/x86/kernel/cpu/sgx/encls.h
-> +++ linux-next-20210625/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -11,7 +11,7 @@
->  #include <asm/traps.h>
->  #include "sgx.h"
->  
-> -/**
-> +/*
->   * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
->   *
->   * ENCLS has its own (positive value) error codes and also generates
-> 
+Either change in key or measurement can trigger the bug. E.g. an unmeasured
+heap could cause a devastating change in Q1 or Q2.
 
-/Jarkko
+Reverse exactly the bytes of Q1 and Q2 in calc_q1q2() before returning to
+the caller.
+
+Link: https://lore.kernel.org/linux-sgx/20210301051836.30738-1-tianjia.zhang@linux.alibaba.com/
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+The original patch did a bad job explaining the code change but it
+turned out making sense. I wrote a new description. 
+ tools/testing/selftests/sgx/sigstruct.c | 41 +++++++++++++------------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
+
+diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
+index dee7a3d6c5a5..92bbc5a15c39 100644
+--- a/tools/testing/selftests/sgx/sigstruct.c
++++ b/tools/testing/selftests/sgx/sigstruct.c
+@@ -55,10 +55,27 @@ static bool alloc_q1q2_ctx(const uint8_t *s, const uint8_t *m,
+ 	return true;
+ }
+ 
++static void reverse_bytes(void *data, int length)
++{
++	int i = 0;
++	int j = length - 1;
++	uint8_t temp;
++	uint8_t *ptr = data;
++
++	while (i < j) {
++		temp = ptr[i];
++		ptr[i] = ptr[j];
++		ptr[j] = temp;
++		i++;
++		j--;
++	}
++}
++
+ static bool calc_q1q2(const uint8_t *s, const uint8_t *m, uint8_t *q1,
+ 		      uint8_t *q2)
+ {
+ 	struct q1q2_ctx ctx;
++	int len;
+ 
+ 	if (!alloc_q1q2_ctx(s, m, &ctx)) {
+ 		fprintf(stderr, "Not enough memory for Q1Q2 calculation\n");
+@@ -89,8 +106,10 @@ static bool calc_q1q2(const uint8_t *s, const uint8_t *m, uint8_t *q1,
+ 		goto out;
+ 	}
+ 
+-	BN_bn2bin(ctx.q1, q1);
+-	BN_bn2bin(ctx.q2, q2);
++	len = BN_bn2bin(ctx.q1, q1);
++	reverse_bytes(q1, len);
++	len = BN_bn2bin(ctx.q2, q2);
++	reverse_bytes(q2, len);
+ 
+ 	free_q1q2_ctx(&ctx);
+ 	return true;
+@@ -152,22 +171,6 @@ static RSA *gen_sign_key(void)
+ 	return key;
+ }
+ 
+-static void reverse_bytes(void *data, int length)
+-{
+-	int i = 0;
+-	int j = length - 1;
+-	uint8_t temp;
+-	uint8_t *ptr = data;
+-
+-	while (i < j) {
+-		temp = ptr[i];
+-		ptr[i] = ptr[j];
+-		ptr[j] = temp;
+-		i++;
+-		j--;
+-	}
+-}
+-
+ enum mrtags {
+ 	MRECREATE = 0x0045544145524345,
+ 	MREADD = 0x0000000044444145,
+@@ -367,8 +370,6 @@ bool encl_measure(struct encl *encl)
+ 	/* BE -> LE */
+ 	reverse_bytes(sigstruct->signature, SGX_MODULUS_SIZE);
+ 	reverse_bytes(sigstruct->modulus, SGX_MODULUS_SIZE);
+-	reverse_bytes(sigstruct->q1, SGX_MODULUS_SIZE);
+-	reverse_bytes(sigstruct->q2, SGX_MODULUS_SIZE);
+ 
+ 	EVP_MD_CTX_destroy(ctx);
+ 	RSA_free(key);
+-- 
+2.32.0
+
