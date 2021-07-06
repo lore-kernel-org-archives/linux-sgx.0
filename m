@@ -2,271 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AE7C07E99
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Jul 2021 14:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D838FC07E96
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Jul 2021 14:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7F8961966
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Jul 2021 14:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B721761C34
+	for <linux-sgx@archiver.kernel.org>; Tue,  6 Jul 2021 14:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231557AbhGEOjp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Jul 2021 10:39:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44068 "EHLO mail.kernel.org"
+        id S231755AbhGFO72 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 6 Jul 2021 10:59:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:62069 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231539AbhGEOjo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 5 Jul 2021 10:39:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 483256195C;
-        Mon,  5 Jul 2021 14:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625495827;
-        bh=JuPCvcyURhAudU9gIfifiJz70vErFSX5KY1xpZ69oQE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXMIokCtWBjuB6GeT17osWO4o+M4WTVprmbX6HmyFX2iwLY6fGid3IqphxI+aUr+G
-         SXN80pO6R1rR0pbW3tYvsxHOgQzssXxfjsZTPTjLx7mBM0XwgZyzpgfdakZPOOqrOa
-         TxR35ba/XrYqDc+HGrU7LiVf0313zhk3sNsXr34H7hQLpOX1h0SUph8JZjogBVcSPI
-         OdBpBhkd4+ShcGD1p8658+qyeJR7rxikwdLswlvLmkVnsH8KjPaEWc7tdjQ04LIr0u
-         VOCqQJ0rVrD5wn5R5tOcLgKaQ1RaPQuT0QCLhPPhknV7XMrHiz00wkyfrvtZWwVShZ
-         Yy13ixOum3DmQ==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
+        id S232793AbhGFO7W (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 6 Jul 2021 10:59:22 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10037"; a="207303281"
+X-IronPort-AV: E=Sophos;i="5.83,328,1616482800"; 
+   d="scan'208";a="207303281"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2021 07:56:43 -0700
+X-IronPort-AV: E=Sophos;i="5.83,328,1616482800"; 
+   d="scan'208";a="486295873"
+Received: from thaovo-mobl1.amr.corp.intel.com (HELO [10.209.81.14]) ([10.209.81.14])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2021 07:56:42 -0700
+Subject: Re: [PATCH 1/4] x86/sgx: Add sgx_nr_all_pages to the debugfs
+To:     Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>,
         Borislav Petkov <bp@alien8.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] selftests/sgx: Trigger the reclaimer and #PF handler
-Date:   Mon,  5 Jul 2021 17:36:52 +0300
-Message-Id: <20210705143652.116125-5-jarkko@kernel.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210705143652.116125-1-jarkko@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 References: <20210705143652.116125-1-jarkko@kernel.org>
+ <20210705143652.116125-2-jarkko@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b8a31e6e-90e8-f93f-e6b2-e72801fb31e4@intel.com>
+Date:   Tue, 6 Jul 2021 07:56:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210705143652.116125-2-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Create a heap for the test enclave, which has the same size as all
-available Enclave Page Cache (EPC) pages in the system. This will guarantee
-that all test_encl.elf pages *and* SGX Enclave Control Structure (SECS)
-have been swapped out by the page reclaimer during the load time. Actually,
-this adds a bit more stress than that since part of the EPC gets reserved
-for the Version Array (VA) pages.
+On 7/5/21 7:36 AM, Jarkko Sakkinen wrote:
+> Create /sys/kernel/debug/x86/sgx_nr_all_pages, which reports total
+> number of EPC pages available in the system.
+Could we flesh this out a bit, please?
 
-For each test, the page fault handler gets triggered in two occasions:
+What's the value here when userspace could just re-enumerate the EPC
+size from CPUID?
 
-- When SGX_IOC_ENCLAVE_INIT is performed, SECS gets swapped in by the
-  page fault handler.
-- During the execution, each page that is referenced gets swapped in
-  by the page fault handler.
+I'd really appreciate if we could draw parallels between these additions
+to the "SGX VM" and their analogs in the "core VM".  In this case, I
+think the closest analog is probably "MemTotal" in /proc/meminfo.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- tools/testing/selftests/sgx/load.c      | 33 +++++++++++++++----
- tools/testing/selftests/sgx/main.c      | 42 ++++++++++++++++++++++++-
- tools/testing/selftests/sgx/main.h      |  3 +-
- tools/testing/selftests/sgx/sigstruct.c |  6 ++--
- 4 files changed, 74 insertions(+), 10 deletions(-)
+Second, how is this going to be used?
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 9946fab2a3d6..a312a132ac33 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -21,6 +21,8 @@
- 
- void encl_delete(struct encl *encl)
- {
-+	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
-+
- 	if (encl->encl_base)
- 		munmap((void *)encl->encl_base, encl->encl_size);
- 
-@@ -30,6 +32,8 @@ void encl_delete(struct encl *encl)
- 	if (encl->fd)
- 		close(encl->fd);
- 
-+	munmap(heap_seg->src, heap_seg->size);
-+
- 	if (encl->segment_tbl)
- 		free(encl->segment_tbl);
- 
-@@ -111,7 +115,10 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
- 	ioc.offset = seg->offset;
- 	ioc.length = seg->size;
- 	ioc.secinfo = (unsigned long)&secinfo;
--	ioc.flags = SGX_PAGE_MEASURE;
-+	if (seg->measure)
-+		ioc.flags = SGX_PAGE_MEASURE;
-+	else
-+		ioc.flags = 0;
- 
- 	rc = ioctl(encl->fd, SGX_IOC_ENCLAVE_ADD_PAGES, &ioc);
- 	if (rc < 0) {
-@@ -124,9 +131,10 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
- 
- 
- 
--bool encl_load(const char *path, struct encl *encl)
-+bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
- {
- 	const char device_path[] = "/dev/sgx_enclave";
-+	struct encl_segment *seg;
- 	Elf64_Phdr *phdr_tbl;
- 	off_t src_offset;
- 	Elf64_Ehdr *ehdr;
-@@ -188,6 +196,8 @@ bool encl_load(const char *path, struct encl *encl)
- 	ehdr = encl->bin;
- 	phdr_tbl = encl->bin + ehdr->e_phoff;
- 
-+	encl->nr_segments = 1; /* one for the heap */
-+
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		Elf64_Phdr *phdr = &phdr_tbl[i];
- 
-@@ -203,7 +213,6 @@ bool encl_load(const char *path, struct encl *encl)
- 	for (i = 0, j = 0; i < ehdr->e_phnum; i++) {
- 		Elf64_Phdr *phdr = &phdr_tbl[i];
- 		unsigned int flags = phdr->p_flags;
--		struct encl_segment *seg;
- 
- 		if (phdr->p_type != PT_LOAD)
- 			continue;
-@@ -240,14 +249,26 @@ bool encl_load(const char *path, struct encl *encl)
- 		seg->offset = (phdr->p_offset & PAGE_MASK) - src_offset;
- 		seg->size = (phdr->p_filesz + PAGE_SIZE - 1) & PAGE_MASK;
- 		seg->src = encl->src + seg->offset;
-+		seg->measure = true;
- 
- 		j++;
- 	}
- 
--	assert(j == encl->nr_segments);
-+	assert(j == encl->nr_segments - 1);
-+
-+	seg = &encl->segment_tbl[j];
-+	seg->offset =  encl->segment_tbl[j - 1].offset + encl->segment_tbl[j - 1].size;
-+	seg->size = heap_size;
-+	seg->src = mmap(NULL, heap_size, PROT_READ | PROT_WRITE,
-+			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+	seg->prot = PROT_READ | PROT_WRITE;
-+	seg->flags = (SGX_PAGE_TYPE_REG << 8) | seg->prot;
-+	seg->measure = false;
-+
-+	if (seg->src == MAP_FAILED)
-+		goto err;
- 
--	encl->src_size = encl->segment_tbl[j - 1].offset +
--			 encl->segment_tbl[j - 1].size;
-+	encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
- 
- 	for (encl->encl_size = 4096; encl->encl_size < encl->src_size; )
- 		encl->encl_size <<= 1;
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index e252015e0c15..772ba1d72619 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -112,17 +112,57 @@ FIXTURE(enclave) {
- 	struct sgx_enclave_run run;
- };
- 
-+#define SGX_NR_ALL_PAGES_PATH "/sys/kernel/debug/x86/sgx_nr_all_pages"
-+
-+static int sysfs_get_ulong(const char *path, unsigned long *value)
-+{
-+	struct stat sbuf;
-+	ssize_t ret = 0;
-+	char buf[128];
-+	int fd;
-+
-+	ret = stat(path, &sbuf);
-+	if (ret)
-+		return ret;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd < 0)
-+		return fd;
-+
-+	ret = read(fd, buf, sizeof(buf));
-+	if (ret < 0)
-+		goto out;
-+
-+	/* Clear the read bytes count. */
-+	ret = 0;
-+
-+	errno = 0;
-+	*value = strtoul(buf, NULL, 0);
-+	if (errno)
-+		ret = -1;
-+
-+out:
-+	close(fd);
-+	return ret;
-+}
-+
- FIXTURE_SETUP(enclave)
- {
- 	Elf64_Sym *sgx_enter_enclave_sym = NULL;
-+	unsigned long nr_all_pages;
- 	struct vdso_symtab symtab;
- 	struct encl_segment *seg;
- 	char maps_line[256];
- 	FILE *maps_file;
- 	unsigned int i;
- 	void *addr;
-+	int ret;
-+
-+	ret = sysfs_get_ulong(SGX_NR_ALL_PAGES_PATH, &nr_all_pages);
-+	if (ret)
-+		ksft_exit_skip("Failed to read " SGX_NR_ALL_PAGES_PATH "\n");
- 
--	if (!encl_load("test_encl.elf", &self->encl)) {
-+	if (!encl_load("test_encl.elf", &self->encl, nr_all_pages * 4096)) {
- 		encl_delete(&self->encl);
- 		ksft_exit_skip("cannot load enclaves\n");
- 	}
-diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
-index 452d11dc4889..a286861dc289 100644
---- a/tools/testing/selftests/sgx/main.h
-+++ b/tools/testing/selftests/sgx/main.h
-@@ -12,6 +12,7 @@ struct encl_segment {
- 	size_t size;
- 	unsigned int prot;
- 	unsigned int flags;
-+	bool measure;
- };
- 
- struct encl {
-@@ -32,7 +33,7 @@ extern unsigned char sign_key[];
- extern unsigned char sign_key_end[];
- 
- void encl_delete(struct encl *ctx);
--bool encl_load(const char *path, struct encl *encl);
-+bool encl_load(const char *path, struct encl *encl, unsigned long heap_size);
- bool encl_measure(struct encl *encl);
- bool encl_build(struct encl *encl);
- 
-diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-index 202a96fd81bf..50c5ab1aa6fa 100644
---- a/tools/testing/selftests/sgx/sigstruct.c
-+++ b/tools/testing/selftests/sgx/sigstruct.c
-@@ -296,8 +296,10 @@ static bool mrenclave_segment(EVP_MD_CTX *ctx, struct encl *encl,
- 		if (!mrenclave_eadd(ctx, seg->offset + offset, seg->flags))
- 			return false;
- 
--		if (!mrenclave_eextend(ctx, seg->offset + offset, seg->src + offset))
--			return false;
-+		if (seg->measure) {
-+			if (!mrenclave_eextend(ctx, seg->offset + offset, seg->src + offset))
-+				return false;
-+		}
- 	}
- 
- 	return true;
--- 
-2.32.0
-
+Third, is this going to be the ABI forever?
