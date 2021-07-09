@@ -2,270 +2,157 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3531C07E9C
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Jul 2021 18:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4132C07E9B
+	for <linux-sgx@archiver.kernel.org>; Fri,  9 Jul 2021 16:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2CC6193D
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Jul 2021 18:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99023613C9
+	for <linux-sgx@archiver.kernel.org>; Fri,  9 Jul 2021 16:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbhGHSRV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Jul 2021 14:17:21 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2094 "EHLO mga01.intel.com"
+        id S229506AbhGIQZd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 9 Jul 2021 12:25:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230139AbhGHSRT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 8 Jul 2021 14:17:19 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10039"; a="231327152"
-X-IronPort-AV: E=Sophos;i="5.84,224,1620716400"; 
-   d="scan'208";a="231327152"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2021 11:14:35 -0700
-X-IronPort-AV: E=Sophos;i="5.84,224,1620716400"; 
-   d="scan'208";a="482637390"
-Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2021 11:14:34 -0700
-From:   Tony Luck <tony.luck@intel.com>
-To:     tony.luck@intel.com
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] x86/sgx: Track phase and type of SGX EPC pages
-Date:   Thu,  8 Jul 2021 11:14:20 -0700
-Message-Id: <20210708181423.1312359-2-tony.luck@intel.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210708181423.1312359-1-tony.luck@intel.com>
-References: <20210708181423.1312359-1-tony.luck@intel.com>
+        id S229491AbhGIQZd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 9 Jul 2021 12:25:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5CDA261153;
+        Fri,  9 Jul 2021 16:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625847769;
+        bh=kxyDYP6A8O10FtJkUZON8yJOupFKIyAhOIelmPtwv5I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bZeKzIiYXEGbK0b9C6iTSp+7gymmyaIyPpTJr+lJkFub5wqx75idU9eUzfu+AEgr8
+         +9onnivkg8BXgiatHW9u5VvmG7gIikAMaENxrGV5Qm+KgeG3PvNy5Za6UdoVX90h//
+         9W+qlDq/Kf+nnYgJwbyxZ7NmXZUZctfErCrsPkLkbo4NwFyFkzisCfZ/v3vwFLR+AD
+         KrsQCi1sJf8fIk+kRe/zgTVlVHeftuzfGB14jEQNEdrgBfT7dEFLDT/IzIa831iykg
+         hvPVEX+slJhPXeXdQqHgxAFr8dgVoZe8kB1YCid7b8DkE6Qi+ZOWDputyWTvcQC9uu
+         bkoqM+CaGnN8Q==
+Date:   Fri, 9 Jul 2021 19:22:47 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-sgx@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] selftests/sgx: Trigger the reclaimer and #PF handler
+Message-ID: <20210709162247.d5ggqgpqpu2drp6o@kernel.org>
+References: <20210705143652.116125-1-jarkko@kernel.org>
+ <20210705143652.116125-5-jarkko@kernel.org>
+ <715ed555-5044-6fee-1d09-1c4cfa827af3@intel.com>
+ <20210706235016.uucukyrr3ckk57pi@kernel.org>
+ <16505466-e001-c4b0-ec41-5384ddcf194b@intel.com>
+ <20210707091736.6wzemgmtzuegk3uf@kernel.org>
+ <10664754-7e53-d9d1-f00c-f9dbd4a2d877@intel.com>
+ <20210707205019.6jy64s4uqcw65q4h@kernel.org>
+ <64b1cac8-75b9-8549-8499-60b4d72cf9ef@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64b1cac8-75b9-8549-8499-60b4d72cf9ef@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Memory errors can be reported either synchronously as memory is accessed,
-or asynchronously by speculative access or by a memory controller page
-scrubber.  The life cycle of an EPC page takes it through:
-	dirty -> free -> in-use -> free.
+On Wed, Jul 07, 2021 at 02:20:04PM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
+> 
+> On 7/7/2021 1:50 PM, Jarkko Sakkinen wrote:
+> > On Wed, Jul 07, 2021 at 08:02:42AM -0700, Reinette Chatre wrote:
+> > > Hi Jarkko,
+> > > 
+> > > On 7/7/2021 2:17 AM, Jarkko Sakkinen wrote:
+> > > > On Tue, Jul 06, 2021 at 05:10:38PM -0700, Reinette Chatre wrote:
+> > > > > Hi Jarkko,
+> > > > > 
+> > > > > On 7/6/2021 4:50 PM, Jarkko Sakkinen wrote:
+> > > > > > On Tue, Jul 06, 2021 at 11:34:54AM -0700, Reinette Chatre wrote:
+> > > > > > > Hi Jarkko,
+> > > > > > > 
+> > > > > > > On 7/5/2021 7:36 AM, Jarkko Sakkinen wrote:
+> > > > > > > > Create a heap for the test enclave, which has the same size as all
+> > > > > > > > available Enclave Page Cache (EPC) pages in the system. This will guarantee
+> > > > > > > > that all test_encl.elf pages *and* SGX Enclave Control Structure (SECS)
+> > > > > > > > have been swapped out by the page reclaimer during the load time. Actually,
+> > > > > > > > this adds a bit more stress than that since part of the EPC gets reserved
+> > > > > > > > for the Version Array (VA) pages.
+> > > > > > > > 
+> > > > > > > > For each test, the page fault handler gets triggered in two occasions:
+> > > > > > > > 
+> > > > > > > > - When SGX_IOC_ENCLAVE_INIT is performed, SECS gets swapped in by the
+> > > > > > > >       page fault handler.
+> > > > > > > > - During the execution, each page that is referenced gets swapped in
+> > > > > > > >       by the page fault handler.
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > If I understand this correctly, all EPC pages are now being consumed during
+> > > > > > > fixture setup and thus every SGX test, no matter how big or small, now
+> > > > > > > becomes a stress test of the reclaimer instead of there being a unique
+> > > > > > > reclaimer test. Since an enclave is set up and torn down for every test this
+> > > > > > > seems like a significant addition. It also seems like this would impact
+> > > > > > > future tests of dynamic page addition where not all scenarios could be
+> > > > > > > tested with all EPC pages already consumed.
+> > > > > > > 
+> > > > > > > Reinette
+> > > > > > 
+> > > > > > Re-initializing the test enclave is mandatory thing to do for all tests
+> > > > > > because it has an internals state.
+> > > > > > 
+> > > > > 
+> > > > > Right, but not all tests require the same enclave. In kselftest terminology
+> > > > > I think you are attempting to force all tests to depend on the same test
+> > > > > fixture. Is it not possible to have a separate "reclaimer" test fixture that
+> > > > > would build an enclave with a large heap and then have reclaimer tests that
+> > > > > exercise it by being tests that are specific to this "reclaimer fixture"?
+> > > > > 
+> > > > > Reinette
+> > > > 
+> > > > Why add that complexity?
+> > > > 
+> > > 
+> > > With this change every test is turned into a pseudo reclaimer test without
+> > > there being any explicit testing (with pass/fail criteria) of reclaimer
+> > > behavior. This is an expensive addition and reduces the scenarios that the
+> > > tests can exercise.
+> > > 
+> > > Reinette
+> > 
+> > There is consistent known behaviour how reclaimer and also the page fault
+> > are exercised for each test. I think that is what matters most right now
+> > that the basic behaviour of both the page reclaimer and page fault handler
+> > gets exercised.
+> 
+> I believe the basic behavior of page fault handler is currently exercised in
+> each test, this is required.
 
-Memory errors are reported using physical addresses. It is a simple
-matter to find which sgx_epc_page structure maps a given address.
-But then recovery code needs to be able to determine the current use of
-the page to take the appropriate recovery action. Within the "in-use"
-phase different actions are needed based on how the page is used in
-the enclave.
+This not true. The current test does not exercise ELDU code path.
 
-Add new flags bits to describe the phase (with an extra bit for the new
-phase of "poisoned"). Drop pages marked as poisoned instead of adding
-them to a free list to make sure they are not re-used.
+> 
+> > 
+> > I don't understand the real-world gain of doing something factors more
+> > complex than necessary at a particular point of time,  when you don't
+> > really need to hang yourself into it forever.
+> 
+> Your argument about "hang yourself into it forever" can go both ways - why
+> should all tests now unnecessarily consume the entire EPC forever?
+> 
+> If I understand correctly adding a separate reclaimer test is not complex
+> but would require refactoring code.
 
-Add a type field to struct epc_page for how an in-use page has been
-allocated. Re-use "enum sgx_page_type" for this type, with a couple
-of additions for s/w types.
+What does it matter anyway if code nees to be refactored?
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/sgx.h      |  6 ++++++
- arch/x86/kernel/cpu/sgx/encl.c  |  4 ++--
- arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
- arch/x86/kernel/cpu/sgx/main.c  | 21 +++++++++++++++++++--
- arch/x86/kernel/cpu/sgx/sgx.h   | 14 ++++++++++++--
- arch/x86/kernel/cpu/sgx/virt.c  |  2 +-
- 6 files changed, 42 insertions(+), 9 deletions(-)
+> > This patch does increase the coverage in a deterministic manner to the code
+> > paths that were not previously exercised, i.e. we know the code paths, and
+> > could even calculate the exact number of times that they are triggered. And
+> > without doing anything obscure. That's what matters to me.
+> 
+> On the contrary this is indeed obfuscating the SGX tests: if an issue shows
+> up in the reclaimer then all tests would fail. If there is a unique
+> reclaimer test then that would help point to where the issue may be.
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 9c31e0ebc55b..9619a6d77a83 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -216,6 +216,8 @@ struct sgx_pageinfo {
-  * %SGX_PAGE_TYPE_REG:	a regular page
-  * %SGX_PAGE_TYPE_VA:	a VA page
-  * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
-+ *
-+ * Also used to track current use of &struct sgx_epc_page
-  */
- enum sgx_page_type {
- 	SGX_PAGE_TYPE_SECS,
-@@ -223,6 +225,10 @@ enum sgx_page_type {
- 	SGX_PAGE_TYPE_REG,
- 	SGX_PAGE_TYPE_VA,
- 	SGX_PAGE_TYPE_TRIM,
-+
-+	/* sgx_epc_page.type */
-+	SGX_PAGE_TYPE_FREE = 100,
-+	SGX_PAGE_TYPE_KVM = 101,
- };
- 
- #define SGX_NR_PAGE_TYPES	5
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 3be203297988..abf6e1a704c0 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -72,7 +72,7 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	struct sgx_epc_page *epc_page;
- 	int ret;
- 
--	epc_page = sgx_alloc_epc_page(encl_page, false);
-+	epc_page = sgx_alloc_epc_page(encl_page, SGX_PAGE_TYPE_REG, false);
- 	if (IS_ERR(epc_page))
- 		return epc_page;
- 
-@@ -679,7 +679,7 @@ struct sgx_epc_page *sgx_alloc_va_page(void)
- 	struct sgx_epc_page *epc_page;
- 	int ret;
- 
--	epc_page = sgx_alloc_epc_page(NULL, true);
-+	epc_page = sgx_alloc_epc_page(NULL,  SGX_PAGE_TYPE_VA, true);
- 	if (IS_ERR(epc_page))
- 		return ERR_CAST(epc_page);
- 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 83df20e3e633..a74ae00194cc 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -83,7 +83,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 
- 	encl->backing = backing;
- 
--	secs_epc = sgx_alloc_epc_page(&encl->secs, true);
-+	secs_epc = sgx_alloc_epc_page(&encl->secs, SGX_PAGE_TYPE_SECS, true);
- 	if (IS_ERR(secs_epc)) {
- 		ret = PTR_ERR(secs_epc);
- 		goto err_out_backing;
-@@ -300,7 +300,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
- 	if (IS_ERR(encl_page))
- 		return PTR_ERR(encl_page);
- 
--	epc_page = sgx_alloc_epc_page(encl_page, true);
-+	epc_page = sgx_alloc_epc_page(encl_page, SGX_PAGE_TYPE_REG, true);
- 	if (IS_ERR(epc_page)) {
- 		kfree(encl_page);
- 		return PTR_ERR(epc_page);
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 63d3de02bbcc..643df87b3e01 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -401,7 +401,12 @@ static void sgx_reclaim_pages(void)
- 		section = &sgx_epc_sections[epc_page->section];
- 		node = section->node;
- 
-+		/* drop poison pages instead of adding to free list */
-+		if (epc_page->flags & SGX_EPC_PAGE_POISON)
-+			continue;
-+
- 		spin_lock(&node->lock);
-+		epc_page->flags = SGX_EPC_PAGE_FREE;
- 		list_add_tail(&epc_page->list, &node->free_page_list);
- 		sgx_nr_free_pages++;
- 		spin_unlock(&node->lock);
-@@ -560,6 +565,7 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
- /**
-  * sgx_alloc_epc_page() - Allocate an EPC page
-  * @owner:	the owner of the EPC page
-+ * @type:	type of page being allocated
-  * @reclaim:	reclaim pages if necessary
-  *
-  * Iterate through EPC sections and borrow a free EPC page to the caller. When a
-@@ -574,7 +580,7 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
-  *   an EPC page,
-  *   -errno on error
-  */
--struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
-+struct sgx_epc_page *sgx_alloc_epc_page(void *owner, enum sgx_page_type type, bool reclaim)
- {
- 	struct sgx_epc_page *page;
- 
-@@ -582,6 +588,8 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
- 		page = __sgx_alloc_epc_page();
- 		if (!IS_ERR(page)) {
- 			page->owner = owner;
-+			page->type = type;
-+			page->flags = 0;
- 			break;
- 		}
- 
-@@ -616,14 +624,22 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
-  * responsibility to make sure that the page is in uninitialized state. In other
-  * words, do EREMOVE, EWB or whatever operation is necessary before calling
-  * this function.
-+ *
-+ * Note that if the page has been tagged as poisoned, it is simply
-+ * dropped on the floor instead of added to the free list to make
-+ * sure we do not re-use it.
-  */
- void sgx_free_epc_page(struct sgx_epc_page *page)
- {
- 	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
- 	struct sgx_numa_node *node = section->node;
- 
-+	if (page->flags & SGX_EPC_PAGE_POISON)
-+		return;
-+
- 	spin_lock(&node->lock);
- 
-+	page->flags = SGX_EPC_PAGE_FREE;
- 	list_add_tail(&page->list, &node->free_page_list);
- 	sgx_nr_free_pages++;
- 
-@@ -651,7 +667,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		section->pages[i].section = index;
--		section->pages[i].flags = 0;
-+		section->pages[i].flags = SGX_EPC_PAGE_DIRTY;
-+		section->pages[i].type = SGX_PAGE_TYPE_FREE;
- 		section->pages[i].owner = NULL;
- 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
- 	}
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 4628acec0009..e43d3c27eb96 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -26,9 +26,19 @@
- /* Pages, which are being tracked by the page reclaimer. */
- #define SGX_EPC_PAGE_RECLAIMER_TRACKED	BIT(0)
- 
-+/* Pages, on the "sgx_dirty_page_list" */
-+#define SGX_EPC_PAGE_DIRTY		BIT(1)
-+
-+/* Pages, on one of the node free lists */
-+#define SGX_EPC_PAGE_FREE		BIT(2)
-+
-+/* Pages, with h/w poison errors */
-+#define SGX_EPC_PAGE_POISON		BIT(3)
-+
- struct sgx_epc_page {
- 	unsigned int section;
--	unsigned int flags;
-+	u16 flags;
-+	u16 type;
- 	struct sgx_encl_page *owner;
- 	struct list_head list;
- };
-@@ -82,7 +92,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page);
- 
- void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
- int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
--struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
-+struct sgx_epc_page *sgx_alloc_epc_page(void *owner, enum sgx_page_type type, bool reclaim);
- 
- #ifdef CONFIG_X86_SGX_KVM
- int __init sgx_vepc_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index 64511c4a5200..044dd92ebd63 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -46,7 +46,7 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
- 	if (epc_page)
- 		return 0;
- 
--	epc_page = sgx_alloc_epc_page(vepc, false);
-+	epc_page = sgx_alloc_epc_page(vepc, SGX_PAGE_TYPE_KVM, false);
- 	if (IS_ERR(epc_page))
- 		return PTR_ERR(epc_page);
- 
--- 
-2.29.2
+I tend to disagree this. I'll add a separate reclaimer test if I need
+to test something that this does not scale. It's an iterative process.
 
+/Jarkko
