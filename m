@@ -2,47 +2,213 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_05,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D410CC07E9B
-	for <linux-sgx@archiver.kernel.org>; Fri,  9 Jul 2021 16:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1665BC07E99
+	for <linux-sgx@archiver.kernel.org>; Fri,  9 Jul 2021 18:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B69E0601FE
-	for <linux-sgx@archiver.kernel.org>; Fri,  9 Jul 2021 16:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5C88613D1
+	for <linux-sgx@archiver.kernel.org>; Fri,  9 Jul 2021 18:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229631AbhGIQcH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 9 Jul 2021 12:32:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58266 "EHLO mail.kernel.org"
+        id S229491AbhGISKr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 9 Jul 2021 14:10:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229627AbhGIQcH (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 9 Jul 2021 12:32:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 75EC6613CA;
-        Fri,  9 Jul 2021 16:29:23 +0000 (UTC)
+        id S229459AbhGISKr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 9 Jul 2021 14:10:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E7EFA613D1;
+        Fri,  9 Jul 2021 18:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625848164;
-        bh=RwviPM07Qe2nCRpEFtpWX6FjU+ANwP8piVW/VuJM5qw=;
-        h=Date:From:To:Subject:From;
-        b=Z7S+fynyF1CdO1oBxfRuWf9s6g9QW99MCCe3AKsADWGbMq2lpDAzE96CUe4cfN+pW
-         DYpF2m+5NWtq2vcRN8z5nlcntPQ/dTDFT4o3brmv4/1ghFWYTKP45s68zSOPMCc/I1
-         /qIHGdAoO5Rj2+F4toaBGKTMlIJ7yo/BK1VGoekANsj2SEbunyGots4UaDGDLlpmBV
-         AnhNpxzQea/YJciS3DW6nNqXMNfIEHhKVQoAppFSGKgx2a3tF/SyjxN1+4VhA88a0E
-         WoQuCuuU51bQdH4vwIJEEO14bRKL5ea2ajvLOU5ii8b3U5MJkh/zzGW3By3rtYqUSQ
-         cyimzcMYOFzBg==
-Date:   Fri, 9 Jul 2021 19:29:21 +0300
+        s=k20201202; t=1625854083;
+        bh=g580cb8XE1EltER+O5uJzG51+6yzo/VUllKlQDQL0PM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J92z3dv+UUwreQ8GgWqq0beXpdRNvozazCwc1N5QVHivg3+pdY0TNe8mWyLx1jJBD
+         1FqE5cleRol+IE/4UsW8jMcr9SN9EtQLq+2UpCBa3O5w/QiZJXuREZoQvDDjZNWn5i
+         L+1viwDwHCO648jtrY2ry7r4vvkCa7MESWf/lwl2YTbRPkUFXQAcyc8EgSR26px46m
+         dG92LNanTCDHylp2S5BAZWb9TNRASTkLevV7iGNg9dgXiRwTB7/4rayiys2PwHuY7V
+         70BCDD7lEXjWfNxLTTYAmaRlhrX9oqh3xQm4bAAlmzxRjCSDqMOsSYPNo2yJ1kgxr0
+         kRQJvVf+UUh1Q==
+Date:   Fri, 9 Jul 2021 21:08:00 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Vacation weeks 28, 29
-Message-ID: <20210709162921.d3ehaeabdsr5kr6x@kernel.org>
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] x86/sgx: Track phase and type of SGX EPC pages
+Message-ID: <20210709180800.kpjlrvbljaknuncq@kernel.org>
+References: <20210708181423.1312359-1-tony.luck@intel.com>
+ <20210708181423.1312359-2-tony.luck@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210708181423.1312359-2-tony.luck@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-I'm on leave two upcoming weeks: 28 and 29. Expect slow response but
-I'll check LKML at minimum once a week.
+On Thu, Jul 08, 2021 at 11:14:20AM -0700, Tony Luck wrote:
+> Memory errors can be reported either synchronously as memory is accessed,
+> or asynchronously by speculative access or by a memory controller page
+> scrubber.  The life cycle of an EPC page takes it through:
+> 	dirty -> free -> in-use -> free.
+> 
+> Memory errors are reported using physical addresses. It is a simple
+> matter to find which sgx_epc_page structure maps a given address.
+> But then recovery code needs to be able to determine the current use of
+> the page to take the appropriate recovery action. Within the "in-use"
+> phase different actions are needed based on how the page is used in
+> the enclave.
+> 
+> Add new flags bits to describe the phase (with an extra bit for the new
+> phase of "poisoned"). Drop pages marked as poisoned instead of adding
+> them to a free list to make sure they are not re-used.
+> 
+> Add a type field to struct epc_page for how an in-use page has been
+> allocated. Re-use "enum sgx_page_type" for this type, with a couple
+> of additions for s/w types.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/include/asm/sgx.h      |  6 ++++++
+>  arch/x86/kernel/cpu/sgx/encl.c  |  4 ++--
+>  arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
+>  arch/x86/kernel/cpu/sgx/main.c  | 21 +++++++++++++++++++--
+>  arch/x86/kernel/cpu/sgx/sgx.h   | 14 ++++++++++++--
+>  arch/x86/kernel/cpu/sgx/virt.c  |  2 +-
+>  6 files changed, 42 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> index 9c31e0ebc55b..9619a6d77a83 100644
+> --- a/arch/x86/include/asm/sgx.h
+> +++ b/arch/x86/include/asm/sgx.h
+> @@ -216,6 +216,8 @@ struct sgx_pageinfo {
+>   * %SGX_PAGE_TYPE_REG:	a regular page
+>   * %SGX_PAGE_TYPE_VA:	a VA page
+>   * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
+> + *
+> + * Also used to track current use of &struct sgx_epc_page
+>   */
+>  enum sgx_page_type {
+>  	SGX_PAGE_TYPE_SECS,
+> @@ -223,6 +225,10 @@ enum sgx_page_type {
+>  	SGX_PAGE_TYPE_REG,
+>  	SGX_PAGE_TYPE_VA,
+>  	SGX_PAGE_TYPE_TRIM,
+> +
+> +	/* sgx_epc_page.type */
+> +	SGX_PAGE_TYPE_FREE = 100,
+> +	SGX_PAGE_TYPE_KVM = 101,
+>  };
+>  
+>  #define SGX_NR_PAGE_TYPES	5
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 3be203297988..abf6e1a704c0 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -72,7 +72,7 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  	struct sgx_epc_page *epc_page;
+>  	int ret;
+>  
+> -	epc_page = sgx_alloc_epc_page(encl_page, false);
+> +	epc_page = sgx_alloc_epc_page(encl_page, SGX_PAGE_TYPE_REG, false);
+>  	if (IS_ERR(epc_page))
+>  		return epc_page;
+>  
+> @@ -679,7 +679,7 @@ struct sgx_epc_page *sgx_alloc_va_page(void)
+>  	struct sgx_epc_page *epc_page;
+>  	int ret;
+>  
+> -	epc_page = sgx_alloc_epc_page(NULL, true);
+> +	epc_page = sgx_alloc_epc_page(NULL,  SGX_PAGE_TYPE_VA, true);
+>  	if (IS_ERR(epc_page))
+>  		return ERR_CAST(epc_page);
+>  
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 83df20e3e633..a74ae00194cc 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -83,7 +83,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+>  
+>  	encl->backing = backing;
+>  
+> -	secs_epc = sgx_alloc_epc_page(&encl->secs, true);
+> +	secs_epc = sgx_alloc_epc_page(&encl->secs, SGX_PAGE_TYPE_SECS, true);
+>  	if (IS_ERR(secs_epc)) {
+>  		ret = PTR_ERR(secs_epc);
+>  		goto err_out_backing;
+> @@ -300,7 +300,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+>  	if (IS_ERR(encl_page))
+>  		return PTR_ERR(encl_page);
+>  
+> -	epc_page = sgx_alloc_epc_page(encl_page, true);
+> +	epc_page = sgx_alloc_epc_page(encl_page, SGX_PAGE_TYPE_REG, true);
+>  	if (IS_ERR(epc_page)) {
+>  		kfree(encl_page);
+>  		return PTR_ERR(epc_page);
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 63d3de02bbcc..643df87b3e01 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -401,7 +401,12 @@ static void sgx_reclaim_pages(void)
+>  		section = &sgx_epc_sections[epc_page->section];
+>  		node = section->node;
+>  
+> +		/* drop poison pages instead of adding to free list */
+> +		if (epc_page->flags & SGX_EPC_PAGE_POISON)
+> +			continue;
+> +
+>  		spin_lock(&node->lock);
+> +		epc_page->flags = SGX_EPC_PAGE_FREE;
+>  		list_add_tail(&epc_page->list, &node->free_page_list);
+>  		sgx_nr_free_pages++;
+>  		spin_unlock(&node->lock);
+> @@ -560,6 +565,7 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
+>  /**
+>   * sgx_alloc_epc_page() - Allocate an EPC page
+>   * @owner:	the owner of the EPC page
+> + * @type:	type of page being allocated
+>   * @reclaim:	reclaim pages if necessary
+>   *
+>   * Iterate through EPC sections and borrow a free EPC page to the caller. When a
+> @@ -574,7 +580,7 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
+>   *   an EPC page,
+>   *   -errno on error
+>   */
+> -struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+> +struct sgx_epc_page *sgx_alloc_epc_page(void *owner, enum sgx_page_type type, bool reclaim)
+>  {
+>  	struct sgx_epc_page *page;
+>  
+> @@ -582,6 +588,8 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+>  		page = __sgx_alloc_epc_page();
+>  		if (!IS_ERR(page)) {
+>  			page->owner = owner;
+> +			page->type = type;
+> +			page->flags = 0;
+>  			break;
+>  		}
+>  
+> @@ -616,14 +624,22 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+>   * responsibility to make sure that the page is in uninitialized state. In other
+>   * words, do EREMOVE, EWB or whatever operation is necessary before calling
+>   * this function.
+> + *
+> + * Note that if the page has been tagged as poisoned, it is simply
+> + * dropped on the floor instead of added to the free list to make
+> + * sure we do not re-use it.
+>   */
+>  void sgx_free_epc_page(struct sgx_epc_page *page)
+>  {
+>  	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
+>  	struct sgx_numa_node *node = section->node;
+>  
+> +	if (page->flags & SGX_EPC_PAGE_POISON)
+> +		return;
+
+I tend to think that it would be nice to collect them somewhere instead
+purposely leaking. E.g. this gives possibility to examine list with
+debugging tools.
 
 /Jarkko
