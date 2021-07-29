@@ -2,282 +2,190 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAB2C432BE
-	for <linux-sgx@archiver.kernel.org>; Wed, 28 Jul 2021 22:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB6BC432BE
+	for <linux-sgx@archiver.kernel.org>; Thu, 29 Jul 2021 16:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5296101B
-	for <linux-sgx@archiver.kernel.org>; Wed, 28 Jul 2021 22:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1872460EBC
+	for <linux-sgx@archiver.kernel.org>; Thu, 29 Jul 2021 16:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232575AbhG1Wv5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 28 Jul 2021 18:51:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37162 "EHLO mail.kernel.org"
+        id S230164AbhG2Q1t (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 29 Jul 2021 12:27:49 -0400
+Received: from mga05.intel.com ([192.55.52.43]:3004 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232281AbhG1Wv5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 28 Jul 2021 18:51:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B67A60EFD;
-        Wed, 28 Jul 2021 22:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627512715;
-        bh=RFdz5NdgktigNk1Z+IYwsFr+Xfnwyf6KGApYnpb/tjA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FmMAXK7idhXzXWk2J1jhuGo3Ic+sG08jOOJf3DzEUVYaCqh5HPQcNRu2K8lWoGuob
-         tkZRbY7DQgBV+bQJVK0QqBARE4d08+PX8uJAxliTYyOps+RPgHgwWEYeyKSC6o3VQe
-         J3nZI4gApM3ICS4GqLsP8z1Jh0enePWLT+vDaJDtD9jk7Cua5OaJ6vXEF3zFX9PYgA
-         bh4n/vVwb5X8lGcaMuosYxwXEcxnofvCBHeXLPPa8s2kMz0MEDb7jDPQu3WbsOFk5P
-         XP3bPXi3ifKAe1M9+hGbFxl/V82yJI/76hNe0kKmc3k7dnUQaGmY3CsWD+D9uwxW+t
-         6wjytycKhuuLg==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
+        id S229620AbhG2Q1s (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 29 Jul 2021 12:27:48 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10060"; a="298504574"
+X-IronPort-AV: E=Sophos;i="5.84,278,1620716400"; 
+   d="scan'208";a="298504574"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2021 09:27:44 -0700
+X-IronPort-AV: E=Sophos;i="5.84,278,1620716400"; 
+   d="scan'208";a="476462579"
+Received: from lixi1-mobl.amr.corp.intel.com (HELO [10.212.184.150]) ([10.212.184.150])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2021 09:27:44 -0700
+Subject: Re: [PATCH v2 1/4] x86/sgx: Add /sys/kernel/debug/x86/sgx_total_mem
+To:     Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>,
         Borislav Petkov <bp@alien8.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] selftests/sgx: Trigger the reclaimer and #PF handler
-Date:   Thu, 29 Jul 2021 01:51:40 +0300
-Message-Id: <20210728225140.248408-5-jarkko@kernel.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210728225140.248408-1-jarkko@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 References: <20210728225140.248408-1-jarkko@kernel.org>
+ <20210728225140.248408-2-jarkko@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <5d3614af-2393-6744-9d85-7001241ca76e@intel.com>
+Date:   Thu, 29 Jul 2021 09:27:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210728225140.248408-2-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Create a heap for the test enclave, which has the same size as all
-available Enclave Page Cache (EPC) pages in the system. This will guarantee
-that all test_encl.elf pages *and* SGX Enclave Control Structure (SECS)
-have been swapped out by the page reclaimer during the load time. Actually,
-this adds a bit more stress than that since part of the EPC gets reserved
-for the Version Array (VA) pages.
+On 7/28/21 3:51 PM, Jarkko Sakkinen wrote:
+> Create /sys/kernel/debug/x86/sgx_total_mem, after the driver is
+> initialized, describing the total amount of SGX reserved memory (also known
+> as Enclave Page Cache (EPC)) available in the system.
+> 
+> This can be used to implement stress that trigger the page reclaimer, and
+> it is probably useful information when admistering a system running
+> enclaves anyhow.
 
-For each test, the page fault handler gets triggered in two occasions:
+How about this as a rewrite?
 
-- When SGX_IOC_ENCLAVE_INIT is performed, SECS gets swapped in by the
-  page fault handler.
-- During the execution, each page that is referenced gets swapped in
-  by the page fault handler.
+Just like normal memory, SGX memory can be overcommitted.  SGX has its
+own reclaim mechanism which kicks in when physical SGX memory (Enclave
+Page Cache / EPC) is exhausted.  That reclaim mechanism is relatively
+rarely exercised and needs selftests to poke at it.
 
-In addition, add two new checks:
+The amount of EPC on the system is determined by the BIOS and it varies
+wildly between systems.  It can be dozens of MB on desktops, or many GB
+on servers.
 
-1. All of the EPC memory must be unused before the test execution
-   starts.
-2. Before SGX_IOC_ENCLAVE_INIT, the number of free EPC pages must
-   be zero.
+To run in a reasonable amount of time, the selftest needs to know how
+much EPC there is in the system.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
+Introduce a new debugfs file to export that information.
 
-v2:
-* sgx_nr_all_pages -> sgx_total_mem
+> diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+> index dd0ac96ff9ef..15bb8f4e42af 100644
+> --- a/Documentation/x86/sgx.rst
+> +++ b/Documentation/x86/sgx.rst
+> @@ -250,3 +250,9 @@ user wants to deploy SGX applications both on the host and in guests
+>  on the same machine, the user should reserve enough EPC (by taking out
+>  total virtual EPC size of all SGX VMs from the physical EPC size) for
+>  host SGX applications so they can run with acceptable performance.
+> +
+> +SGX debugging
+> +=============
+> +
+> +*/sys/kernel/debug/x86/sgx_total_mem* describes the total available
+> +SGX mwemory available in the system.
 
- tools/testing/selftests/sgx/load.c      | 33 +++++++++++++++----
- tools/testing/selftests/sgx/main.c      | 42 ++++++++++++++++++++++++-
- tools/testing/selftests/sgx/main.h      |  3 +-
- tools/testing/selftests/sgx/sigstruct.c |  6 ++--
- 4 files changed, 74 insertions(+), 10 deletions(-)
+	^ memory
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 9946fab2a3d6..a312a132ac33 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -21,6 +21,8 @@
- 
- void encl_delete(struct encl *encl)
- {
-+	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
-+
- 	if (encl->encl_base)
- 		munmap((void *)encl->encl_base, encl->encl_size);
- 
-@@ -30,6 +32,8 @@ void encl_delete(struct encl *encl)
- 	if (encl->fd)
- 		close(encl->fd);
- 
-+	munmap(heap_seg->src, heap_seg->size);
-+
- 	if (encl->segment_tbl)
- 		free(encl->segment_tbl);
- 
-@@ -111,7 +115,10 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
- 	ioc.offset = seg->offset;
- 	ioc.length = seg->size;
- 	ioc.secinfo = (unsigned long)&secinfo;
--	ioc.flags = SGX_PAGE_MEASURE;
-+	if (seg->measure)
-+		ioc.flags = SGX_PAGE_MEASURE;
-+	else
-+		ioc.flags = 0;
- 
- 	rc = ioctl(encl->fd, SGX_IOC_ENCLAVE_ADD_PAGES, &ioc);
- 	if (rc < 0) {
-@@ -124,9 +131,10 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
- 
- 
- 
--bool encl_load(const char *path, struct encl *encl)
-+bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
- {
- 	const char device_path[] = "/dev/sgx_enclave";
-+	struct encl_segment *seg;
- 	Elf64_Phdr *phdr_tbl;
- 	off_t src_offset;
- 	Elf64_Ehdr *ehdr;
-@@ -188,6 +196,8 @@ bool encl_load(const char *path, struct encl *encl)
- 	ehdr = encl->bin;
- 	phdr_tbl = encl->bin + ehdr->e_phoff;
- 
-+	encl->nr_segments = 1; /* one for the heap */
-+
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		Elf64_Phdr *phdr = &phdr_tbl[i];
- 
-@@ -203,7 +213,6 @@ bool encl_load(const char *path, struct encl *encl)
- 	for (i = 0, j = 0; i < ehdr->e_phnum; i++) {
- 		Elf64_Phdr *phdr = &phdr_tbl[i];
- 		unsigned int flags = phdr->p_flags;
--		struct encl_segment *seg;
- 
- 		if (phdr->p_type != PT_LOAD)
- 			continue;
-@@ -240,14 +249,26 @@ bool encl_load(const char *path, struct encl *encl)
- 		seg->offset = (phdr->p_offset & PAGE_MASK) - src_offset;
- 		seg->size = (phdr->p_filesz + PAGE_SIZE - 1) & PAGE_MASK;
- 		seg->src = encl->src + seg->offset;
-+		seg->measure = true;
- 
- 		j++;
- 	}
- 
--	assert(j == encl->nr_segments);
-+	assert(j == encl->nr_segments - 1);
-+
-+	seg = &encl->segment_tbl[j];
-+	seg->offset =  encl->segment_tbl[j - 1].offset + encl->segment_tbl[j - 1].size;
-+	seg->size = heap_size;
-+	seg->src = mmap(NULL, heap_size, PROT_READ | PROT_WRITE,
-+			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+	seg->prot = PROT_READ | PROT_WRITE;
-+	seg->flags = (SGX_PAGE_TYPE_REG << 8) | seg->prot;
-+	seg->measure = false;
-+
-+	if (seg->src == MAP_FAILED)
-+		goto err;
- 
--	encl->src_size = encl->segment_tbl[j - 1].offset +
--			 encl->segment_tbl[j - 1].size;
-+	encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
- 
- 	for (encl->encl_size = 4096; encl->encl_size < encl->src_size; )
- 		encl->encl_size <<= 1;
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index e252015e0c15..fec85e1afd60 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -112,17 +112,57 @@ FIXTURE(enclave) {
- 	struct sgx_enclave_run run;
- };
- 
-+#define SGX_TOTAL_MEM_PATH "/sys/kernel/debug/x86/sgx_total_mem"
-+
-+static int sysfs_get_ulong(const char *path, unsigned long *value)
-+{
-+	struct stat sbuf;
-+	ssize_t ret = 0;
-+	char buf[128];
-+	int fd;
-+
-+	ret = stat(path, &sbuf);
-+	if (ret)
-+		return ret;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd < 0)
-+		return fd;
-+
-+	ret = read(fd, buf, sizeof(buf));
-+	if (ret < 0)
-+		goto out;
-+
-+	/* Clear the read bytes count. */
-+	ret = 0;
-+
-+	errno = 0;
-+	*value = strtoul(buf, NULL, 0);
-+	if (errno)
-+		ret = -1;
-+
-+out:
-+	close(fd);
-+	return ret;
-+}
-+
- FIXTURE_SETUP(enclave)
- {
- 	Elf64_Sym *sgx_enter_enclave_sym = NULL;
- 	struct vdso_symtab symtab;
- 	struct encl_segment *seg;
-+	unsigned long total_mem;
- 	char maps_line[256];
- 	FILE *maps_file;
- 	unsigned int i;
- 	void *addr;
-+	int ret;
-+
-+	ret = sysfs_get_ulong(SGX_TOTAL_MEM_PATH, &total_mem);
-+	if (ret)
-+		ksft_exit_skip("Failed to read " SGX_TOTAL_MEM_PATH "\n");
- 
--	if (!encl_load("test_encl.elf", &self->encl)) {
-+	if (!encl_load("test_encl.elf", &self->encl, total_mem)) {
- 		encl_delete(&self->encl);
- 		ksft_exit_skip("cannot load enclaves\n");
- 	}
-diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
-index 452d11dc4889..a286861dc289 100644
---- a/tools/testing/selftests/sgx/main.h
-+++ b/tools/testing/selftests/sgx/main.h
-@@ -12,6 +12,7 @@ struct encl_segment {
- 	size_t size;
- 	unsigned int prot;
- 	unsigned int flags;
-+	bool measure;
- };
- 
- struct encl {
-@@ -32,7 +33,7 @@ extern unsigned char sign_key[];
- extern unsigned char sign_key_end[];
- 
- void encl_delete(struct encl *ctx);
--bool encl_load(const char *path, struct encl *encl);
-+bool encl_load(const char *path, struct encl *encl, unsigned long heap_size);
- bool encl_measure(struct encl *encl);
- bool encl_build(struct encl *encl);
- 
-diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-index 202a96fd81bf..50c5ab1aa6fa 100644
---- a/tools/testing/selftests/sgx/sigstruct.c
-+++ b/tools/testing/selftests/sgx/sigstruct.c
-@@ -296,8 +296,10 @@ static bool mrenclave_segment(EVP_MD_CTX *ctx, struct encl *encl,
- 		if (!mrenclave_eadd(ctx, seg->offset + offset, seg->flags))
- 			return false;
- 
--		if (!mrenclave_eextend(ctx, seg->offset + offset, seg->src + offset))
--			return false;
-+		if (seg->measure) {
-+			if (!mrenclave_eextend(ctx, seg->offset + offset, seg->src + offset))
-+				return false;
-+		}
- 	}
- 
- 	return true;
--- 
-2.32.0
+It would also be nice to say what the units are here, even if they are
+bytes.
 
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 63d3de02bbcc..b65da19a53ee 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*  Copyright(c) 2016-20 Intel Corporation. */
+>  
+> +#include <linux/debugfs.h>
+>  #include <linux/file.h>
+>  #include <linux/freezer.h>
+>  #include <linux/highmem.h>
+> @@ -28,7 +29,10 @@ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+>  static LIST_HEAD(sgx_active_page_list);
+>  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+>  
+> -/* The free page list lock protected variables prepend the lock. */
+> +/* Total EPC memory available in bytes. */
+> +static unsigned long sgx_total_mem;
+> +
+> +/* The number of free EPC pages in all nodes. */
+>  static unsigned long sgx_nr_free_pages;
+>  
+>  /* Nodes with one or more EPC sections. */
+> @@ -656,6 +660,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+>  		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+>  	}
+>  
+> +	sgx_total_mem += nr_pages * PAGE_SIZE;
+> +
+>  	return true;
+>  }
+>  
+> @@ -823,6 +829,8 @@ static int __init sgx_init(void)
+>  	if (sgx_vepc_init() && ret)
+>  		goto err_provision;
+>  
+> +	debugfs_create_ulong("sgx_total_mem", 0444, arch_debugfs_dir, &sgx_total_mem);
+> +
+>  	return 0;
+>  
+>  err_provision:
+> 
+
+Assuming the new changelog is adopted and typos fixed:
+
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
