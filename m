@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98466C432BE
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9F6C4320E
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A46361168
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A8061164
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237079AbhHFARu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 5 Aug 2021 20:17:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42026 "EHLO mail.kernel.org"
+        id S240126AbhHFARm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 Aug 2021 20:17:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242720AbhHFARq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 5 Aug 2021 20:17:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 01F0261165;
-        Fri,  6 Aug 2021 00:17:30 +0000 (UTC)
+        id S237202AbhHFARl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 5 Aug 2021 20:17:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D3E4961166;
+        Fri,  6 Aug 2021 00:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628209051;
-        bh=pBCuRbKWqZ8VXzwKr9l8E31otOpcFW6kulIyrKJFcrw=;
+        s=k20201202; t=1628209046;
+        bh=5BJ0JYsrjhLXFa/JwNpSZG3ltphoMxiwwEveE2LxUGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jUehiHdmaPA4C/NIvnesCu3Gp1aHv1JldJmON5ZbydPiryo2C0/M4F9mXoZ3gEo6s
-         cAnvPkoulXUt9/KztN3VtMTPQuiSfcUaljmN+fldTXWjZQxAIvHYy0/EAwodIB+ohR
-         568lNt2P2jEaLHttaQTLAniDS3vdCnJ23XCqLwItr7jQI0M1fQjfJ/64HP6KQojTPQ
-         0fxpoZZ9c+dvPukzXjpZAB52Pq65YC21VZydGYOdmIvXQK/KObB3XsXkELCyVEk4TY
-         QZvAa8ApLED7U8ZK90plKM4F9Q8U3+6dOAAgV06f5teBRFisUhW8JXjBIGRAdlgKvA
-         IyF1ONYzhfyKQ==
+        b=dXt+avImv8IkWpTt5eeRaxcsjvZzz2dda8mGkF0Tu0SH+LY33QslysP4R10McPxZF
+         3RRqHqJ0ThHsRjr0iTOVNnV3P1tJxSyYmEPOOYdfyzoFz8SG80AN1QV4ZqCdzsiauX
+         PW7nDZcutSpMpcVsz9fm2ZrIgAjfNMcPDav/V2xeNAJCVUj3IasNXzY/zkxWGLC0zb
+         xHGjl6vIrQdHC5LcC1bvGifs0IMuKcxKAAQQek0y54zZg6zHXO5NuQ3e/PfXZK3Agv
+         Gt6uKbnFs+he8icBhp22ysd/fIueKLRgndbPQUUK9hhG0qxS3GYhwcAPL4yq+uqQpM
+         n5UhkhaQJcxhQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 8/8] selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed
-Date:   Fri,  6 Aug 2021 03:17:04 +0300
-Message-Id: <20210806001704.667889-9-jarkko@kernel.org>
+Subject: [PATCH v3 6/8] selftests/sgx: Encpsulate the test enclave creation
+Date:   Fri,  6 Aug 2021 03:17:02 +0300
+Message-Id: <20210806001704.667889-7-jarkko@kernel.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210806001704.667889-1-jarkko@kernel.org>
 References: <20210806001704.667889-1-jarkko@kernel.org>
@@ -51,110 +51,109 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a variation of the unclobbered_vdso test.
+Having a helper function to build the test enclave is important for
+couple of reasons:
 
-In the new test, create a heap for the test enclave, which has the same
-size as all available Enclave Page Cache (EPC) pages in the system. This
-will guarantee that all test_encl.elf pages *and* SGX Enclave Control
-Structure (SECS) have been swapped out by the page reclaimer during the
-load time..
+1. Allows to parametrize the heap size for different tests.
+3. Allows to easily create multiple enclaves.
 
-This test will trigger both the page reclaimer and the page fault handler.
-The page reclaimer triggered, while the heap is being created during the
-load time. The page fault handler is triggered for all the required pages,
-while the test case is executing.
+Introduce setup_test_encl() for this purpose.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- tools/testing/selftests/sgx/main.c | 62 ++++++++++++++++++++++++++++++
- tools/testing/selftests/sgx/main.h |  1 +
- 2 files changed, 63 insertions(+)
+ tools/testing/selftests/sgx/main.c | 45 ++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
 
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index f219768b4e9a..3be34c3db74a 100644
+index deab02f2f3ce..4fbe9856f775 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -246,6 +246,68 @@ TEST_F(enclave, unclobbered_vdso)
- 	EXPECT_EQ(self->run.user_data, 0);
- }
+@@ -112,7 +112,8 @@ FIXTURE(enclave) {
+ 	struct sgx_enclave_run run;
+ };
  
-+static bool sysfs_get_ulong(const char *path, unsigned long *value)
-+{
-+	struct stat sbuf;
-+	char buf[128];
-+	ssize_t ret;
-+	int fd;
+-FIXTURE_SETUP(enclave)
++static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
++			    struct __test_metadata *_metadata)
+ {
+ 	Elf64_Sym *sgx_enter_enclave_sym = NULL;
+ 	struct vdso_symtab symtab;
+@@ -122,25 +123,25 @@ FIXTURE_SETUP(enclave)
+ 	unsigned int i;
+ 	void *addr;
+ 
+-	if (!encl_load("test_encl.elf", &self->encl, ENCL_HEAP_SIZE_DEFAULT)) {
+-		encl_delete(&self->encl);
+-		ksft_exit_skip("cannot load enclaves\n");
++	if (!encl_load("test_encl.elf", encl, heap_size)) {
++		encl_delete(encl);
++		TH_LOG("Failed to load the test enclave.\n");
+ 	}
+ 
+-	if (!encl_measure(&self->encl))
++	if (!encl_measure(encl))
+ 		goto err;
+ 
+-	if (!encl_build(&self->encl))
++	if (!encl_build(encl))
+ 		goto err;
+ 
+ 	/*
+ 	 * An enclave consumer only must do this.
+ 	 */
+-	for (i = 0; i < self->encl.nr_segments; i++) {
+-		struct encl_segment *seg = &self->encl.segment_tbl[i];
++	for (i = 0; i < encl->nr_segments; i++) {
++		struct encl_segment *seg = &encl->segment_tbl[i];
+ 
+-		addr = mmap((void *)self->encl.encl_base + seg->offset, seg->size,
+-			    seg->prot, MAP_SHARED | MAP_FIXED, self->encl.fd, 0);
++		addr = mmap((void *)encl->encl_base + seg->offset, seg->size,
++			    seg->prot, MAP_SHARED | MAP_FIXED, encl->fd, 0);
+ 		EXPECT_NE(addr, MAP_FAILED);
+ 		if (addr == MAP_FAILED)
+ 			goto err;
+@@ -160,16 +161,13 @@ FIXTURE_SETUP(enclave)
+ 
+ 	vdso_sgx_enter_enclave = addr + sgx_enter_enclave_sym->st_value;
+ 
+-	memset(&self->run, 0, sizeof(self->run));
+-	self->run.tcs = self->encl.encl_base;
+-
+-	return;
++	return true;
+ 
+ err:
+-	encl_delete(&self->encl);
++	encl_delete(encl);
+ 
+-	for (i = 0; i < self->encl.nr_segments; i++) {
+-		seg = &self->encl.segment_tbl[i];
++	for (i = 0; i < encl->nr_segments; i++) {
++		seg = &encl->segment_tbl[i];
+ 
+ 		TH_LOG("0x%016lx 0x%016lx 0x%02x", seg->offset, seg->size, seg->prot);
+ 	}
+@@ -186,7 +184,18 @@ FIXTURE_SETUP(enclave)
+ 		fclose(maps_file);
+ 	}
+ 
+-	ASSERT_TRUE(false);
++	TH_LOG("Failed to initialize the test enclave.\n");
 +
-+	ret = stat(path, &sbuf);
-+	if (ret)
-+		return false;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd < 0)
-+		return false;
-+
-+	ret = read(fd, buf, sizeof(buf));
-+	if (ret < 0) {
-+		close(fd);
-+		return false;
-+	}
-+
-+	errno = 0;
-+	*value = strtoul(buf, NULL, 0);
-+
-+	close(fd);
-+
-+	return errno ? false : true;
++	return false;
 +}
 +
-+TEST_F(enclave, unclobbered_vdso_oversubscribed)
++FIXTURE_SETUP(enclave)
 +{
-+	unsigned long total_mem;
-+	struct encl_op op;
-+
-+	if (!sysfs_get_ulong(SGX_TOTAL_MEM_PATH, &total_mem))
-+		ASSERT_TRUE(false);
-+
-+	if (!setup_test_encl(total_mem, &self->encl, _metadata))
++	if (!setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata))
 +		ASSERT_TRUE(false);
 +
 +	memset(&self->run, 0, sizeof(self->run));
 +	self->run.tcs = self->encl.encl_base;
-+
-+	op.type = ENCL_OP_PUT;
-+	op.buffer = MAGIC;
-+
-+	EXPECT_EQ(ENCL_CALL(&op, &self->run, false), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.user_data, 0);
-+
-+	op.type = ENCL_OP_GET;
-+	op.buffer = 0;
-+
-+	EXPECT_EQ(ENCL_CALL(&op, &self->run, false), 0);
-+
-+	EXPECT_EQ(op.buffer, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.user_data, 0);
-+
-+}
-+
- TEST_F(enclave, clobbered_vdso)
- {
- 	struct encl_op op;
-diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
-index b45c52ec7ab3..dd7767364107 100644
---- a/tools/testing/selftests/sgx/main.h
-+++ b/tools/testing/selftests/sgx/main.h
-@@ -7,6 +7,7 @@
- #define MAIN_H
+ }
  
- #define ENCL_HEAP_SIZE_DEFAULT	4096
-+#define SGX_TOTAL_MEM_PATH	"/sys/kernel/debug/x86/sgx_total_mem"
- 
- struct encl_segment {
- 	void *src;
+ FIXTURE_TEARDOWN(enclave)
 -- 
 2.32.0
 
