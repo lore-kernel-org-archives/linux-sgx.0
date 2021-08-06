@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD33C432BE
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 375A7C43214
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DDC61165
-	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E41961166
+	for <linux-sgx@archiver.kernel.org>; Fri,  6 Aug 2021 00:17:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235757AbhHFARm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 5 Aug 2021 20:17:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41844 "EHLO mail.kernel.org"
+        id S238685AbhHFARv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 Aug 2021 20:17:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238685AbhHFARi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 5 Aug 2021 20:17:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A21B61163;
-        Fri,  6 Aug 2021 00:17:23 +0000 (UTC)
+        id S241119AbhHFARo (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 5 Aug 2021 20:17:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 64C6461163;
+        Fri,  6 Aug 2021 00:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628209043;
-        bh=bnm02H3dfphxSdFEbJmZUOHQV7VRt4GzZNY+MRzq9O8=;
+        s=k20201202; t=1628209048;
+        bh=mtizAPA5mmHzhy5HVIFitBew0+Sy6VfrTxywUHjPXjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BZrAbngSGkrpLwmHesi3ghUWHKKCws5L0aHAcD/7P4ufjlhuOwKyCdQAv/tl3/40H
-         WvCAqKLUi2XsoznSL8sKIcUYsQBVKJfa/XFad709d2XlpTc34CgbP5BcZz88oYPVht
-         6UecuA0I6Qo6cSfSL8w+Gn3iqhpmzD/z8AV6gUzTV5JOlDhK3xLw/d/qXhO1vceFJG
-         GoM6w+Pg2paWzJ4iwrueo9od0IUG9O836VRTd6Wu3zmCCkal9vqRYKvhjxWSeAzKAl
-         /kxcz01ZdTBgdiMPeQd6abcVu3p8cQuveKaPJRk3+w+1MkYUr7zUzY3eYWIAUO7zCl
-         OMlq9pl5qFEJQ==
+        b=NbcmNxYKkvXRt8FurRHNWk3g4fjZ8t3fuJ712LnFhe/Nw6laENFUy46yy3Cj5c3du
+         SRW2/3QXxFnLki83KrtMB8udr/6Bk5VMKQLQwSxHKqGpIM3HYfluCF6czNsOkUIf7i
+         gLS4H3Y5Z9CTmU3bDhIbrOKLemZRCiPXH2Uxp7UVc0KA/55ckF7l8OTAHV4k3oieaa
+         jJrWgLQKlpZxH9zH3rcjnLce0ZO2xQ0vdw3Qy/Qcrf+Fk8BcpF36uoqWv377pdMH/s
+         lFWyqMhs11OfNquieV5IeW+7NMvX60wuiVmBYtq6TnzRCPqILMZ0JGo7ipobi5D9H+
+         E1m/AenKNaF7g==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/8] selftests/sgx: Dump segments and /proc/self/maps only on failure
-Date:   Fri,  6 Aug 2021 03:17:01 +0300
-Message-Id: <20210806001704.667889-6-jarkko@kernel.org>
+Subject: [PATCH v3 7/8] selftests/sgx: Move setup_test_encl() to each TEST_F()
+Date:   Fri,  6 Aug 2021 03:17:03 +0300
+Message-Id: <20210806001704.667889-8-jarkko@kernel.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210806001704.667889-1-jarkko@kernel.org>
 References: <20210806001704.667889-1-jarkko@kernel.org>
@@ -51,67 +51,69 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Logging is always a compromise between clarity and detail. The main use
-case for dumping VMA's is when FIXTURE_SETUP() fails, and is less important
-for enclaves that do initialize correctly. Therefore, print the segments
-and /proc/self/maps only in the error case.
-
-Finally, if a single test ever creates multiple enclaves, the amount of
-log lines would become enormous.
+Create the test enclave inside each TEST_F(), instead of FIXTURE_SETUP(),
+so that the heap size can be defined per test.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- tools/testing/selftests/sgx/main.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ tools/testing/selftests/sgx/main.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 6858a35fed20..deab02f2f3ce 100644
+index 4fbe9856f775..f219768b4e9a 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -127,12 +127,6 @@ FIXTURE_SETUP(enclave)
- 		ksft_exit_skip("cannot load enclaves\n");
- 	}
+@@ -191,11 +191,6 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
  
--	for (i = 0; i < self->encl.nr_segments; i++) {
--		seg = &self->encl.segment_tbl[i];
+ FIXTURE_SETUP(enclave)
+ {
+-	if (!setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata))
+-		ASSERT_TRUE(false);
 -
--		TH_LOG("0x%016lx 0x%016lx 0x%02x", seg->offset, seg->size, seg->prot);
--	}
--
- 	if (!encl_measure(&self->encl))
- 		goto err;
- 
-@@ -169,6 +163,17 @@ FIXTURE_SETUP(enclave)
- 	memset(&self->run, 0, sizeof(self->run));
- 	self->run.tcs = self->encl.encl_base;
- 
-+	return;
-+
-+err:
-+	encl_delete(&self->encl);
-+
-+	for (i = 0; i < self->encl.nr_segments; i++) {
-+		seg = &self->encl.segment_tbl[i];
-+
-+		TH_LOG("0x%016lx 0x%016lx 0x%02x", seg->offset, seg->size, seg->prot);
-+	}
-+
- 	maps_file = fopen("/proc/self/maps", "r");
- 	if (maps_file != NULL)  {
- 		while (fgets(maps_line, sizeof(maps_line), maps_file) != NULL) {
-@@ -181,11 +186,7 @@ FIXTURE_SETUP(enclave)
- 		fclose(maps_file);
- 	}
- 
--err:
--	if (!sgx_enter_enclave_sym)
--		encl_delete(&self->encl);
--
--	ASSERT_NE(sgx_enter_enclave_sym, NULL);
-+	ASSERT_TRUE(false);
+-	memset(&self->run, 0, sizeof(self->run));
+-	self->run.tcs = self->encl.encl_base;
  }
  
  FIXTURE_TEARDOWN(enclave)
+@@ -227,6 +222,12 @@ TEST_F(enclave, unclobbered_vdso)
+ {
+ 	struct encl_op op;
+ 
++	if (!setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata))
++		ASSERT_TRUE(false);
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
+ 	op.type = ENCL_OP_PUT;
+ 	op.buffer = MAGIC;
+ 
+@@ -249,6 +250,12 @@ TEST_F(enclave, clobbered_vdso)
+ {
+ 	struct encl_op op;
+ 
++	if (!setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata))
++		ASSERT_TRUE(false);
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
+ 	op.type = ENCL_OP_PUT;
+ 	op.buffer = MAGIC;
+ 
+@@ -279,6 +286,12 @@ TEST_F(enclave, clobbered_vdso_and_user_function)
+ {
+ 	struct encl_op op;
+ 
++	if (!setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata))
++		ASSERT_TRUE(false);
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
+ 	self->run.user_handler = (__u64)test_handler;
+ 	self->run.user_data = 0xdeadbeef;
+ 
 -- 
 2.32.0
 
