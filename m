@@ -4,158 +4,242 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E55C4320E
-	for <linux-sgx@archiver.kernel.org>; Mon,  9 Aug 2021 09:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE22AC432BE
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 Aug 2021 21:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5F661104
-	for <linux-sgx@archiver.kernel.org>; Mon,  9 Aug 2021 09:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0AD160F02
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 Aug 2021 21:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234509AbhHIJcT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 9 Aug 2021 05:32:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43192 "EHLO mail.kernel.org"
+        id S234176AbhHJVQt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 10 Aug 2021 17:16:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234597AbhHIJcT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 9 Aug 2021 05:32:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 22A2D611C5;
-        Mon,  9 Aug 2021 09:31:57 +0000 (UTC)
+        id S234248AbhHJVQp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 10 Aug 2021 17:16:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 852C260EBD;
+        Tue, 10 Aug 2021 21:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628501518;
-        bh=FOrdcQNSfE4qcKwJIDhTp8LMWfTjCfvnygplnr9i9uo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HhNsKRBO35VbzPgqXJX5LVF37nhqTKYJQAlDmw2WuYUyK93k+4x3vOxQZyseSE33j
-         VozV6SoUhJyypy01Gud8Uz+cJ5XA9pisqiZEAs0fa0EEUp+BZ9vPk/x4m0o62FSj+v
-         EKYkLTWvPLixsy6iWgUmv8io64YY81ny81mveiKZ1EwsNgewMmKB+sucTY2tIcOIjs
-         AOXThBbO5ebGOniQqHIJh9O47P5c4Qo7BTv3T9C1D095RZPtFzOlsAovAvNzowNGft
-         YgMsxbdoLNwo74Mt+9jYj8qS1ORfbbfGZXxEklq7GzaUYjGNgc02/FOl6Z+t+GrvM7
-         7EMyDa9vFaoVQ==
+        s=k20201202; t=1628630183;
+        bh=MJI7Ys7OldLogjzRWfAuzWQ2xSb+bBt5zC9HYn1WMLo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rR86e953c9SQkC96BcpX282wCU7m4pwasihSJ3uM1L8D0NCkrKYeSvYrdrMbCXSKC
+         4uD15FcOhWF1jgxnLlhoHR4HoVaLyG3wygSjBnyPwl9Hqc2lLmwoj5qbFiRUr+CHHO
+         ihB2tlTcDWVinB4PKJu+F7ZhvNqORaNI/BYJE29xUdXaBrIhXB4MGHX4EoJwjh9/sA
+         8eIjQvRabuq5Drn6a4NOoc1Hm2Nw+oW0k44BHMc/BYw6CWT9fJ58oCvKg0sLfnCuMn
+         CoXEyfIDW3tORnsDTXYBvCXSByIiKXhvRgEYSoWQVd6V8G0YWZOHP+Alu16Q19D6jo
+         fzteD4Fx/M6Bg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
+To:     mtk.manpages@gmail.com
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-man@vger.kernel.org,
+        linux-sgx@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/8] selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed
-Date:   Mon,  9 Aug 2021 12:31:27 +0300
-Message-Id: <20210809093127.76264-9-jarkko@kernel.org>
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH v7] sgx.7: New page with overview of Software Guard eXtensions (SGX)
+Date:   Wed, 11 Aug 2021 00:16:16 +0300
+Message-Id: <20210810211616.172775-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210809093127.76264-1-jarkko@kernel.org>
-References: <20210809093127.76264-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a variation of the unclobbered_vdso test.
-
-In the new test, create a heap for the test enclave, which has the same
-size as all available Enclave Page Cache (EPC) pages in the system. This
-will guarantee that all test_encl.elf pages *and* SGX Enclave Control
-Structure (SECS) have been swapped out by the page reclaimer during the
-load time..
-
-This test will trigger both the page reclaimer and the page fault handler.
-The page reclaimer triggered, while the heap is being created during the
-load time. The page fault handler is triggered for all the required pages,
-while the test case is executing.
-
+Cc: linux-man@vger.kernel.org
+Cc: linux-sgx@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
 
+v7:
+* Added more meat about the address space and API.
+* Reorganized the text to have focus more on developer to have a big
+  picture of kernel provided interfaces.
+v6:
+* Small fixes based on Dave's and Reinette's feedback.
+* Extended the "Permissions" section to cover mmap()
+v5:
+* Taking away hardware concepts and focusing more on the interface.
 v4:
-* Wrap setup_test_encl() and get_sysfs_long() with ASSERT_TRUE().
+* Did a heavy edit trying to streamline the story a bit and focus on
+  stuff important to the user (e.g. lighten up x86 details).
+v3:
+* Overhaul based on Michael's comments. Most likely needs to be refined
+  in various places but this is at least a small step forward for sure.
+v2:
+* Fixed the semantic newlines convention and various style errors etc.
+  that were reported by Alenjandro and Michael.
+* SGX was merged to v5.
 
- tools/testing/selftests/sgx/main.c | 59 ++++++++++++++++++++++++++++++
- tools/testing/selftests/sgx/main.h |  1 +
- 2 files changed, 60 insertions(+)
+ man7/sgx.7 | 156 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
+ create mode 100644 man7/sgx.7
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index f41fba919d06..2e0a6523c60c 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -245,6 +245,65 @@ TEST_F(enclave, unclobbered_vdso)
- 	EXPECT_EQ(self->run.user_data, 0);
- }
- 
-+static bool sysfs_get_ulong(const char *path, unsigned long *value)
-+{
-+	struct stat sbuf;
-+	char buf[128];
-+	ssize_t ret;
-+	int fd;
+diff --git a/man7/sgx.7 b/man7/sgx.7
+new file mode 100644
+index 000000000..ab5a504fa
+--- /dev/null
++++ b/man7/sgx.7
+@@ -0,0 +1,156 @@
++.\" Copyright (C) 2021 Intel Corporation
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
++.PP
++sgx - overview of Software Guard eXtensions
++.SH SYNOPSIS
++.EX
++.B #include <asm/sgx.h>
++.PP
++.IB enclave " = open(""/dev/sgx_enclave", " O_RDWR);"
++.EE
++.SH DESCRIPTION
++Intel Software Guard eXtensions (SGX) allow applications to host,
++enclaves,
++protected executable objects in memory.
++As software entities enclaves are instances of
++.I /dev/sgx_enclave.
++.PP
++SGX can be available only if the kernel was configured and built with the
++.B CONFIG_X86_SGX
++option.
++You can verify that both the kernel and hardware have SGX enabled by
++checking that "sgx" appears in the
++.I flags
++field in
++.IR /proc/cpuinfo .
++.PP
++SGX must be enabled in BIOS.
++If SGX appears to be unsupported,
++ensure that SGX is enabled in the BIOS.
++If a BIOS presents a choice between
++.I Enabled
++and
++.I Software Enabled
++modes for SGX,
++choose
++.I Enabled.
++.PP
++Enclaves are shared objects, meaning that
++they can be shared with a
++.BR cmsg (3),
++and inherited in a fork.
++.SS Address space
++The address range for an enclave must be reserved with
++.BR mmap (2).
++This must happen before the enclave construction can begin,
++because the enclave page addresses are fixed during its build time.
++.PP
++The CPU requires the size of the enclave to be power of two,
++and the base address to be naturally aligned with the size.
++An appropriate address range can be found by an anonymous mapping:
++.PP
++.EX
++void *area = mmap(NULL, size * 2, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
++                  -1, 0);
 +
-+	ret = stat(path, &sbuf);
-+	if (ret)
-+		return false;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd < 0)
-+		return false;
-+
-+	ret = read(fd, buf, sizeof(buf));
-+	if (ret < 0) {
-+		close(fd);
-+		return false;
-+	}
-+
-+	errno = 0;
-+	*value = strtoul(buf, NULL, 0);
-+
-+	close(fd);
-+
-+	return errno ? false : true;
-+}
-+
-+TEST_F(enclave, unclobbered_vdso_oversubscribed)
-+{
-+	unsigned long total_mem;
-+	struct encl_op op;
-+
-+	ASSERT_TRUE(sysfs_get_ulong(SGX_TOTAL_MEM_PATH, &total_mem));
-+	ASSERT_TRUE(setup_test_encl(total_mem, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	op.type = ENCL_OP_PUT;
-+	op.buffer = MAGIC;
-+
-+	EXPECT_EQ(ENCL_CALL(&op, &self->run, false), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.user_data, 0);
-+
-+	op.type = ENCL_OP_GET;
-+	op.buffer = 0;
-+
-+	EXPECT_EQ(ENCL_CALL(&op, &self->run, false), 0);
-+
-+	EXPECT_EQ(op.buffer, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.user_data, 0);
-+
-+}
-+
- TEST_F(enclave, clobbered_vdso)
- {
- 	struct encl_op op;
-diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
-index b45c52ec7ab3..dd7767364107 100644
---- a/tools/testing/selftests/sgx/main.h
-+++ b/tools/testing/selftests/sgx/main.h
-@@ -7,6 +7,7 @@
- #define MAIN_H
- 
- #define ENCL_HEAP_SIZE_DEFAULT	4096
-+#define SGX_TOTAL_MEM_PATH	"/sys/kernel/debug/x86/sgx_total_mem"
- 
- struct encl_segment {
- 	void *src;
++/* Find the first address aligned to the size within the range. */
++void *base = ((uint64_t)area + size - 1) & ~(size - 1);
++.EE
++.PP
++.SS Ioctls
++Enclaves are managed with the
++.BR ioctl (2)
++interface defined and documented in
++.IR <asm/sgx.h>:
++.TP
++.IB SGX_IOC_ENCLAVE_CREATE
++Create SGX Enclave Control Structure (SECS) for an enclave.
++SECS is a hardware defined structure,
++which contains the properties of an enclave,
++such as its base address and size.
++.TP
++.IB SGX_IOC_ENCLAVE_ADD_PAGES
++Populate a range of enclave pages with the page data provided by the caller.
++.TP
++.IB SGX_IOC_ENCLAVE_INIT
++Tell the CPU the prepare the enclave for use.
++After a successful initialization,
++no new pages can be added to the enclave.
++.PP
++The details of what these operations actually mean in the hardware level can be
++found in the Intel Software Developers Manual.
++.SS vDSO
++A process can access enclave by entering into its address space through
++a set of entry points,
++which must be defined during the construction process.
++This requires a complex sequence of CPU instructions,
++and kernel assisted exception handling.
++For these reasons,
++it is encapsulated into
++vDSO interface,
++provided by
++.BR vdso_sgx_enter_enclave_t,
++which is located in
++.IR <asm/sgx.h>.
++.SS Permissions
++In order to build an enclave, a process must be able to call
++.IR mmap (2)
++with
++.IR PROT_EXEC
++set,
++because like for any other type of executable,
++the page table permissions must be set appropriately.
++Therefore,
++.I /dev/sgx_enclave
++must reside in a partition,
++which is not mounted with
++.B noexec
++set in the mount options.
++.PP
++During the build process each enclave page is assigned protection bits,
++as part of
++.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES).
++These permissions are also the maximum permissions to which the page can be be mapped.
++If
++.BR mmap (2)
++is called with surpassing permissions,
++it will return
++.B -EACCES.
++If
++.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES)
++is called after
++.BR mmap (2)
++with lower permissions,
++the process will eventually receive a
++.BR SIGBUS
++signal,
++once it accesses the page for the first time.
++.SH VERSIONS
++The SGX feature was added in Linux 5.11.
++.SH SEE ALSO
++.BR ioctl (2),
++.BR mmap (2),
++.BR mprotect (2)
 -- 
 2.32.0
 
