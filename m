@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A53EC4320A
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Aug 2021 22:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF91DC4338F
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Aug 2021 22:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20D7C6103E
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Aug 2021 22:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B797A6109F
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 Aug 2021 22:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231661AbhHLWEU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Aug 2021 18:04:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57228 "EHLO mail.kernel.org"
+        id S236417AbhHLWrV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 Aug 2021 18:47:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230033AbhHLWEU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 12 Aug 2021 18:04:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5D3A060EE2;
-        Thu, 12 Aug 2021 22:03:54 +0000 (UTC)
+        id S235927AbhHLWrU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 12 Aug 2021 18:47:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 687516103E;
+        Thu, 12 Aug 2021 22:46:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628805834;
-        bh=/RQA2HUVN/KwffUegKfdVBavDlf5qe96Equc11Z2xR0=;
+        s=k20201202; t=1628808414;
+        bh=SQhani1VVy1Ae63mZycxBPAbJS0W6NsmF0SGPT8IkvM=;
         h=From:To:Cc:Subject:Date:From;
-        b=G4glfcnfYtMLSQcqm2rgIhVh6uScLwybkfP0vb1JdeQi0Oz4TB7C6Mn1eAy2GrjYD
-         FkXTaxWr1a6UqhBQyWkBuVUo+vL1K2BMmN3FY7giKEUQh8YM06TZ1mDdfoLtUzwYEt
-         Bn++V5n1yxYi6F1BOdhzXqRUFjJhHwZM9apwy9h7krqC+TfjLszP4iy8hPZU8bpLol
-         n8ENAq1j/UMY6Pjs14ZSNG3a2mvgwtWHYdkN7zeo1wYBRaQKaTkvUg0QBwSu2W+THr
-         oVl2bZVI5pxgzwR2XycOEZ0mzha0RLfOZ2lVCv7KGFyD7HIUbo0XJGFAlcWAbScJnR
-         QKpQ1nJZ0yuxQ==
+        b=OdqMB1CzXWKvb31LtzrWnoXXbDTle8dWRtFu5Mb51m7+nRGNuSIbpZfbPFpWnoLmJ
+         a9clM46kqlWMrrQfrmSjRpiYeDt4fDpQZBZ2Xu71FjXopcmm8pWuwKMc6Ec3lrSKMi
+         5oOmLTTqN48s6tQnw2fXEFMJBx++N8St0sVS+m3YwN6wnkyqcaU4lxzaS3UAyBFYF7
+         vAS9cnF128w3g8RRDC8zwutuK65gg3YDtSI82q4tP/rTJy/IM7Yfi9LZ23Nwxnw4On
+         TyEoac27H5naK1p+z4Z6gjH0bkeaPbLo3k7pzQPVuSwwzARW8MbEzNbJDV4i9u3qHB
+         Se1x3O//IZEAQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Reinette Chatre <reinette.chatre@intel.com>,
@@ -39,9 +39,9 @@ Cc:     Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/sgx: Provide per-op parameter structs for the test enclave
-Date:   Fri, 13 Aug 2021 01:03:44 +0300
-Message-Id: <20210812220344.83778-1-jarkko@kernel.org>
+Subject: [PATCH v2] selftests/sgx: Provide per-op parameter structs for the test enclave
+Date:   Fri, 13 Aug 2021 01:46:45 +0300
+Message-Id: <20210812224645.90280-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,17 +56,24 @@ encl_op_header.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- tools/testing/selftests/sgx/defines.h   | 13 ++++++-
+v2:
+* Declare do_encl_op_put() and do_encl_op_get() as static symbols.
+* Use a jump table for ops.
+---
+ tools/testing/selftests/sgx/defines.h   | 14 ++++++-
  tools/testing/selftests/sgx/main.c      | 52 +++++++++++++------------
- tools/testing/selftests/sgx/test_encl.c | 20 ++++++++--
- 3 files changed, 56 insertions(+), 29 deletions(-)
+ tools/testing/selftests/sgx/test_encl.c | 33 ++++++++++------
+ 3 files changed, 61 insertions(+), 38 deletions(-)
 
 diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index f88562afcaa0..4c7274e4d1d5 100644
+index f88562afcaa0..6ff95a766287 100644
 --- a/tools/testing/selftests/sgx/defines.h
 +++ b/tools/testing/selftests/sgx/defines.h
-@@ -23,9 +23,18 @@ enum encl_op_type {
+@@ -21,11 +21,21 @@
+ enum encl_op_type {
+ 	ENCL_OP_PUT,
  	ENCL_OP_GET,
++	ENCL_OP_MAX,
  };
  
 -struct encl_op {
@@ -192,44 +199,51 @@ index e252015e0c15..5c1625fa49de 100644
  	EXPECT_EQ(self->run.user_data, 0);
  }
 diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index 734ea52f9924..b5fab52f0e1c 100644
+index 734ea52f9924..f11eb8315704 100644
 --- a/tools/testing/selftests/sgx/test_encl.c
 +++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -16,17 +16,31 @@ static void *memcpy(void *dest, const void *src, size_t n)
+@@ -16,20 +16,29 @@ static void *memcpy(void *dest, const void *src, size_t n)
  	return dest;
  }
  
-+void do_encl_op_put(void *op)
+-void encl_body(void *rdi,  void *rsi)
++static void do_encl_op_put(void *op)
 +{
 +	struct encl_op_put *op2 = op;
 +
 +	memcpy(&encl_buffer[0], &op2->value, 8);
 +}
 +
-+void do_encl_op_get(void *op)
-+{
++static void do_encl_op_get(void *op)
+ {
+-	struct encl_op *op = (struct encl_op *)rdi;
 +	struct encl_op_get *op2 = op;
-+
+ 
+-	switch (op->type) {
+-	case ENCL_OP_PUT:
+-		memcpy(&encl_buffer[0], &op->buffer, 8);
+-		break;
 +	memcpy(&op2->value, &encl_buffer[0], 8);
 +}
 +
- void encl_body(void *rdi,  void *rsi)
- {
--	struct encl_op *op = (struct encl_op *)rdi;
++void encl_body(void *rdi,  void *rsi)
++{
++	const void (*encl_op_array[ENCL_OP_MAX])(void *) = {
++		do_encl_op_put,
++		do_encl_op_get,
++	};
+ 
+-	case ENCL_OP_GET:
+-		memcpy(&op->buffer, &encl_buffer[0], 8);
+-		break;
 +	struct encl_op_header *op = (struct encl_op_header *)rdi;
  
- 	switch (op->type) {
- 	case ENCL_OP_PUT:
--		memcpy(&encl_buffer[0], &op->buffer, 8);
-+		do_encl_op_put(op);
- 		break;
- 
- 	case ENCL_OP_GET:
--		memcpy(&op->buffer, &encl_buffer[0], 8);
-+		do_encl_op_get(op);
- 		break;
- 
- 	default:
+-	default:
+-		break;
+-	}
++	if (op->type < ENCL_OP_MAX)
++		(*encl_op_array[op->type])(op);
+ }
 -- 
 2.32.0
 
