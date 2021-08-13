@@ -8,52 +8,52 @@ X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FD1C4338F
-	for <linux-sgx@archiver.kernel.org>; Fri, 13 Aug 2021 17:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E261C4320E
+	for <linux-sgx@archiver.kernel.org>; Fri, 13 Aug 2021 18:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C5AA6103A
-	for <linux-sgx@archiver.kernel.org>; Fri, 13 Aug 2021 17:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1131C61038
+	for <linux-sgx@archiver.kernel.org>; Fri, 13 Aug 2021 18:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbhHMRds (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 13 Aug 2021 13:33:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51954 "EHLO
+        id S233456AbhHMSyP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 13 Aug 2021 14:54:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbhHMRdq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 13 Aug 2021 13:33:46 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25EAAC0617AE
-        for <linux-sgx@vger.kernel.org>; Fri, 13 Aug 2021 10:33:19 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id r19-20020a0568301353b029050aa53c3801so12911539otq.2
-        for <linux-sgx@vger.kernel.org>; Fri, 13 Aug 2021 10:33:19 -0700 (PDT)
+        with ESMTP id S233116AbhHMSyP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 13 Aug 2021 14:54:15 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A1C4C061756
+        for <linux-sgx@vger.kernel.org>; Fri, 13 Aug 2021 11:53:48 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id u25so17279291oiv.5
+        for <linux-sgx@vger.kernel.org>; Fri, 13 Aug 2021 11:53:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=T8OEJ0/DfNYzSKTeZkxD23Gy87W8zwO51wj73rgksrQ=;
-        b=JESa9g5aaaaCF1y1elHvztrDLIciDsjdQt+82RK/MNFx9vn4u6mARLGlKteIl1i+lq
-         UTpHZGJjiLGyFLJhseHG38lhqJmNpsLHXJwlxrh6zrM1OayUdIarDNjjDxSz8jxuq5hj
-         rtOYQlO/YHqvTmAjgX8f0Tbwpxux4jeIe+3nA=
+        bh=w/q5TpmhXtwE97hfUFtXadpNp8zPMY0oD8ZlmGnSHRg=;
+        b=S9WsONofc4SyP+/yj8JqnZeQ6HcCuUkMSd1rc4T0/KNl7Z6pmTce/e39X3wjTWeRMS
+         aDdFrpT+I5YzCSbfHkIdutSBtgxmP4A2fQ/U/wlxDu8Q0UoyICmgBrjwU6ghgNZ4nTuQ
+         BWCQedhyV9HR0R4SB/lLsUhxAAtsluYWLn/Pw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=T8OEJ0/DfNYzSKTeZkxD23Gy87W8zwO51wj73rgksrQ=;
-        b=FUMuw4JkcVBhZSp6GgoqrU1C6Fj7seNHGtAweouCZsFno8mNRHPJksF9BcjXW3v3Rw
-         3qnEI3P3VbvYLz6aqZipMYxFnybOJ+Rza81HAUFvzt9vZZ2vB7oHdBoW/7YgzY41Td9c
-         cI78QzCTfESIrM+LkAODwK1HZmaOzPeKmeFqHhWFdTsSA6TabN5FtIwMKuKD9Q0KTocF
-         aK4TqxKFYw522049oRF3wJH8pNCIecW67UbML5rwXifouxfY+s+ypgDTYnUn7COOTUuC
-         Po0P4gW6XaSRxi8YFC8oQSTWVcXlWux9onWWX+NlUmFlDYPIHe7wafwua/zj567xkyiH
-         uV+g==
-X-Gm-Message-State: AOAM5336JT7zgv/YkAt38yrnNUg7qTom4PGBPFRy7efjmWFLqxhm2JQv
-        5hDaBuDLccsJgMkdr8PfOi/oxw==
-X-Google-Smtp-Source: ABdhPJwYke0vW2ZjfpTmneIbMUrd1MH8HL+Dglj/3ch/im2ZcLs194mx/BcIxtbq9/RbeuO0sdJMvQ==
-X-Received: by 2002:a9d:887:: with SMTP id 7mr3013539otf.120.1628875998401;
-        Fri, 13 Aug 2021 10:33:18 -0700 (PDT)
+        bh=w/q5TpmhXtwE97hfUFtXadpNp8zPMY0oD8ZlmGnSHRg=;
+        b=k9p0ckCi63M+GGJLIIJ8PdYwyJwSr9MtNNlOYhoFOy9v/0bL1qS4f3Fy/Ts+oupD1e
+         vxbmcNqNbrhuQxRkRq43u4n35XMMUk5Zo/5W+tuGVFhBl+norb3oxUaEgir/xFzI7lAT
+         p1dlcBRYTfge0uj8TFR/J5XB/G/9RjfQlajIkeDBKykzeP0FGBt7C6hwovuIqvVfCtmo
+         aCfQeERxZm0EOwpZhH2lN7gqlKvViQCk10N4cP2dmiicHtLESENlZZPQGgb6m2o8E+se
+         zi10TKdjfmbnovarG+sxx+nV9PUUbiICNYZHNBZQ18NE6VNoI5K37ySgJvTHU5bQhsow
+         7DOA==
+X-Gm-Message-State: AOAM531nFAWaeUWR8YCB7EKUSMNUBfh1+T0ZCXKFf0ynXQnDo0tw+IKI
+        mTWzCuwClLg/WPUtRzHKyOVy2w==
+X-Google-Smtp-Source: ABdhPJwnZcOOBZbpWswVfhbAAHEPrKTCAXZGjNpPeup8tKCA3LBcBy4NO9eLDTMORYk8niZKL0YwJg==
+X-Received: by 2002:a54:468d:: with SMTP id k13mr3333895oic.125.1628880825829;
+        Fri, 13 Aug 2021 11:53:45 -0700 (PDT)
 Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id j6sm386809ooj.11.2021.08.13.10.33.17
+        by smtp.gmail.com with ESMTPSA id p64sm533827oib.4.2021.08.13.11.53.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 10:33:17 -0700 (PDT)
+        Fri, 13 Aug 2021 11:53:45 -0700 (PDT)
 Subject: Re: [PATCH v4 1/8] x86/sgx: Add /sys/kernel/debug/x86/sgx_total_mem
 To:     Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
 Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
@@ -68,8 +68,8 @@ Cc:     linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
 References: <20210809093127.76264-1-jarkko@kernel.org>
  <20210809093127.76264-2-jarkko@kernel.org>
 From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <4bcc069d-fafe-11e8-3fac-135e9ece2eec@linuxfoundation.org>
-Date:   Fri, 13 Aug 2021 11:33:16 -0600
+Message-ID: <df28390f-dbb3-79fa-258f-1c8477c10c04@linuxfoundation.org>
+Date:   Fri, 13 Aug 2021 12:53:44 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
@@ -126,10 +126,6 @@ On 8/9/21 3:31 AM, Jarkko Sakkinen wrote:
 > +
 > +*/sys/kernel/debug/x86/sgx_total_mem* contains an integer describing
 > +the total SGX reserved memory in bytes, available in the system.
-
-Why not add the details you have in the commit log to the document?
-Also add more details on how to debug/test.
-
 > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
 > index 63d3de02bbcc..b65da19a53ee 100644
 > --- a/arch/x86/kernel/cpu/sgx/main.c
@@ -168,11 +164,12 @@ Also add more details on how to debug/test.
 >   		goto err_provision;
 >   
 > +	debugfs_create_ulong("sgx_total_mem", 0444, arch_debugfs_dir, &sgx_total_mem);
+
+dbugfs init dependency would be met I assume by this time?
+
 > +
 >   	return 0;
 >   
 >   err_provision:
 > 
 
-thanks,
--- Shuah
