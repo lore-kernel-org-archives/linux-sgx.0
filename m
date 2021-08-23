@@ -2,36 +2,34 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670B1C4338F
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Aug 2021 23:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B59C432BE
+	for <linux-sgx@archiver.kernel.org>; Mon, 23 Aug 2021 15:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51145610CB
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 Aug 2021 23:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A58461037
+	for <linux-sgx@archiver.kernel.org>; Mon, 23 Aug 2021 15:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236920AbhHSXoZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 19 Aug 2021 19:44:25 -0400
-Received: from mga03.intel.com ([134.134.136.65]:7152 "EHLO mga03.intel.com"
+        id S230470AbhHWPP7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 23 Aug 2021 11:15:59 -0400
+Received: from mga14.intel.com ([192.55.52.115]:22930 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233711AbhHSXoZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 19 Aug 2021 19:44:25 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10081"; a="216710972"
-X-IronPort-AV: E=Sophos;i="5.84,336,1620716400"; 
-   d="scan'208";a="216710972"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2021 16:43:47 -0700
-X-IronPort-AV: E=Sophos;i="5.84,336,1620716400"; 
-   d="scan'208";a="522651893"
-Received: from srnarvek-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.23.30])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2021 16:43:43 -0700
-Date:   Fri, 20 Aug 2021 11:43:41 +1200
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        id S230457AbhHWPP7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 23 Aug 2021 11:15:59 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10085"; a="216844481"
+X-IronPort-AV: E=Sophos;i="5.84,344,1620716400"; 
+   d="scan'208";a="216844481"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2021 08:15:16 -0700
+X-IronPort-AV: E=Sophos;i="5.84,344,1620716400"; 
+   d="scan'208";a="464098159"
+Received: from mashaikh-mobl1.amr.corp.intel.com (HELO [10.209.115.125]) ([10.209.115.125])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2021 08:15:15 -0700
+Subject: Re: [PATCH] x86/sgx: Add SGX_MemTotal to /proc/meminfo
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
+Cc:     Shuah Khan <shuah@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -42,60 +40,83 @@ Cc:     linux-sgx@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Rapoport <rppt@kernel.org>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Saravanan D <saravanand@fb.com>,
         "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Krish Sadhukhan <krish.sadhukhan@oracle.com>,
-        Saravanan D <saravanand@fb.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] x86/sgx: Add SGX_MemTotal to /proc/meminfo
-Message-Id: <20210820114341.4b9d1aea68bffd7dedd13ef8@intel.com>
-In-Reply-To: <9ec30322d0d133bfa695da475d4de736994a6c68.camel@kernel.org>
-References: <20210819124824.52169-1-jarkko@kernel.org>
-        <20210819124824.52169-2-jarkko@kernel.org>
-        <9ec30322d0d133bfa695da475d4de736994a6c68.camel@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20210818132509.545997-1-jarkko@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <8e6e42b0-0a1e-6892-b601-ce4a94172ef1@intel.com>
+Date:   Mon, 23 Aug 2021 08:15:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20210818132509.545997-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 19 Aug 2021 15:52:48 +0300 Jarkko Sakkinen wrote:
-> On Thu, 2021-08-19 at 15:48 +0300, Jarkko Sakkinen wrote:
-> > The amount of SGX memory on the system is determined by the BIOS and it
-> > varies wildly between systems.  It can be from dozens of MB's on desktops
-> > or VM's, up to many GB's on servers.  Just like for regular memory, it is
-> > sometimes useful to know the amount of usable SGX memory in the system.
-> > 
-> > Add SGX_MemTotal field to /proc/meminfo, which shows the total amount of
-> > usable SGX memory in the system.  E.g. with 32 MB reserved for SGX from
-> > BIOS, the printout would be:
-> > 
-> > SGX_MemTotal:      22528 kB
-> > 
-> > It is less than 32 MB because some of the space is reserved for Enclave
-> > Page Cache Metadata (EPCM), which contains state variables for all the
-> > pages in the Enclave Page Cache (EPC).  The latter contains the pages,
-> > which applications can use to create enclaves.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On 8/18/21 6:25 AM, Jarkko Sakkinen wrote:
+> The amount of SGX memory on the system is determined by the BIOS and it
+> varies wildly between systems.  It can be from dozens of MB's on desktops
+> or VM's, up to many GB's on servers.  Just like for regular memory, it is
+> sometimes useful to know the amount of usable SGX memory in the system.
 > 
-> While working on this, I noticed that suddenly my i5-9660k desktop fully
-> supports SGX on Linux. I don't recall that it has worked in the patch.
-> Maybe this is because of some firmware/ucode update, do not really know,
-> but definitely not a bad thing.
+> Add SGX_MemTotal field to /proc/meminfo, which shows the total amount of
+> usable SGX memory in the system.  E.g. with 32 MB reserved for SGX from
+> BIOS, the printout would be:
 > 
-> Perhaps this casts through other 9th gen Core CPU's.
-> 
-> The motherboard I have in this machine is AORUS Elite z390.
-> 
-> /Jarkko
-> 
+> SGX_MemTotal:      22528 kB
 
-Enabling SGX also requires BIOS support, so perhaps it's BIOS update that makes
-SGX available.
+The big question here: Do we want to put purely architecture-specific
+entries in (the currently quite arch-independent) /proc/meminfo?
 
-Btw, with SGX KVM, EPC will be discovered regardless FLC is available
-or not. You need to check whether /dev/sgx_enclave is present or not to truly
-know whether SGX driver is usable.
+The current "DirectMap4k/2M/1G" entries from arch_report_meminfo() are
+arch-specific in their sizes, of course, but the concept is at least
+quite arch-independent.
