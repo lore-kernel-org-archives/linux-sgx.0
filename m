@@ -2,104 +2,111 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEA0C4320E
-	for <linux-sgx@archiver.kernel.org>; Thu, 26 Aug 2021 22:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5ADC432BE
+	for <linux-sgx@archiver.kernel.org>; Fri, 27 Aug 2021 12:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B03B60E93
-	for <linux-sgx@archiver.kernel.org>; Thu, 26 Aug 2021 22:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E96060E77
+	for <linux-sgx@archiver.kernel.org>; Fri, 27 Aug 2021 12:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243787AbhHZW2E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 26 Aug 2021 18:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57046 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243782AbhHZW2D (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 26 Aug 2021 18:28:03 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BFF8C0613C1;
-        Thu, 26 Aug 2021 15:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=NmGVEeD4f8GyoVLFzkkr+SOsTZSFXpPD5NNKXMPh4iI=; b=BEfzKtSSzenCGG8PcnTcDRY7ka
-        2EhoRY1gg1xloqLf0gyivyjnhKX/7/GxC1Oipx8t04nznYASqPUTPp0uzV1LnA0sc33N1aHH3nsDe
-        bzzFf5pkvTZG+5UUwOETdLytj+5k3hjIYocA3KzpZop13YWHoLWYE+isMO+BKA44fMaHdqrXE75v1
-        FrNGb/UZYgSXVojqkQOvW4ZXX5ZJkbx+t4JDxe5S6H6MVyE4SPUoply1T/AQVKriHg5ym4JZ0oOsU
-        AML4LTaadXfoXYpxYauPsAsvukACTeM4yhwqnwxbhDudDwQ7pb+Wo3r7A91mBXzkWpEUU5YRzTix9
-        LrEAEEUg==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mJNq5-00B0BZ-0A; Thu, 26 Aug 2021 22:27:13 +0000
-Subject: Re: [PATCH v3 2/2] x86/sgx: Add SGX_MemTotal to /proc/meminfo
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
+        id S231271AbhH0MEa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 27 Aug 2021 08:04:30 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19525 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231191AbhH0MEa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 27 Aug 2021 08:04:30 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10088"; a="281664712"
+X-IronPort-AV: E=Sophos;i="5.84,356,1620716400"; 
+   d="scan'208";a="281664712"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2021 05:03:41 -0700
+X-IronPort-AV: E=Sophos;i="5.84,356,1620716400"; 
+   d="scan'208";a="426457876"
+Received: from ivillega-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.59.186])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2021 05:03:37 -0700
+Date:   Sat, 28 Aug 2021 00:03:35 +1200
+From:   Kai Huang <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] x86/sgx: Add SGX_MemTotal to /proc/meminfo
+Message-Id: <20210828000335.1d40dfff0f408b2d91467491@intel.com>
+In-Reply-To: <54923ac01fc303e5105cadca06b7c5cbd322d815.camel@kernel.org>
 References: <20210825235234.153013-1-jarkko@kernel.org>
- <20210825235234.153013-2-jarkko@kernel.org>
- <ba483b7e-19a3-d4d3-56c0-3371a77341cb@infradead.org>
- <e1ff36db0e7ed909653b6adb45094cc459dbad0b.camel@kernel.org>
- <e87c5c8f-dead-ebdc-62f1-aa635288671c@intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <124ad6ff-ee0d-5d59-0857-f1355578b59b@infradead.org>
-Date:   Thu, 26 Aug 2021 15:27:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <e87c5c8f-dead-ebdc-62f1-aa635288671c@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        <20210825235234.153013-2-jarkko@kernel.org>
+        <20210826141959.5f13ff3c9c560c23b58443b1@intel.com>
+        <54923ac01fc303e5105cadca06b7c5cbd322d815.camel@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/26/21 1:27 PM, Dave Hansen wrote:
-> On 8/26/21 9:17 AM, Jarkko Sakkinen wrote:
->>> I would prefer to see this listed in Documentation/filesystems/proc.rst
->>> as an optional field, depending on CONFIG_X86_SGX.
->>> Or at least put a reference in proc.rst to this doc file and its
->>> supplemental fields.
->>>
->>> thanks.
->> I *can* put it there but I did have reason not to, i.e. these attributes
->> are neither there:
->>
->> DirectMap4k:     3930904 kB
->> DirectMap2M:    29440000 kB
->> DirectMap1G:     1048576 kB
->>
->> And they are implemented in arch specific code.
->>
->> Actually they are undocumented, e.g.
->>
->> $ git grep DirectMap4k
->> arch/powerpc/mm/book3s64/pgtable.c:     seq_printf(m, "DirectMap4k:    %8lu kB\n",
->> arch/s390/mm/pageattr.c:        seq_printf(m, "DirectMap4k:    %8lu kB\n",
->> arch/x86/mm/pat/set_memory.c:   seq_printf(m, "DirectMap4k:    %8lu kB\n",
-> 
-> Yeah, we need to add some arch-specific sections to the documentation.
-> That *could* just be a reference over to a new file:
-> 
-> 	Documentation/x86/meminfo.rst
-> 
-> along with whatever other arches provide their own fields too.
-> 
 
-Yes, either way works. Thanks.
+> > > -/* The free page list lock protected variables prepend the lock. */
+> > > +/* The number of usable EPC pages in the system. */
+> > > +unsigned long sgx_nr_all_pages;
+> > > +
+> > > +/* The number of free EPC pages in all nodes. */
+> > >  static unsigned long sgx_nr_free_pages;
+> > >  
+> > >  /* Nodes with one or more EPC sections. */
+> > > @@ -656,6 +659,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+> > >  		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+> > >  	}
+> > >  
+> > > +	sgx_nr_all_pages += nr_pages;
+> > > +
+> > 
+> > EPC sections can be freed again in sgx_init() after they are successfully
+> > initialized, when any further initialization fails (i.e. when fails to create
+> > ksgxd, or fails to register /dev/sgx_provision).  In which case, I think
+> > sgx_nr_all_pages should also be cleared.  But current sgx_init() seems doesn't
+> > reset it.  Do you need to fix that too?
+> 
+> sgx_nr_all_pages tells just the total pages in the system, i.e. it's a constant.
+> 
+> Maybe a rename to "sgx_nr_total_pages" would be a good idea? Would match with
+> the meminfo field better too.
 
--- 
-~Randy
+I don't have preference on name.  I just think if there's no actual user of
+EPC (when both driver and KVM SGX cannot be enabled), it's pointless to print
+number of EPC pages.
 
+> 
+> > 
+> > >  	return true;
+> > >  }
+> > >  
+> > > diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> > > index ad8a5c586a35..82bb09c298de 100644
+> > > --- a/arch/x86/mm/pat/set_memory.c
+> > > +++ b/arch/x86/mm/pat/set_memory.c
+> > > @@ -29,6 +29,7 @@
+> > >  #include <asm/proto.h>
+> > >  #include <asm/memtype.h>
+> > >  #include <asm/set_memory.h>
+> > > +#include <asm/sgx.h>
+> > 
+> > How about only include <asm/sgx.h> when CONFIG_X86_SGX is on, then you don't
+> > have to do #ifdef CONFIG_X86_SGX changes to sgx.h?
+> 
+> Why do it that way instead of doing it once in sgx.h for every site that wants
+> to include the file?
+
+Just my preference.  You only need sgx_nr_all_pages here, while <asm/sgx.h>
+has bunch of others such as SGX data structures.  It seems it's not worth to
+include <asm/sgx.h> directly.
