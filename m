@@ -2,111 +2,127 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5ADC432BE
-	for <linux-sgx@archiver.kernel.org>; Fri, 27 Aug 2021 12:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94854C432BE
+	for <linux-sgx@archiver.kernel.org>; Mon, 30 Aug 2021 09:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E96060E77
-	for <linux-sgx@archiver.kernel.org>; Fri, 27 Aug 2021 12:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BFFA61039
+	for <linux-sgx@archiver.kernel.org>; Mon, 30 Aug 2021 09:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231271AbhH0MEa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 27 Aug 2021 08:04:30 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19525 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231191AbhH0MEa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 27 Aug 2021 08:04:30 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10088"; a="281664712"
-X-IronPort-AV: E=Sophos;i="5.84,356,1620716400"; 
-   d="scan'208";a="281664712"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2021 05:03:41 -0700
-X-IronPort-AV: E=Sophos;i="5.84,356,1620716400"; 
-   d="scan'208";a="426457876"
-Received: from ivillega-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.59.186])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2021 05:03:37 -0700
-Date:   Sat, 28 Aug 2021 00:03:35 +1200
-From:   Kai Huang <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] x86/sgx: Add SGX_MemTotal to /proc/meminfo
-Message-Id: <20210828000335.1d40dfff0f408b2d91467491@intel.com>
-In-Reply-To: <54923ac01fc303e5105cadca06b7c5cbd322d815.camel@kernel.org>
-References: <20210825235234.153013-1-jarkko@kernel.org>
-        <20210825235234.153013-2-jarkko@kernel.org>
-        <20210826141959.5f13ff3c9c560c23b58443b1@intel.com>
-        <54923ac01fc303e5105cadca06b7c5cbd322d815.camel@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S235583AbhH3JfT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 30 Aug 2021 05:35:19 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:39565 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235281AbhH3JfT (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 30 Aug 2021 05:35:19 -0400
+Received: by mail-il1-f199.google.com with SMTP id y8-20020a92c748000000b00224811cb945so8673786ilp.6
+        for <linux-sgx@vger.kernel.org>; Mon, 30 Aug 2021 02:34:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=T+O67gwiRaVfdJjcJ1aFvYV9X0Yl7JeqENgnYORlL/A=;
+        b=HkOF6ixEhVic4V8P6VIX4oSKg9pYLcrzHN2aZsAFoxO8HZ2twCmKpqK+Psxt8+1elU
+         Imy5tU9l4UnemEaguWKEUtU097wibf7x6pJqAy6Z96dUNVr41jNds4h9RI2cFwCBrGBb
+         ClS9gMQCswanjaB5EwioQ5S1WTFFJe3kIqD0PcMmCxQYCZEP+Q1xqxe+muyNJESSRsVD
+         pJW+xIASvS/x+ZG8UZrzfbqkviaY8LhNIVn7LMSZgogezVkttjTdRKnv4b5USXpCZAMs
+         Twem2v+sq9cvEYQTZ7GNGZYpDO16LmbiPV8uaRfX6/FtAZPlFoqk/ipzHqtcQxo5OZA3
+         P2Pw==
+X-Gm-Message-State: AOAM531madp0VC8dxmxo4YXJOMgmw+iTGxNmjrq3RRJ67E2LcE0zWOzt
+        HJ4wnYPTv9DXu1CKyy4/l0NwcKVkD1iaB1+NBnQgCefccO4D
+X-Google-Smtp-Source: ABdhPJxcyU2jINHVL3lxikmSdHU+KGMvG6/+ShL3UkJuOsG7YE+DVD8IvDua3XswKiea1EF/PwMD34VO2kqCZpkeE261MnZ93GEE
+MIME-Version: 1.0
+X-Received: by 2002:a6b:8e50:: with SMTP id q77mr17024476iod.96.1630316065870;
+ Mon, 30 Aug 2021 02:34:25 -0700 (PDT)
+Date:   Mon, 30 Aug 2021 02:34:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fa5aea05cac3895f@google.com>
+Subject: [syzbot] WARNING in exception_type
+From:   syzbot <syzbot+200c08e88ae818f849ce@syzkaller.appspotmail.com>
+To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
+        seanjc@google.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+Hello,
 
-> > > -/* The free page list lock protected variables prepend the lock. */
-> > > +/* The number of usable EPC pages in the system. */
-> > > +unsigned long sgx_nr_all_pages;
-> > > +
-> > > +/* The number of free EPC pages in all nodes. */
-> > >  static unsigned long sgx_nr_free_pages;
-> > >  
-> > >  /* Nodes with one or more EPC sections. */
-> > > @@ -656,6 +659,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
-> > >  		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
-> > >  	}
-> > >  
-> > > +	sgx_nr_all_pages += nr_pages;
-> > > +
-> > 
-> > EPC sections can be freed again in sgx_init() after they are successfully
-> > initialized, when any further initialization fails (i.e. when fails to create
-> > ksgxd, or fails to register /dev/sgx_provision).  In which case, I think
-> > sgx_nr_all_pages should also be cleared.  But current sgx_init() seems doesn't
-> > reset it.  Do you need to fix that too?
-> 
-> sgx_nr_all_pages tells just the total pages in the system, i.e. it's a constant.
-> 
-> Maybe a rename to "sgx_nr_total_pages" would be a good idea? Would match with
-> the meminfo field better too.
+syzbot found the following issue on:
 
-I don't have preference on name.  I just think if there's no actual user of
-EPC (when both driver and KVM SGX cannot be enabled), it's pointless to print
-number of EPC pages.
+HEAD commit:    3f5ad13cb012 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=156f9a4d300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94074b5caf8665c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=200c08e88ae818f849ce
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13848dfe300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136d69e1300000
 
-> 
-> > 
-> > >  	return true;
-> > >  }
-> > >  
-> > > diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-> > > index ad8a5c586a35..82bb09c298de 100644
-> > > --- a/arch/x86/mm/pat/set_memory.c
-> > > +++ b/arch/x86/mm/pat/set_memory.c
-> > > @@ -29,6 +29,7 @@
-> > >  #include <asm/proto.h>
-> > >  #include <asm/memtype.h>
-> > >  #include <asm/set_memory.h>
-> > > +#include <asm/sgx.h>
-> > 
-> > How about only include <asm/sgx.h> when CONFIG_X86_SGX is on, then you don't
-> > have to do #ifdef CONFIG_X86_SGX changes to sgx.h?
-> 
-> Why do it that way instead of doing it once in sgx.h for every site that wants
-> to include the file?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+200c08e88ae818f849ce@syzkaller.appspotmail.com
 
-Just my preference.  You only need sgx_nr_all_pages here, while <asm/sgx.h>
-has bunch of others such as SGX data structures.  It seems it's not worth to
-include <asm/sgx.h> directly.
+L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 8469 at arch/x86/kvm/x86.c:525 exception_type+0x98/0xb0 arch/x86/kvm/x86.c:525
+Modules linked in:
+CPU: 1 PID: 8469 Comm: syz-executor531 Not tainted 5.14.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:exception_type+0x98/0xb0 arch/x86/kvm/x86.c:525
+Code: 31 ff 45 31 ed 44 89 e6 e8 25 75 69 00 45 85 e4 41 0f 95 c5 45 01 ed e8 d6 6d 69 00 44 89 e8 5b 41 5c 41 5d c3 e8 c8 6d 69 00 <0f> 0b e8 c1 6d 69 00 41 bd 03 00 00 00 5b 44 89 e8 41 5c 41 5d c3
+RSP: 0018:ffffc90000f1f8f0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 00000000000000a2 RCX: 0000000000000000
+RDX: ffff888018461c40 RSI: ffffffff810c3b28 RDI: 0000000000000003
+RBP: ffff888020868000 R08: 000000000000001f R09: 00000000000000a2
+R10: ffffffff810c3aaa R11: 0000000000000006 R12: 00000000000000a2
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000040
+FS:  000000000179c300(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffd362aad8 CR3: 00000000182ef000 CR4: 00000000001526e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ x86_emulate_instruction+0xef6/0x1460 arch/x86/kvm/x86.c:7853
+ kvm_mmu_page_fault+0x2f0/0x1810 arch/x86/kvm/mmu/mmu.c:5199
+ handle_ept_misconfig+0xdf/0x3e0 arch/x86/kvm/vmx/vmx.c:5336
+ __vmx_handle_exit arch/x86/kvm/vmx/vmx.c:6021 [inline]
+ vmx_handle_exit+0x336/0x1800 arch/x86/kvm/vmx/vmx.c:6038
+ vcpu_enter_guest+0x2a1c/0x4430 arch/x86/kvm/x86.c:9712
+ vcpu_run arch/x86/kvm/x86.c:9779 [inline]
+ kvm_arch_vcpu_ioctl_run+0x47d/0x1b20 arch/x86/kvm/x86.c:10010
+ kvm_vcpu_ioctl+0x49e/0xe50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3652
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:1069 [inline]
+ __se_sys_ioctl fs/ioctl.c:1055 [inline]
+ __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:1055
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x441159
+Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffd362c598 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000400488 RCX: 0000000000441159
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
+RBP: 0000000000404c50 R08: 0000000000400488 R09: 0000000000400488
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000404ce0
+R13: 0000000000000000 R14: 00000000004ae018 R15: 0000000000400488
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
