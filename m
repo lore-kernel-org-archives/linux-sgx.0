@@ -2,180 +2,86 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C03C432BE
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Aug 2021 02:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10020C432BE
+	for <linux-sgx@archiver.kernel.org>; Tue, 31 Aug 2021 07:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAA25600AA
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Aug 2021 02:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E479460200
+	for <linux-sgx@archiver.kernel.org>; Tue, 31 Aug 2021 07:15:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239377AbhHaCCL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 30 Aug 2021 22:02:11 -0400
-Received: from smtp180.sjtu.edu.cn ([202.120.2.180]:49658 "EHLO
-        smtp180.sjtu.edu.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239310AbhHaCCK (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 30 Aug 2021 22:02:10 -0400
-Received: from proxy02.sjtu.edu.cn (smtp188.sjtu.edu.cn [202.120.2.188])
-        by smtp180.sjtu.edu.cn (Postfix) with ESMTPS id 8F2D5100869B1;
-        Tue, 31 Aug 2021 10:01:13 +0800 (CST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by proxy02.sjtu.edu.cn (Postfix) with ESMTP id 48F5D228C9242;
-        Tue, 31 Aug 2021 10:01:11 +0800 (CST)
-X-Virus-Scanned: amavisd-new at 
-Received: from proxy02.sjtu.edu.cn ([127.0.0.1])
-        by localhost (proxy02.sjtu.edu.cn [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id XeyUk3hsZDdE; Tue, 31 Aug 2021 10:01:11 +0800 (CST)
-Received: from sky.ipads-lab.se.sjtu.edu.cn (unknown [202.120.40.82])
-        (Authenticated sender: skyele@sjtu.edu.cn)
-        by proxy02.sjtu.edu.cn (Postfix) with ESMTPSA id D7C062036576A;
-        Tue, 31 Aug 2021 10:00:48 +0800 (CST)
-From:   Tianqiang Xu <skyele@sjtu.edu.cn>
-To:     x86@kernel.org
-Cc:     pbonzini@redhat.com, seanjc@google.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        kvm@vger.kernel.org, hpa@zytor.com, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Tianqiang Xu <skyele@sjtu.edu.cn>
-Subject: [PATCH 4/4] KVM guest implementation
-Date:   Tue, 31 Aug 2021 09:59:19 +0800
-Message-Id: <20210831015919.13006-4-skyele@sjtu.edu.cn>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210831015919.13006-1-skyele@sjtu.edu.cn>
+        id S239284AbhHaHQK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 31 Aug 2021 03:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239265AbhHaHQJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 31 Aug 2021 03:16:09 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06E25C061575;
+        Tue, 31 Aug 2021 00:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=YY9pvWpNs1TzAImK8Qk46A5Z5evWyYN+iUQ9FkXNB2c=; b=gZVCxgwskqclakQkAXx+Eg+7Bl
+        l/BVBBomSXREZJyKAHP5/AUuxejcIaW95mP3JfuN25GssEJNYKjdO6Ud4u8HfgQ0cNSUk/PRERtsY
+        hP/i6wVee6DIbIJPKXcY0nLdh9NNszNSK94qfHwz8VJMicVkUQmjB+Rk7Eb2PJzMc7MiqUXta/1O5
+        xxYHMNCpBTCzXzexwKysuA4wAvsZsTrmkHLyyHK6XNKt047bIec6ihWXGJ8XZw1f0ZFCYrNaKwvU/
+        eQVYRRaP1jAnA7umHS+h6y3brAhQ7KmMT4jieqDMs6dtybgjFdVWRKTTVbYb7La4nzKcgzw5H5Sbo
+        d79TYnZw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mKxyJ-00EdO7-8r; Tue, 31 Aug 2021 07:14:15 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6DAD23001F6;
+        Tue, 31 Aug 2021 09:14:13 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 22AAB2CFB419C; Tue, 31 Aug 2021 09:14:13 +0200 (CEST)
+Date:   Tue, 31 Aug 2021 09:14:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tianqiang Xu <skyele@sjtu.edu.cn>
+Cc:     x86@kernel.org, pbonzini@redhat.com, seanjc@google.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, kvm@vger.kernel.org, hpa@zytor.com,
+        jarkko@kernel.org, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
+Subject: Re: [PATCH 2/4] Scheduler changes
+Message-ID: <YS3WxQe6bJLx6qpR@hirez.programming.kicks-ass.net>
 References: <20210831015919.13006-1-skyele@sjtu.edu.cn>
+ <20210831015919.13006-2-skyele@sjtu.edu.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210831015919.13006-2-skyele@sjtu.edu.cn>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Guest OS uses 'is_idle' field of kvm_steal_time to know if a pCPU
-is idle and decides whether to schedule a task to a preempted vCPU
-or not. If the pCPU is idle, scheduling a task to this pCPU will
-improve cpu utilization. If not, avoiding scheduling a task to this
-preempted vCPU can avoid host/guest switch, hence improving performance.
+On Tue, Aug 31, 2021 at 09:59:17AM +0800, Tianqiang Xu wrote:
+> Authors: Tianqiang Xu, Dingji Li, Zeyu Mi
+> 	 Shanghai Jiao Tong University
+> 
+> Signed-off-by: Tianqiang Xu <skyele@sjtu.edu.cn>
 
-Guest OS invokes available_idle_cpu_sched() to get the value of
-'is_idle' field of kvm_steal_time.
+Authors is not a valid tag, please see our Documentation on submitting
+patches.
 
-Other modules in kernel except kernel/sched/fair.c which invokes
-available_idle_cpu() is left unchanged, because other modules in
-kernel need the semantic provided by 'preempted' field of kvm_steal_time.
+> @@ -10504,3 +10515,9 @@ void call_trace_sched_update_nr_running(struct rq *rq, int count)
+>  {
+>          trace_sched_update_nr_running_tp(rq, count);
+>  }
+> +
+> +int get_cpu_nr_running(int cpu)
+> +{
+> +	return cpu_rq(cpu)->nr_running;
+> +}
+> +EXPORT_SYMBOL_GPL(get_cpu_nr_running);
 
---
-Authors: Tianqiang Xu, Dingji Li, Zeyu Mi
-	 Shanghai Jiao Tong University
-
-Signed-off-by: Tianqiang Xu <skyele@sjtu.edu.cn>
-
----
- kernel/sched/fair.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 44c452072a1b..f69f0a8d2abe 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5871,13 +5871,13 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
- 	 * a cpufreq perspective, it's better to have higher utilisation
- 	 * on one CPU.
- 	 */
--	if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
--		return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
-+	if (available_idle_cpu_sched(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
-+		return available_idle_cpu_sched(prev_cpu) ? prev_cpu : this_cpu;
- 
- 	if (sync && cpu_rq(this_cpu)->nr_running == 1)
- 		return this_cpu;
- 
--	if (available_idle_cpu(prev_cpu))
-+	if (available_idle_cpu_sched(prev_cpu))
- 		return prev_cpu;
- 
- 	return nr_cpumask_bits;
-@@ -5976,7 +5976,7 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
- 		if (sched_idle_cpu(i))
- 			return i;
- 
--		if (available_idle_cpu(i)) {
-+		if (available_idle_cpu_sched(i)) {
- 			struct cpuidle_state *idle = idle_get_state(rq);
- 			if (idle && idle->exit_latency < min_exit_latency) {
- 				/*
-@@ -6064,7 +6064,7 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
- 
- static inline int __select_idle_cpu(int cpu, struct task_struct *p)
- {
--	if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
-+	if ((available_idle_cpu_sched(cpu) || sched_idle_cpu(cpu)) &&
- 	    sched_cpu_cookie_match(cpu_rq(cpu), p))
- 		return cpu;
- 
-@@ -6115,7 +6115,7 @@ void __update_idle_core(struct rq *rq)
- 		if (cpu == core)
- 			continue;
- 
--		if (!available_idle_cpu(cpu))
-+		if (!available_idle_cpu_sched(cpu))
- 			goto unlock;
- 	}
- 
-@@ -6138,7 +6138,7 @@ static int select_idle_core(struct task_struct *p, int core, struct cpumask *cpu
- 		return __select_idle_cpu(core, p);
- 
- 	for_each_cpu(cpu, cpu_smt_mask(core)) {
--		if (!available_idle_cpu(cpu)) {
-+		if (!available_idle_cpu_sched(cpu)) {
- 			idle = false;
- 			if (*idle_cpu == -1) {
- 				if (sched_idle_cpu(cpu) && cpumask_test_cpu(cpu, p->cpus_ptr)) {
-@@ -6171,7 +6171,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
- 		if (!cpumask_test_cpu(cpu, p->cpus_ptr) ||
- 		    !cpumask_test_cpu(cpu, sched_domain_span(sd)))
- 			continue;
--		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
-+		if (available_idle_cpu_sched(cpu) || sched_idle_cpu(cpu))
- 			return cpu;
- 	}
- 
-@@ -6302,7 +6302,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
- 	for_each_cpu_wrap(cpu, cpus, target) {
- 		unsigned long cpu_cap = capacity_of(cpu);
- 
--		if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
-+		if (!available_idle_cpu_sched(cpu) && !sched_idle_cpu(cpu))
- 			continue;
- 		if (fits_capacity(task_util, cpu_cap))
- 			return cpu;
-@@ -6348,7 +6348,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	 */
- 	lockdep_assert_irqs_disabled();
- 
--	if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
-+	if ((available_idle_cpu_sched(target) || sched_idle_cpu(target)) &&
- 	    asym_fits_capacity(task_util, target))
- 		return target;
- 
-@@ -6356,7 +6356,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	 * If the previous CPU is cache affine and idle, don't be stupid:
- 	 */
- 	if (prev != target && cpus_share_cache(prev, target) &&
--	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
-+	    (available_idle_cpu_sched(prev) || sched_idle_cpu(prev)) &&
- 	    asym_fits_capacity(task_util, prev))
- 		return prev;
- 
-@@ -6379,7 +6379,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	if (recent_used_cpu != prev &&
- 	    recent_used_cpu != target &&
- 	    cpus_share_cache(recent_used_cpu, target) &&
--	    (available_idle_cpu(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
-+	    (available_idle_cpu_sched(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
- 	    cpumask_test_cpu(p->recent_used_cpu, p->cpus_ptr) &&
- 	    asym_fits_capacity(task_util, recent_used_cpu)) {
- 		/*
--- 
-2.26.0
-
+Yeah, not going to happen.
