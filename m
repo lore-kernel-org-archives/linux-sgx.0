@@ -2,88 +2,118 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C64FC432BE
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Aug 2021 07:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF308C432BE
+	for <linux-sgx@archiver.kernel.org>; Wed,  1 Sep 2021 01:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0023B6023E
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Aug 2021 07:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDA3B6102A
+	for <linux-sgx@archiver.kernel.org>; Wed,  1 Sep 2021 01:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239688AbhHaHX5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 31 Aug 2021 03:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53230 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239538AbhHaHX4 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 31 Aug 2021 03:23:56 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5752C061575;
-        Tue, 31 Aug 2021 00:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YP6sLmbHZ4duSfp82g4uPYGB5Sa9IzFIjpbC3uLKhbA=; b=gXi1Ta1sRiqw9f0pfzVKNSvRTc
-        ++Ja+GLsArYf7mZElfpA2Eu1ZME4zRyTaqRWDmEdBfH0bd/FqBv0xIeR2V97jUJENX95O/H8TFSRQ
-        pmxF8uZ4FJaEozNlZ8WBQa5HEc+HLbW+ZY68A1mQTbMe1pWn/WkQxerBMpWv/Sdt9tSCqCfv63hWl
-        O+qP7R0AK4u0g6ws5JOGjdNxO3XdL+vWW1DxXeSxnSsoJPxT7kNBTh1L8tDv1Q81qYMxskMFk6j/j
-        QtoCMFxRMFcwGts3cNAN21GeNaxofh9ci/TGQPhzuRGJXKvGQAiPxzXvTmiffZTyJdgLq6Ys3nAHv
-        OiqmRTFg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mKy52-000x7F-7R; Tue, 31 Aug 2021 07:21:25 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CFDB63001F6;
-        Tue, 31 Aug 2021 09:21:11 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B60542CFB41A3; Tue, 31 Aug 2021 09:21:11 +0200 (CEST)
-Date:   Tue, 31 Aug 2021 09:21:11 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Tianqiang Xu <skyele@sjtu.edu.cn>
-Cc:     x86@kernel.org, pbonzini@redhat.com, seanjc@google.com,
-        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
-        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, kvm@vger.kernel.org, hpa@zytor.com,
-        jarkko@kernel.org, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: Re: [PATCH 4/4] KVM guest implementation
-Message-ID: <YS3YZ+0pJjNL4ouE@hirez.programming.kicks-ass.net>
-References: <20210831015919.13006-1-skyele@sjtu.edu.cn>
- <20210831015919.13006-4-skyele@sjtu.edu.cn>
+        id S231567AbhIABwd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 31 Aug 2021 21:52:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231396AbhIABwc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 31 Aug 2021 21:52:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 528CE603E7;
+        Wed,  1 Sep 2021 01:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630461093;
+        bh=gb/1unkAc9WQ2sT+GelqEJ3c22adTLm706zednkOQEw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=nU/H0oeaCGLEA0f4B4LE4YcVelCG6G+6TQDM8/z/p4lX/dpMNroB67DODnyABRi61
+         js97TW1yh59iqE9Kpje+NfsPs0cfHPR3ZQlmrbbd6spyyhPvuu/aF98LkBXPusqSEw
+         mOYf512S81QzSGPviIzGG5qYypr4+TLD54Lrb4mapckSzuUVj++l27ZgeLz0CZ1ygs
+         IcBuTNfJE39aqu74Q8aXjKS8Sq7CUGV9j2iL44fwL2rFwfPbSPOQ7u7XAYuNav8PMG
+         fy36hUILm8SO/djpgeMjeBpS3n5PjyLg/chCyKu2jMY/q8BrSllWFa8H7Yo2GD6m/E
+         Xnhu8ur1KuNZQ==
+Message-ID: <4c98877510a663ce52b57e9a09efbd476008b112.camel@kernel.org>
+Subject: Re: [PATCH v3 2/2] x86/sgx: Add SGX_MemTotal to /proc/meminfo
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Date:   Wed, 01 Sep 2021 04:51:31 +0300
+In-Reply-To: <124ad6ff-ee0d-5d59-0857-f1355578b59b@infradead.org>
+References: <20210825235234.153013-1-jarkko@kernel.org>
+         <20210825235234.153013-2-jarkko@kernel.org>
+         <ba483b7e-19a3-d4d3-56c0-3371a77341cb@infradead.org>
+         <e1ff36db0e7ed909653b6adb45094cc459dbad0b.camel@kernel.org>
+         <e87c5c8f-dead-ebdc-62f1-aa635288671c@intel.com>
+         <124ad6ff-ee0d-5d59-0857-f1355578b59b@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210831015919.13006-4-skyele@sjtu.edu.cn>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Aug 31, 2021 at 09:59:19AM +0800, Tianqiang Xu wrote:
-> Guest OS uses 'is_idle' field of kvm_steal_time to know if a pCPU
-> is idle and decides whether to schedule a task to a preempted vCPU
-> or not. If the pCPU is idle, scheduling a task to this pCPU will
-> improve cpu utilization. If not, avoiding scheduling a task to this
-> preempted vCPU can avoid host/guest switch, hence improving performance.
-> 
-> Guest OS invokes available_idle_cpu_sched() to get the value of
-> 'is_idle' field of kvm_steal_time.
-> 
-> Other modules in kernel except kernel/sched/fair.c which invokes
-> available_idle_cpu() is left unchanged, because other modules in
-> kernel need the semantic provided by 'preempted' field of kvm_steal_time.
+On Thu, 2021-08-26 at 15:27 -0700, Randy Dunlap wrote:
+> On 8/26/21 1:27 PM, Dave Hansen wrote:
+> > On 8/26/21 9:17 AM, Jarkko Sakkinen wrote:
+> > > > I would prefer to see this listed in Documentation/filesystems/proc=
+.rst
+> > > > as an optional field, depending on CONFIG_X86_SGX.
+> > > > Or at least put a reference in proc.rst to this doc file and its
+> > > > supplemental fields.
+> > > >=20
+> > > > thanks.
+> > > I *can* put it there but I did have reason not to, i.e. these attribu=
+tes
+> > > are neither there:
+> > >=20
+> > > DirectMap4k:     3930904 kB
+> > > DirectMap2M:    29440000 kB
+> > > DirectMap1G:     1048576 kB
+> > >=20
+> > > And they are implemented in arch specific code.
+> > >=20
+> > > Actually they are undocumented, e.g.
+> > >=20
+> > > $ git grep DirectMap4k
+> > > arch/powerpc/mm/book3s64/pgtable.c:     seq_printf(m, "DirectMap4k:  =
+  %8lu kB\n",
+> > > arch/s390/mm/pageattr.c:        seq_printf(m, "DirectMap4k:    %8lu k=
+B\n",
+> > > arch/x86/mm/pat/set_memory.c:   seq_printf(m, "DirectMap4k:    %8lu k=
+B\n",
+> >=20
+> > Yeah, we need to add some arch-specific sections to the documentation.
+> > That *could* just be a reference over to a new file:
+> >=20
+> > 	Documentation/x86/meminfo.rst
+> >=20
+> > along with whatever other arches provide their own fields too.
+> >=20
+>=20
+> Yes, either way works. Thanks.
 
-> ---
->  kernel/sched/fair.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+I'm wondering why /sys/devices/system/node/nodeX/meminfo is not
+documented?  At least I could not find its documentation anywhere.
 
-Goes and replaces every single available_idle_cpu() in fair with the new
-function that doesn't consider vCPU preemption.
+It would actually make more sense not to add anything at all
+/proc/meminfo but rather add SGX_MemTotal to
+/sys/devices/system/node/nodeX/meminfo because it is easy enough for
+user space to calculate the final value. It's just a sum of constants
+(no races).
 
-So what do you reckon now happens in the oversubscribed virt scenario
-where each CPU has multiple vCPUs?
+Given the per-node granularity, maybe the arch-specific documentation
+should be in Documentation/x86/node-meminfo.rst?
+
+So I'm thinking to drop /proc/meminfo change and report SGX stats only
+per-node.
+
+/Jarkko
+
