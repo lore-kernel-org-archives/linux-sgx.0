@@ -2,128 +2,117 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525CAC433FE
-	for <linux-sgx@archiver.kernel.org>; Sun,  5 Sep 2021 20:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8DFC433EF
+	for <linux-sgx@archiver.kernel.org>; Mon,  6 Sep 2021 08:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 355706101C
-	for <linux-sgx@archiver.kernel.org>; Sun,  5 Sep 2021 20:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1202060F9E
+	for <linux-sgx@archiver.kernel.org>; Mon,  6 Sep 2021 08:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238114AbhIEUX3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 5 Sep 2021 16:23:29 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:37466 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236697AbhIEUX2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 5 Sep 2021 16:23:28 -0400
-Received: by mail-il1-f198.google.com with SMTP id w12-20020a92ad0c000000b00227fc2e6eaeso2806635ilh.4
-        for <linux-sgx@vger.kernel.org>; Sun, 05 Sep 2021 13:22:24 -0700 (PDT)
+        id S240893AbhIFIgl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 6 Sep 2021 04:36:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32436 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240795AbhIFIgk (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 6 Sep 2021 04:36:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630917335;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IjuoIMMg9iawWeddQRM19hiJ7Lu1md2D4kuSs3r3SI4=;
+        b=AHETR3nQ+OW6171ulBx1xqUPZ/dE8jjA79Mm4CG+RSyo6LHVu0pVP+arsgVusnvL3gRd+6
+        NdxQYD26NlBw/ehSNCUnJ8km512k7v5oa8ZAsvgFWGQs/u1fViQeaIeaXOe6PxGuTBqR1y
+        vqY6/HEhM3wX/2LhMx3gLU1PS7tCn+4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-577-qfLGIUlLPJSN0Pw62c-dwA-1; Mon, 06 Sep 2021 04:35:34 -0400
+X-MC-Unique: qfLGIUlLPJSN0Pw62c-dwA-1
+Received: by mail-wr1-f72.google.com with SMTP id h6-20020a5d4fc6000000b00157503046afso986976wrw.3
+        for <linux-sgx@vger.kernel.org>; Mon, 06 Sep 2021 01:35:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+rPDgNSzrLHkZMxn4POnNNUzX99qgQeVfqX1qOJ/i+Y=;
-        b=Rjd4zvqmyJ9tpl87wkwSmmI+zKTmZtI6FAd3Fkb3mwScTecTtCEbxOLttF6zMa3Sa/
-         0sRGegPBnTnmDAbYKTstNBiN9+ZxPzU4iSYjGP/P8KzkR/0jsaoj19VV3SkHSCPlhe2X
-         OpXYSTHKxy95IC+b9O0zZi1PmvLksw46XUxqLFITCkRrdRCu81Gyt5bO9cMW9jxfUoQk
-         3S0EYxV8XBR5vIHsGkWD66Vt+p4gbDcZsWuUivKjaeYoi3tk21/nRJiJPjzmGR5YF5rt
-         Aw2PEWWpCN9SvoO4A7kmDU7uV31U8DbjupG9fe7nYDr3mektTBaasOsIRa5wDVb6m17E
-         XyMw==
-X-Gm-Message-State: AOAM530xbPjOnQWRsQb+c1f28GhD87nwqmdqDnXlglLAgaDJZw0K4l02
-        iKdW2WrqxXFaVA5aHrKrr8UBzQ+A1poQSYepCMBHpVy3aGfZ
-X-Google-Smtp-Source: ABdhPJyCiLjtVk7bcmv5SV1YROdQgrWx5SlnNRnIvCzXPcYQfZnvsh4mWSBPjmQnqAVqRELawgeTZtjwlG+o49ITr8nYinh8+HbG
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IjuoIMMg9iawWeddQRM19hiJ7Lu1md2D4kuSs3r3SI4=;
+        b=P9GJASFcS5+nPR0XbKftfBorjpj59QAEvOLYeI4ECMBx64eEj35tGP2WsT5avmoQR0
+         o84H1V2xeNHaX94JwPPUSBu8phmEHE/DOUZKQuf5D0WggXblTWVj3x+Eb9gcg3ksNZpr
+         f7Eg7Tzvlzi25KKv4R0ugONkScpnKG+1HPGRLWawgFxKPU0ISZdWFzi2tit5cKNjyI+2
+         nZhNTTM70jqFxKf3m9uT5uNSWjm8roklcwB5MnM5n+GBdSlz47IcUtrKCfxRTpqavtHI
+         kvC9Wpx6PxZ2BFLm+ifvoelnJflJVh5Ahp5/G87dsVMux29xnCb/GYpXeGmhZfDCd9oW
+         zP5A==
+X-Gm-Message-State: AOAM530mwWnbvKbBjPNNUvY5CjuyV/3I2zRUmxQt5KHr/0+kEQrwSYIe
+        jpXalPL3sk/AO/oSvLH1WwF3+9eXzEqWJzTbLXPL9upqvgknLXXZkdXJ5Gi8QiGtNNr8kapfqu+
+        jm/aGzSTrtb+huN98gQWf
+X-Received: by 2002:a1c:98d5:: with SMTP id a204mr10542451wme.52.1630917333312;
+        Mon, 06 Sep 2021 01:35:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzPMM1T99WUU70Segpdi5Aem47QBjEgyCa24XVyUiY9UeaE4vEGWOypPCBZ8+vWngLZIZgt+w==
+X-Received: by 2002:a1c:98d5:: with SMTP id a204mr10542427wme.52.1630917333122;
+        Mon, 06 Sep 2021 01:35:33 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.gmail.com with ESMTPSA id y15sm7998147wmi.18.2021.09.06.01.35.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Sep 2021 01:35:32 -0700 (PDT)
+Subject: Re: [PATCH] x86/sgx: Declare sgx_set_attribute() for !CONFIG_X86_SGX
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Sean Christopherson <seanjc@google.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tony Luck <tony.luck@intel.com>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20210903064156.387979-1-jarkko@kernel.org>
+ <YTI/dTORBZEmGgux@google.com>
+ <f7e6b2f444f34064e34d7bd680d2c863b9ce6a41.camel@kernel.org>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <a43d34d5-623f-20f3-c29a-56985d5614ba@redhat.com>
+Date:   Mon, 6 Sep 2021 10:35:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:4453:: with SMTP id a19mr6024050ilm.221.1630873344577;
- Sun, 05 Sep 2021 13:22:24 -0700 (PDT)
-Date:   Sun, 05 Sep 2021 13:22:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006096fa05cb454a9c@google.com>
-Subject: [syzbot] WARNING: kmalloc bug in memslot_rmap_alloc
-From:   syzbot <syzbot+e0de2333cbf95ea473e8@syzkaller.appspotmail.com>
-To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
-        seanjc@google.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f7e6b2f444f34064e34d7bd680d2c863b9ce6a41.camel@kernel.org>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello,
+On 03/09/21 17:58, Jarkko Sakkinen wrote:
+>> Eh, it doesn't really simplify the usage.  If anything it makes it more convoluted
+>> because the capability check in kvm_vm_ioctl_check_extension() still needs an
+>> #ifdef, e.g. readers will wonder why the check is conditional but the usage is not.
+> It does objectively a bit, since it's one ifdef less.
 
-syzbot found the following issue on:
+But you're effectively replacing #ifdef CONFIG_X86_SGX_KVM with #ifdef 
+CONFIG_X86_SGX; so the patch is not a no-op as far as KVM is concerned.
 
-HEAD commit:    f1583cb1be35 Merge tag 'linux-kselftest-next-5.15-rc1' of ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11dd6315300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c582b69de20dde2
-dashboard link: https://syzkaller.appspot.com/bug?extid=e0de2333cbf95ea473e8
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15db7e5d300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170e66cd300000
+So NACK for the KVM parts (yeah I know it's RFC but just to be clearer), 
+but I agree that adding a stub inline version of the function is 
+standard practice and we do it a lot in KVM too.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e0de2333cbf95ea473e8@syzkaller.appspotmail.com
+Paolo
 
-L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8419 at mm/util.c:597 kvmalloc_node+0x111/0x120 mm/util.c:597
-Modules linked in:
-CPU: 0 PID: 8419 Comm: syz-executor520 Not tainted 5.14.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:kvmalloc_node+0x111/0x120 mm/util.c:597
-Code: 01 00 00 00 4c 89 e7 e8 ed 17 0d 00 49 89 c5 e9 69 ff ff ff e8 90 0a d1 ff 41 89 ed 41 81 cd 00 20 01 00 eb 95 e8 7f 0a d1 ff <0f> 0b e9 4c ff ff ff 0f 1f 84 00 00 00 00 00 55 48 89 fd 53 e8 66
-RSP: 0018:ffffc90001a7f828 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff888027ee5580 RSI: ffffffff81a51341 RDI: 0000000000000003
-RBP: 0000000000400dc0 R08: 000000007fffffff R09: 00000000ffffffff
-R10: ffffffff81a512fe R11: 0000000000000000 R12: 0000000380000000
-R13: 0000000000000000 R14: 00000000ffffffff R15: dffffc0000000000
-FS:  0000000000707300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007faeea03f6c0 CR3: 0000000074a57000 CR4: 00000000001526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- kvmalloc include/linux/mm.h:806 [inline]
- kvmalloc_array include/linux/mm.h:824 [inline]
- kvcalloc include/linux/mm.h:829 [inline]
- memslot_rmap_alloc+0xf6/0x310 arch/x86/kvm/x86.c:11320
- kvm_alloc_memslot_metadata arch/x86/kvm/x86.c:11388 [inline]
- kvm_arch_prepare_memory_region+0x48d/0x610 arch/x86/kvm/x86.c:11462
- kvm_set_memslot+0xfe/0x1700 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1505
- __kvm_set_memory_region+0x761/0x10e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1668
- kvm_set_memory_region arch/x86/kvm/../../../virt/kvm/kvm_main.c:1689 [inline]
- kvm_vm_ioctl_set_memory_region arch/x86/kvm/../../../virt/kvm/kvm_main.c:1701 [inline]
- kvm_vm_ioctl+0x4c6/0x2330 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4236
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:874 [inline]
- __se_sys_ioctl fs/ioctl.c:860 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:860
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x43ee99
-Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc276d5138 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000400488 RCX: 000000000043ee99
-RDX: 00000000200005c0 RSI: 000000004020ae46 RDI: 0000000000000004
-RBP: 0000000000402e80 R08: 0000000000400488 R09: 0000000000400488
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402f10
-R13: 0000000000000000 R14: 00000000004ac018 R15: 0000000000400488
+> This is fairly standard practice to do in kernel APIs, used in countless
+> places, for instance in Tony's patch set to add MCE recovery for SGX. And
+> it would be nice to share common pattern here how we define API now and
+> futre.
+> 
+> I also remarked that declaration of "sgx_provisioning_allowed" is not flagged,
+> which is IMHO even more convolved because without SGX it is spare data.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
