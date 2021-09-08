@@ -2,149 +2,108 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFAEC433F5
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Sep 2021 18:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90650C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed,  8 Sep 2021 05:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F5CC61103
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Sep 2021 18:05:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 722E26113E
+	for <linux-sgx@archiver.kernel.org>; Wed,  8 Sep 2021 05:36:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345555AbhIGSGq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 7 Sep 2021 14:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36936 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345309AbhIGSGq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Sep 2021 14:06:46 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92A02C06175F
-        for <linux-sgx@vger.kernel.org>; Tue,  7 Sep 2021 11:05:39 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id b4so10969198ilr.11
-        for <linux-sgx@vger.kernel.org>; Tue, 07 Sep 2021 11:05:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qzpzgK3vW8zHPmHABhnfN3E8pmOfA9CLtZXPUD7O1yA=;
-        b=VFDD3+qB1T70aPLYjMFO8iu9L5Ye5pHkxGgSF+BsKCbgrI/ivvRtvOUDnYL22P2B6F
-         Geitq9A0wVPm7nSIFKaYJm/jeB3BQ/vCv3QOVkgPIMZ5Go4x7Vju/n+BnPfMR6FfVA3q
-         vWZ041iqLVDxMATcQ4Qb+XIlGKVd7jXGsbJ3ZeEYQ0BQD/SLoEXLaLNDLcLjCFkTsGaW
-         fi7AeZCFw8ayEIch3nQO/S6OkhDQywgrd9yMPgL1m2MR8zQMhGqTl6tUM6907assvL9z
-         +KidFvJ0FG5Hm6gtPX+rShAuHUEVgqUDLBdAnKGA1fD7ZrMuc5nG79vVHfuiVE2mlPEH
-         6D6w==
+        id S1347557AbhIHFhS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 8 Sep 2021 01:37:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27651 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346949AbhIHFhS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Sep 2021 01:37:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631079369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dFD339gZoGagg4tSSmQme6S+gWZOs2ChudJRNUISs54=;
+        b=HevrQU/guIvoqFmZlZZlPPFy6d/ZC8T3/g9omj6WJ2eFIZj0pKFqs6jJyOmJCdyPcgHZwW
+        kewSuCooxvY++aqAcYvD3ZVfgOIt+HuXnyA8wI7dbUGMz/5JVoAsl226P7y3BXi6304y8j
+        o8TrboOhBz7B9Q2t6HGm1pYjCvgq7Ys=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-258-fhpn83JTMZuxuhNm9JCXPA-1; Wed, 08 Sep 2021 01:36:08 -0400
+X-MC-Unique: fhpn83JTMZuxuhNm9JCXPA-1
+Received: by mail-ej1-f71.google.com with SMTP id n18-20020a170906089200b005dc91303dfeso432144eje.15
+        for <linux-sgx@vger.kernel.org>; Tue, 07 Sep 2021 22:36:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qzpzgK3vW8zHPmHABhnfN3E8pmOfA9CLtZXPUD7O1yA=;
-        b=fRYDUczJgEmUGCwZuso+YEMbJsIJhL2us0qMsC5IHwmHg/nI7DVZ0SXPSIqe/qesU5
-         CZLRoH83+Se721YbVcXB3UgmtRgKpADOqNpUjMBB55yFD1l/ub0begSYHiyuM+VWnAlS
-         q4rA3DpzU9QWqmBWX8194Qhi278dcISyU0epdGoQ2yvDEc7qfj8oS+UfUag7Ez1jhw0I
-         1VKQdtFrnXbV2RCP/NS4pRdxyPLspz/rcFi5Wzy38memzDCY/vDsg/UwCT/YeyVasht7
-         6yXWx5TZmEhXTxCDquqvPoFIIuuHhIksP5jy2EbDtWhXxaqfi/zb+nD8uOFsJZ3XczmB
-         AkUg==
-X-Gm-Message-State: AOAM531zpcFM4497JmUKgT50PjclB7PoPhiIuwHo2DeFmId8fpYv7cpk
-        r/5oYqSMKug3Zfi/dwjoeJTGSv1xwEzCRVPuWs80DQ==
-X-Google-Smtp-Source: ABdhPJwGjNRsARjK37GX3NrPfYazkOzZO+CMfXuxbNbqXapBb+yZmKH7Ce0+n6QGLp+mht0dQVWIvz2nCCOxYLT99a8=
-X-Received: by 2002:a92:c5aa:: with SMTP id r10mr12869774ilt.274.1631037938808;
- Tue, 07 Sep 2021 11:05:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000006096fa05cb454a9c@google.com> <YTehmR1+G34uOHh3@google.com>
-In-Reply-To: <YTehmR1+G34uOHh3@google.com>
-From:   Ben Gardon <bgardon@google.com>
-Date:   Tue, 7 Sep 2021 11:05:27 -0700
-Message-ID: <CANgfPd_yUH6cuVQ54oKRkU3NQ6oevE8ySeeyW=AvAnj4S_AT+w@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dFD339gZoGagg4tSSmQme6S+gWZOs2ChudJRNUISs54=;
+        b=hJDxp0/FNN45zMgfuAlN+2ROQi93uh0bsMUJ0a/imJzpJFYm0TZAQSRy1SzKik2hDr
+         nqkOdpqa0AucL9ZyiyuDohXB0XQlLLMCsAnE0Tsz//JlDXdyegVhqtrqPlHlljxAKU4n
+         Cv2laS8Padav4UC8oMWrKJsqPG0A14mVcdTj9A+DPSx/cXnm1ikaLX2c0PdaYlknsQWY
+         NBD8JUwxH+pccbIcSSUvv3jQT0DU6NlnmfihK79hC9dPHW9FsVfUKsuxnnWoDwf0yhW0
+         2LE+Wc+SB68h6VdjfQ2mLwj6WkePs+BsPoO3YyFt3g3RyvOQzR0y+WnHvcvyyyvTHWS8
+         QBIQ==
+X-Gm-Message-State: AOAM532Yxmyu2Wzul1NOF3WWPS8vVGjswdsUn9b7wciv4SbRWatGEfjg
+        Unb/Dg5+U5PUIqTPNbDJJHHAvabhHhde9hNOGYrqsie3wNAWArkcHjvjobf3AUL9rVLfJLs8jE1
+        X08eIeYC6UeJrwiL95Tix
+X-Received: by 2002:a50:ab42:: with SMTP id t2mr2084744edc.113.1631079367434;
+        Tue, 07 Sep 2021 22:36:07 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyyc6RwiUcNrrlYLIs4pe6r1E3Z5trGvuncJEIl8W+/WZ0elXTSBFJvbD524S8a0IU4LMkBsQ==
+X-Received: by 2002:a50:ab42:: with SMTP id t2mr2084726edc.113.1631079367262;
+        Tue, 07 Sep 2021 22:36:07 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.gmail.com with ESMTPSA id q9sm383547ejf.70.2021.09.07.22.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Sep 2021 22:36:06 -0700 (PDT)
 Subject: Re: [syzbot] WARNING: kmalloc bug in memslot_rmap_alloc
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     syzbot <syzbot+e0de2333cbf95ea473e8@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
-        "H. Peter Anvin" <hpa@zytor.com>, jarkko@kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Sean Christopherson <seanjc@google.com>,
+        syzbot <syzbot+e0de2333cbf95ea473e8@syzkaller.appspotmail.com>
+Cc:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ben Gardon <bgardon@google.com>
+References: <0000000000006096fa05cb454a9c@google.com>
+ <YTehmR1+G34uOHh3@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <2e6b9e6d-30b4-6cb4-1eb7-c626e5d2adb3@redhat.com>
+Date:   Wed, 8 Sep 2021 07:36:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <YTehmR1+G34uOHh3@google.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 7, 2021 at 10:30 AM Sean Christopherson <seanjc@google.com> wrote:
->
-> +Linus and Ben
->
-> On Sun, Sep 05, 2021, syzbot wrote:
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 8419 at mm/util.c:597 kvmalloc_node+0x111/0x120 mm/util.c:597
-> > Modules linked in:
-> > CPU: 0 PID: 8419 Comm: syz-executor520 Not tainted 5.14.0-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > RIP: 0010:kvmalloc_node+0x111/0x120 mm/util.c:597
->
-> ...
->
-> > Call Trace:
-> >  kvmalloc include/linux/mm.h:806 [inline]
-> >  kvmalloc_array include/linux/mm.h:824 [inline]
-> >  kvcalloc include/linux/mm.h:829 [inline]
-> >  memslot_rmap_alloc+0xf6/0x310 arch/x86/kvm/x86.c:11320
-> >  kvm_alloc_memslot_metadata arch/x86/kvm/x86.c:11388 [inline]
-> >  kvm_arch_prepare_memory_region+0x48d/0x610 arch/x86/kvm/x86.c:11462
-> >  kvm_set_memslot+0xfe/0x1700 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1505
-> >  __kvm_set_memory_region+0x761/0x10e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1668
-> >  kvm_set_memory_region arch/x86/kvm/../../../virt/kvm/kvm_main.c:1689 [inline]
-> >  kvm_vm_ioctl_set_memory_region arch/x86/kvm/../../../virt/kvm/kvm_main.c:1701 [inline]
-> >  kvm_vm_ioctl+0x4c6/0x2330 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4236
->
-> KVM is tripping the WARN_ON_ONCE(size > INT_MAX) added in commit 7661809d493b
-> ("mm: don't allow oversized kvmalloc() calls").  The allocation size is absurd and
-> doomed to fail in this particular configuration (syzkaller is just throwing garbage
-> at KVM), but for humongous virtual machines it's feasible that KVM could run afoul
-> of the sanity check for an otherwise legitimate allocation.
->
+On 07/09/21 19:30, Sean Christopherson wrote:
 > The allocation in question is for KVM's "rmap" to translate a guest pfn to a host
 > virtual address.  The size of the rmap in question is an unsigned long per 4kb page
 > in a memslot, i.e. on x86-64, 8 bytes per 4096 bytes of guest memory in a memslot.
 > With INT_MAX=0x7fffffff, KVM will trip the WARN and fail rmap allocations for
 > memslots >= 1tb, and Google already has VMs that create 1.5tb memslots (12tb of
 > total guest memory spread across 8 virtual NUMA nodes).
->
-> One caveat is that KVM's newfangled "TDP MMU" was designed specifically to avoid
-> the rmap allocation (among other things), precisely because of its scalability
-> issues.  I.e. it's unlikely KVM's so called "legacy MMU" that relies on the rmaps
-> would be used for such large VMs.  However, KVM's legacy MMU is still the only option
-> for shadowing nested EPT/NPT, i.e. the rmap allocation would be problematic if/when
-> nested virtualization is enabled in large VMs.
->
-> KVM also has other allocations based on memslot size that are _not_ avoided by KVM's
-> TDP MMU and may eventually be problematic, though presumably not for quite some time
-> as it would require petabyte? memslots.  E.g. a different metadata array requires
-> 4 bytes per 2mb of guest memory.
 
-KVM's dirty bitmap requires 1 bit per 4K, so we'd hit this limit even
-sooner with 64TB memslots.
-Still, that can be avoided with Peter Xu's dirty ring and we're still
-a ways away from 64TB memslots.
+We can just use vmalloc.  The warning was only added on kvmalloc, and 
+vmalloc suits the KVM rmap just fine.
 
->
-> I don't have any clever ideas to handle this from the KVM side, at least not in the
-> short term.  Long term, I think it would be doable to reduce the rmap size for large
-> memslots by 512x, but any change of that nature would be very invasive to KVM and
-> be fairly risky.  It also wouldn't prevent syskaller from triggering this WARN at will.
+The maximum that Red Hat has tested, as far as I know, is about 4TiB 
+(and it was back when there was no support for virtual NUMA nodes in 
+QEMU, so it was all in a single memslot).
 
-Not the most elegant solution, but KVM could, and perhaps should,
-impose a maximum memslot size. KVM operations (e.g. dirty logging)
-which operate on a memslot can take a very long time with terabyte
-memslots. Forcing userspace to handle memory in units of a more
-reasonable size could be a good limitation to impose sooner rather
-than later while there are few users (if any outside Google) of these
-massive memslots.
+Paolo
+
