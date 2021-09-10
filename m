@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968F1C4321E
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC7CC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4B560C40
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78FA06115A
+	for <linux-sgx@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232602AbhIJAqh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:46:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44128 "EHLO mail.kernel.org"
+        id S232103AbhIJAqi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 9 Sep 2021 20:46:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232419AbhIJAS4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:18:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DB0C061212;
-        Fri, 10 Sep 2021 00:17:32 +0000 (UTC)
+        id S232453AbhIJAS5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:18:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E0356115A;
+        Fri, 10 Sep 2021 00:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233053;
-        bh=13Wxtx8dhv8/yMBbWj3kGQZLEmPK0oZNdwQ81jc+SQo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=a5M8Ddkj5MOBLjDKwxdegK3JgQoFqGCC6bcDzj+ArBSZyCOiUG7OixmBTp/bHyuwM
-         M1GRbbPfJ/9u+RO9NtcV5Kog9wA4Wxzo3oE/qgONRen+57GFVUzsI+iqVVebxxcJom
-         aURPDfbR/rPf9vSJ4AKHUVk8ItiwBVBSJDxMofm5bpae/+NtFHH57TNEefv/OmdN9p
-         EOzyvhFX3pYVawUomexNVYhrSJfO6lwtPF9SGAr74gyCTSjKXNWncL5gGBvJrCFali
-         93Akv+ry588Bf1y0r9PunGu/qkaWoU4Tv/JFZl1jmEPqRpebl386RzIyulNzB8N/Dj
-         deNiSF1o1gXCg==
+        s=k20201202; t=1631233056;
+        bh=N7VryCQb/YIXbsKUrHSlN8c3f2IOZpt0Z9Ky/nPZQZk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hwYt2LTBXN4RVzqX8Cxi2NYUBY9sFoXXSwBO75Sw16lHlsUh1jM6Dr3yGc9QP7yIm
+         JoDlpmM6oszNZ7JRKilf0wVlSfRnGTVV5iWaQeBvTlhuM32k41qcf2xuDdIWwSj3Ug
+         qmr8FyO9I9m+d30mM/37GYVoVJ4WHkwgZDaWcPL/9Ryee2e14Vv4CB4uyw3IwYvFQb
+         HszYgVHtDoiYBE6ZiBZsVQ5Av2ibl/+aQK1jaP9IptJ5UhiSq5RrmVzAXwDSHzvf+g
+         xhxVhHNNJg7TjKrT5YAW3lszY/dWC+paPK6SkZWNVK1LpTGE3QV+D/ssR2A4mhMa6r
+         x8L+bmKmWCjOg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
 Cc:     linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/3] x86/sgx: Report SGX memory in /sys/devices/system/node/node*/meminfo
-Date:   Fri, 10 Sep 2021 03:17:24 +0300
-Message-Id: <20210910001726.811497-1-jarkko@kernel.org>
+Subject: [PATCH v4 2/3] x86/sgx: Report SGX memory in /proc/meminfo
+Date:   Fri, 10 Sep 2021 03:17:25 +0300
+Message-Id: <20210910001726.811497-2-jarkko@kernel.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210910001726.811497-1-jarkko@kernel.org>
+References: <20210910001726.811497-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -55,105 +57,98 @@ varies wildly between systems.  It can be from dozens of MB's on desktops
 or VM's, up to many GB's on servers.  Just like for regular memory, it is
 sometimes useful to know the amount of usable SGX memory in the system.
 
-Add SGX_MemTotal field to /sys/devices/system/node/node*/meminfo,
-showing the total SGX memory in each NUMA node. The total memory for
-each NUMA node is calculated by adding the sizes of contained EPC
-sections together.
+Add SGX_MemTotal field to /proc/meminfo, which shows the total amount of
+usable SGX memory in the system.  E.g. with 32 MB reserved for SGX from
+BIOS, the printout would be:
 
-Introduce arch_node_read_meminfo(), which can optionally be rewritten by
-the arch code, and rewrite it for x86 so it prints SGX_MemTotal.
+SGX_MemTotal:      22528 kB
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
 v4:
-* A new patch.
- arch/x86/kernel/cpu/sgx/main.c | 14 ++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h  |  6 ++++++
- drivers/base/node.c            | 10 +++++++++-
- 3 files changed, 29 insertions(+), 1 deletion(-)
+* Calculate sgx_mem_total by adding up the sizes of the NUMA node
+  EPC's, only once all of them have been set up correctly.
+* Move documentation to a separate patch, as it clearly is a
+  separate issue.
+v2:
+* Move ifdef fix for sgx_set_attribute() to a separate patch.
+---
+ arch/x86/include/asm/sgx.h     |  2 ++
+ arch/x86/kernel/cpu/sgx/main.c | 10 ++++++++--
+ arch/x86/mm/pat/set_memory.c   |  5 +++++
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 05f3e21f01a7..65124b05c145 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -365,6 +365,8 @@ struct sgx_sigstruct {
+  * comment!
+  */
+ 
++extern unsigned long sgx_mem_total;
++
+ #ifdef CONFIG_X86_SGX_KVM
+ int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+ 		     int *trapnr);
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 63d3de02bbcc..4c6da5f4a9d4 100644
+index 4c6da5f4a9d4..d8f5769e4004 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -717,6 +717,7 @@ static bool __init sgx_page_cache_init(void)
- 		}
+@@ -28,7 +28,10 @@ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+ static LIST_HEAD(sgx_active_page_list);
+ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
  
- 		sgx_epc_sections[i].node =  &sgx_numa_nodes[nid];
-+		sgx_numa_nodes[nid].size += size;
+-/* The free page list lock protected variables prepend the lock. */
++/* Total size of the Enclave Page Cache (EPC) in the system. */
++unsigned long sgx_mem_total;
++
++/* The number of free EPC pages in all nodes. */
+ static unsigned long sgx_nr_free_pages;
  
- 		sgx_nr_epc_sections++;
+ /* Nodes with one or more EPC sections. */
+@@ -727,6 +730,9 @@ static bool __init sgx_page_cache_init(void)
+ 		return false;
  	}
-@@ -790,6 +791,19 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
  
-+ssize_t arch_node_read_meminfo(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf, int len)
-+{
-+	struct sgx_numa_node *node = &sgx_numa_nodes[dev->id];
++	for (i = 0; i < num_possible_nodes(); i++)
++		sgx_mem_total += sgx_numa_nodes[nid].size;
 +
-+	len += sysfs_emit_at(buf, len,
-+			     "Node %d SGX_MemTotal:   %8lu kB\n",
-+			     dev->id, node->size);
-+
-+	return len;
-+}
-+
- static int __init sgx_init(void)
- {
- 	int ret;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 4628acec0009..74713b98a859 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -39,6 +39,7 @@ struct sgx_epc_page {
-  */
- struct sgx_numa_node {
- 	struct list_head free_page_list;
-+	unsigned long size;
- 	spinlock_t lock;
- };
- 
-@@ -95,4 +96,9 @@ static inline int __init sgx_vepc_init(void)
- 
- void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
- 
-+extern ssize_t arch_node_read_meminfo(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf, int len);
-+
-+
- #endif /* _X86_SGX_H */
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 4a4ae868ad9f..91eaa2e2ce33 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -361,6 +361,13 @@ static void node_init_caches(unsigned int nid) { }
- static void node_remove_caches(struct node *node) { }
- #endif
- 
-+ssize_t __weak arch_node_read_meminfo(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf, int len)
-+{
-+	return len;
-+}
-+
- #define K(x) ((x) << (PAGE_SHIFT - 10))
- static ssize_t node_read_meminfo(struct device *dev,
- 			struct device_attribute *attr, char *buf)
-@@ -473,7 +480,8 @@ static ssize_t node_read_meminfo(struct device *dev,
- #endif
- 			    );
- 	len += hugetlb_report_node_meminfo(buf, len, nid);
--	return len;
-+
-+	return arch_node_read_meminfo(dev, attr, buf, len);
+ 	return true;
  }
  
- #undef K
+@@ -799,7 +805,7 @@ ssize_t arch_node_read_meminfo(struct device *dev,
+ 
+ 	len += sysfs_emit_at(buf, len,
+ 			     "Node %d SGX_MemTotal:   %8lu kB\n",
+-			     dev->id, node->size);
++			     dev->id, node->size / 1024);
+ 
+ 	return len;
+ }
+diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+index ad8a5c586a35..b55ea89df801 100644
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -29,6 +29,7 @@
+ #include <asm/proto.h>
+ #include <asm/memtype.h>
+ #include <asm/set_memory.h>
++#include <asm/sgx.h>
+ 
+ #include "../mm_internal.h"
+ 
+@@ -116,6 +117,10 @@ void arch_report_meminfo(struct seq_file *m)
+ 	if (direct_gbpages)
+ 		seq_printf(m, "DirectMap1G:    %8lu kB\n",
+ 			direct_pages_count[PG_LEVEL_1G] << 20);
++
++#if defined(CONFIG_X86_SGX) || defined(CONFIG_X86_SGX_KVM)
++	seq_printf(m, "SGX_MemTotal:   %8lu kB\n", sgx_mem_total / 1024);
++#endif
+ }
+ #else
+ static inline void split_page_count(int level) { }
 -- 
 2.25.1
 
