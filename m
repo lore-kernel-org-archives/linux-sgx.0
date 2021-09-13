@@ -2,143 +2,118 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B2AC433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 13:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3604C433FE
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 14:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC98D60E9B
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 13:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF81F61244
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 14:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238752AbhIMNPh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 13 Sep 2021 09:15:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26283 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240289AbhIMNPU (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Sep 2021 09:15:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631538843;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ssvFfazFHpZBhyJATyNfwQPcx2BQad/t+2J48qwVlfE=;
-        b=Z7IHsy5gNTByUQl+IepuBEIRt3yd0sjEIOLJBveTTriCcRPS4HuXmxodt5XpYLzZ3IRY3o
-        GZDIXTeaQm1/NsDeXutV7jjtIAPPNg2cWxFtQy5RbweuTPzZ9yCVs11jo9Z7rGjBfJQpg3
-        yWJQVDywnjNd5ken393ffETLH6Kw2io=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-217-MtjKCNNZOO-ViohxAn9OBg-1; Mon, 13 Sep 2021 09:11:57 -0400
-X-MC-Unique: MtjKCNNZOO-ViohxAn9OBg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D6B901808305;
-        Mon, 13 Sep 2021 13:11:55 +0000 (UTC)
-Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4CD236B54F;
-        Mon, 13 Sep 2021 13:11:55 +0000 (UTC)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+        id S245475AbhIMOKc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 13 Sep 2021 10:10:32 -0400
+Received: from mga17.intel.com ([192.55.52.151]:55873 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344737AbhIMOHX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 13 Sep 2021 10:07:23 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10105"; a="201859198"
+X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
+   d="scan'208";a="201859198"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 07:06:00 -0700
+X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
+   d="scan'208";a="551655993"
+Received: from holdensm-mobl.amr.corp.intel.com (HELO [10.212.147.16]) ([10.212.147.16])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 07:06:00 -0700
+Subject: Re: [PATCH 1/2] x86: sgx_vepc: extract sgx_vepc_remove_page
+To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org, jarkko@kernel.org,
         dave.hansen@linux.intel.com, yang.zhong@intel.com
-Subject: [PATCH 2/2] x86: sgx_vepc: implement SGX_IOC_VEPC_REMOVE ioctl
-Date:   Mon, 13 Sep 2021 09:11:53 -0400
-Message-Id: <20210913131153.1202354-3-pbonzini@redhat.com>
-In-Reply-To: <20210913131153.1202354-1-pbonzini@redhat.com>
 References: <20210913131153.1202354-1-pbonzini@redhat.com>
+ <20210913131153.1202354-2-pbonzini@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <dc628588-3030-6c05-0ba4-d8fc6629c0d2@intel.com>
+Date:   Mon, 13 Sep 2021 07:05:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210913131153.1202354-2-pbonzini@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Windows expects all pages to be in uninitialized state on startup.
-Add a ioctl that does this with EREMOVE, so that userspace can bring
-the pages back to this state also when resetting the VM.
-Pure userspace implementations, such as closing and reopening the device,
-are racy.
+On 9/13/21 6:11 AM, Paolo Bonzini wrote:
+> Windows expects all pages to be in uninitialized state on startup.
+> In order to implement this, we will need a ioctl that performs
+> EREMOVE on all pages mapped by a /dev/sgx_vepc file descriptor:
+> other possibilities, such as closing and reopening the device,
+> are racy.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/uapi/asm/sgx.h |  2 ++
- arch/x86/kernel/cpu/sgx/virt.c  | 36 +++++++++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+Hi Paolo,
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 9690d6899ad9..f79d84ce8033 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -27,6 +27,8 @@ enum sgx_page_flags {
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
- #define SGX_IOC_ENCLAVE_PROVISION \
- 	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
-+#define SGX_IOC_VEPC_REMOVE \
-+	_IO(SGX_MAGIC, 0x04)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index 59b9c13121cd..81dc186fda2e 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -154,6 +154,24 @@ static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
- 	return 0;
- }
- 
-+static long sgx_vepc_remove_all(struct sgx_vepc *vepc)
-+{
-+	struct sgx_epc_page *entry;
-+	unsigned long index;
-+	long failures = 0;
-+
-+	xa_for_each(&vepc->page_array, index, entry)
-+		if (sgx_vepc_remove_page(entry))
-+			failures++;
-+
-+	/*
-+	 * Return the number of pages that failed to be removed, so
-+	 * userspace knows that there are still SECS pages lying
-+	 * around.
-+	 */
-+	return failures;
-+}
-+
- static int sgx_vepc_release(struct inode *inode, struct file *file)
- {
- 	struct sgx_vepc *vepc = file->private_data;
-@@ -239,9 +257,27 @@ static int sgx_vepc_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static long sgx_vepc_ioctl(struct file *file,
-+			   unsigned int cmd, unsigned long arg)
-+{
-+	struct sgx_vepc *vepc = file->private_data;
-+
-+	switch (cmd) {
-+	case SGX_IOC_VEPC_REMOVE:
-+		if (arg)
-+			return -EINVAL;
-+		return sgx_vepc_remove_all(vepc);
-+
-+	default:
-+		return -ENOTTY;
-+	}
-+}
-+
- static const struct file_operations sgx_vepc_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		= sgx_vepc_open,
-+	.unlocked_ioctl	= sgx_vepc_ioctl,
-+	.compat_ioctl	= sgx_vepc_ioctl,
- 	.release	= sgx_vepc_release,
- 	.mmap		= sgx_vepc_mmap,
- };
--- 
-2.27.0
+How does this end up happening in the first place?
 
+All enclave pages should start out on 'sgx_dirty_page_list' and
+ksgxd sanitizes them with EREMOVE before making them available.  That
+should cover EREMOVE after reboots while SGX pages are initialized,
+including kexec().
+
+sgx_vepc_free_page() should do the same for pages that a guest not not
+clean up properly.
+
+sgx_encl_free_epc_page() does an EREMOVE after a normal enclave has used
+a page.
+
+Those are the only three cases that I can think of.  So, it sounds like
+one of those is buggy, or there's another unexpected path out there.
+Ultimately, I think it would be really handy if we could do this EREMOVE
+implicitly and without any new ABI.
