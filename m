@@ -2,132 +2,66 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 020E7C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 19:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D9AC433EF
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 20:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DADC761106
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 19:33:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45A1F61106
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 20:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240868AbhIMTeo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 13 Sep 2021 15:34:44 -0400
-Received: from mga18.intel.com ([134.134.136.126]:61836 "EHLO mga18.intel.com"
+        id S244070AbhIMUfQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 13 Sep 2021 16:35:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235290AbhIMTen (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 13 Sep 2021 15:34:43 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10106"; a="208874723"
-X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
-   d="scan'208";a="208874723"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 12:33:27 -0700
-X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
-   d="scan'208";a="609187491"
-Received: from holdensm-mobl.amr.corp.intel.com (HELO [10.212.147.16]) ([10.212.147.16])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 12:33:26 -0700
-Subject: Re: [PATCH 2/2] x86: sgx_vepc: implement SGX_IOC_VEPC_REMOVE ioctl
+        id S242811AbhIMUfQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 13 Sep 2021 16:35:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B458610E6;
+        Mon, 13 Sep 2021 20:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631565240;
+        bh=/EhioSdkkgcCZUG8sXQQ89zG+D82VpaIUWwZPLr8V6s=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=WJp+6TuPHyRGo/kCzwgHtcX64oAWmluZ5bRVY/uv1gmfeKRSrvU0ei7p4kzmx2dnU
+         NpAPJpqT6IXe2lmHlvbxRW7LP2YX2hw3OVei52cNuvch1YbVpUbjb7Buo1Uz2Oxb1N
+         xyog2+HaMgEetjfLofPp4fwbuheJbzOmk6i2gbPapPh15i4lvGmTvQs6Itjfpq0z1T
+         r3R6M9xn0ftL8uzcq9ehzc+ChOwQYtyRag7S2ZCMSBTnnL2Lu1z/wqDLbqGPTmVWNP
+         ul1qKPY62erf3JfhPVOhyBiZMV7NyfNYg043gaacQoUE9UUVbLkIFzEnM8OSXTvsqU
+         wPfHLALc92Gvw==
+Message-ID: <41bf31aec263780af85037ec3d1397aad24b7218.camel@kernel.org>
+Subject: Re: [PATCH 1/2] x86: sgx_vepc: extract sgx_vepc_remove_page
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org, jarkko@kernel.org,
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
         dave.hansen@linux.intel.com, yang.zhong@intel.com
+Date:   Mon, 13 Sep 2021 23:33:57 +0300
+In-Reply-To: <20210913131153.1202354-2-pbonzini@redhat.com>
 References: <20210913131153.1202354-1-pbonzini@redhat.com>
- <20210913131153.1202354-3-pbonzini@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <50287173-0afb-36f4-058e-0960fb4017a7@intel.com>
-Date:   Mon, 13 Sep 2021 12:33:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+         <20210913131153.1202354-2-pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-In-Reply-To: <20210913131153.1202354-3-pbonzini@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/13/21 6:11 AM, Paolo Bonzini wrote:
-> +static long sgx_vepc_remove_all(struct sgx_vepc *vepc)
-> +{
-> +	struct sgx_epc_page *entry;
-> +	unsigned long index;
-> +	long failures = 0;
-> +
-> +	xa_for_each(&vepc->page_array, index, entry)
-> +		if (sgx_vepc_remove_page(entry))
-> +			failures++;
-> +
-> +	/*
-> +	 * Return the number of pages that failed to be removed, so
-> +	 * userspace knows that there are still SECS pages lying
-> +	 * around.
-> +	 */
-> +	return failures;
-> +}
+On Mon, 2021-09-13 at 09:11 -0400, Paolo Bonzini wrote:
+> Windows expects all pages to be in uninitialized state on startup.
+> In order to implement this, we will need a ioctl that performs
+> EREMOVE on all pages mapped by a /dev/sgx_vepc file descriptor:
+> other possibilities, such as closing and reopening the device,
+> are racy.
 
-I'm not sure the retry logic should be in userspace.  Also, is this
-strictly limited to SECS pages?  It could also happen if there were
-enclaves running that used the page.  Granted, userspace can probably
-stop all the vcpus, but the *interface* doesn't prevent it being called
-like that.
+So what makes it racy, and what do mean by racy in this case?
 
-What else can userspace do but:
+I.e. you have to do open() and mmap(), and munmap() + close()
+for removal. Depending on situation that is racy or not...
 
-	ret = ioctl(fd, SGX_IOC_VEPC_REMOVE);
-	if (ret)
-		ret = ioctl(fd, SGX_IOC_VEPC_REMOVE);
-	if (ret)
-		printf("uh oh\n");
+And is "Windows" more precisely a "Windows guest running in
+Linux QEMU host"? It's ambiguous..
 
-We already have existing code to gather up the pages that couldn't be
-EREMOVE'd and selectively EREMOVE them again.  Why not reuse that code
-here?  If there is 100GB of EPC, it's gotta be painful to run through
-the ->page_array twice when once plus a small list iteration will do.
-
-Which reminds me...  Do we need a cond_resched() in there or anything?
-That loop could theoretically get really, really long.
+/Jarkko
