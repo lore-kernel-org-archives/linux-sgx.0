@@ -2,33 +2,65 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5FCC433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 15:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C79E0C433EF
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 18:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0011F61056
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 15:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA65610F9
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Sep 2021 18:36:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344510AbhIMPb1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 13 Sep 2021 11:31:27 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11526 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344766AbhIMPa4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 13 Sep 2021 11:30:56 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10105"; a="218527445"
-X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
-   d="scan'208";a="218527445"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 08:29:18 -0700
-X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
-   d="scan'208";a="551723817"
-Received: from holdensm-mobl.amr.corp.intel.com (HELO [10.212.147.16]) ([10.212.147.16])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 08:29:18 -0700
+        id S1347206AbhIMShO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 13 Sep 2021 14:37:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34830 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238922AbhIMShO (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Sep 2021 14:37:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631558158;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ScHcN8dLaumVNUqatliuYwE9cKX9b+BGBYhfk+zY8Jg=;
+        b=S5Jgwrtm7QywN3E7+kXSxyxHIXCed/iPUUYoN90TkSkE52Ze+NXRjRyR8sCNo0O7jDb0z1
+        qGFcx5jn2JstM+eAPTKjXLUgY9lWu+Dg0qY+wokuIVhQziL6xvgtkdTJ+ox8Zw8r/Sn844
+        BPXcYXgJobXbIwdfqqD8NHLCRAYOnqU=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-549-f2sq3j6wNX2lwIMz4ynUXA-1; Mon, 13 Sep 2021 14:35:57 -0400
+X-MC-Unique: f2sq3j6wNX2lwIMz4ynUXA-1
+Received: by mail-ej1-f71.google.com with SMTP id o7-20020a170906288700b005bb05cb6e25so4065894ejd.23
+        for <linux-sgx@vger.kernel.org>; Mon, 13 Sep 2021 11:35:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ScHcN8dLaumVNUqatliuYwE9cKX9b+BGBYhfk+zY8Jg=;
+        b=Ba5msQHqzUWp+4B5uH5t0EAg1EDPiimC0nYmGfW46ER2DbFZs9apbk9+Qe9Go6Zr3r
+         bKdRse8VRAvsM9BlIu1HKWF5UB1h/o0/z6+zAiSGyD9HtKdgWEGuIT05bkEjHGPigpuT
+         1tCrdMDAKnAydbboqy2YCnLlAH3CUZvrkGhhXDA6YIAP1dzbGeXQnD0WX89qrpuVG8lK
+         +pIe8AH1279MRKNbqfNn5XPcAe9L3ouLa0COe18BCgFF124o5nnv3gnDft1vCyTURpWW
+         R5olUDjam8iGrX7NPrE/3/rz8KChUowvBbRWGX9IDkX/5UG/zXp74dUWQYuwGVs1CXca
+         48YA==
+X-Gm-Message-State: AOAM530+DdS7enf2Vgt0jMijOZQcIv4FZdKodHHrDFiS2w7ogKMK8ZtS
+        RUc+nalUzcduR6uRfg/v6ESlrksMDtwjS+G2UhxyRUlSlFjcNqMaRZeEcfgc1yvJixRYMIwteNO
+        kb/ycWaLvJR6qotr9j3qC
+X-Received: by 2002:a05:6402:186:: with SMTP id r6mr14397450edv.37.1631558155168;
+        Mon, 13 Sep 2021 11:35:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzfyw0ATWgIXoWJXFVBnp8QaQsJtvhjjjhWFxN1Vg7ZJVpr0Wea9ho+vNOhg2FYNgJBj/GnFg==
+X-Received: by 2002:a05:6402:186:: with SMTP id r6mr14397426edv.37.1631558154925;
+        Mon, 13 Sep 2021 11:35:54 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.gmail.com with ESMTPSA id b5sm3861308ejq.56.2021.09.13.11.35.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Sep 2021 11:35:54 -0700 (PDT)
 Subject: Re: [PATCH 1/2] x86: sgx_vepc: extract sgx_vepc_remove_page
-To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
 Cc:     x86@kernel.org, linux-sgx@vger.kernel.org, jarkko@kernel.org,
         dave.hansen@linux.intel.com, yang.zhong@intel.com
@@ -38,88 +70,64 @@ References: <20210913131153.1202354-1-pbonzini@redhat.com>
  <8105a379-195e-8c9b-5e06-f981f254707f@redhat.com>
  <06db5a41-3485-9141-10b5-56ca57ed1792@intel.com>
  <34632ea9-42d3-fdfa-ae47-e208751ab090@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <480cf917-7301-4227-e1c4-728b52537f46@intel.com>
-Date:   Mon, 13 Sep 2021 08:29:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <480cf917-7301-4227-e1c4-728b52537f46@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <2b595588-eb98-6d30-dc50-794fc396bf7e@redhat.com>
+Date:   Mon, 13 Sep 2021 20:35:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <34632ea9-42d3-fdfa-ae47-e208751ab090@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <480cf917-7301-4227-e1c4-728b52537f46@intel.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/13/21 8:14 AM, Paolo Bonzini wrote:
-> On 13/09/21 16:55, Dave Hansen wrote:
->>> By "Windows startup" I mean even after guest reboot.  Because another
->>> process could sneak in and steal your EPC pages between a close() and an
->>> open(), I'd like to have a way to EREMOVE the pages while keeping them
->>> assigned to the specific vEPC instance, i.e.*without*  going through
->>> sgx_vepc_free_page().
->> Oh, so you want fresh EPC state for the guest, but you're concerned that
->> the previous guest might have left them in a bad state.  The current
->> method of getting a new vepc instance (which guarantees fresh state) has
->> some other downsides.
+On 13/09/21 17:29, Dave Hansen wrote:
+> On 9/13/21 8:14 AM, Paolo Bonzini wrote:
+>> On 13/09/21 16:55, Dave Hansen wrote:
+>>>> By "Windows startup" I mean even after guest reboot.  Because another
+>>>> process could sneak in and steal your EPC pages between a close() and an
+>>>> open(), I'd like to have a way to EREMOVE the pages while keeping them
+>>>> assigned to the specific vEPC instance, i.e.*without*  going through
+>>>> sgx_vepc_free_page().
+>>> Oh, so you want fresh EPC state for the guest, but you're concerned that
+>>> the previous guest might have left them in a bad state.  The current
+>>> method of getting a new vepc instance (which guarantees fresh state) has
+>>> some other downsides.
+>>>
+>>> Can't another process steal pages via sgxd and reclaim at any time?
 >>
->> Can't another process steal pages via sgxd and reclaim at any time?
+>> vEPC pages never call sgx_mark_page_reclaimable, don't they?
 > 
-> vEPC pages never call sgx_mark_page_reclaimable, don't they?
+> Oh, I was just looking that they were on the SGX LRU.  You might be right.
+> But, we certainly don't want the fact that they are unreclaimable today
+> to be part of the ABI.  It's more of a bug than a feature.
 
-Oh, I was just looking that they were on the SGX LRU.  You might be right.
+Sure, that's fine.
 
-But, we certainly don't want the fact that they are unreclaimable today
-to be part of the ABI.  It's more of a bug than a feature.
-
->> What's the extra concern here about going through a close()/open()
->> cycle?  Performance?
+>>> What's the extra concern here about going through a close()/open()
+>>> cycle?  Performance?
+>>
+>> Apart from reclaiming, /dev/sgx_vepc might disappear between the first
+>> open() and subsequent ones.
 > 
-> Apart from reclaiming, /dev/sgx_vepc might disappear between the first
-> open() and subsequent ones.
+> Aside from it being rm'd, I don't think that's possible.
+> 
 
-Aside from it being rm'd, I don't think that's possible.
+Being rm'd would be a possibility in principle, and it would be ugly for 
+it to cause issues on running VMs.  Also I'd like for it to be able to 
+pass /dev/sgx_vepc in via a file descriptor, and run QEMU in a chroot or 
+a mount namespace.  Alternatively, with seccomp it may be possible to 
+sandbox a running QEMU process in such a way that open() is forbidden at 
+runtime (all hotplug is done via file descriptor passing); it is not yet 
+possible, but it is a goal.
+
+Paolo
+
