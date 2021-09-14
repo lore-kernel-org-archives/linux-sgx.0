@@ -6,48 +6,43 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CA6C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Sep 2021 16:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209C1C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 14 Sep 2021 16:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24D966115C
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Sep 2021 16:05:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 075DC6112E
+	for <linux-sgx@archiver.kernel.org>; Tue, 14 Sep 2021 16:43:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232983AbhINQGZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 14 Sep 2021 12:06:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58296 "EHLO mail.kernel.org"
+        id S230282AbhINQoV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 14 Sep 2021 12:44:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232916AbhINQGZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 14 Sep 2021 12:06:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 85A3A610FB;
-        Tue, 14 Sep 2021 16:05:07 +0000 (UTC)
+        id S229975AbhINQoQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 14 Sep 2021 12:44:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 32437610A6;
+        Tue, 14 Sep 2021 16:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631635508;
-        bh=b1wd+Y+puqNJWrKtzvXtWggGD1x8IS+rF9VP5msmM8c=;
+        s=k20201202; t=1631637778;
+        bh=1wIid1GWYYDJRk4B5EvkgvC53Qon11JjbEFV0N5VjJs=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=SFQDXYnGIxAvYWnKJ087Tx8/u9tm/NnIW5YjUA8Kfl+MwJ2E7PiyjsDxhcrCY3bTi
-         9m42fbL4lejpy5/nxUYV5FpA9hlGho3PYSNWRRjkL16GtAeK9ioOgH1GveIbgpT/lD
-         iutqhRcrqKc1Lm/vf2A+rfEILD/F3kBSt0wys6q3IQ7B1CzN+DklVnDNinWS59SyKB
-         sLhtm9dGKVheA13yiUSGUuffFuguTzoGtCjpOc6EXgWJ2CxAaEMQouxLLQH3HfEFul
-         jz7Prr5qn+pvN/VdOtJ8fCp2Fi/zI7eSP66Mr34XWm9s+hSHIf/CHD8GnDNwZEQvDx
-         BMAGpCVnoq0tQ==
-Message-ID: <2bc53d87b3bacf78e2bbed8efcdbbf8553a7d6d5.camel@kernel.org>
-Subject: Re: [PATCH 1/2] x86: sgx_vepc: extract sgx_vepc_remove_page
+        b=CnA1MDjvY30m3+AvGHVXgYJ4xMipP36WxUxNERnBAC5APzX/VRn9FeCmV4N4apDY8
+         iQelVlYqQV01SoKdspBWC3259gorEkulQ4aIdA4fch55pw6actv3jeN9+GImh99KHV
+         rOiajUDstHS3rQYNtNyN6XqpaGLCTR1036GEtZj+vhioZBaBKKmLP9jd3tzQigDFCh
+         wkqDsGUh43hydcsrtsJe7Mm+YSw9qsI2iouS28goF0F4He1emcNDbdR8wf5URKC79w
+         y8HhBZS9xTvb8lXWNphXLBP0wwcLPlf7eq4yCsRqNZL9QqEGkAJsKW8CVy9QeSKFM1
+         sW2N8cCEINNWw==
+Message-ID: <fb04eae72ca0b24fdb533585775f2f20de9f5beb.camel@kernel.org>
+Subject: Re: [RFC/RFT PATCH 0/2] x86: sgx_vepc: implement ioctl to EREMOVE
+ all pages
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        dave.hansen@linux.intel.com, yang.zhong@intel.com
-Date:   Tue, 14 Sep 2021 19:05:05 +0300
-In-Reply-To: <734abf89-8be2-dd13-b649-fde5744ba465@redhat.com>
+        Yang Zhong <yang.zhong@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com
+Date:   Tue, 14 Sep 2021 19:42:56 +0300
+In-Reply-To: <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
 References: <20210913131153.1202354-1-pbonzini@redhat.com>
-         <20210913131153.1202354-2-pbonzini@redhat.com>
-         <dc628588-3030-6c05-0ba4-d8fc6629c0d2@intel.com>
-         <8105a379-195e-8c9b-5e06-f981f254707f@redhat.com>
-         <06db5a41-3485-9141-10b5-56ca57ed1792@intel.com>
-         <34632ea9-42d3-fdfa-ae47-e208751ab090@redhat.com>
-         <3409573ac76aad2e7c3363343fc067d5b4621185.camel@kernel.org>
-         <734abf89-8be2-dd13-b649-fde5744ba465@redhat.com>
+         <20210914071030.GA28797@yangzhon-Virtual>
+         <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.36.5-0ubuntu1 
@@ -56,26 +51,42 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2021-09-14 at 07:36 +0200, Paolo Bonzini wrote:
-> On 13/09/21 23:13, Jarkko Sakkinen wrote:
-> > > Apart from reclaiming, /dev/sgx_vepc might disappear between the firs=
-t
-> > > open() and subsequent ones.
+On Tue, 2021-09-14 at 12:19 +0200, Paolo Bonzini wrote:
+> On 14/09/21 09:10, Yang Zhong wrote:
+> > On Mon, Sep 13, 2021 at 09:11:51AM -0400, Paolo Bonzini wrote:
+> > > Based on discussions from the previous week(end), this series impleme=
+nts
+> > > a ioctl that performs EREMOVE on all pages mapped by a /dev/sgx_vepc
+> > > file descriptor.  Other possibilities, such as closing and reopening
+> > > the device, are racy.
+> > >=20
+> > > The patches are untested, but I am posting them because they are simp=
+le
+> > > and so that Yang Zhong can try using them in QEMU.
+> > >=20
 > >=20
-> > If /dev/sgx_vepc disappears, why is it a problem *for the software*, an=
-d
-> > not a sysadmin problem?
+> >    Paolo, i re-implemented one reset patch in the Qemu side to call thi=
+s ioctl(),
+> >    and did some tests on Windows and Linux guest, the Windows/Linux gue=
+st reboot
+> >    work well.
+> >=20
+> >    So, it is time for me to send this reset patch to Qemu community? or=
+ wait for
+> >    this kernel patchset merged? thanks!
 >=20
-> Rather than disappearing, it could be that a program first gets all the=
+> Let's wait for this patch to be accepted first.  I'll wait a little more=
 =20
-> resources it needs before it gets malicious input, and then enter a=20
-> restrictive sandbox.  In this case open() could be completely forbidden.
+> for Jarkko and Dave to comment on this, and include your "Tested-by".
 >=20
-> I will improve the documentation and changelogs when I post the non-RFC=
-=20
-> version; that could have been done better, sorry.
->=20
+> I will also add cond_resched() on the final submission.
 
-No worries, just trying to get bottom of the actual issue.
+Why these would be conflicting tasks? I.e. why could not QEMU use
+what is available now and move forward using better mechanism, when
+they are available?
+
+BTW, I do all my SGX testing ATM in QEMU (for some weeks). IMHO, it's
+already "good enough" for many tasks, even if this fallback case is
+not perfectly sorted out.
 
 /Jarkko
