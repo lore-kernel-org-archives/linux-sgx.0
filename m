@@ -2,90 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 924B8C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Sep 2021 17:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47705C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 08:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8CF60FC1
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Sep 2021 17:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 298786121E
+	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 08:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbhINRp7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 14 Sep 2021 13:45:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43776 "EHLO mail.kernel.org"
+        id S236932AbhIOIoS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 15 Sep 2021 04:44:18 -0400
+Received: from mga05.intel.com ([192.55.52.43]:27364 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229526AbhINRp5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 14 Sep 2021 13:45:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B0816058D;
-        Tue, 14 Sep 2021 17:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631641480;
-        bh=7zOoRROj4qQXQjkpq+dxBC1mAeQSGkD2A+Ff6IkKOes=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pdpK/iN0awS7M9vGY7xVyEZECCZ8A0aHvdvkagSxyFV8sqmmRREshby7GRc0P3nEf
-         gYoaT7Oig98XXdhrUkziKzP215zE4FizO4K0Gu3CojXEAb6d0JErefvF5KmUzIMLZw
-         Oc5jAcs/JW0tBLDLXQ/vplbFVnoyI156kntQoDClatuJFdr4edXtU301j51+U15oe/
-         CuJsFR4+435+rUQYAyJluVdKoQJdei1Uq4b8ZrQKbOwNx6PaIwmwUgUQMOhqFVZCaq
-         5glssfuvALjoSQtjvyAoswXiEzoOxIxh4pehACIzEzIorwMbf7iBeC2XSjxGOhMkQL
-         eP7Acc1V3dk0Q==
-Message-ID: <ec1425c0d46e60feabb31aac58c7dce70d18ae54.camel@kernel.org>
+        id S233002AbhIOIoQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 15 Sep 2021 04:44:16 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10107"; a="307810161"
+X-IronPort-AV: E=Sophos;i="5.85,294,1624345200"; 
+   d="scan'208";a="307810161"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 01:42:57 -0700
+X-IronPort-AV: E=Sophos;i="5.85,294,1624345200"; 
+   d="scan'208";a="544748425"
+Received: from yangzhon-virtual.bj.intel.com (HELO yangzhon-Virtual) ([10.238.144.101])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Sep 2021 01:42:54 -0700
+Date:   Wed, 15 Sep 2021 16:28:57 +0800
+From:   Yang Zhong <yang.zhong@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, jarkko@kernel.org,
+        dave.hansen@linux.intel.com, yang.zhong@intel.com
 Subject: Re: [RFC/RFT PATCH 0/2] x86: sgx_vepc: implement ioctl to EREMOVE
  all pages
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Yang Zhong <yang.zhong@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com
-Date:   Tue, 14 Sep 2021 20:44:37 +0300
-In-Reply-To: <b87fbe2fe213976fa43fb82d5d483da8e6b1bc63.camel@kernel.org>
+Message-ID: <20210915082857.GA30272@yangzhon-Virtual>
 References: <20210913131153.1202354-1-pbonzini@redhat.com>
-         <20210914071030.GA28797@yangzhon-Virtual>
-         <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
-         <fb04eae72ca0b24fdb533585775f2f20de9f5beb.camel@kernel.org>
-         <1afa3ed3-d77b-163d-e35e-30bf4f5d3a9e@redhat.com>
-         <b87fbe2fe213976fa43fb82d5d483da8e6b1bc63.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.36.5-0ubuntu1 
+ <20210914071030.GA28797@yangzhon-Virtual>
+ <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2021-09-14 at 20:40 +0300, Jarkko Sakkinen wrote:
-> On Tue, 2021-09-14 at 19:07 +0200, Paolo Bonzini wrote:
-> > On 14/09/21 18:42, Jarkko Sakkinen wrote:
-> > > > Let's wait for this patch to be accepted first.  I'll wait a little=
- more
-> > > > for Jarkko and Dave to comment on this, and include your "Tested-by=
-".
-> > > >=20
-> > > > I will also add cond_resched() on the final submission.
-> > > Why these would be conflicting tasks? I.e. why could not QEMU use
-> > > what is available now and move forward using better mechanism, when
-> > > they are available?
-> >=20
-> > The implementation using close/open is quite ugly (destroying and=20
-> > recreating the memory block breaks a few levels of abstractions), so=
-=20
-> > it's not really something I'd like to commit.
->=20
-> OK, so the driving reason for SGX_IOC_VEPC_RESET is the complex dance
-> with opening, closing and mmapping() stuff, especially when dealing
-> with multiple sections for one VM? OK, I think I can understand this,
-> given how notorious it might be to get stable in the user space.
->=20
-> Please just document this use case some way (if I got it right) to
-> the commit message of the next version, and I think this starts to
-> make much more sense.
+On Tue, Sep 14, 2021 at 12:19:31PM +0200, Paolo Bonzini wrote:
+> On 14/09/21 09:10, Yang Zhong wrote:
+> >On Mon, Sep 13, 2021 at 09:11:51AM -0400, Paolo Bonzini wrote:
+> >>Based on discussions from the previous week(end), this series implements
+> >>a ioctl that performs EREMOVE on all pages mapped by a /dev/sgx_vepc
+> >>file descriptor.  Other possibilities, such as closing and reopening
+> >>the device, are racy.
+> >>
+> >>The patches are untested, but I am posting them because they are simple
+> >>and so that Yang Zhong can try using them in QEMU.
+> >>
+> >
+> >   Paolo, i re-implemented one reset patch in the Qemu side to call this ioctl(),
+> >   and did some tests on Windows and Linux guest, the Windows/Linux guest reboot
+> >   work well.
+> >
+> >   So, it is time for me to send this reset patch to Qemu community? or wait for
+> >   this kernel patchset merged? thanks!
+> 
+> Let's wait for this patch to be accepted first.  I'll wait a little
+> more for Jarkko and Dave to comment on this, and include your
+> "Tested-by".
+> 
+> I will also add cond_resched() on the final submission.
+> 
 
-I would call it bottleneck rather than race though. I would keep
-race for the things that can cause real race condition inside the
-kernel corrupting data structures or whatever.
+  Thanks Paolo, i will send Qemu patch once this patchset is accepted.
 
-But for sure it is bottleneck that can easily cause user space to
-be racy without extra-ordinary carefulness.
+  This day, i also did corner cases test and updated related Qemu reset patch.
+   
+   do {
+       ret = ioctl(fd, SGX_IOC_VEPC_REMOVE);
+       /* this printf is only for debug*/
+       printf("-------sgx ret=%d and n=%d---\n", ret, n++);
+       if(ret)
+           sleep(1);
+   } while (ret);  
 
-/Jarkko
+  (1). The VEPC size=10M, start 4 enclaves(each ~2G size) in the VM side.
+       then do the 'system_reset' in the Qemu monitor tool.
+       
+  (2). The VEPC size=10G, start 500 enclaves(each ~20M size) in the VM side.
+       then do the 'system_reset' in the Qemu monitor tool.
+
+  The ret will show the failures number(SECS pages number, 4 and 500) got from kernel side,
+  after sleep 1s, the ioctl will return 0 failures.
+
+  If this reset is triggered by guest bios, there is 0 SECS page got from kernel, which will
+  not block VM booting.
+
+  So, until now, the kernel patches work well. If any new issue, i will update it to all. thanks!      
+
+  Yang
+
+> Paolo
