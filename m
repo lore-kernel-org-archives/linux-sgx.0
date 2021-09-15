@@ -2,104 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47705C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 08:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AC5C433EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 20:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 298786121E
-	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 08:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621F161178
+	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 20:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236932AbhIOIoS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 15 Sep 2021 04:44:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27364 "EHLO mga05.intel.com"
+        id S231693AbhIOUcd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 15 Sep 2021 16:32:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:13811 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233002AbhIOIoQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 15 Sep 2021 04:44:16 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10107"; a="307810161"
-X-IronPort-AV: E=Sophos;i="5.85,294,1624345200"; 
-   d="scan'208";a="307810161"
+        id S231490AbhIOUcd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 15 Sep 2021 16:32:33 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10108"; a="286109357"
+X-IronPort-AV: E=Sophos;i="5.85,296,1624345200"; 
+   d="scan'208";a="286109357"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 01:42:57 -0700
-X-IronPort-AV: E=Sophos;i="5.85,294,1624345200"; 
-   d="scan'208";a="544748425"
-Received: from yangzhon-virtual.bj.intel.com (HELO yangzhon-Virtual) ([10.238.144.101])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Sep 2021 01:42:54 -0700
-Date:   Wed, 15 Sep 2021 16:28:57 +0800
-From:   Yang Zhong <yang.zhong@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, yang.zhong@intel.com
-Subject: Re: [RFC/RFT PATCH 0/2] x86: sgx_vepc: implement ioctl to EREMOVE
- all pages
-Message-ID: <20210915082857.GA30272@yangzhon-Virtual>
-References: <20210913131153.1202354-1-pbonzini@redhat.com>
- <20210914071030.GA28797@yangzhon-Virtual>
- <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 13:31:13 -0700
+X-IronPort-AV: E=Sophos;i="5.85,296,1624345200"; 
+   d="scan'208";a="545092769"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 13:31:12 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     linux-sgx@vger.kernel.org, jarkko@kernel.org, shuah@kernel.org
+Cc:     seanjc@google.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/14] selftests/sgx: Oversubscription, page permission, thread entry
+Date:   Wed, 15 Sep 2021 13:30:50 -0700
+Message-Id: <cover.1631731214.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e1c6b6d-6a73-827e-f496-b17b3c0f8c89@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 12:19:31PM +0200, Paolo Bonzini wrote:
-> On 14/09/21 09:10, Yang Zhong wrote:
-> >On Mon, Sep 13, 2021 at 09:11:51AM -0400, Paolo Bonzini wrote:
-> >>Based on discussions from the previous week(end), this series implements
-> >>a ioctl that performs EREMOVE on all pages mapped by a /dev/sgx_vepc
-> >>file descriptor.  Other possibilities, such as closing and reopening
-> >>the device, are racy.
-> >>
-> >>The patches are untested, but I am posting them because they are simple
-> >>and so that Yang Zhong can try using them in QEMU.
-> >>
-> >
-> >   Paolo, i re-implemented one reset patch in the Qemu side to call this ioctl(),
-> >   and did some tests on Windows and Linux guest, the Windows/Linux guest reboot
-> >   work well.
-> >
-> >   So, it is time for me to send this reset patch to Qemu community? or wait for
-> >   this kernel patchset merged? thanks!
-> 
-> Let's wait for this patch to be accepted first.  I'll wait a little
-> more for Jarkko and Dave to comment on this, and include your
-> "Tested-by".
-> 
-> I will also add cond_resched() on the final submission.
-> 
+Hi Everybody,
 
-  Thanks Paolo, i will send Qemu patch once this patchset is accepted.
+This series consists out of outstanding SGX selftests changes, rebased
+and gathered in a single series that is more easily merged for testing
+and development, and a few more changes added to expand the existing tests.
 
-  This day, i also did corner cases test and updated related Qemu reset patch.
-   
-   do {
-       ret = ioctl(fd, SGX_IOC_VEPC_REMOVE);
-       /* this printf is only for debug*/
-       printf("-------sgx ret=%d and n=%d---\n", ret, n++);
-       if(ret)
-           sleep(1);
-   } while (ret);  
+The outstanding SGX selftest changes included in this series that have already
+been submitted separately are:
 
-  (1). The VEPC size=10M, start 4 enclaves(each ~2G size) in the VM side.
-       then do the 'system_reset' in the Qemu monitor tool.
-       
-  (2). The VEPC size=10G, start 500 enclaves(each ~20M size) in the VM side.
-       then do the 'system_reset' in the Qemu monitor tool.
+* An almost two year old patch fixing a benign linker warning that is still
+  present today:
+  https://lore.kernel.org/linux-sgx/20191017030340.18301-2-sean.j.christopherson@intel.com/
+  The original patch is added intact and not all email addresses
+  within are valid.
 
-  The ret will show the failures number(SECS pages number, 4 and 500) got from kernel side,
-  after sleep 1s, the ioctl will return 0 failures.
+* Latest (v4) of Jarkko Sakkinen's series to add an oversubscription test:
+  https://lore.kernel.org/linux-sgx/20210809093127.76264-1-jarkko@kernel.org/
 
-  If this reset is triggered by guest bios, there is 0 SECS page got from kernel, which will
-  not block VM booting.
+* Latest (v2) of Jarkko Sakkinen's patch that provides provide per-op
+  parameter structs for the test enclave:
+  https://lore.kernel.org/linux-sgx/20210812224645.90280-1-jarkko@kernel.org/
 
-  So, until now, the kernel patches work well. If any new issue, i will update it to all. thanks!      
+The reason why most of these patches are outstanding is that they depend
+on a kernel change that is still under discussion. Decision to wait in:
+https://lore.kernel.org/linux-sgx/f8674dac5579a8a424de1565f7ffa2b5bf2f8e36.camel@kernel.org/
+The original patch for this kernel dependency continues to be included in
+this series as a placeholder until the ongoing discussions are concluded.
 
-  Yang
+The new changes introduced in this series builds on Jarkko's outstanding
+SGX selftest changes and adds new tests for page permissions, exception
+handling, and thread entry.
 
-> Paolo
+Reinette
+
+Jarkko Sakkinen (9):
+  x86/sgx: Add /sys/kernel/debug/x86/sgx_total_mem
+  selftests/sgx: Assign source for each segment
+  selftests/sgx: Make data measurement for an enclave segment optional
+  selftests/sgx: Create a heap for the test enclave
+  selftests/sgx: Dump segments and /proc/self/maps only on failure
+  selftests/sgx: Encpsulate the test enclave creation
+  selftests/sgx: Move setup_test_encl() to each TEST_F()
+  selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed
+  selftests/sgx: Provide per-op parameter structs for the test enclave
+
+Reinette Chatre (4):
+  selftests/sgx: Rename test properties in preparation for more enclave
+    tests
+  selftests/sgx: Add page permission and exception test
+  selftests/sgx: Enable multiple thread support
+  selftests/sgx: Add test for multiple TCS entry
+
+Sean Christopherson (1):
+  selftests/x86/sgx: Fix a benign linker warning
+
+ Documentation/x86/sgx.rst                     |   6 +
+ arch/x86/kernel/cpu/sgx/main.c                |  10 +-
+ tools/testing/selftests/sgx/Makefile          |   2 +-
+ tools/testing/selftests/sgx/defines.h         |  33 +-
+ tools/testing/selftests/sgx/load.c            |  40 +-
+ tools/testing/selftests/sgx/main.c            | 341 +++++++++++++++---
+ tools/testing/selftests/sgx/main.h            |   7 +-
+ tools/testing/selftests/sgx/sigstruct.c       |  12 +-
+ tools/testing/selftests/sgx/test_encl.c       |  60 ++-
+ .../selftests/sgx/test_encl_bootstrap.S       |  21 +-
+ 10 files changed, 445 insertions(+), 87 deletions(-)
+
+-- 
+2.25.1
+
