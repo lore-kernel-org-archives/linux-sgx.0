@@ -2,161 +2,81 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F97AC4167B
-	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 20:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FA1C433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 16 Sep 2021 14:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64E4661131
-	for <linux-sgx@archiver.kernel.org>; Wed, 15 Sep 2021 20:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A09A61244
+	for <linux-sgx@archiver.kernel.org>; Thu, 16 Sep 2021 14:09:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232066AbhIOUcs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 15 Sep 2021 16:32:48 -0400
-Received: from mga07.intel.com ([134.134.136.100]:13818 "EHLO mga07.intel.com"
+        id S238146AbhIPOLG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 16 Sep 2021 10:11:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232088AbhIOUch (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 15 Sep 2021 16:32:37 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10108"; a="286109377"
-X-IronPort-AV: E=Sophos;i="5.85,296,1624345200"; 
-   d="scan'208";a="286109377"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 13:31:16 -0700
-X-IronPort-AV: E=Sophos;i="5.85,296,1624345200"; 
-   d="scan'208";a="545092796"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2021 13:31:16 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     linux-sgx@vger.kernel.org, jarkko@kernel.org, shuah@kernel.org
+        id S236328AbhIPOLG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Sep 2021 10:11:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 59E9160238;
+        Thu, 16 Sep 2021 14:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631801385;
+        bh=JSVAyZlj7EFaNRDNJV5SQUCEv0kAxzwlmnzQyh2xd00=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HvrpYOLJC2Li+zPYNRshCCf9T6Q72DMytidkaG2MJOQgRmlqCuwKjHVGOHfPpeJlH
+         px1pxbidskVQey0HE2pQLslzZwKrXAC9cmD9+Gn5u6hGRUm6ui2HmnSsXPOEvipfX0
+         QrsDpA8OXqScfjtYF9bgfXtQ0SJq3hv66KKPYMUZtqcfFT5n+5mGyV3rnyiB9+Lafo
+         ZGgTwnCohPIn/a2AFuTgnlZPf2ZctZrHM+5WJeJWF8jmUG1xayo8Ut8vhyq8QImVnW
+         NXMpCd0G6GEqrH+R2HulZYSWoqYkRWx2l1sCDT8C1YeE3/SQlRGKNB0J1y35q4ULo8
+         9/PPjBcI2Uq2g==
+Message-ID: <6f3cc681e10877e639b882eaabf1a5e21bd2fc94.camel@kernel.org>
+Subject: Re: [PATCH 02/14] x86/sgx: Add /sys/kernel/debug/x86/sgx_total_mem
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        linux-sgx@vger.kernel.org, shuah@kernel.org
 Cc:     seanjc@google.com, bp@alien8.de, dave.hansen@linux.intel.com,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/14] selftests/sgx: Enable multiple thread support
-Date:   Wed, 15 Sep 2021 13:31:03 -0700
-Message-Id: <7b413966289d22f043762b3d20e30cb6ded936e3.1631731214.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1631731214.git.reinette.chatre@intel.com>
+Date:   Thu, 16 Sep 2021 17:09:43 +0300
+In-Reply-To: <086aa5a16faf0d9b47ba9e0ebd2213713d0e76ff.1631731214.git.reinette.chatre@intel.com>
 References: <cover.1631731214.git.reinette.chatre@intel.com>
+         <086aa5a16faf0d9b47ba9e0ebd2213713d0e76ff.1631731214.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Each thread executing in an enclave is associated with a Thread Control
-Structure (TCS). The test enclave contains two hardcoded TCS. Each TCS
-contains meta-data used by the hardware to save and restore thread specific
-information when entering/exiting the enclave.
+On Wed, 2021-09-15 at 13:30 -0700, Reinette Chatre wrote:
+> From: Jarkko Sakkinen <jarkko@kernel.org>
+>=20
+> Just like normal memory, SGX memory can be overcommitted.  SGX has its
+> own reclaim mechanism which kicks in when physical SGX memory (Enclave
+> Page Cache / EPC) is exhausted.  That reclaim mechanism is relatively
+> rarely exercised and needs selftests to poke at it.
+>=20
+> The amount of EPC on the system is determined by the BIOS and it varies
+> wildly between systems.  It can be dozens of MB on desktops, or many GB
+> on servers.
+>=20
+> To run in a reasonable amount of time, the selftest needs to know how
+> much EPC there is in the system.
+>=20
+> Introduce a new debugfs file to export that information.
+>=20
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> [reinette: Use as placeholder patch until other discussions complete]
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 
-The two TCS structures within the test enclave share their SSA (State Save
-Area) resulting in the threads clobbering each other's data. Fix this by
-providing each TCS their own SSA area.
+This could be replaced with the following two patches:
 
-Additionally, there is an 8K stack space and its address is
-computed from the enclave entry point which is correctly done for
-TCS #1 that starts on the first address inside the enclave but
-results in out of bounds memory when entering as TCS #2. Split 8K
-stack space into two separate pages with offset symbol between to ensure
-the current enclave entry calculation can continue to be used for both threads.
+https://lore.kernel.org/linux-sgx/20210914030422.377601-1-jarkko@kernel.org=
+/T/#t
 
-While using the enclave with multiple threads requires these fixes the
-impact is not apparent because every test up to this point enters the
-enclave from the first TCS.
+I forgot to CC this to you when I sent it, sorry about that.
 
-More detail about the stack fix:
--------------------------------
-Before this change the test enclave (test_encl) looks as follows:
-
-.tcs (2 pages):
-(page 1) TCS #1
-(page 2) TCS #2
-
-.text (1 page)
-One page of code
-
-.data (5 pages)
-(page 1) encl_buffer
-(page 2) encl_buffer
-(page 3) SSA
-(page 4 and 5) STACK
-encl_stack:
-
-As shown above there is a symbol, encl_stack, that points to the end of the
-.data segment (pointing to the end of page 5 in .data) which is also the end
-of the enclave.
-
-The enclave entry code computes the stack address by adding encl_stack to the
-pointer to the TCS that entered the enclave. When entering at TCS #1 the
-stack is computed correctly but when entering at TCS #2 the stack pointer
-would point to one page beyond the end of the enclave and a #PF would
-result when TCS #2 attempts to enter the enclave.
-
-The fix involves moving the encl_stack symbol between the two stack pages.
-Doing so enables the stack address computation in the entry code to compute
-the correct stack address for each TCS.
-
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- .../selftests/sgx/test_encl_bootstrap.S       | 21 ++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-index 5d5680d4ea39..82fb0dfcbd23 100644
---- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-+++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-@@ -12,7 +12,7 @@
- 
- 	.fill	1, 8, 0			# STATE (set by CPU)
- 	.fill	1, 8, 0			# FLAGS
--	.quad	encl_ssa		# OSSA
-+	.quad	encl_ssa_tcs1		# OSSA
- 	.fill	1, 4, 0			# CSSA (set by CPU)
- 	.fill	1, 4, 1			# NSSA
- 	.quad	encl_entry		# OENTRY
-@@ -23,10 +23,10 @@
- 	.fill	1, 4, 0xFFFFFFFF	# GSLIMIT
- 	.fill	4024, 1, 0		# Reserved
- 
--	# Identical to the previous TCS.
-+	# TCS2
- 	.fill	1, 8, 0			# STATE (set by CPU)
- 	.fill	1, 8, 0			# FLAGS
--	.quad	encl_ssa		# OSSA
-+	.quad	encl_ssa_tcs2		# OSSA
- 	.fill	1, 4, 0			# CSSA (set by CPU)
- 	.fill	1, 4, 1			# NSSA
- 	.quad	encl_entry		# OENTRY
-@@ -40,8 +40,9 @@
- 	.text
- 
- encl_entry:
--	# RBX contains the base address for TCS, which is also the first address
--	# inside the enclave. By adding the value of le_stack_end to it, we get
-+	# RBX contains the base address for TCS, which is the first address
-+	# inside the enclave for TCS #1 and one page into the enclave for
-+	# TCS #2. By adding the value of encl_stack to it, we get
- 	# the absolute address for the stack.
- 	lea	(encl_stack)(%rbx), %rax
- 	xchg	%rsp, %rax
-@@ -81,9 +82,15 @@ encl_entry:
- 
- 	.section ".data", "aw"
- 
--encl_ssa:
-+encl_ssa_tcs1:
-+	.space 4096
-+encl_ssa_tcs2:
- 	.space 4096
- 
- 	.balign 4096
--	.space 8192
-+	# Stack of TCS #1
-+	.space 4096
- encl_stack:
-+	.balign 4096
-+	# Stack of TCS #2
-+	.space 4096
--- 
-2.25.1
+/Jarkko
 
