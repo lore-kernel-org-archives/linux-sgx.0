@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63A3C43219
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Sep 2021 21:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104C9C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Sep 2021 21:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7BB061279
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Sep 2021 21:38:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED65E60F51
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Sep 2021 21:38:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbhIQVkO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S242502AbhIQVkO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 17 Sep 2021 17:40:14 -0400
-Received: from mga07.intel.com ([134.134.136.100]:54587 "EHLO mga07.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:54592 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241949AbhIQVkN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S242239AbhIQVkN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Fri, 17 Sep 2021 17:40:13 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10110"; a="286563050"
+X-IronPort-AV: E=McAfee;i="6200,9189,10110"; a="286563053"
 X-IronPort-AV: E=Sophos;i="5.85,302,1624345200"; 
-   d="scan'208";a="286563050"
+   d="scan'208";a="286563053"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2021 14:38:50 -0700
 X-IronPort-AV: E=Sophos;i="5.85,302,1624345200"; 
-   d="scan'208";a="546646804"
+   d="scan'208";a="546646814"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2021 14:38:49 -0700
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2021 14:38:50 -0700
 From:   Tony Luck <tony.luck@intel.com>
 To:     Sean Christopherson <seanjc@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
@@ -35,9 +35,9 @@ To:     Sean Christopherson <seanjc@google.com>,
 Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v5 3/7] x86/sgx: Initial poison handling for dirty and free pages
-Date:   Fri, 17 Sep 2021 14:38:32 -0700
-Message-Id: <20210917213836.175138-4-tony.luck@intel.com>
+Subject: [PATCH v5 6/7] x86/sgx: Add hook to error injection address validation
+Date:   Fri, 17 Sep 2021 14:38:35 -0700
+Message-Id: <20210917213836.175138-7-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210917213836.175138-1-tony.luck@intel.com>
 References: <20210827195543.1667168-1-tony.luck@intel.com>
@@ -48,130 +48,63 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-A memory controller patrol scrubber can report poison in a page
-that isn't currently being used.
+SGX reserved memory does not appear in the standard address maps.
 
-Add "poison" field in the sgx_epc_page that can be set for an
-sgx_epc_page. Check for it:
-1) When sanitizing dirty pages
-2) When freeing epc pages
+Add hook to call into the SGX code to check if an address is located
+in SGX memory.
 
-Poison is a new field separated from flags to avoid having to make
-all updates to flags atomic, or integrate poison state changes into
-some other locking scheme to protect flags.
-
-In both cases place the poisoned page on a list of poisoned epc pages
-to make sure it will not be reallocated.
-
-Add debugfs files /sys/kernel/debug/sgx/poison_page_list so that system
-administrators get a list of those pages that have been dropped because
-of poison.
+There are other challenges in injecting errors into SGX. Update the
+documentation with a sequence of operations to inject.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 30 +++++++++++++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++-
- 2 files changed, 31 insertions(+), 2 deletions(-)
+ .../firmware-guide/acpi/apei/einj.rst         | 19 +++++++++++++++++++
+ drivers/acpi/apei/einj.c                      |  3 ++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 10892513212d..7a53ff876059 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*  Copyright(c) 2016-20 Intel Corporation. */
+diff --git a/Documentation/firmware-guide/acpi/apei/einj.rst b/Documentation/firmware-guide/acpi/apei/einj.rst
+index c042176e1707..55e2331a6438 100644
+--- a/Documentation/firmware-guide/acpi/apei/einj.rst
++++ b/Documentation/firmware-guide/acpi/apei/einj.rst
+@@ -181,5 +181,24 @@ You should see something like this in dmesg::
+   [22715.834759] EDAC sbridge MC3: PROCESSOR 0:306e7 TIME 1422553404 SOCKET 0 APIC 0
+   [22716.616173] EDAC MC3: 1 CE memory read error on CPU_SrcID#0_Channel#0_DIMM#0 (channel:0 slot:0 page:0x12345 offset:0x0 grain:32 syndrome:0x0 -  area:DRAM err_code:0001:0090 socket:0 channel_mask:1 rank:0)
  
-+#include <linux/debugfs.h>
- #include <linux/file.h>
- #include <linux/freezer.h>
- #include <linux/highmem.h>
-@@ -43,6 +44,7 @@ static nodemask_t sgx_numa_mask;
- static struct sgx_numa_node *sgx_numa_nodes;
- 
- static LIST_HEAD(sgx_dirty_page_list);
-+static LIST_HEAD(sgx_poison_page_list);
- 
- /*
-  * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
-@@ -62,6 +64,12 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
- 
- 		page = list_first_entry(dirty_page_list, struct sgx_epc_page, list);
- 
-+		if (page->poison) {
-+			list_del(&page->list);
-+			list_add(&page->list, &sgx_poison_page_list);
-+			continue;
-+		}
++Special notes for injection into SGX enclaves:
 +
- 		ret = __eremove(sgx_get_epc_virt_addr(page));
- 		if (!ret) {
- 			/*
-@@ -626,7 +634,10 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
- 	spin_lock(&node->lock);
- 
- 	page->private = NULL;
--	list_add_tail(&page->list, &node->free_page_list);
-+	if (page->poison)
-+		list_add(&page->list, &sgx_poison_page_list);
-+	else
-+		list_add_tail(&page->list, &node->free_page_list);
- 	sgx_nr_free_pages++;
- 
- 	spin_unlock(&node->lock);
-@@ -657,6 +668,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 	for (i = 0; i < nr_pages; i++) {
- 		section->pages[i].section = index;
- 		section->pages[i].flags = 0;
-+		section->pages[i].poison = 0;
- 		section->pages[i].private = "dirty";
- 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
- 	}
-@@ -801,8 +813,21 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
- 
-+static int poison_list_show(struct seq_file *m, void *private)
-+{
-+	struct sgx_epc_page *page;
++There may be a separate BIOS setup option to enable SGX injection.
 +
-+	list_for_each_entry(page, &sgx_poison_page_list, list)
-+		seq_printf(m, "0x%lx\n", sgx_get_epc_phys_addr(page));
++The injection process consists of setting some special memory controller
++trigger that will inject the error on the next write to the target
++address. But the h/w prevents any software outside of an SGX enclave
++from accessing enclave pages (even BIOS SMM mode).
 +
-+	return 0;
-+}
++The following sequence can be used:
++  1) Determine physical address of enclave page
++  2) Use "notrigger=1" mode to inject (this will setup
++     the injection address, but will not actually inject)
++  3) Enter the enclave
++  4) Store data to the virtual address matching physical address from step 1
++  5) Execute CLFLUSH for that virtual address
++  6) Spin delay for 250ms
++  7) Read from the virtual address. This will trigger the error
 +
-+DEFINE_SHOW_ATTRIBUTE(poison_list);
-+
- static int __init sgx_init(void)
- {
-+	struct dentry *dir;
- 	int ret;
- 	int i;
+ For more information about EINJ, please refer to ACPI specification
+ version 4.0, section 17.5 and ACPI 5.0, section 18.6.
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index 2882450c443e..67c335baad52 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -544,7 +544,8 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
+ 				!= REGION_INTERSECTS) &&
+ 	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
+-				!= REGION_INTERSECTS)))
++				!= REGION_INTERSECTS) &&
++	     !arch_is_platform_page(base_addr)))
+ 		return -EINVAL;
  
-@@ -834,6 +859,9 @@ static int __init sgx_init(void)
- 	if (sgx_vepc_init() && ret)
- 		goto err_provision;
- 
-+	dir = debugfs_create_dir("sgx", arch_debugfs_dir);
-+	debugfs_create_file("poison_page_list", 0400, dir, NULL, &poison_list_fops);
-+
- 	return 0;
- 
- err_provision:
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 6a55b1971956..77f3d98c9fbf 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -28,7 +28,8 @@
- 
- struct sgx_epc_page {
- 	unsigned int section;
--	int flags;
-+	u16 flags;
-+	u16 poison;
- 	union {
- 		void *private;
- 		struct sgx_encl_page *owner;
+ inject:
 -- 
 2.31.1
 
