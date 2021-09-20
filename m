@@ -2,173 +2,87 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3506DC4332F
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Sep 2021 21:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AD2C433F5
+	for <linux-sgx@archiver.kernel.org>; Mon, 20 Sep 2021 12:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 208DA60F51
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Sep 2021 21:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53C50610F9
+	for <linux-sgx@archiver.kernel.org>; Mon, 20 Sep 2021 12:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244229AbhIQVkP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 17 Sep 2021 17:40:15 -0400
-Received: from mga07.intel.com ([134.134.136.100]:54587 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242243AbhIQVkN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 17 Sep 2021 17:40:13 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10110"; a="286563052"
-X-IronPort-AV: E=Sophos;i="5.85,302,1624345200"; 
-   d="scan'208";a="286563052"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2021 14:38:50 -0700
-X-IronPort-AV: E=Sophos;i="5.85,302,1624345200"; 
-   d="scan'208";a="546646810"
-Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2021 14:38:50 -0700
-From:   Tony Luck <tony.luck@intel.com>
-To:     Sean Christopherson <seanjc@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v5 5/7] x86/sgx: Hook arch_memory_failure() into mainline code
-Date:   Fri, 17 Sep 2021 14:38:34 -0700
-Message-Id: <20210917213836.175138-6-tony.luck@intel.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210917213836.175138-1-tony.luck@intel.com>
-References: <20210827195543.1667168-1-tony.luck@intel.com>
- <20210917213836.175138-1-tony.luck@intel.com>
+        id S237125AbhITMzd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 20 Sep 2021 08:55:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57015 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238841AbhITMzc (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 20 Sep 2021 08:55:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632142445;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fDLQq5MvPSzAt6PnqUmCdhsPlz4Motg42ahab6MSZ50=;
+        b=cBvRgPndceGbylSpGOBimmg34JCJOFXdLysbGZGfNKs5yySp+O4SfWIktre+FBsG5X6vS2
+        HFkX9+eNqgQx+V7n2onpsaTpqlF6S1dX61jrw4NBQBh9Nw6v3JTG7zOOQ5nD2PH+i2JPBx
+        igNg/+IElNhjivqEB6wQ9zESfIHoFO0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-441--bOW6NYZO16OJnQqaNzPsg-1; Mon, 20 Sep 2021 08:54:04 -0400
+X-MC-Unique: -bOW6NYZO16OJnQqaNzPsg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0A6619253C3;
+        Mon, 20 Sep 2021 12:54:02 +0000 (UTC)
+Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F3311346F;
+        Mon, 20 Sep 2021 12:54:02 +0000 (UTC)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org, jarkko@kernel.org,
+        dave.hansen@linux.intel.com, yang.zhong@intel.com
+Subject: [PATCH 0/2] x86: sgx_vepc: implement ioctl to EREMOVE all pages
+Date:   Mon, 20 Sep 2021 08:53:59 -0400
+Message-Id: <20210920125401.2389105-1-pbonzini@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a call inside memory_failure() to check if the address is an SGX
-EPC page and handle it.
+Add to /dev/sgx_vepc a ioctl that brings vEPC pages back to uninitialized
+state with EREMOVE.  This is useful in order to match the expectations
+of guests after reboot, and to match the behavior of real hardware.
 
-Note the SGX EPC pages do not have a "struct page" entry, so the hook
-goes in at the same point as the device mapping hook.
+The ioctl is a cleaner alternative to closing and reopening the
+/dev/sgx_vepc device; reopening /dev/sgx_vepc could be problematic in
+case userspace has sandboxed itself since the time it first opened the
+device, and has thus lost permissions to do so.
 
-Pull the call to acquire the mutex earlier so the SGX errors are also
-protected.
+If possible, I would like these patches to be included in 5.15 through
+either the x86 or the KVM tree.
 
-Make set_mce_nospec() skip SGX pages when trying to adjust
-the 1:1 map.
+Thanks,
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/processor.h  |  8 ++++++++
- arch/x86/include/asm/set_memory.h |  4 ++++
- include/linux/mm.h                | 13 +++++++++++++
- mm/memory-failure.c               | 19 +++++++++++++------
- 4 files changed, 38 insertions(+), 6 deletions(-)
+Paolo
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 9ad2acaaae9b..4865f2860a4f 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -853,4 +853,12 @@ enum mds_mitigations {
- 	MDS_MITIGATION_VMWERV,
- };
- 
-+#ifdef CONFIG_X86_SGX
-+int arch_memory_failure(unsigned long pfn, int flags);
-+#define arch_memory_failure arch_memory_failure
-+
-+bool arch_is_platform_page(u64 paddr);
-+#define arch_is_platform_page arch_is_platform_page
-+#endif
-+
- #endif /* _ASM_X86_PROCESSOR_H */
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 43fa081a1adb..ce8dd215f5b3 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -2,6 +2,7 @@
- #ifndef _ASM_X86_SET_MEMORY_H
- #define _ASM_X86_SET_MEMORY_H
- 
-+#include <linux/mm.h>
- #include <asm/page.h>
- #include <asm-generic/set_memory.h>
- 
-@@ -98,6 +99,9 @@ static inline int set_mce_nospec(unsigned long pfn, bool unmap)
- 	unsigned long decoy_addr;
- 	int rc;
- 
-+	/* SGX pages are not in the 1:1 map */
-+	if (arch_is_platform_page(pfn << PAGE_SHIFT))
-+		return 0;
- 	/*
- 	 * We would like to just call:
- 	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 73a52aba448f..3cc63682fe47 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3284,5 +3284,18 @@ static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
- 	return 0;
- }
- 
-+#ifndef arch_memory_failure
-+static inline int arch_memory_failure(unsigned long pfn, int flags)
-+{
-+	return -ENXIO;
-+}
-+#endif
-+#ifndef arch_is_platform_page
-+static inline bool arch_is_platform_page(u64 paddr)
-+{
-+	return false;
-+}
-+#endif
-+
- #endif /* __KERNEL__ */
- #endif /* _LINUX_MM_H */
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 54879c339024..5693bac9509c 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1632,21 +1632,28 @@ int memory_failure(unsigned long pfn, int flags)
- 	if (!sysctl_memory_failure_recovery)
- 		panic("Memory failure on page %lx", pfn);
- 
-+	mutex_lock(&mf_mutex);
-+
- 	p = pfn_to_online_page(pfn);
- 	if (!p) {
-+		res = arch_memory_failure(pfn, flags);
-+		if (res == 0)
-+			goto unlock_mutex;
-+
- 		if (pfn_valid(pfn)) {
- 			pgmap = get_dev_pagemap(pfn, NULL);
--			if (pgmap)
--				return memory_failure_dev_pagemap(pfn, flags,
--								  pgmap);
-+			if (pgmap) {
-+				res = memory_failure_dev_pagemap(pfn, flags,
-+								 pgmap);
-+				goto unlock_mutex;
-+			}
- 		}
- 		pr_err("Memory failure: %#lx: memory outside kernel control\n",
- 			pfn);
--		return -ENXIO;
-+		res = -ENXIO;
-+		goto unlock_mutex;
- 	}
- 
--	mutex_lock(&mf_mutex);
--
- try_again:
- 	if (PageHuge(p)) {
- 		res = memory_failure_hugetlb(pfn, flags);
+Changes from RFC:
+- improved commit messages, added documentation
+- renamed ioctl from SGX_IOC_VEPC_REMOVE to SGX_IOC_VEPC_REMOVE_ALL
+
+Paolo Bonzini (2):
+  x86: sgx_vepc: extract sgx_vepc_remove_page
+  x86: sgx_vepc: implement SGX_IOC_VEPC_REMOVE_ALL ioctl
+
+ Documentation/x86/sgx.rst       | 14 ++++++++++
+ arch/x86/include/uapi/asm/sgx.h |  2 ++
+ arch/x86/kernel/cpu/sgx/virt.c  | 48 ++++++++++++++++++++++++++++++---
+ 3 files changed, 61 insertions(+), 3 deletions(-)
+
 -- 
-2.31.1
+2.27.0
 
