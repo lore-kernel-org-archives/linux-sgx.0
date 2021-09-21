@@ -6,38 +6,42 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AFFC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Sep 2021 22:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B39C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 21 Sep 2021 22:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 124F161107
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Sep 2021 22:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAF506044F
+	for <linux-sgx@archiver.kernel.org>; Tue, 21 Sep 2021 22:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233983AbhIUWQt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 21 Sep 2021 18:16:49 -0400
-Received: from mga03.intel.com ([134.134.136.65]:63526 "EHLO mga03.intel.com"
+        id S234480AbhIUWdr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 21 Sep 2021 18:33:47 -0400
+Received: from mga04.intel.com ([192.55.52.120]:64604 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235500AbhIUWQs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 21 Sep 2021 18:16:48 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10114"; a="223518662"
+        id S229804AbhIUWdq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 21 Sep 2021 18:33:46 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10114"; a="221590536"
 X-IronPort-AV: E=Sophos;i="5.85,311,1624345200"; 
-   d="scan'208";a="223518662"
+   d="scan'208";a="221590536"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2021 15:15:19 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2021 15:32:17 -0700
 X-IronPort-AV: E=Sophos;i="5.85,311,1624345200"; 
-   d="scan'208";a="436028077"
+   d="scan'208";a="436031562"
 Received: from adkuncha-mobl2.amr.corp.intel.com (HELO [10.251.2.103]) ([10.251.2.103])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2021 15:15:19 -0700
-Subject: Re: [PATCH v5 1/7] x86/sgx: Provide indication of life-cycle of EPC
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2021 15:32:17 -0700
+Subject: Re: [PATCH v5 2/7] x86/sgx: Add infrastructure to identify SGX EPC
  pages
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
+To:     "Luck, Tony" <tony.luck@intel.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20210827195543.1667168-1-tony.luck@intel.com>
  <20210917213836.175138-1-tony.luck@intel.com>
- <20210917213836.175138-2-tony.luck@intel.com>
- <bba7e537fd9197a92358640ebb0aef365984cebc.camel@kernel.org>
+ <20210917213836.175138-3-tony.luck@intel.com>
+ <ccb678fc-25b8-dcd6-ffaa-267865c66ea5@intel.com>
+ <eeeb51049e894a70b40013ec18a9fa65@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -82,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <057511a3-3bc8-f073-e0f8-7b14646f82fe@intel.com>
-Date:   Tue, 21 Sep 2021 15:15:17 -0700
+Message-ID: <8c39b812-b77a-7d63-2d82-f1c0401a5f16@intel.com>
+Date:   Tue, 21 Sep 2021 15:32:14 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <bba7e537fd9197a92358640ebb0aef365984cebc.camel@kernel.org>
+In-Reply-To: <eeeb51049e894a70b40013ec18a9fa65@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -95,20 +99,43 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/21/21 2:28 PM, Jarkko Sakkinen wrote:
->> Since there are multiple uses of the "owner" field with different types
->> change the sgx_epc_page structure to define an anonymous union with
->> each of the uses explicitly called out.
-> But it's still always a pointer.
+On 9/21/21 1:50 PM, Luck, Tony wrote:
+>> Did we ever figure out how much space storing really big ranges in the
+>> xarray consumes?
+> No. Willy said the existing xarray code would be less than optimal with
+> this usage, but that things would be much better when he applied some
+> maple tree updates to the internals of xarray.
 > 
-> And not only that, but two alternative fields in that union have *exactly* the
-> same type, so it's kind of artifically representing the problem more complex
-> than it really is.
+> If there is some easy way to measure the memory backing an xarray I'm
+> happy to get the data. Or if someone else can synthesize it ... the two
+> ranges on my system that are added to the xarray are:
 > 
-> I'm not just getting, why all this complexity, and not a few casts instead?
+> $ dmesg | grep -i sgx
+> [    8.496844] sgx: EPC section 0x8000c00000-0x807f7fffff
+> [    8.505118] sgx: EPC section 0x10000c00000-0x1007fffffff
+> 
+> I.e. two ranges of a bit under 2GB each.
+> 
+> But I don't think the overhead can be too hideous:
+> 
+> $ grep MemFree /proc/meminfo
+> MemFree:        1048682016 kB
+> 
+> I still have ~ 1TB free. Which is much greater that the 640 KB which should
+> be "enough for anybody" :-).
 
-I suggested this.  It makes the structure more self-describing because
-it explicitly lists the possibles uses of the space in the structure.
+There is a kmem_cache_create() for the xarray nodes.  So, you should be
+able to see the difference in /proc/meminfo's "Slab" field.  Maybe boot
+with init=/bin/sh to reduce the noise and look at meminfo both with and
+without SGX your patch applied, or just with the xarray bits commented out.
 
-Maybe I stare at 'struct page' and its 4 unions too much and I'm
-enamored by their shininess.  But, in the end, I prefer unions to casting.
+I don't quite know how the data structures are munged, but xas_alloc()
+makes it look like 'struct xa_node' is allocated from
+radix_tree_node_cachep.  If that's the case, you should also be able to
+see this in even more detail in:
+
+# grep radix /proc/slabinfo
+radix_tree_node   432305 482412    584   28    4 : tunables    0    0
+ 0 : slabdata  17229  17229      0
+
+again, on a system with and without your new code enabled.
