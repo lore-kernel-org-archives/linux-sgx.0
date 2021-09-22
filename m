@@ -2,87 +2,111 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF70C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 05:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B330FC433EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 167B7611C6
-	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 05:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0FA60EFF
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231908AbhIVF3b (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 22 Sep 2021 01:29:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
+        id S236988AbhIVSXB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 22 Sep 2021 14:23:01 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16951 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231896AbhIVF3a (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 22 Sep 2021 01:29:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A8AAE6112F;
-        Wed, 22 Sep 2021 05:28:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632288481;
-        bh=BPl0WzWMl37d2k/3uxnnOLpKXcWTjHJrAMlccHcUi5M=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=O3eF/e2/0vcG+/9vQrsuSFgUTFzVDba4jm4/FNqlLUicDRXpJqgLL7lvHyy15F9vW
-         DMhjanNmLTOAE6W5jpXpEkvu2a/TBx/aqaBX3pePBlkkcNwNHSzvy4B1hOW3jM0Hzi
-         3xi54CSK8rLYg9BdUsijZ/9Efmh9qE3MUU6AmdIiDI07RHiUVgfsAhcdkOb3e5aN6x
-         URvrhK8Uv7GLcEGg+Yf+gURtdLv62pSAnRL6IVlFEfzf/dN3BLm4/ZLrQtreldV9TC
-         nYn/MyxaE086qtfLfDao1tKwZkjbp4ucLP9npFh4LyF4//OOPg1IZtp6nI2PpNEpNf
-         XTF4CfJh4Fo/w==
-Message-ID: <931e05840165b8285acf8d13ded01fb233b6549c.camel@kernel.org>
-Subject: Re: [PATCH v5 1/7] x86/sgx: Provide indication of life-cycle of EPC
- pages
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Sean Christopherson <seanjc@google.com>
+        id S236943AbhIVSXA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 22 Sep 2021 14:23:00 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10115"; a="309220306"
+X-IronPort-AV: E=Sophos;i="5.85,314,1624345200"; 
+   d="scan'208";a="309220306"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:30 -0700
+X-IronPort-AV: E=Sophos;i="5.85,314,1624345200"; 
+   d="scan'208";a="474789095"
+Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:30 -0700
+From:   Tony Luck <tony.luck@intel.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
 Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 22 Sep 2021 08:27:58 +0300
-In-Reply-To: <057511a3-3bc8-f073-e0f8-7b14646f82fe@intel.com>
-References: <20210827195543.1667168-1-tony.luck@intel.com>
-         <20210917213836.175138-1-tony.luck@intel.com>
-         <20210917213836.175138-2-tony.luck@intel.com>
-         <bba7e537fd9197a92358640ebb0aef365984cebc.camel@kernel.org>
-         <057511a3-3bc8-f073-e0f8-7b14646f82fe@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v6 0/7] Basic recovery for machine checks inside SGX
+Date:   Wed, 22 Sep 2021 11:21:16 -0700
+Message-Id: <20210922182123.200105-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210917213836.175138-1-tony.luck@intel.com>
+References: <20210917213836.175138-1-tony.luck@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2021-09-21 at 15:15 -0700, Dave Hansen wrote:
-> On 9/21/21 2:28 PM, Jarkko Sakkinen wrote:
-> > > Since there are multiple uses of the "owner" field with different typ=
-es
-> > > change the sgx_epc_page structure to define an anonymous union with
-> > > each of the uses explicitly called out.
-> > But it's still always a pointer.
-> >=20
-> > And not only that, but two alternative fields in that union have *exact=
-ly* the
-> > same type, so it's kind of artifically representing the problem more co=
-mplex
-> > than it really is.
-> >=20
-> > I'm not just getting, why all this complexity, and not a few casts inst=
-ead?
->=20
-> I suggested this.  It makes the structure more self-describing because
-> it explicitly lists the possibles uses of the space in the structure.
->=20
-> Maybe I stare at 'struct page' and its 4 unions too much and I'm
-> enamored by their shininess.  But, in the end, I prefer unions to casting=
-.
+Now version 6 (what I actually meant to post as v5).
 
-Yeah, packing data into constrained space (as in the case of struct page) i=
-s
-the only application for, where you can speak of a quantitative decision, w=
-hen
-you pick union.
+Note that I've dropped linux-kernel@vger.kernel.org and x86@kernel.org
+from the distribution. Time to get some internal agreement on these
+changes before bothering the x86 maintainers with yet another version.
 
-/Jarkko
+So I'm looking for Acked-by: or Reviewed-by: on any bits of this
+series that are worthy, and comments on the problems I need to fix
+in the not-worthy parts.
+
+Changes since v4 (I'm going to ignore the bogus v5 I posted):
+
+Jarkko Sakkinen:
+	+ Add linux-sgx@vger.kernel.org to Cc: list
+	+ Remove explicit struct sgx_va_page *va_page type
+	from argument and use in sgx_alloc_va_page(). Just
+	use "void *" as this code doesn't do anything with the
+	internals of struct sgx_va_page.
+	+ Drop the union of all possible types for the "owner"
+	field in struct sgx_epc_page (sorry Dave Hansen, this
+	went in last time from your comment, but it doesn't
+	seem to add much value). Back to "void *owner;"
+	+ rename the xarray that tracks which addresses are
+	EPC pages from "epc_page_ranges" to "sgx_epc_address_space".
+
+Dave Hansen:
+	+ Use more generic names for the globally visible
+	functions that are needed in generic code:
+		sgx_memory_failure -> arch_memory_failure
+		sgx_is_epc_page -> arch_is_platform_page
+	+ Commit comment on space used by xarray to track EPC pages.
+
+Tony Luck:
+	+ Found that ghes code spits warnings for memory addresses
+	that it thinks are bad. Add a check for SGX pages.
+
+Tony Luck (7):
+  x86/sgx: Provide indication of life-cycle of EPC pages
+  x86/sgx: Add infrastructure to identify SGX EPC pages
+  x86/sgx: Initial poison handling for dirty and free pages
+  x86/sgx: Add SGX infrastructure to recover from poison
+  x86/sgx: Hook arch_memory_failure() into mainline code
+  x86/sgx: Add hook to error injection address validation
+  x86/sgx: Add check for SGX pages to ghes_do_memory_failure()
+
+ .../firmware-guide/acpi/apei/einj.rst         |  19 +++
+ arch/x86/include/asm/processor.h              |   8 +
+ arch/x86/include/asm/set_memory.h             |   4 +
+ arch/x86/kernel/cpu/sgx/encl.c                |   5 +-
+ arch/x86/kernel/cpu/sgx/encl.h                |   2 +-
+ arch/x86/kernel/cpu/sgx/ioctl.c               |   2 +-
+ arch/x86/kernel/cpu/sgx/main.c                | 137 ++++++++++++++++--
+ arch/x86/kernel/cpu/sgx/sgx.h                 |   7 +-
+ drivers/acpi/apei/einj.c                      |   3 +-
+ drivers/acpi/apei/ghes.c                      |   2 +-
+ include/linux/mm.h                            |  14 ++
+ mm/memory-failure.c                           |  19 ++-
+ 12 files changed, 196 insertions(+), 26 deletions(-)
+
+
+base-commit: e4e737bb5c170df6135a127739a9e6148ee3da82
+-- 
+2.31.1
 
