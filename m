@@ -2,114 +2,84 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 688DAC433F5
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Sep 2021 23:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30218C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 05:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51F6161038
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Sep 2021 23:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0673E611B0
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 05:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbhIUXwO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 21 Sep 2021 19:52:14 -0400
-Received: from mga07.intel.com ([134.134.136.100]:34912 "EHLO mga07.intel.com"
+        id S232058AbhIVFTZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 22 Sep 2021 01:19:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229824AbhIUXwO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 21 Sep 2021 19:52:14 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10114"; a="287156721"
-X-IronPort-AV: E=Sophos;i="5.85,311,1624345200"; 
-   d="scan'208";a="287156721"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2021 16:50:45 -0700
-X-IronPort-AV: E=Sophos;i="5.85,311,1624345200"; 
-   d="scan'208";a="436049920"
-Received: from adkuncha-mobl2.amr.corp.intel.com (HELO [10.251.2.103]) ([10.251.2.103])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2021 16:50:45 -0700
-Subject: Re: [PATCH v5 2/7] x86/sgx: Add infrastructure to identify SGX EPC
+        id S231901AbhIVFTZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 22 Sep 2021 01:19:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A2D92610A1;
+        Wed, 22 Sep 2021 05:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632287876;
+        bh=ds1qCLLEuGabOz1HUFOYzp9guoYj5j+uwCXOBzR2m9w=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DClyx36BX/OOPtUePak882HjjOXz7eLKXMXAZzwLjIVOzjCKhWf33Zx0oiJX0fafI
+         7vmxnwJbEguc65bJKbU8fq5AVNKhyrKqXYxEORPXyFSYBHu+akklyVwDUBAFuKXqlU
+         Xz5gwfvmwFBQIe+UN3Rt8hyus+XTNzvPkxx+j+uQBxBnU+pahueN3D2L7TI1ZsaVOK
+         G12L8Ct3jUCKudCL2ZfMxWlm1DAgglPYN+tK2Lj0DRWbwz6j0ywbs/ENQlvBFh6NsN
+         tyOznLEzWmUOckNcOaRHwM/bscxR+PBcPm5zFHyVGFhaSAHum2DSVl0OhaETqE1oLp
+         Eocjw+6dkAiCg==
+Message-ID: <e0dff2e1bb7db0ededfa5a66826225e1358ed77f.camel@kernel.org>
+Subject: Re: [PATCH v5 1/7] x86/sgx: Provide indication of life-cycle of EPC
  pages
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     "Luck, Tony" <tony.luck@intel.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Cc:     "Zhang, Cathy" <cathy.zhang@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 22 Sep 2021 08:17:53 +0300
+In-Reply-To: <4c7351bcd03b4161b78a7dc01c795b43@intel.com>
 References: <20210827195543.1667168-1-tony.luck@intel.com>
- <20210917213836.175138-1-tony.luck@intel.com>
- <20210917213836.175138-3-tony.luck@intel.com>
- <ccb678fc-25b8-dcd6-ffaa-267865c66ea5@intel.com>
- <eeeb51049e894a70b40013ec18a9fa65@intel.com>
- <8c39b812-b77a-7d63-2d82-f1c0401a5f16@intel.com>
- <YUpvVK1C4y66Cj2Q@agluck-desk2.amr.corp.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <3d6b0136-dcaa-e0c0-a830-68a012222b19@intel.com>
-Date:   Tue, 21 Sep 2021 16:50:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+         <20210917213836.175138-1-tony.luck@intel.com>
+         <20210917213836.175138-2-tony.luck@intel.com>
+         <bba7e537fd9197a92358640ebb0aef365984cebc.camel@kernel.org>
+         <4c7351bcd03b4161b78a7dc01c795b43@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-In-Reply-To: <YUpvVK1C4y66Cj2Q@agluck-desk2.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/21/21 4:48 PM, Luck, Tony wrote:
-> 
-> # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> : tunables <limit> <batchcount> <sharedfactor> : slabdata <active_slabs> <num_slabs> <sharedavail>
-> 
-> So I think this means that I have (9950 - 9800) * 584 = 87600 more bytes
-> allocated. Maybe that's a lot? But percentage-wise is seems in the
-> noise. E.g. We allocate one "struct sgx_epc_page" for each SGX page.
-> On my system I have 4GB of SGX EPC, so around 32 MB of these structures.
+On Tue, 2021-09-21 at 21:34 +0000, Luck, Tony wrote:
+> > > Since there are multiple uses of the "owner" field with different typ=
+es
+> > > change the sgx_epc_page structure to define an anonymous union with
+> > > each of the uses explicitly called out.
+> >=20
+> > But it's still always a pointer.
+> >=20
+> > And not only that, but two alternative fields in that union have *exact=
+ly* the
+> > same type, so it's kind of artifically representing the problem more co=
+mplex
+> > than it really is.
+>=20
+> Bother! I seem to have jumbled some old bits of v4 into this series.
+>=20
+> I agree that we just want "void *owner; here.  I even made the changes.
+> Then managed to lose them while updating.
+>=20
+> I'll find the bits I lost and re-merge them in.
+>=20
+> -Tony
 
-100k for 4GB of EPC is certainly in the noise as far as I'm concerned.
+Yeah, ok, cool, thank you. Just reporting what I was observing :-)
 
-Thanks for checking this.
+/Jarkko
+
