@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F27C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6EFC43217
 	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F3C06120E
+	by mail.kernel.org (Postfix) with ESMTP id C3CCE6120E
 	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237005AbhIVSXE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 22 Sep 2021 14:23:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:16951 "EHLO mga05.intel.com"
+        id S237017AbhIVSXF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 22 Sep 2021 14:23:05 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16952 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236987AbhIVSXB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 22 Sep 2021 14:23:01 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10115"; a="309220312"
+        id S237020AbhIVSXC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 22 Sep 2021 14:23:02 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10115"; a="309220315"
 X-IronPort-AV: E=Sophos;i="5.85,314,1624345200"; 
-   d="scan'208";a="309220312"
+   d="scan'208";a="309220315"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:31 -0700
 X-IronPort-AV: E=Sophos;i="5.85,314,1624345200"; 
-   d="scan'208";a="474789108"
+   d="scan'208";a="474789115"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:30 -0700
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:31 -0700
 From:   Tony Luck <tony.luck@intel.com>
 To:     Sean Christopherson <seanjc@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>
 Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v6 4/7] x86/sgx: Add SGX infrastructure to recover from poison
-Date:   Wed, 22 Sep 2021 11:21:20 -0700
-Message-Id: <20210922182123.200105-5-tony.luck@intel.com>
+Subject: [PATCH v6 6/7] x86/sgx: Add hook to error injection address validation
+Date:   Wed, 22 Sep 2021 11:21:22 -0700
+Message-Id: <20210922182123.200105-7-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210922182123.200105-1-tony.luck@intel.com>
 References: <20210917213836.175138-1-tony.luck@intel.com>
@@ -47,109 +47,63 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Provide a recovery function sgx_memory_failure(). If the poison was
-consumed synchronously then send a SIGBUS. Note that the virtual
-address of the access is not included with the SIGBUS as is the case
-for poison outside of SGX enclaves. This doesn't matter as addresses
-of code/data inside an enclave is of little to no use to code executing
-outside the (now dead) enclave.
+SGX reserved memory does not appear in the standard address maps.
 
-Poison found in a free page results in the page being moved from the
-free list to the poison page list.
+Add hook to call into the SGX code to check if an address is located
+in SGX memory.
+
+There are other challenges in injecting errors into SGX. Update the
+documentation with a sequence of operations to inject.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 77 ++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+ .../firmware-guide/acpi/apei/einj.rst         | 19 +++++++++++++++++++
+ drivers/acpi/apei/einj.c                      |  3 ++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 91be079788ee..63d6b6d019d0 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -681,6 +681,83 @@ bool arch_is_platform_page(u64 paddr)
- }
- EXPORT_SYMBOL_GPL(arch_is_platform_page);
+diff --git a/Documentation/firmware-guide/acpi/apei/einj.rst b/Documentation/firmware-guide/acpi/apei/einj.rst
+index c042176e1707..55e2331a6438 100644
+--- a/Documentation/firmware-guide/acpi/apei/einj.rst
++++ b/Documentation/firmware-guide/acpi/apei/einj.rst
+@@ -181,5 +181,24 @@ You should see something like this in dmesg::
+   [22715.834759] EDAC sbridge MC3: PROCESSOR 0:306e7 TIME 1422553404 SOCKET 0 APIC 0
+   [22716.616173] EDAC MC3: 1 CE memory read error on CPU_SrcID#0_Channel#0_DIMM#0 (channel:0 slot:0 page:0x12345 offset:0x0 grain:32 syndrome:0x0 -  area:DRAM err_code:0001:0090 socket:0 channel_mask:1 rank:0)
  
-+static struct sgx_epc_page *sgx_paddr_to_page(u64 paddr)
-+{
-+	struct sgx_epc_section *section;
++Special notes for injection into SGX enclaves:
 +
-+	section = xa_load(&sgx_epc_address_space, paddr);
-+	if (!section)
-+		return NULL;
++There may be a separate BIOS setup option to enable SGX injection.
 +
-+	return &section->pages[PFN_DOWN(paddr - section->phys_addr)];
-+}
++The injection process consists of setting some special memory controller
++trigger that will inject the error on the next write to the target
++address. But the h/w prevents any software outside of an SGX enclave
++from accessing enclave pages (even BIOS SMM mode).
 +
-+/*
-+ * Called in process context to handle a hardware reported
-+ * error in an SGX EPC page.
-+ * If the MF_ACTION_REQUIRED bit is set in flags, then the
-+ * context is the task that consumed the poison data. Otherwise
-+ * this is called from a kernel thread unrelated to the page.
-+ */
-+int arch_memory_failure(unsigned long pfn, int flags)
-+{
-+	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
-+	struct sgx_epc_section *section;
-+	struct sgx_numa_node *node;
++The following sequence can be used:
++  1) Determine physical address of enclave page
++  2) Use "notrigger=1" mode to inject (this will setup
++     the injection address, but will not actually inject)
++  3) Enter the enclave
++  4) Store data to the virtual address matching physical address from step 1
++  5) Execute CLFLUSH for that virtual address
++  6) Spin delay for 250ms
++  7) Read from the virtual address. This will trigger the error
 +
-+	/*
-+	 * mm/memory-failure.c calls this routine for all errors
-+	 * where there isn't a "struct page" for the address. But that
-+	 * includes other address ranges besides SGX.
-+	 */
-+	if (!page)
-+		return -ENXIO;
-+
-+	/*
-+	 * If poison was consumed synchronously. Send a SIGBUS to
-+	 * the task. Hardware has already exited the SGX enclave and
-+	 * will not allow re-entry to an enclave that has a memory
-+	 * error. The signal may help the task understand why the
-+	 * enclave is broken.
-+	 */
-+	if (flags & MF_ACTION_REQUIRED)
-+		force_sig(SIGBUS);
-+
-+	section = &sgx_epc_sections[page->section];
-+	node = section->node;
-+
-+	spin_lock(&node->lock);
-+
-+	/* Already poisoned? Nothing more to do */
-+	if (page->poison)
-+		goto out;
-+
-+	page->poison = 1;
-+
-+	/*
-+	 * If there is no owner, then the page is on a free list.
-+	 * Move it to the poison page list.
-+	 */
-+	if (!page->owner) {
-+		list_del(&page->list);
-+		list_add(&page->list, &sgx_poison_page_list);
-+		goto out;
-+	}
-+
-+	/*
-+	 * TBD: Add additional plumbing to enable pre-emptive
-+	 * action for asynchronous poison notification. Until
-+	 * then just hope that the poison:
-+	 * a) is not accessed - sgx_free_epc_page() will deal with it
-+	 *    when the user gives it back
-+	 * b) results in a recoverable machine check rather than
-+	 *    a fatal one
-+	 */
-+out:
-+	spin_unlock(&node->lock);
-+	return 0;
-+}
-+
- /**
-  * A section metric is concatenated in a way that @low bits 12-31 define the
-  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
+ For more information about EINJ, please refer to ACPI specification
+ version 4.0, section 17.5 and ACPI 5.0, section 18.6.
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index 2882450c443e..67c335baad52 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -544,7 +544,8 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
+ 				!= REGION_INTERSECTS) &&
+ 	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
+-				!= REGION_INTERSECTS)))
++				!= REGION_INTERSECTS) &&
++	     !arch_is_platform_page(base_addr)))
+ 		return -EINVAL;
+ 
+ inject:
 -- 
 2.31.1
 
