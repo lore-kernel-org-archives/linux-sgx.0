@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B330FC433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A56BC433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0FA60EFF
+	by mail.kernel.org (Postfix) with ESMTP id F0C656128A
 	for <linux-sgx@archiver.kernel.org>; Wed, 22 Sep 2021 18:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236988AbhIVSXB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S236996AbhIVSXB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 22 Sep 2021 14:23:01 -0400
 Received: from mga05.intel.com ([192.55.52.43]:16951 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236943AbhIVSXA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 22 Sep 2021 14:23:00 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10115"; a="309220306"
+        id S236987AbhIVSXB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 22 Sep 2021 14:23:01 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10115"; a="309220308"
 X-IronPort-AV: E=Sophos;i="5.85,314,1624345200"; 
-   d="scan'208";a="309220306"
+   d="scan'208";a="309220308"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:30 -0700
 X-IronPort-AV: E=Sophos;i="5.85,314,1624345200"; 
-   d="scan'208";a="474789095"
+   d="scan'208";a="474789097"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
   by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2021 11:21:30 -0700
 From:   Tony Luck <tony.luck@intel.com>
@@ -34,79 +34,224 @@ To:     Sean Christopherson <seanjc@google.com>,
         Dave Hansen <dave.hansen@intel.com>
 Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v6 0/7] Basic recovery for machine checks inside SGX
-Date:   Wed, 22 Sep 2021 11:21:16 -0700
-Message-Id: <20210922182123.200105-1-tony.luck@intel.com>
+Subject: [PATCH v6 1/7] x86/sgx: Provide indication of life-cycle of EPC pages
+Date:   Wed, 22 Sep 2021 11:21:17 -0700
+Message-Id: <20210922182123.200105-2-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210917213836.175138-1-tony.luck@intel.com>
+In-Reply-To: <20210922182123.200105-1-tony.luck@intel.com>
 References: <20210917213836.175138-1-tony.luck@intel.com>
+ <20210922182123.200105-1-tony.luck@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Now version 6 (what I actually meant to post as v5).
+SGX EPC pages go through the following life cycle:
 
-Note that I've dropped linux-kernel@vger.kernel.org and x86@kernel.org
-from the distribution. Time to get some internal agreement on these
-changes before bothering the x86 maintainers with yet another version.
+        DIRTY ---> FREE ---> IN-USE --\
+                    ^                 |
+                    \-----------------/
 
-So I'm looking for Acked-by: or Reviewed-by: on any bits of this
-series that are worthy, and comments on the problems I need to fix
-in the not-worthy parts.
+Recovery action for poison for a DIRTY or FREE page is simple. Just
+make sure never to allocate the page. IN-USE pages need some extra
+handling.
 
-Changes since v4 (I'm going to ignore the bogus v5 I posted):
+It would be good to use the sgx_epc_page->owner field as an indicator
+of where an EPC page is currently in that cycle (owner != NULL means
+the EPC page is IN-USE). But there is one caller, sgx_alloc_va_page(),
+that calls with NULL.
 
-Jarkko Sakkinen:
-	+ Add linux-sgx@vger.kernel.org to Cc: list
-	+ Remove explicit struct sgx_va_page *va_page type
-	from argument and use in sgx_alloc_va_page(). Just
-	use "void *" as this code doesn't do anything with the
-	internals of struct sgx_va_page.
-	+ Drop the union of all possible types for the "owner"
-	field in struct sgx_epc_page (sorry Dave Hansen, this
-	went in last time from your comment, but it doesn't
-	seem to add much value). Back to "void *owner;"
-	+ rename the xarray that tracks which addresses are
-	EPC pages from "epc_page_ranges" to "sgx_epc_address_space".
+Since there are multiple uses of the "owner" field with different types
+change the type of sgx_epc_page.owner to "void *.
 
-Dave Hansen:
-	+ Use more generic names for the globally visible
-	functions that are needed in generic code:
-		sgx_memory_failure -> arch_memory_failure
-		sgx_is_epc_page -> arch_is_platform_page
-	+ Commit comment on space used by xarray to track EPC pages.
+Start epc_pages out with a non-NULL owner while they are in DIRTY state.
 
-Tony Luck:
-	+ Found that ghes code spits warnings for memory addresses
-	that it thinks are bad. Add a check for SGX pages.
+Fix up the one holdout to provide a non-NULL owner.
 
-Tony Luck (7):
-  x86/sgx: Provide indication of life-cycle of EPC pages
-  x86/sgx: Add infrastructure to identify SGX EPC pages
-  x86/sgx: Initial poison handling for dirty and free pages
-  x86/sgx: Add SGX infrastructure to recover from poison
-  x86/sgx: Hook arch_memory_failure() into mainline code
-  x86/sgx: Add hook to error injection address validation
-  x86/sgx: Add check for SGX pages to ghes_do_memory_failure()
+Refactor the allocation sequence so that changes to/from NULL
+value happen together with adding/removing the epc_page from
+a free list while the node->lock is held.
 
- .../firmware-guide/acpi/apei/einj.rst         |  19 +++
- arch/x86/include/asm/processor.h              |   8 +
- arch/x86/include/asm/set_memory.h             |   4 +
- arch/x86/kernel/cpu/sgx/encl.c                |   5 +-
- arch/x86/kernel/cpu/sgx/encl.h                |   2 +-
- arch/x86/kernel/cpu/sgx/ioctl.c               |   2 +-
- arch/x86/kernel/cpu/sgx/main.c                | 137 ++++++++++++++++--
- arch/x86/kernel/cpu/sgx/sgx.h                 |   7 +-
- drivers/acpi/apei/einj.c                      |   3 +-
- drivers/acpi/apei/ghes.c                      |   2 +-
- include/linux/mm.h                            |  14 ++
- mm/memory-failure.c                           |  19 ++-
- 12 files changed, 196 insertions(+), 26 deletions(-)
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c  |  5 +++--
+ arch/x86/kernel/cpu/sgx/encl.h  |  2 +-
+ arch/x86/kernel/cpu/sgx/ioctl.c |  2 +-
+ arch/x86/kernel/cpu/sgx/main.c  | 21 +++++++++++----------
+ arch/x86/kernel/cpu/sgx/sgx.h   |  4 ++--
+ 5 files changed, 18 insertions(+), 16 deletions(-)
 
-
-base-commit: e4e737bb5c170df6135a127739a9e6148ee3da82
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 001808e3901c..62cf20d5fbf6 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -667,6 +667,7 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+ 
+ /**
+  * sgx_alloc_va_page() - Allocate a Version Array (VA) page
++ * @owner:	struct sgx_va_page connected to this VA page
+  *
+  * Allocate a free EPC page and convert it to a Version Array (VA) page.
+  *
+@@ -674,12 +675,12 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+  *   a VA page,
+  *   -errno otherwise
+  */
+-struct sgx_epc_page *sgx_alloc_va_page(void)
++struct sgx_epc_page *sgx_alloc_va_page(void *owner)
+ {
+ 	struct sgx_epc_page *epc_page;
+ 	int ret;
+ 
+-	epc_page = sgx_alloc_epc_page(NULL, true);
++	epc_page = sgx_alloc_epc_page(owner, true);
+ 	if (IS_ERR(epc_page))
+ 		return ERR_CAST(epc_page);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index fec43ca65065..2a972bc9b2d1 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -111,7 +111,7 @@ void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+ 				  struct sgx_encl_page *page);
+ 
+-struct sgx_epc_page *sgx_alloc_va_page(void);
++struct sgx_epc_page *sgx_alloc_va_page(void *owner);
+ unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
+ void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
+ bool sgx_va_page_full(struct sgx_va_page *va_page);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 83df20e3e633..655ce0bb069d 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -30,7 +30,7 @@ static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
+ 		if (!va_page)
+ 			return ERR_PTR(-ENOMEM);
+ 
+-		va_page->epc_page = sgx_alloc_va_page();
++		va_page->epc_page = sgx_alloc_va_page(va_page);
+ 		if (IS_ERR(va_page->epc_page)) {
+ 			err = ERR_CAST(va_page->epc_page);
+ 			kfree(va_page);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 63d3de02bbcc..69743709ec90 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -457,7 +457,7 @@ static bool __init sgx_page_reclaimer_init(void)
+ 	return true;
+ }
+ 
+-static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
++static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(void *owner, int nid)
+ {
+ 	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
+ 	struct sgx_epc_page *page = NULL;
+@@ -471,6 +471,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+ 
+ 	page = list_first_entry(&node->free_page_list, struct sgx_epc_page, list);
+ 	list_del_init(&page->list);
++	page->owner = owner;
+ 	sgx_nr_free_pages--;
+ 
+ 	spin_unlock(&node->lock);
+@@ -480,6 +481,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+ 
+ /**
+  * __sgx_alloc_epc_page() - Allocate an EPC page
++ * @owner:	the owner of the EPC page
+  *
+  * Iterate through NUMA nodes and reserve ia free EPC page to the caller. Start
+  * from the NUMA node, where the caller is executing.
+@@ -488,14 +490,14 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+  * - an EPC page:	A borrowed EPC pages were available.
+  * - NULL:		Out of EPC pages.
+  */
+-struct sgx_epc_page *__sgx_alloc_epc_page(void)
++struct sgx_epc_page *__sgx_alloc_epc_page(void *owner)
+ {
+ 	struct sgx_epc_page *page;
+ 	int nid_of_current = numa_node_id();
+ 	int nid = nid_of_current;
+ 
+ 	if (node_isset(nid_of_current, sgx_numa_mask)) {
+-		page = __sgx_alloc_epc_page_from_node(nid_of_current);
++		page = __sgx_alloc_epc_page_from_node(owner, nid_of_current);
+ 		if (page)
+ 			return page;
+ 	}
+@@ -506,7 +508,7 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+ 		if (nid == nid_of_current)
+ 			break;
+ 
+-		page = __sgx_alloc_epc_page_from_node(nid);
++		page = __sgx_alloc_epc_page_from_node(owner, nid);
+ 		if (page)
+ 			return page;
+ 	}
+@@ -559,7 +561,7 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
+ 
+ /**
+  * sgx_alloc_epc_page() - Allocate an EPC page
+- * @owner:	the owner of the EPC page
++ * @owner:	per-caller page owner
+  * @reclaim:	reclaim pages if necessary
+  *
+  * Iterate through EPC sections and borrow a free EPC page to the caller. When a
+@@ -579,11 +581,9 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
+ 	struct sgx_epc_page *page;
+ 
+ 	for ( ; ; ) {
+-		page = __sgx_alloc_epc_page();
+-		if (!IS_ERR(page)) {
+-			page->owner = owner;
++		page = __sgx_alloc_epc_page(owner);
++		if (!IS_ERR(page))
+ 			break;
+-		}
+ 
+ 		if (list_empty(&sgx_active_page_list))
+ 			return ERR_PTR(-ENOMEM);
+@@ -624,6 +624,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ 
+ 	spin_lock(&node->lock);
+ 
++	page->owner = NULL;
+ 	list_add_tail(&page->list, &node->free_page_list);
+ 	sgx_nr_free_pages++;
+ 
+@@ -652,7 +653,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	for (i = 0; i < nr_pages; i++) {
+ 		section->pages[i].section = index;
+ 		section->pages[i].flags = 0;
+-		section->pages[i].owner = NULL;
++		section->pages[i].owner = (void *)-1;
+ 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+ 	}
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 4628acec0009..cc624778645f 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -29,7 +29,7 @@
+ struct sgx_epc_page {
+ 	unsigned int section;
+ 	unsigned int flags;
+-	struct sgx_encl_page *owner;
++	void *owner;
+ 	struct list_head list;
+ };
+ 
+@@ -77,7 +77,7 @@ static inline void *sgx_get_epc_virt_addr(struct sgx_epc_page *page)
+ 	return section->virt_addr + index * PAGE_SIZE;
+ }
+ 
+-struct sgx_epc_page *__sgx_alloc_epc_page(void);
++struct sgx_epc_page *__sgx_alloc_epc_page(void *owner);
+ void sgx_free_epc_page(struct sgx_epc_page *page);
+ 
+ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
 -- 
 2.31.1
 
