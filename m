@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCE1C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8C5C43219
 	for <linux-sgx@archiver.kernel.org>; Mon, 27 Sep 2021 21:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16F4861058
+	by mail.kernel.org (Postfix) with ESMTP id 7C8E3611C5
 	for <linux-sgx@archiver.kernel.org>; Mon, 27 Sep 2021 21:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237149AbhI0Vgk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 27 Sep 2021 17:36:40 -0400
-Received: from mga07.intel.com ([134.134.136.100]:2372 "EHLO mga07.intel.com"
+        id S237176AbhI0Vgl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 27 Sep 2021 17:36:41 -0400
+Received: from mga07.intel.com ([134.134.136.100]:2375 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237050AbhI0Vgk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S236723AbhI0Vgk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Mon, 27 Sep 2021 17:36:40 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10120"; a="288227512"
+X-IronPort-AV: E=McAfee;i="6200,9189,10120"; a="288227514"
 X-IronPort-AV: E=Sophos;i="5.85,327,1624345200"; 
-   d="scan'208";a="288227512"
+   d="scan'208";a="288227514"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2021 14:35:01 -0700
 X-IronPort-AV: E=Sophos;i="5.85,327,1624345200"; 
-   d="scan'208";a="561547582"
+   d="scan'208";a="561547593"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2021 14:35:00 -0700
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2021 14:35:01 -0700
 From:   Tony Luck <tony.luck@intel.com>
 To:     Sean Christopherson <seanjc@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>
 Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 3/7] x86/sgx: Initial poison handling for dirty and free pages
-Date:   Mon, 27 Sep 2021 14:34:48 -0700
-Message-Id: <20210927213452.212470-4-tony.luck@intel.com>
+Subject: [PATCH v7 5/7] x86/sgx: Hook arch_memory_failure() into mainline code
+Date:   Mon, 27 Sep 2021 14:34:50 -0700
+Message-Id: <20210927213452.212470-6-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210927213452.212470-1-tony.luck@intel.com>
 References: <20210922182123.200105-1-tony.luck@intel.com>
@@ -42,131 +42,128 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-A memory controller patrol scrubber can report poison in a page
-that isn't currently being used.
+Add a call inside memory_failure() to call the arch specific code
+to check if the address is an SGX EPC page and handle it.
 
-Add "poison" field in the sgx_epc_page that can be set for an
-sgx_epc_page. Check for it:
-1) When sanitizing dirty pages
-2) When freeing epc pages
+Note the SGX EPC pages do not have a "struct page" entry, so the hook
+goes in at the same point as the device mapping hook.
 
-Poison is a new field separated from flags to avoid having to make
-all updates to flags atomic, or integrate poison state changes into
-some other locking scheme to protect flags.
+Pull the call to acquire the mutex earlier so the SGX errors are also
+protected.
 
-In both cases place the poisoned page on a list of poisoned epc pages
-to make sure it will not be reallocated.
-
-Add debugfs files /sys/kernel/debug/sgx/poison_page_list so that system
-administrators get a list of those pages that have been dropped because
-of poison.
+Make set_mce_nospec() skip SGX pages when trying to adjust
+the 1:1 map.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 31 ++++++++++++++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++-
- 2 files changed, 32 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/processor.h  |  8 ++++++++
+ arch/x86/include/asm/set_memory.h |  4 ++++
+ include/linux/mm.h                | 14 ++++++++++++++
+ mm/memory-failure.c               | 19 +++++++++++++------
+ 4 files changed, 39 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 09fa42690ff2..b558c9a80af4 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*  Copyright(c) 2016-20 Intel Corporation. */
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 9ad2acaaae9b..4865f2860a4f 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -853,4 +853,12 @@ enum mds_mitigations {
+ 	MDS_MITIGATION_VMWERV,
+ };
  
-+#include <linux/debugfs.h>
- #include <linux/file.h>
- #include <linux/freezer.h>
- #include <linux/highmem.h>
-@@ -43,6 +44,7 @@ static nodemask_t sgx_numa_mask;
- static struct sgx_numa_node *sgx_numa_nodes;
- 
- static LIST_HEAD(sgx_dirty_page_list);
-+static LIST_HEAD(sgx_poison_page_list);
- 
- /*
-  * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
-@@ -62,6 +64,12 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
- 
- 		page = list_first_entry(dirty_page_list, struct sgx_epc_page, list);
- 
-+		if (page->poison) {
-+			list_del(&page->list);
-+			list_add(&page->list, &sgx_poison_page_list);
-+			continue;
-+		}
++#ifdef CONFIG_X86_SGX
++int arch_memory_failure(unsigned long pfn, int flags);
++#define arch_memory_failure arch_memory_failure
 +
- 		ret = __eremove(sgx_get_epc_virt_addr(page));
- 		if (!ret) {
- 			/*
-@@ -626,7 +634,11 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
++bool arch_is_platform_page(u64 paddr);
++#define arch_is_platform_page arch_is_platform_page
++#endif
++
+ #endif /* _ASM_X86_PROCESSOR_H */
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index 43fa081a1adb..ce8dd215f5b3 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -2,6 +2,7 @@
+ #ifndef _ASM_X86_SET_MEMORY_H
+ #define _ASM_X86_SET_MEMORY_H
  
- 	spin_lock(&node->lock);
++#include <linux/mm.h>
+ #include <asm/page.h>
+ #include <asm-generic/set_memory.h>
  
--	list_add_tail(&page->list, &node->free_page_list);
-+	page->owner = NULL;
-+	if (page->poison)
-+		list_add(&page->list, &sgx_poison_page_list);
-+	else
-+		list_add_tail(&page->list, &node->free_page_list);
- 	sgx_nr_free_pages++;
- 	page->flags = 0;
+@@ -98,6 +99,9 @@ static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+ 	unsigned long decoy_addr;
+ 	int rc;
  
-@@ -658,6 +670,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 		section->pages[i].section = index;
- 		section->pages[i].flags = SGX_EPC_PAGE_IN_USE;
- 		section->pages[i].owner = NULL;
-+		section->pages[i].poison = 0;
- 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
++	/* SGX pages are not in the 1:1 map */
++	if (arch_is_platform_page(pfn << PAGE_SHIFT))
++		return 0;
+ 	/*
+ 	 * We would like to just call:
+ 	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 73a52aba448f..62b199ed5ec6 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3284,5 +3284,19 @@ static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
+ 	return 0;
+ }
+ 
++#ifndef arch_memory_failure
++static inline int arch_memory_failure(unsigned long pfn, int flags)
++{
++	return -ENXIO;
++}
++#endif
++
++#ifndef arch_is_platform_page
++static inline bool arch_is_platform_page(u64 paddr)
++{
++	return false;
++}
++#endif
++
+ #endif /* __KERNEL__ */
+ #endif /* _LINUX_MM_H */
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 3e6449f2102a..b1cbf9845c19 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1632,21 +1632,28 @@ int memory_failure(unsigned long pfn, int flags)
+ 	if (!sysctl_memory_failure_recovery)
+ 		panic("Memory failure on page %lx", pfn);
+ 
++	mutex_lock(&mf_mutex);
++
+ 	p = pfn_to_online_page(pfn);
+ 	if (!p) {
++		res = arch_memory_failure(pfn, flags);
++		if (res == 0)
++			goto unlock_mutex;
++
+ 		if (pfn_valid(pfn)) {
+ 			pgmap = get_dev_pagemap(pfn, NULL);
+-			if (pgmap)
+-				return memory_failure_dev_pagemap(pfn, flags,
+-								  pgmap);
++			if (pgmap) {
++				res = memory_failure_dev_pagemap(pfn, flags,
++								 pgmap);
++				goto unlock_mutex;
++			}
+ 		}
+ 		pr_err("Memory failure: %#lx: memory outside kernel control\n",
+ 			pfn);
+-		return -ENXIO;
++		res = -ENXIO;
++		goto unlock_mutex;
  	}
  
-@@ -801,8 +814,21 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
- 
-+static int poison_list_show(struct seq_file *m, void *private)
-+{
-+	struct sgx_epc_page *page;
-+
-+	list_for_each_entry(page, &sgx_poison_page_list, list)
-+		seq_printf(m, "0x%lx\n", sgx_get_epc_phys_addr(page));
-+
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(poison_list);
-+
- static int __init sgx_init(void)
- {
-+	struct dentry *dir;
- 	int ret;
- 	int i;
- 
-@@ -834,6 +860,9 @@ static int __init sgx_init(void)
- 	if (sgx_vepc_init() && ret)
- 		goto err_provision;
- 
-+	dir = debugfs_create_dir("sgx", arch_debugfs_dir);
-+	debugfs_create_file("poison_page_list", 0400, dir, NULL, &poison_list_fops);
-+
- 	return 0;
- 
- err_provision:
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index f9202d3d6278..a990a4c9a00f 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -31,7 +31,8 @@
- 
- struct sgx_epc_page {
- 	unsigned int section;
--	unsigned int flags;
-+	u16 flags;
-+	u16 poison;
- 	struct sgx_encl_page *owner;
- 	struct list_head list;
- };
+-	mutex_lock(&mf_mutex);
+-
+ try_again:
+ 	if (PageHuge(p)) {
+ 		res = memory_failure_hugetlb(pfn, flags);
 -- 
 2.31.1
 
