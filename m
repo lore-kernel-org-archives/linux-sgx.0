@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8C5C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C46BC433FE
 	for <linux-sgx@archiver.kernel.org>; Mon, 27 Sep 2021 21:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C8E3611C5
-	for <linux-sgx@archiver.kernel.org>; Mon, 27 Sep 2021 21:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44426113D
+	for <linux-sgx@archiver.kernel.org>; Mon, 27 Sep 2021 21:35:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237176AbhI0Vgl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 27 Sep 2021 17:36:41 -0400
-Received: from mga07.intel.com ([134.134.136.100]:2375 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236723AbhI0Vgk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S236743AbhI0Vgk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 27 Sep 2021 17:36:40 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10120"; a="288227514"
+Received: from mga07.intel.com ([134.134.136.100]:2372 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236723AbhI0Vgj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 27 Sep 2021 17:36:39 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10120"; a="288227511"
 X-IronPort-AV: E=Sophos;i="5.85,327,1624345200"; 
-   d="scan'208";a="288227514"
+   d="scan'208";a="288227511"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2021 14:35:01 -0700
 X-IronPort-AV: E=Sophos;i="5.85,327,1624345200"; 
-   d="scan'208";a="561547593"
+   d="scan'208";a="561547576"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2021 14:35:01 -0700
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2021 14:35:00 -0700
 From:   Tony Luck <tony.luck@intel.com>
 To:     Sean Christopherson <seanjc@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>
 Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 5/7] x86/sgx: Hook arch_memory_failure() into mainline code
-Date:   Mon, 27 Sep 2021 14:34:50 -0700
-Message-Id: <20210927213452.212470-6-tony.luck@intel.com>
+Subject: [PATCH v7 2/7] x86/sgx: Add infrastructure to identify SGX EPC pages
+Date:   Mon, 27 Sep 2021 14:34:47 -0700
+Message-Id: <20210927213452.212470-3-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210927213452.212470-1-tony.luck@intel.com>
 References: <20210922182123.200105-1-tony.luck@intel.com>
@@ -42,128 +42,68 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a call inside memory_failure() to call the arch specific code
-to check if the address is an SGX EPC page and handle it.
+X86 machine check architecture reports a physical address when there
+is a memory error. Handling that error requires a method to determine
+whether the physical address reported is in any of the areas reserved
+for EPC pages by BIOS.
 
-Note the SGX EPC pages do not have a "struct page" entry, so the hook
-goes in at the same point as the device mapping hook.
+SGX EPC pages do not have Linux "struct page" associated with them.
 
-Pull the call to acquire the mutex earlier so the SGX errors are also
-protected.
+Keep track of the mapping from ranges of EPC pages to the sections
+that contain them using an xarray.
 
-Make set_mce_nospec() skip SGX pages when trying to adjust
-the 1:1 map.
+Create a function arch_is_platform_page() that simply reports whether an address
+is an EPC page for use elsewhere in the kernel. The ACPI error injection
+code needs this function and is typically built as a module, so export it.
+
+Note that arch_is_platform_page() will be slower than other similar "what type
+is this page" functions that can simply check bits in the "struct page".
+If there is some future performance critical user of this function it
+may need to be implemented in a more efficient way.
+
+Note also that the current implementation of xarray allocates a few
+hundred kilobytes for this usage on a system with 4GB of SGX EPC memory
+configured. This isn't ideal, but worth it for the code simplicity.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/include/asm/processor.h  |  8 ++++++++
- arch/x86/include/asm/set_memory.h |  4 ++++
- include/linux/mm.h                | 14 ++++++++++++++
- mm/memory-failure.c               | 19 +++++++++++++------
- 4 files changed, 39 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 9ad2acaaae9b..4865f2860a4f 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -853,4 +853,12 @@ enum mds_mitigations {
- 	MDS_MITIGATION_VMWERV,
- };
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index d18988a46c13..09fa42690ff2 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -20,6 +20,7 @@ struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ static int sgx_nr_epc_sections;
+ static struct task_struct *ksgxd_tsk;
+ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
++static DEFINE_XARRAY(sgx_epc_address_space);
  
-+#ifdef CONFIG_X86_SGX
-+int arch_memory_failure(unsigned long pfn, int flags);
-+#define arch_memory_failure arch_memory_failure
-+
-+bool arch_is_platform_page(u64 paddr);
-+#define arch_is_platform_page arch_is_platform_page
-+#endif
-+
- #endif /* _ASM_X86_PROCESSOR_H */
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 43fa081a1adb..ce8dd215f5b3 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -2,6 +2,7 @@
- #ifndef _ASM_X86_SET_MEMORY_H
- #define _ASM_X86_SET_MEMORY_H
- 
-+#include <linux/mm.h>
- #include <asm/page.h>
- #include <asm-generic/set_memory.h>
- 
-@@ -98,6 +99,9 @@ static inline int set_mce_nospec(unsigned long pfn, bool unmap)
- 	unsigned long decoy_addr;
- 	int rc;
- 
-+	/* SGX pages are not in the 1:1 map */
-+	if (arch_is_platform_page(pfn << PAGE_SHIFT))
-+		return 0;
- 	/*
- 	 * We would like to just call:
- 	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 73a52aba448f..62b199ed5ec6 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3284,5 +3284,19 @@ static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
- 	return 0;
- }
- 
-+#ifndef arch_memory_failure
-+static inline int arch_memory_failure(unsigned long pfn, int flags)
-+{
-+	return -ENXIO;
-+}
-+#endif
-+
-+#ifndef arch_is_platform_page
-+static inline bool arch_is_platform_page(u64 paddr)
-+{
-+	return false;
-+}
-+#endif
-+
- #endif /* __KERNEL__ */
- #endif /* _LINUX_MM_H */
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 3e6449f2102a..b1cbf9845c19 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1632,21 +1632,28 @@ int memory_failure(unsigned long pfn, int flags)
- 	if (!sysctl_memory_failure_recovery)
- 		panic("Memory failure on page %lx", pfn);
- 
-+	mutex_lock(&mf_mutex);
-+
- 	p = pfn_to_online_page(pfn);
- 	if (!p) {
-+		res = arch_memory_failure(pfn, flags);
-+		if (res == 0)
-+			goto unlock_mutex;
-+
- 		if (pfn_valid(pfn)) {
- 			pgmap = get_dev_pagemap(pfn, NULL);
--			if (pgmap)
--				return memory_failure_dev_pagemap(pfn, flags,
--								  pgmap);
-+			if (pgmap) {
-+				res = memory_failure_dev_pagemap(pfn, flags,
-+								 pgmap);
-+				goto unlock_mutex;
-+			}
- 		}
- 		pr_err("Memory failure: %#lx: memory outside kernel control\n",
- 			pfn);
--		return -ENXIO;
-+		res = -ENXIO;
-+		goto unlock_mutex;
+ /*
+  * These variables are part of the state of the reclaimer, and must be accessed
+@@ -650,6 +651,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
  	}
  
--	mutex_lock(&mf_mutex);
--
- try_again:
- 	if (PageHuge(p)) {
- 		res = memory_failure_hugetlb(pfn, flags);
+ 	section->phys_addr = phys_addr;
++	xa_store_range(&sgx_epc_address_space, section->phys_addr,
++		       phys_addr + size - 1, section, GFP_KERNEL);
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		section->pages[i].section = index;
+@@ -661,6 +664,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	return true;
+ }
+ 
++bool arch_is_platform_page(u64 paddr)
++{
++	return !!xa_load(&sgx_epc_address_space, paddr);
++}
++EXPORT_SYMBOL_GPL(arch_is_platform_page);
++
+ /**
+  * A section metric is concatenated in a way that @low bits 12-31 define the
+  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
 -- 
 2.31.1
 
