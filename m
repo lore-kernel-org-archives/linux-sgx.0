@@ -2,48 +2,43 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6916C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 28 Sep 2021 02:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98843C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 28 Sep 2021 02:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C88396101A
-	for <linux-sgx@archiver.kernel.org>; Tue, 28 Sep 2021 02:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8469F61247
+	for <linux-sgx@archiver.kernel.org>; Tue, 28 Sep 2021 02:28:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238516AbhI1CPY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 27 Sep 2021 22:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36588 "EHLO mail.kernel.org"
+        id S238727AbhI1CaO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 27 Sep 2021 22:30:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238512AbhI1CPY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 27 Sep 2021 22:15:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2AEED6120F;
-        Tue, 28 Sep 2021 02:13:45 +0000 (UTC)
+        id S238720AbhI1CaN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 27 Sep 2021 22:30:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1ADF561213;
+        Tue, 28 Sep 2021 02:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632795225;
-        bh=P/zL4O0c1uXpFp8kSdRzhNqnIT5nB8gdNwyivu5WHkE=;
+        s=k20201202; t=1632796114;
+        bh=FOphkoC2vj9FVirt/4L/mY63v0XHJ9g7ZIdtbYGJD0s=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Vmona2j3FQOVnxsYqPTLTnwkmXzmb+etU7M6nTSJf3SjwacU5k2CUB8Cg2zg0gVEa
-         sC8dXs9yYp8bYAkgCJxBEBdEAkE7v4nhfq3eJbBpdLiVzGRI0EnQ3irFVzdNcRZVLL
-         qWXZ2WbO6+bOy9wsq7UNWolS6nsaSulGoHhDbnn1iasRv45ArIhVxZ1MLV8eXBO7Sa
-         uhBV2vmsO0/vg4yBCX5nj0N3ZHUUpd4RExCHgrtg9+GH7F4n56q5Jr8ouy6eZ4UFq+
-         KZ+FbgSqRN1i+/Sa2BD1KeImVUFr+19itraBXvOieepPP1X4L0Z4b/CPJuAe6Ki/nt
-         hVhzCGGkUx3Gw==
-Message-ID: <5b6f9e266ec5456d2ef613f0999eb9855b289aab.camel@kernel.org>
-Subject: Re: [PATCH v6 1/7] x86/sgx: Provide indication of life-cycle of EPC
- pages
+        b=p5JxgFhq2BRv4Rd3QrMkv3E2iD6cZlm/DwleV0/0qKGU7f0L7Q8H+k7I6j2Pr3hk+
+         nhSJUWhLg8fyUlyafWm4COJXNHbW1bls6AmxlznqA95q/rtNP7ncW9wxKhOBWnQc+g
+         pBrvs9ICO7DtcCMg4mw2QoGCnxqaJUTcIaxlvLQe6fNvT0dcyX9gH96DdwHSGhtJuz
+         3eQD57wI8B6U4ttzT/ikEF5mZihiUfDKy18V763fxEU1WPQnolZcDDJy94BgOt+YPy
+         UPLdiGbW7BxnGNZk8UHibtEoAi9KPuv1+VYWNrb0/bCAi+cNOUdyoBCv98Tlv9VP50
+         4SBOiOM5vZIIQ==
+Message-ID: <29373cabc9ba55463b16b7d8148722997840fbb5.camel@kernel.org>
+Subject: Re: [PATCH v7 1/7] x86/sgx: Add new sgx_epc_page flag bit to mark
+ in-use pages
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-Date:   Tue, 28 Sep 2021 05:13:43 +0300
-In-Reply-To: <fe8b68dd183b4350bb9c5372d587899b@intel.com>
-References: <20210917213836.175138-1-tony.luck@intel.com>
-         <20210922182123.200105-1-tony.luck@intel.com>
-         <20210922182123.200105-2-tony.luck@intel.com>
-         <5aa9e385b38ce0f63d6b531ede2baafd17fc7861.camel@kernel.org>
-         <42f4b668b5abe818295d804d43c077e5d3cb4a4c.camel@kernel.org>
-         <YUznjYO0TZuorE/2@agluck-desk2.amr.corp.intel.com>
-         <fe8b68dd183b4350bb9c5372d587899b@intel.com>
+To:     Tony Luck <tony.luck@intel.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org
+Date:   Tue, 28 Sep 2021 05:28:32 +0300
+In-Reply-To: <20210927213452.212470-2-tony.luck@intel.com>
+References: <20210922182123.200105-1-tony.luck@intel.com>
+         <20210927213452.212470-1-tony.luck@intel.com>
+         <20210927213452.212470-2-tony.luck@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.36.5-0ubuntu1 
@@ -52,38 +47,33 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 2021-09-23 at 22:11 +0000, Luck, Tony wrote:
-> > That's nice. It avoids having to create a fictitious owner for
-> > the dirty pages, and for the sgx_alloc_va_page() case. Which
-> > in turn means that the owner field in struct sgx_epc_page can
-> > remain as "struct sgx_encl_page *owner;" (neatly avoiding DaveH's
-> > request that it be an anonymous union of all the possible types,
-> > because it is back to just being one type).
-> >=20
-> > Thanks!  Will include in next version.
+On Mon, 2021-09-27 at 14:34 -0700, Tony Luck wrote:
+> SGX EPC pages go through the following life cycle:
 >=20
-> Also avoids a bunch of refactoring to make sure to set the owner field
-> while holding zone->lock.
+>         DIRTY ---> FREE ---> IN-USE --\
+>                     ^                 |
+>                     \-----------------/
 >=20
-> I roughly coded it up and the old part 0001 was:
+> Recovery action for poison for a DIRTY or FREE page is simple. Just
+> make sure never to allocate the page. IN-USE pages need some extra
+> handling.
 >=20
->  arch/x86/kernel/cpu/sgx/encl.c  |    5 +++--
->  arch/x86/kernel/cpu/sgx/encl.h  |    2 +-
->  arch/x86/kernel/cpu/sgx/ioctl.c |    2 +-
->  arch/x86/kernel/cpu/sgx/main.c  |   21 +++++++++++----------
->  arch/x86/kernel/cpu/sgx/sgx.h   |    4 ++--
->  5 files changed, 18 insertions(+), 16 deletions(-)
+> Add a new flag bit SGX_EPC_PAGE_IN_USE that is set when a page
+> is allocated and cleared when the page is freed.
 >=20
-> which is by no means huge, but the new part 0001 is
+> Notes:
 >=20
->  arch/x86/kernel/cpu/sgx/main.c |    4 +++-
->  arch/x86/kernel/cpu/sgx/sgx.h  |    3 +++
->  2 files changed, 6 insertions(+), 1 deletion(-)
+> 1) These transitions are made while holding the node->lock so that
+>    future code that checks the flags while holding the node->lock
+>    can be sure that if the SGX_EPC_PAGE_IN_USE bit is set, then the
+>    page is on the free list.
 >=20
-> -Tony
+> 2) Initially while the pages are on the dirty list the
+>    SGX_EPC_PAGE_IN_USE bit is set.
+>=20
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
 
-This is good to hear. I guess it is then a no brainer to move into
-this direction then.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 /Jarkko
 
