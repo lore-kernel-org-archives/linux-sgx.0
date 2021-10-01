@@ -2,89 +2,119 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6607CC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri,  1 Oct 2021 15:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AD9C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  1 Oct 2021 16:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA6761A6F
-	for <linux-sgx@archiver.kernel.org>; Fri,  1 Oct 2021 15:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B2F761ABF
+	for <linux-sgx@archiver.kernel.org>; Fri,  1 Oct 2021 16:47:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354917AbhJAPPE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 1 Oct 2021 11:15:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36332 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354912AbhJAPPD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 1 Oct 2021 11:15:03 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755EFC06177C
-        for <linux-sgx@vger.kernel.org>; Fri,  1 Oct 2021 08:13:19 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id x4so6504083pln.5
-        for <linux-sgx@vger.kernel.org>; Fri, 01 Oct 2021 08:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=epqGvL2xwASJxQVBW1Iu4NCeLliUpYCfDqhNCQQ6Qu4=;
-        b=RmL9twmGl1cux62in5hgYRWjsjWQRTNuCw+2HHC11ZPLnWbcNtrkeKO6qsTnVf+AQI
-         VOHQZCPXkfGqGtl5egoUHs0ILgIe2nryR/iHwonKaQCQvp4wXQ7b5dGcNp6j8Hc7F2p5
-         lF2wIk+KpQaBVIFo4HvybjQ5oAjVigRE6s2a7on8nAjU5NSqQ7ZxFvqeBgiw6FqjLH7Q
-         Tm2VM9gpKyNNiHlUPe7GanCql6KYPqZp3w3N+wwbu/Im+t270KnjjhVY8SUrLdKcoaaK
-         dk7IGEx9L9po679KQv6O2726NPU3pcl0iQmZGhHy9TcM9+xBtxeRPDelGVQqPTkJHoQT
-         D2JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=epqGvL2xwASJxQVBW1Iu4NCeLliUpYCfDqhNCQQ6Qu4=;
-        b=XUqgEH9H7m9cPcP1shlxokcoFRuBiI6ajT4F2mM0wloDr6rkcU8kaQ3SI2cIlw6FMM
-         x1Pawb3eZVN8EO+u9WGVJ+FQTRhqAjSdB/Huhw0oWt1Ukn0wBnbpLjpChZ62gKFGPOvy
-         CPwJ+eZ2nw6CIg7StOFL2FbM4JuOnn3E8EtIoGH5SecTGcyTZ1KwvrZN/JiReBvpYOUU
-         zmRLBwkEi4cGdNlUnYNXHJKUPicQMZ37a0E1xd5Ax7RiAB/Y1f4y//MeplrIQ4F+miHp
-         /hdzsT8r99T4qklgxKJ+evPuciQy4otQmLDxBDjIN64ov0sIC6nwzsUw7kVt53FPNpLX
-         l19w==
-X-Gm-Message-State: AOAM530tefiCYxsdpxvb2ont5usqxV0+eshwGX/EmT8XAkLEA0US09V4
-        t+ZQUMNNWALqz11KBckptLTN8A==
-X-Google-Smtp-Source: ABdhPJwayzCtSnysz+R4jnKXc7dOdpaqRQaloWu6UZiyZVUaDl75+fhEkUoWnJ6S2FZUlI8UcciF6Q==
-X-Received: by 2002:a17:902:aa91:b0:13e:292f:266a with SMTP id d17-20020a170902aa9100b0013e292f266amr10000865plr.10.1633101198760;
-        Fri, 01 Oct 2021 08:13:18 -0700 (PDT)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id v2sm5991593pje.15.2021.10.01.08.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Oct 2021 08:13:18 -0700 (PDT)
-Date:   Fri, 1 Oct 2021 15:13:14 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     syzbot <syzbot+d6d011bc17bb751d4aa2@syzkaller.appspotmail.com>
-Cc:     bp@alien8.de, dave.hansen@linux.intel.com, glider@google.com,
-        hpa@zytor.com, jarkko@kernel.org, jmattson@google.com,
-        joro@8bytes.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
-Subject: Re: [syzbot] KMSAN: uninit-value in kvm_cpuid
-Message-ID: <YVclio5ny4ziKQer@google.com>
-References: <00000000000048342f05cd44efc0@google.com>
+        id S1355228AbhJAQtR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 1 Oct 2021 12:49:17 -0400
+Received: from mga11.intel.com ([192.55.52.93]:19801 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1355195AbhJAQtQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 1 Oct 2021 12:49:16 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10124"; a="222290384"
+X-IronPort-AV: E=Sophos;i="5.85,339,1624345200"; 
+   d="scan'208";a="222290384"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 09:47:31 -0700
+X-IronPort-AV: E=Sophos;i="5.85,339,1624345200"; 
+   d="scan'208";a="540357489"
+Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 09:47:31 -0700
+From:   Tony Luck <tony.luck@intel.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
+        Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v8 1/7] x86/sgx: Add new sgx_epc_page flag bit to mark in-use pages
+Date:   Fri,  1 Oct 2021 09:47:18 -0700
+Message-Id: <20211001164724.220532-2-tony.luck@intel.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20211001164724.220532-1-tony.luck@intel.com>
+References: <20210927213452.212470-1-tony.luck@intel.com>
+ <20211001164724.220532-1-tony.luck@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000048342f05cd44efc0@google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Sep 30, 2021, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    cd2c05533838 DO-NOT-SUBMIT: kmsan: suppress a report in ke..
-> git tree:       https://github.com/google/kmsan.git master
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11373b17300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=978f1b2d7a5aad3e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d6d011bc17bb751d4aa2
-> compiler:       clang version 14.0.0 (git@github.com:llvm/llvm-project.git 0996585c8e3b3d409494eb5f1cad714b9e1f7fb5), GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b6c4cb300000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fdb00f300000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d6d011bc17bb751d4aa2@syzkaller.appspotmail.com
+SGX EPC pages go through the following life cycle:
 
-#syz fix: KVM: x86: Swap order of CPUID entry "index" vs. "significant flag" checks
+        DIRTY ---> FREE ---> IN-USE --\
+                    ^                 |
+                    \-----------------/
+
+Recovery action for poison for a DIRTY or FREE page is simple. Just
+make sure never to allocate the page. IN-USE pages need some extra
+handling.
+
+Add a new flag bit SGX_EPC_PAGE_IN_USE that is set when a page
+is allocated and cleared when the page is freed.
+
+Notes:
+
+1) These transitions are made while holding the node->lock so that
+   future code that checks the flags while holding the node->lock
+   can be sure that if the SGX_EPC_PAGE_IN_USE bit is set, then the
+   page is on the free list.
+
+2) Initially while the pages are on the dirty list the
+   SGX_EPC_PAGE_IN_USE bit is set.
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 4 +++-
+ arch/x86/kernel/cpu/sgx/sgx.h  | 3 +++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 63d3de02bbcc..d18988a46c13 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -472,6 +472,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+ 	page = list_first_entry(&node->free_page_list, struct sgx_epc_page, list);
+ 	list_del_init(&page->list);
+ 	sgx_nr_free_pages--;
++	page->flags = SGX_EPC_PAGE_IN_USE;
+ 
+ 	spin_unlock(&node->lock);
+ 
+@@ -626,6 +627,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ 
+ 	list_add_tail(&page->list, &node->free_page_list);
+ 	sgx_nr_free_pages++;
++	page->flags = 0;
+ 
+ 	spin_unlock(&node->lock);
+ }
+@@ -651,7 +653,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		section->pages[i].section = index;
+-		section->pages[i].flags = 0;
++		section->pages[i].flags = SGX_EPC_PAGE_IN_USE;
+ 		section->pages[i].owner = NULL;
+ 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+ 	}
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 4628acec0009..f9202d3d6278 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -26,6 +26,9 @@
+ /* Pages, which are being tracked by the page reclaimer. */
+ #define SGX_EPC_PAGE_RECLAIMER_TRACKED	BIT(0)
+ 
++/* Allocated pages */
++#define SGX_EPC_PAGE_IN_USE		BIT(1)
++
+ struct sgx_epc_page {
+ 	unsigned int section;
+ 	unsigned int flags;
+-- 
+2.31.1
+
