@@ -2,84 +2,140 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF6FC433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 30 Sep 2021 18:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A914C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  1 Oct 2021 06:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 836D8619F9
-	for <linux-sgx@archiver.kernel.org>; Thu, 30 Sep 2021 18:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E69761439
+	for <linux-sgx@archiver.kernel.org>; Fri,  1 Oct 2021 06:47:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352973AbhI3SEa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 30 Sep 2021 14:04:30 -0400
-Received: from mga05.intel.com ([192.55.52.43]:8475 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353024AbhI3SEX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 30 Sep 2021 14:04:23 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10123"; a="310797540"
-X-IronPort-AV: E=Sophos;i="5.85,336,1624345200"; 
-   d="scan'208";a="310797540"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2021 11:02:35 -0700
-X-IronPort-AV: E=Sophos;i="5.85,336,1624345200"; 
-   d="scan'208";a="555882303"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.146])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2021 11:02:35 -0700
-Date:   Thu, 30 Sep 2021 11:02:33 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-Subject: Re: [PATCH v7 3/7] x86/sgx: Initial poison handling for dirty and
- free pages
-Message-ID: <YVX7uWE072rXBH0T@agluck-desk2.amr.corp.intel.com>
-References: <20210922182123.200105-1-tony.luck@intel.com>
- <20210927213452.212470-1-tony.luck@intel.com>
- <20210927213452.212470-4-tony.luck@intel.com>
- <3efcda381b49651004e230f6ef008032842db1f9.camel@kernel.org>
- <ca3bb671a49141608ac981012091c3ea@intel.com>
- <1702295227b9276e051a0efee8af1475cba27407.camel@kernel.org>
- <YVOA1/AFFXmR6Uiw@agluck-desk2.amr.corp.intel.com>
- <6e4e24ab222e0d8eba051cd01218a9b716217b7a.camel@kernel.org>
+        id S1352269AbhJAGtH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 1 Oct 2021 02:49:07 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:49138 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352344AbhJAGtD (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 1 Oct 2021 02:49:03 -0400
+Received: by mail-io1-f69.google.com with SMTP id m19-20020a6bea13000000b005d751644a6eso7976929ioc.15
+        for <linux-sgx@vger.kernel.org>; Thu, 30 Sep 2021 23:47:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=9LQI85QZ4f6rHbym/A6v93PSpTYGIavu9AuB8xELSZg=;
+        b=pqaavSode3OLE5+zee/F7d1p1u5LcIq26k72f9CjGxMGzjsyzTOE0yQ0fMGICiLi1a
+         LK5/id34Jf+dRmShZxKDO8ChE/zt8Q02hHBhEWEC6jN0DPqKOn8Ii+SR5fvKZqgd4tAc
+         CWPs27HwxKUn/paIkNymjVwUmFUOG3tBftUsfmYm31q8gDwkL0CRkC0z0KmHKyNTv6+o
+         IWWOaVHCFCto5hfnRAm/qs0iAjRCut2hleiUtx9XUIQYdoAQ1yBfgUlbolvGVLKf4kCC
+         7Sxajl0i6ekLVkxDkRZ4ZzJQ8vMBjzmv6+vf85BuUpYNsXJXKYKi5gjuJwTm20cx+oV2
+         cBBQ==
+X-Gm-Message-State: AOAM530tmoLHQYILBZR0JeC4kTx7aAOxVnqYGGaj0UjbJqaovnWeyo+Z
+        CYoDknNPNfw9LRDWun/BfweRlhvJoBkc/9AuV6ocuOJ70MyI
+X-Google-Smtp-Source: ABdhPJwDvSWHzbTqg3ENq28OtxXRK1m4Wx50j2sg0sKrDW3FM1tQBo7axJfvOO0hKj9ifurRv9N/0toKJgh3WdNdQvJk2+5ldPdv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e4e24ab222e0d8eba051cd01218a9b716217b7a.camel@kernel.org>
+X-Received: by 2002:a05:6e02:178d:: with SMTP id y13mr7705236ilu.266.1633070839499;
+ Thu, 30 Sep 2021 23:47:19 -0700 (PDT)
+Date:   Thu, 30 Sep 2021 23:47:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000048342f05cd44efc0@google.com>
+Subject: [syzbot] KMSAN: uninit-value in kvm_cpuid
+From:   syzbot <syzbot+d6d011bc17bb751d4aa2@syzkaller.appspotmail.com>
+To:     bp@alien8.de, dave.hansen@linux.intel.com, glider@google.com,
+        hpa@zytor.com, jarkko@kernel.org, jmattson@google.com,
+        joro@8bytes.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
+        seanjc@google.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 05:40:18PM +0300, Jarkko Sakkinen wrote:
-> On Tue, 2021-09-28 at 13:53 -0700, Luck, Tony wrote:
-> > > Couldn't it be a blob with 8 bytes for each address?
-> > 
-> > It could be a blob. But that would require some perl/python
-> > instead of simple shell to do the above persistence trick.
-> 
-> The way I've understood it, a list of values breaks sysfs conventions.
-> There can be only single value per attribute. Even, if the blob is
-> interpreted as a list of integers, it is still a value, as far as sysfs
-> is concerned.
-> 
-> I'd also consider programs written with C, or perhaps Rust, when we
-> (ever) add any new sysfs for SGX. In my opinion, it makes sense to make
-> any uapi things we add accesible to as many tools as we can.
-> 
-> Such a trivially constructed blob is not enormously hard to parse in any
-> language, but at least I don't enjoy parsing list of strings in C code,
-> whereas loading a blob is effortless.
-> 
-> This kind of shows why the current sysfs conventions make sense in the
-> first place: they enforce to design attributes in the manner that they
-> are as reachable as possible. That's why I would follow the conventions
-> in a strict manner.
-> 
-> Finally, I would make a proper sysfs attribute out of this (and a separate
-> patch), which would be available per node.
+Hello,
 
-Those are all good points. I'm going to drop any interface from this
-series (because that's above and beyond the goal of "basic machine check
-support"). We can spend some time to come up with the right interface
-and add that in a future series.
+syzbot found the following issue on:
 
--Tony
+HEAD commit:    cd2c05533838 DO-NOT-SUBMIT: kmsan: suppress a report in ke..
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=11373b17300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=978f1b2d7a5aad3e
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6d011bc17bb751d4aa2
+compiler:       clang version 14.0.0 (git@github.com:llvm/llvm-project.git 0996585c8e3b3d409494eb5f1cad714b9e1f7fb5), GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b6c4cb300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fdb00f300000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d6d011bc17bb751d4aa2@syzkaller.appspotmail.com
+
+L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
+=====================================================
+BUG: KMSAN: uninit-value in cpuid_entry2_find arch/x86/kvm/cpuid.c:68 [inline]
+BUG: KMSAN: uninit-value in kvm_find_cpuid_entry arch/x86/kvm/cpuid.c:1103 [inline]
+BUG: KMSAN: uninit-value in kvm_cpuid+0x456/0x28f0 arch/x86/kvm/cpuid.c:1183
+ cpuid_entry2_find arch/x86/kvm/cpuid.c:68 [inline]
+ kvm_find_cpuid_entry arch/x86/kvm/cpuid.c:1103 [inline]
+ kvm_cpuid+0x456/0x28f0 arch/x86/kvm/cpuid.c:1183
+ kvm_vcpu_reset+0x13fb/0x1c20 arch/x86/kvm/x86.c:10885
+ kvm_apic_accept_events+0x58f/0x8c0 arch/x86/kvm/lapic.c:2923
+ vcpu_enter_guest+0xfd2/0x6d80 arch/x86/kvm/x86.c:9534
+ vcpu_run+0x7f5/0x18d0 arch/x86/kvm/x86.c:9788
+ kvm_arch_vcpu_ioctl_run+0x245b/0x2d10 arch/x86/kvm/x86.c:10020
+ kvm_vcpu_ioctl+0x1055/0x1e00 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3749
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:874 [inline]
+ __se_sys_ioctl+0x2df/0x4a0 fs/ioctl.c:860
+ __x64_sys_ioctl+0xd8/0x110 fs/ioctl.c:860
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x54/0xd0 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Local variable ----dummy@kvm_vcpu_reset created at:
+ kvm_vcpu_reset+0x1fb/0x1c20 arch/x86/kvm/x86.c:10812
+ kvm_apic_accept_events+0x58f/0x8c0 arch/x86/kvm/lapic.c:2923
+=====================================================
+Kernel panic - not syncing: panic_on_kmsan set ...
+CPU: 1 PID: 6364 Comm: syz-executor072 Tainted: G    B             5.15.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1ff/0x28e lib/dump_stack.c:106
+ dump_stack+0x25/0x28 lib/dump_stack.c:113
+ panic+0x44f/0xdeb kernel/panic.c:232
+ kmsan_report+0x2ee/0x300 mm/kmsan/report.c:186
+ __msan_warning+0xd7/0x150 mm/kmsan/instrumentation.c:208
+ cpuid_entry2_find arch/x86/kvm/cpuid.c:68 [inline]
+ kvm_find_cpuid_entry arch/x86/kvm/cpuid.c:1103 [inline]
+ kvm_cpuid+0x456/0x28f0 arch/x86/kvm/cpuid.c:1183
+ kvm_vcpu_reset+0x13fb/0x1c20 arch/x86/kvm/x86.c:10885
+ kvm_apic_accept_events+0x58f/0x8c0 arch/x86/kvm/lapic.c:2923
+ vcpu_enter_guest+0xfd2/0x6d80 arch/x86/kvm/x86.c:9534
+ vcpu_run+0x7f5/0x18d0 arch/x86/kvm/x86.c:9788
+ kvm_arch_vcpu_ioctl_run+0x245b/0x2d10 arch/x86/kvm/x86.c:10020
+ kvm_vcpu_ioctl+0x1055/0x1e00 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3749
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:874 [inline]
+ __se_sys_ioctl+0x2df/0x4a0 fs/ioctl.c:860
+ __x64_sys_ioctl+0xd8/0x110 fs/ioctl.c:860
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x54/0xd0 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f51eb544a19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe2fe74dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f51eb544a19
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffe2fe74f68
+R10: 0000000000009120 R11: 0000000000000246 R12: 00007f51eb507c80
+R13: 431bde82d7b634db R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
