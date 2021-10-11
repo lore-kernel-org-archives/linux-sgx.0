@@ -2,25 +2,25 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77ABC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0E4C4332F
 	for <linux-sgx@archiver.kernel.org>; Mon, 11 Oct 2021 18:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0BEC610C9
+	by mail.kernel.org (Postfix) with ESMTP id C45D761074
 	for <linux-sgx@archiver.kernel.org>; Mon, 11 Oct 2021 18:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233122AbhJKTBe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 11 Oct 2021 15:01:34 -0400
-Received: from mga02.intel.com ([134.134.136.20]:7163 "EHLO mga02.intel.com"
+        id S233913AbhJKTBf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 11 Oct 2021 15:01:35 -0400
+Received: from mga02.intel.com ([134.134.136.20]:7166 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229544AbhJKTBc (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 11 Oct 2021 15:01:32 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10134"; a="214094067"
+        id S231439AbhJKTBd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Oct 2021 15:01:33 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10134"; a="214094070"
 X-IronPort-AV: E=Sophos;i="5.85,365,1624345200"; 
-   d="scan'208";a="214094067"
+   d="scan'208";a="214094070"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 11:59:31 -0700
 X-IronPort-AV: E=Sophos;i="5.85,365,1624345200"; 
-   d="scan'208";a="562329859"
+   d="scan'208";a="562329867"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
   by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 11:59:31 -0700
 From:   Tony Luck <tony.luck@intel.com>
@@ -32,70 +32,86 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v9 0/7] Basic recovery for machine checks inside SGX
-Date:   Mon, 11 Oct 2021 11:59:17 -0700
-Message-Id: <20211011185924.374213-1-tony.luck@intel.com>
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH v9 2/7] x86/sgx: Add infrastructure to identify SGX EPC pages
+Date:   Mon, 11 Oct 2021 11:59:19 -0700
+Message-Id: <20211011185924.374213-3-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211001164724.220532-1-tony.luck@intel.com>
+In-Reply-To: <20211011185924.374213-1-tony.luck@intel.com>
 References: <20211001164724.220532-1-tony.luck@intel.com>
+ <20211011185924.374213-1-tony.luck@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Posting latest version to a slightly wider audience.
+X86 machine check architecture reports a physical address when there
+is a memory error. Handling that error requires a method to determine
+whether the physical address reported is in any of the areas reserved
+for EPC pages by BIOS.
 
-The big picture is that SGX uses some memory pages that are walled off
-from access by the OS. This means they:
-1) Don't have "struct page" describing them
-2) Don't appear in the kernel 1:1 map
+SGX EPC pages do not have Linux "struct page" associated with them.
 
-But they are still backed by normal DDR memory, so errors can occur.
+Keep track of the mapping from ranges of EPC pages to the sections
+that contain them using an xarray.
 
-Parts 1-4 of this series handle the internal SGX bits to keep track of
-these pages in an error context. They've had a fair amount of review
-on the linux-sgx list (but if any of the 37 subscribers to that list
-not named Jarkko or Reinette want to chime in with extra comments and
-{Acked,Reviewed,Tested}-by that would be great).
+Create a function arch_is_platform_page() that simply reports whether an
+address is an EPC page for use elsewhere in the kernel. The ACPI error
+injection code needs this function and is typically built as a module,
+so export it.
 
-Linux-mm reviewers can (if they like) skip to part 5 where two changes are
-made: 1) Hook into memory_failure() in the same spot as device mapping 2)
-Skip trying to change 1:1 map (since SGX pages aren't there).
+Note that arch_is_platform_page() will be slower than other similar
+"what type is this page" functions that can simply check bits in the
+"struct page".  If there is some future performance critical user of
+this function it may need to be implemented in a more efficient way.
 
-The hooks have generic looking names rather than specifically saying
-"sgx" at the suggestion of Dave Hansen. I'm not wedded to the names,
-so better suggestions welcome.  I could also change to using some
-"ARCH_HAS_PLATFORM_PAGES" config bits if that's the current fashion.
+Note also that the current implementation of xarray allocates a few
+hundred kilobytes for this usage on a system with 4GB of SGX EPC memory
+configured. This isn't ideal, but worth it for the code simplicity.
 
-Rafael (and other ACPI list readers) can skip to parts 6 & 7 where there
-are hooks into error injection and reporting to simply say "these odd
-looking physical addresses are actually ok to use). I added some extra
-notes to the einj.rst documentation on how to inject into SGX memory.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Tested-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Tony Luck (7):
-  x86/sgx: Add new sgx_epc_page flag bit to mark in-use pages
-  x86/sgx: Add infrastructure to identify SGX EPC pages
-  x86/sgx: Initial poison handling for dirty and free pages
-  x86/sgx: Add SGX infrastructure to recover from poison
-  x86/sgx: Hook arch_memory_failure() into mainline code
-  x86/sgx: Add hook to error injection address validation
-  x86/sgx: Add check for SGX pages to ghes_do_memory_failure()
-
- .../firmware-guide/acpi/apei/einj.rst         |  19 ++++
- arch/x86/include/asm/processor.h              |   8 ++
- arch/x86/include/asm/set_memory.h             |   4 +
- arch/x86/kernel/cpu/sgx/main.c                | 104 +++++++++++++++++-
- arch/x86/kernel/cpu/sgx/sgx.h                 |   6 +-
- drivers/acpi/apei/einj.c                      |   3 +-
- drivers/acpi/apei/ghes.c                      |   2 +-
- include/linux/mm.h                            |  14 +++
- mm/memory-failure.c                           |  19 +++-
- 9 files changed, 168 insertions(+), 11 deletions(-)
-
-
-base-commit: 64570fbc14f8d7cb3fe3995f20e26bc25ce4b2cc
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index d18988a46c13..09fa42690ff2 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -20,6 +20,7 @@ struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+ static int sgx_nr_epc_sections;
+ static struct task_struct *ksgxd_tsk;
+ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
++static DEFINE_XARRAY(sgx_epc_address_space);
+ 
+ /*
+  * These variables are part of the state of the reclaimer, and must be accessed
+@@ -650,6 +651,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	}
+ 
+ 	section->phys_addr = phys_addr;
++	xa_store_range(&sgx_epc_address_space, section->phys_addr,
++		       phys_addr + size - 1, section, GFP_KERNEL);
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		section->pages[i].section = index;
+@@ -661,6 +664,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 	return true;
+ }
+ 
++bool arch_is_platform_page(u64 paddr)
++{
++	return !!xa_load(&sgx_epc_address_space, paddr);
++}
++EXPORT_SYMBOL_GPL(arch_is_platform_page);
++
+ /**
+  * A section metric is concatenated in a way that @low bits 12-31 define the
+  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
 -- 
 2.31.1
 
