@@ -2,25 +2,25 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77918C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CF8C4167E
 	for <linux-sgx@archiver.kernel.org>; Mon, 11 Oct 2021 18:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ABA4610A4
+	by mail.kernel.org (Postfix) with ESMTP id C6BA261050
 	for <linux-sgx@archiver.kernel.org>; Mon, 11 Oct 2021 18:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233946AbhJKTBf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 11 Oct 2021 15:01:35 -0400
-Received: from mga02.intel.com ([134.134.136.20]:7163 "EHLO mga02.intel.com"
+        id S230394AbhJKTBg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 11 Oct 2021 15:01:36 -0400
+Received: from mga02.intel.com ([134.134.136.20]:7166 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230394AbhJKTBd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 11 Oct 2021 15:01:33 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10134"; a="214094069"
+        id S231517AbhJKTBe (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 11 Oct 2021 15:01:34 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10134"; a="214094071"
 X-IronPort-AV: E=Sophos;i="5.85,365,1624345200"; 
-   d="scan'208";a="214094069"
+   d="scan'208";a="214094071"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 11:59:31 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 11:59:32 -0700
 X-IronPort-AV: E=Sophos;i="5.85,365,1624345200"; 
-   d="scan'208";a="562329863"
+   d="scan'208";a="562329872"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
   by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 11:59:31 -0700
 From:   Tony Luck <tony.luck@intel.com>
@@ -34,9 +34,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-acpi@vger.kernel.org, linux-mm@kvack.org,
         Tony Luck <tony.luck@intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH v9 1/7] x86/sgx: Add new sgx_epc_page flag bit to mark in-use pages
-Date:   Mon, 11 Oct 2021 11:59:18 -0700
-Message-Id: <20211011185924.374213-2-tony.luck@intel.com>
+Subject: [PATCH v9 3/7] x86/sgx: Initial poison handling for dirty and free pages
+Date:   Mon, 11 Oct 2021 11:59:20 -0700
+Message-Id: <20211011185924.374213-4-tony.luck@intel.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211011185924.374213-1-tony.luck@intel.com>
 References: <20211001164724.220532-1-tony.luck@intel.com>
@@ -47,80 +47,89 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX EPC pages go through the following life cycle:
+A memory controller patrol scrubber can report poison in a page
+that isn't currently being used.
 
-        DIRTY ---> FREE ---> IN-USE --\
-                    ^                 |
-                    \-----------------/
+Add "poison" field in the sgx_epc_page that can be set for an
+sgx_epc_page. Check for it:
+1) When sanitizing dirty pages
+2) When freeing epc pages
 
-Recovery action for poison for a DIRTY or FREE page is simple. Just
-make sure never to allocate the page. IN-USE pages need some extra
-handling.
+Poison is a new field separated from flags to avoid having to make
+all updates to flags atomic, or integrate poison state changes into
+some other locking scheme to protect flags.
 
-Add a new flag bit SGX_EPC_PAGE_IN_USE that is set when a page
-is allocated and cleared when the page is freed.
-
-Notes:
-
-1) These transitions are made while holding the node->lock so that
-   future code that checks the flags while holding the node->lock
-   can be sure that if the SGX_EPC_PAGE_IN_USE bit is set, then the
-   page is on the free list.
-
-2) Initially while the pages are on the dirty list the
-   SGX_EPC_PAGE_IN_USE bit is set.
+In both cases place the poisoned page on a list of poisoned epc pages
+to make sure it will not be reallocated.
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Tested-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 4 +++-
- arch/x86/kernel/cpu/sgx/sgx.h  | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/main.c | 14 +++++++++++++-
+ arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 63d3de02bbcc..d18988a46c13 100644
+index 09fa42690ff2..653bace26100 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -472,6 +472,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
- 	page = list_first_entry(&node->free_page_list, struct sgx_epc_page, list);
- 	list_del_init(&page->list);
- 	sgx_nr_free_pages--;
-+	page->flags = SGX_EPC_PAGE_IN_USE;
+@@ -43,6 +43,7 @@ static nodemask_t sgx_numa_mask;
+ static struct sgx_numa_node *sgx_numa_nodes;
  
- 	spin_unlock(&node->lock);
+ static LIST_HEAD(sgx_dirty_page_list);
++static LIST_HEAD(sgx_poison_page_list);
  
-@@ -626,6 +627,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ /*
+  * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
+@@ -62,6 +63,12 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
  
- 	list_add_tail(&page->list, &node->free_page_list);
+ 		page = list_first_entry(dirty_page_list, struct sgx_epc_page, list);
+ 
++		if (page->poison) {
++			list_del(&page->list);
++			list_add(&page->list, &sgx_poison_page_list);
++			continue;
++		}
++
+ 		ret = __eremove(sgx_get_epc_virt_addr(page));
+ 		if (!ret) {
+ 			/*
+@@ -626,7 +633,11 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ 
+ 	spin_lock(&node->lock);
+ 
+-	list_add_tail(&page->list, &node->free_page_list);
++	page->owner = NULL;
++	if (page->poison)
++		list_add(&page->list, &sgx_poison_page_list);
++	else
++		list_add_tail(&page->list, &node->free_page_list);
  	sgx_nr_free_pages++;
-+	page->flags = 0;
+ 	page->flags = 0;
  
- 	spin_unlock(&node->lock);
- }
-@@ -651,7 +653,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 
- 	for (i = 0; i < nr_pages; i++) {
+@@ -658,6 +669,7 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
  		section->pages[i].section = index;
--		section->pages[i].flags = 0;
-+		section->pages[i].flags = SGX_EPC_PAGE_IN_USE;
+ 		section->pages[i].flags = SGX_EPC_PAGE_IN_USE;
  		section->pages[i].owner = NULL;
++		section->pages[i].poison = 0;
  		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
  	}
+ 
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 4628acec0009..f9202d3d6278 100644
+index f9202d3d6278..a990a4c9a00f 100644
 --- a/arch/x86/kernel/cpu/sgx/sgx.h
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -26,6 +26,9 @@
- /* Pages, which are being tracked by the page reclaimer. */
- #define SGX_EPC_PAGE_RECLAIMER_TRACKED	BIT(0)
+@@ -31,7 +31,8 @@
  
-+/* Allocated pages */
-+#define SGX_EPC_PAGE_IN_USE		BIT(1)
-+
  struct sgx_epc_page {
  	unsigned int section;
- 	unsigned int flags;
+-	unsigned int flags;
++	u16 flags;
++	u16 poison;
+ 	struct sgx_encl_page *owner;
+ 	struct list_head list;
+ };
 -- 
 2.31.1
 
