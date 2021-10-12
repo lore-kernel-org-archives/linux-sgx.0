@@ -2,92 +2,82 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535AEC433F5
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Oct 2021 16:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A2CC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Oct 2021 17:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC4960F21
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Oct 2021 16:51:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6AE961050
+	for <linux-sgx@archiver.kernel.org>; Tue, 12 Oct 2021 17:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231683AbhJLQxW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 12 Oct 2021 12:53:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46190 "EHLO mail.kernel.org"
+        id S231808AbhJLR73 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 12 Oct 2021 13:59:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:36073 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231655AbhJLQxW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 12 Oct 2021 12:53:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B835960D42;
-        Tue, 12 Oct 2021 16:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634057480;
-        bh=xZrkpJnf1xZwCaEbXMHPPsuTmya/AWfx/7gi6uu/h4I=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=F9blHUmXI6SilVlyRENOPVSyFQYn47i/pPYBAJKk+Hfjbs4Z3TlqCzjlHz2dGRKDH
-         qZe/WQArQfbSaxMnTaxzAE/wFeH14G2Rb31TH11h4l0rvW8s+lEqnG44uA8N+pKpwJ
-         E9UcpNgsO4rr7V/qPUiIq9xU4pazfzaBlz0WW4hkCAqsypoo8NbxPDag2H1y7uwgxR
-         SsO5Vz1bjZhUunDuf84Lv5EEra9TEs9N0TMCnP9fz39eX4PKj8VtO7t3FsFx8n7N23
-         dPVDo3UloKPRQtJyMGlJ3kCQwGYqwj64vFLmjZLY+LNKUbyMyS7w3JpM8ppoP5/niI
-         I16p0CLKdt8XA==
-Message-ID: <b16b8883d19600ca35f6a109cd2669c3c126437a.camel@kernel.org>
-Subject: Re: [PATCH v9 7/7] x86/sgx: Add check for SGX pages to
- ghes_do_memory_failure()
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tony Luck <tony.luck@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        naoya.horiguchi@nec.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        id S229810AbhJLR73 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 12 Oct 2021 13:59:29 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10135"; a="250631548"
+X-IronPort-AV: E=Sophos;i="5.85,368,1624345200"; 
+   d="scan'208";a="250631548"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2021 10:57:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,368,1624345200"; 
+   d="scan'208";a="460469760"
+Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
+  by orsmga002.jf.intel.com with ESMTP; 12 Oct 2021 10:57:25 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12; Tue, 12 Oct 2021 10:57:25 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12; Tue, 12 Oct 2021 10:57:24 -0700
+Received: from fmsmsx610.amr.corp.intel.com ([10.18.126.90]) by
+ fmsmsx610.amr.corp.intel.com ([10.18.126.90]) with mapi id 15.01.2242.012;
+ Tue, 12 Oct 2021 10:57:24 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
         Sean Christopherson <seanjc@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Date:   Tue, 12 Oct 2021 19:51:17 +0300
-In-Reply-To: <20211011185924.374213-8-tony.luck@intel.com>
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: RE: [PATCH v9 0/7] Basic recovery for machine checks inside SGX
+Thread-Topic: [PATCH v9 0/7] Basic recovery for machine checks inside SGX
+Thread-Index: AQHXvtIgJmQWZT3tEE2Mnbpy811gw6vQCbsA//+csTA=
+Date:   Tue, 12 Oct 2021 17:57:24 +0000
+Message-ID: <56e62500e9e24f19bd51aaf038bfad6b@intel.com>
 References: <20211001164724.220532-1-tony.luck@intel.com>
          <20211011185924.374213-1-tony.luck@intel.com>
-         <20211011185924.374213-8-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.40.0-1 
+ <73c711bc548b661977ff26e3d9cc87c9466a8f66.camel@kernel.org>
+In-Reply-To: <73c711bc548b661977ff26e3d9cc87c9466a8f66.camel@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.6.200.16
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2021-10-11 at 11:59 -0700, Tony Luck wrote:
-> SGX EPC pages do not have a "struct page" associated with them so the
-> pfn_valid() sanity check fails and results in a warning message to
-> the console.
->=20
-> Add an additional check to skip the warning if the address of the error
-> is in an SGX EPC page.
->=20
-> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
-> =C2=A0drivers/acpi/apei/ghes.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 0c8330ed1ffd..0c5c9acc6254 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -449,7 +449,7 @@ static bool ghes_do_memory_failure(u64 physical_addr,=
- int flags)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return false;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pfn =3D PHYS_PFN(physical=
-_addr);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!pfn_valid(pfn)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!pfn_valid(pfn) && !arch_i=
-s_platform_page(physical_addr)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0pr_warn_ratelimited(FW_WARN GHES_PFX
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0"Invalid address in generic error data: %#llx\n",
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0physical_addr);
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-/Jarkko
-
+PiBJIHRoaW5rIHlvdSBpbnN0cnVjdGVkIG1lIG9uIHRoaXMgYmVmb3JlIGJ1dCBJJ3ZlIGZvcmdv
+dCBpdDoNCj4gaG93IGRvIEkgc2ltdWxhdGUgdGhpcyBhbmQgdGVzdCBob3cgaXQgd29ya3M/DQoN
+CkphcmtrbywNCg0KWW91IGNhbiB0ZXN0IHRoZSBub24tZXhlY3V0aW9uIHBhdGhzIChlLmcuIHdo
+ZXJlIHRoZSBtZW1vcnkgZXJyb3IgaXMNCnJlcG9ydGVkIGJ5IGEgcGF0cm9sIHNjcnViYmVyIGlu
+IHRoZSBtZW1vcnkgY29udHJvbGxlcikgYnk6DQoNCiMgZWNobyAweHtzb21lX1NHWF9FUENfQURE
+UkVTU30gPiAvc3lzL2RldmljZXMvc3lzdGVtL21lbW9yeS9oYXJkX29mZmxpbmVfcGFnZQ0KDQpU
+aGUgZXhlY3V0aW9uIHBhdGhzIGFyZSBtb3JlIGRpZmZpY3VsdC4gWW91IG5lZWQgYSBzeXN0ZW0g
+dGhhdCBjYW4gaW5qZWN0DQplcnJvcnMgaW50byBFUEMgbWVtb3J5LiBUaGVyZSBhcmUgc29tZSBo
+aW50cyBpbiB0aGUgRG9jdW1lbmF0aW9uIGNoYW5nZXMNCmluIHBhcnQgMDAwNi4NCg0KUmVpbmV0
+dGUgcG9zdGVkIHNvbWUgY2hhbmdlcyB0byBzZ3ggdGVzdHMgdGhhdCBzaGUgdXNlZCB0byB2YWxp
+ZGF0ZS4NCg0KLVRvbnkNCg0K
