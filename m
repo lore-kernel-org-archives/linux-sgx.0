@@ -2,82 +2,111 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A2CC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Oct 2021 17:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6734AC433FE
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Oct 2021 22:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6AE961050
-	for <linux-sgx@archiver.kernel.org>; Tue, 12 Oct 2021 17:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39F6D610D1
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Oct 2021 22:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231808AbhJLR73 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 12 Oct 2021 13:59:29 -0400
-Received: from mga01.intel.com ([192.55.52.88]:36073 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229810AbhJLR73 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 12 Oct 2021 13:59:29 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10135"; a="250631548"
-X-IronPort-AV: E=Sophos;i="5.85,368,1624345200"; 
-   d="scan'208";a="250631548"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2021 10:57:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,368,1624345200"; 
-   d="scan'208";a="460469760"
-Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
-  by orsmga002.jf.intel.com with ESMTP; 12 Oct 2021 10:57:25 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12; Tue, 12 Oct 2021 10:57:25 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12; Tue, 12 Oct 2021 10:57:24 -0700
-Received: from fmsmsx610.amr.corp.intel.com ([10.18.126.90]) by
- fmsmsx610.amr.corp.intel.com ([10.18.126.90]) with mapi id 15.01.2242.012;
- Tue, 12 Oct 2021 10:57:24 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Sean Christopherson <seanjc@google.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: [PATCH v9 0/7] Basic recovery for machine checks inside SGX
-Thread-Topic: [PATCH v9 0/7] Basic recovery for machine checks inside SGX
-Thread-Index: AQHXvtIgJmQWZT3tEE2Mnbpy811gw6vQCbsA//+csTA=
-Date:   Tue, 12 Oct 2021 17:57:24 +0000
-Message-ID: <56e62500e9e24f19bd51aaf038bfad6b@intel.com>
+        id S243414AbhJOW73 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 15 Oct 2021 18:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59692 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243409AbhJOW73 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Oct 2021 18:59:29 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32C43C061570
+        for <linux-sgx@vger.kernel.org>; Fri, 15 Oct 2021 15:57:22 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id oa12-20020a17090b1bcc00b0019f715462a8so8352835pjb.3
+        for <linux-sgx@vger.kernel.org>; Fri, 15 Oct 2021 15:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3MWGSo8J4w0RXdtVwqVMm4uYTHYEHoeo+tcCsWTKSxY=;
+        b=VZHeZzCY3PL4avtmU8lGuY1CvtpVh+tipHevkUmcXAteh4Dobxc3LNJKbXfdW3Afeg
+         0ZGUGU++NEpP/uTKsyiQaARblf1QCbYOWBGVQCSR+AvKnRxlDtxiRMQHet5qfZ5qYPWg
+         qDV2tH/ubCcZwygo9bw+twYt/FIwJZ8hDUEMMhTlypPSwAAAmCj1UlqGNeiYwXNOUm4p
+         9n1azARmndnl/R2ZbOht6441KMS/w5CruDP6RlKoE4LUd5rMCik3biKxV6xjY95Oteys
+         Pkm4ZLzJD9gtSDKC3l8IArbE8CrsHWDKy6jJ3m9NijRIN69QLbSu58a5bwH0Gf+dqGWq
+         VFYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3MWGSo8J4w0RXdtVwqVMm4uYTHYEHoeo+tcCsWTKSxY=;
+        b=RkVcOao1wI8K2M9z3NakXUpfpDSAt45a45MQcuYaBtDUwKc6HLYCIuK/jYyVweePvN
+         mG5srrW2DbyI1PIQ35NZ+8Olgg+A8z5cJ3KcAZjCbqu7tilohgDQG29th9dUlF1bLbrc
+         H7nWoD9pIh1LLSQLb3FPTqRhHwDsat2bpRt5fIPoQO9/K/MQGPUUGARUHDfdR+0/WcoX
+         yxg0ATfWy2o5CCnwDzIgc382Llkz1ksSyS3q44QOL6fa4u0j0bnDEfiXY49epKggIbJZ
+         8r8vwNoOwIQL35zv/XNKoH1HBkZFphNO2iiKHXM0zDG2xYCNHmZjrE4L7W93x+vPx2Sw
+         vFAw==
+X-Gm-Message-State: AOAM531O+DkjlvN0/UcuXRiNN8MYlYPvswJ03KWoQgJ0q/zfVH3yT/EZ
+        CUsWVm2h1/fr3V9r+J2MUt+n/w==
+X-Google-Smtp-Source: ABdhPJzDiTg12tYXR/PBHuS6tQb0K8WgqbJknwYLtFfXcCkEwyvPA0Aa3zGr1lqiSa8BFBqwmi26dg==
+X-Received: by 2002:a17:902:ed0b:b0:13f:4318:491a with SMTP id b11-20020a170902ed0b00b0013f4318491amr13483327pld.4.1634338641488;
+        Fri, 15 Oct 2021 15:57:21 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id x15sm5665489pgo.48.2021.10.15.15.57.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 15:57:21 -0700 (PDT)
+Date:   Fri, 15 Oct 2021 22:57:17 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        naoya.horiguchi@nec.com, Andrew Morton <akpm@linux-foundation.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: Re: [PATCH v9 1/7] x86/sgx: Add new sgx_epc_page flag bit to mark
+ in-use pages
+Message-ID: <YWoHTR8D7M8sEUpZ@google.com>
 References: <20211001164724.220532-1-tony.luck@intel.com>
-         <20211011185924.374213-1-tony.luck@intel.com>
- <73c711bc548b661977ff26e3d9cc87c9466a8f66.camel@kernel.org>
-In-Reply-To: <73c711bc548b661977ff26e3d9cc87c9466a8f66.camel@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.6.200.16
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <20211011185924.374213-1-tony.luck@intel.com>
+ <20211011185924.374213-2-tony.luck@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211011185924.374213-2-tony.luck@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiBJIHRoaW5rIHlvdSBpbnN0cnVjdGVkIG1lIG9uIHRoaXMgYmVmb3JlIGJ1dCBJJ3ZlIGZvcmdv
-dCBpdDoNCj4gaG93IGRvIEkgc2ltdWxhdGUgdGhpcyBhbmQgdGVzdCBob3cgaXQgd29ya3M/DQoN
-CkphcmtrbywNCg0KWW91IGNhbiB0ZXN0IHRoZSBub24tZXhlY3V0aW9uIHBhdGhzIChlLmcuIHdo
-ZXJlIHRoZSBtZW1vcnkgZXJyb3IgaXMNCnJlcG9ydGVkIGJ5IGEgcGF0cm9sIHNjcnViYmVyIGlu
-IHRoZSBtZW1vcnkgY29udHJvbGxlcikgYnk6DQoNCiMgZWNobyAweHtzb21lX1NHWF9FUENfQURE
-UkVTU30gPiAvc3lzL2RldmljZXMvc3lzdGVtL21lbW9yeS9oYXJkX29mZmxpbmVfcGFnZQ0KDQpU
-aGUgZXhlY3V0aW9uIHBhdGhzIGFyZSBtb3JlIGRpZmZpY3VsdC4gWW91IG5lZWQgYSBzeXN0ZW0g
-dGhhdCBjYW4gaW5qZWN0DQplcnJvcnMgaW50byBFUEMgbWVtb3J5LiBUaGVyZSBhcmUgc29tZSBo
-aW50cyBpbiB0aGUgRG9jdW1lbmF0aW9uIGNoYW5nZXMNCmluIHBhcnQgMDAwNi4NCg0KUmVpbmV0
-dGUgcG9zdGVkIHNvbWUgY2hhbmdlcyB0byBzZ3ggdGVzdHMgdGhhdCBzaGUgdXNlZCB0byB2YWxp
-ZGF0ZS4NCg0KLVRvbnkNCg0K
+On Mon, Oct 11, 2021, Tony Luck wrote:
+> SGX EPC pages go through the following life cycle:
+> 
+>         DIRTY ---> FREE ---> IN-USE --\
+>                     ^                 |
+>                     \-----------------/
+> 
+> Recovery action for poison for a DIRTY or FREE page is simple. Just
+> make sure never to allocate the page. IN-USE pages need some extra
+> handling.
+> 
+> Add a new flag bit SGX_EPC_PAGE_IN_USE that is set when a page
+> is allocated and cleared when the page is freed.
+> 
+> Notes:
+> 
+> 1) These transitions are made while holding the node->lock so that
+>    future code that checks the flags while holding the node->lock
+>    can be sure that if the SGX_EPC_PAGE_IN_USE bit is set, then the
+>    page is on the free list.
+> 
+> 2) Initially while the pages are on the dirty list the
+>    SGX_EPC_PAGE_IN_USE bit is set.
+
+This needs to state _why_ pages are marked as IN_USE from the get-go.  Ignoring
+the "Notes", the whole changelog clearly states the the DIRTY state does _not_
+require special handling, but then "Add SGX infrastructure to recover from poison"
+goes and relies on it being set.
+
+Alternatively, why not invert it and have SGX_EPC_PAGE_FREE?  That would have
+clear semantics, the poison recovery code wouldn't have to assume that !flags
+means "free", and the whole changelog becomes:
+
+  Add a flag to explicitly track whether or not an EPC page is on a free list,
+  memory failure recovery code needs to be able to detect if a poisoned page is
+  free so that recovery can know if it's safe to "steal" the page.
