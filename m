@@ -2,78 +2,103 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D22DC433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Oct 2021 13:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4B4C18E1A
+	for <linux-sgx@archiver.kernel.org>; Mon, 18 Oct 2021 14:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60E1C61526
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Oct 2021 13:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A051603E9
+	for <linux-sgx@archiver.kernel.org>; Mon, 18 Oct 2021 14:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232311AbhJRNqe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 18 Oct 2021 09:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35670 "EHLO mail.kernel.org"
+        id S232597AbhJROFN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 18 Oct 2021 10:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232544AbhJRNo2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 18 Oct 2021 09:44:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BB3BC61506;
-        Mon, 18 Oct 2021 13:35:14 +0000 (UTC)
+        id S234998AbhJRODn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 18 Oct 2021 10:03:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B3C8F60FC3;
+        Mon, 18 Oct 2021 13:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634564115;
-        bh=tLlmrcpE9T19JG8z6ljxodSS/pQwrpYkvqtifvX+ESw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=XwUBZ4fcIJWQ+LqXzKYopTgVUjBKY6/fcl5B00avg6Y6dtGGNPfViRvIxZVWiLhhy
-         8eRkFFMviLGgvaCX1mGEwbMsimnxcgo6qhQ5dDhpuVjiVQEOU29brFitSQcQ74W0Xc
-         J18PpThfxQ9N1/hg6wAfQvCGZRR05a6nRBm+gfno6ujb8qlGdCNimY1L+nJ1GhZdbH
-         DW+AsR+eL9ldADG8XHHGJ9XrAz479y+nJCP3JZ4lfuU+JCse/+vkX89Fkds/IGzY9H
-         ft6Ya9Vk42HmY7nEceEoQk+NGWRCR8PBo2IzBHt+1inC3sj+2QIobcVRACb2f9C1wm
-         9G4vX0LA93IXQ==
-Message-ID: <eee87b139519684c1b2eb7d5f259580b29fc6841.camel@kernel.org>
-Subject: Re: [PATCH v7 2/2] x86/sgx: Add an attribute for the amount of SGX
- memory in a NUMA node
+        s=k20201202; t=1634565468;
+        bh=EfoxAVenA0WoMoS/uETiAWnWnsU939TQT9a4GDNMURM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UFXFK+4wesp0e6xVIKglwqHDqn/VlhKwxWsGuRPSi0YiJ3TPPJueUb9QJJpV7saXl
+         SKeEsYxRjSaTFxSRaHZXEuFnCMsnBvhhz7cOw68q5y2Gb2RaS/hLu6n10KGgF28pwp
+         WsXDgNi+WQgdywc88jPWvItWnZetz5dq0+SHlNOpLMnCL/SYSVuGRMHMfrA7NNkrIq
+         TksmmiIWw1xOQV4StzpsmLn/YTu2+2u8kc3tj6BJx90yTiSxnaeLbKnT1/6+27Bd33
+         OK6iIHiNGFPS68NvGRqJNJ7meLDIXvh8jrfPCA2nh/DbfYncDQAhNeToQN1IcEw+JQ
+         vwu2LlEfd0sRQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
 Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Date:   Mon, 18 Oct 2021 16:35:12 +0300
-In-Reply-To: <20211008203308.20963-2-jarkko@kernel.org>
-References: <20211008203308.20963-1-jarkko@kernel.org>
-         <20211008203308.20963-2-jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.40.0-1 
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v8 1/2] x86/sgx: Rename fallback labels in sgx_init()
+Date:   Mon, 18 Oct 2021 16:57:43 +0300
+Message-Id: <20211018135744.45527-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-T24gRnJpLCAyMDIxLTEwLTA4IGF0IDIzOjMzICswMzAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
-Cj4gK3N0YXRpYyB2b2lkIHNneF9udW1hX2V4aXQodm9pZCkKPiArewo+ICvCoMKgwqDCoMKgwqDC
-oHN0cnVjdCBkZXZpY2UgKmRldjsKPiArwqDCoMKgwqDCoMKgwqBpbnQgbmlkOwo+ICsKPiArwqDC
-oMKgwqDCoMKgwqBmb3IgKG5pZCA9IDA7IG5pZCA8IG51bV9wb3NzaWJsZV9ub2RlcygpOyBuaWQr
-Kykgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZXYgPSAmbm9kZV9kZXZpY2Vz
-W25pZF0tPmRldjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKGRldikKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHN5c2ZzX3JlbW92
-ZV9ncm91cCgmZGV2LT5rb2JqLCAmc2d4X25vZGVfYXR0cl9ncm91cCk7Cj4gK8KgwqDCoMKgwqDC
-oMKgfQo+ICt9Cj4gKwo+ICtzdGF0aWMgYm9vbCBzZ3hfbnVtYV9pbml0KHZvaWQpCj4gK3sKPiAr
-wqDCoMKgwqDCoMKgwqBzdHJ1Y3Qgc2d4X251bWFfbm9kZSAqbm9kZTsKPiArwqDCoMKgwqDCoMKg
-wqBpbnQgbmlkOwo+ICvCoMKgwqDCoMKgwqDCoGludCByZXQ7Cj4gKwo+ICvCoMKgwqDCoMKgwqDC
-oGZvciAobmlkID0gMDsgbmlkIDwgbnVtX3Bvc3NpYmxlX25vZGVzKCk7IG5pZCsrKSB7Cj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmICghc2d4X251bWFfbm9kZXNbbmlkXS5zaXpl
-KQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgY29udGlu
-dWU7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBub2RlID0gJnNneF9udW1h
-X25vZGVzW25pZF07Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG5vZGUtPmRldiA9
-ICZub2RlX2RldmljZXNbbmlkXS0+ZGV2Owo+ICsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgcmV0ID0gc3lzZnNfY3JlYXRlX2dyb3VwKCZub2RlLT5kZXYtPmtvYmosICZzZ3hfbm9k
-ZV9hdHRyX2dyb3VwKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHJldCkg
-ewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2d4X251
-bWFfZXhpdCgpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgcmV0dXJuIGZhbHNlOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gK8Kg
-wqDCoMKgwqDCoMKgfQoKSGVyZSdzIGEgbWlzdGFrZTogbm9kZS0+ZGV2IHNob3VsZCBiZSBvbmx5
-IHNldCBhZnRlciBzeXNmZV9jcmVhdGVfZ3JvdXAoKS4KT3RoZXJ3aXNlLCBzeXNmc19yZW1vdmVf
-Z3JvdXAoKSB3aWxsIGlzc3VlIGEgd2FybmluZyBpbiBzZ3hfbnVtYV9leGl0KCksIHdoZW4Kc2d4
-X2NyZWF0ZV9ncm91cCgpIGlzIHVuc3VjY2Vzc2Z1bCwgYmVjYXVzZSB0aGUgZ3JvdXAgZG9lcyBu
-b3QgZXhpc3QuCgpJJ2xsIGZpeCB0aGlzLCBhbmQgc2VuZCBhIG5ldyB2ZXJzaW9uLgoKL0phcmtr
-bwoK
+It's hard to add new content to this function because it is time
+consuming to match fallback and its cause. Rename labels in a way
+that the name of error label refers to the site where failure
+happened. This way it is easier to keep on track what is going
+on.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v5:
+* A new patch.
+---
+ arch/x86/kernel/cpu/sgx/main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 63d3de02bbcc..a6e313f1a82d 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -803,12 +803,12 @@ static int __init sgx_init(void)
+ 
+ 	if (!sgx_page_reclaimer_init()) {
+ 		ret = -ENOMEM;
+-		goto err_page_cache;
++		goto err_reclaimer;
+ 	}
+ 
+ 	ret = misc_register(&sgx_dev_provision);
+ 	if (ret)
+-		goto err_kthread;
++		goto err_provision;
+ 
+ 	/*
+ 	 * Always try to initialize the native *and* KVM drivers.
+@@ -821,17 +821,17 @@ static int __init sgx_init(void)
+ 	ret = sgx_drv_init();
+ 
+ 	if (sgx_vepc_init() && ret)
+-		goto err_provision;
++		goto err_driver;
+ 
+ 	return 0;
+ 
+-err_provision:
++err_driver:
+ 	misc_deregister(&sgx_dev_provision);
+ 
+-err_kthread:
++err_provision:
+ 	kthread_stop(ksgxd_tsk);
+ 
+-err_page_cache:
++err_reclaimer:
+ 	for (i = 0; i < sgx_nr_epc_sections; i++) {
+ 		vfree(sgx_epc_sections[i].pages);
+ 		memunmap(sgx_epc_sections[i].virt_addr);
+-- 
+2.30.2
 
