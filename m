@@ -2,110 +2,114 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8343C4707A
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Oct 2021 20:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F4CC433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Oct 2021 09:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C367561356
-	for <linux-sgx@archiver.kernel.org>; Mon, 18 Oct 2021 20:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5312B61004
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Oct 2021 09:07:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233737AbhJRU2G (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 18 Oct 2021 16:28:06 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28508 "EHLO mga02.intel.com"
+        id S229702AbhJTJJQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Oct 2021 05:09:16 -0400
+Received: from out2.migadu.com ([188.165.223.204]:45555 "EHLO out2.migadu.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230298AbhJRU2D (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 18 Oct 2021 16:28:03 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10141"; a="215522869"
-X-IronPort-AV: E=Sophos;i="5.85,382,1624345200"; 
-   d="scan'208";a="215522869"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2021 13:25:51 -0700
-X-IronPort-AV: E=Sophos;i="5.85,382,1624345200"; 
-   d="scan'208";a="493758200"
-Received: from agluck-desk2.sc.intel.com ([10.3.52.146])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2021 13:25:51 -0700
-From:   Tony Luck <tony.luck@intel.com>
-To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        naoya.horiguchi@nec.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        id S229570AbhJTJJQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 20 Oct 2021 05:09:16 -0400
+Date:   Wed, 20 Oct 2021 18:06:48 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1634720819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tGGXBZ9nlftRplzRbnEZFgw5OfzmeC3UbiQRyY/SD4g=;
+        b=iyyaGvxKReDsgdxRk0A/KeITXndpJQs1eMSQ8Kz/gyvZjZqUlZkqtcl78GxDndmrjgz3Cm
+        fkL4mzmIsSBMdamZj0cvOcH84FAcajsUrjWPjWbOqyUOUEz+0QVqD3nORC8Cb8rZN/4+69
+        SblbdQh4QvbeVd1hCaLkHTylL16wMYA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        naoya.horiguchi@nec.com, Andrew Morton <akpm@linux-foundation.org>,
         Sean Christopherson <seanjc@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
         linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-        Tony Luck <tony.luck@intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH v10 6/7] x86/sgx: Add hook to error injection address validation
-Date:   Mon, 18 Oct 2021 13:25:41 -0700
-Message-Id: <20211018202542.584115-7-tony.luck@intel.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211018202542.584115-1-tony.luck@intel.com>
+Subject: Re: [PATCH v10 5/7] x86/sgx: Hook arch_memory_failure() into
+ mainline code
+Message-ID: <20211020090648.GA2339043@u2004>
 References: <20211011185924.374213-1-tony.luck@intel.com>
  <20211018202542.584115-1-tony.luck@intel.com>
+ <20211018202542.584115-6-tony.luck@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211018202542.584115-6-tony.luck@intel.com>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: naoya.horiguchi@linux.dev
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX reserved memory does not appear in the standard address maps.
+On Mon, Oct 18, 2021 at 01:25:40PM -0700, Tony Luck wrote:
+> Add a call inside memory_failure() to call the arch specific code
+> to check if the address is an SGX EPC page and handle it.
+> 
+> Note the SGX EPC pages do not have a "struct page" entry, so the hook
+> goes in at the same point as the device mapping hook.
+> 
+> Pull the call to acquire the mutex earlier so the SGX errors are also
+> protected.
+> 
+> Make set_mce_nospec() skip SGX pages when trying to adjust
+> the 1:1 map.
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+...
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 73a52aba448f..62b199ed5ec6 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3284,5 +3284,19 @@ static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
+>  	return 0;
+>  }
+>  
+> +#ifndef arch_memory_failure
+> +static inline int arch_memory_failure(unsigned long pfn, int flags)
+> +{
+> +	return -ENXIO;
+> +}
+> +#endif
+> +
+> +#ifndef arch_is_platform_page
+> +static inline bool arch_is_platform_page(u64 paddr)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
 
-Add hook to call into the SGX code to check if an address is located
-in SGX memory.
+How about putting these definitions near the other related functions
+in the same file (like below)?
 
-There are other challenges in injecting errors into SGX. Update the
-documentation with a sequence of operations to inject.
+  ...
+  extern void shake_page(struct page *p);
+  extern atomic_long_t num_poisoned_pages __read_mostly;
+  extern int soft_offline_page(unsigned long pfn, int flags);
+  
+  // here?
+  
+  /*
+   * Error handlers for various types of pages.
+   */
+  enum mf_result {
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Tested-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- .../firmware-guide/acpi/apei/einj.rst         | 19 +++++++++++++++++++
- drivers/acpi/apei/einj.c                      |  3 ++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+Otherwise, the patch looks good to me.
 
-diff --git a/Documentation/firmware-guide/acpi/apei/einj.rst b/Documentation/firmware-guide/acpi/apei/einj.rst
-index c042176e1707..55e2331a6438 100644
---- a/Documentation/firmware-guide/acpi/apei/einj.rst
-+++ b/Documentation/firmware-guide/acpi/apei/einj.rst
-@@ -181,5 +181,24 @@ You should see something like this in dmesg::
-   [22715.834759] EDAC sbridge MC3: PROCESSOR 0:306e7 TIME 1422553404 SOCKET 0 APIC 0
-   [22716.616173] EDAC MC3: 1 CE memory read error on CPU_SrcID#0_Channel#0_DIMM#0 (channel:0 slot:0 page:0x12345 offset:0x0 grain:32 syndrome:0x0 -  area:DRAM err_code:0001:0090 socket:0 channel_mask:1 rank:0)
- 
-+Special notes for injection into SGX enclaves:
-+
-+There may be a separate BIOS setup option to enable SGX injection.
-+
-+The injection process consists of setting some special memory controller
-+trigger that will inject the error on the next write to the target
-+address. But the h/w prevents any software outside of an SGX enclave
-+from accessing enclave pages (even BIOS SMM mode).
-+
-+The following sequence can be used:
-+  1) Determine physical address of enclave page
-+  2) Use "notrigger=1" mode to inject (this will setup
-+     the injection address, but will not actually inject)
-+  3) Enter the enclave
-+  4) Store data to the virtual address matching physical address from step 1
-+  5) Execute CLFLUSH for that virtual address
-+  6) Spin delay for 250ms
-+  7) Read from the virtual address. This will trigger the error
-+
- For more information about EINJ, please refer to ACPI specification
- version 4.0, section 17.5 and ACPI 5.0, section 18.6.
-diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
-index 2882450c443e..67c335baad52 100644
---- a/drivers/acpi/apei/einj.c
-+++ b/drivers/acpi/apei/einj.c
-@@ -544,7 +544,8 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
- 	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
- 				!= REGION_INTERSECTS) &&
- 	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
--				!= REGION_INTERSECTS)))
-+				!= REGION_INTERSECTS) &&
-+	     !arch_is_platform_page(base_addr)))
- 		return -EINVAL;
- 
- inject:
--- 
-2.31.1
+Reviewed-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
 
+Thanks,
+Naoya Horiguchi
