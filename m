@@ -2,35 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB68EC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FBCC4332F
 	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DAE860F92
+	by mail.kernel.org (Postfix) with ESMTP id 3C02A60F70
 	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231370AbhJ1UkF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 28 Oct 2021 16:40:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2692 "EHLO mga02.intel.com"
+        id S231351AbhJ1UkE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 28 Oct 2021 16:40:04 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25710 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231321AbhJ1UkC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 28 Oct 2021 16:40:02 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10151"; a="217692549"
+        id S231313AbhJ1UkB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 28 Oct 2021 16:40:01 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10151"; a="230775405"
 X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
-   d="scan'208";a="217692549"
+   d="scan'208";a="230775405"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:31 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:31 -0700
 X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
-   d="scan'208";a="498562999"
+   d="scan'208";a="498563004"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:29 -0700
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:30 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     jarkko@kernel.org, linux-sgx@vger.kernel.org, shuah@kernel.org,
         dave.hansen@linux.intel.com
 Cc:     seanjc@google.com, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 09/15] selftests/sgx: Move setup_test_encl() to each TEST_F()
-Date:   Thu, 28 Oct 2021 13:37:34 -0700
-Message-Id: <81aac96029004a5aa0ee59681d659ac0a3b40e4f.1635447301.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 14/15] selftests/sgx: Enable multiple thread support
+Date:   Thu, 28 Oct 2021 13:37:39 -0700
+Message-Id: <0312e1e1b5896a5d73d09acef56906e4c5148aa1.1635447301.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1635447301.git.reinette.chatre@intel.com>
 References: <cover.1635447301.git.reinette.chatre@intel.com>
@@ -40,72 +40,124 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Jarkko Sakkinen <jarkko@kernel.org>
+Each thread executing in an enclave is associated with a Thread Control
+Structure (TCS). The test enclave contains two hardcoded TCS. Each TCS
+contains meta-data used by the hardware to save and restore thread specific
+information when entering/exiting the enclave.
 
-Create the test enclave inside each TEST_F(), instead of FIXTURE_SETUP(),
-so that the heap size can be defined per test.
+The two TCS structures within the test enclave share their SSA (State Save
+Area) resulting in the threads clobbering each other's data. Fix this by
+providing each TCS their own SSA area.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Additionally, there is an 8K stack space and its address is
+computed from the enclave entry point which is correctly done for
+TCS #1 that starts on the first address inside the enclave but
+results in out of bounds memory when entering as TCS #2. Split 8K
+stack space into two separate pages with offset symbol between to ensure
+the current enclave entry calculation can continue to be used for both threads.
+
+While using the enclave with multiple threads requires these fixes the
+impact is not apparent because every test up to this point enters the
+enclave from the first TCS.
+
+More detail about the stack fix:
+-------------------------------
+Before this change the test enclave (test_encl) looks as follows:
+
+.tcs (2 pages):
+(page 1) TCS #1
+(page 2) TCS #2
+
+.text (1 page)
+One page of code
+
+.data (5 pages)
+(page 1) encl_buffer
+(page 2) encl_buffer
+(page 3) SSA
+(page 4 and 5) STACK
+encl_stack:
+
+As shown above there is a symbol, encl_stack, that points to the end of the
+.data segment (pointing to the end of page 5 in .data) which is also the end
+of the enclave.
+
+The enclave entry code computes the stack address by adding encl_stack to the
+pointer to the TCS that entered the enclave. When entering at TCS #1 the
+stack is computed correctly but when entering at TCS #2 the stack pointer
+would point to one page beyond the end of the enclave and a #PF would
+result when TCS #2 attempts to enter the enclave.
+
+The fix involves moving the encl_stack symbol between the two stack pages.
+Doing so enables the stack address computation in the entry code to compute
+the correct stack address for each TCS.
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V1:
-- Add signature from Dave.
+- Add Jarkko and Dave's signatures.
 
- tools/testing/selftests/sgx/main.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ .../selftests/sgx/test_encl_bootstrap.S       | 21 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 5b3e49a36344..f41fba919d06 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -191,10 +191,6 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
+index 5d5680d4ea39..82fb0dfcbd23 100644
+--- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
++++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
+@@ -12,7 +12,7 @@
  
- FIXTURE_SETUP(enclave)
- {
--	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
--
--	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
- }
+ 	.fill	1, 8, 0			# STATE (set by CPU)
+ 	.fill	1, 8, 0			# FLAGS
+-	.quad	encl_ssa		# OSSA
++	.quad	encl_ssa_tcs1		# OSSA
+ 	.fill	1, 4, 0			# CSSA (set by CPU)
+ 	.fill	1, 4, 1			# NSSA
+ 	.quad	encl_entry		# OENTRY
+@@ -23,10 +23,10 @@
+ 	.fill	1, 4, 0xFFFFFFFF	# GSLIMIT
+ 	.fill	4024, 1, 0		# Reserved
  
- FIXTURE_TEARDOWN(enclave)
-@@ -226,6 +222,11 @@ TEST_F(enclave, unclobbered_vdso)
- {
- 	struct encl_op op;
+-	# Identical to the previous TCS.
++	# TCS2
+ 	.fill	1, 8, 0			# STATE (set by CPU)
+ 	.fill	1, 8, 0			# FLAGS
+-	.quad	encl_ssa		# OSSA
++	.quad	encl_ssa_tcs2		# OSSA
+ 	.fill	1, 4, 0			# CSSA (set by CPU)
+ 	.fill	1, 4, 1			# NSSA
+ 	.quad	encl_entry		# OENTRY
+@@ -40,8 +40,9 @@
+ 	.text
  
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
- 	op.type = ENCL_OP_PUT;
- 	op.buffer = MAGIC;
+ encl_entry:
+-	# RBX contains the base address for TCS, which is also the first address
+-	# inside the enclave. By adding the value of le_stack_end to it, we get
++	# RBX contains the base address for TCS, which is the first address
++	# inside the enclave for TCS #1 and one page into the enclave for
++	# TCS #2. By adding the value of encl_stack to it, we get
+ 	# the absolute address for the stack.
+ 	lea	(encl_stack)(%rbx), %rax
+ 	xchg	%rsp, %rax
+@@ -81,9 +82,15 @@ encl_entry:
  
-@@ -248,6 +249,11 @@ TEST_F(enclave, clobbered_vdso)
- {
- 	struct encl_op op;
+ 	.section ".data", "aw"
  
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
- 	op.type = ENCL_OP_PUT;
- 	op.buffer = MAGIC;
+-encl_ssa:
++encl_ssa_tcs1:
++	.space 4096
++encl_ssa_tcs2:
+ 	.space 4096
  
-@@ -278,6 +284,11 @@ TEST_F(enclave, clobbered_vdso_and_user_function)
- {
- 	struct encl_op op;
- 
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
- 	self->run.user_handler = (__u64)test_handler;
- 	self->run.user_data = 0xdeadbeef;
- 
+ 	.balign 4096
+-	.space 8192
++	# Stack of TCS #1
++	.space 4096
+ encl_stack:
++	.balign 4096
++	# Stack of TCS #2
++	.space 4096
 -- 
 2.25.1
 
