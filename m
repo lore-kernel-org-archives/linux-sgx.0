@@ -2,25 +2,25 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A84C4167D
-	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 150B0C19777
+	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33B0F60E8B
-	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 014DC6108F
+	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231338AbhJ1UkC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 28 Oct 2021 16:40:02 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2684 "EHLO mga02.intel.com"
+        id S231359AbhJ1UkD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 28 Oct 2021 16:40:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25715 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231240AbhJ1Uj7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 28 Oct 2021 16:39:59 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10151"; a="217692547"
+        id S231304AbhJ1UkA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 28 Oct 2021 16:40:00 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10151"; a="230775404"
 X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
-   d="scan'208";a="217692547"
+   d="scan'208";a="230775404"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:30 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:30 -0700
 X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
-   d="scan'208";a="498562997"
+   d="scan'208";a="498562993"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:29 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -28,9 +28,9 @@ To:     jarkko@kernel.org, linux-sgx@vger.kernel.org, shuah@kernel.org,
         dave.hansen@linux.intel.com
 Cc:     seanjc@google.com, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 07/15] selftests/sgx: Dump segments and /proc/self/maps only on failure
-Date:   Thu, 28 Oct 2021 13:37:32 -0700
-Message-Id: <c8f5ca6be6b040c3924d0d7d79f3eca931671a7f.1635447301.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 04/15] selftests/sgx: Assign source for each segment
+Date:   Thu, 28 Oct 2021 13:37:29 -0700
+Message-Id: <ca1e02fc9e77fdaf5b6a2b33b462541d099101f3.1635447301.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1635447301.git.reinette.chatre@intel.com>
 References: <cover.1635447301.git.reinette.chatre@intel.com>
@@ -42,13 +42,10 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Jarkko Sakkinen <jarkko@kernel.org>
 
-Logging is always a compromise between clarity and detail. The main use
-case for dumping VMA's is when FIXTURE_SETUP() fails, and is less important
-for enclaves that do initialize correctly. Therefore, print the segments
-and /proc/self/maps only in the error case.
-
-Finally, if a single test ever creates multiple enclaves, the amount of
-log lines would become enormous.
+Define source per segment so that enclave pages can be added from different
+sources, e.g. anonymous VMA for zero pages. In other words, add 'src' field
+to struct encl_segment, and assign it to 'encl->src' for pages inherited
+from the enclave binary.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
@@ -57,57 +54,82 @@ Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Changes since V1:
 - Add signature from Dave.
 
- tools/testing/selftests/sgx/main.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ tools/testing/selftests/sgx/load.c      | 5 +++--
+ tools/testing/selftests/sgx/main.h      | 1 +
+ tools/testing/selftests/sgx/sigstruct.c | 8 ++++----
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 6858a35fed20..deab02f2f3ce 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -127,12 +127,6 @@ FIXTURE_SETUP(enclave)
- 		ksft_exit_skip("cannot load enclaves\n");
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index 3ebe5d1fe337..5605474aab73 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -107,7 +107,7 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
+ 	memset(&secinfo, 0, sizeof(secinfo));
+ 	secinfo.flags = seg->flags;
+ 
+-	ioc.src = (uint64_t)encl->src + seg->offset;
++	ioc.src = (uint64_t)seg->src;
+ 	ioc.offset = seg->offset;
+ 	ioc.length = seg->size;
+ 	ioc.secinfo = (unsigned long)&secinfo;
+@@ -216,6 +216,7 @@ bool encl_load(const char *path, struct encl *encl)
+ 
+ 		if (j == 0) {
+ 			src_offset = phdr->p_offset & PAGE_MASK;
++			encl->src = encl->bin + src_offset;
+ 
+ 			seg->prot = PROT_READ | PROT_WRITE;
+ 			seg->flags = SGX_PAGE_TYPE_TCS << 8;
+@@ -228,13 +229,13 @@ bool encl_load(const char *path, struct encl *encl)
+ 
+ 		seg->offset = (phdr->p_offset & PAGE_MASK) - src_offset;
+ 		seg->size = (phdr->p_filesz + PAGE_SIZE - 1) & PAGE_MASK;
++		seg->src = encl->src + seg->offset;
+ 
+ 		j++;
  	}
  
--	for (i = 0; i < self->encl.nr_segments; i++) {
--		seg = &self->encl.segment_tbl[i];
--
--		TH_LOG("0x%016lx 0x%016lx 0x%02x", seg->offset, seg->size, seg->prot);
--	}
--
- 	if (!encl_measure(&self->encl))
- 		goto err;
+ 	assert(j == encl->nr_segments);
  
-@@ -169,6 +163,17 @@ FIXTURE_SETUP(enclave)
- 	memset(&self->run, 0, sizeof(self->run));
- 	self->run.tcs = self->encl.encl_base;
+-	encl->src = encl->bin + src_offset;
+ 	encl->src_size = encl->segment_tbl[j - 1].offset +
+ 			 encl->segment_tbl[j - 1].size;
  
-+	return;
-+
-+err:
-+	encl_delete(&self->encl);
-+
-+	for (i = 0; i < self->encl.nr_segments; i++) {
-+		seg = &self->encl.segment_tbl[i];
-+
-+		TH_LOG("0x%016lx 0x%016lx 0x%02x", seg->offset, seg->size, seg->prot);
-+	}
-+
- 	maps_file = fopen("/proc/self/maps", "r");
- 	if (maps_file != NULL)  {
- 		while (fgets(maps_line, sizeof(maps_line), maps_file) != NULL) {
-@@ -181,11 +186,7 @@ FIXTURE_SETUP(enclave)
- 		fclose(maps_file);
+diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
+index 68672fd86cf9..452d11dc4889 100644
+--- a/tools/testing/selftests/sgx/main.h
++++ b/tools/testing/selftests/sgx/main.h
+@@ -7,6 +7,7 @@
+ #define MAIN_H
+ 
+ struct encl_segment {
++	void *src;
+ 	off_t offset;
+ 	size_t size;
+ 	unsigned int prot;
+diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
+index 92bbc5a15c39..202a96fd81bf 100644
+--- a/tools/testing/selftests/sgx/sigstruct.c
++++ b/tools/testing/selftests/sgx/sigstruct.c
+@@ -289,14 +289,14 @@ static bool mrenclave_eextend(EVP_MD_CTX *ctx, uint64_t offset,
+ static bool mrenclave_segment(EVP_MD_CTX *ctx, struct encl *encl,
+ 			      struct encl_segment *seg)
+ {
+-	uint64_t end = seg->offset + seg->size;
++	uint64_t end = seg->size;
+ 	uint64_t offset;
+ 
+-	for (offset = seg->offset; offset < end; offset += PAGE_SIZE) {
+-		if (!mrenclave_eadd(ctx, offset, seg->flags))
++	for (offset = 0; offset < end; offset += PAGE_SIZE) {
++		if (!mrenclave_eadd(ctx, seg->offset + offset, seg->flags))
+ 			return false;
+ 
+-		if (!mrenclave_eextend(ctx, offset, encl->src + offset))
++		if (!mrenclave_eextend(ctx, seg->offset + offset, seg->src + offset))
+ 			return false;
  	}
  
--err:
--	if (!sgx_enter_enclave_sym)
--		encl_delete(&self->encl);
--
--	ASSERT_NE(sgx_enter_enclave_sym, NULL);
-+	ASSERT_TRUE(false);
- }
- 
- FIXTURE_TEARDOWN(enclave)
 -- 
 2.25.1
 
