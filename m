@@ -2,65 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A511C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 00:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06104C433FE
+	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 302DD610CF
-	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 00:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEA2261056
+	for <linux-sgx@archiver.kernel.org>; Thu, 28 Oct 2021 20:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbhJ1AhU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 27 Oct 2021 20:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbhJ1AhU (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 27 Oct 2021 20:37:20 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD75C061570;
-        Wed, 27 Oct 2021 17:34:54 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id n36-20020a17090a5aa700b0019fa884ab85so6525298pji.5;
-        Wed, 27 Oct 2021 17:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0sIa1ZOan1HJMn9VErgSz3i/hhv+xzoYibTldJx4MsU=;
-        b=BX7k1nFwfzMbPy83sKVubBn8YhJeHNPBCZoS4NZWKY9zOKWqFG0wkRXOCNZUok0q51
-         5sy+LjcOnmuOMgF+Acj6k+oBFPnrfeceVRd6p+n5bRZk4LpPKpl+Nsrt2eHsAeqUMlFo
-         gKe72ikNOHeJ3zn3Hbfvjcev2R8njh1ju8f/y363/0AMjsENafLQDz6ARj8tgAOUPhbe
-         h8GT2zzPwP+qr03IJ4DmsXZX/EOSL/7UnCBfqlwMNB6gApf746+p0eQGrDFSt9RJhcRj
-         R4i6uuE98FjlDGsfrb6RuGBV6v5j6MP4UdfZHS9CU5nnVQOtRNx53ZQkhqNW1UpLWtFZ
-         SZUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0sIa1ZOan1HJMn9VErgSz3i/hhv+xzoYibTldJx4MsU=;
-        b=zy/8o/JWgw/gpXVFDTC6HgLmWA8UQVsMLnvLaLM02wAnDz3pl/nxjuw+stF+wVtpK9
-         R/cZWvbCZtS55U93CFpZlWTnq/Y6Xo8Cts6rGHfHuR50OAKmyFGL7rusMnzwLRvoBzZF
-         H9MWXo7/0Y9+qpJvbm2D/++G9rJEtVDKKp0rAeSf4/82ryM9pPPqouoRoogGHuLlCFjd
-         gmuaff6ECjgQ3qC4T4TOvXuXL4HdB048/vWguovbsrmnCmziYaK+gWoUb4jLXY3OgN/j
-         McHc9eFKiV6kGzHIit5URXIW+asGTFB1mNayePLfuKOafCE33y0lJmpC9dzb9/cwW+Tv
-         mhSA==
-X-Gm-Message-State: AOAM530fKQVpncO8s44XVPVAfpCxB/xHEOn0dR5nzlukgblwXGbzyd+6
-        7RIsVJpIJO3Er7ycUv2Xdqo=
-X-Google-Smtp-Source: ABdhPJyv4GCuYVbFnYeygYoIrjE67yxUSv1ATU6JLJU7IF8jy8zB0fGMETpY1xSKUHOFhJ5g0TbSFQ==
-X-Received: by 2002:a17:902:bf4b:b0:13f:bf61:3867 with SMTP id u11-20020a170902bf4b00b0013fbf613867mr991589pls.22.1635381293765;
-        Wed, 27 Oct 2021 17:34:53 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id q18sm1157801pfj.46.2021.10.27.17.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Oct 2021 17:34:53 -0700 (PDT)
-From:   Yang Guang <cgel.zte@gmail.com>
-X-Google-Original-From: Yang Guang <yang.guang5@zte.com.cn>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Yang Guang <yang.guang5@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>, linux-sgx@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftest/sgx: use swap() to make code cleaner
-Date:   Thu, 28 Oct 2021 00:34:44 +0000
-Message-Id: <20211028003444.7046-1-yang.guang5@zte.com.cn>
+        id S231283AbhJ1Uj7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 28 Oct 2021 16:39:59 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25707 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230380AbhJ1Uj6 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 28 Oct 2021 16:39:58 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10151"; a="230775396"
+X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
+   d="scan'208";a="230775396"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:30 -0700
+X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
+   d="scan'208";a="498562989"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 13:37:29 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     jarkko@kernel.org, linux-sgx@vger.kernel.org, shuah@kernel.org,
+        dave.hansen@linux.intel.com
+Cc:     seanjc@google.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 00/15] selftests/sgx: Oversubscription, page permission, thread entry
+Date:   Thu, 28 Oct 2021 13:37:25 -0700
+Message-Id: <cover.1635447301.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,33 +38,104 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Using swap() make it more readable.
+V1 available at:
+https://lore.kernel.org/lkml/cover.1631731214.git.reinette.chatre@intel.com/
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Yang Guang <yang.guang5@zte.com.cn>
----
- tools/testing/selftests/sgx/sigstruct.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Changes since V1:
 
-diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-index 92bbc5a15c39..47eb0749dba4 100644
---- a/tools/testing/selftests/sgx/sigstruct.c
-+++ b/tools/testing/selftests/sgx/sigstruct.c
-@@ -59,13 +59,10 @@ static void reverse_bytes(void *data, int length)
- {
- 	int i = 0;
- 	int j = length - 1;
--	uint8_t temp;
- 	uint8_t *ptr = data;
- 
- 	while (i < j) {
--		temp = ptr[i];
--		ptr[i] = ptr[j];
--		ptr[j] = temp;
-+		swap(ptr[i], ptr[j]);
- 		i++;
- 		j--;
- 	}
+- Biggest change: The non-kselftest placeholder patches included in this series
+  that the kselftest work depends on are still being discussed elsewhere
+  (link below) but has changed significantly since the first submission,
+  warranting an update to the kselftest patches that depend on it.
+  Jarkko: I made significant modifications to your
+  "selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed"
+  that you may want to look at.
+- Improve cover letter and changelogs (Dave).
+- Add Jarkko and Dave's signatures where obtained (Jarkko and Dave).
+- Fix Cedric's signature in patch 1 (Jarkko and Cedric).
+- Improve the loop locating the data segment (Jarkko).
+- Update placeholder patches that makes the amount of SGX memory available to
+  latest version (v8). Previously this dependency consisted out of one
+  patch, now it spans two.
+
+Hi Everybody,
+
+This series consists out of outstanding SGX selftests changes, rebased
+and gathered in a single series that can easily be merged for testing
+and development, and a few more changes added to expand the existing tests.
+
+The outstanding SGX selftest changes included in this series that have already
+been submitted separately are:
+
+* A more than two year old patch fixing a benign linker warning that is still
+  present today:
+  https://lore.kernel.org/linux-sgx/20191017030340.18301-2-sean.j.christopherson@intel.com/
+  The original patch is added intact and not all email addresses
+  within are valid.
+
+* Latest (v4) of Jarkko Sakkinen's series to add an oversubscription test:
+  https://lore.kernel.org/linux-sgx/20210809093127.76264-1-jarkko@kernel.org/
+
+* Latest (v2) of Jarkko Sakkinen's patch that provides per-op
+  parameter structs for the test enclave:
+  https://lore.kernel.org/linux-sgx/20210812224645.90280-1-jarkko@kernel.org/
+
+The reason why most of these patches are outstanding is that they depend
+on a kernel change that is still under discussion. Decision to wait in:
+https://lore.kernel.org/linux-sgx/f8674dac5579a8a424de1565f7ffa2b5bf2f8e36.camel@kernel.org/
+The latest patches (v8) for this dependency is included in
+this series as a placeholder until the ongoing discussions are concluded:
+https://lore.kernel.org/lkml/20211018135744.45527-1-jarkko@kernel.org/
+https://lore.kernel.org/lkml/20211018135744.45527-2-jarkko@kernel.org/
+
+The new changes introduced in this series builds on Jarkko's outstanding
+SGX selftest changes and adds new tests for page permissions, exception
+handling, and thread entry.
+
+Building and running enclaves is painful and traditionally requires a
+big software stack. This adds features like threads to the SGX selftests
+which are traditionally implemented in that big software stack. This
+helps test SGX kernel support with only code from the kernel tree.
+
+Reinette
+
+Jarkko Sakkinen (10):
+  x86/sgx: Rename fallback labels in sgx_init()
+  x86/sgx: Add an attribute for the amount of SGX memory in a NUMA node
+  selftests/sgx: Assign source for each segment
+  selftests/sgx: Make data measurement for an enclave segment optional
+  selftests/sgx: Create a heap for the test enclave
+  selftests/sgx: Dump segments and /proc/self/maps only on failure
+  selftests/sgx: Encpsulate the test enclave creation
+  selftests/sgx: Move setup_test_encl() to each TEST_F()
+  selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed
+  selftests/sgx: Provide per-op parameter structs for the test enclave
+
+Reinette Chatre (4):
+  selftests/sgx: Rename test properties in preparation for more enclave
+    tests
+  selftests/sgx: Add page permission and exception test
+  selftests/sgx: Enable multiple thread support
+  selftests/sgx: Add test for multiple TCS entry
+
+Sean Christopherson (1):
+  selftests/x86/sgx: Fix a benign linker warning
+
+ Documentation/ABI/stable/sysfs-devices-node   |   7 +
+ arch/x86/kernel/cpu/sgx/main.c                |  97 ++++-
+ arch/x86/kernel/cpu/sgx/sgx.h                 |   2 +
+ tools/testing/selftests/sgx/Makefile          |   2 +-
+ tools/testing/selftests/sgx/defines.h         |  33 +-
+ tools/testing/selftests/sgx/load.c            |  40 +-
+ tools/testing/selftests/sgx/main.c            | 396 ++++++++++++++++--
+ tools/testing/selftests/sgx/main.h            |   7 +-
+ tools/testing/selftests/sgx/sigstruct.c       |  12 +-
+ tools/testing/selftests/sgx/test_encl.c       |  60 ++-
+ .../selftests/sgx/test_encl_bootstrap.S       |  21 +-
+ 11 files changed, 585 insertions(+), 92 deletions(-)
+
+base-commit: 7d2a07b769330c34b4deabeed939325c77a7ec2f
+
 -- 
-2.30.2
+2.25.1
 
