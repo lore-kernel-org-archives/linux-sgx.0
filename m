@@ -2,161 +2,91 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4203BC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 14:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C1DC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 14:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20E3F610EA
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 14:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AA45610FD
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 14:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbhJ2O4F (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 29 Oct 2021 10:56:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229501AbhJ2O4E (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 29 Oct 2021 10:56:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A2F90610A0;
-        Fri, 29 Oct 2021 14:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1635519216;
-        bh=c9TjJcxF47eKgazv9LeRCGys9U1LWlqjJ8YyQ1Ugk2g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KjX3i+oKzatWJ1zjmxbpb2kHkPUUlmmuTmIPEXm8JGxv09tUb+ogD9de6jlbNjZT2
-         blSv/zHWjkXM+xnsx+wpChd/vhVn0Hhfbgn153LDte4v2mJE5VWcNv9yFgSddJOTbu
-         h8xg2uS74neWE7mXQAO8pQparVCYj7E5NIWuT1OU=
-Date:   Fri, 29 Oct 2021 16:53:33 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, reinette.chatre@intel.com,
-        tony.luck@intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-Subject: Re: [PATCH v9 2/2] x86/sgx: Add an attribute for the amount of SGX
- memory in a NUMA node
-Message-ID: <YXwK7Wdi1VUK+1LS@kroah.com>
-References: <20211029121857.477885-1-jarkko@kernel.org>
- <20211029121857.477885-2-jarkko@kernel.org>
+        id S229900AbhJ2O6f (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 29 Oct 2021 10:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51668 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229626AbhJ2O6e (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 29 Oct 2021 10:58:34 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08211C061714
+        for <linux-sgx@vger.kernel.org>; Fri, 29 Oct 2021 07:56:06 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id m14so9455760pfc.9
+        for <linux-sgx@vger.kernel.org>; Fri, 29 Oct 2021 07:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FjCjcYP+D3o8tv9NFpZxsW155sRvSDfbhIEl3Au16T8=;
+        b=fbhsEQHwwevdlsxfPYH0ZOMBGl0MBuTNZ7ZM/mtkL50sTixcSo0LP59DlAS7YgLIeH
+         bd5ffqgdd4NPwRRMPVUM41XFNfQEF4lyvY2qy9/Lhh5gdHAF/RlD3+DNaQeeAL7ckacF
+         uLBqY/pAqpEJF8p+CdGM/OdDjeEMUXe4vrNhRHmNXMw+kQ6GHr1j51B22WZ2cII8JYkY
+         Wtjvk1Ld27LsAm+eskBlsB4uzBEErJsNMfmyQH+nt1IU1CbDeSirNMVr0dGUw9inhgps
+         WU7jJ+CB46GNSD+JDiuUTGANWIGnAeQbKrRIJiJ1ISf8+QJDe1v34NYWmrK1yf14lhQk
+         8hSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FjCjcYP+D3o8tv9NFpZxsW155sRvSDfbhIEl3Au16T8=;
+        b=y5KnGkYpAYy18uL8VPH44CEsLd/yv0EilZOhpXp5YA4xtEB5YI1ZdwHBJ6WhXZQcBQ
+         tzBA2AFrFgmIGl+jI2C76AZm31F07VazIBbs5i2EY3izcrhFt2y7HEAspZz++w5j15AO
+         sWPMfDOq0jzHkWST8ZwbEznUtWol6FdW3jpTrVFKTTW9im5MNMObfDA2YU2thXhVWq3a
+         y3m4tAzR2zTT9lZVTJRhbD6kAjzkrvGxdJOLiH1lDc4QftBKbiSsHJaFcOeL/45pps3C
+         x/pXNbc/Q+vb/G3xoDrtxDxRFWkJREEJe0ddCL3xF8rbphxhuzhlJY2fLH1QNNnNFfzP
+         w2ww==
+X-Gm-Message-State: AOAM53025CQVmVVLjNKEBoLve/qC/sm+3VaJggAysZthDJkgkbtXNPQs
+        fiVZalRlcRxqRvI7Q6sFjr5TLw==
+X-Google-Smtp-Source: ABdhPJw1r41vo9z6GWts/4z+DJNa7FX6eXkNXDzDgmec/E95Um8w49RuJ9Bh5EuGaGZRKpqNN8QPog==
+X-Received: by 2002:a63:9dc5:: with SMTP id i188mr8471251pgd.143.1635519365363;
+        Fri, 29 Oct 2021 07:56:05 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id f8sm6253333pjq.29.2021.10.29.07.56.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Oct 2021 07:56:04 -0700 (PDT)
+Date:   Fri, 29 Oct 2021 14:56:00 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>, jarkko@kernel.org,
+        linux-sgx@vger.kernel.org, shuah@kernel.org,
+        dave.hansen@linux.intel.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 01/15] selftests/x86/sgx: Fix a benign linker warning
+Message-ID: <YXwLgAdOA1jlsSiq@google.com>
+References: <cover.1635447301.git.reinette.chatre@intel.com>
+ <545aac243037bf5c2640929c4d8ff5c1edfe3ef8.1635447301.git.reinette.chatre@intel.com>
+ <d382d0b0-15fb-5e96-accd-c3b59be72dd3@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211029121857.477885-2-jarkko@kernel.org>
+In-Reply-To: <d382d0b0-15fb-5e96-accd-c3b59be72dd3@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 03:18:57PM +0300, Jarkko Sakkinen wrote:
-> The amount of SGX memory on the system is determined by the BIOS and it
-> varies wildly between systems.  It can be from dozens of MB's on desktops
-> or VM's, up to many GB's on servers.  Just like for regular memory, it is
-> sometimes useful to know the amount of usable SGX memory in the system.
+On Thu, Oct 28, 2021, Dave Hansen wrote:
+> On 10/28/21 1:37 PM, Reinette Chatre wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > Pass a build id of "none" to the linker to suppress a warning about the
+> > build id being ignored:
+> > 
+> >   /usr/bin/ld: warning: .note.gnu.build-id section discarded, --build-id
+> >   ignored.
 > 
-> Add an attribute for the amount of SGX memory in bytes to each NUMA
-> node. The path is /sys/devices/system/node/node[0-9]*/sgx/size.
-> Calculate these values by summing up EPC section sizes for each node
-> during the driver initalization.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
-> v9:
-> * Fix racy initialization of sysfs attributes:
->   https://lore.kernel.org/linux-sgx/YXOsx8SvFJV5R7lU@kroah.com/
-> 
-> v8:
-> * Fix a bug in sgx_numa_init(): node->dev should be only set after
->   sysfe_create_group().  Otherwise, sysfs_remove_group() will issue a
->   warning in sgx_numa_exit(), when sgx_create_group() is unsuccessful,
->   because the group does not exist.
-> 
-> v7:
-> * Shorten memory_size to size. The prefix makes the name only longer
->   but does not clarify things more than "size" would.
-> * Use device_attribute instead of kobj_attribute.
-> * Use named attribute group instead of creating raw kobject just for
->   the "sgx" subdirectory.
-> 
-> v6:
-> * Initialize node->size to zero in sgx_setup_epc_section(), when the
->   node is first accessed.
-> 
-> v5
-> * A new patch based on the discussion on
->   https://lore.kernel.org/linux-sgx/3a7cab4115b4f902f3509ad8652e616b91703e1d.camel@kernel.org/T/#t
-> ---
->  Documentation/ABI/stable/sysfs-devices-node |  7 +++++
->  arch/x86/include/asm/sgx.h                  |  2 ++
->  arch/x86/kernel/cpu/sgx/main.c              | 31 +++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/sgx.h               |  2 ++
->  drivers/base/node.c                         | 16 ++++++++++-
->  5 files changed, 57 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-> index 484fc04bcc25..12dc2149e8e0 100644
-> --- a/Documentation/ABI/stable/sysfs-devices-node
-> +++ b/Documentation/ABI/stable/sysfs-devices-node
-> @@ -176,3 +176,10 @@ Contact:	Keith Busch <keith.busch@intel.com>
->  Description:
->  		The cache write policy: 0 for write-back, 1 for write-through,
->  		other or unknown.
-> +
-> +What:		/sys/devices/system/node/nodeX/sgx/size
-> +Date:		October 2021
-> +Contact:	Jarkko Sakkinen <jarkko@kernel.org>
-> +Description:
-> +		Total available physical SGX memory, also known as Enclave Page
-> +		Cache (EPC), in bytes.
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 05f3e21f01a7..43d1ccae6c62 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -365,6 +365,8 @@ struct sgx_sigstruct {
->   * comment!
->   */
->  
-> +extern const struct attribute_group sgx_node_group;
-> +
->  #ifdef CONFIG_X86_SGX_KVM
->  int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
->  		     int *trapnr);
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index a6e313f1a82d..86d6d309ff29 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -714,9 +714,12 @@ static bool __init sgx_page_cache_init(void)
->  			spin_lock_init(&sgx_numa_nodes[nid].lock);
->  			INIT_LIST_HEAD(&sgx_numa_nodes[nid].free_page_list);
->  			node_set(nid, sgx_numa_mask);
-> +			sgx_numa_nodes[nid].size = 0;
->  		}
->  
->  		sgx_epc_sections[i].node =  &sgx_numa_nodes[nid];
-> +		sgx_numa_nodes[nid].dev = &node_devices[nid]->dev;
-> +		sgx_numa_nodes[nid].size += size;
->  
->  		sgx_nr_epc_sections++;
->  	}
-> @@ -790,6 +793,34 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
->  }
->  EXPORT_SYMBOL_GPL(sgx_set_attribute);
->  
-> +#ifdef CONFIG_NUMA
-> +static ssize_t size_show(struct device *dev, struct device_attribute *attr, char *buf)
-> +{
-> +	unsigned long size = 0;
-> +	int nid;
-> +
-> +	for (nid = 0; nid < num_possible_nodes(); nid++) {
-> +		if (dev == sgx_numa_nodes[nid].dev) {
-> +			size = sgx_numa_nodes[nid].size;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return sysfs_emit(buf, "%lu\n", size);
-> +}
-> +DEVICE_ATTR_RO(size);
+> Do we have a good grasp on why this is producing a warning in the first
+> place?  This seems like something that could get merged quickly with one
+> more sentence in the changelog.
 
-static?
-
+The SGX selftests use a custom linker script, tools/testing/selftests/sgx/test_encl.lds,
+to configure the resulting enclave binary so that it's loadable as an enclave
+more or less as-is.  One of the things the script does is drop sections the
+selftests doesn't want, .note* sections being in that category.  I don't recall
+exactly why the script drops sections; I assume it's to simply the loading process.
+Anyways, .note.gnu.build-id is collateral damage and the linker complains.
