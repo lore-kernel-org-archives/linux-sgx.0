@@ -2,73 +2,103 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58E9C433FE
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 03:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD9EC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 12:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9183A61056
-	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 03:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6682F60E09
+	for <linux-sgx@archiver.kernel.org>; Fri, 29 Oct 2021 12:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231558AbhJ2DKn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 28 Oct 2021 23:10:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57182 "EHLO mail.kernel.org"
+        id S231409AbhJ2MVm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 29 Oct 2021 08:21:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231636AbhJ2DKm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 28 Oct 2021 23:10:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7509460E73;
-        Fri, 29 Oct 2021 03:08:14 +0000 (UTC)
+        id S231493AbhJ2MVi (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 29 Oct 2021 08:21:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 76A4D60E09;
+        Fri, 29 Oct 2021 12:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635476895;
-        bh=rcFijOokhBYoREUdIW7nvJYgzDFRwYCbkztI1xQYVmE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AOYa3tUi9tfZpCDRBF3sXsgoQk8bPaS4G2dOw+K66TAtwlvY77khAAFO7dvlDdkWK
-         +lAjFLXy1WqQIaANb1J+wGc/BGGgd+LnYJtc+TgD+OigquQbbCQwhRp7x8nBmheqT5
-         BJ7FR/gHqNN5WXbkwXeTfsYDGKj08G28UXiAV2AXubLG8AelIr3H2UarYT6KqsJ19j
-         C5TiNCa1JiH/U9fxx92jGfwqsgRbxmKg9ktJBtz5UPhJN+DyV3Nc96woCCVfy/IZlr
-         3+tk4qHB5HuFA3ja3ncHK3GQ6DGQfXukV+P0Wf+2xrH/4AIEX5cjvh7IEYaqBWetai
-         qIpbe8RbASjog==
-Date:   Fri, 29 Oct 2021 06:08:12 +0300
+        s=k20201202; t=1635509944;
+        bh=JcmE633qNoTx2/kV2kafIRHAI69ez3qXVDLyj130NYw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HabmaQT5fX3HrG1Ph1iQdRwpWMAI/NFt5PhHjzGhvp3rhAaYZTx+ZmYZ9rVNREvXW
+         coZB2H5JeeetscCYtdCMGKpCaFTA1F2iit3s6l8vWB8Pu8giqOUnbI+R9BiJ3lQH6O
+         ur+9AWYkSQPujIJOsnqiCucTWPJYR4tY1zZYSB8bH3O0XWZ0Ql/JOERb9M4MbUgfBe
+         FISt38MOTvBOylWsW8U5LZ3mnIK4DzRXHrnScjhhDt1V/yYnBZkC9h2SfualCfriaR
+         A4mukJ00Yuh9hSG9ClfOzwxyUt035xRcWXc1PJBZsjR5vlxv60kUlfXJPxEMMRse43
+         SUnJzFz8Z25+w==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org, shuah@kernel.org,
-        dave.hansen@linux.intel.com, seanjc@google.com,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 13/15] selftests/sgx: Add page permission and
- exception test
-Message-ID: <YXtlnORs1545GXvq@iki.fi>
-References: <cover.1635447301.git.reinette.chatre@intel.com>
- <85dd8852e85cd1fcdf70f5b6be9389b6df096b0d.1635447301.git.reinette.chatre@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 1/2] x86/sgx: Rename fallback labels in sgx_init()
+Date:   Fri, 29 Oct 2021 15:18:56 +0300
+Message-Id: <20211029121857.477885-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85dd8852e85cd1fcdf70f5b6be9389b6df096b0d.1635447301.git.reinette.chatre@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 01:37:38PM -0700, Reinette Chatre wrote:
-> The Enclave Page Cache Map (EPCM) is a secure structure used by the
-> processor to track the contents of the enclave page cache. The EPCM
-> contains permissions with which enclave pages can be accessed. SGX
-> support allows EPCM and PTE page permissions to differ - as long as
-> the PTE permissions do not exceed the EPCM permissions.
-> 
-> Add a test that:
-> (1) Creates an SGX enclave page with writable EPCM permission.
-> (2) Changes the PTE permission on the page to read-only. This should
->     be permitted because the permission does not exceed the EPCM
->     permission.
-> (3) Attempts a write to the page. This should generate a page fault
->     (#PF) because of the read-only PTE even though the EPCM
->     permissions allow the page to be written to.
-> 
-> This introduces the first test of SGX exception handling. In this test
-> the issue that caused the exception (PTE page permissions) can be fixed
-> from outside the enclave and after doing so it is possible to re-enter
-> enclave at original entrypoint with ERESUME.
-> 
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+It's hard to add new content to this function because it is time
+consuming to match fallback and its cause. Rename labels in a way
+that the name of error label refers to the site where failure
+happened. This way it is easier to keep on track what is going
+on.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v5:
+* A new patch.
+---
+ arch/x86/kernel/cpu/sgx/main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-/Jarkko
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 63d3de02bbcc..a6e313f1a82d 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -803,12 +803,12 @@ static int __init sgx_init(void)
+ 
+ 	if (!sgx_page_reclaimer_init()) {
+ 		ret = -ENOMEM;
+-		goto err_page_cache;
++		goto err_reclaimer;
+ 	}
+ 
+ 	ret = misc_register(&sgx_dev_provision);
+ 	if (ret)
+-		goto err_kthread;
++		goto err_provision;
+ 
+ 	/*
+ 	 * Always try to initialize the native *and* KVM drivers.
+@@ -821,17 +821,17 @@ static int __init sgx_init(void)
+ 	ret = sgx_drv_init();
+ 
+ 	if (sgx_vepc_init() && ret)
+-		goto err_provision;
++		goto err_driver;
+ 
+ 	return 0;
+ 
+-err_provision:
++err_driver:
+ 	misc_deregister(&sgx_dev_provision);
+ 
+-err_kthread:
++err_provision:
+ 	kthread_stop(ksgxd_tsk);
+ 
+-err_page_cache:
++err_reclaimer:
+ 	for (i = 0; i < sgx_nr_epc_sections; i++) {
+ 		vfree(sgx_epc_sections[i].pages);
+ 		memunmap(sgx_epc_sections[i].virt_addr);
+-- 
+2.32.0
+
