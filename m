@@ -2,80 +2,90 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875A4C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Nov 2021 21:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0BCC433F5
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Nov 2021 23:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69D7A6113E
-	for <linux-sgx@archiver.kernel.org>; Wed,  3 Nov 2021 21:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47DDF611C7
+	for <linux-sgx@archiver.kernel.org>; Wed,  3 Nov 2021 23:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbhKCV5c (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 3 Nov 2021 17:57:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56008 "EHLO mail.kernel.org"
+        id S229907AbhKCXZ3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 3 Nov 2021 19:25:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229968AbhKCV5a (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 3 Nov 2021 17:57:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D84960E08;
-        Wed,  3 Nov 2021 21:54:52 +0000 (UTC)
+        id S229879AbhKCXZ3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 3 Nov 2021 19:25:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 81B27608FB;
+        Wed,  3 Nov 2021 23:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635976493;
-        bh=3dU1WD3jK0GFDms72I0PUOjozVCuxCQ/CRp8xAbQb2w=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=LwLcXvGU3FEntjq529Jt9N0Oer46ORHvmXKIxizy6UkLE8rZ+paiFur98d08GQ1X1
-         LVmAUvUFx50Tu/bJFp7DfyPlmnYHRx7UhXN1Jq6t0cBEmE1kiquxOTBmL8sYF7PUn5
-         VPVfTyNsls4DC845OgiukVyP8LRtqzNuIYO/AfoNIzfk19sl+knOC1Ivs9NCD4vsgf
-         gO4/7Ce2IwxKBp227eB12Vw+xH/bDco1L6W1+NGjeJS6Iow8BUXOCqFUs+WkLfDLDQ
-         pTnymZF4r1l7WVtiABmrL1TNboKz0y6NcGAKH8cVt/cay6jR+P7688ARmlUpg2qf/A
-         jsxmJGvA8M39w==
-Message-ID: <7c859ba3feefe50fc84f5050e50465a5ffe3f572.camel@kernel.org>
-Subject: Re: [PATCH v11 2/2] x86/sgx: Add an attribute for the amount of SGX
- memory in a NUMA node
+        s=k20201202; t=1635981772;
+        bh=PW/WWDcyBTnfu0tXHgz//eODV+c6DYwOC/CHWkF43eQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qFr+cdGTuy0DUFnhdx4aAHMJrJAEkmdH5Lyod6yTIRWwtCoYRhioX1jTxa6gc5SPK
+         NXmKrUWDm4/Yq7PW8G1svaxM60yJc/lZWx8yFlosacQSvVpPKkDoWq/Sh+/OW5LrgX
+         TlXf7387E+BC/h2Sn0jWIs2vB8222nR5LOYzYfMPz6OMPBIF9cPFoQxFiIBTZTJ46A
+         u9QU+iZ/GoT+60199T9691ZYtI8lxxmuxBGk1PcyuX1u1hUedRwKhokmvGSsaAIdkW
+         KtlIvbkRr8BIaHvRK7pfpk8raxBtwHdEEF8yIy9HTBKS+zrW/pXCeByD7iQYGagpXH
+         +z1QXWmCA1RrQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, reinette.chatre@intel.com,
-        tony.luck@intel.com, nathaniel@profian.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Date:   Wed, 03 Nov 2021 23:54:50 +0200
-In-Reply-To: <d3711ca7d612627bb891c10e20c3d569fa6f2bf3.camel@kernel.org>
-References: <20211103012813.670195-1-jarkko@kernel.org>
-         <20211103012813.670195-2-jarkko@kernel.org> <YYJGzgkLJs6819t8@kroah.com>
-         <d3711ca7d612627bb891c10e20c3d569fa6f2bf3.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.40.4-1 
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <seanjc@google.com>
+Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
+        nathaniel@profian.com, stable@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Free backing memory after faulting the enclave page
+Date:   Thu,  4 Nov 2021 01:22:38 +0200
+Message-Id: <20211103232238.110557-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 2021-11-03 at 23:49 +0200, Jarkko Sakkinen wrote:
-> On Wed, 2021-11-03 at 09:22 +0100, Greg Kroah-Hartman wrote:
-> > That's not the proper thing to do here at all, these values should be
-> > part of the device structure that this attribute lives on, in order to
-> > properly handle all of these reference counting and locking issues
-> > automatically.
->=20
-> The attribute group is part of the device structure, so in that sense
-> it is already like this. And I think that all NUMA node specific data
-> (most of which is unrelated to device sysfs) is best kept in the private
-> struct.
+The backing memory was not freed, after loading it back to the SGX
+reserved memory. This problem was not prevalent with the systems that
+were available at the time when SGX was first upstreamed, as the swapped
+memory could grow only up to 128 MB.  However, Icelake Server can have
+gigabytes of SGX memory, and thus this has become a real bottleneck.
 
-If you are concerned that the SGX driver might go away when NUMA code
-calls it, I can address that concern too.
+Free the swap space for other use by calling shmem_truncate_range(),
+when a page is faulted back.
 
-The memory management code if arch/x86/kernel/cpu/sgx is not associated
-with the user space facing driver. E.g. you can use memory manager with
-KVM without having the driver even enabled in the kernel.
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This include the numa code in the SGX subsystem. It's life-cycle is the
-same as the power-cycle. It is guaranteed that any possible time during
-the power cycle, when that sysfs callback is called, all the data is valid.
-That's why it is safe to be part of the attribute groups of the NUMA
-device.
-
-
-/Jarkko
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 001808e3901c..f2d3f2e5028f 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -22,6 +22,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ {
+ 	unsigned long va_offset = encl_page->desc & SGX_ENCL_PAGE_VA_OFFSET_MASK;
+ 	struct sgx_encl *encl = encl_page->encl;
++	struct inode *inode = file_inode(encl->backing);
+ 	struct sgx_pageinfo pginfo;
+ 	struct sgx_backing b;
+ 	pgoff_t page_index;
+@@ -60,6 +61,9 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 
+ 	sgx_encl_put_backing(&b, false);
+ 
++	/* Free the backing memory. */
++	shmem_truncate_range(inode, PFN_PHYS(page_index), PFN_PHYS(page_index) + PAGE_SIZE - 1);
++
+ 	return ret;
+ }
+ 
+-- 
+2.32.0
 
