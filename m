@@ -2,121 +2,221 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C29B8C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Nov 2021 22:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8342C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Nov 2021 07:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED3361139
-	for <linux-sgx@archiver.kernel.org>; Thu,  4 Nov 2021 22:39:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71DDB61262
+	for <linux-sgx@archiver.kernel.org>; Fri,  5 Nov 2021 07:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232167AbhKDWli (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 4 Nov 2021 18:41:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15954 "EHLO mga11.intel.com"
+        id S229739AbhKEHNX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 5 Nov 2021 03:13:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229587AbhKDWli (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 4 Nov 2021 18:41:38 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10158"; a="229271734"
-X-IronPort-AV: E=Sophos;i="5.87,209,1631602800"; 
-   d="scan'208";a="229271734"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2021 15:38:59 -0700
-X-IronPort-AV: E=Sophos;i="5.87,209,1631602800"; 
-   d="scan'208";a="586123902"
-Received: from unknown (HELO [10.209.25.230]) ([10.209.25.230])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2021 15:38:58 -0700
-Subject: Re: [PATCH] x86/sgx: Free backing memory after faulting the enclave
- page
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
-        nathaniel@profian.com, stable@vger.kernel.org,
-        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211103232238.110557-1-jarkko@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <7c122a82-e418-0bce-8f67-cbaa15abc9b9@intel.com>
-Date:   Thu, 4 Nov 2021 15:38:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232486AbhKEHNS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 5 Nov 2021 03:13:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8855F61250;
+        Fri,  5 Nov 2021 07:10:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1636096238;
+        bh=y7PYD7ScSEup1sTtkL4KaiBLwigwF2LB1vwyYh51tlo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ebRh0mlrSrrXXndaFcCsR564XXUFyaWoNyrQgUwZI9BztSKDXmCIa9psaa+sGJPez
+         /0Ma9ooUJ0I+mrXtq3EG9GdkIzIWBvjHjlYNVz8HuxFxIVLBE8VNDKNEJM5a3L4i26
+         AxKfI/f5QhYeyNmUzCHRYU6j3H6IKWgZVhujaRF8=
+Date:   Fri, 5 Nov 2021 08:10:35 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
+        bp@alien8.de, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, tony.luck@intel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Fix free page accounting
+Message-ID: <YYTY60T7YzycEAmp@kroah.com>
+References: <373992d869cd356ce9e9afe43ef4934b70d604fd.1636049678.git.reinette.chatre@intel.com>
+ <YYQsc0kktaOdOXb0@kroah.com>
+ <a636290d-db04-be16-1c86-a8dcc3719b39@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20211103232238.110557-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a636290d-db04-be16-1c86-a8dcc3719b39@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/3/21 4:22 PM, Jarkko Sakkinen wrote:
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -22,6 +22,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
->  {
->  	unsigned long va_offset = encl_page->desc & SGX_ENCL_PAGE_VA_OFFSET_MASK;
->  	struct sgx_encl *encl = encl_page->encl;
-> +	struct inode *inode = file_inode(encl->backing);
->  	struct sgx_pageinfo pginfo;
->  	struct sgx_backing b;
->  	pgoff_t page_index;
-> @@ -60,6 +61,9 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
->  
->  	sgx_encl_put_backing(&b, false);
->  
-> +	/* Free the backing memory. */
-> +	shmem_truncate_range(inode, PFN_PHYS(page_index), PFN_PHYS(page_index) + PAGE_SIZE - 1);
-> +
->  	return ret;
->  }
+On Thu, Nov 04, 2021 at 01:57:31PM -0700, Reinette Chatre wrote:
+> Hi Greg,
+> 
+> On 11/4/2021 11:54 AM, Greg KH wrote:
+> > On Thu, Nov 04, 2021 at 11:28:54AM -0700, Reinette Chatre wrote:
+> > > The SGX driver maintains a single global free page counter,
+> > > sgx_nr_free_pages, that reflects the number of free pages available
+> > > across all NUMA nodes. Correspondingly, a list of free pages is
+> > > associated with each NUMA node and sgx_nr_free_pages is updated
+> > > every time a page is added or removed from any of the free page
+> > > lists. The main usage of sgx_nr_free_pages is by the reclaimer
+> > > that will run when the total free pages go below a watermark to
+> > > ensure that there are always some free pages available to, for
+> > > example, support efficient page faults.
+> > > 
+> > > With sgx_nr_free_pages accessed and modified from a few places
+> > > it is essential to ensure that these accesses are done safely but
+> > > this is not the case. sgx_nr_free_pages is sometimes accessed
+> > > without any protection and when it is protected it is done
+> > > inconsistently with any one of the spin locks associated with the
+> > > individual NUMA nodes.
+> > > 
+> > > The consequence of sgx_nr_free_pages not being protected is that
+> > > its value may not accurately reflect the actual number of free
+> > > pages on the system, impacting the availability of free pages in
+> > > support of many flows. The problematic scenario is when the
+> > > reclaimer never runs because it believes there to be sufficient
+> > > free pages while any attempt to allocate a page fails because there
+> > > are no free pages available. The worst scenario observed was a
+> > > user space hang because of repeated page faults caused by
+> > > no free pages ever made available.
+> > > 
+> > > Change the global free page counter to an atomic type that
+> > > ensures simultaneous updates are done safely. While doing so, move
+> > > the updating of the variable outside of the spin lock critical
+> > > section to which it does not belong.
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 901ddbb9ecf5 ("x86/sgx: Add a basic NUMA allocation scheme to sgx_alloc_epc_page()")
+> > > Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> > > ---
+> > >   arch/x86/kernel/cpu/sgx/main.c | 12 ++++++------
+> > >   1 file changed, 6 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > > index 63d3de02bbcc..8558d7d5f3e7 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > > @@ -28,8 +28,7 @@ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+> > >   static LIST_HEAD(sgx_active_page_list);
+> > >   static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+> > > -/* The free page list lock protected variables prepend the lock. */
+> > > -static unsigned long sgx_nr_free_pages;
+> > > +atomic_long_t sgx_nr_free_pages = ATOMIC_LONG_INIT(0);
+> > >   /* Nodes with one or more EPC sections. */
+> > >   static nodemask_t sgx_numa_mask;
+> > > @@ -403,14 +402,15 @@ static void sgx_reclaim_pages(void)
+> > >   		spin_lock(&node->lock);
+> > >   		list_add_tail(&epc_page->list, &node->free_page_list);
+> > > -		sgx_nr_free_pages++;
+> > >   		spin_unlock(&node->lock);
+> > > +		atomic_long_inc(&sgx_nr_free_pages);
+> > >   	}
+> > >   }
+> > >   static bool sgx_should_reclaim(unsigned long watermark)
+> > >   {
+> > > -	return sgx_nr_free_pages < watermark && !list_empty(&sgx_active_page_list);
+> > > +	return atomic_long_read(&sgx_nr_free_pages) < watermark &&
+> > > +	       !list_empty(&sgx_active_page_list);
+> > 
+> 
+> Thank you very much for taking a look.
+> 
+> > What prevents the value from changing right after you test this?
+> 
+> You are correct. It is indeed possible for the value to change after this
+> test. This test decides when to reclaim more pages so an absolute accurate
+> value is not required but knowing that the amount of free pages are running
+> low is.
+> 
+> >  Why is
+> > an atomic value somehow solving the problem?
+> 
+> During stress testing it was found that page allocation during hot path (for
+> example page fault) is failing because there were no free pages available in
+> any of the free page lists while the global counter contained a value that
+> does not reflect the actual free pages and was higher than the watermark and
+> thus the reclaimer is never run.
+> 
+> Changing it to atomic fixed this issue. I also reverted to how this counter
+> was managed before with a spin lock protected free counter per free list and
+> that also fixes the issue.
+>
+> > The value changes were happening safely, it was just the reading of the
+> > value that was not.  You have not changed the fact that the value can
+> > change right after reading given that there was not going to be a
+> > problem with reading a stale value before.
+> 
+> I am testing on a two socket system and I am seeing that the value of
+> sgx_nr_free_pages does not accurately reflect the actual free pages.
+> 
+> It does not look to me like the value is updated safely as it is updated
+> with inconsistent protection on a system like this. There is a spin lock
+> associated with each NUMA node and which lock is used to update the variable
+> depends on which NUMA node memory is being modified - it is not always
+> protected with the same lock:
+> 
+> spin_lock(&node->lock);
+> sgx_nr_free_pages++;
+> spin_unlock(&node->lock);
 
-This also misses tearing down the backing storage if it is in place at
-sgx_encl_release().
+Ah, I missed that the original code was using a different lock for every
+call place, while now you are just using a single lock (the atomic value
+itself.)  That makes more sense, sorry for the noise.
 
-Does a entry->epc_page==NULL page in there guarantee that it has backing
-storage?
+But isn't this going to cause more thrashing and slow things down as you
+are hitting the "global" lock for this variable for every allocation?
+Or is this not in the hot path?
+
+
+
+> 
+> 
+> > In other words, what did you really fix here?  And how did you test it
+> > to verify it did fix things?
+> 
+> To test this I created a stress test that builds on top of the new
+> "oversubscription" test case that we are trying to add to the SGX
+> kselftests:
+> https://lore.kernel.org/lkml/7715db4882ab9fd52d21de6f62bb3b7e94dc4885.1635447301.git.reinette.chatre@intel.com/
+> 
+> In the changed test an enclave is created with as much heap as SGX memory.
+> After that all the pages are accessed, their type is changed, then the
+> enclave is entered to run EACCEPT on each page, after that the pages are
+> removed (EREMOVE).
+> 
+> This test places significant stress on the SGX memory allocation and reclaim
+> subsystems. The troublesome part of the test is when the enclave is entered
+> so that EACCEPT can be run on each page. During this time, because of the
+> oversubscription and previous accesses, there are many page faults. During
+> this time a new page needs to be allocated in the SGX memory into which the
+> page being faulted needs to be decrypted and loaded back into SGX memory. At
+> this point the test hangs.
+> 
+> Below I show the following:
+> * perf top showing that the test hangs because user space is stuck just
+> encountering page faults
+> * below that I show the code traces explaining why the repeated page faults
+> occur (because reclaimer never runs)
+> * below that shows the perf top traces after this patch is applied showing
+> that the reclaimer now gets a chance to run and the test can complete
+> 
+> 
+> Here is the perf top trace before this patch is applied showing how user
+> space is stuck hitting page faults over and over:
+>    PerfTop:    4569 irqs/sec  kernel:25.0%  exact: 100.0% lost: 0/0 drop:
+> 0/0 [4000Hz cycles],  (all, 224 CPUs)
+
+<ascii art that line-wrapped snipped>
+
+> With this patch the test is able to complete and the tracing shows that the
+> reclaimer is getting a chance to run. Previously the system was spending
+> almost all its time in page faults but now the time is split between the
+> page faults and the reclaimer.
+> 
+> 
+>    PerfTop:    7432 irqs/sec  kernel:81.5%  exact: 100.0% lost: 0/0 drop:
+> 0/0 [4000Hz cycles],  (all, 224 CPUs)
+
+Ok, that's better, you need the reclaim in order to make forward
+progress.
+
+Thanks for the detailed explaination, no objection from me, sorry for
+the misunderstanding.
+
+greg k-h
