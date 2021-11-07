@@ -2,68 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332FDC433F5
-	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 16:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DF2C433F5
+	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 17:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 102B461186
-	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 16:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E0C6137D
+	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 17:32:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235041AbhKGQuo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 7 Nov 2021 11:50:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47638 "EHLO mail.kernel.org"
+        id S235362AbhKGRfX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 7 Nov 2021 12:35:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230092AbhKGQun (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 7 Nov 2021 11:50:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 71CD96108B;
-        Sun,  7 Nov 2021 16:48:00 +0000 (UTC)
+        id S232053AbhKGRfW (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 7 Nov 2021 12:35:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2FD3660F0F;
+        Sun,  7 Nov 2021 17:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636303680;
-        bh=LuqyXW0s3iea0qghV4oS1d9eUNF23p9aYTCVd99xMvE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=aDOMpvuDNeyasOPFzhX4nGLa6ZXwfxPX3U1Vjq77APWqRmSiUx3jLg3Xsrn/ugm9V
-         bmjVCUiM/BnRwBbnG9fsQjJ0sDkCDh9lcdYdB5NARICOOfOJgApq6POIdvNC6DnE1f
-         KodnVm1U7zSA23oa+866uTuZ22MbK0peyHxuPBXeU3HTtQs8F/9a2bzhkjqcdjgpCJ
-         V5WyZWVWFzdPgz4Ase+QKnLouHdt6SAVPsD8w8GBbabe4Q7hnfbHl7rM87HsWT+fZB
-         dfLgekhFOB1D4OJVcj6g2Jvw/nuVIRDfbVN4Z4Fdm7QIA5RbU/EKee+I28mM7QXYXH
-         BTSEzySLfOo3w==
-Message-ID: <2a0b84575733e4aaee13926387d997c35ac23130.camel@kernel.org>
-Subject: Re: [PATCH] x86/sgx: Fix free page accounting
+        s=k20201202; t=1636306359;
+        bh=JcmE633qNoTx2/kV2kafIRHAI69ez3qXVDLyj130NYw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gji0QJm9mm5zmcesTGarWtUS2OJ80DxNkEegJOhemplxrfoVyHMzxuw8lzvV04OfL
+         D+NSUkdr1UHb6OshiEiGehJ8DSVfQB/zFeuGNUAnvfdVuPkkXcerttKBmUBEBKrFyl
+         qmlmCBYWzGptjK95JFlbqaT09P1xxDVGIWw7cca5O43th1Usena95XRu4vIbFJUBmh
+         UjLP7VcGA4hJBfpPmwIGGGbsR6M+teuAWHAKzb8d8nXTT6gOX7KLQhRRGBuOc7hHKr
+         a0xm6RyogrFf7kWM5P7Juf267opOczCF5pdlkdTXoNlBRpK1uiIowrDa1JusjpZdnO
+         dBKZojFw/Kz0A==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        mingo@redhat.com, linux-sgx@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, tony.luck@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date:   Sun, 07 Nov 2021 18:47:58 +0200
-In-Reply-To: <6e51fdacc2c1d834258f00ad8cc268b8d782eca7.camel@kernel.org>
-References: <373992d869cd356ce9e9afe43ef4934b70d604fd.1636049678.git.reinette.chatre@intel.com>
-         <6e51fdacc2c1d834258f00ad8cc268b8d782eca7.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.40.4-1 
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
+        nathaniel@profian.com, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v12 1/2] x86/sgx: Rename fallback labels in sgx_init()
+Date:   Sun,  7 Nov 2021 19:32:32 +0200
+Message-Id: <20211107173233.417034-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, 2021-11-07 at 18:45 +0200, Jarkko Sakkinen wrote:
-> On Thu, 2021-11-04 at 11:28 -0700, Reinette Chatre wrote:
-> > The consequence of sgx_nr_free_pages not being protected is that
-> > its value may not accurately reflect the actual number of free
-> > pages on the system, impacting the availability of free pages in
-> > support of many flows. The problematic scenario is when the
-> > reclaimer never runs because it believes there to be sufficient
-> > free pages while any attempt to allocate a page fails because there
-> > are no free pages available. The worst scenario observed was a
-> > user space hang because of repeated page faults caused by
-> > no free pages ever made available.
->=20
-> Can you go in detail with the "concrete scenario" in the commit
-> message? It does not have to describe all the possible scenarios
-> but at least one sequence of events.
+It's hard to add new content to this function because it is time
+consuming to match fallback and its cause. Rename labels in a way
+that the name of error label refers to the site where failure
+happened. This way it is easier to keep on track what is going
+on.
 
-I.e. I don't have anything fundamentally against changing it to
-atomic but the commit message is completely lacking the stimulus
-of changing anything.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v5:
+* A new patch.
+---
+ arch/x86/kernel/cpu/sgx/main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-/Jarkko
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 63d3de02bbcc..a6e313f1a82d 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -803,12 +803,12 @@ static int __init sgx_init(void)
+ 
+ 	if (!sgx_page_reclaimer_init()) {
+ 		ret = -ENOMEM;
+-		goto err_page_cache;
++		goto err_reclaimer;
+ 	}
+ 
+ 	ret = misc_register(&sgx_dev_provision);
+ 	if (ret)
+-		goto err_kthread;
++		goto err_provision;
+ 
+ 	/*
+ 	 * Always try to initialize the native *and* KVM drivers.
+@@ -821,17 +821,17 @@ static int __init sgx_init(void)
+ 	ret = sgx_drv_init();
+ 
+ 	if (sgx_vepc_init() && ret)
+-		goto err_provision;
++		goto err_driver;
+ 
+ 	return 0;
+ 
+-err_provision:
++err_driver:
+ 	misc_deregister(&sgx_dev_provision);
+ 
+-err_kthread:
++err_provision:
+ 	kthread_stop(ksgxd_tsk);
+ 
+-err_page_cache:
++err_reclaimer:
+ 	for (i = 0; i < sgx_nr_epc_sections; i++) {
+ 		vfree(sgx_epc_sections[i].pages);
+ 		memunmap(sgx_epc_sections[i].virt_addr);
+-- 
+2.32.0
+
