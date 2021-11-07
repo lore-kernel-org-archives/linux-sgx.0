@@ -2,27 +2,27 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0965C433EF
-	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 19:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E112EC433FE
+	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 20:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B057B6125F
-	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 19:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC6756128E
+	for <linux-sgx@archiver.kernel.org>; Sun,  7 Nov 2021 20:01:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235432AbhKGTyZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 7 Nov 2021 14:54:25 -0500
-Received: from mga09.intel.com ([134.134.136.24]:38088 "EHLO mga09.intel.com"
+        id S234124AbhKGUEC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 7 Nov 2021 15:04:02 -0500
+Received: from mga04.intel.com ([192.55.52.120]:28988 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236350AbhKGTyY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sun, 7 Nov 2021 14:54:24 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10161"; a="231969404"
+        id S231401AbhKGUEB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Sun, 7 Nov 2021 15:04:01 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10161"; a="230844659"
 X-IronPort-AV: E=Sophos;i="5.87,217,1631602800"; 
-   d="scan'208";a="231969404"
+   d="scan'208";a="230844659"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2021 11:51:40 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2021 12:01:18 -0800
 X-IronPort-AV: E=Sophos;i="5.87,217,1631602800"; 
-   d="scan'208";a="451221004"
+   d="scan'208";a="451225129"
 Received: from akirasen-mobl.amr.corp.intel.com (HELO [10.209.44.100]) ([10.209.44.100])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2021 11:51:39 -0800
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2021 11:58:24 -0800
 Subject: Re: [PATCH] x86/sgx: Free backing memory after faulting the enclave
  page
 To:     Jarkko Sakkinen <jarkko@kernel.org>
@@ -37,11 +37,8 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20211103232238.110557-1-jarkko@kernel.org>
- <6831ed3c-c5b1-64f7-2ad7-f2d686224b7e@intel.com>
- <e88d6d580354aadaa8eaa5ee6fa703f021786afb.camel@kernel.org>
- <d2191571-30a5-c2aa-e8ed-0a380e9daeac@intel.com>
- <55eb8f3649590289a0f2b1ebe7583b6da3ff70ee.camel@kernel.org>
- <c6f5356b-a56a-e057-ef74-74e1169a844b@intel.com> <YYgsL7xSxnsjqIlu@iki.fi>
+ <7c122a82-e418-0bce-8f67-cbaa15abc9b9@intel.com> <YYgVsi7y4TNuSRLc@iki.fi>
+ <984bc7a4-1c7a-f2c0-5885-0dc7fad3d2b6@intel.com> <YYgs94O3eiKJwKgi@iki.fi>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -86,12 +83,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <7a5d6dab-4d06-40b3-d9c7-09c991b856cd@intel.com>
-Date:   Sun, 7 Nov 2021 11:51:37 -0800
+Message-ID: <dd7c1402-eeb9-cea5-25c6-ab19e8031991@intel.com>
+Date:   Sun, 7 Nov 2021 11:58:21 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YYgsL7xSxnsjqIlu@iki.fi>
+In-Reply-To: <YYgs94O3eiKJwKgi@iki.fi>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,27 +96,27 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/7/21 11:42 AM, Jarkko Sakkinen wrote:
->>> It should be fairly effecient just to check the pages by using
->>> encl->page_tree.
->> That sounds more complicated and slower than what I suggested.  You
->> could even just check the refcount on the page.  I _think_ page cache
->> pages have a refcount of 2.  So, look for the refcount that means "no
->> more PCMD in this page", and just free it if so.
-> Umh, so... there is total 32 PCMD's per one page.
+On 11/7/21 11:45 AM, Jarkko Sakkinen wrote:
+> On Sun, Nov 07, 2021 at 11:06:01AM -0800, Dave Hansen wrote:
+>> That's true, the page cache should all be torn down along with the
+>> fput().  *But*, it would be a very nice property if the backing storage
+>> was empty by this point.  It essentially ensures that no enclave-runtime
+>> cases missed truncating the backing storage away.
+> 
+> What if an enclave is released a point when all of its pages
+> are swapped out? Or even simpler case would an enclave that is
+> larger than all of EPC.
 
-When you place PCMD in a page, you do a get_page().  The refcount goes
-up by one.  So, a PCMD page with one PCMD will (I think) have a refcount
-of 3.  If you totally fill it up with 31 *more* PCMD entries, it will
-have a refcount of 34.  You do *not* do a put_page() on the PCMD page at
-the end of the allocation phase.
+In this loop:
 
-When the backing storage is freed, you drop the refcount.  So, going
-from 32 PCMD entries to 31 entries in a page, you go from 34->33.
+void sgx_encl_release(struct kref *ref)
+{
+	...
+        xa_for_each(&encl->page_array, index, entry) {
+		if (entry->epc_page == NULL)
+			// truncate backing storage
 
-When that refcount drops to 2, you know there is no more data in the
-page that's useful.  At that point you can truncate it out of the
-backing storage.
+> What can be made sure is that for all pages, which are in EPC,
+> the backing page is truncated.
 
-There's no reason to scan the page, or a boatload of other metadata.
-Just keep a refcount.  Just use the *existing* 'struct page' refcount.
+Right, and that should be utterly trivial to do.
