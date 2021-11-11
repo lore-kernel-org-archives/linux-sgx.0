@@ -2,118 +2,176 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E9CC433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Nov 2021 04:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF439C433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Nov 2021 17:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 550BB61284
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Nov 2021 04:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D56961077
+	for <linux-sgx@archiver.kernel.org>; Thu, 11 Nov 2021 17:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbhKKEEa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 10 Nov 2021 23:04:30 -0500
-Received: from mga14.intel.com ([192.55.52.115]:14992 "EHLO mga14.intel.com"
+        id S234166AbhKKRrK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 11 Nov 2021 12:47:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230185AbhKKEEa (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 10 Nov 2021 23:04:30 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="233086513"
-X-IronPort-AV: E=Sophos;i="5.87,225,1631602800"; 
-   d="scan'208";a="233086513"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2021 20:01:41 -0800
-X-IronPort-AV: E=Sophos;i="5.87,225,1631602800"; 
-   d="scan'208";a="546404054"
-Received: from mgoyal-mobl.amr.corp.intel.com (HELO [10.209.27.219]) ([10.209.27.219])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2021 20:01:40 -0800
-Subject: Re: [PATCH V2] x86/sgx: Fix free page accounting
+        id S229710AbhKKRrJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 11 Nov 2021 12:47:09 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 115F861268;
+        Thu, 11 Nov 2021 17:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636652660;
+        bh=9Gq0v0p33pbfM5GnyjHDOkIzDG8zl78YxZZdO6V/SAo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ACl630hv72QwnL86vhB9yF7sypTrTSmWzpgqFQ+a9kIDxyiEpKURrCOJVrC/DDS1W
+         rklqg+8BIOiHAhLDV2SQCKFZOc+QDG8DjCXYIAKRYKqAPfvmE8PYtuGWFJKYbSVz1F
+         RnODRi4csuSnOsrozx6N4lc40x4lt2tcacxbJu7cnIyjurgxn85Is7ze3yvB+aYqbF
+         0rJbGgUa+gzrYGl5ZjOPjC2po0G3TvI3zZTqL9PFAmqQ9dvheguJ2PPDz4WhX+nci4
+         yeSDnGwG5S0/yXcufhU0u/0RsAc+j3JUkPuxC80aALGhjX2e+L35P/Gw1jtYHdmEeg
+         n+aw+cx+7NQDg==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        mingo@redhat.com, linux-sgx@vger.kernel.org, x86@kernel.org,
-        seanjc@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <b2e69e9febcae5d98d331de094d9cc7ce3217e66.1636487172.git.reinette.chatre@intel.com>
- <8e0bb87f05b79317a06ed2d8ab5e2f5cf6132b6a.camel@kernel.org>
- <794a7034-f6a7-4aff-7958-b1bd959ced24@intel.com>
- <94df4c660532a6bf414b6bbd8e25c3ea2e4eda5b.camel@kernel.org>
- <YYyNeW28jqKwD0tF@agluck-desk2.amr.corp.intel.com>
- <f99dca08d332b01daec9eed7e4a55f042b551a67.camel@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bacbf33c-aade-fd16-ed95-20b1d0511752@intel.com>
-Date:   Wed, 10 Nov 2021 20:01:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
+        nathaniel@profian.com, stable@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] x86/sgx: Free backing memory after faulting the enclave page
+Date:   Thu, 11 Nov 2021 19:44:01 +0200
+Message-Id: <20211111174401.865493-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <f99dca08d332b01daec9eed7e4a55f042b551a67.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 11/10/21 7:50 PM, Jarkko Sakkinen wrote:
->>               CPU_A                                 CPU_B
->>               -----                                 -----
->>          spin_lock(&nodeA->lock);              spin_lock(&nodeB->lock);
->>          ...                                   ...
->>          sgx_nr_free_pages--;  /* NOT SAFE */  sgx_nr_free_pages--;
->>
->>          spin_unlock(&nodeA->lock);            spin_unlock(&nodeB->lock);
->>
->> Maybe you missed the "NOT SAFE" hidden in the middle of
->> the picture?
->>
->> -Tony
-> For me from that the ordering is not clear. E.g. compare to
-> https://www.kernel.org/doc/Documentation/memory-barriers.txt
+There is a limited amount of SGX memory (EPC) on each system.  When that
+memory is used up, SGX has its own swapping mechanism which is similar
+in concept but totally separate from the core mm/* code.  Instead of
+swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
+comes from a shared memory pseudo-file and can itself be swapped by the
+core mm code.  There is a hierarchy like this:
 
-Jarkko,
+	EPC <-> shmem <-> disk
 
-Reinette's explanation looks great to me.  Something "protected" by two
-different locks is not protected at all.  I don't think we need to fret
-over this too much.
+After data is swapped back in from shmem to EPC, the shmem backing
+storage needs to be freed.  Currently, the backing shmem is not freed.
+This effectively wastes the shmem while the enclave is running.  The
+memory is recovered when the enclave is destroyed and the backing
+storage freed.
 
-We don't need memory barriers or anything fancy at all to explain this.
+Sort this out by freeing memory with shmem_truncate_range(), as soon as
+a page is faulted back to the EPC.  In addition, free the memory for
+PCMD pages as soon as all PCMD's in a page have been marked as unused
+by zeroing its contents.
+
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2:
+* Rewrite commit message as proposed by Dave.
+* Truncate PCMD pages (Dave).
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 48 +++++++++++++++++++++++++++++++---
+ 1 file changed, 44 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 001808e3901c..ea43c10e5458 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -12,6 +12,27 @@
+ #include "encls.h"
+ #include "sgx.h"
+ 
++
++/*
++ * Get the page number of the page in the backing storage, which stores the PCMD
++ * of the enclave page in the given page index.  PCMD pages are located after
++ * the backing storage for the visible enclave pages and SECS.
++ */
++static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
++{
++	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
++}
++
++/*
++ * Free a page from the backing storage in the given page index.
++ */
++static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, pgoff_t index)
++{
++	struct inode *inode = file_inode(encl->backing);
++
++	shmem_truncate_range(inode, PFN_PHYS(index), PFN_PHYS(index) + PAGE_SIZE - 1);
++}
++
+ /*
+  * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
+  * Pages" in the SDM.
+@@ -24,7 +45,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 	struct sgx_encl *encl = encl_page->encl;
+ 	struct sgx_pageinfo pginfo;
+ 	struct sgx_backing b;
++	bool pcmd_page_empty;
+ 	pgoff_t page_index;
++	pgoff_t pcmd_index;
++	u8 *pcmd_page;
+ 	int ret;
+ 
+ 	if (secs_page)
+@@ -38,8 +62,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 
+ 	pginfo.addr = encl_page->desc & PAGE_MASK;
+ 	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
+-	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
+-			  b.pcmd_offset;
++	pcmd_page = kmap_atomic(b.pcmd);
++	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
+ 
+ 	if (secs_page)
+ 		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
+@@ -55,11 +79,27 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 		ret = -EFAULT;
+ 	}
+ 
+-	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
++	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
++
++	/*
++	 * The area for the PCMD in the page was zeroed above.  Check if the
++	 * whole page is now empty meaning that all PCMD's have been zeroed:
++	 */
++	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
++
++	kunmap_atomic(pcmd_page);
+ 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+ 
+ 	sgx_encl_put_backing(&b, false);
+ 
++	/* Free the backing memory. */
++	sgx_encl_truncate_backing_page(encl, page_index);
++
++	if (pcmd_page_empty) {
++		pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
++		sgx_encl_truncate_backing_page(encl, pcmd_index);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -577,7 +617,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			 struct sgx_backing *backing)
+ {
+-	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
++	pgoff_t pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
+ 	struct page *contents;
+ 	struct page *pcmd;
+ 
+-- 
+2.32.0
+
