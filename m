@@ -2,176 +2,137 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF439C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Nov 2021 17:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC58BC4321E
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Nov 2021 18:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D56961077
-	for <linux-sgx@archiver.kernel.org>; Thu, 11 Nov 2021 17:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96AFD635B0
+	for <linux-sgx@archiver.kernel.org>; Mon, 15 Nov 2021 18:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234166AbhKKRrK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 11 Nov 2021 12:47:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51382 "EHLO mail.kernel.org"
+        id S242117AbhKOSpU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 15 Nov 2021 13:45:20 -0500
+Received: from mga02.intel.com ([134.134.136.20]:59273 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229710AbhKKRrJ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 11 Nov 2021 12:47:09 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 115F861268;
-        Thu, 11 Nov 2021 17:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636652660;
-        bh=9Gq0v0p33pbfM5GnyjHDOkIzDG8zl78YxZZdO6V/SAo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ACl630hv72QwnL86vhB9yF7sypTrTSmWzpgqFQ+a9kIDxyiEpKURrCOJVrC/DDS1W
-         rklqg+8BIOiHAhLDV2SQCKFZOc+QDG8DjCXYIAKRYKqAPfvmE8PYtuGWFJKYbSVz1F
-         RnODRi4csuSnOsrozx6N4lc40x4lt2tcacxbJu7cnIyjurgxn85Is7ze3yvB+aYqbF
-         0rJbGgUa+gzrYGl5ZjOPjC2po0G3TvI3zZTqL9PFAmqQ9dvheguJ2PPDz4WhX+nci4
-         yeSDnGwG5S0/yXcufhU0u/0RsAc+j3JUkPuxC80aALGhjX2e+L35P/Gw1jtYHdmEeg
-         n+aw+cx+7NQDg==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>
-Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
-        nathaniel@profian.com, stable@vger.kernel.org,
-        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
+        id S242654AbhKOSnP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 15 Nov 2021 13:43:15 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10169"; a="220713089"
+X-IronPort-AV: E=Sophos;i="5.87,237,1631602800"; 
+   d="scan'208";a="220713089"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2021 10:35:37 -0800
+X-IronPort-AV: E=Sophos;i="5.87,237,1631602800"; 
+   d="scan'208";a="454130649"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2021 10:35:37 -0800
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     jarkko@kernel.org, linux-sgx@vger.kernel.org, shuah@kernel.org,
+        dave.hansen@linux.intel.com
+Cc:     seanjc@google.com, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] x86/sgx: Free backing memory after faulting the enclave page
-Date:   Thu, 11 Nov 2021 19:44:01 +0200
-Message-Id: <20211111174401.865493-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.32.0
+Subject: [PATCH V3 00/13] selftests/sgx: Oversubscription, page permission, thread entry
+Date:   Mon, 15 Nov 2021 10:35:13 -0800
+Message-Id: <cover.1636997631.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-There is a limited amount of SGX memory (EPC) on each system.  When that
-memory is used up, SGX has its own swapping mechanism which is similar
-in concept but totally separate from the core mm/* code.  Instead of
-swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
-comes from a shared memory pseudo-file and can itself be swapped by the
-core mm code.  There is a hierarchy like this:
+V2 available at:
+https://lore.kernel.org/lkml/cover.1635447301.git.reinette.chatre@intel.com/
 
-	EPC <-> shmem <-> disk
+Changes since V2:
+- Remove the non-kselftest placeholder patches while also removing their
+  usage within the SGX selftests. Instead, the SGX selftests obtain needed
+  data from CPUID directly (Dave).
+- Rewrite commit message of "selftests/x86/sgx: Fix a benign linker
+  warning" (Dave).
+- Add Jarkko's signature to "selftests/sgx: Add page permission and
+  exception test" (Jarkko).
 
-After data is swapped back in from shmem to EPC, the shmem backing
-storage needs to be freed.  Currently, the backing shmem is not freed.
-This effectively wastes the shmem while the enclave is running.  The
-memory is recovered when the enclave is destroyed and the backing
-storage freed.
+V1 available at:
+https://lore.kernel.org/lkml/cover.1631731214.git.reinette.chatre@intel.com/
 
-Sort this out by freeing memory with shmem_truncate_range(), as soon as
-a page is faulted back to the EPC.  In addition, free the memory for
-PCMD pages as soon as all PCMD's in a page have been marked as unused
-by zeroing its contents.
+Changes since V1:
 
-Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: stable@vger.kernel.org
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v2:
-* Rewrite commit message as proposed by Dave.
-* Truncate PCMD pages (Dave).
----
- arch/x86/kernel/cpu/sgx/encl.c | 48 +++++++++++++++++++++++++++++++---
- 1 file changed, 44 insertions(+), 4 deletions(-)
+- Biggest change: The non-kselftest placeholder patches included in this series
+  that the kselftest work depends on are still being discussed elsewhere
+  (link below) but has changed significantly since the first submission,
+  warranting an update to the kselftest patches that depend on it.
+  Jarkko: I made significant modifications to your
+  "selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed"
+  that you may want to look at.
+- Improve cover letter and changelogs (Dave).
+- Add Jarkko and Dave's signatures where obtained (Jarkko and Dave).
+- Fix Cedric's signature in patch 1 (Jarkko and Cedric).
+- Improve the loop locating the data segment (Jarkko).
+- Update placeholder patches that makes the amount of SGX memory available to
+  latest version (v8). Previously this dependency consisted out of one
+  patch, now it spans two.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 001808e3901c..ea43c10e5458 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -12,6 +12,27 @@
- #include "encls.h"
- #include "sgx.h"
- 
-+
-+/*
-+ * Get the page number of the page in the backing storage, which stores the PCMD
-+ * of the enclave page in the given page index.  PCMD pages are located after
-+ * the backing storage for the visible enclave pages and SECS.
-+ */
-+static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-+{
-+	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
-+}
-+
-+/*
-+ * Free a page from the backing storage in the given page index.
-+ */
-+static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, pgoff_t index)
-+{
-+	struct inode *inode = file_inode(encl->backing);
-+
-+	shmem_truncate_range(inode, PFN_PHYS(index), PFN_PHYS(index) + PAGE_SIZE - 1);
-+}
-+
- /*
-  * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
-  * Pages" in the SDM.
-@@ -24,7 +45,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	struct sgx_encl *encl = encl_page->encl;
- 	struct sgx_pageinfo pginfo;
- 	struct sgx_backing b;
-+	bool pcmd_page_empty;
- 	pgoff_t page_index;
-+	pgoff_t pcmd_index;
-+	u8 *pcmd_page;
- 	int ret;
- 
- 	if (secs_page)
-@@ -38,8 +62,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 
- 	pginfo.addr = encl_page->desc & PAGE_MASK;
- 	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
--	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
--			  b.pcmd_offset;
-+	pcmd_page = kmap_atomic(b.pcmd);
-+	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
- 
- 	if (secs_page)
- 		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
-@@ -55,11 +79,27 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 		ret = -EFAULT;
- 	}
- 
--	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
-+	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
-+
-+	/*
-+	 * The area for the PCMD in the page was zeroed above.  Check if the
-+	 * whole page is now empty meaning that all PCMD's have been zeroed:
-+	 */
-+	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
-+
-+	kunmap_atomic(pcmd_page);
- 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
- 	sgx_encl_put_backing(&b, false);
- 
-+	/* Free the backing memory. */
-+	sgx_encl_truncate_backing_page(encl, page_index);
-+
-+	if (pcmd_page_empty) {
-+		pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
-+		sgx_encl_truncate_backing_page(encl, pcmd_index);
-+	}
-+
- 	return ret;
- }
- 
-@@ -577,7 +617,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
- int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 			 struct sgx_backing *backing)
- {
--	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-+	pgoff_t pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
- 	struct page *contents;
- 	struct page *pcmd;
- 
+Hi Everybody,
+
+This series consists out of outstanding SGX selftests changes, rebased
+and gathered in a single series that can easily be merged for testing
+and development, and a few more changes added to expand the existing tests.
+
+The outstanding SGX selftest changes included in this series that have already
+been submitted separately are:
+
+* A more than two year old patch fixing a benign linker warning that is still
+  present today:
+  https://lore.kernel.org/linux-sgx/20191017030340.18301-2-sean.j.christopherson@intel.com/
+  The original patch is added intact and not all email addresses
+  within are valid.
+
+* Latest (v4) of Jarkko Sakkinen's series to add an oversubscription test:
+  https://lore.kernel.org/linux-sgx/20210809093127.76264-1-jarkko@kernel.org/
+
+* Latest (v2) of Jarkko Sakkinen's patch that provides per-op
+  parameter structs for the test enclave:
+  https://lore.kernel.org/linux-sgx/20210812224645.90280-1-jarkko@kernel.org/
+
+The new changes introduced in this series builds on Jarkko's outstanding
+SGX selftest changes and adds new tests for page permissions, exception
+handling, and thread entry.
+
+Building and running enclaves is painful and traditionally requires a
+big software stack. This adds features like threads to the SGX selftests
+which are traditionally implemented in that big software stack. This
+helps test SGX kernel support with only code from the kernel tree.
+
+Reinette
+
+Jarkko Sakkinen (8):
+  selftests/sgx: Assign source for each segment
+  selftests/sgx: Make data measurement for an enclave segment optional
+  selftests/sgx: Create a heap for the test enclave
+  selftests/sgx: Dump segments and /proc/self/maps only on failure
+  selftests/sgx: Encpsulate the test enclave creation
+  selftests/sgx: Move setup_test_encl() to each TEST_F()
+  selftests/sgx: Add a new kselftest: unclobbered_vdso_oversubscribed
+  selftests/sgx: Provide per-op parameter structs for the test enclave
+
+Reinette Chatre (4):
+  selftests/sgx: Rename test properties in preparation for more enclave
+    tests
+  selftests/sgx: Add page permission and exception test
+  selftests/sgx: Enable multiple thread support
+  selftests/sgx: Add test for multiple TCS entry
+
+Sean Christopherson (1):
+  selftests/x86/sgx: Fix a benign linker warning
+
+ tools/testing/selftests/sgx/Makefile          |   2 +-
+ tools/testing/selftests/sgx/defines.h         |  33 +-
+ tools/testing/selftests/sgx/load.c            |  40 +-
+ tools/testing/selftests/sgx/main.c            | 357 +++++++++++++++---
+ tools/testing/selftests/sgx/main.h            |   6 +-
+ tools/testing/selftests/sgx/sigstruct.c       |  12 +-
+ tools/testing/selftests/sgx/test_encl.c       |  60 ++-
+ .../selftests/sgx/test_encl_bootstrap.S       |  21 +-
+ 8 files changed, 445 insertions(+), 86 deletions(-)
+
 -- 
-2.32.0
+2.25.1
 
