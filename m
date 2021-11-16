@@ -2,262 +2,275 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880D3C4332F
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Nov 2021 01:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625DEC433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Nov 2021 16:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 772496322D
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Nov 2021 01:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4775B63219
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Nov 2021 16:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354055AbhKPBgB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 15 Nov 2021 20:36:01 -0500
-Received: from mga02.intel.com ([134.134.136.20]:59597 "EHLO mga02.intel.com"
+        id S238686AbhKPQE3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Nov 2021 11:04:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242914AbhKOSr2 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 15 Nov 2021 13:47:28 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10169"; a="220713114"
-X-IronPort-AV: E=Sophos;i="5.87,237,1631602800"; 
-   d="scan'208";a="220713114"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2021 10:35:38 -0800
-X-IronPort-AV: E=Sophos;i="5.87,237,1631602800"; 
-   d="scan'208";a="454130660"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2021 10:35:37 -0800
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     jarkko@kernel.org, linux-sgx@vger.kernel.org, shuah@kernel.org,
-        dave.hansen@linux.intel.com
-Cc:     seanjc@google.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3 10/13] selftests/sgx: Rename test properties in preparation for more enclave tests
-Date:   Mon, 15 Nov 2021 10:35:23 -0800
-Message-Id: <023fda047c787cf330b88ed9337705edae6a0078.1636997631.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1636997631.git.reinette.chatre@intel.com>
-References: <cover.1636997631.git.reinette.chatre@intel.com>
+        id S238799AbhKPQEU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 16 Nov 2021 11:04:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3FAEB63214;
+        Tue, 16 Nov 2021 16:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637078481;
+        bh=0PSG+6xaIQ+J2U2x+fg7elsNbRPYWLx/o3TGsveFJWU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Sqj0xvR4s7y9f5KYvL0zyv6XxHfQsQy6es91TIbTX/FJrSBMb6B6sH12cg2zk6glL
+         zNSTUw7tJg4IrsXhWbh2d13I/1VF9f8DOF3rMwKtcsQN+clGvh04ixESa2oMDeaqIj
+         cvuOVghNgwpJz5WI94XkCyVTXRQAakxBWskhl4o/eiSZlpfd31wNbH39zDq27X0o9w
+         uSDzky93CvDQ/CWx91Z+eSolAbdSI4qD/VT9/MiabILIiuLWgEq0rZ/X/kIIGX82ur
+         nS+2o/ZexIyob3ZSQxIhHEjL8NdIxxuK+UHse5S0H4RJ9q/1qr9whzTBbYGFQpDtlJ
+         W3ukyvR3hrMDQ==
+Message-ID: <3f3467f0213dad19200c9485151956f630db6f60.camel@kernel.org>
+Subject: Re: [PATCH V3] x86/sgx: Fix free page accounting
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        mingo@redhat.com, linux-sgx@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, tony.luck@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date:   Tue, 16 Nov 2021 18:01:19 +0200
+In-Reply-To: <a95a40743bbd3f795b465f30922dde7f1ea9e0eb.1637004094.git.reinette.chatre@intel.com>
+References: <a95a40743bbd3f795b465f30922dde7f1ea9e0eb.1637004094.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.40.4-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX selftests prepares a data structure outside of the enclave with
-the type of and data for the operation that needs to be run within
-the enclave. At this time only two complementary operations are supported
-by the enclave: copying a value from outside the enclave into a default
-buffer within the enclave and reading a value from the enclave's default
-buffer into a variable accessible outside the enclave.
+On Mon, 2021-11-15 at 11:29 -0800, Reinette Chatre wrote:
+> The SGX driver maintains a single global free page counter,
+> sgx_nr_free_pages, that reflects the number of free pages available
+> across all NUMA nodes. Correspondingly, a list of free pages is
+> associated with each NUMA node and sgx_nr_free_pages is updated
+> every time a page is added or removed from any of the free page
+> lists. The main usage of sgx_nr_free_pages is by the reclaimer
+> that runs when it (sgx_nr_free_pages) goes below a watermark
+> to ensure that there are always some free pages available to, for
+> example, support efficient page faults.
+>=20
+> With sgx_nr_free_pages accessed and modified from a few places
+> it is essential to ensure that these accesses are done safely but
+> this is not the case. sgx_nr_free_pages is read without any
+> protection and updated with inconsistent protection by any one
+> of the spin locks associated with the individual NUMA nodes.
+> For example:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU_A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 CPU_B
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -----=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 -----
+> =C2=A0spin_lock(&nodeA->lock);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock(&nodeB->lock);
+> =C2=A0...=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+> =C2=A0sgx_nr_free_pages--;=C2=A0 /* NOT SAFE */=C2=A0 sgx_nr_free_pages--=
+;
+>=20
+> =C2=A0spin_unlock(&nodeA->lock);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&nodeB->lock);
+>=20
+> Since sgx_nr_free_pages may be protected by different spin locks
+> while being modified from different CPUs, the following scenario
+> is possible:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU_A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ CPU_B
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -----=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ -----
+> {sgx_nr_free_pages =3D 100}
+> =C2=A0spin_lock(&nodeA->lock);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock(&nodeB->lock);
+> =C2=A0sgx_nr_free_pages--;=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sgx_nr_free_pages=
+--;
+> =C2=A0/* LOAD sgx_nr_free_pages =3D 100 */=C2=A0=C2=A0=C2=A0 /* LOAD sgx_=
+nr_free_pages =3D 100 */
+> =C2=A0/* sgx_nr_free_pages--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 */=C2=A0=C2=A0=C2=A0 /* sgx_nr_free_pages--=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> =C2=A0/* STORE sgx_nr_free_pages =3D 99 */=C2=A0=C2=A0=C2=A0 /* STORE sgx=
+_nr_free_pages =3D 99 */
+> =C2=A0spin_unlock(&nodeA->lock);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&nodeB->lock);
+>=20
+> In the above scenario, sgx_nr_free_pages is decremented from two CPUs
+> but instead of sgx_nr_free_pages ending with a value that is two less
+> than it started with, it was only decremented by one while the number
+> of free pages were actually reduced by two. The consequence of
+> sgx_nr_free_pages not being protected is that its value may not
+> accurately reflect the actual number of free pages on the system,
+> impacting the availability of free pages in support of many flows.
+>=20
+> The problematic scenario is when the reclaimer does not run because it
+> believes there to be sufficient free pages while any attempt to allocate
+> a page fails because there are no free pages available. In the SGX driver
+> the reclaimer's watermark is only 32 pages so after encountering the
+> above example scenario 32 times a user space hang is possible when there
+> are no more free pages because of repeated page faults caused by no
+> free pages made available.
+>=20
+> The following flow was encountered:
+> asm_exc_page_fault
+> =C2=A0...
+> =C2=A0=C2=A0 sgx_vma_fault()
+> =C2=A0=C2=A0=C2=A0=C2=A0 sgx_encl_load_page()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sgx_encl_eldu() // Encrypted page ne=
+eds to be loaded from backing
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // storage int=
+o newly allocated SGX memory page
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sgx_alloc_epc_page() // =
+Allocate a page of SGX memory
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __sgx_alloc_=
+epc_page() // Fails, no free SGX memory
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (sgx_shou=
+ld_reclaim(SGX_NR_LOW_PAGES)) // Wake reclaimer
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+wake_up(&ksgxd_waitq);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EBUS=
+Y; // Return -EBUSY giving reclaimer time to run
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EBUSY;
+> =C2=A0=C2=A0=C2=A0=C2=A0 return -EBUSY;
+> =C2=A0=C2=A0 return VM_FAULT_NOPAGE;
+>=20
+> The reclaimer is triggered in above flow with the following code:
+>=20
+> static bool sgx_should_reclaim(unsigned long watermark)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return sgx_nr_free_pages < wat=
+ermark &&
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 !list_empty(&sgx_active_page_list);
+> }
+>=20
+> In the problematic scenario there were no free pages available yet the
+> value of sgx_nr_free_pages was above the watermark. The allocation of
+> SGX memory thus always failed because of a lack of free pages while no
+> free pages were made available because the reclaimer is never started
+> because of sgx_nr_free_pages' incorrect value. The consequence was that
+> user space kept encountering VM_FAULT_NOPAGE that caused the same
+> address to be accessed repeatedly with the same result.
+>=20
+> Change the global free page counter to an atomic type that
+> ensures simultaneous updates are done safely. While doing so, move
+> the updating of the variable outside of the spin lock critical
+> section to which it does not belong.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 901ddbb9ecf5 ("x86/sgx: Add a basic NUMA allocation scheme to sgx_=
+alloc_epc_page()")
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Changes since V2:
+> - V2:
+> https://lore.kernel.org/lkml/b2e69e9febcae5d98d331de094d9cc7ce3217e66.163=
+6487172.git.reinette.chatre@intel.com/
+> - Update changelog to provide example of unsafe variable modification (Ja=
+rkko).
+>=20
+> Changes since V1:
+> - V1:
+> =C2=A0 https://lore.kernel.org/lkml/373992d869cd356ce9e9afe43ef4934b70d60=
+4fd.1636049678.git.reinette.chatre@intel.com/
+> - Add static to definition of sgx_nr_free_pages (Tony).
+> - Add Tony's signature.
+> - Provide detail about error scenario in changelog (Jarkko).
+>=20
+> =C2=A0arch/x86/kernel/cpu/sgx/main.c | 12 ++++++------
+> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
+n.c
+> index 63d3de02bbcc..8471a8b9b48e 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -28,8 +28,7 @@ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+> =C2=A0static LIST_HEAD(sgx_active_page_list);
+> =C2=A0static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+> =C2=A0
+> -/* The free page list lock protected variables prepend the lock. */
+> -static unsigned long sgx_nr_free_pages;
+> +static atomic_long_t sgx_nr_free_pages =3D ATOMIC_LONG_INIT(0);
+> =C2=A0
+> =C2=A0/* Nodes with one or more EPC sections. */
+> =C2=A0static nodemask_t sgx_numa_mask;
+> @@ -403,14 +402,15 @@ static void sgx_reclaim_pages(void)
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0spin_lock(&node->lock);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0list_add_tail(&epc_page->list, &node->free_page_lis=
+t);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0sgx_nr_free_pages++;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0spin_unlock(&node->lock);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0atomic_long_inc(&sgx_nr_free_pages);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0}
+> =C2=A0
+> =C2=A0static bool sgx_should_reclaim(unsigned long watermark)
+> =C2=A0{
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return sgx_nr_free_pages < wat=
+ermark && !list_empty(&sgx_active_page_list);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return atomic_long_read(&sgx_n=
+r_free_pages) < watermark &&
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 !list_empty(&sgx_active_page_list);
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int ksgxd(void *p)
+> @@ -471,9 +471,9 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from=
+_node(int nid)
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0page =3D list_first_entry=
+(&node->free_page_list, struct sgx_epc_page, list);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0list_del_init(&page->list=
+);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sgx_nr_free_pages--;
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_unlock(&node->lock);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0atomic_long_dec(&sgx_nr_free_p=
+ages);
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return page;
+> =C2=A0}
+> @@ -625,9 +625,9 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_lock(&node->lock);
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0list_add_tail(&page->list=
+, &node->free_page_list);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sgx_nr_free_pages++;
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_unlock(&node->lock);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0atomic_long_inc(&sgx_nr_free_p=
+ages);
+> =C2=A0}
+> =C2=A0
+> =C2=A0static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
 
-In preparation for more operations supported by the enclave the names of the
-current enclave operations are changed to more accurately reflect the
-operations and more easily distinguish it from future operations:
-
-* The enums ENCL_OP_PUT and ENCL_OP_GET are renamed to ENCL_OP_PUT_TO_BUFFER
-  and ENCL_OP_GET_FROM_BUFFER respectively.
-* The structs encl_op_put and encl_op_get are renamed to encl_op_put_to_buf
-  and encl_op_get_from_buf respectively.
-* The enclave functions do_encl_op_put and do_encl_op_get are renamed to
-  do_encl_op_put_to_buf and do_encl_op_get_from_buf respectively.
-
-No functional changes.
-
-Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
 Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
-Changes since V1:
-- Add Jarkko and Dave's signatures.
 
- tools/testing/selftests/sgx/defines.h   |  8 +++----
- tools/testing/selftests/sgx/main.c      | 32 ++++++++++++-------------
- tools/testing/selftests/sgx/test_encl.c | 12 +++++-----
- 3 files changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index 6ff95a766287..9ea0c7882dfb 100644
---- a/tools/testing/selftests/sgx/defines.h
-+++ b/tools/testing/selftests/sgx/defines.h
-@@ -19,8 +19,8 @@
- #include "../../../../arch/x86/include/uapi/asm/sgx.h"
- 
- enum encl_op_type {
--	ENCL_OP_PUT,
--	ENCL_OP_GET,
-+	ENCL_OP_PUT_TO_BUFFER,
-+	ENCL_OP_GET_FROM_BUFFER,
- 	ENCL_OP_MAX,
- };
- 
-@@ -28,12 +28,12 @@ struct encl_op_header {
- 	uint64_t type;
- };
- 
--struct encl_op_put {
-+struct encl_op_put_to_buf {
- 	struct encl_op_header header;
- 	uint64_t value;
- };
- 
--struct encl_op_get {
-+struct encl_op_get_from_buf {
- 	struct encl_op_header header;
- 	uint64_t value;
- };
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 3996c00486b6..61321229e485 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -220,15 +220,15 @@ FIXTURE_TEARDOWN(enclave)
- 
- TEST_F(enclave, unclobbered_vdso)
- {
--	struct encl_op_put put_op;
--	struct encl_op_get get_op;
-+	struct encl_op_get_from_buf get_op;
-+	struct encl_op_put_to_buf put_op;
- 
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
- 	self->run.tcs = self->encl.encl_base;
- 
--	put_op.header.type = ENCL_OP_PUT;
-+	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
- 
- 	EXPECT_EQ(ENCL_CALL(&put_op, &self->run, false), 0);
-@@ -236,7 +236,7 @@ TEST_F(enclave, unclobbered_vdso)
- 	EXPECT_EEXIT(&self->run);
- 	EXPECT_EQ(self->run.user_data, 0);
- 
--	get_op.header.type = ENCL_OP_GET;
-+	get_op.header.type = ENCL_OP_GET_FROM_BUFFER;
- 	get_op.value = 0;
- 
- 	EXPECT_EQ(ENCL_CALL(&get_op, &self->run, false), 0);
-@@ -292,9 +292,9 @@ static unsigned long get_total_epc_mem(void)
- 
- TEST_F(enclave, unclobbered_vdso_oversubscribed)
- {
-+	struct encl_op_get_from_buf get_op;
-+	struct encl_op_put_to_buf put_op;
- 	unsigned long total_mem;
--	struct encl_op_put put_op;
--	struct encl_op_get get_op;
- 
- 	total_mem = get_total_epc_mem();
- 	ASSERT_NE(total_mem, 0);
-@@ -303,7 +303,7 @@ TEST_F(enclave, unclobbered_vdso_oversubscribed)
- 	memset(&self->run, 0, sizeof(self->run));
- 	self->run.tcs = self->encl.encl_base;
- 
--	put_op.header.type = ENCL_OP_PUT;
-+	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
- 
- 	EXPECT_EQ(ENCL_CALL(&put_op, &self->run, false), 0);
-@@ -311,7 +311,7 @@ TEST_F(enclave, unclobbered_vdso_oversubscribed)
- 	EXPECT_EEXIT(&self->run);
- 	EXPECT_EQ(self->run.user_data, 0);
- 
--	get_op.header.type = ENCL_OP_GET;
-+	get_op.header.type = ENCL_OP_GET_FROM_BUFFER;
- 	get_op.value = 0;
- 
- 	EXPECT_EQ(ENCL_CALL(&get_op, &self->run, false), 0);
-@@ -324,15 +324,15 @@ TEST_F(enclave, unclobbered_vdso_oversubscribed)
- 
- TEST_F(enclave, clobbered_vdso)
- {
--	struct encl_op_put put_op;
--	struct encl_op_get get_op;
-+	struct encl_op_get_from_buf get_op;
-+	struct encl_op_put_to_buf put_op;
- 
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
- 	self->run.tcs = self->encl.encl_base;
- 
--	put_op.header.type = ENCL_OP_PUT;
-+	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
- 
- 	EXPECT_EQ(ENCL_CALL(&put_op, &self->run, true), 0);
-@@ -340,7 +340,7 @@ TEST_F(enclave, clobbered_vdso)
- 	EXPECT_EEXIT(&self->run);
- 	EXPECT_EQ(self->run.user_data, 0);
- 
--	get_op.header.type = ENCL_OP_GET;
-+	get_op.header.type = ENCL_OP_GET_FROM_BUFFER;
- 	get_op.value = 0;
- 
- 	EXPECT_EQ(ENCL_CALL(&get_op, &self->run, true), 0);
-@@ -360,8 +360,8 @@ static int test_handler(long rdi, long rsi, long rdx, long ursp, long r8, long r
- 
- TEST_F(enclave, clobbered_vdso_and_user_function)
- {
--	struct encl_op_put put_op;
--	struct encl_op_get get_op;
-+	struct encl_op_get_from_buf get_op;
-+	struct encl_op_put_to_buf put_op;
- 
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
-@@ -371,7 +371,7 @@ TEST_F(enclave, clobbered_vdso_and_user_function)
- 	self->run.user_handler = (__u64)test_handler;
- 	self->run.user_data = 0xdeadbeef;
- 
--	put_op.header.type = ENCL_OP_PUT;
-+	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
- 
- 	EXPECT_EQ(ENCL_CALL(&put_op, &self->run, true), 0);
-@@ -379,7 +379,7 @@ TEST_F(enclave, clobbered_vdso_and_user_function)
- 	EXPECT_EEXIT(&self->run);
- 	EXPECT_EQ(self->run.user_data, 0);
- 
--	get_op.header.type = ENCL_OP_GET;
-+	get_op.header.type = ENCL_OP_GET_FROM_BUFFER;
- 	get_op.value = 0;
- 
- 	EXPECT_EQ(ENCL_CALL(&get_op, &self->run, true), 0);
-diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index f11eb8315704..4e8da738173f 100644
---- a/tools/testing/selftests/sgx/test_encl.c
-+++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -16,16 +16,16 @@ static void *memcpy(void *dest, const void *src, size_t n)
- 	return dest;
- }
- 
--static void do_encl_op_put(void *op)
-+static void do_encl_op_put_to_buf(void *op)
- {
--	struct encl_op_put *op2 = op;
-+	struct encl_op_put_to_buf *op2 = op;
- 
- 	memcpy(&encl_buffer[0], &op2->value, 8);
- }
- 
--static void do_encl_op_get(void *op)
-+static void do_encl_op_get_from_buf(void *op)
- {
--	struct encl_op_get *op2 = op;
-+	struct encl_op_get_from_buf *op2 = op;
- 
- 	memcpy(&op2->value, &encl_buffer[0], 8);
- }
-@@ -33,8 +33,8 @@ static void do_encl_op_get(void *op)
- void encl_body(void *rdi,  void *rsi)
- {
- 	const void (*encl_op_array[ENCL_OP_MAX])(void *) = {
--		do_encl_op_put,
--		do_encl_op_get,
-+		do_encl_op_put_to_buf,
-+		do_encl_op_get_from_buf,
- 	};
- 
- 	struct encl_op_header *op = (struct encl_op_header *)rdi;
--- 
-2.25.1
+/Jarkko
 
