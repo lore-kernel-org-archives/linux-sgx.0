@@ -1,239 +1,232 @@
 Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A6FC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Nov 2021 16:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11D2961BD3
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Nov 2021 16:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE93EC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 30 Nov 2021 01:15:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbhKPQYX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Nov 2021 11:24:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231324AbhKPQYX (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 16 Nov 2021 11:24:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9A70F61BE2;
-        Tue, 16 Nov 2021 16:21:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637079686;
-        bh=dVeRd+rpu6BuxDclanJO71ukMtRRehqTwia8OT676z4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SEJoEoMIrJ5qjx2IfB565iw4NrOdsIOlqrqqX/iqz0yROQLRyYI/E1cluCmFKpS7M
-         ilA0hjfhbLdF9VRuug/QyS0CARA6fzKAuHlqeghQPQuVdaL0vtbdolliB7lopkGehQ
-         hMGSjjwsEcPp5SxYj8CjXK/i7HRZlHW3rSd1pC1e8zkCbjWcmzml07+tSq3XrRMAK1
-         e8R4syORC5D7hLHC58OyUva3jOOg1B1FmGEp+TJgKwrAWZW6/BHc7PylSoIbhDQqJ5
-         kooGSzBE0l915viMBoWj+ig7TuOMfJ+KdIQTBndqFFio6udleeMMOA8MixqWUWRV/f
-         kT3nDyDolDz/A==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     reinette.chatre@intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-Subject: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX memory in a NUMA node
-Date:   Tue, 16 Nov 2021 18:21:16 +0200
-Message-Id: <20211116162116.93081-2-jarkko@kernel.org>
+        id S235317AbhK3BSW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 29 Nov 2021 20:18:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233381AbhK3BSV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 29 Nov 2021 20:18:21 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5127C061574;
+        Mon, 29 Nov 2021 17:15:02 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 89FABCE16B4;
+        Tue, 30 Nov 2021 01:15:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53509C53FAD;
+        Tue, 30 Nov 2021 01:14:58 +0000 (UTC)
+From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To:     Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@linux.intel.com, reinette.chatre@intel.com,
+        nathaniel@profian.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+Subject: [PATCH v9] sgx.7: New page with overview of Software Guard eXtensions (SGX)
+Date:   Tue, 30 Nov 2021 03:14:46 +0200
+Message-Id: <20211130011446.11526-1-jarkko.sakkinen@iki.fi>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211116162116.93081-1-jarkko@kernel.org>
-References: <20211116162116.93081-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The amount of SGX memory on the system is determined by the BIOS and it
-varies wildly between systems.  It can be from dozens of MB's on desktops
-or VM's, up to many GB's on servers.  Just like for regular memory, it is
-sometimes useful to know the amount of usable SGX memory in the system.
+From: Jarkko Sakkinen <jarkko@kernel.org>
 
-Introduce CONFIG_HAVE_ARCH_NODE_DEV_GROUP opt-in flag to expose an arch
-specific attribute group, and add an attribute for the amount of SGX
-memory in bytes to each NUMA node:
-
-/sys/devices/system/node/nodeX/x86/sgx_total_bytes
-
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v13:
-* Rebased on top of tip/x86/sgx.
-
-v12:
-* Device ID is set to same as NUMA node ID. Use that to get the correct
-  NUMA node ID in sgx_total_bytes_show().
-
-v11:
-* Fix documentation and the commit message.
-
-v10:
-* Change DEVICE_ATTR_RO() to static (Greg K-H)
-* Change the attribute name as sgx_total_bytes, and attribute group
-  name as "x86" (Dave).
-* Add a new config flag HAVE_ARCH_NODE_DEV_GROUP to identify, whether
-  an arch exports arch specific attribute group for NUMA nodes.
 
 v9:
-* Fix racy initialization of sysfs attributes:
-  https://lore.kernel.org/linux-sgx/YXOsx8SvFJV5R7lU@kroah.com/
-
+* Rename "Address Space" section as "Memory mapping", and refine the
+  text.
+* Rename "Ioctls" section as "Construction", and refine the text.
 v8:
-* Fix a bug in sgx_numa_init(): node->dev should be only set after
-  sysfe_create_group().  Otherwise, sysfs_remove_group() will issue a
-  warning in sgx_numa_exit(), when sgx_create_group() is unsuccessful,
-  because the group does not exist.
-
+* Fix errors reported for the previous version.
 v7:
-* Shorten memory_size to size. The prefix makes the name only longer
-  but does not clarify things more than "size" would.
-* Use device_attribute instead of kobj_attribute.
-* Use named attribute group instead of creating raw kobject just for
-  the "sgx" subdirectory.
-
+* Added more meat about the address space and API.
+* Reorganized the text to have focus more on developer to have a big
+  picture of kernel provided interfaces.
 v6:
-* Initialize node->size to zero in sgx_setup_epc_section(), when the
-  node is first accessed.
+* Small fixes based on Dave's and Reinette's feedback.
+* Extended the "Permissions" section to cover mmap()
+v5:
+* Taking away hardware concepts and focusing more on the interface.
+v4:
+* Did a heavy edit trying to streamline the story a bit and focus on
+  stuff important to the user (e.g. lighten up x86 details).
+v3:
+* Overhaul based on Michael's comments. Most likely needs to be refined
+  in various places but this is at least a small step forward for sure.
+v2:
+* Fixed the semantic newlines convention and various style errors etc.
+  that were reported by Alenjandro and Michael.
+* SGX was merged to v5.
 
-v5
-* A new patch based on the discussion on
-  https://lore.kernel.org/linux-sgx/3a7cab4115b4f902f3509ad8652e616b91703e1d.camel@kernel.org/T/#t
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
 ---
- Documentation/ABI/stable/sysfs-devices-node |  6 ++++++
- arch/Kconfig                                |  4 ++++
- arch/x86/Kconfig                            |  1 +
- arch/x86/kernel/cpu/sgx/main.c              | 20 ++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h               |  1 +
- drivers/base/node.c                         |  3 +++
- include/linux/numa.h                        |  4 ++++
- 7 files changed, 39 insertions(+)
+ man7/sgx.7 | 147 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
+ create mode 100644 man7/sgx.7
 
-diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-index 484fc04bcc25..8db67aa472f1 100644
---- a/Documentation/ABI/stable/sysfs-devices-node
-+++ b/Documentation/ABI/stable/sysfs-devices-node
-@@ -176,3 +176,9 @@ Contact:	Keith Busch <keith.busch@intel.com>
- Description:
- 		The cache write policy: 0 for write-back, 1 for write-through,
- 		other or unknown.
+diff --git a/man7/sgx.7 b/man7/sgx.7
+new file mode 100644
+index 000000000..696d60e18
+--- /dev/null
++++ b/man7/sgx.7
+@@ -0,0 +1,147 @@
++.\" Copyright (C) 2021 Intel Corporation
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
++.PP
++sgx - overview of Software Guard eXtensions
++.SH SYNOPSIS
++.EX
++.B #include <asm/sgx.h>
++.PP
++.IB enclave " = open(""/dev/sgx_enclave", " O_RDWR);"
++.EE
++.SH DESCRIPTION
++Intel Software Guard eXtensions (SGX) allow applications to host
++enclaves,
++protected executable objects in memory.
++.PP
++Enclaves are blobs of executable code,
++running inside a CPU enforced container,
++which is mapped to the process address space.
++They are represented as the instances of
++.I /dev/sgx_enclave.
++They have a fixed set of entry points,
++defined when the enclave is built.
++.PP
++SGX can be only available if the kernel is configured and built with the
++.B CONFIG_X86_SGX
++option.
++If CPU, BIOS and kernel have SGX enabled,
++.I sgx
++appears in the
++.I flags
++field of
++.IR /proc/cpuinfo .
++.PP
++If SGX appears not to be available,
++ensure that SGX is enabled in the BIOS.
++If a BIOS presents a choice between
++.I Enabled
++and
++.I Software Enabled
++modes for SGX,
++choose
++.I Enabled.
++.PP
++.SS Memory mapping
++The file descriptor for an enclave can be shared among multiple processes.
++An enclave is required by the CPU to be placed to an address,
++which is a multiple of its size.
++An address range containing a reasonable base address can be probed with an anonymous
++.BR mmap(2)
++call:
++.PP
++.EX
++void *area = mmap(NULL, size * 2, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
++                  -1, 0);
 +
-+What:		/sys/devices/system/node/nodeX/x86/sgx_total_bytes
-+Date:		November 2021
-+Contact:	Jarkko Sakkinen <jarkko@kernel.org>
-+Description:
-+		The total amount of SGX physical memory in bytes.
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 26b8ed11639d..0a9dadb00b61 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1302,6 +1302,10 @@ config ARCH_HAS_PARANOID_L1D_FLUSH
- config DYNAMIC_SIGFRAME
- 	bool
- 
-+# Select, if arch has a named attribute group bound to NUMA device nodes.
-+config HAVE_ARCH_NODE_DEV_GROUP
-+	bool
-+
- source "kernel/gcov/Kconfig"
- 
- source "scripts/gcc-plugins/Kconfig"
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index b9281fab4e3e..f2b699d12eb8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -269,6 +269,7 @@ config X86
- 	select HAVE_ARCH_KCSAN			if X86_64
- 	select X86_FEATURE_NAMES		if PROC_FS
- 	select PROC_PID_ARCH_STATUS		if PROC_FS
-+	select HAVE_ARCH_NODE_DEV_GROUP		if X86_SGX
- 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
- 
- config INSTRUCTION_DECODER
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index b8e1703eecae..00af6f90d31a 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -825,9 +825,11 @@ static bool __init sgx_page_cache_init(void)
- 			INIT_LIST_HEAD(&sgx_numa_nodes[nid].free_page_list);
- 			INIT_LIST_HEAD(&sgx_numa_nodes[nid].sgx_poison_page_list);
- 			node_set(nid, sgx_numa_mask);
-+			sgx_numa_nodes[nid].size = 0;
- 		}
- 
- 		sgx_epc_sections[i].node =  &sgx_numa_nodes[nid];
-+		sgx_numa_nodes[nid].size += size;
- 
- 		sgx_nr_epc_sections++;
- 	}
-@@ -901,6 +903,24 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
- 
-+#ifdef CONFIG_NUMA
-+static ssize_t sgx_total_bytes_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%lu\n", sgx_numa_nodes[dev->id].size);
-+}
-+static DEVICE_ATTR_RO(sgx_total_bytes);
-+
-+static struct attribute *arch_node_dev_attrs[] = {
-+	&dev_attr_sgx_total_bytes.attr,
-+	NULL,
-+};
-+
-+const struct attribute_group arch_node_dev_group = {
-+	.name = "x86",
-+	.attrs = arch_node_dev_attrs,
-+};
-+#endif /* CONFIG_NUMA */
-+
- static int __init sgx_init(void)
- {
- 	int ret;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 9ec3136c7800..0f17def9fe6f 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -44,6 +44,7 @@ struct sgx_epc_page {
- struct sgx_numa_node {
- 	struct list_head free_page_list;
- 	struct list_head sgx_poison_page_list;
-+	unsigned long size;
- 	spinlock_t lock;
- };
- 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index b5a4ba18f9f9..87acc47e8951 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -581,6 +581,9 @@ static const struct attribute_group node_dev_group = {
- 
- static const struct attribute_group *node_dev_groups[] = {
- 	&node_dev_group,
-+#ifdef CONFIG_HAVE_ARCH_NODE_DEV_GROUP
-+	&arch_node_dev_group,
-+#endif
- 	NULL
- };
- 
-diff --git a/include/linux/numa.h b/include/linux/numa.h
-index cb44cfe2b725..59df211d051f 100644
---- a/include/linux/numa.h
-+++ b/include/linux/numa.h
-@@ -58,4 +58,8 @@ static inline int phys_to_target_node(u64 start)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_NODE_DEV_GROUP
-+extern const struct attribute_group arch_node_dev_group;
-+#endif
-+
- #endif /* _LINUX_NUMA_H */
++void *base = ((uint64_t)area + size - 1) & ~(size - 1);
++.EE
++.PP
++The enclave file descriptor itself can be then mapped with the
++.BR MAP_FIXED
++flag set to the carved out memory.
++.SS Construction
++An enclave instance is created by opening
++.I /dev/sgx_enclave.
++Its contents are populated with the
++.BR ioctl (2)
++interface in
++.IR <asm/sgx.h>:
++.TP
++.IB SGX_IOC_ENCLAVE_CREATE
++Create SGX Enclave Control Structure (SECS) for the enclave.
++SECS is a hardware defined structure,
++which contains the global properties of an enclave.
++.IB SGX_IOC_ENCLAVE_CREATE
++is a one-shot call that fixes enclave's address and
++size for the rest of its life-cycle.
++.TP
++.IB SGX_IOC_ENCLAVE_ADD_PAGES
++Fill a range of the enclaves pages with the caller provided data and protection bits.
++Memory mappings of the enclave can only have protection bits set,
++which are defined in this ioctl.
++The pages added are either regular memory pages for code and data,
++or thread control structures (TCS).
++The latter define the entry points to the enclave,
++which can be entered after the initialization.
++.TP
++.IB SGX_IOC_ENCLAVE_INIT
++Initialize the enclave for the run-time.
++After a successful initialization,
++no new pages can be added to the enclave.
++.SS Invocation
++Thread control structure (TCS) page are the entry points to the enclave,
++which further define an offset inside the enclave where the execution begins.
++The entry points are invoked with
++.I __vdso_sgx_enter_enclave.
++The prototype for the vDSO is defined by
++.BR vdso_sgx_enter_enclave_t
++in
++.IR <asm/sgx.h>.
++.SS Permissions
++.PP
++During the build process each enclave page is assigned protection bits,
++as part of
++.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES).
++These protections are also the maximum protections to which the page can be be mapped.
++If
++.BR mmap (2)_
++is called with higher protections than those defined during the build,
++it will return
++.B -EACCES.
++If
++.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES)
++is called after
++.BR mmap (2)
++with lower protections,
++the caller receives
++.BR SIGBUS,
++once it accesses the page for the first time.
++.SH VERSIONS
++The SGX feature was added in Linux 5.11.
++.SH SEE ALSO
++.BR ioctl (2),
++.BR mmap (2),
++.BR mprotect (2)
+\ No newline at end of file
 -- 
 2.32.0
 
