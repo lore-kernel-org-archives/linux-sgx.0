@@ -2,34 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE93EC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 30 Nov 2021 01:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F24C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 30 Nov 2021 17:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235317AbhK3BSW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 29 Nov 2021 20:18:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233381AbhK3BSV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 29 Nov 2021 20:18:21 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5127C061574;
-        Mon, 29 Nov 2021 17:15:02 -0800 (PST)
+        id S239347AbhK3Rxi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 30 Nov 2021 12:53:38 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:59402 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235792AbhK3Rxh (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 30 Nov 2021 12:53:37 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 89FABCE16B4;
-        Tue, 30 Nov 2021 01:15:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53509C53FAD;
-        Tue, 30 Nov 2021 01:14:58 +0000 (UTC)
-From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+        by sin.source.kernel.org (Postfix) with ESMTPS id 72D28CE1A93;
+        Tue, 30 Nov 2021 17:50:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13077C53FC7;
+        Tue, 30 Nov 2021 17:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638294614;
+        bh=1aIOwP1npiy8giyq6eQ4TV4gE9ar6c81eKNN4XVx6oo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qKQ37NUWXi2M19inCdbQmRaJ3CZz9vINFFP6QCGWRpv4R7KeEFOZ6y7j9MwRbTJAt
+         kxnqd7AxzD3b+QzkfXODNdNQPHai7mttPR5qSFoSVz9GO2E0fKzHfRSk2u/It+sScx
+         6pWscgfxYqC1ZvmdVdY/8iffMAFFtYwzttO8XdyBKjJv9+I3Qoeb6ncShUU+2Us6pu
+         e3YAxUE9TEeAQTzu9xZPB/mDpPw8Cap7XXoAKMRyaamYNGoMai3hcSC/bnq9q4jraI
+         SjXB8r9xUN0lakr5So4/8oBWyyW5SkcE01arDoPJYi+3468YtOhNrBu+HvEAYc9oD2
+         YJ+o+SxfXsMJg==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Michael Kerrisk <mtk.manpages@gmail.com>
 Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
         dave.hansen@linux.intel.com, reinette.chatre@intel.com,
-        nathaniel@profian.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-Subject: [PATCH v9] sgx.7: New page with overview of Software Guard eXtensions (SGX)
-Date:   Tue, 30 Nov 2021 03:14:46 +0200
-Message-Id: <20211130011446.11526-1-jarkko.sakkinen@iki.fi>
+        nathaniel@profian.com, Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH v10] sgx.7: New page with overview of Software Guard eXtensions (SGX)
+Date:   Tue, 30 Nov 2021 19:50:07 +0200
+Message-Id: <20211130175007.22903-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -37,10 +43,10 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Jarkko Sakkinen <jarkko@kernel.org>
-
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-
+---
+v10:
+* v9 was malformed, essentially a resend.
 v9:
 * Rename "Address Space" section as "Memory mapping", and refine the
   text.
@@ -66,8 +72,6 @@ v2:
 * Fixed the semantic newlines convention and various style errors etc.
   that were reported by Alenjandro and Michael.
 * SGX was merged to v5.
-
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
 ---
  man7/sgx.7 | 147 +++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 147 insertions(+)
