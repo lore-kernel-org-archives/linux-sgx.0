@@ -2,22 +2,22 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C5AC433FE
-	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA9CC4321E
+	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245127AbhLAT1F (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 1 Dec 2021 14:27:05 -0500
-Received: from mga05.intel.com ([192.55.52.43]:21702 "EHLO mga05.intel.com"
+        id S245143AbhLAT1G (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 1 Dec 2021 14:27:06 -0500
+Received: from mga04.intel.com ([192.55.52.120]:46904 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244564AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S245104AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 1 Dec 2021 14:27:05 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="322784104"
+X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="235267919"
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="322784104"
+   d="scan'208";a="235267919"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="500380470"
+   d="scan'208";a="500380434"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -28,114 +28,144 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/25] selftests/sgx: Add test for TCS page permission changes
-Date:   Wed,  1 Dec 2021 11:23:10 -0800
-Message-Id: <b8e24d27fbd791c00339397c0aea1c2ef282f2a0.1638381245.git.reinette.chatre@intel.com>
+Subject: [PATCH 00/25] x86/sgx and selftests/sgx: Support SGX2
+Date:   Wed,  1 Dec 2021 11:22:58 -0800
+Message-Id: <cover.1638381245.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1638381245.git.reinette.chatre@intel.com>
-References: <cover.1638381245.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Kernel should not allow permission changes on TCS pages. Add test to
-confirm this behavior.
+Hi Everybody,
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- tools/testing/selftests/sgx/main.c | 70 ++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+The current Linux kernel support for SGX includes support for SGX1 that
+requires that an enclave be created with properties that accommodate all
+usages over its (the enclave's) lifetime. This includes properties such
+as permissions of enclave pages, the number of enclave pages, and the
+number of threads supported by the enclave.
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index dbd071ba03fe..c7c50d05e246 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -120,6 +120,24 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
- 	return NULL;
- }
- 
-+/*
-+ * Return the offset in the enclave where the TCS segment can be found.
-+ * The first RW segment loaded is the TCS.
-+ */
-+static off_t encl_get_tcs_offset(struct encl *encl)
-+{
-+	int i;
-+
-+	for (i = 0; i < encl->nr_segments; i++) {
-+		struct encl_segment *seg = &encl->segment_tbl[i];
-+
-+		if (i == 0 && seg->prot == (PROT_READ | PROT_WRITE))
-+			return seg->offset;
-+	}
-+
-+	return -1;
-+}
-+
- /*
-  * Return the offset in the enclave where the data segment can be found.
-  * The first RW segment loaded is the TCS, skip that to get info on the
-@@ -567,6 +585,58 @@ TEST_F(enclave, pte_permissions)
- 	EXPECT_EQ(self->run.exception_addr, 0);
- }
- 
-+/*
-+ * Modifying permissions of TCS page should not be possible.
-+ */
-+TEST_F(enclave, tcs_permissions)
-+{
-+	struct sgx_page_modp ioc;
-+	int ret, errno_save;
-+
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	memset(&ioc, 0, sizeof(ioc));
-+
-+	/*
-+	 * Ensure kernel supports needed ioctl and system supports needed
-+	 * commands.
-+	 */
-+
-+	ret = ioctl(self->encl.fd, SGX_IOC_PAGE_MODP, &ioc);
-+
-+	if (ret == -1) {
-+		if (errno == ENOTTY)
-+			SKIP(return, "Kernel does not support test SGX_IOC_PAGE_MODP ioctl");
-+		else if (errno == ENODEV)
-+			SKIP(return, "System does not support SGX2");
-+	}
-+
-+	/*
-+	 * Invalid parameters were provided during sanity check,
-+	 * expect command to fail.
-+	 */
-+	EXPECT_EQ(ret, -1);
-+
-+	/*
-+	 * Attempt to make TCS page read-only. This is not allowed and
-+	 * should be prevented by OS.
-+	 */
-+	ioc.offset = encl_get_tcs_offset(&self->encl);
-+	ioc.length = PAGE_SIZE;
-+	ioc.prot = PROT_READ;
-+
-+	ret = ioctl(self->encl.fd, SGX_IOC_PAGE_MODP, &ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, -1);
-+	EXPECT_EQ(errno_save, EINVAL);
-+	EXPECT_EQ(ioc.result, 0);
-+	EXPECT_EQ(ioc.count, 0);
-+}
-+
- /*
-  * Enclave page permission test.
-  *
+Consequences of this requirement to have the enclave be created to
+accommodate all usages include:
+* pages needing to support relocated code are required to have RWX
+  permissions for their entire lifetime,
+* an enclave needs to be created with the maximum stack and heap
+  projected to be needed during the enclave's entire lifetime which
+  can be longer than the processes running within it,
+* an enclave needs to be created with support for the maximum number
+  of threads projected to run in the enclave.
+
+Since SGX1 a few more instructions were introduced, collectively called
+SGX2, that support modifications to an initialized enclave. Hardware
+supporting these instructions are already available as listed on
+https://github.com/ayeks/SGX-hardware
+
+This series adds support for SGX2, also referred to as Enclave Dynamic
+Memory Management (EDMM). This includes:
+
+* Support modifying permissions of regular enclave pages belonging to an
+  initialized enclave. New permissions are not allowed to exceed the
+  originally vetted permissions. Modifying permissions is accomplished
+  with a new ioctl SGX_IOC_PAGE_MODP.
+
+* Support dynamic addition of regular enclave pages to an initialized
+  enclave. Pages are added with RW permissions as their "originally
+  vetted permissions" (see previous bullet) and thus not allowed to
+  be made executable at this time. Enabling dynamically added pages
+  to obtain executable permissions require integration with user space
+  policy that is deferred until the core SGX2 enabling is complete.
+  Pages are dynamically added to an initialized enclave from the SGX
+  page fault handler.
+
+* Support expanding an initialized enclave to accommodate more threads.
+  More threads can be accommodated by an enclave with the addition of
+  Thread Control Structure (TCS) pages that is done by changing the
+  type of regular enclave pages to TCS pages using a new ioctl
+  SGX_IOC_PAGE_MODT.
+
+* Support removing regular and TCS pages from an initialized enclave.
+  Removing pages is accomplished in two stages as supported by two new
+  ioctls SGX_IOC_PAGE_MODT (same ioctl as mentioned in previous bullet)
+  and SGX_IOC_PAGE_REMOVE.
+
+* Tests covering all the new flows, some edge cases, and one
+  comprehensive stress scenario.
+
+No additional work is needed to support SGX2 in a virtualized
+environment. The tests included in this series can also be run from
+a guest and was tested with the recent QEMU release based on 6.2.0
+that supports SGX.
+
+Patches 1 to 9 prepares the existing code for SGX2 support by
+introducing the SGX2 instructions, making sure pages remain accessible
+after their enclave permissions are changed, and tracking enclave page
+types as well as runtime permissions as needed by SGX2.
+
+Patches 10 through 25 are a mix of x86/sgx and selftests/sgx patches
+that follow the format where first an SGX2 feature is
+enabled and then followed by tests of the new feature and/or
+tests of scenarios that combine SGX2 features enabled up to that point.
+
+In two cases (patches 14 and 24) code in support of SGX2 is separated
+out with detailed motivation to support the review.
+
+This series is based on commit 5c16f7ee03c0 ("Merge branch
+'x86/urgent' into x86/sgx, to resolve conflict" as
+found on the x86/sgx branch of the tip repo at
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+
+Your feedback will be greatly appreciated.
+
+Regards,
+
+Reinette
+
+Reinette Chatre (25):
+  x86/sgx: Add shortlog descriptions to ENCLS wrappers
+  x86/sgx: Add wrappers for SGX2 functions
+  x86/sgx: Support VMA permissions exceeding enclave permissions
+  x86/sgx: Add pfn_mkwrite() handler for present PTEs
+  x86/sgx: Introduce runtime protection bits
+  x86/sgx: Use more generic name for enclave cpumask function
+  x86/sgx: Move PTE zap code to separate function
+  x86/sgx: Make SGX IPI callback available internally
+  x86/sgx: Keep record of SGX page type
+  x86/sgx: Support enclave page permission changes
+  selftests/sgx: Add test for EPCM permission changes
+  selftests/sgx: Add test for TCS page permission changes
+  x86/sgx: Support adding of pages to initialized enclave
+  x86/sgx: Tighten accessible memory range after enclave initialization
+  selftests/sgx: Test two different SGX2 EAUG flows
+  x86/sgx: Support modifying SGX page type
+  x86/sgx: Support complete page removal
+  selftests/sgx: Introduce dynamic entry point
+  selftests/sgx: Introduce TCS initialization enclave operation
+  selftests/sgx: Test complete changing of page type flow
+  selftests/sgx: Test faulty enclave behavior
+  selftests/sgx: Test invalid access to removed enclave page
+  selftests/sgx: Test reclaiming of untouched page
+  x86/sgx: Free up EPC pages directly to support large page ranges
+  selftests/sgx: Page removal stress test
+
+ arch/x86/include/asm/sgx.h                    |    8 +
+ arch/x86/include/uapi/asm/sgx.h               |   60 +
+ arch/x86/kernel/cpu/sgx/encl.c                |  333 +++-
+ arch/x86/kernel/cpu/sgx/encl.h                |   12 +-
+ arch/x86/kernel/cpu/sgx/encls.h               |   30 +
+ arch/x86/kernel/cpu/sgx/ioctl.c               |  647 +++++++-
+ arch/x86/kernel/cpu/sgx/main.c                |   70 +-
+ arch/x86/kernel/cpu/sgx/sgx.h                 |    3 +
+ tools/testing/selftests/sgx/defines.h         |   23 +
+ tools/testing/selftests/sgx/load.c            |   41 +
+ tools/testing/selftests/sgx/main.c            | 1450 +++++++++++++++++
+ tools/testing/selftests/sgx/main.h            |    1 +
+ tools/testing/selftests/sgx/test_encl.c       |   68 +
+ .../selftests/sgx/test_encl_bootstrap.S       |    6 +
+ 14 files changed, 2667 insertions(+), 85 deletions(-)
+
+
+base-commit: 5c16f7ee03c011b0c6cd4c6deccaf0b269d054b2
 -- 
 2.25.1
 
