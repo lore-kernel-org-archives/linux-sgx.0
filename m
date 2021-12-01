@@ -2,22 +2,22 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57937C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FA3C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352649AbhLAT1N (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 1 Dec 2021 14:27:13 -0500
-Received: from mga05.intel.com ([192.55.52.43]:21702 "EHLO mga05.intel.com"
+        id S1352679AbhLAT1O (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 1 Dec 2021 14:27:14 -0500
+Received: from mga04.intel.com ([192.55.52.120]:46907 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245114AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 1 Dec 2021 14:27:05 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="322784109"
+        id S245142AbhLAT1G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 1 Dec 2021 14:27:06 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="235267924"
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="322784109"
+   d="scan'208";a="235267924"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="500380481"
+   d="scan'208";a="500380449"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -28,9 +28,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/25] selftests/sgx: Test two different SGX2 EAUG flows
-Date:   Wed,  1 Dec 2021 11:23:13 -0800
-Message-Id: <cf4a1674c36f12beae71f202e3e3f5c5efcdc9bd.1638381245.git.reinette.chatre@intel.com>
+Subject: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
+Date:   Wed,  1 Dec 2021 11:23:03 -0800
+Message-Id: <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1638381245.git.reinette.chatre@intel.com>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
@@ -40,309 +40,103 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Enclave pages can be added to an initialized enclave when an address
-belonging to the enclave but without a backing page is accessed from
-within the enclave.
+Enclave creators declare their paging permission intent at the time
+the pages are added to the enclave. These paging permissions are
+vetted when pages are added to the enclave and stashed off
+(in sgx_encl_page->vm_max_prot_bits) for later comparison with
+enclave PTEs.
 
-Accessing memory without a backing enclave page from within an enclave
-can be in different ways:
-1) Pre-emptively run ENCLU[EACCEPT]. Since the addition of a page
-   always needs to be accepted by the enclave via ENCLU[EACCEPT] this
-   flow is efficient since the first execution of ENCLU[EACCEPT]
-   triggers the addition of the page and when execution returns to the
-   same instruction the second execution would be successful as an
-   acceptance of the page.
+Current permission support assume that enclave page permissions
+remain static for the lifetime of the enclave. This is about to change
+with the addition of support for SGX2 where the permissions of enclave
+pages belonging to an initialized enclave may be changed during the
+enclave's lifetime.
 
-2) A direct read or write. The flow where a direct read or write
-   triggers the page addition execution cannot resume from the
-   instruction (read/write) that triggered the fault but instead
-   the enclave needs to be entered at a different entry point to
-   run needed ENCLU[EACCEPT] before execution can return to the
-   original entry point and the read/write instruction that faulted.
+Introduce runtime protection bits in preparation for support of
+enclave page permission changes. These bits reflect the active
+permissions of an enclave page and are not to exceed the maximum
+protection bits that passed scrutiny during enclave creation.
 
-Add tests for both flows.
+Associate runtime protection bits with each enclave page. Initialize
+the runtime protection bits to the vetted maximum protection bits
+on page creation. Use the runtime protection bits for any access
+checks.
+
+struct sgx_encl_page hosting this information is maintained for each
+enclave page so the space consumed by the struct is important.
+The existing vm_max_prot_bits is already unsigned long while only using
+three bits. Transition to a bitfield for the two members containing
+protection bits.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- tools/testing/selftests/sgx/main.c | 260 +++++++++++++++++++++++++++++
- 1 file changed, 260 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c  | 6 +++---
+ arch/x86/kernel/cpu/sgx/encl.h  | 3 ++-
+ arch/x86/kernel/cpu/sgx/ioctl.c | 6 ++++++
+ 3 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index c7c50d05e246..bc8c7d06d74c 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -85,6 +85,30 @@ static bool vdso_get_symtab(void *addr, struct vdso_symtab *symtab)
- 	return true;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 60afa8eaf979..6fec68896e1b 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -164,7 +164,7 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	 * exceed the VMA permissions.
+ 	 */
+ 	vm_prot_bits = vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
+-	page_prot_bits = entry->vm_max_prot_bits & vm_prot_bits;
++	page_prot_bits = entry->vm_run_prot_bits & vm_prot_bits;
+ 	/*
+ 	 * Add VM_SHARED so that PTE is made writable right away if VMA
+ 	 * and EPCM are writable (no COW in SGX).
+@@ -217,7 +217,7 @@ static vm_fault_t sgx_vma_pfn_mkwrite(struct vm_fault *vmf)
+ 		goto out;
+ 	}
+ 
+-	if (!(entry->vm_max_prot_bits & VM_WRITE))
++	if (!(entry->vm_run_prot_bits & VM_WRITE))
+ 		ret = VM_FAULT_SIGBUS;
+ 
+ out:
+@@ -280,7 +280,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 	mutex_lock(&encl->lock);
+ 	xas_lock(&xas);
+ 	xas_for_each(&xas, page, PFN_DOWN(end - 1)) {
+-		if (~page->vm_max_prot_bits & vm_prot_bits) {
++		if (~page->vm_run_prot_bits & vm_prot_bits) {
+ 			ret = -EACCES;
+ 			break;
+ 		}
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index fec43ca65065..dc262d843411 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -27,7 +27,8 @@
+ 
+ struct sgx_encl_page {
+ 	unsigned long desc;
+-	unsigned long vm_max_prot_bits;
++	unsigned long vm_max_prot_bits:8;
++	unsigned long vm_run_prot_bits:8;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_encl *encl;
+ 	struct sgx_va_page *va_page;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 83df20e3e633..7e0819a89532 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -197,6 +197,12 @@ static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+ 	/* Calculate maximum of the VM flags for the page. */
+ 	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
+ 
++	/*
++	 * At time of allocation, the runtime protection bits are the same
++	 * as the maximum protection bits.
++	 */
++	encl_page->vm_run_prot_bits = encl_page->vm_max_prot_bits;
++
+ 	return encl_page;
  }
  
-+static inline void __cpuid(unsigned int *eax, unsigned int *ebx,
-+			   unsigned int *ecx, unsigned int *edx)
-+{
-+	asm volatile("cpuid"
-+	    : "=a" (*eax),
-+	      "=b" (*ebx),
-+	      "=c" (*ecx),
-+	      "=d" (*edx)
-+	    : "0" (*eax), "2" (*ecx)
-+	    : "memory");
-+}
-+
-+static inline int sgx2_supported(void)
-+{
-+	unsigned int eax, ebx, ecx, edx;
-+
-+	eax = SGX_CPUID;
-+	ecx = 0x0;
-+
-+	__cpuid(&eax, &ebx, &ecx, &edx);
-+
-+	return eax & 0x2;
-+}
-+
- static unsigned long elf_sym_hash(const char *name)
- {
- 	unsigned long h = 0, high;
-@@ -889,4 +913,240 @@ TEST_F(enclave, epcm_permissions)
- 	EXPECT_EQ(eaccept_op.ret, 0);
- }
- 
-+/*
-+ * Test the addition of pages to an initialized enclave via writing to
-+ * a page belonging to the enclave's address space but was not added
-+ * during enclave creation.
-+ */
-+TEST_F(enclave, augment)
-+{
-+	struct encl_op_get_from_addr get_addr_op;
-+	struct encl_op_put_to_addr put_addr_op;
-+	struct encl_op_eaccept eaccept_op;
-+	size_t total_size = 0;
-+	void *addr;
-+	int i;
-+
-+	if (!sgx2_supported())
-+		SKIP(return, "SGX2 not supported");
-+
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	for (i = 0; i < self->encl.nr_segments; i++) {
-+		struct encl_segment *seg = &self->encl.segment_tbl[i];
-+
-+		total_size += seg->size;
-+	}
-+
-+	/*
-+	 * Actual enclave size is expected to be larger than the loaded
-+	 * test enclave since enclave size must be a power of 2 in bytes
-+	 * and test_encl does not consume it all.
-+	 */
-+	EXPECT_LT(total_size + PAGE_SIZE, self->encl.encl_size);
-+
-+	/*
-+	 * Create memory mapping for the page that will be added. New
-+	 * memory mapping is for one page right after all existing
-+	 * mappings.
-+	 */
-+	addr = mmap((void *)self->encl.encl_base + total_size, PAGE_SIZE,
-+		    PROT_READ | PROT_WRITE | PROT_EXEC,
-+		    MAP_SHARED | MAP_FIXED, self->encl.fd, 0);
-+	EXPECT_NE(addr, MAP_FAILED);
-+
-+	self->run.exception_vector = 0;
-+	self->run.exception_error_code = 0;
-+	self->run.exception_addr = 0;
-+
-+	/*
-+	 * Attempt to write to the new page from within enclave.
-+	 * Expected to fail since page is not (yet) part of the enclave.
-+	 * The first #PF will trigger the addition of the page to the
-+	 * enclave, but since the new page needs an EACCEPT from within the
-+	 * enclave before it can be used it would not be possible
-+	 * to successfully return to the failing instruction. This is the
-+	 * cause of the second #PF captured here having the SGX bit set,
-+	 * it is from hardware preventing the page from being used.
-+	 */
-+	put_addr_op.value = MAGIC;
-+	put_addr_op.addr = (unsigned long)addr;
-+	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(self->run.function, ERESUME);
-+	EXPECT_EQ(self->run.exception_vector, 14);
-+	EXPECT_EQ(self->run.exception_addr, (unsigned long)addr);
-+
-+	if (self->run.exception_error_code == 0x6) {
-+		munmap(addr, PAGE_SIZE);
-+		SKIP(return, "Kernel does not support adding pages to initialized enclave");
-+	}
-+
-+	EXPECT_EQ(self->run.exception_error_code, 0x8007);
-+
-+	self->run.exception_vector = 0;
-+	self->run.exception_error_code = 0;
-+	self->run.exception_addr = 0;
-+
-+	/* Handle AEX by running EACCEPT from new entry point. */
-+	self->run.tcs = self->encl.encl_base + PAGE_SIZE;
-+
-+	eaccept_op.epc_addr = self->encl.encl_base + total_size;
-+	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
-+	eaccept_op.ret = 0;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	EXPECT_EQ(eaccept_op.ret, 0);
-+
-+	/* Can now return to main TCS to resume execution. */
-+	self->run.tcs = self->encl.encl_base;
-+
-+	EXPECT_EQ(vdso_sgx_enter_enclave((unsigned long)&put_addr_op, 0, 0,
-+					 ERESUME, 0, 0,
-+					 &self->run),
-+		  0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	/*
-+	 * Read memory that was just written to, confirming that data
-+	 * previously written (MAGIC) is present. Only change two test
-+	 * parameters, rest are same as previous test.
-+	 */
-+	get_addr_op.value = 0;
-+	get_addr_op.addr = (unsigned long)addr;
-+	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(get_addr_op.value, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	munmap(addr, PAGE_SIZE);
-+}
-+
-+/*
-+ * Test for the addition of pages to an initialized enclave via a
-+ * pre-emptive run of EACCEPT on page to be added.
-+ */
-+TEST_F(enclave, augment_via_eaccept)
-+{
-+	struct encl_op_get_from_addr get_addr_op;
-+	struct encl_op_put_to_addr put_addr_op;
-+	struct encl_op_eaccept eaccept_op;
-+	size_t total_size = 0;
-+	void *addr;
-+	int i;
-+
-+	if (!sgx2_supported())
-+		SKIP(return, "SGX2 not supported");
-+
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	for (i = 0; i < self->encl.nr_segments; i++) {
-+		struct encl_segment *seg = &self->encl.segment_tbl[i];
-+
-+		total_size += seg->size;
-+	}
-+
-+	/*
-+	 * Actual enclave size is expected to be larger than the loaded
-+	 * test enclave since enclave size must be a power of 2 in bytes while
-+	 * test_encl does not consume it all.
-+	 */
-+	EXPECT_LT(total_size + PAGE_SIZE, self->encl.encl_size);
-+
-+	/*
-+	 * mmap() a page at end of existing enclave to be used for dynamic
-+	 * EPC page.
-+	 */
-+
-+	addr = mmap((void *)self->encl.encl_base + total_size, PAGE_SIZE,
-+		    PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED | MAP_FIXED,
-+		    self->encl.fd, 0);
-+	EXPECT_NE(addr, MAP_FAILED);
-+
-+	self->run.exception_vector = 0;
-+	self->run.exception_error_code = 0;
-+	self->run.exception_addr = 0;
-+
-+	/*
-+	 * Run EACCEPT on new page to trigger the #PF->EAUG->EACCEPT(again
-+	 * without a #PF). All should be transparent to userspace.
-+	 */
-+	eaccept_op.epc_addr = self->encl.encl_base + total_size;
-+	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
-+	eaccept_op.ret = 0;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+
-+	if (self->run.exception_vector == 14 &&
-+	    self->run.exception_error_code == 4 &&
-+	    self->run.exception_addr == self->encl.encl_base + total_size) {
-+		munmap(addr, PAGE_SIZE);
-+		SKIP(return, "Kernel does not support adding pages to initialized enclave");
-+	}
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	EXPECT_EQ(eaccept_op.ret, 0);
-+
-+	/*
-+	 * New page should be accessible from within enclave - attempt to
-+	 * write to it.
-+	 */
-+	put_addr_op.value = MAGIC;
-+	put_addr_op.addr = (unsigned long)addr;
-+	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	/*
-+	 * Read memory that was just written to, confirming that data
-+	 * previously written (MAGIC) is present. Only change two test
-+	 * parameters, rest are same as previous test.
-+	 */
-+	get_addr_op.value = 0;
-+	get_addr_op.addr = (unsigned long)addr;
-+	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(get_addr_op.value, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	munmap(addr, PAGE_SIZE);
-+}
-+
- TEST_HARNESS_MAIN
 -- 
 2.25.1
 
