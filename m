@@ -2,22 +2,22 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA2FC43217
-	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD84C4167D
+	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232671AbhLAT1H (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S245163AbhLAT1H (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 1 Dec 2021 14:27:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:46904 "EHLO mga04.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:21702 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245113AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S245132AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 1 Dec 2021 14:27:05 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="235267925"
+X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="322784113"
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="235267925"
+   d="scan'208";a="322784113"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:44 -0800
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="500380452"
+   d="scan'208";a="500380494"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -28,9 +28,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 06/25] x86/sgx: Use more generic name for enclave cpumask function
-Date:   Wed,  1 Dec 2021 11:23:04 -0800
-Message-Id: <a6667798da726f27e6b63029ab67da1fef5a771e.1638381245.git.reinette.chatre@intel.com>
+Subject: [PATCH 19/25] selftests/sgx: Introduce TCS initialization enclave operation
+Date:   Wed,  1 Dec 2021 11:23:17 -0800
+Message-Id: <3ab3f4f3c2a0da64a8c889f561f2484788eda365.1638381245.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1638381245.git.reinette.chatre@intel.com>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
@@ -40,171 +40,97 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Knowing which CPUs might have executed an enclave is useful to
-ensure that TLBs are cleared when changes are made to enclave pages.
+The Thread Control Structure (TCS) contains meta-data used by the
+hardware to save and restore thread specific information when
+entering/exiting the enclave. A TCS can be added to an initialized
+enclave by first adding a new regular enclave page, initializing the
+content of the new page from within the enclave, and then changing that
+page's type to a TCS.
 
-Knowing which CPUs might have executed an enclave is currently only used
-within the reclaimer when an enclave page is evicted. In support of this
-the function that determines the CPUs is called sgx_encl_ewb_cpumask() -
-a name that is specific to the current usage.
-
-Rename sgx_encl_ewb_cpumask() to sgx_encl_cpumask() in preparation for its
-usage in more flows. Care should be taken to ensure that any
-future usage maintains the current context requirement that ETRACK has
-been called first. To highlight this the existing comments regarding
-this context is expanded and moved to more prominent location.
-
-With the usage of this function no longer unique to the reclaimer it is
-relocated to be the rest of the enclave code in encl.c.
-
-No functional change.
+Support the initialization of a TCS from within the enclave.
+The variable information needed that should be provided from outside the
+enclave is the address of the TCS, address of the State Save Area (SSA),
+and the entry point that the thread should use to enter the enclave. With
+this information provided all needed fields of a TCS can be initialized.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encl.c | 67 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h |  1 +
- arch/x86/kernel/cpu/sgx/main.c | 31 +---------------
- 3 files changed, 69 insertions(+), 30 deletions(-)
+ tools/testing/selftests/sgx/defines.h   |  8 +++++++
+ tools/testing/selftests/sgx/test_encl.c | 30 +++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 6fec68896e1b..c29e10541d12 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -595,6 +595,73 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
- 	return 0;
+diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
+index b638eb98c80c..d8587c971941 100644
+--- a/tools/testing/selftests/sgx/defines.h
++++ b/tools/testing/selftests/sgx/defines.h
+@@ -26,6 +26,7 @@ enum encl_op_type {
+ 	ENCL_OP_NOP,
+ 	ENCL_OP_EACCEPT,
+ 	ENCL_OP_EMODPE,
++	ENCL_OP_INIT_TCS_PAGE,
+ 	ENCL_OP_MAX,
+ };
+ 
+@@ -68,4 +69,11 @@ struct encl_op_emodpe {
+ 	uint64_t flags;
+ };
+ 
++struct encl_op_init_tcs_page {
++	struct encl_op_header header;
++	uint64_t tcs_page;
++	uint64_t ssa;
++	uint64_t entry;
++};
++
+ #endif /* DEFINES_H */
+diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
+index 5b6c65331527..c0d6397295e3 100644
+--- a/tools/testing/selftests/sgx/test_encl.c
++++ b/tools/testing/selftests/sgx/test_encl.c
+@@ -57,6 +57,35 @@ static void *memcpy(void *dest, const void *src, size_t n)
+ 	return dest;
  }
  
-+/**
-+ * sgx_encl_cpumask - Query which CPUs might be accessing the enclave
-+ * @encl: the enclave
-+ *
-+ * Some SGX functions require that no cached linear-to-physical address
-+ * mappings are present before they can succeed. For example, ENCLS[EWB]
-+ * copies a page from the enclave page cache to regular main memory but
-+ * it fails if it cannot ensure that there are no cached
-+ * linear-to-physical address mappings referring to the page.
-+ *
-+ * SGX hardware flushes all cached linear-to-physical mappings on a CPU
-+ * when an enclave is exited via ENCLU[EEXIT] or an Asynchronous Enclave
-+ * Exit (AEX). Exiting an enclave will thus ensure cached linear-to-physical
-+ * address mappings are cleared but coordination with the tracking done within
-+ * the SGX hardware is needed to support the SGX functions that depend on this
-+ * cache clearing.
-+ *
-+ * When the ENCLS[ETRACK] function is issued on an enclave the hardware
-+ * tracks threads operating inside the enclave at that time. The SGX
-+ * hardware tracking require that all the identified threads must have
-+ * exited the enclave in order to flush the mappings before a function such
-+ * as ENCLS[EWB] will be permitted
-+ *
-+ * The following flow is used to support SGX functions that require that
-+ * no cached linear-to-physical address mappings are present:
-+ * 1) Execute ENCLS[ETRACK] to initiate hardware tracking.
-+ * 2) Use this function (sgx_encl_cpumask()) to query which CPUs might be
-+ *    accessing the enclave.
-+ * 3) Send IPI to identified CPUs, kicking them out of the enclave and
-+ *    thus flushing all locally cached linear-to-physical address mappings.
-+ * 4) Execute SGX function.
-+ *
-+ * Context: It is required to call this function after ENCLS[ETRACK].
-+ *          This will ensure that if any new mm appears (racing with
-+ *          sgx_encl_mm_add()) then the new mm will enter into the
-+ *          enclave with fresh linear-to-physical address mappings.
-+ *
-+ *          It is required that all IPIs are completed before a new
-+ *          ENCLS[ETRACK] is issued so be sure to protect steps 1 to 3
-+ *          of the above flow with the enclave's mutex.
-+ *
-+ * Return: cpumask of CPUs that might be accessing @encl
-+ */
-+const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl)
++static void *memset(void *dest, int c, size_t n)
 +{
-+	cpumask_t *cpumask = &encl->cpumask;
-+	struct sgx_encl_mm *encl_mm;
-+	int idx;
++	size_t i;
 +
-+	cpumask_clear(cpumask);
++	for (i = 0; i < n; i++)
++		((char *)dest)[i] = c;
 +
-+	idx = srcu_read_lock(&encl->srcu);
-+
-+	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+		if (!mmget_not_zero(encl_mm->mm))
-+			continue;
-+
-+		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
-+
-+		mmput_async(encl_mm->mm);
-+	}
-+
-+	srcu_read_unlock(&encl->srcu, idx);
-+
-+	return cpumask;
++	return dest;
 +}
 +
- static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
- 					      pgoff_t index)
++static void do_encl_init_tcs_page(void *_op)
++{
++	struct encl_op_init_tcs_page *op = _op;
++	void *tcs = (void *)op->tcs_page;
++	uint32_t val_32;
++
++	memset(tcs, 0, 16);			/* STATE and FLAGS */
++	memcpy(tcs + 16, &op->ssa, 8);		/* OSSA */
++	memset(tcs + 24, 0, 4);			/* CSSA */
++	val_32 = 1;
++	memcpy(tcs + 28, &val_32, 4);		/* NSSA */
++	memcpy(tcs + 32, &op->entry, 8);	/* OENTRY */
++	memset(tcs + 40, 0, 24);		/* AEP, OFSBASE, OGSBASE */
++	val_32 = 0xFFFFFFFF;
++	memcpy(tcs + 64, &val_32, 4);		/* FSLIMIT */
++	memcpy(tcs + 68, &val_32, 4);		/* GSLIMIT */
++	memset(tcs + 72, 0, 4024);		/* Reserved */
++}
++
+ static void do_encl_op_put_to_buf(void *op)
  {
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index dc262d843411..becb68503baa 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -106,6 +106,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 	struct encl_op_put_to_buf *op2 = op;
+@@ -100,6 +129,7 @@ void encl_body(void *rdi,  void *rsi)
+ 		do_encl_op_nop,
+ 		do_encl_eaccept,
+ 		do_encl_emodpe,
++		do_encl_init_tcs_page,
+ 	};
  
- void sgx_encl_release(struct kref *ref);
- int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
-+const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl);
- int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 			 struct sgx_backing *backing);
- void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 6036328de255..e5be992897f4 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -201,35 +201,6 @@ static void sgx_ipi_cb(void *info)
- {
- }
- 
--static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
--{
--	cpumask_t *cpumask = &encl->cpumask;
--	struct sgx_encl_mm *encl_mm;
--	int idx;
--
--	/*
--	 * Can race with sgx_encl_mm_add(), but ETRACK has already been
--	 * executed, which means that the CPUs running in the new mm will enter
--	 * into the enclave with a fresh epoch.
--	 */
--	cpumask_clear(cpumask);
--
--	idx = srcu_read_lock(&encl->srcu);
--
--	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
--		if (!mmget_not_zero(encl_mm->mm))
--			continue;
--
--		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
--
--		mmput_async(encl_mm->mm);
--	}
--
--	srcu_read_unlock(&encl->srcu, idx);
--
--	return cpumask;
--}
--
- /*
-  * Swap page to the regular memory transformed to the blocked state by using
-  * EBLOCK, which means that it can no longer be referenced (no new TLB entries).
-@@ -276,7 +247,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 			 * miss cpus that entered the enclave between
- 			 * generating the mask and incrementing epoch.
- 			 */
--			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
-+			on_each_cpu_mask(sgx_encl_cpumask(encl),
- 					 sgx_ipi_cb, NULL, 1);
- 			ret = __sgx_encl_ewb(epc_page, va_slot, backing);
- 		}
+ 	struct encl_op_header *op = (struct encl_op_header *)rdi;
 -- 
 2.25.1
 
