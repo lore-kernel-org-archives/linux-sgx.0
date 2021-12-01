@@ -2,22 +2,22 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCAEC43219
-	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C5AC433FE
+	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245139AbhLAT1G (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 1 Dec 2021 14:27:06 -0500
-Received: from mga04.intel.com ([192.55.52.120]:46904 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243784AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S245127AbhLAT1F (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 1 Dec 2021 14:27:05 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="235267921"
+Received: from mga05.intel.com ([192.55.52.43]:21702 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244564AbhLAT1F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 1 Dec 2021 14:27:05 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="322784104"
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="235267921"
+   d="scan'208";a="322784104"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="500380440"
+   d="scan'208";a="500380470"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -28,9 +28,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/25] x86/sgx: Add wrappers for SGX2 functions
-Date:   Wed,  1 Dec 2021 11:23:00 -0800
-Message-Id: <50ad5005c451f41951327853fb450ba302eadb40.1638381245.git.reinette.chatre@intel.com>
+Subject: [PATCH 12/25] selftests/sgx: Add test for TCS page permission changes
+Date:   Wed,  1 Dec 2021 11:23:10 -0800
+Message-Id: <b8e24d27fbd791c00339397c0aea1c2ef282f2a0.1638381245.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1638381245.git.reinette.chatre@intel.com>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
@@ -40,87 +40,102 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The SGX ENCLS instruction uses EAX to specify an SGX function and
-may require additional registers, depending on the SGX function.
-ENCLS invokes the specified privileged SGX function for managing
-and debugging enclaves. Several macros are used to wrap the ENCLS
-functionality.
-
-Add ENCLS wrappers for the SGX2 EMODPR, EMODT, and EAUG functions
-that can make changes to pages of an initialized SGX enclave. The
-EMODPR function is used to restrict enclave page permissions
-as maintained within the enclave (Enclave Page Cache Map (EPCM)
-permissions). The EMODT function is used to change the type of an
-enclave page. The EAUG function is used to dynamically add enclave
-pages to an initialized enclave.
-
-EMODPR and EMODT accepts two parameters and can fault as well as return
-an SGX error code. EAUG also accepts two parameters but does not return
-an SGX error code. Use existing macros for all new functions.
-
-Expand enum sgx_return_code with the possible EMODPR and EMODT
-return codes.
+Kernel should not allow permission changes on TCS pages. Add test to
+confirm this behavior.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/include/asm/sgx.h      |  5 +++++
- arch/x86/kernel/cpu/sgx/encls.h | 18 ++++++++++++++++++
- 2 files changed, 23 insertions(+)
+ tools/testing/selftests/sgx/main.c | 70 ++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 05f3e21f01a7..ebae2a153c66 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -47,17 +47,22 @@ enum sgx_encls_function {
- 
- /**
-  * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
-+ * %SGX_EPC_PAGE_CONFLICT:	Page is being written by other ENCLS function.
-  * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
-  *				been completed yet.
-  * %SGX_CHILD_PRESENT		SECS has child pages present in the EPC.
-  * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-  *				public key does not match IA32_SGXLEPUBKEYHASH.
-+ * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
-+ *				is in the PENDING or MODIFIED state.
-  * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-  */
- enum sgx_return_code {
-+	SGX_EPC_PAGE_CONFLICT		= 7,
- 	SGX_NOT_TRACKED			= 11,
- 	SGX_CHILD_PRESENT		= 13,
- 	SGX_INVALID_EINITTOKEN		= 16,
-+	SGX_PAGE_NOT_MODIFIABLE		= 20,
- 	SGX_UNMASKED_EVENT		= 128,
- };
- 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 241b766265d3..243c30301ddb 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -238,4 +238,22 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
- 	return __encls_ret_3(EWB, pginfo, addr, va);
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index dbd071ba03fe..c7c50d05e246 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -120,6 +120,24 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
+ 	return NULL;
  }
  
-+/* Restrict the permissions of an Enclave Page Cache (EPC) page */
-+static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
++/*
++ * Return the offset in the enclave where the TCS segment can be found.
++ * The first RW segment loaded is the TCS.
++ */
++static off_t encl_get_tcs_offset(struct encl *encl)
 +{
-+	return __encls_ret_2(EMODPR, secinfo, addr);
++	int i;
++
++	for (i = 0; i < encl->nr_segments; i++) {
++		struct encl_segment *seg = &encl->segment_tbl[i];
++
++		if (i == 0 && seg->prot == (PROT_READ | PROT_WRITE))
++			return seg->offset;
++	}
++
++	return -1;
 +}
 +
-+/* Change the type of an Enclave Page Cache (EPC) page */
-+static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
+ /*
+  * Return the offset in the enclave where the data segment can be found.
+  * The first RW segment loaded is the TCS, skip that to get info on the
+@@ -567,6 +585,58 @@ TEST_F(enclave, pte_permissions)
+ 	EXPECT_EQ(self->run.exception_addr, 0);
+ }
+ 
++/*
++ * Modifying permissions of TCS page should not be possible.
++ */
++TEST_F(enclave, tcs_permissions)
 +{
-+	return __encls_ret_2(EMODT, secinfo, addr);
++	struct sgx_page_modp ioc;
++	int ret, errno_save;
++
++	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
++	memset(&ioc, 0, sizeof(ioc));
++
++	/*
++	 * Ensure kernel supports needed ioctl and system supports needed
++	 * commands.
++	 */
++
++	ret = ioctl(self->encl.fd, SGX_IOC_PAGE_MODP, &ioc);
++
++	if (ret == -1) {
++		if (errno == ENOTTY)
++			SKIP(return, "Kernel does not support test SGX_IOC_PAGE_MODP ioctl");
++		else if (errno == ENODEV)
++			SKIP(return, "System does not support SGX2");
++	}
++
++	/*
++	 * Invalid parameters were provided during sanity check,
++	 * expect command to fail.
++	 */
++	EXPECT_EQ(ret, -1);
++
++	/*
++	 * Attempt to make TCS page read-only. This is not allowed and
++	 * should be prevented by OS.
++	 */
++	ioc.offset = encl_get_tcs_offset(&self->encl);
++	ioc.length = PAGE_SIZE;
++	ioc.prot = PROT_READ;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_PAGE_MODP, &ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	EXPECT_EQ(ret, -1);
++	EXPECT_EQ(errno_save, EINVAL);
++	EXPECT_EQ(ioc.result, 0);
++	EXPECT_EQ(ioc.count, 0);
 +}
 +
-+/* Add a page to an initialized enclave */
-+static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
-+{
-+	return __encls_2(EAUG, pginfo, addr);
-+}
-+
- #endif /* _X86_ENCLS_H */
+ /*
+  * Enclave page permission test.
+  *
 -- 
 2.25.1
 
