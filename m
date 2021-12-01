@@ -2,24 +2,24 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 613B1C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF10C43219
 	for <linux-sgx@archiver.kernel.org>; Wed,  1 Dec 2021 19:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352437AbhLAT1M (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1352607AbhLAT1M (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 1 Dec 2021 14:27:12 -0500
-Received: from mga05.intel.com ([192.55.52.43]:21702 "EHLO mga05.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:46904 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229655AbhLAT1G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        id S245136AbhLAT1G (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
         Wed, 1 Dec 2021 14:27:06 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="322784117"
+X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="235267929"
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="322784117"
+   d="scan'208";a="235267929"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:44 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
 X-IronPort-AV: E=Sophos;i="5.87,279,1631602800"; 
-   d="scan'208";a="500380507"
+   d="scan'208";a="500380462"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:43 -0800
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 11:23:42 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -28,9 +28,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 23/25] selftests/sgx: Test reclaiming of untouched page
-Date:   Wed,  1 Dec 2021 11:23:21 -0800
-Message-Id: <5dfa762816df7aad50303ea6519cdf049b19ffed.1638381245.git.reinette.chatre@intel.com>
+Subject: [PATCH 09/25] x86/sgx: Keep record of SGX page type
+Date:   Wed,  1 Dec 2021 11:23:07 -0800
+Message-Id: <f1393ef80c8d1f1bdd3e34baf60c0286f77a8aa1.1638381245.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1638381245.git.reinette.chatre@intel.com>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
@@ -40,91 +40,80 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Removing a page from an initialized enclave involves three steps: (1) the
-user requests changing the page type to PT_TRIM via the SGX_IOC_PAGE_MODT
-ioctl, (2) on success the ENCLU[EACCEPT] instruction is run from within
-the enclave to accept the page removal, (3) the user initiates the actual
-removal of the page via the SGX_IOC_PAGE_REMOVE ioctl.
+SGX2 functions are not allowed on all page types. For example,
+ENCLS[EMODPR] is only allowed on regular SGX enclave pages and
+ENCLS[EMODPT] is only allowed on TCS and regular pages. If these
+functions are attempted on another type of page the hardware would
+trigger a fault.
 
-Remove a page that has never been accessed. This means that when the first
-ioctl requesting page removal arrives, there will be no page table entry,
-yet a valid page table entry needs to exist for the ENCLU[EACCEPT] function
-to succeed. In this test it is verified that a page table entry can still
-be installed for a page that is in the process of being removed.
+Keep a record of the SGX page type so that there is more
+certainty whether an SGX2 instruction can succeed and faults
+can be treated as real failures.
 
-Suggested-by: Haitao Huang <haitao.huang@intel.com>
+The page type is made to be a property of struct sgx_encl_page
+and thus does not cover the VA page type. VA pages are maintained
+in separate structures and thus their type can be determined in
+a different way. The SGX2 instructions being supported do not
+operate on VA pages and this is thus not a scenario needing to
+be covered at this time.
+
+With the protection bits consuming 16 bits of the unsigned long
+there is room available in the bitfield to include the page type
+information without increasing the space consumed by the struct.
+
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- tools/testing/selftests/sgx/main.c | 58 ++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ arch/x86/include/asm/sgx.h      | 3 +++
+ arch/x86/kernel/cpu/sgx/encl.h  | 1 +
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 3bee8fa557fd..618f5ff0601b 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -1849,4 +1849,62 @@ TEST_F(enclave, remove_added_page_invalid_access_after_eaccept)
- 	EXPECT_EQ(self->run.exception_addr, data_start);
- }
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index ebae2a153c66..8b6cbedada96 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -221,6 +221,9 @@ struct sgx_pageinfo {
+  * %SGX_PAGE_TYPE_REG:	a regular page
+  * %SGX_PAGE_TYPE_VA:	a VA page
+  * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
++ *
++ * Make sure when making changes to this enum that its values can still fit
++ * in the bitfield within &struct sgx_encl_page
+  */
+ enum sgx_page_type {
+ 	SGX_PAGE_TYPE_SECS,
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 82e21088e68b..cb9f16d457ac 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -29,6 +29,7 @@ struct sgx_encl_page {
+ 	unsigned long desc;
+ 	unsigned long vm_max_prot_bits:8;
+ 	unsigned long vm_run_prot_bits:8;
++	enum sgx_page_type type:16;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_encl *encl;
+ 	struct sgx_va_page *va_page;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 7e0819a89532..491d2700a54d 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -107,6 +107,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 		set_bit(SGX_ENCL_DEBUG, &encl->flags);
  
-+TEST_F(enclave, remove_untouched_page)
-+{
-+	struct encl_op_eaccept eaccept_op;
-+	struct sgx_page_remove remove_ioc;
-+	struct sgx_page_modt modt_ioc;
-+	unsigned long data_start;
-+	int ret, errno_save;
-+
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	data_start = self->encl.encl_base +
-+			 encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+
-+	modt_ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+	modt_ioc.length = PAGE_SIZE;
-+	modt_ioc.type = SGX_PAGE_TYPE_TRIM;
-+	ret = ioctl(self->encl.fd, SGX_IOC_PAGE_MODT, &modt_ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(modt_ioc.result, 0);
-+	EXPECT_EQ(modt_ioc.count, 4096);
-+
-+	/*
-+	 * Enter enclave via TCS #1 and approve page removal by sending
-+	 * EACCEPT for removed page.
-+	 */
-+
-+	eaccept_op.epc_addr = data_start;
-+	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
-+	eaccept_op.ret = 0;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	EXPECT_EQ(eaccept_op.ret, 0);
-+
-+	memset(&remove_ioc, 0, sizeof(remove_ioc));
-+
-+	remove_ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+	remove_ioc.length = PAGE_SIZE;
-+	ret = ioctl(self->encl.fd, SGX_IOC_PAGE_REMOVE, &remove_ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(remove_ioc.count, 4096);
-+}
-+
- TEST_HARNESS_MAIN
+ 	encl->secs.encl = encl;
++	encl->secs.type = SGX_PAGE_TYPE_SECS;
+ 	encl->base = secs->base;
+ 	encl->size = secs->size;
+ 	encl->attributes = secs->attributes;
+@@ -350,6 +351,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	 */
+ 	encl_page->encl = encl;
+ 	encl_page->epc_page = epc_page;
++	encl_page->type = (secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK) >> 8;
+ 	encl->secs_child_cnt++;
+ 
+ 	if (flags & SGX_PAGE_MEASURE) {
 -- 
 2.25.1
 
