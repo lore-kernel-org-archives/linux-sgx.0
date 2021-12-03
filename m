@@ -2,73 +2,68 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BB9C433F5
-	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 18:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F81C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 18:49:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243044AbhLCSvT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 3 Dec 2021 13:51:19 -0500
-Received: from mga14.intel.com ([192.55.52.115]:18575 "EHLO mga14.intel.com"
+        id S233187AbhLCSxR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 3 Dec 2021 13:53:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12962 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233187AbhLCSvS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 3 Dec 2021 13:51:18 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10187"; a="237259587"
+        id S231605AbhLCSxQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 3 Dec 2021 13:53:16 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10187"; a="224285215"
 X-IronPort-AV: E=Sophos;i="5.87,284,1631602800"; 
-   d="scan'208";a="237259587"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2021 10:47:54 -0800
+   d="scan'208";a="224285215"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2021 10:49:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,284,1631602800"; 
-   d="scan'208";a="460133485"
-Received: from orsmsx604.amr.corp.intel.com ([10.22.229.17])
-  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2021 10:47:53 -0800
-Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
- ORSMSX604.amr.corp.intel.com (10.22.229.17) with Microsoft SMTP Server
+   d="scan'208";a="513366403"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Dec 2021 10:49:51 -0800
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Fri, 3 Dec 2021 10:47:53 -0800
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
+ 15.1.2308.20; Fri, 3 Dec 2021 10:49:51 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Fri, 3 Dec 2021 10:47:53 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20 via Frontend Transport; Fri, 3 Dec 2021 10:47:53 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ 15.1.2308.20 via Frontend Transport; Fri, 3 Dec 2021 10:49:51 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.106)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.20; Fri, 3 Dec 2021 10:47:52 -0800
+ 15.1.2308.20; Fri, 3 Dec 2021 10:49:51 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cPk6kZ2buQREk66l10KSMmaJH5mmgZuV1XPWhVsYewSe5a6Vc5ECIjqyxpFNhz8jT51q34O2t+gvWseS+HaBS0irI9Iy3vYs6y7X/HZJDenubIBevzFyoBuPqw7ig/r7shwgIYihYDN4oOn4c9fHHeN9yw5duw22T10NfHRq0nf0KrHAYkQMdNMY29n1iTIFGV4e3s80ygIwJQPiAa6RSEeTGLM5lIDi/MCrXV5AuYnn357qhHPrM4bo4wDYEWyFk8dh7EjIsYCb+pTMSQDIDqfqteDR5NifRWIPU3sm2aTZtyjc8CLKC6ImdVc1KdLutjD11R2JYM2exUkBGirHEw==
+ b=fWuFmkKXvULRJUbv6SO7jDz5BN96OB6TtgN4y+d5RJKPiGLdOXQj7YtNCJrOQEMsvzIjyPNxMcjHTQm4eLBTfAikM7GS0t6I9fCI1LCxIVYmB/EnrWV7XgG7gSoLy/ev973me1qHrNxCZEe7SWA3seIJOqd60Nc5YY9uB0ulO823kwfw7BVcKzTXCVSFBpem3ifHnGdz88DBjYfCZ/VayI7b1YNar9iY03s1oUaoaOZ1fDKiWZUq3QyuuAM6WXzD/6NnGJEd4TJaTfagDwUtd77FWuk63ZgUIas8LxEYdCS+imYUAdw8oJQwLw1sa8E/Iq0PIjqMBZr9R1PJES9lNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ECRkvOSqkyS8udqGvN088mXTXMhME/msWXPlhUL0zkc=;
- b=Fx4GtwinekvH6IpBer74SUNVSwDNBGvg1jf7rrxAC5DI+xOcSIKr0+0+F1AFVQwK80t4ZGXQobuYJbzwOBewOzABfcOkK/Ubc0gB3cwOuTo/0gYD3C0ihjOzyAnMyNYZB3d5jTcvtqUuOt1W8Z2h52gzGUO/koZlKHGTnOgvJagt21hAFi7WCQYkMZ4eN6hLfS9QUlwS4f3rxAn4cKKI9XnUeh0M4mIkZDDxyhraIkl2P8kDLZNko4kPWNiGHkNOoqh5O+9Fwfq0C7opWvDnDkFqbcUOF45DNsrUEgdWO67C/+Z2P+7RKHKvKUBbJjXqAge4X9FeSZtWGqMxrWq+uA==
+ bh=mCAc2QUnqx+HimV2vK/MHmflwFOO0Fj6m98Uli4WLos=;
+ b=NXhqxVdUSO/qCJ6IM5NBAR/Nc7UI/V+WuyK53QPM4XXiCj0FoMU1zj57Ipa1gafAWie33SArwfU8qZkv/hjNfgxWDXarW5G6BHJahr2fpTiT6Vf1En8JnVv823GZxM63LlrUdoylJOy+rKoiNzPnedJsSD+DNY99qHAE/IirwI7Eg1YaH9AiM7Y9fU47tigAoB7EQ3E5tCc5SbG5zi0aYVfFtT292s4rqFgl1ZPTjB9uh80CZ/EdDkzGRVhQ7OnMg7IdCvFUHxXqOhV2KVwLu1A+J0tjuDIkxO68PcHGju0l1qZ6LwjMUmGlu6S/Q6nV9oZbG7ccq+xFmC7Mp2mjEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
  s=selector2-intel-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ECRkvOSqkyS8udqGvN088mXTXMhME/msWXPlhUL0zkc=;
- b=wz2hyI+vQdn0i7zGIEXB1E5RiRERTMn4tow0IAOMKJX4LS9I5oWYv2attUPy074xk1e4CtkLg80MB08fBc2OGAo45eY3o9QCIdRZGa/6hidZaOPwfMGVtddZBifDpo/Go9+c/I9NwwHS6iS3pnBFqd0h5KVGVR5IvOShHrkrRPQ=
+ bh=mCAc2QUnqx+HimV2vK/MHmflwFOO0Fj6m98Uli4WLos=;
+ b=RrnNoeKgKUJoSDU0dOToyMllemCn3Ynqo2L3rJnDAWxVBPWcuWrx9Pq6kcov6lRDa3tIuHyTjo4S100MaKo1xt4twMmVyCOXE1d2eVQ5PYOtJaS8PY6MbOPupAAPGtv4YzBgo29yI9s0o/uExoJHmRoHDMpid0uh1lRoA55saNY=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by BN9PR11MB5514.namprd11.prod.outlook.com (2603:10b6:408:103::7) with
+ by BN9PR11MB5515.namprd11.prod.outlook.com (2603:10b6:408:104::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23; Fri, 3 Dec
- 2021 18:47:49 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.24; Fri, 3 Dec
+ 2021 18:49:49 +0000
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::bcd0:77e1:3a2e:1e10]) by BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::bcd0:77e1:3a2e:1e10%3]) with mapi id 15.20.4734.023; Fri, 3 Dec 2021
- 18:47:49 +0000
-Message-ID: <8e9352ea-b717-05bc-5120-b993605c1e7b@intel.com>
-Date:   Fri, 3 Dec 2021 10:47:43 -0800
+ 18:49:49 +0000
+Message-ID: <1d1eea17-6279-878a-e52a-2a9e9c8452f8@intel.com>
+Date:   Fri, 3 Dec 2021 10:49:44 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Firefox/91.0 Thunderbird/91.3.2
-Subject: Re: [PATCH 13/25] x86/sgx: Support adding of pages to initialized
- enclave
+Subject: Re: [PATCH 10/25] x86/sgx: Support enclave page permission changes
 Content-Language: en-US
 To:     Dave Hansen <dave.hansen@intel.com>, <dave.hansen@linux.intel.com>,
         <jarkko@kernel.org>, <tglx@linutronix.de>, <bp@alien8.de>,
@@ -79,77 +74,77 @@ CC:     <seanjc@google.com>, <kai.huang@intel.com>,
         <haitao.huang@intel.com>, <mark.shanahan@intel.com>,
         <hpa@zytor.com>, <linux-kernel@vger.kernel.org>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
- <1669c1b8-2d68-0d2b-931d-bdbfd9085b0c@intel.com>
+ <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
+ <8087c21c-195b-3ffa-a3ca-542752db6462@intel.com>
 From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <1669c1b8-2d68-0d2b-931d-bdbfd9085b0c@intel.com>
+In-Reply-To: <8087c21c-195b-3ffa-a3ca-542752db6462@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR14CA0028.namprd14.prod.outlook.com
- (2603:10b6:300:12b::14) To BN0PR11MB5744.namprd11.prod.outlook.com
+X-ClientProxiedBy: MWHPR10CA0068.namprd10.prod.outlook.com
+ (2603:10b6:300:2c::30) To BN0PR11MB5744.namprd11.prod.outlook.com
  (2603:10b6:408:166::16)
 MIME-Version: 1.0
-Received: from [192.168.1.221] (71.238.111.198) by MWHPR14CA0028.namprd14.prod.outlook.com (2603:10b6:300:12b::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend Transport; Fri, 3 Dec 2021 18:47:46 +0000
+Received: from [192.168.1.221] (71.238.111.198) by MWHPR10CA0068.namprd10.prod.outlook.com (2603:10b6:300:2c::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend Transport; Fri, 3 Dec 2021 18:49:47 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4b395252-282b-40b6-db53-08d9b68d66f1
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5514:
+X-MS-Office365-Filtering-Correlation-Id: 5a866448-a32e-48b9-5eb7-08d9b68daee0
+X-MS-TrafficTypeDiagnostic: BN9PR11MB5515:
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <BN9PR11MB551475FF756A9DCFB93DADC5F86A9@BN9PR11MB5514.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Microsoft-Antispam-PRVS: <BN9PR11MB551527D5D72BFD55CCA4BF35F86A9@BN9PR11MB5515.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: G+MKZv59CUl7jGgLuLqBnob3ugBp1EwCBUvQ+LrZXB4Hj3dfX3aWen17gIb6Ib7rjZBSq4+5fqMkykTlPp/xc+pojhXNNK7nEhkuo1a0Zh2dig/lbQagfTWNOpL5Yym6nN7oXsbN/ZqiCi5QsnsxTs5kdEule3HrtZ+jUZTfknGht/ADdDquaIYGUHslZ8hw+n2rg0Ncsre7oEoyf7AD4mje+eNX1vwYSIxBq4vlVMOCAtq2KN76pqSD3/c/o0ycHX/Zy/TTIcq4I1SyVgW4OO8yIC8dZQO3acnwWuhMYUMf4dNRQlWwjjnAGNfTODEjukdboxZl1qbzJg7OjhRy/hWNDAhQC6hiqdGEiEH0W29HoPDdyeeuby+e8EF4+jB6ZAMacbSvoReQyFIDgyCL9W4eTzHAjcgOmr1mwSJYMMG6YuIEhvdjiRQqLbwieirc7g6Mqvv+YU/rN6vq4nuifCvIWz7dEtg1uQMHSerBUPYPTac54jxWivbjDXW+piltzkklWiAIHuItMS9ydSCkZVL02uY5s7xaACFbE1I+jJ4uF1mYBZTomAY9jckDHD9qa57KdOuIsV1fP17AyOuEoRV/OU/GEe9LYv9laVVXvH1xfAYQK0+dbl8fwCLi8XdXxTTfryfNUAIphb0jDVrbX54EYK7QeQvaaQIV5tURpK0laKpWNRmGjWVoarNuUWsrMeipLNJI4M71dV7sSCEQz8tfxRFSKQ/MstlIUh0HzXRDKEVn0nAA6OYfCbJ01Hdq
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(7416002)(8676002)(66476007)(83380400001)(82960400001)(186003)(508600001)(31696002)(4326008)(316002)(6666004)(53546011)(2616005)(66556008)(6486002)(44832011)(86362001)(5660300002)(36756003)(956004)(38100700002)(31686004)(26005)(66946007)(16576012)(8936002)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: 5GD9TiIrOi9hAKBMATcfjmGCDuIZArdzZzKaRWOe26VWKMiIcB8IRnniqcg28bl2uXujmTlTsj+EDTJEw1jE/1PiZzuo8P33MJPEV7mgluWBXkSQ6dFmtlguKYbdSPXt+0VOQC7E78WaJ6J5jbaqD/k7kGf2X5SvrLG8KWTP/jCL8WMg6J/c5iVNvbXV5BjJtUB4oM9UVxzcEL0YbpKRIuXv+OX8CBrNEjPTgFN3z7a64ykxFXGSqDwZxy+JsdJmdiQtOAhNSJNqwnIW0VbO/fmajtLH59kH8fp/rFi7dHgV9nwk16JlOSWj/Vkfh9utwQ6TXOQRqHijHVpPMvucfPw+L+hUI49p28iJY64fSFfrerr0NUXXYYquz6bElNg835hDRWAA/6t4gEzkOFnmY1gQLWC8nv6wfbUR2g2Qatm+dq0sX5ClZi4wnc4gmQh5C8QaU1OdUpp0yacxXQPQHKEEZHeBS4XvzwRPx4dWndKlhyMksU16YOhfumUgXktbSf5wW6vf96qpq62G6ziWvnF+MfqWieydCR0yxNVSlv6wphK5T86ZFFieH658TSrIrgn3WQqFa7IrVUA3WZRkQg7HYuwqALxtsDN3Q3cbD59nCUEaTj0nh1KvkEhgSlteepBHcV9WGzt45ONjwVKQlA10woFRjNGL65HCUgC+Z7AVrNIee/amQ+P3Xk2QumIGa9hay2T6D1WQhBs1Ex3uK6J6spiGFsoX/126HlOkczLzjg8u61w3csDSp4Z6owTe
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(956004)(6486002)(31696002)(86362001)(53546011)(66946007)(316002)(16576012)(66556008)(66476007)(2906002)(5660300002)(82960400001)(186003)(2616005)(38100700002)(8676002)(4744005)(36756003)(44832011)(4326008)(508600001)(7416002)(83380400001)(31686004)(26005)(6666004)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WWVHTEhnR3lBTGZ5ZDhqMUhBcUt0QWJFWUlranZGczdPTFZHMjNiVEkyTEor?=
- =?utf-8?B?Vm5MNGEwalJWTXY1d0wxTVJoWFFhRTB4N0hlVHUyc1AzTXpoR3U0RE53dVBZ?=
- =?utf-8?B?dlg4S2Y0clFxeXBXRUJxZW51Q2tscVhWTVgxWXZ0R1N0NkRZQmxsbEtFTWlG?=
- =?utf-8?B?akx5NzFuSFlONVhiMkdqK2JjSlhLaUk2OEh5SjUwVFphWFllSXZrUys3b1Vi?=
- =?utf-8?B?bXliVngva3JUR3NVcGdENi9NbS9RQzNxVkMvY01QWkJ5SU5jcXhRbDdXemdO?=
- =?utf-8?B?LzBkMHY3bGZwQ3pTSURVSVc1YnF0bHJrcUQ0VThWZ3ZtcU1lZW5xenhMY1dv?=
- =?utf-8?B?WXo5eHFVWUhsQng2NjRVTUo3VEg2TzQ1V0VsK08xZ1pRdVRrU2M1NU14aWNW?=
- =?utf-8?B?MHhOaStFdjUyRk1Za2MyQmFEMm8rZDZrb2hjRllybXJ5Uks1QkVXdEp0S3Rt?=
- =?utf-8?B?NUdPMmZuR3YwMUJMR29Qa2xka0dLT2dVY05ETk02dzJXREZJT0pEelN5Q003?=
- =?utf-8?B?dFk4UDdvcWtsT0ZHOXJjaGZkZ3NvaitQVnJZeVlnczJUays5RmZibk80WGxz?=
- =?utf-8?B?a1l1MWM2bElONDlEWmtvTnZ1RFd3dUp1OFVhTWZqUWdpRDhPKzZyMVBoWkpM?=
- =?utf-8?B?eTVmdWJlVXQvR2ZHSjcrVjJFdTVjMm9zZmJnSndKUHEzZGMrN29hT2NNUUlv?=
- =?utf-8?B?Yy9HQXBHbmM3M1IwbERDUzd1RXFGcnJxMllaTURuWjQwRnlSRlNZRU90TGxD?=
- =?utf-8?B?WTN6T0REUEwwSW4xejY5TUowTHh5Y09wM2xZeGw2dEZiVzJWTXJrVXN1V1Ro?=
- =?utf-8?B?aWxuNHo4TzJFcUJESTdUaTJaYmhHZmxxY2kzeWRlckg5RWlVcHFnL0w3eFBh?=
- =?utf-8?B?V1NPTyttWHhQZUJYbHpZN0IzNGgzaTRSaDVjTFVZTVdTYXl4cXg1NVlpNFkr?=
- =?utf-8?B?VEFqTFhIVjZETG5lM0FPOFFyWmxUUXduY3Y0Y3pGK2xpa3ZQcVB2U2U5SjI5?=
- =?utf-8?B?SXZPSWJDbXRzcVFWem5XNVJ4L0Q0U3IzSmU0SGFKMm9UaUhMS25ad2VrWFdy?=
- =?utf-8?B?a1JaY05rWlI2eE9iQUp3bVNwTHR4M0szVkxjVWdESXRuNjJ0UE5aV0poMjVK?=
- =?utf-8?B?RmZ1MEdHQjJJZnRQbW94cTE3L2tuMEVMUlhVbWZHSGJlbWFRc25jRzBPeTZp?=
- =?utf-8?B?M0NIeG52dGwyeFVwNmpmOSs3cGI3ZDVsTGc1ZVBhY2ZTOFRUUTB1dWZ2aDR2?=
- =?utf-8?B?ZjY0OFBXaDk2OHczQmNQWWlPc1MwZ0pmRko4MmtrNlhNeDFlSTZXemtaUExy?=
- =?utf-8?B?MXlCZ3ZiWEdGa2VLZmlSRVBrYzNBZTE1L0Q3MzlraTNMQ2o2UllMVHRCZHov?=
- =?utf-8?B?N2ZBcXVoc0VFaUQyNnhMSWRMRWw1V3gxQ2tnZk5hckpsYjdtT083VjA5KzhE?=
- =?utf-8?B?TmF0bVpyQ1FNaFFjZlBqMEs2WExxTFJwWlczb0pNTzNwZ2svMlVpdXRKQlBX?=
- =?utf-8?B?S0ZIMm5acms0OXZoVzdVNktpQjRVQUEzSDVWZjZzWWdjQUI0dlVIWXdKODR1?=
- =?utf-8?B?ejYwc3pBOUZGTkw0YW5yOC9KQ283bWlyaUlVdTN6SDkyMXl3VmQ0T24rQUEw?=
- =?utf-8?B?eHIwRzlRZllqdDYwQVpnUEtaZGRER1BZaFBWRSs2UnYwY3dqbFBreWcyUVJE?=
- =?utf-8?B?YVFaUU5rYllkVGtaTjlrVDN6N3IwS2JMVDEwT25qRFU2S25hYlRVcVdOWlpK?=
- =?utf-8?B?b3hCOXkxSEs0OWlMZ2lMMWpLVVZWNTlRbU44d2RuL2NHVGJ3WVJWQmh5NitC?=
- =?utf-8?B?eXB3aG9mN2lIU0JRenJNbVl3SDByckdZMjdmUXNjZDQzR3ZPMnRrT1pVMFFy?=
- =?utf-8?B?NVAzUk8zYmxVZko2KytkeHpFUXZkZlV1Skc0Z1Zmd3lOQVgwVlVIQ0hTYlpi?=
- =?utf-8?B?YnhPTmtBMG1ES3RuZEFybjVmVUhibVJRWjQ0TnRhRUdqd0k4aGpOODhybnE4?=
- =?utf-8?B?WUljS1RzWXRRK3dtbENDTGFYazZqQm9lNjkzbVZuTEZDSmo2NDZLekNxWlhi?=
- =?utf-8?B?NjlNVlMxYmd0SnhBVU8vOTh4aDFtOCtNdUh6czR0MDNsZUduYW5mdSs0aGVv?=
- =?utf-8?B?RXpuOFN6UHlpMmxTRjIva1Q5U0xLSExhemFmUzlVWjRVTEthZTF2NERDOHFC?=
- =?utf-8?B?UlY2NXJZWHU3anR0Sm00ZnpxSTNSaW1WU0FXMWdyd0VHK3dXdWRnSmlNZVZ0?=
- =?utf-8?Q?/O0I6zFwnezI3lbEmaq2sV8U8epDYGawhQwUFIIYSM=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b395252-282b-40b6-db53-08d9b68d66f1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cDJGUThNN05vNEpqMVJtYnlTc1hFV0VYemVGL0hrSTlBM0hQa1lqTldCd3NN?=
+ =?utf-8?B?dHBsczY4cVMySFg1TlkyNFg2cUVVa3JWVUlTNWhWWnZzOEVOcUNQTWkxVUMz?=
+ =?utf-8?B?bXFhOGVNelhnS2Y3R2o4NVFHRkY2ekpOTlFpVHh0aFRhdGFkOUV0TThIMFlq?=
+ =?utf-8?B?SEtFRlhNeWZnZXVIeHVlVkpxMC9nRENnbHFGYklhOUZuRCs2a1RYczZrRGk2?=
+ =?utf-8?B?WlBlOUhmaWZtRjg3NTdtUlVFK2VjS0hpNGZVY0tDaFFRNlpDYUFVNXRqaito?=
+ =?utf-8?B?cHhITVQxQ0dGRGNucGovQjJjNGQweFZXTEpMVU40WXk2c25MZ2xnZ0pnK3o1?=
+ =?utf-8?B?a1FVWjFRcUx4QkpLOU9lOWxZQ3NOL2w4cDhtMTJQK2YyRHppb1VrRzB0OUVh?=
+ =?utf-8?B?WnJHUVZWU3EzMHNGWnlWV2J5TWl4YmNwYTdPbUsxNHYwZ21Uc3M3cWZPd1p2?=
+ =?utf-8?B?SVBVdnBoRzI5YStxWTk3am9rYU4yQVVGZWtuOTZOSGdyaWJJSnFxdU9aUXBD?=
+ =?utf-8?B?VU44azZ0eG5lOWJIVXZueTIzUjQ1VFE4TVdOeVFCdzRtVy9DWHFQL3RhcUVh?=
+ =?utf-8?B?c2Z4ODV4d2lGV3lHTzA1VzR5Y3B2dzM4bUh3TktoMHlaTnQwamVrZkRSUUs4?=
+ =?utf-8?B?OGp5bkFJelBUYXF6emcxbnlodnVnWTRMZTVEYlVHaUlBVUMzcGNnU2VodzI0?=
+ =?utf-8?B?c1N5dEl6YllhdmNTbll6UWNtdmNsWW14NWdSb09GUjdvcXMyMDJLejRFUExD?=
+ =?utf-8?B?Z3RRTHFRV0NWWkN1WWpCVlZaWTRsbTg1NlgybzVhdldaZ3FJdktERnlHQVNH?=
+ =?utf-8?B?UEFzbU8wcm1CMENNRGdwcERNSzZNT0RjK0swRGZDU2FncE1rS01MWDROTm1Y?=
+ =?utf-8?B?MXo5TDZ1Z29KaDlMalhFMW5aWXRVRS9QRi95M3VxOWNYVW5lL3czUURNNmtD?=
+ =?utf-8?B?WWdSWVBIK1BKMGFlU2dxWjdjR3ZqRzFBWWtVYUZ0TEF2ZVdnVnZxKzJ3NDF0?=
+ =?utf-8?B?Z0FKUk1QNERnQTczeHNySkhVc2VvM1pVNnU5MEp0elFBczlmNUV4dXNxZVFa?=
+ =?utf-8?B?TjVUUG5ISG15aFQzQ0EySUlHeEpiODFySzNuZCt3cm52Vm9mbFpYdmNrdXUz?=
+ =?utf-8?B?TVVlamh6N0QxaW00TG85V0RLTEhXbXpwTDFidjE2RVhnejNsMnZ2bk50dlhC?=
+ =?utf-8?B?NHhFZkVnM0RqU1llYXRKczZiaERsZGRmNXJZYlZ0c2dmbGZtRk9SRnNhTkFU?=
+ =?utf-8?B?YmRjSWNGdUpqbC9EZlBDTWtmZ2piRGNxVDc4WDR0UzFCcmhxNVFNRFFubUxH?=
+ =?utf-8?B?U21zVzV4UE5LZFhQblM4N0gyY1RhSnE5bmd1eXRGR1h1UzFCeC9HOHdHUVU0?=
+ =?utf-8?B?c21vZ0pIWU9YdlI3Nzk5QUl4SE9HZThHdU84elJIQ05Objk0OHZ1NnA5QUMw?=
+ =?utf-8?B?MS9SODhuSE0zbjJhenEwTFgyRHNoZnZpbm5LN2twMC9SVWh2YU5HTFFxR292?=
+ =?utf-8?B?U3FJUEh3d1pudGIvVjIxMXU3SDk5UVdNQ0ZjZ2pWT0c5L2NoaEZ6OUhic0NU?=
+ =?utf-8?B?ZGlpU1RKOUR4SW5mTjZWZGMyK09MYjZCelBmU2tISXdwazJyaGJMZXFncDVj?=
+ =?utf-8?B?QnJsMHZZSGRmTVZtN2c0cUVNQzIrTFNLZlpMMVdCdjBlbU1PbFVWUEp5Y3VK?=
+ =?utf-8?B?U3hxK0Y1WUYwSHZnbW5xSDg3M25waUpNMjg3UWliVzFRdlhBbHZrZUlGWHhL?=
+ =?utf-8?B?aVpvd0JCd1FxY3RKU3pvb0NvTktlK1BNY3VEazY3emhzWFBrNEpUTWpyOWE0?=
+ =?utf-8?B?Qnhqc0FZQjR0QnNDUTVaYXdsaTEwMmxFWVBwQjhsQldXMUxBRlJ4NFRDcVZr?=
+ =?utf-8?B?dGRkVndBeFZWQWlPaWFRb05OVVBtdUZ3K2Q5UG9mYlh6TU5WLytKOExqL1FO?=
+ =?utf-8?B?ZnVUaWc3WnAva01rU25zaGxPRkZncW9LSTZFaXZNTHE5UGhVdHovY3hmNm9T?=
+ =?utf-8?B?S3JkMTRUTmU2Z3BUWkxsZ3JORWgxVWllelhMVjcyOVNWc1c0YmQxSW5tR25y?=
+ =?utf-8?B?dDBveFR0YzBmRFU4R3FDK1pZTFVkRkhSOHcySTJPSzNLRGs2dTkzakZxSXBx?=
+ =?utf-8?B?RFJwVEJGdytTVVJsTGdtdWVHSGw2cGNKcTJpYzdUMlBWWW1BMS93eDBNSld6?=
+ =?utf-8?B?ODFoNVBXZVpDSm5NTWM2YXVMZURhRzVRUTBhZU45NENHMVJCc0xQUHJnallx?=
+ =?utf-8?Q?G7G8w9dQlCZ3zAnLA7PvBPS1u0dnJ6WkaYQh4fVW2o=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a866448-a32e-48b9-5eb7-08d9b68daee0
 X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2021 18:47:48.9320
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2021 18:49:49.1703
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FsED6RsMhsCiMdfNQNnzVJlM8uLNneoD3FkJtCnx6rx+BLWdKFfk0Jyu3mhutB4RICY9XQtMscVGWCEK2hE36pbpv2FzBQQowLyqWNhKZBc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5514
+X-MS-Exchange-CrossTenant-UserPrincipalName: ioa9iSUeLopiKouXqGgCE5tcNeFMvQwtEQjEUR5hdIHe6EyNMRrM26+S/n1PxMLdVlXgxPVQ/siGYBRmYF0uXxvGh3HLFirhnL9TEMltwfU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5515
 X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -157,138 +152,24 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 Hi Dave,
 
-On 12/2/2021 4:38 PM, Dave Hansen wrote:
+On 12/3/2021 10:14 AM, Dave Hansen wrote:
 > On 12/1/21 11:23 AM, Reinette Chatre wrote:
->> +static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->> +				     struct sgx_encl *encl, unsigned long addr)
->> +{
->> +	struct sgx_pageinfo pginfo = {0};
->> +	struct sgx_encl_page *encl_page;
->> +	struct sgx_epc_page *epc_page;
->> +	struct sgx_va_page *va_page;
->> +	unsigned long phys_addr;
->> +	unsigned long prot;
->> +	vm_fault_t vmret;
->> +	int ret;
->> +
->> +	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
->> +		return VM_FAULT_SIGBUS;
->> +
->> +	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
->> +	if (!encl_page)
->> +		return VM_FAULT_OOM;
->> +
->> +	encl_page->desc = addr;
->> +	encl_page->encl = encl;
->> +
->> +	/*
->> +	 * Adding a regular page that is architecturally allowed to only
->> +	 * be created with RW permissions.
->> +	 * TBD: Interface with user space policy to support max permissions
->> +	 * of RWX.
->> +	 */
->> +	prot = PROT_READ | PROT_WRITE;
->> +	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
->> +	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
->> +
->> +	epc_page = sgx_alloc_epc_page(encl_page, true);
->> +	if (IS_ERR(epc_page)) {
->> +		kfree(encl_page);
->> +		return VM_FAULT_SIGBUS;
->> +	}
->> +
->> +	va_page = sgx_encl_grow(encl);
->> +	if (IS_ERR(va_page)) {
->> +		ret = PTR_ERR(va_page);
->> +		goto err_out_free;
->> +	}
->> +
->> +	mutex_lock(&encl->lock);
->> +
->> +	/*
->> +	 * Copy comment from sgx_encl_add_page() to maintain guidance in
->> +	 * this similar flow:
->> +	 * Adding to encl->va_pages must be done under encl->lock.  Ditto for
->> +	 * deleting (via sgx_encl_shrink()) in the error path.
->> +	 */
->> +	if (va_page)
->> +		list_add(&va_page->list, &encl->va_pages);
->> +
->> +	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
->> +			encl_page, GFP_KERNEL);
->> +	/*
->> +	 * If ret == -EBUSY then page was created in another flow while
->> +	 * running without encl->lock
->> +	 */
->> +	if (ret)
->> +		goto err_out_unlock;
->> +
->> +	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
->> +	pginfo.addr = encl_page->desc & PAGE_MASK;
->> +	pginfo.metadata = 0;
->> +
->> +	ret = __eaug(&pginfo, sgx_get_epc_virt_addr(epc_page));
->> +	if (ret)
->> +		goto err_out;
->> +
->> +	encl_page->encl = encl;
->> +	encl_page->epc_page = epc_page;
->> +	encl_page->type = SGX_PAGE_TYPE_REG;
->> +	encl->secs_child_cnt++;
->> +
->> +	sgx_mark_page_reclaimable(encl_page->epc_page);
->> +
->> +	phys_addr = sgx_get_epc_phys_addr(epc_page);
->> +	/*
->> +	 * Do not undo everything when creating PTE entry fails - next #PF
->> +	 * would find page ready for a PTE.
->> +	 * PAGE_SHARED because protection is forced to be RW above and COW
->> +	 * is not supported.
->> +	 */
->> +	vmret = vmf_insert_pfn_prot(vma, addr, PFN_DOWN(phys_addr),
->> +				    PAGE_SHARED);
->> +	if (vmret != VM_FAULT_NOPAGE) {
->> +		mutex_unlock(&encl->lock);
->> +		return VM_FAULT_SIGBUS;
->> +	}
->> +	mutex_unlock(&encl->lock);
->> +	return VM_FAULT_NOPAGE;
->> +
->> +err_out:
->> +	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
->> +
->> +err_out_unlock:
->> +	sgx_encl_shrink(encl, va_page);
->> +	mutex_unlock(&encl->lock);
->> +
->> +err_out_free:
->> +	sgx_encl_free_epc_page(epc_page);
->> +	kfree(encl_page);
->> +
->> +	return VM_FAULT_SIGBUS;
->> +}
+>> Enclave page permission changes need to be approached with care and
+>> for this reason this initial support is to allow enclave page
+>> permission changes _only_ if the new permissions are the same or
+>> more restrictive that the permissions originally vetted at the time the
+>> pages were added to the enclave. Support for extending enclave page
+>> permissions beyond what was originally vetted is deferred.
 > 
-> There seems to be very little code sharing between this and the existing
-> page addition.  Are we confident that no refactoring here is in order?
+> It's probably worth adding a few examples here:
+> 
+>   * RWX => RW => RX => RW => R => RWX
+>   * RW => R => RW
+>   * RX => R => RX
 > 
 
-I can understand your concern here because this code looks similar to 
-the page addition code. Primarily because it uses the same objects (an 
-enclave page, an EPC page, and a VA page).
+Indeed - that would make the implications of this change clear.
 
-The flow is different though because (1) the enclave page needs to be 
-created differently to handle its static (RW) permissions as opposed to 
-the permissions from additional meta data, (2) a different instruction 
-(ENCLS[EAUG] vs ENCLS[EADD]) is used, and (3) the page table entries are 
-installed which does not form part of the original page addition.
-
-A major complication to factoring out code is that there are (slightly 
-different) allocations needed before the mutex is obtained (enclave 
-page, EPC page, and VA page) and then different actions taken on these 
-individual allocations with the mutex held. With the mutex in the middle 
-of difference in allocation and different actions it is not clear to me 
-how to refactor this.
-
-Please do let me know if you see any ways in which I can improve this code.
+Will do. Thank you very much.
 
 Reinette
