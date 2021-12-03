@@ -2,24 +2,24 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5109C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu,  2 Dec 2021 23:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDE0C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 00:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349615AbhLBXvs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 2 Dec 2021 18:51:48 -0500
-Received: from mga11.intel.com ([192.55.52.93]:46924 "EHLO mga11.intel.com"
+        id S1343611AbhLCAfm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 2 Dec 2021 19:35:42 -0500
+Received: from mga11.intel.com ([192.55.52.93]:50229 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1377612AbhLBXvr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 2 Dec 2021 18:51:47 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10186"; a="234381638"
+        id S230131AbhLCAfl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 2 Dec 2021 19:35:41 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10186"; a="234387924"
 X-IronPort-AV: E=Sophos;i="5.87,283,1631602800"; 
-   d="scan'208";a="234381638"
+   d="scan'208";a="234387924"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 15:48:19 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 16:32:18 -0800
 X-IronPort-AV: E=Sophos;i="5.87,283,1631602800"; 
-   d="scan'208";a="513438312"
+   d="scan'208";a="513452690"
 Received: from msdenney-mobl.amr.corp.intel.com (HELO [10.209.114.233]) ([10.209.114.233])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 15:48:08 -0800
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 16:32:17 -0800
 Subject: Re: [PATCH 10/25] x86/sgx: Support enclave page permission changes
 To:     Reinette Chatre <reinette.chatre@intel.com>,
         dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
@@ -75,8 +75,8 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <24447a03-139a-c7e0-9ad5-34e2019c4df5@intel.com>
-Date:   Thu, 2 Dec 2021 15:48:06 -0800
+Message-ID: <d78eb8b6-86ed-f39a-63a1-38785ea92a50@intel.com>
+Date:   Thu, 2 Dec 2021 16:32:15 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
@@ -89,38 +89,72 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 12/1/21 11:23 AM, Reinette Chatre wrote:
-> + * EPCM permissions can be extended anytime directly from the enclave with
-> + * no visibility from the OS. This is accomplished with ENCLU[EMODPE]
-> + * run from within enclave. Accessing pages with the new, extended,
-> + * permissions requires the OS to update the PTE to handle the subsequent
-> + * #PF correctly.
+> Whether enclave page permissions are restricted or extended it
+> is necessary to ensure that the page table entries and enclave page
+> permissions are in sync. Introduce a new ioctl,
 
-Hi Reinette,
+These should be "ioctl()".
 
-I really dislike the Intel nomenclature here.  I know the Intel docs are
-all written around permission "extension", but I find it ambiguous.
+> SGX_IOC_PAGE_MODP, to support enclave page permission changes. Since
+> the OS has no insight in how permissions may have been extended from
+> within the enclave all page permission requests are treated as
+> permission restrictions.
+I'm trying to wrap my head around this a bit.  If this is only for
+restricting permissions, should we be reflecting that in the naming?
+SGX_IOC_PAGE_RESTRICT_PERM, perhaps?  Wouldn't that be more direct than
+saying, "here's a permission change ioctl(), but it doesn't arbitrarily
+change things, it treats all changes as restrictions"?
 
-I've been looking at these instructions literally for years now and
-permission extension to me can mean either:
- 1. The set of things you can do is extended
- 2. The set of things you can *NOT* do is extended
+The pseudocode for EMODPR looks like this:
 
-I much rather prefer nomenclature like:
+> (* Update EPCM permissions *)
+> EPCM(DS:RCX).R := EPCM(DS:RCX).R & SCRATCH_SECINFO.FLAGS.R;
+> EPCM(DS:RCX).W := EPCM(DS:RCX).W & SCRATCH_SECINFO.FLAGS.W;
+> EPCM(DS:RCX).X := EPCM(DS:RCX).X & SCRATCH_SECINFO.FLAGS.X;
 
-	EPCM permissions can be relaxed anytime directly from the
-	enclave with no visibility from the OS. This is accomplished
-	with ENCLU[EMODPE] run from within enclave. Accessing pages with
-	the new, relaxed permissions requires the OS to update the PTE
-	to handle the subsequent correctly.
+so it makes total sense that it can only restrict permissions since it's
+effectively:
 
-"Relax" is less ambiguous.  Relaxing a restriction and relaxing
-permissions both mean doing things less strictly.  Extending
-restrictions and extending what is allowed are opposites.
+	new_hw_perm = old_hw_perm & secinfo_perm;
 
-Maybe it's just me and I need to get this through my thick skull at some
-point.  But, I do think it's OK to improve on the architecture names for
-things when they go into the kernel.  The XSAVE XSTATE_BV->xfeatures
-rename comes to mind.
+...
+> +/**
+> + * struct sgx_page_modp - parameter structure for the %SGX_IOC_PAGE_MODP ioctl
+> + * @offset:	starting page offset (page aligned relative to enclave base
+> + *		address defined in SECS)
+> + * @length:	length of memory (multiple of the page size)
+> + * @prot:	new protection bits of pages in range described by @offset
+> + *		and @length
+> + * @result:	SGX result code of ENCLS[EMODPR] function
+> + * @count:	bytes successfully changed (multiple of page size)
+> + */
+> +struct sgx_page_modp {
+> +	__u64 offset;
+> +	__u64 length;
+> +	__u64 prot;
+> +	__u64 result;
+> +	__u64 count;
+> +};
 
-Anyway, I'd appreciate if you could keep this in mind and consider
-changing it if a future revision is needed if you believe it is more clear.
+Could we make it more explicit that offset/length/prot are inputs and
+result/count are output?
+
+..
+> +	if (!params.length || params.length & (PAGE_SIZE - 1))
+> +		return -EINVAL;
+
+I find these a bit easier to read if they're:
+
+	if (!params.length || !IS_ALIGNED(params.length, PAGE_SIZE))
+		...
+
+> +	if (params.offset + params.length - PAGE_SIZE >= encl->size)
+> +		return -EINVAL;
+
+I hate boundary conditions. :)  But, I think this would be simpler
+written as:
+
+	if (params.offset + params.length > encl->size)
+
+Please double-check me on that, though.  I've gotten these kinds of
+checks wrong more times than I care to admit.
