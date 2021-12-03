@@ -2,26 +2,25 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFAAC433F5
-	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 00:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75BCC433EF
+	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 18:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356648AbhLCAmZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 2 Dec 2021 19:42:25 -0500
-Received: from mga05.intel.com ([192.55.52.43]:25271 "EHLO mga05.intel.com"
+        id S1343850AbhLCSS1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 3 Dec 2021 13:18:27 -0500
+Received: from mga17.intel.com ([192.55.52.151]:61370 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1343847AbhLCAmZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 2 Dec 2021 19:42:25 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10186"; a="323130998"
-X-IronPort-AV: E=Sophos;i="5.87,283,1631602800"; 
-   d="scan'208";a="323130998"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 16:39:01 -0800
-X-IronPort-AV: E=Sophos;i="5.87,283,1631602800"; 
-   d="scan'208";a="513454594"
-Received: from msdenney-mobl.amr.corp.intel.com (HELO [10.209.114.233]) ([10.209.114.233])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 16:39:01 -0800
-Subject: Re: [PATCH 13/25] x86/sgx: Support adding of pages to initialized
- enclave
+        id S235884AbhLCSS1 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 3 Dec 2021 13:18:27 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10187"; a="217718214"
+X-IronPort-AV: E=Sophos;i="5.87,284,1631602800"; 
+   d="scan'208";a="217718214"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2021 10:15:02 -0800
+X-IronPort-AV: E=Sophos;i="5.87,284,1631602800"; 
+   d="scan'208";a="478415393"
+Received: from lbriscoe-mobl.amr.corp.intel.com (HELO [10.209.18.147]) ([10.209.18.147])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2021 10:15:02 -0800
+Subject: Re: [PATCH 10/25] x86/sgx: Support enclave page permission changes
 To:     Reinette Chatre <reinette.chatre@intel.com>,
         dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -31,7 +30,7 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
+ <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -76,128 +75,30 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <1669c1b8-2d68-0d2b-931d-bdbfd9085b0c@intel.com>
-Date:   Thu, 2 Dec 2021 16:38:59 -0800
+Message-ID: <8087c21c-195b-3ffa-a3ca-542752db6462@intel.com>
+Date:   Fri, 3 Dec 2021 10:14:59 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
+In-Reply-To: <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 12/1/21 11:23 AM, Reinette Chatre wrote:
-> +static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
-> +				     struct sgx_encl *encl, unsigned long addr)
-> +{
-> +	struct sgx_pageinfo pginfo = {0};
-> +	struct sgx_encl_page *encl_page;
-> +	struct sgx_epc_page *epc_page;
-> +	struct sgx_va_page *va_page;
-> +	unsigned long phys_addr;
-> +	unsigned long prot;
-> +	vm_fault_t vmret;
-> +	int ret;
-> +
-> +	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
-> +	if (!encl_page)
-> +		return VM_FAULT_OOM;
-> +
-> +	encl_page->desc = addr;
-> +	encl_page->encl = encl;
-> +
-> +	/*
-> +	 * Adding a regular page that is architecturally allowed to only
-> +	 * be created with RW permissions.
-> +	 * TBD: Interface with user space policy to support max permissions
-> +	 * of RWX.
-> +	 */
-> +	prot = PROT_READ | PROT_WRITE;
-> +	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
-> +	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
-> +
-> +	epc_page = sgx_alloc_epc_page(encl_page, true);
-> +	if (IS_ERR(epc_page)) {
-> +		kfree(encl_page);
-> +		return VM_FAULT_SIGBUS;
-> +	}
-> +
-> +	va_page = sgx_encl_grow(encl);
-> +	if (IS_ERR(va_page)) {
-> +		ret = PTR_ERR(va_page);
-> +		goto err_out_free;
-> +	}
-> +
-> +	mutex_lock(&encl->lock);
-> +
-> +	/*
-> +	 * Copy comment from sgx_encl_add_page() to maintain guidance in
-> +	 * this similar flow:
-> +	 * Adding to encl->va_pages must be done under encl->lock.  Ditto for
-> +	 * deleting (via sgx_encl_shrink()) in the error path.
-> +	 */
-> +	if (va_page)
-> +		list_add(&va_page->list, &encl->va_pages);
-> +
-> +	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
-> +			encl_page, GFP_KERNEL);
-> +	/*
-> +	 * If ret == -EBUSY then page was created in another flow while
-> +	 * running without encl->lock
-> +	 */
-> +	if (ret)
-> +		goto err_out_unlock;
-> +
-> +	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
-> +	pginfo.addr = encl_page->desc & PAGE_MASK;
-> +	pginfo.metadata = 0;
-> +
-> +	ret = __eaug(&pginfo, sgx_get_epc_virt_addr(epc_page));
-> +	if (ret)
-> +		goto err_out;
-> +
-> +	encl_page->encl = encl;
-> +	encl_page->epc_page = epc_page;
-> +	encl_page->type = SGX_PAGE_TYPE_REG;
-> +	encl->secs_child_cnt++;
-> +
-> +	sgx_mark_page_reclaimable(encl_page->epc_page);
-> +
-> +	phys_addr = sgx_get_epc_phys_addr(epc_page);
-> +	/*
-> +	 * Do not undo everything when creating PTE entry fails - next #PF
-> +	 * would find page ready for a PTE.
-> +	 * PAGE_SHARED because protection is forced to be RW above and COW
-> +	 * is not supported.
-> +	 */
-> +	vmret = vmf_insert_pfn_prot(vma, addr, PFN_DOWN(phys_addr),
-> +				    PAGE_SHARED);
-> +	if (vmret != VM_FAULT_NOPAGE) {
-> +		mutex_unlock(&encl->lock);
-> +		return VM_FAULT_SIGBUS;
-> +	}
-> +	mutex_unlock(&encl->lock);
-> +	return VM_FAULT_NOPAGE;
-> +
-> +err_out:
-> +	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
-> +
-> +err_out_unlock:
-> +	sgx_encl_shrink(encl, va_page);
-> +	mutex_unlock(&encl->lock);
-> +
-> +err_out_free:
-> +	sgx_encl_free_epc_page(epc_page);
-> +	kfree(encl_page);
-> +
-> +	return VM_FAULT_SIGBUS;
-> +}
+> Enclave page permission changes need to be approached with care and
+> for this reason this initial support is to allow enclave page
+> permission changes _only_ if the new permissions are the same or
+> more restrictive that the permissions originally vetted at the time the
+> pages were added to the enclave. Support for extending enclave page
+> permissions beyond what was originally vetted is deferred.
 
-There seems to be very little code sharing between this and the existing
-page addition.  Are we confident that no refactoring here is in order?
+It's probably worth adding a few examples here:
+
+ * RWX => RW => RX => RW => R => RWX
+ * RW => R => RW
+ * RX => R => RX
+
