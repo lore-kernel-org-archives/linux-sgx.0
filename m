@@ -2,41 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F11AC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 19:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C298DC433EF
+	for <linux-sgx@archiver.kernel.org>; Fri,  3 Dec 2021 19:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245460AbhLCTbf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 3 Dec 2021 14:31:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353754AbhLCTbd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 3 Dec 2021 14:31:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CDE4C061751;
-        Fri,  3 Dec 2021 11:28:09 -0800 (PST)
+        id S1343689AbhLCTmO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 3 Dec 2021 14:42:14 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:45282 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353465AbhLCTmN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 3 Dec 2021 14:42:13 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9EEBFB828D3;
-        Fri,  3 Dec 2021 19:28:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9F8C53FAD;
-        Fri,  3 Dec 2021 19:28:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 77B8062CA9;
+        Fri,  3 Dec 2021 19:38:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A23C53FCD;
+        Fri,  3 Dec 2021 19:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638559686;
-        bh=sAJaLNzg+JVMUerDY4yeRe8FVaUg2LjpY6jSf5lZmcg=;
+        s=k20201202; t=1638560328;
+        bh=9bvRIjqCq3O68XxPYaggj9gpPynEul1wuU8aflyGXNg=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=FxRyB3OnmGsrkVo7DOQ9T47jUs6CmY5H5Zzq/Fjf7mI1765jNRxrEHB/TbHLxoT/C
-         5xoVEVv3cPFY2wee470DfWaMJTVVYNXc9OPCG59JqBKvbSFsRnlHtaRrlpp3pRuWSg
-         uHbW9HFZchd1EsZ3epAuGQsG0ZBmURO3s83PnuSsvkzEE8njEU2RSA32/kXmmZEHJM
-         xa6UcuqV48Qf5OUPTychoRyiBkoqmXcYvEdQZou+yNsO/FNLyTReIcqzye5A7ddR2j
-         GPFmJ+C1eZ1W/3Mw1Ph+RRR8Y3y9JOMssUzzhj63NhzALYFzU+9dp8bI9AvRllPcU0
-         6sXvoKQxiVu3g==
-Message-ID: <db9b7bc9-fdca-4dd2-2c3f-3b7354c165bb@kernel.org>
-Date:   Fri, 3 Dec 2021 11:28:04 -0800
+        b=kIJ7xz9wo5llTNncJ9avRrlMXdHK/UUNgmAKSNzpSXGYNN0LgDBJ3y/I5Eu5NfM46
+         +QGzwA2d0+N8aatJWUodSJNeyVX6z/vupy8rlO9o/uw5hTgj3shQM457rOWwrqi5gs
+         bE5J1q6VfvDK/vF6oqZsTLj2zxNz72SYa/i5xXdngzpDCpYKni4SoWG8AVGS7oBCVg
+         XXfkTGHCYt1d2GtkueyyQswvEvLcZlFZlq9Tkvrz+peL/lq+uq2sYpSM+v/9oN5ZdV
+         WFdKPlxyDsnK2ilwTiQ3ILz4m0V7bUGU5a8Pj+f8ai9JR/QIwmDR3o+ljCBA+jTLUi
+         1UvmSGy84hhKA==
+Message-ID: <4960c8f9-72e4-0f40-64e4-4384a76d1e69@kernel.org>
+Date:   Fri, 3 Dec 2021 11:38:47 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
-Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
+Subject: Re: [PATCH 10/25] x86/sgx: Support enclave page permission changes
 Content-Language: en-US
 To:     Reinette Chatre <reinette.chatre@intel.com>,
         dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
@@ -47,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.chatre@intel.com>
+ <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
 From:   Andy Lutomirski <luto@kernel.org>
-In-Reply-To: <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.chatre@intel.com>
+In-Reply-To: <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -57,48 +54,42 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 12/1/21 11:23, Reinette Chatre wrote:
-> Enclave creators declare their paging permission intent at the time
-> the pages are added to the enclave. These paging permissions are
-> vetted when pages are added to the enclave and stashed off
-> (in sgx_encl_page->vm_max_prot_bits) for later comparison with
-> enclave PTEs.
+> In the initial (SGX1) version of SGX, pages in an enclave need to be
+> created with permissions that support all usages of the pages, from the
+> time the enclave is initialized until it is unloaded. For example,
+> pages used by a JIT compiler or when code needs to otherwise be
+> relocated need to always have RWX permissions.
+> 
+> SGX2 includes two functions that can be used to modify the enclave page
+> permissions of regular enclave pages within an initialized enclave.
+> ENCLS[EMODPR] is run from the OS and used to restrict enclave page
+> permissions while ENCLU[EMODPE] is run from within the enclave to
+> extend enclave page permissions.
+> 
+> Enclave page permission changes need to be approached with care and
+> for this reason this initial support is to allow enclave page
+> permission changes _only_ if the new permissions are the same or
+> more restrictive that the permissions originally vetted at the time the
+> pages were added to the enclave. Support for extending enclave page
+> permissions beyond what was originally vetted is deferred.
 > 
 
-I'm a bit confused here. ENCLU[EMODPE] allows the enclave to change the 
-EPCM permission bits however it likes with no oversight from the kernel. 
-  So we end up with a whole bunch of permission masks:
+I may well be missing something, but off the top of my head, literally 
+the only reason that EMODPR needs CPL0 (i.e. ENCLS) is that it requires 
+a TLB flush IPI to take effect.  (Score one for AMD for being having 
+superior hardware in this regard.)
 
-The PTE: controlled by complex kernel policy
+Given that, I don't see any reason for the EMODPR operation to be 
+treated as security sensitive -- it just needs to be implemented 
+correctly.  I don't even see why the host should (or even can!) do any 
+useful tracking of the EPCM state.
 
-The VMA: with your series, this is entirely controlled by userspace.  I 
-think I'm fine with that.
-
-vm_max_prot_bits: populated from secinfo at setup time, unless I missed 
-something that changes it later.  Maybe I'm confused or missed something 
-in one of the patches,
-
-vm_run_prot_bits: populated from some combination of ioctls.  I'm 
-entirely lost as to what this is for.
-
-EPCM bits: controlled by the guest.  basically useless for any host 
-purpose on SGX2 hardware (with or without kernel support -- the enclave 
-can do ENCLU[EMODPE] whether we like it or not, even on old kernels)
-
-So I guess I don't understand the purpose of this patch	or of the rules 
-in the later patches, and I feel like this is getting more complicated 
-than makes sense.
-
-
-Could we perhaps make vm_max_prot_bits dynamic or at least controllable 
-in some useful way?  My initial proposal (years ago) was for 
-vm_max_prot_bits to be *separately* configured at initial load time 
-instead of being inferred from secinfo with the intent being that the 
-user untrusted runtime would set it appropriately.  I have no problem 
-with allowing runtime changes as long as the security policy makes sense 
-and it's kept consistent with PTEs.
-
-Also, I think we need a changelog message or, even better, actual docs 
-in kernel, explaining the actual final set of rules and invariants for 
-all these masks.
+(But I am confused about one thing: to the extent an enclave actually 
+needs EMODPR, is there anything in the hardware or anything that the 
+enclave can do short of actually poking the page from all threads and 
+confirming that a fault occurs to make sure the OS actually flushed the 
+TLB?  ISTM a malicious host could attack an enclave by omitting the TLB 
+flush and then exploiting an enclave but that would have been mitigated 
+if the flush occurred.)
 
 --Andy
