@@ -2,85 +2,102 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E458BC433EF
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 20:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41887C433F5
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 22:04:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352275AbhLDUur (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 15:50:47 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:35246 "EHLO
+        id S241313AbhLDWHh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 17:07:37 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:40830 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231146AbhLDUur (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 15:50:47 -0500
+        with ESMTP id S1352148AbhLDWHh (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 17:07:37 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D9397B80D6A
-        for <linux-sgx@vger.kernel.org>; Sat,  4 Dec 2021 20:47:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C42C341C0;
-        Sat,  4 Dec 2021 20:47:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3859BB80CF5;
+        Sat,  4 Dec 2021 22:04:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BAF0C341C2;
+        Sat,  4 Dec 2021 22:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638650838;
-        bh=HD7ianve5pdIRZvBfK1Q8TBKVyB8D0r45ujHuB+wBNM=;
+        s=k20201202; t=1638655449;
+        bh=bQ1y8zePOz7aHC+wLXiH4tflwEcV6v7xTaaUFi1moLM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FmgONtp6V37Gzf9act25NJbG/o4ElRNhrPl1/L9uzqU0nrYE1qb/Djt79GIfqagSC
-         tic8w8CN5oEDHENUCc5uWzraP33uO8inoJALQ9Cz8Uew9rqyXcQHSWIazRkQj507no
-         kt9NHtkUyUI0vI6FdS9cVxIvO/B48T0XQOoqZX2m9PplzFrdRvjO4aV3SzWKOD89Cj
-         7CiYHTdR+O1+401Ty6+N85/H18IMgMJmOh9axhAagAW5iC7ceOdvcCa5b5PxEspW0P
-         aPYbpSiNLqhIdK126hUlv6upNWX7LdUxafkU8DERvz1Zgz1YHUMDzuuiqZrmNlDsm5
-         9R8c0zJcLB7Aw==
-Date:   Sat, 4 Dec 2021 22:47:15 +0200
+        b=JleWBQmB0LheAaXHcwobkTpOIYlKvOtiGIdaJAA+UhvqJNu1zoz2bGPfb+THNH1fF
+         OfVbs3LqDdjzapza0rDZk4Y8prahWzL8rtI+cfKI5uaXFrkVSg4McXoCTa31ypfGRS
+         /UKA+m2Uj6LLp+cZA5FXyJ8Sz4yexNQtiDWItJi2wo6exu31jQ51YSxp76dHq97KHP
+         PQf03yb1euOkMEggk8kcilY8YIwgnvfpk3mOWgfKiM8/+wwZf2UBzLU/h0Ip9tTZmg
+         fmesYkZCLcMTWMn6Cwe6JDiraR0OzFHqO02cb+UZQSCQFgjrY/+iqUblATs+WsfIpN
+         s7ejib7mKZKYw==
+Date:   Sun, 5 Dec 2021 00:04:05 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Nathaniel McCallum <nathaniel@profian.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: Re: Possible Regression: 5.14.18 => 5.15.6
-Message-ID: <YavT0+e/GoK8gsKu@iki.fi>
-References: <CAHAy0tS9PXgb4cRFEZNEYpiwPVV3CpBRFQhbFN=+XXy=MQakRg@mail.gmail.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/25] x86/sgx: Add wrappers for SGX2 functions
+Message-ID: <Yavl1csrk03Zj4ZW@iki.fi>
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <50ad5005c451f41951327853fb450ba302eadb40.1638381245.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHAy0tS9PXgb4cRFEZNEYpiwPVV3CpBRFQhbFN=+XXy=MQakRg@mail.gmail.com>
+In-Reply-To: <50ad5005c451f41951327853fb450ba302eadb40.1638381245.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Dec 04, 2021 at 08:54:08AM -0500, Nathaniel McCallum wrote:
-> We are seeing a possible regression between 5.14.18 and 5.15.6. Our
-> trace logging shows the following output:
+On Wed, Dec 01, 2021 at 11:23:00AM -0800, Reinette Chatre wrote:
+> The SGX ENCLS instruction uses EAX to specify an SGX function and
+> may require additional registers, depending on the SGX function.
+> ENCLS invokes the specified privileged SGX function for managing
+> and debugging enclaves. Several macros are used to wrap the ENCLS
+> functionality.
 > 
-> enclave location: 00007f3c00000000-00007f3c80000000
-> creating enclave: Secs { size: 2147483648, baseaddr: 139895674765312,
-> ssaframesize: 1, miscselect: (empty), attributes: Attributes {
-> features: MODE64BIT, xfrm: X87 | SSE }, pid: 0, svn: 0 }
-> adding pages: 00007f3c00000000-00007f3c00004000 R
-> adding pages: 00007f3c00004000-00007f3c0000c000 RW
-> adding pages: 00007f3c0000c000-00007f3c00039000 RX
-> adding pages: 00007f3c00201000-00007f3c003fc000 RW
-> adding pages: 00007f3c003fc000-00007f3c003fd000 T
-> adding pages: 00007f3c003fd000-00007f3c00400000 RW
-> adding pages: 00007f3c00400000-00007f3c00401000 R
-> adding pages: 00007f3c00401000-00007f3c00402000 RX
-> adding pages: 00007f3c00402000-00007f3c00403000 R
-> adding pages: 00007f3c00403000-00007f3c00404000 RW
-> enclave initialized
-> remapping: 00007f3c00000000-00007f3c00004000 R
-> remapping: 00007f3c00004000-00007f3c0000c000 RW
-> remapping: 00007f3c0000c000-00007f3c00039000 RX
-> Error: Operation not permitted (os error 1)
+> Add ENCLS wrappers for the SGX2 EMODPR, EMODT, and EAUG functions
+> that can make changes to pages of an initialized SGX enclave. The
+> EMODPR function is used to restrict enclave page permissions
+> as maintained within the enclave (Enclave Page Cache Map (EPCM)
+> permissions). The EMODT function is used to change the type of an
+> enclave page. The EAUG function is used to dynamically add enclave
+> pages to an initialized enclave.
 > 
-> Using strace shows this:
-> ...
-> mmap(0x7f6e80000000, 16384, PROT_READ, MAP_SHARED|MAP_FIXED, 3, 0) =
-> 0x7f6e80000000
-> mmap(0x7f6e80004000, 32768, PROT_READ|PROT_WRITE,
-> MAP_SHARED|MAP_FIXED, 3, 0) = 0x7f6e80004000
-> mmap(0x7f6e8000c000, 184320, PROT_READ|PROT_EXEC,
-> MAP_SHARED|MAP_FIXED, 3, 0) = -1 EPERM (Operation not permitted)
+> EMODPR and EMODT accepts two parameters and can fault as well as return
+> an SGX error code. EAUG also accepts two parameters but does not return
+> an SGX error code. Use existing macros for all new functions.
 > 
-> We've followed the selftest structure pretty closely. The first two
-> remapping calls succeed, but the third one fails. This works on
-> 5.14.18, but fails on 5.15.6.
+> Expand enum sgx_return_code with the possible EMODPR and EMODT
+> return codes.
 
-What are the mount options of /dev?
+These implementation details only obfuscate this commit message, and
+it is way too high-level to be useful e.g. for kernel maintenance.
+
+I'd replace it with something like:
+
+"
+Add wrappers for ENCLS leaf functions EAUG, EMODT and EMODPR,
+which roughly take two steps:
+
+1. EAUG creates a new EPCM entry.
+   EMODT and EMODPR modify an existing EPCM entry.
+2. Set either .PR = 1 (EMODPR), .MODIFY = 1 (EMODT) or .PENDING = 1 (AUG).
+
+The bit is reset by the enclave by invoking ENCLU leaf function EACCEPT
+or EACCEPTCOPY, which will result the EPCM change becoming effective.
+"
+
+The current commit message is also not addressing these:
+
+1. What happens if enclaves accesses a memory address with either .PR,
+   .MODIFY or .PENDING set in EPCM, other than by the means of EACCEPT
+   or EACCEPTCOPY?
+2. The calling conditions (e.g. concerning TLB's and ETRACK/IPI/etc
+   dance related to it).
+
+
+If this information was properly contained here, discussing about the
+following commits would be much easier.
 
 /Jarkko
