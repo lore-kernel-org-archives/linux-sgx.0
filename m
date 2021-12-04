@@ -2,142 +2,114 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D75C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 17:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041EBC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 18:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237272AbhLDSAL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 13:00:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51296 "EHLO
+        id S232569AbhLDSeD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 13:34:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbhLDSAL (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 13:00:11 -0500
+        with ESMTP id S232009AbhLDSeC (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 13:34:02 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 744EEC061751;
-        Sat,  4 Dec 2021 09:56:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111B8C061751;
+        Sat,  4 Dec 2021 10:30:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 39E08B80CF9;
-        Sat,  4 Dec 2021 17:56:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D2BC341C0;
-        Sat,  4 Dec 2021 17:56:42 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BD498B80D40;
+        Sat,  4 Dec 2021 18:30:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59171C341C2;
+        Sat,  4 Dec 2021 18:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638640603;
-        bh=BZLokY/e8n8cCbxaQeUwUTq9iT+e2fx4OIzYgD+4xiQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=qss75gSDuxRDviBJEezahC8px9BbWMlpIvXPh5BfcD8k3e/sAY1QFl0EU+f+QzwkN
-         9nYFubplRya2n7cZVKl3lpMi+Ptg0mo3+hZWMZrly3enYoc17KRAKE7pWu0a5Ljs4P
-         HrhUrG7kJAM0dfXDQmCQ6eYQVEtU5psIaB2RbTgNQtPkVivvZWvmoyyr/OexQHQ1Yk
-         NeRD0B4Yg4SKtzgWwvKG1T7rQRb1ZH//KLJqvNUXdFnZYaRZokC3EqCqNBPrXWtbVM
-         0357PBLzAAVHHNIFfIyiGmWR93Eh0ymosOpbqF3eLc7pKQvgJxNUIIpNcDl1AbX4II
-         mJQ7i3aWqoNTA==
-Message-ID: <67993dd0-827e-5f08-d853-4fb0273adb5f@kernel.org>
-Date:   Sat, 4 Dec 2021 09:56:39 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
-Content-Language: en-US
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
-        cedric.xing@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, hpa@zytor.com,
+        s=k20201202; t=1638642634;
+        bh=vpZJzbz83/r/7Zk6WlXuLGdQvsG896LAUclP0lH086M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fo4fIwVbOy9dzWFaBEcYV9fF/anITNia8T/lRCYT0LLdDNh8MQZqz4s2+Wx6+CtA5
+         odwlAVRxtMsWxvXKoIlVGiSW1vNx52KMk3B91jLWa/dOfGL9YXKxS1pqzO3pUdYPMh
+         TLncHoIQ+qYGsLeDOtKtJrZ1GXVYA4bw8/DlqC7km7vT7IRrln1QzWQcgiABL6sfE6
+         sfqiFtQugpwWc11vfnNEpdsOQfXp1Uz7mvHtR3zZlqiB5qI1tYBoLaDTm1vkYjZG7E
+         zi6qvarrc2cvdrbKdVMmBBeN2O8Rb9zhDfFmpOzpT+Qq4eheyV4jbVL8Z7O/MtBLui
+         eNrar0Y4SLrFQ==
+Date:   Sat, 4 Dec 2021 20:30:28 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/25] x86/sgx: Add shortlog descriptions to ENCLS
+ wrappers
+Message-ID: <YauzxOEmmpeGF/K3@iki.fi>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.chatre@intel.com>
- <db9b7bc9-fdca-4dd2-2c3f-3b7354c165bb@kernel.org>
- <c0aab85a-f6a1-ed5c-5540-b03778ffe24a@intel.com>
- <4f50b3b3-2cd5-30a4-5715-3350ef2174d9@kernel.org>
- <ea7708f6-a4c7-9f00-3c69-39cae0c7ac86@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-In-Reply-To: <ea7708f6-a4c7-9f00-3c69-39cae0c7ac86@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ <fd9ab4d760a2ea7a42ab9e60b9e19b8620abe11d.1638381245.git.reinette.chatre@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd9ab4d760a2ea7a42ab9e60b9e19b8620abe11d.1638381245.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/3/21 17:14, Reinette Chatre wrote:
-> Hi Andy,
+On Wed, Dec 01, 2021 at 11:22:59AM -0800, Reinette Chatre wrote:
+> The SGX ENCLS instruction uses EAX to specify an SGX function and
+> may require additional registers, depending on the SGX function.
+> ENCLS invokes the specified privileged SGX function for managing
+> and debugging enclaves. Macros are used to wrap the ENCLS
+> functionality and several wrappers are used to wrap the macros to
+> make the different SGX functions accessible in the code.
 > 
-> On 12/3/2021 4:38 PM, Andy Lutomirski wrote:
->> On 12/3/21 14:12, Reinette Chatre wrote:
->>> Hi Andy,
->>>
->>> On 12/3/2021 11:28 AM, Andy Lutomirski wrote:
->>>> On 12/1/21 11:23, Reinette Chatre wrote:
->>>>> Enclave creators declare their paging permission intent at the time
->>>>> the pages are added to the enclave. These paging permissions are
->>>>> vetted when pages are added to the enclave and stashed off
->>>>> (in sgx_encl_page->vm_max_prot_bits) for later comparison with
->>>>> enclave PTEs.
->>>>>
->>>>
->>>> I'm a bit confused here. ENCLU[EMODPE] allows the enclave to change 
->>>> the EPCM permission bits however it likes with no oversight from the 
->>>> kernel.   So we end up with a whole bunch of permission masks:
->>>
->>> Before jumping to the permission masks I would like to step back and 
->>> just confirm the context. We need to consider the following three 
->>> permissions:
->>>
->>> EPCM permissions: the enclave page permissions maintained in the SGX 
->>> hardware. The OS is constrained here in that it cannot query the 
->>> current EPCM permissions. Even so, the OS needs to ensure PTEs are 
->>> installed appropriately (we do not want a RW PTE for a read-only 
->>> enclave page)
->>
->> Why not?  What's wrong with an RW PTE for a read-only enclave page?
->>
->> If you convince me that this is actually important, then I'll read all 
->> the stuff below.
+> The wrappers of the supported SGX functions are cryptic. Add short
+> changelog descriptions of each to a comment.
+
+I think you are adding function descriptions.
+
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encls.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> Perhaps it is my misunderstanding/misinterpretation of the current 
-> implementation? From what I understand the current requirement, as 
-> enforced in the current mmap(), mprotect() as well as fault() hooks, is 
-> that mappings are required to have identical or weaker permission than 
-> the enclave permission.
+> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> index 9b204843b78d..241b766265d3 100644
+> --- a/arch/x86/kernel/cpu/sgx/encls.h
+> +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> @@ -162,57 +162,68 @@ static inline bool encls_failed(int ret)
+>  	ret;						\
+>  	})
+>  
+> +/* Create an SECS page in the Enclave Page Cache (EPC) */
+>  static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
+>  {
+>  	return __encls_2(ECREATE, pginfo, secs);
+>  }
 
-The current implementation does require that, but for a perhaps 
-counterintuitive reason.  If a SELinux-restricted (or similarly 
-restricted) process that is *not* permitted to do JIT-like things loads 
-an enclave, it's entirely okay for it to initialize RW enclave pages 
-however it likes and it's entirely okay for it to initialize RX (or XO 
-if that ever becomes a thing) enclave pages from appropriately files on 
-disk.  But it's not okay for it to create RWX enclave pages or to 
-initialize RX enclave pages from untrusted application memory. [0]
+You have:
 
-So we have a half-baked implementation right now: the permission to 
-execute a page is decided based on secinfo (max permissions) when the 
-enclave is set up, and it's enforced at the PTE level.  The PTE 
-enforcement is because, on SGX2 hardware, the enclave can do EMODPE and 
-bypass any supposed restrictions in the EPCM.
+* "Create an SECS page in the Enclave Page Cache (EPC)"
+* "Add a Version Array (VA) page to the Enclave Page Cache (EPC)"
 
-The only coupling between EPCM and PTE here is that the max_perm is 
-initialized together with EPCM, but it didn't have to be that way.
+They should have similar descriptions, e.g.
 
-An SGX2 implementation needs to be more fully baked, because in a 
-dynamic environment enclaves need to be able to use EMODPE and actually 
-end up with permissions that exceed the initial secinfo permissions.  So 
-it needs to be possible to make a page that starts out R (or RW or 
-whatever) but nonetheless has max_perm=RWX so that the enclave can use a 
-combination of EMODPE and (ioctl-based) EMODPR to do JIT.  So I think 
-you should make it possible to set up pages like this, but I see no 
-reason to couple the PTE and the EPCM permissions.
+* "Initialize an EPC page into SGX Enclave Control Structure (SECS) page."
+* "Initialize an EPC page into Version Array (VA) page."
 
-> 
-> Could you please elaborate how you envision PTEs should be managed in 
-> this implementation?
+> +/* Extend uninitialized enclave measurement */
+>  static inline int __eextend(void *secs, void *addr)
+>  {
+>  	return __encls_2(EEXTEND, secs, addr);
+>  }
 
-As above: PTE permissions may not exceed max_perm, and EPCM is entirely 
-separate except to the extent needed for ABI compatibility with SGX1 
-runtimes.
+That description does not make __eextend any less cryptic.
 
+Something like this would be already more informative:
 
-[0] I'm not sure anyone actually has a system set up like this or that 
-the necessary LSM support is in the kernel.  But it's supposed to be 
-possible without changing the ABI.
+/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
 
+This same remark applies to the rest of these comments. They should
+provide a clue what the wrapper does rather than an English open coded
+function name.
+
+/Jarkko
