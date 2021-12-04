@@ -2,33 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC1BC433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 23:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4303C433F5
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 23:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232720AbhLDXQc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 18:16:32 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:36894 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232658AbhLDXQc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 18:16:32 -0500
+        id S233026AbhLDXSe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 18:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36018 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232658AbhLDXSb (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 18:18:31 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B1DC061751;
+        Sat,  4 Dec 2021 15:15:05 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 144A760F28;
-        Sat,  4 Dec 2021 23:13:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5C2C341C0;
-        Sat,  4 Dec 2021 23:13:04 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 17982B80DB9;
+        Sat,  4 Dec 2021 23:15:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A96C341C2;
+        Sat,  4 Dec 2021 23:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638659585;
-        bh=xuirBdsXzzPtl9EEh0mQgSHxLbk3dDXitBScKP/mMpU=;
+        s=k20201202; t=1638659701;
+        bh=fTEwCEp9eDy9sHu7xu/Er563Q9B4q1dX344LnhruwM0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vC/n3iNDGrP+fDH4qvZ6VWYkyRUPPLPDP3IT5hep3e4Ri7L8A9Ydk5wsQzFNQ7CK/
-         AvxeyyDY16/1AcDpVUrze6Qdlwf8BPIS5U9p0LMghycRgoNYPE/O+RGXLK/gAh4mE7
-         /3PPM6/0XaMQsrnEKaCboaqIwlgO3S0lw5r4ewAnIfGxiw0Ealzksoz6ZVIUi+FL7F
-         kHlG0RnQCQBi/uExRyZn6mLeMvZ7NPdVN9CqcjwXI+19ypyPr8hE/P8u1+i8dsqTCR
-         iJVQrjuQMWb1xoLPXxQ5L4GDXYNCDFVKCGnsuoOU3D1io9Zh2ZUxiCAlklo26UvqCr
-         j8b8YtiMY+DkQ==
-Date:   Sun, 5 Dec 2021 01:13:01 +0200
+        b=GKjlksL5uqkY/8UgEQ0iHs/npYPh4O/W1wcHrX6I/+GoZ43f+YtTh8cYqc7vD6Pep
+         w2j5gEH+mwwqCytnz39utyH6EHohCHH/7XPwRD09PkZ0V+fBdIwNpAZ1tSg/V/Rf9v
+         eIb41l9qqZIgdcVBm8D2/KXaso4kYl0QqsDYdWMntoQjWwrgLBjxngjnGUgmoSM8xk
+         uGdviVOMAUo1znJdVGXBg7NVkmKEEsQo8eFVHb1dMVTiMTlu0zu+rdwDmKBJN0ASXi
+         hyK65X0Nk0uGXbAjjbV+5/cAqgJPdRAvSXcsLP2zRmR6kxtKgutk+q4q2izBWRIG+L
+         yXOe4jvVNjL+w==
+Date:   Sun, 5 Dec 2021 01:14:58 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
@@ -37,63 +40,74 @@ Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         cathy.zhang@intel.com, cedric.xing@intel.com,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/25] x86/sgx: Support adding of pages to initialized
- enclave
-Message-ID: <Yav1/ZRX68cECD7a@iki.fi>
+Subject: Re: [PATCH 14/25] x86/sgx: Tighten accessible memory range after
+ enclave initialization
+Message-ID: <Yav2ckVPrHSgCw/5@iki.fi>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
+ <66da195d44cbbed57b6840c5d20bb789c06fb99f.1638381245.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
+In-Reply-To: <66da195d44cbbed57b6840c5d20bb789c06fb99f.1638381245.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-"to initialize" -> "to an initialized"
+On Wed, Dec 01, 2021 at 11:23:12AM -0800, Reinette Chatre wrote:
+> Before an enclave is initialized the enclave's memory range is unknown.
+> The enclave's memory range is learned at the time it is created via the
+> SGX_IOC_ENCLAVE_CREATE ioctl where the provided memory range is obtained
+> from an earlier mmap() of the sgx_enclave device. After an enclave is
+> initialized its memory can be mapped into user space (mmap()) from where
+> it can be entered at its defined entry points.
+> 
+> With the enclave's memory range known after it is initialized there is
+> no reason why it should be possible to map memory outside this range.
+> 
+> Lock down access to the initialized enclave's memory range by denying
+> any attempt to map memory outside its memory range.
+> 
+> Locking down the memory range also makes adding pages to an initialized
+> enclave more efficient. Pages are added to an initialized enclave by
+> accessing memory that belongs to the enclave's memory range but not yet
+> backed by an enclave page. If it is possible for user space to map
+> memory that does not form part of the enclave then an access to this
+> memory would eventually fail. Failures range from a prompt general
+> protection fault if the access was an ENCLU[EACCEPT] from within the
+> enclave, or a page fault via the vDSO if it was another access from
+> within the enclave, or a SIGBUS (also resulting from a page fault) if
+> the access was from outside the enclave.
+> 
+> Disallowing invalid memory to be mapped in the first place avoids
+> preventable failures.
+> 
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 342b97dd4c33..37203da382f8 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -403,6 +403,10 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+>  
+>  	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
+>  
 
-On Wed, Dec 01, 2021 at 11:23:11AM -0800, Reinette Chatre wrote:
-> With SGX1 an enclave needs to be created with its maximum memory demands
-> allocated. Pages cannot be added to an enclave after it is initialized.
-> SGX2 introduces a new function, ENCLS[EAUG], that can be used to add
-> pages to an initialized enclave. With SGX2 the enclave still needs to
-> set aside address space for its maximum memory demands during enclave
-> creation, but all pages need not be added before enclave initialization.
-> Pages can be added during enclave runtime.
-> 
-> Add support for dynamically adding pages to an initialized enclave,
-> architecturally limited to RW permission. Add pages via the page fault
-> handler at the time an enclave address without a backing enclave page
-> is accessed, potentially directly reclaiming pages if no free pages
-> are available.
-> 
-> The enclave is still required to run ENCLU[EACCEPT] on the page before
-> it can be used. A useful flow is for the enclave to run ENCLU[EACCEPT]
-> on an uninitialized address. This will trigger the page fault handler
-> that will add the enclave page and return execution to the enclave to
-> repeat the ENCLU[EACCEPT] instruction, this time successful.
-> 
-> If the enclave accesses an uninitialized address in another way, for
-> example by expanding the enclave stack to a page that has not yet been
-> added, then the page fault handler would add the page on the first
-> write but upon returning to the enclave the instruction that triggered
-> the page fault would be repeated and since ENCLU[EACCEPT] was not run
-> yet it would trigger a second page fault, this time with the SGX flag
-> set in the page fault error code. This can only be recovered by entering
-> the enclave again and directly running the ENCLU[EACCEPT] instruction on
-> the now initialized address.
-> 
-> Accessing an uninitialized address from outside the enclave also triggers
-> this flow but the page will remain in PENDING state until accepted from
-> within the enclave.
+Please write a comment here.
 
-What does it mean being in PENDING state, and more imporantly, what is
-PENDING state? What does a memory access within enclave cause when it
-touch a page within this state?
+> +	if (test_bit(SGX_ENCL_INITIALIZED, &encl->flags) &&
+> +	    (start < encl->base || end > encl->base + encl->size))
+> +		return -EACCES;
+> +
+>  	/*
+>  	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
+>  	 * conflict with the enclave page permissions.
+> -- 
+> 2.25.1
+> 
 
-I see a lot of text in the commit message but zero mentions about EPCM
-expect this one sudden mention about PENDING field without attaching
-it to anything concrete.
+Otherwise, makes sense.
 
 /Jarkko
-
