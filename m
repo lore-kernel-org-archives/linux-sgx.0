@@ -2,99 +2,85 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4883DC433FE
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 20:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E458BC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 20:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233330AbhLDU1a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 15:27:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231348AbhLDU1a (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 15:27:30 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52C19C061751;
-        Sat,  4 Dec 2021 12:24:04 -0800 (PST)
+        id S1352275AbhLDUur (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 15:50:47 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:35246 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231146AbhLDUur (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 15:50:47 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CCFC2B80D9B;
-        Sat,  4 Dec 2021 20:24:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B123C341C2;
-        Sat,  4 Dec 2021 20:24:00 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D9397B80D6A
+        for <linux-sgx@vger.kernel.org>; Sat,  4 Dec 2021 20:47:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C42C341C0;
+        Sat,  4 Dec 2021 20:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638649441;
-        bh=5WZVVH3bfq4ugkAOV2uy7mIqMkhjOZgQDqG+Ih4lMGw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qL2AepS940NgOk+UoSD9Jh3+BSO4JOLGBA6BKS1zwW+X9OfGGLWUc1k5+Alck+Lsr
-         Zg4sv51ofm6O1rFx/6xu4cRJkr6n6ewGiEc1lvylcEox8Gl4XN4f7NO+FfnppDKSIH
-         OkSm6rljI6/IJnzaDdJsAiaJ/D3QdxxpXDG3tQh+ElyfiYbfKBqfxT4NX52YAgYjyj
-         LrRMxqMeqFECtx3JADYjCxusX2bqERPpCbMMY6TDr9S4+tE6ppWEwk76F129JebNOS
-         3YXud3Reuh4lDWM1bpMWVJVCIb8dgP3qyDwNgaemhUz1hkLYq7miClQr/YUtl0NcWG
-         HpXAHL23UOQJw==
+        s=k20201202; t=1638650838;
+        bh=HD7ianve5pdIRZvBfK1Q8TBKVyB8D0r45ujHuB+wBNM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FmgONtp6V37Gzf9act25NJbG/o4ElRNhrPl1/L9uzqU0nrYE1qb/Djt79GIfqagSC
+         tic8w8CN5oEDHENUCc5uWzraP33uO8inoJALQ9Cz8Uew9rqyXcQHSWIazRkQj507no
+         kt9NHtkUyUI0vI6FdS9cVxIvO/B48T0XQOoqZX2m9PplzFrdRvjO4aV3SzWKOD89Cj
+         7CiYHTdR+O1+401Ty6+N85/H18IMgMJmOh9axhAagAW5iC7ceOdvcCa5b5PxEspW0P
+         aPYbpSiNLqhIdK126hUlv6upNWX7LdUxafkU8DERvz1Zgz1YHUMDzuuiqZrmNlDsm5
+         9R8c0zJcLB7Aw==
+Date:   Sat, 4 Dec 2021 22:47:15 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH] selftests/sgx: Fix corrupted cpuid macro invocation
-Date:   Sat,  4 Dec 2021 22:23:55 +0200
-Message-Id: <20211204202355.23005-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.32.0
+To:     Nathaniel McCallum <nathaniel@profian.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: Re: Possible Regression: 5.14.18 => 5.15.6
+Message-ID: <YavT0+e/GoK8gsKu@iki.fi>
+References: <CAHAy0tS9PXgb4cRFEZNEYpiwPVV3CpBRFQhbFN=+XXy=MQakRg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHAy0tS9PXgb4cRFEZNEYpiwPVV3CpBRFQhbFN=+XXy=MQakRg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Compilation results:
+On Sat, Dec 04, 2021 at 08:54:08AM -0500, Nathaniel McCallum wrote:
+> We are seeing a possible regression between 5.14.18 and 5.15.6. Our
+> trace logging shows the following output:
+> 
+> enclave location: 00007f3c00000000-00007f3c80000000
+> creating enclave: Secs { size: 2147483648, baseaddr: 139895674765312,
+> ssaframesize: 1, miscselect: (empty), attributes: Attributes {
+> features: MODE64BIT, xfrm: X87 | SSE }, pid: 0, svn: 0 }
+> adding pages: 00007f3c00000000-00007f3c00004000 R
+> adding pages: 00007f3c00004000-00007f3c0000c000 RW
+> adding pages: 00007f3c0000c000-00007f3c00039000 RX
+> adding pages: 00007f3c00201000-00007f3c003fc000 RW
+> adding pages: 00007f3c003fc000-00007f3c003fd000 T
+> adding pages: 00007f3c003fd000-00007f3c00400000 RW
+> adding pages: 00007f3c00400000-00007f3c00401000 R
+> adding pages: 00007f3c00401000-00007f3c00402000 RX
+> adding pages: 00007f3c00402000-00007f3c00403000 R
+> adding pages: 00007f3c00403000-00007f3c00404000 RW
+> enclave initialized
+> remapping: 00007f3c00000000-00007f3c00004000 R
+> remapping: 00007f3c00004000-00007f3c0000c000 RW
+> remapping: 00007f3c0000c000-00007f3c00039000 RX
+> Error: Operation not permitted (os error 1)
+> 
+> Using strace shows this:
+> ...
+> mmap(0x7f6e80000000, 16384, PROT_READ, MAP_SHARED|MAP_FIXED, 3, 0) =
+> 0x7f6e80000000
+> mmap(0x7f6e80004000, 32768, PROT_READ|PROT_WRITE,
+> MAP_SHARED|MAP_FIXED, 3, 0) = 0x7f6e80004000
+> mmap(0x7f6e8000c000, 184320, PROT_READ|PROT_EXEC,
+> MAP_SHARED|MAP_FIXED, 3, 0) = -1 EPERM (Operation not permitted)
+> 
+> We've followed the selftest structure pretty closely. The first two
+> remapping calls succeed, but the third one fails. This works on
+> 5.14.18, but fails on 5.15.6.
 
-$ make -C tools/testing/selftests/sgx/
-make: Entering directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
-gcc -Wall -Werror -g -I../../../../tools/include -fPIC -z noexecstack -c main.c -o /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o
-main.c: In function ‘get_total_epc_mem’:
-main.c:296:17: error: implicit declaration of function ‘__cpuid’ [-Werror=implicit-function-declaration]
-  296 |                 __cpuid(&eax, &ebx, &ecx, &edx);
-      |                 ^~~~~~~
-cc1: all warnings being treated as errors
-make: *** [Makefile:33: /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o] Error 1
-make: Leaving directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
+What are the mount options of /dev?
 
-Include to cpuid.h is missing and the macro usage is incorrect.
-
-Include cpuid.h and use __cpuid_count() macro in order to fix the
-compilation issue.
-
-Fixes: f0ff2447b861 ("selftests/sgx: Add a new kselftest: Unclobbered_vdso_oversubscribed")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- tools/testing/selftests/sgx/main.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 7e912db4c6c5..370c4995f7c4 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*  Copyright(c) 2016-20 Intel Corporation. */
- 
-+#include <cpuid.h>
- #include <elf.h>
- #include <errno.h>
- #include <fcntl.h>
-@@ -291,9 +292,7 @@ static unsigned long get_total_epc_mem(void)
- 	int section = 0;
- 
- 	while (true) {
--		eax = SGX_CPUID;
--		ecx = section + SGX_CPUID_EPC;
--		__cpuid(&eax, &ebx, &ecx, &edx);
-+		__cpuid_count(SGX_CPUID, section + SGX_CPUID_EPC, eax, ebx, ecx, edx);
- 
- 		type = eax & SGX_CPUID_EPC_MASK;
- 		if (type == SGX_CPUID_EPC_INVALID)
--- 
-2.32.0
-
+/Jarkko
