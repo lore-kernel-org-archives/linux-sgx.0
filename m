@@ -2,78 +2,188 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB434C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 23:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572B1C433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 23:49:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236789AbhLDXue (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 18:50:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42994 "EHLO
+        id S229744AbhLDXxF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 18:53:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbhLDXuc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 18:50:32 -0500
+        with ESMTP id S237288AbhLDXxF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 18:53:05 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CCADC061751;
-        Sat,  4 Dec 2021 15:47:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D398C061751;
+        Sat,  4 Dec 2021 15:49:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 65438B80CF7;
-        Sat,  4 Dec 2021 23:47:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F050C341C0;
-        Sat,  4 Dec 2021 23:47:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D4EB2B80176;
+        Sat,  4 Dec 2021 23:49:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B7DC341C2;
+        Sat,  4 Dec 2021 23:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638661624;
-        bh=M0wBR0Go3o9++qzyhI7FWX1Nv7TxP9Qe7aCa0GyuNUU=;
+        s=k20201202; t=1638661776;
+        bh=voKfHJbeasmLadd3q3Do+PxfFvNASFpZELRln6ClKCg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FTsYctHvyq29NEkv2/pgzveHfr3c8u/2Pm6Tk4x3WKBMq80puzSvgTblfF/1ldRsH
-         Ea690UdNpPHj9kunHj/exrftCPGBAbOWaPVEccfXgW9gCT0+FKytOKupDi6NOFZHoK
-         PDeku0VwEZUMmyG3oBMz0fZ6NG1BiRrbD86hvFrlvx6DWEG0Ljlr5RR9hoZDR30qZc
-         fmMHa3csJGj88SfY1VVb+XTwo28HXgKPVjSFRsRhhJrwQkCYmnCzMi4GMiS4k0s1/T
-         WCLzxF/XM1X1PtP+pMUhK8jVZ4yUi+8iEJjR16vkSaytm7cKPrQB3QndOU+Vr+KlP/
-         VkejP0TzFZilw==
-Date:   Sun, 5 Dec 2021 01:47:00 +0200
+        b=ZuVYcJNVztR3W9xfhw46U3MRUX7MAjL++k3Wp4KsKyke7UFPYU/SMykPrBMzZ6oTN
+         Gjdu7JWNNEa7tVr6ocPelVmDfqwKQZOgWFOkcDnPeVu2HMZkwxpgOwJW3Gx2V4gwas
+         Zavd6QuYM5JBfLfGttRm7jpoI3030CsTnvpAWT7OjEM39YExDvVrwS012i/uA2Sszu
+         TE+ppLHL71DbVGFOG2fMs7kjAJmPuR0UKDWQkmG88EN58NqeqQJhSfGFIC9yIC3ST4
+         zWFUNfriEqXoqVLmKAGA6wW2ZK3earpGu06spzCXQF1MGz4qyEk0cXfjq6xbWMZ8CD
+         89FgXTKjGCaXg==
+Date:   Sun, 5 Dec 2021 01:49:32 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
-        cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Cc:     reinette.chatre@intel.com, tony.luck@intel.com,
+        nathaniel@profian.com, stable@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 24/25] x86/sgx: Free up EPC pages directly to support
- large page ranges
-Message-ID: <Yav99E+wkPaQzH7N@iki.fi>
-References: <cover.1638381245.git.reinette.chatre@intel.com>
- <4d3cc24f06ae75d99449f1d505cbff9ba53819a9.1638381245.git.reinette.chatre@intel.com>
+Subject: Re: [PATCH v2] x86/sgx: Free backing memory after faulting the
+ enclave page
+Message-ID: <Yav+jLMu5aFRqWxJ@iki.fi>
+References: <20211111174401.865493-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4d3cc24f06ae75d99449f1d505cbff9ba53819a9.1638381245.git.reinette.chatre@intel.com>
+In-Reply-To: <20211111174401.865493-1-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 11:23:22AM -0800, Reinette Chatre wrote:
-> The page reclaimer ensures availability of EPC pages across all
-> enclaves. In support of this it runs independently from the individual
-> enclaves in order to take locks from the different enclaves as it writes
-> pages to swap.
+On Thu, Nov 11, 2021 at 07:44:01PM +0200, Jarkko Sakkinen wrote:
+> There is a limited amount of SGX memory (EPC) on each system.  When that
+> memory is used up, SGX has its own swapping mechanism which is similar
+> in concept but totally separate from the core mm/* code.  Instead of
+> swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
+> comes from a shared memory pseudo-file and can itself be swapped by the
+> core mm code.  There is a hierarchy like this:
 > 
-> When needing to load a page from swap an EPC page needs to be available for
-> its contents to be loaded into. Loading an existing enclave page from swap
-> does not reclaim EPC pages directly if none are available, instead the
-> reclaimer is woken when the available EPC pages are found to be below a
-> watermark.
+> 	EPC <-> shmem <-> disk
 > 
-> When iterating over a large number of pages in an oversubscribed
-> environment there is a race between the reclaimer woken up and EPC pages
-> reclaimed fast enough for the page operations to proceed.
+> After data is swapped back in from shmem to EPC, the shmem backing
+> storage needs to be freed.  Currently, the backing shmem is not freed.
+> This effectively wastes the shmem while the enclave is running.  The
+> memory is recovered when the enclave is destroyed and the backing
+> storage freed.
 > 
-> Instead of tuning the race between the page operations and the reclaimer
-> the page operations instead makes sure that there are EPC pages available.
+> Sort this out by freeing memory with shmem_truncate_range(), as soon as
+> a page is faulted back to the EPC.  In addition, free the memory for
+> PCMD pages as soon as all PCMD's in a page have been marked as unused
+> by zeroing its contents.
 > 
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+> v2:
+> * Rewrite commit message as proposed by Dave.
+> * Truncate PCMD pages (Dave).
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 48 +++++++++++++++++++++++++++++++---
+>  1 file changed, 44 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 001808e3901c..ea43c10e5458 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -12,6 +12,27 @@
+>  #include "encls.h"
+>  #include "sgx.h"
+>  
+> +
+> +/*
+> + * Get the page number of the page in the backing storage, which stores the PCMD
+> + * of the enclave page in the given page index.  PCMD pages are located after
+> + * the backing storage for the visible enclave pages and SECS.
+> + */
+> +static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
+> +{
+> +	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
+> +}
+> +
+> +/*
+> + * Free a page from the backing storage in the given page index.
+> + */
+> +static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, pgoff_t index)
+> +{
+> +	struct inode *inode = file_inode(encl->backing);
+> +
+> +	shmem_truncate_range(inode, PFN_PHYS(index), PFN_PHYS(index) + PAGE_SIZE - 1);
+> +}
+> +
+>  /*
+>   * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
+>   * Pages" in the SDM.
+> @@ -24,7 +45,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  	struct sgx_encl *encl = encl_page->encl;
+>  	struct sgx_pageinfo pginfo;
+>  	struct sgx_backing b;
+> +	bool pcmd_page_empty;
+>  	pgoff_t page_index;
+> +	pgoff_t pcmd_index;
+> +	u8 *pcmd_page;
+>  	int ret;
+>  
+>  	if (secs_page)
+> @@ -38,8 +62,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  
+>  	pginfo.addr = encl_page->desc & PAGE_MASK;
+>  	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
+> -	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
+> -			  b.pcmd_offset;
+> +	pcmd_page = kmap_atomic(b.pcmd);
+> +	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
+>  
+>  	if (secs_page)
+>  		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
+> @@ -55,11 +79,27 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  		ret = -EFAULT;
+>  	}
+>  
+> -	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
+> +	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
+> +
+> +	/*
+> +	 * The area for the PCMD in the page was zeroed above.  Check if the
+> +	 * whole page is now empty meaning that all PCMD's have been zeroed:
+> +	 */
+> +	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
+> +
+> +	kunmap_atomic(pcmd_page);
+>  	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+>  
+>  	sgx_encl_put_backing(&b, false);
+>  
+> +	/* Free the backing memory. */
+> +	sgx_encl_truncate_backing_page(encl, page_index);
+> +
+> +	if (pcmd_page_empty) {
+> +		pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
+> +		sgx_encl_truncate_backing_page(encl, pcmd_index);
+> +	}
+> +
+>  	return ret;
+>  }
+>  
+> @@ -577,7 +617,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+>  int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+>  			 struct sgx_backing *backing)
+>  {
+> -	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
+> +	pgoff_t pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
+>  	struct page *contents;
+>  	struct page *pcmd;
+>  
+> -- 
+> 2.32.0
+> 
 
-Why this needs to be part of this patch set?
+Just a friendly remainder.
 
 /Jarkko
