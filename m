@@ -2,33 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41887C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 22:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5FDC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 22:26:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241313AbhLDWHh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 17:07:37 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:40830 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352148AbhLDWHh (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 17:07:37 -0500
+        id S229674AbhLDW3a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 17:29:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231458AbhLDW33 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 17:29:29 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 039D3C061751;
+        Sat,  4 Dec 2021 14:26:03 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3859BB80CF5;
-        Sat,  4 Dec 2021 22:04:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BAF0C341C2;
-        Sat,  4 Dec 2021 22:04:07 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9C535B80CF5;
+        Sat,  4 Dec 2021 22:26:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51705C341C0;
+        Sat,  4 Dec 2021 22:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638655449;
-        bh=bQ1y8zePOz7aHC+wLXiH4tflwEcV6v7xTaaUFi1moLM=;
+        s=k20201202; t=1638656759;
+        bh=IRefYL7dKGvsQRLYIdYZwVhki+f45/Sooo3YLAFOfOs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JleWBQmB0LheAaXHcwobkTpOIYlKvOtiGIdaJAA+UhvqJNu1zoz2bGPfb+THNH1fF
-         OfVbs3LqDdjzapza0rDZk4Y8prahWzL8rtI+cfKI5uaXFrkVSg4McXoCTa31ypfGRS
-         /UKA+m2Uj6LLp+cZA5FXyJ8Sz4yexNQtiDWItJi2wo6exu31jQ51YSxp76dHq97KHP
-         PQf03yb1euOkMEggk8kcilY8YIwgnvfpk3mOWgfKiM8/+wwZf2UBzLU/h0Ip9tTZmg
-         fmesYkZCLcMTWMn6Cwe6JDiraR0OzFHqO02cb+UZQSCQFgjrY/+iqUblATs+WsfIpN
-         s7ejib7mKZKYw==
-Date:   Sun, 5 Dec 2021 00:04:05 +0200
+        b=h2eSF/MsexuL/WZDGRxYRGU7UQlPgsPyQOboq7zgQccSZM7toBzcAQIpmrvve4ufO
+         WxhLlncrt/SrQCowTitiTafQJZibWw+H85YN76tRwm7A/FluLbpGikNrbyDer3TbiM
+         wxivUhu/aJCd2XLw9CA0PeeH/Dom7YJxKNOsgDELmylgtwN012ZMX5xL2LW0qSO2M4
+         F8ZfveqSG0D/lBDK48cE5A10rxZNE938LvuGHpy5YyXMEjqbGGqFvh+WPQjeqVP0wW
+         ugR7CX7ojKVQ63C1LGdslb6a7nCe/M3UDCrOdWOft48OYq3b0abFmCEIZDgI7i5dNh
+         z/nXxZ88mwuPQ==
+Date:   Sun, 5 Dec 2021 00:25:55 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
@@ -37,67 +40,42 @@ Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         cathy.zhang@intel.com, cedric.xing@intel.com,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/25] x86/sgx: Add wrappers for SGX2 functions
-Message-ID: <Yavl1csrk03Zj4ZW@iki.fi>
+Subject: Re: [PATCH 03/25] x86/sgx: Support VMA permissions exceeding enclave
+ permissions
+Message-ID: <Yavq83gZzvkVaDqq@iki.fi>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <50ad5005c451f41951327853fb450ba302eadb40.1638381245.git.reinette.chatre@intel.com>
+ <7e622156315c9c22c3ef84a7c0aeb01b5c001ff9.1638381245.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50ad5005c451f41951327853fb450ba302eadb40.1638381245.git.reinette.chatre@intel.com>
+In-Reply-To: <7e622156315c9c22c3ef84a7c0aeb01b5c001ff9.1638381245.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 11:23:00AM -0800, Reinette Chatre wrote:
-> The SGX ENCLS instruction uses EAX to specify an SGX function and
-> may require additional registers, depending on the SGX function.
-> ENCLS invokes the specified privileged SGX function for managing
-> and debugging enclaves. Several macros are used to wrap the ENCLS
-> functionality.
+On Wed, Dec 01, 2021 at 11:23:01AM -0800, Reinette Chatre wrote:
+> === Summary ===
 > 
-> Add ENCLS wrappers for the SGX2 EMODPR, EMODT, and EAUG functions
-> that can make changes to pages of an initialized SGX enclave. The
-> EMODPR function is used to restrict enclave page permissions
-> as maintained within the enclave (Enclave Page Cache Map (EPCM)
-> permissions). The EMODT function is used to change the type of an
-> enclave page. The EAUG function is used to dynamically add enclave
-> pages to an initialized enclave.
+> An SGX VMA can only be created if its permissions are the same or
+> weaker than the Enclave Page Cache Map (EPCM) permissions. After VMA
+> creation this rule continues to be enforced by the page fault handler.
 > 
-> EMODPR and EMODT accepts two parameters and can fault as well as return
-> an SGX error code. EAUG also accepts two parameters but does not return
-> an SGX error code. Use existing macros for all new functions.
+> With SGX2 the EPCM permissions of a page can change after VMA
+> creation resulting in the VMA exceeding the EPCM permissions and the
+> page fault handler incorrectly blocking access.
 > 
-> Expand enum sgx_return_code with the possible EMODPR and EMODT
-> return codes.
+> Enable the VMA's pages to remain accessible while ensuring that
+> the page table entries are installed to match the EPCM permissions
+> without exceeding the VMA perms issions.
 
-These implementation details only obfuscate this commit message, and
-it is way too high-level to be useful e.g. for kernel maintenance.
+I don't understand what the short summary means in English, and the
+commit message is way too bloated to make any conclusions. It really
+needs a rewrite.
 
-I'd replace it with something like:
+These were the questions I could not find answer for:
 
-"
-Add wrappers for ENCLS leaf functions EAUG, EMODT and EMODPR,
-which roughly take two steps:
-
-1. EAUG creates a new EPCM entry.
-   EMODT and EMODPR modify an existing EPCM entry.
-2. Set either .PR = 1 (EMODPR), .MODIFY = 1 (EMODT) or .PENDING = 1 (AUG).
-
-The bit is reset by the enclave by invoking ENCLU leaf function EACCEPT
-or EACCEPTCOPY, which will result the EPCM change becoming effective.
-"
-
-The current commit message is also not addressing these:
-
-1. What happens if enclaves accesses a memory address with either .PR,
-   .MODIFY or .PENDING set in EPCM, other than by the means of EACCEPT
-   or EACCEPTCOPY?
-2. The calling conditions (e.g. concerning TLB's and ETRACK/IPI/etc
-   dance related to it).
-
-
-If this information was properly contained here, discussing about the
-following commits would be much easier.
+1. Why it would be by any means safe to remove a permission check?
+2. Why not re-issuing mmap()'s is unfeasible? I.e. close existing
+   VMA's and mmap() new ones.
 
 /Jarkko
