@@ -2,114 +2,99 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041EBC433EF
-	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 18:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4883DC433FE
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Dec 2021 20:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232569AbhLDSeD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 4 Dec 2021 13:34:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
+        id S233330AbhLDU1a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Dec 2021 15:27:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232009AbhLDSeC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 13:34:02 -0500
+        with ESMTP id S231348AbhLDU1a (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Dec 2021 15:27:30 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111B8C061751;
-        Sat,  4 Dec 2021 10:30:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52C19C061751;
+        Sat,  4 Dec 2021 12:24:04 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BD498B80D40;
-        Sat,  4 Dec 2021 18:30:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59171C341C2;
-        Sat,  4 Dec 2021 18:30:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CCFC2B80D9B;
+        Sat,  4 Dec 2021 20:24:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B123C341C2;
+        Sat,  4 Dec 2021 20:24:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638642634;
-        bh=vpZJzbz83/r/7Zk6WlXuLGdQvsG896LAUclP0lH086M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fo4fIwVbOy9dzWFaBEcYV9fF/anITNia8T/lRCYT0LLdDNh8MQZqz4s2+Wx6+CtA5
-         odwlAVRxtMsWxvXKoIlVGiSW1vNx52KMk3B91jLWa/dOfGL9YXKxS1pqzO3pUdYPMh
-         TLncHoIQ+qYGsLeDOtKtJrZ1GXVYA4bw8/DlqC7km7vT7IRrln1QzWQcgiABL6sfE6
-         sfqiFtQugpwWc11vfnNEpdsOQfXp1Uz7mvHtR3zZlqiB5qI1tYBoLaDTm1vkYjZG7E
-         zi6qvarrc2cvdrbKdVMmBBeN2O8Rb9zhDfFmpOzpT+Qq4eheyV4jbVL8Z7O/MtBLui
-         eNrar0Y4SLrFQ==
-Date:   Sat, 4 Dec 2021 20:30:28 +0200
+        s=k20201202; t=1638649441;
+        bh=5WZVVH3bfq4ugkAOV2uy7mIqMkhjOZgQDqG+Ih4lMGw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qL2AepS940NgOk+UoSD9Jh3+BSO4JOLGBA6BKS1zwW+X9OfGGLWUc1k5+Alck+Lsr
+         Zg4sv51ofm6O1rFx/6xu4cRJkr6n6ewGiEc1lvylcEox8Gl4XN4f7NO+FfnppDKSIH
+         OkSm6rljI6/IJnzaDdJsAiaJ/D3QdxxpXDG3tQh+ElyfiYbfKBqfxT4NX52YAgYjyj
+         LrRMxqMeqFECtx3JADYjCxusX2bqERPpCbMMY6TDr9S4+tE6ppWEwk76F129JebNOS
+         3YXud3Reuh4lDWM1bpMWVJVCIb8dgP3qyDwNgaemhUz1hkLYq7miClQr/YUtl0NcWG
+         HpXAHL23UOQJw==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
-        cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/25] x86/sgx: Add shortlog descriptions to ENCLS
- wrappers
-Message-ID: <YauzxOEmmpeGF/K3@iki.fi>
-References: <cover.1638381245.git.reinette.chatre@intel.com>
- <fd9ab4d760a2ea7a42ab9e60b9e19b8620abe11d.1638381245.git.reinette.chatre@intel.com>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH] selftests/sgx: Fix corrupted cpuid macro invocation
+Date:   Sat,  4 Dec 2021 22:23:55 +0200
+Message-Id: <20211204202355.23005-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd9ab4d760a2ea7a42ab9e60b9e19b8620abe11d.1638381245.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 11:22:59AM -0800, Reinette Chatre wrote:
-> The SGX ENCLS instruction uses EAX to specify an SGX function and
-> may require additional registers, depending on the SGX function.
-> ENCLS invokes the specified privileged SGX function for managing
-> and debugging enclaves. Macros are used to wrap the ENCLS
-> functionality and several wrappers are used to wrap the macros to
-> make the different SGX functions accessible in the code.
-> 
-> The wrappers of the supported SGX functions are cryptic. Add short
-> changelog descriptions of each to a comment.
+Compilation results:
 
-I think you are adding function descriptions.
+$ make -C tools/testing/selftests/sgx/
+make: Entering directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
+gcc -Wall -Werror -g -I../../../../tools/include -fPIC -z noexecstack -c main.c -o /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o
+main.c: In function ‘get_total_epc_mem’:
+main.c:296:17: error: implicit declaration of function ‘__cpuid’ [-Werror=implicit-function-declaration]
+  296 |                 __cpuid(&eax, &ebx, &ecx, &edx);
+      |                 ^~~~~~~
+cc1: all warnings being treated as errors
+make: *** [Makefile:33: /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o] Error 1
+make: Leaving directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
 
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encls.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> index 9b204843b78d..241b766265d3 100644
-> --- a/arch/x86/kernel/cpu/sgx/encls.h
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -162,57 +162,68 @@ static inline bool encls_failed(int ret)
->  	ret;						\
->  	})
->  
-> +/* Create an SECS page in the Enclave Page Cache (EPC) */
->  static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
->  {
->  	return __encls_2(ECREATE, pginfo, secs);
->  }
+Include to cpuid.h is missing and the macro usage is incorrect.
 
-You have:
+Include cpuid.h and use __cpuid_count() macro in order to fix the
+compilation issue.
 
-* "Create an SECS page in the Enclave Page Cache (EPC)"
-* "Add a Version Array (VA) page to the Enclave Page Cache (EPC)"
+Fixes: f0ff2447b861 ("selftests/sgx: Add a new kselftest: Unclobbered_vdso_oversubscribed")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ tools/testing/selftests/sgx/main.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-They should have similar descriptions, e.g.
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 7e912db4c6c5..370c4995f7c4 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*  Copyright(c) 2016-20 Intel Corporation. */
+ 
++#include <cpuid.h>
+ #include <elf.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -291,9 +292,7 @@ static unsigned long get_total_epc_mem(void)
+ 	int section = 0;
+ 
+ 	while (true) {
+-		eax = SGX_CPUID;
+-		ecx = section + SGX_CPUID_EPC;
+-		__cpuid(&eax, &ebx, &ecx, &edx);
++		__cpuid_count(SGX_CPUID, section + SGX_CPUID_EPC, eax, ebx, ecx, edx);
+ 
+ 		type = eax & SGX_CPUID_EPC_MASK;
+ 		if (type == SGX_CPUID_EPC_INVALID)
+-- 
+2.32.0
 
-* "Initialize an EPC page into SGX Enclave Control Structure (SECS) page."
-* "Initialize an EPC page into Version Array (VA) page."
-
-> +/* Extend uninitialized enclave measurement */
->  static inline int __eextend(void *secs, void *addr)
->  {
->  	return __encls_2(EEXTEND, secs, addr);
->  }
-
-That description does not make __eextend any less cryptic.
-
-Something like this would be already more informative:
-
-/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
-
-This same remark applies to the rest of these comments. They should
-provide a clue what the wrapper does rather than an English open coded
-function name.
-
-/Jarkko
