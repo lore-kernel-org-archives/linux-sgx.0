@@ -2,73 +2,72 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A9BC43217
-	for <linux-sgx@archiver.kernel.org>; Mon,  6 Dec 2021 21:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D8FC433FE
+	for <linux-sgx@archiver.kernel.org>; Mon,  6 Dec 2021 21:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350492AbhLFVSS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 6 Dec 2021 16:18:18 -0500
-Received: from mga07.intel.com ([134.134.136.100]:1806 "EHLO mga07.intel.com"
+        id S1350703AbhLFVTL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 6 Dec 2021 16:19:11 -0500
+Received: from mga14.intel.com ([192.55.52.115]:48617 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1350493AbhLFVRb (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Dec 2021 16:17:31 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="300792645"
+        id S1350702AbhLFVSw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 6 Dec 2021 16:18:52 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="237634969"
 X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
-   d="scan'208";a="300792645"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 13:14:02 -0800
+   d="scan'208";a="237634969"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 13:15:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
-   d="scan'208";a="479268439"
-Received: from orsmsx606.amr.corp.intel.com ([10.22.229.19])
-  by orsmga002.jf.intel.com with ESMTP; 06 Dec 2021 13:14:01 -0800
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX606.amr.corp.intel.com (10.22.229.19) with Microsoft SMTP Server
+   d="scan'208";a="599786812"
+Received: from orsmsx605.amr.corp.intel.com ([10.22.229.18])
+  by FMSMGA003.fm.intel.com with ESMTP; 06 Dec 2021 13:15:22 -0800
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX605.amr.corp.intel.com (10.22.229.18) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 6 Dec 2021 13:14:01 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.1.2308.20; Mon, 6 Dec 2021 13:15:21 -0800
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 6 Dec 2021 13:14:01 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.1.2308.20; Mon, 6 Dec 2021 13:15:21 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20 via Frontend Transport; Mon, 6 Dec 2021 13:14:01 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ 15.1.2308.20 via Frontend Transport; Mon, 6 Dec 2021 13:15:21 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.20; Mon, 6 Dec 2021 13:14:00 -0800
+ 15.1.2308.20; Mon, 6 Dec 2021 13:15:21 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SquTjGz1ij4gyEngTn6sD4glEhm63kk5XmSAeaOzFfb6FA5EA+A8BvShJAZK+HTUTRw+49tUxPIA4UbovDjEWdubXiAEPCs6Bn46XGsi7pZ9MRhljhJ1iZQS/7uTyt67mAZ0MhD9AtJrukGzxzSegoTCLK5dCFU0sH0Vu2TLhkIxCten2G7sL01Ybu0SNvM6cr5c9c9NrzoAXzAaXS2FUlfZiBX1I04ivLwyeMQCqPUw6tRhYx4qh4qd8oEn4FzdjA7+jyP6ty+7uyNunLcT/b4u2HXIiYBhvY1AGzwGiJz+dMPYcFt04Dc3V7oSqtddo3M0QinZblkaAl5NERk4qA==
+ b=byJlnaGnJD2YfkdWwMG0p1l3TNKrGEctHqjGVDh0s5RZ+92OMOk25/k+MgR3LaS0Gp+v9OhVT9EsUWLHlI0VU+bEYisAnKre1/gmuNrquFwK7FN5VogH0agdkh1jATH1AFHtiIdJuxFngPNMCcqhaP8ZbaF1JL+8rH8mGxstXQccZy5jIpPXhbEEuh3mffM3V6jlbnQOfJkNvQ6Kq1nVDcwLgjIvmfH+VnXQ4wY7Yz8lXeHvO7ztdeP6gggMmUdOaR7bcrFX8dzO9TsO+FV0LP6WQtNGUzNIHNrpkzoPfquj0xbIgv3sVayxxq+YgaJ09vstwYwyXQV8EL3kesMkDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XMJ4AV0d9fwUYwPsKwjjhd/ckkB881A+8nODYlP46WU=;
- b=BxTudlUlvAhWWvRdar9gGBnaYtdA053dUxwuYT+9e0WeGz4vvyAoatIYEYG287H2Rsu/5STRFco3xteniFkbA396fO9VQ5ebkQ1ZksdIWQBlUBlUmYcEm6M6vqVvtiZqkCCnYiiFWpV78B6XrN+zuhrkC+uYluqd0b4PJ7lcDmAbacTJW4X1nFQa0a2VOOKDlwHQseGpqc5lyGMeK/1j+oa1Lt6HbhXx7ABlZyjN6cVxW9OGqvXENJaaWNzmvY1pOiTEnbIk4bagCbJHTs3+HfwaP4h6X8torR3a+lNhYocoNnAqmYYIqyRGAzD6/7aGZiCfEsYo9yjHwY/AQpnmTw==
+ bh=qumqX6bfnLnCcdhdidBNaefn+s2dEJVfN9o81F50anw=;
+ b=JiiGS9GnOLWfWVwCdeVKdtXywTSLBT8gWZpmcxnD82znMmPNSmUptGh7r/2VLnppg25xdmLP2SRSWAHBGv6gIWtuehTOuGMUnr2N3mT47EKJsmJ7pFxCvp/0qSard5ksfeTQLof30rB9KDV8yQX9oYnO4rA5I0JwHTKZevaxgBUkr3MQ4YxuHhfTuIpeFhTMe8P/Gfv3+9q8/8+NAerslPddlVavGsKXreC0jYmtx2AZ0xpE1vS9h7Ow3g3swh5/H8S2XqFz+2H1UGc1/bx/f2UXR5D66VWyODqq+oJ/gTCA5JXFnP5oWq3Yv4yMx5yhFGLE0oJYLnd6q3hJixbxwQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
  s=selector2-intel-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XMJ4AV0d9fwUYwPsKwjjhd/ckkB881A+8nODYlP46WU=;
- b=FYbcAo6JbctmzXDASxNTo5cDeN2CCpfzXtYl577UHXnI0sT9ZFe45czRZYvXyau/+uIO8+CPi+0SKCbu2cDawO952NHUJCBvy+5wfMzaQZZnQu6peoX+CVAg+5jm9L9lJqtoKG9ind4n3Jihsrv82QP24ivZ3MfF1MMjQA0gpEs=
+ bh=qumqX6bfnLnCcdhdidBNaefn+s2dEJVfN9o81F50anw=;
+ b=xWNS1c8FpPE20QqIMyHHEfAhRJx5I3gelDNpJBWNPXUmZn26MOo4kdycTdUDoq9aojEwQXN73HtvsOCSV06orw7U5Z6jtTi7dN6jO1qgAxVKnrS7qMxp9Y1vPjezh+Esz5kfub5SSDi30KOK+k7CBgg/nmQ84GeYc8JBS0VoyG0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
  by BN7PR11MB2674.namprd11.prod.outlook.com (2603:10b6:406:b2::29) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.22; Mon, 6 Dec
- 2021 21:13:54 +0000
+ 2021 21:15:16 +0000
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::bcd0:77e1:3a2e:1e10]) by BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::bcd0:77e1:3a2e:1e10%3]) with mapi id 15.20.4755.022; Mon, 6 Dec 2021
- 21:13:54 +0000
-Message-ID: <b49ee68b-63c5-f8f8-ca2b-31663c3150f6@intel.com>
-Date:   Mon, 6 Dec 2021 13:13:49 -0800
+ 21:15:16 +0000
+Message-ID: <d89841cf-6e31-9846-ab6a-79b60baf8095@intel.com>
+Date:   Mon, 6 Dec 2021 13:15:11 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Firefox/91.0 Thunderbird/91.3.2
-Subject: Re: [PATCH 01/25] x86/sgx: Add shortlog descriptions to ENCLS
- wrappers
+Subject: Re: [PATCH 02/25] x86/sgx: Add wrappers for SGX2 functions
 Content-Language: en-US
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 CC:     <dave.hansen@linux.intel.com>, <tglx@linutronix.de>,
@@ -79,76 +78,76 @@ CC:     <dave.hansen@linux.intel.com>, <tglx@linutronix.de>,
         <mark.shanahan@intel.com>, <hpa@zytor.com>,
         <linux-kernel@vger.kernel.org>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <fd9ab4d760a2ea7a42ab9e60b9e19b8620abe11d.1638381245.git.reinette.chatre@intel.com>
- <YauzxOEmmpeGF/K3@iki.fi>
+ <50ad5005c451f41951327853fb450ba302eadb40.1638381245.git.reinette.chatre@intel.com>
+ <Yavl1csrk03Zj4ZW@iki.fi>
 From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <YauzxOEmmpeGF/K3@iki.fi>
+In-Reply-To: <Yavl1csrk03Zj4ZW@iki.fi>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR02CA0015.namprd02.prod.outlook.com
- (2603:10b6:300:4b::25) To BN0PR11MB5744.namprd11.prod.outlook.com
+X-ClientProxiedBy: MW4PR03CA0013.namprd03.prod.outlook.com
+ (2603:10b6:303:8f::18) To BN0PR11MB5744.namprd11.prod.outlook.com
  (2603:10b6:408:166::16)
 MIME-Version: 1.0
-Received: from [192.168.1.221] (71.238.111.198) by MWHPR02CA0015.namprd02.prod.outlook.com (2603:10b6:300:4b::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend Transport; Mon, 6 Dec 2021 21:13:52 +0000
+Received: from [192.168.1.221] (71.238.111.198) by MW4PR03CA0013.namprd03.prod.outlook.com (2603:10b6:303:8f::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.19 via Frontend Transport; Mon, 6 Dec 2021 21:15:13 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4843954c-4078-4a9f-9cd8-08d9b8fd4ebd
+X-MS-Office365-Filtering-Correlation-Id: c3b7d7f0-1bc2-401e-6448-08d9b8fd7fb9
 X-MS-TrafficTypeDiagnostic: BN7PR11MB2674:EE_
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <BN7PR11MB2674B6C94A24495090A7FA30F86D9@BN7PR11MB2674.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Microsoft-Antispam-PRVS: <BN7PR11MB267473873E8080B1E19731ADF86D9@BN7PR11MB2674.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WUOl9dX732p3tA9y8b2qLXUmDgfIJbF2Y4+OA+QZd+D0+yDY7sOiMhMA2/pcY8q7zrnt0kshlDk4oOtiNefZo8AHj9K4Mt7lV6lk+SA5rWuJVRzQ+MAKXEvX2ekaS4hlQfcBaLx2w218t8Uz0gXjeht5PbYIA3rTTbAyQw1MbKzz7D2ZiFz+ch6NeXSU4MJv9Bn6ARVXy22n/+h/y/2k0eB2iYSNODIqdn8XP1mhj0tst5j4bCtedOrM5Aa9Kg0G6E2INy/YEEe4i+n044+QO1oZMgXWWSwUgwJw5HFin2WLqLaokR6rkmrzlAQyALa3pI51reoL4l6j/qfelDm7y9+zG8Y/OhKoSxG19WBy2ZrnuXmA3Dz6TnvPN0cleS4cWsWgI+PqEvlaUcc8372IkVLbwUikO85D8YdFeAte5+xcwMt0m3eQfJ8EF+Qcg/qtPEjtM/pzkgSbwJ0rRdNglf9+V8gpNkqWOGPywsa9lE3Gnhg/SBrYAHfqKglU5nvWocI2VIIdxsvvzbo9nCSDngvdreBnupV4qN0CWIyAstf7YaKyzSJfcBUvPHFYx1GykYv6oqEceOoUn1igAVKlo8TW65tSi/wlSuRxCyUVdIDPxjJJKZcIx1z3xHHPvsvU245LnVXHE34Ci8p2dTPsNcGh50slQJMEnmRi+Z688sX1FkFMALMdyKSH9gp5HEs0lvaMcMYvqvRJskrKWwKOPsbaXwHo1XGxLlE3LmacwY+sUxv4A+rSIsvktjRmfaRw
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(83380400001)(31696002)(7416002)(508600001)(4326008)(2906002)(2616005)(82960400001)(44832011)(26005)(316002)(53546011)(186003)(956004)(16576012)(31686004)(6666004)(38100700002)(36756003)(8936002)(6486002)(8676002)(5660300002)(6916009)(66556008)(66946007)(66476007)(86362001)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: VpE3NLRHe/dm4JXJ2f2tyI3vY2i+2WnJDu+ZE619rPza4db2Xm2kOOTrHVEFTWFTW/KLuayEwMWrP1myjdtcIi8lSep/vtrkaLRWZCsupmXui1mZmFmJR0jNwc740BYWi1s00NGneJxmObhRbJWzA/ldmRKnwbvCKwBEwYQ2iA3WQX4FlckwqxYStHVyo3TkHF4Rd2cHzGfI6/Xn+uhegQw/3K0fhOxKL1gRM0QUWGGu0vZr89WO/ou/IVqJC3LgjrM+AVnD1iswd4bxq4h9ogpxw/jnRrQgjXFA1KSXhzFkhqw5ZbT82cPlgd59VXbPuieFgqFavCGGoStxxF7S4pSsovlxvXJqQfgrdPJn73gLD3tcUvJTnDRik0evHaISdfy495MTg5CLPJ4Ust5MOqWi1gkt5U21fCQvItTSTBplCn9qPcO33TLC5XEQDBoZB9XU4lcfpeCc86xu9Or+/3jJiT5534o3vwyDq+pNFhBB6sN3YBrZoNwVm3HK0UsJvf61m1bPA4e/YJ+WzR1xev9qtV1DhnWxxJo6lW34dH3hmJPIjnInB1QlmVjBCd/GeI1DPDpMHGAv8D2DZMxz38fO+aFhlxXs5zVbxGNr83cigsgO/X9peL1hct2HCBPhCoCENMhVH8ioniD/iyLcwCbKmMJwuYmiQhNxRE99qKvzdi2c3Pls6sx5uIB7JZZcf0+6ZIHzQb3lQpGMREe8loQPZlowLsDCERS592Xfu7X8xapgBamG//Ug9ZfWEWyi
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(83380400001)(31696002)(7416002)(508600001)(4326008)(2906002)(2616005)(82960400001)(44832011)(26005)(316002)(53546011)(186003)(956004)(16576012)(31686004)(38100700002)(36756003)(8936002)(6486002)(8676002)(5660300002)(6916009)(66556008)(66946007)(66476007)(86362001)(43740500002)(45980500001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?akY1NDI4RWVwVXlTYmpWdHpTcXJkb05wWU53QmRpWERNZFZtS3ZwQ3lpN3dG?=
- =?utf-8?B?MXo4U3hmbWh4NVpQYUQvRlpTNkZOL1dBUHNIeHduM3lXMUtRL0VnMXhCZkxL?=
- =?utf-8?B?UUV2WTBYZGovWDVpV25xYXFaa2FNbGxTekw4UEduQUN6RjJoWVE4TkljS2dr?=
- =?utf-8?B?YW1EeXJVdEM0bFJ6K2poT1VrYU1HOFU2bFVJZVIxQ0FIYll4bkNEQ2YwWlBs?=
- =?utf-8?B?NUFzZTdpamJ0b01EaVlSL2JzMXJQcnZpVjJzVFhaM2NXQ2tDbWZtZFpMSXhq?=
- =?utf-8?B?QWdxRFczZkFkT0RPM1RhQTJKNGtsaFlFTXB6SndYa3B2L28rZlptS2xrQXZ5?=
- =?utf-8?B?M2h6ZjFGemI1d3FBemhSdlBUQmdNaklKdC9UeE5HM1ZWQUxlM2diaDVKZERV?=
- =?utf-8?B?dXU1U3hMbDhGSUNKOTFNamw1empveFBnRXdCU2pwcXVjUGNIOHpOTFZxS2JI?=
- =?utf-8?B?MHorZWlIL3p5OTJwQVl0Uy9sWXZHRzZMRFBaVktoREtpSmUySXVCZGZXaisy?=
- =?utf-8?B?Y0NlT3p5cWVsNWp4RFVDS0gzVDhxYVJiQVVsTjIvdlVGWUl6bTlGMjd0TEFM?=
- =?utf-8?B?Q3NyaWhjMUR5YlV0cEpUUlZpa0JvUllYeTltdGl3cFo5QVNZZVhnT1pyNTFH?=
- =?utf-8?B?QzFWaEN3M1RWNWplblI0RUJUUm9Ra1hrQXRHVkVVQ2pzck5WQnQ0TG5kZmll?=
- =?utf-8?B?Sy94MVdhSzJGZ1BkdXZ4K2U4Vk1BV1luVzNiUWdFclZsYkNEdW1qU2lpN1VH?=
- =?utf-8?B?TjNHVWVMWlVkeEU4Y1ZWSXU3SWlqdlN4RHhjci93SWlFNnZUZG90enRVZm5L?=
- =?utf-8?B?dm5HdnpkUlQrOG1YNHdPOW9BcGNUbGJsL2ttZWJQcWxNZy91OXgrT0F1cm1l?=
- =?utf-8?B?K1hBaklXdDd4dFo5eFNoRUtEaVVrb3Z3VTk0VjkxWE85Sno0Mm5VaWJwY1JD?=
- =?utf-8?B?czBIY0lNWVV6YTduQVNCNnZHS3BlejVxQmltVUcvV1lVODdNS1N2eGphTFYr?=
- =?utf-8?B?WUZSemN2VStzdzR3dzZVQnhobTBseTRjT2x4RjB1SG92d2FhNFZGRmd6cncz?=
- =?utf-8?B?QTJZc3JKV2lyNy9rbjZqa1pjN0tXTFQ3RU40Z1lCS0FNT2lvaDRkSzMzR3FB?=
- =?utf-8?B?cmZSZGM0a3VNTE90UWl4Z1ZrWmFxb3JSODFUYmF2UlJzNjd4eC9QMzl0QWlh?=
- =?utf-8?B?WDgxT2taSnhQUlpNZ1NhVmh2cGljZlZvbzNacGMzUCs3OWFuK1BFNGxRMW9p?=
- =?utf-8?B?RWtpeE9xYTZmdFIyckIybzdXeTdxSjVmRXk0R0s3QmZQbzI0NHl0TVhxMEQ4?=
- =?utf-8?B?OUd2ZTFTZzM3UXU0YkpzbmMxSkxuM1ZaYmhnMUFqZ3ZWZ2E4L1FKQXUyR0Rz?=
- =?utf-8?B?U1JCSUZENTZrUDdCbTVJY0gyZ3c5RmdGSnJRZlZ2TGw1bjltZmRORktySC9O?=
- =?utf-8?B?OGhseXk0NHJUZzNmalJsa3M4RThTem53b3BoYkhWcmx4eUEzZ2lCc2JqMHV0?=
- =?utf-8?B?Q2VicHhNLys1ZnNWVzF0OFdIYTNLdjB4QWlIaU4wMkhORGhhYVUwRXVGTXEw?=
- =?utf-8?B?WnJTQWVxNU1HQnBoeUZLeHVCNXJqaFZlTjZWbDI3dGlKUEp5L0thaVJJWk92?=
- =?utf-8?B?Nk8rdXlodDBaUWhiU3lheFVhNHMyK3Z3Wk1IUHJnOHVIUW5FNmRlQUMyMzBG?=
- =?utf-8?B?aDV6Vm9hQVpRSVc4UDhQS1Fra1pCY1V1RGZYRTFxNVFHZzJGL01EdnFuaUZF?=
- =?utf-8?B?VHo3alZrYmM4Z1pSbVIvQjlMUUw2RWxWU3ZnNENSUjUrVmFQZjBkNUNUdXpC?=
- =?utf-8?B?WUgzalg1TDQ4SWJnQ0c1LzI0WlBlb3BSSmhKTURKZmdrVFlwMTdSRlIvNHhq?=
- =?utf-8?B?VE5ldmRPWjhJeDNUV0ZaV2thR3ZjRCs4Yk5IaE1OWFViUDcvVkhNdzJveEM0?=
- =?utf-8?B?S1RKUElXRElwcnBoYlJ5V2dtbEhMck1HN0crOWNMMDZZVUQ4d3h6M2lLYXEy?=
- =?utf-8?B?UFJJd3Y5eWdzWk0yR0dwaDI1RGlSUit0SlcxcnJkUzFrWmZDTlAxSytqbGl5?=
- =?utf-8?B?OG9rTGRWUjUxc0d0TE1sTWFvR2Y4SWdVaU15aHFyT2FkUG5WeTNlV2ZZNVhS?=
- =?utf-8?B?eXJEZUQzWEtjS3FMK2pScUtONTB1Qzg5akd3SzJLT0NNYWxXSUlwUUp2Tnpn?=
- =?utf-8?B?Z2VHbURldlY1QlR6OHNMUWtJa3JSUFk3bWdPOUt3QjY4cGJXeHhMbjdoYTJv?=
- =?utf-8?Q?UDjxspHfr4DdxcPVLAUnnzlIqFy7NwqqW0hziKBSpk=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4843954c-4078-4a9f-9cd8-08d9b8fd4ebd
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WkhBa1BUWFMrcUEvQy90WkN6TFYxdjlJa3FmZHN2RVV0akFpYVVSWGx5UklX?=
+ =?utf-8?B?Um5VVTBXWk5YOUQ1eWhBYmQwWHM4S3J5VjBiVS9nRDFON3FxSExyZXBURGow?=
+ =?utf-8?B?bmJyQW10R2tkcXhvSS9zMWFMNGVFZWRvR2RyRUl4V25pNXBSeUR1eSs3cjky?=
+ =?utf-8?B?Zm4vcExVNnh1MHlVT2l1VU02S3pDWDhDbjBKc2Z0ZmpSUlR6VCtzdkhUTkEy?=
+ =?utf-8?B?THk4T0c3N3FSL0tNLzJwbzJES3k0azFSaEtnQ3VCZGV3UjFISTEyNVZMMFFO?=
+ =?utf-8?B?UWFhZUhpRDhVQ1cvRkpIL090R1J2TDhYOGUxQnFpenpUY2l5TVM0Z1ljMjFV?=
+ =?utf-8?B?YzM0d3ViLzlXWjhJRjdFUER5c2FHemFsakNpc0hicitaaExYbXhEbUJ2cmdZ?=
+ =?utf-8?B?Wlhzbmgva2xZd2RBeDZacEgydlFLYjc0eXYzOHVIb0dYNTZCNU9BY1FWNkMz?=
+ =?utf-8?B?WjJYZzhYOGdWT1RnWW1yUUZxVklRWXRqSkJCSTl2YWFMS3VycDh5bEVaNkVr?=
+ =?utf-8?B?Y3JzYjRpWVNvVXNELzlQa0QwdE9pVTF0SEZDMU85RXlDRzlzNG12R2dUL0U4?=
+ =?utf-8?B?TjdZcVBHYVJaY0RuTFhzb05vWDFsOTh3d0RlNUpFUnY0d1FOcVhjNFVScDhK?=
+ =?utf-8?B?WmNEbkw0VDNRZWZDTGhZK0VEaXpLUUtnU0tUOXR0LzZ1bE9OVHdJVmlpSStR?=
+ =?utf-8?B?L0ViQmttdC9KQlRaWVcyVXhjYTVtdk4yN29GVGRtcUk3RmNoYkNpL0NQbG9Y?=
+ =?utf-8?B?UzZNODA1cGdUSCtwcjA3TVRXSDVnNUlVeU9YcTFzN2hCQUQ4UHVtbjd0WVBW?=
+ =?utf-8?B?T1ZZLy9IcG1FNFc2eDY1MmJEbzdTUkhTb2Y0cHZwckthNVJsNWlQSXJ3Vkd6?=
+ =?utf-8?B?aU8yU0xMTEhCVHdnOFVaS1FNTGNaVFNudHlPenhNN1RqcU8wNHU3b1g1V1NU?=
+ =?utf-8?B?NDArQ29VUHVYaTdiNzhlWjRVdXVDREl2bXJNRWpMUm9CNHVzVHg0SGxOMHNj?=
+ =?utf-8?B?emwyYkJ0dzVIOFg4RUQwQVdGYk5PNXVGU29HTC9LcDZ2Qlo3QmVBQjZnQWFS?=
+ =?utf-8?B?YmRUS2hISC9BNW5VZkdGOU1NZmJocllKTllLQnk0c1FOSGR2T3B3MXdoVzlQ?=
+ =?utf-8?B?cG5Ta2VLdXZQNjB3eW1zZHVjRjh5MDZNckpFcm9HZW9BY1Y0cWozRVRrM0gr?=
+ =?utf-8?B?cktEWVZRcExxU0k0c0xxbVhpNmRhcWQya1V6WFArMmlEQ1FHbDE5TUZRTVBp?=
+ =?utf-8?B?b0t3bnRtWVhWbFRkSzVOa3g1Q0NKVnRxcnpESjVYT3krQnFtTDJDRzkrdjJ2?=
+ =?utf-8?B?Y2E2TVA2ZDlIWVd6K0p5R1dJQkpnTEZLR0todGI0L0ZOZzV5TzVyYTU0Z2NE?=
+ =?utf-8?B?K1JpVWYwRGVJQnRKSSs2WDBSSDgwU2NJUHBLNUNiTHdaYkJhZXlwRnpjSnMr?=
+ =?utf-8?B?NnMzbW5LYlFzbVBmQXFuRTZMeG9mR1RVZ1RjSGFaM0oyNjZHZ250RTNBZkRo?=
+ =?utf-8?B?RGtHcmhiVktFNVlVTGU0Rm5rbU5kUjlKKzJPRmF3bmtIcXZmU0tJMjRpZ0Qv?=
+ =?utf-8?B?aURDY1dnVFBsLy94NDBITktXZFlnejJYdUtXaHVzQi9IUjVEOWlkR0J2Yytn?=
+ =?utf-8?B?QnkvRFZJZjRoSWY4bTkvWUQ2Vmd5UkRTWURPNlhZNDFDR3F3WXg1WExxczE3?=
+ =?utf-8?B?a25CNXhGZUdyRGdvWGZoY3B3QXVaNjAzejdoSmxWeW9Yd0wyVUhadFdqdzY3?=
+ =?utf-8?B?eFpKbDQ3TWIybGFmeDQycHhuZWNkTFJvbnpEdEgwUHE3TnNCWG9MeVRYRC9W?=
+ =?utf-8?B?Nkd0VC9tSkZ5UkQwTUV2cjRrTng4cFBTaDMwSjM5MjlDMW9nVzdNSEhDeG54?=
+ =?utf-8?B?RkZud2dPbVpnelY2M0NxdWF4UE1WVGNtUk1wd1hDVFh3YTM2cFNGUlMxV0FQ?=
+ =?utf-8?B?MmVQL2ZZSExFeVdTeERzUGE3SkJYYVNUL25vaFQvbTBKaENGNkJOVFJqNlVN?=
+ =?utf-8?B?Y3dNeUtVVXdQWkxNZ1lqOUtGZzVZUTl1a3pIckhqVHU2QUpXUE9pNFJ2VklF?=
+ =?utf-8?B?b0p5OFZydHlJMTNSRldDV251U1VKekF0dzE3cmgydm5zWFdUMG1rSnpnSlB4?=
+ =?utf-8?B?UkphbUx1bWYyV1dsV2FJNXhGZS96Q2UySXNpdGNuY3JvWlZnSTRMS3dOMmZQ?=
+ =?utf-8?B?SmNyQ1lEVGxUYWlsTk5MWDY3TURkTjVkczJyZmFTVGc4c3lYYUIvTFBaTEtw?=
+ =?utf-8?Q?mClwaqitjpYurqW3JYlh/HUGBIURypKSjdMlni61co=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3b7d7f0-1bc2-401e-6448-08d9b8fd7fb9
 X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 21:13:54.2716
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 21:15:16.8007
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n4xJl3QjWYl5ngft4jfmgNFYI2SwcRlchCL5wqnrzkkRdCiCvIgg48ZoUeb9SHCnraWuztvqpAeq4E2tPUbnRAHfTELtfORG41xew30tO4A=
+X-MS-Exchange-CrossTenant-UserPrincipalName: Du3G0qQ2lXdspNzezTTJbPKrTKqen5IiaS9UYHt1ltor2FSAfilf9yaZcA50XITPdOnDDrbB5Y0sE17EvMpqKsDwGhh4s8LE7md1UD/4kJo=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR11MB2674
 X-OriginatorOrg: intel.com
 Precedence: bulk
@@ -157,120 +156,84 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 Hi Jarkko,
 
-On 12/4/2021 10:30 AM, Jarkko Sakkinen wrote:
-> On Wed, Dec 01, 2021 at 11:22:59AM -0800, Reinette Chatre wrote:
+On 12/4/2021 2:04 PM, Jarkko Sakkinen wrote:
+> On Wed, Dec 01, 2021 at 11:23:00AM -0800, Reinette Chatre wrote:
 >> The SGX ENCLS instruction uses EAX to specify an SGX function and
 >> may require additional registers, depending on the SGX function.
 >> ENCLS invokes the specified privileged SGX function for managing
->> and debugging enclaves. Macros are used to wrap the ENCLS
->> functionality and several wrappers are used to wrap the macros to
->> make the different SGX functions accessible in the code.
+>> and debugging enclaves. Several macros are used to wrap the ENCLS
+>> functionality.
 >>
->> The wrappers of the supported SGX functions are cryptic. Add short
->> changelog descriptions of each to a comment.
-> 
-> I think you are adding function descriptions.
-
-Will change.
-
-> 
->> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
->> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
->> ---
->>   arch/x86/kernel/cpu/sgx/encls.h | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
+>> Add ENCLS wrappers for the SGX2 EMODPR, EMODT, and EAUG functions
+>> that can make changes to pages of an initialized SGX enclave. The
+>> EMODPR function is used to restrict enclave page permissions
+>> as maintained within the enclave (Enclave Page Cache Map (EPCM)
+>> permissions). The EMODT function is used to change the type of an
+>> enclave page. The EAUG function is used to dynamically add enclave
+>> pages to an initialized enclave.
 >>
->> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
->> index 9b204843b78d..241b766265d3 100644
->> --- a/arch/x86/kernel/cpu/sgx/encls.h
->> +++ b/arch/x86/kernel/cpu/sgx/encls.h
->> @@ -162,57 +162,68 @@ static inline bool encls_failed(int ret)
->>   	ret;						\
->>   	})
->>   
->> +/* Create an SECS page in the Enclave Page Cache (EPC) */
->>   static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
->>   {
->>   	return __encls_2(ECREATE, pginfo, secs);
->>   }
+>> EMODPR and EMODT accepts two parameters and can fault as well as return
+>> an SGX error code. EAUG also accepts two parameters but does not return
+>> an SGX error code. Use existing macros for all new functions.
+>>
+>> Expand enum sgx_return_code with the possible EMODPR and EMODT
+>> return codes.
 > 
-> You have:
-> 
-> * "Create an SECS page in the Enclave Page Cache (EPC)"
-> * "Add a Version Array (VA) page to the Enclave Page Cache (EPC)"
-> 
-> They should have similar descriptions, e.g.
-> 
-> * "Initialize an EPC page into SGX Enclave Control Structure (SECS) page."
-> * "Initialize an EPC page into Version Array (VA) page."
+> These implementation details only obfuscate this commit message, and
+> it is way too high-level to be useful e.g. for kernel maintenance.
 
-Will do. Did you intentionally omit the articles or would you be ok if I 
-change it to:
-
-"Initialize an EPC page into an SGX Enclave Control Structure (SECS) page."
-"Initialize an EPC page into a Version Array (VA) page."
-
-I also notice that you prefer the comments to end with a period and I 
-will do so for all in the next version.
-
->> +/* Extend uninitialized enclave measurement */
->>   static inline int __eextend(void *secs, void *addr)
->>   {
->>   	return __encls_2(EEXTEND, secs, addr);
->>   }
-> 
-> That description does not make __eextend any less cryptic.
-> 
-> Something like this would be already more informative:
-> 
-> /* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
-
-Thank you, I will use this description.
+2c273671d0df ("x86/sgx: Add wrappers for ENCLS functions") seemed to be 
+good enough for kernel maintenance, but ok.
 
 > 
-> This same remark applies to the rest of these comments. They should
-> provide a clue what the wrapper does rather than an English open coded
-> function name.
+> I'd replace it with something like:
+> 
+> "
+> Add wrappers for ENCLS leaf functions EAUG, EMODT and EMODPR,
+> which roughly take two steps:
+> 
+> 1. EAUG creates a new EPCM entry.
+>     EMODT and EMODPR modify an existing EPCM entry.
+> 2. Set either .PR = 1 (EMODPR), .MODIFY = 1 (EMODT) or .PENDING = 1 (AUG).
+> 
+> The bit is reset by the enclave by invoking ENCLU leaf function EACCEPT
+> or EACCEPTCOPY, which will result the EPCM change becoming effective.
+> "
 
-Please see below for another attempt that includes your proposed changes 
-so far. What do you think?
+I can use this if the SGX2 functions continues to be introduced in a 
+single patch but ...
 
-__ecreate():
-/* Initialize an EPC page into an SGX Enclave Control Structure (SECS) 
-page. */
+> 
+> The current commit message is also not addressing these:
+> 
+> 1. What happens if enclaves accesses a memory address with either .PR,
+>     .MODIFY or .PENDING set in EPCM, other than by the means of EACCEPT
+>     or EACCEPTCOPY?
+> 2. The calling conditions (e.g. concerning TLB's and ETRACK/IPI/etc
+>     dance related to it).
 
-__eextend():
-/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
+... adding this information for all three SGX functions would be too 
+much for one patch so I think that I should rather split this into three 
+patches, each introducing a single SGX2 function with all the details 
+you require. But ...
 
-__eadd():
-/* Copy a source page from non-enclave memory into the EPC. */
 
-__einit():
-/* Finalize enclave build, initialize enclave for user code execution */
+... the intent of this patch was just to introduce the wrappers of the 
+SGX2 functions. These details surrounding the flows when using these 
+functions are addressed in the patches that use them. It sounds to me 
+that you want to duplicate that information here where the wrappers are 
+added. Looking ahead you do require the same information in the 
+changelogs of the patches that use these wrappers so I would like to 
+confirm if you would like to see three separate patches with the details 
+duplicating the information provided later or if you would like to see a 
+single patch with the three wrappers and the changelog that you recommend?
 
-__eremove():
-/* Disassociate EPC page from its enclave and mark it as unused. */
+> If this information was properly contained here, discussing about the
+> following commits would be much easier.
 
-__edbgwr():
-/* Copy data to an EPC page belonging to a debug enclave. */
-
-__edbgrd():
-/* Copy data from an EPC page belonging to a debug enclave. */
-
-__etrack():
-/* Track that software has completed the required TLB address clears. */
-
-__eldu():
-/* Load, verify, and unblock an Enclave Page Cache (EPC) page. */
-
-__eblock():
-/* Make EPC page inaccessible to enclave, ready to be written to memory. */
-
-__epa():
-/* Initialize an EPC page into a Version Array (VA) page. */
-
-__ewb():
-/* Invalidate an EPC page and write it out to main memory. */
-
+The commits using these functions should have clear content on the flows 
+surrounding them. I see there is work to do and I will review them to 
+ensure that.
 
 Reinette
+
