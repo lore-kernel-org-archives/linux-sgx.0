@@ -2,69 +2,69 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52414C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon,  6 Dec 2021 21:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF4CC433F5
+	for <linux-sgx@archiver.kernel.org>; Mon,  6 Dec 2021 21:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351314AbhLFVrv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 6 Dec 2021 16:47:51 -0500
-Received: from mga09.intel.com ([134.134.136.24]:9201 "EHLO mga09.intel.com"
+        id S1352736AbhLFVtF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 6 Dec 2021 16:49:05 -0500
+Received: from mga03.intel.com ([134.134.136.65]:39851 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351164AbhLFVru (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Dec 2021 16:47:50 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="237223764"
+        id S1352691AbhLFVsu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 6 Dec 2021 16:48:50 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="237357849"
 X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
-   d="scan'208";a="237223764"
+   d="scan'208";a="237357849"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 13:44:21 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 13:45:21 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
-   d="scan'208";a="514938190"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga008.jf.intel.com with ESMTP; 06 Dec 2021 13:44:19 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+   d="scan'208";a="514938417"
+Received: from orsmsx606.amr.corp.intel.com ([10.22.229.19])
+  by orsmga008.jf.intel.com with ESMTP; 06 Dec 2021 13:45:21 -0800
+Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
+ ORSMSX606.amr.corp.intel.com (10.22.229.19) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Mon, 6 Dec 2021 13:44:18 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.1.2308.20; Mon, 6 Dec 2021 13:45:20 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20 via Frontend Transport; Mon, 6 Dec 2021 13:44:18 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ 15.1.2308.20 via Frontend Transport; Mon, 6 Dec 2021 13:45:20 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.20; Mon, 6 Dec 2021 13:44:16 -0800
+ 15.1.2308.20; Mon, 6 Dec 2021 13:45:20 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nbZ3e8p0iixKlP/E+OvMoxKouC6FB/t9kRZrlJF9MLel08ORJmP/FMLkQC+MPc7anOxHcnqPfZBsZ2Mlasw1iZzzH/ijXFOIFaezXn5BnetHxSYTwl5ZW8zSTl52z746smkJ7ZQmfzCT9ixP+nJBE3ympAluz81NB6J3JMckaImmWZ9036n9unqNDIZPWwhxL4VdN8v26oSWa4KgV1b2ItHXwUyfrefQCNHTNTXSgNiHRXYUgpk/YXUFwbqc2psRhCMv8w/gozLDVo4d5j44bvAdNdwa8N0pByD17NRekZnxjclkQUTvz96Kr95toz7ORiW2EeO9/3y9hTcbzGOFqg==
+ b=b75VW48eFo/7aniJJjCxV/enNTKTb0vhFnpj68SR4xGsG1y8X3UusaKYhcEwu0BXtlBaqchiE4Fq1ulDaIDN21izQXn6+SNuG/aWJmCaF12bbBLBjNbK/2awQOU38DciX3umlSja9h3y/+TrxWpbGJfHdcGUJNkII0NFdSEUskw0t2qDTxa5uKVMSL40t5ISj7OaqSVivjrHOYl2zIOkIKRC2rZ5dvwJe3+ToT1Iw6PjjanXLBlbpEyHjR+V2yRhCrn28grxGhhsZQVqEnNsSdLkglr6Df9Y4A7Fo6HPVZ28MUrFMDx1fHq6J4tYb1/OxDwXbD2fde/1dWnP0dTb4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D5BxN7A1SzuAVEzYTg5Jpa5RgTKWl+5Sz3Dx0s06t4g=;
- b=RS1iotmS25+iD9AzJZw3TpTGHWoiT73tMOzMmo9KQdihthEgrFz+ElwLutKRgVjRgo5vjacJtZUqUxGUZkPFjTpZIZUnPyscWTJqbm/qmKfAvrzrVQ4+u0sBOmixIyLJZGxVuLqqgO8pIU2gTGJpj1PtVaC+7vNV0ElFJHKFShMKMm+TlP67Hw92OUbOE0LMf3xkOhekzNBLYMBSCzkpZbChKS1r+4vD7ULdEGCrk8pXOHEqht3dTvQ3ovkghQ0dr4s2oK0WnfwaX2Ie3RHfjXHI6wXAa14eFNF/bJ7rYdZWDM1fshP3cm7vWlqhyFvRPxgUF83s/cDbi+tex+N2aA==
+ bh=Bsy7J96UDhkX/jSTdJJus3cEehAhS2IZD7IozhNzKLU=;
+ b=jOdZtuDI3TAbqJSOf6Uko5fnC7xLkHnX0/YxiadeOh5VL8BzhQF1AhAXTAO4U1NxIqox3r4t4XX6bnqUdiB3F8Zfr0qtXCtToV95yL/Pjyx527siyjA0izjn55johumwBHJC0K0NyDuv2EyC5K4WWJz1witcXu8V2XL9Pk3zdL58EOlgf5YkrhFZToRmRSOjG/Kq7Pb+NJdEsy3cO3hiBlkUvTJuCG5XzLzsWlg79x5PSgxx3XvI6L69UJw2owKYSFjWNs7JulYYZlkhfHTYbAVurw00ohocS83bEYrcOkSszS2XABd7OcxPxSvZWvAtcdwcVdxAMzVeE9h+3C04ig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
  s=selector2-intel-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D5BxN7A1SzuAVEzYTg5Jpa5RgTKWl+5Sz3Dx0s06t4g=;
- b=S+TQhUhOlNf/MEpc2jtGUB+XbRj48g+mow9APv7emk+33NHHUAevtYNLdx9/F+DZ6eMvj09Vq4wVae6tyibH7PbANi7knu5KAlLepr92atNEqu0aOITKW62hzM1JCp+eEnH64q+3ChVb2/DSHegQ36lYa/sRxzMYTG0LtS+SOT4=
+ bh=Bsy7J96UDhkX/jSTdJJus3cEehAhS2IZD7IozhNzKLU=;
+ b=ckxxBtpTRQPldkUINUf/Ephnz6w/rTV+zZCpF3PhOPnX4Qn8tPeyPOMPsNr3sK16M06kZTAN+EGXu7L6C5D2Okc/cAUsLN1fP5wZlAQc74yt3Bwl1EWxv/t/JiA2SgKy/g2s4oOtdXxQ1b7M0ETQGpscjPyndPnavf4SJOAX0do=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by BN6PR11MB0035.namprd11.prod.outlook.com (2603:10b6:405:62::36) with
+ by BN8PR11MB3729.namprd11.prod.outlook.com (2603:10b6:408:81::26) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Mon, 6 Dec
- 2021 21:44:12 +0000
+ 2021 21:45:18 +0000
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::bcd0:77e1:3a2e:1e10]) by BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::bcd0:77e1:3a2e:1e10%3]) with mapi id 15.20.4755.022; Mon, 6 Dec 2021
- 21:44:12 +0000
-Message-ID: <cc6ecffd-7d4b-0b15-eaf1-6f585e8b31be@intel.com>
-Date:   Mon, 6 Dec 2021 13:44:07 -0800
+ 21:45:18 +0000
+Message-ID: <0522af41-59db-e621-69de-ad64dec3a5d6@intel.com>
+Date:   Mon, 6 Dec 2021 13:45:13 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Firefox/91.0 Thunderbird/91.3.2
-Subject: Re: [PATCH 13/25] x86/sgx: Support adding of pages to initialized
- enclave
+Subject: Re: [PATCH 14/25] x86/sgx: Tighten accessible memory range after
+ enclave initialization
 Content-Language: en-US
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 CC:     <dave.hansen@linux.intel.com>, <tglx@linutronix.de>,
@@ -75,77 +75,77 @@ CC:     <dave.hansen@linux.intel.com>, <tglx@linutronix.de>,
         <mark.shanahan@intel.com>, <hpa@zytor.com>,
         <linux-kernel@vger.kernel.org>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
- <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
- <Yav1/ZRX68cECD7a@iki.fi>
+ <66da195d44cbbed57b6840c5d20bb789c06fb99f.1638381245.git.reinette.chatre@intel.com>
+ <Yav2ckVPrHSgCw/5@iki.fi>
 From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <Yav1/ZRX68cECD7a@iki.fi>
+In-Reply-To: <Yav2ckVPrHSgCw/5@iki.fi>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR21CA0058.namprd21.prod.outlook.com
- (2603:10b6:300:db::20) To BN0PR11MB5744.namprd11.prod.outlook.com
+X-ClientProxiedBy: MWHPR1401CA0012.namprd14.prod.outlook.com
+ (2603:10b6:301:4b::22) To BN0PR11MB5744.namprd11.prod.outlook.com
  (2603:10b6:408:166::16)
 MIME-Version: 1.0
-Received: from [192.168.1.221] (71.238.111.198) by MWHPR21CA0058.namprd21.prod.outlook.com (2603:10b6:300:db::20) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Mon, 6 Dec 2021 21:44:10 +0000
+Received: from [192.168.1.221] (71.238.111.198) by MWHPR1401CA0012.namprd14.prod.outlook.com (2603:10b6:301:4b::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend Transport; Mon, 6 Dec 2021 21:45:16 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b6cce2e4-021c-4497-3add-08d9b9018acc
-X-MS-TrafficTypeDiagnostic: BN6PR11MB0035:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d129361-125c-4c8e-8d3e-08d9b901b1f9
+X-MS-TrafficTypeDiagnostic: BN8PR11MB3729:EE_
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <BN6PR11MB003552DD96D75BE70D101942F86D9@BN6PR11MB0035.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Microsoft-Antispam-PRVS: <BN8PR11MB372901B312270B48D5C26263F86D9@BN8PR11MB3729.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vyYskWCOiBO9PwOrtYpT5WFYDN8g8Lhdd7fakbpwwOEKAdtsMhb6ebtqreGV7oh8+BHqYB1nRbUZxVQSD61lR5GBi1PxDc71r1zPdc6uf8rgB2bQJI0S8oy9BDn1wD/3L+pzyclYURWV1YsXxYBgkkwPIuJyDk1roxakkpVX1dpyvWY/2Zi+6I7WUMv0+jlVTB/sgfwnVjc92dq1a203uMI+444gCbcbwdrw6jPQUhsX9sz35ecTciQeBhHmNZ17RF9xez/pXVYG0S4gI3ws4XXf9oe89VmtESTrrO74hZkSxmwVPYbAwqPaqdGG9QHu50pMAoakIewhRP4aKkIPyrOBjvvsT9nUsT7zgdT8QXnxC95vnyfff0fscnFBGU7IzSZxYkOSpEwSDYgGI/uWtePROpokfpi5nX+t1/qpCX49WKWp3MWIYyO/fAKZ4+NKIs0DRpK9uIUCMvah0Wf+vxShizgDR+h+3zNH3Wtv/GLm8tjccY6QqQ6PapOYDNa+W0Oddcu1/VzatuB6xqnXKT2V1cOm3s1hKuh7LF1pNF+YvHaY4Gms3swhnSpc/Z3qRLWIzF9euKTyjjvI8whbfrYfrv4659QpYFEA0TWYa1Nwv+8l+2E/Kz1rj+U6IF3cD3v1EnfUv94PGCVLZGBZr1JbKxpxsn0GOhLU/UKs6WEUEYLG9V90cdnKNWPWhTx1WECE+dkyA7CiH+bD15NvgKWoZdhicYXL9Pagtx7ZuVg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(6486002)(44832011)(316002)(86362001)(66556008)(66476007)(66946007)(31686004)(508600001)(2906002)(8936002)(82960400001)(53546011)(5660300002)(26005)(38100700002)(186003)(956004)(16576012)(8676002)(2616005)(4326008)(6666004)(83380400001)(36756003)(7416002)(6916009)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: P16Che3FxdGkFKKFMskxb1T1l/1lc9O6uNHANns7ycy0kaG+Pr9sqaBSZiWkbtSi9Vdb5ZJJpYM8GEFli/BVQ8PJKroFgZ6Yt6gyBrW8dM5iEj8glajm0Tx7HcuZNY2xgxONJkjPKbcPsG1Pqs2ZmpBEsdA0MIYybvXdoqolSXVIR2/Ze4qNf1gG92fn57keH5u92Is4upoWIPMepGdN7J364TIUgvO7zxHLjIdnLO+azO42N5tkyfWci5Ie47lDrW6Tg+htC+1hVNIwRIo8cwcmr0YXJF12q7BXVfp7iBW2V9vt95cgbAPI01m3SdYdJi7qxrNfrIJKxzEi55+sl2c8ZqCASifC0zsYDZcXJCuIuXxTpzwNKFnxRZqAaZnx/axHMKy70EFuy+dZBltjaiFP2qetXDkNz9U/5we2lCR5YKS/fUObaSdLmeCGpeR1HZGbnmfZfsE26RbLufUCOVBUesHOvI2D/zpgVNTkmsBdGO/zQot3cJ8qGQosAO2VWyhX7W3GzCqCBCF9fOjTf927YHi5p1HX380ZeMrK2DBsxdHfVB7mHVx7TGWOKALQ6iCMROpmOg172iCr5vDKPbOs2nbjXVDggG3MJkwmy87gZyxLeHAYEtDxzSZTS9b24cPPkOrKwjWKmdkOwW5yQc09w408nqIsTq2PU82eYSIln+jCP/XsjFBIys22ycWghsDmIA8edEeBMv9M/Bkz/kKGmvH3KjxhJCftyNCjOLYd3Sr8Tl2zVG4rBoD5EP0O
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(82960400001)(6666004)(4326008)(38100700002)(186003)(5660300002)(36756003)(31696002)(26005)(31686004)(4744005)(7416002)(86362001)(6916009)(6486002)(44832011)(508600001)(2616005)(956004)(66946007)(66476007)(66556008)(8676002)(53546011)(2906002)(16576012)(316002)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Ymh0L1lpVm1MZmNieHV0ekdvZTJ5UE9QMGY3cDd4Z05yZFpqUjJieWcxOXRh?=
- =?utf-8?B?REFvdzlzbGJmdTFEbldabVhqVHM3emM5cUJndUg0MXVBcm1HNlFqdU9kd0xC?=
- =?utf-8?B?d2dhMVdZb2IzL2duRzhEaThHYU5pRThJejU3dFFPS3ZFL09QYzBvc1ErQUxx?=
- =?utf-8?B?aG1LbHhtdzBLRnc1UkpRZjJ3c1lCMEpJaW9kSWJia29RU3NCOGM0ZXRTTmJB?=
- =?utf-8?B?Ykp5bmxtZjlsMnVqUnhEVkRmck52RHVrbmdicGxSZkg1bHRQOHBSV1FPaVds?=
- =?utf-8?B?bDQ4L1F0clVkU21oTUJBdE4rS2p2bUxNblljelJDcnFqMkhTLytVenFtWVJB?=
- =?utf-8?B?VHdjV2tNMDdlQno0dmN4cjJFSVlGUDZKV2RjTVpPQWpaKzJOdUp2MkQ5eEFi?=
- =?utf-8?B?MzI5S0JoZ1IwWlNvV2xzVU9rS0F5S05zTzdFT0VEYm9xbE5XSXE2SzFwTzU1?=
- =?utf-8?B?c1h6TE9yNjdOZ29VM1VsTW51N0hhT2FyaEdueUdhRVFZZlo0VitGWXlJN0dk?=
- =?utf-8?B?cGRBb3dReTZFTmRXSGxXektLa3F0YmIySmltd3NaVFQ2aFpHQmNjOE5mZlhT?=
- =?utf-8?B?SzljMi8vSzcvUm56QUtQSVFMZkZEOUJwbW40Y2tadWJPeVBkb3JjR1lSUHFa?=
- =?utf-8?B?MDc4VXNaeDdRc0VxdDU4aWJsU3hYNExlem4yOVhidkZxOWxNWm56VjVpaHNT?=
- =?utf-8?B?a3MxOVZDcGc0alo5anZ5clBXY09nc0xoNmRNeGk1aDBKTHlKNVF6Si9CeVd4?=
- =?utf-8?B?ZE9QREVLbjdvcVhUcjVCZi82b3lCM0ZMR2VwWjlCNjkxaHg2SndCNVpoZFph?=
- =?utf-8?B?NjNRTEJlbzI3QllQZzE0enBGSG1aOXZwOGpMaUZ6MGRIOUxoVitPNjhpYWZp?=
- =?utf-8?B?RzRMTUtHMmNvNVlRdUZKa0E4N3psUWVoV3VDZVl2bFpBU1NSTDMvTlJvcy9W?=
- =?utf-8?B?aGs5Snc5ODJtOE1ZU2tOak16Rmh3TUIxUmhYYXpqdEdReWVIdFMrdDFaaWRK?=
- =?utf-8?B?QVFpL1lQdE5oOUpWdGxHYWsvdlhoSE5URDk0SWg0eHFCaElCa0x0YWUyS1lj?=
- =?utf-8?B?TVlMNmp1bzVhT0FJNjZWMHRkZFRTeVpDZ1FqVEthSTd5MWtPdjYySjdGU1Fs?=
- =?utf-8?B?RXpFR1M2TWRWMXNmZG5KUWFDVXhwMzdRY2NrVEIxSi9ZbzJPbjJlNVg4RHdG?=
- =?utf-8?B?MVRaZFdlMW5KNUgvaG9ZV2orZjJ3R1hXcUtsaTNvT3lxWmd5bjRrdFpQOGhu?=
- =?utf-8?B?OXhjSTlRZS9qVjIwd1oraEhrbmIvdGdDMUZ1UTBvMXB4MlFtc3VBWjI2ZGQ1?=
- =?utf-8?B?VnpDREVTWnN6MjUzVm1admFXajhlKy9KaHIvZjNKRWF6SlZJayt4cjlUTEJK?=
- =?utf-8?B?d0RnbGxxcnlDRGYvRzJhd0swcy91bG5Rb0tFdXFRdjJQYWRYWGtaRHhVaWRl?=
- =?utf-8?B?V0xIK3ViZE1CbmVqbEU0T1NrSkxFTFlNd2NPK2MxZUJGZVJSY2tmYkNpVEJn?=
- =?utf-8?B?dVFkOWg5SGkzaUkvanJEZ2tHUm1oYXZ2aFkxb1hTTEE2dzZyMkdpVHJ0WHI0?=
- =?utf-8?B?ZTV5K0I5WWlWKzNGbXFud1RqR05HOStWcERNdlVkUWczZzBROG80SCtaNVVV?=
- =?utf-8?B?dGF1L296M3VPT01MMjBCVWFWUHdvdUwzNkVrM0NhdlFkOStrck1hTjRiSENn?=
- =?utf-8?B?a09Vbk9jU21sQ0FxZU9BaFg2WG9tQ3I1VU9Db2grSmZFZDFXbXZYNlB4aHVB?=
- =?utf-8?B?TGZmb1dsWXZuTDBheWpsS0NmblQ5TnU3TDYvTGFESnExZmRSQkNocnpjMjJq?=
- =?utf-8?B?TXcyQk95bnZwVXRlUEh6ZDJMZFpyM2h0WVF4L290b3ozUVdHbFNua2dzdXln?=
- =?utf-8?B?V2RHSnJhSFdzVWJkTlRkVlNiMkpROGNJclpQaXpRTHgvVWU4Tm9MTTl1eldW?=
- =?utf-8?B?blluRXNvRUxEellGeFBwcC9CVnc4YXlwUTRQcWdUOTdwNUl2aDRHNHZ1UlJS?=
- =?utf-8?B?ejZreVkrZjBWdXI0aE1YZlBWY1lCRHdCL3dsU2xHNTJtWTZUQnFoY0luME5W?=
- =?utf-8?B?UVdZZWM1OXljcUcyRytJN1M1Yk1WTnlOeEo0eVBEWkY2a0FaUlJaZzFzeWwz?=
- =?utf-8?B?RHpZVkphQ3VudXhqTitwUERmTHpQbm8reDB3dUQ2c3gwSUNHM3pQRDZDWEp3?=
- =?utf-8?B?TDJZMjB4RTd4b3ByM2sxc3BmaUltWUlqMk8zcjJrUll6Wi94cTdpcmxwS2tV?=
- =?utf-8?Q?g/6Le4LDnpAIAjdThUVnoxCqCVc3u8itECd/jB0Ayg=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6cce2e4-021c-4497-3add-08d9b9018acc
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cmNVR2hXaFlPTXhSOVY1Y1NKU0lmc2FQTXBjaFE1aWNOY1J2cG5mUzZMZmYr?=
+ =?utf-8?B?bUJPTG00ditjZGpJLzVYRktRZEMzY2FqTnpmMjVsU01US1JWbVBsVWZTZUc2?=
+ =?utf-8?B?MVdtRDlPZXRsNWtQZitiVjBrTkQyZ21hNzVISU1MU2Q0T0dlS0JLTGtmTHgw?=
+ =?utf-8?B?UlB1OFg0NXJPMDJkWUxqY0pOR3ExelhsMU11UjRWdEtzRmRxdzFlU21UdWlS?=
+ =?utf-8?B?ejFnL0FxSmJXTmpja3pCeWNLS1BDTnZ0cjdNMStqeXdZOUVsWnlQazY1QXpy?=
+ =?utf-8?B?ZHl1RHAxR1VxM2pqcGRwcjBhUkRia1NTakJlc255b3pKNVNRM3RIZWQzWU5K?=
+ =?utf-8?B?WFBXMFFUajBPNzFoK0Y3dlRLSkZ0VlNMaHlmcWwxL29ldUR6OWFCM3g3Y0J2?=
+ =?utf-8?B?d2M4cWRyUmIxbEdYSmR4RzY3MllqRDdid1cxQjBzM0pHaUpCYzMyNWpDKzEx?=
+ =?utf-8?B?MHZiY1FOS0M0WXRoYTQvNTdFdUN2dkV3RCtxWStXeldrVWhIU0pCV3REb0pv?=
+ =?utf-8?B?ZkQ0YlNMRlRMZFpuMUtHTjNRRzJDNmlSZUthRzhUbkV3WDR4L0RHMEhJeHpn?=
+ =?utf-8?B?T25BajNtZFZ0dEZQK05MOE41U2djNjBEbm9hQmo4Y0granpkRU1aVGxCOHB3?=
+ =?utf-8?B?S3BoUTBLek12bVhDakhYZDJNeGlvbFVZd0xQbnIwdFcxQ1A3MTI4V3NjRmJu?=
+ =?utf-8?B?TVJTWGswTEpxUHlVR2lJWTd0RUNIbTJ2eXBxWVhYNWxCc0NuZkJyRS84djNR?=
+ =?utf-8?B?a2RjYXRjMW5DYzNQdTRmcG9iYTE4blV2bTVuKytlYVhITFBZTzQrMDFpeVQz?=
+ =?utf-8?B?TjdybTc4TzNzUmxvYVNncXJGbWt0TjlTaUxqRTFscVlEME81MmZkTWRPcUwx?=
+ =?utf-8?B?MTZyQjNFcWpFSHNZL2RPalBVY1pHUjdEcGFNcGoyeDFCU2lEZDRVMHlNa21S?=
+ =?utf-8?B?dkg3RjVnTUFjYmo1THIzK0N6U0hXMjR2MVZRWk95c1RUTjNzM1dINXFQVkpR?=
+ =?utf-8?B?RS9NOEU4dFBJS1dDV1cxWG1mb1dxS2NKT2FBc29INXJ1b250dFZoTlQ1dmVo?=
+ =?utf-8?B?N2dzbDI5cjlqNkduRmdtcUNxMHNOZUlUbm03VWpHYUMzNW1kQW5ZMFdZdUo2?=
+ =?utf-8?B?SWVKOU5zTVN5S0pYS2kvOXgyVFNBQmNvUkdPaUI5N1JuWTdNU2NzOTUvamRC?=
+ =?utf-8?B?emVLTURFRVcwZjV3VFBmOW1wNENBUUxBK3pRUDJVT0hqY1ZPOWExSkZDMEd6?=
+ =?utf-8?B?R0lzR1dGM1BPNUxpOUk5aHNCQWlwUW9Sb2pjNmVMWTB0cjdlZTJYRnVzTHZH?=
+ =?utf-8?B?V2tORVZLRFhrdXlPZnZ0MFErQ3IyRTFwTHFkSVppU1pCK3VZcUU5NXdKOTky?=
+ =?utf-8?B?WHBQT0ZUQmRaaFFZajBGaGFqcVY4SUhqcUphc3BjVElZampWNGNncmRiU3R0?=
+ =?utf-8?B?bmZjNitrTE95eExyeWxCSjIzdEVJUHlYRXZmNFE5OVlTNTBjNk1qZ0NEdEFU?=
+ =?utf-8?B?MHI4MjZobURRMWFlenBMOTZtR09ocnVQTmh3RktFYUNySXhKYVF4ZzFzTzIr?=
+ =?utf-8?B?Q2s0UHp6MVhsVDkrOGU5aitTcXloaHYzWW5FQ0VURk5EZmRaTVRpT25vMFlB?=
+ =?utf-8?B?dk5naFlIMWxxYThua0VJc3NrRUp6WWVXWm5KUktNU2ZQMVVCbGkzTmhLT2Jh?=
+ =?utf-8?B?RzlMUTY2Q1FuZW9lZ0IwSGlDeDFhRm0vN0sxNldvaE8zRlM4TExJNTBJSHVE?=
+ =?utf-8?B?KzBGU3hnbXprWHdCeWZCZTgwdFgxMmlsclFDZ0NnNHIrdFJQbWFSbURzdzdH?=
+ =?utf-8?B?ZmxmLzMwWFFoRDVxS2xJT2xZMVNWN0diWkk1S0puY29MS2Y3Z0xxdWtiNWdz?=
+ =?utf-8?B?ZU4xdmoxVVpzQUk4dDJiakRGVU9Db1BaektQZ1JZNERMWHhpVjdCYnJrMGVF?=
+ =?utf-8?B?YU12azZNVCs2bTcwSHREQkplMWxXWkZ3TXVnVlk5RXhRQ0RUL3piR3REMklQ?=
+ =?utf-8?B?eHplamVSd3RrNTVldkhYL1ErRE9KRFA0OElIV0pUM0tBQ1QvWlJYZU4yMFpF?=
+ =?utf-8?B?WncwVzloUHJJclhTOGlFdW9PS1owVjdKSXpucEZqQURLSXRDWXVNYmxLOW1M?=
+ =?utf-8?B?RzBhV2lOUmFVQXpIdVI4OWtWOWdzN3ZsZnBpYW1sN0dvbzAreW1venhlcHkw?=
+ =?utf-8?B?MjJDNEdoaTkway9ObGthWTM2cFFvWmRCRXVGVGQvTXAyV0dlM1lrUUs2SS9v?=
+ =?utf-8?Q?89odcQ6a32feiQRGuRYsxvmb1zGI3jF/vPqcgr+0XU=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d129361-125c-4c8e-8d3e-08d9b901b1f9
 X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 21:44:12.7548
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 21:45:18.3843
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GOyp5SN5/YYKYef/9LjUmBlHsDniNm+T9wYn7Jnx98jJI24m1zrOLCYuy2p0gbYp0ka9Wj7t8wK0cK9ImbuY3wNppeEOthZ50eBkvwmRBEw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB0035
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rh1O+//fn7n1HEXEDeNz+14A2GZXaXSS4EpTtrZSe3xa3MtddClQqejkjIzqgSnffxlqBUdUPK3ciujoTVx9sGEn9GU+YsWBW3TRTV7PmqQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR11MB3729
 X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -153,71 +153,38 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 Hi Jarkko,
 
-On 12/4/2021 3:13 PM, Jarkko Sakkinen wrote:
-> "to initialize" -> "to an initialized"
+On 12/4/2021 3:14 PM, Jarkko Sakkinen wrote:
+>> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+>> index 342b97dd4c33..37203da382f8 100644
+>> --- a/arch/x86/kernel/cpu/sgx/encl.c
+>> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+>> @@ -403,6 +403,10 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+>>   
+>>   	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
+>>   
+> 
+> Please write a comment here.
 
-Will do.
+Would the comment below suffice?
 
+/* Disallow mapping outside enclave's address range. */
 
 > 
-> On Wed, Dec 01, 2021 at 11:23:11AM -0800, Reinette Chatre wrote:
->> With SGX1 an enclave needs to be created with its maximum memory demands
->> allocated. Pages cannot be added to an enclave after it is initialized.
->> SGX2 introduces a new function, ENCLS[EAUG], that can be used to add
->> pages to an initialized enclave. With SGX2 the enclave still needs to
->> set aside address space for its maximum memory demands during enclave
->> creation, but all pages need not be added before enclave initialization.
->> Pages can be added during enclave runtime.
+>> +	if (test_bit(SGX_ENCL_INITIALIZED, &encl->flags) &&
+>> +	    (start < encl->base || end > encl->base + encl->size))
+>> +		return -EACCES;
+>> +
+>>   	/*
+>>   	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
+>>   	 * conflict with the enclave page permissions.
+>> -- 
+>> 2.25.1
 >>
->> Add support for dynamically adding pages to an initialized enclave,
->> architecturally limited to RW permission. Add pages via the page fault
->> handler at the time an enclave address without a backing enclave page
->> is accessed, potentially directly reclaiming pages if no free pages
->> are available.
->>
->> The enclave is still required to run ENCLU[EACCEPT] on the page before
->> it can be used. A useful flow is for the enclave to run ENCLU[EACCEPT]
->> on an uninitialized address. This will trigger the page fault handler
->> that will add the enclave page and return execution to the enclave to
->> repeat the ENCLU[EACCEPT] instruction, this time successful.
->>
->> If the enclave accesses an uninitialized address in another way, for
->> example by expanding the enclave stack to a page that has not yet been
->> added, then the page fault handler would add the page on the first
->> write but upon returning to the enclave the instruction that triggered
->> the page fault would be repeated and since ENCLU[EACCEPT] was not run
->> yet it would trigger a second page fault, this time with the SGX flag
->> set in the page fault error code. This can only be recovered by entering
->> the enclave again and directly running the ENCLU[EACCEPT] instruction on
->> the now initialized address.
->>
->> Accessing an uninitialized address from outside the enclave also triggers
->> this flow but the page will remain in PENDING state until accepted from
->> within the enclave.
 > 
-> What does it mean being in PENDING state, and more imporantly, what is
-> PENDING state? What does a memory access within enclave cause when it
-> touch a page within this state?
+> Otherwise, makes sense.
+> 
 
-The PENDING state is the enclave page state from the SGX hardware's 
-perspective. The OS uses the ENCLS[EAUG] SGX2 function to add a new page 
-to the enclave but from the SGX hardware's perspective it would be in a 
-PENDING state until the enclave accepts the page. An access to the page 
-in PENDING state would result in a page fault.
-
-
-> I see a lot of text in the commit message but zero mentions about EPCM
-> expect this one sudden mention about PENDING field without attaching
-> it to anything concrete.
-
-My apologies - I will add this to this changelog. This matches your 
-request to describe the __eaug() wrapper introduced in patch 02/25. 
-Would you like me to duplicate this information here and in that patch 
-(a new patch dedicated to the __eaug() wrapper) or would you be ok if I 
-introduce the wrappers all together briefly as in the example you 
-provide and then detail the flows where the wrappers are used - like 
-this patch?
+Thank you
 
 Reinette
-
 
