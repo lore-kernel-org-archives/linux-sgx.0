@@ -2,105 +2,105 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD585C433FE
-	for <linux-sgx@archiver.kernel.org>; Sun,  5 Dec 2021 13:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCC8C4332F
+	for <linux-sgx@archiver.kernel.org>; Mon,  6 Dec 2021 20:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233993AbhLENNW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 5 Dec 2021 08:13:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234042AbhLENNU (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 5 Dec 2021 08:13:20 -0500
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B8B9C061714
-        for <linux-sgx@vger.kernel.org>; Sun,  5 Dec 2021 05:09:53 -0800 (PST)
-Received: by mail-qk1-x72b.google.com with SMTP id p4so8581180qkm.7
-        for <linux-sgx@vger.kernel.org>; Sun, 05 Dec 2021 05:09:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profian-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dtYLmGkWKn/52i7M34wleyxhHkWbT48Sy+Al0iZ03oc=;
-        b=ivK1yal+SGyqtPza6xtmc5lzZD6dWBPHRUDMwpd/32MM4KF9MHNwFnt0JHwkkSnV4k
-         3ooaOV0ZKmJASBpBQJk8OQJhs8uWRmEF4o626hepSEK8KTOfo8tvl8jpYdp/tsZul+V2
-         T0oI2byzSBbZQEp6FSlYzUt0PaDUEGp5y8jCzmwTUyfFaTuXGvTXH/ilVDkShXzt4alF
-         jyoXuz1TI6m4TtfTozljqzqQKcWuNWKOnu141vTzWvVyuM6WC6XrZsMt/DVQBAnVoBqi
-         mU6oSI3i/2/5sM4o7PsGDLt+qo5BP1kW0SqeRtXbQsPpmNGsd3KQgi+SUltwW/rEpPfh
-         HlVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dtYLmGkWKn/52i7M34wleyxhHkWbT48Sy+Al0iZ03oc=;
-        b=i0fhXFxHIEWW4m+ajv7ak4s5JF/vGTF2+CURYteZh3eiQDgZ5o3GtJhQING5TZvEBJ
-         aEciKKILLRMkOsJkY/oLpyEWpQiERucamfyl2gAuCUTFk2pA80zY49ihjVcDIq92KbBp
-         TNTzsluMHXSf6pPljtivFdK+Hvpg2McamuIfPv6zi9KiHc2A7jlksqignieWTKPYAbFM
-         VgcP7bjvWYay0g5zcEpMz5d3oDEzhk1gH9/AOcvTpsSmjbh46lfCdsqvSgwBokETCVz6
-         a8JPKA9ixzQKj9hWRanj31+1R+zOFJQ+WbkPOUk6OXvqFvhxzozxmRNFCftzNpqrIDix
-         VE2w==
-X-Gm-Message-State: AOAM532/Ogve1s0lH8dLlJPMTSDjDDYQy+d+LGm0vAXiJ4wcFuLnmSiB
-        ot+Xauw5ytClbGXln2ij2UWO8ALMXtMTtBqR0hzPMGsQ9KE=
-X-Google-Smtp-Source: ABdhPJzhYfQwgozo4biSXamjnn2Y7Hy+ujKNaOb9xjlT22IIoPobuoG8HYCpGFAw1W5PtX4RxcJKuCJExxvvA6mCrmY=
-X-Received: by 2002:a37:984:: with SMTP id 126mr27654516qkj.257.1638709792209;
- Sun, 05 Dec 2021 05:09:52 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHAy0tS9PXgb4cRFEZNEYpiwPVV3CpBRFQhbFN=+XXy=MQakRg@mail.gmail.com>
- <YavT0+e/GoK8gsKu@iki.fi>
-In-Reply-To: <YavT0+e/GoK8gsKu@iki.fi>
-From:   Nathaniel McCallum <nathaniel@profian.com>
-Date:   Sun, 5 Dec 2021 08:09:41 -0500
-Message-ID: <CAHAy0tS7Xons5b7dVMEdhrzAhcUL0zKfiGy7OpTD9SrppQcYVA@mail.gmail.com>
-Subject: Re: Possible Regression: 5.14.18 => 5.15.6
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-sgx@vger.kernel.org,
+        id S1349656AbhLFUXH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 6 Dec 2021 15:23:07 -0500
+Received: from mga12.intel.com ([192.55.52.136]:41100 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1349521AbhLFUW7 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 6 Dec 2021 15:22:59 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="217422204"
+X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
+   d="scan'208";a="217422204"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 12:19:27 -0800
+X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
+   d="scan'208";a="579508011"
+Received: from svelidan-mobl.amr.corp.intel.com (HELO [10.209.112.71]) ([10.209.112.71])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 12:19:25 -0800
+Subject: Re: [PATCH 10/25] x86/sgx: Support enclave page permission changes
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
         Reinette Chatre <reinette.chatre@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
+ <Yav0/3jeJsuT3yEq@iki.fi>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <925629af-8cb3-c3c7-35ca-52d30beb984d@intel.com>
+Date:   Mon, 6 Dec 2021 12:19:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <Yav0/3jeJsuT3yEq@iki.fi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-That was it! We had switched to debian for our work on SGX2 and they
-use noexec. Thanks!
+On 12/4/21 3:08 PM, Jarkko Sakkinen wrote:
+>> Enclave page permission changes need to be approached with care and
+>> for this reason this initial support is to allow enclave page
+>> permission changes _only_ if the new permissions are the same or
+>> more restrictive that the permissions originally vetted at the time the
+>> pages were added to the enclave. Support for extending enclave page
+>> permissions beyond what was originally vetted is deferred.
+> This paragraph is out-of-scope for a commit message. You could have
+> this in the cover letter but not here. I would just remove it.
 
-On Sat, Dec 4, 2021 at 3:47 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Sat, Dec 04, 2021 at 08:54:08AM -0500, Nathaniel McCallum wrote:
-> > We are seeing a possible regression between 5.14.18 and 5.15.6. Our
-> > trace logging shows the following output:
-> >
-> > enclave location: 00007f3c00000000-00007f3c80000000
-> > creating enclave: Secs { size: 2147483648, baseaddr: 139895674765312,
-> > ssaframesize: 1, miscselect: (empty), attributes: Attributes {
-> > features: MODE64BIT, xfrm: X87 | SSE }, pid: 0, svn: 0 }
-> > adding pages: 00007f3c00000000-00007f3c00004000 R
-> > adding pages: 00007f3c00004000-00007f3c0000c000 RW
-> > adding pages: 00007f3c0000c000-00007f3c00039000 RX
-> > adding pages: 00007f3c00201000-00007f3c003fc000 RW
-> > adding pages: 00007f3c003fc000-00007f3c003fd000 T
-> > adding pages: 00007f3c003fd000-00007f3c00400000 RW
-> > adding pages: 00007f3c00400000-00007f3c00401000 R
-> > adding pages: 00007f3c00401000-00007f3c00402000 RX
-> > adding pages: 00007f3c00402000-00007f3c00403000 R
-> > adding pages: 00007f3c00403000-00007f3c00404000 RW
-> > enclave initialized
-> > remapping: 00007f3c00000000-00007f3c00004000 R
-> > remapping: 00007f3c00004000-00007f3c0000c000 RW
-> > remapping: 00007f3c0000c000-00007f3c00039000 RX
-> > Error: Operation not permitted (os error 1)
-> >
-> > Using strace shows this:
-> > ...
-> > mmap(0x7f6e80000000, 16384, PROT_READ, MAP_SHARED|MAP_FIXED, 3, 0) =
-> > 0x7f6e80000000
-> > mmap(0x7f6e80004000, 32768, PROT_READ|PROT_WRITE,
-> > MAP_SHARED|MAP_FIXED, 3, 0) = 0x7f6e80004000
-> > mmap(0x7f6e8000c000, 184320, PROT_READ|PROT_EXEC,
-> > MAP_SHARED|MAP_FIXED, 3, 0) = -1 EPERM (Operation not permitted)
-> >
-> > We've followed the selftest structure pretty closely. The first two
-> > remapping calls succeed, but the third one fails. This works on
-> > 5.14.18, but fails on 5.15.6.
->
-> What are the mount options of /dev?
->
-> /Jarkko
+This does convey valuable information, though.  It tells the reader that
+this is a sub-optimal implementation.  It also acknowledges that there
+is further work to do.  Maybe saying that it is "deferred" is not quite
+the verbiage I would use, but the concept is fine.
+
