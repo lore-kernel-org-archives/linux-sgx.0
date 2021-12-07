@@ -2,34 +2,37 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7152AC433EF
-	for <linux-sgx@archiver.kernel.org>; Mon,  6 Dec 2021 23:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DA9C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Dec 2021 19:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377505AbhLFXkJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 6 Dec 2021 18:40:09 -0500
-Received: from mga09.intel.com ([134.134.136.24]:18012 "EHLO mga09.intel.com"
+        id S235679AbhLGTk2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 7 Dec 2021 14:40:28 -0500
+Received: from mga04.intel.com ([192.55.52.120]:24373 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1377500AbhLFXkI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Dec 2021 18:40:08 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="237243694"
-X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
-   d="scan'208";a="237243694"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 15:36:39 -0800
-X-IronPort-AV: E=Sophos;i="5.87,292,1631602800"; 
-   d="scan'208";a="579560028"
-Received: from svelidan-mobl.amr.corp.intel.com (HELO [10.209.112.71]) ([10.209.112.71])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 15:36:38 -0800
-Subject: Re: [PATCH] selftests/sgx: Fix corrupted cpuid macro invocation
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org
-References: <20211204202355.23005-1-jarkko@kernel.org>
- <c5792b66-4a27-0a62-bb75-6cc0c4219002@intel.com>
- <eb4a5d7a-64f4-bdf3-2d12-879607f914c3@intel.com>
- <c4257eaf-ecf8-ed35-aa67-5594005aa68c@intel.com>
+        id S231629AbhLGTkZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 7 Dec 2021 14:40:25 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="236407307"
+X-IronPort-AV: E=Sophos;i="5.87,295,1631602800"; 
+   d="scan'208";a="236407307"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 11:36:53 -0800
+X-IronPort-AV: E=Sophos;i="5.87,295,1631602800"; 
+   d="scan'208";a="515431114"
+Received: from yperng-mobl1.amr.corp.intel.com (HELO [10.209.19.84]) ([10.209.19.84])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 11:36:52 -0800
+Subject: Re: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX
+ memory in a NUMA node
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     reinette.chatre@intel.com, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+References: <20211116162116.93081-1-jarkko@kernel.org>
+ <20211116162116.93081-2-jarkko@kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -74,12 +77,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <81e45f9e-046c-c708-cb98-080cc19587c2@intel.com>
-Date:   Mon, 6 Dec 2021 15:36:36 -0800
+Message-ID: <f25d95e6-e129-597b-5d93-d7264feae8b8@intel.com>
+Date:   Tue, 7 Dec 2021 11:36:50 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <c4257eaf-ecf8-ed35-aa67-5594005aa68c@intel.com>
+In-Reply-To: <20211116162116.93081-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,13 +90,46 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/6/21 3:32 PM, Reinette Chatre wrote:
-> My concern is actually about the kselftest framework where I could not
-> answer the following question with certainty: why are there so many
-> usages of cpuid but everybody writes their own instead of including
-> cpuid.h? I am concerned that there are some environment constraints that
-> I am not familiar with and thus decided to follow the custom.
+On 11/16/21 8:21 AM, Jarkko Sakkinen wrote:
+> The amount of SGX memory on the system is determined by the BIOS and it
+> varies wildly between systems.  It can be from dozens of MB's on desktops
+> or VM's, up to many GB's on servers.  Just like for regular memory, it is
+> sometimes useful to know the amount of usable SGX memory in the system.
+> 
+> Introduce CONFIG_HAVE_ARCH_NODE_DEV_GROUP opt-in flag to expose an arch
+> specific attribute group, and add an attribute for the amount of SGX
+> memory in bytes to each NUMA node:
+> 
+> /sys/devices/system/node/nodeX/x86/sgx_total_bytes
 
-I'm probably guilty of a case or two.  There was no logic behind it,
-just that I took and out-of-tree test and plopped it into the kernel
-tree without looking for any selftest infrastructure.
+There's some context missing here:
+
+This serves the same function for SGX memory as /proc/meminfo or
+/sys/devices/system/node/nodeX/meminfo does for normal RAM.  It
+enumerates how much physical SGX memory is present so that you can size
+enclaves on different systems.
+
+This specific file (sgx_total_bytes) is needed today to help drive the
+SGX selftests.  The SGX selftests need to create overcommitted enclaves
+which are larger than the physical SGX memory on the system.  They
+currently use a CPUID-based approach which can diverge from the actual
+amount of SGX memory available.  This file ensures that the selftests
+can work efficiently and do not attempt stupid things like creating a
+100,000 MB enclave on a system with 128 MB  of SGX memory.
+
+The nodeX/x86 directory is used because SGX is highly x86-specific.
+It's very unlikely that any other architecture (or even non-Intel x86
+vendor) will ever implement SGX.  It needs its own directory (as opposed
+to being in the nodeX/ "root") because this is expected to be the first
+of a few different things that need to get exported.  This avoids
+cluttering the root with several "sgx_*" files.
+
+How many of these files will there be?  Just scanning /proc/meminfo,
+these are the no-brainers that we have for RAM, but we need for SGX:
+
+MemTotal:       xxxx kB // sgx_total_bytes (this patch)
+MemFree:        yyyy kB // sgx_free_bytes
+SwapTotal:      zzzz kB // sgx_swapped_bytes
+
+So, at *least* three.  I think we will eventually end up needing
+something more along the lines of a dozen.
