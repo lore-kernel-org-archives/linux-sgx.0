@@ -2,38 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19EDC433EF
-	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 05:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39338C433F5
+	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 05:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbhLKFbv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 11 Dec 2021 00:31:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbhLKFbu (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 00:31:50 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC5CC061714;
-        Fri, 10 Dec 2021 21:28:14 -0800 (PST)
+        id S229679AbhLKFng (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 11 Dec 2021 00:43:36 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:38922 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229502AbhLKFng (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 00:43:36 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 126EBB82AD3;
-        Sat, 11 Dec 2021 05:28:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615C0C004DD;
-        Sat, 11 Dec 2021 05:28:11 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4EABEB82AA5;
+        Sat, 11 Dec 2021 05:39:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C5CC004DD;
+        Sat, 11 Dec 2021 05:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639200491;
-        bh=DmF69SAhs/bhKdwrdHs+5LvgKoaOu6JAimdnFR5ocro=;
+        s=k20201202; t=1639201197;
+        bh=hwFn8av9NpYhRVc0lXY+IBn8be7Fk/0rfLSz20DagtE=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WxZNmaWs7+mM9QuqbhLVtfI1yU4Mes/oBQ2285eK/bpdqmKAMgziF4I0NTeeaQOlz
-         Sx9LteEDeZ/LDGHq1ujSCXZ2wtPLhED4moKs4iaoRhm5pShS9y9vYCvNbTwPLShnGI
-         uAxPZ7ZnZqJVnPVusuNm1nbOZfGIeCswmWWawn9qgyln6FKVOMYRnAb65KY//fnea+
-         UYgVqWaIgv/Co9BIpISfpYAJVVm91xsMjxF2fOmQaboV2av7XQfUaHrADoRKI24Alk
-         4+DKtxMVOzdEeH3WRsF0WNbCQWXH3c55X+NDjVrFrUuN40HZLrLUWwVcTgCOJWPO9S
-         nZcieBuoBoWFw==
-Message-ID: <b6eeb67d3be33767a4d52d8e2009817a90d91224.camel@kernel.org>
-Subject: Re: [PATCH 01/25] x86/sgx: Add shortlog descriptions to ENCLS
- wrappers
+        b=HLSkIJOs6fRJnyGs/82DPwZ+Oymo0iUb7oWWSok/1fFbhKDjQOHT3QjnlV/ZQ5zgp
+         tnMZcUU4EwXOAg7OgVKCIdHjMpWE5JX4BwGXKtrgSiRcET6/SNI++vQu0IkjewBgbM
+         KBdo2nztCmPLf0AewljKCQbRRHNht9LR3dtajurjFN6BQz/Fokc0s6PS1mfEGVTvVj
+         hqyHl0+gKUCGv5FTeBsf8SfxKzI2ghaSH111QEWV6HZhqdpMSFnimoPkOH+0u43cqp
+         75OdVSBaWUHjIFu8fW7AhUbZtNw78VtPVpMdyHZSoYlfrLyHj2cDB1f+cbwzJmjw5t
+         CssCXszHxpaqg==
+Message-ID: <bb7757c5b5cc3fe45e74cbee1ddafb9c71c4f4e1.camel@kernel.org>
+Subject: Re: [PATCH 03/25] x86/sgx: Support VMA permissions exceeding
+ enclave permissions
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
@@ -42,11 +39,12 @@ Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         cathy.zhang@intel.com, cedric.xing@intel.com,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Date:   Sat, 11 Dec 2021 07:28:08 +0200
-In-Reply-To: <b49ee68b-63c5-f8f8-ca2b-31663c3150f6@intel.com>
+Date:   Sat, 11 Dec 2021 07:39:54 +0200
+In-Reply-To: <81308f67-a4d1-1774-f58b-223d4e81f8db@intel.com>
 References: <cover.1638381245.git.reinette.chatre@intel.com>
-         <fd9ab4d760a2ea7a42ab9e60b9e19b8620abe11d.1638381245.git.reinette.chatre@intel.com>
-         <YauzxOEmmpeGF/K3@iki.fi> <b49ee68b-63c5-f8f8-ca2b-31663c3150f6@intel.com>
+         <7e622156315c9c22c3ef84a7c0aeb01b5c001ff9.1638381245.git.reinette.chatre@intel.com>
+         <Yavq83gZzvkVaDqq@iki.fi> <YavrSFDJBGqe7K46@iki.fi>
+         <81308f67-a4d1-1774-f58b-223d4e81f8db@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.42.2 
@@ -55,102 +53,72 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2021-12-06 at 13:13 -0800, Reinette Chatre wrote:
-> > * "Create an SECS page in the Enclave Page Cache (EPC)"
-> > * "Add a Version Array (VA) page to the Enclave Page Cache (EPC)"
-> >=20
-> > They should have similar descriptions, e.g.
-> >=20
-> > * "Initialize an EPC page into SGX Enclave Control Structure (SECS) pag=
-e."
-> > * "Initialize an EPC page into Version Array (VA) page."
+On Mon, 2021-12-06 at 13:16 -0800, Reinette Chatre wrote:
+> Hi Jarkko,
 >=20
-> Will do. Did you intentionally omit the articles or would you be ok if I=
+> On 12/4/2021 2:27 PM, Jarkko Sakkinen wrote:
+> > On Sun, Dec 05, 2021 at 12:25:59AM +0200, Jarkko Sakkinen wrote:
+> > > On Wed, Dec 01, 2021 at 11:23:01AM -0800, Reinette Chatre wrote:
+> > > > =3D=3D=3D Summary =3D=3D=3D
+> > > >=20
+> > > > An SGX VMA can only be created if its permissions are the same or
+> > > > weaker than the Enclave Page Cache Map (EPCM) permissions. After VM=
+A
+> > > > creation this rule continues to be enforced by the page fault handl=
+er.
+> > > >=20
+> > > > With SGX2 the EPCM permissions of a page can change after VMA
+> > > > creation resulting in the VMA exceeding the EPCM permissions and th=
+e
+> > > > page fault handler incorrectly blocking access.
+> > > >=20
+> > > > Enable the VMA's pages to remain accessible while ensuring that
+> > > > the page table entries are installed to match the EPCM permissions
+> > > > without exceeding the VMA perms issions.
+> > >=20
+> > > I don't understand what the short summary means in English, and the
+> > > commit message is way too bloated to make any conclusions. It really
+> > > needs a rewrite.
+> > >=20
+> > > These were the questions I could not find answer for:
+> > >=20
+> > > 1. Why it would be by any means safe to remove a permission check?
+>=20
+> The permission check is redundant for SGX1 and incorrect for SGX2.
+>=20
+> In the current SGX1 implementation the permission check in=20
+> sgx_encl_load_page() is redundant because an SGX VMA can only be created=
 =20
-> change it to:
+> if its permissions are the same or weaker than the EPCM permissions.
 >=20
-> "Initialize an EPC page into an SGX Enclave Control Structure (SECS) page=
-."
-> "Initialize an EPC page into a Version Array (VA) page."
->=20
-> I also notice that you prefer the comments to end with a period and I=20
-> will do so for all in the next version.
-
-Looks fine to me.
-
-> > > +/* Extend uninitialized enclave measurement */
-> > >   static inline int __eextend(void *secs, void *addr)
-> > >   {
-> > >   	return __encls_2(EEXTEND, secs, addr);
-> > >   }
-> >=20
-> > That description does not make __eextend any less cryptic.
-> >=20
-> > Something like this would be already more informative:
-> >=20
-> > /* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
->=20
-> Thank you, I will use this description.
->=20
-> >=20
-> > This same remark applies to the rest of these comments. They should
-> > provide a clue what the wrapper does rather than an English open coded
-> > function name.
->=20
-> Please see below for another attempt that includes your proposed changes=
+> In SGX2 a user is able to change EPCM permissions during runtime (while=
 =20
-> so far. What do you think?
->=20
-> __ecreate():
-> /* Initialize an EPC page into an SGX Enclave Control Structure (SECS)=
+> VMA has the memory mapped). A RW VMA may thus originally have mapped an=
 =20
-> page. */
+> enclave page with RW EPCM permissions but since then the enclave page=20
+> may have its permissions changed to read-only. The VMA should still be=
+=20
+> able to read those enclave pages but the check in sgx_encl_load_page()=
+=20
+> will prevent that.
 >=20
-> __eextend():
-> /* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
+> > > 2. Why not re-issuing mmap()'s is unfeasible? I.e. close existing
+> > >     VMA's and mmap() new ones.
 >=20
-> __eadd():
-> /* Copy a source page from non-enclave memory into the EPC. */
-
-Perhaps:
-
-/*=C2=A0
- * Associate an EPC page to an enclave either as a REG or TCS page
- * populated with the provided data.
- */
-
-This is more aligned with your description for __eremove().
-
+> User is not prevented from closing existing VMAs and creating new ones.
 >=20
-> __einit():
-> /* Finalize enclave build, initialize enclave for user code execution */
+> > 3. Isn't this an API/ABI break?
 >=20
-> __eremove():
-> /* Disassociate EPC page from its enclave and mark it as unused. */
->=20
-> __edbgwr():
-> /* Copy data to an EPC page belonging to a debug enclave. */
->=20
-> __edbgrd():
-> /* Copy data from an EPC page belonging to a debug enclave. */
->=20
-> __etrack():
-> /* Track that software has completed the required TLB address clears. */
->=20
-> __eldu():
-> /* Load, verify, and unblock an Enclave Page Cache (EPC) page. */
->=20
-> __eblock():
-> /* Make EPC page inaccessible to enclave, ready to be written to memory. =
-*/
->=20
-> __epa():
-> /* Initialize an EPC page into a Version Array (VA) page. */
->=20
-> __ewb():
-> /* Invalidate an EPC page and write it out to main memory. */
->=20
+> Could you please elaborate where you see the API/ABI break? The rule=20
+> that new VMAs cannot exceed EPCM permissions is untouched.
 >=20
 > Reinette
+
+I just don't understand the description. There's a whole bunch of text
+but=20
+
+It does not discuss what the patch does in low-level detail what the
+patch does, e.g. the use of vm_insert_pfn_prot(). I honestly do not
+get the story here...
 
 /Jarkko
