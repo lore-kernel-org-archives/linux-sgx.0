@@ -2,237 +2,110 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28074C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 15:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE03C433EF
+	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 15:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbhLKPde (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 11 Dec 2021 10:33:34 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:52910 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229836AbhLKPde (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 10:33:34 -0500
+        id S231317AbhLKPgk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 11 Dec 2021 10:36:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229836AbhLKPgk (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 10:36:40 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7622C061714;
+        Sat, 11 Dec 2021 07:36:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A7264CE0955;
-        Sat, 11 Dec 2021 15:33:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 232C1C004DD;
-        Sat, 11 Dec 2021 15:33:29 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 63688CE094C;
+        Sat, 11 Dec 2021 15:36:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3763C004DD;
+        Sat, 11 Dec 2021 15:36:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639236810;
-        bh=rM8KSxLDKIm9uW4S8GMq6JH5JdBGz8KBbko7xHOzWCQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mo0/ikL0uo98UzoWu44jo33ad1TbCyVGtAWUbL676XiwSDlh2zjO3Y0BZgr7JsicZ
-         u+mfWL0M5e/NgZr7/n0juppDxY38zF7PGX7xkjepL9YLKawSXE3CYqRAvXyBeDqmpr
-         n/HexAlpp7CLtJO3f6UVA/189uJifijmVDethRhi10qjvPzcJorEtIlU8RkzqR4Z4v
-         P+M5IV09h1X8ay0PICi1heTClLNQeXMdWXaGJk6avtnVRRcDSToRd/dYjb+G1LVdfW
-         lT+/IJnw2xTrEN30v0nzvOapvP2h7yaUhW40xJ4i0+F+8b5YAjuTyU9GvozLjqv1sH
-         zq2FPaGaRW0cQ==
+        s=k20201202; t=1639236995;
+        bh=cF1A5jbPqge4rANTbCPUUfKutHCzr7QR7uCHRv4qXi0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=j6Qk1xF7jgVkoGnjV3SqPCZ5dkkRFjKppH4Xd4AlQ13H7eaZOIt+UV/oS6a5fKGED
+         OFqSAuEXDMjRTzTEV2x3u0tO7nF1saG4+Jx6Hv28l8hGImmW3W0jyuCCAw1FFzR53n
+         yMPPm6f29MK9zT+NN6Ma7WxrJogXAKOQvpNJqpETjSAuMSLQME6/T8kqYAzVkZdCxq
+         yuu/XjMdExdC7ABaEWKd2LZypFCLW9B/PsjSs1caCO67hvYV1WCMYvufcCOOJpHnVw
+         ZZbMQXMde5/4l0d15pvXyhaEX/tGRB8ySSOD0fvEMGucOoiuwRje3elVaOJe+d7cU5
+         sw+ydLt/q0dIA==
+Message-ID: <d6ec8429763db7ddba42d9ff658a929b274f2711.camel@kernel.org>
+Subject: Re: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX
+ memory in a NUMA node
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        nathaniel@profian.com, Reinette Chatre <reinette.chatre@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH v11] sgx.7: New page with overview of Software Guard eXtensions (SGX)
-Date:   Sat, 11 Dec 2021 17:33:20 +0200
-Message-Id: <20211211153320.17438-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.34.1
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     reinette.chatre@intel.com, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Date:   Sat, 11 Dec 2021 17:36:31 +0200
+In-Reply-To: <f25d95e6-e129-597b-5d93-d7264feae8b8@intel.com>
+References: <20211116162116.93081-1-jarkko@kernel.org>
+         <20211116162116.93081-2-jarkko@kernel.org>
+         <f25d95e6-e129-597b-5d93-d7264feae8b8@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.42.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v11:
-* Address Reinette's remarks for v10:
-  https://lore.kernel.org/linux-sgx/8f84b8e8-b478-bb81-4aa8-536df882a144@intel.com/
-v10:
-* v9 was malformed, essentially a resend.
-v9:
-* Rename "Address Space" section as "Memory mapping", and refine the
-  text.
-* Rename "Ioctls" section as "Construction", and refine the text.
-v8:
-* Fix errors reported for the previous version.
-v7:
-* Added more meat about the address space and API.
-* Reorganized the text to have focus more on developer to have a big
-  picture of kernel provided interfaces.
-v6:
-* Small fixes based on Dave's and Reinette's feedback.
-* Extended the "Permissions" section to cover mmap()
-v5:
-* Taking away hardware concepts and focusing more on the interface.
-v4:
-* Did a heavy edit trying to streamline the story a bit and focus on
-  stuff important to the user (e.g. lighten up x86 details).
-v3:
-* Overhaul based on Michael's comments. Most likely needs to be refined
-  in various places but this is at least a small step forward for sure.
-v2:
-* Fixed the semantic newlines convention and various style errors etc.
-  that were reported by Alenjandro and Michael.
-* SGX was merged to v5.
----
- man7/sgx.7 | 146 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 146 insertions(+)
- create mode 100644 man7/sgx.7
+On Tue, 2021-12-07 at 11:36 -0800, Dave Hansen wrote:
+> On 11/16/21 8:21 AM, Jarkko Sakkinen wrote:
+> > The amount of SGX memory on the system is determined by the BIOS and it
+> > varies wildly between systems.  It can be from dozens of MB's on deskto=
+ps
+> > or VM's, up to many GB's on servers.  Just like for regular memory, it =
+is
+> > sometimes useful to know the amount of usable SGX memory in the system.
+> >=20
+> > Introduce CONFIG_HAVE_ARCH_NODE_DEV_GROUP opt-in flag to expose an arch
+> > specific attribute group, and add an attribute for the amount of SGX
+> > memory in bytes to each NUMA node:
+> >=20
+> > /sys/devices/system/node/nodeX/x86/sgx_total_bytes
+>=20
+> There's some context missing here:
+>=20
+> This serves the same function for SGX memory as /proc/meminfo or
+> /sys/devices/system/node/nodeX/meminfo does for normal RAM.  It
+> enumerates how much physical SGX memory is present so that you can size
+> enclaves on different systems.
+>=20
+> This specific file (sgx_total_bytes) is needed today to help drive the
+> SGX selftests.  The SGX selftests need to create overcommitted enclaves
+> which are larger than the physical SGX memory on the system.  They
+> currently use a CPUID-based approach which can diverge from the actual
+> amount of SGX memory available.  This file ensures that the selftests
+> can work efficiently and do not attempt stupid things like creating a
+> 100,000 MB enclave on a system with 128 MB  of SGX memory.
+>=20
+> The nodeX/x86 directory is used because SGX is highly x86-specific.
+> It's very unlikely that any other architecture (or even non-Intel x86
+> vendor) will ever implement SGX.  It needs its own directory (as opposed
+> to being in the nodeX/ "root") because this is expected to be the first
+> of a few different things that need to get exported.  This avoids
+> cluttering the root with several "sgx_*" files.
+>=20
+> How many of these files will there be?  Just scanning /proc/meminfo,
+> these are the no-brainers that we have for RAM, but we need for SGX:
+>=20
+> MemTotal:       xxxx kB // sgx_total_bytes (this patch)
+> MemFree:        yyyy kB // sgx_free_bytes
+> SwapTotal:      zzzz kB // sgx_swapped_bytes
+>=20
+> So, at *least* three.  I think we will eventually end up needing
+> something more along the lines of a dozen.
 
-diff --git a/man7/sgx.7 b/man7/sgx.7
-new file mode 100644
-index 000000000..0b5aa87e9
---- /dev/null
-+++ b/man7/sgx.7
-@@ -0,0 +1,146 @@
-+.\" Copyright (C) 2021 Intel Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
-+.PP
-+sgx - overview of Software Guard eXtensions
-+.SH SYNOPSIS
-+.EX
-+.B #include <asm/sgx.h>
-+.PP
-+.IB enclave " = open(""/dev/sgx_enclave"", O_RDWR);"
-+.EE
-+.SH DESCRIPTION
-+Intel Software Guard eXtensions (SGX) allow applications to host
-+enclaves,
-+protected executable objects in memory.
-+.PP
-+Enclaves are blobs of executable code,
-+running inside a CPU enforced container,
-+which is mapped to the process address space.
-+They are represented as the instances of
-+.IR /dev/sgx_enclave .
-+They have a fixed set of entry points,
-+defined when the enclave is built.
-+.PP
-+SGX can only be available if the kernel is configured and built with the
-+.B CONFIG_X86_SGX
-+option.
-+If CPU, BIOS and kernel have SGX enabled,
-+.I sgx
-+appears in the
-+.I flags
-+field of
-+.IR /proc/cpuinfo .
-+.PP
-+If SGX appears not to be available,
-+ensure that SGX is enabled in the BIOS.
-+If a BIOS presents a choice between
-+.I Enabled
-+and
-+.I Software Enabled
-+modes for SGX,
-+choose
-+.IR Enabled .
-+.PP
-+.SS Memory mapping
-+The file descriptor for an enclave can be shared among multiple processes.
-+An enclave is required by the CPU to be placed to an address,
-+which is a multiple of its size.
-+An address range containing a reasonable base address can be probed with an anonymous
-+.BR mmap(2)
-+call:
-+.PP
-+.EX
-+void *area = mmap(NULL, size * 2, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
-+                  -1, 0);
-+
-+void *base = ((uint64_t)area + size - 1) & ~(size - 1);
-+.EE
-+.PP
-+The enclave file descriptor itself can be then mapped with the
-+.BR MAP_FIXED
-+flag set to the carved out memory.
-+.SS Construction
-+An enclave instance is created by opening
-+.IR /dev/sgx_enclave .
-+Its contents are populated with the
-+.BR ioctl (2)
-+interface in
-+.IR <asm/sgx.h> :
-+.TP
-+.IB SGX_IOC_ENCLAVE_CREATE
-+Create SGX Enclave Control Structure (SECS) for the enclave.
-+SECS is a hardware defined structure,
-+which contains the global properties of an enclave.
-+.IB SGX_IOC_ENCLAVE_CREATE
-+is a one-shot call that fixes the enclave's address and
-+size for the rest of its life-cycle.
-+.TP
-+.IB SGX_IOC_ENCLAVE_ADD_PAGES
-+Fill a range of the enclave's pages with the caller provided data and protection bits.
-+Memory mappings of the enclave can only set protection bits that are defined in this ioctl.
-+The pages added are either regular pages for code and data,
-+or thread control structures (TCS).
-+The latter define the entry points to the enclave,
-+which can be entered after the initialization.
-+.TP
-+.IB SGX_IOC_ENCLAVE_INIT
-+Initialize the enclave for the run-time.
-+After a successful initialization,
-+no new pages can be added to the enclave.
-+.SS Invocation
-+Thread control structure (TCS) pages are the entry points to the enclave,
-+which further define an offset inside the enclave where the execution begins.
-+The entry points are invoked with
-+.IR __vdso_sgx_enter_enclave .
-+The prototype for the vDSO is defined by
-+.BR vdso_sgx_enter_enclave_t
-+in
-+.IR <asm/sgx.h> .
-+.SS Permissions
-+.PP
-+During the build process each enclave page is assigned protection bits,
-+as part of
-+.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES).
-+These protections are also the maximum protections with which the page can be be mapped.
-+If
-+.BR mmap (2)
-+is called with higher protections than those defined during the build,
-+it will return
-+.B -EACCES.
-+If
-+.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES)
-+is called after
-+.BR mmap (2)
-+with lower protections,
-+the caller receives
-+.BR SIGBUS,
-+once it accesses the page for the first time.
-+.SH VERSIONS
-+The SGX feature was added in Linux 5.11.
-+.SH SEE ALSO
-+.BR ioctl (2),
-+.BR mmap (2),
-+.BR mprotect (2)
--- 
-2.34.1
+These three I've had in mind for the moment. The latter two will be
+trivial to add now that we have pattern how to add the sysfs attribute
+in the correct way.
 
+/Jarkko
