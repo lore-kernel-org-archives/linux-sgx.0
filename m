@@ -2,43 +2,48 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA09C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 04:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E99CC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 05:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbhLKFB5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 11 Dec 2021 00:01:57 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:54102 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbhLKFB5 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 00:01:57 -0500
+        id S229548AbhLKFU5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 11 Dec 2021 00:20:57 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:40108 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229477AbhLKFU4 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 00:20:56 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 39B35B82780
-        for <linux-sgx@vger.kernel.org>; Sat, 11 Dec 2021 04:58:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52377C004DD;
-        Sat, 11 Dec 2021 04:58:18 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 7EE5BCE2F24;
+        Sat, 11 Dec 2021 05:17:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B93AC004DD;
+        Sat, 11 Dec 2021 05:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639198698;
-        bh=r8c5LoyxG/k/ugKEOQqBPhRyTkH1ZStW7dba6YhGgwM=;
+        s=k20201202; t=1639199837;
+        bh=qJhikgXWzaoyJDcutq52oBBNAeenNWQANF7cPpNbU0M=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PQ2wTlKmndxf03d7rBjvwGeRFGLPCevXwPTU1OAww4aqgzaBnKCH0sVIVzRBMFEey
-         J6nl11uGrcVeVPpoBFuQhkqLd46MgB6Sg7Z3kZ24IUA/jTCCY1vspCzaFXfQSr700f
-         VsdiM7MAGqau7RvwIQ7nw2cRmNxMJZCiuM5wH5SM5MPdyLCnn/PEwoRGJmvZCnDhtW
-         WEBh1Swr7XfEMgHF2vuF4nToYd77LiCO2icca4tqTA2N08R58LYmwMMZ5s069YkGwm
-         2Cj13xGvi5vVWeQliRe80Z0bnGBpGby6L3yCMgN+Z/MM+GAggpziCWs8NSQh4cZ+oG
-         Z4h9EJOyQXTUg==
-Message-ID: <feb490bec9ae7d3386dde183941225fab6fe588e.camel@kernel.org>
-Subject: Re: Possible Regression: 5.14.18 => 5.15.6
+        b=n+zj0+bE7v6iDCAcZSsr1U5X0CDJ1DktplwqX0bxON+sDN/w86rNaeR4a9q+2g4uj
+         tFIc6iNtwXFfLEyrKrOKFY66maabggwaQHmJogN/UjJ4pXRRq+9UiHJoGQY0hNJC2Q
+         fqasI0pf67J1jNIu6Qb8Gjz/N5oo1Q8jRXQRsd2oZuJaX1Fw3lF/7PtCJiyKYavux4
+         9Ayja/XQH0tdpDIoeyRwB6cftKoiEa/CSoleWKxZ8BHNfRPsqSr/cTXWrdE//aTvKk
+         1NoTIKf2VXUQS3LfL4IA+3T9QzQNCIX9XfhrhjiInXPb6Zq/tc2WaCtouY2U8vU6iw
+         8hTmHl6MB3I4A==
+Message-ID: <dc1db094f94e2b4db58f5f3dce384f6967dd4168.camel@kernel.org>
+Subject: Re: [PATCH 10/25] x86/sgx: Support enclave page permission changes
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Nathaniel McCallum <nathaniel@profian.com>
-Cc:     linux-sgx@vger.kernel.org,
+To:     Dave Hansen <dave.hansen@intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>
-Date:   Sat, 11 Dec 2021 06:58:14 +0200
-In-Reply-To: <CAHAy0tS7Xons5b7dVMEdhrzAhcUL0zKfiGy7OpTD9SrppQcYVA@mail.gmail.com>
-References: <CAHAy0tS9PXgb4cRFEZNEYpiwPVV3CpBRFQhbFN=+XXy=MQakRg@mail.gmail.com>
-         <YavT0+e/GoK8gsKu@iki.fi>
-         <CAHAy0tS7Xons5b7dVMEdhrzAhcUL0zKfiGy7OpTD9SrppQcYVA@mail.gmail.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 11 Dec 2021 07:17:13 +0200
+In-Reply-To: <925629af-8cb3-c3c7-35ca-52d30beb984d@intel.com>
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+         <44fe170cfd855760857660b9f56cae8c4747cc15.1638381245.git.reinette.chatre@intel.com>
+         <Yav0/3jeJsuT3yEq@iki.fi> <925629af-8cb3-c3c7-35ca-52d30beb984d@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.42.2 
@@ -47,14 +52,24 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, 2021-12-05 at 08:09 -0500, Nathaniel McCallum wrote:
-> That was it! We had switched to debian for our work on SGX2 and they
-> use noexec. Thanks!
+On Mon, 2021-12-06 at 12:19 -0800, Dave Hansen wrote:
+> On 12/4/21 3:08 PM, Jarkko Sakkinen wrote:
+> > > Enclave page permission changes need to be approached with care and
+> > > for this reason this initial support is to allow enclave page
+> > > permission changes _only_ if the new permissions are the same or
+> > > more restrictive that the permissions originally vetted at the time t=
+he
+> > > pages were added to the enclave. Support for extending enclave page
+> > > permissions beyond what was originally vetted is deferred.
+> > This paragraph is out-of-scope for a commit message. You could have
+> > this in the cover letter but not here. I would just remove it.
+>=20
+> This does convey valuable information, though.  It tells the reader that
+> this is a sub-optimal implementation.  It also acknowledges that there
+> is further work to do.  Maybe saying that it is "deferred" is not quite
+> the verbiage I would use, but the concept is fine.
 
-OK, great!
-
-I just submitted PR for /dev/sgx_vepc:
-
-https://github.com/systemd/systemd/pull/21732/checks
+BTW, should we consistently speak about protection bits instead of
+permissions?
 
 /Jarkko
