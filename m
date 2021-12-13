@@ -2,146 +2,117 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7831C433EF
-	for <linux-sgx@archiver.kernel.org>; Sat, 11 Dec 2021 15:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D5DC433F5
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Dec 2021 17:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231337AbhLKPh4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 11 Dec 2021 10:37:56 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:54920 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbhLKPhw (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Dec 2021 10:37:52 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8A495B80AD2;
-        Sat, 11 Dec 2021 15:37:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB725C004DD;
-        Sat, 11 Dec 2021 15:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639237070;
-        bh=ezOXs6CcJHDlycNj8lmQU7rq1j6Bz02x9rKOsPw8OgE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=A7oGnlOMw//1MxT92AF6CRcLDc+qYZ13y96+6IjTymZPMxDZ0jMx6GOn6AYu+gb+y
-         oG0Lxs5rXlOCCJDACsCPts5OTscst3mt8f5Eismwsji2y0F2kh/557Yi5AwVYIaIXO
-         uPzqJCZ8mWlIAqvzlW/0HvwcltgjPA5Nl23gN8TioSLo7RLewimtpup9wJqaSR6N73
-         2upqBdhuMfnK8Eqo10fD4k3Zu4HJp5wOaMyvI8mLI9Z68IWgjdzSuaz7NFwsrRB0OB
-         k/+TSiH9cXpUcFRiMSnG9lGbYhRLV2lmo7DG3yAvQ1lPPQO/PSyMBPivTxDPzNVhim
-         oqOI9qzBm0jYg==
-Message-ID: <233a2fa4355b060361b9e9a6dc98b3175d1143fb.camel@kernel.org>
-Subject: Re: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX
- memory in a NUMA node
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, reinette.chatre@intel.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Date:   Sat, 11 Dec 2021 17:37:46 +0200
-In-Reply-To: <32abd0a7-bc3c-f7a7-3330-8287ef05131c@intel.com>
-References: <20211116162116.93081-1-jarkko@kernel.org>
-         <20211116162116.93081-2-jarkko@kernel.org>
-         <f25d95e6-e129-597b-5d93-d7264feae8b8@intel.com> <YbCEl9kqhTz2iOY2@zn.tnic>
-         <32abd0a7-bc3c-f7a7-3330-8287ef05131c@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.42.2 
+        id S237297AbhLMRno (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 13 Dec 2021 12:43:44 -0500
+Received: from mga17.intel.com ([192.55.52.151]:15386 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234226AbhLMRno (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 13 Dec 2021 12:43:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639417423; x=1670953423;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=dueVn40VBiXuZM12Hm490PDfqc2WxRDefTyn6lDCgd8=;
+  b=EEbMMdGmFSJKhe1xihFEp7FpNG6sBojxsBzZn7M8n1fH2nd3QWQAgLDU
+   UlsCyWpvvRsdho7hcc7OBBdwPeBQ+HSmqxKbi8ZgpllMS/tx0OEiGlnw/
+   RekDtuxHf0LABgwzp5OEndR3mJcCBs3fp51QjPOuLMADLDD8CKgAaNRFb
+   GYd9tLjPF0WjV+Efq0379pnn9xduNtOaf0px8SmtAKKm2sS/pHMGv7mPl
+   Db+Dx84soGyjOEiH9YD19TVoT/zu+0z3yJR4bg/pIXLqGs3w6Ch5iQY2M
+   WXsm+8LJQ5E2jSO7xDSjMjB+dhldopHPUVvcTMwW/ZlMjBARWlb9uBhGG
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="219469020"
+X-IronPort-AV: E=Sophos;i="5.88,203,1635231600"; 
+   d="scan'208";a="219469020"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 09:43:42 -0800
+X-IronPort-AV: E=Sophos;i="5.88,203,1635231600"; 
+   d="scan'208";a="752343182"
+Received: from chenb-mobl1.amr.corp.intel.com (HELO [10.212.210.237]) ([10.212.210.237])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 09:43:40 -0800
+Subject: Re: [PATCH 16/25] x86/sgx: Support modifying SGX page type
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <c0f04a8f7e1afd9e9319bb9f283db9a3187f7abc.1638381245.git.reinette.chatre@intel.com>
+ <Yav9g4+L8zg48DRf@iki.fi> <dc74a876-54fe-5caa-6602-8887cfe34315@intel.com>
+ <2a269a4dde2976f7aaf17de9c4a7fca3552e9c7a.camel@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <0fb14185-5cc3-a963-253d-2e119b4a52bb@intel.com>
+Date:   Mon, 13 Dec 2021 09:43:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <2a269a4dde2976f7aaf17de9c4a7fca3552e9c7a.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 2021-12-08 at 11:38 -0800, Dave Hansen wrote:
-> I reworked the changelog quite a bit, addressing some of Borislav's
-> questions.  No code changes, though.
->=20
-> The result is below.  I've retained Greg's ack.  I'll stick this in
-> tip/x86/sgx if this looks OK to everyone.
->=20
-> ---
->=20
-> From: Jarkko Sakkinen <jarkko@kernel.org>
->=20
-> =3D=3D Problem =3D=3D
->=20
-> The amount of SGX memory on a system is determined by the BIOS and it
-> varies wildly between systems.  It can be as small as dozens of MB's
-> and as large as many GB's on servers.  Just like how applications need
-> to know how much regular RAM is available, enclave builders need to
-> know how much SGX memory an enclave can consume.
->=20
-> =3D=3D Solution =3D=3D
->=20
-> Introduce a new sysfs file:
->=20
-> 	/sys/devices/system/node/nodeX/x86/sgx_total_bytes
->=20
-> to enumerate the amount of SGX memory available in each NUMA node.
-> This serves the same function for SGX as /proc/meminfo or
-> /sys/devices/system/node/nodeX/meminfo does for normal RAM.
->=20
-> 'sgx_total_bytes' is needed today to help drive the SGX selftests.
-> SGX-specific swap code is exercised by creating overcommitted enclaves
-> which are larger than the physical SGX memory on the system.  They
-> currently use a CPUID-based approach which can diverge from the actual
-> amount of SGX memory available.  'sgx_total_bytes' ensures that the
-> selftests can work efficiently and do not attempt stupid things like
-> creating a 100,000 MB enclave on a system with 128 MB of SGX memory.
->=20
-> =3D=3D Implementation Details =3D=3D
->=20
-> Introduce CONFIG_HAVE_ARCH_NODE_DEV_GROUP opt-in flag to expose an
-> arch specific attribute group, and add an attribute for the amount of
-> SGX memory in bytes to each NUMA node:
->=20
-> =3D=3D ABI Design Discussion =3D=3D
->=20
-> As opposed to the per-node ABI, a single, global ABI was considered.
-> However, this would prevent enclaves from being able to size
-> themselves so that they fit on a single NUMA node.  Essentially, a
-> single value would rule out NUMA optimizations for enclaves.
->=20
-> Create a new "x86/" directory inside each "nodeX/" sysfs directory.
-> 'sgx_total_bytes' is expected to be the first of at least a few
-> sgx-specific files to be placed in the new directory.  Just scanning
-> /proc/meminfo, these are the no-brainers that we have for RAM, but we
-> need for SGX:
->=20
-> 	MemTotal:       xxxx kB // sgx_total_bytes (implemented here)
-> 	MemFree:        yyyy kB // sgx_free_bytes
-> 	SwapTotal:      zzzz kB // sgx_swapped_bytes
->=20
-> So, at *least* three.  I think we will eventually end up needing
-> something more along the lines of a dozen.  A new directory (as
-> opposed to being in the nodeX/ "root") directory avoids cluttering the
-> root with several "sgx_*" files.
->=20
-> Place the new file in a new "nodeX/x86/" directory because SGX is
-> highly x86-specific.  It is very unlikely that any other architecture
-> (or even non-Intel x86 vendor) will ever implement SGX.  Using "sgx/"
-> as opposed to "x86/" was also considered.  But, there is a real chance
-> this can get used for other arch-specific purposes.
->=20
-> [ dhansen: rewrite changelog ]
->=20
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Link: https://lkml.kernel.org/r/20211116162116.93081-2-jarkko@kernel.org
-> ---
->  Documentation/ABI/stable/sysfs-devices-node |  6 ++++++
->  arch/Kconfig                                |  4 ++++
->  arch/x86/Kconfig                            |  1 +
->  arch/x86/kernel/cpu/sgx/main.c              | 20 ++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/sgx.h               |  1 +
->  drivers/base/node.c                         |  3 +++
->  include/linux/numa.h                        |  4 ++++
->  7 files changed, 39 insertions(+)
+On 12/11/21 12:02 AM, Jarkko Sakkinen wrote:
+> On Mon, 2021-12-06 at 13:48 -0800, Reinette Chatre wrote:
+>>> I'd suggest to change this as SGX_IOC_ENCLAVE_MODIFY_TYPE.
+>> How about SGX_IOC_ENCLAVE_MOD_TYPE to be consistent with your earlier 
+>> suggestion of SGX_IOC_ENCLAVE_MOD_PROTECTIONS ?
+> I think it would be best to introduce only one new ioctl that would
+> be capable of doing either operation (and use secinfo as a vessel
+> for additional data).
 
-Thank you! Looks good to me.
+Why?
 
-/Jarkko
-
+I don't think we should try to multiplex within an ioctl().  Just create
+a second ioctl().
