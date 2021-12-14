@@ -2,107 +2,143 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4D5C4332F
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Dec 2021 19:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1A3C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 14 Dec 2021 20:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237405AbhLNT0V (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 14 Dec 2021 14:26:21 -0500
-Received: from mga09.intel.com ([134.134.136.24]:13340 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234275AbhLNT0U (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 14 Dec 2021 14:26:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639509980; x=1671045980;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=XSV+YeNkdlLKpNceb+MMS4Z9fxagz4iZ7SepDSjjwo4=;
-  b=E8DoUiWyhFu/UkmYo142yy1f3om1PiWywwN0NY/ZYWkd9FdTc5U37AV1
-   ogM4g0MhqzYM3JUczMIlpGiPhVk7wmOjNEataMNaQNT0kduXDg3wQbL7s
-   kMbr7reUqIbrAi6NxcZOUCK8ngvbdjZImCeEx1/0lWXGszRPTbiKUIsIK
-   zUvMnBqDX1WMhh3ojDHEkwr8WG7QiTs1zufKCFjgfxMLbgu8pO9TNmDej
-   YqYcAri3DNM1Amp25PwjXDM4pOs9R1xsPj0q0HYuRTpcXSs6+KDjU6iQR
-   tYy+i3RUp/UMFNFJg/qaoF1mdlCPVFo4XGDvPIc9ctAty9yeTjQAbEDOf
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="238879370"
-X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
-   d="scan'208";a="238879370"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 11:26:20 -0800
-X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
-   d="scan'208";a="518416029"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 11:26:19 -0800
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     dave.hansen@linux.intel.com, jarkko@kernel.org,
+        id S237590AbhLNUK6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 14 Dec 2021 15:10:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229795AbhLNUK6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 14 Dec 2021 15:10:58 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D41C06173E
+        for <linux-sgx@vger.kernel.org>; Tue, 14 Dec 2021 12:10:58 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id x10so26303375ioj.9
+        for <linux-sgx@vger.kernel.org>; Tue, 14 Dec 2021 12:10:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aafqAbN1umCKsy+eoUr3Ub+q/hrUYaM2Oh/sRwwhJr8=;
+        b=A3b3Melkvt0PCYRbdzuFHHduWmt+ur9YqPTbtAMv72E+6BSN1IaA/vsMwzHxfr/RnB
+         AD/vFl1ujmbKZvNPw+zmBTWg4OcPcPI1zCW1zgFPlkCMDR68IwqW+cCJT9lkNDxFJL1Y
+         PjB0Qhs+ejxqe5nrYjFf2EsxkoVtfj/uJz74A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aafqAbN1umCKsy+eoUr3Ub+q/hrUYaM2Oh/sRwwhJr8=;
+        b=ER2l4KLavKMuYIPru7werpJeJfFhD9wLLAkVbgT9c76/OAeAJ+7sKaba88MszUbSDF
+         Zos6uzwBx9qyykKdAlPNTcSYTzWN36wv7ChJAbSwvE6hoFfCeADeX3q68IZdHpNbuuQ9
+         AHe7C3Z4qalGG9qekCeMaPo+mNuWm4Ohp+7eL5SBgsBMN/qBTAimbXZQg90XsRDJbYj3
+         UDXjlY00Nhoezl8VWOHwowV8Xbs3lgkKTHsPc78wJ4GzCnuP+Nkj/sbM1kc54OjjZCmw
+         kveg2d3btUmj98aMIDVQhAytBOJmGVOh1WSYTEafUGTTDt2NzJQ8khshfgA9WcUK/raj
+         Erkw==
+X-Gm-Message-State: AOAM531/DIa6PZN13VsJGuejyqrZOxJEniWvrDtdBi4J7rSZBF/Q7lG6
+        1CZYf2esbvbUZKV5GIb7kNxGgg==
+X-Google-Smtp-Source: ABdhPJwNO/Sithe2Kktml/StLgHLdP/RJb+RQrKfKSIlt+H/eA7OYRCpr+N8hUj+cmnL7Uzkz1hi5g==
+X-Received: by 2002:a05:6602:2acc:: with SMTP id m12mr5020000iov.107.1639512657258;
+        Tue, 14 Dec 2021 12:10:57 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id g7sm406692iln.67.2021.12.14.12.10.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Dec 2021 12:10:56 -0800 (PST)
+Subject: Re: [PATCH V2] selftests/sgx: Fix build error caused by missing
+ dependency
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        dave.hansen@linux.intel.com, jarkko@kernel.org,
         linux-sgx@vger.kernel.org, shuah@kernel.org
-Cc:     linux-kselftest@vger.kernel.org
-Subject: [PATCH V2] selftests/sgx: Fix build error caused by missing dependency
-Date:   Tue, 14 Dec 2021 11:26:08 -0800
-Message-Id: <de2a262e97e7b173548b909a608e9e99aab38e9d.1639509500.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
+Cc:     linux-kselftest@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <de2a262e97e7b173548b909a608e9e99aab38e9d.1639509500.git.reinette.chatre@intel.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <8b7c98f4-f050-bc1c-5699-fa598ecc66a2@linuxfoundation.org>
+Date:   Tue, 14 Dec 2021 13:10:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <de2a262e97e7b173548b909a608e9e99aab38e9d.1639509500.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Commit f0ff2447b861 ("selftests/sgx: Add a new kselftest:
-Unclobbered_vdso_oversubscribed") depends on __cpuid() without
-providing the dependency and thus introduces a build error:
+On 12/14/21 12:26 PM, Reinette Chatre wrote:
+> Commit f0ff2447b861 ("selftests/sgx: Add a new kselftest:
+> Unclobbered_vdso_oversubscribed") depends on __cpuid() without
+> providing the dependency and thus introduces a build error:
+> 
+> $ make
+> gcc -Wall -Werror -g -I../../../../tools/include -fPIC -z noexecstack -c main.c -o ../linux/tools/testing/selftests/sgx/main.o
+> main.c: In function ‘get_total_epc_mem’:
+> main.c:296:3: error: implicit declaration of function ‘__cpuid’ [-Werror=implicit-function-declaration]
+>    296 |   __cpuid(&eax, &ebx, &ecx, &edx);
+>        |   ^~~~~~~
+> cc1: all warnings being treated as errors
+> make: *** [Makefile:33: ../linux/tools/testing/selftests/sgx/main.o] Error 1
+> $
+> 
+> Clone kernel's __cpuid() implementation to the self-test in order
+> to make it available to the EPC enumeration code.
+> 
+> Fixes: f0ff2447b861 ("selftests/sgx: Add a new kselftest: Unclobbered_vdso_oversubscribed")
+> Reported-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> 
+> The commit introducing the issue can be found on
+> the x86/sgx branch of tip.git.
+> 
+> Changes since V1:
+> - V1: https://lore.kernel.org/linux-sgx/797ff1331cfe540fc378fcc4a4a7b00ff5099fbe.1638905135.git.reinette.chatre@intel.com/
+> - Improve commit message. (Jarkko)
+> 
+>   tools/testing/selftests/sgx/main.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+> index 7e912db4c6c5..6dead57a3121 100644
+> --- a/tools/testing/selftests/sgx/main.c
+> +++ b/tools/testing/selftests/sgx/main.c
+> @@ -73,6 +73,18 @@ static bool vdso_get_symtab(void *addr, struct vdso_symtab *symtab)
+>   	return true;
+>   }
+>   
+> +static inline void __cpuid(unsigned int *eax, unsigned int *ebx,
+> +			   unsigned int *ecx, unsigned int *edx)
+> +{
+> +	asm volatile("cpuid"
+> +	    : "=a" (*eax),
+> +	      "=b" (*ebx),
+> +	      "=c" (*ecx),
+> +	      "=d" (*edx)
+> +	    : "0" (*eax), "2" (*ecx)
+> +	    : "memory");
+> +}
+> +
+>   static unsigned long elf_sym_hash(const char *name)
+>   {
+>   	unsigned long h = 0, high;
+> 
 
-$ make
-gcc -Wall -Werror -g -I../../../../tools/include -fPIC -z noexecstack -c main.c -o ../linux/tools/testing/selftests/sgx/main.o
-main.c: In function ‘get_total_epc_mem’:
-main.c:296:3: error: implicit declaration of function ‘__cpuid’ [-Werror=implicit-function-declaration]
-  296 |   __cpuid(&eax, &ebx, &ecx, &edx);
-      |   ^~~~~~~
-cc1: all warnings being treated as errors
-make: *** [Makefile:33: ../linux/tools/testing/selftests/sgx/main.o] Error 1
-$
+Let's not add one more __cpuid() define to the individual tests.
+We so far have:
 
-Clone kernel's __cpuid() implementation to the self-test in order
-to make it available to the EPC enumeration code.
+tools/testing/selftests/vm/pkey-x86.h
+selftests/x86/corrupt_xstate_header.c
 
-Fixes: f0ff2447b861 ("selftests/sgx: Add a new kselftest: Unclobbered_vdso_oversubscribed")
-Reported-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
+Let's move the defines to kselftest.h and remove all these duplicate
+defines.
 
-The commit introducing the issue can be found on
-the x86/sgx branch of tip.git.
+For now you could include vm/pkey-x86.h just to fix the build error
+and do the proper cleanup.
 
-Changes since V1:
-- V1: https://lore.kernel.org/linux-sgx/797ff1331cfe540fc378fcc4a4a7b00ff5099fbe.1638905135.git.reinette.chatre@intel.com/
-- Improve commit message. (Jarkko)
-
- tools/testing/selftests/sgx/main.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 7e912db4c6c5..6dead57a3121 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -73,6 +73,18 @@ static bool vdso_get_symtab(void *addr, struct vdso_symtab *symtab)
- 	return true;
- }
- 
-+static inline void __cpuid(unsigned int *eax, unsigned int *ebx,
-+			   unsigned int *ecx, unsigned int *edx)
-+{
-+	asm volatile("cpuid"
-+	    : "=a" (*eax),
-+	      "=b" (*ebx),
-+	      "=c" (*ecx),
-+	      "=d" (*edx)
-+	    : "0" (*eax), "2" (*ecx)
-+	    : "memory");
-+}
-+
- static unsigned long elf_sym_hash(const char *name)
- {
- 	unsigned long h = 0, high;
--- 
-2.25.1
-
+There has been a proliferation of defines in tools and selftests.
+I just fixed/remove 25+ ARRAY_SIZE duplicate define in selftests.
+  
+thanks,
+-- Shuah
