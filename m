@@ -2,39 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFADC433F5
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 22:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC51C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 23:15:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231349AbhLQW5U (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 17 Dec 2021 17:57:20 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:49980 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231326AbhLQW5U (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 17 Dec 2021 17:57:20 -0500
+        id S229595AbhLQXPq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 17 Dec 2021 18:15:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229512AbhLQXPq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 17 Dec 2021 18:15:46 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FC9C061574
+        for <linux-sgx@vger.kernel.org>; Fri, 17 Dec 2021 15:15:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C317562425
-        for <linux-sgx@vger.kernel.org>; Fri, 17 Dec 2021 22:57:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9DAAC36AE5;
-        Fri, 17 Dec 2021 22:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639781839;
-        bh=bhTqfus2J6ultLuDd0zEiq+Q2WkdP91uGxTQyS0ioMI=;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3D2B5B82B2B
+        for <linux-sgx@vger.kernel.org>; Fri, 17 Dec 2021 23:15:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB48C36AE2;
+        Fri, 17 Dec 2021 23:15:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1639782942;
+        bh=bwZM8q8dcdnkaJIHCGAMFbNKGTlaPXxXvdVRnLhTX8g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uJaibgS5if1KqmL3YKhDHKP6TOpMlqpJyaV+KbZVwUk2yOQHtTHbZhnTxtmbCi8Sy
-         KTRtG11lAwxwoM8dJcCEgO94/NSS/+lmISRuS8kOqOfkGUXhIsH0h7QuynGU1q+e7/
-         QfK5HbCyxcpBBxfWQlcUPBYyI6yQ6hZkTs8GHTl3f3a97isIT7nxIUwLOjO1zKIHzl
-         DWmnqzanZSu04WRE8dXLe3q4X3PF/oWTLNiHK85h95h2NljMQtlW1oUsnVIIl4J7NL
-         awj5lBbRTXyzs9zby3ehxAd1yQ6TXXqHcWw9q1sESSn8hdHx4JEDXw6gihTqvRzOhR
-         qulX85LR6q9WQ==
-Date:   Fri, 17 Dec 2021 15:57:15 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
+        b=NT6CEP5ADDNvx99pYWJxAG0649Ip2UiOu6OFqS2IcLthIt9U6ZJMrYNxQB1tsy9Qk
+         QXEBbqCcsF2ulWuKl7pue7DxXdoNLLj6HkyXk/JlazDTtjF4m6IJW0h40HTMbkGkK8
+         tzru5iaOmNxhWQcb2fUGe7no77+2dxAfznhdWP38=
+Date:   Sat, 18 Dec 2021 00:15:40 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     dave@sr71.net, gregkh@linuxfoundation.org, jarkko@kernel.org,
+Cc:     dave@sr71.net, nathan@kernel.org, jarkko@kernel.org,
         linux-sgx@vger.kernel.org, x86@kernel.org
 Subject: Re: [PATCH] x86/sgx: Fix NULL pointer dereference on non-SGX systems
-Message-ID: <Yb0Vy2Q2ifugclva@archlinux-ax161>
+Message-ID: <Yb0aHOuXV0L/691i@kroah.com>
 References: <20211217223153.837591E0@davehans-spike.ostc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -70,9 +70,6 @@ On Fri, Dec 17, 2021 at 02:31:53PM -0800, Dave Hansen wrote:
 > Cc: linux-sgx@vger.kernel.org
 > Cc: x86@kernel.org
 > Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-
-Tested-by: Nathan Chancellor <nathan@kernel.org>
-
 > ---
 > 
 >  b/arch/x86/kernel/cpu/sgx/main.c |    8 +++++++-
@@ -94,6 +91,12 @@ Tested-by: Nathan Chancellor <nathan@kernel.org>
 > +
 > +	return sysfs_emit(buf, "%lu\n", node_bytes);
 >  }
->  static DEVICE_ATTR_RO(sgx_total_bytes);
->  
-> _
+
+Why is this file showing up if we do not have sgx_numa_nodes not
+allocated?  It shouldn't even be there to access then.
+
+don't return a fake number, just don't present the sysfs file at all.
+
+thanks,
+
+greg k-h
