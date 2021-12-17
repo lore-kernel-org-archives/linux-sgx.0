@@ -2,184 +2,165 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2663C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 09:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64757C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 19:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234190AbhLQJjh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 17 Dec 2021 04:39:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59726 "EHLO
+        id S232757AbhLQTMM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 17 Dec 2021 14:12:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231770AbhLQJjg (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 17 Dec 2021 04:39:36 -0500
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8453DC061574;
-        Fri, 17 Dec 2021 01:39:36 -0800 (PST)
-Received: by mail-qt1-x844.google.com with SMTP id a1so1963860qtx.11;
-        Fri, 17 Dec 2021 01:39:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OOpMd3X90BKP/ZtpWdIPJ8+M8gFN2Ocwe7sVB2q7Hdg=;
-        b=oqHzW8ok9MXgfVqWgJtQoyP1zGXQyUcr52i1nAze3/tkFU3J9b6+Pexe67OPGPrWjd
-         Okk+Wq48KlWuMLahdqMYwp6BVo0wsJdGZ0xqgQI3qOc91uRMgby4gU82h+ND543NJbRz
-         ExTytbVigqbOXZ5C4TUiFEWWI2k6OEMORGbTA5NeX6ba/EDv8XXHjgQ51AOD575qFDge
-         rOXimWuWUr9nUB3S75gmzKzmZ2o1WoMFkia6YpLteorH8Qj4rcCkV4yohsZIaDmq1U8L
-         ZM7VuE57a4nO57SLhZIWNi12kiDpmF4w6Q9auqavFcrGjdxgwCEgdd3gxGv67ATEzLS6
-         JBOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OOpMd3X90BKP/ZtpWdIPJ8+M8gFN2Ocwe7sVB2q7Hdg=;
-        b=wTfTxyTTTJw4MMEaW/qnrFsrr4EUimA1kA1FCwG78BnR1Zi7JyXj9SamtA9FfdikNm
-         QoPTYROE4Y7j4Y3QzTlCMgA1IGX10mDiudB2djg7loxL99eq93yTQPWRAk76re0UFvol
-         iuCb3pLQcSP7anVCImRZO1Rqbqd/vwpskwPoE7MzFxUuLA52doyUtRwSx5mWYzEQKh68
-         aZUj6Rr8UVaePVyWQqkdmUW3B9FvzDffLo1c6FHUDZoE2cqCzwuvzirgvmC9+JM6d0rE
-         B5YiHmeBWAAFZ9PmWNIROZ+Du3e/vGb7m+ct66zvkc1ELz9JAZ6F9Z2/8375ue8DAxOM
-         nkzA==
-X-Gm-Message-State: AOAM530tPrTg0ZRnuXF8toppFi1asxN2g+VwHxJWcwNF3EZZION43/Hl
-        pnBXHUby3NklzkXQhG7VaJkbQSTNAUS7/Yh8+I/K0YKI3RI=
-X-Google-Smtp-Source: ABdhPJxe372TIjyCLCQN3sud3qhRo8J8K4VhlXHjIz3adiVNBhdQvfz3QA5Aq6AoPcDiQMQyOLG1sRbHISnmI0FWHIQ=
-X-Received: by 2002:a05:622a:c8:: with SMTP id p8mr1583216qtw.52.1639733975443;
- Fri, 17 Dec 2021 01:39:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20210831015919.13006-1-skyele@sjtu.edu.cn>
-In-Reply-To: <20210831015919.13006-1-skyele@sjtu.edu.cn>
-From:   Jinrong Liang <ljr.kernel@gmail.com>
-Date:   Fri, 17 Dec 2021 17:39:24 +0800
-Message-ID: <CAFg_LQWV56zok563F8WbPEuUiJeeEhfUK3ua+tcm8ChZETWKWg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] KVM: x86: Introduce .pcpu_is_idle() stub infrastructure
-To:     Tianqiang Xu <skyele@sjtu.edu.cn>
-Cc:     x86@kernel.org, pbonzini@redhat.com, seanjc@google.com,
-        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
-        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, kvm@vger.kernel.org, hpa@zytor.com,
-        jarkko@kernel.org, dave.hansen@linux.intel.com,
+        with ESMTP id S230326AbhLQTMM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 17 Dec 2021 14:12:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17AF5C061574;
+        Fri, 17 Dec 2021 11:12:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B574B62384;
+        Fri, 17 Dec 2021 19:12:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE00FC36AE2;
+        Fri, 17 Dec 2021 19:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639768331;
+        bh=abrj6yZx1CS+4y6rWVn3ZtFqCwKgtGVKaalJpu0TSPw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FFvjRiN6uSj8POfLPxfk9KGf6ZdjpD+TnGDpp9MGbIAz1LAjqAdYKmLTfC6BpGnj1
+         oTYHkkU5U2duNyVqLi8UivDcqe/kPxza/hz0G+mUYZhXwZsPug04xNRWFzTeR4twbS
+         7fb/f+UOonucgP8HSJhyuHK014XzSmjZ8FEcP2lSr/7Rl/TKmIwyYXcGd/ev2nCiv3
+         u/bVR8z2NDMcyAqUFfQnm525Ov6KYtqfacvhvi0rzWBy7y5jMxlcOHVIz5V5/aoxyd
+         LSHihi8FSO5U3l0UGv7gyxXbej+kSvpiQcE5ltAZRIn9tUWNmJ1SyOxj8qy+nxDh0t
+         0h3gDLGhjYoug==
+Date:   Fri, 17 Dec 2021 12:12:06 -0700
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, reinette.chatre@intel.com,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX
+ memory in a NUMA node
+Message-ID: <YbzhBrimHGGpddDM@archlinux-ax161>
+References: <20211116162116.93081-1-jarkko@kernel.org>
+ <20211116162116.93081-2-jarkko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211116162116.93081-2-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Tianqiang,
-Tianqiang Xu <skyele@sjtu.edu.cn> =E4=BA=8E2021=E5=B9=B412=E6=9C=8817=E6=97=
-=A5=E5=91=A8=E4=BA=94 15:55=E5=86=99=E9=81=93=EF=BC=9A
->
-> This patch series aims to fix performance issue caused by current
-> para-virtualized scheduling design.
->
-> The current para-virtualized scheduling design uses 'preempted' field of
-> kvm_steal_time to avoid scheduling task on the preempted vCPU.
-> However, when the pCPU where the preempted vCPU most recently run is idle=
-,
-> it will result in low cpu utilization, and consequently poor performance.
->
-> The new field: 'is_idle' of kvm_steal_time can precisely reveal
-> the status of pCPU where preempted vCPU most recently run, and
-> then improve cpu utilization.
->
-> pcpu_is_idle() is used to get the value of 'is_idle' of kvm_steal_time.
->
-> Experiments on a VM with 16 vCPUs show that the patch can reduce around
-> 50% to 80% execution time for most PARSEC benchmarks.
-> This also holds true for a VM with 112 vCPUs.
->
-> Experiments on 2 VMs with 112 vCPUs show that the patch can reduce around
-> 20% to 80% execution time for most PARSEC benchmarks.
->
-> Test environment:
-> -- PowerEdge R740
-> -- 56C-112T CPU Intel(R) Xeon(R) Gold 6238R CPU
-> -- Host 190G DRAM
-> -- QEMU 5.0.0
-> -- PARSEC 3.0 Native Inputs
-> -- Host is idle during the test
-> -- Host and Guest kernel are both kernel-5.14.0
->
-> Results:
-> 1. 1 VM, 16 VCPU, 16 THREAD.
->    Host Topology: sockets=3D2 cores=3D28 threads=3D2
->    VM Topology:   sockets=3D1 cores=3D16 threads=3D1
->    Command: <path to parsec>/bin/parsecmgmt -a run -p <benchmark> -i nati=
-ve -n 16
->    Statistics below are the real time of running each benchmark.(lower is=
- better)
->
->                         before patch    after patch     improvements
-> bodytrack               52.866s         22.619s         57.21%
-> fluidanimate            84.009s         38.148s         54.59%
-> streamcluster           270.17s         42.726s         84.19%
-> splash2x.ocean_cp       31.932s         9.539s          70.13%
-> splash2x.ocean_ncp      36.063s         14.189s         60.65%
-> splash2x.volrend        134.587s        21.79s          83.81%
->
-> 2. 1VM, 112 VCPU. Some benchmarks require the number of threads to be the=
- power of 2,
-> so we run them with 64 threads and 128 threads.
->    Host Topology: sockets=3D2 cores=3D28 threads=3D2
->    VM Topology:   sockets=3D1 cores=3D112 threads=3D1
->    Command: <path to parsec>/bin/parsecmgmt -a run -p <benchmark> -i nati=
-ve -n <64,112,128>
->    Statistics below are the real time of running each benchmark.(lower is=
- better)
->
->                                         before patch    after patch     i=
-mprovements
-> fluidanimate(64 thread)                 124.235s        27.924s         7=
-7.52%
-> fluidanimate(128 thread)                169.127s        64.541s         6=
-1.84%
-> streamcluster(112 thread)               861.879s        496.66s         4=
-2.37%
-> splash2x.ocean_cp(64 thread)            46.415s         18.527s         6=
-0.08%
-> splash2x.ocean_cp(128 thread)           53.647s         28.929s         4=
-6.08%
-> splash2x.ocean_ncp(64 thread)           47.613s         19.576s         5=
-8.89%
-> splash2x.ocean_ncp(128 thread)          54.94s          29.199s         4=
-6.85%
-> splash2x.volrend(112 thread)            801.384s        144.824s        8=
-1.93%
->
-> 3. 2VM, each VM: 112 VCPU. Some benchmarks require the number of threads =
-to
-> be the power of 2, so we run them with 64 threads and 128 threads.
->    Host Topology: sockets=3D2 cores=3D28 threads=3D2
->    VM Topology:   sockets=3D1 cores=3D112 threads=3D1
->    Command: <path to parsec>/bin/parsecmgmt -a run -p <benchmark> -i nati=
-ve -n <64,112,128>
->    Statistics below are the average real time of running each benchmark i=
-n 2 VMs.(lower is better)
->
->                                         before patch    after patch     i=
-mprovements
-> fluidanimate(64 thread)                 135.2125s       49.827s         6=
-3.15%
-> fluidanimate(128 thread)                178.309s        86.964s         5=
-1.23%
-> splash2x.ocean_cp(64 thread)            47.4505s        20.314s         5=
-7.19%
-> splash2x.ocean_cp(128 thread)           55.5645s        30.6515s        4=
-4.84%
-> splash2x.ocean_ncp(64 thread)           49.9775s        23.489s         5=
-3.00%
-> splash2x.ocean_ncp(128 thread)          56.847s         28.545s         4=
-9.79%
-> splash2x.volrend(112 thread)            838.939s        239.632s        7=
-1.44%
->
-> For space limit, we list representative statistics here.
+Hi Jarkko,
 
-I did a performance test according to the description in the patch,
-but did not get the performance improvement described in the description.
+On Tue, Nov 16, 2021 at 06:21:16PM +0200, Jarkko Sakkinen wrote:
+> The amount of SGX memory on the system is determined by the BIOS and it
+> varies wildly between systems.  It can be from dozens of MB's on desktops
+> or VM's, up to many GB's on servers.  Just like for regular memory, it is
+> sometimes useful to know the amount of usable SGX memory in the system.
+> 
+> Introduce CONFIG_HAVE_ARCH_NODE_DEV_GROUP opt-in flag to expose an arch
+> specific attribute group, and add an attribute for the amount of SGX
+> memory in bytes to each NUMA node:
+> 
+> /sys/devices/system/node/nodeX/x86/sgx_total_bytes
+> 
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-I suspect that the big difference between my kernel configuration
-and yours has caused this problem. Can you please provide more detailed
-test information, such as kernel configuration that must be turned on or of=
-f ?
+Apologies if this has already been reported or fixed, I haven't seen
+anything from a full search of lore.kernel.org.
 
-Regards,
-Jinrong Liang
+With this patch in -next as commit 50468e431335 ("x86/sgx: Add an
+attribute for the amount of SGX memory in a NUMA node"), this sysfs node
+causes an OOPS for me on at least one of my test systems (Intel based):
+
+# cat /sys/devices/system/node/node0/x86/sgx_total_bytes
+fish: Job 1, 'cat /sys/devices/system/node/no…' terminated by signal SIGKILL (Forced quit)
+
+# dmesg
+[   56.956995] BUG: kernel NULL pointer dereference, address: 0000000000000020
+[   56.957003] #PF: supervisor read access in kernel mode
+[   56.957006] #PF: error_code(0x0000) - not-present page
+[   56.957009] PGD 0 P4D 0
+[   56.957013] Oops: 0000 [#2] PREEMPT SMP PTI
+[   56.957017] CPU: 1 PID: 866 Comm: cat Tainted: G      D           5.16.0-rc5-next-20211217-debug #1 15ae5b0f28a4b9b6343440ee595affa8e1b5cf57
+[   56.957022] Hardware name: ASUSTeK COMPUTER INC. Q302LA/Q302LA, BIOS Q302LA.203 05/15/2014
+[   56.957024] RIP: 0010:sgx_total_bytes_show+0x28/0x40
+[   56.957032] Code: 66 90 0f 1f 44 00 00 49 89 f8 48 89 d7 48 c7 c6 5f b1 52 a4 41 8b 80 98 02 00 00 48 8d 04 40 48 c1 e0 04 48 03 05 38 b1 3c 02 <48> 8b 50 20 e8 ff ee 3b 00 48 98 31 d2 89 d6 89 d7 41 89 d0 c3 0f
+[   56.957035] RSP: 0018:ffffb79c81447d60 EFLAGS: 00010246
+[   56.957039] RAX: 0000000000000000 RBX: ffffffffa4c30ec0 RCX: 0000000000000000
+[   56.957041] RDX: ffff95d502b95000 RSI: ffffffffa452b15f RDI: ffff95d502b95000
+[   56.957044] RBP: ffffffffa41567c0 R08: ffff95d5002a0400 R09: 0000000000000000
+[   56.957046] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb79c81447e28
+[   56.957048] R13: ffffb79c81447e00 R14: ffff95d5041247a8 R15: 0000000000000001
+[   56.957051] FS:  00007f4ab25af600(0000) GS:ffff95d616e80000(0000) knlGS:0000000000000000
+[   56.957054] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   56.957056] CR2: 0000000000000020 CR3: 00000001029e8005 CR4: 00000000001706e0
+[   56.957060] Call Trace:
+[   56.957062]  <TASK>
+[   56.957064]  dev_attr_show+0x19/0x40
+[   56.957072]  sysfs_kf_seq_show+0xa1/0x120
+[   56.957080]  seq_read_iter+0x12e/0x4c0
+[   56.957085]  new_sync_read+0x159/0x1f0
+[   56.957093]  vfs_read+0xff/0x1a0
+[   56.957099]  ksys_read+0x67/0xf0
+[   56.957105]  do_syscall_64+0x5c/0x90
+[   56.957110]  ? syscall_exit_to_user_mode+0x23/0x50
+[   56.957116]  ? exc_page_fault+0x72/0x180
+[   56.957121]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[   56.957128] RIP: 0033:0x7f4ab24d1862
+[   56.957131] Code: c0 e9 b2 fe ff ff 50 48 8d 3d 5a 29 0a 00 e8 55 e4 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
+[   56.957134] RSP: 002b:00007ffff14dac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   56.957137] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f4ab24d1862
+[   56.957140] RDX: 0000000000020000 RSI: 00007f4ab20d8000 RDI: 0000000000000003
+[   56.957142] RBP: 00007f4ab20d8000 R08: 00007f4ab20d7010 R09: 0000000000000000
+[   56.957144] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000020000
+[   56.957146] R13: 0000000000000003 R14: 0000000000000000 R15: 00007ffff14daf18
+[   56.957150]  </TASK>
+[   56.957152] Modules linked in: 8021q garp mrp stp llc snd_hda_codec_hdmi ccm
+algif_aead cbc x86_pkg_temp_thermal des_generic intel_powerclamp libdes
+coretemp ecb kvm_intel algif_skcipher kvm ax88796b irqbypass cmac
+crct10dif_pclmul i915 crc32_pclmul md4 ghash_clmulni_intel algif_hash
+snd_hda_codec_realtek af_alg snd_hda_codec_generic ledtrig_audio uvcvideo
+asus_nb_wmi aesni_intel snd_hda_intel intel_spi_platform i2c_algo_bit iwlmvm
+videobuf2_vmalloc asus_wmi snd_intel_dspcfg ttm snd_intel_sdw_acpi crypto_simd
+joydev ak8975 intel_spi iTCO_wdt btusb mousedev spi_nor sparse_keymap
+intel_pmc_bxt at24 cryptd videobuf2_memops iTCO_vendor_support mac80211
+hid_multitouch mtd platform_profile btrtl intel_rapl_msr mei_hdcp snd_hda_codec
+btbcm rapl libarc4 videobuf2_v4l2 drm_kms_helper intel_cstate
+processor_thermal_device_pci_legacy asix intel_uncore syscopyarea selftests
+btintel snd_hda_core videobuf2_common pcspkr iwlwifi snd_hwdep
+processor_thermal_device vfat btmtk i2c_i801 sysfillrect usbnet
+[   56.957229]  snd_pcm processor_thermal_rfim psmouse fat sysimgblt i2c_smbus
+bluetooth videodev processor_thermal_mbox snd_timer processor_thermal_rapl
+fb_sys_fops mii cfg80211 mei_me usbhid snd ecdh_generic mdio_devres mc
+inv_mpu6050_i2c intel_rapl_common cec crc16 int340x_thermal_zone libphy lpc_ich
+rfkill intel_gtt mei soundcore intel_soc_dts_iosf inv_mpu6050 acpi_als wmi
+dell_smo8800 industrialio_triggered_buffer int3400_thermal video i2c_mux
+kfifo_buf soc_button_array industrialio acpi_thermal_rel asus_wireless mac_hid
+drm pkcs8_key_parser fuse bpf_preload ip_tables x_tables xfs libcrc32c
+crc32c_generic serio_raw atkbd libps2 i8042 crc32c_intel xhci_pci
+xhci_pci_renesas serio
+[   56.957286] CR2: 0000000000000020
+[   56.957289] ---[ end trace 0000000000000000 ]---
+[   56.957291] RIP: 0010:sgx_total_bytes_show+0x28/0x40
+[   56.957296] Code: 66 90 0f 1f 44 00 00 49 89 f8 48 89 d7 48 c7 c6 5f b1 52 a4 41 8b 80 98 02 00 00 48 8d 04 40 48 c1 e0 04 48 03 05 38 b1 3c 02 <48> 8b 50 20 e8 ff ee 3b 00 48 98 31 d2 89 d6 89 d7 41 89 d0 c3 0f
+[   56.957299] RSP: 0018:ffffb79c8118fd58 EFLAGS: 00010246
+[   56.957301] RAX: 0000000000000000 RBX: ffffffffa4c30ec0 RCX: 0000000000000000
+[   56.957304] RDX: ffff95d50403d000 RSI: ffffffffa452b15f RDI: ffff95d50403d000
+[   56.957306] RBP: ffffffffa41567c0 R08: ffff95d5002a0400 R09: 0000000000000000
+[   56.957308] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb79c8118fe20
+[   56.957310] R13: ffffb79c8118fdf8 R14: ffff95d503fd0550 R15: 0000000000000001
+[   56.957312] FS:  00007f4ab25af600(0000) GS:ffff95d616e80000(0000) knlGS:0000000000000000
+[   56.957315] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   56.957317] CR2: 0000000000000020 CR3: 00000001029e8005 CR4: 00000000001706e0
+
+If I can provide any further information or testing, let me know!
+
+Cheers,
+Nathan
