@@ -2,221 +2,449 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7B2C433FE
-	for <linux-sgx@archiver.kernel.org>; Wed, 15 Dec 2021 00:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D3CC3525B
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 01:51:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232930AbhLOATi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 14 Dec 2021 19:19:38 -0500
-Received: from mga12.intel.com ([192.55.52.136]:40612 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235557AbhLOATh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 14 Dec 2021 19:19:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639527577; x=1671063577;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=prAz/5te5PUgl2lxuGdl/wFjwUDw2KfuyMiX2PG4Wk0=;
-  b=YTdLPTFuL4jR5LeFdaATtbjwClHhEVE9vWGyuBM7PPHHdv3kzaUZPdxM
-   v9U24yNxGEjZQwtC6WnxAaUZM3rTF/qC6P3yI7W7Co9NTy79MMOOcut5c
-   j8JkszS9dIskRvV7VAe2455/rb0lvgIiXufN3Ny2+o8+Cdbwruei72lpY
-   FSgdWgJUIgnMmraRBCtpGh05s6LxQFlHb7BZ7d7wuFWI74o3I6VwkoFeo
-   c96VA4UZRVEjRooG5VnmXcerDAFk86qLFkPqpwURMD+np3bpfLJyv04Zi
-   D+odrCLg/BF8cw5QFRoP5kIe95ydSHGqR9iCCjd/ragIqkvOc5bxlFOBn
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="219127771"
-X-IronPort-AV: E=Sophos;i="5.88,206,1635231600"; 
-   d="scan'208";a="219127771"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 16:19:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,206,1635231600"; 
-   d="scan'208";a="614501699"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga004.jf.intel.com with ESMTP; 14 Dec 2021 16:19:31 -0800
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 14 Dec 2021 16:19:30 -0800
-Received: from fmsmsx607.amr.corp.intel.com (10.18.126.87) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 14 Dec 2021 16:19:30 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx607.amr.corp.intel.com (10.18.126.87) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20 via Frontend Transport; Tue, 14 Dec 2021 16:19:30 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.106)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.20; Tue, 14 Dec 2021 16:19:29 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g+2tUOH3StAmFtz7FSC7anoLynXVKUYDczuhbW5JVxXOxL18+OBNJifJELjl77CcJRZjHcJhZaLBCKg1q0A4gUwP9BiwmeqeP901OpkLSDOffzLEXeKDWsy+zzvBRjRVRM2ROK1WXBmquunCxREb4IZKxMqZIjvFTtsuPqXNoECynh8OoVokHKAENhJVww6k6d376dvLLaK6Q4EJl9KaFZ0YJKaLFXPbz+09CTlX0J+e9GQDOsPojRuTXMQzg28ujQA6ycXbHywhbAAJD4dmXa91R56ZHu13/lCriqWF93GAVtevGNv4+tbcr1RpFZ3xapr90ZUUoTyxgIiurqj92w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T97Z6tAP2h5SL8b6IkMnqRAazdKWimaf7skxsMknyFQ=;
- b=AaCEXCP0SoTyjwPstkAmOgRmjT7eZ56mJoZDvDT+Rxh98dUBUCteYuC3A4RYS5K9bbHtTaxEynx30K7RjTnjOj408E1+iM/oSLNUraVg4Mk/RZxDgeUW1P8kRINlCKKst/Oq6pJNzuEbTtp3RkjqQW8iY+cbMpUvoKBn/KJWRJUw/Ze/Z0oCJpulFq15EcPyKm/R8J4NG/gpHcl0Dq7F7c9HfaTLUp92YUAY2fUeQqA92ZFmCOqKIDoP2ysBASCnb9/WZbyfMylRlDlsgcoNiHkTBzPD1X+MQP2qWgYZIkWoPd32Tb4s2M+u/imrNB+wUPM+8FE4plsQ1DhA0zvR1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T97Z6tAP2h5SL8b6IkMnqRAazdKWimaf7skxsMknyFQ=;
- b=rEKf8EVhmKU3Jg6BtlpkyZ8fCzkyJip4nsDtOw1Z7QMoYKEOBrqIKRIOCzCmQZ6ay+WcRj7MP74bXAuHazvEMPFTVorGRCZE7JJ/CrpGZmQW8pEvDUcjEIB5DT8VdtjY7ULwJHEgZsAUhRm/l7PcXWbOHUMrLRHlMiwFOV/kM24=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by BN9PR11MB5306.namprd11.prod.outlook.com (2603:10b6:408:137::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Wed, 15 Dec
- 2021 00:19:28 +0000
-Received: from BN0PR11MB5744.namprd11.prod.outlook.com
- ([fe80::bcd0:77e1:3a2e:1e10]) by BN0PR11MB5744.namprd11.prod.outlook.com
- ([fe80::bcd0:77e1:3a2e:1e10%3]) with mapi id 15.20.4778.018; Wed, 15 Dec 2021
- 00:19:28 +0000
-Message-ID: <1eefe8b4-feec-3f2a-7eae-c10e49fbedf0@intel.com>
-Date:   Tue, 14 Dec 2021 16:19:24 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.4.0
-Subject: Re: [PATCH] selftests/sgx: Fix corrupted cpuid macro invocation
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
-CC:     Dave Hansen <dave.hansen@linux.intel.com>,
-        <linux-kselftest@vger.kernel.org>, <linux-sgx@vger.kernel.org>
-References: <20211204202355.23005-1-jarkko@kernel.org>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <20211204202355.23005-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MWHPR10CA0024.namprd10.prod.outlook.com (2603:10b6:301::34)
- To BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
+        id S232114AbhLQBvA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 16 Dec 2021 20:51:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33444 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232135AbhLQBu7 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 16 Dec 2021 20:50:59 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5711EC061574;
+        Thu, 16 Dec 2021 17:50:59 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id c4so1172736wrd.9;
+        Thu, 16 Dec 2021 17:50:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=vIlBnK7LqLJ5+ast3pZGTk1nkBEcUI80uH3/s8w1130=;
+        b=bH9DX9/ZJ3BJYB7T1rHxhCq7vygz+9ehLX6AhLRWwWh4YzwDbSE5V2FSF6rMemDe8I
+         0K6djm+R2c8cwM9m7lQ2HERw7SDhQ5HOtXOROvspkbe283ux8zonLeTn2kw57g25Iej3
+         bPwJG0j4DA2WWZMXuO5tUPh2s7xhtGy9d2mH05bgerLEEKefx09f03TAszIDEi0amq3e
+         Vc7KfpGb+OZt/PaItbCJQTIlo7K0Oyt/ufn2NE2wk+kwOaq0xIpjEKA2Mn048YdioUmy
+         G1ZpNzjCp/gqVyp2rU8pXaUeaEfdA7TLNHoTAthWUcw9rUn4ErT/IjKwk8gjC3qFJUd9
+         Qg8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=vIlBnK7LqLJ5+ast3pZGTk1nkBEcUI80uH3/s8w1130=;
+        b=7xlicAQB9dNcLmjJh9Djka2UZ5XvjtGjDPE4Qjv8e2B+ub4sX0j20dn/ZMBPzbQFTJ
+         scyWoEmglk856bKPUib+af4yWNHagvT1L47voJF315/9ToPjIWAOZGCuiHnFbExk+gk5
+         acdvGNUSf6TWb2OhIvXh8ofrOFyYrZvmgz2YlqIAQYDtQm5RdwUQC4X7gjZazQY5lyyk
+         VZpFauFdAAHPYiRpCvBJZgzCW9Dwd8PZrqV0fdWIGl85HS6wGAfPhkNbVXhZ9qx4cBwB
+         xFkS6mCtPgCAh2WGiZ4JK0L+ENGzQAi0NFZGrl8oOX3TGciXGCdfep7wldVKfVlEEZPG
+         i0dg==
+X-Gm-Message-State: AOAM533CgFHqhQsONJl0p7K3xQ7U78FzCUTf0NsepruXmJTN2icMJFtU
+        /e295UeXunsHA0BdYittcDs=
+X-Google-Smtp-Source: ABdhPJw890QOzUt3bzbro+MgGOjVmIjN7u6K0UYc/eP8rd8PKCT/2qu9jvmV/km7EKfVPR91NOhWHw==
+X-Received: by 2002:adf:f08c:: with SMTP id n12mr524958wro.598.1639705857797;
+        Thu, 16 Dec 2021 17:50:57 -0800 (PST)
+Received: from [10.168.10.170] ([170.253.36.171])
+        by smtp.gmail.com with ESMTPSA id g16sm7103881wmq.20.2021.12.16.17.50.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Dec 2021 17:50:57 -0800 (PST)
+Message-ID: <c58f3951-282c-ef66-fc62-844da06c5af4@gmail.com>
+Date:   Fri, 17 Dec 2021 02:50:56 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 49fa6af3-0b18-4101-df41-08d9bf608f02
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5306:EE_
-X-Microsoft-Antispam-PRVS: <BN9PR11MB5306709064EB7CE676BFB500F8769@BN9PR11MB5306.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: spNng9+xmBH9FGT6A2yRlloYPdSMmKqp0MviPDzKO2DAlAeT61RwC0R8Gs8ilz1BTePoXDaXE4O2XjG8EzdhIptAaXTTkJe3HsWnWxJTOpFHRHsegV2Rs+GBAvx0rPd4rTiWGxnLKMuZ3nJ/5pqhka/4q8MhDeiRuP1Nja0xIU/zvdSEReO6Lonswr9G9+Ov4pQZ41eA/T3Jh5bJ9aH85wPMqsxtnO7TzItD9hS8sxbP9zOrOhP5CqZd/mYuFxJI/smfNJbJ9Yl+/hTrlW8tm4seJ1a31L2ze8EAouTWnmRfGqier3XUs1CGfjtPTh4gBXPOUmRPHWjSZv22g6vZj17IDjZ5j9n5qgQJGkc6AXUR+91G1zw+2gP0lSU44FX88DhCwFnVa4PUv99FFOEMe+H5Bz/t7GTyn3ROhf4+86x1uVSmHJzUqcNeAFd8JWndR7hylNCfOEzQMBaF73xB/jVasZlOVXOFK3Zxhv7n3zm+eaA0JyYUk19X25TCi/CzYRHsGZEd/tkv8hlg6Cu/2kJNmksKDwyuYRsXve4oqB5dRV5F6sVb1P+WaQlyS0+6TRTIzwCIO7xt1QsBRbKYj09edOS/UfBd462iFQ8j7Hag/geUo1KGVGbQQRucRb4cMxzRTbCW1x01FF6E4YKycEusvHyxi6+Mt8pUkVJiamI0nHozhSgnPX+fMykypJxLeyM96IFbLnlFVIf559gJXAhmXliFZ0U8xHJKSkgPIIN+mNEBStARQu7qZxbXJ9m65tqitjZcEq0klMlVVXlpNu2g/wgevUlcSL60ZFJcIRjv73ZMAGu33xTvKS/tm4ZlP9ZGt89dDoE0wD7Rm3p/Ew==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(508600001)(6506007)(82960400001)(2906002)(31686004)(86362001)(966005)(6666004)(316002)(36756003)(6486002)(66476007)(31696002)(8676002)(2616005)(5660300002)(110136005)(66556008)(4326008)(44832011)(8936002)(186003)(6512007)(26005)(83380400001)(53546011)(38100700002)(66946007)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjNERW1uekZrK3RyL2J1T1BrMjlwVTlSZnZYU29rL2RsVWlrbVVWWGZMb1Jo?=
- =?utf-8?B?RkRldXQvQ0NJd3YrSUV5ZytzbWRtLy9HZG1xNCtBK1FOcTdYTGR6bWc0N2pF?=
- =?utf-8?B?akx3aDlUSFRaYWlmT1liQzJJWVRBcUIyV1JvMXpFU3hKemxWQU5INUdIdlVx?=
- =?utf-8?B?R21RT0piTzM3cmt3SVhhUEVuaTBlcGlPb21xcjl2WllyUXRwKzU3TEJOVDZ0?=
- =?utf-8?B?ZGd3Wkg5SWJqK0FQYjlMNmFWY0FXY0lNKzloNmlnQnB5Y1I2WllJczA4VFZl?=
- =?utf-8?B?cWZ6TVB1VTFLVzc1aEN5blMzYlV6YUEyUmszMXVrS0JDNXVuVUJNcUd0SEl4?=
- =?utf-8?B?MDhLdks3OXcvL0E4RG9VcytKdjVLV0ZzdENVaU5UM1NRT2pEbFZ4aFVSMVM2?=
- =?utf-8?B?Ymh3V0VtSCtKSm9oZExXdVFqaDBUNGVQOVk0V09yS0s4ZGd2Q1JtNkx0MkNm?=
- =?utf-8?B?VEtnL3VvRWI3d0EySDNET0FlZHk1TmJYT3NOOUJmLzVyUmROT3VqcDdkMnpL?=
- =?utf-8?B?QnpEZGo0L1V0M2ZOTERMK0xZSFVLeHBLblROVks2RGJsbTBITklNSTIweUQw?=
- =?utf-8?B?VHZYUGpUbnBnb0JmYXlYMHViZm1xem0xb1lLUDN2V2hLK1BONWdscG1xVEEr?=
- =?utf-8?B?Qk16QkVTR1g5UUJ4MHFkQ29pWU1CVkxaWHVicjVJQUxXY24rcFB0eGxmcnlJ?=
- =?utf-8?B?azUyRFpvWGU3SUhqUktmMzFpaXhoeTAvcHlqYmM2QUsvbDdDYlpCZXNZMmg2?=
- =?utf-8?B?WkFXWUdSR2RXTlFXb280Qkp2SzhpMmZjN204NFlneWJWSEYvVUVkK2c5aDVF?=
- =?utf-8?B?dkgySmlvZzViQzRSa251SXI4bDNCTUJWelFGRWJxTldZZXNGVytoSE5NK1pq?=
- =?utf-8?B?eVloWCtFT08wZEkxdzhzUE1qSjlqemUybGNyNnpDYmlXUHV4SWpnR0d6UUFH?=
- =?utf-8?B?QnEvL1lhbEF3dGxHQ2ZJWlBaeEtqY0JkNmpmOXp2VW1YcGZlMC9NbEZmZFQ1?=
- =?utf-8?B?a3pCaE1rc0ROU3ZLSHVWL2JsMlFvREJidjFxRDlBVWlHUTBMSTNkWWc0Nm1G?=
- =?utf-8?B?SnIrbm1vdTc0dmo0cWxOaWNiSVZzTzN5b1pYZ25QamtxOWxwZS8xQm5kQndB?=
- =?utf-8?B?RnRraFBVekZvcUtIOVoxaVMyOUJLc05hWG5mWStJUnQwVU5hODhld0tjWEtQ?=
- =?utf-8?B?K0k0bXZRemdsNkFhY09DeHRheTdRMjhXUkd2RTQwWWhZZWRrd1A5ZE5tSFRX?=
- =?utf-8?B?akhZVnBXQWhSbXBKTU5vVFpzdXlXSVBST3VxN2ZtUlRTYWpxWEFpQ3g3R3pk?=
- =?utf-8?B?MExuRFk3VTVHY1YvRTdyUHNMYmtULzBaYlc3TUVKa2xCdkIxVDVDamFDTTFN?=
- =?utf-8?B?U2pPMUN3ZW9va3JOL1didjNteGxqTjU4b3FoTUdrTXR3ZDM4V3Ryd1lNL1kw?=
- =?utf-8?B?UmFSM2tqYlVFZm43YTI1OUx1QXBVcUdWUHlwekNKOGswVTYvRGZuNStrL25r?=
- =?utf-8?B?Y2JzSHIzUmJPUnRiRDBGUFlnT3UyZUgzZGVjN0tqNm5uUTZVMkw3ajlwbC9n?=
- =?utf-8?B?S3FidHBDbnZhNDdDQVVMclcyMkZDRnJJZkVzQ2s1MjRWT0R4aFZDL3M1S0lm?=
- =?utf-8?B?UW1xTGVXTS9sUk5rejIzOXpBaXFPQjlzbHBQdDVURExkeGQ2WGlaR2IwVGkv?=
- =?utf-8?B?c1RZL29ndnhpVFVKdFhNVEdMR1RCQmVwMlk0K290V2ViVXdydFMvSTFwbnhj?=
- =?utf-8?B?Tjk0TG8yN1piUVNDdnVYaFp5RURuenhOdSs4OFNzYzYrb3JPUEtVeDVNR0I1?=
- =?utf-8?B?azREWkxlRVZ6RjFyUUtYc0t6bUxLOHpkVzhSSzlUNSt1VkZyNXFWNDVzaUdu?=
- =?utf-8?B?Y1ZrUW1BMXY1a2VZYXY1ZysvelBvalhURnkrMUJBYkhnemJ6dmRXSUREdXlt?=
- =?utf-8?B?VFhVWk9MNzA0cGxJWW9oWnlCZnk4K255QnZMdjZUM0VtamhyYmhQQ1UvYVJU?=
- =?utf-8?B?VlZ4KzBzc2R4aWR2UXR6elRhcGQ2MGlxZGZBR01zb3RuMW5Fenh2T2RvN2FB?=
- =?utf-8?B?NHk5RDNrcVNMbmgxTFVEVklsRGxnaCtaVlhiWTNLaSsrUXB6cStRTys1NTlG?=
- =?utf-8?B?WXgzaC81K2o3WUJUNnRkWG1DL1hwbVBvSW9ZdVR3dzBudmJjUTBTWEdLc0p0?=
- =?utf-8?B?VlNlWFVLTGJxYmxFd1dBM0d2bnZRbmRIRldDcTczL0ZSd3JrOG80SUxhb2oz?=
- =?utf-8?Q?9Mtk7ejDvFb5ffr1i2EoqIl9v2aseR/xkYtF7XEsgA=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49fa6af3-0b18-4101-df41-08d9bf608f02
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2021 00:19:28.8702
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m2nulqs+UzfRDPDyYb/myiyco0CE5hfLAZKHy4m5ezie4HPStKEu4SloJryleci0iLzapz6ZYfjPZHEPSQy7FpLtJaySIrFzF8YCTIjhhYY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5306
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v11] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        nathaniel@profian.com, Michael Kerrisk <mtk.manpages@gmail.com>,
+        Reinette Chatre <reinette.chatre@intel.com>
+References: <20211211153320.17438-1-jarkko@kernel.org>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+In-Reply-To: <20211211153320.17438-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Dave and Jarkko,
+Hi Jarkko,
 
-On 12/4/2021 12:23 PM, Jarkko Sakkinen wrote:
-> Compilation results:
-> 
-> $ make -C tools/testing/selftests/sgx/
-> make: Entering directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
-> gcc -Wall -Werror -g -I../../../../tools/include -fPIC -z noexecstack -c main.c -o /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o
-> main.c: In function ‘get_total_epc_mem’:
-> main.c:296:17: error: implicit declaration of function ‘__cpuid’ [-Werror=implicit-function-declaration]
->    296 |                 __cpuid(&eax, &ebx, &ecx, &edx);
->        |                 ^~~~~~~
-> cc1: all warnings being treated as errors
-> make: *** [Makefile:33: /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o] Error 1
-> make: Leaving directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
-> 
-> Include to cpuid.h is missing and the macro usage is incorrect.
-> 
-> Include cpuid.h and use __cpuid_count() macro in order to fix the
-> compilation issue.
-> 
-> Fixes: f0ff2447b861 ("selftests/sgx: Add a new kselftest: Unclobbered_vdso_oversubscribed")
+Please see some comments below.
+
+Thanks,
+Alex
+
+On 12/11/21 16:33, Jarkko Sakkinen wrote:
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > ---
->   tools/testing/selftests/sgx/main.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
+> v11:
+> * Address Reinette's remarks for v10:
+>    https://lore.kernel.org/linux-sgx/8f84b8e8-b478-bb81-4aa8-536df882a144@intel.com/
+> v10:
+> * v9 was malformed, essentially a resend.
+> v9:
+> * Rename "Address Space" section as "Memory mapping", and refine the
+>    text.
+> * Rename "Ioctls" section as "Construction", and refine the text.
+> v8:
+> * Fix errors reported for the previous version.
+> v7:
+> * Added more meat about the address space and API.
+> * Reorganized the text to have focus more on developer to have a big
+>    picture of kernel provided interfaces.
+> v6:
+> * Small fixes based on Dave's and Reinette's feedback.
+> * Extended the "Permissions" section to cover mmap()
+> v5:
+> * Taking away hardware concepts and focusing more on the interface.
+> v4:
+> * Did a heavy edit trying to streamline the story a bit and focus on
+>    stuff important to the user (e.g. lighten up x86 details).
+> v3:
+> * Overhaul based on Michael's comments. Most likely needs to be refined
+>    in various places but this is at least a small step forward for sure.
+> v2:
+> * Fixed the semantic newlines convention and various style errors etc.
+>    that were reported by Alenjandro and Michael.
+> * SGX was merged to v5.
+> ---
+>   man7/sgx.7 | 146 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 146 insertions(+)
+>   create mode 100644 man7/sgx.7
 > 
-> diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-> index 7e912db4c6c5..370c4995f7c4 100644
-> --- a/tools/testing/selftests/sgx/main.c
-> +++ b/tools/testing/selftests/sgx/main.c
-> @@ -1,6 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0
->   /*  Copyright(c) 2016-20 Intel Corporation. */
->   
-> +#include <cpuid.h>
->   #include <elf.h>
->   #include <errno.h>
->   #include <fcntl.h>
-> @@ -291,9 +292,7 @@ static unsigned long get_total_epc_mem(void)
->   	int section = 0;
->   
->   	while (true) {
-> -		eax = SGX_CPUID;
-> -		ecx = section + SGX_CPUID_EPC;
-> -		__cpuid(&eax, &ebx, &ecx, &edx);
-> +		__cpuid_count(SGX_CPUID, section + SGX_CPUID_EPC, eax, ebx, ecx, edx);
->   
->   		type = eax & SGX_CPUID_EPC_MASK;
->   		if (type == SGX_CPUID_EPC_INVALID)
+> diff --git a/man7/sgx.7 b/man7/sgx.7
+> new file mode 100644
+> index 000000000..0b5aa87e9
+> --- /dev/null
+> +++ b/man7/sgx.7
+> @@ -0,0 +1,146 @@
+> +.\" Copyright (C) 2021 Intel Corporation
+> +.\"
+> +.\" %%%LICENSE_START(VERBATIM)
+> +.\" Permission is granted to make and distribute verbatim copies of this
+> +.\" manual provided the copyright notice and this permission notice are
+> +.\" preserved on all copies.
+> +.\"
+> +.\" Permission is granted to copy and distribute modified versions of this
+> +.\" manual under the conditions for verbatim copying, provided that the
+> +.\" entire resulting derived work is distributed under the terms of a
+> +.\" permission notice identical to this one.
+> +.\"
+> +.\" Since the Linux kernel and libraries are constantly changing, this
+> +.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+> +.\" responsibility for errors or omissions, or for damages resulting from
+> +.\" the use of the information contained herein.  The author(s) may not
+> +.\" have taken the same level of care in the production of this manual,
+> +.\" which is licensed free of charge, as they might when working
+> +.\" professionally.
+> +.\"
+> +.\" Formatted or processed versions of this manual, if unaccompanied by
+> +.\" the source, must acknowledge the copyright and authors of this work.
+> +.\" %%%LICENSE_END
+> +.\"
+> +.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
+> +.PP
+> +sgx - overview of Software Guard eXtensions
+> +.SH SYNOPSIS
+
+Please, add .nf here (see any man2 or man3 pages as an example).
+
+groff(7):
+        .nf       No filling or adjusting of output lines.
 
 
-Shuah confirmed ([1]) that there is no problem including cpuid.h and 
-that this is the preferred fix.
+> +.EX
+> +.B #include <asm/sgx.h>
+> +.PP
+> +.IB enclave " = open(""/dev/sgx_enclave"", O_RDWR);"
 
-Thank you very much Jarkko.
+Sorry for not jumping here before.  I read the thread but didn't have 
+the time to reply.  What you wanted to use here is \(dq.
 
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+groff_man(7):
+        \(dq   ASCII  double-quote.  Sometimes needed after macro
+               calls to prevent the interpretation of  the  ASCII
+               quotation  mark  character '"' as the beginning or
+               end of a macro argument.
 
-Reinette
+So:
 
-[1] 
-https://lore.kernel.org/linux-kselftest/63293c72-55ca-9446-35eb-74aff4c8ba5d@linuxfoundation.org/
+.IB enclave " = open(" \dq/dev/sgx_enclave\(dq ", O_RDWR);"
+
+
+> +.EE
+
+Please, add .fi here.
+
+groff(7):
+        .fi       Fill output lines.
+
+
+> +.SH DESCRIPTION
+> +Intel Software Guard eXtensions (SGX) allow applications to host
+> +enclaves,
+> +protected executable objects in memory.
+> +.PP
+> +Enclaves are blobs of executable code,
+> +running inside a CPU enforced container,
+> +which is mapped to the process address space.
+> +They are represented as the instances of
+> +.IR /dev/sgx_enclave .
+> +They have a fixed set of entry points,
+> +defined when the enclave is built.
+> +.PP
+> +SGX can only be available if the kernel is configured and built with the
+> +.B CONFIG_X86_SGX
+> +option.
+> +If CPU, BIOS and kernel have SGX enabled,
+> +.I sgx
+> +appears in the
+> +.I flags
+> +field of
+> +.IR /proc/cpuinfo .
+> +.PP
+> +If SGX appears not to be available,
+> +ensure that SGX is enabled in the BIOS.
+> +If a BIOS presents a choice between
+> +.I Enabled
+> +and
+> +.I Software Enabled
+> +modes for SGX,
+> +choose
+> +.IR Enabled .
+> +.PP
+
+.PP not necessary just before .SS or .SH.  Please remove it.
+
+> +.SS Memory mapping
+> +The file descriptor for an enclave can be shared among multiple processes.
+> +An enclave is required by the CPU to be placed to an address,
+> +which is a multiple of its size.
+> +An address range containing a reasonable base address can be probed with an anonymous
+> +.BR mmap(2)
+> +call:
+> +.PP
+> +.EX
+> +void *area = mmap(NULL, size * 2, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
+> +                  -1, 0);
+> +
+> +void *base = ((uint64_t)area + size - 1) & ~(size - 1);
+
+Wouldn't uintptr_t(3) be better here (instead of uint64_t(3))?
+
+Also, please add a space just after the cast, just for consistency with 
+other manual pages.
+
+> +.EE
+> +.PP
+
+Please indent the above.
+
+man-pages(7):
+    Indentation of structure definitions, shell session logs, and so on
+        When  structure  definitions, shell session logs, and so on are
+        included in running text, indent them  by  4  spaces  (i.e.,  a
+        block  enclosed  by .in +4n and .in), format them using the .EX
+        and EE macros, and surround them with suitable paragraph  mark-
+        ers (either .PP or .IP).  For example:
+
+                .PP
+                .in +4n
+                .EX
+                int
+                main(int argc, char *argv[])
+                {
+                    return 0;
+                }
+                .EE
+                .in
+                .PP
+
+> +The enclave file descriptor itself can be then mapped with the
+> +.BR MAP_FIXED
+
+This should be .B
+
+groff_man(7):
+        .B [text]
+               Set text in bold.  If the macro is given no  argu-
+               ments,  the  text of the next input line is set in
+               bold.
+
+               Use bold for literal portions of syntax  synopses,
+               for  command-line options in running text, and for
+               literals that are major topics of the subject  un-
+               der  discussion;  for example, this page uses bold
+               for macro and register names.  In .EX/.EE examples
+               of  interactive I/O (such as a shell session), set
+               only the user-typed input in bold.
+
+        [...]
+
+        .BR bold-text roman-text ...
+               Set each argument in bold and roman, alternately.
+
+                      Any such change becomes effective with the first 
+use of
+                      .BR .NH ,
+                      .I after
+                      the new alias is defined.
+
+
+> +flag set to the carved out memory.
+> +.SS Construction
+> +An enclave instance is created by opening
+> +.IR /dev/sgx_enclave .
+> +Its contents are populated with the
+> +.BR ioctl (2)
+> +interface in
+> +.IR <asm/sgx.h> :
+> +.TP
+> +.IB SGX_IOC_ENCLAVE_CREATE
+
+This should be .B
+
+> +Create SGX Enclave Control Structure (SECS) for the enclave.
+> +SECS is a hardware defined structure,
+> +which contains the global properties of an enclave.
+> +.IB SGX_IOC_ENCLAVE_CREATE
+
+Same here
+
+> +is a one-shot call that fixes the enclave's address and
+> +size for the rest of its life-cycle.
+> +.TP
+> +.IB SGX_IOC_ENCLAVE_ADD_PAGES
+
+Same here.
+
+> +Fill a range of the enclave's pages with the caller provided data and protection bits.
+> +Memory mappings of the enclave can only set protection bits that are defined in this ioctl.
+> +The pages added are either regular pages for code and data,
+> +or thread control structures (TCS).
+> +The latter define the entry points to the enclave,
+> +which can be entered after the initialization.
+> +.TP
+> +.IB SGX_IOC_ENCLAVE_INIT
+
+Same here.
+
+> +Initialize the enclave for the run-time.
+> +After a successful initialization,
+> +no new pages can be added to the enclave.
+> +.SS Invocation
+> +Thread control structure (TCS) pages are the entry points to the enclave,
+> +which further define an offset inside the enclave where the execution begins.
+> +The entry points are invoked with
+> +.IR __vdso_sgx_enter_enclave .
+> +The prototype for the vDSO is defined by
+> +.BR vdso_sgx_enter_enclave_t
+
+.I
+
+Types go in italics.  This is to be added to a future manual page 
+groff_man_style(7).  Discussed here: 
+<https://lore.kernel.org/linux-man/20211112093536.hvifxgdtb2y6jzge@localhost.localdomain/>
+
+> +in
+> +.IR <asm/sgx.h> .
+> +.SS Permissions
+> +.PP
+> +During the build process each enclave page is assigned protection bits,
+> +as part of
+> +.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES).
+
+Function calls go in italics.
+
+man-pages(7):
+        Expressions, if not written on a separate indented  line,
+        should  be  specified in italics.  Again, the use of non-
+        breaking spaces may be appropriate if the  expression  is
+        inlined with normal text.
+
+So this should use .IR, not .BR.
+
+Also, a space before the period.
+
+groff_man(7):
+        .IR italic-text roman-text ...
+               Set  each  argument  in  italics and roman, alter-
+               nately.
+
+                      This is the first command of the
+                      .IR prologue .
+
+
+> +These protections are also the maximum protections with which the page can be be mapped.
+> +If
+> +.BR mmap (2)
+> +is called with higher protections than those defined during the build,
+> +it will return
+> +.B -EACCES.
+
+.BR and a space.
+
+groff_man(7):
+        .BR bold-text roman-text ...
+               Set each argument in bold and roman, alternately.
+
+                      Any such change becomes effective with the first 
+use of
+                      .BR .NH ,
+                      .I after
+                      the new alias is defined.
+
+
+> +If
+> +.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES)
+
+.I
+
+groff_man(7):
+        .I [text]
+               Set text in italics.  If the macro is given no ar-
+               guments, the text of the next input line is set in
+               italics.
+
+               Use italics for file and path names, for  environ-
+               ment  variables,  for  enumeration or preprocessor
+               constants in  C,  for  variable  (user-determined)
+               portions  of syntax synopses, for the first occur-
+               rence only of a  technical  concept  being  intro-
+               duced,  for  names of works of software (including
+               commands and functions, but excluding names of op-
+               erating  systems or their kernels), and anywhere a
+               parameter requiring replacement by the user is en-
+               countered.  An exception involves variable text in
+               a context that is already marked  up  in  italics,
+               such  as  file  or path names with variable compo-
+               nents; in such cases,  follow  the  convention  of
+               mathematical typography: set the file or path name
+               in italics as usual (see .IR below), but use roman
+               for  the  variable part, and italics again in run-
+               ning roman text when referring to the variable ma-
+               terial.
+
+
+> +is called after
+> +.BR mmap (2)
+> +with lower protections,
+> +the caller receives
+> +.BR SIGBUS,
+
+A space before the comma.
+
+> +once it accesses the page for the first time.
+> +.SH VERSIONS
+> +The SGX feature was added in Linux 5.11.
+> +.SH SEE ALSO
+> +.BR ioctl (2),
+> +.BR mmap (2),
+> +.BR mprotect (2)
+
+-- 
+Alejandro Colomar
+Linux man-pages comaintainer; http://www.kernel.org/doc/man-pages/
