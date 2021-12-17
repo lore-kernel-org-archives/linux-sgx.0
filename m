@@ -2,38 +2,41 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64757C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 19:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC837C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Dec 2021 21:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232757AbhLQTMM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 17 Dec 2021 14:12:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbhLQTMM (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 17 Dec 2021 14:12:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17AF5C061574;
-        Fri, 17 Dec 2021 11:12:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B574B62384;
-        Fri, 17 Dec 2021 19:12:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE00FC36AE2;
-        Fri, 17 Dec 2021 19:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639768331;
-        bh=abrj6yZx1CS+4y6rWVn3ZtFqCwKgtGVKaalJpu0TSPw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FFvjRiN6uSj8POfLPxfk9KGf6ZdjpD+TnGDpp9MGbIAz1LAjqAdYKmLTfC6BpGnj1
-         oTYHkkU5U2duNyVqLi8UivDcqe/kPxza/hz0G+mUYZhXwZsPug04xNRWFzTeR4twbS
-         7fb/f+UOonucgP8HSJhyuHK014XzSmjZ8FEcP2lSr/7Rl/TKmIwyYXcGd/ev2nCiv3
-         u/bVR8z2NDMcyAqUFfQnm525Ov6KYtqfacvhvi0rzWBy7y5jMxlcOHVIz5V5/aoxyd
-         LSHihi8FSO5U3l0UGv7gyxXbej+kSvpiQcE5ltAZRIn9tUWNmJ1SyOxj8qy+nxDh0t
-         0h3gDLGhjYoug==
-Date:   Fri, 17 Dec 2021 12:12:06 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
+        id S237291AbhLQVRq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 17 Dec 2021 16:17:46 -0500
+Received: from mga11.intel.com ([192.55.52.93]:6486 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237156AbhLQVRp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 17 Dec 2021 16:17:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639775865; x=1671311865;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=0MGr81aqkNa4jKgg4hdu/6la1f3mjEWrRC+B7fBMBug=;
+  b=fcdskudsWqc1h0PTqvNUHMpLoUmtmmD5GmeIsIO2bqcI0rQrHlYOcii6
+   rBlOVQFuLYVHbSXxB8VczIfA0533ElSEhure4pNCY7Ft8zzw+tDArPcO4
+   7+lZtWrjeZ1XtjeRZoN/YK4Oqz+WT4uJPLf1FcDfzgjA0qtqYtD6d63LT
+   F5lJeva2kmqT0qJ83R4KYr0Rmt30VmUv3vSpvCSdRRZLyShK1RwomsLY7
+   zMLbZ2i6dMPrro85NxSZPyQfOWmaO0TeY37hUskWl+RTMmL0h+BZRQfoY
+   djnKuoVUP9QFEnhsIuu3rF4SCk/mikmF68dymhUjNYilUkoshksd0JwJH
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10201"; a="237376125"
+X-IronPort-AV: E=Sophos;i="5.88,214,1635231600"; 
+   d="scan'208";a="237376125"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2021 13:17:45 -0800
+X-IronPort-AV: E=Sophos;i="5.88,214,1635231600"; 
+   d="scan'208";a="683522144"
+Received: from mkundu-mobl1.amr.corp.intel.com (HELO [10.212.216.75]) ([10.212.216.75])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2021 13:17:45 -0800
+Subject: Re: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX
+ memory in a NUMA node
+To:     Nathan Chancellor <nathan@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
@@ -41,126 +44,72 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>, reinette.chatre@intel.com,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: Re: [PATCH v13 2/2] x86/sgx: Add an attribute for the amount of SGX
- memory in a NUMA node
-Message-ID: <YbzhBrimHGGpddDM@archlinux-ax161>
 References: <20211116162116.93081-1-jarkko@kernel.org>
- <20211116162116.93081-2-jarkko@kernel.org>
+ <20211116162116.93081-2-jarkko@kernel.org> <YbzhBrimHGGpddDM@archlinux-ax161>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b744d47e-4b7f-d372-f8ba-758555c08993@intel.com>
+Date:   Fri, 17 Dec 2021 13:17:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <YbzhBrimHGGpddDM@archlinux-ax161>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211116162116.93081-2-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
+On 12/17/21 11:12 AM, Nathan Chancellor wrote:
+> With this patch in -next as commit 50468e431335 ("x86/sgx: Add an
+> attribute for the amount of SGX memory in a NUMA node"), this sysfs node
+> causes an OOPS for me on at least one of my test systems (Intel based):
 
-On Tue, Nov 16, 2021 at 06:21:16PM +0200, Jarkko Sakkinen wrote:
-> The amount of SGX memory on the system is determined by the BIOS and it
-> varies wildly between systems.  It can be from dozens of MB's on desktops
-> or VM's, up to many GB's on servers.  Just like for regular memory, it is
-> sometimes useful to know the amount of usable SGX memory in the system.
-> 
-> Introduce CONFIG_HAVE_ARCH_NODE_DEV_GROUP opt-in flag to expose an arch
-> specific attribute group, and add an attribute for the amount of SGX
-> memory in bytes to each NUMA node:
-> 
-> /sys/devices/system/node/nodeX/x86/sgx_total_bytes
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Thanks for the report!
 
-Apologies if this has already been reported or fixed, I haven't seen
-anything from a full search of lore.kernel.org.
-
-With this patch in -next as commit 50468e431335 ("x86/sgx: Add an
-attribute for the amount of SGX memory in a NUMA node"), this sysfs node
-causes an OOPS for me on at least one of my test systems (Intel based):
-
-# cat /sys/devices/system/node/node0/x86/sgx_total_bytes
-fish: Job 1, 'cat /sys/devices/system/node/no…' terminated by signal SIGKILL (Forced quit)
-
-# dmesg
-[   56.956995] BUG: kernel NULL pointer dereference, address: 0000000000000020
-[   56.957003] #PF: supervisor read access in kernel mode
-[   56.957006] #PF: error_code(0x0000) - not-present page
-[   56.957009] PGD 0 P4D 0
-[   56.957013] Oops: 0000 [#2] PREEMPT SMP PTI
-[   56.957017] CPU: 1 PID: 866 Comm: cat Tainted: G      D           5.16.0-rc5-next-20211217-debug #1 15ae5b0f28a4b9b6343440ee595affa8e1b5cf57
-[   56.957022] Hardware name: ASUSTeK COMPUTER INC. Q302LA/Q302LA, BIOS Q302LA.203 05/15/2014
-[   56.957024] RIP: 0010:sgx_total_bytes_show+0x28/0x40
-[   56.957032] Code: 66 90 0f 1f 44 00 00 49 89 f8 48 89 d7 48 c7 c6 5f b1 52 a4 41 8b 80 98 02 00 00 48 8d 04 40 48 c1 e0 04 48 03 05 38 b1 3c 02 <48> 8b 50 20 e8 ff ee 3b 00 48 98 31 d2 89 d6 89 d7 41 89 d0 c3 0f
-[   56.957035] RSP: 0018:ffffb79c81447d60 EFLAGS: 00010246
-[   56.957039] RAX: 0000000000000000 RBX: ffffffffa4c30ec0 RCX: 0000000000000000
-[   56.957041] RDX: ffff95d502b95000 RSI: ffffffffa452b15f RDI: ffff95d502b95000
-[   56.957044] RBP: ffffffffa41567c0 R08: ffff95d5002a0400 R09: 0000000000000000
-[   56.957046] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb79c81447e28
-[   56.957048] R13: ffffb79c81447e00 R14: ffff95d5041247a8 R15: 0000000000000001
-[   56.957051] FS:  00007f4ab25af600(0000) GS:ffff95d616e80000(0000) knlGS:0000000000000000
-[   56.957054] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   56.957056] CR2: 0000000000000020 CR3: 00000001029e8005 CR4: 00000000001706e0
-[   56.957060] Call Trace:
-[   56.957062]  <TASK>
-[   56.957064]  dev_attr_show+0x19/0x40
-[   56.957072]  sysfs_kf_seq_show+0xa1/0x120
-[   56.957080]  seq_read_iter+0x12e/0x4c0
-[   56.957085]  new_sync_read+0x159/0x1f0
-[   56.957093]  vfs_read+0xff/0x1a0
-[   56.957099]  ksys_read+0x67/0xf0
-[   56.957105]  do_syscall_64+0x5c/0x90
-[   56.957110]  ? syscall_exit_to_user_mode+0x23/0x50
-[   56.957116]  ? exc_page_fault+0x72/0x180
-[   56.957121]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[   56.957128] RIP: 0033:0x7f4ab24d1862
-[   56.957131] Code: c0 e9 b2 fe ff ff 50 48 8d 3d 5a 29 0a 00 e8 55 e4 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
-[   56.957134] RSP: 002b:00007ffff14dac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-[   56.957137] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f4ab24d1862
-[   56.957140] RDX: 0000000000020000 RSI: 00007f4ab20d8000 RDI: 0000000000000003
-[   56.957142] RBP: 00007f4ab20d8000 R08: 00007f4ab20d7010 R09: 0000000000000000
-[   56.957144] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000020000
-[   56.957146] R13: 0000000000000003 R14: 0000000000000000 R15: 00007ffff14daf18
-[   56.957150]  </TASK>
-[   56.957152] Modules linked in: 8021q garp mrp stp llc snd_hda_codec_hdmi ccm
-algif_aead cbc x86_pkg_temp_thermal des_generic intel_powerclamp libdes
-coretemp ecb kvm_intel algif_skcipher kvm ax88796b irqbypass cmac
-crct10dif_pclmul i915 crc32_pclmul md4 ghash_clmulni_intel algif_hash
-snd_hda_codec_realtek af_alg snd_hda_codec_generic ledtrig_audio uvcvideo
-asus_nb_wmi aesni_intel snd_hda_intel intel_spi_platform i2c_algo_bit iwlmvm
-videobuf2_vmalloc asus_wmi snd_intel_dspcfg ttm snd_intel_sdw_acpi crypto_simd
-joydev ak8975 intel_spi iTCO_wdt btusb mousedev spi_nor sparse_keymap
-intel_pmc_bxt at24 cryptd videobuf2_memops iTCO_vendor_support mac80211
-hid_multitouch mtd platform_profile btrtl intel_rapl_msr mei_hdcp snd_hda_codec
-btbcm rapl libarc4 videobuf2_v4l2 drm_kms_helper intel_cstate
-processor_thermal_device_pci_legacy asix intel_uncore syscopyarea selftests
-btintel snd_hda_core videobuf2_common pcspkr iwlwifi snd_hwdep
-processor_thermal_device vfat btmtk i2c_i801 sysfillrect usbnet
-[   56.957229]  snd_pcm processor_thermal_rfim psmouse fat sysimgblt i2c_smbus
-bluetooth videodev processor_thermal_mbox snd_timer processor_thermal_rapl
-fb_sys_fops mii cfg80211 mei_me usbhid snd ecdh_generic mdio_devres mc
-inv_mpu6050_i2c intel_rapl_common cec crc16 int340x_thermal_zone libphy lpc_ich
-rfkill intel_gtt mei soundcore intel_soc_dts_iosf inv_mpu6050 acpi_als wmi
-dell_smo8800 industrialio_triggered_buffer int3400_thermal video i2c_mux
-kfifo_buf soc_button_array industrialio acpi_thermal_rel asus_wireless mac_hid
-drm pkcs8_key_parser fuse bpf_preload ip_tables x_tables xfs libcrc32c
-crc32c_generic serio_raw atkbd libps2 i8042 crc32c_intel xhci_pci
-xhci_pci_renesas serio
-[   56.957286] CR2: 0000000000000020
-[   56.957289] ---[ end trace 0000000000000000 ]---
-[   56.957291] RIP: 0010:sgx_total_bytes_show+0x28/0x40
-[   56.957296] Code: 66 90 0f 1f 44 00 00 49 89 f8 48 89 d7 48 c7 c6 5f b1 52 a4 41 8b 80 98 02 00 00 48 8d 04 40 48 c1 e0 04 48 03 05 38 b1 3c 02 <48> 8b 50 20 e8 ff ee 3b 00 48 98 31 d2 89 d6 89 d7 41 89 d0 c3 0f
-[   56.957299] RSP: 0018:ffffb79c8118fd58 EFLAGS: 00010246
-[   56.957301] RAX: 0000000000000000 RBX: ffffffffa4c30ec0 RCX: 0000000000000000
-[   56.957304] RDX: ffff95d50403d000 RSI: ffffffffa452b15f RDI: ffff95d50403d000
-[   56.957306] RBP: ffffffffa41567c0 R08: ffff95d5002a0400 R09: 0000000000000000
-[   56.957308] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb79c8118fe20
-[   56.957310] R13: ffffb79c8118fdf8 R14: ffff95d503fd0550 R15: 0000000000000001
-[   56.957312] FS:  00007f4ab25af600(0000) GS:ffff95d616e80000(0000) knlGS:0000000000000000
-[   56.957315] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   56.957317] CR2: 0000000000000020 CR3: 00000001029e8005 CR4: 00000000001706e0
-
-If I can provide any further information or testing, let me know!
-
-Cheers,
-Nathan
+Could you share /proc/cpuinfo and a full dmesg from when this happens?
+I'm curious if your system has SGX at all and if it had any issues
+during initialization.
