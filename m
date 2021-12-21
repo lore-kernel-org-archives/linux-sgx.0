@@ -2,110 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77425C433EF
-	for <linux-sgx@archiver.kernel.org>; Mon, 20 Dec 2021 22:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61245C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 21 Dec 2021 08:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbhLTWsX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 20 Dec 2021 17:48:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
+        id S234728AbhLUImf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 21 Dec 2021 03:42:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229474AbhLTWsX (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 20 Dec 2021 17:48:23 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59BB7C061574;
-        Mon, 20 Dec 2021 14:48:23 -0800 (PST)
-Received: from zn.tnic (dslb-088-067-202-008.088.067.pools.vodafone-ip.de [88.67.202.8])
+        with ESMTP id S234305AbhLUIme (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 21 Dec 2021 03:42:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3DAC061574
+        for <linux-sgx@vger.kernel.org>; Tue, 21 Dec 2021 00:42:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BCF6F1EC04E4;
-        Mon, 20 Dec 2021 23:48:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1640040497;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=FTdRJbvgD63oUHMOrYjWy5nRUmOd9XvXNqQ7stf7PJ0=;
-        b=Lvq/LueX72/2Jeg6cTGhbJ/WttPypQkeaKdGZA84/DWA5Przw464qXs7ttqDoCH5BgCpHI
-        QfVKhQzQwbGvb0hKkeyZvUkf8SeDnPSPJA4MaI9mSsYQ0Qq33GWGAazn2moLOefa9Kn/oH
-        6D2saOIXBhG0TWaXctCWzg68pIIXUTU=
-Date:   Mon, 20 Dec 2021 23:48:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
-Message-ID: <YcEINHL3LViw11Yv@zn.tnic>
-References: <20211220174640.7542-1-kristen@linux.intel.com>
- <20211220174640.7542-2-kristen@linux.intel.com>
- <YcDZ4++GQN+ODm50@zn.tnic>
- <9e08e13208950e9fd955a46994b7fef705751dd6.camel@linux.intel.com>
- <YcDxhWZ7lzB2BB8N@zn.tnic>
- <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D1D4161466
+        for <linux-sgx@vger.kernel.org>; Tue, 21 Dec 2021 08:42:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8627C36AE2;
+        Tue, 21 Dec 2021 08:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640076153;
+        bh=6yaXjq48asIAwWT2Tuh0uo1XoqGmEzs3VE/9bUAKKR0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sHT12kXip+Kj6UfqMizL5yz+iQm0K5TDU0fTo1qoZ4gyl5S6pScISxIwGrGuPHpQZ
+         8Vm7etFspJh4eVWrtiPIJGq7bNTD5vqc85aWOI1AsczdcQwU4uMHcGMBxy1/z3J0of
+         OBq6RcUwF6+LO2fscYSJ71TLR9dAcLTzi7HGUh8Kkyh/RsNlrR5BYTPcob1Sdo63w9
+         CdeR1o7x0rNj/h3f6+nphIKpjQG8Sw8ba6o2s2fgfpN1AUvklbMDWkzSWGaU7AkacV
+         oeni3qfISgJ6GLyBfcShnQaBAnad2YK3tzi+HwjkDIV4sWj9xgTl+XUrLr9RXP878x
+         dEE2fL2PnxyuA==
+Date:   Tue, 21 Dec 2021 10:42:32 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     dave@sr71.net, nathan@kernel.org, gregkh@linuxfoundation.org,
+        linux-sgx@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/sgx: Fix NULL pointer dereference on non-SGX systems
+Message-ID: <YcGTePmWDMOQU1pn@iki.fi>
+References: <20211217223153.837591E0@davehans-spike.ostc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
+In-Reply-To: <20211217223153.837591E0@davehans-spike.ostc.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Dec 20, 2021 at 01:35:03PM -0800, Kristen Carlson Accardi wrote:
-> So, in your proposal you would first change the calculated number of
-> maximum available backing pages to be based on total system RAM rather
-> than EPC memory, got it.
+On Fri, Dec 17, 2021 at 02:31:53PM -0800, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> Nathan Chancellor reported an oops when aceessing the
+> 'sgx_total_bytes' sysfs file:
+> 
+> 	https://lore.kernel.org/all/YbzhBrimHGGpddDM@archlinux-ax161/
+> 
+> The sysfs output code accesses the sgx_numa_nodes[] array
+> unconditionally.  However, this array is allocated during SGX
+> initialization, which only occurs on systems where SGX is
+> supported.
+> 
+> If the sysfs file is accessed on systems without SGX support,
+> sgx_numa_nodes[] is NULL and an oops occurs.
+> 
+> Add a check to ensure that SGX has been initialized to the point
+> where sgx_numa_nodes[] is allocated, before accessing it.
+> 
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: linux-sgx@vger.kernel.org
+> Cc: x86@kernel.org
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> ---
+> 
+>  b/arch/x86/kernel/cpu/sgx/main.c |    8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff -puN arch/x86/kernel/cpu/sgx/main.c~sgx-null-ptr arch/x86/kernel/cpu/sgx/main.c
+> --- a/arch/x86/kernel/cpu/sgx/main.c~sgx-null-ptr	2021-12-17 13:38:00.217312383 -0800
+> +++ b/arch/x86/kernel/cpu/sgx/main.c	2021-12-17 14:00:36.293044390 -0800
+> @@ -906,7 +906,13 @@ EXPORT_SYMBOL_GPL(sgx_set_attribute);
+>  #ifdef CONFIG_NUMA
+>  static ssize_t sgx_total_bytes_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  {
+> -	return sysfs_emit(buf, "%lu\n", sgx_numa_nodes[dev->id].size);
+> +	unsigned long node_bytes = 0;
+> +
+> +	/* Avoid acccessing sgx_numa_nodes[] when it is not allocated: */
+> +	if (!nodes_empty(sgx_numa_mask))
+> +		node_bytes = sgx_numa_nodes[dev->id].size;
+> +
+> +	return sysfs_emit(buf, "%lu\n", node_bytes);
+>  }
+>  static DEVICE_ATTR_RO(sgx_total_bytes);
+>  
+> _
 
-This was just an example. My point is to try to make it automatic and
-not introduce another knob. And to decide on the limits and behavior
-by using common sense and addressing the common use cases first.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-> This would require recalculating the max number of allowed backing
-> pages per enclave at run time whenever a new enclave is loaded - but
-> all the existing enclaves may have already used more than the new max
-> number of per-enclave allowable pages. How would you handle that
-> scenario? This would add a lot of complexity for sure - and it does
-> make me wonder whether any additional benefit of limiting per enclave
-> would be worth it.
+[Some latency in response time is because off-work up until end of the year]
 
-See above - this was just an example. And as you've shown, an example of
-what *not* to do.
-
-> Thanks for your more detailed explanation - I will take a look at the
-> VM overcommit limits. Since obviously the original implementation did
-> have a default value set, I had still a remaining specific question
-> about your comments. Are you suggesting that there should not be a way
-> to override any overcommit limit at all? So drop the parameter all
-> together?
-
-So let me ask you a counter-question:
-
-Imagine you're a sysadmin. Or a general, common system user if there
-ever is one.
-
-When your system starts thrashing and you're running a bunch of
-enclaves, how do you find out there even is a knob which might
-potentially help you?
-
-And after you find it, how would you use that knob?
-
-Or would you rather prefer that the system did the right thing for you
-instead of having to figure out what the sensible values for that knob
-would be?
-
-My point is: put yourself in the user's shoes and try to think about
-what would be the optimal thing the system should do.
-
-Once that is cleanly and properly defined, then we can deal with knobs
-and policies etc.
-
-I sincerely hope that makes more sense.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+/Jarkko
