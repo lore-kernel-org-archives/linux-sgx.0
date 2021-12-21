@@ -2,104 +2,76 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61245C433F5
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Dec 2021 08:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E43CC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 21 Dec 2021 08:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234728AbhLUImf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:42:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50134 "EHLO
+        id S235855AbhLUIwe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 21 Dec 2021 03:52:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234305AbhLUIme (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 21 Dec 2021 03:42:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3DAC061574
-        for <linux-sgx@vger.kernel.org>; Tue, 21 Dec 2021 00:42:34 -0800 (PST)
+        with ESMTP id S233569AbhLUIwd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 21 Dec 2021 03:52:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B6FC061574;
+        Tue, 21 Dec 2021 00:52:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D1D4161466
-        for <linux-sgx@vger.kernel.org>; Tue, 21 Dec 2021 08:42:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8627C36AE2;
-        Tue, 21 Dec 2021 08:42:32 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 80255B81211;
+        Tue, 21 Dec 2021 08:52:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4600C36AE2;
+        Tue, 21 Dec 2021 08:52:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640076153;
-        bh=6yaXjq48asIAwWT2Tuh0uo1XoqGmEzs3VE/9bUAKKR0=;
+        s=k20201202; t=1640076751;
+        bh=cTgfH3Chgz3SzxHPSaXVcyqObWYtBCdFtEJiZmv4+6o=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sHT12kXip+Kj6UfqMizL5yz+iQm0K5TDU0fTo1qoZ4gyl5S6pScISxIwGrGuPHpQZ
-         8Vm7etFspJh4eVWrtiPIJGq7bNTD5vqc85aWOI1AsczdcQwU4uMHcGMBxy1/z3J0of
-         OBq6RcUwF6+LO2fscYSJ71TLR9dAcLTzi7HGUh8Kkyh/RsNlrR5BYTPcob1Sdo63w9
-         CdeR1o7x0rNj/h3f6+nphIKpjQG8Sw8ba6o2s2fgfpN1AUvklbMDWkzSWGaU7AkacV
-         oeni3qfISgJ6GLyBfcShnQaBAnad2YK3tzi+HwjkDIV4sWj9xgTl+XUrLr9RXP878x
-         dEE2fL2PnxyuA==
-Date:   Tue, 21 Dec 2021 10:42:32 +0200
+        b=QJA5ZlLczUqRya8BJ1+xQhKgfZ6m96GMzlSjxW5/+Kwc3ydaF4yBiX2HzVkSvlibI
+         AowwJvtt+0iDSeyVsynxir9x+Ts75PWPcnkhvU6P1m73XyhWQyEAnnAOMWkwRdJV4L
+         9J8Qi/fa4mHqxwy37saqNcskcn+Zj9t2jnX8sCZJozrHQVNcKCldu56/7+dpl6XBx+
+         3xdQaBTVBjXy3Q3n972MpSA9hxQ0Oibq2hRb/qZz/2nqqQdqUIdqBhORhRoLYt9mwl
+         gDNivYxrgTz1n9wvL6OUfJ26ATnMCr3NOCTzOGjma7pMC/n7h9cxDyp0WSLdQMI/b5
+         DN7R08AGGIyxw==
+Date:   Tue, 21 Dec 2021 10:52:30 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     dave@sr71.net, nathan@kernel.org, gregkh@linuxfoundation.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/sgx: Fix NULL pointer dereference on non-SGX systems
-Message-ID: <YcGTePmWDMOQU1pn@iki.fi>
-References: <20211217223153.837591E0@davehans-spike.ostc.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 16/25] x86/sgx: Support modifying SGX page type
+Message-ID: <YcGVzsXmHrijKaFz@iki.fi>
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <c0f04a8f7e1afd9e9319bb9f283db9a3187f7abc.1638381245.git.reinette.chatre@intel.com>
+ <Yav9g4+L8zg48DRf@iki.fi>
+ <dc74a876-54fe-5caa-6602-8887cfe34315@intel.com>
+ <2a269a4dde2976f7aaf17de9c4a7fca3552e9c7a.camel@kernel.org>
+ <0fb14185-5cc3-a963-253d-2e119b4a52bb@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211217223153.837591E0@davehans-spike.ostc.intel.com>
+In-Reply-To: <0fb14185-5cc3-a963-253d-2e119b4a52bb@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 02:31:53PM -0800, Dave Hansen wrote:
+On Mon, Dec 13, 2021 at 09:43:38AM -0800, Dave Hansen wrote:
+> On 12/11/21 12:02 AM, Jarkko Sakkinen wrote:
+> > On Mon, 2021-12-06 at 13:48 -0800, Reinette Chatre wrote:
+> >>> I'd suggest to change this as SGX_IOC_ENCLAVE_MODIFY_TYPE.
+> >> How about SGX_IOC_ENCLAVE_MOD_TYPE to be consistent with your earlier 
+> >> suggestion of SGX_IOC_ENCLAVE_MOD_PROTECTIONS ?
+> > I think it would be best to introduce only one new ioctl that would
+> > be capable of doing either operation (and use secinfo as a vessel
+> > for additional data).
 > 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
+> Why?
 > 
-> Nathan Chancellor reported an oops when aceessing the
-> 'sgx_total_bytes' sysfs file:
-> 
-> 	https://lore.kernel.org/all/YbzhBrimHGGpddDM@archlinux-ax161/
-> 
-> The sysfs output code accesses the sgx_numa_nodes[] array
-> unconditionally.  However, this array is allocated during SGX
-> initialization, which only occurs on systems where SGX is
-> supported.
-> 
-> If the sysfs file is accessed on systems without SGX support,
-> sgx_numa_nodes[] is NULL and an oops occurs.
-> 
-> Add a check to ensure that SGX has been initialized to the point
-> where sgx_numa_nodes[] is allocated, before accessing it.
-> 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: linux-sgx@vger.kernel.org
-> Cc: x86@kernel.org
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> ---
-> 
->  b/arch/x86/kernel/cpu/sgx/main.c |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff -puN arch/x86/kernel/cpu/sgx/main.c~sgx-null-ptr arch/x86/kernel/cpu/sgx/main.c
-> --- a/arch/x86/kernel/cpu/sgx/main.c~sgx-null-ptr	2021-12-17 13:38:00.217312383 -0800
-> +++ b/arch/x86/kernel/cpu/sgx/main.c	2021-12-17 14:00:36.293044390 -0800
-> @@ -906,7 +906,13 @@ EXPORT_SYMBOL_GPL(sgx_set_attribute);
->  #ifdef CONFIG_NUMA
->  static ssize_t sgx_total_bytes_show(struct device *dev, struct device_attribute *attr, char *buf)
->  {
-> -	return sysfs_emit(buf, "%lu\n", sgx_numa_nodes[dev->id].size);
-> +	unsigned long node_bytes = 0;
-> +
-> +	/* Avoid acccessing sgx_numa_nodes[] when it is not allocated: */
-> +	if (!nodes_empty(sgx_numa_mask))
-> +		node_bytes = sgx_numa_nodes[dev->id].size;
-> +
-> +	return sysfs_emit(buf, "%lu\n", node_bytes);
->  }
->  static DEVICE_ATTR_RO(sgx_total_bytes);
->  
-> _
+> I don't think we should try to multiplex within an ioctl().  Just create
+> a second ioctl().
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-[Some latency in response time is because off-work up until end of the year]
+I'm fine with 2 ioctls.
 
 /Jarkko
