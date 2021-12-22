@@ -2,115 +2,118 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B15C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 22 Dec 2021 00:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DEFC433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Dec 2021 14:21:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235565AbhLVAkI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 21 Dec 2021 19:40:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45372 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231169AbhLVAkI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 21 Dec 2021 19:40:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D983BC061574;
-        Tue, 21 Dec 2021 16:40:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 98C7CB81A27;
-        Wed, 22 Dec 2021 00:40:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E929CC36AEA;
-        Wed, 22 Dec 2021 00:40:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640133605;
-        bh=j4fxKQ/pouRbRKesqGWj6oRpvgQjCFuPocDWspHDWpk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CRC3wHdIBRa9zy6jEt4GCTd215IEdJ/k4UtFLWcIj2jlorNj6GVId8YsRxmMGNGmN
-         YyMt1XPuejBfKSGlrrm3izZpwt/Iy2gRCgVoLpRM41gh3arsmDEiGbq93SAQrzTf+8
-         UZnOVYj6t8QxTdcqCXiQRCaHayo32eN5y0EvAtpA4eSzwk0EJkplxDk6i2DTivuYpj
-         PfH8nv4g94XPwhss/aQC1oorYc4niFtTVjkKCVjZF8SoT/T+qSl8gZew9XH+h48jo6
-         TkosmWaF1zZ3Us/kTR3ka/WaqlNiBui/hl/isRseDkYayWhVM1k+gddIpOsJQemsLc
-         Xmyn4tE8XX66w==
-Date:   Wed, 22 Dec 2021 02:40:04 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     Shuah Khan <shuah@kernel.org>,
+        id S236915AbhLVOVt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 22 Dec 2021 09:21:49 -0500
+Received: from mga06.intel.com ([134.134.136.31]:55895 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231283AbhLVOVs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 22 Dec 2021 09:21:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1640182908; x=1671718908;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=FEpSXqj02d+EU/rYx5Mz5iXZxGvJLIUPwf9mJpaZGH0=;
+  b=YXTxms9lPNaSVsl3YxUZg4z2RgTVAzL2Eax7N7tINLorE2x38bJGPVNw
+   kPfFf7wOwfd7MTT/67lBonstul9WRIg9QzyX5GjzdYAnU5ZtS5WXA6nBD
+   l658zbaHVln4HM4xz4Scrl+zjY8yNB6ENjR9Fof7sXMqfyUmJbbC4RZ5F
+   7bgKSi/BUumf/swlWLTX51StlWKW40I9VCbBOcPrv8buaE2XK+x0r728D
+   7dTX1WSR1Gm30EyCnvoLzh84QWIPLbE9oAgFvKze0ZJsmtfxpDJbVyp7b
+   nyu8v+evtgsYADQzsy1AjN4dCUFD6wJu+Le/uP1WLySbB8xCgkG2Td8CB
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10205"; a="301391857"
+X-IronPort-AV: E=Sophos;i="5.88,226,1635231600"; 
+   d="scan'208";a="301391857"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2021 06:21:48 -0800
+X-IronPort-AV: E=Sophos;i="5.88,226,1635231600"; 
+   d="scan'208";a="484768609"
+Received: from drakemat-mobl.amr.corp.intel.com (HELO [10.212.179.136]) ([10.212.179.136])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2021 06:21:48 -0800
+Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kselftest@vger.kernel.org, linux-sgx@vger.kernel.org
-Subject: Re: [PATCH] selftests/sgx: Fix corrupted cpuid macro invocation
-Message-ID: <YcJz5HScqjAiWUBk@iki.fi>
-References: <20211204202355.23005-1-jarkko@kernel.org>
- <1eefe8b4-feec-3f2a-7eae-c10e49fbedf0@intel.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <20211220174640.7542-1-kristen@linux.intel.com>
+ <20211220174640.7542-2-kristen@linux.intel.com> <YcDZ4++GQN+ODm50@zn.tnic>
+ <9e08e13208950e9fd955a46994b7fef705751dd6.camel@linux.intel.com>
+ <YcDxhWZ7lzB2BB8N@zn.tnic>
+ <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <6e8239c6-1b0d-ad42-0bf6-971f37af17b2@intel.com>
+Date:   Wed, 22 Dec 2021 06:21:45 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1eefe8b4-feec-3f2a-7eae-c10e49fbedf0@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Dec 14, 2021 at 04:19:24PM -0800, Reinette Chatre wrote:
-> Hi Dave and Jarkko,
-> 
-> On 12/4/2021 12:23 PM, Jarkko Sakkinen wrote:
-> > Compilation results:
-> > 
-> > $ make -C tools/testing/selftests/sgx/
-> > make: Entering directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
-> > gcc -Wall -Werror -g -I../../../../tools/include -fPIC -z noexecstack -c main.c -o /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o
-> > main.c: In function ‘get_total_epc_mem’:
-> > main.c:296:17: error: implicit declaration of function ‘__cpuid’ [-Werror=implicit-function-declaration]
-> >    296 |                 __cpuid(&eax, &ebx, &ecx, &edx);
-> >        |                 ^~~~~~~
-> > cc1: all warnings being treated as errors
-> > make: *** [Makefile:33: /home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx/main.o] Error 1
-> > make: Leaving directory '/home/jarkko/Projects/linux-sgx/tools/testing/selftests/sgx'
-> > 
-> > Include to cpuid.h is missing and the macro usage is incorrect.
-> > 
-> > Include cpuid.h and use __cpuid_count() macro in order to fix the
-> > compilation issue.
-> > 
-> > Fixes: f0ff2447b861 ("selftests/sgx: Add a new kselftest: Unclobbered_vdso_oversubscribed")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> >   tools/testing/selftests/sgx/main.c | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-> > index 7e912db4c6c5..370c4995f7c4 100644
-> > --- a/tools/testing/selftests/sgx/main.c
-> > +++ b/tools/testing/selftests/sgx/main.c
-> > @@ -1,6 +1,7 @@
-> >   // SPDX-License-Identifier: GPL-2.0
-> >   /*  Copyright(c) 2016-20 Intel Corporation. */
-> > +#include <cpuid.h>
-> >   #include <elf.h>
-> >   #include <errno.h>
-> >   #include <fcntl.h>
-> > @@ -291,9 +292,7 @@ static unsigned long get_total_epc_mem(void)
-> >   	int section = 0;
-> >   	while (true) {
-> > -		eax = SGX_CPUID;
-> > -		ecx = section + SGX_CPUID_EPC;
-> > -		__cpuid(&eax, &ebx, &ecx, &edx);
-> > +		__cpuid_count(SGX_CPUID, section + SGX_CPUID_EPC, eax, ebx, ecx, edx);
-> >   		type = eax & SGX_CPUID_EPC_MASK;
-> >   		if (type == SGX_CPUID_EPC_INVALID)
-> 
-> 
-> Shuah confirmed ([1]) that there is no problem including cpuid.h and that
-> this is the preferred fix.
-> 
-> Thank you very much Jarkko.
-> 
-> Acked-by: Reinette Chatre <reinette.chatre@intel.com>
-> 
-> Reinette
-> 
-> [1] https://lore.kernel.org/linux-kselftest/63293c72-55ca-9446-35eb-74aff4c8ba5d@linuxfoundation.org/
+On 12/20/21 1:35 PM, Kristen Carlson Accardi wrote:
+> Thanks for your more detailed explanation - I will take a look at the
+> VM overcommit limits. Since obviously the original implementation did
+> have a default value set, I had still a remaining specific question
+> about your comments. Are you suggesting that there should not be a way
+> to override any overcommit limit at all? So drop the parameter all
+> together?
 
-OK, cool, thanks!
+Yes, let's kill the exposed tunable.
 
-/Jarkko
+We don't have any strong, practical need for it at the moment other than
+paranoia.
