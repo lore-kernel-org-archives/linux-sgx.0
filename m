@@ -2,150 +2,122 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB87AC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 21 Dec 2021 15:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCFFC433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 22 Dec 2021 00:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbhLUPxs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 21 Dec 2021 10:53:48 -0500
-Received: from mga03.intel.com ([134.134.136.65]:28756 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229449AbhLUPxr (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:53:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640102027; x=1671638027;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=R5238Kbi1+5NFWk9tUibKnCtpKSEaKH/BRg0ie3MMR8=;
-  b=OdMrrRqaXkGdNJga19OgfsA/EFB7LuUIfmhLdqq7FSnBIs77CKD0clX6
-   qwyss9/DP8q3kDroujQG+xhWdVV0fXM0YLNpWemLizf8w5mi1+J3Xo2f/
-   Ez6Ebd2kT6aL8xf6zHKqXf5A71xJizUioao66BF52gJ3E5adj56FhThTB
-   GrjzFd4VR2wqvELXXuFw46g01qHYCU2svPGlMhvt089vrd6KjPUcYJo85
-   qFYtJ+3wgQhQdJ324RRFqugJbK5e8JOvsiJyAzZl6AmLf3olYvZ5WnLpx
-   NGeojzXi8jkialZ2gJ4SRhJ7n+u420BJ2YAKcQrKNtyqUMSCzYp3eWKIm
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10204"; a="240371609"
-X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="240371609"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:53:42 -0800
-X-IronPort-AV: E=Sophos;i="5.88,223,1635231600"; 
-   d="scan'208";a="466335481"
-Received: from jborouma-mobl1.amr.corp.intel.com (HELO [10.209.37.145]) ([10.209.37.145])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2021 07:53:41 -0800
-Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
-To:     Borislav Petkov <bp@alien8.de>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <20211220174640.7542-1-kristen@linux.intel.com>
- <20211220174640.7542-2-kristen@linux.intel.com> <YcDZ4++GQN+ODm50@zn.tnic>
- <9e08e13208950e9fd955a46994b7fef705751dd6.camel@linux.intel.com>
- <YcDxhWZ7lzB2BB8N@zn.tnic>
- <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
- <YcEINHL3LViw11Yv@zn.tnic>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <721375d1-c76a-24fa-5013-f7b2455610a2@intel.com>
-Date:   Tue, 21 Dec 2021 07:53:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S235494AbhLVAjI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 21 Dec 2021 19:39:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234160AbhLVAjH (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 21 Dec 2021 19:39:07 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8D8C061574;
+        Tue, 21 Dec 2021 16:39:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A7760B81A43;
+        Wed, 22 Dec 2021 00:39:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC794C36AE9;
+        Wed, 22 Dec 2021 00:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640133544;
+        bh=M6gBu5PznHBo4KKDniMEoCRoA9ky61/ubPU1ZfzuUx4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J2UZF/cmZc3nWKebMY1bBUq2bhsVQ1yJ7OLihAQp3nYu1MbrMxtF2BWKzXWo4hjVS
+         Eg17zYny4ceStuWcWMNeYgbrQSXTgaCGx0aL9bn7CChUkLTp6ncCB94y76kHJxp+tL
+         VJPDB5wBj2JOzSOEn+Vk3eFd2Ajhns09CIgj8Mfw/CIoU+QCxUpxDxXa5aHw75jWYH
+         RlxaWZEk2NxkGKOq+GJrxUkFnxgj5VxkhH0h5Bid3hq1UgmndWWmHHN4j56FQ4jhqn
+         oJfIz13oU6V3Gt8c0uGoLs5xnh+Zxtkp1Rh3QU3k/tmeiyZGETNneKE6lCc4KnzBTN
+         Foc8yL/1mtRAw==
+Date:   Wed, 22 Dec 2021 02:39:02 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@linux.intel.com, nathaniel@profian.com
+Subject: Re: [PATCH v10] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+Message-ID: <YcJzpqa9RNzg+Vim@iki.fi>
+References: <20211130175007.22903-1-jarkko@kernel.org>
+ <8f84b8e8-b478-bb81-4aa8-536df882a144@intel.com>
+ <e998dddb2efd158ac14dc3c5393efe882ca62d16.camel@kernel.org>
+ <3af1d311-7ef8-1b67-fcae-5cd15be02606@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <YcEINHL3LViw11Yv@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3af1d311-7ef8-1b67-fcae-5cd15be02606@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/20/21 2:48 PM, Borislav Petkov wrote:
-> On Mon, Dec 20, 2021 at 01:35:03PM -0800, Kristen Carlson Accardi wrote:
->> So, in your proposal you would first change the calculated number of
->> maximum available backing pages to be based on total system RAM rather
->> than EPC memory, got it.
+On Mon, Dec 13, 2021 at 11:51:36AM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> This was just an example. My point is to try to make it automatic and
-> not introduce another knob. And to decide on the limits and behavior
-> by using common sense and addressing the common use cases first.
-
-The common case is clearly a few enclaves on systems where the
-overcommit levels are modest.  The "100%" limit will work great there.
-
-I'd personally be fine with just enforcing that limit as the default and
-ignoring everything else.  It makes me a bit nervous, though, because
-suddenly enforcing a limit is an ABI break.  The tunable effectively
-gives us a way out if we screw up either the limit's quantity or someone
-needs the old ABI back.
-
-That said, we don't *need* it to be tunable, boot parameter or not.  If
-you're concerned about the tunable, I think we should drop it and not
-look back.
-
-> Imagine you're a sysadmin. Or a general, common system user if there
-> ever is one.
+> On 12/11/2021 7:19 AM, Jarkko Sakkinen wrote:
+> > On Wed, 2021-12-08 at 14:11 -0800, Reinette Chatre wrote:
+> > > On 11/30/2021 9:50 AM, Jarkko Sakkinen wrote:
 > 
-> When your system starts thrashing and you're running a bunch of
-> enclaves, how do you find out there even is a knob which might
-> potentially help you?
+> ...
+> 
+> > > > +.SH SYNOPSIS
+> > > > +.EX
+> > > > +.B #include <asm/sgx.h>
+> > > > +.PP
+> > > > +.IB enclave " = open(""/dev/sgx_enclave", " O_RDWR);"
+> > > 
+> > > I view the man page output using "man -l man7/sgx.7" and when I do so
+> > > the above line is unbalanced: "enclave" and (unexpectedly) the comma are
+> > > underlined and the line is displayed with a single instance of a double
+> > > quote: enclave = open("/dev/sgx_enclave, O_RDWR);
+> > 
+> > After some trial and error, and looking at symlink.7, this seems to
+> > fix it:
+> > 
+> > -.IB enclave " = open(""/dev/sgx_enclave", " O_RDWR);"
+> > +.IB enclave " = open(""/dev/sgx_enclave"", O_RDWR);"
+> > 
+> > Does this fix for you?
+> 
+> Yes, thank you. When looking at your updated patch I see that only enclave
+> is underlined and the quotes are matching.
+> 
+> ...
+> 
+> > > > +is called with higher protections than those defined during the build,
+> > > > +it will return
+> > > > +.B -EACCES.
+> > > > +If
+> > > > +.BR ioctl(SGX_IOC_ENCLAVE_ADD_PAGES)
+> > > > +is called after
+> > > > +.BR mmap (2)
+> > > > +with lower protections,
+> > > > +the caller receives
+> > > > +.BR SIGBUS,
+> > > > +once it accesses the page for the first time.
+> > > > +.SH VERSIONS
+> > > > +The SGX feature was added in Linux 5.11.
+> > > 
+> > > This does not document the SGX_IOC_VEPC_REMOVE ioctl that was added in
+> > > v5.16. How do you envision additions to this page as new features are
+> > > added to the Linux support of SGX?
+> > 
+> > I started this before any of KVM stuff was in upstream. It'd be better
+> > to get the basic ioctl's done first. I cannot really give estimate for
+> > vepc at this point.
+> 
+> SGX_IOC_VEPC_REMOVE_ALL can be found in v5.16.
 
-I'm selfish.  The tunable isn't for end users.  It's for me.
+I'd get the basic API documentation ready first and continue to that after
+it is final.
 
-The scenario I envisioned is that a user upgrades to a new kernel and
-their enclaves start crashing.  They'll eventually find us, the
-maintainers of the SGX code, and we'll have a tool as kernel developers
-to help them.  The tunable helps _me_ in two ways:
-1. It help me easily get user back to pre-5.17 (or whatever) behavior
-2. If we got the "100%" value wrong, end users can help us experiment to
-   help find a better value.
+> > For future features (e.g. SGX2), the expectation is that the feature is
+> > supported by an associated man page update.
+> > 
+> 
+> ok, thank you.
+> 
+> Reinette
 
-BTW, all the chat about "malicious" enclaves and so forth...  I
-*totally* agree that this is a problem and one worth solving.  It just
-can't be solved today.  We need real cgroup support.  It's coming soon.
+/Jarkko
