@@ -2,104 +2,209 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E5FC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 28 Dec 2021 14:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BEFC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 28 Dec 2021 23:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234841AbhL1O5E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 28 Dec 2021 09:57:04 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:40568 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234834AbhL1O5C (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 28 Dec 2021 09:57:02 -0500
+        id S237709AbhL1XEe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 28 Dec 2021 18:04:34 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:42544 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229882AbhL1XEd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 28 Dec 2021 18:04:33 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 11F416122F;
-        Tue, 28 Dec 2021 14:57:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FDFFC36AE7;
-        Tue, 28 Dec 2021 14:57:00 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 21576B80E71
+        for <linux-sgx@vger.kernel.org>; Tue, 28 Dec 2021 23:04:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D73C36AEC;
+        Tue, 28 Dec 2021 23:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640703421;
-        bh=nMUfTt6GNtf97yL27tK96zd4QoSQd+3VZBBUwks/lnA=;
+        s=k20201202; t=1640732670;
+        bh=yux5p2nR35X5+Vwid26Kh5Rv3Cd1tYvdQ7r7hl3ND8c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xm5fBEUc12qoAlXBA9KPIRPUk1q0YoaHqPCBMEcTWS4Em7OT+7ISxVN09ne8xreei
-         gEuXIE1lofDIwynm2uyUR+hyMVz+37Scqse24MNSMY2QzLvJLOOeuBuCC/VIdLb1RC
-         2qFgpu//T52Siaprfp0vtZcRq1gBAN4sb1AKszAsz+kz5xwO4DWon7bAFw+oyAH313
-         qJIxRMVXf9oP8Iu4KAABalLF3ngjrDB+9BIHFc5GwZrR1DcNrnQ3Ugx64aEqvRwNO7
-         tVQ0KavCFTHnNt3heyS3I8Pb5v45jeMf7TO3ERs/hId1sBxZI9PbCdtGbX1zR1zoUg
-         0hJdCVF0rTBOw==
-Date:   Tue, 28 Dec 2021 16:57:03 +0200
+        b=ub99nSKBR9x6AclgBRW/QYGO4tpBF+67phGGuNwOQB8s9+E0B1ybZWFhjXgUVaDli
+         2ToO9+t9azGCeq8vufyJokKMypH25rR9SoLQyaemKaq0iO8En1pzWNaLB5l1/CvcKX
+         i1bvxfs/cMdClZ9wQbRtZmhgchvdAJCyNDIF7bVlN3qpCrrxhFC2HNCxMPakd0JeAt
+         8B1KJToJ9eh2+Ru53EghMDXCm2Msmf6SnZuTQaaDY7pPc2YKmZxD1lYcGoJORG5h1o
+         nDCk8562O5sAAN3l7qNXbYUTIVUtB/ph3kfy81Dy4XMVocrrmuNZHGP2K8YG3imgJ7
+         kHkUxQ6QyLKEg==
+Date:   Wed, 29 Dec 2021 01:04:28 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
-        cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/25] x86/sgx: Support adding of pages to initialized
- enclave
-Message-ID: <Ycslvzx4He2Ophqa@iki.fi>
-References: <cover.1638381245.git.reinette.chatre@intel.com>
- <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
- <Yav1/ZRX68cECD7a@iki.fi>
- <cc6ecffd-7d4b-0b15-eaf1-6f585e8b31be@intel.com>
- <ce00226feaa02dbc0f66f3f8aa7a243f61e410aa.camel@kernel.org>
- <e934673b-8410-d3fe-f231-fef672050e2b@intel.com>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
+Message-ID: <YcuX/DzVsAWvhEBA@iki.fi>
+References: <20211220174640.7542-1-kristen@linux.intel.com>
+ <20211220174640.7542-2-kristen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e934673b-8410-d3fe-f231-fef672050e2b@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211220174640.7542-2-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 02:12:57PM -0800, Reinette Chatre wrote:
-> Hi Jarkko,
+On Mon, Dec 20, 2021 at 09:46:39AM -0800, Kristen Carlson Accardi wrote:
+> When the system runs out of enclave memory, SGX can reclaim EPC pages
+> by swapping to normal RAM. This normal RAM is allocated via a
+> per-enclave shared memory area. The shared memory area is not mapped
+> into the enclave or the task mapping it, which makes its memory use
+> opaque (including to the OOM killer). Having lots of hard to find
+> memory around is problematic, especially when there is no limit.
 > 
-> On 12/11/2021 12:00 AM, Jarkko Sakkinen wrote:
-> > On Mon, 2021-12-06 at 13:44 -0800, Reinette Chatre wrote:
-> > > On 12/4/2021 3:13 PM, Jarkko Sakkinen wrote:
-> > > > On Wed, Dec 01, 2021 at 11:23:11AM -0800, Reinette Chatre wrote:
+> Introduce a module parameter and a global counter that can be used to limit
+> the number of pages that enclaves are able to consume for backing storage.
+> This parameter is a percentage value that is used in conjunction with the
+> number of EPC pages in the system to set a cap on the amount of backing
+> RAM that can be consumed.
 > 
-> ...
+> The default for this value is 100, which limits the total number of
+> shared memory pages that may be consumed by all enclaves as backing pages
+> to the number of EPC pages on the system.
 > 
-> > > > > Accessing an uninitialized address from outside the enclave also triggers
-> > > > > this flow but the page will remain in PENDING state until accepted from
-> > > > > within the enclave.
-> > > > 
-> > > > What does it mean being in PENDING state, and more imporantly, what is
-> > > > PENDING state? What does a memory access within enclave cause when it
-> > > > touch a page within this state?
-> > > 
-> > > The PENDING state is the enclave page state from the SGX hardware's
-> > > perspective. The OS uses the ENCLS[EAUG] SGX2 function to add a new page
-> > > to the enclave but from the SGX hardware's perspective it would be in a
-> > > PENDING state until the enclave accepts the page. An access to the page
-> > > in PENDING state would result in a page fault.
-> > > 
-> > > 
-> > > > I see a lot of text in the commit message but zero mentions about EPCM
-> > > > expect this one sudden mention about PENDING field without attaching
-> > > > it to anything concrete.
-> > > 
-> > > My apologies - I will add this to this changelog. This matches your
-> > > request to describe the __eaug() wrapper introduced in patch 02/25.
-> > > Would you like me to duplicate this information here and in that patch
-> > > (a new patch dedicated to the __eaug() wrapper) or would you be ok if I
-> > > introduce the wrappers all together briefly as in the example you
-> > > provide and then detail the flows where the wrappers are used - like
-> > > this patch?
-> > 
-> > I think it would be a good place to describe these details in 02/25,
-> > and skip them in rest of the patches.
-> > 
+> For example, on an SGX system that has 128MB of EPC, this default would
+> cap the amount of normal RAM that SGX consumes for its shared memory
+> areas at 128MB.
 > 
-> Will do. I do think describing this amount of detail for the new SGX2
-> functions would be too much for a single patch so I currently plan to split
-> that (02/25) patch into a new patch per SGX2 instruction. Is that ok with
-> you or would you like to keep it in a single patch?
+> If sgx.overcommit_percent is set to a negative value (such as -1),
+> SGX will not place any limits on the amount of overcommit that might
+> be requested, and SGX will behave as it has previously without the
+> overcommit_percent limit.
+> 
+> SGX may not be built as a module, but the module parameter interface
+> is used in order to provide a convenient interface.
+> 
+> The SGX overcommit_percent works differently than the core VM overcommit
+> limit. Enclaves request backing pages one page at a time, and the number
+> of in use backing pages that are allowed is a global resource that is
+> limited for all enclaves.
+> 
+> Introduce a pair of functions which can be used by callers when requesting
+> backing RAM pages. These functions are responsible for accounting the
+> page charges. A request may return an error if the request will cause the
+> counter to exceed the backing page cap.
+> 
+> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  7 ++
+>  Documentation/x86/sgx.rst                     | 16 ++++-
+>  arch/x86/kernel/cpu/sgx/Makefile              |  6 +-
+>  arch/x86/kernel/cpu/sgx/main.c                | 64 +++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/sgx.h                 |  2 +
+>  5 files changed, 93 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 9725c546a0d4..9d23c05a833b 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -5165,6 +5165,13 @@
+>  
+>  	serialnumber	[BUGS=X86-32]
+>  
+> +	sgx.overcommit_percent=	[X86-64,SGX]
+> +			Limits the amount of normal RAM used for backing
+> +			storage that may be allocate, expressed as a
+> +			percentage of the total number of EPC pages in the
+> +			system.
+> +			See Documentation/x86/sgx.rst for more information.
+> +
+>  	shapers=	[NET]
+>  			Maximal number of shapers.
+>  
+> diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+> index 265568a9292c..4f9a1c68be94 100644
+> --- a/Documentation/x86/sgx.rst
+> +++ b/Documentation/x86/sgx.rst
+> @@ -147,7 +147,21 @@ Page reclaimer
+>  
+>  Similar to the core kswapd, ksgxd, is responsible for managing the
+>  overcommitment of enclave memory.  If the system runs out of enclave memory,
+> -*ksgxd* “swaps” enclave memory to normal memory.
+> +*ksgxd* “swaps” enclave memory to normal RAM. This normal RAM is allocated
+> +via per enclave shared memory. The shared memory area is not mapped into the
+> +enclave or the task mapping it, which makes its memory use opaque - including
+> +to the system out of memory killer (OOM). This can be problematic when there
+> +are no limits in place on the amount an enclave can allocate.
+> +
+> +At boot time, the module parameter "sgx.overcommit_percent" can be used to
+> +place a limit on the number of shared memory backing pages that may be
+> +allocated, expressed as a percentage of the total number of EPC pages in the
+> +system.  A value of 100 is the default, and represents a limit equal to the
+> +number of EPC pages in the system. To disable the limit, set
+> +sgx.overcommit_percent to -1. The number of backing pages available to
+> +enclaves is a global resource. If the system exceeds the number of allowed
+> +backing pages in use, the reclaimer will be unable to swap EPC pages to
+> +shared memory.
+>  
+>  Launch Control
+>  ==============
+> diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+> index 9c1656779b2a..72f9192a43fe 100644
+> --- a/arch/x86/kernel/cpu/sgx/Makefile
+> +++ b/arch/x86/kernel/cpu/sgx/Makefile
+> @@ -1,6 +1,10 @@
+> -obj-y += \
+> +# This allows sgx to have module namespace
+> +obj-y += sgx.o
+> +
+> +sgx-y += \
+>  	driver.o \
+>  	encl.o \
+>  	ioctl.o \
+>  	main.o
+> +
+>  obj-$(CONFIG_X86_SGX_KVM)	+= virt.o
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 2857a49f2335..c58ce9d9fd56 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*  Copyright(c) 2016-20 Intel Corporation. */
+>  
+> +#include <linux/moduleparam.h>
+>  #include <linux/file.h>
+>  #include <linux/freezer.h>
+>  #include <linux/highmem.h>
+> @@ -43,6 +44,54 @@ static struct sgx_numa_node *sgx_numa_nodes;
+>  
+>  static LIST_HEAD(sgx_dirty_page_list);
+>  
+> +/*
+> + * Limits the amount of normal RAM that SGX can consume for EPC
+> + * overcommit to the total EPC pages * sgx_overcommit_percent / 100
+> + */
+> +static int sgx_overcommit_percent = 100;
+> +module_param_named(overcommit_percent, sgx_overcommit_percent, int, 0440);
+> +MODULE_PARM_DESC(overcommit_percent, "Percentage of overcommit of EPC pages.");
+> +
+> +/* The number of pages that can be allocated globally for backing storage. */
+> +static atomic_long_t sgx_nr_available_backing_pages;
+> +static bool sgx_disable_overcommit_tracking;
 
-It's ok for me.
+I don't like the use of word tracking as we already have ETRACK. I'd also
+shorten the first global as "sgx_nr_backing_pages".
+
+Couldn't you set "sgx_nr_backing_pages" to -1 when capping is disabled, and
+then you would not need that bool in the first place?
+
+> +
+> +/**
+> + * sgx_charge_mem() - charge for a page used for backing storage
+> + *
+
+Please remove this empty line:
+
+https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+
+> + * Backing storage usage is capped by the sgx_nr_available_backing_pages.
+> + * If the backing storage usage is over the overcommit limit,
+
+Where does this verb "charge" come from?
 
 /Jarkko
