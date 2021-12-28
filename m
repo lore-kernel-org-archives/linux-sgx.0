@@ -2,118 +2,189 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DEFC433F5
-	for <linux-sgx@archiver.kernel.org>; Wed, 22 Dec 2021 14:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D46C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 28 Dec 2021 14:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236915AbhLVOVt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 22 Dec 2021 09:21:49 -0500
-Received: from mga06.intel.com ([134.134.136.31]:55895 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231283AbhLVOVs (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 22 Dec 2021 09:21:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1640182908; x=1671718908;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=FEpSXqj02d+EU/rYx5Mz5iXZxGvJLIUPwf9mJpaZGH0=;
-  b=YXTxms9lPNaSVsl3YxUZg4z2RgTVAzL2Eax7N7tINLorE2x38bJGPVNw
-   kPfFf7wOwfd7MTT/67lBonstul9WRIg9QzyX5GjzdYAnU5ZtS5WXA6nBD
-   l658zbaHVln4HM4xz4Scrl+zjY8yNB6ENjR9Fof7sXMqfyUmJbbC4RZ5F
-   7bgKSi/BUumf/swlWLTX51StlWKW40I9VCbBOcPrv8buaE2XK+x0r728D
-   7dTX1WSR1Gm30EyCnvoLzh84QWIPLbE9oAgFvKze0ZJsmtfxpDJbVyp7b
-   nyu8v+evtgsYADQzsy1AjN4dCUFD6wJu+Le/uP1WLySbB8xCgkG2Td8CB
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10205"; a="301391857"
-X-IronPort-AV: E=Sophos;i="5.88,226,1635231600"; 
-   d="scan'208";a="301391857"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2021 06:21:48 -0800
-X-IronPort-AV: E=Sophos;i="5.88,226,1635231600"; 
-   d="scan'208";a="484768609"
-Received: from drakemat-mobl.amr.corp.intel.com (HELO [10.212.179.136]) ([10.212.179.136])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2021 06:21:48 -0800
-Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <20211220174640.7542-1-kristen@linux.intel.com>
- <20211220174640.7542-2-kristen@linux.intel.com> <YcDZ4++GQN+ODm50@zn.tnic>
- <9e08e13208950e9fd955a46994b7fef705751dd6.camel@linux.intel.com>
- <YcDxhWZ7lzB2BB8N@zn.tnic>
- <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6e8239c6-1b0d-ad42-0bf6-971f37af17b2@intel.com>
-Date:   Wed, 22 Dec 2021 06:21:45 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S234751AbhL1OvH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 28 Dec 2021 09:51:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229480AbhL1OvG (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 28 Dec 2021 09:51:06 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633E2C061574;
+        Tue, 28 Dec 2021 06:51:06 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2D72EB81229;
+        Tue, 28 Dec 2021 14:51:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72452C36AE8;
+        Tue, 28 Dec 2021 14:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640703063;
+        bh=uXDfVDTHPvOrTHP7/qWnkJFWttPCWOTangKOTvaFXYM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p+IELg9dzV4yFwlk3NoC/P7hhoh+LmtYlFHeDDyTK2J2vjX54eZGa0+6cRcORoPL5
+         Xm4lG8UToXVq0/8n7z/E2nWpiUAEX/gYVIuSTWlr3d40JgeHc+53C/lwtH+GT8pvia
+         oGzbOls+oqnqMs/MUPjcSi1zCmV7SGCH/vTMSnaJnRxY3gndZrXEMLquJ9COuXOIHy
+         B0BTB0nHONIMcVM0oBUlr5CP/k5i0wLGL2r48FwxX2fAMwMHcyMVQzKdBriGlfwK98
+         jy7DT4pv+s4IYTOvCmcvW8cTeFOCwyU/fjeu0DFdgHZflefMMBemcSGES+x7eDrc9m
+         LVuGbuTLz0n+g==
+Date:   Tue, 28 Dec 2021 16:51:06 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/25] x86/sgx: Add pfn_mkwrite() handler for present PTEs
+Message-ID: <YcskWr6yH/8AjDPv@iki.fi>
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <9edf8cd20628cbf400886d88e359fb24265fdef0.1638381245.git.reinette.chatre@intel.com>
+ <YavvE+wF5XQNXlFu@iki.fi>
+ <d39a9c2f-c69f-c5f1-6d4e-65d66bdbd06d@intel.com>
+ <eb8aa99b4d2ad3d8bb7cd01542dcb99520506d84.camel@kernel.org>
+ <16bce99a-206e-1e9c-a74d-6116df705df4@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <f9faa3ee2614af088c510bc3c68080712665cd8f.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16bce99a-206e-1e9c-a74d-6116df705df4@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 12/20/21 1:35 PM, Kristen Carlson Accardi wrote:
-> Thanks for your more detailed explanation - I will take a look at the
-> VM overcommit limits. Since obviously the original implementation did
-> have a default value set, I had still a remaining specific question
-> about your comments. Are you suggesting that there should not be a way
-> to override any overcommit limit at all? So drop the parameter all
-> together?
+On Mon, Dec 13, 2021 at 02:09:30PM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
+> 
+> On 12/10/2021 11:37 PM, Jarkko Sakkinen wrote:
+> > On Mon, 2021-12-06 at 13:18 -0800, Reinette Chatre wrote:
+> > > Hi Jarkko,
+> > > 
+> > > On 12/4/2021 2:43 PM, Jarkko Sakkinen wrote:
+> > > > On Wed, Dec 01, 2021 at 11:23:02AM -0800, Reinette Chatre wrote:
+> > > > > By default a write page fault on a present PTE inherits the permissions
+> > > > > of the VMA. Enclave page permissions maintained in the hardware's
+> > > > > Enclave Page Cache Map (EPCM) may change after a VMA accessing the page
+> > > > > is created. A VMA's permissions may thus exceed the enclave page
+> > > > > permissions even though the VMA was originally created not to exceed
+> > > > > the enclave page permissions. Following the default behavior during
+> > > > > a page fault on a present PTE while the VMA permissions exceed the
+> > > > > enclave page permissions would result in the PTE for an enclave page
+> > > > > to be writable even though the page is not writable according to the
+> > > > > enclave's permissions.
+> > > > > 
+> > > > > Consider the following scenario:
+> > > > > * An enclave page exists with RW EPCM permissions.
+> > > > > * A RW VMA maps the range spanning the enclave page.
+> > > > > * The enclave page's EPCM permissions are changed to read-only.
+> > > > 
+> > > > How could this happen in the existing mainline code?
+> > > 
+> > > This is a preparatory patch for SGX2 support. Restricting the
+> > > permissions of an enclave page would require OS support that is added in
+> > > a later patch.
+> > > 
+> > > > 
+> > > > > * There is no page table entry for the enclave page.
+> > > > > 
+> > > > > Q.
+> > > > >    What will user space observe when an attempt is made to write to the
+> > > > >    enclave page from within the enclave?
+> > > > > 
+> > > > > A.
+> > > > >    Initially the page table entry is not present so the following is
+> > > > >    observed:
+> > > > >    1) Instruction writing to enclave page is run from within the enclave.
+> > > > >    2) A page fault with second and third bits set (0x6) is encountered
+> > > > >       and handled by the SGX handler sgx_vma_fault() that installs a
+> > > > >       read-only page table entry following previous patch that installs
+> > > > >       page table entry with permissions that VMA and enclave agree on
+> > > > >       (read-only in this case).
+> > > > >    3) Instruction writing to enclave page is re-attempted.
+> > > > >    4) A page fault with first three bits set (0x7) is encountered and
+> > > > >       transparently (from SGX and user space perspective) handled by the
+> > > > >       OS with the page table entry made writable because the VMA is
+> > > > >       writable.
+> > > > >    5) Instruction writing to enclave page is re-attempted.
+> > > > >    6) Since the EPCM permissions prevents writing to the page a new page
+> > > > >       fault is encountered, this time with the SGX flag set in the error
+> > > > >       code (0x8007). No action is taken by OS for this page fault and
+> > > > >       execution returns to user space.
+> > > > >    7) Typically such a fault will be passed on to an application with a
+> > > > >       signal but if the enclave is entered with the vDSO function provided
+> > > > >       by the kernel then user space does not receive a signal but instead
+> > > > >       the vDSO function returns successfully with exception information
+> > > > >       (vector=14, error code=0x8007, and address) within the exception
+> > > > >       fields within the vDSO function's struct sgx_enclave_run.
+> > > > > 
+> > > > > As can be observed it is not possible for user space to write to an
+> > > > > enclave page if that page's enclave page permissions do not allow so,
+> > > > > no matter what the VMA or PTE allows.
+> > > > > 
+> > > > > Even so, the OS should not allow writing to a page if that page is not
+> > > > > writable. Thus the page table entry should accurately reflect the
+> > > > > enclave page permissions.
+> > > > > 
+> > > > > Do not blindly accept VMA permissions on a page fault due to a write
+> > > > > attempt to a present PTE. Install a pfn_mkwrite() handler that ensures
+> > > > > that the VMA permissions agree with the enclave permissions in this
+> > > > > regard.
+> > > > > 
+> > > > > Considering the same scenario as above after this change results in
+> > > > > the following behavior change:
+> > > > > 
+> > > > > Q.
+> > > > >    What will user space observe when an attempt is made to write to the
+> > > > >    enclave page from within the enclave?
+> > > > > 
+> > > > > A.
+> > > > >    Initially the page table entry is not present so the following is
+> > > > >    observed:
+> > > > >    1) Instruction writing to enclave page is run from within the enclave.
+> > > > >    2) A page fault with second and third bits set (0x6) is encountered
+> > > > >       and handled by the SGX handler sgx_vma_fault() that installs a
+> > > > >       read-only page table entry following previous patch that installs
+> > > > >       page table entry with permissions that VMA and enclave agree on
+> > > > >       (read-only in this case).
+> > > > >    3) Instruction writing to enclave page is re-attempted.
+> > > > >    4) A page fault with first three bits set (0x7) is encountered and
+> > > > >       passed to the pfn_mkwrite() handler for consideration. The handler
+> > > > >       determines that the page should not be writable and returns SIGBUS.
+> > > > >    5) Typically such a fault will be passed on to an application with a
+> > > > >       signal but if the enclave is entered with the vDSO function provided
+> > > > >       by the kernel then user space does not receive a signal but instead
+> > > > >       the vDSO function returns successfully with exception information
+> > > > >       (vector=14, error code=0x7, and address) within the exception fields
+> > > > >       within the vDSO function's struct sgx_enclave_run.
+> > > > > 
+> > > > > The accurate exception information supports the SGX runtime, which is
+> > > > > virtually always implemented inside a shared library, by providing
+> > > > > accurate information in support of its management of the SGX enclave.
+> > > > 
+> > > > This QA-format is not a great idea, as it kind of tells what are the legit
+> > > > questions to ask.
+> > > 
+> > > I will remove the QA-format and just describe the two (before/after)
+> > > scenarios.
+> > > 
+> > > > You should describe what the patch does and what are the
+> > > > legit reasons for doing that. Unfortunately, in the current form it is very
+> > > > hard to get grip of this patch.
+> > > 
+> > > That was the goal of the summary (the first paragraph) at the start of
+> > > the changelog. Could you please elaborate how you would like me to
+> > > improve it?
+> > 
+> > If I do a search "mktme" through the commit message, it gives
+> > me zero results.
+> 
+> Could you please elaborate why you expect "mktme" to show up in the commit
+> message?
 
-Yes, let's kill the exposed tunable.
+I'm sorry, my mistake doubled: I ment to write mkwrite, and yes its use was well
+described in the commit message.
 
-We don't have any strong, practical need for it at the moment other than
-paranoia.
+/Jarkko
