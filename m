@@ -2,67 +2,89 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBE2C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Jan 2022 18:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EAAC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Jan 2022 19:16:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231139AbiAGSrP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 7 Jan 2022 13:47:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:18598 "EHLO mga17.intel.com"
+        id S230496AbiAGTQm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 7 Jan 2022 14:16:42 -0500
+Received: from mga07.intel.com ([134.134.136.100]:3822 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230343AbiAGSrN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 7 Jan 2022 13:47:13 -0500
+        id S230475AbiAGTQl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 7 Jan 2022 14:16:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641581233; x=1673117233;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AVOvGHK2+PnzQnmj0+JK64mUWQbsspK8z0DDBKDHByY=;
-  b=NwLFs2yUAleMWdx2jxeOyaId1gHtGAFIuscNR0L6W1NaY5Mi6BpwcqWu
-   yXeR9yw+Yk7AGJBWnNkAwRHuciBNniA/FVyCDOcdKYaKz81fydghGuVjR
-   FsR2sVY8T9UghSVEcVuB+ydxM24NO7T7ovQkmCWqtiL4bL3GUWXEZynJa
-   wxhutdwO9p9qc8Y3tESKK68FgRZbS6EbFT+frZgFPx7eUTRDz3y0QqBnL
-   +GO6KHvN75CKsVd8tRTqkcOsqmNvAICd1QtTd1BEinZc6f7S4vRzBLB9x
-   ELWI3oWOVP/JHx27TztDEwoggnXcwSMeeWiKvT0OALWCdNTVejSRQHZ3s
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10219"; a="223618549"
+  t=1641583001; x=1673119001;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=UJvI0p8S88c7Vko3exbS/ce8PjbOJZ8Ih0hV6b9Yuxo=;
+  b=jX4N0AE7qAkrtAWAtpeCayYxe0mQX09BJXDrfjm9Jxwc+aHY20RWCRfu
+   J/Dn1ydUEQaFMie90HLqz2hk/ezLyMk/obcwA7i67czr2/8iMJiAoupAf
+   foWpVdW5tPaKSablWAtY7hWXxzMSYIRzq3SGdX501LaRgOUl3BotqL2sb
+   LPhxDTUAKjdETVZbaTzzym2BOyTkcWIct4ssqIj8XuyqQJ0GenivxDriK
+   wAjWqjDgXi8Xe3Gl/ERcmKY6trzBQpimYx88tze2yqcW1HRr/yRy9k3I7
+   Osz2X9shCpAOhsVFL1U2S7g8ZogcTwV+3rnOiqFlhfO6DxvNp7qWfAhyw
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10219"; a="306290570"
 X-IronPort-AV: E=Sophos;i="5.88,270,1635231600"; 
-   d="scan'208";a="223618549"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2022 10:46:52 -0800
+   d="scan'208";a="306290570"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2022 11:16:14 -0800
 X-IronPort-AV: E=Sophos;i="5.88,270,1635231600"; 
-   d="scan'208";a="473403501"
-Received: from kcmojjad-mobl.amr.corp.intel.com (HELO [10.209.72.209]) ([10.209.72.209])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2022 10:46:51 -0800
-Message-ID: <171631a9-aaec-f590-3377-29c13fc6041e@intel.com>
-Date:   Fri, 7 Jan 2022 10:46:48 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
+   d="scan'208";a="612272381"
+Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.212.25.179])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2022 11:16:14 -0800
+Message-ID: <3b169fde457f28e086c49c8a3b8d81ac539cfb59.camel@linux.intel.com>
 Subject: Re: [PATCH v2 1/2] x86/sgx: Add accounting for tracking overcommit
-Content-Language: en-US
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
 Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 07 Jan 2022 11:16:12 -0800
+In-Reply-To: <171631a9-aaec-f590-3377-29c13fc6041e@intel.com>
 References: <20220107181618.6597-1-kristen@linux.intel.com>
- <20220107181618.6597-2-kristen@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <20220107181618.6597-2-kristen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+         <20220107181618.6597-2-kristen@linux.intel.com>
+         <171631a9-aaec-f590-3377-29c13fc6041e@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/7/22 10:16, Kristen Carlson Accardi wrote:
-> The overcommit percentage value is 150, which limits the total number of
-> shared memory pages that may be consumed by all enclaves as backing pages
-> to 1.5X of EPC pages on the system.
+On Fri, 2022-01-07 at 10:46 -0800, Dave Hansen wrote:
+> On 1/7/22 10:16, Kristen Carlson Accardi wrote:
+> > The overcommit percentage value is 150, which limits the total
+> > number of
+> > shared memory pages that may be consumed by all enclaves as backing
+> > pages
+> > to 1.5X of EPC pages on the system.
+> 
+> Hi Kristen,
+> 
+> Could you give some background on how this value was chosen and how
+> it 
+> might impact userspace?
 
-Hi Kristen,
+Yes,
+The value of 1.5x the number of EPC pages was chosen because it will
+handle the most common case of a few enclaves that don't need much
+overcommit without any impact to user space. In the less commone case
+where there are many enclaves or a few large enclaves which need a lot
+of overcommit due to large EPC memory requirements, the reclaimer may
+fail to allocate a backing page for swapping if the limit has been
+reached. In this case the page will not be able to be reclaimed and the
+system will not be able to allocate any new EPC pages. Any ioctl or
+call to add new EPC pages will get -ENOMEM, so for example, new
+enclaves will fail to load, and new EPC pages will not be able to be
+added.
 
-Could you give some background on how this value was chosen and how it 
-might impact userspace?
+Does that make sense?
+
+Kristen
+
+
