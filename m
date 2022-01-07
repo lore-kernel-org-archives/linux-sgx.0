@@ -2,98 +2,105 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FD4C433F5
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Jan 2022 12:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F36D6C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Jan 2022 12:26:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232184AbiAGMZa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 7 Jan 2022 07:25:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44862 "EHLO
+        id S229889AbiAGM0f (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 7 Jan 2022 07:26:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbiAGMZ3 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 7 Jan 2022 07:25:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3009C061245
-        for <linux-sgx@vger.kernel.org>; Fri,  7 Jan 2022 04:25:29 -0800 (PST)
+        with ESMTP id S231223AbiAGM0S (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 7 Jan 2022 07:26:18 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF65C061245;
+        Fri,  7 Jan 2022 04:26:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7303EB825E3
-        for <linux-sgx@vger.kernel.org>; Fri,  7 Jan 2022 12:25:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDFFC36AE0;
-        Fri,  7 Jan 2022 12:25:26 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DFD2B61E29;
+        Fri,  7 Jan 2022 12:26:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C611CC36AE0;
+        Fri,  7 Jan 2022 12:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641558327;
-        bh=S6LzLpkV56867B6nbWgR9mCXedYzHipHEAAD/X8JNv4=;
+        s=k20201202; t=1641558377;
+        bh=aKwLmZO6B2wjO3JzQbIVujH9UXKt1lKP5lgh1sDezbE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IRvAdG8zYadO+k6OPZiheIwOUXfwPUsCfSP9GTvYqazTQ9avqibMsVhFEw8hX0Zsg
-         9s0xGXtGr+hGdBtQnbaFrbrHCawxMljykcTr2Vu6LyrfTIKdvBInU0uDBB0KW7oiLw
-         qUpB9T6tcCXreaXEC7f0JK2wdAoAxwZ71DBp4TlQV9mz5KcB/3TTgyUGu41Uvpgte9
-         mAA1JP3mTku/algico51vRGO6gvXpyg3DwSkK0fDtbM8NUH8uFJSsReZUZHLcOrJku
-         1lkPBRY4oZ2j5ImgM5oplKB6/qFvoFNNYYMgy827b6KFGJni4SWtGHgybV2BVf8/Aw
-         rWZQZzW3Ska3w==
-Date:   Fri, 7 Jan 2022 14:25:22 +0200
+        b=Bu97ErzTXbk7b3/b+UXvRAveEch1CwAFM1AS6DcOQY4z6AcAiPQ3VEB3fj6v4g4Ch
+         fsE+HTAKyw81pppXnew33TYXVRiGRoMKQ+7BqjHf34+IzvBu9Ndf4WvjqgQ/ErL0wz
+         BS8H3cpO8y8tQ8m48L+/m3LEiceRLt0niGRCadEaVD9DHyA/YOVMPsfqvHlIhU1yD9
+         zH4MlfjF2Ld23DjTk9adZ1idXWL+NpfRmlXK6u3CB6I5clC+ODOINS8vP33nUh7gX3
+         Y9hcg9xnySXwJpnLJsx9/zbuii9CZpSU6/CSrZF+szuZEJYdht/rI+pfC0lF3jGAeH
+         k2QaZ3gdBmRnQ==
+Date:   Fri, 7 Jan 2022 14:26:12 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
-Message-ID: <YdgxMvEu6v+fvdRz@iki.fi>
-References: <20211220174640.7542-1-kristen@linux.intel.com>
- <20211220174640.7542-2-kristen@linux.intel.com>
- <YcuX/DzVsAWvhEBA@iki.fi>
- <8aa0be2752ed26317ff9b24c9803ccef542ce6ab.camel@linux.intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/25] x86/sgx: Move PTE zap code to separate function
+Message-ID: <YdgxZFvjrPQN2D8S@iki.fi>
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <bd228c90c139437bb4fcc4b7b99063bfd3eb1439.1638381245.git.reinette.chatre@intel.com>
+ <Yavy5JTYAkdZjnK2@iki.fi>
+ <66151f3a-0e32-fc57-cb54-5b714588389b@intel.com>
+ <917c53ff755d9a20e1f4bcb48c70add8364d1065.camel@kernel.org>
+ <192e252a-653f-2221-73dd-99894c134a37@intel.com>
+ <YcsleU6ExUbpN51r@iki.fi>
+ <cf654da2-00b3-0c3c-57ad-bb669e60de92@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8aa0be2752ed26317ff9b24c9803ccef542ce6ab.camel@linux.intel.com>
+In-Reply-To: <cf654da2-00b3-0c3c-57ad-bb669e60de92@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 06, 2022 at 10:26:18AM -0800, Kristen Carlson Accardi wrote:
-> Hi Jarkko, thanks for your review,
+On Thu, Jan 06, 2022 at 09:46:35AM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> On Wed, 2021-12-29 at 01:04 +0200, Jarkko Sakkinen wrote:
-> > On Mon, Dec 20, 2021 at 09:46:39AM -0800, Kristen Carlson Accardi
-> > wrote:
-> > > 
-> > > +
-> > > +/**
-> > > + * sgx_charge_mem() - charge for a page used for backing storage
-> > > + *
+> On 12/28/2021 6:55 AM, Jarkko Sakkinen wrote:
+> > On Mon, Dec 13, 2021 at 02:11:26PM -0800, Reinette Chatre wrote:
+> >> Hi Jarkko,
+> >>
+> >> On 12/10/2021 11:52 PM, Jarkko Sakkinen wrote:
+> >>> On Mon, 2021-12-06 at 13:30 -0800, Reinette Chatre wrote:
+> >>>> Hi Jarkko,
+> >>>>
+> >>>> On 12/4/2021 2:59 PM, Jarkko Sakkinen wrote:
+> >>>>> On Wed, Dec 01, 2021 at 11:23:05AM -0800, Reinette Chatre wrote:
+> >>>>>> The SGX reclaimer removes page table entries pointing to pages that are
+> >>>>>> moved to swap. SGX2 enables changes to pages belonging to an initialized
+> >>>>>> enclave, for example changing page permissions. Supporting SGX2 requires
+> >>>>>> this ability to remove page table entries that is available in the
+> >>>>>> SGX reclaimer code.
+> >>>>>
+> >>>>> Missing: why SGX2 requirest this?
+> >>>>
+> >>>> The above paragraph states that SGX2 needs to remove page table entries
+> >>>> because it modifies page permissions. Could you please elaborate what is
+> >>>> missing?
+> >>>
+> >>> It does not say why SGX2 requires an ability to remove page table entries.
+> >>
+> >> Are you saying that modification of EPCM page permissions is not a reason to
+> >> remove page table entries pointing to those pages?
 > > 
-> > Please remove this empty line:
+> > So you have:
 > > 
-> > https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+> > "Supporting SGX2 requires this ability to remove page table entries that is
+> > available in the SGX reclaimer code"
+> > 
+> > Just write down where you need this ability (briefly).
 > 
-> I read this to be that there should be an empty line after the short
-> description/arg list but before the longer description. I think for
-> functions without args this is the proper layout. It also is more
-> readable.
-> 
-> > 
-> > > + * Backing storage usage is capped by the
-> > > sgx_nr_available_backing_pages.
-> > > + * If the backing storage usage is over the overcommit limit,
-> > 
-> > Where does this verb "charge" come from?
-> 
-> Charge in this context means that some available backing pages are now
-> not available because they are in use. It feels appropriate to me to
-> use "charge/uncharge" verbs for this action, unless you think it's
-> confusing somehow.
+> Will do. I will expand the current permission changing text and also add the need
+> for this ability when regular pages are changed to TCS pages. TCS pages may not
+> be accessed by enclave code so when a regular page becomes a TCS page any page
+> table entries pointing to it should be removed.
 
-OK, it's cool.
+Thank you, sounds good.
 
-I'm still wondering why you need extra variable given that
-sgx_nr_backing_available_pages is signed. You could mark the
-feature being disabled by setting it to -1.
-
-It might cosmetically improve readability to have a boolean but
-for practical uses (e.g. eBPF tracing scripts) it only adds extra
-complexity.
-
-/Jarkko
+BR,
+Jarkko
