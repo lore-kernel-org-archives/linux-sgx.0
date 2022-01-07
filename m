@@ -2,39 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB74C433F5
-	for <linux-sgx@archiver.kernel.org>; Fri,  7 Jan 2022 16:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11E1C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  7 Jan 2022 16:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229522AbiAGQsw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 7 Jan 2022 11:48:52 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56550 "EHLO
+        id S1348394AbiAGQzw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 7 Jan 2022 11:55:52 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56584 "EHLO
         galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbiAGQsw (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 7 Jan 2022 11:48:52 -0500
-Date:   Fri, 07 Jan 2022 16:48:49 -0000
+        with ESMTP id S240137AbiAGQzu (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 7 Jan 2022 11:55:50 -0500
+Date:   Fri, 07 Jan 2022 16:55:47 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1641574130;
+        s=2020; t=1641574548;
         h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OCY4EAlKlYnLHXZBeKTj2/unpIMOBS4Pq6lUTcCYIl0=;
-        b=rjBUoHDWalCGCjsf/UiUfB1ag84oZ5RNdGsxQskE0kzBe/ZhVEOgjBt3MxiddhU+sDhoox
-        BDmtCiBcKZ0qRcrWTOOIJyTToHlxnkbI7wrcEKCMRUbC/JIdGSoLrH2c+iZ2HXiOhMWSht
-        262sTU9IVx7/WW/XIuhvlCIkfU6JReJfzP8MSUdnVYSXWL3KCZXiFnevO7PwhpLIiUG3In
-        M9+g48d/uZReh5t2QHniSeCE/x/REMtaPAoH9GSRokRBpzAi/AZY/dinqu/liYZlPfUHDZ
-        qAbKmHH4n4euwgKfl4hWmRO3NnCZ4hSsBqUgKfVAjbrz694QETctQo2lKQo62g==
+        bh=czIJid5YRRHws7Ee6CSNs6t7w5jtE4beYMoRQ3qtPE8=;
+        b=0ZBJrehae9YRoOV7yrOGdtKMdhhImUhuG9T3DDm6PP1l7jlbXTdkLsnNnaiH/MyFkghEvx
+        EndvVbOhlD8KxKnO7Tp396lvlQddskmRb2WK/G1ZFKEGSDNFHXLbFHtCk7jtUOO23bBeqq
+        qjoi3TnkWdIySb2V/FSe+Kd7cnURFwr4dp4SeE/XIFT10i9xXDUlD5KsKki8iwMZfBrBd9
+        p6Hs7D2uH57rAQayVDCj2OT34fhp+XAFL4TRqYzhmC6fcH7yWTBJrdPANihC/nVB6LuUbh
+        yAZava7W/ZTnuRbCbb9TIU1RDg5nIR1zrLumYOuAwf6A+1H9d+QJ9Qq6pt1nGg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1641574130;
+        s=2020e; t=1641574548;
         h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OCY4EAlKlYnLHXZBeKTj2/unpIMOBS4Pq6lUTcCYIl0=;
-        b=6hGRLEEvyoOkhGhpiO952XR1I70VjKnq5gzb66euGUzvkqJpAFFCHRy0YXv7nIKRG8n33X
-        ooq+GmwiXsRMH/Cw==
+        bh=czIJid5YRRHws7Ee6CSNs6t7w5jtE4beYMoRQ3qtPE8=;
+        b=8l3fSO5jorxH56fRUbSWvJ3GlT0wbdmmcSjbqczlOINicBka7LyfIkAHoKsh8ZrACIPH4r
+        Ba18MpRKz3BU5JCQ==
 From:   "tip-bot2 for Dave Hansen" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
@@ -49,7 +49,7 @@ Cc:     linux-sgx@vger.kernel.org, x86@kernel.org,
 In-Reply-To: <20220104171527.5E8416A8@davehans-spike.ostc.intel.com>
 References: <20220104171527.5E8416A8@davehans-spike.ostc.intel.com>
 MIME-Version: 1.0
-Message-ID: <164157412947.16921.14651280675483708212.tip-bot2@tip-bot2>
+Message-ID: <164157454727.16921.2222151221151650802.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
@@ -60,12 +60,12 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 The following commit has been merged into the x86/sgx branch of tip:
 
-Commit-ID:     cebb880030045059e55d21cbe049cdfa18d3990d
-Gitweb:        https://git.kernel.org/tip/cebb880030045059e55d21cbe049cdfa18d3990d
+Commit-ID:     2056e2989bf47ad7274ecc5e9dda2add53c112f9
+Gitweb:        https://git.kernel.org/tip/2056e2989bf47ad7274ecc5e9dda2add53c112f9
 Author:        Dave Hansen <dave.hansen@linux.intel.com>
 AuthorDate:    Tue, 04 Jan 2022 09:15:27 -08:00
 Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Fri, 07 Jan 2022 08:42:33 -08:00
+CommitterDate: Fri, 07 Jan 2022 08:47:23 -08:00
 
 x86/sgx: Fix NULL pointer dereference on non-SGX systems
 
@@ -105,7 +105,6 @@ Cc: linux-sgx@vger.kernel.org
 Cc: x86@kernel.org
 Fixes: 50468e431335 ("x86/sgx: Add an attribute for the amount of SGX memory in a NUMA node")
 Reported-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
