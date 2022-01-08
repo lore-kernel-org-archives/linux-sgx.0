@@ -2,122 +2,84 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05191C433EF
-	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 14:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE02C433F5
+	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 15:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbiAHOYm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 8 Jan 2022 09:24:42 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:49948 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiAHOYm (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 09:24:42 -0500
+        id S234538AbiAHPpy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 8 Jan 2022 10:45:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40240 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231841AbiAHPpy (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 10:45:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A88C06173F;
+        Sat,  8 Jan 2022 07:45:53 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F95A60B11
-        for <linux-sgx@vger.kernel.org>; Sat,  8 Jan 2022 14:24:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A77CC36AE3;
-        Sat,  8 Jan 2022 14:24:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 958E7B80259;
+        Sat,  8 Jan 2022 15:45:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C7EC36AE3;
+        Sat,  8 Jan 2022 15:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641651880;
-        bh=xFdz/qxjhZFqo3n8Y2JG1cFBOpIZsJkszPbmmEgtBuE=;
+        s=k20201202; t=1641656750;
+        bh=1paZYEVtT19xm+lguuMbu/mMdfS7w78Iwwv0Yl0bEuk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GPIo4W7/3BX2ghZTshWl7VRYkU6SrBxp1z0/ite09uaVtcUyoFSajVPrxf2DPTnth
-         s5ej3Ma08Fkjc7kwLk1DtLV5/1WliI7jMVnrdVuVKe3BfJUMXsdNONZTHuvhOeTAl0
-         QFPtK+0c/k0rtNODqBtBGBwRRB1NKdVrMZ7j5P1sx8V5VaFf/GEtcE0WTq34q1EzJ0
-         W8Qmw47zDSHVZOnjLgQ+m0WV91KCE2e2pXgaBTwkbO4fXt7U1xnBW10zpz9ccqZvwD
-         3kVmRZAfUuo54h2kXuVjbaYYIijbKNn3yxCCR/E1TtW5k6M1cVISBXXF5Gzyc0HQif
-         /B5xDVdnRtiVA==
-Date:   Sat, 8 Jan 2022 16:24:32 +0200
+        b=EfUY+h4C3UJDL/3LWw4zULjQAG3wiCsloaYoFIt6fGWTir1xvlQh9dB2bU6OIYrIQ
+         q607/tIYKhTihj01oyOyi9OzrkpxYyZbkoDaftIjKQ+m6OxK8VV+DFtB/QiL/7nQ3r
+         KVR0PuytGckBbm+DaR6/PS3AYRBk0lnacgTqkxHU9lsNmyfaecTZRsUPtxtx3OSgoJ
+         O3AXdX7nKvAuNwX1WbbZwKvQo4qXTgHDUWk9fS5NfGFoteBcsMfYB4SRTtEfSItVyO
+         +p8V0CcYpSxDULVcRR2OHaJbcEFHsa6EMSfHJ1LJKjcvMsrwmJyKgPgQg/k80J0gox
+         jbeka9ig/poDw==
+Date:   Sat, 8 Jan 2022 17:45:41 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 2/2] x86/sgx: account backing pages
-Message-ID: <YdmeoPO8TAjqkG5F@iki.fi>
-References: <20211220174640.7542-1-kristen@linux.intel.com>
- <20211220174640.7542-3-kristen@linux.intel.com>
- <YcufxPNV8HleTPB4@iki.fi>
- <a2de9239-336c-c4db-3998-e90d6f150634@intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
+Message-ID: <YdmxpTVM1JG8nxQ3@iki.fi>
+References: <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.chatre@intel.com>
+ <db9b7bc9-fdca-4dd2-2c3f-3b7354c165bb@kernel.org>
+ <YawAWmodeNaUbzV8@iki.fi>
+ <a1b14f33-5142-8cab-3b5f-4cc79b62091e@intel.com>
+ <a24bc46e4ba8a69938a7f73012019ce0f61005c2.camel@kernel.org>
+ <f6a55943-13ef-41ef-609a-6406cffef513@intel.com>
+ <YcsklLw1uFyppSji@iki.fi>
+ <573e0836-6ac2-30a4-0c21-d4763707ac96@intel.com>
+ <YdgvFTIRboHwTgRT@iki.fi>
+ <op.1fmvdehpwjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a2de9239-336c-c4db-3998-e90d6f150634@intel.com>
+In-Reply-To: <op.1fmvdehpwjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jan 04, 2022 at 04:36:28PM -0800, Dave Hansen wrote:
-> On 12/28/21 3:37 PM, Jarkko Sakkinen wrote:
-> > On Mon, Dec 20, 2021 at 09:46:40AM -0800, Kristen Carlson Accardi wrote:
-> >> +int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
-> >> +			    struct sgx_backing *backing)
-> >> +{
-> >> +	return sgx_encl_get_backing(encl, page_index, backing);
-> >> +}
-> > Is this wrapping necessary?
-> 
-> Yes, I think so.
-> 
-> > Also, there is ambiguous terminology:
+On Fri, Jan 07, 2022 at 10:14:29AM -0600, Haitao Huang wrote:
+> > > > OK, so the question is: do we need both or would a mechanism just
+> > > to extend
+> > > > permissions be sufficient?
+> > > 
+> > > I do believe that we need both in order to support pages having only
+> > > the permissions required to support their intended use during the
+> > > time the
+> > > particular access is required. While technically it is possible to grant
+> > > pages all permissions they may need during their lifetime it is safer to
+> > > remove permissions when no longer required.
 > > 
-> > 1. Local function: "get_backing"
-> > 2. Exported function: "lookup_backing"
-> 
-> I'm not sure what you're getting at.
-> 
-> There are three important things that you do with backing storage:
-> 
-> 1. Allocate it
-> 2. Find it
-> 3. De-allocate (free) it
-> 
-> Right now, the code has a pattern where it does:
-> 
-> 	get_backing();
-> 	// do something
-> 	put_backing();
-> 
-> That sure as heck looks like it is allocating and freeing it.  But, it's
-> actually *maybe* doing an allocation.  The "find it" path also looks
-> *EXACTLY* the same as the actual allocation path.  You might also recall
-> that the original code didn't even *have* a (real) free path.
-> 
-> The "wrapping" is really just naming the two different operations that
-> use the "get" function: lookup and allocate.  It's not just wrapping,
-> it's clarify the logical behavior.
+> > So if we imagine a run-time: how EMODPR would be useful, and how using it
+> > would make things safer?
+> > 
+> In scenarios of JIT compilers, once code is generated into RW pages,
+> modifying both PTE and EPCM permissions to RX would be a good defensive
+> measure. In that case, EMODPR is useful.
 
-Why it makes sense to keep sgx_encl_get_backing(), if it has zero call
-sites and not open-code its implementation to sgx_encl_lookup_backing().
-
-I'm also wondering, why here the function is not named as
-sgx_encl_charge_backing(), i.e. follow the naming convention? It would be
-easier to remember the flow, when reading the code. Since we use "not as
-common name", let's take advantage of it to make maintaining the code
-easier later on.
-
-The commit message says:
-
-"Modify the existing flow for requesting backing pages to reduce the
-available backing page counter and confirm that the limit has not been
-exceeded. Backing page usage for loading EPC pages back out of the shared
-memory do not incur a charge."
-
-I would add, in order to make this less abstract:
-
-"
-In other words, replace call sites of sgx_encl_get_backing() with either:
-
-* sgx_encl_lookup_backing() for ELDU, which does not cause sgx_charge_mem()
-  to be invoked.
-* sgx_encl_alloc_backing() for EWB, which does cause sgx_charge_mem()
-  to be invoked.
-"
-
-It's currently way too abstract description of the code change.
+What is the exact threat we are talking about?
 
 /Jarkko
