@@ -2,180 +2,122 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F13C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 14:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05191C433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 14:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234253AbiAHOFX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 8 Jan 2022 09:05:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiAHOFW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 09:05:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46470C061574;
-        Sat,  8 Jan 2022 06:05:22 -0800 (PST)
+        id S229667AbiAHOYm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 8 Jan 2022 09:24:42 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:49948 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229529AbiAHOYm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 09:24:42 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B040560765;
-        Sat,  8 Jan 2022 14:05:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 993B8C36AE9;
-        Sat,  8 Jan 2022 14:05:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F95A60B11
+        for <linux-sgx@vger.kernel.org>; Sat,  8 Jan 2022 14:24:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A77CC36AE3;
+        Sat,  8 Jan 2022 14:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641650721;
-        bh=tsd6QKgwnEqcOh0jtyyg+k1WJ1P/nOav/IHxxqAhnHQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LjTx04+wRM6N2/WjYz1sAoYw0rzejzJ+8230soxINy64cj47AKDH4zFfoyiGX4FCu
-         43hkF8Y0aRvGFtqSSQUdqOuo6KkhnvfO3qhGNDiJx57M9fHCAtVAuHoeIvDqa6C96B
-         qEQKghUxZpy1qsfYpTgZqJzfqlC4ogRCVPFI4oeYI2Ep7VPRrzzvTuGr7/zChYG43g
-         Ck8PJmma3ebCs4v5wxIsOP+q8iLY+A61yCM1TvyJZvJnlX156SQRfr++mdWcvHA4/x
-         bLw670HMec32GyzmmoSXSgOtMlk959nYS/IOMC1a1iIvIQOQyEkp3Gq6xKz1RfykCc
-         GvfHukmMLjt0w==
+        s=k20201202; t=1641651880;
+        bh=xFdz/qxjhZFqo3n8Y2JG1cFBOpIZsJkszPbmmEgtBuE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GPIo4W7/3BX2ghZTshWl7VRYkU6SrBxp1z0/ite09uaVtcUyoFSajVPrxf2DPTnth
+         s5ej3Ma08Fkjc7kwLk1DtLV5/1WliI7jMVnrdVuVKe3BfJUMXsdNONZTHuvhOeTAl0
+         QFPtK+0c/k0rtNODqBtBGBwRRB1NKdVrMZ7j5P1sx8V5VaFf/GEtcE0WTq34q1EzJ0
+         W8Qmw47zDSHVZOnjLgQ+m0WV91KCE2e2pXgaBTwkbO4fXt7U1xnBW10zpz9ccqZvwD
+         3kVmRZAfUuo54h2kXuVjbaYYIijbKNn3yxCCR/E1TtW5k6M1cVISBXXF5Gzyc0HQif
+         /B5xDVdnRtiVA==
+Date:   Sat, 8 Jan 2022 16:24:32 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        linux-sgx@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>
-Subject: [PATCH v3] x86/sgx: Free backing memory after faulting the enclave page
-Date:   Sat,  8 Jan 2022 16:05:10 +0200
-Message-Id: <20220108140510.76583-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH 2/2] x86/sgx: account backing pages
+Message-ID: <YdmeoPO8TAjqkG5F@iki.fi>
+References: <20211220174640.7542-1-kristen@linux.intel.com>
+ <20211220174640.7542-3-kristen@linux.intel.com>
+ <YcufxPNV8HleTPB4@iki.fi>
+ <a2de9239-336c-c4db-3998-e90d6f150634@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2de9239-336c-c4db-3998-e90d6f150634@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-There is a limited amount of SGX memory (EPC) on each system.  When that
-memory is used up, SGX has its own swapping mechanism which is similar
-in concept but totally separate from the core mm/* code.  Instead of
-swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
-comes from a shared memory pseudo-file and can itself be swapped by the
-core mm code.  There is a hierarchy like this:
+On Tue, Jan 04, 2022 at 04:36:28PM -0800, Dave Hansen wrote:
+> On 12/28/21 3:37 PM, Jarkko Sakkinen wrote:
+> > On Mon, Dec 20, 2021 at 09:46:40AM -0800, Kristen Carlson Accardi wrote:
+> >> +int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
+> >> +			    struct sgx_backing *backing)
+> >> +{
+> >> +	return sgx_encl_get_backing(encl, page_index, backing);
+> >> +}
+> > Is this wrapping necessary?
+> 
+> Yes, I think so.
+> 
+> > Also, there is ambiguous terminology:
+> > 
+> > 1. Local function: "get_backing"
+> > 2. Exported function: "lookup_backing"
+> 
+> I'm not sure what you're getting at.
+> 
+> There are three important things that you do with backing storage:
+> 
+> 1. Allocate it
+> 2. Find it
+> 3. De-allocate (free) it
+> 
+> Right now, the code has a pattern where it does:
+> 
+> 	get_backing();
+> 	// do something
+> 	put_backing();
+> 
+> That sure as heck looks like it is allocating and freeing it.  But, it's
+> actually *maybe* doing an allocation.  The "find it" path also looks
+> *EXACTLY* the same as the actual allocation path.  You might also recall
+> that the original code didn't even *have* a (real) free path.
+> 
+> The "wrapping" is really just naming the two different operations that
+> use the "get" function: lookup and allocate.  It's not just wrapping,
+> it's clarify the logical behavior.
 
-	EPC <-> shmem <-> disk
+Why it makes sense to keep sgx_encl_get_backing(), if it has zero call
+sites and not open-code its implementation to sgx_encl_lookup_backing().
 
-After data is swapped back in from shmem to EPC, the shmem backing
-storage needs to be freed.  Currently, the backing shmem is not freed.
-This effectively wastes the shmem while the enclave is running.  The
-memory is recovered when the enclave is destroyed and the backing
-storage freed.
+I'm also wondering, why here the function is not named as
+sgx_encl_charge_backing(), i.e. follow the naming convention? It would be
+easier to remember the flow, when reading the code. Since we use "not as
+common name", let's take advantage of it to make maintaining the code
+easier later on.
 
-Sort this out by freeing memory with shmem_truncate_range(), as soon as
-a page is faulted back to the EPC.  In addition, free the memory for
-PCMD pages as soon as all PCMD's in a page have been marked as unused
-by zeroing its contents.
+The commit message says:
 
-Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: stable@vger.kernel.org
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-* Resend.
-v2:
-* Rewrite commit message as proposed by Dave.
-* Truncate PCMD pages (Dave).
----
- arch/x86/kernel/cpu/sgx/encl.c | 48 +++++++++++++++++++++++++++++++---
- 1 file changed, 44 insertions(+), 4 deletions(-)
+"Modify the existing flow for requesting backing pages to reduce the
+available backing page counter and confirm that the limit has not been
+exceeded. Backing page usage for loading EPC pages back out of the shared
+memory do not incur a charge."
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 001808e3901c..ea43c10e5458 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -12,6 +12,27 @@
- #include "encls.h"
- #include "sgx.h"
- 
-+
-+/*
-+ * Get the page number of the page in the backing storage, which stores the PCMD
-+ * of the enclave page in the given page index.  PCMD pages are located after
-+ * the backing storage for the visible enclave pages and SECS.
-+ */
-+static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-+{
-+	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
-+}
-+
-+/*
-+ * Free a page from the backing storage in the given page index.
-+ */
-+static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, pgoff_t index)
-+{
-+	struct inode *inode = file_inode(encl->backing);
-+
-+	shmem_truncate_range(inode, PFN_PHYS(index), PFN_PHYS(index) + PAGE_SIZE - 1);
-+}
-+
- /*
-  * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
-  * Pages" in the SDM.
-@@ -24,7 +45,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	struct sgx_encl *encl = encl_page->encl;
- 	struct sgx_pageinfo pginfo;
- 	struct sgx_backing b;
-+	bool pcmd_page_empty;
- 	pgoff_t page_index;
-+	pgoff_t pcmd_index;
-+	u8 *pcmd_page;
- 	int ret;
- 
- 	if (secs_page)
-@@ -38,8 +62,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 
- 	pginfo.addr = encl_page->desc & PAGE_MASK;
- 	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
--	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
--			  b.pcmd_offset;
-+	pcmd_page = kmap_atomic(b.pcmd);
-+	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
- 
- 	if (secs_page)
- 		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
-@@ -55,11 +79,27 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 		ret = -EFAULT;
- 	}
- 
--	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
-+	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
-+
-+	/*
-+	 * The area for the PCMD in the page was zeroed above.  Check if the
-+	 * whole page is now empty meaning that all PCMD's have been zeroed:
-+	 */
-+	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
-+
-+	kunmap_atomic(pcmd_page);
- 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
- 	sgx_encl_put_backing(&b, false);
- 
-+	/* Free the backing memory. */
-+	sgx_encl_truncate_backing_page(encl, page_index);
-+
-+	if (pcmd_page_empty) {
-+		pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
-+		sgx_encl_truncate_backing_page(encl, pcmd_index);
-+	}
-+
- 	return ret;
- }
- 
-@@ -577,7 +617,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
- int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 			 struct sgx_backing *backing)
- {
--	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-+	pgoff_t pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
- 	struct page *contents;
- 	struct page *pcmd;
- 
--- 
-2.34.1
+I would add, in order to make this less abstract:
 
+"
+In other words, replace call sites of sgx_encl_get_backing() with either:
+
+* sgx_encl_lookup_backing() for ELDU, which does not cause sgx_charge_mem()
+  to be invoked.
+* sgx_encl_alloc_backing() for EWB, which does cause sgx_charge_mem()
+  to be invoked.
+"
+
+It's currently way too abstract description of the code change.
+
+/Jarkko
