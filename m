@@ -2,110 +2,194 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93127C433EF
-	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 15:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A314C433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 15:59:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229573AbiAHPzG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 8 Jan 2022 10:55:06 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:40450 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbiAHPzG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 10:55:06 -0500
+        id S231843AbiAHP7z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 8 Jan 2022 10:59:55 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:34034 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229521AbiAHP7z (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 10:59:55 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CCF42B802C8
-        for <linux-sgx@vger.kernel.org>; Sat,  8 Jan 2022 15:55:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19376C36AE0;
-        Sat,  8 Jan 2022 15:55:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FDE360023;
+        Sat,  8 Jan 2022 15:59:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B56EC36AE0;
+        Sat,  8 Jan 2022 15:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641657303;
-        bh=/8v9lJ4NsSh9rzKizumIr+6XIMCXtY72ClAeVFiaQ+A=;
+        s=k20201202; t=1641657594;
+        bh=htASsLws3Mvlm2x0N7PmBvQYBfbBlED38f8HWeqrOa0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xd5YiabTmprWKk9VxAl7CL0N4/G/eFAl6SuaW2jhUuYF5tVwBjADQbGIqhEmhOmvV
-         5lpDRU2oC1wbZfkNz7RnlEvpEerTfmnL7ZCyzcMK7AAo4qXjwqx8DjJ+/jKbY7uLub
-         VMdIu42KdFa+2li7Z7C+D2evbpW6udmFMNXtsHZGVXmzyDj/vTthA+RbP9Re99ZX2l
-         VIh2ZYuZi3/wb83ERHBCHjHxjb+uyiIpQxYZdKkUA7eiGsQJtECQsRSQPOCVCP8I1t
-         mzfjIitfrxitzCjpIQGRyTnxUNYbiKs5lJksItTOC0M8cScrK57g/B+yC2YZTWsOG3
-         oJkDoNzgazRRA==
-Date:   Sat, 8 Jan 2022 17:54:55 +0200
+        b=DoCXFhXYNwUEcNeE4PK1owbHGtoCuozZynk2LGRDELiHxbuy9n20YzXg0YJkd13cg
+         1eKZyWzOvwv6iZ3J6S7lSIXZLfOmwEx5/mGq9N1sVEOAt8pcPRuT649pOl4d2h1EEB
+         bvPkkwaEmkCKCNOU0oBByHLQRfIrHOqLgnfW9Lj9GRE6WPRURWXDWHMsMMDAM3dncC
+         wn0BImPh4JpEPDlo/KhWG4CJCRR7AX1HRKjjjWp9qyroUJYiFHcSdoJQbf26eZ6xYO
+         INRBWLc3sqLgLVkVStfoBqrdM2Ac8kygMAuBqiTtQQwsqb6O+HyYw1LFkuARyMc1r2
+         OGzTu5iHjtIew==
+Date:   Sat, 8 Jan 2022 17:59:45 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+Cc:     linux-sgx@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 1/2] x86/sgx: Add accounting for tracking overcommit
-Message-ID: <Ydmzz6izGpM+dZv3@iki.fi>
-References: <20211220174640.7542-1-kristen@linux.intel.com>
- <20211220174640.7542-2-kristen@linux.intel.com>
- <YcuX/DzVsAWvhEBA@iki.fi>
- <8aa0be2752ed26317ff9b24c9803ccef542ce6ab.camel@linux.intel.com>
- <YdgxMvEu6v+fvdRz@iki.fi>
- <6c697809f70cf8d5f7ac973459672f6867f56815.camel@linux.intel.com>
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] x86/sgx: Add accounting for tracking overcommit
+Message-ID: <Ydm08b9+gPnJoQgF@iki.fi>
+References: <20220107181618.6597-1-kristen@linux.intel.com>
+ <20220107181618.6597-2-kristen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6c697809f70cf8d5f7ac973459672f6867f56815.camel@linux.intel.com>
+In-Reply-To: <20220107181618.6597-2-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jan 07, 2022 at 09:17:03AM -0800, Kristen Carlson Accardi wrote:
-> On Fri, 2022-01-07 at 14:25 +0200, Jarkko Sakkinen wrote:
-> > On Thu, Jan 06, 2022 at 10:26:18AM -0800, Kristen Carlson Accardi
-> > wrote:
-> > > Hi Jarkko, thanks for your review,
-> > > 
-> > > On Wed, 2021-12-29 at 01:04 +0200, Jarkko Sakkinen wrote:
-> > > > On Mon, Dec 20, 2021 at 09:46:39AM -0800, Kristen Carlson Accardi
-> > > > wrote:
-> > > > > +
-> > > > > +/**
-> > > > > + * sgx_charge_mem() - charge for a page used for backing
-> > > > > storage
-> > > > > + *
-> > > > 
-> > > > Please remove this empty line:
-> > > > 
-> > > > https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-> > > 
-> > > I read this to be that there should be an empty line after the
-> > > short
-> > > description/arg list but before the longer description. I think for
-> > > functions without args this is the proper layout. It also is more
-> > > readable.
-> > > 
-> > > > > + * Backing storage usage is capped by the
-> > > > > sgx_nr_available_backing_pages.
-> > > > > + * If the backing storage usage is over the overcommit limit,
-> > > > 
-> > > > Where does this verb "charge" come from?
-> > > 
-> > > Charge in this context means that some available backing pages are
-> > > now
-> > > not available because they are in use. It feels appropriate to me
-> > > to
-> > > use "charge/uncharge" verbs for this action, unless you think it's
-> > > confusing somehow.
-> > 
-> > OK, it's cool.
-> > 
-> > I'm still wondering why you need extra variable given that
-> > sgx_nr_backing_available_pages is signed. You could mark the
-> > feature being disabled by setting it to -1.
-> > 
-> > It might cosmetically improve readability to have a boolean but
-> > for practical uses (e.g. eBPF tracing scripts) it only adds extra
-> > complexity.
-> > 
-> > /Jarkko
+On Fri, Jan 07, 2022 at 10:16:16AM -0800, Kristen Carlson Accardi wrote:
+> When the system runs out of enclave memory, SGX can reclaim EPC pages
+> by swapping to normal RAM. This normal RAM is allocated via a
+> per-enclave shared memory area. The shared memory area is not mapped
+> into the enclave or the task mapping it, which makes its memory use
+> opaque (including to the OOM killer). Having lots of hard to find
+> memory around is problematic, especially when there is no limit.
 > 
-> I can see your point. Since Boris objected to the module param, the
-> next version will not have a way to disable limits at all, so I am
-> deleting that boolean all together.
+> Introduce a global counter that can be used to limit the number of pages
+> that enclaves are able to consume for backing storage.  This parameter
+> is a percentage value that is used in conjunction with the number of
+> EPC pages in the system to set a cap on the amount of backing RAM that
+> can be consumed.
+> 
+> The overcommit percentage value is 150, which limits the total number of
+> shared memory pages that may be consumed by all enclaves as backing pages
+> to 1.5X of EPC pages on the system.
+> 
+> For example, on an SGX system that has 128MB of EPC, this would
+> cap the amount of normal RAM that SGX consumes for its shared memory
+> areas at 192MB.
+> 
+> The SGX overcommit percent works differently than the core VM overcommit
+> limit. Enclaves request backing pages one page at a time, and the number
+> of in use backing pages that are allowed is a global resource that is
+> limited for all enclaves.
+> 
+> Introduce a pair of functions which can be used by callers when requesting
+> backing RAM pages. These functions are responsible for accounting the
+> page charges. A request may return an error if the request will cause the
+> counter to exceed the backing page cap.
+> 
+> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 46 ++++++++++++++++++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/sgx.h  |  2 ++
+>  2 files changed, 48 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 2857a49f2335..8a7bfe0d9023 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -43,6 +43,45 @@ static struct sgx_numa_node *sgx_numa_nodes;
+>  
+>  static LIST_HEAD(sgx_dirty_page_list);
+>  
+> +/*
+> + * Limits the amount of normal RAM that SGX can consume for EPC
+> + * overcommit to the total EPC pages * sgx_overcommit_percent / 100
+> + */
+> +static int sgx_overcommit_percent = 150;
+> +
+> +/* The number of pages that can be allocated globally for backing storage. */
+> +static atomic_long_t sgx_nr_available_backing_pages;
+> +
+> +/**
+> + * sgx_charge_mem() - charge for a page used for backing storage
+> + *
+> + * Backing storage usage is capped by the sgx_nr_available_backing_pages.
+> + * If the backing storage usage is over the overcommit limit,
+> + * return an error.
+> + *
+> + * Return:
+> + * 0:		The page requested does not exceed the limit
+> + * -ENOMEM:	The page requested exceeds the overcommit limit
+> + */
+> +int sgx_charge_mem(void)
+> +{
+> +	if (!atomic_long_add_unless(&sgx_nr_available_backing_pages, -1, 0))
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * sgx_uncharge_mem() - uncharge a page previously used for backing storage
+> + *
+> + * When backing storage is no longer in use, increment the
+> + * sgx_nr_available_backing_pages counter.
+> + */
+> +void sgx_uncharge_mem(void)
+> +{
+> +	atomic_long_inc(&sgx_nr_available_backing_pages);
+> +}
+> +
+>  /*
+>   * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
+>   * from the input list, and made available for the page allocator. SECS pages
+> @@ -786,6 +825,8 @@ static bool __init sgx_page_cache_init(void)
+>  	u64 pa, size;
+>  	int nid;
+>  	int i;
+> +	u64 total_epc_bytes = 0;
+> +	u64 available_backing_bytes;
 
-Ok, cool, I'm looking forward for the next version.
+Use reverse-christmas-tree declaration order here. This was required for
+the original patch set, so I expect this to still hold.
 
-/Jarkko
+>  
+>  	sgx_numa_nodes = kmalloc_array(num_possible_nodes(), sizeof(*sgx_numa_nodes), GFP_KERNEL);
+>  	if (!sgx_numa_nodes)
+> @@ -830,6 +871,7 @@ static bool __init sgx_page_cache_init(void)
+>  
+>  		sgx_epc_sections[i].node =  &sgx_numa_nodes[nid];
+>  		sgx_numa_nodes[nid].size += size;
+> +		total_epc_bytes += size;
+>  
+>  		sgx_nr_epc_sections++;
+>  	}
+> @@ -839,6 +881,10 @@ static bool __init sgx_page_cache_init(void)
+>  		return false;
+>  	}
+>  
+> +	available_backing_bytes = total_epc_bytes * (sgx_overcommit_percent / 100);
+> +
+
+IMHO this empty line could be removed, and group these statements together.
+
+> +	atomic_long_set(&sgx_nr_available_backing_pages, available_backing_bytes >> PAGE_SHIFT);
+> +
+>  	return true;
+>  }
+>  
+> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+> index 0f17def9fe6f..3507a9983fc1 100644
+> --- a/arch/x86/kernel/cpu/sgx/sgx.h
+> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+> @@ -89,6 +89,8 @@ void sgx_free_epc_page(struct sgx_epc_page *page);
+>  void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
+>  int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
+>  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
+> +int sgx_charge_mem(void);
+> +void sgx_uncharge_mem(void);
+>  
+>  #ifdef CONFIG_X86_SGX_KVM
+>  int __init sgx_vepc_init(void);
+> -- 
+> 2.20.1
+> 
+
+Other than that, looks good to me.
+
+BR,
+Jarkko
