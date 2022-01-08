@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE02C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 15:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEEEC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  8 Jan 2022 15:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234538AbiAHPpy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 8 Jan 2022 10:45:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40240 "EHLO
+        id S231809AbiAHPvx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 8 Jan 2022 10:51:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231841AbiAHPpy (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 10:45:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A88C06173F;
-        Sat,  8 Jan 2022 07:45:53 -0800 (PST)
+        with ESMTP id S229747AbiAHPvx (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 8 Jan 2022 10:51:53 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAA7C06173F;
+        Sat,  8 Jan 2022 07:51:53 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 958E7B80259;
-        Sat,  8 Jan 2022 15:45:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C7EC36AE3;
-        Sat,  8 Jan 2022 15:45:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C3E0A60B1E;
+        Sat,  8 Jan 2022 15:51:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF51C36AE3;
+        Sat,  8 Jan 2022 15:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641656750;
-        bh=1paZYEVtT19xm+lguuMbu/mMdfS7w78Iwwv0Yl0bEuk=;
+        s=k20201202; t=1641657112;
+        bh=rihuPpIwqQVBPOr0P/Ce50ptAT0AOX7DB9EZmsP73OI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EfUY+h4C3UJDL/3LWw4zULjQAG3wiCsloaYoFIt6fGWTir1xvlQh9dB2bU6OIYrIQ
-         q607/tIYKhTihj01oyOyi9OzrkpxYyZbkoDaftIjKQ+m6OxK8VV+DFtB/QiL/7nQ3r
-         KVR0PuytGckBbm+DaR6/PS3AYRBk0lnacgTqkxHU9lsNmyfaecTZRsUPtxtx3OSgoJ
-         O3AXdX7nKvAuNwX1WbbZwKvQo4qXTgHDUWk9fS5NfGFoteBcsMfYB4SRTtEfSItVyO
-         +p8V0CcYpSxDULVcRR2OHaJbcEFHsa6EMSfHJ1LJKjcvMsrwmJyKgPgQg/k80J0gox
-         jbeka9ig/poDw==
-Date:   Sat, 8 Jan 2022 17:45:41 +0200
+        b=GQdx9LS80hQ57HHJ1ix5xtd1CWSA69/dJ73i3cF5jzlhYnbw+We8PiH8a4qcmc2Fp
+         +7xaBQkoaM1T6piFAeAYVmEyKgrYXkaEXzARn/JPzyuvB1cyc/WDCtB4DcrzzMOjAL
+         KpdoR0bQkbQ5zf8rGy3qMlUhFVSL2Nk7rjsYCE1d2r/tKISRs4slGwKT2+sUWdXjj4
+         YSK4tlTermu1C22Qbh45K83pZ6x2Qw58zkdFgxEUoYuiSMaT1Jy5Au0qXPPCXZoZ0n
+         c8qtxLs2sCbJluKcPQ6l1KMfVeeCd+cu0bxm6BUjmWUI6Zh/c6m33Ptbh4+GtmuX2R
+         dRBH1seSj/Ueg==
+Date:   Sat, 8 Jan 2022 17:51:43 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Haitao Huang <haitao.huang@linux.intel.com>
 Cc:     Reinette Chatre <reinette.chatre@intel.com>,
@@ -42,9 +42,8 @@ Cc:     Reinette Chatre <reinette.chatre@intel.com>,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
-Message-ID: <YdmxpTVM1JG8nxQ3@iki.fi>
-References: <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.chatre@intel.com>
- <db9b7bc9-fdca-4dd2-2c3f-3b7354c165bb@kernel.org>
+Message-ID: <YdmzDy1BOHgh8CII@iki.fi>
+References: <db9b7bc9-fdca-4dd2-2c3f-3b7354c165bb@kernel.org>
  <YawAWmodeNaUbzV8@iki.fi>
  <a1b14f33-5142-8cab-3b5f-4cc79b62091e@intel.com>
  <a24bc46e4ba8a69938a7f73012019ce0f61005c2.camel@kernel.org>
@@ -53,33 +52,45 @@ References: <2f6b04dd8949591ee6139072c72eb93da3dd07b0.1638381245.git.reinette.ch
  <573e0836-6ac2-30a4-0c21-d4763707ac96@intel.com>
  <YdgvFTIRboHwTgRT@iki.fi>
  <op.1fmvdehpwjvjmi@hhuan26-mobl1.mshome.net>
+ <YdmxpTVM1JG8nxQ3@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.1fmvdehpwjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <YdmxpTVM1JG8nxQ3@iki.fi>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jan 07, 2022 at 10:14:29AM -0600, Haitao Huang wrote:
-> > > > OK, so the question is: do we need both or would a mechanism just
-> > > to extend
-> > > > permissions be sufficient?
+On Sat, Jan 08, 2022 at 05:45:44PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Jan 07, 2022 at 10:14:29AM -0600, Haitao Huang wrote:
+> > > > > OK, so the question is: do we need both or would a mechanism just
+> > > > to extend
+> > > > > permissions be sufficient?
+> > > > 
+> > > > I do believe that we need both in order to support pages having only
+> > > > the permissions required to support their intended use during the
+> > > > time the
+> > > > particular access is required. While technically it is possible to grant
+> > > > pages all permissions they may need during their lifetime it is safer to
+> > > > remove permissions when no longer required.
 > > > 
-> > > I do believe that we need both in order to support pages having only
-> > > the permissions required to support their intended use during the
-> > > time the
-> > > particular access is required. While technically it is possible to grant
-> > > pages all permissions they may need during their lifetime it is safer to
-> > > remove permissions when no longer required.
-> > 
-> > So if we imagine a run-time: how EMODPR would be useful, and how using it
-> > would make things safer?
-> > 
-> In scenarios of JIT compilers, once code is generated into RW pages,
-> modifying both PTE and EPCM permissions to RX would be a good defensive
-> measure. In that case, EMODPR is useful.
+> > > So if we imagine a run-time: how EMODPR would be useful, and how using it
+> > > would make things safer?
+> > > 
+> > In scenarios of JIT compilers, once code is generated into RW pages,
+> > modifying both PTE and EPCM permissions to RX would be a good defensive
+> > measure. In that case, EMODPR is useful.
+> 
+> What is the exact threat we are talking about?
 
-What is the exact threat we are talking about?
+To add: it should be *significantly* critical thread, given that not
+supporting only EAUG would leave us only one complex call pattern with
+EACCEPT involvement.
+
+I'd even go to suggest to leave EMODPR out of the patch set, and introduce
+it when there is PoC code for any of the existing run-time that
+demonstrates the demand for it. Right now this way too speculative.
+
+Supporting EMODPE is IMHO by factors more critical.
 
 /Jarkko
