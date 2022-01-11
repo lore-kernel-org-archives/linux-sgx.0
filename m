@@ -2,99 +2,75 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FD9C433F5
-	for <linux-sgx@archiver.kernel.org>; Tue, 11 Jan 2022 14:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD52C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 11 Jan 2022 15:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241657AbiAKOUh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 11 Jan 2022 09:20:37 -0500
-Received: from mga01.intel.com ([192.55.52.88]:52076 "EHLO mga01.intel.com"
+        id S240264AbiAKPnv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 11 Jan 2022 10:43:51 -0500
+Received: from mga14.intel.com ([192.55.52.115]:45578 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241605AbiAKOUh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 11 Jan 2022 09:20:37 -0500
+        id S240010AbiAKPnu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 11 Jan 2022 10:43:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641910837; x=1673446837;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=7RMJP2lXxAIbB5vNgMmj7i+EJNws1Qf8O/v9iesBz7A=;
-  b=aAAXZ0XXSs3Y4Qa6mcKpzl6H0PoDLw4WhbgnD9y86CFLSfbVwKSXiPz9
-   LpyBaL6WR3my8nmsTqiYizWwxbBuLHMDJsoPUyx+MbUe44c4GCOCxiqk9
-   Dsl+C/5ibeiv62R3vmDRgiGlafXFvaz7h6rYNfE+ohqGZas6cLhJ/kgFS
-   Ri4Z4ajYs58EmjjcDOVCwLIhzJdECr0Mx+bs8FE96fbxv74MlcWu+8wcE
-   sSxAPJ45+IkbFrRzQgNBY6QTUs1PFt232ztM3PPW1j+3EH5GpWt4xPRhy
-   ujkCyFKmvm1zQvSUaX9ETjtbF+/wE+WV8DcL8B0kZ3kIp7ZDSTXYufHXl
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10223"; a="267830891"
+  t=1641915830; x=1673451830;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mbYhbfEPWbz/jPT9cqRRXX3BhHy6E2iOrDNTHn/NRDk=;
+  b=CtgQM56VgdNUncEHPiIB0+fBBdPLrwjemY3QtTSc5YOzgyq5XMCUfPXr
+   /Je6iEBUu7Vfdon8mMRm0OyUBSrHiktgwqKqVXiXyZTbyzEW6105vZVPw
+   Xupfioji8lc7If1YwmdwNWzmKN86RyhN1vLzPKWF16gyXe18tc3SGIT3X
+   20oUFf1N6HTS93uj7cETdJVP9BCmo/YwQ0UqWqx0gaBqBb9UGbRDjZAe7
+   //04mOfoYhh6NmCxK+oTvLtuIlh/pKfVDjyRwR9YE1vhBkgz16NoCTWyZ
+   XmqYeAI3ZKjaTyrZpW0rw1YqIYqC8y8Xg3/u9n2MaI6QEM76k+pgRbOmI
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10223"; a="243713762"
 X-IronPort-AV: E=Sophos;i="5.88,279,1635231600"; 
-   d="scan'208";a="267830891"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2022 06:20:35 -0800
+   d="scan'208";a="243713762"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2022 07:43:50 -0800
 X-IronPort-AV: E=Sophos;i="5.88,279,1635231600"; 
-   d="scan'208";a="528757782"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.255.38.99])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 11 Jan 2022 06:20:34 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Dave Hansen" <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-        "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Kristen Carlson Accardi" <kristen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org
+   d="scan'208";a="613254996"
+Received: from padhika1-mobl.amr.corp.intel.com (HELO [10.209.13.65]) ([10.209.13.65])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2022 07:43:36 -0800
+Message-ID: <bc370c39-d8c1-9371-2345-cf255ced9a1b@intel.com>
+Date:   Tue, 11 Jan 2022 07:43:35 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
 Subject: Re: [PATCH v2 1/2] x86/sgx: Add accounting for tracking overcommit
+Content-Language: en-US
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org
 References: <20220107181618.6597-1-kristen@linux.intel.com>
  <20220107181618.6597-2-kristen@linux.intel.com>
  <171631a9-aaec-f590-3377-29c13fc6041e@intel.com>
  <3b169fde457f28e086c49c8a3b8d81ac539cfb59.camel@linux.intel.com>
-Date:   Tue, 11 Jan 2022 08:20:32 -0600
-MIME-Version: 1.0
+ <op.1ft4sin7wjvjmi@hhuan26-mobl1.mshome.net>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <op.1ft4sin7wjvjmi@hhuan26-mobl1.mshome.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1ft4sin7wjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <3b169fde457f28e086c49c8a3b8d81ac539cfb59.camel@linux.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, 07 Jan 2022 13:16:12 -0600, Kristen Carlson Accardi  
-<kristen@linux.intel.com> wrote:
+On 1/11/22 06:20, Haitao Huang wrote:
+> If the system has a ton of RAM but limited EPC, I think it makes sense 
+> to allow more EPC swapping, can we do min(0.5*RAM, 2*EPC)?
+> I suppose if the system is used for heavy enclave load, user would be 
+> willing to at least use half of RAM.
 
-> On Fri, 2022-01-07 at 10:46 -0800, Dave Hansen wrote:
->> On 1/7/22 10:16, Kristen Carlson Accardi wrote:
->> > The overcommit percentage value is 150, which limits the total
->> > number of
->> > shared memory pages that may be consumed by all enclaves as backing
->> > pages
->> > to 1.5X of EPC pages on the system.
->>
->> Hi Kristen,
->>
->> Could you give some background on how this value was chosen and how
->> it
->> might impact userspace?
->
-> Yes,
-> The value of 1.5x the number of EPC pages was chosen because it will
-> handle the most common case of a few enclaves that don't need much
-> overcommit without any impact to user space. In the less commone case
-> where there are many enclaves or a few large enclaves which need a lot
-> of overcommit due to large EPC memory requirements, the reclaimer may
-> fail to allocate a backing page for swapping if the limit has been
-> reached. In this case the page will not be able to be reclaimed and the
-> system will not be able to allocate any new EPC pages. Any ioctl or
-> call to add new EPC pages will get -ENOMEM, so for example, new
-> enclaves will fail to load, and new EPC pages will not be able to be
-> added.
->
-> Does that make sense?
+If I have 100GB of RAM and 100MB of EPC, can I really *meaningfully* run 
+50GB of enclaves?  In that case, if everything was swapped out evenly, I 
+would only have a 499/500 chance that a given page reference would fault.
 
-If the system has a ton of RAM but limited EPC, I think it makes sense to  
-allow more EPC swapping, can we do min(0.5*RAM, 2*EPC)?
-I suppose if the system is used for heavy enclave load, user would be  
-willing to at least use half of RAM.
-
-Thanks
-Haitao
+This isn't about a "heavy enclave load".  If there is *that* much 
+swapped-out enclave memory, will an enclave even make meaningful forward 
+progress?
