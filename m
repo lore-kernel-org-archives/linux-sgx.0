@@ -2,149 +2,279 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D3AC433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jan 2022 23:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521C7C433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jan 2022 02:41:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236307AbiALX4W (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 Jan 2022 18:56:22 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:33958 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236243AbiALX4V (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jan 2022 18:56:21 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2EBDD61209;
-        Wed, 12 Jan 2022 23:56:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195EAC36AEC;
-        Wed, 12 Jan 2022 23:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642031780;
-        bh=4Y0xWoLOQCcyaOD6zkLkEVyq9HhnUPTs5P99NoUOcvw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DPnCX3bBpfwVEIZqtAoQy+56wECmnL8LZqgefE+rG/OBeU2LU1oRYDcgRyzATbPxy
-         1XstZbpam4N7YncNnhyodS7a4lNw4dyXzCGO1Hsrxsj2R0WNW5aO6hqIMBQZC/Deun
-         VWpIb6qWVg6rppaHaVJNik391xHTDQJuBk8ycTbQOqhaTBBcZQHVGqj/r7I9jJkJ0G
-         3cfFQnMGR1LWTYnBOlCR5W1czNiMHVsBV6NTodrjYEBJ8DkGc93RkKyKW4DHdQNVS1
-         dLJ5XPyykEZHZseBJRNfiYddu8ig8NF0g6o4BkO0XrqVZYvVYdrm3Te5/oPoaA8SVi
-         acYUL+UtBRe4g==
-Date:   Thu, 13 Jan 2022 01:56:08 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, dave.hansen@linux.intel.com,
+        id S231809AbiAMClu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 Jan 2022 21:41:50 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21073 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231805AbiAMClY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 12 Jan 2022 21:41:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1642041684; x=1673577684;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=2TRqlbMLunChKaYsEtSl7g62THDdi2D+AG1qUnTuMDg=;
+  b=hPXXNHnd13RiAmobIxs2uu/TQTef9MM13Pffw7IEvh3DSHECFuwHAy8G
+   LsCPa3npmW/3C/w6yhbp84i0i4NGI/vXHL+fEoiwO2sXjE3zNQ0182nva
+   bywMKLppKXcRrbzm/h+KA6pS3sT7NbiCHf4sorcDNRuvh0Fd9fGuH3Khp
+   zpb4fZPHWx4NO47iqB8NZc7Jggwy18gPEPxxJIGLPHeCvT9b484CMjyuT
+   MUotLd+igWJ5/CKCURpl51e7lMa2SIPnAiKCieEtLfeAUPd8dQA/gBFch
+   0nbWJYvOouYtfl3VR9j7/ZanHHrAyjYI55LvZvlyTX+IcuyjBhrrBTrdA
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10225"; a="304648656"
+X-IronPort-AV: E=Sophos;i="5.88,284,1635231600"; 
+   d="scan'208";a="304648656"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 18:41:23 -0800
+X-IronPort-AV: E=Sophos;i="5.88,284,1635231600"; 
+   d="scan'208";a="529472448"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.255.33.250])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 12 Jan 2022 18:41:21 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc:     "Reinette Chatre" <reinette.chatre@intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>, dave.hansen@linux.intel.com,
         tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
         linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
         kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
-Message-ID: <Yd9qmMx7NO450mzZ@iki.fi>
-References: <573e0836-6ac2-30a4-0c21-d4763707ac96@intel.com>
- <YdgvFTIRboHwTgRT@iki.fi>
- <op.1fmvdehpwjvjmi@hhuan26-mobl1.mshome.net>
- <YdmxpTVM1JG8nxQ3@iki.fi>
- <YdmzDy1BOHgh8CII@iki.fi>
- <Ydm6RiIwuh3IspRI@iki.fi>
- <op.1fsvkfiwwjvjmi@hhuan26-mobl1.mshome.net>
- <YdzjEzjF0YKn+pZ6@iki.fi>
- <4195402f-cbf9-bc75-719d-22cea8e36e60@intel.com>
- <Yd9pMq4lUy56B+50@iki.fi>
+References: <op.1fmvdehpwjvjmi@hhuan26-mobl1.mshome.net>
+ <YdmxpTVM1JG8nxQ3@iki.fi> <YdmzDy1BOHgh8CII@iki.fi> <Ydm6RiIwuh3IspRI@iki.fi>
+ <op.1fsvkfiwwjvjmi@hhuan26-mobl1.mshome.net> <YdzjEzjF0YKn+pZ6@iki.fi>
+ <YdzjrIxrVfgrlzWH@iki.fi> <YdzldMXO2LrssnER@iki.fi> <YdzoQJknQK5r6xLK@iki.fi>
+ <op.1ftbip0cwjvjmi@hhuan26-mobl1.mshome.net> <Yd9o4BJWNtK5AxoB@iki.fi>
+Date:   Wed, 12 Jan 2022 20:41:18 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yd9pMq4lUy56B+50@iki.fi>
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.1fwxk0flwjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <Yd9o4BJWNtK5AxoB@iki.fi>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 01:50:13AM +0200, Jarkko Sakkinen wrote:
-> On Tue, Jan 11, 2022 at 09:13:27AM -0800, Reinette Chatre wrote:
-> > Hi Jarkko,
-> > 
-> > On 1/10/2022 5:53 PM, Jarkko Sakkinen wrote:
-> > > On Mon, Jan 10, 2022 at 04:05:21PM -0600, Haitao Huang wrote:
-> > >> On Sat, 08 Jan 2022 10:22:30 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-> > >> wrote:
-> > >>
-> > >>> On Sat, Jan 08, 2022 at 05:51:46PM +0200, Jarkko Sakkinen wrote:
-> > >>>> On Sat, Jan 08, 2022 at 05:45:44PM +0200, Jarkko Sakkinen wrote:
-> > >>>>> On Fri, Jan 07, 2022 at 10:14:29AM -0600, Haitao Huang wrote:
-> > >>>>>>>>> OK, so the question is: do we need both or would a
-> > >>>> mechanism just
-> > >>>>>>>> to extend
-> > >>>>>>>>> permissions be sufficient?
-> > >>>>>>>>
-> > >>>>>>>> I do believe that we need both in order to support pages
-> > >>>> having only
-> > >>>>>>>> the permissions required to support their intended use
-> > >>>> during the
-> > >>>>>>>> time the
-> > >>>>>>>> particular access is required. While technically it is
-> > >>>> possible to grant
-> > >>>>>>>> pages all permissions they may need during their lifetime it
-> > >>>> is safer to
-> > >>>>>>>> remove permissions when no longer required.
-> > >>>>>>>
-> > >>>>>>> So if we imagine a run-time: how EMODPR would be useful, and
-> > >>>> how using it
-> > >>>>>>> would make things safer?
-> > >>>>>>>
-> > >>>>>> In scenarios of JIT compilers, once code is generated into RW pages,
-> > >>>>>> modifying both PTE and EPCM permissions to RX would be a good
-> > >>>> defensive
-> > >>>>>> measure. In that case, EMODPR is useful.
-> > >>>>>
-> > >>>>> What is the exact threat we are talking about?
-> > >>>>
-> > >>>> To add: it should be *significantly* critical thread, given that not
-> > >>>> supporting only EAUG would leave us only one complex call pattern with
-> > >>>> EACCEPT involvement.
-> > >>>>
-> > >>>> I'd even go to suggest to leave EMODPR out of the patch set, and
-> > >>>> introduce
-> > >>>> it when there is PoC code for any of the existing run-time that
-> > >>>> demonstrates the demand for it. Right now this way too speculative.
-> > >>>>
-> > >>>> Supporting EMODPE is IMHO by factors more critical.
-> > >>>
-> > >>> At least it does not protected against enclave code because an enclave
-> > >>> can
-> > >>> always choose not to EACCEPT any of the EMODPR requests. I'm not only
-> > >>> confused here about the actual threat but also the potential adversary
-> > >>> and
-> > >>> target.
-> > >>>
-> > >> I'm not sure I follow your thoughts here. The sequence should be for enclave
-> > >> to request  EMODPR in the first place through runtime to kernel, then to
-> > >> verify with EACCEPT that the OS indeed has done EMODPR.
-> > >> If enclave does not verify with EACCEPT, then its own code has
-> > >> vulnerability. But this does not justify OS not providing the mechanism to
-> > >> request EMODPR.
-> > > 
-> > > The question is really simple: what is the threat scenario? In order to use
-> > > the word "vulnerability", you would need one.
-> > > 
-> > > Given the complexity of the whole dance with EMODPR it is mandatory to have
-> > > one, in order to ack it to the mainline.
-> > > 
-> > 
-> > Which complexity related to EMODPR are you concerned about? In a later message
-> > you mention "This leaves only EAUG and EMODT requiring the EACCEPT handshake"
-> > so it seems that you are perhaps concerned about the flow involving EACCEPT?
-> > The OS does not require nor depend on EACCEPT being called as part of these flows
-> > so a faulty or misbehaving user space omitting an EACCEPT call would not impact
-> > these flows in the OS, but would of course impact the enclave.
-> 
-> I'd say *any* complexity because I see no benefit of supporting it. E.g.
-> EMODPR/EACCEPT/EMODPE sequence I mentioned to Haitao concerns me. How is
-> EMODPR going to help with any sort of workload?
+On Wed, 12 Jan 2022 17:48:48 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
+wrote:
 
-I've even started think should we just always allow mmap()? The worst thing
-that can happen is that the enclave crashes. Does that matter all that
-much? I'm asking because access control is the main theme in SGX2 patch set
-that IMHO should be considered to the ground. It really "stress tests" that
-area. If we can settle on  that, then other things are just technical details
-that we can surely sort out.
+> On Mon, Jan 10, 2022 at 09:48:15PM -0600, Haitao Huang wrote:
+>> On Mon, 10 Jan 2022 20:15:28 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+>> wrote:
+>>
+>> > On Tue, Jan 11, 2022 at 04:03:32AM +0200, Jarkko Sakkinen wrote:
+>> > > On Tue, Jan 11, 2022 at 03:55:59AM +0200, Jarkko Sakkinen wrote:
+>> > > > On Tue, Jan 11, 2022 at 03:53:26AM +0200, Jarkko Sakkinen wrote:
+>> > > > > On Mon, Jan 10, 2022 at 04:05:21PM -0600, Haitao Huang wrote:
+>> > > > > > On Sat, 08 Jan 2022 10:22:30 -0600, Jarkko Sakkinen
+>> > > <jarkko@kernel.org>
+>> > > > > > wrote:
+>> > > > > >
+>> > > > > > > On Sat, Jan 08, 2022 at 05:51:46PM +0200, Jarkko Sakkinen  
+>> wrote:
+>> > > > > > > > On Sat, Jan 08, 2022 at 05:45:44PM +0200, Jarkko Sakkinen
+>> > > wrote:
+>> > > > > > > > > On Fri, Jan 07, 2022 at 10:14:29AM -0600, Haitao Huang
+>> > > wrote:
+>> > > > > > > > > > > > > OK, so the question is: do we need both or  
+>> would a
+>> > > > > > > > mechanism just
+>> > > > > > > > > > > > to extend
+>> > > > > > > > > > > > > permissions be sufficient?
+>> > > > > > > > > > > >
+>> > > > > > > > > > > > I do believe that we need both in order to support
+>> > > pages
+>> > > > > > > > having only
+>> > > > > > > > > > > > the permissions required to support their  
+>> intended use
+>> > > > > > > > during the
+>> > > > > > > > > > > > time the
+>> > > > > > > > > > > > particular access is required. While technically  
+>> it is
+>> > > > > > > > possible to grant
+>> > > > > > > > > > > > pages all permissions they may need during their
+>> > > lifetime it
+>> > > > > > > > is safer to
+>> > > > > > > > > > > > remove permissions when no longer required.
+>> > > > > > > > > > >
+>> > > > > > > > > > > So if we imagine a run-time: how EMODPR would be
+>> > > useful, and
+>> > > > > > > > how using it
+>> > > > > > > > > > > would make things safer?
+>> > > > > > > > > > >
+>> > > > > > > > > > In scenarios of JIT compilers, once code is generated
+>> > > into RW pages,
+>> > > > > > > > > > modifying both PTE and EPCM permissions to RX would be
+>> > > a good
+>> > > > > > > > defensive
+>> > > > > > > > > > measure. In that case, EMODPR is useful.
+>> > > > > > > > >
+>> > > > > > > > > What is the exact threat we are talking about?
+>> > > > > > > >
+>> > > > > > > > To add: it should be *significantly* critical thread,
+>> > > given that not
+>> > > > > > > > supporting only EAUG would leave us only one complex call
+>> > > pattern with
+>> > > > > > > > EACCEPT involvement.
+>> > > > > > > >
+>> > > > > > > > I'd even go to suggest to leave EMODPR out of the patch
+>> > > set, and
+>> > > > > > > > introduce
+>> > > > > > > > it when there is PoC code for any of the existing run-time
+>> > > that
+>> > > > > > > > demonstrates the demand for it. Right now this way too
+>> > > speculative.
+>> > > > > > > >
+>> > > > > > > > Supporting EMODPE is IMHO by factors more critical.
+>> > > > > > >
+>> > > > > > > At least it does not protected against enclave code because
+>> > > an enclave
+>> > > > > > > can
+>> > > > > > > always choose not to EACCEPT any of the EMODPR requests. I'm
+>> > > not only
+>> > > > > > > confused here about the actual threat but also the potential
+>> > > adversary
+>> > > > > > > and
+>> > > > > > > target.
+>> > > > > > >
+>> > > > > > I'm not sure I follow your thoughts here. The sequence should
+>> > > be for enclave
+>> > > > > > to request  EMODPR in the first place through runtime to
+>> > > kernel, then to
+>> > > > > > verify with EACCEPT that the OS indeed has done EMODPR.
+>> > > > > > If enclave does not verify with EACCEPT, then its own code has
+>> > > > > > vulnerability. But this does not justify OS not providing the
+>> > > mechanism to
+>> > > > > > request EMODPR.
+>> > > > >
+>> > > > > The question is really simple: what is the threat scenario? In
+>> > > order to use
+>> > > > > the word "vulnerability", you would need one.
+>> > > > >
+>> > > > > Given the complexity of the whole dance with EMODPR it is
+>> > > mandatory to have
+>> > > > > one, in order to ack it to the mainline.
+>> > > > >
+>> > > > > > Similar to how we don't want have RWX code pages for normal  
+>> Linux
+>> > > > > > application, when an enclave loads code pages (either directly
+>> > > or JIT
+>> > > > > > compiled from high level code ) into EAUG'd page (which has
+>> > > RW), we do not
+>> > > > > > want leave pages to be RWX for code to be executable, hence
+>> > > the need of
+>> > > > > > EMODPR request OS to reduce the permissions to RX once the
+>> > > code is ready to
+>> > > > > > execute.
+>> > > > >
+>> > > > > You cannot compare *enforced* permissions outside the enclave,
+>> > > and claim that
+>> > > > > they would be equivalent to the permissions of the already
+>> > > sandboxed code
+>> > > > > inside the enclave, with permissions that are not enforced but
+>> > > are based
+>> > > > > on good will of the enclave code.
+>> > > >
+>> > > > To add, you can already do "EMODPR" by simply adjusting VMA
+>> > > permissions to be
+>> > > > more restrictive. How this would be worse than this collaboration
+>> > > based
+>> > > > thing?
+>> > >
+>> > > ... or you could even make soft version of EMODPR without using that
+>> > > opcode
+>> > > by writing an ioctl to update our xarray to allow lower permissions.
+>> > > That
+>> > > ties the hands of the process who is doing the mmap() already.
+>> >
+>> > E.g. why not just
+>> >
+>> > #define SGX_IOC_ENCLAVE_RESTRICT_PAGE_PERMISSIONS \
+>> > 	_IOW(SGX_MAGIC, 0x05, struct sgx_enclave_modify_page_permissions)
+>> > #define SGX_IOC_ENCLAVE_EXTEND_PAGE_PERMISSIONS \
+>> > 	_IOW(SGX_MAGIC, 0x06, struct sgx_enclave_modify_page_permissions)
+>> >
+>> > struct sgx_enclave_restrict_page_permissions {
+>> > 	__u64 src;
+>> > 	__u64 offset;
+>> > 	__u64 length;
+>> > 	__u64 secinfo;
+>> > 	__u64 count;
+>> > };
+>> > struct sgx_enclave_extend_page_permissions {
+>> > 	__u64 src;
+>> > 	__u64 offset;
+>> > 	__u64 length;
+>> > 	__u64 secinfo;
+>> > 	__u64 count;
+>> > };
+>> >
+>> > These would simply update the xarray and nothing else. I'd go with two
+>> > ioctls (with the necessary checks for secinfo) in order to provide  
+>> hook
+>> > up points in the future for LSMs.
+>> >
+>> > This leaves only EAUG and EMODT requiring the EACCEPT handshake.
+>> >
+>> > /Jarkko
+>> The trusted code base here is the enclave. It can't trust any code  
+>> outside
+>> for enforcement. There is also need for TLB shootdown.
+>>
+>> To answer your earlier question about threat, the threat is
+>> malicious/compromised code inside enclave. Yes, you can say the whole  
+>> thing
+>> is sand-boxed, but the runtime inside enclave could load complex upper  
+>> layer
+>> code.  Therefore the runtime needs to have a trusted mechanism to ensure
+>> code pages not writable so that there is less/no chance for compromised
+>> malicious enclave to modify existing code pages. I still consider it to  
+>> be
+>> similar to normal Linux elf-loader/dynamic linker relying on  
+>> mmap/mprotect
+>> and trusting OS to enforce permissions, but here the enclave runtime  
+>> only
+>> trust the HW provided mechanism: EMODPR to change EPCM records and  
+>> EACCEPT
+>> to verify.
+>
+> So what if:
+>
+> 1. User space does EMODPR ioctl.
+> 2. Enclave does EACCEPT.
+> 3. Enclave does EMODPE.
+>
+Could you elaborate on your exact concern here? EMODPE won't be able to  
+restrict permissions, only add, so no way to cancel what's done by EMODPR  
+if that's your concern.
 
-/Jarkko
+And EMODPE would only affect EPCM not PTE. So if OS set PTE no matching  
+EPCM, the enclave won't be able to use the page for added access.
+
+> The problem here is the asymmetry of these operations. If EMODPE also
+> required EACCEPT from the run-time, EMODPR would also make sense.
+>
+
+The asymmetry is on the user space side as Reinette stated in her reply. I  
+could not see why this a relevant concern for kernel.
+
+> Please give a code example on how EMODPR improves trust.
+>
+It's not that EMODPR itself improves trust. What I try to say is that the  
+enclave runtime can use EACCET to verify EPCM permissions which is  
+trusted, and not relying on PTE permissions which is controlled by OS. It  
+must do EACCEPT for EMODPR and other ENCLS ops like EMODT,EAUG, etc. as  
+enclave security model considers OS untrusted.
+
+EMODPR is the only way to restrict permissions in EPCM for enclave pages.  
+So if it is not supported by kernel then there is no way for enclave  
+runtimes to support the use cases I stated previously. That means RWX  
+required in EPCM for dynamic loaded/JIT compiled code pages.
+
+Thanks
+Haitao
