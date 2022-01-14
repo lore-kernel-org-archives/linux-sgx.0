@@ -2,259 +2,260 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65F5C433F5
-	for <linux-sgx@archiver.kernel.org>; Fri, 14 Jan 2022 21:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70F1C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 14 Jan 2022 21:36:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiANV0B (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 14 Jan 2022 16:26:01 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:54014 "EHLO
+        id S229865AbiANVgg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 14 Jan 2022 16:36:36 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:58530 "EHLO
         dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbiANV0B (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 14 Jan 2022 16:26:01 -0500
+        with ESMTP id S229838AbiANVgf (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 14 Jan 2022 16:36:35 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95BA861F85;
-        Fri, 14 Jan 2022 21:26:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2C2C36AE9;
-        Fri, 14 Jan 2022 21:25:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E40E61F9B;
+        Fri, 14 Jan 2022 21:36:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34261C36AE9;
+        Fri, 14 Jan 2022 21:36:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642195560;
-        bh=D4XDC8+UErC1Yj02L5DJLEKNsLTWCellAgAC60/AMbU=;
+        s=k20201202; t=1642196194;
+        bh=a92jsGWhL5DsPYT7tYxlR91a3WyN9cW0YdAlCYvlwUg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UsdV2pbp/IDOyj9u8C1t+6BcIs4jWNgrKXq+TFxdqACdUGuKwBWOICaXs/sRO5ecQ
-         A/5tQR2M7tT2njdWGGOlWoFVOryClDlDKOqFPjCctEhYG/KyRw/0fEnj6D+DCjKvmH
-         Ct5UHz4XbcgOE7nCJv6feWCjzbchepbBxJv7Icpp4OnOYfQBDrfwYjsBvS77dnFVwV
-         sKVlfpkoRWlzQttY7JsXE1YWoNlDYJsyJM3EOEXHuvtQXLUjBlW9eXrLhAI5SNDxj+
-         nldUNjJjxkr8QhMJ3hSj935Sv2vrLuBUOwEm0gOvRSbnkKDzJUJMskX1POviPWe5v0
-         8z0SHKaqhOtXQ==
-Date:   Fri, 14 Jan 2022 23:25:47 +0200
+        b=Ygns0sTyX3uGYdMtjQB3sfBpIK/aUmev/21p+E7yAXJKyufJZXVBl15zcQcP0jb59
+         yMYVY4Y5wGwGm+yKfAFFk5MD+IBDHaeld/uVUAksFV+onWk2k/44DhJgSl4mx8dsk/
+         +N72w3lFQA6T7KMkXMbHBgOFvT6HX2uuOG8fxvJN+0N0evy8qHa7yj/YGoOoeHqf8v
+         u2uzhqlHzkKf4Z4hE9qKw0yz0cqW9OcxqohRJ1v+wNkDdEcaNURk8vVorsJ/nZNszD
+         i/BrPgmwlUlsgIKIx29LJ5DoTNhghRLgCkBWN42pjYPZvExMYWqN0O+nk/1gV9ppb/
+         quyaKZOgOZ7xg==
+Date:   Fri, 14 Jan 2022 23:36:22 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v3] x86/sgx: Free backing memory after faulting the
- enclave page
-Message-ID: <YeHqW8AaQ3HZZoQx@iki.fi>
-References: <20220108140510.76583-1-jarkko@kernel.org>
- <cd26205a-8551-194f-58df-05f89cd4f049@intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
+Message-ID: <YeHs1vyUaZ/v9eAF@iki.fi>
+References: <YdmzDy1BOHgh8CII@iki.fi>
+ <Ydm6RiIwuh3IspRI@iki.fi>
+ <op.1fsvkfiwwjvjmi@hhuan26-mobl1.mshome.net>
+ <YdzjEzjF0YKn+pZ6@iki.fi>
+ <YdzjrIxrVfgrlzWH@iki.fi>
+ <YdzldMXO2LrssnER@iki.fi>
+ <YdzoQJknQK5r6xLK@iki.fi>
+ <op.1ftbip0cwjvjmi@hhuan26-mobl1.mshome.net>
+ <Yd9o4BJWNtK5AxoB@iki.fi>
+ <op.1fwxk0flwjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cd26205a-8551-194f-58df-05f89cd4f049@intel.com>
+In-Reply-To: <op.1fwxk0flwjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 10:08:02PM -0800, Reinette Chatre wrote:
-> Hi Jarkko,
+On Wed, Jan 12, 2022 at 08:41:18PM -0600, Haitao Huang wrote:
+> On Wed, 12 Jan 2022 17:48:48 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
 > 
-> On 1/8/2022 6:05 AM, Jarkko Sakkinen wrote:
-> > There is a limited amount of SGX memory (EPC) on each system.  When that
-> > memory is used up, SGX has its own swapping mechanism which is similar
-> > in concept but totally separate from the core mm/* code.  Instead of
-> > swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
-> > comes from a shared memory pseudo-file and can itself be swapped by the
-> > core mm code.  There is a hierarchy like this:
+> > On Mon, Jan 10, 2022 at 09:48:15PM -0600, Haitao Huang wrote:
+> > > On Mon, 10 Jan 2022 20:15:28 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+> > > wrote:
+> > > 
+> > > > On Tue, Jan 11, 2022 at 04:03:32AM +0200, Jarkko Sakkinen wrote:
+> > > > > On Tue, Jan 11, 2022 at 03:55:59AM +0200, Jarkko Sakkinen wrote:
+> > > > > > On Tue, Jan 11, 2022 at 03:53:26AM +0200, Jarkko Sakkinen wrote:
+> > > > > > > On Mon, Jan 10, 2022 at 04:05:21PM -0600, Haitao Huang wrote:
+> > > > > > > > On Sat, 08 Jan 2022 10:22:30 -0600, Jarkko Sakkinen
+> > > > > <jarkko@kernel.org>
+> > > > > > > > wrote:
+> > > > > > > >
+> > > > > > > > > On Sat, Jan 08, 2022 at 05:51:46PM +0200, Jarkko
+> > > Sakkinen wrote:
+> > > > > > > > > > On Sat, Jan 08, 2022 at 05:45:44PM +0200, Jarkko Sakkinen
+> > > > > wrote:
+> > > > > > > > > > > On Fri, Jan 07, 2022 at 10:14:29AM -0600, Haitao Huang
+> > > > > wrote:
+> > > > > > > > > > > > > > > OK, so the question is: do we need both or
+> > > would a
+> > > > > > > > > > mechanism just
+> > > > > > > > > > > > > > to extend
+> > > > > > > > > > > > > > > permissions be sufficient?
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > I do believe that we need both in order to support
+> > > > > pages
+> > > > > > > > > > having only
+> > > > > > > > > > > > > > the permissions required to support their
+> > > intended use
+> > > > > > > > > > during the
+> > > > > > > > > > > > > > time the
+> > > > > > > > > > > > > > particular access is required. While
+> > > technically it is
+> > > > > > > > > > possible to grant
+> > > > > > > > > > > > > > pages all permissions they may need during their
+> > > > > lifetime it
+> > > > > > > > > > is safer to
+> > > > > > > > > > > > > > remove permissions when no longer required.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > So if we imagine a run-time: how EMODPR would be
+> > > > > useful, and
+> > > > > > > > > > how using it
+> > > > > > > > > > > > > would make things safer?
+> > > > > > > > > > > > >
+> > > > > > > > > > > > In scenarios of JIT compilers, once code is generated
+> > > > > into RW pages,
+> > > > > > > > > > > > modifying both PTE and EPCM permissions to RX would be
+> > > > > a good
+> > > > > > > > > > defensive
+> > > > > > > > > > > > measure. In that case, EMODPR is useful.
+> > > > > > > > > > >
+> > > > > > > > > > > What is the exact threat we are talking about?
+> > > > > > > > > >
+> > > > > > > > > > To add: it should be *significantly* critical thread,
+> > > > > given that not
+> > > > > > > > > > supporting only EAUG would leave us only one complex call
+> > > > > pattern with
+> > > > > > > > > > EACCEPT involvement.
+> > > > > > > > > >
+> > > > > > > > > > I'd even go to suggest to leave EMODPR out of the patch
+> > > > > set, and
+> > > > > > > > > > introduce
+> > > > > > > > > > it when there is PoC code for any of the existing run-time
+> > > > > that
+> > > > > > > > > > demonstrates the demand for it. Right now this way too
+> > > > > speculative.
+> > > > > > > > > >
+> > > > > > > > > > Supporting EMODPE is IMHO by factors more critical.
+> > > > > > > > >
+> > > > > > > > > At least it does not protected against enclave code because
+> > > > > an enclave
+> > > > > > > > > can
+> > > > > > > > > always choose not to EACCEPT any of the EMODPR requests. I'm
+> > > > > not only
+> > > > > > > > > confused here about the actual threat but also the potential
+> > > > > adversary
+> > > > > > > > > and
+> > > > > > > > > target.
+> > > > > > > > >
+> > > > > > > > I'm not sure I follow your thoughts here. The sequence should
+> > > > > be for enclave
+> > > > > > > > to request  EMODPR in the first place through runtime to
+> > > > > kernel, then to
+> > > > > > > > verify with EACCEPT that the OS indeed has done EMODPR.
+> > > > > > > > If enclave does not verify with EACCEPT, then its own code has
+> > > > > > > > vulnerability. But this does not justify OS not providing the
+> > > > > mechanism to
+> > > > > > > > request EMODPR.
+> > > > > > >
+> > > > > > > The question is really simple: what is the threat scenario? In
+> > > > > order to use
+> > > > > > > the word "vulnerability", you would need one.
+> > > > > > >
+> > > > > > > Given the complexity of the whole dance with EMODPR it is
+> > > > > mandatory to have
+> > > > > > > one, in order to ack it to the mainline.
+> > > > > > >
+> > > > > > > > Similar to how we don't want have RWX code pages for
+> > > normal Linux
+> > > > > > > > application, when an enclave loads code pages (either directly
+> > > > > or JIT
+> > > > > > > > compiled from high level code ) into EAUG'd page (which has
+> > > > > RW), we do not
+> > > > > > > > want leave pages to be RWX for code to be executable, hence
+> > > > > the need of
+> > > > > > > > EMODPR request OS to reduce the permissions to RX once the
+> > > > > code is ready to
+> > > > > > > > execute.
+> > > > > > >
+> > > > > > > You cannot compare *enforced* permissions outside the enclave,
+> > > > > and claim that
+> > > > > > > they would be equivalent to the permissions of the already
+> > > > > sandboxed code
+> > > > > > > inside the enclave, with permissions that are not enforced but
+> > > > > are based
+> > > > > > > on good will of the enclave code.
+> > > > > >
+> > > > > > To add, you can already do "EMODPR" by simply adjusting VMA
+> > > > > permissions to be
+> > > > > > more restrictive. How this would be worse than this collaboration
+> > > > > based
+> > > > > > thing?
+> > > > >
+> > > > > ... or you could even make soft version of EMODPR without using that
+> > > > > opcode
+> > > > > by writing an ioctl to update our xarray to allow lower permissions.
+> > > > > That
+> > > > > ties the hands of the process who is doing the mmap() already.
+> > > >
+> > > > E.g. why not just
+> > > >
+> > > > #define SGX_IOC_ENCLAVE_RESTRICT_PAGE_PERMISSIONS \
+> > > > 	_IOW(SGX_MAGIC, 0x05, struct sgx_enclave_modify_page_permissions)
+> > > > #define SGX_IOC_ENCLAVE_EXTEND_PAGE_PERMISSIONS \
+> > > > 	_IOW(SGX_MAGIC, 0x06, struct sgx_enclave_modify_page_permissions)
+> > > >
+> > > > struct sgx_enclave_restrict_page_permissions {
+> > > > 	__u64 src;
+> > > > 	__u64 offset;
+> > > > 	__u64 length;
+> > > > 	__u64 secinfo;
+> > > > 	__u64 count;
+> > > > };
+> > > > struct sgx_enclave_extend_page_permissions {
+> > > > 	__u64 src;
+> > > > 	__u64 offset;
+> > > > 	__u64 length;
+> > > > 	__u64 secinfo;
+> > > > 	__u64 count;
+> > > > };
+> > > >
+> > > > These would simply update the xarray and nothing else. I'd go with two
+> > > > ioctls (with the necessary checks for secinfo) in order to provide
+> > > hook
+> > > > up points in the future for LSMs.
+> > > >
+> > > > This leaves only EAUG and EMODT requiring the EACCEPT handshake.
+> > > >
+> > > > /Jarkko
+> > > The trusted code base here is the enclave. It can't trust any code
+> > > outside
+> > > for enforcement. There is also need for TLB shootdown.
+> > > 
+> > > To answer your earlier question about threat, the threat is
+> > > malicious/compromised code inside enclave. Yes, you can say the
+> > > whole thing
+> > > is sand-boxed, but the runtime inside enclave could load complex
+> > > upper layer
+> > > code.  Therefore the runtime needs to have a trusted mechanism to ensure
+> > > code pages not writable so that there is less/no chance for compromised
+> > > malicious enclave to modify existing code pages. I still consider it
+> > > to be
+> > > similar to normal Linux elf-loader/dynamic linker relying on
+> > > mmap/mprotect
+> > > and trusting OS to enforce permissions, but here the enclave runtime
+> > > only
+> > > trust the HW provided mechanism: EMODPR to change EPCM records and
+> > > EACCEPT
+> > > to verify.
 > > 
-> > 	EPC <-> shmem <-> disk
+> > So what if:
 > > 
-> > After data is swapped back in from shmem to EPC, the shmem backing
-> > storage needs to be freed.  Currently, the backing shmem is not freed.
-> > This effectively wastes the shmem while the enclave is running.  The
-> > memory is recovered when the enclave is destroyed and the backing
-> > storage freed.
+> > 1. User space does EMODPR ioctl.
+> > 2. Enclave does EACCEPT.
+> > 3. Enclave does EMODPE.
 > > 
-> > Sort this out by freeing memory with shmem_truncate_range(), as soon as
-> > a page is faulted back to the EPC.  In addition, free the memory for
-> > PCMD pages as soon as all PCMD's in a page have been marked as unused
-> > by zeroing its contents.
-> > 
-> > Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: stable@vger.kernel.org
-> > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v3:
-> > * Resend.
-> > v2:
-> > * Rewrite commit message as proposed by Dave.
-> > * Truncate PCMD pages (Dave).
-> > ---
-> >  arch/x86/kernel/cpu/sgx/encl.c | 48 +++++++++++++++++++++++++++++++---
-> >  1 file changed, 44 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> > index 001808e3901c..ea43c10e5458 100644
-> > --- a/arch/x86/kernel/cpu/sgx/encl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> > @@ -12,6 +12,27 @@
-> >  #include "encls.h"
-> >  #include "sgx.h"
-> >  
-> > +
-> > +/*
-> > + * Get the page number of the page in the backing storage, which stores the PCMD
-> > + * of the enclave page in the given page index.  PCMD pages are located after
-> > + * the backing storage for the visible enclave pages and SECS.
-> > + */
-> > +static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-> > +{
-> > +	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
-> > +}
-> > +
-> > +/*
-> > + * Free a page from the backing storage in the given page index.
-> > + */
-> > +static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, pgoff_t index)
-> > +{
-> > +	struct inode *inode = file_inode(encl->backing);
-> > +
-> > +	shmem_truncate_range(inode, PFN_PHYS(index), PFN_PHYS(index) + PAGE_SIZE - 1);
-> > +}
-> > +
-> >  /*
-> >   * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
-> >   * Pages" in the SDM.
-> > @@ -24,7 +45,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
-> >  	struct sgx_encl *encl = encl_page->encl;
-> >  	struct sgx_pageinfo pginfo;
-> >  	struct sgx_backing b;
-> > +	bool pcmd_page_empty;
-> >  	pgoff_t page_index;
-> > +	pgoff_t pcmd_index;
-> > +	u8 *pcmd_page;
-> >  	int ret;
-> >  
-> >  	if (secs_page)
-> > @@ -38,8 +62,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
-> >  
-> >  	pginfo.addr = encl_page->desc & PAGE_MASK;
-> >  	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
-> > -	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
-> > -			  b.pcmd_offset;
-> > +	pcmd_page = kmap_atomic(b.pcmd);
-> > +	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
-> >  
-> >  	if (secs_page)
-> >  		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
-> > @@ -55,11 +79,27 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
-> >  		ret = -EFAULT;
-> >  	}
-> >  
-> > -	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
-> > +	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
-> > +
-> > +	/*
-> > +	 * The area for the PCMD in the page was zeroed above.  Check if the
-> > +	 * whole page is now empty meaning that all PCMD's have been zeroed:
-> > +	 */
-> > +	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
-> > +
-> > +	kunmap_atomic(pcmd_page);
-> >  	kunmap_atomic((void *)(unsigned long)pginfo.contents);
-> >  
-> >  	sgx_encl_put_backing(&b, false);
-> >  
-> > +	/* Free the backing memory. */
-> > +	sgx_encl_truncate_backing_page(encl, page_index);
-> > +
-> > +	if (pcmd_page_empty) {
-> > +		pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
-> > +		sgx_encl_truncate_backing_page(encl, pcmd_index);
-> > +	}
-> > +
-> >  	return ret;
-> >  }
-> >  
-> > @@ -577,7 +617,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
-> >  int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
-> >  			 struct sgx_backing *backing)
-> >  {
-> > -	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-> > +	pgoff_t pcmd_index = sgx_encl_get_backing_pcmd_nr(encl, page_index);
-> >  	struct page *contents;
-> >  	struct page *pcmd;
-> >  
+> Could you elaborate on your exact concern here? EMODPE won't be able to
+> restrict permissions, only add, so no way to cancel what's done by EMODPR if
+> that's your concern.
 > 
-> I applied this patch on top of commit 2056e2989bf4 ("x86/sgx: Fix NULL pointer
-> dereference on non-SGX systems") found on branch x86/sgx of the tip repo.
-> 
-> When I run the SGX selftests the new oversubscription test case is failing with
-> the error below:
-> ./test_sgx
-> TAP version 13
-> 1..6
-> # Starting 6 tests from 2 test cases.
-> #  RUN           enclave.unclobbered_vdso ...
-> #            OK  enclave.unclobbered_vdso
-> ok 1 enclave.unclobbered_vdso
-> #  RUN           enclave.unclobbered_vdso_oversubscribed ...
-> # main.c:330:unclobbered_vdso_oversubscribed:Expected (&self->run)->function (2) == EEXIT (4)
-> # main.c:330:unclobbered_vdso_oversubscribed:0x0e 0x06 0x00007f6000000fff
-> # main.c:338:unclobbered_vdso_oversubscribed:Expected get_op.value (0) == MAGIC (1234605616436508552)
-> # main.c:339:unclobbered_vdso_oversubscribed:Expected (&self->run)->function (2) == EEXIT (4)
-> # main.c:339:unclobbered_vdso_oversubscribed:0x0e 0x06 0x00007f6000000fff
-> # unclobbered_vdso_oversubscribed: Test failed at step #2
-> #          FAIL  enclave.unclobbered_vdso_oversubscribed
-> not ok 2 enclave.unclobbered_vdso_oversubscribed
-> #  RUN           enclave.clobbered_vdso ...
-> #            OK  enclave.clobbered_vdso
-> ok 3 enclave.clobbered_vdso
-> #  RUN           enclave.clobbered_vdso_and_user_function ...
-> #            OK  enclave.clobbered_vdso_and_user_function
-> ok 4 enclave.clobbered_vdso_and_user_function
-> #  RUN           enclave.tcs_entry ...
-> #            OK  enclave.tcs_entry
-> ok 5 enclave.tcs_entry
-> #  RUN           enclave.pte_permissions ...
-> #            OK  enclave.pte_permissions
-> 
-> The kernel logs also contain a splat that I have not encountered before:
-> 
-> ------------[ cut here ]------------
-> ELDU returned 9 (0x9)
-> WARNING: CPU: 6 PID: 2470 at arch/x86/kernel/cpu/sgx/encl.c:77 sgx_encl_eldu+0x37c/0x3f0
-> Modules linked in: intel_rapl_msr intel_rapl_common i10nm_edac x86_pkg_temp_thermal ipmi_ssif coretemp kvm_intel kvm cmdlinepart intel_spi_pci intel_spi spi_nor ipmi_si mei_me ipmi_devintf input_leds irqbypass mtd mei ioatdma intel_pch_thermal wmi ipmi_msghandler acpi_power_meter iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi btrfs blake2b_generic zstd_compress raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq raid1 raid0 multipath linear ixgbe crct10dif_pclmul crc32_pclmul ghash_clmulni_intel hid_generic aesni_intel crypto_simd xfrm_algo usbhid cryptd ast dca hid mdio drm_vram_helper drm_ttm_helper
-> CPU: 6 PID: 2470 Comm: test_sgx Not tainted 5.16.0-rc1+ #24
-> Hardware name: Intel Corporation 
-> RIP: 0010:sgx_encl_eldu+0x37c/0x3f0
-> Code: 89 c2 48 c7 c6 e1 e9 3e 9b 48 c7 c7 e6 e9 3e 9b 44 89 95 54 ff ff ff 4c 89 85 58 ff ff ff c6 05 fc bd dd 01 01 e8 54 88 03 00 <0f> 0b 44 8b 95 54 ff ff ff 4c 8b 85 58 ff ff ff e9 46 fe ff ff 48
-> <snip>
-> Call Trace:
-> <TASK>
-> sgx_encl_load_page+0x82/0xc0
-> ? sgx_encl_load_page+0x82/0xc0
-> sgx_vma_fault+0x40/0xe0
-> __do_fault+0x32/0x110
-> __handle_mm_fault+0xf84/0x1510
-> handle_mm_fault+0x13e/0x3f0
-> do_user_addr_fault+0x210/0x660
-> ? rcu_read_lock_sched_held+0x4f/0x80
-> exc_page_fault+0x7b/0x270
-> ? asm_exc_page_fault+0x8/0x30
-> asm_exc_page_fault+0x1e/0x30
-> RIP: 0033:0x7ffe7fdc3dba
-> <snip>
-> 
-> I ran the test on two systems and in both cases the test failed accompanied by
-> the kernel splat.
-> 
-> Reinette
+> And EMODPE would only affect EPCM not PTE. So if OS set PTE no matching
+> EPCM, the enclave won't be able to use the page for added access.
 
-Thank you for testing this.
-
-I did not get any errors when I run kselftest at the time *but* it was
-exactly two months ago (2021-11-11). I cannot recall whether this test
-was already in at the time, or did I run the overcommit test out-of-tree,
-or if some confliciting non-kselftest changes have been applied.
-
-I'll do the backtracking when I have the time by doing git bisect between
-2021-11-11 x86/sgx and the current one.
+The problem I see is clearly visible in your last sentence, if you think
+about it. That's all I can add more to this discussion for the moment.
 
 /Jarkko
