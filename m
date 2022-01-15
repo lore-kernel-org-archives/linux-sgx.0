@@ -2,36 +2,33 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61427C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat, 15 Jan 2022 12:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE086C433EF
+	for <linux-sgx@archiver.kernel.org>; Sat, 15 Jan 2022 16:49:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbiAOMAJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 15 Jan 2022 07:00:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiAOMAJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 15 Jan 2022 07:00:09 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C45C061574;
-        Sat, 15 Jan 2022 04:00:08 -0800 (PST)
+        id S232312AbiAOQtw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 15 Jan 2022 11:49:52 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:49550 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232284AbiAOQtv (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 15 Jan 2022 11:49:51 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FDCE60AFD;
-        Sat, 15 Jan 2022 12:00:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74173C36AE3;
-        Sat, 15 Jan 2022 12:00:07 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A835DB801B8;
+        Sat, 15 Jan 2022 16:49:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D97BEC36AE3;
+        Sat, 15 Jan 2022 16:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642248008;
-        bh=r9mCVdEqRE76DIUgmvsuL5KxAftGQ+FEDrAOiIvvDhE=;
+        s=k20201202; t=1642265389;
+        bh=CLLfm9z4AHVfy39p3/9aWoBxWNIR8mlJbzJzJMB4pGA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I9QCfFfjVVTaSZC0/ue3HBhFBkOfX8cBP5b7/iHL3HQxb+yq6McvxairD+ZF2f0kq
-         oUcvcX3kO6F5IVZlXr20FD51piIXZWNtpfp9mdpfb4SiKMydTYvHyDP5GY5Z64ys6h
-         WBClygFuRSPGrNBxWv5QgyGND8Lhk6tcItII+ggBVRzpuxBWlzO5bZuo8Lw/xDrNUh
-         kUYQnRRjFJ/q/OlI5T3kDhyLYr6YG8JruFqwvvdsXWpauPCl2zgprsIuHsrNORdkVc
-         PjDdhxEaRx5APminK2r8GR4zWcuOFtOhi9GSQqMWjczXYBQhmuh1OZyHAwSRyF66js
-         8xX1j/8OA/nyw==
-Date:   Sat, 15 Jan 2022 13:59:55 +0200
+        b=fT2BoyLg2sMw1ZkvgyyXgU/zckpUzC9vWesoXeQxZxHb4P+njNTe2XErZfUHI5Olh
+         YE8ISfpYQ/6+KR7+Z9PSTAiztDm3WNAndhUWHICkAqTaKq3yPGy3BxFLoNtFWVs/bW
+         FCLE1wS7F5CW6eRhzg7RYMebwA6hEeBpcGACogLQGSezs49RY9XO0K9dl/3UPp/DF8
+         mL0lb0L9mZ1btelK1h2wSRcrNe5fxIT2T7xtkqepaJdjfnk2JYoL1+3NmLlwqRAiMj
+         6cvLs19sakmx/SARIAulVloqt8P3RUnDL2UXdTM7OEt+ZlGJhrS60s+u236Ut+Onq0
+         U6s2wNz4sry7A==
+Date:   Sat, 15 Jan 2022 18:49:36 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
@@ -43,95 +40,46 @@ Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
-Message-ID: <YeK3O5Inu53bwltX@iki.fi>
-References: <CAHAy0tRi2q+wG+yBttq0FYeK-5wUAoK_=ZCtWsfQf0m8oPc1-w@mail.gmail.com>
+Message-ID: <YeL7ID70Wg22MGCY@iki.fi>
+References: <op.1fsvkfiwwjvjmi@hhuan26-mobl1.mshome.net>
+ <YdzjEzjF0YKn+pZ6@iki.fi>
+ <4195402f-cbf9-bc75-719d-22cea8e36e60@intel.com>
+ <Yd9pMq4lUy56B+50@iki.fi>
+ <Yd9qmMx7NO450mzZ@iki.fi>
+ <CAHAy0tRi2q+wG+yBttq0FYeK-5wUAoK_=ZCtWsfQf0m8oPc1-w@mail.gmail.com>
  <168fb2c9-de3f-384a-bb17-ab84db2cf533@intel.com>
  <YeHwzwnfsUcxiNbw@iki.fi>
  <b0e5c1fc-aa6d-4e26-c18b-d93d93c2131a@intel.com>
  <YeIEKayEUidj0Dlb@iki.fi>
- <6e1cb295-b86e-ae09-2cf0-cfefd1a10e65@intel.com>
- <YeIU6e6wetrifn+b@iki.fi>
- <e2d675f7-319b-4816-ad5e-4154cbf69f2b@intel.com>
- <YeIgzLzPu0U8s0sh@iki.fi>
- <YeK2hFcy72tYL61S@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YeK2hFcy72tYL61S@iki.fi>
+In-Reply-To: <YeIEKayEUidj0Dlb@iki.fi>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Jan 15, 2022 at 01:56:55PM +0200, Jarkko Sakkinen wrote:
-> On Sat, Jan 15, 2022 at 03:18:04AM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Jan 14, 2022 at 04:41:59PM -0800, Reinette Chatre wrote:
-> > > Hi Jarkko,
-> > > 
-> > > On 1/14/2022 4:27 PM, Jarkko Sakkinen wrote:
-> > > > On Fri, Jan 14, 2022 at 04:01:33PM -0800, Reinette Chatre wrote:
-> > > >> Hi Jarkko,
-> > > >>
-> > > >> On 1/14/2022 3:15 PM, Jarkko Sakkinen wrote:
-> > > >>> On Fri, Jan 14, 2022 at 03:05:21PM -0800, Reinette Chatre wrote:
-> > > >>>> Hi Jarkko,
-> > > >>>
-> > > >>> How enclave can check a page range that EPCM has the expected permissions?
-> > > >>
-> > > >> Only way to change EPCM permissions from outside enclave is to run ENCLS[EMODPR]
-> > > >> that needs to be accepted from within the enclave via ENCLU[EACCEPT]. At that
-> > > >> time the enclave provides the expected permissions and that will fail
-> > > >> if there is a mismatch with the EPCM permissions (SGX_PAGE_ATTRIBUTES_MISMATCH).
-> > > > 
-> > > > This is a very valid point but that does make the introspection possible
-> > > > only at the time of EACCEPT.
-> > > > 
-> > > > It does not give tools for enclave to make sure that EMODPR-ETRACK dance
-> > > > was ever exercised.
-> > > 
-> > > Could you please elaborate? EACCEPT is available to the enclave as a tool
-> > > and it would fail if ETRACK was not completed (error SGX_NOT_TRACKED).
-> > > 
-> > > Here is the relevant snippet from the SDM from the section where it
-> > > describes EACCEPT:
-> > > 
-> > > IF (Tracking not correct)
-> > >     THEN
-> > >         RFLAGS.ZF := 1;
-> > >         RAX := SGX_NOT_TRACKED;
-> > >         GOTO DONE;
-> > > FI;
-> > > 
-> > > Reinette
-> > 
-> > Yes, if enclave calls EACCEPT it does the necessary introspection and makes
-> > sure that ETRACK is completed. I have trouble understanding how enclave
-> > makes sure that EACCEPT was called.
+On Sat, Jan 15, 2022 at 01:15:53AM +0200, Jarkko Sakkinen wrote:
+> > After running ENCLU[EMODPE] user space uses SGX_IOC_ENCLAVE_MOD_PROTECTIONS
 > 
-> I'm not concerned of anything going wrong once EMODPR has been started.
+> OK, great.
 > 
-> The problem nails down to that the whole EMODPR process is spawned by
-> the entity that is not trusted so maybe that should further broke down
-> to three roles:
-> 
-> 1. Build process B
-> 2. Runner process R.
-> 3. Enclave E.
-> 
-> And to the costraint that we trust B *more* than R. Once B has done all the
-> needed EMODPR calls it would send the file descriptor to R. Even if R would
-> have full access to /dev/sgx_enclave, it would not matter, since B has done
-> EMODPR-EACCEPT dance with E.
-> 
-> So what you can achieve with EMODPR is not protection against mistrusted
-> *OS*. There's absolutely no chance you could use it for that purpose
-> because mistrusted OS controls the whole process.
-> 
-> EMODPR is to help to protect enclave against mistrusted *process*, i.e.
-> in the above scenario R.
+> A minor nit: please call it SGX_IOC_ENCLAVE_MODIFY_PROTECTIONS. 
 
-My suggestion for this is that let's make EMODPR either opt-in or opt-out
-with flags parameter, I don't care which way around. That way you can pick
-between performance or extra layer of hardening if you care about the above
-scenario.
+I'm not confident after looking through the test case and ioctl
+about EMODPE support but I do not want disturb this anymore. Bunch
+of things have been nailed and I'm now running the code, which is
+great.
+
+The obviously wrong implementation choice in this ioctl is that
+it is multi-function. It should be just split it into two ioctls:
+sgx_restrict_page_permissions and sgx_extend_page_permissions.
+
+They are conceptually different flows and I'm also basing this on earlier
+discussion in this mailing list from which I conclude that it is also
+consensus to not have such ioctls.
+
+Might sound clanky but it is much easier to comprehend what is going
+on "in the blackbox" by doing that split.
 
 /Jarkko
