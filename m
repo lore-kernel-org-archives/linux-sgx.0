@@ -2,69 +2,107 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8976AC433F5
-	for <linux-sgx@archiver.kernel.org>; Sat, 15 Jan 2022 00:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4ADC433F5
+	for <linux-sgx@archiver.kernel.org>; Sat, 15 Jan 2022 01:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229905AbiAOA6Y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 14 Jan 2022 19:58:24 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:33768 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbiAOA6Y (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 14 Jan 2022 19:58:24 -0500
+        id S231906AbiAOBSS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 14 Jan 2022 20:18:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231905AbiAOBSS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 14 Jan 2022 20:18:18 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A61C06173E;
+        Fri, 14 Jan 2022 17:18:17 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 61C86CE24C2;
-        Sat, 15 Jan 2022 00:58:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0E5C36AE7;
-        Sat, 15 Jan 2022 00:58:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7154E620CD;
+        Sat, 15 Jan 2022 01:18:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5603EC36AE7;
+        Sat, 15 Jan 2022 01:18:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642208300;
-        bh=McnEXYJd55Dz/0s+UTqoEnDni3cdecySuuj+DIbfTCE=;
+        s=k20201202; t=1642209496;
+        bh=brmYZ4xsVJ9RXGnMsvg9QqXh7sxIldild9tW5Lgpe0E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rO6sYCB1zx3VR1h4CXXO38hSKfTDq7qJ24l1I7kDdd1AEm7JPYkSK77vewZY7OBf0
-         L6FLM/EU7QqAGKFE3Uln4Q8sAtY5ltJRVWQMl+vQm9tGA7UMg6bMvpTfrSYu06+8xp
-         CEQGQcgfMLQlLcApW57I509ytFJw25EHtiQ4Tx0IeBM9bTShAcQErnhkeimEd0nQl8
-         +ky9f5AZ0l3N8E03R3m1+sSwXrv0uxuXaUDHiQLPYwnrZznI9nqDdWp45Rz2/ZYCId
-         HRNUMu1HFS90DCcnb/vRMgDD4g47TIKCwvZY1MDqUpMbIK9eSWmA18BO3SEEHHCJNA
-         A/8pzLpWr0l1A==
-Date:   Sat, 15 Jan 2022 02:58:08 +0200
+        b=DWDCninBjNgm0moqa+yAl6prAEwa+NU8DPl9Eywp98UqLKkfYMkaUMGMJ5fGL47UV
+         zhnU3GceFNsbVnJHyCPAbcR9wwP1KwxovDqog6RsI16fYebjyC828eoM92vR0eNQm2
+         yMbueFP5OGsUp/rgyZRkmpQ6ZpXrMi1Vt/XlkJ5ww5sJzxNook3/QHlPWeHve87hqg
+         6Pp/qbzPf06l3j3DYAB8oYOKFxjHIL/6uYEP4Fj/lgc2mddk6dENyCbB4qrZiZH+xT
+         QU7yOsVvXY1UwmX1Sk29amhpbYPKnJcDMoKTStGonwSZh8MAeX+yeRwYlyZhcEcM80
+         2pSJoDqNXXb9A==
+Date:   Sat, 15 Jan 2022 03:18:04 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Nathaniel McCallum <nathaniel@profian.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] x86/sgx: account backing pages
-Message-ID: <YeIcIMNUK/ujMTMQ@iki.fi>
-References: <20220107181618.6597-1-kristen@linux.intel.com>
- <20220107181618.6597-3-kristen@linux.intel.com>
- <Ydm2Qk8JFwgdueZa@iki.fi>
- <fda3bb7bd557a37112a4f7c6c205871addda1bd3.camel@linux.intel.com>
- <YeIMqd+o//M3vB6e@iki.fi>
- <3b7e79ea-18f2-afe2-be4e-401524b481f7@intel.com>
+Subject: Re: [PATCH 05/25] x86/sgx: Introduce runtime protection bits
+Message-ID: <YeIgzLzPu0U8s0sh@iki.fi>
+References: <Yd9pMq4lUy56B+50@iki.fi>
+ <Yd9qmMx7NO450mzZ@iki.fi>
+ <CAHAy0tRi2q+wG+yBttq0FYeK-5wUAoK_=ZCtWsfQf0m8oPc1-w@mail.gmail.com>
+ <168fb2c9-de3f-384a-bb17-ab84db2cf533@intel.com>
+ <YeHwzwnfsUcxiNbw@iki.fi>
+ <b0e5c1fc-aa6d-4e26-c18b-d93d93c2131a@intel.com>
+ <YeIEKayEUidj0Dlb@iki.fi>
+ <6e1cb295-b86e-ae09-2cf0-cfefd1a10e65@intel.com>
+ <YeIU6e6wetrifn+b@iki.fi>
+ <e2d675f7-319b-4816-ad5e-4154cbf69f2b@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3b7e79ea-18f2-afe2-be4e-401524b481f7@intel.com>
+In-Reply-To: <e2d675f7-319b-4816-ad5e-4154cbf69f2b@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jan 14, 2022 at 03:55:43PM -0800, Dave Hansen wrote:
-> On 1/14/22 3:52 PM, Jarkko Sakkinen wrote:
-> >> I can understand your hesitation, but I agree with Dave here that
-> >> wrapping the function makes the code more clear. I would prefer to keep
-> >> this the way it is.
-> > What if sgx_encl_get_backing() was changed as "static inline", if the
-> > only motivation is encapsulation?
+On Fri, Jan 14, 2022 at 04:41:59PM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> What would the purpose be of adding an 'inline' to the function definition?
+> On 1/14/2022 4:27 PM, Jarkko Sakkinen wrote:
+> > On Fri, Jan 14, 2022 at 04:01:33PM -0800, Reinette Chatre wrote:
+> >> Hi Jarkko,
+> >>
+> >> On 1/14/2022 3:15 PM, Jarkko Sakkinen wrote:
+> >>> On Fri, Jan 14, 2022 at 03:05:21PM -0800, Reinette Chatre wrote:
+> >>>> Hi Jarkko,
+> >>>
+> >>> How enclave can check a page range that EPCM has the expected permissions?
+> >>
+> >> Only way to change EPCM permissions from outside enclave is to run ENCLS[EMODPR]
+> >> that needs to be accepted from within the enclave via ENCLU[EACCEPT]. At that
+> >> time the enclave provides the expected permissions and that will fail
+> >> if there is a mismatch with the EPCM permissions (SGX_PAGE_ATTRIBUTES_MISMATCH).
+> > 
+> > This is a very valid point but that does make the introspection possible
+> > only at the time of EACCEPT.
+> > 
+> > It does not give tools for enclave to make sure that EMODPR-ETRACK dance
+> > was ever exercised.
+> 
+> Could you please elaborate? EACCEPT is available to the enclave as a tool
+> and it would fail if ETRACK was not completed (error SGX_NOT_TRACKED).
+> 
+> Here is the relevant snippet from the SDM from the section where it
+> describes EACCEPT:
+> 
+> IF (Tracking not correct)
+>     THEN
+>         RFLAGS.ZF := 1;
+>         RAX := SGX_NOT_TRACKED;
+>         GOTO DONE;
+> FI;
+> 
+> Reinette
 
-Agreed, not much sense to do this. I just had troubles to get the way
-things were encapsulated before your response.
+Yes, if enclave calls EACCEPT it does the necessary introspection and makes
+sure that ETRACK is completed. I have trouble understanding how enclave
+makes sure that EACCEPT was called.
 
 /Jarkko
