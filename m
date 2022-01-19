@@ -2,63 +2,106 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6842DC433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jan 2022 20:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A4AC433EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jan 2022 22:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236412AbiASU4M (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Jan 2022 15:56:12 -0500
-Received: from mga12.intel.com ([192.55.52.136]:8898 "EHLO mga12.intel.com"
+        id S233513AbiASWYL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Jan 2022 17:24:11 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56951 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229541AbiASU4K (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 19 Jan 2022 15:56:10 -0500
+        id S229902AbiASWYL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Wed, 19 Jan 2022 17:24:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1642625770; x=1674161770;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=y1cV4Lb9fxtwCX9YG0G8GKSznGdZtvMh/DK8DOsgMe4=;
-  b=GDZbAqY21W2f/xSlZ7gYyy3fvtPXVTinV8sF5pF0LmsIdQhNysmhIWig
-   8Y7xTYlejvLKWhRQStcEWFbfM5CqLvWKC3pHSccWWI1ZlpuCP9Rhjr/Vf
-   CaaXwA8rbEvzoLvV1u9tLy/D/2iWx9Npc37iCpfdNUkKj41or94p+QWYV
-   fQ8QZuivICUzE7qwSVmZahFM7lGkMYdITg3w32PDaumuJx57/jhbhRwwL
-   YNqf0ytoldxxk635lCHn+ureneb8AUr1UA1xOVT50nAO8/LSVXPCC1pFE
-   nQg7/Z2Zy9eOUhdZrddf+XLESLk27XOcbkZjv3Rtgd8eOQM4QbTCBu6hs
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10231"; a="225169853"
+  t=1642631051; x=1674167051;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0pJyoyJAvBdSpCycsxUaxiIERBuyoVK8GZ/qVyHt7Hc=;
+  b=TK5ygU+dWRNVxhHWm6/pC86MugZ81+D9wBJ1YqvC/IvjuTrviaEeT1xV
+   7yxj5DzZ1qCMRcmILetNG3eUOQVs/LGUX92bshcAhgu0bu35SoOJja1kw
+   tMuFcBMKb0/6IOBg7Uxq42VshtLUB1padEGT2uoAxre8umNvFAtU55yhk
+   X80DZCHB5N1lmiNzsSrGAMZcS+jDd+x0ddTI/wyepmUUFEqJ7hCwHWFiG
+   f34H0YcoAOU6detGzkA+8icuIgXENazLB3vxMzd/IoQpKEnh/TLoGSruA
+   yQEsUPCHNlArrH3gu2eQfcYETeQqg6VZPVp4JMmBzJp0ExAFTaRdhcc+g
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10231"; a="331561464"
 X-IronPort-AV: E=Sophos;i="5.88,300,1635231600"; 
-   d="scan'208";a="225169853"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2022 12:56:10 -0800
+   d="scan'208";a="331561464"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2022 14:24:04 -0800
 X-IronPort-AV: E=Sophos;i="5.88,300,1635231600"; 
-   d="scan'208";a="475281851"
-Received: from rbschuch-mobl.amr.corp.intel.com (HELO [10.212.238.54]) ([10.212.238.54])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2022 12:56:09 -0800
-Subject: Re: [PATCH] x86/sgx: Add poison handling to reclaimer
-To:     Reinette Chatre <reinette.chatre@intel.com>, tony.luck@intel.com,
-        dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, luto@kernel.org, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org
+   d="scan'208";a="561218570"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2022 14:24:04 -0800
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     tony.luck@intel.com, dave.hansen@linux.intel.com,
+        jarkko@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org
-References: <ef74bd9548df61f77e802e7505affcfb5159c48c.1642545829.git.reinette.chatre@intel.com>
- <9cefa244-9830-c158-6112-b2c61a464632@intel.com>
- <effafec4-affc-297b-4b0e-aeca1884fa4f@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Message-ID: <6548bb1e-ba03-6526-0d1b-87ff5e1a8170@intel.com>
-Date:   Wed, 19 Jan 2022 12:56:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+Subject: [PATCH V2] x86/sgx: Add poison handling to reclaimer
+Date:   Wed, 19 Jan 2022 14:23:50 -0800
+Message-Id: <be5af586f667c7bcb8ef01286ce75675de5d100f.1642630582.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <effafec4-affc-297b-4b0e-aeca1884fa4f@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/19/22 12:47 PM, Reinette Chatre wrote:
-> Thank you very much for the detailed analysis. Should I resend with
-> an improved commit message that contains your scenario description
-> and summary?
+The SGX reclaimer code lacks page poison handling in its main
+free path. This can lead to avoidable machine checks if a
+poisoned page is freed and reallocated instead of being
+isolated.
 
-Sure, that would be great.
+A troublesome scenario is:
+ 1. Machine check (#MC) occurs (asynchronous, !MF_ACTION_REQUIRED)
+ 2. arch_memory_failure() is eventually called
+ 3. (SGX) page->poison set to 1
+ 4. Page is reclaimed
+ 5. Page added to normal free lists by sgx_reclaim_pages()
+    ^ This is the bug (poison pages should be isolated on the
+    sgx_poison_page_list instead)
+ 6. Page is reallocated by some innocent enclave, a second (synchronous)
+    in-kernel #MC is induced, probably during EADD instruction.
+    ^ This is the fallout from the bug
+
+(6) is unfortunate and can be avoided by replacing the open coded
+enclave page freeing code in the reclaimer with sgx_free_epc_page()
+to obtain support for poison page handling that includes placing the
+poisoned page on the correct list.
+
+Fixes: d6d261bded8a ("x86/sgx: Add new sgx_epc_page flag bit to mark free pages")
+Fixes: 992801ae9243 ("x86/sgx: Initial poison handling for dirty and free pages")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+Changes since V1:
+- V1: https://lore.kernel.org/lkml/ef74bd9548df61f77e802e7505affcfb5159c48c.1642545829.git.reinette.chatre@intel.com/
+- Complete rewrite of commit message with significant guidance from Dave
+  who provided the summary as well as troublesome scenario.
+
+ arch/x86/kernel/cpu/sgx/main.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 4b41efc9e367..997a5d0bc488 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -418,13 +418,7 @@ static void sgx_reclaim_pages(void)
+ 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+ 		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+ 
+-		section = &sgx_epc_sections[epc_page->section];
+-		node = section->node;
+-
+-		spin_lock(&node->lock);
+-		list_add_tail(&epc_page->list, &node->free_page_list);
+-		spin_unlock(&node->lock);
+-		atomic_long_inc(&sgx_nr_free_pages);
++		sgx_free_epc_page(epc_page);
+ 	}
+ }
+ 
+-- 
+2.25.1
+
