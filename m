@@ -2,43 +2,44 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E278C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 20 Jan 2022 12:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D81C433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 20 Jan 2022 13:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244414AbiATM6N (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 20 Jan 2022 07:58:13 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:36758 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231253AbiATM6N (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 20 Jan 2022 07:58:13 -0500
+        id S232193AbiATNBt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 20 Jan 2022 08:01:49 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:34492 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244304AbiATNBs (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 20 Jan 2022 08:01:48 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E755C616F2;
-        Thu, 20 Jan 2022 12:58:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC7EC340E0;
-        Thu, 20 Jan 2022 12:58:11 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 48FF0B81D73;
+        Thu, 20 Jan 2022 13:01:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6506BC340E0;
+        Thu, 20 Jan 2022 13:01:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642683492;
-        bh=PjsGNV1TcOlrmGioweXTIZy082puxUuggsqwMwI5MpU=;
+        s=k20201202; t=1642683704;
+        bh=wwalQNmVSbEuIpDRTaRCjWnWylnsXSj3/abMBcKpGdo=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Mx1W0FiMlD35wnnWBZfIXrXLDShM3EwMl1GNK30GOr7khcsY3oXmwRX5jgHz+yVRw
-         Qn+IrwNTxZkvR1KtBDtich2OaVcjzsSzyb/WnAehzDJh5TFx4sf9M/ylVazu+1BVhL
-         NrD9PH/J+5R9BODGMuddhCf7Ske77FeYXHvOfLtCz6TBHhkems4fy7pNl/vkS+nwNu
-         lR54GWBs8r6htUqebRIN0GC5mhCgt9TfVDiSEVYAxKzSlnrXAeNPV/ZTSFO4rXV6kH
-         vkqfmgNHLqnSPNiBWj5zEyP9P/4kJHbZ5IQGlkfKT9np+UP+sZd1OMGqBZMsvV0IeL
-         GnRfFLMNKn4qg==
-Message-ID: <80083e5ca3fd0a5bd2de43ebc803fc914d09ac3c.camel@kernel.org>
-Subject: Re: [PATCH] x86/sgx: Add poison handling to reclaimer
+        b=q+JDZSLBxsWw3vwdtKCCmhmga9g/5UyS2wqOK4wxCFfZg6/Ovfgcplz15jUB4scQ7
+         y/zUiQcL5bASZtJ5Cu3y5gqyovAB/MfjcAmi5yTMXJvUIejVx2q+LMPYWOODDlnqmN
+         lw26BZ0SnMwyoEWevobRudSvLQZ4RFfZ6+3DsphupCmEBL8BSxz/AfTApbOz9BpsIS
+         zGMt0Dhd9k5UxRSDkDDukHJL3jAmIIOaNJDGJynAdCSSHOYSJ1R+SpS4m8cRov6HgK
+         8aTV4gkkyQV/cdV2SshFH1ac9lFt73RCFn3PYt6YmiCGi6BoSdSZ7epGjA/uABMiom
+         nn28qvQUCZI4Q==
+Message-ID: <e4e8fbe757860cd24e2f66b25be60d76663935d8.camel@kernel.org>
+Subject: Re: [PATCH] x86/sgx: Silence softlockup detection when releasing
+ large enclaves
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>, tony.luck@intel.com,
+To:     Reinette Chatre <reinette.chatre@intel.com>,
         dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
         x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Thu, 20 Jan 2022 14:57:56 +0200
-In-Reply-To: <ef74bd9548df61f77e802e7505affcfb5159c48c.1642545829.git.reinette.chatre@intel.com>
-References: <ef74bd9548df61f77e802e7505affcfb5159c48c.1642545829.git.reinette.chatre@intel.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date:   Thu, 20 Jan 2022 15:01:29 +0200
+In-Reply-To: <1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com>
+References: <1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.42.3 
@@ -47,35 +48,68 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2022-01-18 at 15:05 -0800, Reinette Chatre wrote:
-> The machine check recovery handling in SGX added the changes
-> listed below to the freeing of pages in sgx_free_epc_page().
-> The SGX reclaimer contains an open coded version of
-> sgx_free_epc_page() and thus did not obtain the changes in
-> support of poison handling.
+On Tue, 2022-01-18 at 11:14 -0800, Reinette Chatre wrote:
+> Vijay reported that the "unclobbered_vdso_oversubscribed" selftest
+> triggers the softlockup detector.
 >=20
-> The changes made to EPC page freeing in support of poison handling
-> are:
-> 1) A new SGX_EPC_PAGE_IS_FREE flag is set when the EPC page is
-> =C2=A0=C2=A0 freed. Introduced in commit d6d261bded8a ("x86/sgx: Add new
-> =C2=A0=C2=A0 sgx_epc_page flag bit to mark free pages").
-> 2) A new "poison" field in struct sgx_epc_page is used to
-> =C2=A0=C2=A0 determine whether a newly freed EPC page should be placed
-> =C2=A0=C2=A0 on the list of poisoned or list of free pages. Introduced
-> =C2=A0=C2=A0 in commit 992801ae9243 ("x86/sgx: Initial poison handling
-> =C2=A0=C2=A0 for dirty and free pages").
-> 3) The owner field in struct sgx_epc_page is cleared when the EPC
-> =C2=A0=C2=A0 page is freed.=C2=A0 Introduced in commit 992801ae9243 ("x86=
-/sgx:
-> =C2=A0=C2=A0 Initial poison handling for dirty and free pages").
+> Actual SGX systems have 128GB of enclave memory or more.=C2=A0 The
+> "unclobbered_vdso_oversubscribed" selftest creates one enclave which
+> consumes all of the enclave memory on the system. Tearing down such a
+> large enclave takes around a minute, most of it in the loop where
+> the EREMOVE instruction is applied to each individual 4k enclave
+> page.
 >=20
-> Replace the open coded enclave page freeing code in the reclaimer
-> with sgx_free_epc_page() to obtain support for poison page handling.
+> Spending one minute in a loop triggers the softlockup detector.
 >=20
-> Fixes: d6d261bded8a ("x86/sgx: Add new sgx_epc_page flag bit to mark
-> free pages")
+> Add a cond_resched() to give other tasks a chance to run and placate
+> the softlockup detector.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+> Reported-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Softlockup message:
+> watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [test_sgx:11502]
+> Kernel panic - not syncing: softlockup: hung tasks
+> <snip>
+> sgx_encl_release+0x86/0x1c0
+> sgx_release+0x11c/0x130
+> __fput+0xb0/0x280
+> ____fput+0xe/0x10
+> task_work_run+0x6c/0xc0
+> exit_to_user_mode_prepare+0x1eb/0x1f0
+> syscall_exit_to_user_mode+0x1d/0x50
+> do_syscall_64+0x46/0xb0
+> entry_SYSCALL_64_after_hwframe+0x44/0xae
+>=20
+> =C2=A0arch/x86/kernel/cpu/sgx/encl.c | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c
+> b/arch/x86/kernel/cpu/sgx/encl.c
+> index 001808e3901c..ab2b79327a8a 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -410,6 +410,7 @@ void sgx_encl_release(struct kref *ref)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0kfree(entry);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0cond_resched();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0xa_destroy(&encl->page_ar=
+ray);
 
-AFAIK, this patch does not semantically break anything so it is not
-a legit fixes tag.
+I'd add a comment, e.g.
+
+/* Invoke scheduler to prevent soft lockups. */
+
+Other than that makes sense.
 
 BR, Jarkko
+
