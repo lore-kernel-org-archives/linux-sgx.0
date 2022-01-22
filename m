@@ -2,121 +2,111 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C64DC433F5
-	for <linux-sgx@archiver.kernel.org>; Sat, 22 Jan 2022 19:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AABCC433F5
+	for <linux-sgx@archiver.kernel.org>; Sat, 22 Jan 2022 23:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233033AbiAVTPF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 22 Jan 2022 14:15:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:64395 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229582AbiAVTPE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Sat, 22 Jan 2022 14:15:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1642878904; x=1674414904;
-  h=cc:references:subject:to:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=tm2pQlSjghJq/urFWSMM+I1PhbNtArTasdhNBef54RE=;
-  b=ao0EycBD+2rIagxAdQR8hg7i3I/ZMn9UaHqYCw5xSZc/r0NV1PFs4DJT
-   zsth1+EIQ/GTIp1WJ+ilCJzfwDDmrIk+v6+ts9znMB4ZlvK308oHwkkFx
-   qUQ7Qv/IOPaxCihKu7FKAHGhgHpW40hjM7Bc9FJ86MV2wNlq9/oevkf1B
-   l0qj9iW9H1zD7H/MpepisxS76+CaTWFP9OJxuvymvBIqDrNRE11LzTwzQ
-   4MmV3Gk0t3F+pewhfCHBWd1APSgafGXzSRRcyUJDEaBZfoBDOs5xRoJQ/
-   Bk6C1etm5kLMyrFa/BS4oGF/1hymDAOy3VX7DjLLkfhe5leOaW0KbGCoM
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10234"; a="233199948"
-X-IronPort-AV: E=Sophos;i="5.88,308,1635231600"; 
-   d="scan'208";a="233199948"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2022 11:15:04 -0800
-X-IronPort-AV: E=Sophos;i="5.88,308,1635231600"; 
-   d="scan'208";a="533697231"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.255.35.86])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 22 Jan 2022 11:15:03 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-Cc:     "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>
-References: <53bf06e8-f523-83db-ed4d-039c34f634cd@intel.com>
-Subject: Re: Testing 5.17 bugfix material
-To:     "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Dave Hansen" <dave.hansen@intel.com>
-Date:   Sat, 22 Jan 2022 13:15:01 -0600
+        id S235085AbiAVX1a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 22 Jan 2022 18:27:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235086AbiAVX13 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 22 Jan 2022 18:27:29 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 948A8C06173B;
+        Sat, 22 Jan 2022 15:27:29 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C007AB80927;
+        Sat, 22 Jan 2022 23:27:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E778CC004E1;
+        Sat, 22 Jan 2022 23:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642894045;
+        bh=M+MQhp+HSCK78FPXyMCdwnIZZqwcnoAsYpMjBJfr0qQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=himcJttT2YJlLoxsSLkRu071kxDcSQP61Wg45eCD3ZoSVyjLVJSTNaqQ4c8TiKuiJ
+         EDnA6WU7mUD7tbbtyxepsa+yUEvb/EUanXTJ0TcwACV15lO8EYAO1HRnXT4oPeLMRP
+         K4cKH+N5UEniK8qPzmRJF4AW9P6UEx0Q/iNUqxCAqydMO35VGoCaBlqraHWgxVW6KT
+         5vXQj+SKReEdL25PinipTt0xFwqY85znKJmbMO9n+4sMmHcfwczWO2k6J/psgTIvQY
+         IWohdEozkVQIVCtu1dX6YvOqO/cLvEjOwsZ0u6Xtiy/xZ7jDNcVyUiSIlGT8B9Su+I
+         mBNy2S3psb1HA==
+Date:   Sun, 23 Jan 2022 01:27:07 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     tony.luck@intel.com, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, bp@alien8.de, luto@kernel.org,
+        mingo@redhat.com, linux-sgx@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] x86/sgx: Add poison handling to reclaimer
+Message-ID: <YeySy2lGjEbNbK1G@iki.fi>
+References: <be5af586f667c7bcb8ef01286ce75675de5d100f.1642630582.git.reinette.chatre@intel.com>
+ <3bfe66204ee84a0bbccaf7cd20af0d8300fb9f26.camel@kernel.org>
+ <8ac3fc3e-9d90-48cf-d84e-40f9cbddd9ac@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1gevpaxgwjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <53bf06e8-f523-83db-ed4d-039c34f634cd@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8ac3fc3e-9d90-48cf-d84e-40f9cbddd9ac@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Dave,
+On Thu, Jan 20, 2022 at 10:20:01AM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
+> 
+> On 1/20/2022 5:09 AM, Jarkko Sakkinen wrote:
+> > On Wed, 2022-01-19 at 14:23 -0800, Reinette Chatre wrote:
+> >> The SGX reclaimer code lacks page poison handling in its main
+> >> free path. This can lead to avoidable machine checks if a
+> >> poisoned page is freed and reallocated instead of being
+> >> isolated.
+> >>
+> >> A troublesome scenario is:
+> >>  1. Machine check (#MC) occurs (asynchronous, !MF_ACTION_REQUIRED)
+> >>  2. arch_memory_failure() is eventually called
+> >>  3. (SGX) page->poison set to 1
+> >>  4. Page is reclaimed
+> >>  5. Page added to normal free lists by sgx_reclaim_pages()
+> >>     ^ This is the bug (poison pages should be isolated on the
+> >>     sgx_poison_page_list instead)
+> >>  6. Page is reallocated by some innocent enclave, a second
+> >> (synchronous)
+> >>     in-kernel #MC is induced, probably during EADD instruction.
+> >>     ^ This is the fallout from the bug
+> >>
+> >> (6) is unfortunate and can be avoided by replacing the open coded
+> >> enclave page freeing code in the reclaimer with sgx_free_epc_page()
+> >> to obtain support for poison page handling that includes placing the
+> >> poisoned page on the correct list.
+> >>
+> >> Fixes: d6d261bded8a ("x86/sgx: Add new sgx_epc_page flag bit to mark
+> >> free pages")
+> >> Fixes: 992801ae9243 ("x86/sgx: Initial poison handling for dirty and
+> >> free pages")
+> > 
+> > Same comment as for the first version: remove the first fixes tag.
+> > 
+> 
+> For completeness I'll duplicate my response also:
+> 
+> The commit you refer to, commit d6d261bded8a ("x86/sgx: Add new
+> sgx_epc_page flag bit to mark free pages", introduced a new page flag bit
+> (SGX_EPC_PAGE_IS_FREE) that should be set when an EPC page is freed. The
+> commit also sets the bit in sgx_free_epc_page() when an EPC page is freed.
+> The commit should also have set that bit when the EPC page is freed in the
+> reclaimer, which contains an open coded version of sgx_free_epc_page(),
+> but it did not. This fix adds the snippet that was omitted from that
+> commit.
+> 
+> Reinette
 
-On Fri, 21 Jan 2022 13:57:50 -0600, Dave Hansen <dave.hansen@intel.com>
-wrote:
+Let me check. Yes, I can see it in lore, but somehow it has slipped out
+of my inbox. My apologies.
 
-> Hi Everyone,
->
-> There are a few SGX fixes that have showed up in the last week or so,
-> mostly around RAS and fixing the backing storage issues.  Could folks
-> please give this branch a good thrashing?
->
->> https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/log/?h=x86/sgx
->
-> I'm planning to send this bunch up to Linus after 5.17-rc1 comes out.
->
-> Kristen, I really dug into the changelogs of your two patches to make it
-> more clear that they are bugfix and stable@ material.  I'd appreciate
-> some additional eyeballs there.
+The change would make sense even as a clean up (no reason to have open
+coded of sgx_free_epc_page(), let alone this regression:
 
-When testing this with a large enclave loaded by Intel runtime, we saw it  
-hang
-on EADD ioctl and the ioctl never returns.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Also noticed the selftest fails on oversub but the return errno is EINTR  
-not
-ENOMEM as expected.
-
-When user space register signal handler with SA_RESTART flag, EINTR would
-be an auto restart of ioctl. So that might be what's going on with Intel
-runtime test. And I suspect following code may cause infinite restart of  
-the
-ioctl:
-
-struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
-{
-       struct sgx_epc_page *page;
-
-       for ( ; ; ) {
-           page = __sgx_alloc_epc_page();
-           if (!IS_ERR(page)) {
-               page->owner = owner;
-               break;
-           }
-
-           if (list_empty(&sgx_active_page_list))<-- should also check
-sgx_nr_available_backing_pages?
-               return ERR_PTR(-ENOMEM);
-
-           if (!reclaim) {
-               page = ERR_PTR(-EBUSY);
-               break;
-           }
-
-           if (signal_pending(current)) {
-               page = ERR_PTR(-ERESTARTSYS);<---- this is the only exit of
-the for loop when backing store limit reaches.
-               break;
-           }
-
-           sgx_reclaim_pages(); <---- no checking for backing store fail due
-to limit here.
-           cond_resched();
-       }
-
-Thanks
-Haitao
+BR, Jarkko
