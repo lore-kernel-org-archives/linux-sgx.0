@@ -2,122 +2,108 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388EBC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jan 2022 12:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FCCC4332F
+	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jan 2022 18:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345683AbiAYMIl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 25 Jan 2022 07:08:41 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:52970 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344858AbiAYMGp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 25 Jan 2022 07:06:45 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BB6B4B817ED
-        for <linux-sgx@vger.kernel.org>; Tue, 25 Jan 2022 12:06:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6641C340E0;
-        Tue, 25 Jan 2022 12:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643112393;
-        bh=Uvl2nZ/Bem8omy1N7KAD1XvAODVMjwC3hOeZ1E3wWDc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xnyynt++3Ygh90Mgv45mwICb1wc6goLOmqNDjbklE9hDi0S1QsyRD+6uGlnKU8K9e
-         OeAvbxN2SrAEvGWvSbI33kDs6wtkbWXp7rXJxndGpGH/3BDIoiLaTlwhi5Q3lk2NAo
-         UtcCFLpOsiBESTn964SCSoAXDjxa9rtH7QjJTA3ZElEb9esHC5tta1rni0OG6iHfvT
-         KgDtTMskUAIrgDJJMJxglm1JFvBsNtkLd3rULBdrlufrW+eqiAh1dcT9hdC80rDegS
-         EMhU+3hjs65mtdrEYv9uYO/qwlG7A4YKyfOnpp+aic/74BapFSCZ1aOFE9QuPYHsWO
-         41rv/K5p3Wn9g==
-Date:   Tue, 25 Jan 2022 14:06:12 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     "Accardi, Kristen C" <kristen.c.accardi@intel.com>
-Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: Testing 5.17 bugfix material
-Message-ID: <Ye/ntErfl1ARo4S0@iki.fi>
-References: <53bf06e8-f523-83db-ed4d-039c34f634cd@intel.com>
- <06fa9c6e691db71abec906ebce14167bb896ade2.camel@intel.com>
- <Ye7oYz9Lj8yLadyT@iki.fi>
- <9ea2d9cdf649186a4079061bf6b654378c3d256e.camel@intel.com>
+        id S231313AbiAYSZQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 25 Jan 2022 13:25:16 -0500
+Received: from mga03.intel.com ([134.134.136.65]:4719 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229488AbiAYSYL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 25 Jan 2022 13:24:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643135050; x=1674671050;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UJIqw8gcL194wHLtJoARGquGC2qqeBOMWHN3mV2Gobg=;
+  b=EyMMRXFt5NOcoBwlH8/Xj1wheqWzCIBlOy27ftXRanL2+l+2GqTs0/Ix
+   YUkEozVsVFuOFr3JWKuuSIg3m1MahS/V/zvf0cp90tiyoUOGdNBOarW/6
+   sXBoW3mlTHGg71DCaNHSs3Z7WrIKZ7vlqYjGyROAhUnK16DyWMai0RLB8
+   9suKfH76ItUTKni3zOxvQnW4e2rYGvIlszallSwnpJZeRxb41V0m9KeUm
+   9k8+ndr8lZNZf5q6Tiwn/Q0jRfEbYwzGFpcsEIrTcCFSsU1YvG/bAOKpM
+   0x8UoFH+iCRqFuMyxATYtEnmHa66Aq+1LX48JQR+7xAgzm8ZEzhOtzDmn
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="246319033"
+X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
+   d="scan'208";a="246319033"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2022 10:22:48 -0800
+X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
+   d="scan'208";a="563134939"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2022 10:22:48 -0800
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
+        bp@alien8.de, luto@kernel.org, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org
+Cc:     vijay.dhanraj@intel.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH V2] x86/sgx: Silence softlockup detection when releasing large enclaves
+Date:   Tue, 25 Jan 2022 10:22:43 -0800
+Message-Id: <b5e9f218064aa76e3026f778e1ad0a1d823e3db8.1643133224.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ea2d9cdf649186a4079061bf6b654378c3d256e.camel@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 24, 2022 at 08:59:14PM +0000, Accardi, Kristen C wrote:
-> On Mon, 2022-01-24 at 19:56 +0200, Jarkko Sakkinen wrote:
-> > On Mon, Jan 24, 2022 at 05:44:43PM +0000, Accardi, Kristen C wrote:
-> > > On Fri, 2022-01-21 at 11:57 -0800, Dave Hansen wrote:
-> > > > Hi Everyone,
-> > > > 
-> > > > There are a few SGX fixes that have showed up in the last week or
-> > > > so,
-> > > > mostly around RAS and fixing the backing storage issues.  Could
-> > > > folks
-> > > > please give this branch a good thrashing?
-> > > > 
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/log/?h=x86/sgx
-> > > > 
-> > > > I'm planning to send this bunch up to Linus after 5.17-rc1 comes
-> > > > out.
-> > > > 
-> > > > Kristen, I really dug into the changelogs of your two patches to
-> > > > make
-> > > > it
-> > > > more clear that they are bugfix and stable@ material.  I'd
-> > > > appreciate
-> > > > some additional eyeballs there.
-> > > 
-> > > There's a bug in the calculation for the available backing bytes,
-> > > pointed out by Haitao and team. Here's a fix applied to your tree.
-> > > 
-> > > From 2ebcf0e70b1235224410e08c983e357d5ac3c435 Mon Sep 17 00:00:00
-> > > 2001
-> > > From: Kristen Carlson Accardi <kristen@linux.intel.com>
-> > > Date: Mon, 24 Jan 2022 09:28:56 -0800
-> > > Subject: [PATCH] x86/sgx: fixup for available backing pages
-> > > calculation
-> > > 
-> > > Remove improper parentheses from calculation for available backing
-> > > bytes. Without this fix, the result will be incorrect due to
-> > > rounding.
-> > > 
-> > > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> > > ---
-> > >  arch/x86/kernel/cpu/sgx/main.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/sgx/main.c
-> > > b/arch/x86/kernel/cpu/sgx/main.c
-> > > index 7ed6a1b10c21..10a6af89bf64 100644
-> > > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > > @@ -922,7 +922,7 @@ static bool __init sgx_page_cache_init(void)
-> > >  		return false;
-> > >  	}
-> > >  
-> > > -	available_backing_bytes = total_epc_bytes *
-> > > (sgx_overcommit_percent / 100);
-> > > +	available_backing_bytes = total_epc_bytes *
-> > > sgx_overcommit_percent / 100;
-> > >  	atomic_long_set(&sgx_nr_available_backing_pages,
-> > > available_backing_bytes >> PAGE_SHIFT);
-> > >  
-> > >  	return true;
-> > > -- 
-> > > 2.20.1
-> > > 
-> > 
-> > So what about sgx_reclaim_pages() having no return value that Haitao
-> > pointed out?
-> 
-> I'm taking a look at that, and testing, and will send a separate fix.
+Vijay reported that the "unclobbered_vdso_oversubscribed" selftest
+triggers the softlockup detector.
 
-NP, take your time, just remarked that it looks legit :-)
+Actual SGX systems have 128GB of enclave memory or more.  The
+"unclobbered_vdso_oversubscribed" selftest creates one enclave which
+consumes all of the enclave memory on the system. Tearing down such a
+large enclave takes around a minute, most of it in the loop where
+the EREMOVE instruction is applied to each individual 4k enclave page.
 
-/Jarkko
+Spending one minute in a loop triggers the softlockup detector.
+
+Add a cond_resched() to give other tasks a chance to run and placate
+the softlockup detector.
+
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Reported-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+Softlockup message:
+
+watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [test_sgx:11502]
+Kernel panic - not syncing: softlockup: hung tasks
+<snip>
+sgx_encl_release+0x86/0x1c0
+sgx_release+0x11c/0x130
+__fput+0xb0/0x280
+____fput+0xe/0x10
+task_work_run+0x6c/0xc0
+exit_to_user_mode_prepare+0x1eb/0x1f0
+syscall_exit_to_user_mode+0x1d/0x50
+do_syscall_64+0x46/0xb0
+entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Changes since V1:
+- V1: https://lore.kernel.org/lkml/1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com/
+- Add comment provided by Jarkko.
+
+ arch/x86/kernel/cpu/sgx/encl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 001808e3901c..48afe96ae0f0 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -410,6 +410,8 @@ void sgx_encl_release(struct kref *ref)
+ 		}
+ 
+ 		kfree(entry);
++		/* Invoke scheduler to prevent soft lockups. */
++		cond_resched();
+ 	}
+ 
+ 	xa_destroy(&encl->page_array);
+-- 
+2.25.1
+
