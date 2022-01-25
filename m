@@ -2,130 +2,122 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D78C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jan 2022 05:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388EBC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jan 2022 12:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S255366AbiAYFPi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 25 Jan 2022 00:15:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:54419 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S254456AbiAYEhU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 24 Jan 2022 23:37:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643085438; x=1674621438;
-  h=cc:references:subject:to:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=g5Wsb8JqDziI1XzBhCw7FtBzJrmJW77OaD+5JXi7rp0=;
-  b=DFyuwzwmguTKvX4Dh7oNJj0nQ4w21sqV500/f24lbmQAdQG+t+TvRJCA
-   sEmsLO3ljU4D/wWWjEDxXIWNXkWtSXboZNjXVTteO2SWa/cAxjDiQKJmy
-   S0e530idfIkgR7BDgbHm405kzGvht4UolisHq3vLw5wEFQoSGJziQcIc9
-   qPeNJldv53r/GgTdtfmalXRjQ0JWHr87CXlXeMNpzkfpKqwR0bTFUGknO
-   W+yR48e0dw58t7zL6phAisqrgpiRUFeG2INP6BPr5WzpempZVdmWEhFiu
-   F83iEIsMU7/8/DbfPwwrEhJT49UVfDb7Bml4i+g9xG8sGx8Ymo2RGdW5j
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="233583746"
-X-IronPort-AV: E=Sophos;i="5.88,314,1635231600"; 
-   d="scan'208";a="233583746"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 20:27:22 -0800
-X-IronPort-AV: E=Sophos;i="5.88,314,1635231600"; 
-   d="scan'208";a="534555139"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.255.33.35])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 24 Jan 2022 20:27:21 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-Cc:     "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
+        id S1345683AbiAYMIl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 25 Jan 2022 07:08:41 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:52970 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344858AbiAYMGp (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 25 Jan 2022 07:06:45 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BB6B4B817ED
+        for <linux-sgx@vger.kernel.org>; Tue, 25 Jan 2022 12:06:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6641C340E0;
+        Tue, 25 Jan 2022 12:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643112393;
+        bh=Uvl2nZ/Bem8omy1N7KAD1XvAODVMjwC3hOeZ1E3wWDc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Xnyynt++3Ygh90Mgv45mwICb1wc6goLOmqNDjbklE9hDi0S1QsyRD+6uGlnKU8K9e
+         OeAvbxN2SrAEvGWvSbI33kDs6wtkbWXp7rXJxndGpGH/3BDIoiLaTlwhi5Q3lk2NAo
+         UtcCFLpOsiBESTn964SCSoAXDjxa9rtH7QjJTA3ZElEb9esHC5tta1rni0OG6iHfvT
+         KgDtTMskUAIrgDJJMJxglm1JFvBsNtkLd3rULBdrlufrW+eqiAh1dcT9hdC80rDegS
+         EMhU+3hjs65mtdrEYv9uYO/qwlG7A4YKyfOnpp+aic/74BapFSCZ1aOFE9QuPYHsWO
+         41rv/K5p3Wn9g==
+Date:   Tue, 25 Jan 2022 14:06:12 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     "Accardi, Kristen C" <kristen.c.accardi@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "Luck, Tony" <tony.luck@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>
-References: <53bf06e8-f523-83db-ed4d-039c34f634cd@intel.com>
- <op.1gevpaxgwjvjmi@hhuan26-mobl1.mshome.net> <Ye7k7b1x8OnQcJgL@iki.fi>
- <Ye7n/vk+MNF3Nc1D@iki.fi>
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>
 Subject: Re: Testing 5.17 bugfix material
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>
-Date:   Mon, 24 Jan 2022 22:27:20 -0600
+Message-ID: <Ye/ntErfl1ARo4S0@iki.fi>
+References: <53bf06e8-f523-83db-ed4d-039c34f634cd@intel.com>
+ <06fa9c6e691db71abec906ebce14167bb896ade2.camel@intel.com>
+ <Ye7oYz9Lj8yLadyT@iki.fi>
+ <9ea2d9cdf649186a4079061bf6b654378c3d256e.camel@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1gjamonzwjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <Ye7n/vk+MNF3Nc1D@iki.fi>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ea2d9cdf649186a4079061bf6b654378c3d256e.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 24 Jan 2022 11:55:10 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-wrote:
+On Mon, Jan 24, 2022 at 08:59:14PM +0000, Accardi, Kristen C wrote:
+> On Mon, 2022-01-24 at 19:56 +0200, Jarkko Sakkinen wrote:
+> > On Mon, Jan 24, 2022 at 05:44:43PM +0000, Accardi, Kristen C wrote:
+> > > On Fri, 2022-01-21 at 11:57 -0800, Dave Hansen wrote:
+> > > > Hi Everyone,
+> > > > 
+> > > > There are a few SGX fixes that have showed up in the last week or
+> > > > so,
+> > > > mostly around RAS and fixing the backing storage issues.  Could
+> > > > folks
+> > > > please give this branch a good thrashing?
+> > > > 
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/log/?h=x86/sgx
+> > > > 
+> > > > I'm planning to send this bunch up to Linus after 5.17-rc1 comes
+> > > > out.
+> > > > 
+> > > > Kristen, I really dug into the changelogs of your two patches to
+> > > > make
+> > > > it
+> > > > more clear that they are bugfix and stable@ material.  I'd
+> > > > appreciate
+> > > > some additional eyeballs there.
+> > > 
+> > > There's a bug in the calculation for the available backing bytes,
+> > > pointed out by Haitao and team. Here's a fix applied to your tree.
+> > > 
+> > > From 2ebcf0e70b1235224410e08c983e357d5ac3c435 Mon Sep 17 00:00:00
+> > > 2001
+> > > From: Kristen Carlson Accardi <kristen@linux.intel.com>
+> > > Date: Mon, 24 Jan 2022 09:28:56 -0800
+> > > Subject: [PATCH] x86/sgx: fixup for available backing pages
+> > > calculation
+> > > 
+> > > Remove improper parentheses from calculation for available backing
+> > > bytes. Without this fix, the result will be incorrect due to
+> > > rounding.
+> > > 
+> > > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> > > ---
+> > >  arch/x86/kernel/cpu/sgx/main.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/cpu/sgx/main.c
+> > > b/arch/x86/kernel/cpu/sgx/main.c
+> > > index 7ed6a1b10c21..10a6af89bf64 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > > @@ -922,7 +922,7 @@ static bool __init sgx_page_cache_init(void)
+> > >  		return false;
+> > >  	}
+> > >  
+> > > -	available_backing_bytes = total_epc_bytes *
+> > > (sgx_overcommit_percent / 100);
+> > > +	available_backing_bytes = total_epc_bytes *
+> > > sgx_overcommit_percent / 100;
+> > >  	atomic_long_set(&sgx_nr_available_backing_pages,
+> > > available_backing_bytes >> PAGE_SHIFT);
+> > >  
+> > >  	return true;
+> > > -- 
+> > > 2.20.1
+> > > 
+> > 
+> > So what about sgx_reclaim_pages() having no return value that Haitao
+> > pointed out?
+> 
+> I'm taking a look at that, and testing, and will send a separate fix.
 
-> On Mon, Jan 24, 2022 at 07:42:08PM +0200, Jarkko Sakkinen wrote:
->> On Sat, Jan 22, 2022 at 01:15:01PM -0600, Haitao Huang wrote:
->> > Hi Dave,
->> >
->> > On Fri, 21 Jan 2022 13:57:50 -0600, Dave Hansen  
->> <dave.hansen@intel.com>
->> > wrote:
->> >
->> > > Hi Everyone,
->> > >
->> > > There are a few SGX fixes that have showed up in the last week or  
->> so,
->> > > mostly around RAS and fixing the backing storage issues.  Could  
->> folks
->> > > please give this branch a good thrashing?
->> > >
->> > > >  
->> https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/log/?h=x86/sgx
->> > >
->> > > I'm planning to send this bunch up to Linus after 5.17-rc1 comes  
->> out.
->> > >
->> > > Kristen, I really dug into the changelogs of your two patches to  
->> make it
->> > > more clear that they are bugfix and stable@ material.  I'd  
->> appreciate
->> > > some additional eyeballs there.
->> >
->> > When testing this with a large enclave loaded by Intel runtime, we  
->> saw it
->> > hang
->> > on EADD ioctl and the ioctl never returns.
->> >
->> > Also noticed the selftest fails on oversub but the return errno is  
->> EINTR not
->> > ENOMEM as expected.
->> >
->> > When user space register signal handler with SA_RESTART flag, EINTR  
->> would
->> > be an auto restart of ioctl. So that might be what's going on with  
->> Intel
->> > runtime test. And I suspect following code may cause infinite restart  
->> of the
->> > ioctl:
->> >
->> > struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
->> > {
->> >       struct sgx_epc_page *page;
->> >
->> >       for ( ; ; ) {
->> >           page = __sgx_alloc_epc_page();
->> >           if (!IS_ERR(page)) {
->> >               page->owner = owner;
->> >               break;
->> >           }
->> >
->> >           if (list_empty(&sgx_active_page_list))<-- should also check
->> > sgx_nr_available_backing_pages?
->> >               return ERR_PTR(-ENOMEM);
->
-> I don't think so but why do you think it should?
+NP, take your time, just remarked that it looks legit :-)
 
-I was thinking no point to continue if
-(atomic_long_read(&sgx_nr_available_backing_pages)==0).
-We just failed on finding available EPC above in __sgx_alloc_epc_page. So  
-if we can't swap, then nothing we can do, right?
-
-BR
-Haitao
+/Jarkko
