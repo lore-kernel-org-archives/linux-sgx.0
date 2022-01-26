@@ -2,97 +2,86 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4B1C28CF5
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 20:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2F5C2BA4C
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 20:07:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbiAZUB2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 26 Jan 2022 15:01:28 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:38759 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiAZUB1 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 15:01:27 -0500
-Received: by mail-il1-f199.google.com with SMTP id u3-20020a056e021a4300b002b9060b0d1eso576844ilv.5
-        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 12:01:27 -0800 (PST)
+        id S229867AbiAZUHj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 Jan 2022 15:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53404 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229863AbiAZUHi (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 15:07:38 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15275C06173B
+        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 12:07:38 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id f8so347342pgf.8
+        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 12:07:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DFPbCzFKgxQWuOxXDy4LqnA2tAk83/d+qYRfzdS9NDo=;
+        b=TP7ylFU44strBzOztNYqY0AiAUjmiqBhnHSVWaVt6Q97YGju/ko9HtELlc96RNzQmk
+         c5GRHSiwHCY2L3QnUZv3HpittI8Tv5XjZ1uwXje7ZZ3ioZcNjM2Wya4p7B3F6pPsGiTI
+         olHecr9ms1I9Ed80tJ6DQNuaU0DMsvwWSB8k1opAy7K+N5YxYNAfZhCHDYL1zjUReiin
+         gs0glcoIN0z1O/FuZTQKDcD5h3tjAfUdmsk99D+P8lW61cksG60aU5Hr6pjw8/5YwyFD
+         M9KacrqevRkUbNjiPhJXREJLJonwvyw38dBnvoajgs5Xi2jBI0gxf5Gfb6Ap9DV2/bGz
+         x/Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=cLW8LI7/XqtiFj9yd0tHprkCjsn8/AVoa/nyBCUb7oc=;
-        b=u91/FzRi+sX/Nu6e/+Ul7Hhb8gSAzs4/CyHE0BaNBksuyNjwLeDVf0nzH8na2sGnKY
-         4Gp07ULBb1/UCvjA+TZV1Ty0mXRTiGNu3tmKSXroLn2YXOt57ibWFJvRtYig1nzypvZq
-         PChtsFiIcArnb+0fxHvcf4CHHS6qswOHXo6elU/JxlMm7X/JsyJjmYMaFv9qJnLuM3sn
-         ufB3VJ3J0NILgreaFXRtzoTVO48XZIuc+AJM5dy+5H4LiecuK+VT7dYVQMkGOhozDV6I
-         pSquW+Ghq9IFCKEc98Bx28ENEFqVa32VF0qS+WJyzccX0WICnk6sS9Npp7X9Hb0HDn2a
-         DPyQ==
-X-Gm-Message-State: AOAM530//34+zsPTxYnJwJUO6WynCsr2ll87o2iYKo/erZX2lKO+ObEJ
-        BCIIn450BwRiaE8nGXoKae9IeQLKeA44JVEjixI3v9gDwUpe
-X-Google-Smtp-Source: ABdhPJxK+FPfqJHgz9j/jX/ITPK4Sulzl9Qkw1XWG390K84oD1Sq9GxH+8V1Sv1ZdgU80iett2IV3EnKh9COq6LNds5MetrvFsc/
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1686:: with SMTP id f6mr484033ila.300.1643227287269;
- Wed, 26 Jan 2022 12:01:27 -0800 (PST)
-Date:   Wed, 26 Jan 2022 12:01:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000be3e4505d681aa17@google.com>
-Subject: [syzbot] memory leak in kvm_vcpu_ioctl_set_cpuid2
-From:   syzbot <syzbot+ead0473557070d5432cd@syzkaller.appspotmail.com>
-To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DFPbCzFKgxQWuOxXDy4LqnA2tAk83/d+qYRfzdS9NDo=;
+        b=Higi8v1EhuV2t9YuHWusIvX9gBr6v1wzqpcBQxLqhHLYc2MU1IFCrMxtHj8Ukm/xzg
+         tIyXW4dCV5FhV/NBlGSwFOsm0sGOqeQymTVGBXdqL/jDFNxq/FXvsmLRYtzCBL5TPJgN
+         r4dSJkceEB1fkNTwwJXfJMDuMuDWQDvKpfygqGDbseduCH46Rg9MJs5TINMXyGT9F6yH
+         3hih+dWXuBWm4xerHCqOuGQNootBwEYXszXGymswdZoHnFsFp8+u4hvdfcyoNNBuaJD0
+         hJvfL7Lthd47NNDduAnkbArHDVpTsxutQF/50ZhGzYhb7xjUWZuuY5HOMrPCZd9b+Xjy
+         HTvw==
+X-Gm-Message-State: AOAM5304JvJCc8+zM7AStyO6lptzALQb+YgsaxIduJeyR2w5wX4Fo1jB
+        HOyYhRVqhiS7gKxojzJ5BZFvLQ==
+X-Google-Smtp-Source: ABdhPJw3PkdqBDJWONWWZfBkpDUrnMNOkcHKBvNPxcp8RFeoeqA9FCCpVA61RqaqORBl8dSzqaamHQ==
+X-Received: by 2002:a63:cc05:: with SMTP id x5mr378850pgf.163.1643227657367;
+        Wed, 26 Jan 2022 12:07:37 -0800 (PST)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id f15sm2811295pfn.19.2022.01.26.12.07.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jan 2022 12:07:36 -0800 (PST)
+Date:   Wed, 26 Jan 2022 20:07:33 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     syzbot <syzbot+ead0473557070d5432cd@syzkaller.appspotmail.com>
+Cc:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
         jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
         kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sgx@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
-        seanjc@google.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
+Subject: Re: [syzbot] memory leak in kvm_vcpu_ioctl_set_cpuid2
+Message-ID: <YfGqBUYWj6nBxntP@google.com>
+References: <000000000000be3e4505d681aa17@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000be3e4505d681aa17@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello,
+On Wed, Jan 26, 2022, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0809edbae347 Merge tag 'devicetree-fixes-for-5.17-1' of gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17982967b00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8d6c95ce1d56de
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ead0473557070d5432cd
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1402f91fb00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ba591fb00000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+ead0473557070d5432cd@syzkaller.appspotmail.com
 
-syzbot found the following issue on:
-
-HEAD commit:    0809edbae347 Merge tag 'devicetree-fixes-for-5.17-1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17982967b00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8d6c95ce1d56de
-dashboard link: https://syzkaller.appspot.com/bug?extid=ead0473557070d5432cd
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1402f91fb00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ba591fb00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ead0473557070d5432cd@syzkaller.appspotmail.com
-
-BUG: memory leak
-unreferenced object 0xffff88810963a800 (size 2048):
-  comm "syz-executor025", pid 3610, jiffies 4294944928 (age 8.080s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 0d 00 00 00  ................
-    47 65 6e 75 6e 74 65 6c 69 6e 65 49 00 00 00 00  GenuntelineI....
-  backtrace:
-    [<ffffffff814948ee>] kmalloc_node include/linux/slab.h:604 [inline]
-    [<ffffffff814948ee>] kvmalloc_node+0x3e/0x100 mm/util.c:580
-    [<ffffffff814950f2>] kvmalloc include/linux/slab.h:732 [inline]
-    [<ffffffff814950f2>] vmemdup_user+0x22/0x100 mm/util.c:199
-    [<ffffffff8109f5ff>] kvm_vcpu_ioctl_set_cpuid2+0x8f/0xf0 arch/x86/kvm/cpuid.c:423
-    [<ffffffff810711b9>] kvm_arch_vcpu_ioctl+0xb99/0x1e60 arch/x86/kvm/x86.c:5251
-    [<ffffffff8103e92d>] kvm_vcpu_ioctl+0x4ad/0x950 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4066
-    [<ffffffff815afacc>] vfs_ioctl fs/ioctl.c:51 [inline]
-    [<ffffffff815afacc>] __do_sys_ioctl fs/ioctl.c:874 [inline]
-    [<ffffffff815afacc>] __se_sys_ioctl fs/ioctl.c:860 [inline]
-    [<ffffffff815afacc>] __x64_sys_ioctl+0xfc/0x140 fs/ioctl.c:860
-    [<ffffffff844a3335>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff844a3335>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+#syz fix: KVM: x86: Free kvm_cpuid_entry2 array on post-KVM_RUN KVM_SET_CPUID{,2}
