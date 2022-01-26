@@ -2,86 +2,83 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2F5C2BA4C
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 20:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8C9C2BA4C
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 20:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbiAZUHj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 26 Jan 2022 15:07:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53404 "EHLO
+        id S230051AbiAZUSF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 Jan 2022 15:18:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbiAZUHi (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 15:07:38 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15275C06173B
-        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 12:07:38 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id f8so347342pgf.8
-        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 12:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DFPbCzFKgxQWuOxXDy4LqnA2tAk83/d+qYRfzdS9NDo=;
-        b=TP7ylFU44strBzOztNYqY0AiAUjmiqBhnHSVWaVt6Q97YGju/ko9HtELlc96RNzQmk
-         c5GRHSiwHCY2L3QnUZv3HpittI8Tv5XjZ1uwXje7ZZ3ioZcNjM2Wya4p7B3F6pPsGiTI
-         olHecr9ms1I9Ed80tJ6DQNuaU0DMsvwWSB8k1opAy7K+N5YxYNAfZhCHDYL1zjUReiin
-         gs0glcoIN0z1O/FuZTQKDcD5h3tjAfUdmsk99D+P8lW61cksG60aU5Hr6pjw8/5YwyFD
-         M9KacrqevRkUbNjiPhJXREJLJonwvyw38dBnvoajgs5Xi2jBI0gxf5Gfb6Ap9DV2/bGz
-         x/Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DFPbCzFKgxQWuOxXDy4LqnA2tAk83/d+qYRfzdS9NDo=;
-        b=Higi8v1EhuV2t9YuHWusIvX9gBr6v1wzqpcBQxLqhHLYc2MU1IFCrMxtHj8Ukm/xzg
-         tIyXW4dCV5FhV/NBlGSwFOsm0sGOqeQymTVGBXdqL/jDFNxq/FXvsmLRYtzCBL5TPJgN
-         r4dSJkceEB1fkNTwwJXfJMDuMuDWQDvKpfygqGDbseduCH46Rg9MJs5TINMXyGT9F6yH
-         3hih+dWXuBWm4xerHCqOuGQNootBwEYXszXGymswdZoHnFsFp8+u4hvdfcyoNNBuaJD0
-         hJvfL7Lthd47NNDduAnkbArHDVpTsxutQF/50ZhGzYhb7xjUWZuuY5HOMrPCZd9b+Xjy
-         HTvw==
-X-Gm-Message-State: AOAM5304JvJCc8+zM7AStyO6lptzALQb+YgsaxIduJeyR2w5wX4Fo1jB
-        HOyYhRVqhiS7gKxojzJ5BZFvLQ==
-X-Google-Smtp-Source: ABdhPJw3PkdqBDJWONWWZfBkpDUrnMNOkcHKBvNPxcp8RFeoeqA9FCCpVA61RqaqORBl8dSzqaamHQ==
-X-Received: by 2002:a63:cc05:: with SMTP id x5mr378850pgf.163.1643227657367;
-        Wed, 26 Jan 2022 12:07:37 -0800 (PST)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id f15sm2811295pfn.19.2022.01.26.12.07.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jan 2022 12:07:36 -0800 (PST)
-Date:   Wed, 26 Jan 2022 20:07:33 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     syzbot <syzbot+ead0473557070d5432cd@syzkaller.appspotmail.com>
-Cc:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
-Subject: Re: [syzbot] memory leak in kvm_vcpu_ioctl_set_cpuid2
-Message-ID: <YfGqBUYWj6nBxntP@google.com>
-References: <000000000000be3e4505d681aa17@google.com>
+        with ESMTP id S229519AbiAZUSF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 15:18:05 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1DCC06161C
+        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 12:18:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B3EF5B81FC8
+        for <linux-sgx@vger.kernel.org>; Wed, 26 Jan 2022 20:18:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C878C340E3;
+        Wed, 26 Jan 2022 20:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643228282;
+        bh=DEQvsHvJT6xcu5Tw6noRUdc+F2u5tB/+Cb4cMQX3DC4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C98XAmSyRPvZ7bOuDVAhFYmbKtXG2R2kU+DZuUsGsdS3sM/YI/Lk9qD3lOzajEeZJ
+         P4JPZG9+v/TSq4zfb/DTZQLpfcPTfzyRkC5Gs37Mb96nFOsuKbonR9cOptMI7KwgL2
+         nXksxDUGQmInE6FTwLOlos3OnNPEVawHBZKGJ4OShoyoZcbeADaEhTeXCaFIou0z4x
+         yryOn3DdIr5P+9f7AKJNz03XI/o5KgFOyOf/5eb1j+drhicotkuswVUTVOsVuQpV3T
+         Dwm/5660YA2yfUfplTLivIK0nMx8z1nhyHMO/7gMAD7hTXycCZN9TlpYZLn4V4nAen
+         mZOQkoKfwAiFA==
+Date:   Wed, 26 Jan 2022 22:17:39 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        haitao.huang@linux.intel.com
+Subject: Re: [PATCH 1/2] x86/sgx: fixup for available backing pages
+ calculation
+Message-ID: <YfGsY5IYpIXhqjGm@iki.fi>
+References: <20220126191711.4917-1-kristen@linux.intel.com>
+ <20220126191711.4917-2-kristen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000be3e4505d681aa17@google.com>
+In-Reply-To: <20220126191711.4917-2-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jan 26, 2022, syzbot wrote:
-> Hello,
+On Wed, Jan 26, 2022 at 11:17:10AM -0800, Kristen Carlson Accardi wrote:
+> Remove improper parentheses from calculation for available
+> backing bytes. Wtihout this fix, the result will be incorrect
+> due to rounding.
 > 
-> syzbot found the following issue on:
+> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> HEAD commit:    0809edbae347 Merge tag 'devicetree-fixes-for-5.17-1' of gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17982967b00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8d6c95ce1d56de
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ead0473557070d5432cd
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1402f91fb00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ba591fb00000
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 990f341bbd30..c4030fb608c6 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -881,7 +881,7 @@ static bool __init sgx_page_cache_init(void)
+>  		return false;
+>  	}
+>  
+> -	available_backing_bytes = total_epc_bytes * (sgx_overcommit_percent / 100);
+> +	available_backing_bytes = total_epc_bytes * sgx_overcommit_percent / 100;
+>  	atomic_long_set(&sgx_nr_available_backing_pages, available_backing_bytes >> PAGE_SHIFT);
+>  
+>  	return true;
+> -- 
+> 2.20.1
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+ead0473557070d5432cd@syzkaller.appspotmail.com
 
-#syz fix: KVM: x86: Free kvm_cpuid_entry2 array on post-KVM_RUN KVM_SET_CPUID{,2}
+You can turn it as:
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+/Jarkko
