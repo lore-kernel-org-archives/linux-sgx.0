@@ -2,108 +2,77 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FCCC4332F
-	for <linux-sgx@archiver.kernel.org>; Tue, 25 Jan 2022 18:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8ACC2BA4C
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 13:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbiAYSZQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 25 Jan 2022 13:25:16 -0500
-Received: from mga03.intel.com ([134.134.136.65]:4719 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229488AbiAYSYL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 25 Jan 2022 13:24:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643135050; x=1674671050;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UJIqw8gcL194wHLtJoARGquGC2qqeBOMWHN3mV2Gobg=;
-  b=EyMMRXFt5NOcoBwlH8/Xj1wheqWzCIBlOy27ftXRanL2+l+2GqTs0/Ix
-   YUkEozVsVFuOFr3JWKuuSIg3m1MahS/V/zvf0cp90tiyoUOGdNBOarW/6
-   sXBoW3mlTHGg71DCaNHSs3Z7WrIKZ7vlqYjGyROAhUnK16DyWMai0RLB8
-   9suKfH76ItUTKni3zOxvQnW4e2rYGvIlszallSwnpJZeRxb41V0m9KeUm
-   9k8+ndr8lZNZf5q6Tiwn/Q0jRfEbYwzGFpcsEIrTcCFSsU1YvG/bAOKpM
-   0x8UoFH+iCRqFuMyxATYtEnmHa66Aq+1LX48JQR+7xAgzm8ZEzhOtzDmn
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="246319033"
-X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
-   d="scan'208";a="246319033"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2022 10:22:48 -0800
-X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
-   d="scan'208";a="563134939"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2022 10:22:48 -0800
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, luto@kernel.org, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Cc:     vijay.dhanraj@intel.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH V2] x86/sgx: Silence softlockup detection when releasing large enclaves
-Date:   Tue, 25 Jan 2022 10:22:43 -0800
-Message-Id: <b5e9f218064aa76e3026f778e1ad0a1d823e3db8.1643133224.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
+        id S239835AbiAZNcZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 Jan 2022 08:32:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234653AbiAZNcZ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 08:32:25 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83AD9C061747;
+        Wed, 26 Jan 2022 05:32:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 48BADCE1BBD;
+        Wed, 26 Jan 2022 13:32:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58B8C340E3;
+        Wed, 26 Jan 2022 13:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643203940;
+        bh=YMtDtX9/VJvj3G4cAPl7V1NbZUcQIKinYDUPxL8qhjE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EepSUECiaPziM4IaRkBsHKXQ/DMwfHWyrD3dGkznRH4Qf/5rxlXkKI9xhpqJfDdSr
+         3tWinwnzRD9mdpjj6F5PPn/eZSw6Fa3jHwvScPnz7/9bSdf67FLKwe8huxL8ZyHGQ7
+         UKze5yhTuhB6QDBXBEy1wbelTrUTqpelzb75HNxuC5O+csX3GdQAlha88R/zayHX4C
+         Lti+7XyHBhS/XS06wWrZanB/v52Xv0yxp+DwmRcgS9xf2Af7C4I0iztzO+BhLpapCN
+         XNrAYdpwvD1LB/IRS5QrXOVbTaSg8TQnLfhJbZmFP32/2ynejaVXfbg14Qu/2zij5c
+         R+3cUJ7tlQnJg==
+Date:   Wed, 26 Jan 2022 15:31:59 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v3] x86/sgx: Free backing memory after faulting the
+ enclave page
+Message-ID: <YfFNT4P27vdxNo7G@iki.fi>
+References: <20220108140510.76583-1-jarkko@kernel.org>
+ <cd26205a-8551-194f-58df-05f89cd4f049@intel.com>
+ <b01342c0-97c8-a29e-d172-d53d051b683c@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b01342c0-97c8-a29e-d172-d53d051b683c@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Vijay reported that the "unclobbered_vdso_oversubscribed" selftest
-triggers the softlockup detector.
+On Mon, Jan 24, 2022 at 09:17:32AM -0800, Dave Hansen wrote:
+> On 1/12/22 22:08, Reinette Chatre wrote:
+> > ------------[ cut here ]------------
+> > ELDU returned 9 (0x9)
+> > WARNING: CPU: 6 PID: 2470 at arch/x86/kernel/cpu/sgx/encl.c:77 sgx_encl_eldu+0x37c/0x3f0
+> 
+> Could we flesh out that error message, please?
+> 
+> That "return" is a code from "Information and Error Codes" in the SGX SDM
+> chapter.  It's also spelled out in 'enum sgx_return_code'.  So, at least,
+> this should probably say:
+> 
+> 	ELDU sgx_return_code: 9 (0x9)
+> 
+> *That* is at least greppable.
 
-Actual SGX systems have 128GB of enclave memory or more.  The
-"unclobbered_vdso_oversubscribed" selftest creates one enclave which
-consumes all of the enclave memory on the system. Tearing down such a
-large enclave takes around a minute, most of it in the loop where
-the EREMOVE instruction is applied to each individual 4k enclave page.
+Yes, I'm all for adding sgx_ prefix to everything but should it rather
+be "sgx: ELDU ..." like most of everything else?
 
-Spending one minute in a loop triggers the softlockup detector.
-
-Add a cond_resched() to give other tasks a chance to run and placate
-the softlockup detector.
-
-Cc: stable@vger.kernel.org
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Reported-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
-Softlockup message:
-
-watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [test_sgx:11502]
-Kernel panic - not syncing: softlockup: hung tasks
-<snip>
-sgx_encl_release+0x86/0x1c0
-sgx_release+0x11c/0x130
-__fput+0xb0/0x280
-____fput+0xe/0x10
-task_work_run+0x6c/0xc0
-exit_to_user_mode_prepare+0x1eb/0x1f0
-syscall_exit_to_user_mode+0x1d/0x50
-do_syscall_64+0x46/0xb0
-entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Changes since V1:
-- V1: https://lore.kernel.org/lkml/1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com/
-- Add comment provided by Jarkko.
-
- arch/x86/kernel/cpu/sgx/encl.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 001808e3901c..48afe96ae0f0 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -410,6 +410,8 @@ void sgx_encl_release(struct kref *ref)
- 		}
- 
- 		kfree(entry);
-+		/* Invoke scheduler to prevent soft lockups. */
-+		cond_resched();
- 	}
- 
- 	xa_destroy(&encl->page_array);
--- 
-2.25.1
-
+/Jarkko
