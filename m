@@ -2,77 +2,130 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8ACC2BA4C
-	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 13:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FB1C28CF5
+	for <linux-sgx@archiver.kernel.org>; Wed, 26 Jan 2022 14:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239835AbiAZNcZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 26 Jan 2022 08:32:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
+        id S241946AbiAZO3g (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 26 Jan 2022 09:29:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234653AbiAZNcZ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 08:32:25 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83AD9C061747;
-        Wed, 26 Jan 2022 05:32:24 -0800 (PST)
+        with ESMTP id S235227AbiAZO3f (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 26 Jan 2022 09:29:35 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B4CC06161C;
+        Wed, 26 Jan 2022 06:29:35 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 48BADCE1BBD;
-        Wed, 26 Jan 2022 13:32:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58B8C340E3;
-        Wed, 26 Jan 2022 13:32:19 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1A163B81E66;
+        Wed, 26 Jan 2022 14:29:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDBFC340E3;
+        Wed, 26 Jan 2022 14:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643203940;
-        bh=YMtDtX9/VJvj3G4cAPl7V1NbZUcQIKinYDUPxL8qhjE=;
+        s=k20201202; t=1643207372;
+        bh=pWEEutZGmoLYplYAkdgznvxnwOPUR3rQhhgjKa18Waw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EepSUECiaPziM4IaRkBsHKXQ/DMwfHWyrD3dGkznRH4Qf/5rxlXkKI9xhpqJfDdSr
-         3tWinwnzRD9mdpjj6F5PPn/eZSw6Fa3jHwvScPnz7/9bSdf67FLKwe8huxL8ZyHGQ7
-         UKze5yhTuhB6QDBXBEy1wbelTrUTqpelzb75HNxuC5O+csX3GdQAlha88R/zayHX4C
-         Lti+7XyHBhS/XS06wWrZanB/v52Xv0yxp+DwmRcgS9xf2Af7C4I0iztzO+BhLpapCN
-         XNrAYdpwvD1LB/IRS5QrXOVbTaSg8TQnLfhJbZmFP32/2ynejaVXfbg14Qu/2zij5c
-         R+3cUJ7tlQnJg==
-Date:   Wed, 26 Jan 2022 15:31:59 +0200
+        b=rN73OAcpkdhzmwGpRyhbVsfs0wx0G+AEvN+N2+ahYZTUceIo3Zj5x7crC1Xt4mXKq
+         gbxaZ/nRoJvOsWG+wleKubMpi13rwBRKlPvZteTwOssL+Qu44e+60NaO46fgH+thw6
+         4Hi1EZ9GJKLPrtFKOGFl0U7bXdSicOJY/Te4rBOb7Cl4Y1SonDYQLEKcsui2JpN5Ux
+         7t9bYMlBNdN4FGhMU88CrvJHt04WijzMI932IXS5YLTF+aadROyglqf0gddCLr6ISQ
+         gkjD30wO0I4oUDxmc7QjRDsIrFDTO8bpuAs21In7uacXdDke1aNctkBhDCuWzNbEvd
+         Vo+H5VFTO9/RA==
+Date:   Wed, 26 Jan 2022 16:29:12 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v3] x86/sgx: Free backing memory after faulting the
- enclave page
-Message-ID: <YfFNT4P27vdxNo7G@iki.fi>
-References: <20220108140510.76583-1-jarkko@kernel.org>
- <cd26205a-8551-194f-58df-05f89cd4f049@intel.com>
- <b01342c0-97c8-a29e-d172-d53d051b683c@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Silence softlockup detection when releasing
+ large enclaves
+Message-ID: <YfFauJSPU5TNetSe@iki.fi>
+References: <1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com>
+ <e4e8fbe757860cd24e2f66b25be60d76663935d8.camel@kernel.org>
+ <71032a38-e1ab-ac73-09f7-9eefffd53674@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <b01342c0-97c8-a29e-d172-d53d051b683c@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <71032a38-e1ab-ac73-09f7-9eefffd53674@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 24, 2022 at 09:17:32AM -0800, Dave Hansen wrote:
-> On 1/12/22 22:08, Reinette Chatre wrote:
-> > ------------[ cut here ]------------
-> > ELDU returned 9 (0x9)
-> > WARNING: CPU: 6 PID: 2470 at arch/x86/kernel/cpu/sgx/encl.c:77 sgx_encl_eldu+0x37c/0x3f0
+On Thu, Jan 20, 2022 at 08:28:36AM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> Could we flesh out that error message, please?
+> On 1/20/2022 5:01 AM, Jarkko Sakkinen wrote:
+> > On Tue, 2022-01-18 at 11:14 -0800, Reinette Chatre wrote:
+> >> Vijay reported that the "unclobbered_vdso_oversubscribed" selftest
+> >> triggers the softlockup detector.
+> >>
+> >> Actual SGX systems have 128GB of enclave memory or more.  The
+> >> "unclobbered_vdso_oversubscribed" selftest creates one enclave which
+> >> consumes all of the enclave memory on the system. Tearing down such a
+> >> large enclave takes around a minute, most of it in the loop where
+> >> the EREMOVE instruction is applied to each individual 4k enclave
+> >> page.
+> >>
+> >> Spending one minute in a loop triggers the softlockup detector.
+> >>
+> >> Add a cond_resched() to give other tasks a chance to run and placate
+> >> the softlockup detector.
+> >>
+> >> Cc: stable@vger.kernel.org
+> >> Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+> >> Reported-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+> >> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> >> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> >> ---
+> >> Softlockup message:
+> >> watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [test_sgx:11502]
+> >> Kernel panic - not syncing: softlockup: hung tasks
+> >> <snip>
+> >> sgx_encl_release+0x86/0x1c0
+> >> sgx_release+0x11c/0x130
+> >> __fput+0xb0/0x280
+> >> ____fput+0xe/0x10
+> >> task_work_run+0x6c/0xc0
+> >> exit_to_user_mode_prepare+0x1eb/0x1f0
+> >> syscall_exit_to_user_mode+0x1d/0x50
+> >> do_syscall_64+0x46/0xb0
+> >> entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >>
+> >>  arch/x86/kernel/cpu/sgx/encl.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/arch/x86/kernel/cpu/sgx/encl.c
+> >> b/arch/x86/kernel/cpu/sgx/encl.c
+> >> index 001808e3901c..ab2b79327a8a 100644
+> >> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> >> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> >> @@ -410,6 +410,7 @@ void sgx_encl_release(struct kref *ref)
+> >>                 }
+> >>  
+> >>                 kfree(entry);
+> >> +               cond_resched();
+> >>         }
+> >>  
+> >>         xa_destroy(&encl->page_array);
+> > 
+> > I'd add a comment, e.g.
+> > 
+> > /* Invoke scheduler to prevent soft lockups. */
 > 
-> That "return" is a code from "Information and Error Codes" in the SGX SDM
-> chapter.  It's also spelled out in 'enum sgx_return_code'.  So, at least,
-> this should probably say:
+> I could do that. I would like to point out though that there are already
+> six other usages of cond_resched() in the driver and it does indeed
+> seem to be the common pattern. When adding this comment to the now
+> seventh usage it would be the first comment documenting the usage of
+> cond_resched() in the driver.
 > 
-> 	ELDU sgx_return_code: 9 (0x9)
+> > 
+> > Other than that makes sense.
 > 
-> *That* is at least greppable.
+> Thank you very much for taking a look.
 
-Yes, I'm all for adding sgx_ prefix to everything but should it rather
-be "sgx: ELDU ..." like most of everything else?
+Well, I believe in inline comments to evolution. As in here it was missing,
+a reminder makes sense.
 
 /Jarkko
