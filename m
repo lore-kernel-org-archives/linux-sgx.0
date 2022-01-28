@@ -2,210 +2,145 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D108AC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jan 2022 18:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2D7C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jan 2022 18:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343693AbiA1S0e (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 28 Jan 2022 13:26:34 -0500
-Received: from mga09.intel.com ([134.134.136.24]:28015 "EHLO mga09.intel.com"
+        id S1350580AbiA1SnE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 28 Jan 2022 13:43:04 -0500
+Received: from mga06.intel.com ([134.134.136.31]:22689 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348965AbiA1S0e (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Fri, 28 Jan 2022 13:26:34 -0500
+        id S237624AbiA1SnE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Fri, 28 Jan 2022 13:43:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643394394; x=1674930394;
+  t=1643395384; x=1674931384;
   h=message-id:date:mime-version:to:cc:references:from:
    subject:in-reply-to:content-transfer-encoding;
-  bh=ZNFALw1NYgLOvQNdOffNOqnUI9IT8EvUd+ud55cUqKQ=;
-  b=GnpDt9EcAVuuPyTkuxHr8Y3hHKzJoyIg7i8xpMl1pBDYMv/q2EPqEnGk
-   7rPvFwQXH/BxjL7Spxw2JigKE1OUU2iVgBLPUgDCtx7LU5kFlEZbjQi3W
-   MV/KJlkTYjHpxTQ1qhV4XslbBNZqT9hbeeKkuxXJshWpzdDUUIlDd189b
-   rZyVLuBVCRaYGWQa6kJV4g/yAmZEmPECy6IRWMitDBavUpfda/KGkReaI
-   EF57h9uqTs4fXDFjy+W052RDTf6k0NguS159ysiI+wRl5w+VJ5/o24uOR
-   yRSjYm86ZcHwwiT2lZ/62Nr0uqkE1kY0omzj2LYz3hsz1Hj6ajpChdPU6
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10240"; a="246945509"
+  bh=0ttcunwAGH2xmbuztc03gm7UXUtl7LXOSyi4HYFHOU8=;
+  b=RbThspp58cZB7OneL9TRh5TXomvx29rHKc/dQvlIUCfnNmpOqUidxlva
+   uhk/swyJa578okLCi+ZyIGW1coMueSU3zHPS6u3h7unBTd5uIL0pPIZem
+   WH4J6ILDoK6kP9mVqEP4pNH+m++61kjUIYBsQEg52PLgawFL23gFkqOrA
+   UvyXqovT6sKIY8bxJn+nWMLVIvMtlqSprp9MxE2cvxxe8dZ4iAv7vMix4
+   mMvqNOo4fg8xrkI+U6EO9WmDxgPr7QZ5tPgL9KSRutpl/UFPjONC9aZG6
+   UaZzLM1FU75ZVCUN+eJwbtbk+TPKljMU7/33uKqayOt5fZd39PoQ7PUnh
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10240"; a="307905373"
 X-IronPort-AV: E=Sophos;i="5.88,324,1635231600"; 
-   d="scan'208";a="246945509"
+   d="scan'208";a="307905373"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 10:26:33 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 10:43:04 -0800
 X-IronPort-AV: E=Sophos;i="5.88,324,1635231600"; 
-   d="scan'208";a="697175321"
+   d="scan'208";a="697179925"
 Received: from zhenkuny-mobl2.amr.corp.intel.com (HELO [10.209.84.59]) ([10.209.84.59])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 10:26:33 -0800
-Message-ID: <b8255288-69e7-379d-45c3-12f0c2085f19@intel.com>
-Date:   Fri, 28 Jan 2022 10:26:30 -0800
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 10:43:03 -0800
+Message-ID: <df2248d2-eb61-22d6-3a51-d8091f9eaad6@intel.com>
+Date:   Fri, 28 Jan 2022 10:43:00 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.2
 Content-Language: en-US
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-sgx@vger.kernel.org
-Cc:     haitao.huang@linux.intel.com, jarkko@kernel.org
-References: <20220126191711.4917-1-kristen@linux.intel.com>
- <20220126191711.4917-3-kristen@linux.intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>, jarkko@kernel.org,
+        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+        shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org
+References: <cover.1643393473.git.reinette.chatre@intel.com>
+ <3c1d84724ecc7c94131ba1d94dc4c5de5aafc58f.1643393473.git.reinette.chatre@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH 2/2] x86/sgx: Allow sgx_reclaim_pages() to report failure
-In-Reply-To: <20220126191711.4917-3-kristen@linux.intel.com>
+Subject: Re: [PATCH 1/4] selftests/sgx: Fix segfault upon early test failure
+In-Reply-To: <3c1d84724ecc7c94131ba1d94dc4c5de5aafc58f.1643393473.git.reinette.chatre@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 1/26/22 11:17, Kristen Carlson Accardi wrote:
-> If backing pages are not able to be allocated during
-> sgx_reclaim_pages(), return an error code to the caller.
-> sgx_reclaim_pages() can be called from the reclaimer thread,
-> or when adding pages via an ioctl. When it is called from the
-
-ioctl() is a function name.  Please add parenthesis to make that clear,
-just like any other function name.
-
-> kernel thread, it's safe to ignore the return value, however,
-> calls from the ioctls should forward the error.
+On 1/28/22 10:23, Reinette Chatre wrote:
+> A segfault is encountered if there happens to be an
+> early failure of any of the SGX tests. One way to
+> reproduce this is to remove the enclave binary
+> "test_encl.elf" that will trigger early enclave loading
+> failure followed by a segfault.
 > 
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> The segfault occurs within encl_delete() that cleans up
+> after an enclave by umapping its mapped regions and closing
+> the file descriptor to the SGX driver. As integrated with
+> the kselftest harness encl_delete() is called upon exit
+> from every test, irrespective of test success. encl_delete()
+> is also called to clean up if an error is encountered during
+> enclave loading.
+> 
+> encl_delete() is thus responsible for cleaning any amount of
+> enclave state - including state that has already been cleaned.
+> 
+> encl_delete() starts by accessing encl->segment_tbl that may
+> not have been created yet due to a very early failure or may
+> already be cleaned up because of a failure encountered after
+> encl->segment_tbl was created.
+> 
+> Ensure encl->segment_tbl is valid before attempting to access
+> memory offset from it. The offset with which it is accessed,
+> encl->nr_segments, is initialized after encl->segment_tbl and
+> thus considered valid to use after the encl->segment_tbl check
+> succeeds.
+
+I'm thinking we can be a bit more concise about the problem:
+
+== Background ==
+
+The SGX selftests track parts of the enclave binaries in an array:
+encl->segment_tbl[].  That array is dynamically allocated early (but not
+first) in the test's lifetime.  The array is referenced at the end of
+the test in encl_delete().
+
+== Problem ==
+
+encl->segment_tbl[] can be NULL if the test fails before its allocation.
+ That leads to a NULL-pointer-dereference in encl_delete().  This is
+triggered during early failures of the selftest like if the enclave
+binary ("test_encl.elf") is deleted.
+
+--
+
+I think it's also best to refer to this as a NULL-pointer problem rather
+than a segfault.   The segfault is really just the fallout from the NULL
+pointer, *not* the primary problem.
+
+> Fixes: 3200505d4de6 ("selftests/sgx: Create a heap for the test enclave")
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/main.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
+>  tools/testing/selftests/sgx/load.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index c4030fb608c6..0e95f69ebcb7 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -377,17 +377,18 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
->   * problematic as it would increase the lock contention too much, which would
->   * halt forward progress.
->   */
-> -static void sgx_reclaim_pages(void)
-> +static int sgx_reclaim_pages(void)
+> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+> index 9d4322c946e2..006b464c8fc9 100644
+> --- a/tools/testing/selftests/sgx/load.c
+> +++ b/tools/testing/selftests/sgx/load.c
+> @@ -21,7 +21,7 @@
+>  
+>  void encl_delete(struct encl *encl)
 >  {
->  	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
->  	struct sgx_backing backing[SGX_NR_TO_SCAN];
->  	struct sgx_epc_section *section;
->  	struct sgx_encl_page *encl_page;
-> +	int pages_being_reclaimed = 0;
->  	struct sgx_epc_page *epc_page;
->  	struct sgx_numa_node *node;
->  	pgoff_t page_index;
->  	int cnt = 0;
-> -	int ret;
-> +	int ret = 0;
->  	int i;
+> -	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
+> +	struct encl_segment *heap_seg;
 >  
->  	spin_lock(&sgx_reclaimer_lock);
-> @@ -422,6 +423,8 @@ static void sgx_reclaim_pages(void)
->  		if (ret)
->  			goto skip;
+>  	if (encl->encl_base)
+>  		munmap((void *)encl->encl_base, encl->encl_size);
+> @@ -32,10 +32,11 @@ void encl_delete(struct encl *encl)
+>  	if (encl->fd)
+>  		close(encl->fd);
 >  
-> +		pages_being_reclaimed++;
+> -	munmap(heap_seg->src, heap_seg->size);
+> -
+> -	if (encl->segment_tbl)
+> +	if (encl->segment_tbl) {
+> +		heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
+> +		munmap(heap_seg->src, heap_seg->size);
 
-I think we can do better on the naming there.  Yes, this is number of
-pages which have 'SGX_ENCL_PAGE_BEING_RECLAIMED' set, but what does that
-*mean*?  What are the implications?
+This probably deserves a comment linking heap_seg->src and
+encl->segment_tbl together. They _look_ independent here.
 
-For instance, 'backing_pages_allocated' would imply that there are
-future backing pages to use (or clean up).
-
->  		mutex_lock(&encl_page->encl->lock);
->  		encl_page->desc |= SGX_ENCL_PAGE_BEING_RECLAIMED;
->  		mutex_unlock(&encl_page->encl->lock);
-> @@ -437,6 +440,9 @@ static void sgx_reclaim_pages(void)
->  		chunk[i] = NULL;
->  	}
+>  		free(encl->segment_tbl);
+> +	}
 >  
-> +	if (!pages_being_reclaimed)
-> +		return ret;
-
-I think this needs a comment.  It will return the error from the *last*
-failure of sgx_encl_get_backing().  That's fine, I guess, but it's a bit
-weird because there could have been 100 errors and the first 99 errors
-are ignored.
-
->  	for (i = 0; i < cnt; i++) {
->  		epc_page = chunk[i];
->  		if (epc_page)
-> @@ -463,6 +469,7 @@ static void sgx_reclaim_pages(void)
->  		spin_unlock(&node->lock);
->  		atomic_long_inc(&sgx_nr_free_pages);
->  	}
-> +	return ret;
+>  	memset(encl, 0, sizeof(*encl));
 >  }
-
-
-Let's say cnt=2.  The first run through the loop does
-sgx_encl_get_backing() and increments pages_being_reclaimed.  The second
-run through the loop hits an error, sets ret=-ESOMETHING.  The loop
-terminates.
-
-	if (!pages_being_reclaimed) <-- false
-		return ret;
-
-	... keep running
-
-Then, we get to the bottom of the function.  One page was reclaimed.
-Success!  But, ret=-ESOMETHING.  sgx_reclaim_pages() will return an error.
-
-Right?
-
-I think this is structured wrong.  In the end, we want to know whether
-sgx_reclaim_pages() made any progress.  Let's have it return *that*.
-How many pages did it successfully reclaim?
-
-That has some really nice properties, especially if we wait until the
-last possible moment to manipulate the count.  Perhaps:
-
-static int sgx_reclaim_pages(void)
-{
-	...
-	int nr_pages_reclaimed = 0;
-	...
-
-	// The last loop:
-        for (i = 0; i < cnt; i++) {
-                epc_page = chunk[i];
-                if (!epc_page)
-                        continue;
-		...
-                atomic_long_inc(&sgx_nr_free_pages);
-		nr_pages_reclaimed++
-        }
-
-	return nr_pages_reclaimed;
-}
-
-That makes it *blatantly* obvious what the function returns since the
-only manipulation of 'nr_pages_reclaimed' is right next to the return.
-It also makes the function resilient to any new points of failure.
-Let's say that we want to check for sgx_reclaimer_block() failures.
-With this patch's approach, we have to add a new check and return for
-"pages_being_reclaimed", or even an entirely new counter.
-
-With the approach I'm suggesting, it "just works".
-
->  static bool sgx_should_reclaim(unsigned long watermark)
-> @@ -636,6 +643,7 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
->  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
->  {
->  	struct sgx_epc_page *page;
-> +	int ret;
->  
->  	for ( ; ; ) {
->  		page = __sgx_alloc_epc_page();
-> @@ -657,7 +665,11 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
->  			break;
->  		}
->  
-> -		sgx_reclaim_pages();
-> +		ret = sgx_reclaim_pages();
-> +		if (ret) {
-> +			page = ERR_PTR(-ENOMEM);
-> +			break;
-> +		}
->  		cond_resched();
->  	}
-
-So, we go to the trouble of plumbing a real error code out of
-sgx_reclaim_pages(), but then throw it away here.  Why?
 
