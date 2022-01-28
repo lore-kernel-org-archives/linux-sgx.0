@@ -2,69 +2,67 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF48C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jan 2022 07:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6599C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jan 2022 01:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237066AbiA0HCH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 27 Jan 2022 02:02:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237047AbiA0HCH (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Jan 2022 02:02:07 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1262CC061714;
-        Wed, 26 Jan 2022 23:02:07 -0800 (PST)
+        id S232096AbiA1BTo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 27 Jan 2022 20:19:44 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:55362 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345005AbiA1BTo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Jan 2022 20:19:44 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AF91561984;
-        Thu, 27 Jan 2022 07:02:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBACEC340E4;
-        Thu, 27 Jan 2022 07:02:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8BBA461D9C;
+        Fri, 28 Jan 2022 01:19:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F604C340E4;
+        Fri, 28 Jan 2022 01:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643266926;
-        bh=FEDscaRYBQwJH6GLsPAmvTFyqeo2iRJEKEQWnaCfndk=;
+        s=k20201202; t=1643332783;
+        bh=uCxmkv3MsmS5VB5Uv/OVhQoVUNbJy7UDQlZjt6hiAaI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WU7bHJ1t+MRI1oX3FfPjy+aAdM8u/rg4WpIJqBp1lW6u6U0WTMeKPo+l5OvItZYxi
-         JPQtbYOryH2VacybHpaE49nZQiqtw6kgYb9mrLDz3dRQZhiqVQzNDZzjDpxC6x/oeV
-         deTAk7usORJI65R6cay+1lmUv2h43DZmmX2Mat7JnlBpil2xaC4Okqvxa8HgJxFGSn
-         9FzYynvDIPbqWnpkubyBtbswM/2EFIZhuMy3D/EvEJSaHxGBBXi1hn2ffCxIgnXCVL
-         xqJmjlGMuIV8/StJW6lElW8HpcgQ69YcHfqjt0OeChOyFs8yMyxZYQabZXyvO5POTE
-         DVmk2MDqJ2FGw==
-Date:   Thu, 27 Jan 2022 09:01:43 +0200
+        b=Swp5wEsyaGBL3jZu+pBH5cFfI4d70W75jYObACPQbTGg9lj/atw+rrc7pVpGGF6o+
+         8W5k1cT5aCX6p62R3VhjXh2zllx+rN5XQYbIevJTb77PKkyi6CyYWWQ61PJHHBf+2o
+         F2wCt8Lzeiki030oNfCJ25eGkyRv7hvwYjfE1UPUv0kKKwKoFFkWqz0raXKAUZpN85
+         I2ZT4KILVb7Bs9gMPYS+mzZrtOx6d2jn9V6em+NKZtZBbGP+Op41irXFAm4BbHYf87
+         rDdVQ2Wbj3meNvLLXCLaFto9HvsYsliDteQ53NH5UCC5bpXUvwdoS408nIw2/dJKjf
+         tDEz7XiRRKqSA==
+Date:   Fri, 28 Jan 2022 03:19:18 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v3] x86/sgx: Free backing memory after faulting the
- enclave page
-Message-ID: <YfJDV63oGmWOmO4F@iki.fi>
-References: <20220108140510.76583-1-jarkko@kernel.org>
+To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        nathaniel@profian.com, Michael Kerrisk <mtk.manpages@gmail.com>,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: Re: [PATCH v11] sgx.7: New page with overview of Software Guard
+ eXtensions (SGX)
+Message-ID: <YfNElmmBbkw1Xpfy@iki.fi>
+References: <20211211153320.17438-1-jarkko@kernel.org>
+ <c58f3951-282c-ef66-fc62-844da06c5af4@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220108140510.76583-1-jarkko@kernel.org>
+In-Reply-To: <c58f3951-282c-ef66-fc62-844da06c5af4@gmail.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Jan 08, 2022 at 04:05:10PM +0200, Jarkko Sakkinen wrote:
-> +static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-> +{
-> +	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
-> +}
+On Fri, Dec 17, 2021 at 02:50:56AM +0100, Alejandro Colomar (man-pages) wrote:
+> Hi Jarkko,
+> 
+> Please see some comments below.
+> 
+> Thanks,
+> Alex
 
-Found it.
+Thank you. I've addressed all the comments below. However, I feel that
+/dev/sgx_provision is not properly documented at all. I also think that
+Reinette's argument for v10 was fair that "remove VEPC" ioctl that QEMU
+uses should not be left out from the initial patch set.
 
-This should be 
+I'm implementing user space that doest attestation, so I rather write a
+proper description of the attestation, once it is working, rather than add
+to the number of review rounds.
 
-static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-{
-	return PFN_DOWN(encl->size) + 1 + (index * PAGE_SIZE) / sizeof(struct sgx_pcmd);
-}
-
-/Jarkko
+BR, Jarkko
