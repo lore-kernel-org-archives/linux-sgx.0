@@ -2,44 +2,44 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0603AC43217
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Feb 2022 22:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74B5C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Feb 2022 22:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240122AbiBAWrP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S232447AbiBAWrP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Tue, 1 Feb 2022 17:47:15 -0500
 Received: from mga09.intel.com ([134.134.136.24]:18697 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239860AbiBAWrP (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Tue, 1 Feb 2022 17:47:15 -0500
+        id S239234AbiBAWrO (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Tue, 1 Feb 2022 17:47:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643755635; x=1675291635;
+  t=1643755634; x=1675291634;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pkVzBF2FA4/VUakkZoRXj7x9NWg00p1UuaLfO/qP4vk=;
-  b=SLZewVWKuYTR39y1hO8JVwh6Ib/DJPBEEgmrvwwThwwm5kulB4vV7rFH
-   8I3Lhbuj0Som6Pork3gfDA6dhdd9dN/CdekrnNbHTeTKypdQ53yirYNyA
-   prnRg3NkawfzRuMI6cNkS0qcvLTOhzZY2cmkXmBPMyc4HMNsYtEE8SLHv
-   ymx4mXrvcb4DYNJTUHQ1ifO9pJzSxVo7+whA1DsEczJebbR1DzjigXsd2
-   zD29AKjuIHNd0mmVNs5svLmq/svmIfZ2q0aHJ7Ae8jVcaleOjAadG8Kl/
-   zU+r58Xuy/BHBxrNyNr94bnOjfDOeh2wvSpEpuvIRzbxH83JRcI0anEqh
+  bh=kkaZuACiZ0ejAq9qCfv3ISOiQAYfbcK3eJHzVdB5CKk=;
+  b=F8nNAN+NBuHPp+cxFDGoXaItUxccqIQMu9kXLLlWuGh5FFz01OW5Iv19
+   +lTnsXAZwhkoHJE2/tzcywVJnm3/Z4D9roVXikdfCUUMBebZHfnRMlEH0
+   85MG/+bS3VEI4311CribFtYA4sUl1XkdHKb4987bJOVaS7kMtGHJlN5jy
+   SPNCdF1QkkBcnk+w91x/YDvmjGevYRgFvtEZZk9J+yQNrP+AJnJJHNxVM
+   mSHGElrNXeLOOJYn6hri9leStgJoNjCxdEssHb37bvJ1ZDjFrHiFabLMV
+   lE8nzwMIbyxoMSzSX4fbEO5U7mloBRWn10LcBJ3LyIu1vEhoZlu3coKai
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10245"; a="247582283"
+X-IronPort-AV: E=McAfee;i="6200,9189,10245"; a="247582280"
 X-IronPort-AV: E=Sophos;i="5.88,335,1635231600"; 
-   d="scan'208";a="247582283"
+   d="scan'208";a="247582280"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2022 14:47:14 -0800
 X-IronPort-AV: E=Sophos;i="5.88,335,1635231600"; 
-   d="scan'208";a="698584744"
+   d="scan'208";a="698584742"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2022 14:47:14 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     jarkko@kernel.org, dave.hansen@linux.intel.com,
         linux-sgx@vger.kernel.org, shuah@kernel.org
 Cc:     linux-kselftest@vger.kernel.org
-Subject: [PATCH V2 3/4] selftests/sgx: Ensure enclave data available during debug print
-Date:   Tue,  1 Feb 2022 14:47:05 -0800
-Message-Id: <eaaeeb9122916d831942fc8a3043c687137314c1.1643754040.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 1/4] selftests/sgx: Fix NULL-pointer-dereference upon early test failure
+Date:   Tue,  1 Feb 2022 14:47:03 -0800
+Message-Id: <89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1643754040.git.reinette.chatre@intel.com>
 References: <cover.1643754040.git.reinette.chatre@intel.com>
@@ -49,45 +49,64 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-In support of debugging the SGX tests print details from
-the enclave and its memory mappings if any failure is encountered
-during enclave loading.
+== Background ==
 
-When a failure is encountered no data is printed because the
-printing of the data is preceded by cleanup of the data.
+The SGX selftests track parts of the enclave binaries in an array:
+encl->segment_tbl[]. That array is dynamically allocated early
+(but not first) in the test's lifetime. The array is referenced
+at the end of the test in encl_delete().
 
-Move the data cleanup after the data print.
+== Problem ==
 
-Fixes: 147172148909 ("selftests/sgx: Dump segments and /proc/self/maps only on failure")
+encl->segment_tbl[] can be NULL if the test fails before its
+allocation. That leads to a NULL-pointer-dereference in encl_delete().
+This is triggered during early failures of the selftest like if the
+enclave binary ("test_encl.elf") is deleted.
+
+== Solution ==
+
+Ensure encl->segment_tbl[] is valid before attempting to access
+its members. The offset with which it is accessed, encl->nr_segments,
+is initialized before encl->segment_tbl[] and thus considered valid
+to use after the encl->segment_tbl[] check succeeds.
+
+Fixes: 3200505d4de6 ("selftests/sgx: Create a heap for the test enclave")
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-No changes since V1.
+Changes since V1:
+- Rewrite commit message (Dave).
 
- tools/testing/selftests/sgx/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/sgx/load.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index a7cd2c3e6f7e..b0bd95a4730d 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -186,8 +186,6 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
- 	return true;
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index 9d4322c946e2..006b464c8fc9 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -21,7 +21,7 @@
  
- err:
--	encl_delete(encl);
+ void encl_delete(struct encl *encl)
+ {
+-	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
++	struct encl_segment *heap_seg;
+ 
+ 	if (encl->encl_base)
+ 		munmap((void *)encl->encl_base, encl->encl_size);
+@@ -32,10 +32,11 @@ void encl_delete(struct encl *encl)
+ 	if (encl->fd)
+ 		close(encl->fd);
+ 
+-	munmap(heap_seg->src, heap_seg->size);
 -
- 	for (i = 0; i < encl->nr_segments; i++) {
- 		seg = &encl->segment_tbl[i];
+-	if (encl->segment_tbl)
++	if (encl->segment_tbl) {
++		heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
++		munmap(heap_seg->src, heap_seg->size);
+ 		free(encl->segment_tbl);
++	}
  
-@@ -208,6 +206,8 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
- 
- 	TH_LOG("Failed to initialize the test enclave.\n");
- 
-+	encl_delete(encl);
-+
- 	return false;
+ 	memset(encl, 0, sizeof(*encl));
  }
- 
 -- 
 2.25.1
 
