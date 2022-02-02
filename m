@@ -2,65 +2,65 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405B1C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Feb 2022 18:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E49C433EF
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Feb 2022 18:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbiBBSBZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Feb 2022 13:01:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34868 "EHLO
+        id S236025AbiBBSDV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Feb 2022 13:03:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232155AbiBBSBZ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Feb 2022 13:01:25 -0500
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50592C06173B
-        for <linux-sgx@vger.kernel.org>; Wed,  2 Feb 2022 10:01:25 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id w7so63109ioj.5
-        for <linux-sgx@vger.kernel.org>; Wed, 02 Feb 2022 10:01:25 -0800 (PST)
+        with ESMTP id S229744AbiBBSDU (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Feb 2022 13:03:20 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AEF6C06173B
+        for <linux-sgx@vger.kernel.org>; Wed,  2 Feb 2022 10:03:20 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id n17so76563iod.4
+        for <linux-sgx@vger.kernel.org>; Wed, 02 Feb 2022 10:03:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rs6cylvIq9qI+0M8hTCu9FcoUVmSzH0x8j8OjYEAN3c=;
-        b=R1IlwvcrOMGu4WNCG8qm9arYJF2GN5LO7mzw/i8cvKjjtLdVDPBARchopPtNE3hk4e
-         X8y1mUNSdNX5iTgsGFV+v1kRUf7tzd20ekyCqb6kOJbMfIihYc5gCbDV4b0q0M1H4cVS
-         C3xmnta+T6jQvkLR+7iutP2LOTvzRzDS+Qb1I=
+        bh=SI1shEwOrMkmq2fon/SPYzxLuIxmD/6oDSkyJhsld/s=;
+        b=VYXEdwzhlRZAhmyKOsQKpqq7IikInC9lQzt8vPumRq3SCSIS0EyKjXWyjcPOvwi7AU
+         GF9ALa4xHXdpkGkkH+bBrYfZ18PhwiV3Zz807BOmVlf9+z8a6ut2/9dtgNTTLRV/7TQQ
+         DQASI3+WsxjE34ZaO0IGSfVFoICsh7as7npZk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rs6cylvIq9qI+0M8hTCu9FcoUVmSzH0x8j8OjYEAN3c=;
-        b=FVRti2mZECjp9UiGcMvvYGrysAPcyc0ReVzm9uxS18YFP3+gZ/xd0CxXO2+3UhjlbH
-         vMRHySDefILuaNlSOCBCvjjk+fekWyHpMYxwS2prcEZgeAfO4RkpW+VWF7HXoZGlmD+v
-         QzFYSIaWECoUW5VMV+LGT8G4wBf+/HLFWFmCa8HxO1UBwu3zeYHAE/pAutszO8+JUqKR
-         1HzVk4WyaZBykTQuJIViOC52zFeWpe8HYtlkfMzI2bne9/v16FtWsfbqPWRJCrNjq0OI
-         l/E88fM2DO6+PpIVc1EIXX7KporfHJcV7DyDQhnNyy1AE7CQ2GxQvLbze01OfKn8/Ihc
-         yaKA==
-X-Gm-Message-State: AOAM531ji3FM1YJ2tabug5i62QvZ4DVbqmD67LWQlHygljHiWXc/92cn
-        tqN8l6cSV45NVBC/Hyrwz4bcCg==
-X-Google-Smtp-Source: ABdhPJzqoR0cwM2uEmbGvwhyKMdRHr8SgxZk4Jo2dWgEyMznbgfy6zWbJsZO9hKOuvQugS6pu48dmg==
-X-Received: by 2002:a05:6638:2587:: with SMTP id s7mr8951598jat.315.1643824884656;
-        Wed, 02 Feb 2022 10:01:24 -0800 (PST)
+        bh=SI1shEwOrMkmq2fon/SPYzxLuIxmD/6oDSkyJhsld/s=;
+        b=6O6gmYFKfwJA25OijCnzlMPv8TeCkrjGW7T+WEZXsOfF1DFrQtFP3lk7k3/Mg7H6YC
+         F4BxxfajQJkuFDLt7vlCCH5HzymSHEE2znwt6Ney4jkd5wdmH0MMu4HGJCj6zTwbJLbn
+         9lAfwNb6fVeeXue0XxsPQJTCHgDemeRrClSfiA/rAo1SY5YuQzPCV66jNzNu+C1+YEYK
+         FVR4aDhvu3x0aKlWirfynIK3UCXKNYKtya4rFSNIlJMhkqurQY38dALI9mvI9YIlrmbb
+         Z8fq+xck+DfyUZp7hRSUWbkoYM3+vLhH8Synpqi9XF4oz5bgMTj6KZiQ/v7pHFpRF5UP
+         B86w==
+X-Gm-Message-State: AOAM532+1bE65rmCOoH5AwBH4E9C2aOaXlIy5GBpafR6/uF0uKHeELHP
+        WkkWFGp7s1rb7ENddM5Ek205kg==
+X-Google-Smtp-Source: ABdhPJzB44zSHiZP6Q5KDJoX6x/kno+8nM3uBcm6ZA4ksTVVijnP1B9QjQ3E4YJtSuBJg4PO4z7NXw==
+X-Received: by 2002:a05:6638:3e8:: with SMTP id s8mr12350195jaq.284.1643824999049;
+        Wed, 02 Feb 2022 10:03:19 -0800 (PST)
 Received: from [192.168.1.128] ([71.205.29.0])
-        by smtp.gmail.com with ESMTPSA id k14sm22128397ilv.74.2022.02.02.10.01.22
+        by smtp.gmail.com with ESMTPSA id a6sm2569336iow.22.2022.02.02.10.03.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Feb 2022 10:01:24 -0800 (PST)
-Subject: Re: [PATCH V2 1/4] selftests/sgx: Fix NULL-pointer-dereference upon
- early test failure
+        Wed, 02 Feb 2022 10:03:18 -0800 (PST)
+Subject: Re: [PATCH V2 2/4] selftests/sgx: Do not attempt enclave build
+ without valid enclave
 To:     Reinette Chatre <reinette.chatre@intel.com>, jarkko@kernel.org,
         dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
         shuah@kernel.org
 Cc:     linux-kselftest@vger.kernel.org,
         Shuah Khan <skhan@linuxfoundation.org>
 References: <cover.1643754040.git.reinette.chatre@intel.com>
- <89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com>
+ <4e4ea6d70c286c209964bec1e8d29ac8e692748b.1643754040.git.reinette.chatre@intel.com>
 From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <b8ee2381-d1a2-89c6-d199-15b0fdba0553@linuxfoundation.org>
-Date:   Wed, 2 Feb 2022 11:01:22 -0700
+Message-ID: <f6124d90-1036-0eef-b64a-94072302dd44@linuxfoundation.org>
+Date:   Wed, 2 Feb 2022 11:03:17 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com>
+In-Reply-To: <4e4ea6d70c286c209964bec1e8d29ac8e692748b.1643754040.git.reinette.chatre@intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,72 +69,38 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 2/1/22 3:47 PM, Reinette Chatre wrote:
-> == Background ==
+> It is not possible to build an enclave if it was not possible to load
+> the binary from which it should be constructed. Do not attempt
+> to make further progress but instead return with failure. A
+> "return false" from setup_test_encl() is expected to trip an
+> ASSERT_TRUE() and abort the rest of the test.
 > 
-> The SGX selftests track parts of the enclave binaries in an array:
-> encl->segment_tbl[]. That array is dynamically allocated early
-> (but not first) in the test's lifetime. The array is referenced
-> at the end of the test in encl_delete().
-> 
-> == Problem ==
-> 
-> encl->segment_tbl[] can be NULL if the test fails before its
-> allocation. That leads to a NULL-pointer-dereference in encl_delete().
-> This is triggered during early failures of the selftest like if the
-> enclave binary ("test_encl.elf") is deleted.
-> 
-> == Solution ==
-> 
-
-"==" usage looks a bit odd in the change log.
-  
-> Ensure encl->segment_tbl[] is valid before attempting to access
-> its members. The offset with which it is accessed, encl->nr_segments,
-> is initialized before encl->segment_tbl[] and thus considered valid
-> to use after the encl->segment_tbl[] check succeeds.
-> 
-> Fixes: 3200505d4de6 ("selftests/sgx: Create a heap for the test enclave")
+> Fixes: 1b35eb719549 ("selftests/sgx: Encpsulate the test enclave creation")
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 > ---
 > Changes since V1:
-> - Rewrite commit message (Dave).
+> - Add Acked-by from Dave.
+> - Detail in commit log what callers will see with this change (Dave).
 > 
->   tools/testing/selftests/sgx/load.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
+>   tools/testing/selftests/sgx/main.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-> index 9d4322c946e2..006b464c8fc9 100644
-> --- a/tools/testing/selftests/sgx/load.c
-> +++ b/tools/testing/selftests/sgx/load.c
-> @@ -21,7 +21,7 @@
+> diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+> index 370c4995f7c4..a7cd2c3e6f7e 100644
+> --- a/tools/testing/selftests/sgx/main.c
+> +++ b/tools/testing/selftests/sgx/main.c
+> @@ -147,6 +147,7 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+>   	if (!encl_load("test_encl.elf", encl, heap_size)) {
+>   		encl_delete(encl);
+>   		TH_LOG("Failed to load the test enclave.\n");
+> +		return false;
+>   	}
 >   
->   void encl_delete(struct encl *encl)
->   {
-> -	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
-> +	struct encl_segment *heap_seg;
->   
->   	if (encl->encl_base)
->   		munmap((void *)encl->encl_base, encl->encl_size);
-> @@ -32,10 +32,11 @@ void encl_delete(struct encl *encl)
->   	if (encl->fd)
->   		close(encl->fd);
->   
-> -	munmap(heap_seg->src, heap_seg->size);
-> -
-> -	if (encl->segment_tbl)
-> +	if (encl->segment_tbl) {
-> +		heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
-> +		munmap(heap_seg->src, heap_seg->size);
->   		free(encl->segment_tbl);
-> +	}
->   
->   	memset(encl, 0, sizeof(*encl));
->   }
+>   	if (!encl_measure(encl))
 > 
-
-The rest looks good to me. I can take this through kselftest tree, if not,
-
 Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
 thanks,
 -- Shuah
+
