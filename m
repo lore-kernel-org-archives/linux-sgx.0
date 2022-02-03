@@ -2,123 +2,270 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D06C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Feb 2022 19:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B75DC433F5
+	for <linux-sgx@archiver.kernel.org>; Thu,  3 Feb 2022 18:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235794AbiBBTlV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Feb 2022 14:41:21 -0500
-Received: from mga06.intel.com ([134.134.136.31]:48444 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229889AbiBBTlS (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Wed, 2 Feb 2022 14:41:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643830878; x=1675366878;
+        id S1353316AbiBCSQC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 3 Feb 2022 13:16:02 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:12263 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353310AbiBCSQA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 3 Feb 2022 13:16:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1643912160; x=1675448160;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=H7G+M9z2UW1EGl0N9AVQnxh/5j9NciiuSvnbaYbcXME=;
-  b=L5PJKh4ZvwMOvfD1VGIT161kzHYpbqdzR7V1oC7sEP3McM136y/I9otK
-   soNcKdht6eEBYXZX0sZaLAiDA8mkX2NNferZw/l/QzsTr88T7NpQ/2XXT
-   jBMuwQnUoD6+J1ESjPHm9WQPTYfA6itGImHeP8IPQtrsUiwcgyBHwNXEm
-   eamzQFOkFYZk7kYtzevOXL4ZOBVae4QI2kRkBo9VJJLvvkkWQuquJ/cPJ
-   exsapFKddeDh0ypDVVd7e8a1aSpMmOjl16B5yvc8znYHH9CWPNuY0o1hV
-   lktUuuCjvq1XJdmibAQmgjVvwNfNQVfDRO0SfnMifMPFpkNJmaW+zuDjl
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10246"; a="308734863"
-X-IronPort-AV: E=Sophos;i="5.88,337,1635231600"; 
-   d="scan'208";a="308734863"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2022 11:41:18 -0800
-X-IronPort-AV: E=Sophos;i="5.88,337,1635231600"; 
-   d="scan'208";a="523623678"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2022 11:41:18 -0800
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     tony.luck@intel.com, dave.hansen@linux.intel.com,
-        jarkko@kernel.org, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH V3] x86/sgx: Add poison handling to reclaimer
-Date:   Wed,  2 Feb 2022 11:41:12 -0800
-Message-Id: <dcc95eb2aaefb042527ac50d0a50738c7c160dac.1643830353.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
+  bh=P04UnRBV76MpDpOOK6q6643kAlnLXt09lfQX/PkSX+E=;
+  b=b5GAs4ypYj4piUVQuEYQ01A1DKTQs3KFxSBReYuERvIvozHkvwLILs28
+   RUn82lsA9zDrVIa7mV/Jnouj0mbbaJtHgv72gIUH64ovMHuhC05PvxAZx
+   gjTYAWJYDhaAj5fLJHg3mVOiYcR6DsLXDLP77uvbXqs+eEdXxIaBJQAig
+   s=;
+X-IronPort-AV: E=Sophos;i="5.88,340,1635206400"; 
+   d="scan'208";a="175354490"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-iad-1d-54a073b7.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP; 03 Feb 2022 18:15:49 +0000
+Received: from EX13D07EUA003.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
+        by email-inbound-relay-iad-1d-54a073b7.us-east-1.amazon.com (Postfix) with ESMTPS id 75E19A28C2;
+        Thu,  3 Feb 2022 18:15:45 +0000 (UTC)
+Received: from dev-dsk-faresx-1b-818bcd8f.eu-west-1.amazon.com (10.43.160.132)
+ by EX13D07EUA003.ant.amazon.com (10.43.165.176) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.28; Thu, 3 Feb 2022 18:15:39 +0000
+From:   Fares Mehanna <faresx@amazon.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+CC:     <x86@kernel.org>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+        Fares Mehanna <faresx@amazon.de>
+Subject: [PATCH] KVM: VMX: pass TME information to guests
+Date:   Thu, 3 Feb 2022 18:14:32 +0000
+Message-ID: <20220203181432.34911-1-faresx@amazon.de>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.43.160.132]
+X-ClientProxiedBy: EX13D11UWB001.ant.amazon.com (10.43.161.53) To
+ EX13D07EUA003.ant.amazon.com (10.43.165.176)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The SGX reclaimer code lacks page poison handling in its main
-free path. This can lead to avoidable machine checks if a
-poisoned page is freed and reallocated instead of being
-isolated.
+Guests running on IceLake have TME-EN disabled in CPUID, and they can't read TME
+related MSRs [IA32_TME_CAPABILITY, IA32_TME_ACTIVATE, IA32_TME_EXCLUDE_MASK,
+IA32_TME_EXCLUDE_BASE].
 
-A troublesome scenario is:
- 1. Machine check (#MC) occurs (asynchronous, !MF_ACTION_REQUIRED)
- 2. arch_memory_failure() is eventually called
- 3. (SGX) page->poison set to 1
- 4. Page is reclaimed
- 5. Page added to normal free lists by sgx_reclaim_pages()
-    ^ This is the bug (poison pages should be isolated on the
-    sgx_poison_page_list instead)
- 6. Page is reallocated by some innocent enclave, a second (synchronous)
-    in-kernel #MC is induced, probably during EADD instruction.
-    ^ This is the fallout from the bug
+So guests don't know if they are running with TME enabled or not.
 
-(6) is unfortunate and can be avoided by replacing the open coded
-enclave page freeing code in the reclaimer with sgx_free_epc_page()
-to obtain support for poison page handling that includes placing the
-poisoned page on the correct list.
+In this patch, TME information is passed to the guest if the host has `TME-EN`
+enabled in CPUID and TME MSRs are locked and the exclusion range is disabled.
 
-Fixes: d6d261bded8a ("x86/sgx: Add new sgx_epc_page flag bit to mark free pages")
-Fixes: 992801ae9243 ("x86/sgx: Initial poison handling for dirty and free pages")
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+This will guarantee that hardware supports TME, MSRs are locked, so host can't
+change them and exclusion range is disabled, so TME rules apply on all host
+memory.
+
+In IA32_TME_CAPABILITY and IA32_TME_ACTIVATE we mask out the reserved bits and
+MKTME related bits.
+
+So in IA32_TME_CAPABILITY, we are passing:
+Bit[0]:  Support for AES-XTS 128-bit encryption algorithm
+Bit[2]:  Support for AES-XTS 256-bit encryption algorithm
+Bit[31]: TME encryption bypass supported
+
+And in IA32_TME_ACTIVATE, we are passing:
+Bit[0]:   Lock RO
+Bit[1]:   TME Enable RWL
+Bit[2]:   Key select
+Bit[3]:   Save TME key for Standby
+Bit[4:7]: Encryption Algorithm
+Bit[31]:  TME Encryption Bypass Enable
+
+However IA32_TME_EXCLUDE_MASK and IA32_TME_EXCLUDE_BASE are read by the guest as
+zero, since we will only pass TME information if the exclusion range is
+disabled.
+
+Those information are helpful for the guest to determine if TME is enabled by
+the BIOS or not.
+
+Signed-off-by: Fares Mehanna <faresx@amazon.de>
 ---
-Changes since V2:
-- V2: https://lore.kernel.org/linux-sgx/be5af586f667c7bcb8ef01286ce75675de5d100f.1642630582.git.reinette.chatre@intel.com/
-- Add Reviewed-by from Jarkko.
-- Remove unused variables.
+ arch/x86/include/asm/msr-index.h |  6 ++++++
+ arch/x86/include/asm/processor.h | 14 ++++++++++++++
+ arch/x86/kernel/cpu/intel.c      | 15 +--------------
+ arch/x86/kvm/cpuid.c             | 19 ++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.c           | 20 ++++++++++++++++++++
+ 5 files changed, 59 insertions(+), 15 deletions(-)
 
-Changes since V1:
-- V1: https://lore.kernel.org/lkml/ef74bd9548df61f77e802e7505affcfb5159c48c.1642545829.git.reinette.chatre@intel.com/
-- Complete rewrite of commit message with significant guidance from Dave
-  who provided the summary as well as troublesome scenario.
-
- arch/x86/kernel/cpu/sgx/main.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 4b41efc9e367..8e4bc6453d26 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -344,10 +344,8 @@ static void sgx_reclaim_pages(void)
- {
- 	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
- 	struct sgx_backing backing[SGX_NR_TO_SCAN];
--	struct sgx_epc_section *section;
- 	struct sgx_encl_page *encl_page;
- 	struct sgx_epc_page *epc_page;
--	struct sgx_numa_node *node;
- 	pgoff_t page_index;
- 	int cnt = 0;
- 	int ret;
-@@ -418,13 +416,7 @@ static void sgx_reclaim_pages(void)
- 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
- 		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 3faf0f97edb1..908aad1a7cad 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -438,6 +438,12 @@
+ #define MSR_RELOAD_PMC0			0x000014c1
+ #define MSR_RELOAD_FIXED_CTR0		0x00001309
  
--		section = &sgx_epc_sections[epc_page->section];
--		node = section->node;
--
--		spin_lock(&node->lock);
--		list_add_tail(&epc_page->list, &node->free_page_list);
--		spin_unlock(&node->lock);
--		atomic_long_inc(&sgx_nr_free_pages);
-+		sgx_free_epc_page(epc_page);
- 	}
++/* Memory encryption MSRs */
++#define MSR_IA32_TME_CAPABILITY		0x981
++#define MSR_IA32_TME_ACTIVATE		0x982
++#define MSR_IA32_TME_EXCLUDE_MASK	0x983
++#define MSR_IA32_TME_EXCLUDE_BASE	0x984
++
+ /*
+  * AMD64 MSRs. Not complete. See the architecture manual for a more
+  * complete list.
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 2c5f12ae7d04..28387ae7277b 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -863,4 +863,18 @@ bool arch_is_platform_page(u64 paddr);
+ #define arch_is_platform_page arch_is_platform_page
+ #endif
+ 
++/* Helpers to access TME_ACTIVATE MSR */
++#define TME_ACTIVATE_LOCKED(x)		((x) & 0x1)
++#define TME_ACTIVATE_ENABLED(x)		((x) & 0x2)
++
++#define TME_ACTIVATE_POLICY(x)		(((x) >> 4) & 0xf)        /* Bits 7:4 */
++#define TME_ACTIVATE_POLICY_AES_XTS_128	0
++
++#define TME_ACTIVATE_KEYID_BITS(x)	(((x) >> 32) & 0xf)     /* Bits 35:32 */
++
++#define TME_ACTIVATE_CRYPTO_ALGS(x)	(((x) >> 48) & 0xffff)    /* Bits 63:48 */
++#define TME_ACTIVATE_CRYPTO_AES_XTS_128	1
++
++#define TME_EXCLUSION_ENABLED(x)	((x) & 0x800) /* Bit 11 */
++
+ #endif /* _ASM_X86_PROCESSOR_H */
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 8321c43554a1..46ad006089a3 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -14,6 +14,7 @@
+ 
+ #include <asm/cpufeature.h>
+ #include <asm/msr.h>
++#include <asm/processor.h>
+ #include <asm/bugs.h>
+ #include <asm/cpu.h>
+ #include <asm/intel-family.h>
+@@ -492,20 +493,6 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
+ #endif
  }
  
+-#define MSR_IA32_TME_ACTIVATE		0x982
+-
+-/* Helpers to access TME_ACTIVATE MSR */
+-#define TME_ACTIVATE_LOCKED(x)		(x & 0x1)
+-#define TME_ACTIVATE_ENABLED(x)		(x & 0x2)
+-
+-#define TME_ACTIVATE_POLICY(x)		((x >> 4) & 0xf)	/* Bits 7:4 */
+-#define TME_ACTIVATE_POLICY_AES_XTS_128	0
+-
+-#define TME_ACTIVATE_KEYID_BITS(x)	((x >> 32) & 0xf)	/* Bits 35:32 */
+-
+-#define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	/* Bits 63:48 */
+-#define TME_ACTIVATE_CRYPTO_AES_XTS_128	1
+-
+ /* Values for mktme_status (SW only construct) */
+ #define MKTME_ENABLED			0
+ #define MKTME_DISABLED			1
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 28be02adc669..c5a18527f099 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -84,6 +84,22 @@ static inline struct kvm_cpuid_entry2 *cpuid_entry2_find(
+ 	return NULL;
+ }
+ 
++static bool kvm_tme_supported(void)
++{
++	u64 tme_activation, tme_exclusion;
++
++	if (!feature_bit(TME))
++		return false;
++
++	if (rdmsrl_safe(MSR_IA32_TME_EXCLUDE_MASK, &tme_exclusion))
++		return false;
++	if (rdmsrl_safe(MSR_IA32_TME_ACTIVATE, &tme_activation))
++		return false;
++
++	return TME_ACTIVATE_LOCKED(tme_activation) &&
++		!TME_EXCLUSION_ENABLED(tme_exclusion);
++}
++
+ static int kvm_check_cpuid(struct kvm_vcpu *vcpu,
+ 			   struct kvm_cpuid_entry2 *entries,
+ 			   int nent)
+@@ -508,6 +524,7 @@ static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+ 
+ void kvm_set_cpu_caps(void)
+ {
++	unsigned int f_tme = kvm_tme_supported() ? F(TME) : 0;
+ #ifdef CONFIG_X86_64
+ 	unsigned int f_gbpages = F(GBPAGES);
+ 	unsigned int f_lm = F(LM);
+@@ -565,7 +582,7 @@ void kvm_set_cpu_caps(void)
+ 		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+ 		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+ 		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+-		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
++		f_tme | F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
+ 		F(SGX_LC) | F(BUS_LOCK_DETECT)
+ 	);
+ 	/* Set LA57 based on hardware capability. */
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index aca3ae2a02f3..f8cbf935cfe0 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1913,6 +1913,26 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_IA32_DEBUGCTLMSR:
+ 		msr_info->data = vmcs_read64(GUEST_IA32_DEBUGCTL);
+ 		break;
++	case MSR_IA32_TME_CAPABILITY:
++		if (!guest_cpuid_has(vcpu, X86_FEATURE_TME))
++			return 1;
++		if (rdmsrl_safe(MSR_IA32_TME_CAPABILITY, &msr_info->data))
++			return 1;
++		msr_info->data &= 0x80000005; /* Bit 0, 2, 31 */
++		break;
++	case MSR_IA32_TME_ACTIVATE:
++		if (!guest_cpuid_has(vcpu, X86_FEATURE_TME))
++			return 1;
++		if (rdmsrl_safe(MSR_IA32_TME_ACTIVATE, &msr_info->data))
++			return 1;
++		msr_info->data &= 0x800000FF; /* Bits [0-7] and Bit 31 */
++		break;
++	case MSR_IA32_TME_EXCLUDE_MASK:
++	case MSR_IA32_TME_EXCLUDE_BASE:
++		if (!guest_cpuid_has(vcpu, X86_FEATURE_TME))
++			return 1;
++		msr_info->data = 0x0;
++		break;
+ 	default:
+ 	find_uret_msr:
+ 		msr = vmx_find_uret_msr(vmx, msr_info->index);
 -- 
-2.25.1
+2.32.0
+
+
+
+
+Amazon Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
+Sitz: Berlin
+Ust-ID: DE 289 237 879
+
+
 
