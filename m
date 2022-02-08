@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692A2C3527A
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E78EC35280
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232276AbiBHBGt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:06:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59298 "EHLO
+        id S235798AbiBHBG7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:06:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344132AbiBHAqL (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:11 -0500
+        with ESMTP id S1344213AbiBHAqQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:16 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137ABC06109E;
-        Mon,  7 Feb 2022 16:46:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DF49C061A73;
+        Mon,  7 Feb 2022 16:46:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281171; x=1675817171;
+  t=1644281176; x=1675817176;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=q0vphHXpAQ7cBGzaSnch/i7jIsfuQCmDvKVvEhi6WfE=;
-  b=DqhAG0o/3gNfJdXRAurh4XCfhf0A1afodJ1xbUNkTk+ZJrfjD7NnGd8l
-   I9w5oSzPrVel+bb0ZYhQy0nvJ7NSI+g8ypV7RK33QKb65AblQkP3bUaRt
-   XofMGYwVK4HkShJM8alyhwpVz5Kq1WNGa6mIsqXXEPL14DANGOmrD6CEr
-   3FmXcrFf2cYJ7EN/EM4jnWzscKsv8BRHqaPURUpH6XzBGCA6KTcTQHEEm
-   SQ6CMV+py8stsDx4OMszqB8WORr5mUGFmFNynSZMCTJVdyumwzU0sWApq
-   MbjSSauO6ZM5qIwn2OxjYo07EZDHGjhwCdoYi26lEEK3yA48/mzui0IPP
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407937"
+  bh=jpG9hfXpHnLcADFZTQ12jgZ85kq17DbfUnpfb4LgYcQ=;
+  b=SFpFVQ5pTiisUFeTwZhD0qKgOduvaDnBALDaxUav5w86+85aQf1ypcmw
+   UwXwH+vWj/2oRiVFAIw6TubOpwkGnCDZT4IF5Zn6iK2Rnmo3OakDq8p+6
+   qx95t9TWtrCO6csy8yTtOd+K25URrXO3jrFExz6g+arM6Vk6f+DA8HJkf
+   NDCT1NRGJyoKO+6vGRn1J9B0b7FDrDHLFRd/U3ZoznxvxDW7mVpJ0DdyF
+   uvkHrqIiNQByhNel5embOIbxt6U6a1nd9A9KbULddNnnFI5vcYJrHMc3J
+   G4gH8UNsMCnoAIeazloG0M16Wfpq/FKfKYnJuKb1q+xub8vn4Z0av7rz8
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407986"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407937"
+   d="scan'208";a="232407986"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389473"
+   d="scan'208";a="499389541"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 03/32] x86/sgx: Add wrapper for SGX2 EMODT function
-Date:   Mon,  7 Feb 2022 16:45:25 -0800
-Message-Id: <794af0e3cfe04cf886304b3dd644f9b4787b7125.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 24/32] Documentation/x86: Introduce enclave runtime management section
+Date:   Mon,  7 Feb 2022 16:45:46 -0800
+Message-Id: <81387cc6cfee70a98165377f234908037e40dcf8.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,54 +56,47 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a wrapper for the EMODT ENCLS leaf function used to
-change the type of an enclave page as maintained in the
-SGX hardware's Enclave Page Cache Map (EPCM).
-
-EMODT:
-1) Updates the EPCM page type of the enclave page.
-2) Sets the MODIFIED bit in the EPCM entry of the enclave page.
-   This bit is reset by the enclave by invoking ENCLU leaf
-   function EACCEPT or EACCEPTCOPY.
-
-Access from within the enclave to the enclave page is not possible
-while the MODIFIED bit is set.
-
-After changing the enclave page type by issuing EMODT the kernel
-needs to collaborate with the hardware to ensure that no logical
-processor continues to hold a reference to the changed page. This
-is required to ensure no required security checks are circumvented
-and is required for the enclave's EACCEPT/EACCEPTCOPY to succeed.
-Ensuring that no references to the changed page remain is
-accomplished with the ETRACK flow.
+Enclave runtime management is introduced following the pattern
+of the section describing enclave building. Provide a brief
+summary of enclave runtime management, pointing to the functions
+implementing the ioctl()s that will contain details within their
+kernel-doc.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V1:
-- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
-  in three to introduce the SGX2 functions separately (Jarkko).
-- Rewrite commit message to include how the EPCM within the hardware
-  is changed by the SGX2 function as well as the calling
-  conditions (Jarkko).
+- New patch.
 
- arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/x86/sgx.rst | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 2b091912f038..7a1ecf704ec1 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -221,4 +221,10 @@ static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
- 	return __encls_ret_2(EMODPR, secinfo, addr);
- }
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+index 9df620b59f83..4059efbb4d2e 100644
+--- a/Documentation/x86/sgx.rst
++++ b/Documentation/x86/sgx.rst
+@@ -138,6 +138,22 @@ pages and establish enclave page permissions.
+                sgx_ioc_enclave_init
+                sgx_ioc_enclave_provision
  
-+/* Change the type of an EPC page. */
-+static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
-+{
-+	return __encls_ret_2(EMODT, secinfo, addr);
-+}
++Enclave runtime management
++--------------------------
 +
- #endif /* _X86_ENCLS_H */
++Systems supporting SGX2 additionally support changes to initialized
++enclaves: modifying enclave page permissions and type, and dynamically
++adding and removing of enclave pages. When an enclave accesses an address
++within its address range that does not have a backing page then a new
++regular page will be dynamically added to the enclave. The enclave is
++still required to run EACCEPT on the new page before it can be used.
++
++.. kernel-doc:: arch/x86/kernel/cpu/sgx/ioctl.c
++   :functions: sgx_ioc_enclave_relax_perm
++               sgx_ioc_enclave_restrict_perm
++               sgx_ioc_enclave_modt
++               sgx_ioc_enclave_remove_pages
++
+ Enclave vDSO
+ ------------
+ 
 -- 
 2.25.1
 
