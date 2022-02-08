@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E3CC35275
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5D9C3527B
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344134AbiBHBGo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:06:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59350 "EHLO
+        id S237416AbiBHBGu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:06:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344159AbiBHAqN (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:13 -0500
+        with ESMTP id S1344200AbiBHAqP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:15 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2EEC061355;
-        Mon,  7 Feb 2022 16:46:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A363C043180;
+        Mon,  7 Feb 2022 16:46:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281172; x=1675817172;
+  t=1644281174; x=1675817174;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=bkkbubhpgksylAdJ5GIuG4s5L7IcqFdVjXHVqGP1L64=;
-  b=j4rwqOgDot52Nje7np1wi/8/Je13o0VT+AOo9wETjk/FLDkDbKYH41Bx
-   5SjNWMUcKQWiNETCfvyeWqLFRCZ1XLfOdt2DXWMPzhxxOlzuIpLAhNLPJ
-   NT3S0O3AFF0VcAeyzDFQW652NadlbSMW16bUF84zZ7hhSiUdqcVJ9C4wa
-   5Kj8yB1m2shlgTaX2j5cqyzO83DwXJACL024jGlRMFw/qLKkz8dkKFxcF
-   fHL8cHl5I2Kz9AnBudvoiEOk9nA3CmFwf35ZH/gOwMfKXFFMjfDWuFW4F
-   ExNWBqGnEm0S1JTU2eYHzD59aernV6v8a3LGhQhcglQtFJ37DkpJj8opU
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407946"
+  bh=1A6UdSkdCK3bqLgWMEXCKbpOWOvvLhq/cAw+l+Ee07I=;
+  b=W9Z6dd9XTItOWGLB23nsu3G8Mahcz4Zs3paJTDokByW9JAy5aEPcr9Q1
+   Vd+xRDrxCL3uWlEZ69JJNwq4Skgdmoqc9WhlP9JZ+tzDfOhKUjZhwNXrP
+   YG9lUZumy0sllJtu10ixE5isTxDZ0Xufj9AV3v9m1QijuekkWMSjkjOBG
+   TgTcHakk4EKu8Muw1LhrZ2X9dIRN/UJ/U/l05fQebik8XqwBLwhiw6XCV
+   E5CtTdnkBNpGVT0RcH8RHu+oEFpeZt0SKQ467XNsWt6SarxUHfblyVuvG
+   4BFuoi0XDjJu9zpe+qtdwDKf3g8OwKaUv0Q8+TcIW8sBScgg0hPzrCIzj
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407970"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407946"
+   d="scan'208";a="232407970"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389486"
+   d="scan'208";a="499389523"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 07/32] x86/sgx: Add pfn_mkwrite() handler for present PTEs
-Date:   Mon,  7 Feb 2022 16:45:29 -0800
-Message-Id: <00f26961350fcbc27f1b6e0ccb24532876705289.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 18/32] selftests/sgx: Add test for TCS page permission changes
+Date:   Mon,  7 Feb 2022 16:45:40 -0800
+Message-Id: <6666b212b8ab33ad2c0546cd5dc42b8beb7a1605.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,165 +56,111 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-By default a write page fault on a present PTE inherits the
-permissions of the VMA.
-
-When using SGX2, enclave page permissions maintained in the
-hardware's Enclave Page Cache Map (EPCM) may change after a VMA
-accessing the page is created. A VMA's permissions may thus be
-more relaxed than the EPCM permissions even though the VMA was
-originally created not to have more relaxed permissions. Following
-the default behavior during a page fault on a present PTE while
-the VMA permissions are more relaxed than the EPCM permissions would
-result in the PTE for an enclave page to be writable even
-though the page is not writable according to the EPCM permissions.
-
-The kernel should not allow writing to a page if that page is not
-writable: the PTE should accurately reflect the EPCM permissions
-while not being more relaxed than the VMA permissions.
-
-Do not blindly accept VMA permissions on a page fault due to a
-write attempt to a present PTE. Install a pfn_mkwrite() handler
-that ensures that the VMA permissions agree with the EPCM
-permissions in this regard.
-
-Before and after page fault flow scenarios
-==========================================
-
-Consider the following scenario that will be possible when using SGX2:
-* An enclave page exists with RW EPCM permissions.
-* A RW VMA maps the range spanning the enclave page.
-* The enclave page's EPCM permissions are changed to read-only.
-* There is no PTE for the enclave page.
-
-Considering that the PTE is not present in the scenario,
-user space will observe the following when attempting to write to the
-enclave page from within the enclave:
- 1) Instruction writing to enclave page is run from within the enclave.
- 2) A page fault with second and third bits set (0x6) is encountered
-    and handled by the SGX handler sgx_vma_fault() that installs a
-    read-only page table entry following previous patch that installs
-    a PTE with permissions that VMA and enclave agree on
-    (read-only in this case).
- 3) Instruction writing to enclave page is re-attempted.
- 4) A page fault with first three bits set (0x7) is encountered and
-    transparently (from SGX driver and user space perspective) handled
-    by the kernel with the PTE made writable because the VMA is
-    writable.
- 5) Instruction writing to enclave page is re-attempted.
- 6) Since the EPCM permissions prevents writing to the page a new page
-    fault is encountered, this time with the SGX flag set in the error
-    code (0x8007). No action is taken by the kernel for this page fault
-    and execution returns to user space.
- 7) Typically such a fault will be passed on to an application with a
-    signal but if the enclave is entered with the vDSO function provided
-    by the kernel then user space does not receive a signal but instead
-    the vDSO function returns successfully with exception information
-    (vector=14, error code=0x8007, and address) within the exception
-    fields within the vDSO function's struct sgx_enclave_run.
-
-As can be observed it is not possible for user space to write to an
-enclave page if that page's EPCM permissions do not allow so,
-no matter what the VMA or PTE allows.
-
-Even so, the kernel should not allow writing to a page if that page is
-not writable. The PTE should accurately reflect the EPCM permissions.
-
-With a pfn_mkwrite() handler that ensures that the VMA permissions
-agree with the EPCM permissions user space observes the following
-when attempting to write to the enclave page from within the enclave:
- 1) Instruction writing to enclave page is run from within the enclave.
- 2) A page fault with second and third bits set (0x6) is encountered
-    and handled by the SGX handler sgx_vma_fault() that installs a
-    read-only page table entry following previous patch that installs
-    a PTE with permissions that VMA and enclave agree on
-    (read-only in this case).
- 3) Instruction writing to enclave page is re-attempted.
- 4) A page fault with first three bits set (0x7) is encountered and
-    passed to the pfn_mkwrite() handler for consideration. The handler
-    determines that the page should not be writable and returns SIGBUS.
- 5) Typically such a fault will be passed on to an application with a
-    signal but if the enclave is entered with the vDSO function provided
-    by the kernel then user space does not receive a signal but instead
-    the vDSO function returns successfully with exception information
-    (vector=14, error code=0x7, and address) within the exception fields
-    within the vDSO function's struct sgx_enclave_run.
-
-The accurate exception information supports the SGX runtime, which is
-virtually always implemented inside a shared library, by providing
-accurate information in support of its management of the SGX enclave.
+Kernel should not allow permission changes on TCS pages. Add test to
+confirm this behavior.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V1:
-- Highlight in commit message that the behavior cannot happen in
-  existing code but instead is behavior that becomes possible with SGX2
-  (Jarkko).
-- Reword commit message and remove the Q&A format (Jarkko).
+- Adapt test to the kernel interface changes: the ioctl() name change
+  and providing entire secinfo as parameter.
+- Rewrite error path to reduce line lengths.
 
- arch/x86/kernel/cpu/sgx/encl.c | 42 ++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ tools/testing/selftests/sgx/main.c | 74 ++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index b6105d9e7c46..1ba01c75a579 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -184,6 +184,47 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
- 	return VM_FAULT_NOPAGE;
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 4f348ed1dc29..1398cd1b0983 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -121,6 +121,24 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
+ 	return NULL;
  }
  
 +/*
-+ * A fault occurred while writing to a present enclave PTE. Since PTE is
-+ * present this will not be handled by sgx_vma_fault(). VMA may allow
-+ * writing to the page while enclave (as based on EPCM permissions) does
-+ * not. Do not follow the default of inheriting VMA permissions in this
-+ * regard, ensure enclave also allows writing to the page.
++ * Return the offset in the enclave where the TCS segment can be found.
++ * The first RW segment loaded is the TCS.
 + */
-+static vm_fault_t sgx_vma_pfn_mkwrite(struct vm_fault *vmf)
++static off_t encl_get_tcs_offset(struct encl *encl)
 +{
-+	unsigned long addr = (unsigned long)vmf->address;
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct sgx_encl_page *entry;
-+	struct sgx_encl *encl;
-+	vm_fault_t ret = 0;
++	int i;
 +
-+	encl = vma->vm_private_data;
++	for (i = 0; i < encl->nr_segments; i++) {
++		struct encl_segment *seg = &encl->segment_tbl[i];
 +
-+	/*
-+	 * It's very unlikely but possible that allocating memory for the
-+	 * mm_list entry of a forked process failed in sgx_vma_open(). When
-+	 * this happens, vm_private_data is set to NULL.
-+	 */
-+	if (unlikely(!encl))
-+		return VM_FAULT_SIGBUS;
-+
-+	mutex_lock(&encl->lock);
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
++		if (i == 0 && seg->prot == (PROT_READ | PROT_WRITE))
++			return seg->offset;
 +	}
 +
-+	if (!(entry->vm_max_prot_bits & VM_WRITE))
-+		ret = VM_FAULT_SIGBUS;
-+
-+out:
-+	mutex_unlock(&encl->lock);
-+	return ret;
++	return -1;
 +}
 +
- static void sgx_vma_open(struct vm_area_struct *vma)
- {
- 	struct sgx_encl *encl = vma->vm_private_data;
-@@ -381,6 +422,7 @@ const struct vm_operations_struct sgx_vm_ops = {
- 	.mprotect = sgx_vma_mprotect,
- 	.open = sgx_vma_open,
- 	.access = sgx_vma_access,
-+	.pfn_mkwrite = sgx_vma_pfn_mkwrite,
- };
+ /*
+  * Return the offset in the enclave where the data segment can be found.
+  * The first RW segment loaded is the TCS, skip that to get info on the
+@@ -567,6 +585,62 @@ TEST_F(enclave, pte_permissions)
+ 	EXPECT_EQ(self->run.exception_addr, 0);
+ }
  
- /**
++/*
++ * Modifying permissions of TCS page should not be possible.
++ */
++TEST_F(enclave, tcs_permissions)
++{
++	struct sgx_enclave_restrict_perm ioc;
++	struct sgx_secinfo secinfo;
++	int ret, errno_save;
++
++	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
++	memset(&ioc, 0, sizeof(ioc));
++	memset(&secinfo, 0, sizeof(secinfo));
++
++	/*
++	 * Ensure kernel supports needed ioctl() and system supports needed
++	 * commands.
++	 */
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, &ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	/*
++	 * Invalid parameters were provided during sanity check,
++	 * expect command to fail.
++	 */
++	ASSERT_EQ(ret, -1);
++
++	/* ret == -1 */
++	if (errno_save == ENOTTY)
++		SKIP(return,
++		     "Kernel does not support SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS ioctl()");
++	else if (errno_save == ENODEV)
++		SKIP(return, "System does not support SGX2");
++
++	/*
++	 * Attempt to make TCS page read-only. This is not allowed and
++	 * should be prevented by the kernel.
++	 */
++	secinfo.flags = PROT_READ;
++	ioc.offset = encl_get_tcs_offset(&self->encl);
++	ioc.length = PAGE_SIZE;
++	ioc.secinfo = (unsigned long)&secinfo;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, &ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	EXPECT_EQ(ret, -1);
++	EXPECT_EQ(errno_save, EINVAL);
++	EXPECT_EQ(ioc.result, 0);
++	EXPECT_EQ(ioc.count, 0);
++}
++
+ /*
+  * Enclave page permission test.
+  *
 -- 
 2.25.1
 
