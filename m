@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B383C35294
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA896C47084
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236470AbiBHBHA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:07:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59452 "EHLO
+        id S235043AbiBHBG4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:06:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344214AbiBHAqQ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:16 -0500
+        with ESMTP id S1344120AbiBHAqK (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:10 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32273C043180;
-        Mon,  7 Feb 2022 16:46:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC29C061355;
+        Mon,  7 Feb 2022 16:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281176; x=1675817176;
+  t=1644281169; x=1675817169;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8/l41GYdNmbgP2ToNZ8AUjD5rze4OQVd0hNF/VcPaSI=;
-  b=C5UG+rrBnA6ovTiWh8pbOXgONhDGiWpnNaSQjjlpWN8fHwM9ycdYuG5b
-   ZZCjmBl0z7YX0VIsU43YlenHICLSPy3SdqmhCzoGPbgNWaEtKyrXwFXFX
-   e9r41lY/wG8tLqHtjjV/L+ZWJs4jgx6HmH1b2t+oLcQzXeEf/H5WBFZ0x
-   +nDxD4tDoFgsAfGcSPTQAbs6kUl2/uHHNn/5szAZjp9zeCtHkdnnBEx+n
-   G63ohNRlAUJpWfm8b2Qq1EhjL8hwOlfh6uk1vMtiw7KyY5T7KrJktO98x
-   OfjuGO9F4bZUw9meUmDWuHqPo+twNHNBHuY1CtoH1rOXVV5fZ/JOJpAUm
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407988"
+  bh=/RKQ1XlzkuP7ga1970y/Ps7KzLZ4JZ1dgTODJCtAQjE=;
+  b=LDtKrPcLKq7/55mpRECuZEfH2tcwcvvBHbZBcdk+y7XrAMYI0vGoQmCM
+   MqhnAEt14CByp4MeQ4HNBJvh4Gwi6n2VclUcW9/xJTXIXoUAbQNxSOCh5
+   7I+L1BcvTJAMj+lKpv6E+YK1OVT5j1b5x2quklbG3PHljThAZt3US5NSY
+   3zR11EkWvpGC/QwoSepTyFUxElKtrrnCDlZAg+8Ug4Os00cQNHKBVT17j
+   2r3Xksl41EMrK39Yyk1YvRe3T90zNqvHSPChHJNakxzgM0L8euuetzqmg
+   mk6kzsLeEFoBde9YJCscZn4CL4ez+GAuvXPZFwRdal7EgehHIC8wVQcLy
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407935"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407988"
+   d="scan'208";a="232407935"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:10 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389545"
+   d="scan'208";a="499389471"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 25/32] selftests/sgx: Introduce dynamic entry point
-Date:   Mon,  7 Feb 2022 16:45:47 -0800
-Message-Id: <65c137c875bd4da675eaba35316ff43d7cfd52f8.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 02/32] x86/sgx: Add wrapper for SGX2 EMODPR function
+Date:   Mon,  7 Feb 2022 16:45:24 -0800
+Message-Id: <05630d35c1d12400622a868f8ef6ec25f38348af.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,49 +56,88 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The test enclave (test_encl.elf) is built with two initialized
-Thread Control Structures (TCS) included in the binary. Both TCS are
-initialized with the same entry point, encl_entry, that correctly
-computes the absolute address of the stack based on the stack of each
-TCS that is also built into the binary.
+Add a wrapper for the EMODPR ENCLS leaf function used to
+restrict enclave page permissions as maintained in the
+SGX hardware's Enclave Page Cache Map (EPCM).
 
-A new TCS can be added dynamically to the enclave and requires to be
-initialized with an entry point used to enter the enclave. Since the
-existing entry point, encl_entry, assumes that the TCS and its stack
-exists at particular offsets within the binary it is not able to handle
-a dynamically added TCS and its stack.
+EMODPR:
+1) Updates the EPCM permissions of an enclave page by treating
+   the new permissions as a mask - supplying a value that relaxes
+   EPCM permissions has no effect.
+2) Sets the PR bit in the EPCM entry of the enclave page to
+   indicate that permission restriction is in progress. The bit
+   is reset by the enclave by invoking ENCLU leaf function
+   EACCEPT or EACCEPTCOPY.
 
-Introduce a new entry point, encl_dyn_entry, that initializes the
-absolute address of that thread's stack to the address immediately
-preceding the TCS itself. It is now possible to dynamically add a
-contiguous memory region to the enclave with the new stack preceding
-the new TCS. With the new TCS initialized with encl_dyn_entry as entry
-point the absolute address of the stack is computed correctly on entry.
+The enclave may access the page throughout the entire process
+if conforming to the EPCM permissions for the enclave page.
+
+After performing the permission restriction by issuing EMODPR
+the kernel needs to collaborate with the hardware to ensure that
+all logical processors sees the new restricted permissions. This
+is required for the enclave's EACCEPT/EACCEPTCOPY to succeed and
+is accomplished with the ETRACK flow.
+
+Expand enum sgx_return_code with the possible EMODPR return
+values.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-No changes since V1.
+Changes since V1:
+- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
+  in three to introduce the SGX2 functions separately (Jarkko).
+- Rewrite commit message to include how the EPCM within the hardware
+  is changed by the SGX2 function as well as the calling
+  conditions (Jarkko).
+- Make short description more specific to which permissions (EPCM
+  permissions) the function modifies.
 
- tools/testing/selftests/sgx/test_encl_bootstrap.S | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/sgx.h      | 5 +++++
+ arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-index 82fb0dfcbd23..03ae0f57e29d 100644
---- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-+++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-@@ -45,6 +45,12 @@ encl_entry:
- 	# TCS #2. By adding the value of encl_stack to it, we get
- 	# the absolute address for the stack.
- 	lea	(encl_stack)(%rbx), %rax
-+	jmp encl_entry_core
-+encl_dyn_entry:
-+	# Entry point for dynamically created TCS page expected to follow
-+	# its stack directly.
-+	lea -1(%rbx), %rax
-+encl_entry_core:
- 	xchg	%rsp, %rax
- 	push	%rax
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 3f9334ef67cd..d67810b50a81 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -65,17 +65,22 @@ enum sgx_encls_function {
  
+ /**
+  * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
++ * %SGX_EPC_PAGE_CONFLICT:	Page is being written by other ENCLS function.
+  * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
+  *				been completed yet.
+  * %SGX_CHILD_PRESENT		SECS has child pages present in the EPC.
+  * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
+  *				public key does not match IA32_SGXLEPUBKEYHASH.
++ * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
++ *				is in the PENDING or MODIFIED state.
+  * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
+  */
+ enum sgx_return_code {
++	SGX_EPC_PAGE_CONFLICT		= 7,
+ 	SGX_NOT_TRACKED			= 11,
+ 	SGX_CHILD_PRESENT		= 13,
+ 	SGX_INVALID_EINITTOKEN		= 16,
++	SGX_PAGE_NOT_MODIFIABLE		= 20,
+ 	SGX_UNMASKED_EVENT		= 128,
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index 0e22fa8f77c5..2b091912f038 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -215,4 +215,10 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+ 	return __encls_ret_3(EWB, pginfo, addr, va);
+ }
+ 
++/* Restrict the EPCM permissions of an EPC page. */
++static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
++{
++	return __encls_ret_2(EMODPR, secinfo, addr);
++}
++
+ #endif /* _X86_ENCLS_H */
 -- 
 2.25.1
 
