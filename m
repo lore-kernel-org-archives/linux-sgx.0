@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AD1C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4423C433FE
 	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240784AbiBHBHI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:07:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
+        id S240856AbiBHBHJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:07:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344208AbiBHAqQ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:16 -0500
+        with ESMTP id S1344187AbiBHAqO (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:14 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F1DC06109E;
-        Mon,  7 Feb 2022 16:46:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA721C06109E;
+        Mon,  7 Feb 2022 16:46:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281175; x=1675817175;
+  t=1644281174; x=1675817174;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nPz4+vatRmyqZEYH2Bd8uVMCoWcWywhPkxm9WqPHwrI=;
-  b=P54keFmTR633x0M/2ytgyWPMkLgWbx4cmVNQ3npGjPw92mlYZaoT3OBK
-   ZanBlteUdQLXL97WfRpqcawUv3Cc73jmM/rypQZVUu6k7a4Eld17gB0Xx
-   fhp/Gt1Zy9UBXCeaghSOSFZPQd8X9HCohRxrNgCTpx7DNibW/LjFy859p
-   uLssjV+c5Q/E+JmWvZr+lBgUA0Dy9IzaIML4BNEmSrw/GhviU6xDB0fE/
-   +oWUAafDLTB+mipA9JPXiKhiusI+p498rUhErXxECmeuL4oOsDVZq5tO7
-   +2cD8wiMDzB4/mu8P6D4D5shkUodGwqmuqQxGaPkV04eoDAMV0RteRMpT
+  bh=2dg6loMjsFSUg2XAXybpedRO1g+2h8QfirGVJBzr9kU=;
+  b=XQ1wiq2QV/9EodOrPXq8Hpru50sAC+QmbJqMGut+I817LwSdbt4YP/YI
+   x53EusNKgOPdirv6wQ/fNbCl1MtB18upazt3Go78mssEiQ2TBxewcftme
+   b2zRnCdnxvtQpym8OqMcDCECH/hvM2AjrISsCCwdnrzWS1NPfq6WSAAAy
+   t1ERhvx+TXGU3VR45Ti/jC9vIV5N2iU/R2sp7t85Z5fRHy7ZVctr3lS+V
+   Bq543q0RJN8is7VmV1AeAX15jgzhnKotEvzY/8C5LCDEuDOxVb+z9NQdj
+   Eyw17jVAbuR5ZGoqyN2qpAB2oqIbxX3gWv9JOhUIZBwFq1xen80B1ZzUb
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407974"
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407960"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407974"
+   d="scan'208";a="232407960"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389528"
+   d="scan'208";a="499389510"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 20/32] x86/sgx: Tighten accessible memory range after enclave initialization
-Date:   Mon,  7 Feb 2022 16:45:42 -0800
-Message-Id: <1b833dbce6c937f71523f4aaf4b2181b9673519f.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 14/32] x86/sgx: Keep record of SGX page type
+Date:   Mon,  7 Feb 2022 16:45:36 -0800
+Message-Id: <772dfb5a11a41fe5636d4b9320ccd818e76a7033.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,57 +56,84 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Before an enclave is initialized the enclave's memory range is unknown.
-The enclave's memory range is learned at the time it is created via the
-SGX_IOC_ENCLAVE_CREATE ioctl() where the provided memory range is
-obtained from an earlier mmap() of /dev/sgx_enclave. After an enclave
-is initialized its memory can be mapped into user space (mmap()) from
-where it can be entered at its defined entry points.
+SGX2 functions are not allowed on all page types. For example,
+ENCLS[EMODPR] is only allowed on regular SGX enclave pages and
+ENCLS[EMODPT] is only allowed on TCS and regular pages. If these
+functions are attempted on another type of page the hardware would
+trigger a fault.
 
-With the enclave's memory range known after it is initialized there is
-no reason why it should be possible to map memory outside this range.
+Keep a record of the SGX page type so that there is more
+certainty whether an SGX2 instruction can succeed and faults
+can be treated as real failures.
 
-Lock down access to the initialized enclave's memory range by denying
-any attempt to map memory outside its memory range.
+The page type is a property of struct sgx_encl_page
+and thus does not cover the VA page type. VA pages are maintained
+in separate structures and their type can be determined in
+a different way. The SGX2 instructions needing the page type do not
+operate on VA pages and this is thus not a scenario needing to
+be covered at this time.
 
-Locking down the memory range also makes adding pages to an initialized
-enclave more efficient. Pages are added to an initialized enclave by
-accessing memory that belongs to the enclave's memory range but not yet
-backed by an enclave page. If it is possible for user space to map
-memory that does not form part of the enclave then an access to this
-memory would eventually fail. Failures range from a prompt general
-protection fault if the access was an ENCLU[EACCEPT] from within the
-enclave, or a page fault via the vDSO if it was another access from
-within the enclave, or a SIGBUS (also resulting from a page fault) if
-the access was from outside the enclave.
+With the protection bits consuming 16 bits of the unsigned long
+there is room available in the bitfield to include the page type
+information without increasing the space consumed by the struct.
 
-Disallowing invalid memory to be mapped in the first place avoids
-preventable failures.
-
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V1:
-- Add comment (Jarkko).
+- Add Acked-by from Jarkko.
 
- arch/x86/kernel/cpu/sgx/encl.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/include/asm/sgx.h      | 3 +++
+ arch/x86/kernel/cpu/sgx/encl.h  | 1 +
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index d1e3ea86b902..c20100245411 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -403,6 +403,11 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index d67810b50a81..eae20fa52b93 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -239,6 +239,9 @@ struct sgx_pageinfo {
+  * %SGX_PAGE_TYPE_REG:	a regular page
+  * %SGX_PAGE_TYPE_VA:	a VA page
+  * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
++ *
++ * Make sure when making changes to this enum that its values can still fit
++ * in the bitfield within &struct sgx_encl_page
+  */
+ enum sgx_page_type {
+ 	SGX_PAGE_TYPE_SECS,
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 82e21088e68b..cb9f16d457ac 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -29,6 +29,7 @@ struct sgx_encl_page {
+ 	unsigned long desc;
+ 	unsigned long vm_max_prot_bits:8;
+ 	unsigned long vm_run_prot_bits:8;
++	enum sgx_page_type type:16;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_encl *encl;
+ 	struct sgx_va_page *va_page;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 6e7cc441156b..b8336d5d9029 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -107,6 +107,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 		set_bit(SGX_ENCL_DEBUG, &encl->flags);
  
- 	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
+ 	encl->secs.encl = encl;
++	encl->secs.type = SGX_PAGE_TYPE_SECS;
+ 	encl->base = secs->base;
+ 	encl->size = secs->size;
+ 	encl->attributes = secs->attributes;
+@@ -350,6 +351,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	 */
+ 	encl_page->encl = encl;
+ 	encl_page->epc_page = epc_page;
++	encl_page->type = (secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK) >> 8;
+ 	encl->secs_child_cnt++;
  
-+	/* Disallow mapping outside enclave's address range. */
-+	if (test_bit(SGX_ENCL_INITIALIZED, &encl->flags) &&
-+	    (start < encl->base || end > encl->base + encl->size))
-+		return -EACCES;
-+
- 	/*
- 	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
- 	 * conflict with the enclave page permissions.
+ 	if (flags & SGX_PAGE_MEASURE) {
 -- 
 2.25.1
 
