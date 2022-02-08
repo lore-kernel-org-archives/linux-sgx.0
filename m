@@ -2,99 +2,229 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0A0C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu,  3 Feb 2022 18:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FA3C43217
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353524AbiBCSlG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 3 Feb 2022 13:41:06 -0500
-Received: from mga12.intel.com ([192.55.52.136]:60318 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236478AbiBCSlE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Thu, 3 Feb 2022 13:41:04 -0500
+        id S235722AbiBHBGm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:06:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344162AbiBHAqN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:13 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A26C0612A4;
+        Mon,  7 Feb 2022 16:46:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643913664; x=1675449664;
-  h=message-id:date:mime-version:to:cc:references:from:
-   subject:in-reply-to:content-transfer-encoding;
-  bh=j1rUkWkZiHJ+AeL3YGAaC3KE5WNVPE8P8N/y8SgMX4c=;
-  b=lhid75iIwAWl1IOkhwnYlt3c4ZwNB825rjcdu4JebT2PO2jZDMuqB5hH
-   x4wc2xHQwbWl1uHxd9AHIBF5cTMskEh+TGRg9uO4o0hvJbEvX+74hp2o6
-   F51cp+VEN0XHIo90ZY0+znDUQd3vkHRTvvUELvkMCGZBWC5Wc8Xiase7C
-   MJi04uoNK5J91kqtosJs73dMgcw1z8PvG4ZVFM1fB+mho6L/EUNm4U0tp
-   bI9EBL3ouFvJItW+X5sGO62f3/uJW0hZoLXvQX3ncF82BzHR5NHq5tFc7
-   ZpiBAdu3qhDj3vSgLq6AJyUggYYDkoCJmB2w6/LJQVgidWrC9OZi6JNiX
+  t=1644281172; x=1675817172;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Stk+3fvhrUfHLDS05QiXyxq3INLSvoy9CWL37/WB/Mk=;
+  b=WlMurCTWPepPg9RaXwc7eQG62jqy/GE8a0NP7yCId50IP34mnBBWhQPO
+   tISGbEnfvt2MrKF5q1FFN+IXoF1LByxaEUyDglRdYrQJCXHpH5b1f1ZEP
+   JNOIM7xUSsKAmuCeuV/s8HC3j0Ealoth8XGUtlTFBHW5hItaBfCBn1RyX
+   C/GV9fWoO7wYILv4XOSJH7t0jiJZ+A3I0L1yn/iI1t2YB+DgBCNzqagqm
+   ib5nPfBGqKGLZPcZXu4+bvBX8PGadN0Cz/uCa5NZCa/GHI1Q1r8a2k5DH
+   /TPGClXkLb6ixSZoS2l8x52wLg1XqYoptm+qeCTUiGvGO3HJEiTjQbI3b
    A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10247"; a="228189381"
-X-IronPort-AV: E=Sophos;i="5.88,340,1635231600"; 
-   d="scan'208";a="228189381"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2022 10:40:53 -0800
-X-IronPort-AV: E=Sophos;i="5.88,340,1635231600"; 
-   d="scan'208";a="535299218"
-Received: from oshoron-mobl.amr.corp.intel.com (HELO [10.209.125.125]) ([10.209.125.125])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2022 10:40:52 -0800
-Message-ID: <6c55ac92-0470-07ba-77c0-4701c4ea7ce3@intel.com>
-Date:   Thu, 3 Feb 2022 10:40:50 -0800
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407948"
+X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
+   d="scan'208";a="232407948"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
+X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
+   d="scan'208";a="499389489"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
+        bp@alien8.de, luto@kernel.org, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org
+Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
+        cedric.xing@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 08/32] x86/sgx: x86/sgx: Add sgx_encl_page->vm_run_prot_bits for dynamic permission changes
+Date:   Mon,  7 Feb 2022 16:45:30 -0800
+Message-Id: <5136c1984544a18aadf17df040dfd8c846a22f18.1644274683.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
+References: <cover.1644274683.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Content-Language: en-US
-To:     Fares Mehanna <faresx@amazon.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "Shutemov, Kirill" <kirill.shutemov@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-References: <20220203181432.34911-1-faresx@amazon.de>
-From:   Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH] KVM: VMX: pass TME information to guests
-In-Reply-To: <20220203181432.34911-1-faresx@amazon.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/3/22 10:14, Fares Mehanna wrote:
-> This will guarantee that hardware supports TME, MSRs are locked, so host can't
-> change them and exclusion range is disabled, so TME rules apply on all host
-> memory.
+Enclave creators declare their enclave page permissions (EPCM
+permissions) at the time the pages are added to the enclave. These
+page permissions are the vetted permissible accesses of the enclave
+pages and stashed off (in struct sgx_encl_page->vm_max_prot_bits)
+for later comparison with enclave PTEs and VMAs.
 
-But, what's the point?  Guests can't trust this information.  The host
-can lie all it wants about it.
+Current permission support assume that EPCM permissions remain static
+for the lifetime of the enclave. This is about to change with the
+addition of support for SGX2 where the EPCM permissions of enclave
+pages belonging to an initialized enclave may change during the
+enclave's lifetime.
 
-Also, your assumptions about TME rules applying to *all* host memory are
-a bit aggressive.
+Support for changing of EPCM permissions should continue to respect
+the vetted maximum protection bits maintained in
+sgx_encl_page->vm_max_prot_bits. Towards this end, add
+sgx_encl_page->vm_run_prot_bits in preparation for support of
+enclave page permission changes. sgx_encl_page->vm_run_prot_bits
+reflect the active EPCM permissions of an enclave page and are not to
+exceed sgx_encl_page->vm_max_prot_bits.
 
-Even if the guest knew for sure that it was reading an MSR directly, it
-doesn't mean that any guest memory is actually TME-protected.  The
-memory could be from a non-TME range like persistent memory.  There are
-some weasel words in the spec about this:
+Two permission fields are used: sgx_encl_page->vm_run_prot_bits
+reflects the current EPCM permissions and is used to manage the page
+table entries while sgx_encl_page->vm_max_prot_bits contains the vetted
+maximum protection bits and is used to guide which EPCM permissions
+are allowed in the upcoming SGX2 permission changing support (it guides
+what values sgx_encl_page->vm_run_prot_bits may have).
 
-> Upon activation, all memory (except in TME Exclusion range) attached
-> to CPU/SoC is encrypted using AES-XTS 128 bit ephemeral key (platform
-> key) that is generated by the CPU on every boot.
+Consider this example how sgx_encl_page->vm_max_prot_bits and
+sgx_encl_page->vm_run_prot_bits are used:
 
-The important part here is "attached to the CPU/SoC".  I guess they
-don't count persistent memory as "attached".  This also obviously would
-not apply to non-CPU-attached memory that was attached by something like
-CXL[1].
+(1) Add an enclave page with secinfo of RW to an uninitialized enclave:
+    sgx_encl_page->vm_max_prot_bits = RW
+    sgx_encl_page->vm_run_prot_bits = RW
 
-The extra fun part of all this is that the architecture doesn't provide
-a way to tell if the memory is "attached to the CPU/SoC".  That makes it
-impossible to get any guarantees out of all this.
+    At this point RW VMAs would be allowed to access this page and PTEs
+    would allow write access as guided by
+    sgx_encl_page->vm_run_prot_bits.
 
-In other words, you can't trust the exclusion range in the MSR to be the
-*ONLY* non-TME-protected area.
+(2) User space invokes SGX2 to change the EPCM permissions to read-only.
+    This is allowed because sgx_encl_page->vm_max_prot_bits = RW:
+    sgx_encl_page->vm_max_prot_bits = RW
+    sgx_encl_page->vm_run_prot_bits = R
 
-1. https://www.computeexpresslink.org/
+    At this point only new read-only VMAs would be allowed to access
+    this page and PTEs would not allow write access as guided
+    by sgx_encl_page->vm_run_prot_bits.
+
+(3) User space invokes SGX2 to change the EPCM permissions to RX.
+    This will not be supported by the kernel because
+    sgx_encl_page->vm_max_prot_bits = RW:
+    sgx_encl_page->vm_max_prot_bits = RW
+    sgx_encl_page->vm_run_prot_bits = R
+
+(3) User space invokes SGX2 to change the EPCM permissions to RW.
+    This will be allowed because sgx_encl_page->vm_max_prot_bits = RW:
+    sgx_encl_page->vm_max_prot_bits = RW
+    sgx_encl_page->vm_run_prot_bits = RW
+
+    At this point RW VMAs would again be allowed to access this page
+    and PTEs would allow write access as guided by
+    sgx_encl_page->vm_run_prot_bits.
+
+struct sgx_encl_page hosting this information is maintained for each
+enclave page so the space consumed by the struct is important.
+The existing sgx_encl_page->vm_max_prot_bits is already unsigned long
+while only using three bits. Transition to a bitfield for the two
+members containing protection bits.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+Changes since V1:
+- Add snippet to Documentation/x86/sgx.rst that details the difference
+  between vm_max_prot_bits and vm_run_prot_bits (Andy and Jarkko).
+- Change subject line (Jarkko).
+- Refer to actual variables instead of using English rephrasing -
+  sgx_encl_page->vm_run_prot_bits instead of "runtime
+  protection bits" (Jarkko).
+- Add information in commit message on why two fields are needed
+  (Jarkko).
+
+ Documentation/x86/sgx.rst       | 10 ++++++++++
+ arch/x86/kernel/cpu/sgx/encl.c  |  6 +++---
+ arch/x86/kernel/cpu/sgx/encl.h  |  3 ++-
+ arch/x86/kernel/cpu/sgx/ioctl.c |  6 ++++++
+ 4 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+index 5659932728a5..9df620b59f83 100644
+--- a/Documentation/x86/sgx.rst
++++ b/Documentation/x86/sgx.rst
+@@ -99,6 +99,16 @@ The relationships between the different permission masks are:
+ * PTEs are installed to match the EPCM permissions, but not be more
+   relaxed than the VMA permissions.
+ 
++During runtime the EPCM permissions of enclave pages belonging to an
++initialized enclave can change on systems supporting SGX2. In support
++of these runtime changes the kernel maintains (for each enclave page)
++the most permissive EPCM permission mask allowed by policy as
++the ``vm_max_prot_bits`` of that page. EPCM permissions are not allowed
++to be relaxed beyond ``vm_max_prot_bits``.  The kernel also maintains
++the currently active EPCM permissions of an enclave page as its
++``vm_run_prot_bits`` to ensure PTEs and new VMAs respect the active
++EPCM permission values.
++
+ On systems supporting SGX2 EPCM permissions may change while the
+ enclave page belongs to a VMA without impacting the VMA permissions.
+ This means that a running VMA may appear to allow access to an enclave
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 1ba01c75a579..a980d8458949 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -164,7 +164,7 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	 * exceed the VMA permissions.
+ 	 */
+ 	vm_prot_bits = vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
+-	page_prot_bits = entry->vm_max_prot_bits & vm_prot_bits;
++	page_prot_bits = entry->vm_run_prot_bits & vm_prot_bits;
+ 	/*
+ 	 * Add VM_SHARED so that PTE is made writable right away if VMA
+ 	 * and EPCM are writable (no COW in SGX).
+@@ -217,7 +217,7 @@ static vm_fault_t sgx_vma_pfn_mkwrite(struct vm_fault *vmf)
+ 		goto out;
+ 	}
+ 
+-	if (!(entry->vm_max_prot_bits & VM_WRITE))
++	if (!(entry->vm_run_prot_bits & VM_WRITE))
+ 		ret = VM_FAULT_SIGBUS;
+ 
+ out:
+@@ -280,7 +280,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 	mutex_lock(&encl->lock);
+ 	xas_lock(&xas);
+ 	xas_for_each(&xas, page, PFN_DOWN(end - 1)) {
+-		if (~page->vm_max_prot_bits & vm_prot_bits) {
++		if (~page->vm_run_prot_bits & vm_prot_bits) {
+ 			ret = -EACCES;
+ 			break;
+ 		}
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index fec43ca65065..dc262d843411 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -27,7 +27,8 @@
+ 
+ struct sgx_encl_page {
+ 	unsigned long desc;
+-	unsigned long vm_max_prot_bits;
++	unsigned long vm_max_prot_bits:8;
++	unsigned long vm_run_prot_bits:8;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_encl *encl;
+ 	struct sgx_va_page *va_page;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 83df20e3e633..7e0819a89532 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -197,6 +197,12 @@ static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+ 	/* Calculate maximum of the VM flags for the page. */
+ 	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
+ 
++	/*
++	 * At time of allocation, the runtime protection bits are the same
++	 * as the maximum protection bits.
++	 */
++	encl_page->vm_run_prot_bits = encl_page->vm_max_prot_bits;
++
+ 	return encl_page;
+ }
+ 
+-- 
+2.25.1
+
