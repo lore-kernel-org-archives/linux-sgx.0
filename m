@@ -2,121 +2,117 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27F9C433FE
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34322C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 18:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241588AbiBHBH0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:07:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59384 "EHLO
+        id S240950AbiBHSsu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Feb 2022 13:48:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344185AbiBHAqO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:14 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68B7C0612A4;
-        Mon,  7 Feb 2022 16:46:13 -0800 (PST)
+        with ESMTP id S1358560AbiBHSst (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Feb 2022 13:48:49 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D4DC0612C1;
+        Tue,  8 Feb 2022 10:48:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281173; x=1675817173;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=t+GjrwHa0XMcdV/fjG6z/cisk5uWswmvo+fb9wRZs6g=;
-  b=RM2IQVu6mfyhm1FpgVKEqQ9lqLg1CbxlZdE86blrBMTal5JN/sILC/GS
-   jLMC3xmI2QHeBBvzrzmqI8n/+nM2460ADGDoP/ZUX+NYt4pAt9A/3mzxh
-   uau0NeADKmi/EOksTZVMSbc3mgrl2DJwVP/NqchqHBQfiLQQebmK5ZVYf
-   c9EWZ8Hi4iUssfufBl9/sBDMd42olX7KKNYMWOHowiCqaPpB/9nJQf2Vx
-   qlKuEHz4+op3uUUbHl8fEi1QiIlBINHTtzoeDe6RxbbPG0U7Z8s4D+X0L
-   k28UgtURDcCd/hQ9dkZh7GR3mCTO/NJhCXhde7GqPrPvV0jp5JsWpqok5
+  t=1644346129; x=1675882129;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GKYfrOdPKIidCVFdft/pVkcauP1SFgER+aJOOG3WDEA=;
+  b=nvxCrdDs4OeAnUM9i++1tL6hCNiNV1a8ZMXu2s/MV/yWXB2zsl5q/G61
+   cR3AyMXgHkhgE1wdVY7YftNxyMDaCiFAGTERLvGXYD/zrmMDkr5rUoHOR
+   bzZsILWoaMRTBOqBVQCN1uQhEFjJ6PLpOWyb2cbxm+Msg6CGClNMsTkkB
+   D0RqUTQkseeqYgAt9JvJYLEG4idlo1UwKatmXwyzChHR2wG3RHSwNJ9aA
+   IioWmKRt1h5QFFSJ/oDu/nrDG72iwpLLEbjmsgSOIWuVvZG6XRsC4NDSF
+   5uNLZ/UwS1MlXxO3ocA7Iyz/zy9RnqlSAkYHXnMTni+mxnfNLc5X4nt5v
    Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407959"
-X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407959"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
-X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389507"
+X-IronPort-AV: E=McAfee;i="6200,9189,10252"; a="236430341"
+X-IronPort-AV: E=Sophos;i="5.88,353,1635231600"; 
+   d="scan'208";a="236430341"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 10:48:14 -0800
+X-IronPort-AV: E=Sophos;i="5.88,353,1635231600"; 
+   d="scan'208";a="484914385"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 10:48:14 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
         linux-sgx@vger.kernel.org, x86@kernel.org
-Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
-        cedric.xing@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 13/32] x86/sgx: Create utility to validate user provided offset and length
-Date:   Mon,  7 Feb 2022 16:45:35 -0800
-Message-Id: <e2374b14ab79596926d0de57e6b6952304e40070.1644274683.git.reinette.chatre@intel.com>
+Cc:     vijay.dhanraj@intel.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH V3] x86/sgx: Silence softlockup detection when releasing large enclaves
+Date:   Tue,  8 Feb 2022 10:48:07 -0800
+Message-Id: <ced01cac1e75f900251b0a4ae1150aa8ebd295ec.1644345232.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
-References: <cover.1644274683.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-User provided offset and length is validated when parsing the parameters
-of the SGX_IOC_ENCLAVE_ADD_PAGES ioctl(). Extract this validation
-into a utility that can be used by the SGX2 ioctl()s that will
-also provide these values.
+Vijay reported that the "unclobbered_vdso_oversubscribed" selftest
+triggers the softlockup detector.
 
+Actual SGX systems have 128GB of enclave memory or more.  The
+"unclobbered_vdso_oversubscribed" selftest creates one enclave which
+consumes all of the enclave memory on the system. Tearing down such a
+large enclave takes around a minute, most of it in the loop where
+the EREMOVE instruction is applied to each individual 4k enclave page.
+
+Spending one minute in a loop triggers the softlockup detector.
+
+Add a cond_resched() to give other tasks a chance to run and placate
+the softlockup detector.
+
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Reported-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Tested-by: Jarkko Sakkinen <jarkko@kernel.org>  (kselftest as sanity check)
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
+Softlockup message:
+
+watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [test_sgx:11502]
+Kernel panic - not syncing: softlockup: hung tasks
+<snip>
+sgx_encl_release+0x86/0x1c0
+sgx_release+0x11c/0x130
+__fput+0xb0/0x280
+____fput+0xe/0x10
+task_work_run+0x6c/0xc0
+exit_to_user_mode_prepare+0x1eb/0x1f0
+syscall_exit_to_user_mode+0x1d/0x50
+do_syscall_64+0x46/0xb0
+entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Changes since V2:
+- V2: https://lore.kernel.org/lkml/b5e9f218064aa76e3026f778e1ad0a1d823e3db8.1643133224.git.reinette.chatre@intel.com/
+- Add Jarkko's "Reviewed-by" and "Tested-by" tags.
+
 Changes since V1:
-- New patch
+- V1: https://lore.kernel.org/lkml/1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com/
+- Add comment provided by Jarkko.
 
- arch/x86/kernel/cpu/sgx/ioctl.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/sgx/encl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 7e0819a89532..6e7cc441156b 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -378,6 +378,26 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
- 	return ret;
- }
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 001808e3901c..48afe96ae0f0 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -410,6 +410,8 @@ void sgx_encl_release(struct kref *ref)
+ 		}
  
-+/*
-+ * Ensure user provided offset and length values are valid for
-+ * an enclave.
-+ */
-+static int sgx_validate_offset_length(struct sgx_encl *encl,
-+				      unsigned long offset,
-+				      unsigned long length)
-+{
-+	if (!IS_ALIGNED(offset, PAGE_SIZE))
-+		return -EINVAL;
-+
-+	if (!length || length & (PAGE_SIZE - 1))
-+		return -EINVAL;
-+
-+	if (offset + length - PAGE_SIZE >= encl->size)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- /**
-  * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
-  * @encl:       an enclave pointer
-@@ -431,14 +451,10 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
- 	if (copy_from_user(&add_arg, arg, sizeof(add_arg)))
- 		return -EFAULT;
+ 		kfree(entry);
++		/* Invoke scheduler to prevent soft lockups. */
++		cond_resched();
+ 	}
  
--	if (!IS_ALIGNED(add_arg.offset, PAGE_SIZE) ||
--	    !IS_ALIGNED(add_arg.src, PAGE_SIZE))
--		return -EINVAL;
--
--	if (!add_arg.length || add_arg.length & (PAGE_SIZE - 1))
-+	if (!IS_ALIGNED(add_arg.src, PAGE_SIZE))
- 		return -EINVAL;
- 
--	if (add_arg.offset + add_arg.length - PAGE_SIZE >= encl->size)
-+	if (sgx_validate_offset_length(encl, add_arg.offset, add_arg.length))
- 		return -EINVAL;
- 
- 	if (copy_from_user(&secinfo, (void __user *)add_arg.secinfo,
+ 	xa_destroy(&encl->page_array);
 -- 
 2.25.1
 
