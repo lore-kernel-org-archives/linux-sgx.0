@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68310C46467
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0F2C38A02
 	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 22:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1387064AbiBHW0r (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 8 Feb 2022 17:26:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45052 "EHLO
+        id S1387059AbiBHW0q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Feb 2022 17:26:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1387026AbiBHVsu (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Feb 2022 16:48:50 -0500
+        with ESMTP id S1387031AbiBHVsw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Feb 2022 16:48:52 -0500
 Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2191C0612B8;
-        Tue,  8 Feb 2022 13:48:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 407AEC0612BC;
+        Tue,  8 Feb 2022 13:48:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644356929; x=1675892929;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GGSyh+03q9qU11wHQlvx8iReUEq1xb52fNxWSqLbH+4=;
-  b=GJz07wFvA+IoPPsN9IpyuJWWA/A2v0qbbQGPLgU/LoNFALHXmV9Ue2nN
-   2K0Occf/hrS1cXd7PrKi72PB7wLpvkEJuyYW7WL0k5vW3BJNGsGySe11W
-   nvNG5VwXnKmodjasmjYrgcSf/yC1gsetZq/dtOUdFOUybOZfOmSB0dO7B
-   YPZDQj1vbUF/h56K9QtfqRgOBwfARR/shTyMH41P9UYUUTs2DeN44/s+z
-   8a3WrHZBXcgPg5PsFd6jyGVD9Sv4YMeXHH/hSUEt7d/ZrdaMOG82MPQnz
-   uXgjWOcitxNnrkUccR2scjkK322pK0oyJetO2gSlwjnFebTfpgHBe7Sal
+  t=1644356932; x=1675892932;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=s0tX+0pl5bXcA0SPU+yggYgA8LCS4TYSxMJl38V+Muc=;
+  b=X/4Mnzc08m2lRQCs30OFD+Obo+g30ysvf4C05wOviQS7+0qC7UHLExcS
+   8QjigbILEgk9ofUxUkxK2qTGaVEggdW/94ql+9FYeF2JF+rXtoFw470ID
+   fePBugZAJpiQNcb9psfEyaWJycQSnFiOStcHZlwsjz7vqUyvaiTr+7Yme
+   HVnE1jIlN3qEJTPcThxxMc1YtwawTZR3EeieucqWTqenCYJu1JPmfr6Z0
+   nX8aES+BC0QSMFYc52EEbPQYqtzH2C6GvsjGZN1bpIDowcb0MpE0PM2MF
+   xes0XaGuEOjWIe50XCTcJz829UX6bVJSEdQnUZrlH4MM9lmA2gp0U9d01
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10252"; a="309805365"
+X-IronPort-AV: E=McAfee;i="6200,9189,10252"; a="309805368"
 X-IronPort-AV: E=Sophos;i="5.88,353,1635231600"; 
-   d="scan'208";a="309805365"
+   d="scan'208";a="309805368"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 13:48:49 -0800
 X-IronPort-AV: E=Sophos;i="5.88,353,1635231600"; 
-   d="scan'208";a="632992863"
+   d="scan'208";a="632992867"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 13:48:49 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -41,49 +41,59 @@ To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
         linux-sgx@vger.kernel.org, x86@kernel.org, shuah@kernel.org
 Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 0/4] selftests/sgx: Early enclave loading error path fixes
-Date:   Tue,  8 Feb 2022 13:48:38 -0800
-Message-Id: <cover.1644355600.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 3/4] selftests/sgx: Ensure enclave data available during debug print
+Date:   Tue,  8 Feb 2022 13:48:41 -0800
+Message-Id: <dab672f771e9b99e50c17ae2a75dc0b020cb0ce9.1644355600.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1644355600.git.reinette.chatre@intel.com>
+References: <cover.1644355600.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+In support of debugging the SGX tests print details from
+the enclave and its memory mappings if any failure is encountered
+during enclave loading.
+
+When a failure is encountered no data is printed because the
+printing of the data is preceded by cleanup of the data.
+
+Move the data cleanup after the data print.
+
+Fixes: 147172148909 ("selftests/sgx: Dump segments and /proc/self/maps only on failure")
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
 Changes since V2:
-- V2: https://lore.kernel.org/linux-sgx/cover.1643754040.git.reinette.chatre@intel.com/
-- Added Acked-by from Shuah to all patches in series.
-- Shuah is ok with these entering the kernel via tip.git:
-  https://lore.kernel.org/linux-sgx/e188c62e-f75e-2bec-b544-76063098611d@linuxfoundation.org/
-- Include x86@kernel.org and more x86 maintainers since goal is for
-  inclusion into tip.git.
+- Add Acked-by from Shuah.
 
-Changes since V1:
-- V1: https://lore.kernel.org/linux-sgx/cover.1643393473.git.reinette.chatre@intel.com/
-- All changes impact the commit messages only, no changes to code.
-- Rewrite commit message of 1/4 (Dave).
-- Detail in 2/4 commit log what callers will see with this change (Dave).
-- Add Acked-by from Dave to 2/4 and 4/4.
+ tools/testing/selftests/sgx/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hi Everybody,
-
-Please find included a few fixes that address problems encountered after
-venturing into the enclave loading error handling code of the SGX
-selftests.
-
-Reinette
-
-Reinette Chatre (4):
-  selftests/sgx: Fix NULL-pointer-dereference upon early test failure
-  selftests/sgx: Do not attempt enclave build without valid enclave
-  selftests/sgx: Ensure enclave data available during debug print
-  selftests/sgx: Remove extra newlines in test output
-
- tools/testing/selftests/sgx/load.c | 9 +++++----
- tools/testing/selftests/sgx/main.c | 9 +++++----
- 2 files changed, 10 insertions(+), 8 deletions(-)
-
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index a7cd2c3e6f7e..b0bd95a4730d 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -186,8 +186,6 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+ 	return true;
+ 
+ err:
+-	encl_delete(encl);
+-
+ 	for (i = 0; i < encl->nr_segments; i++) {
+ 		seg = &encl->segment_tbl[i];
+ 
+@@ -208,6 +206,8 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+ 
+ 	TH_LOG("Failed to initialize the test enclave.\n");
+ 
++	encl_delete(encl);
++
+ 	return false;
+ }
+ 
 -- 
 2.25.1
 
