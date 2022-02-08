@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70A9C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27F9C433FE
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237414AbiBHBHZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:07:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59306 "EHLO
+        id S241588AbiBHBH0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:07:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344145AbiBHAqM (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:12 -0500
+        with ESMTP id S1344185AbiBHAqO (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:14 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB19C061355;
-        Mon,  7 Feb 2022 16:46:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68B7C0612A4;
+        Mon,  7 Feb 2022 16:46:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281171; x=1675817171;
+  t=1644281173; x=1675817173;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=k4hx/Ud/sdDS2pZSrHiW08bbdXJjTQrEHO82BjFrkss=;
-  b=LZj5GX0t2jw0f61o3wgXTsjSHc173A4WccB2vvQg2M0SEsTztiPForKq
-   8MAliPBaSkyuNv8qV1R/xvSdpQ/sRKvKbfa1TYcqxxw43sMygboXtVKz/
-   0ksVBFULZ9dVn8G/iAqx1vUiQW6FCRKnXVc7NFAev5CxswYXtJLNUmshi
-   LLlaTxN4ejICKG6MiY1UypYFwW7uYUKTXpmMOuAY19EBWJIqg5jiiPbyX
-   ULBQV8/WiyHTrJBbX6ux4ZnBuchayL7DJeCHnT4r/ZoTv3NabUXa8MWvF
-   fTYKNPjrxlnkbOWIjorwm3ZoZkFLcf748UJXgjGjF7iFXzkhZ4o6vtipg
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407931"
+  bh=t+GjrwHa0XMcdV/fjG6z/cisk5uWswmvo+fb9wRZs6g=;
+  b=RM2IQVu6mfyhm1FpgVKEqQ9lqLg1CbxlZdE86blrBMTal5JN/sILC/GS
+   jLMC3xmI2QHeBBvzrzmqI8n/+nM2460ADGDoP/ZUX+NYt4pAt9A/3mzxh
+   uau0NeADKmi/EOksTZVMSbc3mgrl2DJwVP/NqchqHBQfiLQQebmK5ZVYf
+   c9EWZ8Hi4iUssfufBl9/sBDMd42olX7KKNYMWOHowiCqaPpB/9nJQf2Vx
+   qlKuEHz4+op3uUUbHl8fEi1QiIlBINHTtzoeDe6RxbbPG0U7Z8s4D+X0L
+   k28UgtURDcCd/hQ9dkZh7GR3mCTO/NJhCXhde7GqPrPvV0jp5JsWpqok5
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407959"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407931"
+   d="scan'208";a="232407959"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389468"
+   d="scan'208";a="499389507"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 01/32] x86/sgx: Add short descriptions to ENCLS wrappers
-Date:   Mon,  7 Feb 2022 16:45:23 -0800
-Message-Id: <8a76d614dab425c81fc40fd3f7cc5c8649fdaf7a.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 13/32] x86/sgx: Create utility to validate user provided offset and length
+Date:   Mon,  7 Feb 2022 16:45:35 -0800
+Message-Id: <e2374b14ab79596926d0de57e6b6952304e40070.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,111 +56,67 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The SGX ENCLS instruction uses EAX to specify an SGX function and
-may require additional registers, depending on the SGX function.
-ENCLS invokes the specified privileged SGX function for managing
-and debugging enclaves. Macros are used to wrap the ENCLS
-functionality and several wrappers are used to wrap the macros to
-make the different SGX functions accessible in the code.
+User provided offset and length is validated when parsing the parameters
+of the SGX_IOC_ENCLAVE_ADD_PAGES ioctl(). Extract this validation
+into a utility that can be used by the SGX2 ioctl()s that will
+also provide these values.
 
-The wrappers of the supported SGX functions are cryptic. Add short
-descriptions of each as a comment.
-
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V1:
-- Fix commit message and subject to not refer to descriptions as
-  "changelog descriptions" or "shortlog descriptions" (Jarkko).
-- Improve all descriptions with guidance from Jarkko.
+- New patch
 
- arch/x86/kernel/cpu/sgx/encls.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index fa04a73daf9c..0e22fa8f77c5 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -136,57 +136,71 @@ static inline bool encls_failed(int ret)
- 	ret;						\
- 	})
- 
-+/* Initialize an EPC page into an SGX Enclave Control Structure (SECS) page. */
- static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
- {
- 	return __encls_2(ECREATE, pginfo, secs);
- }
- 
-+/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
- static inline int __eextend(void *secs, void *addr)
- {
- 	return __encls_2(EEXTEND, secs, addr);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 7e0819a89532..6e7cc441156b 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -378,6 +378,26 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	return ret;
  }
  
 +/*
-+ * Associate an EPC page to an enclave either as a REG or TCS page
-+ * populated with the provided data.
++ * Ensure user provided offset and length values are valid for
++ * an enclave.
 + */
- static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
- {
- 	return __encls_2(EADD, pginfo, addr);
- }
++static int sgx_validate_offset_length(struct sgx_encl *encl,
++				      unsigned long offset,
++				      unsigned long length)
++{
++	if (!IS_ALIGNED(offset, PAGE_SIZE))
++		return -EINVAL;
++
++	if (!length || length & (PAGE_SIZE - 1))
++		return -EINVAL;
++
++	if (offset + length - PAGE_SIZE >= encl->size)
++		return -EINVAL;
++
++	return 0;
++}
++
+ /**
+  * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
+  * @encl:       an enclave pointer
+@@ -431,14 +451,10 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 	if (copy_from_user(&add_arg, arg, sizeof(add_arg)))
+ 		return -EFAULT;
  
-+/* Finalize enclave build, initialize enclave for user code execution. */
- static inline int __einit(void *sigstruct, void *token, void *secs)
- {
- 	return __encls_ret_3(EINIT, sigstruct, secs, token);
- }
+-	if (!IS_ALIGNED(add_arg.offset, PAGE_SIZE) ||
+-	    !IS_ALIGNED(add_arg.src, PAGE_SIZE))
+-		return -EINVAL;
+-
+-	if (!add_arg.length || add_arg.length & (PAGE_SIZE - 1))
++	if (!IS_ALIGNED(add_arg.src, PAGE_SIZE))
+ 		return -EINVAL;
  
-+/* Disassociate EPC page from its enclave and mark it as unused. */
- static inline int __eremove(void *addr)
- {
- 	return __encls_ret_1(EREMOVE, addr);
- }
+-	if (add_arg.offset + add_arg.length - PAGE_SIZE >= encl->size)
++	if (sgx_validate_offset_length(encl, add_arg.offset, add_arg.length))
+ 		return -EINVAL;
  
-+/* Copy data to an EPC page belonging to a debug enclave. */
- static inline int __edbgwr(void *addr, unsigned long *data)
- {
- 	return __encls_2(EDGBWR, *data, addr);
- }
- 
-+/* Copy data from an EPC page belonging to a debug enclave. */
- static inline int __edbgrd(void *addr, unsigned long *data)
- {
- 	return __encls_1_1(EDGBRD, *data, addr);
- }
- 
-+/* Track that software has completed the required TLB address clears. */
- static inline int __etrack(void *addr)
- {
- 	return __encls_ret_1(ETRACK, addr);
- }
- 
-+/* Load, verify, and unblock an EPC page. */
- static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
- 			 void *va)
- {
- 	return __encls_ret_3(ELDU, pginfo, addr, va);
- }
- 
-+/* Make EPC page inaccessible to enclave, ready to be written to memory. */
- static inline int __eblock(void *addr)
- {
- 	return __encls_ret_1(EBLOCK, addr);
- }
- 
-+/* Initialize an EPC page into a Version Array (VA) page. */
- static inline int __epa(void *addr)
- {
- 	unsigned long rbx = SGX_PAGE_TYPE_VA;
-@@ -194,6 +208,7 @@ static inline int __epa(void *addr)
- 	return __encls_2(EPA, rbx, addr);
- }
- 
-+/* Invalidate an EPC page and write it out to main memory. */
- static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
- 			void *va)
- {
+ 	if (copy_from_user(&secinfo, (void __user *)add_arg.secinfo,
 -- 
 2.25.1
 
