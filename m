@@ -2,117 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34322C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 18:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA53C38162
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 22:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240950AbiBHSsu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 8 Feb 2022 13:48:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
+        id S1386946AbiBHW0p (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Feb 2022 17:26:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358560AbiBHSst (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Feb 2022 13:48:49 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D4DC0612C1;
-        Tue,  8 Feb 2022 10:48:48 -0800 (PST)
+        with ESMTP id S1387033AbiBHVsw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Feb 2022 16:48:52 -0500
+Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAB4C0612BE;
+        Tue,  8 Feb 2022 13:48:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644346129; x=1675882129;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GKYfrOdPKIidCVFdft/pVkcauP1SFgER+aJOOG3WDEA=;
-  b=nvxCrdDs4OeAnUM9i++1tL6hCNiNV1a8ZMXu2s/MV/yWXB2zsl5q/G61
-   cR3AyMXgHkhgE1wdVY7YftNxyMDaCiFAGTERLvGXYD/zrmMDkr5rUoHOR
-   bzZsILWoaMRTBOqBVQCN1uQhEFjJ6PLpOWyb2cbxm+Msg6CGClNMsTkkB
-   D0RqUTQkseeqYgAt9JvJYLEG4idlo1UwKatmXwyzChHR2wG3RHSwNJ9aA
-   IioWmKRt1h5QFFSJ/oDu/nrDG72iwpLLEbjmsgSOIWuVvZG6XRsC4NDSF
-   5uNLZ/UwS1MlXxO3ocA7Iyz/zy9RnqlSAkYHXnMTni+mxnfNLc5X4nt5v
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10252"; a="236430341"
+  t=1644356932; x=1675892932;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i0kAY4g/MZJ7vvBHPcqkSBopKtS9n2VC7jnthVGE/BE=;
+  b=c5Op6eBzbfACVJuQkPiWmMX0zHWEF97Rq2eNyyjdorOpxMAW8CuZsjKp
+   mu24r7Tt0mh7iQXO48cBA/MLKWKIF62CYX8TvejTcQ8L1rwzuJqYrKBHG
+   xs7DbKhsEv/VFNH9UrvyDRc+/TFIOYlx/I8WQmcOGaMTW1d5yd5Luzh14
+   +L0uXGCIrbWyKyfjeSRuvuSjb52UJxZbJ+V1zHeef4m+4BqRTtAOoPZFT
+   o6L/cERqTuOhzeczWpNaiQ4F/OvqxsNaKIiHGHuEcvBx0TAKgOzAMkxV3
+   +vn4lUctf9yy1kTwXFGpy9npmkFcKtSlOyZnIkqVxyoLDYliS82AyXfJg
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10252"; a="309805369"
 X-IronPort-AV: E=Sophos;i="5.88,353,1635231600"; 
-   d="scan'208";a="236430341"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 10:48:14 -0800
+   d="scan'208";a="309805369"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 13:48:49 -0800
 X-IronPort-AV: E=Sophos;i="5.88,353,1635231600"; 
-   d="scan'208";a="484914385"
+   d="scan'208";a="632992868"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 10:48:14 -0800
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2022 13:48:49 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Cc:     vijay.dhanraj@intel.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH V3] x86/sgx: Silence softlockup detection when releasing large enclaves
-Date:   Tue,  8 Feb 2022 10:48:07 -0800
-Message-Id: <ced01cac1e75f900251b0a4ae1150aa8ebd295ec.1644345232.git.reinette.chatre@intel.com>
+        linux-sgx@vger.kernel.org, x86@kernel.org, shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3 4/4] selftests/sgx: Remove extra newlines in test output
+Date:   Tue,  8 Feb 2022 13:48:42 -0800
+Message-Id: <6fd171ba622aed172a7c5b129d34d50bd0482f24.1644355600.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1644355600.git.reinette.chatre@intel.com>
+References: <cover.1644355600.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Vijay reported that the "unclobbered_vdso_oversubscribed" selftest
-triggers the softlockup detector.
+The TH_LOG() macro is an optional debug logging function made
+available by kselftest itself. When TH_LOG_ENABLED is set it
+prints the provided message with additional information and
+formatting that already includes a newline.
 
-Actual SGX systems have 128GB of enclave memory or more.  The
-"unclobbered_vdso_oversubscribed" selftest creates one enclave which
-consumes all of the enclave memory on the system. Tearing down such a
-large enclave takes around a minute, most of it in the loop where
-the EREMOVE instruction is applied to each individual 4k enclave page.
+Providing a newline to the message printed by TH_LOG() results
+in a double newline that produces irregular test output.
 
-Spending one minute in a loop triggers the softlockup detector.
+Remove the unnecessary newlines from the text provided to
+TH_LOG().
 
-Add a cond_resched() to give other tasks a chance to run and placate
-the softlockup detector.
-
-Cc: stable@vger.kernel.org
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Reported-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+Fixes: 1b35eb719549 ("selftests/sgx: Encpsulate the test enclave creation")
 Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Tested-by: Jarkko Sakkinen <jarkko@kernel.org>  (kselftest as sanity check)
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-Softlockup message:
-
-watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [test_sgx:11502]
-Kernel panic - not syncing: softlockup: hung tasks
-<snip>
-sgx_encl_release+0x86/0x1c0
-sgx_release+0x11c/0x130
-__fput+0xb0/0x280
-____fput+0xe/0x10
-task_work_run+0x6c/0xc0
-exit_to_user_mode_prepare+0x1eb/0x1f0
-syscall_exit_to_user_mode+0x1d/0x50
-do_syscall_64+0x46/0xb0
-entry_SYSCALL_64_after_hwframe+0x44/0xae
-
 Changes since V2:
-- V2: https://lore.kernel.org/lkml/b5e9f218064aa76e3026f778e1ad0a1d823e3db8.1643133224.git.reinette.chatre@intel.com/
-- Add Jarkko's "Reviewed-by" and "Tested-by" tags.
+- Add Acked-by from Shuah.
 
 Changes since V1:
-- V1: https://lore.kernel.org/lkml/1aa037705e5aa209d8b7a075873c6b4190327436.1642530802.git.reinette.chatre@intel.com/
-- Add comment provided by Jarkko.
+- Add Acked-by from Dave.
 
- arch/x86/kernel/cpu/sgx/encl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/testing/selftests/sgx/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 001808e3901c..48afe96ae0f0 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -410,6 +410,8 @@ void sgx_encl_release(struct kref *ref)
- 		}
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index b0bd95a4730d..dd74fa42302e 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -146,7 +146,7 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
  
- 		kfree(entry);
-+		/* Invoke scheduler to prevent soft lockups. */
-+		cond_resched();
+ 	if (!encl_load("test_encl.elf", encl, heap_size)) {
+ 		encl_delete(encl);
+-		TH_LOG("Failed to load the test enclave.\n");
++		TH_LOG("Failed to load the test enclave.");
+ 		return false;
  	}
  
- 	xa_destroy(&encl->page_array);
+@@ -204,7 +204,7 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+ 		fclose(maps_file);
+ 	}
+ 
+-	TH_LOG("Failed to initialize the test enclave.\n");
++	TH_LOG("Failed to initialize the test enclave.");
+ 
+ 	encl_delete(encl);
+ 
 -- 
 2.25.1
 
