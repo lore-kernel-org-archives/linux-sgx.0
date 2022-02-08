@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F3EC4167B
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC865C3527E
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239229AbiBHBHD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:07:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59366 "EHLO
+        id S231185AbiBHBG5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:06:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344173AbiBHAqN (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:13 -0500
+        with ESMTP id S1344225AbiBHAqS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:18 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5B3C061A73;
-        Mon,  7 Feb 2022 16:46:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C982C043180;
+        Mon,  7 Feb 2022 16:46:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281173; x=1675817173;
+  t=1644281177; x=1675817177;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Vpn/fGoiS2yDPxP8EE7QJ5pCXZ5J6QLvwca5ok82a6U=;
-  b=JvHDs3oXcz/kNcXNVDqCnu5YIc779rd7fryuyimUwK6aJcqV3Zkh9Jef
-   T0GSeDA7EmDSKVWbDBv7m28zmJEktbVdBClqq8Ea0EG17V8VHWFpnVWK8
-   O9rHaA1lhWCPN0IQZ2O8rhDhmwwjD2HCv1GlGAFMBNitRkAmXkRcClWbl
-   jIshWc/nZXIa7evTdUOR+MKvoOJ2RllnS+wrT4driPfhe+x5HaonIMlYJ
-   s7d4v97bDW+pITu2ClOAuT1Lvfb3noLb/fKksX2DzidVx1We6EIKfrk8d
-   AaPpEhMMwy9EzmnDQ6B86agW+TJykPMeNTnbaNxlFSWU5JHh3kdJ+Cbg+
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407957"
+  bh=/rJMW2flOWfkg1MprTvQqgBi1ZLUHOzTS97piUEK1S4=;
+  b=M6VIg3+UHMXOdquaW6IsO1g0pB0KJ/IW+dct/SX/mIlTr8LMBOZ8xDXB
+   vP0uPk3S7IAmGuBY2sYdJUBCUBANJPVa5dllSJbooh/6dDDI7R1lrbjEP
+   lj65w8ytpa1FzsMpAffTxOtL7yDnUvuXgvJnn9TM6VhAgqpX4ulHMQ+2H
+   52Cm1DH8wgNoON8DA8qiqSwuuZ+FHfnGtKU9YoiyiIzosBwzG1Io/KjYc
+   ei/Eqq3TsY/aog40rzIjl2pzKJDCxeuQeJGeOshOnuIPzWOhPyYUbmvv+
+   5nLCTL6OqxtClBoSKZdg2WjbIc5bPVVeOAE/64cnDpS9LMCHsmQNXJmDc
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407996"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407957"
+   d="scan'208";a="232407996"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:10 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389502"
+   d="scan'208";a="499389563"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 12/32] x86/sgx: Make sgx_ipi_cb() available internally
-Date:   Mon,  7 Feb 2022 16:45:34 -0800
-Message-Id: <335ba22c3969affc01332bcb74fd6a697275fc67.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 31/32] x86/sgx: Free up EPC pages directly to support large page ranges
+Date:   Mon,  7 Feb 2022 16:45:53 -0800
+Message-Id: <5abcc02a9b6c7bf5fbfb301c3311ff755965d861.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,47 +56,95 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The ETRACK function followed by an IPI to all CPUs within an enclave
-is a common pattern with more frequent use in support of SGX2.
+The page reclaimer ensures availability of EPC pages across all
+enclaves. In support of this it runs independently from the
+individual enclaves in order to take locks from the different
+enclaves as it writes pages to swap.
 
-Make the (empty) IPI callback function available internally in
-preparation for usage by SGX2.
+When needing to load a page from swap an EPC page needs to be
+available for its contents to be loaded into. Loading an existing
+enclave page from swap does not reclaim EPC pages directly if
+none are available, instead the reclaimer is woken when the
+available EPC pages are found to be below a watermark.
+
+When iterating over a large number of pages in an oversubscribed
+environment there is a race between the reclaimer woken up and
+EPC pages reclaimed fast enough for the page operations to proceed.
+
+Ensure there are EPC pages available before attempting to load
+a page that may potentially be pulled from swap into an available
+EPC page.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-Changes since V1:
-- Replace "for more usages" by "for usage by SGX2" (Jarkko)
+Changes since v1:
+- Reword commit message.
 
- arch/x86/kernel/cpu/sgx/main.c | 2 +-
- arch/x86/kernel/cpu/sgx/sgx.h  | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 6 ++++++
+ arch/x86/kernel/cpu/sgx/main.c  | 6 ++++++
+ arch/x86/kernel/cpu/sgx/sgx.h   | 1 +
+ 3 files changed, 13 insertions(+)
 
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 0ffb07095a80..d8c3c07badb3 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -962,6 +962,8 @@ static long sgx_enclave_restrict_perm(struct sgx_encl *encl,
+ 	for (c = 0 ; c < modp->length; c += PAGE_SIZE) {
+ 		addr = encl->base + modp->offset + c;
+ 
++		sgx_direct_reclaim();
++
+ 		mutex_lock(&encl->lock);
+ 
+ 		entry = sgx_encl_load_page(encl, addr);
+@@ -1156,6 +1158,8 @@ static long sgx_enclave_modt(struct sgx_encl *encl,
+ 	for (c = 0 ; c < modt->length; c += PAGE_SIZE) {
+ 		addr = encl->base + modt->offset + c;
+ 
++		sgx_direct_reclaim();
++
+ 		mutex_lock(&encl->lock);
+ 
+ 		entry = sgx_encl_load_page(encl, addr);
+@@ -1354,6 +1358,8 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
+ 	for (c = 0 ; c < params->length; c += PAGE_SIZE) {
+ 		addr = encl->base + params->offset + c;
+ 
++		sgx_direct_reclaim();
++
+ 		mutex_lock(&encl->lock);
+ 
+ 		entry = sgx_encl_load_page(encl, addr);
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index ce9e87d5f8ec..6e2cb7564080 100644
+index 6e2cb7564080..545da16bb3ea 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -172,7 +172,7 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
- 	return ret;
+@@ -370,6 +370,12 @@ static bool sgx_should_reclaim(unsigned long watermark)
+ 	       !list_empty(&sgx_active_page_list);
  }
  
--static void sgx_ipi_cb(void *info)
-+void sgx_ipi_cb(void *info)
++void sgx_direct_reclaim(void)
++{
++	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
++		sgx_reclaim_pages();
++}
++
+ static int ksgxd(void *p)
  {
- }
- 
+ 	set_freezable();
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 0f17def9fe6f..b30cee4de903 100644
+index b30cee4de903..85cbf103b0dd 100644
 --- a/arch/x86/kernel/cpu/sgx/sgx.h
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -90,6 +90,8 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
+@@ -86,6 +86,7 @@ static inline void *sgx_get_epc_virt_addr(struct sgx_epc_page *page)
+ struct sgx_epc_page *__sgx_alloc_epc_page(void);
+ void sgx_free_epc_page(struct sgx_epc_page *page);
+ 
++void sgx_direct_reclaim(void);
+ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
  int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
- 
-+void sgx_ipi_cb(void *info);
-+
- #ifdef CONFIG_X86_SGX_KVM
- int __init sgx_vepc_init(void);
- #else
 -- 
 2.25.1
 
