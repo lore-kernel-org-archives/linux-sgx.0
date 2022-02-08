@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B284C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A267C43217
 	for <linux-sgx@archiver.kernel.org>; Tue,  8 Feb 2022 01:07:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241053AbiBHBHX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:07:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59480 "EHLO
+        id S241089AbiBHBHY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Feb 2022 20:07:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242236AbiBHAqR (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:17 -0500
+        with ESMTP id S1344153AbiBHAqM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Feb 2022 19:46:12 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 462BEC061A73;
-        Mon,  7 Feb 2022 16:46:17 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B857C061A73;
+        Mon,  7 Feb 2022 16:46:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644281177; x=1675817177;
+  t=1644281172; x=1675817172;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=xMEi1oXFcnuX1gpk8saxEOCFax6+UjSCCyW2mtxyWzA=;
-  b=ltJCwWA5Tonap8ESUl2Scim5lHKCAroDOdkThdgjCt4yytUtZY4il5Lk
-   UwXpE06MsVsIGZMTIb7eSxLA6sCBqhD7WH9IXqCmS8TO5Eoom+f4FP21S
-   2SiB7ofoEDb3gDkuXoJV3PYuaeFVEy4VjzYB17XVrsnriT0mPoo8tCumr
-   PQglEC7DR4UHBqPJEpS2vjiBybErSbJqGRoPQlGs3s4tRKeZpT8R0CKXV
-   eXO1jAnIr5YaoziYZy+x/URwVox/hHgHdQ1qbFUkqVAuvY37zJtJgjReX
-   /kKCYDSXWCE+LzYMln2nLEuQMn5BcI/1VKLjTRcWzJYpWp9q/LiiA5X9j
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407995"
+  bh=8EpFNPqK4DbJWTi/iUeiaR91d3oTWcQUQu8VuBjJR+0=;
+  b=CIqUnrNBOoznRL/jpluw/dAx4BhtbnEfnmQMGS9Ih9/HYOi0gz5jo32C
+   IglfX5miebaH0QCTy9ZJcMEF+HJ5V2XlYFjpDXQJrzbkWxXBXRQKguPGt
+   Ca4pme40vY11QUrye6WiZPPbYyCp1x2l6pLPhjS78WgehmUVBirYnDzMA
+   uqUKeHcMk4HgaJWE79oq2qTmwa8Ybn2n5S4+YnieTt4ocQCs/rovFfYBC
+   pl/fEI7b2Eu0ISHY0HjtsvT+UcXxCIxEIQ+N4H3xYXPor0gKNf210obbk
+   o4g6OsIYH/6Mgp04hO7juelnxdO2S/UCAg+OF0Kqg8xF5Rpszj8guUd9Q
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10251"; a="232407942"
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="232407995"
+   d="scan'208";a="232407942"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:10 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
 X-IronPort-AV: E=Sophos;i="5.88,351,1635231600"; 
-   d="scan'208";a="499389560"
+   d="scan'208";a="499389480"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:09 -0800
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 16:46:08 -0800
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 30/32] selftests/sgx: Test reclaiming of untouched page
-Date:   Mon,  7 Feb 2022 16:45:52 -0800
-Message-Id: <8a28acf461e5c6c0895221766b5bad2fe353d68e.1644274683.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 05/32] Documentation/x86: Document SGX permission details
+Date:   Mon,  7 Feb 2022 16:45:27 -0800
+Message-Id: <39ad1503cfa6004abfd3de1e3b01650e09cd9e4c.1644274683.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
@@ -56,127 +56,64 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Removing a page from an initialized enclave involves three steps:
-(1) the user requests changing the page type to PT_TRIM via the
-    SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()
-(2) on success the ENCLU[EACCEPT] instruction is run from within
-    the enclave to accept the page removal
-(3) the user initiates the actual removal of the page via the
-    SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl().
+Provide summary of the various permissions involved in
+managing access to enclave pages. This summary documents
+the foundation for additions related to runtime managing of
+enclave page permissions that is made possible with SGX2.
 
-Remove a page that has never been accessed. This means that when the
-first ioctl() requesting page removal arrives, there will be no page
-table entry, yet a valid page table entry needs to exist for the
-ENCLU[EACCEPT] function to succeed. In this test it is verified that
-a page table entry can still be installed for a page that is in the
-process of being removed.
-
-Suggested-by: Haitao Huang <haitao.huang@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V1:
-- Update to support ioctl() name change (SGX_IOC_PAGE_MODT ->
-  SGX_IOC_ENCLAVE_MODIFY_TYPE) and provide secinfo as parameter instead
-  of just page type (Jarkko).
-- Update test to reflect page removal ioctl() and struct name change:
-  SGX_IOC_PAGE_REMOVE->SGX_IOC_ENCLAVE_REMOVE_PAGES,
-  struct sgx_page_remove -> struct sgx_enclave_remove_pages (Jarkko).
-- Ensure test is skipped when SGX2 not supported by kernel.
+- New patch.
 
- tools/testing/selftests/sgx/main.c | 82 ++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ Documentation/x86/sgx.rst | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 239d3c9df169..4fe5a0324c97 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -1835,4 +1835,86 @@ TEST_F(enclave, remove_added_page_invalid_access_after_eaccept)
- 	EXPECT_EQ(self->run.exception_addr, data_start);
- }
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+index 265568a9292c..89ff924b1480 100644
+--- a/Documentation/x86/sgx.rst
++++ b/Documentation/x86/sgx.rst
+@@ -71,16 +71,34 @@ The processor tracks EPC pages in a hardware metadata structure called the
+ which describes the owning enclave, access rights and page type among the other
+ things.
  
-+TEST_F(enclave, remove_untouched_page)
-+{
-+	struct sgx_enclave_remove_pages remove_ioc;
-+	struct encl_op_eaccept eaccept_op;
-+	struct sgx_enclave_modt modt_ioc;
-+	struct sgx_secinfo secinfo;
-+	unsigned long data_start;
-+	int ret, errno_save;
+-EPCM permissions are separate from the normal page tables.  This prevents the
+-kernel from, for instance, allowing writes to data which an enclave wishes to
+-remain read-only.  EPCM permissions may only impose additional restrictions on
+-top of normal x86 page permissions.
+-
+ For all intents and purposes, the SGX architecture allows the processor to
+ invalidate all EPCM entries at will.  This requires that software be prepared to
+ handle an EPCM fault at any time.  In practice, this can happen on events like
+ power transitions when the ephemeral key that encrypts enclave memory is lost.
+ 
++Details about enclave page permissions
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
++EPCM permissions are separate from the normal page tables.  This prevents the
++kernel from, for instance, allowing writes to data which an enclave wishes
++to remain read-only.
 +
-+	/*
-+	 * Hardware (SGX2) and kernel support is needed for this test. Start
-+	 * with check that test has a chance of succeeding.
-+	 */
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
++Three permission masks are relevant to SGX:
 +
-+	if (ret == -1) {
-+		if (errno == ENOTTY)
-+			SKIP(return, "Kernel does not support SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()");
-+		else if (errno == ENODEV)
-+			SKIP(return, "System does not support SGX2");
-+	}
++* EPCM permissions.
++* Page Table Entry (PTE) permissions.
++* Virtual Memory Area (VMA) permissions.
 +
-+	/*
-+	 * Invalid parameters were provided during sanity check,
-+	 * expect command to fail.
-+	 */
-+	EXPECT_EQ(ret, -1);
++An enclave is only able to access an enclave page if all three permission
++masks enable it to do so.
 +
-+	/* SGX2 is supported by kernel and hardware, test can proceed. */
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
++The relationships between the different permission masks are:
 +
-+	data_start = self->encl.encl_base +
-+			 encl_get_data_offset(&self->encl) + PAGE_SIZE;
++* An SGX VMA can only be created if its permissions are the same or weaker
++  than the EPCM permissions.
++* PTEs are installed to match the EPCM permissions, but not be more
++  relaxed than the VMA permissions.
 +
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+	memset(&secinfo, 0, sizeof(secinfo));
-+
-+	secinfo.flags = SGX_PAGE_TYPE_TRIM << 8;
-+	modt_ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+	modt_ioc.length = PAGE_SIZE;
-+	modt_ioc.secinfo = (unsigned long)&secinfo;
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(modt_ioc.result, 0);
-+	EXPECT_EQ(modt_ioc.count, 4096);
-+
-+	/*
-+	 * Enter enclave via TCS #1 and approve page removal by sending
-+	 * EACCEPT for removed page.
-+	 */
-+
-+	eaccept_op.epc_addr = data_start;
-+	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
-+	eaccept_op.ret = 0;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	EXPECT_EQ(eaccept_op.ret, 0);
-+
-+	memset(&remove_ioc, 0, sizeof(remove_ioc));
-+
-+	remove_ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+	remove_ioc.length = PAGE_SIZE;
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(remove_ioc.count, 4096);
-+}
-+
- TEST_HARNESS_MAIN
+ Application interface
+ =====================
+ 
 -- 
 2.25.1
 
