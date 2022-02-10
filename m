@@ -2,100 +2,80 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6205EC433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Feb 2022 20:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2994C433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Feb 2022 19:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbiBIUUI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Feb 2022 15:20:08 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:41844 "EHLO
+        id S237528AbiBJTH4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Feb 2022 14:07:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231176AbiBIUUH (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 9 Feb 2022 15:20:07 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8C6E040DC8;
-        Wed,  9 Feb 2022 12:19:58 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id d14-20020a05600c34ce00b0037bf4d14dc7so1829794wmq.3;
-        Wed, 09 Feb 2022 12:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CqsKKaBJAfyykjVru6LPSv6oTLCyk2AFIDEOcj0IiF4=;
-        b=NelNrri3yMogvk8gqSHXFa4cVb5szYFxMDKoVZN2TwaJf6iFBXO/zj6b5IRdnMR0oa
-         gtJtfzDARIKdTdzSAmKQNTsVlFsXlgaSayYfuFQ/0pIr2CHWpdOTzdS2t63yCW5mTN+F
-         Oq6lUfLouPhxy7Eqy7zhhFMeop0BtTdKMRsfoA5ea5zjreAZ5veH/BvrY2xctjQeZ3YK
-         ROil9vg7lA/7ojCiZ3wB8qgzcPOf+kw6Qa04ORkVwCf3S64uF9yCpThWqQkT5MbJGiwj
-         V2dBxgTZxfpu+Fjt1ZeLbYR7wHvQR4NECvs77qdl6bJW36Wm3BtQEhOhtUafXWXGk/vH
-         vfaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CqsKKaBJAfyykjVru6LPSv6oTLCyk2AFIDEOcj0IiF4=;
-        b=kC8cstvDkx5XxbykUrDO9gyeuFdkYQIfEYKJ0c4A0X9mJszyhyrFiEeEHJo/ms0o4j
-         xhNZEY22SZQ6y6XYMyhldI/m/or56GAZqvxe8ektFRdPTg02j7wegVmkkJFWS/StkBDq
-         A+FaMv/hF4Ii4CeHxPfaTLT0P4tHPiV3vNJyMWEzMeKT421VL1aetOKk0Zwu0JZEZvAz
-         lWfNHr942Ij7LA2Hm7TsWr/t9o7DZ50s7sTPRzzFnfD6IHyu3si6ih6DlDPgGS1laAyI
-         RisiIpcaU8LY6ohY/W+MVODvdFXptUHQde4bTi4BCamMsfdBWpX7NpGY80mj65TgkTJ0
-         czyg==
-X-Gm-Message-State: AOAM533Xiz5ZxozU/rQSyqb+y2HA0Sb8YapKBoCAmTE8hvSckGJ+1dDy
-        b7+oXPm1BKy4WAiXpdtyFn36XV7TOfU=
-X-Google-Smtp-Source: ABdhPJx0ge3CY/5UnNcF3/zeuPDxr0gKdbfDvc2PjmvToGDsvGCaiAoziAx2kp1oixA1AAGVbLwo6w==
-X-Received: by 2002:a05:600c:1d8b:: with SMTP id p11mr4135039wms.115.1644437996681;
-        Wed, 09 Feb 2022 12:19:56 -0800 (PST)
-Received: from [192.168.0.160] ([170.253.36.171])
-        by smtp.gmail.com with ESMTPSA id r12sm16910256wrw.73.2022.02.09.12.19.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Feb 2022 12:19:55 -0800 (PST)
-Sender: Alejandro Colomar <alx.mailinglists@gmail.com>
-Message-ID: <0bdb594e-7c3d-e05a-0d40-eff92b4cd252@gmail.com>
-Date:   Wed, 9 Feb 2022 21:19:54 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v11] sgx.7: New page with overview of Software Guard
- eXtensions (SGX)
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
+        with ESMTP id S236382AbiBJTHz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Feb 2022 14:07:55 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA93BE6A;
+        Thu, 10 Feb 2022 11:07:56 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id 15D951F4673D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1644520075;
+        bh=1rWTHTOu/9ZCL4nSK783UU0XLclDFK7bWJjIFMEY3aA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VKXG7iap6mk4sIHKNMeND3sOzufZOiG80I6qy2TNSBG9X2y4VdtyVCZaKMxW11rgJ
+         95sacDBT4yqCoixTW8KRBh+VxIS+kEoZCFwyQvOQcHLQIW66Ax6vlAizLJuANVdArj
+         EIRrcOYYMNTTyzXa/ej8ppIeTSCCK/FDr46Bnp8JpmJ1Hgo7CWVK76lzBO+CfFcI83
+         TJXg5tJGhMdH3Wqgkl54QcWZ7aEWvjptRBoqbisLJzmNjDHQK6nPdtgrcwOTLrLHxa
+         migMCy4mEnDQNdrNZDhF8eghOyuJSDY/svBoR04BCfQEY9W93CxCxUTI1xCyyyKfS3
+         wVUxGzpKCVgKw==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        nathaniel@profian.com, Michael Kerrisk <mtk.manpages@gmail.com>,
-        Reinette Chatre <reinette.chatre@intel.com>
-References: <20211211153320.17438-1-jarkko@kernel.org>
- <c58f3951-282c-ef66-fc62-844da06c5af4@gmail.com> <YfNElmmBbkw1Xpfy@iki.fi>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-In-Reply-To: <YfNElmmBbkw1Xpfy@iki.fi>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Shuah Khan <shuah@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-sgx@vger.kernel.org (open list:INTEL SGX),
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernelci@groups.io
+Subject: [PATCH 0/2] selftests: sgx: Fix build of test_sgx
+Date:   Fri, 11 Feb 2022 00:06:39 +0500
+Message-Id: <20220210190642.1477814-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
+CC can have multiple sub-strings like "ccache gcc". Build system of sgx
+selftest is unable to support this use case and test_sgx isn't built.
+Then rsync gives an erorr:
 
-On 1/28/22 02:19, Jarkko Sakkinen wrote:
-> On Fri, Dec 17, 2021 at 02:50:56AM +0100, Alejandro Colomar (man-pages) wrote:
->> Hi Jarkko,
->>
->> Please see some comments below.
->>
->> Thanks,
->> Alex
-> 
-> Thank you. I've addressed all the comments below. However, I feel that
-> /dev/sgx_provision is not properly documented at all. I also think that
-> Reinette's argument for v10 was fair that "remove VEPC" ioctl that QEMU
-> uses should not be left out from the initial patch set.
-> 
-> I'm implementing user space that doest attestation, so I rather write a
-> proper description of the attestation, once it is working, rather than add
-> to the number of review rounds.
+rsync: [sender] link_stat "//linux/build/kselftest/sgx/test_sgx" failed: No such file or directory (2)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1333) [sender=3.2.3]
 
-Fair enough.  Please send an v12 with those comments addressed, and I'll
-merge it!  (if you miss anything, we'll fix it later, don't worry)
+This can be fixed if CC is considered to have one string while passing to
+check_cc.sh script and inside this script, CC is expanded before execution.
 
-Thanks,
+Following build tests have been performed to confirm that these patches
+don't break anything else. The verification has also been done through
+KernelCI scripts locally as KernelCI has caught this bug:
+1) cd tools/testing/selftests && make
+2) make -C tools/testing/selftests
+3) make -C tools/testing/selftests O=build
+4) make -C tools/testing/selftests O=build CC="ccache gcc"
+5) ./kci_build make_kselftest
 
-Alex
+Muhammad Usama Anjum (2):
+  selftests: x86: allow expansion of $(CC)
+  selftests: sgx: Treat CC as one argument
+
+ tools/testing/selftests/sgx/Makefile    | 2 +-
+ tools/testing/selftests/x86/check_cc.sh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.30.2
+
