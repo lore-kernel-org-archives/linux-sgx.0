@@ -2,51 +2,41 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DDEC433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Feb 2022 20:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FEEC433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Feb 2022 22:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344356AbiBJUwH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Feb 2022 15:52:07 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60250 "EHLO
+        id S1345079AbiBJWmj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Feb 2022 17:42:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244417AbiBJUwG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Feb 2022 15:52:06 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88A10A7
-        for <linux-sgx@vger.kernel.org>; Thu, 10 Feb 2022 12:52:05 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id r144so8948360iod.9
-        for <linux-sgx@vger.kernel.org>; Thu, 10 Feb 2022 12:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZDmTcXbfCgXu5awEkEkH5h6M1B7QYIk5NA43T9cuepo=;
-        b=gxHVZlPIYOHcQPLsLrfHJVOy+4sm5LiddBbY884K3dpEMzZVGPqLXx8cPls3wtGXE3
-         T4KPGCLxJG7ZefY+MDFO2FYShWKMsTqbUUKXkOogoNUCmMBOcim8TauHAL1cEN/Di1sa
-         E9Sp2Rz/bXncSrKDa1xsmtUGNe1p21Z1AAHiU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZDmTcXbfCgXu5awEkEkH5h6M1B7QYIk5NA43T9cuepo=;
-        b=CMR47vJGidr8RSiPqJ5cck0Iyx5phvqZezQcEzFAG3SNfnjNWFiF0DTElhYWgEgM0v
-         cbEb0vRcLeQCp1WmFJs86/ptw18qyU/k4qGRBijgHaVahU5yf2tq1sIqRKytIAfaKdq8
-         jYlFHcQzogvnIR+ZAypH/Iohss9zHcf/EyCCtdLCg6W/tGUDK3UG8PEJfvjAiBxcXJRQ
-         ErH+R4NyW2Gtdy/x2EtpOKD7QR87wtwWVpF4A9+Hfy2TsJ7OiABkO3FA4wfI401gzcxR
-         UQJMCVKuo51ccytn6PkTyZIWp4QisxI43cU3kCXD1aloHlMpH3EXINfCc+LdCv3RuWcc
-         QLpQ==
-X-Gm-Message-State: AOAM532hID2QfFhzASr+lgJuEehkezYgOCDT+RMFIfcK7rxlrVbdfGUd
-        s+kZ0KU6RKJdMA9s3dVGorgxGGjRyv7SGg==
-X-Google-Smtp-Source: ABdhPJzrz7xQPZCYP3BEuJcYIkGZ8gXDQZXXiBB6HqpqMPptfSV1nxX3Wnr697ep6+rpXCCFXzHaCQ==
-X-Received: by 2002:a02:b0c3:: with SMTP id w3mr4709002jah.37.1644526325191;
-        Thu, 10 Feb 2022 12:52:05 -0800 (PST)
-Received: from [192.168.1.128] ([71.205.29.0])
-        by smtp.gmail.com with ESMTPSA id l6sm7179414ilt.16.2022.02.10.12.52.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Feb 2022 12:52:04 -0800 (PST)
-Subject: Re: [PATCH 2/2] selftests: sgx: Treat CC as one argument
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        with ESMTP id S1345032AbiBJWmh (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Feb 2022 17:42:37 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B85026D4;
+        Thu, 10 Feb 2022 14:42:37 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id 850A11F467B4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1644532956;
+        bh=bedGo7xcKtSpxhKnR+SjKvtdtKnjMdpeXSz+eoAK79g=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=aDieopZ85m1PLSn0SM2YpgfuPUXWCpFgbf7eegoSQGvbnj+qcVoxsqfwwBj4UXKV/
+         jTdy+wGP3V7ojgOOycAjGc1E6awJpB6rzm7pQa7EYynzk7PEvKmqTkDgDT8u4eCgqe
+         3YsWQD1/WOUATmWAjME6u18BS7fjFCnSc72kYytUr2+ojQGKihgGQIskMrmsSMS+yt
+         +S1AIAkeIGpGksvE/hK7vtZpX4EtXB7RNcE21sNUe/MTfrlQ8nAYlNxn4PRrvkuyFV
+         iM5m5OtbVY1vxEiBsgKJ78oHImNSpr8f+ZgTg4ZOysKrNMFHi68rxaEcsOk5oBkPMJ
+         gBdQRwAH2Q7eQ==
+Message-ID: <81619c13-41e6-3aab-4cf7-9b6d5a11e05c@collabora.com>
+Date:   Fri, 11 Feb 2022 03:41:54 +0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Cc:     usama.anjum@collabora.com, kernel@collabora.com,
+        kernelci@groups.io, "kernelci.org bot" <bot@kernelci.org>
+Subject: Re: [PATCH 1/2] selftests: x86: allow expansion of $(CC)
+Content-Language: en-US
+To:     Shuah Khan <skhan@linuxfoundation.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Shuah Khan <shuah@kernel.org>,
@@ -56,55 +46,83 @@ To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         "open list:INTEL SGX" <linux-sgx@vger.kernel.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-Cc:     kernel@collabora.com, kernelci@groups.io,
-        "kernelci.org bot" <bot@kernelci.org>
+        open list <linux-kernel@vger.kernel.org>
 References: <20220210190642.1477814-1-usama.anjum@collabora.com>
- <20220210190642.1477814-3-usama.anjum@collabora.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <2e40809b-fb03-24cb-d68c-c89b464be39b@linuxfoundation.org>
-Date:   Thu, 10 Feb 2022 13:52:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-MIME-Version: 1.0
-In-Reply-To: <20220210190642.1477814-3-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+ <20220210190642.1477814-2-usama.anjum@collabora.com>
+ <a34f2fc8-f4aa-fef4-d1dd-f3fdb5114f72@linuxfoundation.org>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <a34f2fc8-f4aa-fef4-d1dd-f3fdb5114f72@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/10/22 12:06 PM, Muhammad Usama Anjum wrote:
-> CC can have multiple sub-strings like "ccache gcc". For check_cc.sh,
-> CC needs to be treated like one argument. Put double quotes around it to
-> make CC one string and hence one argument.
+On 2/11/22 1:51 AM, Shuah Khan wrote:
+> On 2/10/22 12:06 PM, Muhammad Usama Anjum wrote:
+>> CC can have multiple sub-strings like "ccache gcc". Erorr pops up if
+>> it is treated as single string and double quote are used around it.
+>> This can be fixed by removing the quotes and not treating CC a single
+>> string.
+>>
+>> Fixes: e9886ace222e ("selftests, x86: Rework x86 target architecture
+>> detection")
+>> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>>   tools/testing/selftests/x86/check_cc.sh | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/x86/check_cc.sh
+>> b/tools/testing/selftests/x86/check_cc.sh
+>> index 3e2089c8cf549..aff2c15018b53 100755
+>> --- a/tools/testing/selftests/x86/check_cc.sh
+>> +++ b/tools/testing/selftests/x86/check_cc.sh
+>> @@ -7,7 +7,7 @@ CC="$1"
+>>   TESTPROG="$2"
+>>   shift 2
+>>   -if "$CC" -o /dev/null "$TESTPROG" -O0 "$@" 2>/dev/null; then
+>> +if $CC -o /dev/null "$TESTPROG" -O0 "$@" 2>/dev/null; then
+>>       echo 1
+>>   else
+>>       echo 0
+>>
 > 
-> Fixes: 2adcba79e69d ("selftests/x86: Add a selftest for SGX")
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->   tools/testing/selftests/sgx/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> The intent is testing if $CC is set. Does this change work when
+> $CC is not set?
 > 
-> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-> index 2956584e1e37f..75af864e07b65 100644
-> --- a/tools/testing/selftests/sgx/Makefile
-> +++ b/tools/testing/selftests/sgx/Makefile
-> @@ -4,7 +4,7 @@ include ../lib.mk
->   
->   .PHONY: all clean
->   
-> -CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh $(CC) \
-> +CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh "$(CC)" \
->   			    ../x86/trivial_64bit_program.c)
->   
->   ifndef OBJCOPY
-> 
+Yeah, it works. I've added a debug variable inside sgx/Makefile and it
+is detecting empty argument correctly as well.
 
-The intent is testing if $CC is set. Does this change work when
-$CC is not set?
 
-thanks,
--- Shuah
+--- a/tools/testing/selftests/sgx/Makefile
++++ b/tools/testing/selftests/sgx/Makefile
+@@ -6,7 +6,7 @@ include ../lib.mk
+
+ CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh "$(CC)" \
+                            ../x86/trivial_64bit_program.c)
+-
++$(info $$CAN_BUILD_X86_64 is [${CAN_BUILD_X86_64}])
+
+
+Wrong examples:
+➜  sgx (next-20220210_) ✗ make CC=""
+$CAN_BUILD_X86_64 is [0]
+➜  sgx (next-20220210_) ✗ make CC="cache gcc"
+$CAN_BUILD_X86_64 is [0]
+
+Correct examples:
+➜  sgx (next-20220210_) ✗ make CC=gcc
+$CAN_BUILD_X86_64 is [1]
+➜  sgx (next-20220210_) ✗ make
+$CAN_BUILD_X86_64 is [1]
+➜  sgx (next-20220210_) ✗ make CC="ccache gcc"
+$CAN_BUILD_X86_64 is [1]
+➜  sgx (next-20220210_) ✗ make CC="gcc"
+$CAN_BUILD_X86_64 is [1]
+➜  sgx (next-20220210_) ✗ make CC="clang"
+$CAN_BUILD_X86_64 is [1]
+➜  sgx (next-20220210_) ✗ make CC="ccache clang"
+$CAN_BUILD_X86_64 is [1]
+
+
