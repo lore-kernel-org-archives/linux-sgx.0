@@ -2,31 +2,31 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C46C433FE
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Feb 2022 18:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1AEC433F5
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Feb 2022 18:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbiBNSmq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 14 Feb 2022 13:42:46 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:55258 "EHLO
+        id S232394AbiBNSmx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Feb 2022 13:42:53 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:55500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235969AbiBNSmp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Feb 2022 13:42:45 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 070EB6A03A;
-        Mon, 14 Feb 2022 10:42:30 -0800 (PST)
+        with ESMTP id S235493AbiBNSms (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Feb 2022 13:42:48 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551E76A025;
+        Mon, 14 Feb 2022 10:42:34 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id 933581F42D84
+        with ESMTPSA id 0F3981F410C0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1644864140;
-        bh=w9UAj95XKnPRibc1brD+qtkacXLhUZfQCGbpzMCMPok=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nEyFlAL4xdt6WUN1sUPYXMSk5v2VNbDhrWDjlOy1PIaBfiFd+2ayg2yqwf7rWIiQR
-         XOMbdLVetye+DhWZLEaJX/bgTO58ynwTgpkuLXulIktOk2IfQhJ3QQ5ztsd8xUBbz+
-         uB8OaVhLvbWrjMGwvJtRfd2oqMPWstchn7AC8wklCK6jTOwgAhOpT2VMiHNckDyxY3
-         nItAcySVf+2NL84xTPXkAYY6uCPeWvIBJChkey3ia5UylEatqS2Y1PfZsJRQKkQlJd
-         CVKP25/jyNBCxe6m/Li5mMfQ35lqnV/0fkwiq4fZth4Kjy4MAqm63go6bn2u/5cteZ
-         zbdHTyqEZh10w==
+        s=mail; t=1644864131;
+        bh=7u0HNDo3EDsgorjd5iMF9ffXgHW0CA+ygVimr7HCfN0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PkjQ083apuELxkrX2tqCWqBbzGPsy3ku+Oyj2FCniH85Ru06e9qLtuMs5Wvf7f3G2
+         I3Szy/v2wn2LE288W3CBqQZkn/gTSt95maP9Y/WdaOmrIR5lj+V51PqPR/tLggs5rJ
+         N3ST6Qd2kHz05y9Vr+a8sHAamE+qx+mdCsubn/NO+ZytUk5Wg2K69t9Che8/+YznZl
+         wvuvKl7C9YiQ2McRMk7WfM2kL+VrHSii+IpA2s2Lpbdmczx1jc6ixfg3eVqXT2blnG
+         rzpUzxLs0VVpt25peClCbZWO4u3fcDuoQIcHY1ZMl967I0N0M6DWo3QyJGwzbc+glY
+         967FnTylmzwcg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -38,44 +38,44 @@ To:     Jarkko Sakkinen <jarkko@kernel.org>,
         linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
         linux-kernel@vger.kernel.org (open list), David.Laight@ACULAB.COM
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernelci@groups.io,
-        "kernelci.org bot" <bot@kernelci.org>
-Subject: [PATCH V2 2/2] selftests: sgx: Treat CC as one argument
-Date:   Mon, 14 Feb 2022 23:41:09 +0500
-Message-Id: <20220214184109.3739179-3-usama.anjum@collabora.com>
+        kernel@collabora.com, kernelci@groups.io
+Subject: [PATCH V2 0/2] selftests: sgx: Fix build of test_sgx
+Date:   Mon, 14 Feb 2022 23:41:07 +0500
+Message-Id: <20220214184109.3739179-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220214184109.3739179-1-usama.anjum@collabora.com>
-References: <20220214184109.3739179-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-CC can have multiple sub-strings like "ccache gcc". For check_cc.sh,
-CC needs to be treated like one argument. Put double quotes around it to
-make CC one string and hence one argument.
+CC can have multiple sub-strings like "ccache gcc". Build system of sgx
+selftest is unable to support this use case and test_sgx isn't built.
+Then rsync gives an erorr:
 
-Fixes: 2adcba79e69d ("selftests/x86: Add a selftest for SGX")
-Reported-by: "kernelci.org bot" <bot@kernelci.org>
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/sgx/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+rsync: [sender] link_stat "//linux/build/kselftest/sgx/test_sgx" failed: No such file or directory (2)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1333) [sender=3.2.3]
 
-diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-index 2956584e1e37f..75af864e07b65 100644
---- a/tools/testing/selftests/sgx/Makefile
-+++ b/tools/testing/selftests/sgx/Makefile
-@@ -4,7 +4,7 @@ include ../lib.mk
- 
- .PHONY: all clean
- 
--CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh $(CC) \
-+CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh "$(CC)" \
- 			    ../x86/trivial_64bit_program.c)
- 
- ifndef OBJCOPY
+This can be fixed if CC is considered to have one string while passing to
+check_cc.sh script and inside this script, CC is expanded before execution.
+
+Following build tests have been performed to confirm that these patches
+don't break anything else. The verification has also been done through
+KernelCI scripts locally as KernelCI has caught this bug:
+1) cd tools/testing/selftests && make
+2) make -C tools/testing/selftests
+3) make -C tools/testing/selftests O=build
+4) make -C tools/testing/selftests O=build CC="ccache gcc"
+5) ./kci_build make_kselftest
+
+Muhammad Usama Anjum (2):
+  selftests: x86: add validity check and allow field splitting
+  selftests: sgx: Treat CC as one argument
+
+ tools/testing/selftests/sgx/Makefile    | 2 +-
+ tools/testing/selftests/x86/check_cc.sh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
 -- 
 2.30.2
 
