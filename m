@@ -2,86 +2,91 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3CAC433F5
-	for <linux-sgx@archiver.kernel.org>; Sun, 20 Feb 2022 20:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8457AC433EF
+	for <linux-sgx@archiver.kernel.org>; Sun, 20 Feb 2022 20:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241246AbiBTUFI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 20 Feb 2022 15:05:08 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42154 "EHLO
+        id S238736AbiBTUGX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 20 Feb 2022 15:06:23 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234114AbiBTUFI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 20 Feb 2022 15:05:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C3D4B869;
-        Sun, 20 Feb 2022 12:04:46 -0800 (PST)
+        with ESMTP id S234114AbiBTUGW (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 20 Feb 2022 15:06:22 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612DC4B86F;
+        Sun, 20 Feb 2022 12:06:00 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5CD26B80DBF;
-        Sun, 20 Feb 2022 20:04:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C81C340F0;
-        Sun, 20 Feb 2022 20:04:43 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EFF3960EC5;
+        Sun, 20 Feb 2022 20:05:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E96D6C340E8;
+        Sun, 20 Feb 2022 20:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645387484;
-        bh=OChxHZfNI+1N07VreIQzaoVdtEd8W6WVSjom4udJg9M=;
+        s=k20201202; t=1645387559;
+        bh=2cppNPZpgF4RmbAOVD9rQTVohiAwNWLrRbqbsVsBqCY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H40wTH7ieQmU6lagNgWWmC0gB6ok09qIsMUJNQV2EufOpaAnoFIR9v9yh2mREdY32
-         2h8OuzIFOeKy0bnPzd8/Ef2BvanKWyP/hKfz5akaWal9k8GhppriHlIjoryLclpuH7
-         P95i49+YZ0efu9CUaY9YZCu8bDufU67BDFLQYD5NGevUW70AOIMZdnJt16f016BDS9
-         w76Vyqst6GLVELzzZAh34wePuwt3+oaDehm8yyy4+vnAWeke/CufVrIemRnQzY8qOa
-         gxhMzMTNCy4154rqjyBgVUTsKuVrdqpMaeHoIQDdYUIvN60hcZBYqOGQ85drx2hBlO
-         YQMTT0rbYyYtw==
-Date:   Sun, 20 Feb 2022 21:05:23 +0100
+        b=niY8cZECU6OPPbsI/aUzCuTvxDlM4M06j26qCpW1iJvk+u5ZIbu5zG9zBa+fHRz6W
+         iaHf0opGsL/jVGiJLJkGPmAZK8XQrJa2nZQjZmbcbe+KqLZ3PJAP7pDvkx2vUs6XMg
+         h7lYgq7x4D+r2ZMBUYqR+2hSbFbL7T916kkk09wr4GIfdAz1gXOxcpPdkYHFs0vcxM
+         VPbzzWhb02h8+Lnim1LCf8I38zliBKlTulmXJs9DPzOpFimsO1d9214md+/8ivSYwK
+         O8Mxrqhj7oMAn/y87NxFRcVTI2WQPMGuHWhzvjvUFX/4ZgBj75XYBpb0yXu81ve80T
+         8CGWTIwoPARpA==
+Date:   Sun, 20 Feb 2022 21:06:33 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     linux-man@vger.kernel.org, linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        nathaniel@profian.com, Michael Kerrisk <mtk.manpages@gmail.com>,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: Re: [PATCH v11] sgx.7: New page with overview of Software Guard
- eXtensions (SGX)
-Message-ID: <YhKfA87I0BbkLg+m@iki.fi>
-References: <20211211153320.17438-1-jarkko@kernel.org>
- <c58f3951-282c-ef66-fc62-844da06c5af4@gmail.com>
- <YfNElmmBbkw1Xpfy@iki.fi>
- <0bdb594e-7c3d-e05a-0d40-eff92b4cd252@gmail.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "open list:INTEL SGX" <linux-sgx@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, kernel@collabora.com,
+        kernelci@groups.io, "kernelci.org bot" <bot@kernelci.org>
+Subject: Re: [PATCH 2/2] selftests: sgx: Treat CC as one argument
+Message-ID: <YhKfSUXC/U1twT9h@iki.fi>
+References: <20220210190642.1477814-1-usama.anjum@collabora.com>
+ <20220210190642.1477814-3-usama.anjum@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0bdb594e-7c3d-e05a-0d40-eff92b4cd252@gmail.com>
+In-Reply-To: <20220210190642.1477814-3-usama.anjum@collabora.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Feb 09, 2022 at 09:19:54PM +0100, Alejandro Colomar (man-pages) wrote:
-> Hi Jarkko,
+On Fri, Feb 11, 2022 at 12:06:41AM +0500, Muhammad Usama Anjum wrote:
+> CC can have multiple sub-strings like "ccache gcc". For check_cc.sh,
+> CC needs to be treated like one argument. Put double quotes around it to
+> make CC one string and hence one argument.
 > 
-> On 1/28/22 02:19, Jarkko Sakkinen wrote:
-> > On Fri, Dec 17, 2021 at 02:50:56AM +0100, Alejandro Colomar (man-pages) wrote:
-> >> Hi Jarkko,
-> >>
-> >> Please see some comments below.
-> >>
-> >> Thanks,
-> >> Alex
-> > 
-> > Thank you. I've addressed all the comments below. However, I feel that
-> > /dev/sgx_provision is not properly documented at all. I also think that
-> > Reinette's argument for v10 was fair that "remove VEPC" ioctl that QEMU
-> > uses should not be left out from the initial patch set.
-> > 
-> > I'm implementing user space that doest attestation, so I rather write a
-> > proper description of the attestation, once it is working, rather than add
-> > to the number of review rounds.
+> Fixes: 2adcba79e69d ("selftests/x86: Add a selftest for SGX")
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  tools/testing/selftests/sgx/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Fair enough.  Please send an v12 with those comments addressed, and I'll
-> merge it!  (if you miss anything, we'll fix it later, don't worry)
+> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
+> index 2956584e1e37f..75af864e07b65 100644
+> --- a/tools/testing/selftests/sgx/Makefile
+> +++ b/tools/testing/selftests/sgx/Makefile
+> @@ -4,7 +4,7 @@ include ../lib.mk
+>  
+>  .PHONY: all clean
+>  
+> -CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh $(CC) \
+> +CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh "$(CC)" \
+>  			    ../x86/trivial_64bit_program.c)
+>  
+>  ifndef OBJCOPY
+> -- 
+> 2.30.2
+> 
 
-It took me two weeks to do the remote attestation implementation for Enarx
-project [*] but I needed to do it before continuing with the man page. I'll
-continue with this some time next week. It's not exactly directly attached
-to kernel API but I think it is good to bring some context on that.
 
-[*] https://github.com/enarx/enarx/pull/1329
+Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
