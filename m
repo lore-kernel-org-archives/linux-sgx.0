@@ -2,91 +2,79 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8457AC433EF
-	for <linux-sgx@archiver.kernel.org>; Sun, 20 Feb 2022 20:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51303C433F5
+	for <linux-sgx@archiver.kernel.org>; Sun, 20 Feb 2022 20:08:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238736AbiBTUGX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 20 Feb 2022 15:06:23 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42626 "EHLO
+        id S234114AbiBTUJJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 20 Feb 2022 15:09:09 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234114AbiBTUGW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 20 Feb 2022 15:06:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612DC4B86F;
-        Sun, 20 Feb 2022 12:06:00 -0800 (PST)
+        with ESMTP id S230148AbiBTUJJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 20 Feb 2022 15:09:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16E74C424;
+        Sun, 20 Feb 2022 12:08:47 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EFF3960EC5;
-        Sun, 20 Feb 2022 20:05:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E96D6C340E8;
-        Sun, 20 Feb 2022 20:05:58 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 56F38B80DBF;
+        Sun, 20 Feb 2022 20:08:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5402AC340E8;
+        Sun, 20 Feb 2022 20:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645387559;
-        bh=2cppNPZpgF4RmbAOVD9rQTVohiAwNWLrRbqbsVsBqCY=;
+        s=k20201202; t=1645387725;
+        bh=DhetoqoN1bQhE470buT/GVnwjIyJoyikQ9zpkEijeOc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=niY8cZECU6OPPbsI/aUzCuTvxDlM4M06j26qCpW1iJvk+u5ZIbu5zG9zBa+fHRz6W
-         iaHf0opGsL/jVGiJLJkGPmAZK8XQrJa2nZQjZmbcbe+KqLZ3PJAP7pDvkx2vUs6XMg
-         h7lYgq7x4D+r2ZMBUYqR+2hSbFbL7T916kkk09wr4GIfdAz1gXOxcpPdkYHFs0vcxM
-         VPbzzWhb02h8+Lnim1LCf8I38zliBKlTulmXJs9DPzOpFimsO1d9214md+/8ivSYwK
-         O8Mxrqhj7oMAn/y87NxFRcVTI2WQPMGuHWhzvjvUFX/4ZgBj75XYBpb0yXu81ve80T
-         8CGWTIwoPARpA==
-Date:   Sun, 20 Feb 2022 21:06:33 +0100
+        b=syRskMMvwodSY+IksRqwKxVATeoGUHVDeg3Div3p3y6fy+hqj6twSBflY12UNaH0R
+         +7LpN+B6KuyWpBxcYKGFBUHBH83ZhFfJvrcCgSJw03GyrHabH6pQi0Jh/NsSXQHfGX
+         N/Z6qiScEZiBlx0nJLzzmSBqrAQYP88YCMWlhenLHokWYDY/Ac0mTZEW4ZzI2RMf4U
+         33CzErzYtnltTNvrVP5QkotUw70uwwbIlmkqEFRDNVjhRfnC517/FtMi2w0VaC0eZ4
+         s1nXgA3uaTYORUXEFBn21vTZbf7C+mI+d5JEikX59DRO3OIhHma0jL3xEoNhvC6Sty
+         xEanaeGwrBBeA==
+Date:   Sun, 20 Feb 2022 21:09:22 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        "open list:INTEL SGX" <linux-sgx@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        kernelci@groups.io, "kernelci.org bot" <bot@kernelci.org>
-Subject: Re: [PATCH 2/2] selftests: sgx: Treat CC as one argument
-Message-ID: <YhKfSUXC/U1twT9h@iki.fi>
-References: <20220210190642.1477814-1-usama.anjum@collabora.com>
- <20220210190642.1477814-3-usama.anjum@collabora.com>
+        Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v3] x86/sgx: Free backing memory after faulting the
+ enclave page
+Message-ID: <YhKf8gwdE8tyPTOA@iki.fi>
+References: <20220108140510.76583-1-jarkko@kernel.org>
+ <YfJDV63oGmWOmO4F@iki.fi>
+ <8afec431-4dfc-d8df-152b-76cca0e17ccb@intel.com>
+ <YhKN+LRD2vuhWhqB@iki.fi>
+ <bf6654d9-572b-3423-59a0-c17112f75792@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220210190642.1477814-3-usama.anjum@collabora.com>
+In-Reply-To: <bf6654d9-572b-3423-59a0-c17112f75792@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Feb 11, 2022 at 12:06:41AM +0500, Muhammad Usama Anjum wrote:
-> CC can have multiple sub-strings like "ccache gcc". For check_cc.sh,
-> CC needs to be treated like one argument. Put double quotes around it to
-> make CC one string and hence one argument.
+On Sun, Feb 20, 2022 at 10:58:00AM -0800, Dave Hansen wrote:
+> On 2/20/22 10:52, Jarkko Sakkinen wrote:
+> >> Am I just all twisted around from looking at this code too much?  Could
+> >> you please take another look and send a new version of the patch?
+> > Yeah, I will. It took me two weeks to make full remote attestation
+> > implementation for SGX in Rust but at least I can confirm that all
+> > the kernel bits work on that (and this will also help me to finish
+> > the man page because it is pretty nasty to document it if you haven't
+> > gone to the rabbit hole yourself).
+> > 
+> > I'll prioritize now to get SGX2 patches tested with Enarx implementation
+> > but this 2nd thing in my kernel queue.
 > 
-> Fixes: 2adcba79e69d ("selftests/x86: Add a selftest for SGX")
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  tools/testing/selftests/sgx/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-> index 2956584e1e37f..75af864e07b65 100644
-> --- a/tools/testing/selftests/sgx/Makefile
-> +++ b/tools/testing/selftests/sgx/Makefile
-> @@ -4,7 +4,7 @@ include ../lib.mk
->  
->  .PHONY: all clean
->  
-> -CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh $(CC) \
-> +CAN_BUILD_X86_64 := $(shell ../x86/check_cc.sh "$(CC)" \
->  			    ../x86/trivial_64bit_program.c)
->  
->  ifndef OBJCOPY
-> -- 
-> 2.30.2
-> 
+> I really prioritize bug fixes over new features.  New features can's
+> really get merged until this gets fixed up.
 
-
-Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Fair enough. In this case I was not exactly sure whether it is categorized
+as bug or enhancement. Should I also put a fixes tag to this to the
+original reclaimer code (since it has been like this since the epoch)?
 
 BR, Jarkko
