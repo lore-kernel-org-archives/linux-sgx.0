@@ -2,95 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730A2C433EF
-	for <linux-sgx@archiver.kernel.org>; Sun, 20 Feb 2022 19:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E46C433F5
+	for <linux-sgx@archiver.kernel.org>; Sun, 20 Feb 2022 19:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237700AbiBTTBW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 20 Feb 2022 14:01:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51178 "EHLO
+        id S242106AbiBTTDz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 20 Feb 2022 14:03:55 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237468AbiBTTBV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 20 Feb 2022 14:01:21 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1EB4C7A8
-        for <linux-sgx@vger.kernel.org>; Sun, 20 Feb 2022 11:00:59 -0800 (PST)
+        with ESMTP id S237468AbiBTTDz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 20 Feb 2022 14:03:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C94377F5;
+        Sun, 20 Feb 2022 11:03:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6052E60EBD
-        for <linux-sgx@vger.kernel.org>; Sun, 20 Feb 2022 19:00:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E938C340E8;
-        Sun, 20 Feb 2022 19:00:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F65E60EC5;
+        Sun, 20 Feb 2022 19:03:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03804C340E8;
+        Sun, 20 Feb 2022 19:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645383658;
-        bh=qylJeT0QgA5ZC5054OzOvE+ARmZypPvWggiTd7ULIJM=;
+        s=k20201202; t=1645383812;
+        bh=HWIcNwmiZQcWWxwoRyqMSCbiA3SfghFbHTqekIDyJXI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n8yJQ17K0p0viei5u3RwlYWWQ/xR9VZWomqyusIJYGXsvG2nZ3380IzGpbHziinRi
-         vs7Wdp7o425K7b0LhCvYpOrlMtjTRsxbBEre2kWagXqK+Ro1Hb9r//vg7RreTnadOP
-         4GPu6Mi4Bdrn7z081/lhTY4OEwjuJr4TwxhqHy2V9R25jAMHUiXBjXHxtO+ELAsI1Y
-         QKx4h5AdcftqnSie+urNPW4W7RkLXNT+HPB7+K9S5Hja7x9qHWjOHZuy+5AibwJTCx
-         XiwWTY4aqmG6oY/G6L2Gr+D7sr3iEbS4KMpqqlcBvDZKPja4Nyq84xlN3s6LZDG+MU
-         xMN4hJ4pl3ByQ==
-Date:   Sun, 20 Feb 2022 20:01:38 +0100
+        b=GHvlNncTTJBe+4auGsKcHtIM2z+2wsVbp5uz8uIxNjDElpiTm+47NvH35H4U1HQTo
+         1VNoWCEQvTTZ7m6Mk2BkhFs1hJHKVlMgIaatiZ+dVQNoiPnYIDj6m5PjVq+ujsD5xP
+         5tcYYNtrsl3ZNxDSG+YREsBX5UgdCEDvIxxSBduA3eSyj7tcC7u0IstnauGn7khe5n
+         XE8jGrrNnpIhSnBu7Iw9m8u4j55XjBETqGby73pWJI3J4NCELUs1E30OSvrpVFTQZ6
+         yNlVDZuecUH6R3NPt6nzTcNh3KAmtpjgmatr735RoP17XtVlMo1JOnyUlEsrUqM7M+
+         NctsAoxJQCNKw==
+Date:   Sun, 20 Feb 2022 20:04:11 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
-        kristen@linux.intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, reinette.chatre@intel.com, bp@alien8.de,
-        seanjc@google.com, luto@kernel.org, nathaniel@profian.com,
-        harald@profian.com
-Subject: Re: aesmd availability
-Message-ID: <YhKQEpL+B/bEqLoH@iki.fi>
-References: <YfPAh8m1c9LI6plB@iki.fi>
- <YfPYfsnjYXQsY6Jz@iki.fi>
- <op.1gw53ee3wjvjmi@hhuan26-mobl1.mshome.net>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH V2 2/4] selftests/sgx: Do not attempt enclave build
+ without valid enclave
+Message-ID: <YhKQq0DsT7SN+CQz@iki.fi>
+References: <cover.1643754040.git.reinette.chatre@intel.com>
+ <4e4ea6d70c286c209964bec1e8d29ac8e692748b.1643754040.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.1gw53ee3wjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <4e4ea6d70c286c209964bec1e8d29ac8e692748b.1643754040.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 01, 2022 at 10:15:04AM -0600, Haitao Huang wrote:
-> Hi Jarkko
+On Tue, Feb 01, 2022 at 02:47:04PM -0800, Reinette Chatre wrote:
+> It is not possible to build an enclave if it was not possible to load
+> the binary from which it should be constructed. Do not attempt
+> to make further progress but instead return with failure. A
+> "return false" from setup_test_encl() is expected to trip an
+> ASSERT_TRUE() and abort the rest of the test.
 > 
-> On Fri, 28 Jan 2022 05:50:22 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-> wrote:
+> Fixes: 1b35eb719549 ("selftests/sgx: Encpsulate the test enclave creation")
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Changes since V1:
+> - Add Acked-by from Dave.
+> - Detail in commit log what callers will see with this change (Dave).
 > 
-> > On Fri, Jan 28, 2022 at 12:08:07PM +0200, Jarkko Sakkinen wrote:
-> > > I noticed that with aesmd the only feasible way to host it is to make a
-> > > VM for it because:
-> > > 
-> > > - A beter predictable round-trip time for attestation.
-> > > - In the worst case, attestation could be potentially blocked.
-> > > 
+>  tools/testing/selftests/sgx/main.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I don't fully understand your description here. Based on what you said
-> below, I think you are talking about how to improve (control of) EPC
-> allocation for apps in case of over-subscription (i.e., when EPC runs out).
-> My comments below are with this understanding.
+> diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+> index 370c4995f7c4..a7cd2c3e6f7e 100644
+> --- a/tools/testing/selftests/sgx/main.c
+> +++ b/tools/testing/selftests/sgx/main.c
+> @@ -147,6 +147,7 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+>  	if (!encl_load("test_encl.elf", encl, heap_size)) {
+>  		encl_delete(encl);
+>  		TH_LOG("Failed to load the test enclave.\n");
+> +		return false;
+>  	}
+>  
+>  	if (!encl_measure(encl))
+> -- 
+> 2.25.1
 > 
-> In case you think there are limitations of aesmd implementation that prevent
-> aesmd from being hosted in other than a separate VM, please create an issue
-> on the corresponding GitHub.
-> 
-> > > Should the driver have a page locking mechanism to make this more
-> > > robust,
-> > > or do we want to satisfy to this? I'm not 100% sure what'd be the right
-> > > path forward, just pointing out a potential availability issue.
-> > 
-> 
-> Current swapping would ensure the last active pages be loaded so it gives
-> some level of insurance that aesmd would be able to run as long as there is
-> swapping RAM and other apps are not super active during attestation.
-> 
-> I think SGX cgroups support should help address this concern in a general
-> way, which was discussed before and I think is in plan.
-> 
-> Not sure if lock works better, could you explain how it work?
 
-I agree that since cgroups is coming eventually it will address these
-concerns.
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
