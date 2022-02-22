@@ -2,238 +2,337 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2A8C433F5
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Feb 2022 20:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858EAC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Feb 2022 20:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234779AbiBVUGM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Feb 2022 15:06:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54130 "EHLO
+        id S235469AbiBVU2U (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Feb 2022 15:28:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231683AbiBVUGL (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Feb 2022 15:06:11 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C70F210F;
-        Tue, 22 Feb 2022 12:05:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645560345; x=1677096345;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=vCsm5bleSPaBJf03+hbtcQWg6zMrhfHguWyCt5Lyl5E=;
-  b=c+UKFcN26rN8Wob4JkR2vOW0UOpjFGFd95Hf6qOcJ7Ou0OsbVP2Qj4ZD
-   +gs4kmcmSfL05PfWs0dk6/gCEOq2m+w8p+AJydVRrNBvvS0F6tPGV+JOE
-   JG86s83sUxPydKge/Epws+JUv4K7LXHQcl6hHwZmvkrULjgRROuvVvZGc
-   fkqlE6RJ96ED9BZxKp0au5sShfPg7STvTjTyyWhtcSlx0GppOFfaQAO0U
-   klLVJreLfu70N9SVv6KZLCCcdsmIbiadIKMP+czi1eH6uJHdUkIDIodD1
-   4NFYcv6IiZ3kTACvSHHemJreekhxA5lo08QmPLLJyShFKrAHn9IkYrG4L
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="251538240"
-X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
-   d="scan'208";a="251538240"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 12:05:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
-   d="scan'208";a="505657666"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orsmga002.jf.intel.com with ESMTP; 22 Feb 2022 12:05:43 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Tue, 22 Feb 2022 12:05:42 -0800
-Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 22 Feb 2022 12:05:42 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20 via Frontend Transport; Tue, 22 Feb 2022 12:05:42 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.20; Tue, 22 Feb 2022 12:05:40 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dStOWYNkBy1OsI00AXSuYaFMdkkS4vYN2T6aaFBMYIl5PhAvseeCTH81N2GAmIF9a8DmVXjHHdwXQouP4KCLrelWz72TNUhqzXDE/iZcFXFtKuhIbw/bs6hBUqfg0I0OFFodC/YLMylFgtm3Cnd2OPIkVU+78qLJ22mKxTrJWMvKy4ezli8d76oWydoYDc2yiVMwmYBSh2DXR9zC8IxjR6jVNDMoy6xRrvFDYBdOcNtWDMaY8e8NDQIGK13pFItSgTZtXX1JKl5ogep8DTomgTHJv6vcxHC6EJfpQJH8XfETQhYToDpHhFoNGKyoMGyMkyeZjnX84CxZOO9ljY7VaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p0LOWeZ/AQRVC5abVwYb1txKeO/Nwk4kqRXc1SAGsb4=;
- b=lKI5J7FLIQ5CYL55i08qFyD2dRpsra9bAevdvBUwSkRk9UnRmkt8uGBvqk+SbuDn9h7kAZFaPNzHQzFpD/pSqRjVlwHWJeZeEGeLT0fVI42PGNLflTgHEHLVwW6KFGPbDsxufIdUAFL7swjhwTgjdC5QEqVJyHqDcPds6A1Jj+ejCfRoGYeo5YPZieWDDywXKZV4VaAf/miLlxDrT7MpS+IU196oFeqdBm2M3oY6ZYHRQZKHr0KUTHV+T8RB30InxI8H358oQxvl4UXPa34uj/xsCyrTedUKKzcxFOZHBtvzBiZqLfWuYuISZ+hIOf2SXUFtMz8IJQSV+22bdOn7HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by SJ0PR11MB5772.namprd11.prod.outlook.com (2603:10b6:a03:422::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.16; Tue, 22 Feb
- 2022 20:05:38 +0000
-Received: from BN0PR11MB5744.namprd11.prod.outlook.com
- ([fe80::55e4:9a32:8e6f:4774]) by BN0PR11MB5744.namprd11.prod.outlook.com
- ([fe80::55e4:9a32:8e6f:4774%4]) with mapi id 15.20.4995.026; Tue, 22 Feb 2022
- 20:05:38 +0000
-Message-ID: <8defd54d-1263-07b8-a117-c298903cbe27@intel.com>
-Date:   Tue, 22 Feb 2022 12:05:34 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.6.0
-Subject: Re: [PATCH V2 1/4] selftests/sgx: Fix NULL-pointer-dereference upon
- early test failure
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-CC:     <dave.hansen@linux.intel.com>, <linux-sgx@vger.kernel.org>,
-        <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
-References: <cover.1643754040.git.reinette.chatre@intel.com>
- <89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com>
- <YhKePZv8tsgKYGfK@iki.fi>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <YhKePZv8tsgKYGfK@iki.fi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR15CA0067.namprd15.prod.outlook.com
- (2603:10b6:301:4c::29) To BN0PR11MB5744.namprd11.prod.outlook.com
- (2603:10b6:408:166::16)
+        with ESMTP id S235465AbiBVU2T (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Feb 2022 15:28:19 -0500
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5584B153A
+        for <linux-sgx@vger.kernel.org>; Tue, 22 Feb 2022 12:27:51 -0800 (PST)
+Received: by mail-qv1-xf2b.google.com with SMTP id 8so2564745qvf.2
+        for <linux-sgx@vger.kernel.org>; Tue, 22 Feb 2022 12:27:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=profian-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=48AlOTyfMV81jSSoRqkodq50EcHYcR/mLTKjIa8eKfc=;
+        b=iSftD+H4U6f7Jl6coF9DryBqTKSD96cy0Fmd0VeyBMSOOavdXJU32HQMGJrJOD0c+E
+         vHhCHjzK5azHqWbz+Eenjp5t8z6pJ/aqT9ZzTV5vw51j558dBfUd7RMK9i4WADRt21CH
+         8YlzyefEiaOJnh4tOdvw+eGRejazMCUMGdDKt4JIfZjZfBR0hVtrF4RcTbDjA0PAUh/Y
+         AMqtru7BlQcca79A/t3230YzfikKUgFyXR6ApWlye99WdbTjo4sCSbSTmqvfvdWd+z2b
+         tGaxT4UjKUaXqqOPd56WG5kLi7xYms1e/y7WHjibzWNghTYD2iFkwnFwcaFEmtNhoFy0
+         SUig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=48AlOTyfMV81jSSoRqkodq50EcHYcR/mLTKjIa8eKfc=;
+        b=JIVAfsupTE48qWrUBuUUGTPjQkZ6gcAlrn3Bz4B0op3XAbQxjeVLaz0z/KBRMgLKc6
+         ojJ6Lrl4onyUhVeiux4g8eYIOier6YlDiwfpAazDm0BR4wUqIUwTEAq/Lo4BKNTpfyRG
+         5tb7GhIWNoqqynArZvGeSiViHyqbMrEyn+++Bd0irK0zEKTWzWUAEO9Q+md0Zv9aFnGw
+         zI5GcHITz/bN9na2/GdXxA5LOt4ar7WxcQa4koVqWrbss9V34pIWmYzu4ZIFlbPMAqXv
+         pdqpbL4yr+BKaDW4AnmjIp7dX+j63uPTqkuptEJJemvGh9RUZb5hPuyAe7vXoO8py5Lp
+         wXGQ==
+X-Gm-Message-State: AOAM531KnS5rOSLTr1Iz5KelFd2qZh9JyKwFZ56dXWjaFrvwTEd0gJlz
+        o4VvuEmXQ38MfqbR9aqkxY8FO2fXgmXz2YDWQNMyVw==
+X-Google-Smtp-Source: ABdhPJxdZ8ESNWCfO7ggjnMxpRQUxuLhRRF8IYCzXscdDJfrWpuwRoxTkKXwocsqhUcWOQ153jMu11GNzX/sVkkmFv0=
+X-Received: by 2002:ac8:73cf:0:b0:2d2:cb26:21f6 with SMTP id
+ v15-20020ac873cf000000b002d2cb2621f6mr23632963qtp.374.1645561670819; Tue, 22
+ Feb 2022 12:27:50 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fa852c21-7779-4c49-861a-08d9f63eb18a
-X-MS-TrafficTypeDiagnostic: SJ0PR11MB5772:EE_
-X-Microsoft-Antispam-PRVS: <SJ0PR11MB577267B9926B03BE23CE5C75F83B9@SJ0PR11MB5772.namprd11.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NRmq/KvxY58oGiE/r9zaUXQFlrEjmz9HDXMWjgMnD6Qt9ziGg+/Fy9F7U+xalNx+Lf+iOve6gGqvFRU3xO49iRiAQxW7+L1QLpGmloRxwdPTt0xG5Gs259lJtdLNM0cWig5lJ28U8ULMljVwkTSZVfBhNAP1lbuWcMajF7bWtNgG/0JrjUNhu5bH0qFD00Hlp9dz7zZ6XM6/pbprvl+BUiso7r5u+locBcNYSJ9CNuz9R92PnNxA4PkFM9kUhjdG9YNaSAeU3Ydu1S4rbpLlZTG4C3I7A969sLT+UX/9zw9Sp/JgA3tYXX7DqTUnuCgYuLyxaA/+2QA/lLDn9+KPCDGsoRi4G9/95D37GAEXEwhXUkilTqG70YmOjJxTW+4UIP4JfRCVWSrbY2x+bXKTqAKtP8oNWxrnJ2o4gDfpC6l2m6pG1BnZQuadRt8G5n6seobKady4o3Ada+ggGzx/jDpkF8HS4NEYELn5wFO6Esplcv9ZXF8xtmpPIxfj4aIUvIqK/2dBmIf1zw6UtGOGgfu6kub04U+uqtTc6O05EFj3GUyT1Eetb7odYbMq8cD3UETBIavibarlqNNKdqBrUI7JRPNr/l54hbOt7Yd2JXBIDBYTy056nCA26B5ESjdvqasSTZyJhIsBlhCJ6rBtKXxctpMjEN6qxVvUZFbMEDp35edKwR9NnPpOyhI+dBH0qEHKs/iq0vMp0s3aj66sBHJ06bj79/GbcC+rBj15hlp0d+WeDruCOcHjOLUMHk3Ld71B1nvphbqjMzUQvQkHslNaqW9/pNCwMZ/8tqpxlveGW9Mg+ZsteREnk1HRAn1O
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(66476007)(2906002)(8936002)(966005)(66946007)(66556008)(8676002)(38100700002)(6486002)(53546011)(6506007)(6666004)(508600001)(4326008)(44832011)(6512007)(316002)(5660300002)(86362001)(6916009)(2616005)(36756003)(31696002)(186003)(26005)(83380400001)(31686004)(82960400001)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZnozazZwL1czeDViZXFqRDZxQzVjcnZHdVMvcU8zVWtWWnFpVlBaN2NSUW05?=
- =?utf-8?B?NU1Mam4yb0M2SFNDWUY2dG9Ib2MyVjhBQkhNUFE1ci9CbDR2cTZvWjl2UkUz?=
- =?utf-8?B?SzlPcmpnV1FPREx3N1JhczQ3dlhiQlFFQ1RZRG0rbWdWUk1UUVBJaE55SllR?=
- =?utf-8?B?Q29PQnRHWHlqSXI3b25tZ2hyb2t2Qzd0UUlUa2NlYWdzeGFuNnZSeU11OGdo?=
- =?utf-8?B?cEJpamZMYlJDVDRCeS9MY09La2YyYmloK3d5Tm9uQnN6RHZ2ejkvaWlReTRH?=
- =?utf-8?B?MTdPMWo3NU9iUG1yMitDaVRtM2pDQVlJTldhVkFoOHk3MjMwTUxXMzF1VHpW?=
- =?utf-8?B?RDJZRWdSY0lpdFl4VTVRRHBIb2JjY0Q2bEtwd1NGZFBWWS9NQlovcXBxenYv?=
- =?utf-8?B?MUFMeWIvcEhzajdRNVBPOGxsTS9CSDFmQ3RweFlPN2JreVo4OXpYSHJOUytM?=
- =?utf-8?B?enIrOEJ6SW9tcUFySlJiWDZpS0V0OEVTSldJZ0YwM0VaMnJFVE5sNHZaQTBz?=
- =?utf-8?B?Y2VNckFJaEtTdTFEemRDUTZLRHpLU0FJdlZKS2krZ1g3d0lwbkh5MnFnL3Rx?=
- =?utf-8?B?Q1gxdU52TnpHRnNhZ2cwWk1YUzY4SkZkMGlaSkZrUUdFcmVtanR0QU45ZFJC?=
- =?utf-8?B?WjNxM1B0ZFQ1MWZYV2NPMGI2bnBJUllvT1dmUWhoaFNsaGVEcWFDUUN4cTUx?=
- =?utf-8?B?LzlKOWF6dmZCT3BmKzYwNFBkQk1rdjl1Si9aeldwY09FT3hHVkRTSll1MW0v?=
- =?utf-8?B?Ung2YnYrT1NvREtHR0ZLMitvbEJINXVHa1NkbjdkWVU1MzhJRytEM3NyNGRk?=
- =?utf-8?B?bThES1ovTmdqT1I1UDQySzdueFFWaGk1VW1hUjg1bDN1WmliTFNkektsNDZV?=
- =?utf-8?B?alI1WnZnUXVVYVNpUHdrQkZiQWc2VmR5S0p0bU5qYXlxMC9rZ1VtbXhoUzhL?=
- =?utf-8?B?NDNUcFllNUh2clRaSUwvN1UxdW56WHBTRFNVUU11MmY3cE1iYm9jN09aSDhw?=
- =?utf-8?B?NFhKZWk5Z1dTMTcyQlFTTXlFMVVnTzVyYkJTV2F4YjVDMXNmU1JRd0N2ajFr?=
- =?utf-8?B?QWMycFhwU1dIZmo5L0JZTXRQcnhRUVZPWFgwWWlkQVNPWnBQM2FIRWtvdzZx?=
- =?utf-8?B?VHZxUTd6N04wMzJUODZGYW9HUGdQYzU3V1dKNVA5ZDA1ZGZQNGNSOHRPNHE1?=
- =?utf-8?B?cVVpSEJYRmF3dGppUGQxS3J1WnZYWS9keE80UlRzZ1dEVnFuYWN4OVhyODhR?=
- =?utf-8?B?enRQdXh6YU82MTBiaC9JUisxTkl4RUJuMFM5eU1VeDdMVkNYSmhKWWEwV2FX?=
- =?utf-8?B?YnVhNHNWbElyalNrelhIeW1CUnZZNTFPa1hwQ1RiZEtiUXROSkkrZExhczEx?=
- =?utf-8?B?eEF6cS9Ia1BVOUErZjJmcXlGWXVVRlhhUnpyNy9RdlpXTEE2cVcyYXJOQUto?=
- =?utf-8?B?RDVSdUE5Z21YR0NWdGpON3ozUWR4TDdCUkVHcEhVcENGRWxyTkE1QytTbU96?=
- =?utf-8?B?bTMzaEN1NUpadXZpWW9NeWlIdTVBZXMrMnBjbVJQQlkvSE1wbXlydDVyVzl1?=
- =?utf-8?B?cGIvMzduczhzamlnWFNmZGJPclRsS2grd1VodTJrc0dmWGtXYW9mUGx4YXZs?=
- =?utf-8?B?M09iVUh6T1ZCZE5nVSt2blpTOXBidk41VHhyVHR0QnhlL2hiUEdUQ0JQeTJR?=
- =?utf-8?B?bDM3VWN1MXRVZ0dwaEMwUy9rc3dJdCt6dFRjSjM4V0pDY1BMZnVaNUUrMS9Y?=
- =?utf-8?B?eHJnamNFaWRsSHJJbVlIOXIyMDFHcUdobGRSLzBUQlhUU1luSlNoUTlGT3Aw?=
- =?utf-8?B?czNYcTl0MUFnRHZBMnlmLzRVQlU1SzRiTk9manRNaWMwQnd5UUtCSGRtUmN0?=
- =?utf-8?B?dU1YUHpraGRKMWlqRVJvN0YzU1FoT01SNUlFWTdrWFR4cUNJRmZ6SGlxdjZJ?=
- =?utf-8?B?V1V1Tk9vdzNFVUF4WWY4TW9kOVFGU28xUXBBdDRIY1pJWi9UWGJFYjJqUXg1?=
- =?utf-8?B?bkFZdi9XWGhPbkMrckp6eHpjQ09NeFhyZzBBb085S09sc25tZ2V5dVFKMlE2?=
- =?utf-8?B?OFpKdVFObWdEVDdzd3BVUGlUaHhEMjAzby92NXJHMVdsN0hLQ2E0QnVLTWdU?=
- =?utf-8?B?VEtvbHVvd3F2SlNoUHBsdGhZa1NGYi9OV1o1SEF3Vnl1c0htTnRlV0FGZXNk?=
- =?utf-8?B?T0FzTUxRT2dwdGliekgveE94QmdKSExPVG51WWNHWXc2WDlwb0M3aVZ2Q0dG?=
- =?utf-8?Q?TwhiXrJY6RvWs9bDFezI3SAf966cpCw/EjD6CZlTzE=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa852c21-7779-4c49-861a-08d9f63eb18a
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 20:05:37.9342
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Axox1QFjgdul8+kzE53ruFjme7JehR3pO3MopZWZzwIXLpKX+dtbS+bPbpVyfAPKTNIeTmv78QYv9vdMpW6jCYZVnPKYzDdEv/g79TyjL/A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5772
-X-OriginatorOrg: intel.com
+References: <cover.1644274683.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1644274683.git.reinette.chatre@intel.com>
+From:   Nathaniel McCallum <nathaniel@profian.com>
+Date:   Tue, 22 Feb 2022 15:27:40 -0500
+Message-ID: <CAHAy0tR-64vxtFo4KXiJP_va2=WF++Q6gDaPksNxiaSB5wWvhA@mail.gmail.com>
+Subject: Re: [PATCH V2 00/32] x86/sgx and selftests/sgx: Support SGX2
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        tglx@linutronix.de, bp@alien8.de,
+        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
+1. This interface looks very odd to me. mmap() is the kernel interface
+for changing user space memory maps. Why are we introducing a new
+interface for this? You can just simply add a new mmap flag (i.e.
+MAP_SGX_TCS*) and then figure out which SGX instructions to execute
+based on the desired state of the memory maps. If you do this, none of
+the following ioctls are needed:
 
-On 2/20/2022 12:02 PM, Jarkko Sakkinen wrote:
-> On Tue, Feb 01, 2022 at 02:47:03PM -0800, Reinette Chatre wrote:
->> == Background ==
->>
->> The SGX selftests track parts of the enclave binaries in an array:
->> encl->segment_tbl[]. That array is dynamically allocated early
->> (but not first) in the test's lifetime. The array is referenced
->> at the end of the test in encl_delete().
->>
->> == Problem ==
->>
->> encl->segment_tbl[] can be NULL if the test fails before its
->> allocation. That leads to a NULL-pointer-dereference in encl_delete().
->> This is triggered during early failures of the selftest like if the
->> enclave binary ("test_encl.elf") is deleted.
->>
->> == Solution ==
->>
->> Ensure encl->segment_tbl[] is valid before attempting to access
->> its members. The offset with which it is accessed, encl->nr_segments,
->> is initialized before encl->segment_tbl[] and thus considered valid
->> to use after the encl->segment_tbl[] check succeeds.
->>
->> Fixes: 3200505d4de6 ("selftests/sgx: Create a heap for the test enclave")
->> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
->> ---
->> Changes since V1:
->> - Rewrite commit message (Dave).
->>
->>  tools/testing/selftests/sgx/load.c | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
->> index 9d4322c946e2..006b464c8fc9 100644
->> --- a/tools/testing/selftests/sgx/load.c
->> +++ b/tools/testing/selftests/sgx/load.c
->> @@ -21,7 +21,7 @@
->>  
->>  void encl_delete(struct encl *encl)
->>  {
->> -	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
->> +	struct encl_segment *heap_seg;
->>  
->>  	if (encl->encl_base)
->>  		munmap((void *)encl->encl_base, encl->encl_size);
->> @@ -32,10 +32,11 @@ void encl_delete(struct encl *encl)
->>  	if (encl->fd)
->>  		close(encl->fd);
->>  
->> -	munmap(heap_seg->src, heap_seg->size);
->> -
->> -	if (encl->segment_tbl)
->> +	if (encl->segment_tbl) {
->> +		heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
->> +		munmap(heap_seg->src, heap_seg->size);
->>  		free(encl->segment_tbl);
->> +	}
->>  
->>  	memset(encl, 0, sizeof(*encl));
->>  }
->> -- 
->> 2.25.1
->>
-> 
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
+* SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
+* SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
+* SGX_IOC_ENCLAVE_REMOVE_PAGES
+* SGX_IOC_ENCLAVE_MODIFY_TYPE
 
-Thank you very much for taking a look at these patches. 
+It also means that languages don't have to grow support for all these
+ioctls. Instead, they can just reuse the existing mmap() bindings with
+the new flag. Also, multiple operations can be combined into a single
+mmap() call, amortizing the changes over a single context switch.
 
-V3[1] was submitted (8 February) and merged (11 February) onto x86/sgx
-before I received your reviewed-by tags for V1 (15 February) or
-V2 (20 February). The merged version thus does not contain your tags.
+2. Automatically adding pages with hard-coded permissions in a fault
+handler seems like a really bad idea. How do you distinguish between
+accesses which should result in an updated mapping and accesses that
+should result in a fault? IMHO, all unmapped page accesses should
+result in a page fault. mmap() should be called first to identify the
+correct permissions for these pages. Then the page handler should be
+updated to use the permissions from the mapping when backfilling
+physical pages. If I understand correctly, this should also obviate
+the need for the weird userspace callback to allow for execute
+permissions.
 
-Reinette
+3. Implementing as I've suggested also means that we can lock down an
+enclave, for example - after code has been JITed, by closing the file
+descriptor. Once the file descriptor used to create the enclave is
+closed, no further mmap() can be performed on the enclave. Attempting
+to do EACCEPT on an unmapped page will generate a page fault.
 
-[1] https://lore.kernel.org/linux-sgx/cover.1644355600.git.reinette.chatre@intel.com/
+* - I'm aware that a new flag might be frowned upon. I see a few other options:
+1. reuse an existing flag which doesn't make sense in this context
+2. communicate the page type in the offset argument
+3. keep SGX_IOC_ENCLAVE_MODIFY_TYPE
+
+On Mon, Feb 7, 2022 at 8:07 PM Reinette Chatre
+<reinette.chatre@intel.com> wrote:
+>
+> V1: https://lore.kernel.org/linux-sgx/cover.1638381245.git.reinette.chatre@intel.com/
+>
+> Changes since V1 that directly impact user space:
+> - SGX2 permission changes changed from a single ioctl() named
+>   SGX_IOC_PAGE_MODP to two new ioctl()s:
+>   SGX_IOC_ENCLAVE_RELAX_PERMISSIONS and
+>   SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, supported by two different
+>   parameter structures (SGX_IOC_ENCLAVE_RELAX_PERMISSIONS does
+>   not support a result output parameter) (Jarkko).
+>
+>   User space flow impact: After user space runs ENCLU[EMODPE] it
+>   needs to call SGX_IOC_ENCLAVE_RELAX_PERMISSIONS to have PTEs
+>   updated. Previously running SGX_IOC_PAGE_MODP in this scenario
+>   resulted in EPCM.PR being set but calling
+>   SGX_IOC_ENCLAVE_RELAX_PERMISSIONS will not result in EPCM.PR
+>   being set anymore and thus no need for an additional
+>   ENCLU[EACCEPT].
+>
+> - SGX_IOC_ENCLAVE_RELAX_PERMISSIONS and
+>   SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
+>   obtain new permissions from secinfo as parameter instead of
+>   the permissions directly (Jarkko).
+>
+> - ioctl() supporting SGX2 page type change is renamed from
+>   SGX_IOC_PAGE_MODT to SGX_IOC_ENCLAVE_MODIFY_TYPE (Jarkko).
+>
+> - SGX_IOC_ENCLAVE_MODIFY_TYPE obtains new page type from secinfo
+>   as parameter instead of the page type directly (Jarkko).
+>
+> - ioctl() supporting SGX2 page removal is renamed from
+>   SGX_IOC_PAGE_REMOVE to SGX_IOC_ENCLAVE_REMOVE_PAGES (Jarkko).
+>
+> - All ioctl() parameter structures have been renamed as a result of the
+>   ioctl() renaming:
+>   SGX_IOC_ENCLAVE_RELAX_PERMISSIONS => struct sgx_enclave_relax_perm
+>   SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS => struct sgx_enclave_restrict_perm
+>   SGX_IOC_ENCLAVE_MODIFY_TYPE => struct sgx_enclave_modt
+>   SGX_IOC_ENCLAVE_REMOVE_PAGES => struct sgx_enclave_remove_pages
+>
+> Changes since V1 that do not directly impact user space:
+> - Number of patches in series increased from 25 to 32 primarily because
+>   of splitting the original submission:
+>   - Wrappers for the new SGX2 functions are introduced in three separate
+>     patches replacing the original "x86/sgx: Add wrappers for SGX2
+>     functions"
+>     (Jarkko).
+>   - Moving and renaming sgx_encl_ewb_cpumask() is done with two patches
+>     replacing the original "x86/sgx: Use more generic name for enclave
+>     cpumask function" (Jarkko).
+>   - Support for SGX2 EPCM permission changes is split into two ioctls(),
+>     one for relaxing and one for restricting permissions, each introduced
+>     by a new patch replacing the original "x86/sgx: Support enclave page
+>     permission changes" (Jarkko).
+>   - Extracted code used by existing ioctls() for usage by new ioctl()s
+>     into a new utility in new patch "x86/sgx: Create utility to validate
+>     user provided offset and length" (Dave did not specifically ask for
+>     this but it addresses his review feedback).
+>   - Two new Documentation patches to support the SGX2 work
+>     ("Documentation/x86: Introduce enclave runtime management") and
+>     a dedicated section on the enclave permission management
+>     ("Documentation/x86: Document SGX permission details") (Andy).
+> - Most patches were reworked to improve the language by:
+>   * aiming to refer to exact item instead of English rephrasing (Jarkko).
+>   * use ioctl() instead of ioctl throughout (Dave).
+>   * Use "relaxed" instead of "exceed" when referring to permissions
+>     (Dave).
+> - Improved documentation with several additions to
+>   Documentation/x86/sgx.rst.
+> - Many smaller changes, please refer to individual patches.
+>
+> Hi Everybody,
+>
+> The current Linux kernel support for SGX includes support for SGX1 that
+> requires that an enclave be created with properties that accommodate all
+> usages over its (the enclave's) lifetime. This includes properties such
+> as permissions of enclave pages, the number of enclave pages, and the
+> number of threads supported by the enclave.
+>
+> Consequences of this requirement to have the enclave be created to
+> accommodate all usages include:
+> * pages needing to support relocated code are required to have RWX
+>   permissions for their entire lifetime,
+> * an enclave needs to be created with the maximum stack and heap
+>   projected to be needed during the enclave's entire lifetime which
+>   can be longer than the processes running within it,
+> * an enclave needs to be created with support for the maximum number
+>   of threads projected to run in the enclave.
+>
+> Since SGX1 a few more functions were introduced, collectively called
+> SGX2, that support modifications to an initialized enclave. Hardware
+> supporting these functions are already available as listed on
+> https://github.com/ayeks/SGX-hardware
+>
+> This series adds support for SGX2, also referred to as Enclave Dynamic
+> Memory Management (EDMM). This includes:
+>
+> * Support modifying permissions of regular enclave pages belonging to an
+>   initialized enclave. New permissions are not allowed to exceed the
+>   originally vetted permissions. For example, RX isn't allowed unless
+>   the page was originally added with RX or RWX.
+>   Modifying permissions is accomplished with two new ioctl()s:
+>   SGX_IOC_ENCLAVE_RELAX_PERMISSIONS and
+>   SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS.
+>
+> * Support dynamic addition of regular enclave pages to an initialized
+>   enclave. Pages are added with RW permissions as their "originally
+>   vetted permissions" (see previous bullet) and thus not allowed to
+>   be made executable at this time. Enabling dynamically added pages
+>   to obtain executable permissions require integration with user space
+>   policy that is deferred until the core SGX2 enabling is complete.
+>   Pages are dynamically added to an initialized enclave from the SGX
+>   page fault handler.
+>
+> * Support expanding an initialized enclave to accommodate more threads.
+>   More threads can be accommodated by an enclave with the addition of
+>   Thread Control Structure (TCS) pages that is done by changing the
+>   type of regular enclave pages to TCS pages using a new ioctl()
+>   SGX_IOC_ENCLAVE_MODIFY_TYPE.
+>
+> * Support removing regular and TCS pages from an initialized enclave.
+>   Removing pages is accomplished in two stages as supported by two new
+>   ioctl()s SGX_IOC_ENCLAVE_MODIFY_TYPE (same ioctl() as mentioned in
+>   previous bullet) and SGX_IOC_ENCLAVE_REMOVE_PAGES.
+>
+> * Tests covering all the new flows, some edge cases, and one
+>   comprehensive stress scenario.
+>
+> No additional work is needed to support SGX2 in a virtualized
+> environment. The tests included in this series can also be run from
+> a guest and was tested with the recent QEMU release based on 6.2.0
+> that supports SGX.
+>
+> Patches 1 to 14 prepares the existing code for SGX2 support by
+> introducing the SGX2 functions, making sure pages remain accessible
+> after their enclave permissions are changed, and tracking enclave page
+> types as well as runtime permissions as needed by SGX2.
+>
+> Patches 15 through 32 are a mix of x86/sgx and selftests/sgx patches
+> that follow the format where first an SGX2 feature is
+> enabled and then followed by tests of the new feature and/or
+> tests of scenarios that combine SGX2 features enabled up to that point.
+>
+> In two cases (patches 20 and 31) code in support of SGX2 is separated
+> out with detailed motivation to support the review.
+>
+> This series is based on v5.17-rc2 with the following fixes additionally
+> applied:
+>
+> "selftests/sgx: Remove extra newlines in test output"
+>  https://lore.kernel.org/linux-sgx/16317683a1822bbd44ab3ca48b60a9a217ac24de.1643754040.git.reinette.chatre@intel.com/
+> "selftests/sgx: Ensure enclave data available during debug print"
+>  https://lore.kernel.org/linux-sgx/eaaeeb9122916d831942fc8a3043c687137314c1.1643754040.git.reinette.chatre@intel.com/
+> "selftests/sgx: Do not attempt enclave build without valid enclave"
+>  https://lore.kernel.org/linux-sgx/4e4ea6d70c286c209964bec1e8d29ac8e692748b.1643754040.git.reinette.chatre@intel.com/
+> "selftests/sgx: Fix NULL-pointer-dereference upon early test failure"
+>  https://lore.kernel.org/linux-sgx/89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com/
+> "x86/sgx: Add poison handling to reclaimer"
+>  https://lore.kernel.org/linux-sgx/dcc95eb2aaefb042527ac50d0a50738c7c160dac.1643830353.git.reinette.chatre@intel.com/
+> "x86/sgx: Silence softlockup detection when releasing large enclaves"
+>  https://lore.kernel.org/linux-sgx/b5e9f218064aa76e3026f778e1ad0a1d823e3db8.1643133224.git.reinette.chatre@intel.com/
+>
+> Your feedback will be greatly appreciated.
+>
+> Regards,
+>
+> Reinette
+>
+> Reinette Chatre (32):
+>   x86/sgx: Add short descriptions to ENCLS wrappers
+>   x86/sgx: Add wrapper for SGX2 EMODPR function
+>   x86/sgx: Add wrapper for SGX2 EMODT function
+>   x86/sgx: Add wrapper for SGX2 EAUG function
+>   Documentation/x86: Document SGX permission details
+>   x86/sgx: Support VMA permissions more relaxed than enclave permissions
+>   x86/sgx: Add pfn_mkwrite() handler for present PTEs
+>   x86/sgx: x86/sgx: Add sgx_encl_page->vm_run_prot_bits for dynamic
+>     permission changes
+>   x86/sgx: Export sgx_encl_ewb_cpumask()
+>   x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()
+>   x86/sgx: Move PTE zap code to new sgx_zap_enclave_ptes()
+>   x86/sgx: Make sgx_ipi_cb() available internally
+>   x86/sgx: Create utility to validate user provided offset and length
+>   x86/sgx: Keep record of SGX page type
+>   x86/sgx: Support relaxing of enclave page permissions
+>   x86/sgx: Support restricting of enclave page permissions
+>   selftests/sgx: Add test for EPCM permission changes
+>   selftests/sgx: Add test for TCS page permission changes
+>   x86/sgx: Support adding of pages to an initialized enclave
+>   x86/sgx: Tighten accessible memory range after enclave initialization
+>   selftests/sgx: Test two different SGX2 EAUG flows
+>   x86/sgx: Support modifying SGX page type
+>   x86/sgx: Support complete page removal
+>   Documentation/x86: Introduce enclave runtime management section
+>   selftests/sgx: Introduce dynamic entry point
+>   selftests/sgx: Introduce TCS initialization enclave operation
+>   selftests/sgx: Test complete changing of page type flow
+>   selftests/sgx: Test faulty enclave behavior
+>   selftests/sgx: Test invalid access to removed enclave page
+>   selftests/sgx: Test reclaiming of untouched page
+>   x86/sgx: Free up EPC pages directly to support large page ranges
+>   selftests/sgx: Page removal stress test
+>
+>  Documentation/x86/sgx.rst                     |   64 +-
+>  arch/x86/include/asm/sgx.h                    |    8 +
+>  arch/x86/include/uapi/asm/sgx.h               |   81 +
+>  arch/x86/kernel/cpu/sgx/encl.c                |  334 +++-
+>  arch/x86/kernel/cpu/sgx/encl.h                |   12 +-
+>  arch/x86/kernel/cpu/sgx/encls.h               |   33 +
+>  arch/x86/kernel/cpu/sgx/ioctl.c               |  831 ++++++++-
+>  arch/x86/kernel/cpu/sgx/main.c                |   70 +-
+>  arch/x86/kernel/cpu/sgx/sgx.h                 |    3 +
+>  tools/testing/selftests/sgx/defines.h         |   23 +
+>  tools/testing/selftests/sgx/load.c            |   41 +
+>  tools/testing/selftests/sgx/main.c            | 1484 +++++++++++++++++
+>  tools/testing/selftests/sgx/main.h            |    1 +
+>  tools/testing/selftests/sgx/test_encl.c       |   68 +
+>  .../selftests/sgx/test_encl_bootstrap.S       |    6 +
+>  15 files changed, 2963 insertions(+), 96 deletions(-)
+>
+>
+> base-commit: 26291c54e111ff6ba87a164d85d4a4e134b7315c
+> prerequisite-patch-id: 3c3908f1c3536cc04ba020fb3e81f51395b44223
+> prerequisite-patch-id: e860923423c3387cf6fdcceb2fa41dc5e9454ef4
+> prerequisite-patch-id: 986260c8bc4255eb61e2c4afa88d2b723e376423
+> prerequisite-patch-id: ba014a99fced2b57d5d9e2dfb9d80ddf4333c13e
+> prerequisite-patch-id: 65cbb72889b6353a5639b984615d12019136b270
+> prerequisite-patch-id: e3296a2f0345a77c8a7ca91f76697ae2e1dca21f
+> --
+> 2.25.1
+>
