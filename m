@@ -2,142 +2,195 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CDDC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Feb 2022 00:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B16C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Feb 2022 12:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237407AbiBVAPm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Feb 2022 19:15:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60252 "EHLO
+        id S230196AbiBVMET (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Feb 2022 07:04:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233643AbiBVAPl (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 21 Feb 2022 19:15:41 -0500
+        with ESMTP id S229992AbiBVMER (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Feb 2022 07:04:17 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B936924BFC;
-        Mon, 21 Feb 2022 16:15:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CE6C7D78;
+        Tue, 22 Feb 2022 04:03:51 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3841EB811B3;
-        Tue, 22 Feb 2022 00:15:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB0AC340E9;
-        Tue, 22 Feb 2022 00:15:12 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CBC4FB81995;
+        Tue, 22 Feb 2022 12:03:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20446C340E8;
+        Tue, 22 Feb 2022 12:03:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645488913;
-        bh=8kIH+CU4O2vOEf2rHBiux6fRL3f9GE2CqZ2PZwFgLE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k6Ft7IhR4B9kJrZRdtSdTsLBEAIQTApR+RTTAG9+T/MNu4zve4hcpbxffGJ4/O1BX
-         GU8/h8QmQABvoLjrepefmvjRRTiPS+wmkoTgkqfruFW5tQMdgkyxKbXA3/TQBZ6JC+
-         IW0r6hX92BhcB01ahQWfAxT4cx8BbMNUUy8BK+7BnKg/3pOGvFOaepETs0y/YZoAYD
-         yN4NxlxfTvcapY2aCQlK5pqs4u/drHen5GIJfXCRzggDii3dyPgx25ao+NeAyzhRY5
-         JZwQDFSgv5ADxTxfgsfHMB6Jmt/1nsmM95T7K6XfPHd/MQY41434CX4ySUIGq8u35n
-         T4OWbPc77ZXTA==
-Date:   Tue, 22 Feb 2022 01:15:48 +0100
+        s=k20201202; t=1645531428;
+        bh=zgzpvIWCRKTrfW0fbK2bzKxaNODmDIlJqfN/5E/6vIk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QSgEzRxcPL4Z2dfuvcdf63fF00ZqIO0ojMzZwbdRpZeep05BoUqJVtnlJbYBhTHCs
+         9R6tFMZJWnb5Es3x4e4HiN5Rt0r/MJ6kameMo4QkNX7pEFD+SntFObZpUH+mcpRg9t
+         LvfZaj0Fq8wisT60QFkpKrE/+SM9Y4k67ELg3rIRBx+vuBvKAzSaSKybqsPS/J4hze
+         kmPC/5TZyDnxhN0r2jtI8g8wW9HMuAxWZor/kdxYatLTPb2AHBNFlhGaMsT/MHgoMY
+         /8cnq8g7dae5onkFEygHSnLPAa9MLGFN+GYVaYjRgRNpAXjTgIzjH/mhfNKowukbxs
+         e63Ck3LSmJWWg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
         Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v3] x86/sgx: Free backing memory after faulting the
- enclave page
-Message-ID: <YhQrNDMhVoKxPhFQ@iki.fi>
-References: <20220108140510.76583-1-jarkko@kernel.org>
- <YfJDV63oGmWOmO4F@iki.fi>
- <8afec431-4dfc-d8df-152b-76cca0e17ccb@intel.com>
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v4] x86/sgx: Free backing memory after faulting the enclave page
+Date:   Tue, 22 Feb 2022 13:03:41 +0100
+Message-Id: <20220222120342.5277-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8afec431-4dfc-d8df-152b-76cca0e17ccb@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 03:30:52PM -0800, Dave Hansen wrote:
-> On 1/26/22 23:01, Jarkko Sakkinen wrote:
-> > On Sat, Jan 08, 2022 at 04:05:10PM +0200, Jarkko Sakkinen wrote:
-> >> +static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-> >> +{
-> >> +	return PFN_DOWN(encl->size) + 1 + (index / sizeof(struct sgx_pcmd));
-> >> +}
-> > Found it.
-> > 
-> > This should be 
-> > 
-> > static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl *encl, pgoff_t index)
-> > {
-> > 	return PFN_DOWN(encl->size) + 1 + (index * PAGE_SIZE) / sizeof(struct sgx_pcmd);
-> > }
-> 
-> I've looked at this for about 10 minutes and been simultaneously
-> confused as to whether it is right or wrong.  That makes it
-> automatically wrong. :)
-> 
-> First, this isn't calculating a "PCMD number".  It's calculating backing
-> offset.  The "PCMD number" calculation is only a part of it.  I think
-> that makes the naming rather sloppy.
-> 
-> Second, I think the typing is sloppy.  page_index for example:
-> 
-> > static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
-> >                            struct sgx_epc_page *epc_page,
-> >                            struct sgx_epc_page *secs_page)
-> > {
-> ...
-> >         pgoff_t page_index;
-> 
-> It's storing a page number:
-> 
->                 page_index = PFN_DOWN(encl->size);
-> 
-> not a real offset-into-a-file.  That makes it even more confusing when
-> 'page_index' crosses a function boundary, gets renamed to 'index' and
-> then its units get confused.
-> 
-> /*
->  * Given a page number within an enclave (@epc_page_nr), calculate the
->  * offset in bytes into the backing file where that page's PCMD is
->  * located.
->  */
-> -static inline pgoff_t sgx_encl_get_backing_pcmd_nr(struct sgx_encl
-> *encl, pgoff_t index)
-> +static inline pgoff_t sgx_page_nr_to_pcmd_nr(struct sgx_encl *encl,
-> unsigned long epc_page_nr)
-> {
-> 	pgoff_t last_epc_offset = PFN_DOWN(encl->size);
-> 	pgoff_t pcmd_offset;
-> 
-> 	// The SECS page is stashed in a slot after the
-> 	// last normal EPC page.  Leave space for it:
-> 	last_epc_offset++;
-> 
-> 	pcmd_offset = epc_page_nr / sizeof(struct sgx_pcmd);
-> 
-> 	return last_epc_offset + pcmd_offset;
-> }
-> 
-> Looking at that, I still think your *original* version is correct.
-> 
-> Am I just all twisted around from looking at this code too much?  Could
-> you please take another look and send a new version of the patch?
+There is a limited amount of SGX memory (EPC) on each system.  When that
+memory is used up, SGX has its own swapping mechanism which is similar
+in concept but totally separate from the core mm/* code.  Instead of
+swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
+comes from a shared memory pseudo-file and can itself be swapped by the
+core mm code.  There is a hierarchy like this:
 
-I gave some though and this is what I came up with.
+	EPC <-> shmem <-> disk
 
-So what do you think about this:
+After data is swapped back in from shmem to EPC, the shmem backing
+storage needs to be freed.  Currently, the backing shmem is not freed.
+This effectively wastes the shmem while the enclave is running.  The
+memory is recovered when the enclave is destroyed and the backing
+storage freed.
 
-	pgoff_t pcmd_off = encl->size + PAGE_SIZE + page_idex * sizeof(struct sgx_pcmd); 
-	
-This makes the calculations quite simple:
+Sort this out by freeing memory with shmem_truncate_range(), as soon as
+a page is faulted back to the EPC.  In addition, free the memory for
+PCMD pages as soon as all PCMD's in a page have been marked as unused
+by zeroing its contents.
 
-	backing->pcmd = pcmd;
-	backing->pcmd_offset = pcmd_off & PAGE_SIZE;
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v4:
+* Sanitized the offset calculations.
+v3:
+* Resend.
+v2:
+* Rewrite commit message as proposed by Dave.
+* Truncate PCMD pages (Dave).
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 44 +++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
-and
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 8be6f0592bdc..94319190efb1 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -12,6 +12,17 @@
+ #include "encls.h"
+ #include "sgx.h"
+ 
++
++/*
++ * Free a page from the backing storage in the given page index.
++ */
++static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, pgoff_t index)
++{
++	struct inode *inode = file_inode(encl->backing);
++
++	shmem_truncate_range(inode, PFN_PHYS(index), PFN_PHYS(index) + PAGE_SIZE - 1);
++}
++
+ /*
+  * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
+  * Pages" in the SDM.
+@@ -24,7 +35,9 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 	struct sgx_encl *encl = encl_page->encl;
+ 	struct sgx_pageinfo pginfo;
+ 	struct sgx_backing b;
++	bool pcmd_page_empty;
+ 	pgoff_t page_index;
++	u8 *pcmd_page;
+ 	int ret;
+ 
+ 	if (secs_page)
+@@ -38,8 +51,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 
+ 	pginfo.addr = encl_page->desc & PAGE_MASK;
+ 	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
+-	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
+-			  b.pcmd_offset;
++	pcmd_page = kmap_atomic(b.pcmd);
++	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
+ 
+ 	if (secs_page)
+ 		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
+@@ -55,11 +68,28 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 		ret = -EFAULT;
+ 	}
+ 
+-	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
++	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
++
++	/*
++	 * The area for the PCMD in the page was zeroed above.  Check if the
++	 * whole page is now empty meaning that all PCMD's have been zeroed:
++	 */
++	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
++
++	kunmap_atomic(pcmd_page);
+ 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+ 
+ 	sgx_encl_put_backing(&b, false);
+ 
++	sgx_encl_truncate_backing_page(encl, page_index);
++
++	if (pcmd_page_empty) {
++		pgoff_t pcmd_off = encl->size + PAGE_SIZE /* SECS */ +
++				   page_index * sizeof(struct sgx_pcmd);
++
++		sgx_encl_truncate_backing_page(encl, PFN_DOWN(pcmd_off));
++	}
++
+ 	return ret;
+ }
+ 
+@@ -583,7 +613,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 				struct sgx_backing *backing)
+ {
+-	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
++	pgoff_t pcmd_off = encl->size + PAGE_SIZE /* SECS */ + page_index * sizeof(struct sgx_pcmd);
+ 	struct page *contents;
+ 	struct page *pcmd;
+ 
+@@ -591,7 +621,7 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 	if (IS_ERR(contents))
+ 		return PTR_ERR(contents);
+ 
+-	pcmd = sgx_encl_get_backing_page(encl, pcmd_index);
++	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(pcmd_off));
+ 	if (IS_ERR(pcmd)) {
+ 		put_page(contents);
+ 		return PTR_ERR(pcmd);
+@@ -600,9 +630,7 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 	backing->page_index = page_index;
+ 	backing->contents = contents;
+ 	backing->pcmd = pcmd;
+-	backing->pcmd_offset =
+-		(page_index & (PAGE_SIZE / sizeof(struct sgx_pcmd) - 1)) *
+-		sizeof(struct sgx_pcmd);
++	backing->pcmd_offset = pcmd_off & (PAGE_SIZE - 1);
+ 
+ 	return 0;
+ }
+-- 
+2.35.1
 
-	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(pcmd_off));
-	
-Then pgoff_t is actually also used for what it is meant to be.
-
-/Jarkko
