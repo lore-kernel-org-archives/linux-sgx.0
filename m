@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF725C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Feb 2022 15:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2EDC433FE
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Feb 2022 15:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237743AbiBWPqB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Feb 2022 10:46:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
+        id S242379AbiBWPqc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Feb 2022 10:46:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233481AbiBWPqA (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Feb 2022 10:46:00 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB813C084A;
-        Wed, 23 Feb 2022 07:45:32 -0800 (PST)
+        with ESMTP id S233481AbiBWPqb (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Feb 2022 10:46:31 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A77EC1151;
+        Wed, 23 Feb 2022 07:46:04 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A0451B820C9;
-        Wed, 23 Feb 2022 15:45:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D30AC340E7;
-        Wed, 23 Feb 2022 15:45:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BC4EF61849;
+        Wed, 23 Feb 2022 15:46:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF4BC340E7;
+        Wed, 23 Feb 2022 15:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645631130;
-        bh=kZDlRKaFrJs14SSOER1lGpAd5UKzlhkkD+Hu55Em64Y=;
+        s=k20201202; t=1645631163;
+        bh=5y8GBuKQ8Eu0KbdCimROfrUbByVtDNDNH0UD13FuHhA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XVZ9owF+aJ2CIrk6HV782/IIKB+VWHDzca7DNV+C8FVvbSSphQHEc+Oea2BKckmH8
-         BH5i4PaOkM6KtkbGGn9z/Rch672B9vYXhcrb8Kfw/iRdeuFnBI7/nonYBp/1qDCUep
-         bPtFhwX/e2sw7HKoqFVpiw2QWkFVPSeN5SfCCnhnaerrImvm2Dj9iSqLYweSYBH7zG
-         MSrPQZbHzk4QqT+NF4B5GJo3/415QrvBwRho8jjxNFXSfFjRhwMmRwn7p6+5vzcfXC
-         X/a1Y3Vc8aLQAu0zu+y1hShrr58z1IqMo9b87j/XDXuSoiSk4oiUgLwYolNfXZQKvQ
-         DGm9fs0ca7Bxw==
-Date:   Wed, 23 Feb 2022 16:46:04 +0100
+        b=Hg2LUP6Xzp4UdLri5evbkORuqJUfg0B6m8UBZKoDct2qzjZLv5InivSv3xRJDNilK
+         oTLsrVECQ34vJWpeuCYJSWzbA6vOuYXwdkX22kU28o14s+tDHYQKi0F4Lv4IK/EuPF
+         5oF3LjltFoulBk6wuk80Qjc+vksqZeUBGSpqpnvvzilv4ynDdycFinojz0xqy6Dv4x
+         UtmzYJsJt6/ekTv+z+HQfSuSsiGkqB+nWboyaf9O0R2d8fBh0KeJDXXOv/rT+Efz9u
+         tdIxVFq9smYfi7axYfU+/eIm1Cyw0psR1C0g5fJH+MEi0/H6HY1LNpzgdy/6jrHfV1
+         MDB5fo1yohihw==
+Date:   Wed, 23 Feb 2022 16:46:39 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
@@ -40,148 +40,63 @@ Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         cathy.zhang@intel.com, cedric.xing@intel.com,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
- permissions
-Message-ID: <YhZWvFSuax2GI9cQ@iki.fi>
+Subject: Re: [PATCH V2 19/32] x86/sgx: Support adding of pages to an
+ initialized enclave
+Message-ID: <YhZW38aVILsrK4Jo@iki.fi>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
- <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
- <YhLhoMFPyOFZ2fsX@iki.fi>
- <d6a5c304-d448-5f0c-6367-26dcba872db3@intel.com>
+ <fcbde9c3e67289eaff9cd8b34989919629fe823c.1644274683.git.reinette.chatre@intel.com>
+ <YhDbGfzGWQ5RtwTU@iki.fi>
+ <YhDb/QRYMa4+xsyv@iki.fi>
+ <YhKLNqgPNNLS7JyN@iki.fi>
+ <80f3d7b9-e3d5-b2c0-7707-710bf6f5081e@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d6a5c304-d448-5f0c-6367-26dcba872db3@intel.com>
+In-Reply-To: <80f3d7b9-e3d5-b2c0-7707-710bf6f5081e@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 10:35:04AM -0800, Reinette Chatre wrote:
+On Tue, Feb 22, 2022 at 11:19:11AM -0800, Reinette Chatre wrote:
 > Hi Jarkko,
 > 
-> On 2/20/2022 4:49 PM, Jarkko Sakkinen wrote:
-> > On Mon, Feb 07, 2022 at 04:45:38PM -0800, Reinette Chatre wrote:
-> 
+> On 2/20/2022 10:40 AM, Jarkko Sakkinen wrote:
 > ...
-> 
-> >> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> >> index 5c678b27bb72..b0ffb80bc67f 100644
-> >> --- a/arch/x86/include/uapi/asm/sgx.h
-> >> +++ b/arch/x86/include/uapi/asm/sgx.h
-> >> @@ -31,6 +31,8 @@ enum sgx_page_flags {
-> >>  	_IO(SGX_MAGIC, 0x04)
-> >>  #define SGX_IOC_ENCLAVE_RELAX_PERMISSIONS \
-> >>  	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_relax_perm)
-> >> +#define SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS \
-> >> +	_IOWR(SGX_MAGIC, 0x06, struct sgx_enclave_restrict_perm)
-> >>  
-> >>  /**
-> >>   * struct sgx_enclave_create - parameter structure for the
-> >> @@ -95,6 +97,25 @@ struct sgx_enclave_relax_perm {
-> >>  	__u64 count;
-> >>  };
-> >>  
-> >> +/**
-> >> + * struct sgx_enclave_restrict_perm - parameters for ioctl
-> >> + *                                    %SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
-> >> + * @offset:	starting page offset (page aligned relative to enclave base
-> >> + *		address defined in SECS)
-> >> + * @length:	length of memory (multiple of the page size)
-> >> + * @secinfo:	address for the SECINFO data containing the new permission bits
-> >> + *		for pages in range described by @offset and @length
-> >> + * @result:	(output) SGX result code of ENCLS[EMODPR] function
-> >> + * @count:	(output) bytes successfully changed (multiple of page size)
-> >> + */
-> >> +struct sgx_enclave_restrict_perm {
-> >> +	__u64 offset;
-> >> +	__u64 length;
-> >> +	__u64 secinfo;
-> >> +	__u64 result;
-> >> +	__u64 count;
-> >> +};
-> >> +
-> >>  struct sgx_enclave_run;
-> >>  
-> >>  /**
-> 
-> ...
-> 
-> > 
-> > Just a suggestion but these might be a bit less cluttered explanations of
-> > the fields:
-> > 
-> > /// SGX_IOC_ENCLAVE_RELAX_PERMISSIONS parameter structure
-> > #[repr(C)]
-> > pub struct RelaxPermissions {
-> >     /// In: starting page offset
-> >     offset: u64,
-> >     /// In: length of the address range (multiple of the page size)
-> >     length: u64,
-> >     /// In: SECINFO containing the relaxed permissions
-> >     secinfo: u64,
-> >     /// Out: length of the address range successfully changed
-> >     count: u64,
-> > };
-> > 
-> > /// SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS parameter structure
-> > #[repr(C)]
-> > pub struct RestrictPermissions {
-> >     /// In: starting page offset
-> >     offset: u64,
-> >     /// In: length of the address range (multiple of the page size)
-> >     length: u64,
-> >     /// In: SECINFO containing the restricted permissions
-> >     secinfo: u64,
-> >     /// In: ENCLU[EMODPR] return value
-> >     result: u64,
-> >     /// Out: length of the address range successfully changed
-> >     count: u64,
-> > };
-> 
-> In your proposal you shorten the descriptions from the current implementation.
-> I do consider the removed information valuable since I believe that it helps
-> users understand the kernel interface requirements without needing to be
-> familiar with or dig into the kernel code to understand how the provided data
-> is used.
-> 
-> For example, you shorten offset to "starting page offset", but what was removed
-> was the requirement that this offset has to be page aligned and what the offset
-> is relative to. I do believe summarizing these requirements upfront helps
-> a user space developer by not needing to dig through kernel code later
-> in order to understand why an -EINVAL was received.
-> 
 >  
-> > I can live with the current ones too but I rewrote them so that I can
-> > quickly make sense of the fields later. It's Rust code but the point is
-> > the documentation...
+> > Do you know if it is possible to do EAUG, EMODPR and the do a single
+> > EACCEPT for both? Just looking at pseudo-code, it looked doable but
+> > I need to check this.
+> > 
+> > I.e. EAUG has this
+> > 
+> > EPCM(DS:RCX).BLOCKED := 0;
+> > EPCM(DS:RCX).PENDING := 1;
+> > EPCM(DS:RCX).MODIFIED := 0;
+> > EPCM(DS:RCX).PR := 0;
+> > (* associate the EPCPAGE with the SECS by storing the SECS identifier of DS:TMP_SECS *)
+> > Update EPCM(DS:RCX) SECS identifier to reference DS:TMP_SECS identifier;
+> > (* Set EPCM valid fields *)
+> > EPCM(DS:RCX).VALID := 1;
+> > 
+> > And EMODPR only checks .VALID.
 > 
-> Since you do seem to be ok with the current descriptions I would prefer
-> to keep them.
-
-Yeah, they are fine to me.
-
-> > Also, it should not be too much trouble to use the struct in user space
-> > code even if the struct names are struct sgx_enclave_relax_permissions and
-> > struct sgx_enclave_restrict_permissions, given that you most likely have
-> > exactly single call-site in the run-time.
+> After that check there is also:
+> IF (EPCM(DS:RCX).PENDING is not 0 or (EPCM(DS:RCX).MODIFIED is not 0) )
+>     THEN
+>         RFLAGS.ZF := 1;
+>         RAX := SGX_PAGE_NOT_MODIFIABLE;
+>         GOTO DONE;
+> FI;
 > 
-> Are you requesting that I make the following name changes?
-> struct sgx_enclave_relax_perm -> struct sgx_enclave_relax_permissions
-> struct sgx_enclave_restrict_perm -> struct sgx_enclave_restrict_permissions
+> Attempting the SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS ioctl() on a recently
+> added page (EAUG) that has not yet been EACCEPTed is thus expected to fail
+> with errno of EFAULT (indicating ENCLS[EMODPR] failure) and the returned
+> structure's result field set to 20 (SGX_PAGE_NOT_MODIFIABLE).
 > 
-> If so, do you want the function names also written out in this way?
-> sgx_enclave_relax_perm()        -> sgx_enclave_relax_permissions()
-> sgx_ioc_enclave_relax_perm()    -> sgx_ioc_enclave_relax_permissions()
-> sgx_enclave_restrict_perm()     -> sgx_enclave_restrict_permissions()
-> sgx_ioc_enclave_restrict_perm() -> sgx_ioc_enclave_restrict_permissions()
+> I confirmed this behavior by modifying the "augment" kselftest test by adding
+> a SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS call between the new memory access and
+> the EACCEPT.
 
-Yes, unless you have a specific reason to shorten them :-)
-
-> > Other than that, looks quite good.
-> 
-> Thank you very much for reviewing and testing this work.
-
-NP
- 
-> Reinette
+Thank you, also Mark confirmed this.
 
 BR, Jarkko
