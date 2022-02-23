@@ -2,255 +2,136 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705CCC433F5
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Feb 2022 13:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D303C433EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Feb 2022 15:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236619AbiBWNZS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Feb 2022 08:25:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
+        id S234095AbiBWPnq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Feb 2022 10:43:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233910AbiBWNZS (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Feb 2022 08:25:18 -0500
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5662350078
-        for <linux-sgx@vger.kernel.org>; Wed, 23 Feb 2022 05:24:47 -0800 (PST)
-Received: by mail-qv1-xf36.google.com with SMTP id v18so266121qvh.11
-        for <linux-sgx@vger.kernel.org>; Wed, 23 Feb 2022 05:24:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profian-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cRq1ZmoZqz6vzgu6ZttwFLygmkaSZmytxXDN6dK2bJ8=;
-        b=P8B5Nx7SMzuI2JWxjYA/3H4yEi2pLza+5tLU/ErpdiWPo2c0I6Nvrg9hgEbHPSAEhm
-         T/cIcogG/aZWysQENT+sz3LdU7G+tCkqjbTylQUqdKlWLoQnjYFL8YftPrKlI/UA3hv7
-         Ot972123Shb3HwwSvhaWbbv7PnZ56ZgbDZhiPZNpVGZyORHP7OCQgwgZEFzsCBOZFChc
-         /sSnssQjNzto7dEfhrYZRsd+J+BBCfhC0/xWLGjRfWfEAqw5LVnIogd4oHg2mDkIRgD3
-         lSgfxYOCgIavpMRy/gLNrfY9F03JUSIoBpJgHFcU6ZM6EVotpHRvi6uTPBucRUqtgqWd
-         pS7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cRq1ZmoZqz6vzgu6ZttwFLygmkaSZmytxXDN6dK2bJ8=;
-        b=r+vuluynjbAxWwXSB+CxgRsarHr09B91W4tcQyfMf4ZnSEyRZMy2YhYuiiUd6UNOxE
-         zG49FlH4dpv28wcEKptCACnHengJ0UTt93M9LcZ33ZFOjPCCQpSkEJwbi/izw2i0W1ML
-         4w29js1E7STX02rgbHOCRkGtKniHbLfUvZMjaM7PtbtzvM1RPGm0XAOncH+S3dUQNgmX
-         IKKLKqJuM1XZY9YXCRUMJNBVEz8oehN9kxRDWDLWbbiD/g9iWpupNreKOkRouxl0XyWJ
-         qD36UHK63BNMIVj0NC3GcMFnGqUIFmx9Jr8LE7epGdgLvWFw0GHdJ5biaAh5hZtMdLPD
-         5pzQ==
-X-Gm-Message-State: AOAM530oaUGR1GjvseuPs1rdCqBU79xc4DOl1p2fCC4b5KlW4qvip57E
-        QuvMlysFOVoXfpXvf36sPg90sVczpZgxM0amviUorA==
-X-Google-Smtp-Source: ABdhPJwPqNeqK3IPrRIB0Io70zp9BhEDRiGxqJiBXHyGHL0ZcxpwKsXw2VI0SOZbA7lVquhDD9nQ9ydYewZDSQPHMIY=
-X-Received: by 2002:ac8:73cf:0:b0:2d2:cb26:21f6 with SMTP id
- v15-20020ac873cf000000b002d2cb2621f6mr26354751qtp.374.1645622686290; Wed, 23
- Feb 2022 05:24:46 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <CAHAy0tR-64vxtFo4KXiJP_va2=WF++Q6gDaPksNxiaSB5wWvhA@mail.gmail.com> <86495779-a9c5-45d5-0017-c491bf6354ab@intel.com>
-In-Reply-To: <86495779-a9c5-45d5-0017-c491bf6354ab@intel.com>
-From:   Nathaniel McCallum <nathaniel@profian.com>
-Date:   Wed, 23 Feb 2022 08:24:35 -0500
-Message-ID: <CAHAy0tQYBD2b0jdim=6Zv+hwskyd1FhpycyGF+1FBHDih9TP3g@mail.gmail.com>
-Subject: Re: [PATCH V2 00/32] x86/sgx and selftests/sgx: Support SGX2
+        with ESMTP id S234043AbiBWPnq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Feb 2022 10:43:46 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD7F13F3D;
+        Wed, 23 Feb 2022 07:43:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 273D0B82033;
+        Wed, 23 Feb 2022 15:43:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90118C340E7;
+        Wed, 23 Feb 2022 15:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645630995;
+        bh=poLkfAL/ene1NybYu+EMK7WnfwCiDW55xL2XkxtVWyw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CFw7gj+7mez/kKLMf1VfbxbWXgj4ra9+215sRauxf4oPQnXotD6cZmJ/jnWLO3SBN
+         5Dv9kMK/3/SdBHNz5DYbz7gnAlRyokhw6DLO0GsP9yTk6NuY77PGyYXv7BGbIb07m6
+         2ZvxBUpGe72ZK/nIg7G18RwOjPxIlmNO6SCrM9vkozKHym/Y5EfDbGuzgyT4X5hkhn
+         uz73Dn+cyjNLmd9vs/3wnE2G1T995lDtSpE2ljpLcsB1LnFrxJWzJ+QTXeLPCvz+Yc
+         HGK5MkWQzPxbZdIK9aKjhOHAg9hK9u0/dGCt7Ki4jOLLY4ZRjDopu3Ts6YJUr5mJ8a
+         beIPLQQVEfLAg==
+Date:   Wed, 23 Feb 2022 16:43:50 +0100
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        tglx@linutronix.de, bp@alien8.de,
-        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
-        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH V2 1/4] selftests/sgx: Fix NULL-pointer-dereference upon
+ early test failure
+Message-ID: <YhZWNkNUvMYLWaee@iki.fi>
+References: <cover.1643754040.git.reinette.chatre@intel.com>
+ <89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com>
+ <YhKePZv8tsgKYGfK@iki.fi>
+ <8defd54d-1263-07b8-a117-c298903cbe27@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8defd54d-1263-07b8-a117-c298903cbe27@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 5:39 PM Reinette Chatre
-<reinette.chatre@intel.com> wrote:
->
-> Hi Nathaniel,
->
-> On 2/22/2022 12:27 PM, Nathaniel McCallum wrote:
-> > 1. This interface looks very odd to me. mmap() is the kernel interface
-> > for changing user space memory maps. Why are we introducing a new
-> > interface for this?
->
-> mmap() is the kernel interface used to create new mappings in the
-> virtual address space of the calling process. This is different from
-> the permissions and properties of the underlying file/memory being mapped.
->
-> A new interface is introduced because changes need to be made to the
-> permissions and properties of the underlying enclave. A new virtual
-> address space is not needed nor should existing VMAs be impacted.
->
-> This is similar to how mmap() is not used to change file permissions.
->
-> VMA permissions are separate from enclave page permissions as found in
-> the EPCM (Enclave Page Cache Map). The current implementation (SGX1) already
-> distinguishes between the VMA and EPCM permissions - for example, it is
-> already possible to create a read-only VMA from enclave pages that have
-> RW EPCM permissions. mmap() of a portion of EPC memory with a particular
-> permission does not imply that the underlying EPCM permissions (should)have
-> that permission.
+On Tue, Feb 22, 2022 at 12:05:34PM -0800, Reinette Chatre wrote:
+> Hi Jarkko,
+> 
+> On 2/20/2022 12:02 PM, Jarkko Sakkinen wrote:
+> > On Tue, Feb 01, 2022 at 02:47:03PM -0800, Reinette Chatre wrote:
+> >> == Background ==
+> >>
+> >> The SGX selftests track parts of the enclave binaries in an array:
+> >> encl->segment_tbl[]. That array is dynamically allocated early
+> >> (but not first) in the test's lifetime. The array is referenced
+> >> at the end of the test in encl_delete().
+> >>
+> >> == Problem ==
+> >>
+> >> encl->segment_tbl[] can be NULL if the test fails before its
+> >> allocation. That leads to a NULL-pointer-dereference in encl_delete().
+> >> This is triggered during early failures of the selftest like if the
+> >> enclave binary ("test_encl.elf") is deleted.
+> >>
+> >> == Solution ==
+> >>
+> >> Ensure encl->segment_tbl[] is valid before attempting to access
+> >> its members. The offset with which it is accessed, encl->nr_segments,
+> >> is initialized before encl->segment_tbl[] and thus considered valid
+> >> to use after the encl->segment_tbl[] check succeeds.
+> >>
+> >> Fixes: 3200505d4de6 ("selftests/sgx: Create a heap for the test enclave")
+> >> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> >> ---
+> >> Changes since V1:
+> >> - Rewrite commit message (Dave).
+> >>
+> >>  tools/testing/selftests/sgx/load.c | 9 +++++----
+> >>  1 file changed, 5 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+> >> index 9d4322c946e2..006b464c8fc9 100644
+> >> --- a/tools/testing/selftests/sgx/load.c
+> >> +++ b/tools/testing/selftests/sgx/load.c
+> >> @@ -21,7 +21,7 @@
+> >>  
+> >>  void encl_delete(struct encl *encl)
+> >>  {
+> >> -	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
+> >> +	struct encl_segment *heap_seg;
+> >>  
+> >>  	if (encl->encl_base)
+> >>  		munmap((void *)encl->encl_base, encl->encl_size);
+> >> @@ -32,10 +32,11 @@ void encl_delete(struct encl *encl)
+> >>  	if (encl->fd)
+> >>  		close(encl->fd);
+> >>  
+> >> -	munmap(heap_seg->src, heap_seg->size);
+> >> -
+> >> -	if (encl->segment_tbl)
+> >> +	if (encl->segment_tbl) {
+> >> +		heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
+> >> +		munmap(heap_seg->src, heap_seg->size);
+> >>  		free(encl->segment_tbl);
+> >> +	}
+> >>  
+> >>  	memset(encl, 0, sizeof(*encl));
+> >>  }
+> >> -- 
+> >> 2.25.1
+> >>
+> > 
+> > 
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > 
+> 
+> Thank you very much for taking a look at these patches. 
+> 
+> V3[1] was submitted (8 February) and merged (11 February) onto x86/sgx
+> before I received your reviewed-by tags for V1 (15 February) or
+> V2 (20 February). The merged version thus does not contain your tags.
+> 
+> Reinette
+> 
+> [1] https://lore.kernel.org/linux-sgx/cover.1644355600.git.reinette.chatre@intel.com/
 
-Yes. BUT... unlike the file permissions, this leaks an implementation detail.
+Not a big deal, but thanks for confirming :-)
 
-The user process is governed by VMA permissions. And during enclave
-creation, it had to mmap() all the enclave regions to their final VMA
-permissions. So during enclave creation you have to use mmap() but
-after enclave creation you use custom APIs? That's inconsistent at
-best.
-
-Forcing userspace to worry about the (mostly undocumented!)
-interactions between EPC, PTE and VMA permissions makes these APIs
-hard to use and difficult to reason about.
-
-When I call SGX_IOC_ENCLAVE_RELAX_PERMISSIONS, do I also have to call
-mmap() to update the VMA permissions to match? It isn't clear. Nor is
-it really clear why I'm calling completely separate APIs.
-
-> > You can just simply add a new mmap flag (i.e.
-> > MAP_SGX_TCS*) and then figure out which SGX instructions to execute
-> > based on the desired state of the memory maps. If you do this, none of
-> > the following ioctls are needed:
-> >
-> > * SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> > * SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
-> > * SGX_IOC_ENCLAVE_REMOVE_PAGES
-> > * SGX_IOC_ENCLAVE_MODIFY_TYPE
-> >
-> > It also means that languages don't have to grow support for all these
-> > ioctls. Instead, they can just reuse the existing mmap() bindings with
-> > the new flag. Also, multiple operations can be combined into a single
-> > mmap() call, amortizing the changes over a single context switch.
-> >
-> > 2. Automatically adding pages with hard-coded permissions in a fault
-> > handler seems like a really bad idea.
->
-> Could you please elaborate why this is a bad idea?
-
-Because implementations that miss this subtlety suddenly have pages
-with magic permissions. Magic is bad. Explicit is good.
-
-> > How do you distinguish between
-> > accesses which should result in an updated mapping and accesses that
-> > should result in a fault?
->
-> Accesses that should result in an updated mapping have two requirements:
-> (a) address accessed belongs to the enclave based on the address
->     range specified during enclave create
-> (b) there is no backing enclave page for the address
-
-What happens if the enclave is buggy? Or has been compromised. In both
-of those cases, there should be a userspace visible fault and pages
-should not be added.
-
-> > IMHO, all unmapped page accesses should
-> > result in a page fault. mmap() should be called first to identify the
-> > correct permissions for these pages.
-> > Then the page handler should be
-> > updated to use the permissions from the mapping when backfilling
-> > physical pages. If I understand correctly, this should also obviate
->
-> Regular enclave pages can _only_ be dynamically added with RW permission.
->
-> SGX2's support for adding regular pages to an enclave via the EAUG
-> instruction is architecturally set at RW. The OS cannot change those permissions
-> via the EAUG instruction nor can the OS do so with a different/additional
-> instruction because:
-> * the OS is not able to relax permissions since that can only be done from
-> within the enclave with ENCLU[EMODPE], thus it is not possible for the OS to
-> dynamically add pages via EAUG as RW and then relax permissions to RWX.
-> * the OS is not able to EAUG a page and immediately attempt an EMODPR either
-> as Jarkko also recently inquired about:
-> https://lore.kernel.org/linux-sgx/80f3d7b9-e3d5-b2c0-7707-710bf6f5081e@intel.com/
-
-This design looks... unfinished. EAUG takes a PAGEINFO in RBX, but
-PAGEINFO.SECINFO must be zeroed and EAUG instead sets magic hard-coded
-permissions. Why doesn't EAUG just respect the permissions in
-PAGEINFO.SECINFO? We aren't told.
-
-Further, if the enclave can do EMODPE, why does
-SGX_IOC_ENCLAVE_RELAX_PERMISSIONS even exist? None of the
-documentation explains what this ioctl even does. Does it update PTE
-permissions? VMA permissions? Nobody knows without reading the source
-code.
-
-Userspace should not be bothered with the subtle details of the
-interaction between EPC, PTE and VMA permissions. But this API does
-everything it can do to expose all these details to userspace. And it
-doesn't bother to document them (probably because it is hard). It
-would be much better to avoid exposing these details to userspace.
-
-IMHO, there should be a simple flow like this (if EAUG respects
-PAGEINFO.SECINFO):
-
-1. Non-enclave calls mmap()/munmap().
-2. Enclave issues EACCEPT, if necessary.
-3. Enclave issues EMODPE, if necessary.
-
-Notice that in the second step above, during the mmap() call, the
-kernel ensures that EPC, PTE and VMA are in sync and fails if they
-cannot be made to be compatible. Also note that in the above flow EAUG
-instructions can be efficiently batched.
-
-Given the current poor state of the EAUG instruction, we might need to
-do this flow instead:
-
-1. Enclave issues EACCEPT, if necessary. (Add RW pages...)
-2. Non-enclave calls mmap()/munmap().
-3. Enclave issues EACCEPT, if necessary.
-4. Enclave issues EMODPE, if necessary.
-
-However, doing EAUG only via the page access handler means that there
-is no way to batch EAUG instructions and this forces a context switch
-for every page you want to add. This has to be terrible for
-performance. Note specifically that the SDM calls out batching, which
-is currently impossible under this patch set. 35.5.7 - "Page
-allocation operations may be batched to improve efficiency."
-
-As it stands today, if I want to add 256MiB of pages to an enclave,
-I'll have to do 2^16 context switches. That doesn't seem scalable.
-
-> > the need for the weird userspace callback to allow for execute
-> > permissions.
->
-> User policy integration would always be required to allow execute
-> permissions on a writable page. This is not expected to be a userspace
-> callback but instead integration with existing user policy subsystem(s).
-
-Why? This isn't documented.
-
-> > 3. Implementing as I've suggested also means that we can lock down an
-> > enclave, for example - after code has been JITed, by closing the file
-> > descriptor. Once the file descriptor used to create the enclave is
-> > closed, no further mmap() can be performed on the enclave. Attempting
-> > to do EACCEPT on an unmapped page will generate a page fault.
->
-> This is not clear to me. If the file descriptor is closed and no further
-> mmap() is allowed then how would a process be able to enter the enclave
-> to execute code within it?
-
-EENTER (or the vdso function) with the address of a TCS page, like
-normal. In Enarx, we don't retain the enclave fd after the final
-mmap() following EINIT. Everything works just fine.
-
-> This series does indeed lock down the address range to ensure that it is
-> not possible to map memory that does not belong to the enclave after the
-> enclave is created. Please see:
-> https://lore.kernel.org/linux-sgx/1b833dbce6c937f71523f4aaf4b2181b9673519f.1644274683.git.reinette.chatre@intel.com/
-
-That's not what I'm talking about. I'm talking about a workflow like this:
-
-1. Enclave initialization: ECREATE ... EINIT
-2. EENTER
-3. Enclave JITs some code (changes page permissions)
-4. EEXIT
-5. Close enclave fd.
-6. EENTER
-7. If an enclave attempts page modifications, a fault occurs.
-
-Think of this similar to seccomp(). The enclave wants to do some
-dynamic page table manipulation. But then it wants to lock down page
-table modification so that, if compromised, attackers have no ability
-to obtain RWX permissions.
+BR, Jarkko
