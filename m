@@ -2,136 +2,186 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D303C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Feb 2022 15:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF725C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Feb 2022 15:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234095AbiBWPnq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Feb 2022 10:43:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55770 "EHLO
+        id S237743AbiBWPqB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Feb 2022 10:46:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234043AbiBWPnq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Feb 2022 10:43:46 -0500
+        with ESMTP id S233481AbiBWPqA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Feb 2022 10:46:00 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD7F13F3D;
-        Wed, 23 Feb 2022 07:43:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB813C084A;
+        Wed, 23 Feb 2022 07:45:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 273D0B82033;
-        Wed, 23 Feb 2022 15:43:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90118C340E7;
-        Wed, 23 Feb 2022 15:43:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A0451B820C9;
+        Wed, 23 Feb 2022 15:45:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D30AC340E7;
+        Wed, 23 Feb 2022 15:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645630995;
-        bh=poLkfAL/ene1NybYu+EMK7WnfwCiDW55xL2XkxtVWyw=;
+        s=k20201202; t=1645631130;
+        bh=kZDlRKaFrJs14SSOER1lGpAd5UKzlhkkD+Hu55Em64Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CFw7gj+7mez/kKLMf1VfbxbWXgj4ra9+215sRauxf4oPQnXotD6cZmJ/jnWLO3SBN
-         5Dv9kMK/3/SdBHNz5DYbz7gnAlRyokhw6DLO0GsP9yTk6NuY77PGyYXv7BGbIb07m6
-         2ZvxBUpGe72ZK/nIg7G18RwOjPxIlmNO6SCrM9vkozKHym/Y5EfDbGuzgyT4X5hkhn
-         uz73Dn+cyjNLmd9vs/3wnE2G1T995lDtSpE2ljpLcsB1LnFrxJWzJ+QTXeLPCvz+Yc
-         HGK5MkWQzPxbZdIK9aKjhOHAg9hK9u0/dGCt7Ki4jOLLY4ZRjDopu3Ts6YJUr5mJ8a
-         beIPLQQVEfLAg==
-Date:   Wed, 23 Feb 2022 16:43:50 +0100
+        b=XVZ9owF+aJ2CIrk6HV782/IIKB+VWHDzca7DNV+C8FVvbSSphQHEc+Oea2BKckmH8
+         BH5i4PaOkM6KtkbGGn9z/Rch672B9vYXhcrb8Kfw/iRdeuFnBI7/nonYBp/1qDCUep
+         bPtFhwX/e2sw7HKoqFVpiw2QWkFVPSeN5SfCCnhnaerrImvm2Dj9iSqLYweSYBH7zG
+         MSrPQZbHzk4QqT+NF4B5GJo3/415QrvBwRho8jjxNFXSfFjRhwMmRwn7p6+5vzcfXC
+         X/a1Y3Vc8aLQAu0zu+y1hShrr58z1IqMo9b87j/XDXuSoiSk4oiUgLwYolNfXZQKvQ
+         DGm9fs0ca7Bxw==
+Date:   Wed, 23 Feb 2022 16:46:04 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
-        shuah@kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH V2 1/4] selftests/sgx: Fix NULL-pointer-dereference upon
- early test failure
-Message-ID: <YhZWNkNUvMYLWaee@iki.fi>
-References: <cover.1643754040.git.reinette.chatre@intel.com>
- <89824888783fd8e770bfc64530c7549650a41851.1643754040.git.reinette.chatre@intel.com>
- <YhKePZv8tsgKYGfK@iki.fi>
- <8defd54d-1263-07b8-a117-c298903cbe27@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
+Message-ID: <YhZWvFSuax2GI9cQ@iki.fi>
+References: <cover.1644274683.git.reinette.chatre@intel.com>
+ <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
+ <YhLhoMFPyOFZ2fsX@iki.fi>
+ <d6a5c304-d448-5f0c-6367-26dcba872db3@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8defd54d-1263-07b8-a117-c298903cbe27@intel.com>
+In-Reply-To: <d6a5c304-d448-5f0c-6367-26dcba872db3@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 12:05:34PM -0800, Reinette Chatre wrote:
+On Tue, Feb 22, 2022 at 10:35:04AM -0800, Reinette Chatre wrote:
 > Hi Jarkko,
 > 
-> On 2/20/2022 12:02 PM, Jarkko Sakkinen wrote:
-> > On Tue, Feb 01, 2022 at 02:47:03PM -0800, Reinette Chatre wrote:
-> >> == Background ==
-> >>
-> >> The SGX selftests track parts of the enclave binaries in an array:
-> >> encl->segment_tbl[]. That array is dynamically allocated early
-> >> (but not first) in the test's lifetime. The array is referenced
-> >> at the end of the test in encl_delete().
-> >>
-> >> == Problem ==
-> >>
-> >> encl->segment_tbl[] can be NULL if the test fails before its
-> >> allocation. That leads to a NULL-pointer-dereference in encl_delete().
-> >> This is triggered during early failures of the selftest like if the
-> >> enclave binary ("test_encl.elf") is deleted.
-> >>
-> >> == Solution ==
-> >>
-> >> Ensure encl->segment_tbl[] is valid before attempting to access
-> >> its members. The offset with which it is accessed, encl->nr_segments,
-> >> is initialized before encl->segment_tbl[] and thus considered valid
-> >> to use after the encl->segment_tbl[] check succeeds.
-> >>
-> >> Fixes: 3200505d4de6 ("selftests/sgx: Create a heap for the test enclave")
-> >> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> >> ---
-> >> Changes since V1:
-> >> - Rewrite commit message (Dave).
-> >>
-> >>  tools/testing/selftests/sgx/load.c | 9 +++++----
-> >>  1 file changed, 5 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-> >> index 9d4322c946e2..006b464c8fc9 100644
-> >> --- a/tools/testing/selftests/sgx/load.c
-> >> +++ b/tools/testing/selftests/sgx/load.c
-> >> @@ -21,7 +21,7 @@
+> On 2/20/2022 4:49 PM, Jarkko Sakkinen wrote:
+> > On Mon, Feb 07, 2022 at 04:45:38PM -0800, Reinette Chatre wrote:
+> 
+> ...
+> 
+> >> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> >> index 5c678b27bb72..b0ffb80bc67f 100644
+> >> --- a/arch/x86/include/uapi/asm/sgx.h
+> >> +++ b/arch/x86/include/uapi/asm/sgx.h
+> >> @@ -31,6 +31,8 @@ enum sgx_page_flags {
+> >>  	_IO(SGX_MAGIC, 0x04)
+> >>  #define SGX_IOC_ENCLAVE_RELAX_PERMISSIONS \
+> >>  	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_relax_perm)
+> >> +#define SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS \
+> >> +	_IOWR(SGX_MAGIC, 0x06, struct sgx_enclave_restrict_perm)
 > >>  
-> >>  void encl_delete(struct encl *encl)
-> >>  {
-> >> -	struct encl_segment *heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
-> >> +	struct encl_segment *heap_seg;
+> >>  /**
+> >>   * struct sgx_enclave_create - parameter structure for the
+> >> @@ -95,6 +97,25 @@ struct sgx_enclave_relax_perm {
+> >>  	__u64 count;
+> >>  };
 > >>  
-> >>  	if (encl->encl_base)
-> >>  		munmap((void *)encl->encl_base, encl->encl_size);
-> >> @@ -32,10 +32,11 @@ void encl_delete(struct encl *encl)
-> >>  	if (encl->fd)
-> >>  		close(encl->fd);
+> >> +/**
+> >> + * struct sgx_enclave_restrict_perm - parameters for ioctl
+> >> + *                                    %SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
+> >> + * @offset:	starting page offset (page aligned relative to enclave base
+> >> + *		address defined in SECS)
+> >> + * @length:	length of memory (multiple of the page size)
+> >> + * @secinfo:	address for the SECINFO data containing the new permission bits
+> >> + *		for pages in range described by @offset and @length
+> >> + * @result:	(output) SGX result code of ENCLS[EMODPR] function
+> >> + * @count:	(output) bytes successfully changed (multiple of page size)
+> >> + */
+> >> +struct sgx_enclave_restrict_perm {
+> >> +	__u64 offset;
+> >> +	__u64 length;
+> >> +	__u64 secinfo;
+> >> +	__u64 result;
+> >> +	__u64 count;
+> >> +};
+> >> +
+> >>  struct sgx_enclave_run;
 > >>  
-> >> -	munmap(heap_seg->src, heap_seg->size);
-> >> -
-> >> -	if (encl->segment_tbl)
-> >> +	if (encl->segment_tbl) {
-> >> +		heap_seg = &encl->segment_tbl[encl->nr_segments - 1];
-> >> +		munmap(heap_seg->src, heap_seg->size);
-> >>  		free(encl->segment_tbl);
-> >> +	}
-> >>  
-> >>  	memset(encl, 0, sizeof(*encl));
-> >>  }
-> >> -- 
-> >> 2.25.1
-> >>
+> >>  /**
+> 
+> ...
+> 
 > > 
+> > Just a suggestion but these might be a bit less cluttered explanations of
+> > the fields:
 > > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > /// SGX_IOC_ENCLAVE_RELAX_PERMISSIONS parameter structure
+> > #[repr(C)]
+> > pub struct RelaxPermissions {
+> >     /// In: starting page offset
+> >     offset: u64,
+> >     /// In: length of the address range (multiple of the page size)
+> >     length: u64,
+> >     /// In: SECINFO containing the relaxed permissions
+> >     secinfo: u64,
+> >     /// Out: length of the address range successfully changed
+> >     count: u64,
+> > };
 > > 
+> > /// SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS parameter structure
+> > #[repr(C)]
+> > pub struct RestrictPermissions {
+> >     /// In: starting page offset
+> >     offset: u64,
+> >     /// In: length of the address range (multiple of the page size)
+> >     length: u64,
+> >     /// In: SECINFO containing the restricted permissions
+> >     secinfo: u64,
+> >     /// In: ENCLU[EMODPR] return value
+> >     result: u64,
+> >     /// Out: length of the address range successfully changed
+> >     count: u64,
+> > };
 > 
-> Thank you very much for taking a look at these patches. 
+> In your proposal you shorten the descriptions from the current implementation.
+> I do consider the removed information valuable since I believe that it helps
+> users understand the kernel interface requirements without needing to be
+> familiar with or dig into the kernel code to understand how the provided data
+> is used.
 > 
-> V3[1] was submitted (8 February) and merged (11 February) onto x86/sgx
-> before I received your reviewed-by tags for V1 (15 February) or
-> V2 (20 February). The merged version thus does not contain your tags.
+> For example, you shorten offset to "starting page offset", but what was removed
+> was the requirement that this offset has to be page aligned and what the offset
+> is relative to. I do believe summarizing these requirements upfront helps
+> a user space developer by not needing to dig through kernel code later
+> in order to understand why an -EINVAL was received.
 > 
-> Reinette
+>  
+> > I can live with the current ones too but I rewrote them so that I can
+> > quickly make sense of the fields later. It's Rust code but the point is
+> > the documentation...
 > 
-> [1] https://lore.kernel.org/linux-sgx/cover.1644355600.git.reinette.chatre@intel.com/
+> Since you do seem to be ok with the current descriptions I would prefer
+> to keep them.
 
-Not a big deal, but thanks for confirming :-)
+Yeah, they are fine to me.
+
+> > Also, it should not be too much trouble to use the struct in user space
+> > code even if the struct names are struct sgx_enclave_relax_permissions and
+> > struct sgx_enclave_restrict_permissions, given that you most likely have
+> > exactly single call-site in the run-time.
+> 
+> Are you requesting that I make the following name changes?
+> struct sgx_enclave_relax_perm -> struct sgx_enclave_relax_permissions
+> struct sgx_enclave_restrict_perm -> struct sgx_enclave_restrict_permissions
+> 
+> If so, do you want the function names also written out in this way?
+> sgx_enclave_relax_perm()        -> sgx_enclave_relax_permissions()
+> sgx_ioc_enclave_relax_perm()    -> sgx_ioc_enclave_relax_permissions()
+> sgx_enclave_restrict_perm()     -> sgx_enclave_restrict_permissions()
+> sgx_ioc_enclave_restrict_perm() -> sgx_ioc_enclave_restrict_permissions()
+
+Yes, unless you have a specific reason to shorten them :-)
+
+> > Other than that, looks quite good.
+> 
+> Thank you very much for reviewing and testing this work.
+
+NP
+ 
+> Reinette
 
 BR, Jarkko
