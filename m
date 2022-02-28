@@ -2,102 +2,87 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9D5C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Feb 2022 15:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2CBC433EF
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Feb 2022 15:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234688AbiB1PRN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Feb 2022 10:17:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37282 "EHLO
+        id S237207AbiB1Pcs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Feb 2022 10:32:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237544AbiB1PRJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Feb 2022 10:17:09 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EAB683000;
-        Mon, 28 Feb 2022 07:16:30 -0800 (PST)
+        with ESMTP id S236783AbiB1Pcr (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Feb 2022 10:32:47 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8B882D15;
+        Mon, 28 Feb 2022 07:32:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646061390; x=1677597390;
+  t=1646062328; x=1677598328;
   h=message-id:date:mime-version:to:cc:references:from:
    subject:in-reply-to:content-transfer-encoding;
-  bh=GFDKt/IDNLdqLTuvDR6yJcVQxe8prvsZyzafk0irqZQ=;
-  b=dZt5eLPlw3/rVdLr0/J8lsOrDWfpq0pa3v7loKEUbA+zmQIBU9tSmasN
-   cEPgzjUNMugxHN/ucZYKc9r9F2VHfmsEYHCzP/JmpeoUkZEukEJDuXGr6
-   HztKmgEg6rAZoUePgH6Er969RH/lUr0q+v9AD1/L+mRwopSRyNQ4/SF3M
-   KnOw+gpCfe+5T5gTbRcSDXnIfBb9oPeRKaFtfxbb1ikbSSkbX6asrAjLE
-   PzR1yRYiqnPsUWTbonVrysuvzql5XdgO5urnMG/HwOy8GaHWflNw3vaCQ
-   aogwzXcEFOdsGk72YKTlegqxI2LCeywn8BFOiDmxIy9jrl6iW2m6JcC7S
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10271"; a="277563357"
+  bh=A3kdMGKBPJg68rq8VDU9FNscngH3Bv2jiEeKZ84eaOw=;
+  b=biKhEqbL/4pJO/5Z/e5X+uftMwbynO0DNV0e5RfST5Ug7eMNSItTrvG2
+   uUUsxblvF6UytWbQ/wltoVNiP1ib+LBmS8ZGAdOBHBapabnVgg393H1p6
+   EeaCQ1ijGYATYDcJJ5RwG07mgB8Qlfbx6xf4PNU4gILnHg6DtN5T0yvXv
+   YJvfrnIf0ge6c1JmwUQyUJwfeR0zUTx0fpNO9Teb38VSi0+bmHK3/9gqm
+   9hO7L2Wz8HXMilMSKJwxmJM1yxwa1E54+exHGFE1DEtM6pMgjwqdzDzxc
+   qeEfL5PpE3eSDs/ZhB+qGGcpp2vmsqcNot2XTF19UIsS7VTmp2hZi6bKt
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10271"; a="236412845"
 X-IronPort-AV: E=Sophos;i="5.90,142,1643702400"; 
-   d="scan'208";a="277563357"
+   d="scan'208";a="236412845"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2022 07:16:28 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2022 07:32:08 -0800
 X-IronPort-AV: E=Sophos;i="5.90,142,1643702400"; 
-   d="scan'208";a="550276016"
+   d="scan'208";a="550281259"
 Received: from eliasbro-mobl.amr.corp.intel.com (HELO [10.212.174.65]) ([10.212.174.65])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2022 07:16:27 -0800
-Message-ID: <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
-Date:   Mon, 28 Feb 2022 07:16:22 -0800
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2022 07:32:07 -0800
+Message-ID: <0e06910b-9313-94ae-11e3-10a2b14645f2@intel.com>
+Date:   Mon, 28 Feb 2022 07:32:02 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
 Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>
-Cc:     "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Lutomirski, Andy" <luto@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Shanahan, Mark" <mark.shanahan@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
- <YhLhoMFPyOFZ2fsX@iki.fi>
- <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
- <Yhy/GvJegnTqYdq6@iki.fi>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20220222120342.5277-1-jarkko@kernel.org>
+ <33646f1e-da44-503a-c454-02658d512926@intel.com> <YhzGS+x0eNoc3gyN@iki.fi>
 From:   Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
- permissions
-In-Reply-To: <Yhy/GvJegnTqYdq6@iki.fi>
+Subject: Re: [PATCH v4] x86/sgx: Free backing memory after faulting the
+ enclave page
+In-Reply-To: <YhzGS+x0eNoc3gyN@iki.fi>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 2/28/22 04:24, Jarkko Sakkinen wrote:
->> Regarding the recent update of splitting the page permissions change
->> request into two IOCTLS (RELAX and RESTRICT), can we combine them into
->> one? That is, revert to how it was done in the v1 version?
-> They are logically separate complex functionalities:
+On 2/28/22 04:55, Jarkko Sakkinen wrote:
+> I thought that the formula is so simple that it does not matter if it is
+> just in two sites open coded but I can wrap it too, if required, e.g.
 > 
-> 1. "restrict" calls EMODPR and requires EACCEPT
-> 2. "relax" increases permissions up to vetted ("EADD") and could be
->     combined with EMODPE called inside enclave.
+> /* 
+>  * Calculate byte offset of a PCMD struct associated to an enclave page.
+>  * PCMD's follow right after the EPC data in the backing storage. In
+>  * addition to the visible enclave pages, there's one extra page slot
+>  * for SECS, before PCMD data.
+>  */
+> static pgoff_t *sgx_encl_page_index_to_pcmd_offset(struct sgx_encl *encl, unsigned long page_index)
+> {
+>         return encl->size + PAGE_SIZE + page_index * sizeof(struct sgx_pcmd);
+> }
 
-It would be great to have a _slightly_ better justification than that.
-Existing permission interfaces like chmod or mprotect() don't have this
-asymmetry.
+Yes, it's required.  Please wrap it.
 
-I think you're saying that the underlying hardware implementation is
-asymmetric, so the interface should be too.  I don't find that argument
-very convincing.  If the hardware interface is arcane and we can make it
-look more sane in the ioctl() layer, we should that, asymmetry or not.
-
-If we can't make it any more sane, let's say why the ioctl() must or
-should be asymmetric.
-
-The SGX2 page permission mechanism is horribly counter intuitive.
-*Everybody* that looks at it thinks that it's wrong.  That means that we
-have a lot of work ahead of us to explain the interfaces that get
-layered on top.
+There's also nothing wrong with spreading that calculation across
+several lines.  It may be arithmetically simple, but it's combining
+three or four logical steps.  There's no shame in separating and
+commenting some of those separately.
