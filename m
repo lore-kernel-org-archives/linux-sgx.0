@@ -2,67 +2,72 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E129C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Feb 2022 20:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CFAC4332F
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Feb 2022 20:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229479AbiB1Ugf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Feb 2022 15:36:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43700 "EHLO
+        id S229801AbiB1UmW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Feb 2022 15:42:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiB1Ugf (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Feb 2022 15:36:35 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE5008C7D5
-        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 12:35:51 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id a23so27256802eju.3
-        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 12:35:51 -0800 (PST)
+        with ESMTP id S229825AbiB1UmU (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Feb 2022 15:42:20 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD1641CB3A
+        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 12:41:34 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id u20so23468771lff.2
+        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 12:41:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uod9R4vPcpqIjzHofeC96qXcIXUlGW+U5alvKq7K0ZA=;
-        b=Y+K+LAchMzIcesbCiqrzhisJgvbUIKYh3oFG/AlZJTKul1K9rRfHylHsN/EgM8hdwz
-         P3hABFpC0Wcw+/0V4cKR5X0P787Wy9QwMeL5ORY50P9+oNZqmMp6NkFq4yV6NAIkP79C
-         0bvk8ZnwfFSPqzKfD7Qqea+fs2YLRTaNcLanw=
+        bh=qhbC6eV8gO++7ErI4p8jtmcwHU0MP2/Ov9cpdMFArow=;
+        b=WVa5dIiqx38h7wrDwDC1XUsKJKiBFCag4a2cDDwm9PX3cUtT8qqZ7IT4jQUgf/P4m+
+         SFGMe+WsS02R4cGzO91FNZKGdT/lUA2soxV9cxmDWvmKG61T36jSK+GypeHu4wmj47J3
+         J2dEWo9WRu5EKgz1ZgjNDbSUreOeJ25KIOWY4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uod9R4vPcpqIjzHofeC96qXcIXUlGW+U5alvKq7K0ZA=;
-        b=VOv9D8LgtdBXR7fu/7rYCNWVBNZwXd/tYHsFv0wjUxXIbRwv5yHWpXd/DDhCriU2bg
-         v6qGWbdWmXZh2dkjVoPT60Lytd2OO9rqhbMcx33049NjCWsX5DIl0+hIAu49cufo4GCc
-         uC1WYeq9DetA5enSVu2oae98YbYLdxMLdbIyagmvsDQCdQgTeHIOXsdZd+SrTagwGREl
-         s+2GKv8XTG36EtrWD1ufQ2DrUqASnbXv0M5OPsAP6JS/pdXk1NJJLv0P/tYqVkDf9WyW
-         gpqXAhPPzjKf0vXyNejytGez5UpRvvZp82oq0izzpOM0yki3fXJLtjK1kLkS+vRBzZSW
-         6U0A==
-X-Gm-Message-State: AOAM533jgee+0W2eQmP7Qmr6WyfqeXQcyX3aPtZrYwbJZvd+6i6NiDoq
-        tSELnRwQimxVD9dY5Xz3zWh9wPXdMEvqkLFodO8=
-X-Google-Smtp-Source: ABdhPJzBFGa+iHv1JoG3PqGa6jvPUVdhfPw8A3FNpQQXJ+Pkp7Sx+IQsnpL0xaT5KiRvOJKjkO/05g==
-X-Received: by 2002:a17:907:1384:b0:6cd:5c6a:eec0 with SMTP id vs4-20020a170907138400b006cd5c6aeec0mr16876623ejb.35.1646080550224;
-        Mon, 28 Feb 2022 12:35:50 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id u4-20020a170906780400b006ce69ff6050sm4677066ejm.69.2022.02.28.12.35.49
+        bh=qhbC6eV8gO++7ErI4p8jtmcwHU0MP2/Ov9cpdMFArow=;
+        b=S2FZLNm1m7T7KFzOrT/EA4H3ZwmIFSRuwrEgp6/lo9vKoN/nKA4S+lPJKO1HKCmw2r
+         rLH5euYBLBZrvN2XwdUbMT//Wy85C8EeqDZEWGcLyjyTT71iIcFDbB76KrXD/diDQY5F
+         Tvu7BTnID12ymYp5rH6xPB3d2DdWOnxyXE7afwAX4rFppZSLPS7dhgAcFL3C8dZv1cX3
+         OkSfMX5grfyc7q0UNX9MIfLE3omO9tsq796TNCmOm4fX61IMzp1HcSkjoCkPCSleIRkK
+         iLdoqKOvlSnO84IOSvG7AHe7YQWASrYza/ZP94gcJ/Vq5gX1INz1FL88mSnlvFj5qni6
+         23Qw==
+X-Gm-Message-State: AOAM532YO9T7r8pyJgDNMfItdH/Mw+hQxWocsa6sYBtZVovtZ4MSZO7F
+        yuFb21hRcVlCQKkyVcKm/prEBhVYUrojS9Iu6eM=
+X-Google-Smtp-Source: ABdhPJxIa9zhxQqVxTQ9c4koZqfbRQc8mC2nu4qrBSHOuXXWXsqihNlJrN3Vz5UARxVDEr/sgxWHBQ==
+X-Received: by 2002:a05:6512:3094:b0:442:ca74:a610 with SMTP id z20-20020a056512309400b00442ca74a610mr13572089lfd.438.1646080892927;
+        Mon, 28 Feb 2022 12:41:32 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id k7-20020a0565123d8700b004435a1e2e55sm1125779lfv.179.2022.02.28.12.41.29
         for <linux-sgx@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Feb 2022 12:35:50 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id f8so7124971edf.10
-        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 12:35:49 -0800 (PST)
-X-Received: by 2002:ac2:44a4:0:b0:445:8fc5:a12a with SMTP id
- c4-20020ac244a4000000b004458fc5a12amr7653619lfm.27.1646078630855; Mon, 28 Feb
- 2022 12:03:50 -0800 (PST)
+        Mon, 28 Feb 2022 12:41:31 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id j7so23433701lfu.6
+        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 12:41:29 -0800 (PST)
+X-Received: by 2002:a05:6512:e8a:b0:443:7b8c:579a with SMTP id
+ bi10-20020a0565120e8a00b004437b8c579amr13784522lfb.687.1646080877791; Mon, 28
+ Feb 2022 12:41:17 -0800 (PST)
 MIME-Version: 1.0
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
  <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <Yh0tl3Lni4weIMkl@casper.infradead.org> <e3bb7d0632f8ef60f18c19976d57330e1ef00584.camel@sipsolutions.net>
+In-Reply-To: <e3bb7d0632f8ef60f18c19976d57330e1ef00584.camel@sipsolutions.net>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 28 Feb 2022 12:03:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
-Message-ID: <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+Date:   Mon, 28 Feb 2022 12:41:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjNgWNa9njuBJEoafc-cRV3SbzZfh3m5YfxcZxdCw3+XQ@mail.gmail.com>
+Message-ID: <CAHk-=wjNgWNa9njuBJEoafc-cRV3SbzZfh3m5YfxcZxdCw3+XQ@mail.gmail.com>
 Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
  as a ptr
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Jakob Koschel <jakobkoschel@gmail.com>,
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
         alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
@@ -116,34 +121,28 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 11:56 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Feb 28, 2022 at 12:29 PM Johannes Berg
+<johannes@sipsolutions.net> wrote:
 >
-> I do wish we could actually poison the 'pos' value after the loop
-> somehow - but clearly the "might be uninitialized" I was hoping for
-> isn't the way to do it.
+> If we're willing to change the API for the macro, we could do
+>
+>   list_for_each_entry(type, pos, head, member)
+>
+> and then actually take advantage of -Wshadow?
 
-Side note: we do need *some* way to do it.
+See my reply to Willy. There is no way -Wshadow will ever happen.
 
-Because if we make that change, and only set it to another pointer
-when not the head, then we very much change the semantics of
-"list_for_each_head()". The "list was empty" case would now exit with
-'pos' not set at all (or set to NULL if we add that). Or it would be
-set to the last entry.
+I considered that (type, pos, head, member) kind of thing, to the
+point of trying it for one file, but it ends up as horrendous syntax.
+It turns out that declaring the type separately really helps, and
+avoids crazy long lines among other things.
 
-And regardless, that means that all the
+It would be unacceptable for another reason too - the amount of churn
+would just be immense. Every single use of that macro (and related
+macros) would change, even the ones that really don't need it or want
+it (ie the good kinds that already only use the variable inside the
+loop).
 
-        if (pos == head)
+So "typeof(pos) pos" may be ugly - but it's a very localized ugly.
 
-kinds of checks after the loop would be fundamentally broken.
-
-Darn. I really hoped for (and naively expected) that we could actually
-have the compiler warn about the use-after-loop case. That whole
-"compiler will now complain about bad use" was integral to my clever
-plan to use the C99 feature of declaring the iterator inside the loop.
-
-But my "clever plan" was apparently some ACME-level Wile E. Coyote sh*t.
-
-Darn.
-
-                   Linus
+                    Linus
