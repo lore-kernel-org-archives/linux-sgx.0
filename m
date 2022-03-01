@@ -2,255 +2,219 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAFDC43219
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 11:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D00C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 12:58:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234531AbiCAL3E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 1 Mar 2022 06:29:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60344 "EHLO
+        id S234865AbiCAM6l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 1 Mar 2022 07:58:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbiCAL3A (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 06:29:00 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B1A46652;
-        Tue,  1 Mar 2022 03:28:19 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id gb39so30861217ejc.1;
-        Tue, 01 Mar 2022 03:28:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=rLPvv7mVdDwWU3WqqHUc/M/t9o2wkfNNz2uUSA/i/Q0=;
-        b=ioxwEWwSec2mkWoQpVaP+m+cuqfrILVMZy97DsxGJQFNwUj5vt0t9wo5G7myUpC8Gn
-         ea9oHHWNkcI1g0+ETzPDSekL4muwhDYsG3jrD0dPjJWnH1vW4gUq2ufbL8yBIo9ax2rC
-         LCc4peu3G2+oC3D/CoxTwxe0jKznErkS9hGO2cQ4rpTAmgLJ5M6BCvPaoqQObgiQcr6n
-         RKDduahlScES6wicQqME3eGzY8GUno55Oqx2eUsC/sQVyrcKAkNt4/DW8JZWJd6l/Vwp
-         mTTzA+edxLDCldwyXcUf3Jn0ErW39L5ba+PqRXF7jiU95w3jgcW/Rs/bUGAwA8mWZWkw
-         L2Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=rLPvv7mVdDwWU3WqqHUc/M/t9o2wkfNNz2uUSA/i/Q0=;
-        b=giO4plcs+ABte//d8gwL+2pUDHZqwCPkblhelmffpXm7V53ATpHNorjmZ913XTgE1z
-         FqflQE315aEEKvoN0tFlsYijiUOy/DnmlpKWRDKWEfBOAoXEqD08HgbwPAszCPvNBAjd
-         zg5Pa6s8phaSWtCFkVz9Q0eIigW5ve0F0j4Py0dsWriP8rjA3UE8oEFTmpjoy22jC5sR
-         rJ8TqHMKfLTj0rkSBjkvZT5NOHYtUQ6nD1seea29RX4m9ege4KP3SoDbvLaXOZrEXyBv
-         9C7PQnNtTW6e9zXaD4JhioQRXRERrornvFJqcig7/3P6MlWHkL5GEEMVFM/GHWPIvDzd
-         EuRA==
-X-Gm-Message-State: AOAM531HJ68V5UhOdCNzhzSINJGxvNunr87sa97CIt/ht8s+pnGg68cW
-        1CRheCZkNYxUF70jAhMNRTg=
-X-Google-Smtp-Source: ABdhPJykJwlP+KqTh6zSzndCpDSZzE2bN4aLh28OSmyBBaWLei6TdHv4i/sMtFtkO4GxsNuXK9LBkw==
-X-Received: by 2002:a17:906:68c2:b0:6b4:9f26:c099 with SMTP id y2-20020a17090668c200b006b49f26c099mr18827008ejr.41.1646134097608;
-        Tue, 01 Mar 2022 03:28:17 -0800 (PST)
-Received: from smtpclient.apple ([2a02:8109:9d80:3f6c:6db3:8d4c:747e:98ad])
-        by smtp.gmail.com with ESMTPSA id a25-20020a50ff19000000b0040f84cd806csm7036870edu.59.2022.03.01.03.28.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Mar 2022 03:28:17 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.60.0.1.1\))
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-From:   Jakob Koschel <jakobkoschel@gmail.com>
-In-Reply-To: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
-Date:   Tue, 1 Mar 2022 12:28:15 +0100
-Cc:     =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CEDAD0D9-56EE-4105-9107-72C2EAD940B0@gmail.com>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com>
- <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
- <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
- <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
- <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3693.60.0.1.1)
+        with ESMTP id S230415AbiCAM6l (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 07:58:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0629F13DF1;
+        Tue,  1 Mar 2022 04:58:00 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AF166B818D4;
+        Tue,  1 Mar 2022 12:57:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80B30C340EE;
+        Tue,  1 Mar 2022 12:57:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646139477;
+        bh=r75Uzu8npn39r4huc5vp0QUopdOSRjOWjwUwuLTzzJI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XIT+/WNf0MDXISpteczFZnD/f5tbZVR5uIq6Fzan3pquU0MfcU2IlMQBIKrq5m3DH
+         s05RAN2ZmV4eeHhA7iRpGps69DTryLghWkCd2obVPwOitVKTfoGzx5brGkwcc4V5ac
+         lIaJdrBkf43/9lTEBqmsHa5gOW0p8Q5M5Yn4bWeeoBSTzxp5ayhA42Ksn4NbsWpy8w
+         21I+89A7bmhKxJeMPoDrYSlw/iI8KsqwK7sTypVXXgn43DZPQ8k5qFnemRPsArJLVE
+         bLEAPzJUvirns5poA7Ssfq07ww27IK9aGNYzBqkIsUquTCorTUbZTuMCwg4b/+95JG
+         S+ZyQocZGKwRA==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v5] x86/sgx: Free backing memory after faulting the enclave page
+Date:   Tue,  1 Mar 2022 13:58:36 +0100
+Message-Id: <20220301125836.3430-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+There is a limited amount of SGX memory (EPC) on each system.  When that
+memory is used up, SGX has its own swapping mechanism which is similar
+in concept but totally separate from the core mm/* code.  Instead of
+swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
+comes from a shared memory pseudo-file and can itself be swapped by the
+core mm code.  There is a hierarchy like this:
 
+	EPC <-> shmem <-> disk
 
-> On 1. Mar 2022, at 01:41, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->=20
-> On Mon, Feb 28, 2022 at 1:47 PM Jakob Koschel <jakobkoschel@gmail.com> =
-wrote:
->>=20
->> The goal of this is to get compiler warnings right? This would indeed =
-be great.
->=20
-> Yes, so I don't mind having a one-time patch that has been gathered
-> using some automated checker tool, but I don't think that works from a
-> long-term maintenance perspective.
->=20
-> So if we have the basic rule being "don't use the loop iterator after
-> the loop has finished, because it can cause all kinds of subtle
-> issues", then in _addition_ to fixing the existing code paths that
-> have this issue, I really would want to (a) get a compiler warning for
-> future cases and (b) make it not actually _work_ for future cases.
->=20
-> Because otherwise it will just happen again.
->=20
->> Changing the list_for_each_entry() macro first will break all of =
-those cases
->> (e.g. the ones using 'list_entry_is_head()).
->=20
-> So I have no problems with breaking cases that we basically already
-> have a patch for due to  your automated tool. There were certainly
-> more than a handful, but it didn't look _too_ bad to just make the
-> rule be "don't use the iterator after the loop".
->=20
-> Of course, that's just based on that patch of yours. Maybe there are a
-> ton of other cases that your patch didn't change, because they didn't
-> match your trigger case, so I may just be overly optimistic here.
+After data is swapped back in from shmem to EPC, the shmem backing
+storage needs to be freed.  Currently, the backing shmem is not freed.
+This effectively wastes the shmem while the enclave is running.  The
+memory is recovered when the enclave is destroyed and the backing
+storage freed.
 
-Based on the coccinelle script there are ~480 cases that need fixing
-in total. I'll now finish all of them and then split them by
-submodules as Greg suggested and repost a patch set per submodule.
-Sounds good?
+Sort this out by freeing memory with shmem_truncate_range(), as soon as
+a page is faulted back to the EPC.  In addition, free the memory for
+PCMD pages as soon as all PCMD's in a page have been marked as unused
+by zeroing its contents.
 
->=20
-> But basically to _me_, the important part is that the end result is
-> maintainable longer-term. I'm more than happy to have a one-time patch
-> to fix a lot of dubious cases if we can then have clean rules going
-> forward.
->=20
->> I assumed it is better to fix those cases first and then have a =
-simple
->> coccinelle script changing the macro + moving the iterator into the =
-scope
->> of the macro.
->=20
-> So that had been another plan of mine, until I actually looked at
-> changing the macro. In the one case I looked at, it was ugly beyond
-> belief.
->=20
-> It turns out that just syntactically, it's really nice to give the
-> type of the iterator from outside the way we do now. Yeah, it may be a
-> bit odd, and maybe it's partly because I'm so used to the
-> "list_for_each_list_entry()" syntax, but moving the type into the loop
-> construct really made it nasty - either one very complex line, or
-> having to split it over two lines which was even worse.
->=20
-> Maybe the place I looked at just happened to have a long typename, but
-> it's basically always going to be a struct, so it's never a _simple_
-> type. And it just looked very odd adn unnatural to have the type as
-> one of the "arguments" to that list_for_each_entry() macro.
->=20
-> So yes, initially my idea had been to just move the iterator entirely
-> inside the macro. But specifying the type got so ugly that I think
-> that
->=20
->        typeof (pos) pos
->=20
-> trick inside the macro really ends up giving us the best of all =
-worlds:
->=20
-> (a) let's us keep the existing syntax and code for all the nice cases
-> that did everything inside the loop anyway
->=20
-> (b) gives us a nice warning for any normal use-after-loop case
-> (unless you explicitly initialized it like that
-> sgx_mmu_notifier_release() function did for no good reason
->=20
-> (c) also guarantees that even if you don't get a warning,
-> non-converted (or newly written) bad code won't actually _work_
->=20
-> so you end up getting the new rules without any ambiguity or mistaken
->=20
->> With this you are no longer able to set the 'outer' pos within the =
-list
->> iterator loop body or am I missing something?
->=20
-> Correct. Any assignment inside the loop will be entirely just to the
-> local loop case. So any "break;" out of the loop will have to set
-> another variable - like your updated patch did.
->=20
->> I fail to see how this will make most of the changes in this
->> patch obsolete (if that was the intention).
->=20
-> I hope my explanation above clarifies my thinking: I do not dislike
-> your patch, and in fact your patch is indeed required to make the new
-> semantics work.
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v5:
+* Encapsulated file offset calculation for PCMD struct.
+* Replaced "magic number" PAGE_SIZE with sizeof(struct sgx_secs) to make
+  the offset calculation more self-documentative.
+v4:
+* Sanitized the offset calculations.
+v3:
+* Resend.
+v2:
+* Rewrite commit message as proposed by Dave.
+* Truncate PCMD pages (Dave).
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 57 ++++++++++++++++++++++++++++------
+ 1 file changed, 48 insertions(+), 9 deletions(-)
 
-ok it's all clear now, thanks for clarifying.
-I've defined all the 'tmp' iterator variables uninitialized so applying
-your patch on top of that later will just give the nice compiler warning=20=
-
-if they are used past the loop body.
-
->=20
-> What I disliked was always the maintainability of your patch - making
-> the rules be something that isn't actually visible in the source code,
-> and letting the old semantics still work as well as they ever did, and
-> having to basically run some verification pass to find bad users.
-
-Since this patch is not a complete list of cases that need fixing (30%)
-I haven't included the actual change of moving the iterator variable
-into the loop and thought that would be a second step coming after this
-is merged.
-
-With these changes alone, yes you still rely on manual verification =
-passes.
-
->=20
-> (I also disliked your original patch that mixed up the "CPU
-> speculation type safety" with the actual non-speculative problems, but
-> that was another issue).
->=20
->                Linus
-
-- Jakob
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 8be6f0592bdc..3d2ed8d27747 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -12,6 +12,30 @@
+ #include "encls.h"
+ #include "sgx.h"
+ 
++/*
++ * Calculate byte offset of a PCMD struct associated with an enclave page. PCMD's
++ * follow right after the EPC data in the backing storage. In addition to the
++ * visible enclave pages, there's one extra page slot for SECS, before PCMD
++ * structs.
++ */
++static inline pgoff_t sgx_encl_get_backing_page_pcmd_offset(struct sgx_encl *encl,
++							    unsigned long page_index)
++{
++	pgoff_t epc_end_off = encl->size + sizeof(struct sgx_secs);
++
++	return epc_end_off + page_index * sizeof(struct sgx_pcmd);
++}
++
++/*
++ * Free a page from the backing storage in the given page index.
++ */
++static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, unsigned long page_index)
++{
++	struct inode *inode = file_inode(encl->backing);
++
++	shmem_truncate_range(inode, PFN_PHYS(page_index), PFN_PHYS(page_index) + PAGE_SIZE - 1);
++}
++
+ /*
+  * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
+  * Pages" in the SDM.
+@@ -22,9 +46,11 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ {
+ 	unsigned long va_offset = encl_page->desc & SGX_ENCL_PAGE_VA_OFFSET_MASK;
+ 	struct sgx_encl *encl = encl_page->encl;
++	pgoff_t page_index, page_pcmd_off;
+ 	struct sgx_pageinfo pginfo;
+ 	struct sgx_backing b;
+-	pgoff_t page_index;
++	bool pcmd_page_empty;
++	u8 *pcmd_page;
+ 	int ret;
+ 
+ 	if (secs_page)
+@@ -32,14 +58,16 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 	else
+ 		page_index = PFN_DOWN(encl->size);
+ 
++	page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
++
+ 	ret = sgx_encl_lookup_backing(encl, page_index, &b);
+ 	if (ret)
+ 		return ret;
+ 
+ 	pginfo.addr = encl_page->desc & PAGE_MASK;
+ 	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
+-	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
+-			  b.pcmd_offset;
++	pcmd_page = kmap_atomic(b.pcmd);
++	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
+ 
+ 	if (secs_page)
+ 		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
+@@ -55,11 +83,24 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 		ret = -EFAULT;
+ 	}
+ 
+-	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
++	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
++
++	/*
++	 * The area for the PCMD in the page was zeroed above.  Check if the
++	 * whole page is now empty meaning that all PCMD's have been zeroed:
++	 */
++	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
++
++	kunmap_atomic(pcmd_page);
+ 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+ 
+ 	sgx_encl_put_backing(&b, false);
+ 
++	sgx_encl_truncate_backing_page(encl, page_index);
++
++	if (pcmd_page_empty)
++		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
++
+ 	return ret;
+ }
+ 
+@@ -583,7 +624,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 				struct sgx_backing *backing)
+ {
+-	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
++	pgoff_t page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
+ 	struct page *contents;
+ 	struct page *pcmd;
+ 
+@@ -591,7 +632,7 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 	if (IS_ERR(contents))
+ 		return PTR_ERR(contents);
+ 
+-	pcmd = sgx_encl_get_backing_page(encl, pcmd_index);
++	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(page_pcmd_off));
+ 	if (IS_ERR(pcmd)) {
+ 		put_page(contents);
+ 		return PTR_ERR(pcmd);
+@@ -600,9 +641,7 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 	backing->page_index = page_index;
+ 	backing->contents = contents;
+ 	backing->pcmd = pcmd;
+-	backing->pcmd_offset =
+-		(page_index & (PAGE_SIZE / sizeof(struct sgx_pcmd) - 1)) *
+-		sizeof(struct sgx_pcmd);
++	backing->pcmd_offset = page_pcmd_off & (PAGE_SIZE - 1);
+ 
+ 	return 0;
+ }
+-- 
+2.35.1
 
