@@ -2,196 +2,255 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1159BC35278
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 17:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE18C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 17:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236755AbiCARlc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 1 Mar 2022 12:41:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
+        id S233087AbiCARtl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 1 Mar 2022 12:49:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236689AbiCARlS (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 12:41:18 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A557A3FD9A;
-        Tue,  1 Mar 2022 09:40:08 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id qk11so33047112ejb.2;
-        Tue, 01 Mar 2022 09:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=pFdYiycpncfTymiwtZowrsS5EyWiXpYxNs42/BHAfYg=;
-        b=jNa8kCMtl/UUGI9n6DMpRCjqu31f4wAijdvFFxZnjTmTKVAPvZHGvGIS5mEbyeVH7U
-         2x/09r6Vjc5jlvMmGEJ/il9wQB7v0QaDJcbwnO54cttgXGRrRpdgplSbMXJLSVGPucZZ
-         9N0BbQ67CEO0Sz9E19ATZ7SkTLFNHyfaTEafdxDnprAieU2S7WSxP1eMUqDcJyOgT3om
-         KiVwLoBVmeYUr/3jVH1Ywgf3KLmBchJpZXF9NW4w0E+aOTUpi5SfsW8FSQSkfcXvzSp5
-         ZeMWPQFNXAG0u+f0IIKFL+VZxclmrwVLcWvb/ml3Qc/gpz+jEOgbpY53v+25m0fIUJKc
-         BDYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=pFdYiycpncfTymiwtZowrsS5EyWiXpYxNs42/BHAfYg=;
-        b=7BjOqnZ5sU9qNZ+ZbtSmgnT5ugUg93W5EXL23Z5fe91YD2NAMRFaHW96/iox28ODCe
-         zqAFwD48zzIEd81R9GJv5UK+KG9scXt7NvQtyP+Tf5kF63AzEx5N9z8DCwxFBhh7olol
-         j+i7AEIN6OT5RB2ty/uoXl9LTeWga37qhGhumANM9x1vRakL08DEGpxWyxOzWbkagvl5
-         hx2G33gWBsH3/S06EqJo0yi12GOrr5OLeiJxLIPeZrW7pPUk4+hc//wyXdd6sazAO3nv
-         Dav3+r8ijXUxQvrfHbHDAATDTCs2mESdLmjJW2dmuOW4FcQVPcuapDoh+166AMkBBZwv
-         oVhA==
-X-Gm-Message-State: AOAM530VelPFZGzmt8PzE4qZ+PeqHB0a4Jg3ubfAK0hD+zaASk4je+GF
-        jsmkzHlrJhshQu1Koj+2bw0=
-X-Google-Smtp-Source: ABdhPJwzanGhehpmLWEMTTJkMBhYufoyhmHURG9yND716ZZIbM/kd8Ex5thBnsVmcSvoj9ZPyJ3fsw==
-X-Received: by 2002:a17:906:948:b0:6d6:e479:1fe4 with SMTP id j8-20020a170906094800b006d6e4791fe4mr3312230ejd.240.1646156406993;
-        Tue, 01 Mar 2022 09:40:06 -0800 (PST)
-Received: from smtpclient.apple ([2a02:8109:9d80:3f6c:6db3:8d4c:747e:98ad])
-        by smtp.gmail.com with ESMTPSA id a25-20020a50ff19000000b0040f84cd806csm7398100edu.59.2022.03.01.09.40.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Mar 2022 09:40:06 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.60.0.1.1\))
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-From:   Jakob Koschel <jakobkoschel@gmail.com>
-In-Reply-To: <Yh5ZmwiH5AxtQ69K@kroah.com>
-Date:   Tue, 1 Mar 2022 18:40:04 +0100
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        samba-technical@lists.samba.org,
-        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        intel-wired-lan@lists.osuosl.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sgx@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4B1AFAD9-C1B3-499C-945A-C259361ABA8C@gmail.com>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com>
- <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
- <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
- <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
- <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
- <CEDAD0D9-56EE-4105-9107-72C2EAD940B0@gmail.com> <Yh5ZmwiH5AxtQ69K@kroah.com>
-To:     Greg KH <greg@kroah.com>
-X-Mailer: Apple Mail (2.3693.60.0.1.1)
+        with ESMTP id S231362AbiCARtk (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 12:49:40 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8890417ABC;
+        Tue,  1 Mar 2022 09:48:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646156939; x=1677692939;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=I6KM271satBWpvOHn/oit8P+JmMVHIjTX42gAIYCq8U=;
+  b=Cr//G5aYYW1Is9oET4Va8ucnM7qA5I1iLu9V9X2P1GnGexRKRYwBkras
+   HfofeIK+DG/nHJB0XfqrQ51jaqTS/avWfg1Ty5rkBlyqgeblCJlq8rhpD
+   gu8uxJgB+u06xs8km1Aa4V/w56zabtlA0e3HLQU9UxPJXFsochnHHsbwn
+   gXLS7vNkO6s+kJvig6ZvawneDcn4EB8Hz3UQH0K93WGXZ8reWHjlpcDOf
+   4BPoODRE5OfCaFdYEISa4CluAPvEI9Ww8qdl6H/hVSBAdpu+0ZDvUs4Y1
+   +qlxoOOBL/Oh/qfTLwROn8zE+hhYpXGOGLmowrwD79PEWc5M3Q8yDBWwn
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10273"; a="240610302"
+X-IronPort-AV: E=Sophos;i="5.90,146,1643702400"; 
+   d="scan'208";a="240610302"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2022 09:48:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,146,1643702400"; 
+   d="scan'208";a="534995399"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orsmga007.jf.intel.com with ESMTP; 01 Mar 2022 09:48:58 -0800
+Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 1 Mar 2022 09:48:58 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 1 Mar 2022 09:48:58 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21 via Frontend Transport; Tue, 1 Mar 2022 09:48:58 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.102)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.20; Tue, 1 Mar 2022 09:48:57 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WqukVV9k+BMZyCfnUhNeAXDf41+RVtH5xFF/ftbSHU0i0luwgtwjYp1E/X5FdtFZlj/DbVp5CiY+JZtKyIoVCAMQlXWPi8Q5tf3mUuox1b+tJrI9KfVAYz2uTkqPrSg7wTuulyk5bPZAyeHfHr886AYBfi+B2U48zLl9APL95I58SZdTd0eKNn/SHjR13ejGCOr0Hy7hVnmSowIZGiwbYW64zZxjidviN54Qkzy17GSYNBOpBAewWOpJE6lb7Kx5v4ekxnOhEWCD9dgMIoTC7fRACLn/R6On3M0SkLXpHDU2UxKENKjB+arFXm0wb7p3zCCnxFMhoLl+gjPZ6n+4oA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iu02AMPhs2tQTYGKgJXe7/gMkxogJ93Yvnycq7Kuxfs=;
+ b=DiQLwcsGJPya+zW7oPJZCkSlz1DNY+DZMNpjGjDaEcpSXSurJv311O+gwaKngarNYS19LmI+IpS1y+xvWvO5vBb69DulWJ2r1a7Pi1U3USqbx6LRkttPZZRxN/IX+ck3NZkOmOxR1tTxBWhO2SXG4sGY7J0r2DicjbuQdKB7JMMKROTQMiGU33IhV/0NISwC35WBf7aWu4DZos/0G1xxG70xmg+yAizwo3ysu2peaKSC+HlCwEVYao6+Ok6PtUBM4qc/n3yOTR1fH3k8UsEq7KOdMLdg3Y9OS/koM6rasrLOuIgNAdCKqS5NWSRCo7Q5LH4N4eHOwwVmx+XVLFYmmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
+ by CH2PR11MB4293.namprd11.prod.outlook.com (2603:10b6:610:40::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.26; Tue, 1 Mar
+ 2022 17:48:54 +0000
+Received: from BN0PR11MB5744.namprd11.prod.outlook.com
+ ([fe80::55e4:9a32:8e6f:4774]) by BN0PR11MB5744.namprd11.prod.outlook.com
+ ([fe80::55e4:9a32:8e6f:4774%4]) with mapi id 15.20.5017.027; Tue, 1 Mar 2022
+ 17:48:54 +0000
+Message-ID: <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
+Date:   Tue, 1 Mar 2022 09:48:48 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.6.1
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+CC:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Shanahan, Mark" <mark.shanahan@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1644274683.git.reinette.chatre@intel.com>
+ <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
+ <YhLhoMFPyOFZ2fsX@iki.fi>
+ <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
+ <Yhy/GvJegnTqYdq6@iki.fi> <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
+ <Yh4fGORDaJyVrJQW@iki.fi> <Yh4i4hVcnfZ8QDAl@iki.fi>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <Yh4i4hVcnfZ8QDAl@iki.fi>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MWHPR20CA0018.namprd20.prod.outlook.com
+ (2603:10b6:300:13d::28) To BN0PR11MB5744.namprd11.prod.outlook.com
+ (2603:10b6:408:166::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ca0d6a0f-8b23-4d35-f00b-08d9fbabc069
+X-MS-TrafficTypeDiagnostic: CH2PR11MB4293:EE_
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-Microsoft-Antispam-PRVS: <CH2PR11MB4293D0C363B63B1E24294B25F8029@CH2PR11MB4293.namprd11.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: VmA6P+Q8WgRPbDdibZE+Bss4sA/mpbiffl6ElSe2Vo67uVCIf1LzA+bUc4XolYfLuixn7JQD6JTEuci8r/wl/Rp3rllqGto1HhuMmOHVm4fbLh+JgRZGR0mnokHqETowbMtv1YiTbZ+Gs2rMGeAN4GxkqVlDWLHlBiRKj8cL3lbrgA/o4zvr8R3SLGRs65XLBxUlLJkfJ2IGjPMShRwkB8IxNjbAh/O/gIhWUZNT51hQl7fdSXLFxA0XsWqnHTqNRZW5RtwSh+pB8I8t7V01qS3Q7dd5S4t6CpEqyVs4J8eD3SSiudbAZ5381F1UIgqYqPgE2Qeo6wCmMFQ1xrlOWR5GakgmFdaRyD67Uc39m18eg3QfL/3ifnap/qEFBFKvZP6gADDM+3F+H5xmzSNR92YDC7FkWnY7ixJkk5ejwkf+DGqOGZV+9VESCJJ3J7md9DKV1JGwS1H5uN2WGWjpSBJejMPGrgGSYsIhE+SnsbNnL10a4BY8kl9/BDKLYhBKJ6KwQ1ULZdvqneRrkCq+dmLB+g/Nyw/XGVy84XRm3Wcd1LM9F5BrODxImN+/HNdr/wkJBFN3ZSnBW9i7PULkpi/NTdLkhYz4jPQkYZacByeaDguE1cGJDhH1YdE4YiqB8BJjI6l+o/JX4BYYigGy99quPt4Xb6BN2f0dgiB3WfCudOnFvMCBZjVj8cFf6QA0tfP/IAl3rQkzrBLloMWut3bjyrhHNMAAIbwWKcc0VRvYrSYt+vvIST9oCKLeyPKO
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(110136005)(83380400001)(26005)(186003)(2906002)(6486002)(36756003)(66946007)(31696002)(2616005)(66476007)(66556008)(5660300002)(86362001)(44832011)(4326008)(54906003)(82960400001)(6636002)(8936002)(316002)(7416002)(8676002)(508600001)(31686004)(53546011)(38100700002)(6512007)(6506007)(6666004)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Zm9UNmZpMHc1dmtSaWRTOVN1eUhsd1VmTW51YWVSR1BiSUJpdlFZOE4rYVFh?=
+ =?utf-8?B?RzRSU3I4QnorOUt0azRZczNSSk9XRHFGZVN6emNnZ0UvN09jWWROaXg1cWhP?=
+ =?utf-8?B?c3NMdE44VUVRNG9ORCtMYk1jYTdFTWxHRkExWnZRV2phSXcza0YveUREVHFO?=
+ =?utf-8?B?UHc3ekw5R2Q5cXNSMVJRUlBWekIveXhUYytVRVd4UXZUZFNJY1FrVUNXbGFR?=
+ =?utf-8?B?MlZyUVNJT0x4QjFkeFBnZW5yRHdYc3dYMTcvamdYdllnS2dqbFFaZDlaUlkw?=
+ =?utf-8?B?bHZCUjQ2Z1NaNElLek84UnRHdGxFNXZSWVJkNjBYUWprazdmVmo1RTNBc0Ny?=
+ =?utf-8?B?WGNrUU5oRFVPb3VtTTRsK29ENVhDUFUyWkdxMXdPY1lxVFQrai9hejdYVE1s?=
+ =?utf-8?B?L0dEN05XWUlrbG10U2NYdTE5WnVNbE9ValBNSnhFMkZjTGx3VkRmb3hFYXZV?=
+ =?utf-8?B?TmtiZUxOelJlQkNXOHRUemlHOFlxODl3Vjc4cWcwRGY1YndxNUZxb2lGNE1S?=
+ =?utf-8?B?WVBoemNIRXAzdDF3d2NiRTlVWno0dklLdkdkYk1FaUVJc0pRbTZrTDVDZ2ky?=
+ =?utf-8?B?ek9oc2ZKTHRHMkJRMG0yc29NaXNlSTdlbGw2UzRjWWYvd05hR0hxRk5sa1Qr?=
+ =?utf-8?B?N2hOeDZEMUpuOFB4T2ZyN1d4WTR1UlVxUlF5dXF3Smt3VFNZUjg0SEpTNHZv?=
+ =?utf-8?B?a0xLamZEZWQ4TVloelZKWXNSdnNQQ3ozdE1jdFRmVDdWU0tpZ1hScnlMTU0r?=
+ =?utf-8?B?TDhlbE9pb2VaUDVKZ2YwSElaOUN5djZwWHg5SFV6VzVJSWdFaHJNc01GY3A0?=
+ =?utf-8?B?T3hXMHQ4b2JQMm0zTlUwZUZZZmhyNFBkb3lhRDFzRGVjQkhVT3JPTHQ0Rm5X?=
+ =?utf-8?B?eWxjZlp2MTRsQnkwZnVScHNhZUI3NldZTDFjRVpROFRhdkVrSVpUVk01ZERU?=
+ =?utf-8?B?QzF5dnJ4MWxoRDRnYXJKTHdKRm93emJtNzVaUnR5M3l6ZTdHN2EzRXdDeWQr?=
+ =?utf-8?B?N0hRbzRjR2p0bWQ3dG5zdG5mTEwrNGZIZWN3V2Ywak9Tdi9RT2RSYkVtZXhw?=
+ =?utf-8?B?YlNQeHIzNGswVmYvTXpGanc4L0RRaDNXWWtLNm8vYUx3NFNzblh3a3FkUExN?=
+ =?utf-8?B?TWJlQ0oxSmdiRmFES0FvU3dKRWg2OVhTaGxNTXpZWkxDT2g3R3g3bkc5dU9J?=
+ =?utf-8?B?VTJNbVA4NkFmNHhoZm55SmlqY0lZSGdFZVF0QlpvcTRnSy80OFM1a3grdm1S?=
+ =?utf-8?B?bS9BTHNUbmFaUFBUZDBpNkRHL0QrMDJTWkMxUWxlOHJSMVVBTEtrbHNrbXpj?=
+ =?utf-8?B?SkJCSkREY1ZSNXAxc1NyZVlYdEVPVlJqYUpyaEdESTgwRmtKeFpSQkhZRHNu?=
+ =?utf-8?B?QmI4L3ZnSmNpbVl5Tkh3MEU1Zi9xWkRvMEtmVmFpckZzTndGTkJrY2JiOUd3?=
+ =?utf-8?B?Mzh0UGFjSUR5c2ZJd1cyOHlNVzlsMzRiR3BqVEdSVWpzNWJFekNUeDM0MlBr?=
+ =?utf-8?B?UmN4dnJMeS9zSmMxVzJnanBPV295eWlSWlVhd01UMXRWWFVGVG1WM2o3Unll?=
+ =?utf-8?B?ampHQkdBbUhWR09ZbnJNeGdHODJHaUZDS2czWldjOUxxNnRiMUhpTnluWWxx?=
+ =?utf-8?B?WXMxRW52YmVGMHg5NUR3TStzYStIRllrUGNUSk1halR2ZzlRdEpEcFNFMmEy?=
+ =?utf-8?B?ZnB3Z0xDcnArbTMrLzJ4bEFvd2dIYVU0Si83SVdOSVdlaW1mbjBnbXVpRldO?=
+ =?utf-8?B?WUVBWjNHenNNQTd2OTVOUjBjUlFVcm1ObkczK3E5Z1ZGeUhFOHI5Yys3S3V4?=
+ =?utf-8?B?Rk9XbHN2OUFXTzF3ZHcrMEJxRUUzalo1OE5nZDNmQWZrWFU0RXNITjdzV0po?=
+ =?utf-8?B?dVJzQXE1QW00VEM1U1hYbzh6Ym9DN3dtaDd5S0djaTU3Z1FxMmM3bExyK0Q3?=
+ =?utf-8?B?S0JKbTJXL2Z0cnhGZkRXdWNxK1dwV0JFYkNGVS9ScG1nQ21JU1lXVStBSmpt?=
+ =?utf-8?B?aENFZTVhdStkSlVWWVdvQ2lEQndjeS83NFhHZ1NZRyswZFZPb0plY0NVQlhx?=
+ =?utf-8?B?TE9xMnJ3QWUwWmZYQ2ozWk1HdGZianNZWjlYQVlXczQ1d2Q3YVBVS3F2M0dp?=
+ =?utf-8?B?dFZQN2VjbjFpT1B6Y05TV1JKYmphSjdIT3RXdkJoMktySlVJTEpyOVNzcENZ?=
+ =?utf-8?B?QjI5V1ZtWVNwNmNoZGltaTk3bHcwWGlLZldoUWhZRFRkeDNIdE52ZXJPY2p6?=
+ =?utf-8?Q?qP4KtmaiYFAjtRHPH+O12UPd7dLcqPdiNnUaAbaG2k=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca0d6a0f-8b23-4d35-f00b-08d9fbabc069
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2022 17:48:54.1243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vkBzW3g1aypSWzMnxyY3ht8jcbfFJLmM//Jx8RKY5OsKk9px6nYDgvLFLRjyZdmusSVCaOoJn+fYFJa0F8gtDP/plXcK08wzlQYPxR/+yzc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR11MB4293
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+Hi Jarkko,
+
+On 3/1/2022 5:42 AM, Jarkko Sakkinen wrote:
+>> With EACCEPTCOPY (kudos to Mark S. for reminding me of this version of
+>> EACCEPT @ chat.enarx.dev) it is possible to make R and RX pages but
+>> obviously new RX pages are now out of the picture:
+>>
+>>
+>> 	/*
+>> 	 * Adding a regular page that is architecturally allowed to only
+>> 	 * be created with RW permissions.
+>> 	 * TBD: Interface with user space policy to support max permissions
+>> 	 * of RWX.
+>> 	 */
+>> 	prot = PROT_READ | PROT_WRITE;
+>> 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
+>> 	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
+>>
+>> If that TBD is left out to the final version the page augmentation has a
+>> risk of a API bottleneck, and that risk can realize then also in the page
+>> permission ioctls.
+>>
+>> I.e. now any review comment is based on not fully known territory, we have
+>> one known unknown, and some unknown unknowns from unpredictable effect to
+>> future API changes.
+
+The plan to complete the "TBD" in the above snippet was to follow this work
+with user policy integration at this location. On a high level the plan was
+for this to look something like:
 
 
-> On 1. Mar 2022, at 18:36, Greg KH <greg@kroah.com> wrote:
->=20
-> On Tue, Mar 01, 2022 at 12:28:15PM +0100, Jakob Koschel wrote:
->>=20
->>=20
->>> On 1. Mar 2022, at 01:41, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->>>=20
->>> On Mon, Feb 28, 2022 at 1:47 PM Jakob Koschel =
-<jakobkoschel@gmail.com> wrote:
->>>>=20
->>>> The goal of this is to get compiler warnings right? This would =
-indeed be great.
->>>=20
->>> Yes, so I don't mind having a one-time patch that has been gathered
->>> using some automated checker tool, but I don't think that works from =
-a
->>> long-term maintenance perspective.
->>>=20
->>> So if we have the basic rule being "don't use the loop iterator =
-after
->>> the loop has finished, because it can cause all kinds of subtle
->>> issues", then in _addition_ to fixing the existing code paths that
->>> have this issue, I really would want to (a) get a compiler warning =
-for
->>> future cases and (b) make it not actually _work_ for future cases.
->>>=20
->>> Because otherwise it will just happen again.
->>>=20
->>>> Changing the list_for_each_entry() macro first will break all of =
-those cases
->>>> (e.g. the ones using 'list_entry_is_head()).
->>>=20
->>> So I have no problems with breaking cases that we basically already
->>> have a patch for due to  your automated tool. There were certainly
->>> more than a handful, but it didn't look _too_ bad to just make the
->>> rule be "don't use the iterator after the loop".
->>>=20
->>> Of course, that's just based on that patch of yours. Maybe there are =
-a
->>> ton of other cases that your patch didn't change, because they =
-didn't
->>> match your trigger case, so I may just be overly optimistic here.
->>=20
->> Based on the coccinelle script there are ~480 cases that need fixing
->> in total. I'll now finish all of them and then split them by
->> submodules as Greg suggested and repost a patch set per submodule.
->> Sounds good?
->=20
-> Sounds good to me!
->=20
-> If you need help carving these up and maintaining them over time as
-> different subsystem maintainers accept/ignore them, just let me know.
-> Doing large patchsets like this can be tough without a lot of
-> experience.
+ 	/*
+ 	 * Adding a regular page that is architecturally allowed to only
+ 	 * be created with RW permissions.
+ 	 * Interface with user space policy to support max permissions
+ 	 * of RWX.
+ 	 */
+ 	prot = PROT_READ | PROT_WRITE;
+ 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
 
-Very much appreciated!
+        if (user space policy allows RWX on dynamically added pages)
+	 	encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ | PROT_WRITE | PROT_EXEC, 0);
+	else
+		encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ | PROT_WRITE, 0);
 
-There will probably be some cases that do not match one of the pattern
-we already discussed and need separate attention.
+The work that follows this series aimed to do the integration with user
+space policy.
 
-I was planning to start with one subsystem and adjust the coming ones
-according to the feedback gather there instead of posting all of them
-in one go.
+> I think the best way to move forward would be to do EAUG's explicitly with
+> an ioctl that could also include secinfo for permissions. Then you can
+> easily do the rest with EACCEPTCOPY inside the enclave.
 
->=20
-> thanks,
->=20
-> greg k-h
+SGX_IOC_ENCLAVE_ADD_PAGES already exists and could possibly be used for
+this purpose. It already includes SECINFO which may also be useful if
+needing to later support EAUG of PT_SS* pages.
 
-- Jakob=
+How this could work is user space calls SGX_IOC_ENCLAVE_ADD_PAGES
+after enclave initialization on any memory region within the enclave where
+pages are planned to be added dynamically. This ioctl() calls EAUG to add the
+new pages with RW permissions and their vm_max_prot_bits can be set to the
+permissions found in the included SECINFO. This will support later EACCEPTCOPY
+as well as SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
+
+The big question is whether communicating user policy after enclave initialization
+via the SECINFO within SGX_IOC_ENCLAVE_ADD_PAGES is acceptable to all? I would
+appreciate a confirmation on this direction considering the significant history
+behind this topic.
+ 
+> Putting EAUG to the #PF handler and implicitly call it just too flakky and
+> hard to make deterministic for e.g. JIT compiler in our use case (not to
+> mention that JIT is not possible at all because inability to do RX pages).
+
+In this series this is indeed not possible because it lacks the user policy
+integration. JIT will be possible after user policy integration.
+
+Reinette
+ 
