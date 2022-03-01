@@ -2,34 +2,71 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4B5C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 28 Feb 2022 23:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7DBC433EF
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 00:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbiB1X1s (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 28 Feb 2022 18:27:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48356 "EHLO
+        id S231913AbiCAAqc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Feb 2022 19:46:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229961AbiB1X1p (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Feb 2022 18:27:45 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB8CADE2C1;
-        Mon, 28 Feb 2022 15:27:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kySnWHttTi8Odl1WzgGLjQ1pb3b/AWH5qnYZSwnte50=; b=nt03mWtTaEB9qwsFMTflxzDbvW
-        aPSsVBeLr8i8UFwA1l3fNavsuYE231uUwb0yDTUi43cd3zIwbEaMZqro2u+rXbOt0KZriPQpyGi5J
-        +pW6oqM84XOoVppIQh3QNnM4ANpt9aIP3ShEwC0IGa2NKI/m2xxapQAyHhJG42Bevn7SuMSAnyA27
-        7+3DFdmFFllbJzk1MHudhAJj7GPo/5RsA7npxrePVRbtGBQKbJeOUSye2chevgvDMrFkod2y0FmL7
-        JW29U+rs2LR5a0WX3s04bvbvXotX/UjRCpaaxaXPYROyoDfpDk5Wuy418QovroPX+qbpGelik5Tc/
-        I0FC9RZw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nOpPe-0090gL-Ex; Mon, 28 Feb 2022 23:26:42 +0000
-Date:   Mon, 28 Feb 2022 23:26:42 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        with ESMTP id S231897AbiCAAqY (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Feb 2022 19:46:24 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C09EB119
+        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 16:45:44 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id bu29so24391882lfb.0
+        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 16:45:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BlmDHl6uq7o6y8aC/cJk7fo5oLGvHdeOO4XUoHPiZHY=;
+        b=CuWkmdhnuqYUPLlFfSW5kqvLG+/BaUYxswQvwT5TlbeMKdgX0f6Tdop/2MomIxMIWT
+         P4yfskuo3sOir2HSEC5b7N//0EkwPlLVbS+ffho6xWO2QaHJfy0oi9bnLtClO4bSDX+r
+         dQzBghLtont2uRRAhfDOfzUglX2wpO3DzhpXQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BlmDHl6uq7o6y8aC/cJk7fo5oLGvHdeOO4XUoHPiZHY=;
+        b=KGYswBHywkPVOqBvj9TEtaAZUDuADh0lbUQhzdS81OMf6b8Z7dloTaWkQ2FAxuS7t5
+         ikJGzSY44CIyTV7aEX782Qgn53yu1pKLB2YsnMudmq6Mwow2xX4IPqNUflgK2ElW8lim
+         TeKswgsFm1w8lXtX+iwtluisBvq5RElUO07Iv8rlQQknGEKYFsH2tUVaflswG46awt6t
+         90BMQWpclln6LNTcDELUkGCATQWpBq//Z0kj7P193cmW8n3cDb1ERlMh6ogYT8z3eoj7
+         o0gDVWOL7079HqSGqWQpsZw6ZA7+zHX9Q29hwavWGA+bltzDLQx5SXI4g92ccdQ2Pv6w
+         PilA==
+X-Gm-Message-State: AOAM533LFXcGkIOQykah6b/rajop8CIpplL2rwW2jyL1fup/xpqqTEpC
+        G6BeVvwbU2MDa+ME565BurcumVXPJBngJa5dAt8=
+X-Google-Smtp-Source: ABdhPJyt2yTD75qRrrtVhpcjWWoQpQ17FiLZlQ5QDJx+BCUrWi3U8xGEN5Ua0B3j9Y4+9QSEIjXHaA==
+X-Received: by 2002:a05:6512:3281:b0:443:5944:7a46 with SMTP id p1-20020a056512328100b0044359447a46mr14497506lfe.156.1646095542501;
+        Mon, 28 Feb 2022 16:45:42 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id b2-20020a196442000000b00443c5b81ce0sm1212523lfj.180.2022.02.28.16.45.38
+        for <linux-sgx@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Feb 2022 16:45:39 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id bn33so19770824ljb.6
+        for <linux-sgx@vger.kernel.org>; Mon, 28 Feb 2022 16:45:38 -0800 (PST)
+X-Received: by 2002:a05:6512:3042:b0:437:96f5:e68a with SMTP id
+ b2-20020a056512304200b0043796f5e68amr14778245lfb.449.1646095527444; Mon, 28
+ Feb 2022 16:45:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <Yh0tl3Lni4weIMkl@casper.infradead.org> <CAHk-=wgBfJ1-cPA2LTvFyyy8owpfmtCuyiZi4+um8DhFNe+CyA@mail.gmail.com>
+ <Yh1aMm3hFe/j9ZbI@casper.infradead.org>
+In-Reply-To: <Yh1aMm3hFe/j9ZbI@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 28 Feb 2022 16:45:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
+Message-ID: <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         Jakob Koschel <jakobkoschel@gmail.com>,
         alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
@@ -79,66 +116,27 @@ Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Message-ID: <Yh1aMm3hFe/j9ZbI@casper.infradead.org>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220228110822.491923-3-jakobkoschel@gmail.com>
- <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
- <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
- <Yh0tl3Lni4weIMkl@casper.infradead.org>
- <CAHk-=wgBfJ1-cPA2LTvFyyy8owpfmtCuyiZi4+um8DhFNe+CyA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgBfJ1-cPA2LTvFyyy8owpfmtCuyiZi4+um8DhFNe+CyA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 12:37:15PM -0800, Linus Torvalds wrote:
-> On Mon, Feb 28, 2022 at 12:16 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > Then we can never use -Wshadow ;-(  I'd love to be able to turn it on;
-> > it catches real bugs.
-> 
-> Oh, we already can never use -Wshadow regardless of things like this.
-> That bridge hasn't just been burned, it never existed in the first
-> place.
-> 
-> The whole '-Wshadow' thing simply cannot work with local variables in
-> macros - something that we've used since day 1.
-> 
-> Try this (as a "p.c" file):
-> 
->         #define min(a,b) ({                     \
->                 typeof(a) __a = (a);            \
->                 typeof(b) __b = (b);            \
->                 __a < __b ? __a : __b; })
-> 
->         int min3(int a, int b, int c)
->         {
->                 return min(a,min(b,c));
->         }
-> 
-> and now do "gcc -O2 -S t.c".
-> 
-> Then try it with -Wshadow.
+On Mon, Feb 28, 2022 at 3:26 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> #define ___PASTE(a, b)  a##b
+> #define __PASTE(a, b) ___PASTE(a, b)
+> #define _min(a, b, u) ({         \
 
-#define ___PASTE(a, b)	a##b
-#define __PASTE(a, b) ___PASTE(a, b)
-#define _min(a, b, u) ({         \
-        typeof(a) __PASTE(__a,u) = (a);            \
-        typeof(b) __PASTE(__b,u) = (b);            \
-        __PASTE(__a,u) < __PASTE(__b,u) ? __PASTE(__a,u) : __PASTE(__b,u); })
+Yeah, except that's ugly beyond belief, plus it's literally not what
+we do in the kernel.
 
-#define min(a, b) _min(a, b, __COUNTER__)
+Really. The "-Wshadow doesn't work on the kernel" is not some new
+issue, because you have to do completely insane things to the source
+code to enable it.
 
-int min3(int a, int b, int c)
-{
-        return min(a,min(b,c));
-}
+Just compare your uglier-than-sin version to my straightforward one.
+One does the usual and obvious "use a private variable to avoid the
+classic multi-use of a macro argument". And the other one is an
+abomination.
 
-(probably there's a more elegant way to do this)
+              Linus
