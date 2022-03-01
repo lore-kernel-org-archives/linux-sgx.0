@@ -2,219 +2,127 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D00C433EF
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 12:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0E1C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 13:26:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234865AbiCAM6l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 1 Mar 2022 07:58:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36890 "EHLO
+        id S233056AbiCAN0x (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 1 Mar 2022 08:26:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbiCAM6l (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 07:58:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0629F13DF1;
-        Tue,  1 Mar 2022 04:58:00 -0800 (PST)
+        with ESMTP id S230374AbiCAN0w (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 08:26:52 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F37FF9D044;
+        Tue,  1 Mar 2022 05:26:11 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AF166B818D4;
-        Tue,  1 Mar 2022 12:57:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80B30C340EE;
-        Tue,  1 Mar 2022 12:57:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8ED796144F;
+        Tue,  1 Mar 2022 13:26:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4705DC340EE;
+        Tue,  1 Mar 2022 13:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646139477;
-        bh=r75Uzu8npn39r4huc5vp0QUopdOSRjOWjwUwuLTzzJI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XIT+/WNf0MDXISpteczFZnD/f5tbZVR5uIq6Fzan3pquU0MfcU2IlMQBIKrq5m3DH
-         s05RAN2ZmV4eeHhA7iRpGps69DTryLghWkCd2obVPwOitVKTfoGzx5brGkwcc4V5ac
-         lIaJdrBkf43/9lTEBqmsHa5gOW0p8Q5M5Yn4bWeeoBSTzxp5ayhA42Ksn4NbsWpy8w
-         21I+89A7bmhKxJeMPoDrYSlw/iI8KsqwK7sTypVXXgn43DZPQ8k5qFnemRPsArJLVE
-         bLEAPzJUvirns5poA7Ssfq07ww27IK9aGNYzBqkIsUquTCorTUbZTuMCwg4b/+95JG
-         S+ZyQocZGKwRA==
+        s=k20201202; t=1646141171;
+        bh=q9GySkEXj2qOEws7WQOcFqhKLJ1DJ8LgqDRm04SdGeU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PPYvYuyueG6EFv2fYzIoq3il0/n2kYnPiWjDUpOFBNjDQrEULzkYVHw1eyjRD2VGv
+         rJeF0aqQPQM6AeIBatbJhFQ5vxhYSFPKqUQlEJCvYAv4lLD7TMxD32gi1RUzBLikt0
+         NbF4B03o3T8Il98RCGPWG+TeM4yPwRE9uvPwaJVdv8EVcaDO3GgsHrld3/0odUqSx5
+         seGKIta13pTceYFRVUsn4gxpO0B6dLdW6ias4B3eN2HywOMApIMIQOKAK3Ozqg2zFk
+         EfzDGJbSgVGb1OkOUuWXPJUHik54imQfdglXde2ZN03nr6pbWYcj6z2Xpg0gTS6mXF
+         XOl30WceJBOhQ==
+Date:   Tue, 1 Mar 2022 14:26:48 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [PATCH v5] x86/sgx: Free backing memory after faulting the enclave page
-Date:   Tue,  1 Mar 2022 13:58:36 +0100
-Message-Id: <20220301125836.3430-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.35.1
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Shanahan, Mark" <mark.shanahan@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
+Message-ID: <Yh4fGORDaJyVrJQW@iki.fi>
+References: <cover.1644274683.git.reinette.chatre@intel.com>
+ <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
+ <YhLhoMFPyOFZ2fsX@iki.fi>
+ <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
+ <Yhy/GvJegnTqYdq6@iki.fi>
+ <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-There is a limited amount of SGX memory (EPC) on each system.  When that
-memory is used up, SGX has its own swapping mechanism which is similar
-in concept but totally separate from the core mm/* code.  Instead of
-swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
-comes from a shared memory pseudo-file and can itself be swapped by the
-core mm code.  There is a hierarchy like this:
+On Mon, Feb 28, 2022 at 07:16:22AM -0800, Dave Hansen wrote:
+> On 2/28/22 04:24, Jarkko Sakkinen wrote:
+> >> Regarding the recent update of splitting the page permissions change
+> >> request into two IOCTLS (RELAX and RESTRICT), can we combine them into
+> >> one? That is, revert to how it was done in the v1 version?
+> > They are logically separate complex functionalities:
+> > 
+> > 1. "restrict" calls EMODPR and requires EACCEPT
+> > 2. "relax" increases permissions up to vetted ("EADD") and could be
+> >     combined with EMODPE called inside enclave.
+> 
+> It would be great to have a _slightly_ better justification than that.
+> Existing permission interfaces like chmod or mprotect() don't have this
+> asymmetry.
+> 
+> I think you're saying that the underlying hardware implementation is
+> asymmetric, so the interface should be too.  I don't find that argument
+> very convincing.  If the hardware interface is arcane and we can make it
+> look more sane in the ioctl() layer, we should that, asymmetry or not.
 
-	EPC <-> shmem <-> disk
+That is my argument, yes.
 
-After data is swapped back in from shmem to EPC, the shmem backing
-storage needs to be freed.  Currently, the backing shmem is not freed.
-This effectively wastes the shmem while the enclave is running.  The
-memory is recovered when the enclave is destroyed and the backing
-storage freed.
+> If we can't make it any more sane, let's say why the ioctl() must or
+> should be asymmetric.
 
-Sort this out by freeing memory with shmem_truncate_range(), as soon as
-a page is faulted back to the EPC.  In addition, free the memory for
-PCMD pages as soon as all PCMD's in a page have been marked as unused
-by zeroing its contents.
+Perhaps underling this asymmetry in kdoc would be enough.
 
-Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: stable@vger.kernel.org
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v5:
-* Encapsulated file offset calculation for PCMD struct.
-* Replaced "magic number" PAGE_SIZE with sizeof(struct sgx_secs) to make
-  the offset calculation more self-documentative.
-v4:
-* Sanitized the offset calculations.
-v3:
-* Resend.
-v2:
-* Rewrite commit message as proposed by Dave.
-* Truncate PCMD pages (Dave).
----
- arch/x86/kernel/cpu/sgx/encl.c | 57 ++++++++++++++++++++++++++++------
- 1 file changed, 48 insertions(+), 9 deletions(-)
+> The SGX2 page permission mechanism is horribly counter intuitive.
+> *Everybody* that looks at it thinks that it's wrong.  That means that we
+> have a lot of work ahead of us to explain the interfaces that get
+> layered on top.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 8be6f0592bdc..3d2ed8d27747 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -12,6 +12,30 @@
- #include "encls.h"
- #include "sgx.h"
- 
-+/*
-+ * Calculate byte offset of a PCMD struct associated with an enclave page. PCMD's
-+ * follow right after the EPC data in the backing storage. In addition to the
-+ * visible enclave pages, there's one extra page slot for SECS, before PCMD
-+ * structs.
-+ */
-+static inline pgoff_t sgx_encl_get_backing_page_pcmd_offset(struct sgx_encl *encl,
-+							    unsigned long page_index)
-+{
-+	pgoff_t epc_end_off = encl->size + sizeof(struct sgx_secs);
-+
-+	return epc_end_off + page_index * sizeof(struct sgx_pcmd);
-+}
-+
-+/*
-+ * Free a page from the backing storage in the given page index.
-+ */
-+static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, unsigned long page_index)
-+{
-+	struct inode *inode = file_inode(encl->backing);
-+
-+	shmem_truncate_range(inode, PFN_PHYS(page_index), PFN_PHYS(page_index) + PAGE_SIZE - 1);
-+}
-+
- /*
-  * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
-  * Pages" in the SDM.
-@@ -22,9 +46,11 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- {
- 	unsigned long va_offset = encl_page->desc & SGX_ENCL_PAGE_VA_OFFSET_MASK;
- 	struct sgx_encl *encl = encl_page->encl;
-+	pgoff_t page_index, page_pcmd_off;
- 	struct sgx_pageinfo pginfo;
- 	struct sgx_backing b;
--	pgoff_t page_index;
-+	bool pcmd_page_empty;
-+	u8 *pcmd_page;
- 	int ret;
- 
- 	if (secs_page)
-@@ -32,14 +58,16 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	else
- 		page_index = PFN_DOWN(encl->size);
- 
-+	page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
-+
- 	ret = sgx_encl_lookup_backing(encl, page_index, &b);
- 	if (ret)
- 		return ret;
- 
- 	pginfo.addr = encl_page->desc & PAGE_MASK;
- 	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
--	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
--			  b.pcmd_offset;
-+	pcmd_page = kmap_atomic(b.pcmd);
-+	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
- 
- 	if (secs_page)
- 		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
-@@ -55,11 +83,24 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 		ret = -EFAULT;
- 	}
- 
--	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
-+	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
-+
-+	/*
-+	 * The area for the PCMD in the page was zeroed above.  Check if the
-+	 * whole page is now empty meaning that all PCMD's have been zeroed:
-+	 */
-+	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
-+
-+	kunmap_atomic(pcmd_page);
- 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
- 	sgx_encl_put_backing(&b, false);
- 
-+	sgx_encl_truncate_backing_page(encl, page_index);
-+
-+	if (pcmd_page_empty)
-+		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
-+
- 	return ret;
- }
- 
-@@ -583,7 +624,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
- static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 				struct sgx_backing *backing)
- {
--	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-+	pgoff_t page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
- 	struct page *contents;
- 	struct page *pcmd;
- 
-@@ -591,7 +632,7 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 	if (IS_ERR(contents))
- 		return PTR_ERR(contents);
- 
--	pcmd = sgx_encl_get_backing_page(encl, pcmd_index);
-+	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(page_pcmd_off));
- 	if (IS_ERR(pcmd)) {
- 		put_page(contents);
- 		return PTR_ERR(pcmd);
-@@ -600,9 +641,7 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 	backing->page_index = page_index;
- 	backing->contents = contents;
- 	backing->pcmd = pcmd;
--	backing->pcmd_offset =
--		(page_index & (PAGE_SIZE / sizeof(struct sgx_pcmd) - 1)) *
--		sizeof(struct sgx_pcmd);
-+	backing->pcmd_offset = page_pcmd_off & (PAGE_SIZE - 1);
- 
- 	return 0;
- }
--- 
-2.35.1
+I fully agree on this :-)
 
+With EACCEPTCOPY (kudos to Mark S. for reminding me of this version of
+EACCEPT @ chat.enarx.dev) it is possible to make R and RX pages but
+obviously new RX pages are now out of the picture:
+
+
+	/*
+	 * Adding a regular page that is architecturally allowed to only
+	 * be created with RW permissions.
+	 * TBD: Interface with user space policy to support max permissions
+	 * of RWX.
+	 */
+	prot = PROT_READ | PROT_WRITE;
+	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
+	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
+
+If that TBD is left out to the final version the page augmentation has a
+risk of a API bottleneck, and that risk can realize then also in the page
+permission ioctls.
+
+I.e. now any review comment is based on not fully known territory, we have
+one known unknown, and some unknown unknowns from unpredictable effect to
+future API changes.
+
+BR, Jarkko
