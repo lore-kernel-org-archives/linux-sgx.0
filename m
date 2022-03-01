@@ -2,137 +2,96 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1ABC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 13:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31068C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Mar 2022 15:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231482AbiCANm5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 1 Mar 2022 08:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57676 "EHLO
+        id S235572AbiCAPNO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 1 Mar 2022 10:13:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231405AbiCANm4 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 08:42:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FB29E570;
-        Tue,  1 Mar 2022 05:42:16 -0800 (PST)
+        with ESMTP id S232130AbiCAPNN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 10:13:13 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1625AA66EC;
+        Tue,  1 Mar 2022 07:12:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A724B614BE;
-        Tue,  1 Mar 2022 13:42:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3198BC340EE;
-        Tue,  1 Mar 2022 13:42:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A5B9061635;
+        Tue,  1 Mar 2022 15:12:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B47C340EE;
+        Tue,  1 Mar 2022 15:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646142135;
-        bh=ahSjw3wUn+GFCyQQGsdDHtb34Vw6ym0H5q7SQRteiiw=;
+        s=k20201202; t=1646147551;
+        bh=nhjoO2U16ehs9nVncYaKUrXUw/1VXcwyAGAuJhstjd0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pphtXXaYXAEqYxD+yk4J7znj4oPZ91A3EQyAzDLIPaJC7UvL0Rkkr/3Z8Z2JRG04k
-         rsOleTpwHny0atwv3QLAcnGH1JWUqHdMH35APN6XPxhev5hxyDc4q84DchtZXsCAjI
-         l9Pqxc1NZy538yFGrCYUfHYO3MWrLRLaNXTtLbsKG2cPcuMDbsf92Cz3RP0ebXhHtA
-         1QTucIgBE49sYJhhDx92w5duKGAhGhzzorbgIzheX33wb/7qq+72ZJRpbU6LU8KI4d
-         PIF/fHg0v9TaG2heaG/4KHNIuhi0zKg8gvaphzGurLWKb3tQFIAe02Itqyo9tipyOP
-         g5hZb8oDoafsQ==
-Date:   Tue, 1 Mar 2022 14:42:58 +0100
+        b=VILTBHfHCFmcMOBwjJrG0uAZPIXDz1NSseZXGwyBJSppITz8cgwiso19pp6rZYSnw
+         XSbXGsRRwRDluwzgoqyVq6SY2YISDFqPKupEDIcTE5bBFhfYVTNMXl/tTP3iYvWbCW
+         /iPZUdsqx2pGrUeR73Io0FiGhyLw5hACQt7a0WUS8eMi8hL+3G+nffAd0S1q73P4Qd
+         8GSnHyKpS75DYTb+hSQbwANc+/VhNeWdpHfIBpEycve6VwVoc3dP6y/9l/t2Jkwdtu
+         nvgC1czza6ZhCoZLvWka/ER4dPNVqz5m7pO9VEShZAqqyAdXRUREUzqrp2HUdG8D55
+         Ym6poS0GlpPtQ==
+Date:   Tue, 1 Mar 2022 16:13:13 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Lutomirski, Andy" <luto@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Shanahan, Mark" <mark.shanahan@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
- permissions
-Message-ID: <Yh4i4hVcnfZ8QDAl@iki.fi>
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
- <YhLhoMFPyOFZ2fsX@iki.fi>
- <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
- <Yhy/GvJegnTqYdq6@iki.fi>
- <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
- <Yh4fGORDaJyVrJQW@iki.fi>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/25] x86/sgx: Support adding of pages to initialized
+ enclave
+Message-ID: <Yh44CahjtgAarDad@iki.fi>
+References: <cover.1638381245.git.reinette.chatre@intel.com>
+ <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yh4fGORDaJyVrJQW@iki.fi>
+In-Reply-To: <9ab661a845d242cb10a90ade997f8ebda33cc7c9.1638381245.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 01, 2022 at 02:26:48PM +0100, Jarkko Sakkinen wrote:
-> On Mon, Feb 28, 2022 at 07:16:22AM -0800, Dave Hansen wrote:
-> > On 2/28/22 04:24, Jarkko Sakkinen wrote:
-> > >> Regarding the recent update of splitting the page permissions change
-> > >> request into two IOCTLS (RELAX and RESTRICT), can we combine them into
-> > >> one? That is, revert to how it was done in the v1 version?
-> > > They are logically separate complex functionalities:
-> > > 
-> > > 1. "restrict" calls EMODPR and requires EACCEPT
-> > > 2. "relax" increases permissions up to vetted ("EADD") and could be
-> > >     combined with EMODPE called inside enclave.
-> > 
-> > It would be great to have a _slightly_ better justification than that.
-> > Existing permission interfaces like chmod or mprotect() don't have this
-> > asymmetry.
-> > 
-> > I think you're saying that the underlying hardware implementation is
-> > asymmetric, so the interface should be too.  I don't find that argument
-> > very convincing.  If the hardware interface is arcane and we can make it
-> > look more sane in the ioctl() layer, we should that, asymmetry or not.
-> 
-> That is my argument, yes.
-> 
-> > If we can't make it any more sane, let's say why the ioctl() must or
-> > should be asymmetric.
-> 
-> Perhaps underling this asymmetry in kdoc would be enough.
-> 
-> > The SGX2 page permission mechanism is horribly counter intuitive.
-> > *Everybody* that looks at it thinks that it's wrong.  That means that we
-> > have a lot of work ahead of us to explain the interfaces that get
-> > layered on top.
-> 
-> I fully agree on this :-)
-> 
-> With EACCEPTCOPY (kudos to Mark S. for reminding me of this version of
-> EACCEPT @ chat.enarx.dev) it is possible to make R and RX pages but
-> obviously new RX pages are now out of the picture:
-> 
-> 
-> 	/*
-> 	 * Adding a regular page that is architecturally allowed to only
-> 	 * be created with RW permissions.
-> 	 * TBD: Interface with user space policy to support max permissions
-> 	 * of RWX.
-> 	 */
-> 	prot = PROT_READ | PROT_WRITE;
-> 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
-> 	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
-> 
-> If that TBD is left out to the final version the page augmentation has a
-> risk of a API bottleneck, and that risk can realize then also in the page
-> permission ioctls.
-> 
-> I.e. now any review comment is based on not fully known territory, we have
-> one known unknown, and some unknown unknowns from unpredictable effect to
-> future API changes.
+On Wed, Dec 01, 2021 at 11:23:11AM -0800, Reinette Chatre wrote:
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+> index 848a28d28d3d..1b6ce1da7c92 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.h
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -123,4 +123,6 @@ void sgx_encl_free_epc_page(struct sgx_epc_page *page);
+>  struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+>  					 unsigned long addr);
+>  
+> +struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl);
+> +void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page);
+>  #endif /* _X86_ENCL_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 5dddb3c9f742..de0bf68ee842 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -17,7 +17,7 @@
+>  #include "encl.h"
+>  #include "encls.h"
+>  
+> -static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
+> +struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
+>  {
+>  	struct sgx_va_page *va_page = NULL;
+>  	void *err;
+> @@ -43,7 +43,7 @@ static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
+>  	return va_page;
+>  }
+>  
+> -static void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
+> +void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
+>  {
+>  	encl->page_cnt--;
 
-I think the best way to move forward would be to do EAUG's explicitly with
-an ioctl that could also include secinfo for permissions. Then you can
-easily do the rest with EACCEPTCOPY inside the enclave.
+Nit: this should be a separate patch, e.g.
 
-Putting EAUG to the #PF handler and implicitly call it just too flakky and
-hard to make deterministic for e.g. JIT compiler in our use case (not to
-mention that JIT is not possible at all because inability to do RX pages).
+  x86/sgx: Export sgx_encl_{grow,shrink}()
+
+  In order to use sgx_encl_{grow,shrink}() in the page augementation code
+  located in encl.c, export these functions.
 
 BR, Jarkko
