@@ -2,117 +2,177 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6913C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 04:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C93E0C4332F
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 09:29:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231496AbiCBED7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 1 Mar 2022 23:03:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40966 "EHLO
+        id S240475AbiCBJaW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Mar 2022 04:30:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbiCBED7 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 23:03:59 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979D6A6506;
-        Tue,  1 Mar 2022 20:03:16 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59212B81EFB;
-        Wed,  2 Mar 2022 04:03:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0A2C004E1;
-        Wed,  2 Mar 2022 04:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646193794;
-        bh=h/zNtPLk+QSkNGXZP+XwPVF+BSDCj+5WALXfsDs5SaY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uHjsFFdv9DqVVQbxs4E3m8ynC2YeDHf6beWVDxYurkOCYKpbuKunJ8qf2fx892D0M
-         g9CLF/lL/smn0U3OsIrjAxouLHGLdatpoq4dAWOxqPSTb7fzaaIvCpYGO+miqEg6vx
-         96PUcTW9NvKCOQlaoi9YV6k9v/HdGMP+RhPC20y5NcTFAzV4SazG76PNvCYYjSt+Qj
-         O0dhj4bvWBkCJ0+HYlH0h7HD356Blq37pxzaG6Vpc0mYlS7XRrc6BQuROZUAIwH6p+
-         GPjCOk929zFY3IYLd/Yyr0Q/yWo7ELJb7xZja9UXXvNbdDKOD9EB36FUwU+vZQFf9f
-         GiCjsddALFKhA==
-Date:   Wed, 2 Mar 2022 05:03:58 +0100
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Lutomirski, Andy" <luto@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Shanahan, Mark" <mark.shanahan@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
- permissions
-Message-ID: <Yh7srrm9S9ml/yGL@iki.fi>
-References: <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
- <YhLhoMFPyOFZ2fsX@iki.fi>
- <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
- <Yhy/GvJegnTqYdq6@iki.fi>
- <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
- <Yh4fGORDaJyVrJQW@iki.fi>
- <Yh4i4hVcnfZ8QDAl@iki.fi>
- <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
- <Yh7Q5fbOtr+6YWaS@iki.fi>
- <Yh7SOgqdFxJdVPMq@iki.fi>
+        with ESMTP id S240423AbiCBJaV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 04:30:21 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8006CB7159
+        for <linux-sgx@vger.kernel.org>; Wed,  2 Mar 2022 01:29:36 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id l12so1334137ljh.12
+        for <linux-sgx@vger.kernel.org>; Wed, 02 Mar 2022 01:29:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=XH8CYV/Z50iBLZ27uSo3DlVY0KhJ8ZO+RiecWTcYel0=;
+        b=IQg4uBejV+wOE9gbvRPz3nvi4LkiiVw4YSIjC8NPteocLXX0uLpiZyGXJ60leACu72
+         E2mMgbaj2BDeYnhoOw0DKPRcT2bjIlB4yRTWQZ65OcYRTHhlWzgeq8LyFprIEpiij6N8
+         YNaymndxJaFKphqyYHlKdyPolm4uaJOX+WJuI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=XH8CYV/Z50iBLZ27uSo3DlVY0KhJ8ZO+RiecWTcYel0=;
+        b=zgxtLphmG+Gfvq5Kx5HB/pyCbcMxOPsRcPDwl9/IcBEqsohTbj8lxAz6g5+lDWMm8X
+         Jr2kzJC1SlHCJD10AfhkdnpFoWFquzlgacXlnAt4ASgp0vzkOJvwGex7BXf4+qcgR9Cx
+         WzYYGLQYCR4D+JlIf6rUH5abqqExeqOp338BdtgzshjBPTl/STXUUhx0+oRc8nYy0eGe
+         bsfDq89DY/IxxM6WAxS0hJ0GN8gETMBSG6WV/cxGE04wHgBB04hpLF4HQN+AfDQThlQA
+         s4QtmprWwbgP5u2YlsyWUt1mbVtYzbR37h97FGa+f7DgQho+3AlUA+nbkp0SCiS0GmtD
+         /fvg==
+X-Gm-Message-State: AOAM532iXtQFPielOwLeCGh1ZFtUvL1x1DJml2e140PqPp2UPuqA5rYp
+        YHI1xzJ/5i4Vl8sD8LCyVv42/w==
+X-Google-Smtp-Source: ABdhPJxPRWTwhfDKGEWi/HTZUmtnN6xoKL1T2KNwEAF9KgB2sMMXSt6lke7BfBVtPRIEaNMyntkyzw==
+X-Received: by 2002:a2e:3c0d:0:b0:246:3c52:7ada with SMTP id j13-20020a2e3c0d000000b002463c527adamr19885072lja.459.1646213374808;
+        Wed, 02 Mar 2022 01:29:34 -0800 (PST)
+Received: from [172.16.11.74] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id f36-20020a0565123b2400b0043795432e87sm1960430lfv.150.2022.03.02.01.29.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Mar 2022 01:29:33 -0800 (PST)
+Message-ID: <78ccb184-405e-da93-1e02-078f90d2b9bc@rasmusvillemoes.dk>
+Date:   Wed, 2 Mar 2022 10:29:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yh7SOgqdFxJdVPMq@iki.fi>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>,
+        "linux1394-devel@lists.sourceforge.net" 
+        <linux1394-devel@lists.sourceforge.net>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "kgdb-bugreport@lists.sourceforge.net" 
+        <kgdb-bugreport@lists.sourceforge.net>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
+        "v9fs-developer@lists.sourceforge.net" 
+        <v9fs-developer@lists.sourceforge.net>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Mike Rapoport <rppt@kernel.org>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-3-jakobkoschel@gmail.com>
+ <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
+ <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+ <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
+ <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
+ <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
+ <7dc860874d434d2288f36730d8ea3312@AcuMS.aculab.com>
+ <CAHk-=whKqg89zu4T95+ctY-hocR6kDArpo2qO14-kV40Ga7ufw@mail.gmail.com>
+ <0ced2b155b984882b39e895f0211037c@AcuMS.aculab.com>
+ <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+In-Reply-To: <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 02, 2022 at 03:11:06AM +0100, Jarkko Sakkinen wrote:
-> On Wed, Mar 02, 2022 at 03:05:25AM +0100, Jarkko Sakkinen wrote:
-> > > The work that follows this series aimed to do the integration with user
-> > > space policy.
-> > 
-> > What do you mean by "user space policy" anyway exactly? I'm sorry but I
-> > just don't fully understand this.
-> > 
-> > It's too big of a risk to accept this series without X taken care of. Patch
-> > series should neither have TODO nor TBD comments IMHO. I don't want to ack
-> > a series based on speculation what might happen in the future.
+On 02/03/2022 00.55, Linus Torvalds wrote:
+> On Tue, Mar 1, 2022 at 3:19 PM David Laight <David.Laight@aculab.com> wrote:
+>>
+
+> With the "don't use iterator outside the loop" approach, the exact
+> same code works in both the old world order and the new world order,
+> and you don't have the semantic confusion. And *if* you try to use the
+> iterator outside the loop, you'll _mostly_ (*) get a compiler warning
+> about it not being initialized.
 > 
-> If I accept this, then I'm kind of pre-acking code that I have no idea what
-> it looks like, can it be acked, or am I doing the right thing for the
-> kernel by acking this. 
+>              Linus
 > 
-> It's unfortunately force majeure situation for me. I simply could not ack
-> this, whether I want it or not.
+> (*) Unless somebody initializes the iterator pointer pointlessly.
+> Which clearly does happen. Thus the "mostly". It's not perfect, and
+> that's most definitely not nice - but it should at least hopefully
+> make it that much harder to mess up.
 
-I'd actually to leave out permission change madness completely out of this
-patch set, as we all know it is a grazy beast of microarchitecture. For
-user space having that is less critical than having executable pages.
+This won't help the current issue (because it doesn't exist and might
+never), but just in case some compiler people are listening, I'd like to
+have some sort of way to tell the compiler "treat this variable as
+uninitialized from here on". So one could do
 
-Simply with EAUG/EACCEPTCOPY you can already populate enclave with any
-permissions you had in mind. Augmenting alone would be logically consistent
-patch set that is actually usable for many workloads.
+#define kfree(p) do { __kfree(p); __magic_uninit(p); } while (0)
 
-Now there is half-broken augmenting (this is even writtend down to the TBD
-comment) and complex code for EMODPR and EMODT that is usable only for
-kselftests and not much else before there is fully working augmenting.
+with __magic_uninit being a magic no-op that doesn't affect the
+semantics of the code, but could be used by the compiler's "[is/may be]
+used uninitialized" machinery to flag e.g. double frees on some odd
+error path etc. It would probably only work for local automatic
+variables, but it should be possible to just ignore the hint if p is
+some expression like foo->bar or has side effects. If we had that, the
+end-of-loop test could include that to "uninitialize" the iterator.
 
-This way we get actually sound patch set that is easy to review and apply
-to the mainline. It is also factors easier for you to iterate a smaller
-set of patches.
+Maybe sparse/smatch or some other static analyzer could implement such a
+magic thing? Maybe it's better as a function attribute
+[__attribute__((uninitializes(1)))] to avoid having to macrofy all
+functions that release resources.
 
-After this it is so much easier to start to look at remaining functionality,
-and at the same time augmenting part can be stress tested with real-world
-code and it will mature quickly.
-
-This whole thing *really* needs a serious U-turn on how it is delivered to
-the upstream. Sometimes it is better just to admit that this didn't start
-with the right foot.
-
-BR, Jarkko
+Rasmus
