@@ -2,460 +2,260 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED2BC433EF
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 16:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A02EC46467
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 17:15:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239458AbiCBQ6K (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Mar 2022 11:58:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43656 "EHLO
+        id S243699AbiCBRPx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Mar 2022 12:15:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243601AbiCBQ6C (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 11:58:02 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146F55675D
-        for <linux-sgx@vger.kernel.org>; Wed,  2 Mar 2022 08:57:17 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id n11so2171231qtk.8
-        for <linux-sgx@vger.kernel.org>; Wed, 02 Mar 2022 08:57:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profian-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lDgfXVCBj5NCHWxZKv7iGAFS+RAinlgiSzL/8RxMDV4=;
-        b=JHWCGfShRd4cr04CNZivUhRUer938+dOv1ZN4WFwnS5tlcSkbUO6s5k1vDPK0R3FK9
-         V1iTCygj4AGBEluhHpk1igzQeGCDNPAhbUN1bht92A90hITQFS57pCS/Ca2cM0gLFr+/
-         eEqvPyBHjaItOk+8bvw9h4xS69TaeBb1Z+uU2sJOEHM2Os9irdoKpDVq/tTEP0jnRSrG
-         xiq8kSXNv+dynzJX7LuPHGQdHqPROkL1dyGwqDPj7KrNLHxUQCPuC1FoEwLqriRkawEN
-         EQWesvxuYAoJlInUbr2VOLlzip6MSqkKvXiuOE2zGuf0RBCZOb2lOofwDIL6ou4gw9CE
-         m2aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lDgfXVCBj5NCHWxZKv7iGAFS+RAinlgiSzL/8RxMDV4=;
-        b=PG5JXjawaaT5lA6sLZ0mOOtnsMkPNqxtl/V5pFwCuNxH4ByZ1jxZ6RLR0W9NED/jD2
-         cvAQHHQ2FueKoZ4myw2NDwlP7hfqjrrTiwv2XopE5fnxHaP+UxO+n0csamFsNdDRhNq3
-         lFLfd4BajyZRPwawlNJs+jQIo8X/qpInhtGR/E9n2G6ArO9dRC/5w7LAMes94gmo4yOf
-         BdGx2JmKxvz8RJxAfvnCMkE+wU1mVSOV0BzjQ16CvFMF/6oA+CSB65CGxUZOQlUtN7xt
-         CB1DK5NaBbcSVj1xjnEkew8GZNLMLh+z9pegdibFrSgA25SbZOwJIhGK4M1wJw8P4C7J
-         bAww==
-X-Gm-Message-State: AOAM533xuJCFnSHl1rGLHArjOddwNqj0UqV9921DYFxRqPCbVCEbRTBU
-        eySK1rvaXcGnj/bXzpKe5DxGXLgq+0eZaZZmVU64IA==
-X-Google-Smtp-Source: ABdhPJyPhJEZN6nVPNhspUEhnNS8/39I1gAsmu4rPS5EjG6zK0cW2r6S1mTeLsjyH2UrsfuMHFG+pxHW0w95ObJzNxo=
-X-Received: by 2002:a05:622a:589:b0:2de:9437:a380 with SMTP id
- c9-20020a05622a058900b002de9437a380mr24092117qtb.593.1646240235931; Wed, 02
- Mar 2022 08:57:15 -0800 (PST)
+        with ESMTP id S237817AbiCBRPu (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 12:15:50 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19AA58E45;
+        Wed,  2 Mar 2022 09:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646241306; x=1677777306;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=quZJORXDoBJnmtXWeY1UEG0LMErZNbKWG4uR8GxuM8A=;
+  b=EgFtrQTE2RuXhvw9sRIr3IT+pA0Ncb8f9tiCc0SC60P5NxN5IIJ1lIbG
+   qRXhfI2wJDlspyrIGC0iL/9/1vb/Lqq8nOVou0CScelNSeM2zFz5ZYwQd
+   vRCxbYiuOYMHLgn2p868GOLIzIRhmd1d7Ftp+C+uIAO1rF5yphwxH1nTK
+   BZo8QGgTZGobcAwOhtAkimiecLreyGJPEymFRGwK29ytkPQQTUw1YAXwn
+   7s74MTXIjfdUqEKiu1QGwymv12Ru01fVqM/H0rIJHbiNJzFQB0n0mysA7
+   4izUGN7Nj88HSoNqykEmQlZt68TbXwAcpy2jJWkt8gcliob3VHMqMtNgg
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10274"; a="339886271"
+X-IronPort-AV: E=Sophos;i="5.90,149,1643702400"; 
+   d="scan'208";a="339886271"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 09:15:05 -0800
+X-IronPort-AV: E=Sophos;i="5.90,149,1643702400"; 
+   d="scan'208";a="551343768"
+Received: from jbuller-mobl1.ger.corp.intel.com (HELO [10.213.194.231]) ([10.213.194.231])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 09:14:53 -0800
+Message-ID: <ed52ce3c-0f4a-a1e8-4176-543657d6228d@linux.intel.com>
+Date:   Wed, 2 Mar 2022 17:14:50 +0000
 MIME-Version: 1.0
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <CAHAy0tR-64vxtFo4KXiJP_va2=WF++Q6gDaPksNxiaSB5wWvhA@mail.gmail.com>
- <86495779-a9c5-45d5-0017-c491bf6354ab@intel.com> <CAHAy0tQYBD2b0jdim=6Zv+hwskyd1FhpycyGF+1FBHDih9TP3g@mail.gmail.com>
- <e746026c-33f3-fd15-5303-563b3eb761d3@intel.com>
-In-Reply-To: <e746026c-33f3-fd15-5303-563b3eb761d3@intel.com>
-From:   Nathaniel McCallum <nathaniel@profian.com>
-Date:   Wed, 2 Mar 2022 11:57:05 -0500
-Message-ID: <CAHAy0tRXxDQSuBVoEW9jzpFaWns4DzWqmFASFNGgGb5vjnYuPw@mail.gmail.com>
-Subject: Re: [PATCH V2 00/32] x86/sgx and selftests/sgx: Support SGX2
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        tglx@linutronix.de, bp@alien8.de,
-        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
-        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [Intel-gfx] [PATCH 6/6] treewide: remove check of list iterator
+ against head past the loop body
+Content-Language: en-US
+To:     Jakob Koschel <jakobkoschel@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel@lists.freedesktop.org,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        amd-gfx@lists.freedesktop.org, samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-cifs@vger.kernel.org, kvm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-media@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>, linux-pm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs-developer@lists.sourceforge.net, linux-tegra@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-sgx@vger.kernel.org,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        tipc-discussion@lists.sourceforge.net,
+        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, Mike Rapoport <rppt@kernel.org>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-7-jakobkoschel@gmail.com>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Organization: Intel Corporation UK Plc
+In-Reply-To: <20220228110822.491923-7-jakobkoschel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Reinette,
 
-Perhaps it would be better for us to have a shared understanding on
-how the patches as posted are supposed to work in the most common
-cases? I'm thinking here of projects such as Enarx, Gramine and
-Occulum, which all have a similar process. Namely they execute an
-executable (called exec in the below chart) which has things like
-syscalls handled by a shim. These two components (shim and exec) are
-supported by a non-enclave userspace runtime. Given this common
-architectural pattern, this is how I understand adding pages via an
-exec call to mmap() to work.
+On 28/02/2022 11:08, Jakob Koschel wrote:
+> When list_for_each_entry() completes the iteration over the whole list
+> without breaking the loop, the iterator value will be a bogus pointer
+> computed based on the head element.
+> 
+> While it is safe to use the pointer to determine if it was computed
+> based on the head element, either with list_entry_is_head() or
+> &pos->member == head, using the iterator variable after the loop should
+> be avoided.
+> 
+> In preparation to limiting the scope of a list iterator to the list
+> traversal loop, use a dedicated pointer to point to the found element.
+> 
+> Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
 
-https://mermaid.live/edit#pako:eNp1k81qwzAQhF9F6NRCAu1Vh0BIRemhoeSHBuIettYm=
-FpElVZZLQ8i7144sJ8aOT2bmY3d2vT7R1AikjBb4U6JO8UXC3kGeaFI9FpyXqbSgPTmg06j6uiu=
-1lzn2jSKTA2XwD9NEB31uPBLzi-6iMpLnYB8Wn4-kOBYpKBW52iXj8WQSmzEy5Zvt01ewG5HUQN=
-2UEc7nK77YPjdALd64GWih8NpkALGwR_JtzOGAaKXexyTKGEt2pgoMaXahgj5Qgk9nM_6xGvDDJ=
-psmOyiVv0LB62B8un4dBDrLiLPeWciCL9fvvKVQizhSG6stFz9Df7sxUpcYitR-SodFO2A_Vw-7=
-l4nzzduqjX9bKJxOHDDeBB3RHF0OUlS3faq1hPoMqzulrHoVGPZOE32u0NIK8MiF9MZRtgNV4Ih=
-C6c3yqFPKvCsxQs3_0VDnfzf-CPg
+[snip until i915 parts]
 
-This only covers adding RW pages. I haven't even tackled permission
-changes yet. Is that understanding correct? If not, please provide an
-alternative sequence diagram to explain how you expect this to be
-used.
+>   drivers/gpu/drm/i915/gem/i915_gem_context.c   | 14 +++---
+>   .../gpu/drm/i915/gem/i915_gem_execbuffer.c    | 15 ++++---
+>   drivers/gpu/drm/i915/gt/intel_ring.c          | 15 ++++---
 
-On Wed, Feb 23, 2022 at 1:25 PM Reinette Chatre
-<reinette.chatre@intel.com> wrote:
->
-> Hi Nathaniel,
->
-> On 2/23/2022 5:24 AM, Nathaniel McCallum wrote:
-> > On Tue, Feb 22, 2022 at 5:39 PM Reinette Chatre
-> > <reinette.chatre@intel.com> wrote:
-> >>
-> >> Hi Nathaniel,
-> >>
-> >> On 2/22/2022 12:27 PM, Nathaniel McCallum wrote:
-> >>> 1. This interface looks very odd to me. mmap() is the kernel interfac=
-e
-> >>> for changing user space memory maps. Why are we introducing a new
-> >>> interface for this?
-> >>
-> >> mmap() is the kernel interface used to create new mappings in the
-> >> virtual address space of the calling process. This is different from
-> >> the permissions and properties of the underlying file/memory being map=
-ped.
-> >>
-> >> A new interface is introduced because changes need to be made to the
-> >> permissions and properties of the underlying enclave. A new virtual
-> >> address space is not needed nor should existing VMAs be impacted.
-> >>
-> >> This is similar to how mmap() is not used to change file permissions.
-> >>
-> >> VMA permissions are separate from enclave page permissions as found in
-> >> the EPCM (Enclave Page Cache Map). The current implementation (SGX1) a=
-lready
-> >> distinguishes between the VMA and EPCM permissions - for example, it i=
-s
-> >> already possible to create a read-only VMA from enclave pages that hav=
-e
-> >> RW EPCM permissions. mmap() of a portion of EPC memory with a particul=
-ar
-> >> permission does not imply that the underlying EPCM permissions (should=
-)have
-> >> that permission.
-> >
-> > Yes. BUT... unlike the file permissions, this leaks an implementation d=
-etail.
->
-> Not really - just like a RW file can be mapped read-only or RW, RW enclav=
-e
-> memory can be mapped read-only or RW.
->
-> >
-> > The user process is governed by VMA permissions. And during enclave
-> > creation, it had to mmap() all the enclave regions to their final VMA
-> > permissions. So during enclave creation you have to use mmap() but
-> > after enclave creation you use custom APIs? That's inconsistent at
-> > best.
->
-> No. ioctl()s are consistently used to manage enclave memory.
->
-> The existing ioctls() SGX_IOC_ENCLAVE_CREATE, SGX_IOC_ENCLAVE_ADD_PAGES,
-> and SGX_IOC_ENCLAVE_INIT are used to set up to initialize the enclave mem=
-ory.
->
-> The new ioctls() are used to manage enclave memory after enclave initiali=
-zation.
->
-> The enclave memory is thus managed with a consistent interface.
->
-> mmap() is required before SGX_IOC_ENCLAVE_CREATE to obtain a base address
-> for the enclave that is required by the ioctl(). The rest of the ioctl()s=
-,
-> existing and new, are consistent in interface by not requiring a memory
-> mapping but instead work from an offset from the base address.
->
-> > Forcing userspace to worry about the (mostly undocumented!)
-> > interactions between EPC, PTE and VMA permissions makes these APIs
-> > hard to use and difficult to reason about.
->
-> This is not new. The current SGX1 user space is already prevented from
-> creating a mapping of enclave memory that is more relaxed than the enclav=
-e
-> memory. For example, if the enclave memory has RW EPCM permissions then i=
-t
-> is not possible to mmap() that memory as RWX.
->
-> >
-> > When I call SGX_IOC_ENCLAVE_RELAX_PERMISSIONS, do I also have to call
-> > mmap() to update the VMA permissions to match? It isn't clear. Nor is
->
-> mprotect() may be the better call to use.
->
-> > it really clear why I'm calling completely separate APIs.
-> >
-> >>> You can just simply add a new mmap flag (i.e.
-> >>> MAP_SGX_TCS*) and then figure out which SGX instructions to execute
-> >>> based on the desired state of the memory maps. If you do this, none o=
-f
-> >>> the following ioctls are needed:
-> >>>
-> >>> * SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> >>> * SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
-> >>> * SGX_IOC_ENCLAVE_REMOVE_PAGES
-> >>> * SGX_IOC_ENCLAVE_MODIFY_TYPE
-> >>>
-> >>> It also means that languages don't have to grow support for all these
-> >>> ioctls. Instead, they can just reuse the existing mmap() bindings wit=
-h
-> >>> the new flag. Also, multiple operations can be combined into a single
-> >>> mmap() call, amortizing the changes over a single context switch.
-> >>>
-> >>> 2. Automatically adding pages with hard-coded permissions in a fault
-> >>> handler seems like a really bad idea.
-> >>
-> >> Could you please elaborate why this is a bad idea?
-> >
-> > Because implementations that miss this subtlety suddenly have pages
-> > with magic permissions. Magic is bad. Explicit is good.
-> >
->
-> There is no magic. Any new pages have to be accepted by the enclave.
-> The enclave will not be able to access these pages unless explicitly
-> accepted, ENCLU[EACCEPT], from within the enclave.
->
-> >>> How do you distinguish between
-> >>> accesses which should result in an updated mapping and accesses that
-> >>> should result in a fault?
-> >>
-> >> Accesses that should result in an updated mapping have two requirement=
-s:
-> >> (a) address accessed belongs to the enclave based on the address
-> >>     range specified during enclave create
-> >> (b) there is no backing enclave page for the address
-> >
-> > What happens if the enclave is buggy? Or has been compromised. In both
-> > of those cases, there should be a userspace visible fault and pages
-> > should not be added.
->
-> If user space accesses a memory address with a regular read/write that
-> results in a new page added then there is indeed a user space visible
-> fault. You can see this flow in action in the "augment" test case in
-> https://lore.kernel.org/linux-sgx/32c1116934a588bd3e6c174684e3e36a05c0a4d=
-4.1644274683.git.reinette.chatre@intel.com/
->
-> If user space indeed wants the page after encountering such a fault then
-> it needs to enter the enclave again, from a different entry point, to
-> run ENCLU[EACCEPT], before it can return to the original entry point to
-> continue execution from the instruction that triggered the original read/=
-write.
->
-> The only flow where a page is added without a user space visible fault
-> is when user space explicitly runs the ENCLU[EACCEPT] to do so.
->
-> >
-> >>> IMHO, all unmapped page accesses should
-> >>> result in a page fault. mmap() should be called first to identify the
-> >>> correct permissions for these pages.
-> >>> Then the page handler should be
-> >>> updated to use the permissions from the mapping when backfilling
-> >>> physical pages. If I understand correctly, this should also obviate
-> >>
-> >> Regular enclave pages can _only_ be dynamically added with RW permissi=
-on.
-> >>
-> >> SGX2's support for adding regular pages to an enclave via the EAUG
-> >> instruction is architecturally set at RW. The OS cannot change those p=
-ermissions
-> >> via the EAUG instruction nor can the OS do so with a different/additio=
-nal
-> >> instruction because:
-> >> * the OS is not able to relax permissions since that can only be done =
-from
-> >> within the enclave with ENCLU[EMODPE], thus it is not possible for the=
- OS to
-> >> dynamically add pages via EAUG as RW and then relax permissions to RWX=
-.
-> >> * the OS is not able to EAUG a page and immediately attempt an EMODPR =
-either
-> >> as Jarkko also recently inquired about:
-> >> https://lore.kernel.org/linux-sgx/80f3d7b9-e3d5-b2c0-7707-710bf6f5081e=
-@intel.com/
-> >
-> > This design looks... unfinished. EAUG takes a PAGEINFO in RBX, but
-> > PAGEINFO.SECINFO must be zeroed and EAUG instead sets magic hard-coded
-> > permissions. Why doesn't EAUG just respect the permissions in
-> > PAGEINFO.SECINFO? We aren't told.
->
-> This design is finished and respects the hardware specification. You can =
-find
-> the details in the SDM's documentation of the EAUG function.
->
-> If the SECINFO field has a value then the hardware requires it to indicat=
-e
-> that it is a new shadow stack page being added, not a regular page. Suppo=
-rt for
-> shadow stack pages is not in scope for this work. Attempting to dynamical=
-ly
-> add a regular page with explicit permissions will result in a #GP(0).
->
-> The only way to add a regular enclave page is to make the SECINFO field e=
-mpty
-> and doing so forces the page type to be a regular page and the permission=
-s to
-> be RW.
->
-> >
-> > Further, if the enclave can do EMODPE, why does
-> > SGX_IOC_ENCLAVE_RELAX_PERMISSIONS even exist? None of the
-> > documentation explains what this ioctl even does. Does it update PTE
-> > permissions? VMA permissions? Nobody knows without reading the source
-> > code.
->
-> Build the documentation (after applying this series) and it should
-> contain all the information you are searching for. As is the current cust=
-om
-> in the SGX documentation the built documentation pulls its content from
-> the kernel doc of the functions that implement the core of the
-> user space interactions.
->
-> >
-> > Userspace should not be bothered with the subtle details of the
-> > interaction between EPC, PTE and VMA permissions. But this API does
-> > everything it can do to expose all these details to userspace. And it
-> > doesn't bother to document them (probably because it is hard). It
-> > would be much better to avoid exposing these details to userspace.
-> >
-> > IMHO, there should be a simple flow like this (if EAUG respects
-> > PAGEINFO.SECINFO):
->
-> EAUG does not respect PAGEINFO.SECINFO for regular pages.
->
-> >
-> > 1. Non-enclave calls mmap()/munmap().
-> > 2. Enclave issues EACCEPT, if necessary.
-> > 3. Enclave issues EMODPE, if necessary.
-> >
-> > Notice that in the second step above, during the mmap() call, the
-> > kernel ensures that EPC, PTE and VMA are in sync and fails if they
-> > cannot be made to be compatible. Also note that in the above flow EAUG
-> > instructions can be efficiently batched.
-> >
-> > Given the current poor state of the EAUG instruction, we might need to
-> > do this flow instead:
-> >
-> > 1. Enclave issues EACCEPT, if necessary. (Add RW pages...)
-> > 2. Non-enclave calls mmap()/munmap().
-> > 3. Enclave issues EACCEPT, if necessary.
-> > 4. Enclave issues EMODPE, if necessary.
-> >
-> > However, doing EAUG only via the page access handler means that there
-> > is no way to batch EAUG instructions and this forces a context switch
-> > for every page you want to add. This has to be terrible for
-> > performance. Note specifically that the SDM calls out batching, which
-> > is currently impossible under this patch set. 35.5.7 - "Page
-> > allocation operations may be batched to improve efficiency."
->
-> These page functions are all per-page so it is not possible to add multip=
-le
-> pages with a single instruction. It is indeed possible to pre-fault pages=
-.
->
-> > As it stands today, if I want to add 256MiB of pages to an enclave,
-> > I'll have to do 2^16 context switches. That doesn't seem scalable.
->
-> No. Running ENCLU[EACCEPT] on each of the pages within that range should =
-not
-> need any explicit context switch out of the enclave. See the "augment_via=
-_eaccept"
-> test case in:
-> https://lore.kernel.org/linux-sgx/32c1116934a588bd3e6c174684e3e36a05c0a4d=
-4.1644274683.git.reinette.chatre@intel.com/
->
->
-> >>> the need for the weird userspace callback to allow for execute
-> >>> permissions.
-> >>
-> >> User policy integration would always be required to allow execute
-> >> permissions on a writable page. This is not expected to be a userspace
-> >> callback but instead integration with existing user policy subsystem(s=
-).
-> >
-> > Why? This isn't documented.
->
-> This is similar to the existing policies involved in managing the permiss=
-ions
-> of mapped memory. When user space calls mprotect() to change permissions
-> of a mapped region then the kernel will not blindly allow the permissions=
- but
-> instead ensure that it is allowed based on user policy by calling the LSM
-> (Linux Security Module) hooks.
->
-> You can learn more about LSM and various security modules at:
-> Documentation/security/lsm.rst
-> Documentation/admin-guide/LSM/*
->
-> You can compare what is needed here to what is currently done when user s=
-pace
-> attempts to make some memory executable (see:
-> mm/mprotect.c:do_mprotect_key()->security_file_mprotect()). User policy n=
-eeds
-> to help the kernel determine if this is allowed. For example, when SELinu=
-x is
-> the security module of choice then the process or file (depending on what=
- type
-> of memory is being changed) needs to have a special permission (PROCESS__=
-EXECHEAP,
-> PROCESS__EXECSTACK, or FILE__EXECMOD) assigned by user space to allow thi=
-s.
->
-> Integration with user space policy is required for RWX of dynamically add=
-ed pages
-> to be supported. In this series dynamically added pages will not be allow=
-ed to
-> be made executable, a follow-up series will add support for user policy
-> integration to support RWX permissions of dynamically added pages.
->
-> >>> 3. Implementing as I've suggested also means that we can lock down an
-> >>> enclave, for example - after code has been JITed, by closing the file
-> >>> descriptor. Once the file descriptor used to create the enclave is
-> >>> closed, no further mmap() can be performed on the enclave. Attempting
-> >>> to do EACCEPT on an unmapped page will generate a page fault.
-> >>
-> >> This is not clear to me. If the file descriptor is closed and no furth=
-er
-> >> mmap() is allowed then how would a process be able to enter the enclav=
-e
-> >> to execute code within it?
-> >
-> > EENTER (or the vdso function) with the address of a TCS page, like
-> > normal. In Enarx, we don't retain the enclave fd after the final
-> > mmap() following EINIT. Everything works just fine.
->
-> The OS fault handler is responsible for managing the PTEs that is require=
-d
-> for the enclave to be able to access the memory within the enclave.
-> The OS fault handler is attached to a VMA that is created with mmap().
->
-> >
-> >> This series does indeed lock down the address range to ensure that it =
-is
-> >> not possible to map memory that does not belong to the enclave after t=
-he
-> >> enclave is created. Please see:
-> >> https://lore.kernel.org/linux-sgx/1b833dbce6c937f71523f4aaf4b2181b9673=
-519f.1644274683.git.reinette.chatre@intel.com/
-> >
-> > That's not what I'm talking about. I'm talking about a workflow like th=
-is:
-> >
-> > 1. Enclave initialization: ECREATE ... EINIT
-> > 2. EENTER
-> > 3. Enclave JITs some code (changes page permissions)
-> > 4. EEXIT
-> > 5. Close enclave fd.
-> > 6. EENTER
-> > 7. If an enclave attempts page modifications, a fault occurs.
->
-> The original fd that was created to obtain the enclave base address
-> may be closed at (5) but the executable and data portions of the enclave
-> still needs to be mapped afterwards to be able to have OS support for
-> managing the PTEs that the enclave depends on to access those pages.
->
-> >
-> > Think of this similar to seccomp(). The enclave wants to do some
-> > dynamic page table manipulation. But then it wants to lock down page
-> > table modification so that, if compromised, attackers have no ability
-> > to obtain RWX permissions.
->
-> Reinette
+[snip]
+
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_context.c b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+> index 00327b750fbb..80c79028901a 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+> @@ -107,25 +107,27 @@ static void lut_close(struct i915_gem_context *ctx)
+>   	radix_tree_for_each_slot(slot, &ctx->handles_vma, &iter, 0) {
+>   		struct i915_vma *vma = rcu_dereference_raw(*slot);
+>   		struct drm_i915_gem_object *obj = vma->obj;
+> -		struct i915_lut_handle *lut;
+> +		struct i915_lut_handle *lut = NULL;
+> +		struct i915_lut_handle *tmp;
+> 
+>   		if (!kref_get_unless_zero(&obj->base.refcount))
+>   			continue;
+> 
+>   		spin_lock(&obj->lut_lock);
+> -		list_for_each_entry(lut, &obj->lut_list, obj_link) {
+> -			if (lut->ctx != ctx)
+> +		list_for_each_entry(tmp, &obj->lut_list, obj_link) {
+> +			if (tmp->ctx != ctx)
+>   				continue;
+> 
+> -			if (lut->handle != iter.index)
+> +			if (tmp->handle != iter.index)
+>   				continue;
+> 
+> -			list_del(&lut->obj_link);
+> +			list_del(&tmp->obj_link);
+> +			lut = tmp;
+>   			break;
+>   		}
+>   		spin_unlock(&obj->lut_lock);
+> 
+> -		if (&lut->obj_link != &obj->lut_list) {
+> +		if (lut) {
+>   			i915_lut_handle_free(lut);
+>   			radix_tree_iter_delete(&ctx->handles_vma, &iter, slot);
+
+Looks okay although personally I would have left lut as is for a smaller 
+diff and introduced a new local like 'found' or 'unlinked'.
+
+>   			i915_vma_close(vma);
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> index 1736efa43339..fda9e3685ad2 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> @@ -2444,7 +2444,8 @@ static struct i915_request *eb_throttle(struct i915_execbuffer *eb, struct intel
+>   {
+>   	struct intel_ring *ring = ce->ring;
+>   	struct intel_timeline *tl = ce->timeline;
+> -	struct i915_request *rq;
+> +	struct i915_request *rq = NULL;
+> +	struct i915_request *tmp;
+> 
+>   	/*
+>   	 * Completely unscientific finger-in-the-air estimates for suitable
+> @@ -2460,15 +2461,17 @@ static struct i915_request *eb_throttle(struct i915_execbuffer *eb, struct intel
+>   	 * claiming our resources, but not so long that the ring completely
+>   	 * drains before we can submit our next request.
+>   	 */
+> -	list_for_each_entry(rq, &tl->requests, link) {
+> -		if (rq->ring != ring)
+> +	list_for_each_entry(tmp, &tl->requests, link) {
+> +		if (tmp->ring != ring)
+>   			continue;
+> 
+> -		if (__intel_ring_space(rq->postfix,
+> -				       ring->emit, ring->size) > ring->size / 2)
+> +		if (__intel_ring_space(tmp->postfix,
+> +				       ring->emit, ring->size) > ring->size / 2) {
+> +			rq = tmp;
+>   			break;
+> +		}
+>   	}
+> -	if (&rq->link == &tl->requests)
+> +	if (!rq)
+>   		return NULL; /* weird, we will check again later for real */
+
+Alternatively, instead of break could simply do "return 
+i915_request_get(rq);" and replace the end of the function after the 
+loop with "return NULL;". A bit smaller diff, or at least less "spread 
+out" over the function, so might be easier to backport stuff touching 
+this area in the future. But looks correct as is.
+
+> 
+>   	return i915_request_get(rq);
+> diff --git a/drivers/gpu/drm/i915/gt/intel_ring.c b/drivers/gpu/drm/i915/gt/intel_ring.c
+> index 2fdd52b62092..4881c4e0c407 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_ring.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_ring.c
+> @@ -191,24 +191,27 @@ wait_for_space(struct intel_ring *ring,
+>   	       struct intel_timeline *tl,
+>   	       unsigned int bytes)
+>   {
+> -	struct i915_request *target;
+> +	struct i915_request *target = NULL;
+> +	struct i915_request *tmp;
+>   	long timeout;
+> 
+>   	if (intel_ring_update_space(ring) >= bytes)
+>   		return 0;
+> 
+>   	GEM_BUG_ON(list_empty(&tl->requests));
+> -	list_for_each_entry(target, &tl->requests, link) {
+> -		if (target->ring != ring)
+> +	list_for_each_entry(tmp, &tl->requests, link) {
+> +		if (tmp->ring != ring)
+>   			continue;
+> 
+>   		/* Would completion of this request free enough space? */
+> -		if (bytes <= __intel_ring_space(target->postfix,
+> -						ring->emit, ring->size))
+> +		if (bytes <= __intel_ring_space(tmp->postfix,
+> +						ring->emit, ring->size)) {
+> +			target = tmp;
+>   			break;
+> +		}
+>   	}
+> 
+> -	if (GEM_WARN_ON(&target->link == &tl->requests))
+> +	if (GEM_WARN_ON(!target))
+>   		return -ENOSPC;
+> 
+>   	timeout = i915_request_wait(target,
+
+Looks okay as well. Less clear here if there is a clean solution to make 
+the diff smaller so no suggestions. I mean do I dare mention "goto 
+found;" from inside the loop, where the break is, instead of the 
+variable renames.. risky.. :) (And ofc "return -ENOSPC" immediately 
+after the loop.)
+
+As a summary changes looks okay, up to you if you want to try to make 
+the diffs smaller or not. It doesn't matter hugely really, all I have is 
+a vague and uncertain "maybe it makes backporting of something, someday 
+easier". So for i915 it is good either way.
+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com> # i915 bits only
+
+Regards,
+
+Tvrtko
