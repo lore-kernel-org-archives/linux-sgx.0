@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BACC433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 02:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7BCC433EF
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 02:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232191AbiCBCF0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 1 Mar 2022 21:05:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54534 "EHLO
+        id S237949AbiCBCLI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 1 Mar 2022 21:11:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbiCBCF0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 21:05:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737AC2A27F;
-        Tue,  1 Mar 2022 18:04:43 -0800 (PST)
+        with ESMTP id S231734AbiCBCLH (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Mar 2022 21:11:07 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C2AA6512;
+        Tue,  1 Mar 2022 18:10:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0AD5BB81EEC;
-        Wed,  2 Mar 2022 02:04:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA1EC340F0;
-        Wed,  2 Mar 2022 02:04:40 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id B9D85CE20CB;
+        Wed,  2 Mar 2022 02:10:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63914C340EE;
+        Wed,  2 Mar 2022 02:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646186680;
-        bh=i4qQTRUMKVz/Lw2o/GZqlV/+bdva2T20twC9gBHnWnc=;
+        s=k20201202; t=1646187022;
+        bh=U/4xh9QWn0bXibryx90ssRbqx36g3p2I2thEq7GTMCA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N/05FiaYF8YljcgHpY54ApqD9f2xENlBfg90LnaguFJvjcPz2xw7WcbQQeHVvJLGR
-         UzLxqfC8iCZfB3ZwdlHopEkEhWdl0Lnr14OuMPxcyZLNGVasHfYwvEcZJvwgerc3q8
-         baST5dn4j2GkCbbtHB1nhBUXjTRo1kMx6BHn2qYYLnsiVSlaTjrMrCstIrVfT6oSGN
-         8Im1EQUgWGlGOy1r/LOygk/BScjn4QDBeYHFWzxaK6wZ6LU+yIbepQKigqSKegPqD0
-         I66gkkK1bM6+kGdrQY4ZwYxk/09hAvHLd1By4rlhVsYolWs+Mhj1sSjAWUfBfxniWD
-         G7ivxizt7wx/A==
-Date:   Wed, 2 Mar 2022 03:05:25 +0100
+        b=pVsWhWV7BIZYQF2Kwu6QyzAUJ/vzzeq1zqk8T+YySwRKjcg0Xk2SK6YCOFWR2+aZO
+         AOCOqics4mI+YL9ur5c4LWbP5H8v4+TpUdydbqolTlybvWXnr7zWXkAarYWRGOZjof
+         Rtp5c0N7Cm0nIVuMNrj8LqDcbkdsj4tENObCwfmkJ7rkvo/ViGwv1uT4BEwTRL+Jxd
+         CA1Nw2Z58JPF4Afbjrc2c+Hk0FOJLo8sQm5IreVuXwjYt/+TN8jfNdiWYgnMpVogKI
+         yqzsr7jBOVh1/HpJUrfPU351igwoY/nD2ECr/OFe4yj8yoK21pIGrmmt3eXAOuzL7y
+         iegcfO/rgo7Eg==
+Date:   Wed, 2 Mar 2022 03:11:06 +0100
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     Dave Hansen <dave.hansen@intel.com>,
@@ -53,7 +53,7 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
  permissions
-Message-ID: <Yh7Q5fbOtr+6YWaS@iki.fi>
+Message-ID: <Yh7SOgqdFxJdVPMq@iki.fi>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
  <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
  <YhLhoMFPyOFZ2fsX@iki.fi>
@@ -63,111 +63,31 @@ References: <cover.1644274683.git.reinette.chatre@intel.com>
  <Yh4fGORDaJyVrJQW@iki.fi>
  <Yh4i4hVcnfZ8QDAl@iki.fi>
  <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
+ <Yh7Q5fbOtr+6YWaS@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
+In-Reply-To: <Yh7Q5fbOtr+6YWaS@iki.fi>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 01, 2022 at 09:48:48AM -0800, Reinette Chatre wrote:
-> Hi Jarkko,
+On Wed, Mar 02, 2022 at 03:05:25AM +0100, Jarkko Sakkinen wrote:
+> > The work that follows this series aimed to do the integration with user
+> > space policy.
 > 
-> On 3/1/2022 5:42 AM, Jarkko Sakkinen wrote:
-> >> With EACCEPTCOPY (kudos to Mark S. for reminding me of this version of
-> >> EACCEPT @ chat.enarx.dev) it is possible to make R and RX pages but
-> >> obviously new RX pages are now out of the picture:
-> >>
-> >>
-> >> 	/*
-> >> 	 * Adding a regular page that is architecturally allowed to only
-> >> 	 * be created with RW permissions.
-> >> 	 * TBD: Interface with user space policy to support max permissions
-> >> 	 * of RWX.
-> >> 	 */
-> >> 	prot = PROT_READ | PROT_WRITE;
-> >> 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
-> >> 	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
-> >>
-> >> If that TBD is left out to the final version the page augmentation has a
-> >> risk of a API bottleneck, and that risk can realize then also in the page
-> >> permission ioctls.
-> >>
-> >> I.e. now any review comment is based on not fully known territory, we have
-> >> one known unknown, and some unknown unknowns from unpredictable effect to
-> >> future API changes.
+> What do you mean by "user space policy" anyway exactly? I'm sorry but I
+> just don't fully understand this.
 > 
-> The plan to complete the "TBD" in the above snippet was to follow this work
-> with user policy integration at this location. On a high level the plan was
-> for this to look something like:
-> 
-> 
->  	/*
->  	 * Adding a regular page that is architecturally allowed to only
->  	 * be created with RW permissions.
->  	 * Interface with user space policy to support max permissions
->  	 * of RWX.
->  	 */
->  	prot = PROT_READ | PROT_WRITE;
->  	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
-> 
->         if (user space policy allows RWX on dynamically added pages)
-> 	 	encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ | PROT_WRITE | PROT_EXEC, 0);
-> 	else
-> 		encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ | PROT_WRITE, 0);
-> 
-> The work that follows this series aimed to do the integration with user
-> space policy.
+> It's too big of a risk to accept this series without X taken care of. Patch
+> series should neither have TODO nor TBD comments IMHO. I don't want to ack
+> a series based on speculation what might happen in the future.
 
-What do you mean by "user space policy" anyway exactly? I'm sorry but I
-just don't fully understand this.
+If I accept this, then I'm kind of pre-acking code that I have no idea what
+it looks like, can it be acked, or am I doing the right thing for the
+kernel by acking this. 
 
-It's too big of a risk to accept this series without X taken care of. Patch
-series should neither have TODO nor TBD comments IMHO. I don't want to ack
-a series based on speculation what might happen in the future.
-
-> > I think the best way to move forward would be to do EAUG's explicitly with
-> > an ioctl that could also include secinfo for permissions. Then you can
-> > easily do the rest with EACCEPTCOPY inside the enclave.
-> 
-> SGX_IOC_ENCLAVE_ADD_PAGES already exists and could possibly be used for
-> this purpose. It already includes SECINFO which may also be useful if
-> needing to later support EAUG of PT_SS* pages.
-
-You could also simply add SGX_IOC_ENCLAVE_AUGMENT_PAGES and call it a day.
-
-And if there is plan to extend SGX_IOC_ENCLAVE_ADD_PAGES what is this weird
-thing added to the #PF handler? Why is it added at all then?
-
-> How this could work is user space calls SGX_IOC_ENCLAVE_ADD_PAGES
-> after enclave initialization on any memory region within the enclave where
-> pages are planned to be added dynamically. This ioctl() calls EAUG to add the
-> new pages with RW permissions and their vm_max_prot_bits can be set to the
-> permissions found in the included SECINFO. This will support later EACCEPTCOPY
-> as well as SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-
-I don't like this type of re-use of the existing API.
-
-> The big question is whether communicating user policy after enclave initialization
-> via the SECINFO within SGX_IOC_ENCLAVE_ADD_PAGES is acceptable to all? I would
-> appreciate a confirmation on this direction considering the significant history
-> behind this topic.
-
-I have no idea because I don't know what is user space policy.
-
-> > Putting EAUG to the #PF handler and implicitly call it just too flakky and
-> > hard to make deterministic for e.g. JIT compiler in our use case (not to
-> > mention that JIT is not possible at all because inability to do RX pages).
-> 
-> In this series this is indeed not possible because it lacks the user policy
-> integration. JIT will be possible after user policy integration.
-
-Like this I don't what this series can be used in practice.
-
-Majority of practical use cases for EDMM boil down to having a way to add
-new executable code (not just Enarx).
-
-> Reinette
+It's unfortunately force majeure situation for me. I simply could not ack
+this, whether I want it or not.
 
 BR, Jarkko
