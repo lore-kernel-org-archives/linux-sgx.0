@@ -2,153 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DBCC433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 14:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F60C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed,  2 Mar 2022 16:40:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242683AbiCBOFG convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Mar 2022 09:05:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34898 "EHLO
+        id S240468AbiCBQlX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Mar 2022 11:41:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242579AbiCBOFC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 09:05:02 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 58D798567F
-        for <linux-sgx@vger.kernel.org>; Wed,  2 Mar 2022 06:04:13 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-196-4Li6Fux3PdyQ14Lo-DMf3A-1; Wed, 02 Mar 2022 14:04:10 +0000
-X-MC-Unique: 4Li6Fux3PdyQ14Lo-DMf3A-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Wed, 2 Mar 2022 14:04:06 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Wed, 2 Mar 2022 14:04:06 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Xiaomeng Tong' <xiam0nd.tong@gmail.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "bjohannesmeyer@gmail.com" <bjohannesmeyer@gmail.com>,
-        "c.giuffrida@vu.nl" <c.giuffrida@vu.nl>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "h.j.bos@vu.nl" <h.j.bos@vu.nl>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "jakobkoschel@gmail.com" <jakobkoschel@gmail.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "kgdb-bugreport@lists.sourceforge.net" 
-        <kgdb-bugreport@lists.sourceforge.net>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux1394-devel@lists.sourceforge.net" 
-        <linux1394-devel@lists.sourceforge.net>,
-        "linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "nathan@kernel.org" <nathan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "rppt@kernel.org" <rppt@kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        "v9fs-developer@lists.sourceforge.net" 
-        <v9fs-developer@lists.sourceforge.net>
-Subject: RE: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Thread-Topic: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Thread-Index: AQHYLhg9+DU/OogLf0+tiSFmjztyUKysHu+Q
-Date:   Wed, 2 Mar 2022 14:04:06 +0000
-Message-ID: <1077f17e50d34dc2bbfdf4e52a1cb2fd@AcuMS.aculab.com>
-References: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
- <20220302093106.8402-1-xiam0nd.tong@gmail.com>
-In-Reply-To: <20220302093106.8402-1-xiam0nd.tong@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S243299AbiCBQlW (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 11:41:22 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 785EBCA0E5;
+        Wed,  2 Mar 2022 08:40:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646239237; x=1677775237;
+  h=message-id:date:mime-version:to:cc:references:from:
+   subject:in-reply-to:content-transfer-encoding;
+  bh=WYdj9HsqlR6mD7UuAQBB90fXgHWVIMAG8azr7wg+GKA=;
+  b=Xc1MICeFkY54mnnvgi1/7t2Hum902GFPZrtHLsZ1stEP6DXbmDHFrlEV
+   2D81WfzWgVo5WofsNW3CiG61fQbD/lNd3xoeDqt3BzDRBDksLdC4z6vN8
+   KPWCHV+AjlRG/2gMXAcZch11GTM81W/rbK10cSKiCWbUm15G/c5LYUQH8
+   GoeOVpIYwji2336S412QOZ4WWdyDQSwNMYPNitu0RsiDy9Jmd9/P2I8BE
+   3kV7dHWShOugbYBzDyJ0oPA5G6iugIvjPB1EnsKWhXJVs9sLL6bfVT0Fr
+   kVdc7kRMO6V2sSSxwkMrxHVhJK8hgZr3sZVUhbuL2EFEoIodZ6FQLt63a
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10274"; a="251018458"
+X-IronPort-AV: E=Sophos;i="5.90,149,1643702400"; 
+   d="scan'208";a="251018458"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 08:40:36 -0800
+X-IronPort-AV: E=Sophos;i="5.90,149,1643702400"; 
+   d="scan'208";a="511067040"
+Received: from nagana-mobl.amr.corp.intel.com (HELO [10.252.142.107]) ([10.252.142.107])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 08:40:35 -0800
+Message-ID: <1f06eb77-1c08-33f6-d784-8eeee25f6f6a@intel.com>
+Date:   Wed, 2 Mar 2022 08:40:29 -0800
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
 Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20220301125836.3430-1-jarkko@kernel.org>
+ <3a083b4d-9645-dec6-8cdc-481429dd0a1f@intel.com> <Yh7LUU401weiq0ew@iki.fi>
+From:   Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v5] x86/sgx: Free backing memory after faulting the
+ enclave page
+In-Reply-To: <Yh7LUU401weiq0ew@iki.fi>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Xiaomeng Tong
-> Sent: 02 March 2022 09:31
+On 3/1/22 17:41, Jarkko Sakkinen wrote:
+> On Tue, Mar 01, 2022 at 09:54:14AM -0800, Dave Hansen wrote:
+>> On 3/1/22 04:58, Jarkko Sakkinen wrote:
+>>> @@ -32,14 +58,16 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>>>  	else
+>>>  		page_index = PFN_DOWN(encl->size);
+>>>  
+>>> +	page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
+>>> +
+>>>  	ret = sgx_encl_lookup_backing(encl, page_index, &b);
+>>>  	if (ret)
+>>>  		return ret;
+>> What tree is this against?  It looks like it might be on top of
+>> Kristen's overcommit series.
+>>
+>> It would be best if you could test this on top of tip/sgx.  Kristen
+>> changed code in this area as well.
+> I rebased this against latest stuff and now I did a sanity check:
 > 
-> On Mon, 28 Feb 2022 16:41:04 -0800, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > But basically to _me_, the important part is that the end result is
-> > maintainable longer-term.
+> $ git fetch tip
+> remote: Enumerating objects: 75, done.
+> remote: Counting objects: 100% (75/75), done.
+> remote: Compressing objects: 100% (12/12), done.
+> remote: Total 77 (delta 65), reused 65 (delta 63), pack-reused 2
+> Unpacking objects: 100% (77/77), 34.07 KiB | 157.00 KiB/s, done.
+>>From git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>    161a9a33702a..cedd3614e5d9  perf/core  -> tip/perf/core
+>    6255b48aebfd..25795ef6299f  sched/core -> tip/sched/core
 > 
-> I couldn't agree more. And because of that, I stick with the following
-> approach because it's maintainable longer-term than "type(pos) pos" one:
->  Implements a new macro for each list_for_each_entry* with _inside suffix.
->   #define list_for_each_entry_inside(pos, type, head, member)
+> $ git rebase tip/x86/sgx 
+> Current branch master is up to date.
 
-I think that it would be better to make any alternate loop macro
-just set the variable to NULL on the loop exit.
-That is easier to code for and the compiler might be persuaded to
-not redo the test.
+Are you sure you didn't also rebase all of Kristen's work along with
+your one patch?  How many patches did you rebase?
 
-It also doesn't need an extra variable defined in the for() statement
-so can be back-ported to older kernels without required declaration
-in the middle of blocks.
+You might want to do:
 
-OTOH there may be alternative definitions that can be used to get
-the compiler (or other compiler-like tools) to detect broken code.
-Even if the definition can't possibly generate a working kerrnel.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+	git log tip/x86/sgx..
