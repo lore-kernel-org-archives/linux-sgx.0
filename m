@@ -2,224 +2,295 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9118C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu,  3 Mar 2022 12:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C7DC433EF
+	for <linux-sgx@archiver.kernel.org>; Thu,  3 Mar 2022 14:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233385AbiCCMij (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 3 Mar 2022 07:38:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49572 "EHLO
+        id S234199AbiCCO7h (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 3 Mar 2022 09:59:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232047AbiCCMig (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 3 Mar 2022 07:38:36 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179C340A1E;
-        Thu,  3 Mar 2022 04:37:48 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id z2so4410135plg.8;
-        Thu, 03 Mar 2022 04:37:48 -0800 (PST)
+        with ESMTP id S232579AbiCCO7g (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 3 Mar 2022 09:59:36 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B646BDE2F8
+        for <linux-sgx@vger.kernel.org>; Thu,  3 Mar 2022 06:58:49 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id u20so8988249lff.2
+        for <linux-sgx@vger.kernel.org>; Thu, 03 Mar 2022 06:58:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FF/MJjppdIPbLAPuX69GDDcuetlfqDD+38vpsQJKjV4=;
-        b=bORDDPjE3HJ8Q+lkuHUI9YXm2z2OfuiHyYo73LjCVUqKH+mzapaLyTx7j6vUSzodyH
-         H1fbBW3W0VvnP5bKsE/Cw0qa3UKie6z+yV023jD/NJPLY9kKDIxXXIT7NvpcVUCfUtIs
-         KFg6MVSLFINqOtsOfPJChC2DDL1HsjgJIQ8T87wI93Fz/8cIhc43z3LdnIXEJu5YqpzN
-         mnmxIpvlp/TKF5EWx4k9hHupAU2T1e2iVIXLRuFiSvdgN4U8XMzx7dalBaWhuU90/nq+
-         yD0rNidPjh7VKui8oE8v/Ywp+ZPTs/OvJCCqJBXBdG8sdbvMpiVPMu/2SHGpauCCE/Ok
-         XUow==
+        d=profian-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5xeMN/9ilN/F8EqvDVB1kmS35o2nYH5bHf7Wkl3vn/Y=;
+        b=tXTD8zHPfvFzdBsk4z7SarYbm5IEnbz5EpEcpPT27zA0uXg3EOJz0990aMVBOMvcrk
+         yCZILrH2Ly9K5pubu3WdJi9lJQ1OQ1KB2+yQTkGr+ovpV9gfV6inrapJu2XNF33QoEub
+         ccQZuee6cxULrNEwDTIfYY8VwKdiCFXSh9ys9rmtqy31E6VdHkwzLBCe3vH2TbHr9IDO
+         Kid30XpaknHd8iQBsWiFW+BdD+i3BB4sBkL2qRY4SZNPc+93BSeJZ+z0/MldBydgYXUp
+         zc/I+4q5LibjTFwCKpF+06UIDVPByiClJ/zhjezqf2tCLiNy/XClR9jIR8V5CCC7QCX0
+         dGPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FF/MJjppdIPbLAPuX69GDDcuetlfqDD+38vpsQJKjV4=;
-        b=5nmLDPdt4158KChLD7ZNId285UqdJIJg11uAueR32aF7hOqlaYWbUvnmXZpM/JktUK
-         1qvgKYbYiTRkWHI5gTGarJSXkv/BPsY02qYjIyaKu5D1VoFhfQK3OfOvvBA1mitkp1pl
-         PHdB5t5bp1FMJUVOAH0K8EpBEK1rG15MNH4CTtmiib6Vw4Pr7eykcIDH7EDZNF9GTY6z
-         II2zykestbe6hJIjCaKLuZLX/2vbbnq4OYS/ayY74gRe/rgTtqZBgMurHZQMjy38p/aF
-         qArR0GkBo8iuzNewabyxKOYNjpfwJ8HcLGIyXlRseL3hv363FaX+5Gl48VoKpzYF3kmL
-         oM/A==
-X-Gm-Message-State: AOAM530wAj2kNlYNbl2xdlwDu3GliNRaOBAj8yqWQoWLLlVxSGhp9Yd4
-        BQspS3STPlljfAwrfky5Csc=
-X-Google-Smtp-Source: ABdhPJwaQutGx29a4puPWhBgOBT74prgxxfsvHgGuVwO/yqGuQ+dVL8XCd59bWLeDERLYwR3js66yQ==
-X-Received: by 2002:a17:903:22d0:b0:151:97f5:db54 with SMTP id y16-20020a17090322d000b0015197f5db54mr7837971plg.58.1646311068298;
-        Thu, 03 Mar 2022 04:37:48 -0800 (PST)
-Received: from ubuntu.huawei.com ([119.3.119.19])
-        by smtp.googlemail.com with ESMTPSA id t7-20020a17090a024700b001bf12386db4sm1483030pje.47.2022.03.03.04.37.24
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5xeMN/9ilN/F8EqvDVB1kmS35o2nYH5bHf7Wkl3vn/Y=;
+        b=OCF7CpSY30IFuh6tf3SliVV7+VaCiXAlo/dWoDd2CDjYHtlJ7dgIJq5v4YTL04ecNu
+         BtV2MJCpej/d3W0ApQgiO+oPzhzj9iwHfJGgcB9pKyx8PHVhas+ypoVzfde5JJmiHj/u
+         qd8ghprBWEnOOJo2+nbBRtuectWPmit771slCy5D0ZvtcepgFauM1bgnLZ1IOgNW06Kv
+         TWX3IsZUiiRcqIvt3RPV9Rx7uqg1lejc+dJweFniuJw7cAzX9pWgYFRGhY2I0xvwPCv5
+         /jFtYrYgi6YhId7KyJmqZjvz/KVRhT9xdd9QDW8fE8Rgr39u/RN4eUbA4sUMehEadqCp
+         XRTw==
+X-Gm-Message-State: AOAM533Cm6fKGfgmrbG9kG/Z2vC97EApXAjFS1tl4EOK/+epvygtlQxZ
+        WquGTXzgrKdSIkN7OuvbKf/dDA==
+X-Google-Smtp-Source: ABdhPJwSova1Fsy/phxDaF24m0tU/f1WwLQdcCbC2rQwQx/n/tNUhqDQIac9a3GLxK753IXHe7NShQ==
+X-Received: by 2002:a05:6512:3093:b0:446:71e1:ca09 with SMTP id z19-20020a056512309300b0044671e1ca09mr1049497lfd.203.1646319525431;
+        Thu, 03 Mar 2022 06:58:45 -0800 (PST)
+Received: from localhost (91-154-92-187.elisa-laajakaista.fi. [91.154.92.187])
+        by smtp.gmail.com with ESMTPSA id p6-20020a05651238c600b00443de9cdc48sm471158lft.226.2022.03.03.06.58.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 04:37:47 -0800 (PST)
-From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
-To:     david.laight@aculab.com
-Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
-        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
-        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
-        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
-        dan.carpenter@oracle.com, dmaengine@vger.kernel.org,
-        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
-        gustavo@embeddedor.com, h.j.bos@vu.nl,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        jakobkoschel@gmail.com, jgg@ziepe.ca, keescook@chromium.org,
-        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
-        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
-        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
-        rppt@kernel.org, samba-technical@lists.samba.org,
-        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
-        torvalds@linux-foundation.org,
-        v9fs-developer@lists.sourceforge.net, xiam0nd.tong@gmail.com
-Subject: RE: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
-Date:   Thu,  3 Mar 2022 20:37:18 +0800
-Message-Id: <20220303123718.12426-1-xiam0nd.tong@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <2d208771c50b4c6db4f43039e9d62851@AcuMS.aculab.com>
-References: <2d208771c50b4c6db4f43039e9d62851@AcuMS.aculab.com>
+        Thu, 03 Mar 2022 06:58:44 -0800 (PST)
+From:   Jarkko Sakkinen <jarkko@profian.com>
+To:     Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     alx.manpages@gmail.com, linux-man@vger.kernel.org,
+        linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        nathaniel@profian.com, Reinette Chatre <reinette.chatre@intel.com>,
+        Jarkko Sakkinen <jarkko@profian.com>
+Subject: [PATCH v12] sgx.7: New page with overview of Software Guard eXtensions (SGX)
+Date:   Thu,  3 Mar 2022 16:57:57 +0200
+Message-Id: <20220303145757.58464-1-jarkko@profian.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-> From: Xiaomeng Tong
-> > Sent: 03 March 2022 07:27
-> > 
-> > On Thu, 3 Mar 2022 04:58:23 +0000, David Laight wrote:
-> > > on 3 Mar 2022 10:27:29 +0800, Xiaomeng Tong wrote:
-> > > > The problem is the mis-use of iterator outside the loop on exit, and
-> > > > the iterator will be the HEAD's container_of pointer which pointers
-> > > > to a type-confused struct. Sidenote: The *mis-use* here refers to
-> > > > mistakely access to other members of the struct, instead of the
-> > > > list_head member which acutally is the valid HEAD.
-> > >
-> > > The problem is that the HEAD's container_of pointer should never
-> > > be calculated at all.
-> > > This is what is fundamentally broken about the current definition.
-> > 
-> > Yes, the rule is "the HEAD's container_of pointer should never be
-> > calculated at all outside the loop", but how do you make sure everyone
-> > follows this rule?
-> > Everyone makes mistakes, but we can eliminate them all from the beginning
-> > with the help of compiler which can catch such use-after-loop things.
-> > 
-> > > > IOW, you would dereference a (NULL + offset_of_member) address here.
-> > >
-> > >Where?
-> > 
-> > In the case where a developer do not follows the above rule, and mistakely
-> > access a non-list-head member of the HEAD's container_of pointer outside
-> > the loop. For example:
-> >     struct req{
-> >       int a;
-> >       struct list_head h;
-> >     }
-> >     struct req *r;
-> >     list_for_each_entry(r, HEAD, h) {
-> >       if (r->a == 0x10)
-> >         break;
-> >     }
-> >     // the developer made a mistake: he didn't take this situation into
-> >     // account where all entries in the list are *r->a != 0x10*, and now
-> >     // the r is the HEAD's container_of pointer.
-> >     r->a = 0x20;
-> > Thus the "r->a = 0x20" would dereference a (NULL + offset_of_member)
-> > address here.
-> 
-> That is just a bug.
-> No different to failing to check anything else might 'return'
-> a NULL pointer.
+Document the Software Guard eXtensions kernel features, which were
+available in Linux v5.11.
 
-Yes, but it‘s a mistake everyone has made and will make, we should avoid
-this at the beginning with the help of compiler.
+Signed-off-by: Jarkko Sakkinen <jarkko@profian.com>
+---
+v12:
+* Fix issues reported by Alejandro.
+* Expand the explanation and make the text a bit more consistent.
+* SGX_IOC_ENCLAVE_PROVISION was missing.
+v11:
+* Address Reinette's remarks for v10:
+  https://lore.kernel.org/linux-sgx/8f84b8e8-b478-bb81-4aa8-536df882a144@intel.com/
+v10:
+* v9 was malformed, essentially a resend.
+v9:
+* Rename "Address Space" section as "Memory mapping", and refine the
+  text.
+* Rename "Ioctls" section as "Construction", and refine the text.
+v8:
+* Fix errors reported for the previous version.
+v7:
+* Added more meat about the address space and API.
+* Reorganized the text to have focus more on developer to have a big
+  picture of kernel provided interfaces.
+v6:
+* Small fixes based on Dave's and Reinette's feedback.
+* Extended the "Permissions" section to cover mmap()
+v5:
+* Taking away hardware concepts and focusing more on the interface.
+v4:
+* Did a heavy edit trying to streamline the story a bit and focus on
+  stuff important to the user (e.g. lighten up x86 details).
+v3:
+* Overhaul based on Michael's comments. Most likely needs to be refined
+  in various places but this is at least a small step forward for sure.
+v2:
+* Fixed the semantic newlines convention and various style errors etc.
+  that were reported by Alenjandro and Michael.
+* SGX was merged to v5.
+---
+ man7/sgx.7  | 164 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ man7/vdso.7 |   1 +
+ 2 files changed, 165 insertions(+)
+ create mode 100644 man7/sgx.7
 
-> Because it is a NULL dereference you find out pretty quickly.
+diff --git a/man7/sgx.7 b/man7/sgx.7
+new file mode 100644
+index 000000000..20d2d4777
+--- /dev/null
++++ b/man7/sgx.7
+@@ -0,0 +1,164 @@
++.\" Copyright (C) 2021 Intel Corporation
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH SGX 7 2021\-02\-02 "Linux" "Linux Programmer's Manual"
++.PP
++sgx - overview of Software Guard eXtensions
++.SH SYNOPSIS
++.nf
++.B #include <asm/sgx.h>
++.PP
++.IB enclave " = open(" \(dq/dev/sgx_enclave\(dq ", O_RDWR);"
++.fi
++.SH DESCRIPTION
++Intel Software Guard eXtensions (SGX) allow applications to host
++enclaves,
++protected executable objects in encrypted memory.
++.PP
++Enclaves are blobs of executable code,
++running inside a CPU enforced container,
++which is mapped to the process address space.
++They are represented as the open files of
++.IR /dev/sgx_enclave .
++Enclaves can have an arbitrary fixed set of entry points,
++entered with the leaf functions of ENCLU x86 opcode.
++Once entered,
++CPU executes inside the enclave and can access its memory.
++Exceptions,
++some x86 opcodes,
++and privilege level changes will throw the CPU out of the enclave,
++and they must be handled by the host.
++.PP
++SGX can only be available if the kernel is configured and built with the
++.B CONFIG_X86_SGX
++option.
++If CPU, BIOS and kernel have SGX enabled,
++.I sgx
++appears in the
++.I flags
++field of
++.IR /proc/cpuinfo .
++.PP
++If SGX appears not to be available,
++ensure that SGX is enabled in the BIOS.
++If a BIOS presents a choice between
++.I Enabled
++and
++.I Software Enabled
++modes for SGX,
++choose
++.IR Enabled .
++.SS Memory mapping
++The file descriptor of an enclave can be shared among multiple processes.
++An enclave is required by the CPU to be placed to an address,
++which is a multiple of its size.
++An address range containing a reasonable base address can be probed with an anonymous
++.BR mmap(2)
++call:
++.PP
++.in +4
++.EX
++void *area = mmap(NULL, size * 2, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
++                  -1, 0);
++
++void *base = ((uintptr_t) area + size - 1) & ~(size - 1);
++.EE
++.in
++.PP
++The enclave file descriptor itself can be then mapped with the
++.B MAP_FIXED
++flag set to the carved out memory.
++.SS Entering the enclave
++Kernel defines
++.IR __vdso_sgx_enter_enclave
++.BR vdso (7)
++for entering to the enclave.
++Further, the prototype for the
++.BR vdso (7)
++is defined by
++.I vdso_sgx_enter_enclave_t
++in
++.IR <asm/sgx.h> .
++.IR __vdso_sgx_enter_enclave
++wraps the logic for entering the enclave,
++and provides kernel assisted CPU exception handling.
++CPU exceptions are returned back to the host,
++which can then handle the situation in-behalf of the enclave.
++.SS Permissions
++.PP
++During the build process each enclave page is assigned permissions,
++as part of
++.I SGX_IOC_ENCLAVE_ADD_PAGES .
++These are the maximum permissions with which the page can be be mapped.
++If
++.BR mmap (2)
++is called with higher permissions than those defined during the build,
++it will return
++.B -EACCES .
++If
++.I SGX_IOC_ENCLAVE_ADD_PAGES
++is called after
++.BR mmap (2)
++with lower permissions,
++the caller receives
++.BR SIGBUS ,
++once it accesses the page for the first time.
++.SS Ioctls
++Enclaves are managed with the
++.BR ioctl (2)
++interface in
++.IR <asm/sgx.h> :
++.TP
++.B SGX_IOC_ENCLAVE_CREATE
++Create SGX Enclave Control Structure (SECS) for the enclave.
++SECS is a hardware defined structure,
++which contains the global properties of an enclave.
++.B SGX_IOC_ENCLAVE_CREATE
++is a one-shot call that fixes the enclave's address and
++size for the rest of its life-cycle.
++.TP
++.B SGX_IOC_ENCLAVE_ADD_PAGES
++Fill a range of the enclave's pages with the caller provided data and permissions.
++The pages added are either regular pages for code and data,
++or thread control structures (TCS).
++The latter define the entry points to the enclave,
++which can be entered after the initialization.
++.TP
++.B SGX_IOC_ENCLAVE_INIT
++Initialize the enclave for the run-time.
++After a successful initialization,
++no new pages can be added to the enclave.
++.B SGX_IOC_ENCLAVE_PROVISION
++Allow an enclave the enclave access the provision key,
++required for remote attestation.
++A file handle to
++.IR /dev/sgx_provision
++must be supplied in order to grant the permission.
++.SH VERSIONS
++The SGX feature was added in Linux 5.11.
++.SH SEE ALSO
++.BR ioctl (2),
++.BR mmap (2),
++.BR mprotect (2)
++.BR vdso (7)
+diff --git a/man7/vdso.7 b/man7/vdso.7
+index 9b426f823..d231c96cc 100644
+--- a/man7/vdso.7
++++ b/man7/vdso.7
+@@ -548,6 +548,7 @@ __vdso_clock_gettime	LINUX_2.6
+ __vdso_getcpu	LINUX_2.6
+ __vdso_gettimeofday	LINUX_2.6
+ __vdso_time	LINUX_2.6
++__vdso_sgx_enter_enclave	LINUX5.11
+ .TE
+ .if t \{\
+ .in
+-- 
+2.35.1
 
-AFAIK，NULL dereference is a undefined bahavior, can compiler quickly
-catch it? Or it can only be applied to some simple/restricted cases.
-
-> The existing loop leaves you with a valid pointer to something
-> that isn't a list item.
-> 
-> > > > Please remind me if i missed something, thanks.
-> > > >
-> > > > Can you share your "alternative definitions" details? thanks!
-> > >
-> > > The loop should probably use as extra variable that points
-> > > to the 'list node' in the next structure.
-> > > Something like:
-> > > 	for (xxx *iter = head->next;
-> > > 		iter == &head ? ((item = NULL),0) : ((item = list_item(iter),1));
-> > > 		iter = item->member->next) {
-> > > 	   ...
-> > > With a bit of casting you can use 'item' to hold 'iter'.
-> > 
-> > you still can not make sure everyone follows this rule:
-> > "do not use iterator outside the loop" without the help of compiler,
-> > because item is declared outside the loop.
-> 
-> That one has 'iter' defined in the loop.
-
-Oh, sorry, I misunderstood. Then this is the same way with my way of
-list_for_each_entry_inside(pos, type, head, member), which declare
-the iterator inside the loop.
-You go further and make things like "&pos->member == (head)" goes away
-to avoid calculate the HEAD's container_of pointer, although the
-calculation is harmless.
-
-> 
-> > BTW, to avoid ambiguity，the "alternative definitions" here i asked is
-> > something from you in this context:
-> > "OTOH there may be alternative definitions that can be used to get
-> > the compiler (or other compiler-like tools) to detect broken code.
-> > Even if the definition can't possibly generate a working kerrnel."
-> 
-> I was thinking of something like:
-> 	if ((pos = list_first)), 1) pos = NULL else
-> so that unchecked dereferences after the loop will be detectable
-> as NULL pointer offsets - but that in itself isn't enough to avoid
-> other warnings.
-> 
-
-Do you mean put this right after the loop (I changed somthing that i
-do not understand, please correct me if i am worng, thanks):
-       if (pos == list_first) pos = NULL; else
-and compiler can detect the following NULL derefernce?
-But if the NULL derefernce is just right after the loop originally,
-it will be masked by the *else* keyword。
-
-> > > > The "list_for_each_entry_inside(pos, type, head, member)" way makes
-> > > > the iterator invisiable outside the loop, and would be catched by
-> > > > compiler if use-after-loop things happened.
-> > 
-> > > It is also a compete PITA for anything doing a search.
-> > 
-> > You mean it would be a burden on search? can you show me some examples?
-> 
-> The whole business of having to save the pointer to the located item
-> before breaking the loop, remembering to have set it to NULL earlier etc.
-
-Ok, i see. And then you need pass a "item" to the list_for_each_entry macro
-as a new argument.
-
-> 
-> It is so much better if you can just do:
-> 		if (found)
-> 			break;
-> 
-> 	David
-
-this confused me. this way is better or the "save the pointer to the located item
-before breaking the loop" one?
-
---
-Xiaomeng Tong
