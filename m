@@ -2,273 +2,266 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E55C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu,  3 Mar 2022 17:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE631C433F5
+	for <linux-sgx@archiver.kernel.org>; Thu,  3 Mar 2022 21:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232200AbiCCRzI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 3 Mar 2022 12:55:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55536 "EHLO
+        id S236499AbiCCVYA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 3 Mar 2022 16:24:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiCCRzI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 3 Mar 2022 12:55:08 -0500
+        with ESMTP id S234572AbiCCVYA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 3 Mar 2022 16:24:00 -0500
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31B5C149B88;
-        Thu,  3 Mar 2022 09:54:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A18CECE901;
+        Thu,  3 Mar 2022 13:23:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646330062; x=1677866062;
+  t=1646342593; x=1677878593;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=PSUYa8WUxwLJWexK7gpm59vgTgLXt1xuSrv7ZCF/atE=;
-  b=A4B7LfZHHCJOQks1R0b+zZimd+S9ExmG9k+QIUnDSjl1qw7+Bnd7xWUt
-   xxN3Ud99/3TB5Na33K4g5tyiq6oTzwsinBpByXApAs9UevJAqlpdXiV2E
-   pPzUg+vS0S16RBVN6QbPEUwU4lYVB8NVgzy4/KzxYFxGLBjv2H6xWO6np
-   ezu2njM3VQJNKVaa+JAf0PfTxpPExYyGWy3MJWOFMa6msAzw+DA0Dmkh/
-   S9U+uc7d7CotohP03d6Me4G71tfl7qIDL0KTGvFOQjc7P9LC/ZyRnenAJ
-   8UpjeAqXrbgleSSpfVorFJpcjMqXUOtURnu7EQQRjV1ZjSZmGDnsFg49u
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10275"; a="340183925"
-X-IronPort-AV: E=Sophos;i="5.90,151,1643702400"; 
-   d="scan'208";a="340183925"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2022 09:49:28 -0800
+  bh=S/KwrJbu2OY4ntGg5Wm3B3inMX6kh41HB+6Wxm7AJvE=;
+  b=V6a0ceBeHMILLm4MyAes1dZsRDTFIox6dMCa0LbrEVqfllxHdal/u6Ls
+   0/YLXbdOV3J1B1z5TNdbDXRroj21MvdBabJhrnE09lDE3oWWMJ8EOP43z
+   mBqXShVorb/UFgDVajleRtv7/KIcNPozk9ZnSrfOx7s4YpoyWF1PaHR4h
+   HImzBEYTaVBvNYqfYShV/fZE/I7XE+6iGchXRGnbVQ8CXtJH70ACRm6YA
+   P5+2CZa8cRIEekXJI8L+eMIlDvWvvx3lzhImFT66NSHh5oen0IALSr1D2
+   aHWsOIGpnfpV7uvrvwdh5CBZ/DUffnvFDut3pu59TUhRIZFGSEmNrjVQl
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10275"; a="340248540"
+X-IronPort-AV: E=Sophos;i="5.90,153,1643702400"; 
+   d="scan'208";a="340248540"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2022 13:23:13 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,151,1643702400"; 
-   d="scan'208";a="594480249"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Mar 2022 09:49:27 -0800
-Received: from orsmsx604.amr.corp.intel.com (10.22.229.17) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="5.90,153,1643702400"; 
+   d="scan'208";a="576657629"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orsmga001.jf.intel.com with ESMTP; 03 Mar 2022 13:23:12 -0800
+Received: from fmsmsx605.amr.corp.intel.com (10.18.126.85) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 3 Mar 2022 09:49:27 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx604.amr.corp.intel.com (10.22.229.17) with Microsoft SMTP Server
+ 15.1.2308.21; Thu, 3 Mar 2022 13:23:11 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21 via Frontend Transport; Thu, 3 Mar 2022 09:49:27 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ 15.1.2308.21 via Frontend Transport; Thu, 3 Mar 2022 13:23:11 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.21; Thu, 3 Mar 2022 09:49:27 -0800
+ 15.1.2308.21; Thu, 3 Mar 2022 13:23:11 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nVmu0k7VDZzu0Xain1NvDmNLGFJtjyhGjUHMji8fW0kIhnotY+3JC93QNntXfgAqf1yhsbRxf9lXOzpU5iMM63bq+REE7EqQgxuh06k/3Y4rk1Ss9PBDIsG3uV3k8cr3/NLwqIk0/Cpb9NDKY44Ixv6dyvqXRhdTpK09GBDISkVDpHxLcxvx9fgRi8XYodBBR41tvKukAA/CC69aY6UC6FYxRUthVc89HGJQrPLd0tI22p73sLF9VNlFyxZIEruKx3MpAJoj/B9YzDMp3Y3f5CCcZ132KvvK272TQPIxxdHKfEbvQrVSytTm+FI1c5aJzKp6CUHkSxXohe/Azkxe2w==
+ b=CUI7Ut5heOez+p8X8aNP9ll580mpNivO149dcV/aXDrikwW10ulD04LGtEkPf1YkNrshb9aumMSMS7H7tpgXm9AE1RB4eGOywU+2ZsFGxcDHhNRyD/F0LOz/VdxI1oYxn7x9NsJht/W3kUgMHZTwLgvgo0mNR712hnS/2H1CGHvjRAQHTBVLMX0/vGL4J+v9DqCyuP4lx1ZbvLQm7/taSmizhqS9mXHMe4kK592awzBr5T30NAULUWCL2m8pB4OEtXsWp/Lq4k8BfgzieXrq6Flq0c3hy98GQCjuLYdlbUOtQVBbZiOiaEoj0fubaG7Gxleci9lYfn6hov0TBf9yfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YpRljGnyAYFRDGLuH7rCO/Ku5xOLEMxCj3VoSh7uq0c=;
- b=CPbnPGhhxXSJk+8W7BajKjKA2Zv8kQM7QWDdMU+DSfuhuuN2JhL40Rl/fPwuYL3sz+/sJhXe1whBWNZc9UL48mnnajWT+13OOjsT747FKDgfXCP2mcaOJGx4REVj1R91KJf2xahkDLrDkoi0iOZRgxvC3VhsskNa9+reHIbl1oHjP51IIIoV42cPYDDzNHRVRp18cUISjyCnN365oPw/dTtEWMSuINM7qkMQ+FL5xPFzJhjUsRgIEa0za8HWZDlgkjnrGJEBRfdI+LO1czq0pVG3CTcHRybxaGXL1dn2coeaqWZEsYbaalEJuNWTSZxtCWTNnOY9AtCWoJjN1ofq1g==
+ bh=9QVjmpnN63P7azjab12k4Lun7GFN3Yo6u6gJqdBsVsI=;
+ b=K3Z9FTgUCfSz82UmueHZuP4JL/ePgCra5PLJL1QGZdtUwC0x+OUbjBf49UGjrtGKveCaMQ+Mxy1VfcSncskTg2XxFU3rQbclgHFYipMWV7oPS0rXlPF8Jd3UQk+6tl7//zW54ZT57AyO8pEuj2CtMHqQTkbFPkH95ns9nzdm7w9nhMR5zGfQan9vBzPvNYJnUg5I6SPFX/AhMTcrxaXZNQRQoxHux+F299JtXDf4FUQL7bTh0sLlM6VTGJqTmL6FuULSKFsmYPfT/x/gDSf35CXaU94mbZGM3LnN24aLeNZKIW7/HycFpYN13kLqo8wJ/j6xNP3Nro4xciYZyGuSEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by BN8PR11MB3636.namprd11.prod.outlook.com (2603:10b6:408:8c::25) with
+ by DM4PR11MB5439.namprd11.prod.outlook.com (2603:10b6:5:39b::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Thu, 3 Mar
- 2022 17:49:23 +0000
+ 2022 21:23:07 +0000
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::55e4:9a32:8e6f:4774]) by BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::55e4:9a32:8e6f:4774%5]) with mapi id 15.20.5038.015; Thu, 3 Mar 2022
- 17:49:23 +0000
-Message-ID: <e1c8e8e9-4e56-6df7-c7b0-749a62d1dff2@intel.com>
-Date:   Thu, 3 Mar 2022 09:49:18 -0800
+ 21:23:07 +0000
+Message-ID: <19155cab-ecff-a8a6-f724-98c4535642ef@intel.com>
+Date:   Thu, 3 Mar 2022 13:23:01 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Firefox/91.0 Thunderbird/91.6.1
-Subject: Re: [PATCH V2 00/32] x86/sgx and selftests/sgx: Support SGX2
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
 Content-Language: en-US
-To:     Nathaniel McCallum <nathaniel@profian.com>
-CC:     <dave.hansen@linux.intel.com>, Jarkko Sakkinen <jarkko@kernel.org>,
-        <tglx@linutronix.de>, <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>, <mingo@redhat.com>,
-        <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <seanjc@google.com>,
-        <kai.huang@intel.com>, <cathy.zhang@intel.com>,
-        <cedric.xing@intel.com>, <haitao.huang@intel.com>,
-        <mark.shanahan@intel.com>, <hpa@zytor.com>,
-        <linux-kernel@vger.kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+CC:     Dave Hansen <dave.hansen@intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Shanahan, Mark" <mark.shanahan@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <cover.1644274683.git.reinette.chatre@intel.com>
- <CAHAy0tR-64vxtFo4KXiJP_va2=WF++Q6gDaPksNxiaSB5wWvhA@mail.gmail.com>
- <86495779-a9c5-45d5-0017-c491bf6354ab@intel.com>
- <CAHAy0tQYBD2b0jdim=6Zv+hwskyd1FhpycyGF+1FBHDih9TP3g@mail.gmail.com>
- <e746026c-33f3-fd15-5303-563b3eb761d3@intel.com>
- <CAHAy0tRXxDQSuBVoEW9jzpFaWns4DzWqmFASFNGgGb5vjnYuPw@mail.gmail.com>
- <b2733dba-278a-4574-f7ab-f035e97f762e@intel.com>
- <CAHAy0tRoy=qpn-OqKmEHaWSngO+_Ko+YYd3Aq7WGk+1=n8=2mA@mail.gmail.com>
+ <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
+ <YhLhoMFPyOFZ2fsX@iki.fi>
+ <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
+ <Yhy/GvJegnTqYdq6@iki.fi> <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
+ <Yh4fGORDaJyVrJQW@iki.fi> <Yh4i4hVcnfZ8QDAl@iki.fi>
+ <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com> <Yh7Q5fbOtr+6YWaS@iki.fi>
+ <6f65287a-f69c-971e-be2c-929e327e7ff9@intel.com>
+ <op.1igppyk9wjvjmi@hhuan26-mobl1.mshome.net>
 From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <CAHAy0tRoy=qpn-OqKmEHaWSngO+_Ko+YYd3Aq7WGk+1=n8=2mA@mail.gmail.com>
+In-Reply-To: <op.1igppyk9wjvjmi@hhuan26-mobl1.mshome.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0124.namprd04.prod.outlook.com
- (2603:10b6:303:84::9) To BN0PR11MB5744.namprd11.prod.outlook.com
+X-ClientProxiedBy: CO2PR04CA0171.namprd04.prod.outlook.com
+ (2603:10b6:104:4::25) To BN0PR11MB5744.namprd11.prod.outlook.com
  (2603:10b6:408:166::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6259142e-17b8-4df8-8d8c-08d9fd3e268a
-X-MS-TrafficTypeDiagnostic: BN8PR11MB3636:EE_
+X-MS-Office365-Filtering-Correlation-Id: 121deee3-3314-4537-0dba-08d9fd5c023a
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5439:EE_
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <BN8PR11MB3636FB1198D995E3A00F027DF8049@BN8PR11MB3636.namprd11.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DM4PR11MB5439A49F363A7315C098D1E4F8049@DM4PR11MB5439.namprd11.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Wl+9vMcwHuYjdpwaZLAhLBroShBDCHfU9A9nDjUZiZYHkkn3XnsdYzpoj1R2M8Zdiujz60dIs+n5h+WLAraBwTN8o0hhYfe2uVoRFlApA60h0Gox0qfrbBcYooL19XUwFMoBWriZQVqVFUgaKiqxvMR7D0KpAujWngt7+iOqsYhlXdcCNXZnfDKBGgE375eDJJo2jCh6Qm5qPnUEU0ht1nZbcaXQKc8wuyBOGL+1KxhH0P1ehD77hPGUbzVFKbqgBGL3fDplCCb5VJJMR83a+LAzsJ17Dv/Vm+cpSBpf4LES/cZJBon7ueKGfVfvh2cSGB5nIxRPrQLdi96tejV+0GJjmuTFgh0W4uhHukNeBGMiM0aEQ2SAnhFqH99W79jEsiKijCmowUXmJ1jfLwRmVPIXZiviQBS6wf3mzYHr+liMbJy+MI+JfHnVeEJhB0khsexQHFqK9UlGyve4KS7x163vcdUCpMubaqXVipMvCwtJpCM20vZMydFZuMs+dammU8YeheDekxhftysUFOdyThbhfdUatO5bK8NILw2NeQe3MPPs+LV9rU5VcggqdKe9EZknkbBs8wvSjOQzHYnz9TNhMiG1j6AJPndambHJlQ8oshYhXzqcSz+9uwTqnoyIck/Z3dlAFQQdLR1+0UOFQXs4HeVqtzHGxiZGmQUGiRIUsZIgg9Gycue4+/w42BJawo6qRmuIWRcoq78+g8SPP05pERh4ImvdHFOPLjC0AE2WMrKOnL8EWQFgGJBuAFcjpHSa+loZkkshcji0glWcFo3CxldYquARdO7QMoEvoawmGFSFidX20eWXVHmrR7iP
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(508600001)(8936002)(6486002)(83380400001)(5660300002)(2906002)(82960400001)(7416002)(2616005)(966005)(6512007)(316002)(6506007)(53546011)(31696002)(38100700002)(6916009)(186003)(6666004)(26005)(54906003)(86362001)(4326008)(31686004)(8676002)(66946007)(44832011)(66556008)(36756003)(66476007)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: UHUkEUH+R7rQV8H8+i42nP8MqnslaX6bHLLva7tM5VZngfxfbUBnosBUK9iGbLjhzrpiZeTLJgNzIVArjzFQIUAjRMZfRh/aqWEwlxdb3xFjrwl7P9ia4CA3Unik1m22u7PAdHjq2izBf0j/a2wsfvZfpkRnNBQAg7+xgX5pePIoCq9VONpieICvzW/rbjIsqcOkeFMluuEFuFbKUtu1TtTtp/rqZ7Vf6xMw9NYWzvr7ZvWHMxPeE+3na4Sf0gLAPPfKKZYKG8xTukFGk8gSpsWpylx8O9A0uofbVoNXoP9hIWbZJT5C9mbcFJAfovz4qQD6BD8MTmgqHx1NgcK5TOco+9Od2DzMIBNeT8BcJAFM46N+ApAsLBc9e/Dhpymokc87U/4l7QutdLjcFthIrbn3o48LSbdAiIsOrEbNtphOw4r50JyY52bWSVxLiU6u5eDJidssK4RnW7dQ1ebeecOCrCC0qZcs89d1yowEnLLapA1v5Xobs+qSwgRKNMSDKRNZgzj6XdgLyVS2qYmUwAho41xHsPkRkD6r1qHAb8w0PXIjkXDdCNZ5cDbUJpxxOaZ6bhTQ8Uii6fK3YisHqlGxCOiC5qUvK+VQTXnSG6yAe5zOpT2M/DuNoGU9FKNitkswjfLjPL2NxRdJs1HgnIfR1vM7j/zxMDkOcDOyBAInDyPquQSw74O6QPwXS5WN1cXzUGSUr0naCZD+YFhYsXu0yGUoZvkGkXr6rb5ifuG8J282fV3os5920XLJYjz0
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(8936002)(83380400001)(2616005)(54906003)(44832011)(7416002)(86362001)(31686004)(6486002)(508600001)(36756003)(31696002)(186003)(26005)(5660300002)(110136005)(316002)(6666004)(66476007)(66946007)(66556008)(8676002)(4326008)(38100700002)(82960400001)(6512007)(6506007)(53546011)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZmZFL0psQzZvNEZUWkJEMVNORWlxckZUQXNkY1Y4bnk2eUt6OW96aGNpOUoy?=
- =?utf-8?B?TFU3TmZ2SENkemVJaEZsc2l3WU1NVTVibmViRW1UczcyTDk2QmpReDN3WFFq?=
- =?utf-8?B?bXRqTlhpVFEzWlViMnFUUUwzZGRGU1dFcjNGa3liTDIwdUpkcWc5SEkvZXVK?=
- =?utf-8?B?ZXMvY2hHVzh5SFIzcGR0cGVpSlpIMnV2SmNhOHFQa1NSRkxSQVdiUjd6OXNL?=
- =?utf-8?B?WmJMU2VVSFZReTNlaFJVUEdWR0FUbldCRUk0aVVlV1RsZjJMQVBkM1c3M25p?=
- =?utf-8?B?cE12cXpjWkNpekYxUjZDNGdWMzh1ZnB4aDFZaVQ2aUNtSllUWEI5a25adjlX?=
- =?utf-8?B?WDM3eWg5Tlg3V3RUZk5KdlVHdTdSZ1MxL2p5NWl4eXUxcGJMdndsQ1JzdVlL?=
- =?utf-8?B?MitSNlQ1TVd6MU5QekJyOThFZ3hiNkhxS0M1Z2VBWXl0V3hBYlg2ZjQ3RGFj?=
- =?utf-8?B?TmRvM2IyOVdkZkxRcnBxaGw1eEZnd0N0MnNkckYxMzVyMGZPL3VzR1Mxa005?=
- =?utf-8?B?UXRYL3pxb1EwOGpBUzRyWm5zY21TKzJ6emluN2pUVGcwdkV4YjlhR1RIbkZ4?=
- =?utf-8?B?VzdORGpidTFFSXhkQnUrY3RuL3ltWFRjTUZTaGQ2Sk9MZ1lzUDhmY2VJRFdB?=
- =?utf-8?B?YmRJOWo5RjBPRllTWHZpMFBtUWU0b2RKdEllbi9yd0gvaVA2Y1oxZ3UyYVEz?=
- =?utf-8?B?VEE0UmhqMTNoNXpwV3g3MG1abEVaN09Zc1hrYkNmOFQ4VDc2TE9BK3A0cTM2?=
- =?utf-8?B?R0pCcy9MY3dBNTNqM3JWUmk5RFZWcVp0Q0hOYW5IckRIdGhTTllqeldIM1lw?=
- =?utf-8?B?QlR5czVrTTgwRlZZemVTRjFHUmZsUUI5ZG45OUFyYXAwWU5qOWFpYW1wM084?=
- =?utf-8?B?Z2xMRlAyNDJEYmtINFZLRkFNRlBYRktpRld2ZzlVaVlsc1hOWm1aaXRtdWta?=
- =?utf-8?B?aHhsclRaWDd0b3dSQkxITTlUNFlZRmZSanJFek41OUUvTVEzRXhUU1hMYm9h?=
- =?utf-8?B?QWpWVHdWUk1VN2Y2dmtKSFFOYVBvWUdMM21MSm5pU0hRbnJCNXZnRzRaMnB3?=
- =?utf-8?B?R0dON0h3bVNEcmVzM0NuWVlFa0FqK2FQbFJIeVA4Y0VJUDF2UE1VUXVzNnUx?=
- =?utf-8?B?L2FrdzlKTlR2SFo2QjZMTGp5a2c0eXNrL3pWR3F5c1ZnNlFBU21ZVkNGVUNS?=
- =?utf-8?B?WlFoZVZWdG1yZWtHaEVGQ0VYWFZlZ0tFdE95eFFzcHRpZEpSdGMvYXpOV2kr?=
- =?utf-8?B?eE9pK1RMUW5IYnhCU3djdEhTOFE0S0N1TGdJUk90UjNiMXM3RkVNc3lLeFRr?=
- =?utf-8?B?Y1liNHk4anV0STRTSHBLSWh1Wko0bGFIcnlmcnhycHZHZzNZamoxZ3gvMlVh?=
- =?utf-8?B?YitHZkVldHBRYTdodStrNnVIRThySk5zd3dvSE9DVitnMHA4eXZZcGwxTGhD?=
- =?utf-8?B?SkhQVXhTQm5mbTB5Zk42UEVNTkkwbStPTDVnNnJKTFpWbll6bjZhcHVsR2JN?=
- =?utf-8?B?MjVFUzYvNVpvTE5vLys0RUJXMmlkeXM0SndUcUpOcnhwR0JyaXBFMEFSRlRh?=
- =?utf-8?B?MW9VaTNoWFpSMWJwMzkraWFLNG81YmpzbE5FTGw0c0tGS2twUnM1S3VsZGli?=
- =?utf-8?B?eWtZUG1tSkwwMjFERE5ocnNFcG5LY1o0dHZ4ejlON2phUjk1RGw0Z0xvNXoz?=
- =?utf-8?B?cW4wQ21VdVJvRDZuLzZqTlNNbkdDdEhEdWlIbHhvQUhYd0hnenRlNzZTOWtr?=
- =?utf-8?B?ZVdXMVczck56OE0zdGR0M1o3bEhPSlpRQ011MGk4QVh3c3huREF6RjR6V0tw?=
- =?utf-8?B?ZW43QWExU0dxazZsZDZCaE9ETDVOZEFHbVB4NjJuSVVQd0JXL08wTjJWdEFn?=
- =?utf-8?B?QjBlcGdGZm51OVpQZlJVMnlEbGRYck1MVzE1WmVRT1VXTDVpTmp3MTIzMlFj?=
- =?utf-8?B?TFFocjhQS3RQcE5nR3JKamxETUZlY3lUdGZET0NxL0FoVTRZMTNDNU8yb25m?=
- =?utf-8?B?bDlLT2RKQzZZRlRZR2hsZ0V3QUZEei9pT0xEYWFpVE11QVlBTlNhcjVTanZ4?=
- =?utf-8?B?czJLZ256TmtsdU56RVV2YjhkVk9NbDl5M3FlODNEQWhnYUk5dlE0R29sbEVq?=
- =?utf-8?B?MTJwY0tTZXdQeDZtQVVMbWZoeXcxa1ZVRWF6YXVWME95Skw5WnpqNlFFQU5N?=
- =?utf-8?B?VVk4YVJqRnFzSDBaM3NIa2YvUmprSUFRbUFpUlFWK0E1dGxCcHU0NFc5WUdV?=
- =?utf-8?B?NUt2Yjl0SHFndmRBdEU1ZlU3b0dBPT0=?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6259142e-17b8-4df8-8d8c-08d9fd3e268a
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d0tWQmZPTGVuODBFKzB4dGloSDd4R2ZudURrdU9pOWRVK2VhbndoYWFzMVN5?=
+ =?utf-8?B?TUEvaHNJREQ4dkF3cGNWb1N3N2wwTHBmZzVKcFhiNlJVOExoRUNpVWJ0L0RM?=
+ =?utf-8?B?d1JlVmt4bmJqOC8zU1dMMHpkaWtvK1ErTzRhRnFDQkpmMEpLakMvYlFOQnpO?=
+ =?utf-8?B?T0FnWU55eGNSb1dCcDRLc3FHV3VmWWN3enVhL3NSZzc1MlN5MTBNRGVjREdr?=
+ =?utf-8?B?MkwzTWhoclA2SUdxeXhrK1FOS2hIaTFqVGgra3l6ZExSMTJiM01QbGJxSmpC?=
+ =?utf-8?B?eHo4bkhkYUM4bWN2Sno4c3g5ck03dFBZeElUVnFNYmhEZkJLeE1Oa3lNQk5W?=
+ =?utf-8?B?YnVycFpiUzZMNTY2N1dldi96bWIrS3pwdUJ5NGVUbk1VMlZDa0ZRVTZHTEdE?=
+ =?utf-8?B?ejRMWDFQQkZzVy9vaGFFeldHZEFzTUpidThhd1R5RTVvMkJ1Q2c1ZFAzc1ly?=
+ =?utf-8?B?WHdCWmxvSVBRMko3YUxyRWxuOUlXVHZGcGx1bGdzeXRHZ0dENzErOUFFclZL?=
+ =?utf-8?B?Z2Y2OC9PQVJoSmJ4MmgrZ1JWNVhFTkxnaUJkWHMyNHF6aGFqSkptNlhDV1BQ?=
+ =?utf-8?B?MjVScktieVRGdFlycmx6TmtDUVVGVUgxblJTTGg2WnBQSUpCZ0xmdFpSQ243?=
+ =?utf-8?B?dFpjUm5lUU9FcWRMZzkzcnZkbHU3cjF1MUo4VlJoQk84bU5aNGVscWV6OEpC?=
+ =?utf-8?B?OGU1OVZFYksybEhVVmxDRGx3dHUrR3l3dXpKZS9ibzNpVDNHaVpxSWsvMWhV?=
+ =?utf-8?B?TTBCYzU3bEdPQTc0eWJ4SVROSTZjY05aMy9NSVlRWnZBY2FZbVBTR0lCazlC?=
+ =?utf-8?B?Q0kvdkp1YWdXalZTUFVOcmZEaEJVZDFsWXRQMGt4YkZ3cUptb2JWUzZ6b2Va?=
+ =?utf-8?B?Ump3MS9EMEFjNlRPQWc3Z3BNdFdsMmlNRU14VllOR1RLWEpWZnp4K1FXWTd0?=
+ =?utf-8?B?am1wUDlmakkzS0tzQXJNOWNOcVpFTmJDcm5wZlg1M2hzbm1YSzNGUHFCTFNM?=
+ =?utf-8?B?Ymk3eDZHeXVvdVNKK2ZBVC94blRIbnFWQlR1Q29XT1ltNnppTFVYU0M0SVFM?=
+ =?utf-8?B?RnZzTFNiSEY1RG80ZUhGM3RJWDB5bU1jdCtqcFhnVTQzWngwbnZQcEhQbVlh?=
+ =?utf-8?B?ajlqQlZQRS9lNENTdnpYYmpEcTNpM2JzWEpNSVhDeGJoK0xzNkNBN1dxb0Fz?=
+ =?utf-8?B?TlVNMUVOYnRabGM3cWxnNzAxbEdBcXZ0bWpIR3dtcnR0QkxKaHFsTE1FSVNS?=
+ =?utf-8?B?cnFadWV3cHE0a0VhRVhMQ0UwS0NCSVpLUkcwSUJ3cE04aGxiMG5oNE1ZeTNk?=
+ =?utf-8?B?MmFKK01JZk9YVkV6NlkxUlBtZWx5bCs0M1lTRVhlc0oyWElLTUFaandZRllV?=
+ =?utf-8?B?MWZTWVQ2cm8xTENYbUlHWlA0L3lTcHFMWklsK3k1bE1QZTNiUGxnS2JONmI3?=
+ =?utf-8?B?QjRLOEczQ2xnUlF0bDYvTkp1Wk9qUEFLbHluMlYzSjd0a2t0dk03UUR0T3BX?=
+ =?utf-8?B?VzVjVjBGTzVtY29CVVRRTTdPWUtXZ050T2VwakhScHRmWmFoOVFSdzBEVG16?=
+ =?utf-8?B?Ym5PelVrdHRhTVU3cll3ZGpyeFN3WmdtZlZqdURsT010KzdOblN3aS81TEtK?=
+ =?utf-8?B?Uk12WHhvVm02RnIvWmdsQ3lhZlNPZVk1b1RxcXF4U29iZldXcVgxTDlqWFh2?=
+ =?utf-8?B?RUFZVEV3VkFGcCtPRVZuQ0dza3E0R2NkNmVHaWc3RWhmeHNqRTJocUlnYlhu?=
+ =?utf-8?B?ODNEdUloWXZaMXhic0Q2a1ZuTWJIOGpSRDlva1FYSlFjWFlZM3E1SjcxYXRy?=
+ =?utf-8?B?WnpBWVBmWXkvQ2lMdTZqejZTdEhLN1p0T2N0ZXhCME9SOGoyQWtZT2FvU0pM?=
+ =?utf-8?B?dzgrUEV1TGxRQllzQVVlTHpJK2lPOUZyM1hjb0xFamZ6djlWK3RmdDRuaEpy?=
+ =?utf-8?B?cE9ETGdLNURDZlRoWWZVb0ZsM1BQamM5OCtMeFlKU0c3T09MbTJ3Zit2ekZx?=
+ =?utf-8?B?d0VPOW1hNk85LytRZWdxbjN1VkNLbU8xQlZiMGNsc09CZ3VLUXNBa0hpemNl?=
+ =?utf-8?B?OERZbTR5blJHYVJlRDdPbEd4cUdPeWR6aG9wQk53WHpSMGNqaW94SkU3a2Nw?=
+ =?utf-8?B?Z0R1M0F2dDMzWWlRUkVLaGxRNlhCZjhoSHpHeHh4eG9wdnlhOGtsSFRGVExE?=
+ =?utf-8?B?M2VOZ3ZZc1JIWDFVRzNQMEx0QUZRRVZLVFZEbTFFcHJMbjRLUGxwalU3cFNO?=
+ =?utf-8?Q?m68WEUH/k2YCMdGDbXeV6hnoaxUFqU9DmBfOPehzqo=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 121deee3-3314-4537-0dba-08d9fd5c023a
 X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2022 17:49:23.1830
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2022 21:23:07.3780
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SYyXdPv60AQbSMM3XNwLctk5pHT3Xrvc9U44xGIwneJ1sBXWh4Y7Ck5F3AaIhcgZwueaVROUU2X73MoXvF97Bz9gCTU3ZeesuDywhjHSQiM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR11MB3636
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZuAoJyVKaZELSjAxRY6RjGWrbX5MQWw+sKMwHsxXcB3w9vFBxXxjzcH7iSdZYGJyDqC6QMPEzLj6HjNwZTIucPrAlCFoFinNebUXYZIW5y8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5439
 X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Nathaniel,
+Hi Haitao,
 
-On 3/2/2022 5:13 PM, Nathaniel McCallum wrote:
-> On Wed, Mar 2, 2022 at 4:20 PM Reinette Chatre
-> <reinette.chatre@intel.com> wrote:
->>
->> Hi Nathaniel,
->>
->> On 3/2/2022 8:57 AM, Nathaniel McCallum wrote:
->>> Perhaps it would be better for us to have a shared understanding on
->>> how the patches as posted are supposed to work in the most common
->>> cases? I'm thinking here of projects such as Enarx, Gramine and
->>> Occulum, which all have a similar process. Namely they execute an
->>> executable (called exec in the below chart) which has things like
->>> syscalls handled by a shim. These two components (shim and exec) are
->>> supported by a non-enclave userspace runtime. Given this common
->>> architectural pattern, this is how I understand adding pages via an
->>> exec call to mmap() to work.
+On 3/3/2022 8:08 AM, Haitao Huang wrote:
+> On Wed, 02 Mar 2022 16:57:45 -0600, Reinette Chatre <reinette.chatre@intel.com> wrote:
+>> On 3/1/2022 6:05 PM, Jarkko Sakkinen wrote:
+>>> On Tue, Mar 01, 2022 at 09:48:48AM -0800, Reinette Chatre wrote:
+>>>> On 3/1/2022 5:42 AM, Jarkko Sakkinen wrote:
+
+...
+
+>>>>> I think the best way to move forward would be to do EAUG's explicitly with
+>>>>> an ioctl that could also include secinfo for permissions. Then you can
+>>>>> easily do the rest with EACCEPTCOPY inside the enclave.
+>>>>
+>>>> SGX_IOC_ENCLAVE_ADD_PAGES already exists and could possibly be used for
+>>>> this purpose. It already includes SECINFO which may also be useful if
+>>>> needing to later support EAUG of PT_SS* pages.
 >>>
->>> https://mermaid.live/edit#pako:eNp1k81qwzAQhF9F6NRCAu1Vh0BIRemhoeSHBuIettYmFpElVZZLQ8i7144sJ8aOT2bmY3d2vT7R1AikjBb4U6JO8UXC3kGeaFI9FpyXqbSgPTmg06j6uiu1lzn2jSKTA2XwD9NEB31uPBLzi-6iMpLnYB8Wn4-kOBYpKBW52iXj8WQSmzEy5Zvt01ewG5HUQN2UEc7nK77YPjdALd64GWih8NpkALGwR_JtzOGAaKXexyTKGEt2pgoMaXahgj5Qgk9nM_6xGvDDJpsmOyiVv0LB62B8un4dBDrLiLPeWciCL9fvvKVQizhSG6stFz9Df7sxUpcYitR-SodFO2A_Vw-7l4nzzduqjX9bKJxOHDDeBB3RHF0OUlS3faq1hPoMqzulrHoVGPZOE32u0NIK8MiF9MZRtgNV4IhC6c3yqFPKvCsxQs3_0VDnfzf-CPg
+>>> You could also simply add SGX_IOC_ENCLAVE_AUGMENT_PAGES and call it a day.
+>>
+>> I could, yes.
+>>
+>>> And if there is plan to extend SGX_IOC_ENCLAVE_ADD_PAGES what is this weird
+>>> thing added to the #PF handler? Why is it added at all then?
+>>
+>> I was just speculating in my response, there is no plan to extend
+>> SGX_IOC_ENCLAVE_ADD_PAGES (that I am aware of).
+>>
+>>>> How this could work is user space calls SGX_IOC_ENCLAVE_ADD_PAGES
+>>>> after enclave initialization on any memory region within the enclave where
+>>>> pages are planned to be added dynamically. This ioctl() calls EAUG to add the
+>>>> new pages with RW permissions and their vm_max_prot_bits can be set to the
+>>>> permissions found in the included SECINFO. This will support later EACCEPTCOPY
+>>>> as well as SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
 >>>
->>> This only covers adding RW pages. I haven't even tackled permission
->>> changes yet. Is that understanding correct? If not, please provide an
->>> alternative sequence diagram to explain how you expect this to be
->>> used.
+>>> I don't like this type of re-use of the existing API.
 >>
->> Please find my attempt linked below:
+>> I could proceed with SGX_IOC_ENCLAVE_AUGMENT_PAGES if there is consensus after
+>> considering the user policy question (above) and performance trade-off (more below).
 >>
->> https://mermaid.live/edit#pako:eNqFUsFqAjEQ_ZWQUwsK7XUPgthQeqiUVang9jAkoxu6m2yzWVsR_72J2WTbKnSOb97MvPeSI-VaIM1oix8dKo4PEnYG6kIRVw0YK7lsQFlSghGfYPCy845GYXWJm05ZWV8ZaEt55QB-IS9UwOfaItF7NGc0I3UNzU3-ekvaQ8uhqiLPd8l4PJnEYxmZsvXm7i20e5B4QlA5rAqMgJJfG9Ixg21X2ctVXn9GGJsvWb65729FSZXWDdlqpxx46Qzu-gB8-cHzhhim2zKdzdjLcuAAt3IPzv6Qkq84EdxGM3492UJS-cdSpLHp6nEgCPz3RjI5NPvAlRisJjspOsbWT8sUyc_MwjuynC1Wzyw9EB3RGk0NUrgvePRYQW2J7tNQd5sKDN5ooU6O2jXCiWZCWm1otoWqxRGFzurFQXGaWdNhJPXfuGedvgFejOuH
+>>>
+>>>> The big question is whether communicating user policy after enclave initialization
+>>>> via the SECINFO within SGX_IOC_ENCLAVE_ADD_PAGES is acceptable to all? I would
+>>>> appreciate a confirmation on this direction considering the significant history
+>>>> behind this topic.
+>>>
+>>> I have no idea because I don't know what is user space policy.
 >>
->> The changes include:
->> * Move mmap() to occur before attempting EACCEPT on the addresses. This is
->>   required for EACCEPT (as well as any subsequent access from within the enclave)
->>   to be able to access the pages.
->> * Remove AEX[1] to the runtime within the loop. After EAUG returns execution
->>   will return to the instruction pointer that triggered the #PF, EACCEPT,
->>   this will cause the EACCEPT to be run again, this time succeeding.
+>> This discussion is about some enclave usages needing RWX permissions
+>> on dynamically added enclave pages. RWX permissions on dynamically added pages is
+>> not something that should blindly be allowed for all SGX enclaves but instead the user
+>> needs to explicitly allow specific enclaves to have such ability. This is equivalent
+>> to (but not the same as) what exists in Linux today with LSM. As seen in
+>> mm/mprotect.c:do_mprotect_pkey()->security_file_mprotect() Linux is able to make
+>> files and memory be both writable and executable, but it would only do so for those
+>> files and memory that the LSM (which is how user policy is communicated, like SELinux)
+>> indicates it is allowed, not blindly do so for all files and all memory.
 >>
->> This is based on the implementation within this series. When supporting
->> the new ioctl() requested by Jarkko there will be an additional ioctl()
->> required before the loop.
+>>>>> Putting EAUG to the #PF handler and implicitly call it just too flakky and
+>>>>> hard to make deterministic for e.g. JIT compiler in our use case (not to
+>>>>> mention that JIT is not possible at all because inability to do RX pages).
+>>
+>> I understand how SGX_IOC_ENCLAVE_AUGMENT_PAGES can be more deterministic but from
+>> what I understand it would have a performance impact since it would require all memory
+>> that may be needed by the enclave be pre-allocated from outside the enclave and not
+>> just dynamically allocated from within the enclave at the time it is needed.
+>>
+>> Would such a performance impact be acceptable?
+>>
 > 
-> https://mermaid.live/edit/#pako:eNp1U9FqgzAU_ZWQpw1a2F6FFaQLYw8ro7asUPeQmWsNNYlL4rZS-u-LRmut1ie953jvOecmR5woBjjABr5LkAk8c7rTVMQSuYeWVslSfIH23wXVlie8oNKijGr2SzUMkT1oCfmwrktpuRj5wWRcDKvwB0ksfX2hLCD1A7quBkgIWtwtP-6ROZiE5nnLq1A0nc5m7bAAhWSzffj0cFNEFaEaGiBCFiuy3D42hKp4gWZUshy6ISOUL6X2e4CCy10rQhUW8dR52QESivGUJ9RyJQ2SAAyYZ_V6ndUSsnldneVca_bJdvY7lkf6vc4haTBlbsdbDmLoaLlSBUqVy5wmWW2nw3rq26Pg-oTzOXlf9Xkt7BfTeqjjSWlP2JWTlkrC9cutlmcLlUlxoRBkE3T9Mrq7KArd0UBPqFDGTpstI2OphSv-jf1cBukPJlmSaP1GXFs8wQK0oJy523Ws-DG2GTiJOHCvDLx3HMuTo5YFc1MJ41ZpHKQ0NzDB1fWLDjLBgdUltKTmhjas0z-kWy8L
+> User space won't always have enough info to decide whether the pages to be EAUG'd immediately. In some cases (shared libraries, JVM for example) lots of code/data pages can be mapped but never actually touched. One enclave/process does not know if any other more important enclave/process would need the EPC.
 > 
-> My comments below correspond to the arrow numbers in the diagram.
+> It should be for kernel to make the final decision as it has overall picture of the system EPC usage and availability.
 > 
-> 2. When the runtime receives the AEX, it doesn't have enough knowledge
-> to know whether or not to ask the kernel for an mmap(). So it has to
-> reenter the shim.
+> User space can provide a hint (similar to MAP_POPULATE) to kernel that the mmap'd area will soon be needed and kernel should EAUG as soon as it sees fit based on current system usage. Or kernel implement some policy to avoid #PF triggered by EACCEPT, for example, if the system has ton of free EPC relative to the requested by mmap at the time.
 > 
-> 3. The shim has to handle the syscall instruction routing it to the
-> enclave's memory management subsystem.
-> 
-> 4. The shim has to do bookkeeping and decide if additional pages are
-> even needed. If pages are already allocated, for example, it can skip
-> directly to step 13. However, if modifications are needed, it will go
-> to steps 5-12.
-> 
-> 5-12. This is the part that represents new code from the kernel's
-> perspective for SGX2. It is also in a performance critical path and
-> should be evaluated with greater scrutiny. The number of context
-> switches is O(2N + 4) for each new allocated block, where N is the
-> number of pages: a context switch occurs at step 5, 6, 7,  8, 9/10 and
-> 12. However, this can be reduced to O(4) for each new allocated block
-> with a simple modification:
-> 
-> https://mermaid.live/edit/#pako:eNqNk11rwyAUhv-KeLVBC9ttYIXQydjFymhaVmh24fSkkUbN1Gwrpf99pvlsk8G80nMez3l91SNmmgMOsIXPAhSDR0F3hspYIT9o4bQq5AeYap1T4wQTOVUOpdTwb2pgmNmDUZAN46ZQTsiRDTYVchiFH2CxquIL7QDpLzDnaICkpPnN8u0W2YNlNMsarsyi6XQ2a5oFKCSb7d17la6DqATKpgEiZLEiy-19DZTBXjalimfQNRlBPrTe7wFyoXaNCJ07JBJ_lh0gqblIBKNOaGWRAuDAK-qiVquWkM3zqpVzrblytjt-R2Va5yjR3h_K0nPrLleOaudFERKunzoIVE9Xj26VtZYbsEXmxgUOTP2_witfSTifk9fViMDzZPQuoij0V40eUK6tm9a3hqyjDq74P_zuH6V6aGRJovUL8WXxBEswkgruf8ux5GPsUvDvGQd-yiGhpS04ViePFjn3XQkXThscJDSzMMHld4oOiuHAmQIaqP5xNXX6BeBJIEk
 
-Your optimized proposal is possible in the current implementation as
-follows:
+mmap(...,...,...,MAP_POPULATE,...,...) would be most fitting and
+ideal since it would enable user space to indicate that the pages would
+be needed soon and the kernel can then prefault the pages. This is already
+desirable in the current implementation to avoid the first page fault on
+pages added via SGX_IOC_ENCLAVE_ADD_PAGES.
 
-https://mermaid.live/edit#pako:eNp1k11vgjAUhv_KSa-2RJPtlmQmxvViFzOLuMxEdlHbgzTSlrVlmzH-9xUBUWFclfc8nI-X0wPhRiCJiMOvEjXHZ8m2lqlEQ3hY6Y0u1QZt_V4w6yWXBdMeMmbFD7PYj-zQasz7ui21l2rgA5dJ1VfxF3mia31uPIL5RntSI1CKFXeLj3twe8dZnrdcFYXxeDJpi0Uwpav1w2cdbkSogKpoBJTOl3SxfmyASryIZkyLHLsiA8jGmN0OsZB62zZhCg8yDbNsEZQRMpWceWm0A40oUNTUVa5zt5SuXpbndm57rp3txu-oOnKd62ySRVfmfjhlz4YOy40pIDXBc8az0zhdbMAJOp3N6NuyY1A3o54Og-7F8TT8HHiCwjg_bnwG55nHG_4fhy5HqVeDLmj8_kpDWjIiCq1iUoT9PlR8QnyGYQNJFI4CU1bZQhJ9DGhZiFCVCumNJVHKcocjUl2AeK85ibwtsYWaO9JQxz-gBQs-
+Unfortunately MAP_POPULATE is not supported by SGX VMAs because of their
+VM_IO and VM_PFNMAP flags. When VMAs with such flags obtain this capability
+then I believe that SGX would benefit.
 
-You can think of that EACCEPT instruction similar to a current (SGX1)
-enclave memory read or write when the enclave page is not currently in
-the EPC, for example, if the enclave memory being accessed is swapped
-out and need to be decrypted and loaded back. Instead of ENCLS[ELDU]
-incorporated to load the enclave page back into EPC, ENCLS[EAUG] is
-incorporated to create a new EPC page.
-
-You can find an example of such a flow involving EACCEPT in the
-"augment_via_eaccept" test found in "[PATCH V2 21/32] selftests/sgx: Test
-two different SGX2 EAUG flows"
-
-
-> The interesting thing about this pattern is that this can be done for
-> all page modification types except EMODT. For example, here's the same
-> process for changing a mapping from RW to RX:
-> 
-> https://mermaid.live/edit/#pako:eNqNk11rwyAUhv-KeLVBC9ttYIVCvdhFu5F0UGh24fSkkUbN1Gwrpf995jttMphXes7jOa-vesZMc8ABtvBZgGKwEvRgqIwV8oMWTqtCfoCp1zk1TjCRU-VQSg3_pgbGmSMYBdk4bgrlhJzYYFMhx1H4ARarOr7RDpD-AlNFAyQlze_C3T2yJ8tolrVcmUXz-WLRNgvQkuz2D-91ugmiEiibBoiQzZaE-8cGKIODbEoVz6BvMoF8aH08AuRCHVoROndIJP4sB0BSc5EIRp3QyiIFwIHX1FWtTi0hu-dtJ-dWc-1sf_yeyrTOUaK9P5SlVes-V45651URsn5ZvYY9BmqgbMB32jrTDdgic9MSR7b-X-ONs5U-MqGvmkxeRhQt_V2jJ5Rr6-bNtSHrqIMb_g_DhyepXxoJSfS2Jr4snmEJRlLB_Xc5l3yMXQr-QePATzkktHQFx-ri0SLnvivhwmmDg4RmFma4_E_RSTEcOFNACzVfrqEuvytQILY
-> 
-> My point in this thread has always been that it is an anti-feature to
-> presume that there is a need to treat EPC and VLA permissions
-> separately. This is a performance sink and it optimizes for a use case
-> which doesn't exist. Nobody actually wants there to be a mismatch
-> between EPC and VLA permissions.
-
-I assume you mean VMA permissions. It is hard for me to trust the statement
-that nobody wants there to be a mismatch since VMA permissions being separate
-from EPC permissions is an intentional (as documented) and integral part of the
-current SGX ABI. Current SGX implementation explicitly checks for and supports
-VMA mappings with permissions different from EPC permissions.
-
-This SGX2 implementation follows and respects the current ABI and changing ABI
-cannot be taken lightly.
- 
 Reinette
