@@ -2,202 +2,119 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF965C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu,  3 Mar 2022 01:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F37CC4321E
+	for <linux-sgx@archiver.kernel.org>; Thu,  3 Mar 2022 02:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbiCCBO7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 2 Mar 2022 20:14:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
+        id S231805AbiCCC2m (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 2 Mar 2022 21:28:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231268AbiCCBO4 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 20:14:56 -0500
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0B210FFC
-        for <linux-sgx@vger.kernel.org>; Wed,  2 Mar 2022 17:14:07 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id bm39so2873625qkb.0
-        for <linux-sgx@vger.kernel.org>; Wed, 02 Mar 2022 17:14:07 -0800 (PST)
+        with ESMTP id S231743AbiCCC2i (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 2 Mar 2022 21:28:38 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B340D10FC6;
+        Wed,  2 Mar 2022 18:27:53 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id p3-20020a17090a680300b001bbfb9d760eso6464723pjj.2;
+        Wed, 02 Mar 2022 18:27:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profian-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Wi6L8alYy4V4SsfLlVtyi/z2L0oc5Zl5QzoxxcNQf/I=;
-        b=vo9Yjirf0Zq3WgOxoTSy4UnGcRGG9B7+HsAJscLXwWmP9qV1b/MahfajWNyyE8Sbi3
-         LoS/+1v4TlWzgY4VkHPbYp8oExikdPztGL8i3ud5cvw2zdWx1oXnuAtpeVjtQXMVtRA9
-         VI4JMQTQ13rs34E1Bd99Nxl3Ar2WLW2ajs5hgAfHzS6cUXbG2+/uzWMRKsD+DtnEpw+G
-         OSdi06S3b4+/sr+jth4ZhmKCXdqgqIG/gMtTCfedCadCDxqNizpmlnUTHSod80P2xB14
-         W/c9uhvH5EBBB0BH6MBn/mBMF8uxmZU/90h+UXXL5cyzBZvyKmWPkEUen6AynlIvDpKV
-         TQoA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=C6016/38QKZUQAyk5HMPjenTvm42Pe8sPBzTcqL5vmY=;
+        b=qBGtve+IuFrAkJa+gsN1WQjHRs2fvQkSK1D44BenBKAqsyswWIPF49CjeAw6Lc/Xiz
+         7VY9uX10GWOeYOq3Roffx9lK59MGCnSnWmLkHD6Zz3XGADMqQbIXFAspvzlfyt7tl87F
+         C44YITS/y0gKUKqqxM42VKL4jH/Xx4KasojD++jZOWXtcwkx1m//DlSoFwhQEbp4i/NS
+         eGEaCL2abI9d2Qo/vgVE47lljuFHl9RIsYb9haWI9DYl1+oIMHXMK3O9uyeK26H4D1AX
+         Jy4saNgfSyFkb5FP8pbKE6ds3BSqIpGBCoZu+qijzq/vfSl1dGYXTnehjmH9/ySByi+z
+         BIOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Wi6L8alYy4V4SsfLlVtyi/z2L0oc5Zl5QzoxxcNQf/I=;
-        b=SZfELIKuMTHsGXvx3n8mXqxzR8/DcOkbO9kPSq0UlD+rQ9pJw2XUfvHvH7tLf2VeP2
-         9P8FwNkKMe+fqvyR72uTzAx5e0TedVnQNvkE/e+JzVtzmHNrFuSUfO2Ys2zaOg4yGwm6
-         BA8hQmRXFWXV/Oe/QGKbrcqKxfFn7/n5a6ASOUGcYStX1ZjvRnNBU4ko9NdPaAP0F0jl
-         Ue9oOEpQVRsk1WDGBTMFmMFmZ2X8qQK+1txibqsFQYMTno8ZRn8/xH2j/2FwAptFPsFW
-         g6UfxwjfCeNbUXiHW2xzFBjy8zbJ9TomUNiFSuDmkMCHGoV7g01ZHkoU+Ec5Ec7cUcgn
-         r7yw==
-X-Gm-Message-State: AOAM533RNLYApfqYHf93NzfX+lFg7BSKMu+KQVHO9QsfwsMnLjbiVHNx
-        CkQ9IoiAQc05b5+opZAjQvxby4bGhr7kFxI38IZ8CQ==
-X-Google-Smtp-Source: ABdhPJy9iknoyuZ0ItWdiDqHtIn9q0sub8CXf8vcFX5YBLNwfzRFvmxFbQAWud9UXKfFN7tKSPUrUqM/GN6B4w6HLHg=
-X-Received: by 2002:a05:620a:1981:b0:477:6e45:3e7d with SMTP id
- bm1-20020a05620a198100b004776e453e7dmr17386067qkb.407.1646270046597; Wed, 02
- Mar 2022 17:14:06 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <CAHAy0tR-64vxtFo4KXiJP_va2=WF++Q6gDaPksNxiaSB5wWvhA@mail.gmail.com>
- <86495779-a9c5-45d5-0017-c491bf6354ab@intel.com> <CAHAy0tQYBD2b0jdim=6Zv+hwskyd1FhpycyGF+1FBHDih9TP3g@mail.gmail.com>
- <e746026c-33f3-fd15-5303-563b3eb761d3@intel.com> <CAHAy0tRXxDQSuBVoEW9jzpFaWns4DzWqmFASFNGgGb5vjnYuPw@mail.gmail.com>
- <b2733dba-278a-4574-f7ab-f035e97f762e@intel.com>
-In-Reply-To: <b2733dba-278a-4574-f7ab-f035e97f762e@intel.com>
-From:   Nathaniel McCallum <nathaniel@profian.com>
-Date:   Wed, 2 Mar 2022 20:13:55 -0500
-Message-ID: <CAHAy0tRoy=qpn-OqKmEHaWSngO+_Ko+YYd3Aq7WGk+1=n8=2mA@mail.gmail.com>
-Subject: Re: [PATCH V2 00/32] x86/sgx and selftests/sgx: Support SGX2
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        tglx@linutronix.de, bp@alien8.de,
-        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org, seanjc@google.com,
-        kai.huang@intel.com, cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=C6016/38QKZUQAyk5HMPjenTvm42Pe8sPBzTcqL5vmY=;
+        b=CzJtZPcuhcWcftaDgdBMfTH8+c9EoS3XmQ505LWS57kdN7/Y7hxiGiFhGCtkVhWR4n
+         9QiYMg9DgjK+2U+OgCUW8Ihc/Zsz1tArsI+VPvsbHeizYXBDN8PT/Evowom4DSVx5ZKW
+         SbKPrObrC5eMgExacIP+ZPEND4qx5Us+NJQ0WRDXPRpYk5m/o2sqMuwebEko7dN7/HEk
+         eAq5ky/UWz0+SWqk5EOcM1gkci5Yts4Pn4Ct+p/tQQvAT2EONElmTfre57WvwdfOJKPi
+         0JSo3Tr1FuDqKJWi6MM1A+v0Yqa4E2WoDAES5x9cgi/rm9pPbPuEvHVBoD12sn5e/d+j
+         6agg==
+X-Gm-Message-State: AOAM531YwoKciGKl5/xB3iguH9sB6KyY7W/Y8igN4n9GDfpUTuo8ZSvU
+        LuwF03lr62QEMLGgZKYD3hLDUsWYyg5BSQ==
+X-Google-Smtp-Source: ABdhPJwdGKGtPoJbq9KB0b78P8kOQOqlHazHAUCZQHvA6TzNHcldJErwW75BUHOqmaVxrll88UvLqQ==
+X-Received: by 2002:a17:902:ec90:b0:151:a632:7ebb with SMTP id x16-20020a170902ec9000b00151a6327ebbmr1936164plg.154.1646274473191;
+        Wed, 02 Mar 2022 18:27:53 -0800 (PST)
+Received: from ubuntu.huawei.com ([119.3.119.19])
+        by smtp.googlemail.com with ESMTPSA id d15-20020a17090ab30f00b001b8e65326b3sm359822pjr.9.2022.03.02.18.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Mar 2022 18:27:52 -0800 (PST)
+From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
+To:     david.laight@aculab.com
+Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
+        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
+        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
+        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
+        dan.carpenter@oracle.com, dmaengine@vger.kernel.org,
+        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
+        gustavo@embeddedor.com, h.j.bos@vu.nl,
+        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
+        jakobkoschel@gmail.com, jgg@ziepe.ca, keescook@chromium.org,
+        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
+        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        rppt@kernel.org, samba-technical@lists.samba.org,
+        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
+        torvalds@linux-foundation.org,
+        v9fs-developer@lists.sourceforge.net, xiam0nd.tong@gmail.com
+Subject: RE: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
+Date:   Thu,  3 Mar 2022 10:27:29 +0800
+Message-Id: <20220303022729.9321-1-xiam0nd.tong@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <1077f17e50d34dc2bbfdf4e52a1cb2fd@AcuMS.aculab.com>
+References: <1077f17e50d34dc2bbfdf4e52a1cb2fd@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 2, 2022 at 4:20 PM Reinette Chatre
-<reinette.chatre@intel.com> wrote:
->
-> Hi Nathaniel,
->
-> On 3/2/2022 8:57 AM, Nathaniel McCallum wrote:
-> > Perhaps it would be better for us to have a shared understanding on
-> > how the patches as posted are supposed to work in the most common
-> > cases? I'm thinking here of projects such as Enarx, Gramine and
-> > Occulum, which all have a similar process. Namely they execute an
-> > executable (called exec in the below chart) which has things like
-> > syscalls handled by a shim. These two components (shim and exec) are
-> > supported by a non-enclave userspace runtime. Given this common
-> > architectural pattern, this is how I understand adding pages via an
-> > exec call to mmap() to work.
-> >
-> > https://mermaid.live/edit#pako:eNp1k81qwzAQhF9F6NRCAu1Vh0BIRemhoeSHBuIe=
-ttYmFpElVZZLQ8i7144sJ8aOT2bmY3d2vT7R1AikjBb4U6JO8UXC3kGeaFI9FpyXqbSgPTmg06j=
-6uiu1lzn2jSKTA2XwD9NEB31uPBLzi-6iMpLnYB8Wn4-kOBYpKBW52iXj8WQSmzEy5Zvt01ewG5=
-HUQN2UEc7nK77YPjdALd64GWih8NpkALGwR_JtzOGAaKXexyTKGEt2pgoMaXahgj5Qgk9nM_6xG=
-vDDJpsmOyiVv0LB62B8un4dBDrLiLPeWciCL9fvvKVQizhSG6stFz9Df7sxUpcYitR-SodFO2A_=
-Vw-7l4nzzduqjX9bKJxOHDDeBB3RHF0OUlS3faq1hPoMqzulrHoVGPZOE32u0NIK8MiF9MZRtgN=
-V4IhC6c3yqFPKvCsxQs3_0VDnfzf-CPg
-> >
-> > This only covers adding RW pages. I haven't even tackled permission
-> > changes yet. Is that understanding correct? If not, please provide an
-> > alternative sequence diagram to explain how you expect this to be
-> > used.
->
-> Please find my attempt linked below:
->
-> https://mermaid.live/edit#pako:eNqFUsFqAjEQ_ZWQUwsK7XUPgthQeqiUVang9jAkox=
-u6m2yzWVsR_72J2WTbKnSOb97MvPeSI-VaIM1oix8dKo4PEnYG6kIRVw0YK7lsQFlSghGfYPCy8=
-45GYXWJm05ZWV8ZaEt55QB-IS9UwOfaItF7NGc0I3UNzU3-ekvaQ8uhqiLPd8l4PJnEYxmZsvXm=
-7i20e5B4QlA5rAqMgJJfG9Ixg21X2ctVXn9GGJsvWb65729FSZXWDdlqpxx46Qzu-gB8-cHzhhi=
-m2zKdzdjLcuAAt3IPzv6Qkq84EdxGM3492UJS-cdSpLHp6nEgCPz3RjI5NPvAlRisJjspOsbWT8=
-sUyc_MwjuynC1Wzyw9EB3RGk0NUrgvePRYQW2J7tNQd5sKDN5ooU6O2jXCiWZCWm1otoWqxRGFz=
-urFQXGaWdNhJPXfuGedvgFejOuH
->
-> The changes include:
-> * Move mmap() to occur before attempting EACCEPT on the addresses. This i=
-s
->   required for EACCEPT (as well as any subsequent access from within the =
-enclave)
->   to be able to access the pages.
-> * Remove AEX[1] to the runtime within the loop. After EAUG returns execut=
-ion
->   will return to the instruction pointer that triggered the #PF, EACCEPT,
->   this will cause the EACCEPT to be run again, this time succeeding.
->
-> This is based on the implementation within this series. When supporting
-> the new ioctl() requested by Jarkko there will be an additional ioctl()
-> required before the loop.
+On Wed, 2 Mar 2022 14:04:06 +0000, David Laight
+<David.Laight@ACULAB.COM> wrote:
+> I think that it would be better to make any alternate loop macro
+> just set the variable to NULL on the loop exit.
+> That is easier to code for and the compiler might be persuaded to
+> not redo the test.
 
-https://mermaid.live/edit/#pako:eNp1U9FqgzAU_ZWQpw1a2F6FFaQLYw8ro7asUPeQmWs=
-NNYlL4rZS-u-LRmut1ie953jvOecmR5woBjjABr5LkAk8c7rTVMQSuYeWVslSfIH23wXVlie8oN=
-KijGr2SzUMkT1oCfmwrktpuRj5wWRcDKvwB0ksfX2hLCD1A7quBkgIWtwtP-6ROZiE5nnLq1A0n=
-c5m7bAAhWSzffj0cFNEFaEaGiBCFiuy3D42hKp4gWZUshy6ISOUL6X2e4CCy10rQhUW8dR52QES=
-ivGUJ9RyJQ2SAAyYZ_V6ndUSsnldneVca_bJdvY7lkf6vc4haTBlbsdbDmLoaLlSBUqVy5wmWW2=
-nw3rq26Pg-oTzOXlf9Xkt7BfTeqjjSWlP2JWTlkrC9cutlmcLlUlxoRBkE3T9Mrq7KArd0UBPqF=
-DGTpstI2OphSv-jf1cBukPJlmSaP1GXFs8wQK0oJy523Ws-DG2GTiJOHCvDLx3HMuTo5YFc1MJ4=
-1ZpHKQ0NzDB1fWLDjLBgdUltKTmhjas0z-kWy8L
+No, that would lead to a NULL dereference.
 
-My comments below correspond to the arrow numbers in the diagram.
+The problem is the mis-use of iterator outside the loop on exit, and
+the iterator will be the HEAD's container_of pointer which pointers
+to a type-confused struct. Sidenote: The *mis-use* here refers to
+mistakely access to other members of the struct, instead of the
+list_head member which acutally is the valid HEAD.
 
-2. When the runtime receives the AEX, it doesn't have enough knowledge
-to know whether or not to ask the kernel for an mmap(). So it has to
-reenter the shim.
+IOW, you would dereference a (NULL + offset_of_member) address here.
 
-3. The shim has to handle the syscall instruction routing it to the
-enclave's memory management subsystem.
+Please remind me if i missed something, thanks.
 
-4. The shim has to do bookkeeping and decide if additional pages are
-even needed. If pages are already allocated, for example, it can skip
-directly to step 13. However, if modifications are needed, it will go
-to steps 5-12.
+> OTOH there may be alternative definitions that can be used to get
+> the compiler (or other compiler-like tools) to detect broken code.
+> Even if the definition can't possibly generate a working kerrnel.
 
-5-12. This is the part that represents new code from the kernel's
-perspective for SGX2. It is also in a performance critical path and
-should be evaluated with greater scrutiny. The number of context
-switches is O(2N + 4) for each new allocated block, where N is the
-number of pages: a context switch occurs at step 5, 6, 7,  8, 9/10 and
-12. However, this can be reduced to O(4) for each new allocated block
-with a simple modification:
+The "list_for_each_entry_inside(pos, type, head, member)" way makes
+the iterator invisiable outside the loop, and would be catched by
+compiler if use-after-loop things happened.
 
-https://mermaid.live/edit/#pako:eNqNk11rwyAUhv-KeLVBC9ttYIXQydjFymhaVmh24fS=
-kkUbN1Gwrpf99pvlsk8G80nMez3l91SNmmgMOsIXPAhSDR0F3hspYIT9o4bQq5AeYap1T4wQTOV=
-UOpdTwb2pgmNmDUZAN46ZQTsiRDTYVchiFH2CxquIL7QDpLzDnaICkpPnN8u0W2YNlNMsarsyi6=
-XQ2a5oFKCSb7d17la6DqATKpgEiZLEiy-19DZTBXjalimfQNRlBPrTe7wFyoXaNCJ07JBJ_lh0g=
-qblIBKNOaGWRAuDAK-qiVquWkM3zqpVzrblytjt-R2Va5yjR3h_K0nPrLleOaudFERKunzoIVE9=
-Xj26VtZYbsEXmxgUOTP2_witfSTifk9fViMDzZPQuoij0V40eUK6tm9a3hqyjDq74P_zuH6V6aG=
-RJovUL8WXxBEswkgruf8ux5GPsUvDvGQd-yiGhpS04ViePFjn3XQkXThscJDSzMMHld4oOiuHAm=
-QIaqP5xNXX6BeBJIEk
+Can you share your "alternative definitions" details? thanks!
 
-The interesting thing about this pattern is that this can be done for
-all page modification types except EMODT. For example, here's the same
-process for changing a mapping from RW to RX:
-
-https://mermaid.live/edit/#pako:eNqNk11rwyAUhv-KeLVBC9ttYIVCvdhFu5F0UGh24fS=
-kkUbN1Gwrpf995jttMphXes7jOa-vesZMc8ABtvBZgGKwEvRgqIwV8oMWTqtCfoCp1zk1TjCRU-=
-VQSg3_pgbGmSMYBdk4bgrlhJzYYFMhx1H4ARarOr7RDpD-AlNFAyQlze_C3T2yJ8tolrVcmUXz-=
-WLRNgvQkuz2D-91ugmiEiibBoiQzZaE-8cGKIODbEoVz6BvMoF8aH08AuRCHVoROndIJP4sB0BS=
-c5EIRp3QyiIFwIHX1FWtTi0hu-dtJ-dWc-1sf_yeyrTOUaK9P5SlVes-V45651URsn5ZvYY9Bmq=
-gbMB32jrTDdgic9MSR7b-X-ONs5U-MqGvmkxeRhQt_V2jJ5Rr6-bNtSHrqIMb_g_DhyepXxoJSf=
-S2Jr4snmEJRlLB_Xc5l3yMXQr-QePATzkktHQFx-ri0SLnvivhwmmDg4RmFma4_E_RSTEcOFNAC=
-zVfrqEuvytQILY
-
-My point in this thread has always been that it is an anti-feature to
-presume that there is a need to treat EPC and VLA permissions
-separately. This is a performance sink and it optimizes for a use case
-which doesn't exist. Nobody actually wants there to be a mismatch
-between EPC and VLA permissions.
-
-So, besides EMODT, the only userspace interface we need is
-mmap()/mprotect()/munmap(). The kernel should either succeed the
-mmap()/mprotect()/munmap() syscall if the EPC permissions can be made
-compatible or should fail otherwise.
-
-Another interesting property arises from this flow. Since the EPC and
-VLA permissions are always synchronized from the perspective of
-userspace, in cases where the memory state between the kernel and the
-exec layer is roughly synchronous, bookkeeping in the shim can be
-implemented without any persistent memory between syscall handling
-events. So, for example, the shim can implement brk() and
-mmap()/munmap()/mprotect() with just two pointers: one to the break
-position and one to the lowest mmap().
-
-It is true that this basically commits enclave authors to doing all
-EACCEPT calls immediately after modifications. But I suspect everyone
-will do this anyway since there is no efficient (read: performant) way
-for shims to handle page faults. So trying to do this lazily will just
-result in a huge decrease in performance.
+--
+Xiaomeng Tong
