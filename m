@@ -2,35 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4957C43219
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C453C4167B
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:37:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238249AbiCDJia (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S238434AbiCDJia (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 4 Mar 2022 04:38:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54858 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239290AbiCDJiA (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:00 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10FED1AAA5E;
-        Fri,  4 Mar 2022 01:36:40 -0800 (PST)
+        with ESMTP id S239377AbiCDJiG (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:06 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484681AC296;
+        Fri,  4 Mar 2022 01:36:50 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BB54EB827BD;
-        Fri,  4 Mar 2022 09:36:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B9D4C340F1;
-        Fri,  4 Mar 2022 09:36:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C19B06197F;
+        Fri,  4 Mar 2022 09:36:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA714C340E9;
+        Fri,  4 Mar 2022 09:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646386597;
-        bh=yRyCeWv+M3IKj32rt53/t5L1zqgAFTq44e0cYPNfNgM=;
+        s=k20201202; t=1646386609;
+        bh=GIXXvHUCjsNwfokUE4YhJH42Rc0GvtvU/kUuFqoC1JU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AWevxKTjTpkL7dMammx1Ok1LoLGurgaDBfaGZ6isThp3tdPDUgBnuHVpvfqtLA9gG
-         AM06mWej8mQZZ5sk0dW+sbeeTVh3/w2PihHqR3i2WngLxxqA73EdJD886yrBAhkES5
-         vZaHpkWHpvXjBiKdB075ULa910DSONqqIUV9a+W7IR/n1xep7FCEHz29u5wbehLR4q
-         GgwR+VS4u12d01TQ8lxGgB2/h7QYzDskAw/d7VqCPdaTD/AAe4wsq7FCAM1VjGHknw
-         JJ85qAqa7QYuFoN+gVpHJ2M4BGMlC72ucxI52SbFgnT5WI0LjoQ834ZHUFnCYSqAhA
-         bLXr60qqeX/xg==
+        b=ta7ivz106BJGA+gQ8JvbWucWxO0Qp7UOccO63ppI72sxKNAeFj05Yhi0o6g/PmClN
+         3EX/V9WLW45ZNbj7uT7bKKEOITH4VtOHkoquh/vHHs8azxEVBfYXilv9Fye6OGFUBA
+         Jq0RFuIhZhosrRzRHSSxbyVZAuZcr/yYbWq7Z7PHgIrvSVyicRajbAV2nWp9KAViG6
+         3Sy9M9NCK1cty+pDtVAsVgFDiWvYKAQBdMdqB/TXUQE8n06psZhjsis3MIWJbPMFBb
+         pFlHKsyY09UOaJ50wS8M9HBgpfFR7FM7TqLpmZUeRltSn3GeJPgtPMW1K3JNSfcNTs
+         txD/A54yikRrQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
@@ -43,9 +43,9 @@ Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
         linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
         64-BIT))
-Subject: [RFC PATCH v2.1 09/30] x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()
-Date:   Fri,  4 Mar 2022 11:35:03 +0200
-Message-Id: <20220304093524.397485-9-jarkko@kernel.org>
+Subject: [RFC PATCH v2.1 13/30] x86/sgx: Keep record of SGX page type
+Date:   Fri,  4 Mar 2022 11:35:07 +0200
+Message-Id: <20220304093524.397485-13-jarkko@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220304093524.397485-1-jarkko@kernel.org>
 References: <20220304093524.397485-1-jarkko@kernel.org>
@@ -57,84 +57,83 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Reinette Chatre <reinette.chatre@intel.com>
 
-sgx_encl_ewb_cpumask() is no longer unique to the reclaimer where it
-is used during the EWB ENCLS leaf function when EPC pages are written
-out to main memory and sgx_encl_ewb_cpumask() is used to learn which
-CPUs might have executed the enclave to ensure that TLBs are cleared.
+SGX2 functions are not allowed on all page types. For example,
+ENCLS[EMODPR] is only allowed on regular SGX enclave pages and
+ENCLS[EMODPT] is only allowed on TCS and regular pages. If these
+functions are attempted on another type of page the hardware would
+trigger a fault.
 
-Upcoming SGX2 enabling will use sgx_encl_ewb_cpumask() during the
-EMODPR and EMODT ENCLS leaf functions that make changes to enclave
-pages. The function is needed for the same reason it is used now: to
-learn which CPUs might have executed the enclave to ensure that TLBs
-no longer point to the changed pages.
+Keep a record of the SGX page type so that there is more
+certainty whether an SGX2 instruction can succeed and faults
+can be treated as real failures.
 
-Rename sgx_encl_ewb_cpumask() to sgx_encl_cpumask() to reflect the
-broader usage.
+The page type is a property of struct sgx_encl_page
+and thus does not cover the VA page type. VA pages are maintained
+in separate structures and their type can be determined in
+a different way. The SGX2 instructions needing the page type do not
+operate on VA pages and this is thus not a scenario needing to
+be covered at this time.
 
+With the protection bits consuming 16 bits of the unsigned long
+there is room available in the bitfield to include the page type
+information without increasing the space consumed by the struct.
+
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encl.c | 6 +++---
- arch/x86/kernel/cpu/sgx/encl.h | 2 +-
- arch/x86/kernel/cpu/sgx/main.c | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/sgx.h      | 3 +++
+ arch/x86/kernel/cpu/sgx/encl.h  | 3 ++-
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 ++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 353866e1b16f..54716886e804 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -596,7 +596,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
- }
- 
- /**
-- * sgx_encl_ewb_cpumask() - Query which CPUs might be accessing the enclave
-+ * sgx_encl_cpumask() - Query which CPUs might be accessing the enclave
-  * @encl: the enclave
-  *
-  * Some SGX functions require that no cached linear-to-physical address
-@@ -621,7 +621,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
-  * The following flow is used to support SGX functions that require that
-  * no cached linear-to-physical address mappings are present:
-  * 1) Execute ENCLS[ETRACK] to initiate hardware tracking.
-- * 2) Use this function (sgx_encl_ewb_cpumask()) to query which CPUs might be
-+ * 2) Use this function (sgx_encl_cpumask()) to query which CPUs might be
-  *    accessing the enclave.
-  * 3) Send IPI to identified CPUs, kicking them out of the enclave and
-  *    thus flushing all locally cached linear-to-physical address mappings.
-@@ -638,7 +638,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
-  *
-  * Return: cpumask of CPUs that might be accessing @encl
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index d67810b50a81..eae20fa52b93 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -239,6 +239,9 @@ struct sgx_pageinfo {
+  * %SGX_PAGE_TYPE_REG:	a regular page
+  * %SGX_PAGE_TYPE_VA:	a VA page
+  * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
++ *
++ * Make sure when making changes to this enum that its values can still fit
++ * in the bitfield within &struct sgx_encl_page
   */
--const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
-+const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl)
- {
- 	cpumask_t *cpumask = &encl->cpumask;
- 	struct sgx_encl_mm *encl_mm;
+ enum sgx_page_type {
+ 	SGX_PAGE_TYPE_SECS,
 diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 2b15615be8c6..817edefa884a 100644
+index e760991762e4..94ccea8fbbf2 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.h
 +++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -105,7 +105,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+@@ -27,7 +27,8 @@
  
- void sgx_encl_release(struct kref *ref);
- int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
--const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl);
-+const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl);
- int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 			 struct sgx_backing *backing);
- void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index d481e8b0e7bc..60b166bff7b4 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -249,7 +249,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
- 			 * miss cpus that entered the enclave between
- 			 * generating the mask and incrementing epoch.
- 			 */
--			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
-+			on_each_cpu_mask(sgx_encl_cpumask(encl),
- 					 sgx_ipi_cb, NULL, 1);
- 			ret = __sgx_encl_ewb(epc_page, va_slot, backing);
- 		}
+ struct sgx_encl_page {
+ 	unsigned long desc;
+-	unsigned long vm_max_prot_bits;
++	u32 vm_max_prot_bits;
++	enum sgx_page_type type:32;
+ 	struct sgx_epc_page *epc_page;
+ 	struct sgx_encl *encl;
+ 	struct sgx_va_page *va_page;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index f487549bccba..0c211af8e948 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -107,6 +107,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 		set_bit(SGX_ENCL_DEBUG, &encl->flags);
+ 
+ 	encl->secs.encl = encl;
++	encl->secs.type = SGX_PAGE_TYPE_SECS;
+ 	encl->base = secs->base;
+ 	encl->size = secs->size;
+ 	encl->attributes = secs->attributes;
+@@ -344,6 +345,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	 */
+ 	encl_page->encl = encl;
+ 	encl_page->epc_page = epc_page;
++	encl_page->type = (secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK) >> 8;
+ 	encl->secs_child_cnt++;
+ 
+ 	if (flags & SGX_PAGE_MEASURE) {
 -- 
 2.35.1
 
