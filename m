@@ -2,51 +2,54 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD9BC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEE3C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239087AbiCDJiv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Mar 2022 04:38:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
+        id S239158AbiCDJjt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Mar 2022 04:39:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238275AbiCDJhq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:37:46 -0500
+        with ESMTP id S239216AbiCDJh4 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:37:56 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF201A8C95;
-        Fri,  4 Mar 2022 01:36:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0689C1AA04F;
+        Fri,  4 Mar 2022 01:36:28 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0E3E5B827B1;
-        Fri,  4 Mar 2022 09:36:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C985C340F1;
-        Fri,  4 Mar 2022 09:36:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B1900B827B1;
+        Fri,  4 Mar 2022 09:36:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECFDC340E9;
+        Fri,  4 Mar 2022 09:36:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646386573;
-        bh=hVi53zxhpZZwfLO+QSjSvU5hkK9i3hr9I45N4lSNasI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=a/QlWblvp5nbCk0pW27X8PXtdW6OZFJvy2k0QHBEP0OHn3Rq6dIW8Ef+mgBRgbias
-         XJMgTvrb/hYG0mAiseTuy+HabUHMozGx/Slb0S2J5l9FRLF+j/4TFWllBME27JnHiY
-         imLhzJEMBynIs9EdMJfLTSsaJUYnCcU6SBfjKzzSaEUmkaNJfz7W6KoPpPppAQKGwK
-         Y9WB9P9J7IOk+HSAcu1ZGl65u6F4WjO3iboYlAdWxUY0p2ZjbgeZPJUmKeD/UPgOF9
-         BJUSPvcj4VLMfqoGwU2kB30rtIrhWF5CHmYqz/WOfq8cyfP3XE5k6z0ydHxh1wHFET
-         3EQX6kfh505Mw==
+        s=k20201202; t=1646386585;
+        bh=RysmT+LMcL7CcpTbcFEHYgnbXGPnkMn9nXWQC+7jnwQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=D1Lu1XiBXLAfS47x5JoNRhFXBRxeA60mOqx9qyQskBf/8h4u7xIjYB3IHNe9xpM4z
+         KKndUrIen8ZKb2cIafCmhRx4YWhaAzIAMCqchHdCRogMreJwaMMAR1JVVaUaU/raRT
+         Ew0QQq2jkR31VfRbpKzfKgZ+QtX/SsSRLlfhAj0lSRmxgZPyp9U3To6iKcMY0qDqCY
+         z4SKI6Z86pKsxJmygN/CQwSnq8x5PHhea5bS2GzKctN27+AVy/K3iQQ6i7RbYSkzQD
+         pdXo1YnTLrg1yt0Fvttw70EulSJCI+9M2fCS02jL35LuUbyoSDeGMJagjV+uGC/qNx
+         5/TF1KdEJxXMw==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        "H. Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
         linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [RFC PATCH v2.1 01/30] x86/sgx: Add short descriptions to ENCLS wrappers
-Date:   Fri,  4 Mar 2022 11:34:55 +0200
-Message-Id: <20220304093524.397485-1-jarkko@kernel.org>
+        64-BIT)), linux-doc@vger.kernel.org (open list:DOCUMENTATION)
+Subject: [RFC PATCH v2.1 05/30] Documentation/x86: Document SGX permission details
+Date:   Fri,  4 Mar 2022 11:34:59 +0200
+Message-Id: <20220304093524.397485-5-jarkko@kernel.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220304093524.397485-1-jarkko@kernel.org>
+References: <20220304093524.397485-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -55,106 +58,61 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Reinette Chatre <reinette.chatre@intel.com>
 
-The SGX ENCLS instruction uses EAX to specify an SGX function and
-may require additional registers, depending on the SGX function.
-ENCLS invokes the specified privileged SGX function for managing
-and debugging enclaves. Macros are used to wrap the ENCLS
-functionality and several wrappers are used to wrap the macros to
-make the different SGX functions accessible in the code.
+Provide summary of the various permissions involved in
+managing access to enclave pages. This summary documents
+the foundation for additions related to runtime managing of
+enclave page permissions that is made possible with SGX2.
 
-The wrappers of the supported SGX functions are cryptic. Add short
-descriptions of each as a comment.
-
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encls.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ Documentation/x86/sgx.rst | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index fa04a73daf9c..0e22fa8f77c5 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -136,57 +136,71 @@ static inline bool encls_failed(int ret)
- 	ret;						\
- 	})
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+index 265568a9292c..89ff924b1480 100644
+--- a/Documentation/x86/sgx.rst
++++ b/Documentation/x86/sgx.rst
+@@ -71,16 +71,34 @@ The processor tracks EPC pages in a hardware metadata structure called the
+ which describes the owning enclave, access rights and page type among the other
+ things.
  
-+/* Initialize an EPC page into an SGX Enclave Control Structure (SECS) page. */
- static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
- {
- 	return __encls_2(ECREATE, pginfo, secs);
- }
+-EPCM permissions are separate from the normal page tables.  This prevents the
+-kernel from, for instance, allowing writes to data which an enclave wishes to
+-remain read-only.  EPCM permissions may only impose additional restrictions on
+-top of normal x86 page permissions.
+-
+ For all intents and purposes, the SGX architecture allows the processor to
+ invalidate all EPCM entries at will.  This requires that software be prepared to
+ handle an EPCM fault at any time.  In practice, this can happen on events like
+ power transitions when the ephemeral key that encrypts enclave memory is lost.
  
-+/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
- static inline int __eextend(void *secs, void *addr)
- {
- 	return __encls_2(EEXTEND, secs, addr);
- }
++Details about enclave page permissions
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++EPCM permissions are separate from the normal page tables.  This prevents the
++kernel from, for instance, allowing writes to data which an enclave wishes
++to remain read-only.
++
++Three permission masks are relevant to SGX:
++
++* EPCM permissions.
++* Page Table Entry (PTE) permissions.
++* Virtual Memory Area (VMA) permissions.
++
++An enclave is only able to access an enclave page if all three permission
++masks enable it to do so.
++
++The relationships between the different permission masks are:
++
++* An SGX VMA can only be created if its permissions are the same or weaker
++  than the EPCM permissions.
++* PTEs are installed to match the EPCM permissions, but not be more
++  relaxed than the VMA permissions.
++
+ Application interface
+ =====================
  
-+/*
-+ * Associate an EPC page to an enclave either as a REG or TCS page
-+ * populated with the provided data.
-+ */
- static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
- {
- 	return __encls_2(EADD, pginfo, addr);
- }
- 
-+/* Finalize enclave build, initialize enclave for user code execution. */
- static inline int __einit(void *sigstruct, void *token, void *secs)
- {
- 	return __encls_ret_3(EINIT, sigstruct, secs, token);
- }
- 
-+/* Disassociate EPC page from its enclave and mark it as unused. */
- static inline int __eremove(void *addr)
- {
- 	return __encls_ret_1(EREMOVE, addr);
- }
- 
-+/* Copy data to an EPC page belonging to a debug enclave. */
- static inline int __edbgwr(void *addr, unsigned long *data)
- {
- 	return __encls_2(EDGBWR, *data, addr);
- }
- 
-+/* Copy data from an EPC page belonging to a debug enclave. */
- static inline int __edbgrd(void *addr, unsigned long *data)
- {
- 	return __encls_1_1(EDGBRD, *data, addr);
- }
- 
-+/* Track that software has completed the required TLB address clears. */
- static inline int __etrack(void *addr)
- {
- 	return __encls_ret_1(ETRACK, addr);
- }
- 
-+/* Load, verify, and unblock an EPC page. */
- static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
- 			 void *va)
- {
- 	return __encls_ret_3(ELDU, pginfo, addr, va);
- }
- 
-+/* Make EPC page inaccessible to enclave, ready to be written to memory. */
- static inline int __eblock(void *addr)
- {
- 	return __encls_ret_1(EBLOCK, addr);
- }
- 
-+/* Initialize an EPC page into a Version Array (VA) page. */
- static inline int __epa(void *addr)
- {
- 	unsigned long rbx = SGX_PAGE_TYPE_VA;
-@@ -194,6 +208,7 @@ static inline int __epa(void *addr)
- 	return __encls_2(EPA, rbx, addr);
- }
- 
-+/* Invalidate an EPC page and write it out to main memory. */
- static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
- 			void *va)
- {
 -- 
 2.35.1
 
