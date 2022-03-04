@@ -2,50 +2,47 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0E5C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6078C433FE
 	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239225AbiCDJjw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S239317AbiCDJjw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 4 Mar 2022 04:39:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54802 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239358AbiCDJiE (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C54E1AAFD7;
-        Fri,  4 Mar 2022 01:36:45 -0800 (PST)
+        with ESMTP id S239482AbiCDJiP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F511188866;
+        Fri,  4 Mar 2022 01:37:27 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8A571B827BA;
-        Fri,  4 Mar 2022 09:36:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1354C340E9;
-        Fri,  4 Mar 2022 09:36:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 36DF361631;
+        Fri,  4 Mar 2022 09:37:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF8AC340E9;
+        Fri,  4 Mar 2022 09:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646386603;
-        bh=55zyzQl0Utut0R3HWtDL9uTt0ymhG7PO+ZXLPy+52CY=;
+        s=k20201202; t=1646386646;
+        bh=aIzJHGwj+yln2PhjXzljUtzwNIdyaPfY7nITk1Afxqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tnj7wGX5mtfbPPE8l/IusJSbXGvTBWmDF/6tMYQ0mFiUW6ru9fGw2jG6h21LDY+Qt
-         20ACoJLcGOj1MbECyj9yxBr5RL4RInSAna8JyBgZ5OuucK1U8MbBGhKPZ+ievtR6bp
-         fP57LaSQOyyliv9NY456JQZqv5Fo8HiCT8COZNScHOn3EDmlUT8Ey860wvy0ShzAJ/
-         vgv+xdhqoq1YU4Hj4+yIlnMsa5BjuD6G8RjAgMP3OwFP5Gg3Xwwtzk6FoKTx4+phWH
-         FiHck6GE0OtBOPIx3HQNfonufc6EQ0m3gayXWI3W4LLpdZmpTff2IlJDJvJhfUmHxz
-         iMjke9QhulTpQ==
+        b=JQh3v4tUjpAxef8z5y1WxmygZooW4sjfZeL8qfNB6v5IH4bmNcLFov0uwBsEKy8Rz
+         7VBMirY6dBExhGIKE0BEaGVmB5NOT8BPhpocwxpr3ROwMyuAPRJs8dv7nbznkfsrOG
+         qD1tzan3gvZkv0C7P8yS7wlG8SseHiEGX3XTrrBIYx/rYGixwnWBvzx8OSkZpA2Sw9
+         gc+wBOyExARsFj29t20VBFYi5eFMy0VgSYnBGAhHLL2BzvNrdZMlLkn8PMtkVm6Pcc
+         YldnfnZtuPVsXE+CP6Mt+c2MLlL3br+6Q9uDvPSYSey853eXD4DTuysEFa/dsEoLWT
+         0p3plXLREBRpw==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [RFC PATCH v2.1 11/30] x86/sgx: Make sgx_ipi_cb() available internally
-Date:   Fri,  4 Mar 2022 11:35:05 +0200
-Message-Id: <20220304093524.397485-11-jarkko@kernel.org>
+        Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RFC PATCH v2.1 26/30] selftests/sgx: Test faulty enclave behavior
+Date:   Fri,  4 Mar 2022 11:35:20 +0200
+Message-Id: <20220304093524.397485-26-jarkko@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220304093524.397485-1-jarkko@kernel.org>
 References: <20220304093524.397485-1-jarkko@kernel.org>
@@ -57,44 +54,148 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Reinette Chatre <reinette.chatre@intel.com>
 
-The ETRACK function followed by an IPI to all CPUs within an enclave
-is a common pattern with more frequent use in support of SGX2.
+Removing a page from an initialized enclave involves three steps:
+first the user requests changing the page type to SGX_PAGE_TYPE_TRIM
+via an ioctl(), on success the ENCLU[EACCEPT] instruction needs to be
+run from within the enclave to accept the page removal, finally the
+user requests page removal to be completed via an ioctl(). Only after
+acceptance (ENCLU[EACCEPT]) from within the enclave can the kernel
+remove the page from a running enclave.
 
-Make the (empty) IPI callback function available internally in
-preparation for usage by SGX2.
+Test the behavior when the user's request to change the page type
+succeeds, but the ENCLU[EACCEPT] instruction is not run before the
+ioctl() requesting page removal is run. This should not be permitted.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 2 +-
- arch/x86/kernel/cpu/sgx/sgx.h  | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/sgx/main.c | 116 +++++++++++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 06492dcffcf1..1a3014aec490 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -172,7 +172,7 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
- 	return ret;
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index f9872c6746a3..82902dab96bc 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -1453,4 +1453,120 @@ TEST_F(enclave, tcs_create)
+ 	munmap(addr, 3 * PAGE_SIZE);
  }
  
--static void sgx_ipi_cb(void *info)
-+void sgx_ipi_cb(void *info)
- {
- }
- 
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 0f17def9fe6f..b30cee4de903 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -90,6 +90,8 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
- int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
- struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
- 
-+void sgx_ipi_cb(void *info);
++/*
++ * Ensure sane behavior if user requests page removal, does not run
++ * EACCEPT from within enclave but still attempts to finalize page removal
++ * with the SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl(). The latter should fail
++ * because the removal was not EACCEPTed from within the enclave.
++ */
++TEST_F(enclave, remove_added_page_no_eaccept)
++{
++	struct sgx_enclave_remove_pages remove_ioc;
++	struct encl_op_get_from_addr get_addr_op;
++	struct encl_op_put_to_addr put_addr_op;
++	struct sgx_enclave_modt modt_ioc;
++	struct sgx_secinfo secinfo;
++	unsigned long data_start;
++	int ret, errno_save;
 +
- #ifdef CONFIG_X86_SGX_KVM
- int __init sgx_vepc_init(void);
- #else
++	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
++	/*
++	 * Hardware (SGX2) and kernel support is needed for this test. Start
++	 * with check that test has a chance of succeeding.
++	 */
++	memset(&modt_ioc, 0, sizeof(modt_ioc));
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
++
++	if (ret == -1) {
++		if (errno == ENOTTY)
++			SKIP(return, "Kernel does not support SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()");
++		else if (errno == ENODEV)
++			SKIP(return, "System does not support SGX2");
++	}
++
++	/*
++	 * Invalid parameters were provided during sanity check,
++	 * expect command to fail.
++	 */
++	EXPECT_EQ(ret, -1);
++
++	/*
++	 * Page that will be removed is the second data page in the .data
++	 * segment. This forms part of the local encl_buffer within the
++	 * enclave.
++	 */
++	data_start = self->encl.encl_base +
++		     encl_get_data_offset(&self->encl) + PAGE_SIZE;
++
++	/*
++	 * Sanity check that page at @data_start is writable before
++	 * removing it.
++	 *
++	 * Start by writing MAGIC to test page.
++	 */
++	put_addr_op.value = MAGIC;
++	put_addr_op.addr = data_start;
++	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
++
++	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	/*
++	 * Read memory that was just written to, confirming that data
++	 * previously written (MAGIC) is present.
++	 */
++	get_addr_op.value = 0;
++	get_addr_op.addr = data_start;
++	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
++
++	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
++
++	EXPECT_EQ(get_addr_op.value, MAGIC);
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	/* Start page removal by requesting change of page type to PT_TRIM */
++	memset(&modt_ioc, 0, sizeof(modt_ioc));
++	memset(&secinfo, 0, sizeof(secinfo));
++
++	secinfo.flags = SGX_PAGE_TYPE_TRIM << 8;
++	modt_ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
++	modt_ioc.length = PAGE_SIZE;
++	modt_ioc.secinfo = (unsigned long)&secinfo;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	EXPECT_EQ(ret, 0);
++	EXPECT_EQ(errno_save, 0);
++	EXPECT_EQ(modt_ioc.result, 0);
++	EXPECT_EQ(modt_ioc.count, 4096);
++
++	/* Skip EACCEPT */
++
++	/* Send final ioctl() to complete page removal */
++	memset(&remove_ioc, 0, sizeof(remove_ioc));
++
++	remove_ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
++	remove_ioc.length = PAGE_SIZE;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	/* Operation not permitted since EACCEPT was omitted. */
++	EXPECT_EQ(ret, -1);
++	EXPECT_EQ(errno_save, EPERM);
++	EXPECT_EQ(remove_ioc.count, 0);
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.35.1
 
