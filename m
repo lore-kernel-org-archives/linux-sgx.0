@@ -2,185 +2,326 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B44EC433F5
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 07:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C93C433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 08:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238616AbiCDHBP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Mar 2022 02:01:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50796 "EHLO
+        id S233533AbiCDIb5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Mar 2022 03:31:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238446AbiCDHBM (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 02:01:12 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8AF318E3DF;
-        Thu,  3 Mar 2022 23:00:21 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id t187so2483135pgb.1;
-        Thu, 03 Mar 2022 23:00:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0a+oQu3LYTAbOOyoILb+F/zkApGIum0yjd+xPCLEHo4=;
-        b=UcHSzcmMAevEFsqxc8gimvoSIew96LrW3UYvjfgkcaeLb/Edql9668oTELTgMdhcyh
-         uwTLYgNgPfuwuQfZCbkLtuIX59UkP2xXrD0mK6eOfNdOu/KSihdjQUFHL7gwAFzgpb4Z
-         PeSQfhLMwS3uLkuXfSSL1QQyblGTA4kTyWBkcty1viz6EkWmIbbGn99xu95lY6jAsJ0c
-         CbisDo/RPFGn8gAJnKluj00ht4OQ80XaXmCEvGalnXTnvAWrV5UWFfWh6kgUBnLZJvSQ
-         W0PYU136vUwP4grvjJEIhDxHc0WM1lPQ2cysIXPjh+breTQ07tU9AM0RgZ3Jr4UsSFjT
-         NaGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0a+oQu3LYTAbOOyoILb+F/zkApGIum0yjd+xPCLEHo4=;
-        b=wb2esMQoam0yRdU1iiWooJMh4JC1GjnRkNWIV6OwsjoezbD+7+ifd1PhuzPjaxCPmO
-         u1fcrH6eLHtxqL4KDTLuseNeth97iCChifcBxeofjvT0Byq082mjxQBMfKUbi4/3XunZ
-         7O1vtdoC6GJQEe1jCXtEwSzf90DWRIWVtkfFAhBCXU/4JQ9/KiwbJufulDJ2q3IPax49
-         jtXkkkenH5kmYciK/w/TThMkCF+OMj+Sm8kubeVraTrTJ9SBcdzW0IJc/7q7VtLNcYPK
-         tCqru2KpLGaD7gEtqsW5aTHIjrKYId6o+E8n1FslfMQUFX2avWIb0/I/Jx8Qwp0u0z7d
-         d27Q==
-X-Gm-Message-State: AOAM532aXFpfPfPgP0BGzvfNmwbT3nDlpYgI2HlLyy0AbUqKoKxKSL90
-        x6bmOo7yTyt/Z10hh54ZEPQ=
-X-Google-Smtp-Source: ABdhPJxBFOb3A6C/RlDh1uHGrWM51HjSkR68cXfNAhNGErUbSC2hd/FilwMHkJmidt1eEHAWD7GVrA==
-X-Received: by 2002:a05:6a00:cc7:b0:4ec:c6f3:ad29 with SMTP id b7-20020a056a000cc700b004ecc6f3ad29mr41958698pfv.66.1646377221067;
-        Thu, 03 Mar 2022 23:00:21 -0800 (PST)
-Received: from ubuntu.huawei.com ([119.3.119.19])
-        by smtp.googlemail.com with ESMTPSA id f6-20020a654006000000b00346193b405fsm3665134pgp.44.2022.03.03.23.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 23:00:20 -0800 (PST)
-From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
-To:     daniel.thompson@linaro.org
-Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
-        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
-        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
-        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
-        dan.carpenter@oracle.com, david.laight@aculab.com,
-        dmaengine@vger.kernel.org, drbd-dev@lists.linbit.com,
-        dri-devel@lists.freedesktop.org, gustavo@embeddedor.com,
-        h.j.bos@vu.nl, intel-gfx@lists.freedesktop.org,
-        intel-wired-lan@lists.osuosl.org, jakobkoschel@gmail.com,
-        jgg@ziepe.ca, keescook@chromium.org,
-        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
-        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
-        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
-        rppt@kernel.org, samba-technical@lists.samba.org,
-        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
-        torvalds@linux-foundation.org,
-        v9fs-developer@lists.sourceforge.net, xiam0nd.tong@gmail.com
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
-Date:   Fri,  4 Mar 2022 14:59:57 +0800
-Message-Id: <20220304065957.16799-1-xiam0nd.tong@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220303121824.qdyrognluik74iph@maple.lan>
-References: <20220303121824.qdyrognluik74iph@maple.lan>
+        with ESMTP id S233522AbiCDIb4 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 03:31:56 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8939D19BE4D;
+        Fri,  4 Mar 2022 00:31:04 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F25061015;
+        Fri,  4 Mar 2022 08:31:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8064C340E9;
+        Fri,  4 Mar 2022 08:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646382663;
+        bh=fwzhEw5YqiuNQASpOM0rdBn+ZueUJTulpkPCJl4FRD4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iQPMNgIOVMbPo2z4bssQovKPfoWBWK9E4of+Mn9kMAf1shu8/6b9LBKxtJl0lsq0+
+         P8E8Il3euNLHVqYMVSy1NOWODd+HZVGCUxG6L9E/ZMPLHEyxXtH2zzEFszN0/hxt61
+         GaC0BEwmkwtmfw9vthxmHO8YJE2f8eWxSl3Zm5b4kZeXgAHAIJMynYz4GVVgk6wdVi
+         lUTKic+is8MrxhP80ovlP5iU7dwNr/wE7l985cQd1rDPwav45W6ggETNR0r/EQ9PqG
+         r6s93dHaDr+9UEO3sefQv2XZeP+y8uKyAS5nrt/kPps34IGQ7g834LVTsa0t+PplMB
+         TtxXxJZ3W/r4g==
+Date:   Fri, 4 Mar 2022 10:30:22 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Shanahan, Mark" <mark.shanahan@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
+Message-ID: <YiHOHn3q4gwoFv+u@iki.fi>
+References: <Yhy/GvJegnTqYdq6@iki.fi>
+ <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
+ <Yh4fGORDaJyVrJQW@iki.fi>
+ <Yh4i4hVcnfZ8QDAl@iki.fi>
+ <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
+ <Yh7Q5fbOtr+6YWaS@iki.fi>
+ <6f65287a-f69c-971e-be2c-929e327e7ff9@intel.com>
+ <op.1igppyk9wjvjmi@hhuan26-mobl1.mshome.net>
+ <YiFMyZ4t2MC0n5Pn@iki.fi>
+ <op.1ihmv4mvwjvjmi@hhuan26-mobl1.mshome.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <op.1ihmv4mvwjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 3 Mar 2022 12:18:24 +0000, Daniel Thompson wrote:
-> On Thu, Mar 03, 2022 at 03:26:57PM +0800, Xiaomeng Tong wrote:
-> > On Thu, 3 Mar 2022 04:58:23 +0000, David Laight wrote:
-> > > on 3 Mar 2022 10:27:29 +0800, Xiaomeng Tong wrote:
-> > > > The problem is the mis-use of iterator outside the loop on exit, and
-> > > > the iterator will be the HEAD's container_of pointer which pointers
-> > > > to a type-confused struct. Sidenote: The *mis-use* here refers to
-> > > > mistakely access to other members of the struct, instead of the
-> > > > list_head member which acutally is the valid HEAD.
-> > >
-> > > The problem is that the HEAD's container_of pointer should never
-> > > be calculated at all.
-> > > This is what is fundamentally broken about the current definition.
+On Thu, Mar 03, 2022 at 10:03:30PM -0600, Haitao Huang wrote:
+> 
+> On Thu, 03 Mar 2022 17:18:33 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
+> 
+> > On Thu, Mar 03, 2022 at 10:08:14AM -0600, Haitao Huang wrote:
+> > > Hi all,
+> > > 
+> > > On Wed, 02 Mar 2022 16:57:45 -0600, Reinette Chatre
+> > > <reinette.chatre@intel.com> wrote:
+> > > 
+> > > > Hi Jarkko,
+> > > >
+> > > > On 3/1/2022 6:05 PM, Jarkko Sakkinen wrote:
+> > > > > On Tue, Mar 01, 2022 at 09:48:48AM -0800, Reinette Chatre wrote:
+> > > > > > Hi Jarkko,
+> > > > > >
+> > > > > > On 3/1/2022 5:42 AM, Jarkko Sakkinen wrote:
+> > > > > > > > With EACCEPTCOPY (kudos to Mark S. for reminding me of
+> > > > > > > > this version of
+> > > > > > > > EACCEPT @ chat.enarx.dev) it is possible to make R and RX
+> > > pages but
+> > > > > > > > obviously new RX pages are now out of the picture:
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > 	/*
+> > > > > > > > 	 * Adding a regular page that is architecturally allowed
+> > > to only
+> > > > > > > > 	 * be created with RW permissions.
+> > > > > > > > 	 * TBD: Interface with user space policy to support max
+> > > permissions
+> > > > > > > > 	 * of RWX.
+> > > > > > > > 	 */
+> > > > > > > > 	prot = PROT_READ | PROT_WRITE;
+> > > > > > > > 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
+> > > > > > > > 	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
+> > > > > > > >
+> > > > > > > > If that TBD is left out to the final version the page
+> > > > > > > > augmentation has a
+> > > > > > > > risk of a API bottleneck, and that risk can realize then
+> > > > > > > > also in the page
+> > > > > > > > permission ioctls.
+> > > > > > > >
+> > > > > > > > I.e. now any review comment is based on not fully known
+> > > > > > > > territory, we have
+> > > > > > > > one known unknown, and some unknown unknowns from
+> > > > > > > > unpredictable effect to
+> > > > > > > > future API changes.
+> > > > > >
+> > > > > > The plan to complete the "TBD" in the above snippet was to
+> > > > > > follow this work
+> > > > > > with user policy integration at this location. On a high level
+> > > > > > the plan was
+> > > > > > for this to look something like:
+> > > > > >
+> > > > > >
+> > > > > >  	/*
+> > > > > >  	 * Adding a regular page that is architecturally allowed to only
+> > > > > >  	 * be created with RW permissions.
+> > > > > >  	 * Interface with user space policy to support max permissions
+> > > > > >  	 * of RWX.
+> > > > > >  	 */
+> > > > > >  	prot = PROT_READ | PROT_WRITE;
+> > > > > >  	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
+> > > > > >
+> > > > > >         if (user space policy allows RWX on dynamically added
+> > > pages)
+> > > > > > 	 	encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ |
+> > > > > > PROT_WRITE | PROT_EXEC, 0);
+> > > > > > 	else
+> > > > > > 		encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ |
+> > > > > > PROT_WRITE, 0);
+> > > > > >
+> > > > > > The work that follows this series aimed to do the integration
+> > > with user
+> > > > > > space policy.
+> > > > >
+> > > > > What do you mean by "user space policy" anyway exactly? I'm
+> > > sorry but I
+> > > > > just don't fully understand this.
+> > > >
+> > > > My apologies - I just assumed that you would need no reminder
+> > > about this
+> > > > contentious
+> > > > part of SGX history. Essentially it means that, yes, the kernel could
+> > > > theoretically
+> > > > permit any kind of access to any file/page, but some accesses are
+> > > known
+> > > > to generally
+> > > > be a bad idea - like making memory executable as well as writable
+> > > - and
+> > > > thus there
+> > > > are additional checks based on what user space permits before the
+> > > kernel
+> > > > allows
+> > > > such accesses.
+> > > >
+> > > > For example,
+> > > > mm/mprotect.c:do_mprotect_pkey()->security_file_mprotect()
+> > > >
+> > > > User policy and SGX has seen significant discussion. Some notable
+> > > > threads:
+> > > > https://lore.kernel.org/linux-security-module/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com/
+> > > > https://lore.kernel.org/linux-security-module/20190619222401.14942-1-sean.j.christopherson@intel.com/
+> > > >
+> > > > > It's too big of a risk to accept this series without X taken care
+> > > > > of. Patch
+> > > > > series should neither have TODO nor TBD comments IMHO. I don't want
+> > > > > to ack
+> > > > > a series based on speculation what might happen in the future.
+> > > >
+> > > > ok
+> > > >
+> > > > >
+> > > > > > > I think the best way to move forward would be to do EAUG's
+> > > > > > > explicitly with
+> > > > > > > an ioctl that could also include secinfo for permissions.
+> > > Then you can
+> > > > > > > easily do the rest with EACCEPTCOPY inside the enclave.
+> > > > > >
+> > > > > > SGX_IOC_ENCLAVE_ADD_PAGES already exists and could possibly be
+> > > used for
+> > > > > > this purpose. It already includes SECINFO which may also be
+> > > useful if
+> > > > > > needing to later support EAUG of PT_SS* pages.
+> > > > >
+> > > > > You could also simply add SGX_IOC_ENCLAVE_AUGMENT_PAGES and call it
+> > > > > a day.
+> > > >
+> > > > I could, yes.
+> > > >
+> > > > > And if there is plan to extend SGX_IOC_ENCLAVE_ADD_PAGES what is
+> > > > > this weird
+> > > > > thing added to the #PF handler? Why is it added at all then?
+> > > >
+> > > > I was just speculating in my response, there is no plan to extend
+> > > > SGX_IOC_ENCLAVE_ADD_PAGES (that I am aware of).
+> > > >
+> > > > > > How this could work is user space calls SGX_IOC_ENCLAVE_ADD_PAGES
+> > > > > > after enclave initialization on any memory region within the
+> > > > > > enclave where
+> > > > > > pages are planned to be added dynamically. This ioctl() calls
+> > > > > > EAUG to add the
+> > > > > > new pages with RW permissions and their vm_max_prot_bits can be
+> > > > > > set to the
+> > > > > > permissions found in the included SECINFO. This will support
+> > > > > > later EACCEPTCOPY
+> > > > > > as well as SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
+> > > > >
+> > > > > I don't like this type of re-use of the existing API.
+> > > >
+> > > > I could proceed with SGX_IOC_ENCLAVE_AUGMENT_PAGES if there is
+> > > consensus
+> > > > after
+> > > > considering the user policy question (above) and performance trade-off
+> > > > (more below).
+> > > >
+> > > > >
+> > > > > > The big question is whether communicating user policy after
+> > > > > > enclave initialization
+> > > > > > via the SECINFO within SGX_IOC_ENCLAVE_ADD_PAGES is acceptable
+> > > > > > to all? I would
+> > > > > > appreciate a confirmation on this direction considering the
+> > > > > > significant history
+> > > > > > behind this topic.
+> > > > >
+> > > > > I have no idea because I don't know what is user space policy.
+> > > >
+> > > > This discussion is about some enclave usages needing RWX permissions
+> > > > on dynamically added enclave pages. RWX permissions on dynamically
+> > > added
+> > > > pages is
+> > > > not something that should blindly be allowed for all SGX enclaves but
+> > > > instead the user
+> > > > needs to explicitly allow specific enclaves to have such ability. This
+> > > > is equivalent
+> > > > to (but not the same as) what exists in Linux today with LSM. As
+> > > seen in
+> > > > mm/mprotect.c:do_mprotect_pkey()->security_file_mprotect() Linux
+> > > is able
+> > > > to make
+> > > > files and memory be both writable and executable, but it would only do
+> > > > so for those
+> > > > files and memory that the LSM (which is how user policy is
+> > > communicated,
+> > > > like SELinux)
+> > > > indicates it is allowed, not blindly do so for all files and all
+> > > memory.
+> > > >
+> > > > > > > Putting EAUG to the #PF handler and implicitly call it just
+> > > > > > > too flakky and
+> > > > > > > hard to make deterministic for e.g. JIT compiler in our use
+> > > > > > > case (not to
+> > > > > > > mention that JIT is not possible at all because inability to
+> > > > > > > do RX pages).
+> > > >
+> > > > I understand how SGX_IOC_ENCLAVE_AUGMENT_PAGES can be more
+> > > deterministic
+> > > > but from
+> > > > what I understand it would have a performance impact since it would
+> > > > require all memory
+> > > > that may be needed by the enclave be pre-allocated from outside the
+> > > > enclave and not
+> > > > just dynamically allocated from within the enclave at the time it is
+> > > > needed.
+> > > >
+> > > > Would such a performance impact be acceptable?
+> > > >
+> > > 
+> > > User space won't always have enough info to decide whether the pages
+> > > to be
+> > > EAUG'd immediately. In some cases (shared libraries, JVM for
+> > > example) lots
+> > > of code/data pages can be mapped but never actually touched. One
+> > > enclave/process does not know if any other more important
+> > > enclave/process
+> > > would need the EPC.
+> > > 
+> > > It should be for kernel to make the final decision as it has overall
+> > > picture
+> > > of the system EPC usage and availability.
 > > 
-> > Yes, the rule is "the HEAD's container_of pointer should never be
-> > calculated at all outside the loop", but how do you make sure everyone
-> > follows this rule?
+> > EAUG ioctl does not give better capabilities for user space to waste
+> > EPC given that EADD ioctl already exists, i.e. your argument is logically
+> > incorrect.
 > 
-> Your formulation of the rule is correct: never run container_of() on HEAD
-> pointer.
-
-Actually, it is not my rule. My rule is that never access other members
-of the struct except for the list_head member after the loop, because
-this is a invalid member after loop exit, but valid for the list_head
-member which just is HEAD and the lately caculation (&pos->head) seems
-harmless.
-
-I have considered the case that the HEAD's container "pos" is layouted
-across the max and the min address boundary, which means the address of
-HEAD is likely 0x60, and the address of pos is likely 0xffffffe0.
-It seems ok to caculate pos with:
-((type *)(__mptr - offsetof(type, member)));
-and it seems ok to caculate head outside the loop with:
-if (&pos->head == &HEAD)
-    return NULL;
-
-The only case I can think of with the rule "never run container_of()
-on HEAD" must be followed is when the first argument (which is &HEAD)
-passing to container_of() is NULL + some offset, it may lead to the
-resulting "pos->member" access being a NULL dereference. But maybe
-the caller can take the responsibility to check if it is NULL, not
-container_of() itself.
-
-Please remind me if i missed somthing, thanks.
-
+> The point of adding EAUG is to allow more efficient use of EPC pages.
+> Without EAUG, enclaves have to EADD everything upfront into EPC, consuming
+> predetermined number of EPC pages, some of which may not be used at all.
+> With EAUG, enclaves should be able to load minimal pages to get started,
+> pages added on #PF as they are actually accessed.
 > 
-> However the rule that is introduced by list_for_each_entry_inside() is
-> *not* this rule. The rule it introduces is: never access the iterator
-> variable outside the loop.
+> Obviously as you pointed out, some usages make more sense to pre-EAUG (EAUG
+> before #PF). But your proposal of supporting only pre-EAUG here essentially
+> makes EAUG behave almost the same as EADD.  If the current implementation
+> with EAUG on #PF can also use MAP_POPULATE for pre-EAUG (seems possible
+> based on Dave's comments), then it is flxible to cover all cases and allow
+> kernel to optimize allocation of EPC pages.
 
-Sorry for the confusion, indeed, that is two *different* rule.
+There is no even a working #PF based implementation in existance, and your
+argument has too many if's for my taste.
 
-> 
-> Making the iterator NULL on loop exit does follow the rule you proposed
-> but using a different technique: do not allow HEAD to be stored in the
-> iterator variable after loop exit. This also makes it impossible to run
-> container_of() on the HEAD pointer.
-> 
+Reinette, can you squash this fixup to your patch set and send v3 so that
+we get to a working implementation that can be benchmarked against e.g.
+ioctl based version:
 
-It does not. My rule is: never access the iterator variable outside the loop.
-The "Making the iterator NULL on loop exit" way still leak the pos with NULL
-outside the loop, may lead to a NULL deference.
+https://lore.kernel.org/linux-sgx/20220304033918.361495-1-jarkko@kernel.org/T/#u
 
-> 
-> > Everyone makes mistakes, but we can eliminate them all from the beginning
-> > with the help of compiler which can catch such use-after-loop things.
-> 
-> Indeed but if we introduce new interfaces then we don't have to worry
-> about existing usages and silent regressions. Code will have been
-> written knowing the loop can exit with the iterator set to NULL.
+This also objectively fixes some performance issues, e.g. EMODPE can be
+just used without any round-trips (v2 requires relax ioctl).
 
-Yes, it is more simple and compatible with existing interfaces. Howerver,
-you should make every developers to remember that "pos will be set NULL on
-loop exit", which is unreasonable and impossible for *every* single person.
-Otherwise the mis-use-after-loop will lead to a NULL dereference.
-But we can kill this problem by declaring iterator inside the loop and the
-complier will catch it if somebody mis-use-after-loop.
-
-> 
-> Sure it is still possible for programmers to make mistakes and
-> dereference the NULL pointer but C programmers are well training w.r.t.
-> NULL pointer checking so such mistakes are much less likely than with
-> the current list_for_each_entry() macro. This risk must be offset
-> against the way a NULLify approach can lead to more elegant code when we
-> are doing a list search.
-> 
-
-Yes, the NULLify approach is better than the current list_for_each_entry()
-macro, but i stick with that the list_for_each_entry_inside() way is best
-and perfect _technically_.
-
-Thus, my idea is *better a finger off than always aching*, let's settle this
-damn problem once and for all, with list_for_each_entry_inside().
-
---
-Xiaomeng Tong
+BR, Jark
