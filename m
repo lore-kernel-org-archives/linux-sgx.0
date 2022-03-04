@@ -2,50 +2,47 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6869C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7262FC433EF
 	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239052AbiCDJin (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Mar 2022 04:38:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55428 "EHLO
+        id S237378AbiCDJim (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Mar 2022 04:38:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239457AbiCDJiK (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE17198D20;
-        Fri,  4 Mar 2022 01:37:13 -0800 (PST)
+        with ESMTP id S239481AbiCDJiP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB023EBAFD;
+        Fri,  4 Mar 2022 01:37:24 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 27BCC618EF;
-        Fri,  4 Mar 2022 09:37:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DBBC340E9;
-        Fri,  4 Mar 2022 09:37:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 61BE961877;
+        Fri,  4 Mar 2022 09:37:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D52BC340E9;
+        Fri,  4 Mar 2022 09:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646386632;
-        bh=I7FI2ZTIaw0TF4ACFpwpzjWGZayC8TeyxjEwqSEMzZE=;
+        s=k20201202; t=1646386643;
+        bh=td03E+VxqV1sHqZ2twwWB29v96HBJ+vNd/qZrzoqWmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ml6iu6s7KuPP3FPWGAczwp6xWcEVSlLepx17YudPP7+MV+lH78sQqBinD81g3Hwvx
-         iz9zkdQ9Ux0TjmRe7dNMIgYIvIuM5grI+wTlQWW9hGGDyovl9dqSnfeqmNrElPnqT+
-         G2i/4TP8wIT6K+VZs8P96yKQeTryNSSN7QgWkcRmaQWo9kLBXl4Fkryy7vdm50mODe
-         M+KFpFixaEVWiZXQ3EAqddsU7o9c6qoxVdAtiBByRpRTpaXHbWYZYhclBnGu5DDj1o
-         AOzgX3x4v+QwSqF1yH3jcL+8w5xZS6Xos9lYgM6TFk0s6NccseLFAsqwv3/mpUrL0x
-         8CZC8YFzZ0n0A==
+        b=qu6IhPohZUNxdhVhxzWLb27+1Yj9lmA0hhWZuNCaqEWFo+zPc0XX9Q6GRFMZ4QLDM
+         S+dUEwsOvMLSxHgj05zXQFM/pAdjAgNv7XHbnTikaC4ayNUGU4Gva3ntqF4CrueJDO
+         dU24VfnhfOxdl5uECaQmgJ+oIh21IvacsESHiif/DzNKeRKePsRQIpsEeR3zIddKEE
+         RJxILLrKp2HP40jqAt+iISo7TB+vjuHl03Ql3R1NipLwRlxmSz8gnOQNbOmoolMu0B
+         fuYz1o5uqpuS+LAIiizwu8B5Rg2x80hQl7F2jELBJ9ERBhAeWSCNMw2BA8jMfDbd05
+         7dH6h/XAxFqZA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [RFC PATCH v2.1 21/30] x86/sgx: Support complete page removal
-Date:   Fri,  4 Mar 2022 11:35:15 +0200
-Message-Id: <20220304093524.397485-21-jarkko@kernel.org>
+        Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RFC PATCH v2.1 25/30] selftests/sgx: Test complete changing of page type flow
+Date:   Fri,  4 Mar 2022 11:35:19 +0200
+Message-Id: <20220304093524.397485-25-jarkko@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220304093524.397485-1-jarkko@kernel.org>
 References: <20220304093524.397485-1-jarkko@kernel.org>
@@ -57,242 +54,449 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Reinette Chatre <reinette.chatre@intel.com>
 
-The SGX2 page removal flow was introduced in previous patch and is
-as follows:
-1) Change the type of the pages to be removed to SGX_PAGE_TYPE_TRIM
-   using the ioctl() SGX_IOC_ENCLAVE_MODIFY_TYPE introduced in
-   previous patch.
-2) Approve the page removal by running ENCLU[EACCEPT] from within
-   the enclave.
-3) Initiate actual page removal using the ioctl()
-   SGX_IOC_ENCLAVE_REMOVE_PAGES introduced here.
+Support for changing an enclave page's type enables an initialized
+enclave to be expanded with support for more threads by changing the
+type of a regular enclave page to that of a Thread Control Structure
+(TCS).  Additionally, being able to change a TCS or regular enclave
+page's type to be trimmed (SGX_PAGE_TYPE_TRIM) initiates the removal
+of the page from the enclave.
 
-Support the final step of the SGX2 page removal flow with ioctl()
-SGX_IOC_ENCLAVE_REMOVE_PAGES. With this ioctl() the user specifies
-a page range that should be removed. All pages in the provided
-range should have the SGX_PAGE_TYPE_TRIM page type and the request
-will fail with EPERM (Operation not permitted) if a page that does
-not have the correct type is encountered. Page removal can fail
-on any page within the provided range. Support partial success by
-returning the number of pages that were successfully removed.
-
-Since actual page removal will succeed even if ENCLU[EACCEPT] was not
-run from within the enclave the ENCLU[EMODPR] instruction with RWX
-permissions is used as a no-op mechanism to ensure ENCLU[EACCEPT] was
-successfully run from within the enclave before the enclave page is
-removed.
-
-If the user omits running SGX_IOC_ENCLAVE_REMOVE_PAGES the pages will
-still be removed when the enclave is unloaded.
+Test changing page type to TCS as well as page removal flows
+in two phases: In the first phase support for a new thread is
+dynamically added to an initialized enclave and in the second phase
+the pages associated with the new thread are removed from the enclave.
+As an additional sanity check after the second phase the page used as
+a TCS page during the first phase is added back as a regular page and
+ensured that it can be written to (which is not possible if it was a
+TCS page).
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/include/uapi/asm/sgx.h |  21 +++++
- arch/x86/kernel/cpu/sgx/ioctl.c | 145 ++++++++++++++++++++++++++++++++
- 2 files changed, 166 insertions(+)
+ tools/testing/selftests/sgx/load.c |  41 ++++
+ tools/testing/selftests/sgx/main.c | 347 +++++++++++++++++++++++++++++
+ tools/testing/selftests/sgx/main.h |   1 +
+ 3 files changed, 389 insertions(+)
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 003599120edf..c4e0326d281d 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -33,6 +33,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_restrict_perm)
- #define SGX_IOC_ENCLAVE_MODIFY_TYPE \
- 	_IOWR(SGX_MAGIC, 0x06, struct sgx_enclave_modt)
-+#define SGX_IOC_ENCLAVE_REMOVE_PAGES \
-+	_IOWR(SGX_MAGIC, 0x08, struct sgx_enclave_remove_pages)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -117,6 +119,25 @@ struct sgx_enclave_modt {
- 	__u64 count;
- };
- 
-+/**
-+ * struct sgx_enclave_remove_pages - %SGX_IOC_ENCLAVE_REMOVE_PAGES parameters
-+ * @offset:	starting page offset (page aligned relative to enclave base
-+ *		address defined in SECS)
-+ * @length:	length of memory (multiple of the page size)
-+ * @count:	(output) bytes successfully changed (multiple of page size)
-+ *
-+ * Regular (PT_REG) or TCS (PT_TCS) can be removed from an initialized
-+ * enclave if the system supports SGX2. First, the %SGX_IOC_ENCLAVE_MODIFY_TYPE
-+ * ioctl() should be used to change the page type to PT_TRIM. After that
-+ * succeeds ENCLU[EACCEPT] should be run from within the enclave and then
-+ * %SGX_IOC_ENCLAVE_REMOVE_PAGES can be used to complete the page removal.
-+ */
-+struct sgx_enclave_remove_pages {
-+	__u64 offset;
-+	__u64 length;
-+	__u64 count;
-+};
-+
- struct sgx_enclave_run;
- 
- /**
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 2c8cca51c7df..99cba5837acc 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -1175,6 +1175,148 @@ static long sgx_ioc_enclave_modt(struct sgx_encl *encl, void __user *arg)
- 	return ret;
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index 006b464c8fc9..94bdeac1cf04 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -130,6 +130,47 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
+ 	return true;
  }
  
-+/**
-+ * sgx_encl_remove_pages() - Remove trimmed pages from SGX enclave
-+ * @encl:	Enclave to which the pages belong
-+ * @params:	Checked parameters from user on which pages need to be removed
-+ *
-+ * Return:
-+ * - 0:		Success.
-+ * - -errno:	Otherwise.
++/*
++ * Parse the enclave code's symbol table to locate and return address of
++ * the provided symbol
 + */
-+static long sgx_encl_remove_pages(struct sgx_encl *encl,
-+				  struct sgx_enclave_remove_pages *params)
++uint64_t encl_get_entry(struct encl *encl, const char *symbol)
 +{
-+	struct sgx_encl_page *entry;
-+	struct sgx_secinfo secinfo;
-+	unsigned long addr;
-+	unsigned long c;
-+	void *epc_virt;
-+	int ret;
++	Elf64_Shdr *sections;
++	Elf64_Sym *symtab;
++	Elf64_Ehdr *ehdr;
++	char *sym_names;
++	int num_sym;
++	int i;
 +
-+	memset(&secinfo, 0, sizeof(secinfo));
-+	secinfo.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
++	ehdr = encl->bin;
++	sections = encl->bin + ehdr->e_shoff;
 +
-+	for (c = 0 ; c < params->length; c += PAGE_SIZE) {
-+		addr = encl->base + params->offset + c;
-+
-+		mutex_lock(&encl->lock);
-+
-+		entry = sgx_encl_load_page(encl, addr);
-+		if (IS_ERR(entry)) {
-+			ret = PTR_ERR(entry) == -EBUSY ? -EAGAIN : -EFAULT;
-+			goto out_unlock;
++	for (i = 0; i < ehdr->e_shnum; i++) {
++		if (sections[i].sh_type == SHT_SYMTAB) {
++			symtab = (Elf64_Sym *)((char *)encl->bin + sections[i].sh_offset);
++			num_sym = sections[i].sh_size / sections[i].sh_entsize;
++			break;
 +		}
-+
-+		if (entry->type != SGX_PAGE_TYPE_TRIM) {
-+			ret = -EPERM;
-+			goto out_unlock;
-+		}
-+
-+		/*
-+		 * ENCLS[EMODPR] is a no-op instruction used to inform if
-+		 * ENCLU[EACCEPT] was run from within the enclave. If
-+		 * ENCLS[EMODPR] is run with RWX on a trimmed page that is
-+		 * not yet accepted then it will return
-+		 * %SGX_PAGE_NOT_MODIFIABLE, after the trimmed page is
-+		 * accepted the instruction will encounter a page fault.
-+		 */
-+		epc_virt = sgx_get_epc_virt_addr(entry->epc_page);
-+		ret = __emodpr(&secinfo, epc_virt);
-+		if (!encls_faulted(ret) || ENCLS_TRAPNR(ret) != X86_TRAP_PF) {
-+			ret = -EPERM;
-+			goto out_unlock;
-+		}
-+
-+		if (sgx_unmark_page_reclaimable(entry->epc_page)) {
-+			ret = -EBUSY;
-+			goto out_unlock;
-+		}
-+
-+		/*
-+		 * Do not keep encl->lock because of dependency on
-+		 * mmap_lock acquired in sgx_zap_enclave_ptes().
-+		 */
-+		mutex_unlock(&encl->lock);
-+
-+		sgx_zap_enclave_ptes(encl, addr);
-+
-+		mutex_lock(&encl->lock);
-+
-+		sgx_encl_free_epc_page(entry->epc_page);
-+		encl->secs_child_cnt--;
-+		entry->epc_page = NULL;
-+		xa_erase(&encl->page_array, PFN_DOWN(entry->desc));
-+		sgx_encl_shrink(encl, NULL);
-+		kfree(entry);
-+
-+		mutex_unlock(&encl->lock);
 +	}
 +
-+	ret = 0;
-+	goto out;
++	for (i = 0; i < ehdr->e_shnum; i++) {
++		if (sections[i].sh_type == SHT_STRTAB) {
++			sym_names = (char *)encl->bin + sections[i].sh_offset;
++			break;
++		}
++	}
 +
-+out_unlock:
-+	mutex_unlock(&encl->lock);
-+out:
-+	params->count = c;
++	for (i = 0; i < num_sym; i++) {
++		Elf64_Sym *sym = &symtab[i];
 +
-+	return ret;
++		if (!strcmp(symbol, sym_names + sym->st_name))
++			return (uint64_t)sym->st_value;
++	}
++
++	return 0;
 +}
 +
-+/**
-+ * sgx_ioc_enclave_remove_pages() - handler for %SGX_IOC_ENCLAVE_REMOVE_PAGES
-+ * @encl:	an enclave pointer
-+ * @arg:	userspace pointer to &struct sgx_enclave_remove_pages instance
-+ *
-+ * Final step of the flow removing pages from an initialized enclave. The
-+ * complete flow is:
-+ *
-+ * 1) User changes the type of the pages to be removed to %SGX_PAGE_TYPE_TRIM
-+ *    using the %SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl().
-+ * 2) User approves the page removal by running ENCLU[EACCEPT] from within
-+ *    the enclave.
-+ * 3) User initiates actual page removal using the
-+ *    %SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl() that is handled here.
-+ *
-+ * First remove any page table entries pointing to the page and then proceed
-+ * with the actual removal of the enclave page and data in support of it.
-+ *
-+ * VA pages are not affected by this removal. It is thus possible that the
-+ * enclave may end up with more VA pages than needed to support all its
-+ * pages.
-+ *
-+ * Return:
-+ * - 0:		Success
-+ * - -errno:	Otherwise
-+ */
-+static long sgx_ioc_enclave_remove_pages(struct sgx_encl *encl,
-+					 void __user *arg)
-+{
-+	struct sgx_enclave_remove_pages params;
-+	long ret;
-+
-+	ret = sgx_ioc_sgx2_ready(encl);
-+	if (ret)
-+		return ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	if (sgx_validate_offset_length(encl, params.offset, params.length))
-+		return -EINVAL;
-+
-+	if (params.count)
-+		return -EINVAL;
-+
-+	ret = sgx_encl_remove_pages(encl, &params);
-+
-+	if (copy_to_user(arg, &params, sizeof(params)))
-+		return -EFAULT;
-+
-+	return ret;
-+}
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
  {
- 	struct sgx_encl *encl = filep->private_data;
-@@ -1202,6 +1344,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_MODIFY_TYPE:
- 		ret = sgx_ioc_enclave_modt(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_REMOVE_PAGES:
-+		ret = sgx_ioc_enclave_remove_pages(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
+ 	const char device_path[] = "/dev/sgx_enclave";
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 13542c5de66f..f9872c6746a3 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -1106,4 +1106,351 @@ TEST_F(enclave, augment_via_eaccept)
+ 	munmap(addr, PAGE_SIZE);
+ }
+ 
++/*
++ * SGX2 page type modification test in two phases:
++ * Phase 1:
++ * Create a new TCS, consisting out of three new pages (stack page with regular
++ * page type, SSA page with regular page type, and TCS page with TCS page
++ * type) in an initialized enclave and run a simple workload within it.
++ * Phase 2:
++ * Remove the three pages added in phase 1, add a new regular page at the
++ * same address that previously hosted the TCS page and verify that it can
++ * be modified.
++ */
++TEST_F(enclave, tcs_create)
++{
++	struct encl_op_init_tcs_page init_tcs_page_op;
++	struct sgx_enclave_remove_pages remove_ioc;
++	struct encl_op_get_from_addr get_addr_op;
++	struct encl_op_put_to_addr put_addr_op;
++	struct encl_op_get_from_buf get_buf_op;
++	struct encl_op_put_to_buf put_buf_op;
++	void *addr, *tcs, *stack_end, *ssa;
++	struct encl_op_eaccept eaccept_op;
++	struct sgx_enclave_modt modt_ioc;
++	struct sgx_secinfo secinfo;
++	size_t total_size = 0;
++	uint64_t val_64;
++	int errno_save;
++	int ret, i;
++
++	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl,
++				    _metadata));
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
++	/*
++	 * Hardware (SGX2) and kernel support is needed for this test. Start
++	 * with check that test has a chance of succeeding.
++	 */
++	memset(&modt_ioc, 0, sizeof(modt_ioc));
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
++
++	if (ret == -1) {
++		if (errno == ENOTTY)
++			SKIP(return, "Kernel does not support SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()");
++		else if (errno == ENODEV)
++			SKIP(return, "System does not support SGX2");
++	}
++
++	/*
++	 * Invalid parameters were provided during sanity check,
++	 * expect command to fail.
++	 */
++	EXPECT_EQ(ret, -1);
++
++	/*
++	 * Add three regular pages via EAUG: one will be the TCS stack, one
++	 * will be the TCS SSA, and one will be the new TCS. The stack and
++	 * SSA will remain as regular pages, the TCS page will need its
++	 * type changed after populated with needed data.
++	 */
++	for (i = 0; i < self->encl.nr_segments; i++) {
++		struct encl_segment *seg = &self->encl.segment_tbl[i];
++
++		total_size += seg->size;
++	}
++
++	/*
++	 * Actual enclave size is expected to be larger than the loaded
++	 * test enclave since enclave size must be a power of 2 in bytes while
++	 * test_encl does not consume it all.
++	 */
++	EXPECT_LT(total_size + 3 * PAGE_SIZE, self->encl.encl_size);
++
++	/*
++	 * mmap() three pages at end of existing enclave to be used for the
++	 * three new pages.
++	 */
++	addr = mmap((void *)self->encl.encl_base + total_size, 3 * PAGE_SIZE,
++		    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED,
++		    self->encl.fd, 0);
++	EXPECT_NE(addr, MAP_FAILED);
++
++	self->run.exception_vector = 0;
++	self->run.exception_error_code = 0;
++	self->run.exception_addr = 0;
++
++	stack_end = (void *)self->encl.encl_base + total_size;
++	tcs = (void *)self->encl.encl_base + total_size + PAGE_SIZE;
++	ssa = (void *)self->encl.encl_base + total_size + 2 * PAGE_SIZE;
++
++	/*
++	 * Run EACCEPT on each new page to trigger the
++	 * EACCEPT->(#PF)->EAUG->EACCEPT(again without a #PF) flow.
++	 */
++
++	eaccept_op.epc_addr = (unsigned long)stack_end;
++	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
++	eaccept_op.ret = 0;
++	eaccept_op.header.type = ENCL_OP_EACCEPT;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	if (self->run.exception_vector == 14 &&
++	    self->run.exception_error_code == 4 &&
++	    self->run.exception_addr == (unsigned long)stack_end) {
++		munmap(addr, 3 * PAGE_SIZE);
++		SKIP(return, "Kernel does not support adding pages to initialized enclave");
++	}
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	eaccept_op.epc_addr = (unsigned long)ssa;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	eaccept_op.epc_addr = (unsigned long)tcs;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	/*
++	 * Three new pages added to enclave. Now populate the TCS page with
++	 * needed data. This should be done from within enclave. Provide
++	 * the function that will do the actual data population with needed
++	 * data.
++	 */
++
++	/*
++	 * New TCS will use the "encl_dyn_entry" entrypoint that expects
++	 * stack to begin in page before TCS page.
++	 */
++	val_64 = encl_get_entry(&self->encl, "encl_dyn_entry");
++	EXPECT_NE(val_64, 0);
++
++	init_tcs_page_op.tcs_page = (unsigned long)tcs;
++	init_tcs_page_op.ssa = (unsigned long)total_size + 2 * PAGE_SIZE;
++	init_tcs_page_op.entry = val_64;
++	init_tcs_page_op.header.type = ENCL_OP_INIT_TCS_PAGE;
++
++	EXPECT_EQ(ENCL_CALL(&init_tcs_page_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	/* Change TCS page type to TCS. */
++	memset(&modt_ioc, 0, sizeof(modt_ioc));
++	memset(&secinfo, 0, sizeof(secinfo));
++
++	secinfo.flags = SGX_PAGE_TYPE_TCS << 8;
++	modt_ioc.offset = total_size + PAGE_SIZE;
++	modt_ioc.length = PAGE_SIZE;
++	modt_ioc.secinfo = (unsigned long)&secinfo;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	EXPECT_EQ(ret, 0);
++	EXPECT_EQ(errno_save, 0);
++	EXPECT_EQ(modt_ioc.result, 0);
++	EXPECT_EQ(modt_ioc.count, 4096);
++
++	/* EACCEPT new TCS page from enclave. */
++	eaccept_op.epc_addr = (unsigned long)tcs;
++	eaccept_op.flags = SGX_SECINFO_TCS | SGX_SECINFO_MODIFIED;
++	eaccept_op.ret = 0;
++	eaccept_op.header.type = ENCL_OP_EACCEPT;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	/* Run workload from new TCS. */
++	self->run.tcs = (unsigned long)tcs;
++
++	/*
++	 * Simple workload to write to data buffer and read value back.
++	 */
++	put_buf_op.header.type = ENCL_OP_PUT_TO_BUFFER;
++	put_buf_op.value = MAGIC;
++
++	EXPECT_EQ(ENCL_CALL(&put_buf_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	get_buf_op.header.type = ENCL_OP_GET_FROM_BUFFER;
++	get_buf_op.value = 0;
++
++	EXPECT_EQ(ENCL_CALL(&get_buf_op, &self->run, true), 0);
++
++	EXPECT_EQ(get_buf_op.value, MAGIC);
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	/*
++	 * Phase 2 of test:
++	 * Remove pages associated with new TCS, create a regular page
++	 * where TCS page used to be and verify it can be used as a regular
++	 * page.
++	 */
++
++	/* Start page removal by requesting change of page type to PT_TRIM. */
++	memset(&modt_ioc, 0, sizeof(modt_ioc));
++	memset(&secinfo, 0, sizeof(secinfo));
++
++	secinfo.flags = SGX_PAGE_TYPE_TRIM << 8;
++	modt_ioc.offset = total_size;
++	modt_ioc.length = 3 * PAGE_SIZE;
++	modt_ioc.secinfo = (unsigned long)&secinfo;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	EXPECT_EQ(ret, 0);
++	EXPECT_EQ(errno_save, 0);
++	EXPECT_EQ(modt_ioc.result, 0);
++	EXPECT_EQ(modt_ioc.count, 3 * PAGE_SIZE);
++
++	/*
++	 * Enter enclave via TCS #1 and approve page removal by sending
++	 * EACCEPT for each of three removed pages.
++	 */
++	self->run.tcs = self->encl.encl_base;
++
++	eaccept_op.epc_addr = (unsigned long)stack_end;
++	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
++	eaccept_op.ret = 0;
++	eaccept_op.header.type = ENCL_OP_EACCEPT;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	eaccept_op.epc_addr = (unsigned long)tcs;
++	eaccept_op.ret = 0;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	eaccept_op.epc_addr = (unsigned long)ssa;
++	eaccept_op.ret = 0;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	/* Send final ioctl() to complete page removal. */
++	memset(&remove_ioc, 0, sizeof(remove_ioc));
++
++	remove_ioc.offset = total_size;
++	remove_ioc.length = 3 * PAGE_SIZE;
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
++	errno_save = ret == -1 ? errno : 0;
++
++	EXPECT_EQ(ret, 0);
++	EXPECT_EQ(errno_save, 0);
++	EXPECT_EQ(remove_ioc.count, 3 * PAGE_SIZE);
++
++	/*
++	 * Enter enclave via TCS #1 and access location where TCS #3 was to
++	 * trigger dynamic add of regular page at that location.
++	 */
++	eaccept_op.epc_addr = (unsigned long)tcs;
++	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
++	eaccept_op.ret = 0;
++	eaccept_op.header.type = ENCL_OP_EACCEPT;
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	EXPECT_EQ(eaccept_op.ret, 0);
++
++	/*
++	 * New page should be accessible from within enclave - write to it.
++	 */
++	put_addr_op.value = MAGIC;
++	put_addr_op.addr = (unsigned long)tcs;
++	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
++
++	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	/*
++	 * Read memory from newly added page that was just written to,
++	 * confirming that data previously written (MAGIC) is present.
++	 */
++	get_addr_op.value = 0;
++	get_addr_op.addr = (unsigned long)tcs;
++	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
++
++	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
++
++	EXPECT_EQ(get_addr_op.value, MAGIC);
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	munmap(addr, 3 * PAGE_SIZE);
++}
++
+ TEST_HARNESS_MAIN
+diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
+index b45c52ec7ab3..fc585be97e2f 100644
+--- a/tools/testing/selftests/sgx/main.h
++++ b/tools/testing/selftests/sgx/main.h
+@@ -38,6 +38,7 @@ void encl_delete(struct encl *ctx);
+ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size);
+ bool encl_measure(struct encl *encl);
+ bool encl_build(struct encl *encl);
++uint64_t encl_get_entry(struct encl *encl, const char *symbol);
+ 
+ int sgx_enter_enclave(void *rdi, void *rsi, long rdx, u32 function, void *r8, void *r9,
+ 		      struct sgx_enclave_run *run);
 -- 
 2.35.1
 
