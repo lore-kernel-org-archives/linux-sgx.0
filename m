@@ -2,47 +2,50 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F35C433FE
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7ADC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237814AbiCDJiq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Mar 2022 04:38:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58996 "EHLO
+        id S237541AbiCDJit (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Mar 2022 04:38:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237257AbiCDJi1 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:38:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C707DF9B;
-        Fri,  4 Mar 2022 01:37:39 -0800 (PST)
+        with ESMTP id S239275AbiCDJh7 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:37:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573021A6F9F;
+        Fri,  4 Mar 2022 01:36:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 958986197E;
-        Fri,  4 Mar 2022 09:37:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B90BC340E9;
-        Fri,  4 Mar 2022 09:37:37 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BA4B3B827B8;
+        Fri,  4 Mar 2022 09:36:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFBEC340E9;
+        Fri,  4 Mar 2022 09:36:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646386657;
-        bh=Kn/vNsiev7dahB6veyuVCK/X3UuJrkBSEBZH8/QcHss=;
+        s=k20201202; t=1646386594;
+        bh=lWejqATEW/q/CLKjFBnZqv7CVO31Bvbype7mwXlAaeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D2hqedJIoyAa4chosW/kLeSuLOSzMFN9P2rdCHR/4xGMzaIsUzXjZeT+kg0+vO0Io
-         aJWhVzPOE3hL7sLBokq3marXLOeDXrLL4VvKkB7TLAp3hJTOhbH0WPOT8KsaRg1AaL
-         heUzMgELvfhW8AKBS8zq1R53/ZlyTz7T/+jw+VIyoWuEPgMpf6XDvVD2p2qdOU+V3T
-         rJfo4A/zakEHRIHBzgejlbyU6b9vkKQNuakShc+weJ1O3ZPGG8iYYgZbVseTt8CiPX
-         llopNikgYr7wjdY7hGLBpv8wqJM/26szI67po4e58HjY7bmU9KW+cXXSkmhflwsAv4
-         9CpLwnU/vjqoA==
+        b=GI2nN/+6HjKlLdzdV0ABzzFeInz2eKYuT+/y97A3fZny4xYw7xVhybVYDXcoPYpcN
+         iAk8mYFd8dAzXHh2u4komRgMzHs5Y1BfU1qX8B8bqduaqTZ/1F0WBha1BhBcgovAnO
+         +F2gQrx41i6SAop0K9eicxfUq1qD0lC1uPO2nsNgEuxUqQXHq4Y8LG3rEFqN5Y7z8U
+         Dwd5khixjFGCgoLFYWc1TaiyFNhadGW3ym9qpnCFugnWY62mw/WsFyXJdJiusBaGdv
+         6L2acejjScdL/wEaqkyMkcL8Hb6qlC1WRYBhl75F0dcjegBYWX+sRB45ykQU3fnE1G
+         1oTWigRNmOaxg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH v2.1 30/30] selftests/sgx: Page removal stress test
-Date:   Fri,  4 Mar 2022 11:35:24 +0200
-Message-Id: <20220304093524.397485-30-jarkko@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [RFC PATCH v2.1 08/30] x86/sgx: Export sgx_encl_ewb_cpumask()
+Date:   Fri,  4 Mar 2022 11:35:02 +0200
+Message-Id: <20220304093524.397485-8-jarkko@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220304093524.397485-1-jarkko@kernel.org>
 References: <20220304093524.397485-1-jarkko@kernel.org>
@@ -54,154 +57,162 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Reinette Chatre <reinette.chatre@intel.com>
 
-Create enclave with additional heap that consumes all physical SGX
-memory and then remove it.
+Using sgx_encl_ewb_cpumask() to learn which CPUs might have executed
+an enclave is useful to ensure that TLBs are cleared when changes are
+made to enclave pages.
 
-Depending on the available SGX memory this test could take a
-significant time to run (several minutes) as it (1) creates the
-enclave, (2) changes the type of every page to be trimmed,
-(3) enters the enclave once per page to run EACCEPT, before
-(4) the pages are finally removed.
+sgx_encl_ewb_cpumask() is used within the reclaimer when an enclave
+page is evicted. The upcoming SGX2 support enables changes to be
+made to enclave pages and will require TLBs to not refer to the
+changed pages and thus will be needing sgx_encl_ewb_cpumask().
+
+Relocate sgx_encl_ewb_cpumask() to be with the rest of the enclave
+code in encl.c now that it is no longer unique to the reclaimer.
+
+Take care to ensure that any future usage maintains the
+current context requirement that ETRACK has been called first.
+Expand the existing comments to highlight this while moving them
+to a more prominent location before the function.
+
+No functional change.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- tools/testing/selftests/sgx/main.c | 122 +++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c | 67 ++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encl.h |  1 +
+ arch/x86/kernel/cpu/sgx/main.c | 29 ---------------
+ 3 files changed, 68 insertions(+), 29 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index c691a4864db8..5c4faf6d5640 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -378,7 +378,129 @@ TEST_F(enclave, unclobbered_vdso_oversubscribed)
- 	EXPECT_EQ(get_op.value, MAGIC);
- 	EXPECT_EEXIT(&self->run);
- 	EXPECT_EQ(self->run.user_data, 0);
-+}
-+
-+TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
-+{
-+	struct sgx_enclave_remove_pages remove_ioc;
-+	struct encl_op_get_from_buf get_op;
-+	struct encl_op_eaccept eaccept_op;
-+	struct encl_op_put_to_buf put_op;
-+	struct sgx_enclave_modt modt_ioc;
-+	struct sgx_secinfo secinfo;
-+	struct encl_segment *heap;
-+	unsigned long total_mem;
-+	int ret, errno_save;
-+	unsigned long addr;
-+	unsigned long i;
-+
-+	/*
-+	 * Create enclave with additional heap that is as big as all
-+	 * available physical SGX memory.
-+	 */
-+	total_mem = get_total_epc_mem();
-+	ASSERT_NE(total_mem, 0);
-+	TH_LOG("Creating an enclave with %lu bytes heap may take a while ...",
-+	       total_mem);
-+	ASSERT_TRUE(setup_test_encl(total_mem, &self->encl, _metadata));
-+
-+	/*
-+	 * Hardware (SGX2) and kernel support is needed for this test. Start
-+	 * with check that test has a chance of succeeding.
-+	 */
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
-+
-+	if (ret == -1) {
-+		if (errno == ENOTTY)
-+			SKIP(return, "Kernel does not support SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()");
-+		else if (errno == ENODEV)
-+			SKIP(return, "System does not support SGX2");
-+	}
-+
-+	/*
-+	 * Invalid parameters were provided during sanity check,
-+	 * expect command to fail.
-+	 */
-+	EXPECT_EQ(ret, -1);
-+
-+	/* SGX2 is supported by kernel and hardware, test can proceed. */
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	heap = &self->encl.segment_tbl[self->encl.nr_segments - 1];
-+
-+	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
-+	put_op.value = MAGIC;
-+
-+	EXPECT_EQ(ENCL_CALL(&put_op, &self->run, false), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.user_data, 0);
-+
-+	get_op.header.type = ENCL_OP_GET_FROM_BUFFER;
-+	get_op.value = 0;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_op, &self->run, false), 0);
-+
-+	EXPECT_EQ(get_op.value, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.user_data, 0);
-+
-+	/* Trim entire heap. */
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+	memset(&secinfo, 0, sizeof(secinfo));
-+
-+	secinfo.flags = SGX_PAGE_TYPE_TRIM << 8;
-+	modt_ioc.offset = heap->offset;
-+	modt_ioc.length = heap->size;
-+	modt_ioc.secinfo = (unsigned long)&secinfo;
-+
-+	TH_LOG("Changing type of %zd bytes to trimmed may take a while ...",
-+	       heap->size);
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &modt_ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(modt_ioc.result, 0);
-+	EXPECT_EQ(modt_ioc.count, heap->size);
-+
-+	/* EACCEPT all removed pages. */
-+	addr = self->encl.encl_base + heap->offset;
-+
-+	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+
-+	TH_LOG("Entering enclave to run EACCEPT for each page of %zd bytes may take a while ...",
-+	       heap->size);
-+	for (i = 0; i < heap->size; i += 4096) {
-+		eaccept_op.epc_addr = addr + i;
-+		eaccept_op.ret = 0;
- 
-+		EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+
-+		EXPECT_EQ(self->run.exception_vector, 0);
-+		EXPECT_EQ(self->run.exception_error_code, 0);
-+		EXPECT_EQ(self->run.exception_addr, 0);
-+		ASSERT_EQ(eaccept_op.ret, 0);
-+		ASSERT_EQ(self->run.function, EEXIT);
-+	}
-+
-+	/* Complete page removal. */
-+	memset(&remove_ioc, 0, sizeof(remove_ioc));
-+
-+	remove_ioc.offset = heap->offset;
-+	remove_ioc.length = heap->size;
-+
-+	TH_LOG("Removing %zd bytes from enclave may take a while ...",
-+	       heap->size);
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(remove_ioc.count, heap->size);
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 6d25f7ed1294..353866e1b16f 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -595,6 +595,73 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 	return 0;
  }
  
- TEST_F(enclave, clobbered_vdso)
++/**
++ * sgx_encl_ewb_cpumask() - Query which CPUs might be accessing the enclave
++ * @encl: the enclave
++ *
++ * Some SGX functions require that no cached linear-to-physical address
++ * mappings are present before they can succeed. For example, ENCLS[EWB]
++ * copies a page from the enclave page cache to regular main memory but
++ * it fails if it cannot ensure that there are no cached
++ * linear-to-physical address mappings referring to the page.
++ *
++ * SGX hardware flushes all cached linear-to-physical mappings on a CPU
++ * when an enclave is exited via ENCLU[EEXIT] or an Asynchronous Enclave
++ * Exit (AEX). Exiting an enclave will thus ensure cached linear-to-physical
++ * address mappings are cleared but coordination with the tracking done within
++ * the SGX hardware is needed to support the SGX functions that depend on this
++ * cache clearing.
++ *
++ * When the ENCLS[ETRACK] function is issued on an enclave the hardware
++ * tracks threads operating inside the enclave at that time. The SGX
++ * hardware tracking require that all the identified threads must have
++ * exited the enclave in order to flush the mappings before a function such
++ * as ENCLS[EWB] will be permitted
++ *
++ * The following flow is used to support SGX functions that require that
++ * no cached linear-to-physical address mappings are present:
++ * 1) Execute ENCLS[ETRACK] to initiate hardware tracking.
++ * 2) Use this function (sgx_encl_ewb_cpumask()) to query which CPUs might be
++ *    accessing the enclave.
++ * 3) Send IPI to identified CPUs, kicking them out of the enclave and
++ *    thus flushing all locally cached linear-to-physical address mappings.
++ * 4) Execute SGX function.
++ *
++ * Context: It is required to call this function after ENCLS[ETRACK].
++ *          This will ensure that if any new mm appears (racing with
++ *          sgx_encl_mm_add()) then the new mm will enter into the
++ *          enclave with fresh linear-to-physical address mappings.
++ *
++ *          It is required that all IPIs are completed before a new
++ *          ENCLS[ETRACK] is issued so be sure to protect steps 1 to 3
++ *          of the above flow with the enclave's mutex.
++ *
++ * Return: cpumask of CPUs that might be accessing @encl
++ */
++const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
++{
++	cpumask_t *cpumask = &encl->cpumask;
++	struct sgx_encl_mm *encl_mm;
++	int idx;
++
++	cpumask_clear(cpumask);
++
++	idx = srcu_read_lock(&encl->srcu);
++
++	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
++		if (!mmget_not_zero(encl_mm->mm))
++			continue;
++
++		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
++
++		mmput_async(encl_mm->mm);
++	}
++
++	srcu_read_unlock(&encl->srcu, idx);
++
++	return cpumask;
++}
++
+ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+ 					      pgoff_t index)
+ {
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index fec43ca65065..2b15615be8c6 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -105,6 +105,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ 
+ void sgx_encl_release(struct kref *ref);
+ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
++const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl);
+ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			 struct sgx_backing *backing);
+ void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 4b41efc9e367..d481e8b0e7bc 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -203,35 +203,6 @@ static void sgx_ipi_cb(void *info)
+ {
+ }
+ 
+-static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
+-{
+-	cpumask_t *cpumask = &encl->cpumask;
+-	struct sgx_encl_mm *encl_mm;
+-	int idx;
+-
+-	/*
+-	 * Can race with sgx_encl_mm_add(), but ETRACK has already been
+-	 * executed, which means that the CPUs running in the new mm will enter
+-	 * into the enclave with a fresh epoch.
+-	 */
+-	cpumask_clear(cpumask);
+-
+-	idx = srcu_read_lock(&encl->srcu);
+-
+-	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+-		if (!mmget_not_zero(encl_mm->mm))
+-			continue;
+-
+-		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
+-
+-		mmput_async(encl_mm->mm);
+-	}
+-
+-	srcu_read_unlock(&encl->srcu, idx);
+-
+-	return cpumask;
+-}
+-
+ /*
+  * Swap page to the regular memory transformed to the blocked state by using
+  * EBLOCK, which means that it can no longer be referenced (no new TLB entries).
 -- 
 2.35.1
 
