@@ -2,395 +2,214 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC9BC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50770C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri,  4 Mar 2022 09:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232365AbiCDJA7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Mar 2022 04:00:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44818 "EHLO
+        id S233050AbiCDJi0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Mar 2022 04:38:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231526AbiCDJA6 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:00:58 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF70E123433;
-        Fri,  4 Mar 2022 01:00:09 -0800 (PST)
+        with ESMTP id S239250AbiCDJh6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 04:37:58 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5F361AA4A3;
+        Fri,  4 Mar 2022 01:36:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8CAAEB827B3;
-        Fri,  4 Mar 2022 09:00:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C785FC340E9;
-        Fri,  4 Mar 2022 09:00:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D1AE61983;
+        Fri,  4 Mar 2022 09:36:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F29CCC340E9;
+        Fri,  4 Mar 2022 09:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646384407;
-        bh=MTRRZycgyX27cftet2AcMZPMA/KWOX/3CGZ18ZCkcpA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q78AWocaanHuKbB8814KYZs3VFrtxn/0QsjKxU8QIE8QSD+RjFKk7WxY37KTgR8vh
-         Y+F1xdTSrCMpNNi0CYpKHH/IQ+5KlQfDe+kQCT/V5E6UbVm1YtWr2Fs3Abvgrh9iBY
-         7i1dbsPTpThfd2a27W5SU6qyBe5xmSCs9roTz3ao5SgjNnKUTnAwhFrfE6YftnvZiP
-         uCwY77/pu+IKMgQ3Cac56ccJ2fB3BmpV0/N/bg8ICUHq8tAS8V25qw7wr+uwVDzS61
-         ZcYH+FmY2qlErtY0GiDkf8i7sdMPxGuUl9Iu5ricacMaGio/3Jf0YzoXbSueSwIa5q
-         Z6VRKg05giQbw==
-Date:   Fri, 4 Mar 2022 10:59:26 +0200
+        s=k20201202; t=1646386591;
+        bh=kKcR9AvfZlN19CESCMgiF89yZBxT/ZOKGdAISIaDRy8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FL3tOIUmfhfHK63Ab5MP7aTRkotd0px38yI7drnuBRi7UH6dLWheNUIg14jXgupDx
+         TASHw0sH95vnY/fytDdwVM/WaX1UF8F8cjVzbjaRO1W1jrmHafzb4k9FcOcFaQ8JlD
+         /pAubU4WBi8dIJq3NrA1Qja79vX2tzL1Y6iOEQmkmiPAUxrc5tqVL/oKrFfh6mZxkL
+         46JzhiNHI0N3/v/nHqsldedvy/s4mKFbJeHEvYcZrrtCZvP3iXg2ieKX+AkvziJYdK
+         zYwJJjIzBP5uNlmx0pnC3aj4+omAcM3/8hpjcqxmvt8Xb+jRBLTwApx9AjW0HDWaCt
+         HUt7N6+YhIkbA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
-        cathy.zhang@intel.com, cedric.xing@intel.com,
-        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 15/32] x86/sgx: Support relaxing of enclave page
- permissions
-Message-ID: <YiHU7kHM6IqUJl8n@iki.fi>
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <f0029cda125be9eb4eb2e051ab41d500081c6e2c.1644274683.git.reinette.chatre@intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [RFC PATCH v2.1 07/30] x86/sgx: Add pfn_mkwrite() handler for present PTEs
+Date:   Fri,  4 Mar 2022 11:35:01 +0200
+Message-Id: <20220304093524.397485-7-jarkko@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220304093524.397485-1-jarkko@kernel.org>
+References: <20220304093524.397485-1-jarkko@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f0029cda125be9eb4eb2e051ab41d500081c6e2c.1644274683.git.reinette.chatre@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Feb 07, 2022 at 04:45:37PM -0800, Reinette Chatre wrote:
-> In the initial (SGX1) version of SGX, pages in an enclave need to be
-> created with permissions that support all usages of the pages, from
-> the time the enclave is initialized until it is unloaded. For example,
-> pages used by a JIT compiler or when code needs to otherwise be
-> relocated need to always have RWX permissions.
-> 
-> With the SGX2 function ENCLU[EMODPE] an enclave is able to relax
-> the EPCM permissions of its pages after the enclave is initialized.
-> Relaxing EPCM permissions is not possible from outside the enclave,
-> including from the kernel. The kernel does control the PTEs though
-> and the enclave still depends on the kernel to install PTEs with the
-> new relaxed permissions before it (the enclave) can access the pages
-> using the new permissions.
-> 
-> Introduce ioctl() SGX_IOC_ENCLAVE_RELAX_PERMISSIONS to support
-> relaxing of EPCM permissions done from within the enclave. With
-> this ioctl() the user specifies a page range and the permissions to
-> be applied to all pages in the provided range. After checking
-> the new permissions (more detail below) the PTEs are reset and
-> it is ensured that any new PTEs will contain the new, relaxed,
-> permissions.
-> 
-> The permission change request could fail on any page within the
-> provided range. To support partial success the ioctl() returns
-> an error code based on failures encountered by the kernel and
-> the number of pages that were successfully changed.
-> 
-> Checking user provided new permissions
-> ======================================
-> 
-> Enclave page permission changes need to be approached with care and
-> for this reason permission changes are only allowed if
-> the new permissions are the same or more restrictive that the
-> vetted permissions. Thus, even though an enclave is able to relax
-> the EPCM permissions of its pages beyond what was originally vetted,
-> the kernel will not. The kernel will only install PTEs that respect
-> the vetted enclave page permissions.
-> 
-> For example, enclave pages with vetted EPCM permissions in brackets
-> below are allowed to have PTE permissions as follows:
-> * (RWX) R => RW => RX => RWX
-> * (RW) R => RW
-> * (RX) R => RX
-> 
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> Changes since V1:
-> - Change terminology to use "relax" instead of "extend" to refer to
->   the case when enclave page permissions are added (Dave).
-> - Use ioctl() in commit message (Dave).
-> - Add examples on what permissions would be allowed (Dave).
-> - Split enclave page permission changes into two ioctl()s, one for
->   permission restricting (SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS)
->   and one for permission relaxing (SGX_IOC_ENCLAVE_RELAX_PERMISSIONS)
->   (Jarkko).
-> - In support of the ioctl() name change the following names have been
->   changed:
->   struct sgx_page_modp -> struct sgx_enclave_relax_perm
->   sgx_ioc_page_modp() -> sgx_ioc_enclave_relax_perm()
->   sgx_page_modp() -> sgx_enclave_relax_perm()
-> - ioctl() takes entire secinfo as input instead of
->   page permissions only (Jarkko).
-> - Fix kernel-doc to include () in function name.
-> - Introduce small helper to check for SGX2 readiness instead of
->   duplicating the same two checks in every SGX2 supporting ioctl().
-> - Fixups in comments
-> - Move kernel-doc to function that provides documentation for
->   Documentation/x86/sgx.rst.
-> - Remove redundant comment.
-> - Make explicit which member of struct sgx_enclave_relax_perm is
->   for output (Dave).
-> 
->  arch/x86/include/uapi/asm/sgx.h |  19 +++
->  arch/x86/kernel/cpu/sgx/ioctl.c | 199 ++++++++++++++++++++++++++++++++
->  2 files changed, 218 insertions(+)
-> 
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index f4b81587e90b..5c678b27bb72 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -29,6 +29,8 @@ enum sgx_page_flags {
->  	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
->  #define SGX_IOC_VEPC_REMOVE_ALL \
->  	_IO(SGX_MAGIC, 0x04)
-> +#define SGX_IOC_ENCLAVE_RELAX_PERMISSIONS \
-> +	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_relax_perm)
->  
->  /**
->   * struct sgx_enclave_create - parameter structure for the
-> @@ -76,6 +78,23 @@ struct sgx_enclave_provision {
->  	__u64 fd;
->  };
->  
-> +/**
-> + * struct sgx_enclave_relax_perm - parameters for ioctl
-> + *                                 %SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> + * @offset:	starting page offset (page aligned relative to enclave base
-> + *		address defined in SECS)
-> + * @length:	length of memory (multiple of the page size)
-> + * @secinfo:	address for the SECINFO data containing the new permission bits
-> + *		for pages in range described by @offset and @length
-> + * @count:	(output) bytes successfully changed (multiple of page size)
-> + */
-> +struct sgx_enclave_relax_perm {
-> +	__u64 offset;
-> +	__u64 length;
-> +	__u64 secinfo;
-> +	__u64 count;
-> +};
-> +
->  struct sgx_enclave_run;
->  
->  /**
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index b8336d5d9029..9cc6af404bf6 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -698,6 +698,202 @@ static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
->  	return sgx_set_attribute(&encl->attributes_mask, params.fd);
->  }
->  
-> +static unsigned long vm_prot_from_secinfo(u64 secinfo_perm)
-> +{
-> +	unsigned long vm_prot;
-> +
-> +	vm_prot = _calc_vm_trans(secinfo_perm, SGX_SECINFO_R, PROT_READ)  |
-> +		  _calc_vm_trans(secinfo_perm, SGX_SECINFO_W, PROT_WRITE) |
-> +		  _calc_vm_trans(secinfo_perm, SGX_SECINFO_X, PROT_EXEC);
-> +	vm_prot = calc_vm_prot_bits(vm_prot, 0);
-> +
-> +	return vm_prot;
-> +}
-> +
-> +/**
-> + * sgx_enclave_relax_perm() - Update OS after permissions relaxed by enclave
-> + * @encl:	Enclave to which the pages belong.
-> + * @modp:	Checked parameters from user on which pages need modifying.
-> + * @secinfo_perm: New validated permission bits.
-> + *
-> + * Return:
-> + * - 0:		Success.
-> + * - -errno:	Otherwise.
-> + */
-> +static long sgx_enclave_relax_perm(struct sgx_encl *encl,
-> +				   struct sgx_enclave_relax_perm *modp,
-> +				   u64 secinfo_perm)
-> +{
-> +	struct sgx_encl_page *entry;
-> +	unsigned long vm_prot;
-> +	unsigned long addr;
-> +	unsigned long c;
-> +	int ret;
-> +
-> +	vm_prot = vm_prot_from_secinfo(secinfo_perm);
-> +
-> +	for (c = 0 ; c < modp->length; c += PAGE_SIZE) {
-> +		addr = encl->base + modp->offset + c;
-> +
-> +		mutex_lock(&encl->lock);
-> +
-> +		entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-> +		if (!entry) {
-> +			ret = -EFAULT;
-> +			goto out_unlock;
-> +		}
-> +
-> +		/*
-> +		 * Changing EPCM permissions is only supported on regular
-> +		 * SGX pages.
-> +		 */
-> +		if (entry->type != SGX_PAGE_TYPE_REG) {
-> +			ret = -EINVAL;
-> +			goto out_unlock;
-> +		}
-> +
-> +		/*
-> +		 * Do not accept permissions that are more relaxed
-> +		 * than vetted permissions.
-> +		 * If this check fails then EPCM permissions may be more
-> +		 * relaxed that what would be allowed by the kernel via
-> +		 * PTEs.
-> +		 */
-> +		if ((entry->vm_max_prot_bits & vm_prot) != vm_prot) {
-> +			ret = -EPERM;
-> +			goto out_unlock;
-> +		}
-> +
-> +		/*
-> +		 * Change runtime protection before zapping PTEs to ensure
-> +		 * any new #PF uses new permissions.
-> +		 */
-> +		entry->vm_run_prot_bits = vm_prot;
-> +
-> +		mutex_unlock(&encl->lock);
-> +		/*
-> +		 * Do not keep encl->lock because of dependency on
-> +		 * mmap_lock acquired in sgx_zap_enclave_ptes().
-> +		 */
-> +		sgx_zap_enclave_ptes(encl, addr);
-> +	}
-> +
-> +	ret = 0;
-> +	goto out;
-> +
-> +out_unlock:
-> +	mutex_unlock(&encl->lock);
-> +out:
-> +	modp->count = c;
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Ensure enclave is ready for SGX2 functions. Readiness is checked
-> + * by ensuring the hardware supports SGX2 and the enclave is initialized
-> + * and thus able to handle requests to modify pages within it.
-> + */
-> +static int sgx_ioc_sgx2_ready(struct sgx_encl *encl)
-> +{
-> +	if (!(cpu_feature_enabled(X86_FEATURE_SGX2)))
-> +		return -ENODEV;
-> +
-> +	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Return valid permission fields from a secinfo structure provided by
-> + * user space. The secinfo structure is required to only have bits in
-> + * the permission fields set.
-> + */
-> +static int sgx_perm_from_user_secinfo(void __user *_secinfo, u64 *secinfo_perm)
-> +{
-> +	struct sgx_secinfo secinfo;
-> +	u64 perm;
-> +
-> +	if (copy_from_user(&secinfo, (void __user *)_secinfo,
-> +			   sizeof(secinfo)))
-> +		return -EFAULT;
-> +
-> +	if (secinfo.flags & ~SGX_SECINFO_PERMISSION_MASK)
-> +		return -EINVAL;
-> +
-> +	if (memchr_inv(secinfo.reserved, 0, sizeof(secinfo.reserved)))
-> +		return -EINVAL;
-> +
-> +	perm = secinfo.flags & SGX_SECINFO_PERMISSION_MASK;
-> +
-> +	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
-> +		return -EINVAL;
-> +
-> +	*secinfo_perm = perm;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * sgx_ioc_enclave_relax_perm() - handler for
-> + *                                %SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> + * @encl:	an enclave pointer
-> + * @arg:	userspace pointer to a &struct sgx_enclave_relax_perm instance
-> + *
-> + * SGX2 distinguishes between relaxing and restricting the enclave page
-> + * permissions maintained by the hardware (EPCM permissions) of pages
-> + * belonging to an initialized enclave (after %SGX_IOC_ENCLAVE_INIT).
-> + *
-> + * EPCM permissions can be relaxed anytime directly from within the enclave
-> + * with no visibility from the kernel. This is accomplished with
-> + * ENCLU[EMODPE] run from within the enclave. Accessing pages with
-> + * the new, relaxed permissions requires the kernel to update the PTE
-> + * to handle the subsequent #PF correctly.
-> + *
-> + * Enclave page permissions are not allowed to exceed the
-> + * maximum vetted permissions maintained in
-> + * &struct sgx_encl_page->vm_max_prot_bits. If the enclave
-> + * exceeds these permissions by running ENCLU[EMODPE] from within the enclave
-> + * the kernel will prevent access to the pages via PTE and
-> + * VMA permissions.
-> + *
-> + * Return:
-> + * - 0:		Success
-> + * - -errno:	Otherwise
-> + */
-> +static long sgx_ioc_enclave_relax_perm(struct sgx_encl *encl, void __user *arg)
-> +{
-> +	struct sgx_enclave_relax_perm params;
-> +	u64 secinfo_perm;
-> +	long ret;
-> +
-> +	ret = sgx_ioc_sgx2_ready(encl);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (copy_from_user(&params, arg, sizeof(params)))
-> +		return -EFAULT;
-> +
-> +	if (sgx_validate_offset_length(encl, params.offset, params.length))
-> +		return -EINVAL;
-> +
-> +	ret = sgx_perm_from_user_secinfo((void __user *)params.secinfo,
-> +					 &secinfo_perm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (params.count)
-> +		return -EINVAL;
-> +
-> +	ret = sgx_enclave_relax_perm(encl, &params, secinfo_perm);
-> +
-> +	if (copy_to_user(arg, &params, sizeof(params)))
-> +		return -EFAULT;
-> +
-> +	return ret;
-> +}
-> +
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  {
->  	struct sgx_encl *encl = filep->private_data;
-> @@ -719,6 +915,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  	case SGX_IOC_ENCLAVE_PROVISION:
->  		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
->  		break;
-> +	case SGX_IOC_ENCLAVE_RELAX_PERMISSIONS:
-> +		ret = sgx_ioc_enclave_relax_perm(encl, (void __user *)arg);
-> +		break;
->  	default:
->  		ret = -ENOIOCTLCMD;
->  		break;
-> -- 
-> 2.25.1
-> 
+From: Reinette Chatre <reinette.chatre@intel.com>
 
-Definitive NAK.
+By default a write page fault on a present PTE inherits the
+permissions of the VMA.
 
-Should be dropped from the next patch set version. We *do not* want to
-artificially construct an extra round-trip to EMODPE flow.
+When using SGX2, enclave page permissions maintained in the
+hardware's Enclave Page Cache Map (EPCM) may change after a VMA
+accessing the page is created. A VMA's permissions may thus be
+more relaxed than the EPCM permissions even though the VMA was
+originally created not to have more relaxed permissions. Following
+the default behavior during a page fault on a present PTE while
+the VMA permissions are more relaxed than the EPCM permissions would
+result in the PTE for an enclave page to be writable even
+though the page is not writable according to the EPCM permissions.
 
-BR, Jarkko
+The kernel should not allow writing to a page if that page is not
+writable: the PTE should accurately reflect the EPCM permissions
+while not being more relaxed than the VMA permissions.
+
+Do not blindly accept VMA permissions on a page fault due to a
+write attempt to a present PTE. Install a pfn_mkwrite() handler
+that ensures that the VMA permissions agree with the EPCM
+permissions in this regard.
+
+Before and after page fault flow scenarios
+==========================================
+
+Consider the following scenario that will be possible when using SGX2:
+* An enclave page exists with RW EPCM permissions.
+* A RW VMA maps the range spanning the enclave page.
+* The enclave page's EPCM permissions are changed to read-only.
+* There is no PTE for the enclave page.
+
+Considering that the PTE is not present in the scenario,
+user space will observe the following when attempting to write to the
+enclave page from within the enclave:
+ 1) Instruction writing to enclave page is run from within the enclave.
+ 2) A page fault with second and third bits set (0x6) is encountered
+    and handled by the SGX handler sgx_vma_fault() that installs a
+    read-only page table entry following previous patch that installs
+    a PTE with permissions that VMA and enclave agree on
+    (read-only in this case).
+ 3) Instruction writing to enclave page is re-attempted.
+ 4) A page fault with first three bits set (0x7) is encountered and
+    transparently (from SGX driver and user space perspective) handled
+    by the kernel with the PTE made writable because the VMA is
+    writable.
+ 5) Instruction writing to enclave page is re-attempted.
+ 6) Since the EPCM permissions prevents writing to the page a new page
+    fault is encountered, this time with the SGX flag set in the error
+    code (0x8007). No action is taken by the kernel for this page fault
+    and execution returns to user space.
+ 7) Typically such a fault will be passed on to an application with a
+    signal but if the enclave is entered with the vDSO function provided
+    by the kernel then user space does not receive a signal but instead
+    the vDSO function returns successfully with exception information
+    (vector=14, error code=0x8007, and address) within the exception
+    fields within the vDSO function's struct sgx_enclave_run.
+
+As can be observed it is not possible for user space to write to an
+enclave page if that page's EPCM permissions do not allow so,
+no matter what the VMA or PTE allows.
+
+Even so, the kernel should not allow writing to a page if that page is
+not writable. The PTE should accurately reflect the EPCM permissions.
+
+With a pfn_mkwrite() handler that ensures that the VMA permissions
+agree with the EPCM permissions user space observes the following
+when attempting to write to the enclave page from within the enclave:
+ 1) Instruction writing to enclave page is run from within the enclave.
+ 2) A page fault with second and third bits set (0x6) is encountered
+    and handled by the SGX handler sgx_vma_fault() that installs a
+    read-only page table entry following previous patch that installs
+    a PTE with permissions that VMA and enclave agree on
+    (read-only in this case).
+ 3) Instruction writing to enclave page is re-attempted.
+ 4) A page fault with first three bits set (0x7) is encountered and
+    passed to the pfn_mkwrite() handler for consideration. The handler
+    determines that the page should not be writable and returns SIGBUS.
+ 5) Typically such a fault will be passed on to an application with a
+    signal but if the enclave is entered with the vDSO function provided
+    by the kernel then user space does not receive a signal but instead
+    the vDSO function returns successfully with exception information
+    (vector=14, error code=0x7, and address) within the exception fields
+    within the vDSO function's struct sgx_enclave_run.
+
+The accurate exception information supports the SGX runtime, which is
+virtually always implemented inside a shared library, by providing
+accurate information in support of its management of the SGX enclave.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 42 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 20e97d3abdce..6d25f7ed1294 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -184,6 +184,47 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	return VM_FAULT_NOPAGE;
+ }
+ 
++/*
++ * A fault occurred while writing to a present enclave PTE. Since PTE is
++ * present this will not be handled by sgx_vma_fault(). VMA may allow
++ * writing to the page while enclave (as based on EPCM permissions) does
++ * not. Do not follow the default of inheriting VMA permissions in this
++ * regard, ensure enclave also allows writing to the page.
++ */
++static vm_fault_t sgx_vma_pfn_mkwrite(struct vm_fault *vmf)
++{
++	unsigned long addr = (unsigned long)vmf->address;
++	struct vm_area_struct *vma = vmf->vma;
++	struct sgx_encl_page *entry;
++	struct sgx_encl *encl;
++	vm_fault_t ret = 0;
++
++	encl = vma->vm_private_data;
++
++	/*
++	 * It's very unlikely but possible that allocating memory for the
++	 * mm_list entry of a forked process failed in sgx_vma_open(). When
++	 * this happens, vm_private_data is set to NULL.
++	 */
++	if (unlikely(!encl))
++		return VM_FAULT_SIGBUS;
++
++	mutex_lock(&encl->lock);
++
++	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
++	if (!entry) {
++		ret = VM_FAULT_SIGBUS;
++		goto out;
++	}
++
++	if (!(entry->vm_max_prot_bits & VM_WRITE))
++		ret = VM_FAULT_SIGBUS;
++
++out:
++	mutex_unlock(&encl->lock);
++	return ret;
++}
++
+ static void sgx_vma_open(struct vm_area_struct *vma)
+ {
+ 	struct sgx_encl *encl = vma->vm_private_data;
+@@ -381,6 +422,7 @@ const struct vm_operations_struct sgx_vm_ops = {
+ 	.mprotect = sgx_vma_mprotect,
+ 	.open = sgx_vma_open,
+ 	.access = sgx_vma_access,
++	.pfn_mkwrite = sgx_vma_pfn_mkwrite,
+ };
+ 
+ /**
+-- 
+2.35.1
+
