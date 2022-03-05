@@ -2,380 +2,144 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D96C433F5
-	for <linux-sgx@archiver.kernel.org>; Sat,  5 Mar 2022 01:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E91FC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  5 Mar 2022 01:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbiCEBEG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 4 Mar 2022 20:04:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
+        id S230138AbiCEB1v (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 4 Mar 2022 20:27:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiCEBEF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 20:04:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCE831CE9B9;
-        Fri,  4 Mar 2022 17:03:15 -0800 (PST)
+        with ESMTP id S229836AbiCEB1u (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 4 Mar 2022 20:27:50 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E27924891F;
+        Fri,  4 Mar 2022 17:27:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4198161F51;
-        Sat,  5 Mar 2022 01:03:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26902C340E9;
-        Sat,  5 Mar 2022 01:03:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 598D1B82B64;
+        Sat,  5 Mar 2022 01:27:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2628C340E9;
+        Sat,  5 Mar 2022 01:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646442194;
-        bh=zYtuIkRNR31j199FK8vxS8K91wZhoT2cjKlItlsB5BI=;
+        s=k20201202; t=1646443619;
+        bh=O2t5cstrad8YH4XMqpJzo/2cG6IQjd2OC+YQBg1gwjQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YRkmV9jbquG3Ad4ozCAUiZRLKfv5Hl2E+L0NewuVd9kpGx7PJL6pfem128cjTF9Q5
-         bX9rSfSCjMce5mqzyYELGruLXf+JL4LcLg374s6hJRmnTStTp/ygfohTe1BRecFdlY
-         dlijgwCFK9zUb78kV2Yau56Wx2vYl+WBr+w1P87kTU27PZTo4iaNWoVeYGNvsSxfwB
-         qSNCye7ay0dXWieBVmnOv/AivGBfbAgfwb+kUz0k0QUimVpZUhhzxYjlQgRzFpnNTt
-         GbAXFoXUStg5HpoxV0+YtiqoWyxjbg5qKROQq+4HHInWjgnGUpbJtjDPP9AWwC2O16
-         FCFSUc2FjRNLA==
-Date:   Sat, 5 Mar 2022 03:02:28 +0200
+        b=AyKcCHDn/r9ub05vihRHvw5HbD+I+NlxvvPBFkrx9Y12SKZU/8gXEM4+XB6e9aN5B
+         snAlThJXJGM0uJajsNOEEDC4jBfZ0P+2zS2Gj/J4pOWmlQdVkbxtCxwcIfJZ7yqqiS
+         29cCPAszFqGeOV98wWeoDkbNVWypHk0BhT2roeohAkVrdmNWOSLPADb0BJZCogAAzp
+         hsshrXYjYn+NJM5qTR+hGdskNKDUQbmzkAwXY9xf2+wXoaOFdPa204bkioGcDL5pJg
+         JxWdKnBXjExjBQSvq10RbhSgcOWOptTdIuKLWtiKkgkiouFrhYXVdYdbFgo/teGIR1
+         fsy7Oc0vz9sNQ==
+Date:   Sat, 5 Mar 2022 03:26:12 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Lutomirski, Andy" <luto@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Shanahan, Mark" <mark.shanahan@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
- permissions
-Message-ID: <YiK2pL7eoVGMZyH9@iki.fi>
-References: <Yh4fGORDaJyVrJQW@iki.fi>
- <Yh4i4hVcnfZ8QDAl@iki.fi>
- <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
- <Yh7Q5fbOtr+6YWaS@iki.fi>
- <6f65287a-f69c-971e-be2c-929e327e7ff9@intel.com>
- <op.1igppyk9wjvjmi@hhuan26-mobl1.mshome.net>
- <YiFMyZ4t2MC0n5Pn@iki.fi>
- <op.1ihmv4mvwjvjmi@hhuan26-mobl1.mshome.net>
- <YiHOHn3q4gwoFv+u@iki.fi>
- <op.1iijnwtpwjvjmi@hhuan26-mobl1.mshome.net>
+Cc:     linux-sgx@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] x86: Add SGX_IOC_ENCLAVE_AUGMENT_PAGES
+Message-ID: <YiK8NEnvgPerEdFB@iki.fi>
+References: <20220304122852.563475-1-jarkko@kernel.org>
+ <op.1iilcwhywjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.1iijnwtpwjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <op.1iilcwhywjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 04, 2022 at 09:51:22AM -0600, Haitao Huang wrote:
-> Hi Jarkko
-> 
-> On Fri, 04 Mar 2022 02:30:22 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+On Fri, Mar 04, 2022 at 10:27:58AM -0600, Haitao Huang wrote:
+> On Fri, 04 Mar 2022 06:28:52 -0600, Jarkko Sakkinen <jarkko@kernel.org>
 > wrote:
 > 
-> > On Thu, Mar 03, 2022 at 10:03:30PM -0600, Haitao Huang wrote:
-> > > 
-> > > On Thu, 03 Mar 2022 17:18:33 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-> > > wrote:
-> > > 
-> > > > On Thu, Mar 03, 2022 at 10:08:14AM -0600, Haitao Huang wrote:
-> > > > > Hi all,
-> > > > >
-> > > > > On Wed, 02 Mar 2022 16:57:45 -0600, Reinette Chatre
-> > > > > <reinette.chatre@intel.com> wrote:
-> > > > >
-> > > > > > Hi Jarkko,
-> > > > > >
-> > > > > > On 3/1/2022 6:05 PM, Jarkko Sakkinen wrote:
-> > > > > > > On Tue, Mar 01, 2022 at 09:48:48AM -0800, Reinette Chatre wrote:
-> > > > > > > > Hi Jarkko,
-> > > > > > > >
-> > > > > > > > On 3/1/2022 5:42 AM, Jarkko Sakkinen wrote:
-> > > > > > > > > > With EACCEPTCOPY (kudos to Mark S. for reminding me of
-> > > > > > > > > > this version of
-> > > > > > > > > > EACCEPT @ chat.enarx.dev) it is possible to make R and RX
-> > > > > pages but
-> > > > > > > > > > obviously new RX pages are now out of the picture:
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > 	/*
-> > > > > > > > > > 	 * Adding a regular page that is architecturally allowed
-> > > > > to only
-> > > > > > > > > > 	 * be created with RW permissions.
-> > > > > > > > > > 	 * TBD: Interface with user space policy to support max
-> > > > > permissions
-> > > > > > > > > > 	 * of RWX.
-> > > > > > > > > > 	 */
-> > > > > > > > > > 	prot = PROT_READ | PROT_WRITE;
-> > > > > > > > > > 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
-> > > > > > > > > > 	encl_page->vm_max_prot_bits =
-> > > encl_page->vm_run_prot_bits;
-> > > > > > > > > >
-> > > > > > > > > > If that TBD is left out to the final version the page
-> > > > > > > > > > augmentation has a
-> > > > > > > > > > risk of a API bottleneck, and that risk can realize then
-> > > > > > > > > > also in the page
-> > > > > > > > > > permission ioctls.
-> > > > > > > > > >
-> > > > > > > > > > I.e. now any review comment is based on not fully known
-> > > > > > > > > > territory, we have
-> > > > > > > > > > one known unknown, and some unknown unknowns from
-> > > > > > > > > > unpredictable effect to
-> > > > > > > > > > future API changes.
-> > > > > > > >
-> > > > > > > > The plan to complete the "TBD" in the above snippet was to
-> > > > > > > > follow this work
-> > > > > > > > with user policy integration at this location. On a high level
-> > > > > > > > the plan was
-> > > > > > > > for this to look something like:
-> > > > > > > >
-> > > > > > > >
-> > > > > > > >  	/*
-> > > > > > > >  	 * Adding a regular page that is architecturally allowed
-> > > to only
-> > > > > > > >  	 * be created with RW permissions.
-> > > > > > > >  	 * Interface with user space policy to support max
-> > > permissions
-> > > > > > > >  	 * of RWX.
-> > > > > > > >  	 */
-> > > > > > > >  	prot = PROT_READ | PROT_WRITE;
-> > > > > > > >  	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
-> > > > > > > >
-> > > > > > > >         if (user space policy allows RWX on dynamically added
-> > > > > pages)
-> > > > > > > > 	 	encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ |
-> > > > > > > > PROT_WRITE | PROT_EXEC, 0);
-> > > > > > > > 	else
-> > > > > > > > 		encl_page->vm_max_prot_bits = calc_vm_prot_bits(PROT_READ |
-> > > > > > > > PROT_WRITE, 0);
-> > > > > > > >
-> > > > > > > > The work that follows this series aimed to do the integration
-> > > > > with user
-> > > > > > > > space policy.
-> > > > > > >
-> > > > > > > What do you mean by "user space policy" anyway exactly? I'm
-> > > > > sorry but I
-> > > > > > > just don't fully understand this.
-> > > > > >
-> > > > > > My apologies - I just assumed that you would need no reminder
-> > > > > about this
-> > > > > > contentious
-> > > > > > part of SGX history. Essentially it means that, yes, the
-> > > kernel could
-> > > > > > theoretically
-> > > > > > permit any kind of access to any file/page, but some accesses are
-> > > > > known
-> > > > > > to generally
-> > > > > > be a bad idea - like making memory executable as well as writable
-> > > > > - and
-> > > > > > thus there
-> > > > > > are additional checks based on what user space permits before the
-> > > > > kernel
-> > > > > > allows
-> > > > > > such accesses.
-> > > > > >
-> > > > > > For example,
-> > > > > > mm/mprotect.c:do_mprotect_pkey()->security_file_mprotect()
-> > > > > >
-> > > > > > User policy and SGX has seen significant discussion. Some notable
-> > > > > > threads:
-> > > > > > https://lore.kernel.org/linux-security-module/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com/
-> > > > > > https://lore.kernel.org/linux-security-module/20190619222401.14942-1-sean.j.christopherson@intel.com/
-> > > > > >
-> > > > > > > It's too big of a risk to accept this series without X taken
-> > > care
-> > > > > > > of. Patch
-> > > > > > > series should neither have TODO nor TBD comments IMHO. I
-> > > don't want
-> > > > > > > to ack
-> > > > > > > a series based on speculation what might happen in the future.
-> > > > > >
-> > > > > > ok
-> > > > > >
-> > > > > > >
-> > > > > > > > > I think the best way to move forward would be to do EAUG's
-> > > > > > > > > explicitly with
-> > > > > > > > > an ioctl that could also include secinfo for permissions.
-> > > > > Then you can
-> > > > > > > > > easily do the rest with EACCEPTCOPY inside the enclave.
-> > > > > > > >
-> > > > > > > > SGX_IOC_ENCLAVE_ADD_PAGES already exists and could possibly be
-> > > > > used for
-> > > > > > > > this purpose. It already includes SECINFO which may also be
-> > > > > useful if
-> > > > > > > > needing to later support EAUG of PT_SS* pages.
-> > > > > > >
-> > > > > > > You could also simply add SGX_IOC_ENCLAVE_AUGMENT_PAGES and
-> > > call it
-> > > > > > > a day.
-> > > > > >
-> > > > > > I could, yes.
-> > > > > >
-> > > > > > > And if there is plan to extend SGX_IOC_ENCLAVE_ADD_PAGES what is
-> > > > > > > this weird
-> > > > > > > thing added to the #PF handler? Why is it added at all then?
-> > > > > >
-> > > > > > I was just speculating in my response, there is no plan to extend
-> > > > > > SGX_IOC_ENCLAVE_ADD_PAGES (that I am aware of).
-> > > > > >
-> > > > > > > > How this could work is user space calls
-> > > SGX_IOC_ENCLAVE_ADD_PAGES
-> > > > > > > > after enclave initialization on any memory region within the
-> > > > > > > > enclave where
-> > > > > > > > pages are planned to be added dynamically. This ioctl() calls
-> > > > > > > > EAUG to add the
-> > > > > > > > new pages with RW permissions and their vm_max_prot_bits
-> > > can be
-> > > > > > > > set to the
-> > > > > > > > permissions found in the included SECINFO. This will support
-> > > > > > > > later EACCEPTCOPY
-> > > > > > > > as well as SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> > > > > > >
-> > > > > > > I don't like this type of re-use of the existing API.
-> > > > > >
-> > > > > > I could proceed with SGX_IOC_ENCLAVE_AUGMENT_PAGES if there is
-> > > > > consensus
-> > > > > > after
-> > > > > > considering the user policy question (above) and performance
-> > > trade-off
-> > > > > > (more below).
-> > > > > >
-> > > > > > >
-> > > > > > > > The big question is whether communicating user policy after
-> > > > > > > > enclave initialization
-> > > > > > > > via the SECINFO within SGX_IOC_ENCLAVE_ADD_PAGES is acceptable
-> > > > > > > > to all? I would
-> > > > > > > > appreciate a confirmation on this direction considering the
-> > > > > > > > significant history
-> > > > > > > > behind this topic.
-> > > > > > >
-> > > > > > > I have no idea because I don't know what is user space policy.
-> > > > > >
-> > > > > > This discussion is about some enclave usages needing RWX
-> > > permissions
-> > > > > > on dynamically added enclave pages. RWX permissions on dynamically
-> > > > > added
-> > > > > > pages is
-> > > > > > not something that should blindly be allowed for all SGX
-> > > enclaves but
-> > > > > > instead the user
-> > > > > > needs to explicitly allow specific enclaves to have such
-> > > ability. This
-> > > > > > is equivalent
-> > > > > > to (but not the same as) what exists in Linux today with LSM. As
-> > > > > seen in
-> > > > > > mm/mprotect.c:do_mprotect_pkey()->security_file_mprotect() Linux
-> > > > > is able
-> > > > > > to make
-> > > > > > files and memory be both writable and executable, but it would
-> > > only do
-> > > > > > so for those
-> > > > > > files and memory that the LSM (which is how user policy is
-> > > > > communicated,
-> > > > > > like SELinux)
-> > > > > > indicates it is allowed, not blindly do so for all files and all
-> > > > > memory.
-> > > > > >
-> > > > > > > > > Putting EAUG to the #PF handler and implicitly call it just
-> > > > > > > > > too flakky and
-> > > > > > > > > hard to make deterministic for e.g. JIT compiler in our use
-> > > > > > > > > case (not to
-> > > > > > > > > mention that JIT is not possible at all because inability to
-> > > > > > > > > do RX pages).
-> > > > > >
-> > > > > > I understand how SGX_IOC_ENCLAVE_AUGMENT_PAGES can be more
-> > > > > deterministic
-> > > > > > but from
-> > > > > > what I understand it would have a performance impact since it
-> > > would
-> > > > > > require all memory
-> > > > > > that may be needed by the enclave be pre-allocated from
-> > > outside the
-> > > > > > enclave and not
-> > > > > > just dynamically allocated from within the enclave at the time
-> > > it is
-> > > > > > needed.
-> > > > > >
-> > > > > > Would such a performance impact be acceptable?
-> > > > > >
-> > > > >
-> > > > > User space won't always have enough info to decide whether the pages
-> > > > > to be
-> > > > > EAUG'd immediately. In some cases (shared libraries, JVM for
-> > > > > example) lots
-> > > > > of code/data pages can be mapped but never actually touched. One
-> > > > > enclave/process does not know if any other more important
-> > > > > enclave/process
-> > > > > would need the EPC.
-> > > > >
-> > > > > It should be for kernel to make the final decision as it has overall
-> > > > > picture
-> > > > > of the system EPC usage and availability.
-> > > >
-> > > > EAUG ioctl does not give better capabilities for user space to waste
-> > > > EPC given that EADD ioctl already exists, i.e. your argument is
-> > > logically
-> > > > incorrect.
-> > > 
-> > > The point of adding EAUG is to allow more efficient use of EPC pages.
-> > > Without EAUG, enclaves have to EADD everything upfront into EPC,
-> > > consuming
-> > > predetermined number of EPC pages, some of which may not be used at all.
-> > > With EAUG, enclaves should be able to load minimal pages to get started,
-> > > pages added on #PF as they are actually accessed.
-> > > 
-> > > Obviously as you pointed out, some usages make more sense to
-> > > pre-EAUG (EAUG
-> > > before #PF). But your proposal of supporting only pre-EAUG here
-> > > essentially
-> > > makes EAUG behave almost the same as EADD.  If the current
-> > > implementation
-> > > with EAUG on #PF can also use MAP_POPULATE for pre-EAUG (seems possible
-> > > based on Dave's comments), then it is flxible to cover all cases and
-> > > allow
-> > > kernel to optimize allocation of EPC pages.
+> > With SGX1 an enclave needs to be created with its maximum memory demands
+> > allocated. Pages cannot be added to an enclave after it is initialized.
+> > SGX2 introduces a new function, ENCLS[EAUG], that can be used to add
+> > pages
+> > to an initialized enclave. With SGX2 the enclave still needs to set aside
+> > address space for its maximum memory demands during enclave creation, but
+> > all pages need not be added before enclave initialization. Pages can be
+> > added during enclave runtime.
 > > 
-> > There is no even a working #PF based implementation in existance, and
-> > your
-> > argument has too many if's for my taste.
+> > Add support for dynamically adding pages to an initialized enclave with
+> > SGX_IOC_ENCLAVE_AUGMENT_PAGES, which performs EAUG's to a given range of
+> > pages. Do not enforce any particular permissions from kernel, like is
+> > done
+> > for the pages added during the pre-initialization phase, as enclave
+> > controls the final permissions and content for these pages by issuing
+> > either ENCLU[EACCEPT] (empty RW) or ENCLU[EACCEPTCOPY] (arbitrary data
+> > and
+> > permissions).
+> > 
+> > Explicit EAUG ioctl is a better choice than an implicit EAUG from a page
+> > fault handler because it allows to have O(1) number of kernel-enclave
+> > round
+> > trips for EAUG-EACCEPT{COPY} process, instead of O(n), as it is in the
+> > case
+> > when a page fault handler EAUG single page at a time.
+> > 
+> > Cc: Reinette Chatre <reinette.chatre@intel.com>
+> > Cc: Nathaniel McCallum <nathaniel@profian.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > Is contained in sgx2-v2.1 branch of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git
+> > ---
+> >  arch/x86/include/uapi/asm/sgx.h |  14 +++
+> >  arch/x86/kernel/cpu/sgx/ioctl.c | 159 ++++++++++++++++++++++++++++++++
+> >  2 files changed, 173 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/uapi/asm/sgx.h
+> > b/arch/x86/include/uapi/asm/sgx.h
+> > index c4e0326d281d..2b3a606e78fe 100644
+> > --- a/arch/x86/include/uapi/asm/sgx.h
+> > +++ b/arch/x86/include/uapi/asm/sgx.h
+> > @@ -35,6 +35,8 @@ enum sgx_page_flags {
+> >  	_IOWR(SGX_MAGIC, 0x06, struct sgx_enclave_modt)
+> >  #define SGX_IOC_ENCLAVE_REMOVE_PAGES \
+> >  	_IOWR(SGX_MAGIC, 0x08, struct sgx_enclave_remove_pages)
+> > +#define SGX_IOC_ENCLAVE_AUGMENT_PAGES \
+> > +	_IOWR(SGX_MAGIC, 0x09, struct sgx_enclave_augment_pages)
+> > /**
+> >   * struct sgx_enclave_create - parameter structure for the
+> > @@ -138,6 +140,18 @@ struct sgx_enclave_remove_pages {
+> >  	__u64 count;
+> >  };
+> > +/**
+> > + * struct sgx_enclave_augment_pages - parameter structure for the
+> > %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> > + * @offset:	starting page offset
+> > + * @length:	length of the data (multiple of the page size)
+> > + * @count:	number of bytes added (multiple of the page size)
+> > + */
+> > +struct sgx_enclave_augment_pages {
+> > +	__u64 offset;
+> > +	__u64 length;
+> > +	__u64 count;
+> > +};
+> > +
 > 
-> 1) if you mean no user space is implementing this kind of solution, read
-> this section, otherwise, skip to 2) below which is only couple of sentences.
-> 
-> If you are willing to look, there is already implementation in our SDK to do
-> heap and stack expansion on demand on #PF. Enclaves may not know heap/stack
-> size up front, we have implemented these features to make EPC usage more
-> efficient. I don't know why normal processes can add RAM on #PF, but
-> enclaves adding EPC on #PF becomes so unacceptable concept to you. And the
-> kernel does that for EPC swapping already when #PF happens on a swapped out
-> EPC page.
+> As I stated in another thread, we need a mechanism to allow EAUG page
+> lazily, e.g., on #PF. Can we add a field here to indicate that?
 
-In adds O(n) round-trips for a mmap() emulation, which can be done in O(1)
-round-trips with a ioctl.
+ioctl *does not* prevent lazy behaviour where, or if, it makes sense.
 
-> Our implementation has gone through several rounds, the latest is
-> here:https://github.com/intel/linux-sgx/tree/edmm_v2/sdk/emm. It was also
-> implemented in original OOT driver based SDK implementation. Customers are
-> using it and found them useful. I think this is a critical feature that many
-> other runtimes will also need.
+For growing memory (e.g. MAP_GROWSDOWN) you should just take advantage of
+the vDSO's exception handling mechanism and call the ioctl on demand.
 
-I'm not sure what the common sense argument here is.
+For a high-performance user space you still want to be also do minimum
+round trip "batch jobs" where they are possible.
 
-> 2)
-> It's OK for you to request additional support for your usage and I agree it
-> is needed. But IMHO, totally getting rid of EAUG on #PF is bad and
-> unnecessary. Current implementation can be extended to support your usage.
-> What's the reason  you think MAP_POPULATE won't work for you?
-
-I do not recall taking stand on MAP_POPULATE.
-
-> BR
-> Haitao
+We exactly have the whole vDSO framework to service the on-demand needs
+while still having full control of the execution. EAUG in the #PF handler
+is all about being flakky and loosing all robustness.
 
 BR, Jarkko
