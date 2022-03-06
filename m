@@ -2,149 +2,112 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4324DC433EF
-	for <linux-sgx@archiver.kernel.org>; Sun,  6 Mar 2022 16:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DAAC433EF
+	for <linux-sgx@archiver.kernel.org>; Sun,  6 Mar 2022 16:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233032AbiCFQcG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 6 Mar 2022 11:32:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38370 "EHLO
+        id S233842AbiCFQyR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 6 Mar 2022 11:54:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231760AbiCFQcG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 6 Mar 2022 11:32:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 873A61CB0E;
-        Sun,  6 Mar 2022 08:31:12 -0800 (PST)
+        with ESMTP id S231229AbiCFQyQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 6 Mar 2022 11:54:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5A24D26B;
+        Sun,  6 Mar 2022 08:53:24 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 19A2BB80EB6;
-        Sun,  6 Mar 2022 16:31:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05079C340EC;
-        Sun,  6 Mar 2022 16:31:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F1F160ECA;
+        Sun,  6 Mar 2022 16:53:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61F83C340EC;
+        Sun,  6 Mar 2022 16:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646584269;
-        bh=mAjG7+BiIqoRd5IOoAhab8ycnY4sTbYJ/QdO4tj4SjQ=;
+        s=k20201202; t=1646585602;
+        bh=MsFvCvDm3Ch69LnmbtaI1I9nqbcwEoILGdlAPzIetO8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WmV8h7JgeyJG8ZGSc8iKGqEaUtEI3Q0JalKZI+CUbjht76gXmgZJMktdkjs15wetl
-         wEMC69veZDMnQp4t1lzDWXm/Ai0QAhIxBOaD/BdzAFALkh59VEkVVXTkex0O95bw1V
-         rLuCowg8Rc6Xu+2ElH6/sn/KaIbX3RcnGKjKiW5gcFH5w4it4MOricd7h+yiq+2Ax8
-         TdfhIzs/8x1gik5pc4W1hmMasnm13nxBb6hGeigkmv0PmLywC8F0u1cEHUIgVgLwGG
-         cPW/fVpoPMwiHS0OquvhXj9i9UxFWd+A05o2AZjGTmEzGLFuI0kyXGvAN2ssT9QQRu
-         2iOSFmvSPeYsA==
-Date:   Sun, 6 Mar 2022 18:30:28 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Nathaniel McCallum <nathaniel@profian.com>,
+        b=Y914rtUiHzXvBnz643r24P9/50ijdnH21BhkmMXNdPFnctYpw+CGGwkjiSO4OwtXJ
+         cIj6IDXTGuX4ok/Azkkkz4yPB4UiDiPEI3ZnY1KuetY2NlaSDCT4alak24MLKqMMWT
+         81w5Bw17iwZvWhZno4RxV9EAK9enO5SHr8ultMzE3oiqsv18m8lefFW9p7UhVw52Rl
+         P6T7XXKOZbWsN36s081JMMyXiGRVG5ePMhoUhLaFZ1j0EZtYdQz3Yxv9v0DV/r8mqd
+         A923uLtITDotkTWx1rpjNsEoRnRjJwbB7SjCx/NcIAi4R8U3aH/UB0N3Tz2bKFyora
+         Nys80UhGrEPVg==
+Date:   Sun, 6 Mar 2022 18:52:41 +0200
+From:   'Jarkko Sakkinen' <jarkko@kernel.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] x86: Add SGX_IOC_ENCLAVE_AUGMENT_PAGES
-Message-ID: <YiThpJ9Jvu0brr4f@iki.fi>
-References: <20220304122852.563475-1-jarkko@kernel.org>
- <13e0c364328ed822c5d358416bb13aa5faea3195.camel@kernel.org>
- <op.1il7jxj8wjvjmi@hhuan26-mobl1.mshome.net>
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
+        <thomas.hellstrom@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jason Ekstrand <jason@jlekstrand.net>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        zhangyiru <zhangyiru3@huawei.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "codalist@coda.cs.cmu.edu" <codalist@coda.cs.cmu.edu>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
+Message-ID: <YiTm2b8KTRUsDkC0@iki.fi>
+References: <20220306053211.135762-1-jarkko@kernel.org>
+ <7f46ef3c80734f478501d21cef0182c5@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <op.1il7jxj8wjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <7f46ef3c80734f478501d21cef0182c5@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Mar 06, 2022 at 09:20:11AM -0600, Haitao Huang wrote:
-> On Fri, 04 Mar 2022 07:50:43 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-> wrote:
+On Sun, Mar 06, 2022 at 08:30:14AM +0000, David Laight wrote:
+> From: Jarkko Sakkinen
+> > Sent: 06 March 2022 05:32
+> > 
+> > For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
+> > to use that for initializing the device memory by providing a new callback
+> > f_ops->populate() for the purpose.
+> > 
+> > SGX patches are provided to show the callback in context.
+> > 
+> > An obvious alternative is a ioctl but it is less elegant and requires
+> > two syscalls (mmap + ioctl) per memory range, instead of just one
+> > (mmap).
 > 
-> > On Fri, 2022-03-04 at 14:28 +0200, Jarkko Sakkinen wrote:
-> > > With SGX1 an enclave needs to be created with its maximum memory demands
-> > > allocated. Pages cannot be added to an enclave after it is initialized.
-> > > SGX2 introduces a new function, ENCLS[EAUG], that can be used to add
-> > > pages
-> > > to an initialized enclave. With SGX2 the enclave still needs to set
-> > > aside
-> > > address space for its maximum memory demands during enclave
-> > > creation, but
-> > > all pages need not be added before enclave initialization. Pages can be
-> > > added during enclave runtime.
-> > > 
-> > > Add support for dynamically adding pages to an initialized enclave with
-> > > SGX_IOC_ENCLAVE_AUGMENT_PAGES, which performs EAUG's to a given range of
-> > > pages. Do not enforce any particular permissions from kernel, like
-> > > is done
-> > > for the pages added during the pre-initialization phase, as enclave
-> > > controls the final permissions and content for these pages by issuing
-> > > either ENCLU[EACCEPT] (empty RW) or ENCLU[EACCEPTCOPY] (arbitrary
-> > > data and
-> > > permissions).
-> > > 
-> > > Explicit EAUG ioctl is a better choice than an implicit EAUG from a page
-> > > fault handler because it allows to have O(1) number of
-> > > kernel-enclave round
-> > > trips for EAUG-EACCEPT{COPY} process, instead of O(n), as it is in
-> > > the case
-> > > when a page fault handler EAUG single page at a time.
-> > > 
-> > > Cc: Reinette Chatre <reinette.chatre@intel.com>
-> > > Cc: Nathaniel McCallum <nathaniel@profian.com>
-> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > ---
-> > > Is contained in sgx2-v2.1 branch of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git
-> > 
-> > I created sgx2-v2.2 branch, which has #PF EAUG removed. I
-> > also moved selftests to the tail in the patch sets so that
-> > it is easier to update them reflecting these and future
-> > changes. Having them intervened makes things just complicated.
-> > 
-> > I focus now to implement mmap() for Enarx with this, so no
-> > kselftest update just yet.
-> > 
-> > Roughly the sequence in Enarx is:
-> > 
-> > 1. Enclave traps on syscall (opcode).
-> > 2. Host jumps to shim expection handler.
-> > 3. Enclave copies the mmap() arguments to a buffer outside
-> >    the enclave.
-> > 4. Enclave exists back to the host.
-> > 5. Host performs EAUG to the mmap range.
-> > 6. Host performs mmap() to the mmap range, which succeeds
-> >    given that vm_max_prot_bits is RWX (i.e. disabled for
-> >    dynamic pages).
-> > 7. Host jumps back to the enclave and execution continues
-> >    there in the mmap handler.
-> > 8. mmap handler does a series of EACCEPTCOPY operations for
-> >    the range with given permissions and empty page as the
-> >    input data.
-> > 
-> EACCEPTCOPY will require target pages with RW in PTE. So you would need to
-> make mprotect to change PTE permissions afterwards depending on your target
-> permissions.
+> Is this all about trying to stop the vm_operations_struct.fault()
+> function being called?
 
-EACCEPTCOPY afaik does depend on EPCM permissions, not PTE permissions.
+In SGX protected memory is actually encrypted normal memory and CPU access
+control semantics (marked as reserved, e.g. struct page's).
 
-> Without knowing much your context, if your intent is to
-> EACCEPTCOPY(EPCM.RX/EPCM.R, EPCM.pending), then I don't see how the page can
-> be used later without making it RW again first, and copy real data into it.
-> So these empty EACCEPTCOPYs may be better just EACCEPTs(EPCM.RW,
-> EPCM.pending). Then after copy real data into the pages, you do
-> EMODPE/EMODPR as needed.
+In SGX you need call ENCLS[EAUG] outside the protected memory to add new
+pages to the protected memory. Then when CPU is executing inside this
+protected memory, also known as enclaves, it commits the memory as part of
+the enclave either with ENCLU[EACCEPT] or ENCLU[EACCEPTCOPY].
 
-I take this point other than we could potentially use EACCEPTCOPY to
-implement semantics for e.g. a mapped file. But yes sometimes you will
-need take W out bit EMODPR, you're right.
+So the point is not prevent page faults but to prepare the memory for
+pending state so that the enclave can then accept them without round-trips,
+and in some cases thus improve performance (in our case in enarx.dev
+platform that we are developing).
 
-The key problem in the SGX2 patch set is not EPCM side but PTE side.
-In order to effectively adjust PTE permissions, vm_max_prot_bits
-should be RWX. They make sense only for the static signed content
-at most.
-
-If that is changed in the current patch set, then it should be fairly
-easy to tune both PTE and EPCM permissions based on situation.
+In fact, #PF handler in SGX driver in the current SGX2 patch set also does
+EAUG on-demand. Optimal is to have both routes available. And said, this
+can be of course also implemented as ioctl.
 
 BR, Jarkko
