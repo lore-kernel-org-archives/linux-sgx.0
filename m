@@ -2,72 +2,173 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB76FC433F5
-	for <linux-sgx@archiver.kernel.org>; Sun,  6 Mar 2022 11:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FF3C433F5
+	for <linux-sgx@archiver.kernel.org>; Sun,  6 Mar 2022 13:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231336AbiCFLeN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 6 Mar 2022 06:34:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52460 "EHLO
+        id S230451AbiCFNjg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 6 Mar 2022 08:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233336AbiCFLeM (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 6 Mar 2022 06:34:12 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 129DB642F;
-        Sun,  6 Mar 2022 03:33:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=nK6fc9sC8NZv7QaEVaxxTpIxTZq/SzNUDta5FD5I7jI=; b=h03YOdnltrDeha98gsHK8dkXur
-        5WoXXbWj9PkQijgsFCid6H+5zSNuEWh5HeK1YhrMBrHf+71kA/oDixn2BUGWhQsYkcLEKl1EEFFAb
-        yT27l+88Uc53FamnyVQeFQ/bdxrd4LcHjhphvkOuaSq+T2tznDtehp/m5HjPS2RFVECxEnIcR0mSb
-        Jo/KP09BOhKIMryYd6TEejD8yn3IQ1txvcT7jyWhJqioiy2SYyfZRKLtxU4yFQvD36B10yUCdvd1L
-        9+3zCnbLTPK2vsrUZhhqP2vVnO/FL6CZa9CI3XROhMMLD5U1DxF3iXCMbbV4oPLok2eUuDa75j9Ip
-        CbR6J1Iw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nQp8I-00EIzX-Hf; Sun, 06 Mar 2022 11:33:02 +0000
-Date:   Sun, 6 Mar 2022 11:33:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Nathaniel McCallum <nathaniel@profian.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        zhangyiru <zhangyiru3@huawei.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
-        linux-mips@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, codalist@coda.cs.cmu.edu,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
-Message-ID: <YiSb7tsUEBRGS+HA@casper.infradead.org>
-References: <20220306053211.135762-1-jarkko@kernel.org>
+        with ESMTP id S229447AbiCFNjf (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 6 Mar 2022 08:39:35 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89BB95E177;
+        Sun,  6 Mar 2022 05:38:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646573923; x=1678109923;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=5hsVQzMTILHzOIBUtRjqKsF/5egQd3aW8vfB2d+9ck0=;
+  b=F4U5pxcjfqx42ZTikMxXXwDeEjZnE8O6rZOJ+v13I/Ze910NKFTcfLTk
+   iLkiBUB1j7mGWQZE+FiPOrPpCvFsxZ3zq4ZPttvNX7X6XM23KgiHPQU2T
+   pzxVSuxKo4R4eURz5obpC/8gY85lZktJmEUXQpxliZuL5gsNyYXLCRSuW
+   h5VYQy4v+7CzfJvEKPUIhAQNqeh4zz2LDbLhOJhuDGSzU+5YoyDMcvHFt
+   GOt+Ml9N9a/mc39S2YFYAgnil65H/bTSoMT33QhX21Re2r6soQSi8eWBV
+   s9t64wLlnOT97AghLxdhRz/GuYRv1CLKJJY3+Gk+GIZ9EdmRCjuHDjEWc
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10277"; a="234837660"
+X-IronPort-AV: E=Sophos;i="5.90,159,1643702400"; 
+   d="scan'208";a="234837660"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2022 05:38:43 -0800
+X-IronPort-AV: E=Sophos;i="5.90,159,1643702400"; 
+   d="scan'208";a="552810152"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.255.37.141])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 06 Mar 2022 05:38:41 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org,
+        "Reinette Chatre" <reinette.chatre@intel.com>,
+        "Nathaniel McCallum" <nathaniel@profian.com>,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] x86: Add SGX_IOC_ENCLAVE_AUGMENT_PAGES
+References: <20220304122852.563475-1-jarkko@kernel.org>
+ <op.1iilcwhywjvjmi@hhuan26-mobl1.mshome.net> <YiK8NEnvgPerEdFB@iki.fi>
+Date:   Sun, 06 Mar 2022 07:38:40 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220306053211.135762-1-jarkko@kernel.org>
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.1il2uqzhwjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <YiK8NEnvgPerEdFB@iki.fi>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Mar 06, 2022 at 07:32:04AM +0200, Jarkko Sakkinen wrote:
-> For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
-> to use that for initializing the device memory by providing a new callback
-> f_ops->populate() for the purpose.
+On Fri, 04 Mar 2022 19:26:12 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
+wrote:
 
-As I said, NAK.
+> On Fri, Mar 04, 2022 at 10:27:58AM -0600, Haitao Huang wrote:
+>> On Fri, 04 Mar 2022 06:28:52 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+>> wrote:
+>>
+>> > With SGX1 an enclave needs to be created with its maximum memory  
+>> demands
+>> > allocated. Pages cannot be added to an enclave after it is  
+>> initialized.
+>> > SGX2 introduces a new function, ENCLS[EAUG], that can be used to add
+>> > pages
+>> > to an initialized enclave. With SGX2 the enclave still needs to set  
+>> aside
+>> > address space for its maximum memory demands during enclave creation,  
+>> but
+>> > all pages need not be added before enclave initialization. Pages can  
+>> be
+>> > added during enclave runtime.
+>> >
+>> > Add support for dynamically adding pages to an initialized enclave  
+>> with
+>> > SGX_IOC_ENCLAVE_AUGMENT_PAGES, which performs EAUG's to a given range  
+>> of
+>> > pages. Do not enforce any particular permissions from kernel, like is
+>> > done
+>> > for the pages added during the pre-initialization phase, as enclave
+>> > controls the final permissions and content for these pages by issuing
+>> > either ENCLU[EACCEPT] (empty RW) or ENCLU[EACCEPTCOPY] (arbitrary data
+>> > and
+>> > permissions).
+>> >
+>> > Explicit EAUG ioctl is a better choice than an implicit EAUG from a  
+>> page
+>> > fault handler because it allows to have O(1) number of kernel-enclave
+>> > round
+>> > trips for EAUG-EACCEPT{COPY} process, instead of O(n), as it is in the
+>> > case
+>> > when a page fault handler EAUG single page at a time.
+>> >
+>> > Cc: Reinette Chatre <reinette.chatre@intel.com>
+>> > Cc: Nathaniel McCallum <nathaniel@profian.com>
+>> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> > ---
+>> > Is contained in sgx2-v2.1 branch of
+>> > git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git
+>> > ---
+>> >  arch/x86/include/uapi/asm/sgx.h |  14 +++
+>> >  arch/x86/kernel/cpu/sgx/ioctl.c | 159  
+>> ++++++++++++++++++++++++++++++++
+>> >  2 files changed, 173 insertions(+)
+>> >
+>> > diff --git a/arch/x86/include/uapi/asm/sgx.h
+>> > b/arch/x86/include/uapi/asm/sgx.h
+>> > index c4e0326d281d..2b3a606e78fe 100644
+>> > --- a/arch/x86/include/uapi/asm/sgx.h
+>> > +++ b/arch/x86/include/uapi/asm/sgx.h
+>> > @@ -35,6 +35,8 @@ enum sgx_page_flags {
+>> >  	_IOWR(SGX_MAGIC, 0x06, struct sgx_enclave_modt)
+>> >  #define SGX_IOC_ENCLAVE_REMOVE_PAGES \
+>> >  	_IOWR(SGX_MAGIC, 0x08, struct sgx_enclave_remove_pages)
+>> > +#define SGX_IOC_ENCLAVE_AUGMENT_PAGES \
+>> > +	_IOWR(SGX_MAGIC, 0x09, struct sgx_enclave_augment_pages)
+>> > /**
+>> >   * struct sgx_enclave_create - parameter structure for the
+>> > @@ -138,6 +140,18 @@ struct sgx_enclave_remove_pages {
+>> >  	__u64 count;
+>> >  };
+>> > +/**
+>> > + * struct sgx_enclave_augment_pages - parameter structure for the
+>> > %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+>> > + * @offset:	starting page offset
+>> > + * @length:	length of the data (multiple of the page size)
+>> > + * @count:	number of bytes added (multiple of the page size)
+>> > + */
+>> > +struct sgx_enclave_augment_pages {
+>> > +	__u64 offset;
+>> > +	__u64 length;
+>> > +	__u64 count;
+>> > +};
+>> > +
+>>
+>> As I stated in another thread, we need a mechanism to allow EAUG page
+>> lazily, e.g., on #PF. Can we add a field here to indicate that?
+>
+> ioctl *does not* prevent lazy behaviour where, or if, it makes sense.
+>
+> For growing memory (e.g. MAP_GROWSDOWN) you should just take advantage of
+> the vDSO's exception handling mechanism and call the ioctl on demand.
+>
+> For a high-performance user space you still want to be also do minimum
+> round trip "batch jobs" where they are possible.
+>
+
+Looks like you are pursuing MAP_POPULATE to optimize out the O(N) trips.
+Just for my understanding of your proposal in case this ever comes back.  
+For the on-demand case,  this ioctl is required for for each #PF. That's  
+extra round trip compared to automatic kernel EAUG on #PF.
+
+
+> We exactly have the whole vDSO framework to service the on-demand needs
+> while still having full control of the execution. EAUG in the #PF handler
+> is all about being flakky and loosing all robustness.
+>
+
+Again, you keep saying EAUG in the #PF handler is not good. So far the  
+only concrete thing I hear is extra O(N) round trips which can be  
+optimized out.
