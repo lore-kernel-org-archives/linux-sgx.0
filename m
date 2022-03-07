@@ -2,167 +2,79 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4DAC433EF
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 14:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAC1C433F5
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 14:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243243AbiCGOfI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Mar 2022 09:35:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
+        id S242968AbiCGOiz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Mar 2022 09:38:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243245AbiCGOfD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 09:35:03 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6EA5D606CA
-        for <linux-sgx@vger.kernel.org>; Mon,  7 Mar 2022 06:34:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646663646;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EFYNbblCnNcuaPx8LOQ1Hn2woAp9Zpf6py8Ud+OJaTY=;
-        b=Xn60WXAy1tH6T0oSpqBYGPvMDcibEK/7ysBsvl+/cVnZW8AO1ZPh8tyz/iA/t/SnbPy6TS
-        +7OCJyqZkLcLvhH6moVM9HCN1kC/37+/6bWZDvbJx84Ety0ZVdQs647o8hD+Bz3/a94QfZ
-        BvmX9XC7ClAGlCwTiYU9bH/plGbsGN4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-116-4DfYLNOlNYu0Yu5G15YX5g-1; Mon, 07 Mar 2022 09:34:03 -0500
-X-MC-Unique: 4DfYLNOlNYu0Yu5G15YX5g-1
-Received: by mail-wm1-f69.google.com with SMTP id m34-20020a05600c3b2200b0038115c73361so5298067wms.5
-        for <linux-sgx@vger.kernel.org>; Mon, 07 Mar 2022 06:34:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=EFYNbblCnNcuaPx8LOQ1Hn2woAp9Zpf6py8Ud+OJaTY=;
-        b=EmnrTwsaKMQUsXKwU1l/1FPMAXBs6eX5veeJ3K1HReL+kQl4ZQ3zYNC6lxcNM7K49R
-         MzTg1by/mLLWDBH7pcfvMeTAEohLeL6smDRytl7hOTW1pWCnus5e6joK5NkRbgESMmKr
-         mJU7WZ4pQOPA5cmqJ+BNGdSoTHaDdSnzwKjNrQKcjjPAIynU/3iJ7Fmk7rjSc7UAWPgs
-         nyqNbyt8w3NZQL1InPHZnRx/FFl2zUxXXwaksBT9fGw02mBbUhbiTr3WChYQEDQg6E4h
-         bTzUpBsAr9ScKibmux3/my6FDqEo8TKEwH9UgjgcYML5RMcG09PcnbsPJTcoA7G0SNHN
-         Bbew==
-X-Gm-Message-State: AOAM5334lXHuDyRRBmMqEwu25a0GWOF24oUGjkGOVklUSxmtylUOc835
-        w3CKeTKDncV2LyANvSm9dRE+JAh25IvVqma+/LhA/sG0wCIyZ5ZD1qANkA78r75S8hPs2171WCr
-        JDBiNDhqCPWpiGK13yzJO
-X-Received: by 2002:a7b:ca49:0:b0:389:bcde:f7ab with SMTP id m9-20020a7bca49000000b00389bcdef7abmr1185198wml.7.1646663642074;
-        Mon, 07 Mar 2022 06:34:02 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxPQNqWxZSPrdYEmAfxwtZ3y4N0Kf0xHJe42MVbdVGbGB8hJ9qV6tBxdbfd3Fa3fXlIgu+yCQ==
-X-Received: by 2002:a7b:ca49:0:b0:389:bcde:f7ab with SMTP id m9-20020a7bca49000000b00389bcdef7abmr1185173wml.7.1646663641772;
-        Mon, 07 Mar 2022 06:34:01 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:1e00:8d67:f75a:a8ae:dc02? (p200300cbc7051e008d67f75aa8aedc02.dip0.t-ipconnect.de. [2003:cb:c705:1e00:8d67:f75a:a8ae:dc02])
-        by smtp.gmail.com with ESMTPSA id h12-20020a5d548c000000b001f1f99e7792sm2398939wrv.111.2022.03.07.06.33.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 06:33:54 -0800 (PST)
-Message-ID: <dab25b2d-88f1-7ad5-c28a-15a97b38af03@redhat.com>
-Date:   Mon, 7 Mar 2022 15:33:52 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        with ESMTP id S240410AbiCGOiz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 09:38:55 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430A31A837;
+        Mon,  7 Mar 2022 06:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NW9RpFh+hvH2B+kdkMZrrBGYcByfxt2ECpS3XLUg5ic=; b=tJW4g9xzh7Hr7eTiR6n30j60WO
+        IYwXR9LZ0duAlYTPi8RrvkjPPngfb7+5UiJ9/ZQDEmqZxuVEE7Qbp6lMMYytUbktkhxgCkWSDTHz/
+        1HZ0/A46EkR5RhOL/6a/GA/m7T0Xdl7GYI14I9F+ekXEYTzuywuHs6g05qrRgYv8hr/bztXDiu2e+
+        NN0Vkgbei6YVv2EJhvRxLOhyg0NOBGLz0ad8LGOORcltIsEZCfhwsdgFVWe1FyuU/IK3Nyj+5fUwi
+        f50yHXIse9zePYwFp7mtZTHd3yptwZqau6qA/Lwjq3Ry8EyNIJpG+QOGy9Q7M8mbbEBcnSDA3dMvA
+        /ZHTriAA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nREUe-00FIYz-EZ; Mon, 07 Mar 2022 14:37:48 +0000
+Date:   Mon, 7 Mar 2022 14:37:48 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Matthew Auld <matthew.auld@intel.com>,
-        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        zhangyiru <zhangyiru3@huawei.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
-        linux-mips@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, codalist@coda.cs.cmu.edu,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20220306053211.135762-1-jarkko@kernel.org>
- <d6b09f23-f470-c119-8d3e-7d72a3448b64@redhat.com> <YiYVHTkS8IsMMw6T@iki.fi>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
-In-Reply-To: <YiYVHTkS8IsMMw6T@iki.fi>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=david@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-sgx@vger.kernel.org, jaharkes@cs.cmu.edu,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        codalist@telemann.coda.cs.cmu.edu, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC v2] mm: Add f_ops->populate()
+Message-ID: <YiYYvAWYgC+PKEx0@casper.infradead.org>
+References: <20220306032655.97863-1-jarkko@kernel.org>
+ <20220306152456.2649b1c56da2a4ce4f487be4@linux-foundation.org>
+ <c3083144-bfc1-3260-164c-e59b2d110df8@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3083144-bfc1-3260-164c-e59b2d110df8@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 07.03.22 15:22, Jarkko Sakkinen wrote:
-> On Mon, Mar 07, 2022 at 11:12:44AM +0100, David Hildenbrand wrote:
->> On 06.03.22 06:32, Jarkko Sakkinen wrote:
->>> For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
->>> to use that for initializing the device memory by providing a new callback
->>> f_ops->populate() for the purpose.
->>>
->>> SGX patches are provided to show the callback in context.
->>>
->>> An obvious alternative is a ioctl but it is less elegant and requires
->>> two syscalls (mmap + ioctl) per memory range, instead of just one
->>> (mmap).
->>
->> What about extending MADV_POPULATE_READ | MADV_POPULATE_WRITE to support
->> VM_IO | VM_PFNMAP (as well?) ?
+On Sun, Mar 06, 2022 at 03:41:54PM -0800, Dave Hansen wrote:
+> In short: page faults stink.  The core kernel has lots of ways of
+> avoiding page faults like madvise(MADV_WILLNEED) or mmap(MAP_POPULATE).
+>  But, those only work on normal RAM that the core mm manages.
 > 
-> What would be a proper point to bind that behaviour? For mmap/mprotect it'd
-> be probably populate_vma_page_range() because that would span both mmap()
-> and mprotect() (Dave's suggestion in this thread).
-
-MADV_POPULATE_* ends up in faultin_vma_page_range(), right next to
-populate_vma_page_range(). So it might require a similar way to hook
-into the driver I guess.
-
+> SGX is weird.  SGX memory is managed outside the core mm.  It doesn't
+> have a 'struct page' and get_user_pages() doesn't work on it.  Its VMAs
+> are marked with VM_IO.  So, none of the existing methods for avoiding
+> page faults work on SGX memory.
 > 
-> For MAP_POPULATE I did not have hard proof to show that it would be used
-> by other drivers but for madvice() you can find at least a few ioctl
-> based implementations:
-> 
-> $ git grep -e madv --and \( -e ioc \)  drivers/
-> drivers/gpu/drm/i915/gem/i915_gem_ioctls.h:int i915_gem_madvise_ioctl(struct drm_device *dev, void *data,
-> drivers/gpu/drm/i915/i915_driver.c:     DRM_IOCTL_DEF_DRV(I915_GEM_MADVISE, i915_gem_madvise_ioctl, DRM_RENDER_ALLOW),
-> drivers/gpu/drm/i915/i915_gem.c:i915_gem_madvise_ioctl(struct drm_device *dev, void *data,
-> drivers/gpu/drm/msm/msm_drv.c:static int msm_ioctl_gem_madvise(struct drm_device *dev, void *data,
-> drivers/gpu/drm/msm/msm_drv.c:  DRM_IOCTL_DEF_DRV(MSM_GEM_MADVISE,  msm_ioctl_gem_madvise,  DRM_RENDER_ALLOW),
-> drivers/gpu/drm/panfrost/panfrost_drv.c:static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
-> drivers/gpu/drm/vc4/vc4_drv.c:  DRM_IOCTL_DEF_DRV(VC4_GEM_MADVISE, vc4_gem_madvise_ioctl, DRM_RENDER_ALLOW),
-> drivers/gpu/drm/vc4/vc4_drv.h:int vc4_gem_madvise_ioctl(struct drm_device *dev, void *data,
-> drivers/gpu/drm/vc4/vc4_gem.c:int vc4_gem_madvise_ioctl(struct drm_device *dev, void *data,
-> 
-> IMHO this also provides supportive claim for MAP_POPULATE, and yeah, I
-> agree that to be consistent implementation, both madvice() and MAP_POPULATE
-> should work.
+> This essentially helps extend existing "normal RAM" kernel ABIs to work
+> for avoiding faults for SGX too.  SGX users want to enjoy all of the
+> benefits of a delayed allocation policy (better resource use,
+> overcommit, NUMA affinity) but without the cost of millions of faults.
 
-MADV_POPULATE_WRITE + MADV_DONTNEED/FALLOC_FL_PUNCH_HOLE is one way to
-dynamically manage memory consumption inside a sparse memory mapping
-(preallocate/populate via MADV_POPULATE_WRITE, discard via
-MADV_DONTNEED/FALLOC_FL_PUNCH_HOLE).  Extending that whole mechanism to
-deal with VM_IO | VM_PFNMAP mappings as well could be interesting.
+We have a mechanism for dynamically reducing the number of page faults
+already; it's just buried in the page cache code.  You have vma->vm_file,
+which contains a file_ra_state.  You can use this to track where
+recent faults have been and grow the size of the region you fault in
+per page fault.  You don't have to (indeed probably don't want to) use
+the same algorithm as the page cache, but the _principle_ is the same --
+were recent speculative faults actually used; should we grow the number
+of pages actually faulted in, or is this a random sparse workload where
+we want to allocate individual pages.
 
-At least I herd about some ideas where we might want to dynamically
-expose memory to a VM (via virtio-mem) inside a sparse memory mapping,
-and the memory in that sparse memory mapping is provided from a
-dedicated memory pool managed by a device driver -- not just using
-ordinary anonymous/file/hugetlb memory as we do right now.
-
-Now, this is certainly stuff for the future, I just wanted to mention it.
-
--- 
-Thanks,
-
-David / dhildenb
-
+Don't rely on the user to ask.  They don't know.
