@@ -2,74 +2,90 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 734D4C433EF
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 15:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE8EC433F5
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 15:35:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235305AbiCGPaY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Mar 2022 10:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36004 "EHLO
+        id S238846AbiCGPgp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Mar 2022 10:36:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232666AbiCGPaX (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 10:30:23 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E9C49930;
-        Mon,  7 Mar 2022 07:29:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646666969; x=1678202969;
-  h=message-id:date:mime-version:to:cc:references:from:
-   subject:in-reply-to:content-transfer-encoding;
-  bh=+Ryh1cggbQNBN3ci8CirZd3kAvv6BbXwKIEkPSgvYgY=;
-  b=JMxTF1fSCVM8W57maYuXQGwAw1E8Godzt4FHpwgklmGDsgDWWtvFpSwG
-   adYr9f76bUJXWs8XNCtfWqohPB4glgULKg+h4ln0WkdSitUlUO/cygBOQ
-   EBkDGhy6QpvZZR/y0Zs2IL3mqd0XIEqf8ZpIGx7S+LSE9+uTVHrb9OCnI
-   ZezShSjTIukEEWy/cKk/wPsjP2jYlYcAaLdkw7sm7qxdbTcYJOYeCjkg6
-   Qfd3r701DeheGHzAkTZgnhxRdBt2qX3pDkLlyvkzzkv2Ir+WMiU6BxWiF
-   fhsi7p0SPe6edFVkx85MUM3kR+O70q1VZt6WNX+7xtZlaggcLi7MyAfXi
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10279"; a="241850201"
-X-IronPort-AV: E=Sophos;i="5.90,162,1643702400"; 
-   d="scan'208";a="241850201"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2022 07:29:28 -0800
-X-IronPort-AV: E=Sophos;i="5.90,162,1643702400"; 
-   d="scan'208";a="643281164"
-Received: from mshipman-mobl5.amr.corp.intel.com (HELO [10.251.12.40]) ([10.251.12.40])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2022 07:29:28 -0800
-Message-ID: <3c974f25-ece6-102b-01c3-bd7e6274f613@intel.com>
-Date:   Mon, 7 Mar 2022 07:29:22 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        with ESMTP id S235983AbiCGPgo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 10:36:44 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897BD5C373;
+        Mon,  7 Mar 2022 07:35:50 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 36FD5B815E5;
+        Mon,  7 Mar 2022 15:35:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F40C340E9;
+        Mon,  7 Mar 2022 15:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646667347;
+        bh=JbY5diFr5DxLb353nQpEtMPOmLgwWU265WRVU2Sa3gs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TQZVPcmNWFx3KoCVbAtcqbmRxBlREjxRlqgYPDRU+Erw7qGlNkJDbSAgTBy2wzkFq
+         BI/wXu31ar6PvEUzPO442Zbn1oeAelVVtdsnd10dI2AVp8OuqsK+PnRx/FQ216yVDZ
+         LFFnvbvYe4kXQXZbAznh/2RF1rIiA/X4mWHqPJzmHbgiJhQ7K6mp3uVEN3CrMrs+Qc
+         DQJcr7NnRQkK4SD+wblqWNAA8Gphl4orMBRcvlPyUiGc/lsAs9t5IFCBOAevBGiEW2
+         G+oz7dajXVHK9hGSQMdWtgmkUk3ZHtnWIsLpYJp0WpuvECsvUD9DhjTSLDe58mFbVr
+         ok5uLUOmV6gAA==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org, jaharkes@cs.cmu.edu,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        codalist@telemann.coda.cs.cmu.edu, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20220306032655.97863-1-jarkko@kernel.org>
- <20220306152456.2649b1c56da2a4ce4f487be4@linux-foundation.org>
- <c3083144-bfc1-3260-164c-e59b2d110df8@intel.com> <YiXsJRE8CWOvFNWH@iki.fi>
-From:   Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH RFC v2] mm: Add f_ops->populate()
-In-Reply-To: <YiXsJRE8CWOvFNWH@iki.fi>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Enable PROT_EXEC for EAUG'd pages
+Date:   Mon,  7 Mar 2022 17:35:04 +0200
+Message-Id: <20220307153504.198112-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 3/7/22 03:27, Jarkko Sakkinen wrote:
-> But e.g. in __mm_populate() anything with (VM_IO | VM_PFNMAP) gets
-> filtered out and never reach that function.
-> 
-> I don't know unorthodox that'd be but could we perhaps have a VM
-> flag for SGX?
+vm_max_permissions was created to control the pre-initialization content
+that contributes to MRSIGNATURE. It was never meant to be as a limit to
+dynamically added pages.
 
-SGX only works on a subset of the chips from one vendor on one
-architecture.  That doesn't seem worth burning a VM flag.
+E.g. static content could be used as a hook for LSM's to decide whether
+certain signature is qualified for EINIT. Dynamic content has nothing to
+do with that. The current mechanisms only add to the complexity on how
+to control PTE and EPCM permissions, and do not add anything else than
+obfuscity to security side of things.
+
+Thus add PROT_EXEC to the permissions assigned by the #PF handler.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 79e39bd99c09..0256918b2c2f 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -160,12 +160,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+ 	encl_page->encl = encl;
+ 
+ 	/*
+-	 * Adding a regular page that is architecturally allowed to only
+-	 * be created with RW permissions.
+-	 * TBD: Interface with user space policy to support max permissions
+-	 * of RWX.
++	 * Dynamic pages do not contribute to MRSIGNATURE, i.e. they are
++	 * controlled only by PTE and EPCM permissions. Thus, the no limit
++	 * is set here.
+ 	 */
+-	prot = PROT_READ | PROT_WRITE;
++	prot = PROT_READ | PROT_WRITE | PROT_EXEC;
+ 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
+ 	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
+ 
+-- 
+2.35.1
+
