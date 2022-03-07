@@ -2,90 +2,91 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE8EC433F5
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 15:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E78DC433EF
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 15:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238846AbiCGPgp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Mar 2022 10:36:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56534 "EHLO
+        id S233704AbiCGPox (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Mar 2022 10:44:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235983AbiCGPgo (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 10:36:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897BD5C373;
-        Mon,  7 Mar 2022 07:35:50 -0800 (PST)
+        with ESMTP id S233446AbiCGPow (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 10:44:52 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E0C70F42;
+        Mon,  7 Mar 2022 07:43:58 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 36FD5B815E5;
-        Mon,  7 Mar 2022 15:35:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F40C340E9;
-        Mon,  7 Mar 2022 15:35:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C3F8EB815EB;
+        Mon,  7 Mar 2022 15:43:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3107EC340E9;
+        Mon,  7 Mar 2022 15:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646667347;
-        bh=JbY5diFr5DxLb353nQpEtMPOmLgwWU265WRVU2Sa3gs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TQZVPcmNWFx3KoCVbAtcqbmRxBlREjxRlqgYPDRU+Erw7qGlNkJDbSAgTBy2wzkFq
-         BI/wXu31ar6PvEUzPO442Zbn1oeAelVVtdsnd10dI2AVp8OuqsK+PnRx/FQ216yVDZ
-         LFFnvbvYe4kXQXZbAznh/2RF1rIiA/X4mWHqPJzmHbgiJhQ7K6mp3uVEN3CrMrs+Qc
-         DQJcr7NnRQkK4SD+wblqWNAA8Gphl4orMBRcvlPyUiGc/lsAs9t5IFCBOAevBGiEW2
-         G+oz7dajXVHK9hGSQMdWtgmkUk3ZHtnWIsLpYJp0WpuvECsvUD9DhjTSLDe58mFbVr
-         ok5uLUOmV6gAA==
+        s=k20201202; t=1646667835;
+        bh=pfUclWf7OeQP6fVMwAxfeek4Z/tO6y5WQdf6JL4ro+k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MGqXs4QUJZlZgCVSTmVIhUyrefWcLiV5XQbqLL4lWUXGjnXK8TQIh8MZmlhlk7Dws
+         vymCZmmrecWaK5QsPzl/JEnH42FdMm3knJaE2LeAyUSJ6XKfnw56pF4AeKS+pTp0gM
+         5KdvMy04Dnkw4+IxsOcB497JN8wWMBQMp3/kpehP7UKOCvtf1DHR6KqD1XbWMnWqm1
+         J5NppGJKVe/xpRZtg5cS5CCRR4+KxGOb1RuKPdZJJ1tfKV82mNLMPHXXAbwf++SaN3
+         MlkGhHuxVnfK5PtQGRXqcvD5ziuoeGJJ2APZH4iRWJVk48q3ueX06DQHuMjFgRGo6P
+         8lzRQuuKTdedQ==
+Date:   Mon, 7 Mar 2022 17:43:14 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sgx: Enable PROT_EXEC for EAUG'd pages
-Date:   Mon,  7 Mar 2022 17:35:04 +0200
-Message-Id: <20220307153504.198112-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        linux-sgx@vger.kernel.org, jaharkes@cs.cmu.edu,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        codalist@telemann.coda.cs.cmu.edu, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC v2] mm: Add f_ops->populate()
+Message-ID: <YiYoEiBklxQrb8Wj@iki.fi>
+References: <20220306032655.97863-1-jarkko@kernel.org>
+ <20220306152456.2649b1c56da2a4ce4f487be4@linux-foundation.org>
+ <c3083144-bfc1-3260-164c-e59b2d110df8@intel.com>
+ <YiYYvAWYgC+PKEx0@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YiYYvAWYgC+PKEx0@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-vm_max_permissions was created to control the pre-initialization content
-that contributes to MRSIGNATURE. It was never meant to be as a limit to
-dynamically added pages.
+On Mon, Mar 07, 2022 at 02:37:48PM +0000, Matthew Wilcox wrote:
+> On Sun, Mar 06, 2022 at 03:41:54PM -0800, Dave Hansen wrote:
+> > In short: page faults stink.  The core kernel has lots of ways of
+> > avoiding page faults like madvise(MADV_WILLNEED) or mmap(MAP_POPULATE).
+> >  But, those only work on normal RAM that the core mm manages.
+> > 
+> > SGX is weird.  SGX memory is managed outside the core mm.  It doesn't
+> > have a 'struct page' and get_user_pages() doesn't work on it.  Its VMAs
+> > are marked with VM_IO.  So, none of the existing methods for avoiding
+> > page faults work on SGX memory.
+> > 
+> > This essentially helps extend existing "normal RAM" kernel ABIs to work
+> > for avoiding faults for SGX too.  SGX users want to enjoy all of the
+> > benefits of a delayed allocation policy (better resource use,
+> > overcommit, NUMA affinity) but without the cost of millions of faults.
+> 
+> We have a mechanism for dynamically reducing the number of page faults
+> already; it's just buried in the page cache code.  You have vma->vm_file,
+> which contains a file_ra_state.  You can use this to track where
+> recent faults have been and grow the size of the region you fault in
+> per page fault.  You don't have to (indeed probably don't want to) use
+> the same algorithm as the page cache, but the _principle_ is the same --
+> were recent speculative faults actually used; should we grow the number
+> of pages actually faulted in, or is this a random sparse workload where
+> we want to allocate individual pages.
+> 
+> Don't rely on the user to ask.  They don't know.
 
-E.g. static content could be used as a hook for LSM's to decide whether
-certain signature is qualified for EINIT. Dynamic content has nothing to
-do with that. The current mechanisms only add to the complexity on how
-to control PTE and EPCM permissions, and do not add anything else than
-obfuscity to security side of things.
+This sounds like a possibility. I'll need to study it properly first
+though. Thank you for pointing this out.
 
-Thus add PROT_EXEC to the permissions assigned by the #PF handler.
-
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/encl.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 79e39bd99c09..0256918b2c2f 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -160,12 +160,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
- 	encl_page->encl = encl;
- 
- 	/*
--	 * Adding a regular page that is architecturally allowed to only
--	 * be created with RW permissions.
--	 * TBD: Interface with user space policy to support max permissions
--	 * of RWX.
-+	 * Dynamic pages do not contribute to MRSIGNATURE, i.e. they are
-+	 * controlled only by PTE and EPCM permissions. Thus, the no limit
-+	 * is set here.
- 	 */
--	prot = PROT_READ | PROT_WRITE;
-+	prot = PROT_READ | PROT_WRITE | PROT_EXEC;
- 	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
- 	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
- 
--- 
-2.35.1
-
+BR, Jarkko
