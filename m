@@ -2,92 +2,102 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FBBC433EF
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 15:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A96C433F5
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 16:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238496AbiCGP7o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Mar 2022 10:59:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55064 "EHLO
+        id S238386AbiCGQDk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Mar 2022 11:03:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234875AbiCGP7n (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 10:59:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA46338AB;
-        Mon,  7 Mar 2022 07:58:48 -0800 (PST)
+        with ESMTP id S239484AbiCGQDj (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 11:03:39 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B3031DF4;
+        Mon,  7 Mar 2022 08:02:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 76B06B81627;
-        Mon,  7 Mar 2022 15:58:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52D7C340E9;
-        Mon,  7 Mar 2022 15:58:45 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 87A6BB81606;
+        Mon,  7 Mar 2022 16:02:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9DCCC340E9;
+        Mon,  7 Mar 2022 16:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646668726;
-        bh=W5kqratoVSRl9NEd4VE6Iu3BSqv9ulKVQPHP1qdhNvw=;
+        s=k20201202; t=1646668961;
+        bh=dcOU/gA08rZKDZ4+ccCpMowJuxHHgzOtP4kOG059zHQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aurmVE6NZjU7sOJJ+E50h+AIed6RxvrashOmy+xb2DcYubmVUquVyy5I9fekqFNX5
-         Cj+DSIerBr9haVVQWprk2CNueZQDWhPWsYbjZnFm5soSe9mGKZABgiP7UB87yme/N4
-         6EPfyNphy7nkrwusx8woJNJVhhRtzd+KdAwnPwTkOb1R7gnVSFeh7a2JW9/ViytEVh
-         Q601UbynX2V3G3LMpsywSlFS/RXL1A8v1EyttbFgnIXyJHWxWdXHy8L4t6dm0RnGNZ
-         1nhf2OPJo2RASPa3NwFjwplBGb8ddISaD7ZUdDcGoU3Lc8nvMUP2jl9oHK4F7hlT1g
-         hFXST0Agp0K8w==
-Date:   Mon, 7 Mar 2022 17:58:05 +0200
+        b=GOVFZvLuN64f5sEeKly/51EJIRfdUIxlAQIenk4DPdMYWALdqgQTx0jjMKlAU0u74
+         OGqTpztCZN9RUx/5Vlb9VgQSZTby2PdqYmFsj5VbospRed4vipQt/G3I4A8qXXqzXE
+         of1yVZdmQ/BFuTvuCXA2K/6w8g59Z4cDBQUfI56VkVz+8OTtEu3K2JFQXJcpatGCVj
+         v8b6n7HQPZl3IDgio1yBs5yVTds2W/J4peeg5GToJB1orbRfzRTyPuNCDz1Rvy5oFe
+         V9/gTKooW1Yxft+L3IyldTXDN4AVlEQXr4VjVpEBwdlv+/IrG7BkSwGqyqwoRgEzSl
+         AfZWxxLMSkjwg==
+Date:   Mon, 7 Mar 2022 18:02:00 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+To:     linux-sgx@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>, G@iki.fi,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        zhangyiru <zhangyiru3@huawei.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
-        linux-mips@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, codalist@coda.cs.cmu.edu,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
-Message-ID: <YiYrjRW/Qmoq8c+L@iki.fi>
-References: <20220306053211.135762-1-jarkko@kernel.org>
- <YiSb7tsUEBRGS+HA@casper.infradead.org>
- <YiW4yurDXSifTYUt@infradead.org>
- <YiYIv9guOgClLKT8@iki.fi>
- <YiYrRWMp1akXY8Vb@infradead.org>
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Enable PROT_EXEC for EAUG'd pages
+Message-ID: <YiYseF3aKI70x3d8@iki.fi>
+References: <20220307153504.198112-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YiYrRWMp1akXY8Vb@infradead.org>
+In-Reply-To: <20220307153504.198112-1-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Mar 07, 2022 at 07:56:53AM -0800, Christoph Hellwig wrote:
-> On Mon, Mar 07, 2022 at 03:29:35PM +0200, Jarkko Sakkinen wrote:
-> > So what would you suggest to sort out the issue? I'm happy to go with
-> > ioctl if nothing else is acceptable.
+On Mon, Mar 07, 2022 at 05:35:04PM +0200, Jarkko Sakkinen wrote:
+> vm_max_permissions was created to control the pre-initialization content
+> that contributes to MRSIGNATURE. It was never meant to be as a limit to
+> dynamically added pages.
 > 
-> PLenty of drivers treat all mmaps as if MAP_POPULATE was specified,
-> typically by using (io_)remap_pfn_range.  If there any reason to only
-> optionally have the pre-fault semantics for sgx?  If not this should
-> be really simple.  And if we have a real need for it to be optional
-> we'll just need to find a sane way to pass that information to ->mmap.
+> E.g. static content could be used as a hook for LSM's to decide whether
+> certain signature is qualified for EINIT. Dynamic content has nothing to
+> do with that. The current mechanisms only add to the complexity on how
+> to control PTE and EPCM permissions, and do not add anything else than
+> obfuscity to security side of things.
+> 
+> Thus add PROT_EXEC to the permissions assigned by the #PF handler.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 79e39bd99c09..0256918b2c2f 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -160,12 +160,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+>  	encl_page->encl = encl;
+>  
+>  	/*
+> -	 * Adding a regular page that is architecturally allowed to only
+> -	 * be created with RW permissions.
+> -	 * TBD: Interface with user space policy to support max permissions
+> -	 * of RWX.
+> +	 * Dynamic pages do not contribute to MRSIGNATURE, i.e. they are
+> +	 * controlled only by PTE and EPCM permissions. Thus, the no limit
+> +	 * is set here.
+>  	 */
+> -	prot = PROT_READ | PROT_WRITE;
+> +	prot = PROT_READ | PROT_WRITE | PROT_EXEC;
+>  	encl_page->vm_run_prot_bits = calc_vm_prot_bits(prot, 0);
+>  	encl_page->vm_max_prot_bits = encl_page->vm_run_prot_bits;
+>  
+> -- 
+> 2.35.1
+> 
 
-Dave, what if mmap() would just unconditionally EAUG after initialization?
+This is really a show stopper. I think here's a logical mistake on for what
+purpose vm_max_prot_bits are used for. They are meant for the static and
+also signed content of the enclave.
 
-It's an option, yes.
+These changes in the patch set that are related to vm_max_prot_bits only
+messes up what already exists, and make incredibly hard to implement
+anything decent on top of SGX2 features.
 
 BR, Jarkko
