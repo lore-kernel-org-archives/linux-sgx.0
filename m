@@ -2,35 +2,67 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08988C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 07:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C47A2C433FE
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Mar 2022 10:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235939AbiCGHtg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Mar 2022 02:49:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55952 "EHLO
+        id S241458AbiCGKyR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Mar 2022 05:54:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235940AbiCGHte (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 02:49:34 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4D629CAA;
-        Sun,  6 Mar 2022 23:48:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=u44gcPJxldLKcwFv2Kgs/qlvzNfA8B/3/pfeFxePDMc=; b=ka9PRijrZ3eRBw1yItomT14Sqq
-        jmBORx4WCv4segJPEOqcAC3tqzYtvC+BUZU4+e3vHCXkSbArBKnX45ei5WNvlf36lcWjyUgzAE7OG
-        1oA20KbtigBeQELHwPKsjqg0DOYHqmH+C8bYJm1QGOnPjx44rkEdJgP72nidrDZW/i/nFGHYMk5sJ
-        XS5iV8+/7Zp5yJKt3rpIucmjX76N4zA0MRmAt1xxlFlNsVXNgR3q/FjL5Vu+0O5asOVkTIwmnnVbT
-        zBu2SjEeBZ2Q6NXtgxS2ilZzHIYsyxgi3fxgw7eWR6CXDcPj2eTY9YRLOob0H05nk494vP2VOmvp4
-        TM7swpKg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nR86U-00GK0Y-TY; Mon, 07 Mar 2022 07:48:26 +0000
-Date:   Sun, 6 Mar 2022 23:48:26 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-mm@kvack.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        with ESMTP id S241581AbiCGKxq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Mar 2022 05:53:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3965BA646E
+        for <linux-sgx@vger.kernel.org>; Mon,  7 Mar 2022 02:13:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646647969;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EAtJPNtZqQT+pzIC8Y0yY8ijMFQMxHJn+7uAlJm9E2A=;
+        b=fS3Wdt/0fAB8ucyCh/FXt/pFb/OWVEhapcH2PHSVoiUg3oAMC2aw1iBtKIqXtc0yuVsgbu
+        gwRmlNkkin2vD8Y5zT9zdxHDUN/S2aSld8jfmP6T/I8VrbUWGkUA+f7jaHkS41VHGrnQY8
+        iVORhb0mgUlS/CFWB3dmLRUy++cp8OQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-175-OmCc98gbO76NhgzP43h9wQ-1; Mon, 07 Mar 2022 05:12:47 -0500
+X-MC-Unique: OmCc98gbO76NhgzP43h9wQ-1
+Received: by mail-wm1-f69.google.com with SMTP id t2-20020a7bc3c2000000b003528fe59cb9so6495183wmj.5
+        for <linux-sgx@vger.kernel.org>; Mon, 07 Mar 2022 02:12:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=EAtJPNtZqQT+pzIC8Y0yY8ijMFQMxHJn+7uAlJm9E2A=;
+        b=Sl/geAMbWB5G5JilYRDQ/nQ76I7BU8HnZfbV0p/ENzJIGnJTgSAgcdhlgTF8aAjtg5
+         jMYqG6JDi+qUUs8uQ179bkTJYN7t0fvZYMdGPyExm2QjolYwhv7Jt2YDKjaLmE6D2znB
+         oM7H6zara2Nsjd0892Drow9lg0fptBbBaVfrECAZJDAhKmra0LI9NC9avJ9ZirRFxBJX
+         nTzj8PkTeEGBI8jkwbgniMMiV4EDh+pg2Gyt6XcbY0f2VQ1KpZg//V2OHEPXRFneSMwr
+         QP5ID0FZGd47jbwUWdEPRP3bFkdMzNu13dG2CPwdurVMTYH3fVfBJbWHoj8El/cX/3qU
+         H9GA==
+X-Gm-Message-State: AOAM531h84DRX7yqeubsS2DUWTetJxOpMhoX25iwt31kAIjyzL4joscG
+        hCmTlhLCuOB996k0Q3xeOd3F+HVsJEvOKS79napGDCY4gezK0SKILioqXhXSQ08aHPJnod7oQ5U
+        E0WAxFcew3M8dlz8Nh854
+X-Received: by 2002:a5d:6046:0:b0:1f0:4973:142f with SMTP id j6-20020a5d6046000000b001f04973142fmr7674906wrt.538.1646647966508;
+        Mon, 07 Mar 2022 02:12:46 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwEV99RC6J+Vin5f1sKjrk/pcIneCd29UN8hGV1eMibccSf0NvkVF1D5zaL4pxEGhCcclmMGQ==
+X-Received: by 2002:a5d:6046:0:b0:1f0:4973:142f with SMTP id j6-20020a5d6046000000b001f04973142fmr7674887wrt.538.1646647966292;
+        Mon, 07 Mar 2022 02:12:46 -0800 (PST)
+Received: from ?IPV6:2003:cb:c705:1e00:8d67:f75a:a8ae:dc02? (p200300cbc7051e008d67f75aa8aedc02.dip0.t-ipconnect.de. [2003:cb:c705:1e00:8d67:f75a:a8ae:dc02])
+        by smtp.gmail.com with ESMTPSA id bg18-20020a05600c3c9200b0037c2ef07493sm14954074wmb.3.2022.03.07.02.12.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Mar 2022 02:12:45 -0800 (PST)
+Message-ID: <d6b09f23-f470-c119-8d3e-7d72a3448b64@redhat.com>
+Date:   Mon, 7 Mar 2022 11:12:44 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-mm@kvack.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Nathaniel McCallum <nathaniel@profian.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -38,7 +70,7 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-mm@kvack.org,
         Florian Fainelli <f.fainelli@gmail.com>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Matthew Auld <matthew.auld@intel.com>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
+        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= 
         <thomas.hellstrom@linux.intel.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Jason Ekstrand <jason@jlekstrand.net>,
@@ -55,25 +87,38 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>, linux-mm@kvack.org,
         linux-mips@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, codalist@coda.cs.cmu.edu,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
-Message-ID: <YiW4yurDXSifTYUt@infradead.org>
 References: <20220306053211.135762-1-jarkko@kernel.org>
- <YiSb7tsUEBRGS+HA@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiSb7tsUEBRGS+HA@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20220306053211.135762-1-jarkko@kernel.org>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=david@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Mar 06, 2022 at 11:33:02AM +0000, Matthew Wilcox wrote:
-> On Sun, Mar 06, 2022 at 07:32:04AM +0200, Jarkko Sakkinen wrote:
-> > For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
-> > to use that for initializing the device memory by providing a new callback
-> > f_ops->populate() for the purpose.
+On 06.03.22 06:32, Jarkko Sakkinen wrote:
+> For device memory (aka VM_IO | VM_PFNMAP) MAP_POPULATE does nothing. Allow
+> to use that for initializing the device memory by providing a new callback
+> f_ops->populate() for the purpose.
 > 
-> As I said, NAK.
+> SGX patches are provided to show the callback in context.
+> 
+> An obvious alternative is a ioctl but it is less elegant and requires
+> two syscalls (mmap + ioctl) per memory range, instead of just one
+> (mmap).
 
-Agreed.  This is an amazingly bad interface.
+What about extending MADV_POPULATE_READ | MADV_POPULATE_WRITE to support
+VM_IO | VM_PFNMAP (as well?) ?
+
+
+-- 
+Thanks,
+
+David / dhildenb
+
