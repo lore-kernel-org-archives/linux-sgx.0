@@ -2,229 +2,230 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B08FC433FE
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Mar 2022 11:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12BEC433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Mar 2022 11:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346399AbiCHLht (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 8 Mar 2022 06:37:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60110 "EHLO
+        id S1346529AbiCHLnZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Mar 2022 06:43:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346269AbiCHLhq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Mar 2022 06:37:46 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8DFB3CA5B;
-        Tue,  8 Mar 2022 03:36:49 -0800 (PST)
+        with ESMTP id S1346531AbiCHLnW (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Mar 2022 06:43:22 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B306AC11;
+        Tue,  8 Mar 2022 03:42:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FDF161657;
-        Tue,  8 Mar 2022 11:36:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B025C340EB;
-        Tue,  8 Mar 2022 11:36:48 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6A190B81875;
+        Tue,  8 Mar 2022 11:42:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA17C340EE;
+        Tue,  8 Mar 2022 11:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646739408;
-        bh=mY08w+v9XXfUiTCBJ7UOPNnHi31W9WF2KER6j5/de34=;
+        s=k20201202; t=1646739743;
+        bh=SKJPI2/K7NNxddLgs6MLbymZUAOGnvP/YyFkNAqS7BQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fZjmYpdk1V7xqtgga2zkgjxyKGES25yooX25Sr5NV47DD9xKA3ddfoKEeuG9c/h5q
-         +gXlZXGeX+gFX680jx2s8lRdX+TLWiRCyjCOF5xId4Pp7gN8SfRvPqp5fZx24h/4km
-         wOy+3+cNu6ir1cchndu3f0KTmOArMRvh7NCB5YqVOuUnvwSKIb4UX8c4P4DvNtqv1Q
-         KGAJr9JhNh2t54jwEFGr76LdlnqJWW78qWuNKBKk1phA5qgOgh1ZmWkyxWgsQkclMm
-         z3EurEFcmbyjA3rIfCFxTgc2m5ln5heqqM2Thv+iCqtuWyNwGLaeDOMhR0jFmeHk7p
-         9Heqm2+JjoNeA==
-Date:   Tue, 8 Mar 2022 13:36:08 +0200
+        b=kAo6Q7+QLYaNk74rag9l9i/KVvEk08mg9ZG+GXZKoCGLGCIB8DT5AEjj/82R8Xnto
+         rIzk4Kd9zhcCEcldJB2Ppt8whz+VuWo2SvICbeEINGcGjS6x2CxR+jPNdiZxawrXP3
+         qTgRdkhL+vsBp0Li/y3nuC8do8jR/pziQ+0/ZxWpyXGuuYOAe9QDIHAyijMesGcAxL
+         1HVAkHIBqd2BysIfG/yI7cxbsSNVHxRTFuPLYZyrAlTBzaDjPBnbxjqllVNFFV65jQ
+         wz3Sfae8rWNCJy0NzxzIX7DRem8M0yQIePCkfcLivschZYXca7ea1t6HxUIHZwhCek
+         FGOFzNjVlkG5w==
+Date:   Tue, 8 Mar 2022 13:41:42 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6] x86/sgx: Free backing memory after faulting the
- enclave page
-Message-ID: <Yic/qD7Nq9VocH6W@iki.fi>
-References: <20220303223859.273187-1-jarkko@kernel.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH RFC v3 3/3] x86/sgx: Implement EAUG population with
+ MAP_POPULATE
+Message-ID: <YidA9qR3PR9zpx5A@iki.fi>
+References: <20220308112833.262805-1-jarkko@kernel.org>
+ <20220308112833.262805-4-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220303223859.273187-1-jarkko@kernel.org>
+In-Reply-To: <20220308112833.262805-4-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 04, 2022 at 12:38:58AM +0200, Jarkko Sakkinen wrote:
-> There is a limited amount of SGX memory (EPC) on each system.  When that
-> memory is used up, SGX has its own swapping mechanism which is similar
-> in concept but totally separate from the core mm/* code.  Instead of
-> swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
-> comes from a shared memory pseudo-file and can itself be swapped by the
-> core mm code.  There is a hierarchy like this:
+On Tue, Mar 08, 2022 at 01:28:33PM +0200, Jarkko Sakkinen wrote:
+> With SGX1 an enclave needs to be created with its maximum memory demands
+> pre-allocated. Pages cannot be added to an enclave after it is initialized.
+> SGX2 introduces a new function, ENCLS[EAUG] for adding pages to an
+> initialized enclave.
 > 
-> 	EPC <-> shmem <-> disk
+> Add support for dynamically adding pages to an initialized enclave with
+> mmap() by populating pages with EAUG. Use f_ops->populate() callback to
+> achieve this behaviour.
 > 
-> After data is swapped back in from shmem to EPC, the shmem backing
-> storage needs to be freed.  Currently, the backing shmem is not freed.
-> This effectively wastes the shmem while the enclave is running.  The
-> memory is recovered when the enclave is destroyed and the backing
-> storage freed.
-> 
-> Sort this out by freeing memory with shmem_truncate_range(), as soon as
-> a page is faulted back to the EPC.  In addition, free the memory for
-> PCMD pages as soon as all PCMD's in a page have been marked as unused
-> by zeroing its contents.
-> 
-> Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > ---
-> v6:
-> * Re-applied on top of tip/x86/sgx and fixed the merge conflict, i.e.
->   sgx_encl_get_backing() instead of sgx_encl_lookup_backing().
-> v5:
-> * Encapsulated file offset calculation for PCMD struct.
-> * Replaced "magic number" PAGE_SIZE with sizeof(struct sgx_secs) to make
->   the offset calculation more self-documentative.
-> v4:
-> * Sanitized the offset calculations.
-> v3:
-> * Resend.
-> v2:
-> * Rewrite commit message as proposed by Dave.
-> * Truncate PCMD pages (Dave).
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 57 ++++++++++++++++++++++++++++------
->  1 file changed, 48 insertions(+), 9 deletions(-)
+>  arch/x86/kernel/cpu/sgx/driver.c | 128 +++++++++++++++++++++++++++++++
+>  1 file changed, 128 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 001808e3901c..6fa3d0a14b93 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -12,6 +12,30 @@
->  #include "encls.h"
->  #include "sgx.h"
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> index aa9b8b868867..848938334e8a 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -9,6 +9,7 @@
+>  #include <asm/traps.h>
+>  #include "driver.h"
+>  #include "encl.h"
+> +#include "encls.h"
 >  
-> +/*
-> + * Calculate byte offset of a PCMD struct associated with an enclave page. PCMD's
-> + * follow right after the EPC data in the backing storage. In addition to the
-> + * visible enclave pages, there's one extra page slot for SECS, before PCMD
-> + * structs.
-> + */
-> +static inline pgoff_t sgx_encl_get_backing_page_pcmd_offset(struct sgx_encl *encl,
-> +							    unsigned long page_index)
-> +{
-> +	pgoff_t epc_end_off = encl->size + sizeof(struct sgx_secs);
-> +
-> +	return epc_end_off + page_index * sizeof(struct sgx_pcmd);
-> +}
-> +
-> +/*
-> + * Free a page from the backing storage in the given page index.
-> + */
-> +static inline void sgx_encl_truncate_backing_page(struct sgx_encl *encl, unsigned long page_index)
-> +{
-> +	struct inode *inode = file_inode(encl->backing);
-> +
-> +	shmem_truncate_range(inode, PFN_PHYS(page_index), PFN_PHYS(page_index) + PAGE_SIZE - 1);
-> +}
-> +
->  /*
->   * ELDU: Load an EPC page as unblocked. For more info, see "OS Management of EPC
->   * Pages" in the SDM.
-> @@ -22,9 +46,11 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
->  {
->  	unsigned long va_offset = encl_page->desc & SGX_ENCL_PAGE_VA_OFFSET_MASK;
->  	struct sgx_encl *encl = encl_page->encl;
-> +	pgoff_t page_index, page_pcmd_off;
->  	struct sgx_pageinfo pginfo;
->  	struct sgx_backing b;
-> -	pgoff_t page_index;
-> +	bool pcmd_page_empty;
-> +	u8 *pcmd_page;
->  	int ret;
->  
->  	if (secs_page)
-> @@ -32,14 +58,16 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
->  	else
->  		page_index = PFN_DOWN(encl->size);
->  
-> +	page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
-> +
->  	ret = sgx_encl_get_backing(encl, page_index, &b);
->  	if (ret)
->  		return ret;
->  
->  	pginfo.addr = encl_page->desc & PAGE_MASK;
->  	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
-> -	pginfo.metadata = (unsigned long)kmap_atomic(b.pcmd) +
-> -			  b.pcmd_offset;
-> +	pcmd_page = kmap_atomic(b.pcmd);
-> +	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
->  
->  	if (secs_page)
->  		pginfo.secs = (u64)sgx_get_epc_virt_addr(secs_page);
-> @@ -55,11 +83,24 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
->  		ret = -EFAULT;
->  	}
->  
-> -	kunmap_atomic((void *)(unsigned long)(pginfo.metadata - b.pcmd_offset));
-> +	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
-> +
-> +	/*
-> +	 * The area for the PCMD in the page was zeroed above.  Check if the
-> +	 * whole page is now empty meaning that all PCMD's have been zeroed:
-> +	 */
-> +	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
-> +
-> +	kunmap_atomic(pcmd_page);
->  	kunmap_atomic((void *)(unsigned long)pginfo.contents);
->  
->  	sgx_encl_put_backing(&b, false);
->  
-> +	sgx_encl_truncate_backing_page(encl, page_index);
-> +
-> +	if (pcmd_page_empty)
-> +		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
-> +
->  	return ret;
->  }
->  
-> @@ -577,7 +618,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
->  int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
->  			 struct sgx_backing *backing)
->  {
-> -	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-> +	pgoff_t page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
->  	struct page *contents;
->  	struct page *pcmd;
->  
-> @@ -585,7 +626,7 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
->  	if (IS_ERR(contents))
->  		return PTR_ERR(contents);
->  
-> -	pcmd = sgx_encl_get_backing_page(encl, pcmd_index);
-> +	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(page_pcmd_off));
->  	if (IS_ERR(pcmd)) {
->  		put_page(contents);
->  		return PTR_ERR(pcmd);
-> @@ -594,9 +635,7 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
->  	backing->page_index = page_index;
->  	backing->contents = contents;
->  	backing->pcmd = pcmd;
-> -	backing->pcmd_offset =
-> -		(page_index & (PAGE_SIZE / sizeof(struct sgx_pcmd) - 1)) *
-> -		sizeof(struct sgx_pcmd);
-> +	backing->pcmd_offset = page_pcmd_off & (PAGE_SIZE - 1);
->  
+>  u64 sgx_attributes_reserved_mask;
+>  u64 sgx_xfrm_reserved_mask = ~0x3;
+> @@ -101,6 +102,132 @@ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
 >  	return 0;
 >  }
+>  
+> +static int sgx_encl_augment_page(struct sgx_encl *encl, unsigned long offset)
+> +{
+> +	struct sgx_pageinfo pginfo = {0};
+> +	struct sgx_encl_page *encl_page;
+> +	struct sgx_epc_page *epc_page;
+> +	struct sgx_va_page *va_page;
+> +	u64 secinfo_flags;
+> +	int ret;
+> +
+> +	/*
+> +	 * Ignore internal permission checking for dynamically added pages.
+> +	 * They matter only for data added during the pre-initialization phase.
+> +	 * The enclave decides the permissions by the means of EACCEPT,
+> +	 * EACCEPTCOPY and EMODPE.
+> +	 */
+> +	secinfo_flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
+> +	encl_page = sgx_encl_page_alloc(encl, offset, secinfo_flags);
+> +	if (IS_ERR(encl_page))
+> +		return PTR_ERR(encl_page);
+> +
+> +	epc_page = sgx_alloc_epc_page(encl_page, true);
+> +	if (IS_ERR(epc_page)) {
+> +		ret = PTR_ERR(epc_page);
+> +		goto err_alloc_epc_page;
+> +	}
+> +
+> +	va_page = sgx_encl_grow(encl);
+> +	if (IS_ERR(va_page)) {
+> +		ret = PTR_ERR(va_page);
+> +		goto err_grow;
+> +	}
+> +
+> +	mutex_lock(&encl->lock);
+> +
+> +	/*
+> +	 * Adding to encl->va_pages must be done under encl->lock.  Ditto for
+> +	 * deleting (via sgx_encl_shrink()) in the error path.
+> +	 */
+> +	if (va_page)
+> +		list_add(&va_page->list, &encl->va_pages);
+> +
+> +	/*
+> +	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
+> +	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
+> +	 * to userspace errors (or kernel/hardware bugs).
+> +	 */
+> +	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
+> +			encl_page, GFP_KERNEL);
+> +
+> +	/*
+> +	 * If ret == -EBUSY then page was created in another flow while
+> +	 * running without encl->lock
+> +	 */
+> +	if (ret)
+> +		goto err_xa_insert;
+> +
+> +	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
+> +	pginfo.addr = encl_page->desc & PAGE_MASK;
+> +	pginfo.metadata = 0;
+> +
+> +	ret = __eaug(&pginfo, sgx_get_epc_virt_addr(epc_page));
+> +	if (ret)
+> +		goto err_eaug;
+> +
+> +	encl_page->encl = encl;
+> +	encl_page->epc_page = epc_page;
+> +	encl_page->type = SGX_PAGE_TYPE_REG;
+> +	encl->secs_child_cnt++;
+> +
+> +	sgx_mark_page_reclaimable(encl_page->epc_page);
+> +
+> +	mutex_unlock(&encl->lock);
+> +
+> +	return 0;
+> +
+> +err_eaug:
+> +	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
+> +
+> +err_xa_insert:
+> +	sgx_encl_shrink(encl, va_page);
+> +	mutex_unlock(&encl->lock);
+> +
+> +err_grow:
+> +	sgx_encl_free_epc_page(epc_page);
+> +
+> +err_alloc_epc_page:
+> +	kfree(encl_page);
+> +
+> +	return VM_FAULT_SIGBUS;
+> +}
+
+This can be obviously exported to be used also in the page fault handler.
+
+> +
+> +/*
+> + * Add new pages to the enclave sequentially with ENCLS[EAUG]. Note that
+> + * sgx_mmap() validates that the given VMA is within the enclave range. Calling
+> + * here sgx_encl_may_map() second time would too time consuming.
+> + */
+> +static int sgx_populate(struct file *file, unsigned long start, unsigned long end)
+> +{
+> +	struct sgx_encl *encl = file->private_data;
+> +	unsigned long length = end - start;
+> +	unsigned long pos;
+> +	int ret;
+> +
+> +	/* EAUG works only for initialized enclaves. */
+> +	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+> +		return -EINVAL;
+> +
+> +	for (pos = 0 ; pos < length; pos += PAGE_SIZE) {
+> +		if (signal_pending(current)) {
+> +			if (!pos)
+> +				ret = -ERESTARTSYS;
+> +
+> +			break;
+> +		}
+> +
+> +		if (need_resched())
+> +			cond_resched();
+> +
+> +		ret = sgx_encl_augment_page(encl, start + pos);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static unsigned long sgx_get_unmapped_area(struct file *file,
+>  					   unsigned long addr,
+>  					   unsigned long len,
+> @@ -133,6 +260,7 @@ static const struct file_operations sgx_encl_fops = {
+>  	.compat_ioctl		= sgx_compat_ioctl,
+>  #endif
+>  	.mmap			= sgx_mmap,
+> +	.populate		= sgx_populate,
+>  	.get_unmapped_area	= sgx_get_unmapped_area,
+>  };
+>  
 > -- 
 > 2.35.1
 > 
-
-Is there still something to be done?
 
 BR, Jarkko
