@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F74C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  9 Mar 2022 08:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71A4C433EF
+	for <linux-sgx@archiver.kernel.org>; Wed,  9 Mar 2022 09:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231536AbiCIIyF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Mar 2022 03:54:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52474 "EHLO
+        id S232173AbiCIJg6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 9 Mar 2022 04:36:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231527AbiCIIyF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 9 Mar 2022 03:54:05 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F98624BC3;
-        Wed,  9 Mar 2022 00:53:05 -0800 (PST)
+        with ESMTP id S232155AbiCIJg6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 9 Mar 2022 04:36:58 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6CB16F94E;
+        Wed,  9 Mar 2022 01:35:59 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59E61B81EAB;
-        Wed,  9 Mar 2022 08:53:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A855C340E8;
-        Wed,  9 Mar 2022 08:53:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AFD5A61633;
+        Wed,  9 Mar 2022 09:35:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90883C340E8;
+        Wed,  9 Mar 2022 09:35:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646815982;
-        bh=wpEIW3SwPpEISRwjNCu5yxdFfn1cnwyk3HFiMUGaj9w=;
+        s=k20201202; t=1646818558;
+        bh=ap3IEN9WI5D+Wgpg4vty70KterEBnX5GNImrGJ+LBJo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=elGmIHCl6AlCPZYydvwXmo45L0wIvPpHHIWHBojLETnoaZ9uFe5Wxh3pT8miC8a+r
-         yswjkGA+w51Dr+kUhpwu6VTRwJZacWx8V3BQGbsaNqA26SBhYe9lDp1ls32Kfd/Lp5
-         jGTWFEAu/FvuSu9hfBYGVWoNOJwRCoDnxifFeu7S73qwh1QryU8ufIaZK8OnITOa76
-         oT9pp2g4XiHlsoBisPlVI1KVm/Wnnx22aQfNfg1J7OM/6XTI8kOCOADhgdwPk0Pc7U
-         /f9TNyBjO1PvSmBgG+BQrAHQAuAPdW5RmS0bHME9yxL4t8Ms6qQS4VMAi/kehdvW00
-         nlvpVY2zdakzQ==
-Date:   Wed, 9 Mar 2022 10:52:18 +0200
+        b=gI2/a/YEZeybZGVlUbgVYJv1aPXi1imBbSmLpKrUEcVrKR/vK/SKI3gQJ23HPqWQB
+         oQj4dHxxMSqHEAzGvaWeLia0mjnyEd4Czd8UuJlbjtSWsj/dMzPLOo0s6wUSyGHKkh
+         mm/libqAZ0/oCdUR2bKYtmzeYpmnbjbDCUwUVIJz+3vrId5DHejdfOl/O9yCYxRuMa
+         pIxy/SZUem7wJv2ttBf/fhTLfH01+9qki4C2WXrCsY9DAOW2HxD4Qj9PDTBKzMy/RG
+         LKx2LL0Wpdfoln2GXVQp35GxwINMjrLx6h0b7qPr7JuaNjnEz1V/tQHTCT26ARb7mF
+         MkFvLoOnLi9Bw==
+Date:   Wed, 9 Mar 2022 11:35:14 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Nathaniel McCallum <nathaniel@profian.com>,
@@ -45,34 +45,43 @@ Cc:     Nathaniel McCallum <nathaniel@profian.com>,
         <linux-kernel@vger.kernel.org>
 Subject: Re: [RFC PATCH v2.1 14/30] x86/sgx: Support restricting of enclave
  page permissions
-Message-ID: <YihqwiU3Dr5mvMQx@iki.fi>
+Message-ID: <Yih00gFMaJhLIgxa@iki.fi>
 References: <20220304093524.397485-1-jarkko@kernel.org>
  <20220304093524.397485-14-jarkko@kernel.org>
+ <YihqwiU3Dr5mvMQx@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220304093524.397485-14-jarkko@kernel.org>
+In-Reply-To: <YihqwiU3Dr5mvMQx@iki.fi>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 04, 2022 at 11:35:08AM +0200, Jarkko Sakkinen wrote:
-> +#define SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS \
-> +	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_restrict_perm)
+On Wed, Mar 09, 2022 at 10:52:22AM +0200, Jarkko Sakkinen wrote:
+> On Fri, Mar 04, 2022 at 11:35:08AM +0200, Jarkko Sakkinen wrote:
+> > +#define SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS \
+> > +	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_restrict_perm)
+> 
+> What if this was replaced with just SGX_IOC_ENCLAVE_RESET_PAGES, which
+> would simply do EMODPR with PROT_NONE? The main ingredient of EMODPR is to
+> flush out the TLB's, and move a page to pending state, which cannot be done
+> from inside the enclave.
+> 
+> It's there because of microarchitecture constraints, and less so to work as
+> a reasonable permission control mechanism (actually it does terrible job on
+> that side and only confuses).
+> 
+> Once you have this magic TLB reset button in place you can just do one
+> EACCEPT and EMODPE inside the enclave and you're done.
+> 
+> This is also kind of atomic in the sense that EACCEPT free's a page with no
+> rights so no misuse can happend before EMODPE has tuned EPCM.
 
-What if this was replaced with just SGX_IOC_ENCLAVE_RESET_PAGES, which
-would simply do EMODPR with PROT_NONE? The main ingredient of EMODPR is to
-flush out the TLB's, and move a page to pending state, which cannot be done
-from inside the enclave.
+I wonder if this type of pattern could be made work out for Graphene:
 
-It's there because of microarchitecture constraints, and less so to work as
-a reasonable permission control mechanism (actually it does terrible job on
-that side and only confuses).
+1. SGX_IOC_ENCLAVE_RESET_PAGES
+2. EACCEPT + EMODPE
 
-Once you have this magic TLB reset button in place you can just do one
-EACCEPT and EMODPE inside the enclave and you're done.
-
-This is also kind of atomic in the sense that EACCEPT free's a page with no
-rights so no misuse can happend before EMODPE has tuned EPCM.
+This kind of delivers EMODP that everyone has been looking for.
 
 BR, Jarkko
