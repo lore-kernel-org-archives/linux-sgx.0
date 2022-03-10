@@ -2,102 +2,105 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EBAC433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 05:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89551C433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 05:44:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236332AbiCJFZ1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Mar 2022 00:25:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55130 "EHLO
+        id S239616AbiCJFp2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Mar 2022 00:45:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234788AbiCJFZ0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 00:25:26 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F46710D4
-        for <linux-sgx@vger.kernel.org>; Wed,  9 Mar 2022 21:24:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646889865; x=1678425865;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=v/gSEYYyqkZG8gJS9omU7n+pEaoesg/5k0FjiuyDtgo=;
-  b=QJe0CVn5dtOLrJHUY5vs8vHdSLtEGGxefcDZrCEDkJevvShNfiPeqv/O
-   GryM1vTfcGQUUYwzSrIHGJP7yN7ctTkv7Z7JIwxNmHc3ZSw2x80p2mZT4
-   mm6D1vClw94PDiUOTo8bI6ePnnMRoTBe/0N7TIDiZHe7y1VMT4QLof1wM
-   N9cxzPZ6ak6M0QtwvyaIbnTKRzpU68AagwjX/jO3r3R+K7bekV0RULHOw
-   KEK1zt2vXSnXAfW7pCFpvlid19DExcUk5n0FrPkzCSLzc/0BOC3YXa8zX
-   ZCgsyK/+NU8NC+kAc9SVFA4RgwRLWhN1OMOPtRVLPrC6nbAnG6aQJwvZg
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="254897396"
-X-IronPort-AV: E=Sophos;i="5.90,169,1643702400"; 
-   d="scan'208";a="254897396"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2022 21:24:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,169,1643702400"; 
-   d="scan'208";a="510766486"
-Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
-  by orsmga002.jf.intel.com with ESMTP; 09 Mar 2022 21:24:25 -0800
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 9 Mar 2022 21:24:24 -0800
-Received: from shsmsx601.ccr.corp.intel.com (10.109.6.141) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 9 Mar 2022 21:24:23 -0800
-Received: from shsmsx601.ccr.corp.intel.com ([10.109.6.141]) by
- SHSMSX601.ccr.corp.intel.com ([10.109.6.141]) with mapi id 15.01.2308.021;
- Thu, 10 Mar 2022 13:24:21 +0800
-From:   "Zhang, Cathy" <cathy.zhang@intel.com>
-To:     "Hansen, Dave" <dave.hansen@intel.com>,
+        with ESMTP id S234788AbiCJFp1 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 00:45:27 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE17BF9569;
+        Wed,  9 Mar 2022 21:44:26 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 84935B824B0;
+        Thu, 10 Mar 2022 05:44:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B219AC340E8;
+        Thu, 10 Mar 2022 05:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646891064;
+        bh=UAD2SHCQKikznMEi3b+5p9+6yWHEy6/wfJRgJiN3Su8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G7TnwKGeMbF7k6cjgdLv6WGf2G0f4ImzNcJPJAm/WjtPZ4J94GnJgapKgQn62yP14
+         oKaLqpGfdEAh2gBbp3VYori6tJEfDrh3+Mi7vjo/bEYVAPE5DKGsvA7W1khos+kvA9
+         c6ib04aXV+MIdrY5uUL9Mw9ryMTzsMSTdwyHX5j6M80Dop0FzDkGF4VNqtF1acgXsT
+         gEaupQz4J5v/nHGSIgS3MpKGTLnYGQYSjFPqNTOh3eGLrHGDTMqgECxbI7y4kdSApL
+         O+eSUnS94bAkjPggEK2WrF++vzugsh5MiRiXfn5CjTKK2jN1ca27vMzIP+tMNaFJ4K
+         5i5BBBXh7TkkQ==
+Date:   Thu, 10 Mar 2022 07:43:39 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>
-Subject: RE: [RFC PATCH 00/11] Support microcode updates affecting SGX
-Thread-Topic: [RFC PATCH 00/11] Support microcode updates affecting SGX
-Thread-Index: AQHYM6IVktmAyyEgpEqK30RfEey+Q6y2/EQAgAEY31A=
-Date:   Thu, 10 Mar 2022 05:24:21 +0000
-Message-ID: <86db310117904ce99165f308227b71a7@intel.com>
-References: <20220309104050.18207-1-cathy.zhang@intel.com>
- <78b2e9f9-3be0-8670-a827-0a8fe7bf9ba6@intel.com>
-In-Reply-To: <78b2e9f9-3be0-8670-a827-0a8fe7bf9ba6@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-version: 11.6.401.20
-dlp-reaction: no-action
-dlp-product: dlpe-windows
-x-originating-ip: [10.239.127.36]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Shanahan, Mark" <mark.shanahan@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
+Message-ID: <YimQCwmhQkaxMTtn@iki.fi>
+References: <Yhy/GvJegnTqYdq6@iki.fi>
+ <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
+ <Yh4fGORDaJyVrJQW@iki.fi>
+ <Yh4i4hVcnfZ8QDAl@iki.fi>
+ <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
+ <Yh7Q5fbOtr+6YWaS@iki.fi>
+ <6f65287a-f69c-971e-be2c-929e327e7ff9@intel.com>
+ <op.1igppyk9wjvjmi@hhuan26-mobl1.mshome.net>
+ <19155cab-ecff-a8a6-f724-98c4535642ef@intel.com>
+ <ce9bd1a9-491a-09e9-1cdc-a55669f8cf28@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce9bd1a9-491a-09e9-1cdc-a55669f8cf28@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGkgRGF2ZSwgVGhvbWFzLA0KDQpUaGFua3MgZm9yIGhlbHBpbmcgcmV2aWV3IQ0KDQpJIHdpbGwg
-cmVtb3ZlIHRoZSBuZXcgQUJJIGFuZCBsZXQgbWljcm9jb2RlIHVwZGF0ZSBwcm9jZXNzIGNhbGwg
-dGhlIGludGVyZmFjZSBkaXJlY3RseSB0byBjbGVhbiB1cCBFUEMgYW5kIGRvIEVVUERBVEVTVk4u
-IFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgaGF2ZSBvdGhlciBzdWdnZXN0aW9uLg0KDQo+IC0t
-LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEhhbnNlbiwgRGF2ZSA8ZGF2ZS5oYW5z
-ZW5AaW50ZWwuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgTWFyY2ggMTAsIDIwMjIgNDozMyBBTQ0K
-PiBUbzogWmhhbmcsIENhdGh5IDxjYXRoeS56aGFuZ0BpbnRlbC5jb20+OyBsaW51eC1zZ3hAdmdl
-ci5rZXJuZWwub3JnOw0KPiB4ODZAa2VybmVsLm9yZzsgUmFqLCBBc2hvayA8YXNob2sucmFqQGlu
-dGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMDAvMTFdIFN1cHBvcnQgbWljcm9j
-b2RlIHVwZGF0ZXMgYWZmZWN0aW5nIFNHWA0KPiANCj4gT24gMy85LzIyIDAyOjQwLCBDYXRoeSBa
-aGFuZyB3cm90ZToNCj4gPiBUaGlzIHNlcmllcyBpbXBsZW1lbnRzIHRoZSBpbmZyYXN0cnVjdHVy
-ZSBuZWVkZWQgdG8gdHJhY2sgYW5kIHRlYXINCj4gPiBkb3duIGJhcmUtbWV0YWwgZW5jbGF2ZXMg
-YW5kIHRoZW4gcnVuIEVVUERBVEVTVk4uIFRoaXMgaXMgZXhwZWN0ZWQgdG8NCj4gPiBiZSB0cmln
-Z2VyZWQgYnkgYWRtaW5pc3RyYXRvcnMgdmlhIHN5c2ZzIGF0IHNvbWUgY29udmVuaWVudCB0aW1l
-IGFmdGVyDQo+ID4gYSBtaWNyb2NvZGUgdXBkYXRlLCBwcm9iYWJseSBieSB0aGUgbWljcm9jb2Rl
-IHVwZGF0ZSB0b29saW5nIGl0c2VsZi4NCj4gDQo+IENhdGh5LCBpZiBpdCBpc24ndCBhYnVuZGFu
-dGx5IGNsZWFyIGJ5IG5vdywgZXZlcnlvbmUgc2VlbXMgdG8gaGF0ZSB0aGlzIHBhcnQgb2YNCj4g
-dGhlIGltcGxlbWVudGF0aW9uLg0KPiANCj4gTGV0J3MganVzdCBtYWtlIHRoaXMganVzdCBkbyBF
-VVBEQVRFU1ZOIGFzIGEgcGFydCBvZiB0aGUgbWljcm9jb2RlIHVwZGF0ZQ0KPiBwcm9jZXNzLiAg
-Tm8gbmV3IEFCSS4gIE5vIHRyeWluZyB0byBwcmVzZXJ2ZSBlbmNsYXZlcy4gIEtpbGwgdGhlbSBl
-YXJseSwga2lsbA0KPiB0aGVtIGFsbCwgYW5kIGJlIGRvbmUgd2l0aCBpdC4NCj4gDQo+IElmIHdl
-IG1lcmdlIHRoYXQgYW5kIHdlIGhhdmUgZW5kIHVzZXJzIGNoYXNpbmcgdXMgd2l0aCB0b3JjaGVz
-IGFuZA0KPiBwaXRjaGZvcmtzIGJlY2F1c2UgdGhlaXIgcHJlY2lvdXMgZW5jbGF2ZXMgd2VyZSB0
-b3JuIGRvd24sIHdlJ2xsIHRoaW5rIGFib3V0DQo+IGRvaW5nIHNvbWV0aGluZyBkaWZmZXJlbnQu
-DQo=
+On Thu, Mar 03, 2022 at 01:44:14PM -0800, Dave Hansen wrote:
+> On 3/3/22 13:23, Reinette Chatre wrote:
+> > Unfortunately MAP_POPULATE is not supported by SGX VMAs because of their
+> > VM_IO and VM_PFNMAP flags. When VMAs with such flags obtain this capability
+> > then I believe that SGX would benefit.
+> 
+> Some Intel folks asked for this quite a while ago.  I think it's
+> entirely doable: add a new vm_ops->populate() function that will allow
+> ignoring VM_IO|VM_PFNMAP if present.
+> 
+> Or, if nobody wants to waste all of the vm_ops space, just add an
+> arch_vma_populate() or something which can call over into SGX.
+> 
+> I'll happily review the patches if anyone can put such a beast together.
+
+Everyone would be better off, if EAUG's were done unconditionally for
+mmap() after initialization. Nice property is that this needs no core mm
+changes.
+
+The resource saving argument is at least a bit weak because you might use
+EMODPR for the address range anyway. So you end up doing things just
+slower. And to have good confidentiality, you actually probably want to
+clear also dynamically added pages with EACCEPTCOPY (and zero page) when
+you take them into use.
+
+I find it also a bit worrying that enclave has direct access to allocate
+kernel resources and trigger ring-0 opcode. I don't like that part at
+all. syscall/ioctl sets the correct barrier, as the host side should be
+and is the resource manager, not the enclave.
+
+BR, Jarkko
