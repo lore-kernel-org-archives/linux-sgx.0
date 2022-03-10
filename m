@@ -2,134 +2,129 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBB8C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 06:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DC1C433FE
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 18:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238269AbiCJGMf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Mar 2022 01:12:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48608 "EHLO
+        id S236118AbiCJSCp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Mar 2022 13:02:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238151AbiCJGMe (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 01:12:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CCB6C1ED;
-        Wed,  9 Mar 2022 22:11:34 -0800 (PST)
+        with ESMTP id S234616AbiCJSCo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 13:02:44 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD8B197B78;
+        Thu, 10 Mar 2022 10:01:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E16106191C;
-        Thu, 10 Mar 2022 06:11:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC5DCC340E8;
-        Thu, 10 Mar 2022 06:11:32 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D3EA7B8278D;
+        Thu, 10 Mar 2022 18:01:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07274C340E8;
+        Thu, 10 Mar 2022 18:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646892693;
-        bh=+NRsmFooFziApBCrU39ZrDWDpT82NCDcWI2bwFAfxLQ=;
+        s=k20201202; t=1646935300;
+        bh=Ehed+d1AEXVa5J2E1toVI+Dn/MDgVrfaiJcmSqyAOuU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lvOi1HG4F/nEVju0MUqWvgfXpukS80FBaYaZEuuwUboWQ2H8kjjD8VNNF/HXjPLJX
-         nu4PsCTIXrQt0A/OBIs7033cPFN0Fc9f8pLWotjPiynqVHgs50DLrCd/gz3qz3eEgB
-         PEXte7CnSpNLcrCz9Uvv9uReARgruJhMRRzSbtfDk7LoyxUUz2mtji0HsEgz97zl5j
-         kfb/d1gI/yxFqeiwJLsEFhCkfGe66lF0JaBbvpzzviBbughdUoBmK4UJB3KRBSQiRK
-         IYcoGSm8R5mmijav0DMrhVx064bWob7MRyOakzUqcavS3H2gCKrGMHKnmq3C6YdxT0
-         +aCb6LCq6SocA==
-Date:   Thu, 10 Mar 2022 08:10:48 +0200
+        b=brMd6jeMiCgX3+4y+Xa9b0xDYmgzBPhI+UCeko4yYEy6Qt5M7usGrhriLweB1NWbz
+         buMDiSB/dO9anfLDyTS+b7ycQfNqBFzjLdMBys3+VyYlSFWDeG4a8a2RJXU3MYqsc2
+         8O131NBYY8lcHgDuYH8rGR5okCSXsBdEqOc4VhD63N1KRo9yLhymm+vk7uLcNlLorM
+         ZxSvANeo+8484M3uw5dBboFcCiand2dpj0e8YiPLzT+EDlarP7+d+zX+k2awVLpHuT
+         oRQyKqtEmFLbr8eq6wRS/tTOHE5IRFCq3Ni/r4p51ExFx8jJfACMsT+0RvcAq2PyxT
+         z8WeTllWfGrxA==
+Date:   Thu, 10 Mar 2022 20:00:55 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>
-Cc:     "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Lutomirski, Andy" <luto@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Zhang, Cathy" <cathy.zhang@intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Shanahan, Mark" <mark.shanahan@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
- permissions
-Message-ID: <YimWaAqEnXHbLdjh@iki.fi>
-References: <cover.1644274683.git.reinette.chatre@intel.com>
- <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
- <YhLhoMFPyOFZ2fsX@iki.fi>
- <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, stable@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6] x86/sgx: Free backing memory after faulting the
+ enclave page
+Message-ID: <Yio814lJVgutumd8@iki.fi>
+References: <20220303223859.273187-1-jarkko@kernel.org>
+ <d476aa51-f855-bfb8-0738-3190439a2f72@intel.com>
+ <YihezQsQca0RBuxT@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
+In-Reply-To: <YihezQsQca0RBuxT@iki.fi>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 07:21:50PM +0000, Dhanraj, Vijay wrote:
-> Hi All,
+On Wed, Mar 09, 2022 at 10:01:17AM +0200, Jarkko Sakkinen wrote:
+> On Tue, Mar 08, 2022 at 11:16:19AM -0800, Reinette Chatre wrote:
+> > Hi,
+> > 
+> > On 3/3/2022 2:38 PM, Jarkko Sakkinen wrote:
+> > > There is a limited amount of SGX memory (EPC) on each system.  When that
+> > > memory is used up, SGX has its own swapping mechanism which is similar
+> > > in concept but totally separate from the core mm/* code.  Instead of
+> > > swapping to disk, SGX swaps from EPC to normal RAM.  That normal RAM
+> > > comes from a shared memory pseudo-file and can itself be swapped by the
+> > > core mm code.  There is a hierarchy like this:
+> > > 
+> > > 	EPC <-> shmem <-> disk
+> > > 
+> > > After data is swapped back in from shmem to EPC, the shmem backing
+> > > storage needs to be freed.  Currently, the backing shmem is not freed.
+> > > This effectively wastes the shmem while the enclave is running.  The
+> > > memory is recovered when the enclave is destroyed and the backing
+> > > storage freed.
+> > > 
+> > > Sort this out by freeing memory with shmem_truncate_range(), as soon as
+> > > a page is faulted back to the EPC.  In addition, free the memory for
+> > > PCMD pages as soon as all PCMD's in a page have been marked as unused
+> > > by zeroing its contents.
+> > > 
+> > > Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > 
+> > I can reliably reproduce the issue this patch aims to solve by creating
+> > a virtual machine that has a significant portion of its memory consumed
+> > by EPC:
+> > 
+> > qemu-system-x86_64 -smp 4 -m 4G\
+> >  -enable-kvm \
+> >  -cpu host,+sgx-provisionkey \
+> >  -object memory-backend-ram,size=2G,host-nodes=0,policy=bind,id=node0 \
+> >  -object memory-backend-epc,id=mem0,size=1536M,prealloc=on,host-nodes=0,policy=bind \
+> >  -numa node,nodeid=0,cpus=0-1,memdev=node0 \
+> >  -object memory-backend-ram,size=2G,host-nodes=1,policy=bind,id=node1 \
+> >  -object memory-backend-epc,id=mem1,size=1536M,prealloc=on,host-nodes=1,policy=bind \
+> >  -numa node,nodeid=1,cpus=2-3,memdev=node1 \
+> >  -M sgx-epc.0.memdev=mem0,sgx-epc.0.node=0,sgx-epc.1.memdev=mem1,sgx-epc.1.node=1 \
+> >  ...
+> > 
+> > Before this patch, running the very stressful SGX2 over subscription test case
+> > (unclobbered_vdso_oversubscribed_remove) in this environment always triggers 
+> > the oom-killer but no amount of tasks killed can save the system
+> > with it always ending deadlocked on memory:
+> > 
+> > [   58.642719] Tasks state (memory values in pages):
+> > [   58.644324] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+> > [   58.647237] [    195]     0   195     3153      197    45056        0         -1000 systemd-udevd
+> > [   58.650238] [    281]     0   281  1836367        0 10817536        0             0 test_sgx
+> > [   58.653088] Out of memory and no killable processes...
+> > [   58.654832] Kernel panic - not syncing: System is deadlocked on memory
+> > 
+> > After applying this patch I was able to run SGX2 selftest
+> > unclobbered_vdso_oversubscribed_remove ten times successfully.
+> > 
+> > Tested-by: Reinette Chatre <reinette.chatre@intel.com>
 > 
-> Regarding the recent update of splitting the page permissions change
-> request into two IOCTLS (RELAX and RESTRICT), can we combine them into
-> one? That is, revert to how it was done in the v1 version?
+> Thank you.
 > 
-> Why? Currently in Gramine (a library OS for unmodified applications,
-> https://gramineproject.io/) with the new proposed change, one needs to
-> store the page permission for each page or range of pages. And for every
-> request of `mmap` or `mprotect`, Gramine would have to do a lookup of the
-> page permissions for the request range and then call the respective IOCTL
-> either RESTRICT or RELAX. This seems a little overwhelming.
-> 
-> Request: Instead, can we do `MODPE`,  call `RESTRICT` IOCTL, and then do
-> an `EACCEPT` irrespective of RELAX or RESTRICT page permission request?
-> With this approach, we can avoid storing  page permissions and simplify
-> the implementation.
-> 
-> I understand RESTRICT IOCTL would do a `MODPR` and trigger `ETRACK` flows
-> to do TLB shootdowns which might not be needed for RELAX IOCTL but I am
-> not sure what will be the performance impact. Is there any data point to
-> see the performance impact?
-> 
-> Thanks,
-> -Vijay
+> > Reinette
 
-This should get better in the next versuin. "relax" is gone. And for
-dynamic EAUG'd pages only VMA and EPCM permissions matter, i.e.
-internal vm_max_prot_bits is set to RWX.
-
-I patched the existing series eno
-
-For Enarx I'm using the following patterns.
-
-Shim mmap() handler:
-1. Ask host for mmap() syscall.
-2. Construct secinfo matching the protection bits.
-3. For each page in the address range: EACCEPTCOPY with a
-   zero page.
-    
-Shim mprotect() handler:
-1. Ask host for mprotect() syscall.
-2. For each page in the address range: EACCEPT with PROT_NONE
-   secinfo and EMODPE with the secinfo having the prot bits.
-    
-Backend mprotect() handler:
-1. Invoke ENCLAVE_RESTRICT_PERMISSIONS ioctl for the address
-   range with PROT_NONE.
-2. Invoke real mprotect() syscall.
-
-Not super-complicated.
-
-That is the safest way to changes permissions i.e. use EMODPR only to reset
-the permissions, and EMODPE as EMODP. Then the page is always either
-inaccessible completely or with the correct permissions.
-
-Any other ways to use EMODPR are a bit questionable. That's why I tend to
-think that it would be better to kernel provide only limited version of it
-to reset the permissions. Most of the other use will be most likely
-mis-use. IMHO there is only one legit pattern to use it, i.e. "least
-racy" pattern.
-
-I would replace SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS with
-SGX_IOC_ENCLAVE_RESET_PERMISSIONS that resets pages to PROT_NONE or embed
-this straight into mprotect().
+Dave, can this be picked up?
 
 BR, Jarkko
