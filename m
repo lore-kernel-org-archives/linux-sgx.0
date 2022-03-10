@@ -2,41 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D08FC433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 06:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBB8C433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 06:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233820AbiCJGBj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Mar 2022 01:01:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51622 "EHLO
+        id S238269AbiCJGMf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Mar 2022 01:12:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232317AbiCJGBi (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 01:01:38 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBCD8F637;
-        Wed,  9 Mar 2022 22:00:37 -0800 (PST)
+        with ESMTP id S238151AbiCJGMe (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 01:12:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CCB6C1ED;
+        Wed,  9 Mar 2022 22:11:34 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8780EB8251C;
-        Thu, 10 Mar 2022 06:00:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84C8C340E8;
-        Thu, 10 Mar 2022 06:00:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E16106191C;
+        Thu, 10 Mar 2022 06:11:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC5DCC340E8;
+        Thu, 10 Mar 2022 06:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646892035;
-        bh=r5cCxBx7p3YWGZryxH9n4PbKUVpUHmAMBZJNVrUytl0=;
+        s=k20201202; t=1646892693;
+        bh=+NRsmFooFziApBCrU39ZrDWDpT82NCDcWI2bwFAfxLQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EW98nCiCh80jg8eCpPwOchY6rKiHkkT8EMEGyQkqhOwAT1+Q/CbpAjwr9OKyLEhun
-         zHQw/Eqopv2RERq2CYPlEdDion4o6WaRzd9JbM3oH59QsJRDJT4yAkirttiyRNg9XF
-         39U+V03uCCv18VZ0FwGnspIVaL5zJ/QHzOWf0t2uM4vNCQVe6TZNRNttSpSocj8Z5s
-         lUzdgFr0e+ZEQ1/mFvLUna73833TNcQVquJFRNWGFjqVH8JN37h30oDlDkg6GDo3pV
-         afkUj3bJMJz0nmn7g7/ELusgjEALP3lQqf0rnfyp4maALraBbrIeaSOyH8FCJx59ZY
-         J0v3L7fymZB7A==
-Date:   Thu, 10 Mar 2022 07:59:50 +0200
+        b=lvOi1HG4F/nEVju0MUqWvgfXpukS80FBaYaZEuuwUboWQ2H8kjjD8VNNF/HXjPLJX
+         nu4PsCTIXrQt0A/OBIs7033cPFN0Fc9f8pLWotjPiynqVHgs50DLrCd/gz3qz3eEgB
+         PEXte7CnSpNLcrCz9Uvv9uReARgruJhMRRzSbtfDk7LoyxUUz2mtji0HsEgz97zl5j
+         kfb/d1gI/yxFqeiwJLsEFhCkfGe66lF0JaBbvpzzviBbughdUoBmK4UJB3KRBSQiRK
+         IYcoGSm8R5mmijav0DMrhVx064bWob7MRyOakzUqcavS3H2gCKrGMHKnmq3C6YdxT0
+         +aCb6LCq6SocA==
+Date:   Thu, 10 Mar 2022 08:10:48 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+To:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>
+Cc:     "Chatre, Reinette" <reinette.chatre@intel.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "bp@alien8.de" <bp@alien8.de>,
@@ -54,57 +52,84 @@ Cc:     Reinette Chatre <reinette.chatre@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
  permissions
-Message-ID: <YimT1uYC/3EFR1VV@iki.fi>
-References: <f6a256a6-a7d7-a8e7-c9a8-e232203c63af@intel.com>
- <Yh4fGORDaJyVrJQW@iki.fi>
- <Yh4i4hVcnfZ8QDAl@iki.fi>
- <2d2d3471-78ce-9faa-daf6-138078f5ffaa@intel.com>
- <Yh7Q5fbOtr+6YWaS@iki.fi>
- <6f65287a-f69c-971e-be2c-929e327e7ff9@intel.com>
- <op.1igppyk9wjvjmi@hhuan26-mobl1.mshome.net>
- <19155cab-ecff-a8a6-f724-98c4535642ef@intel.com>
- <ce9bd1a9-491a-09e9-1cdc-a55669f8cf28@intel.com>
- <YimQCwmhQkaxMTtn@iki.fi>
+Message-ID: <YimWaAqEnXHbLdjh@iki.fi>
+References: <cover.1644274683.git.reinette.chatre@intel.com>
+ <4ce06608b5351f65f4e6bc6fc87c88a71215a2e7.1644274683.git.reinette.chatre@intel.com>
+ <YhLhoMFPyOFZ2fsX@iki.fi>
+ <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YimQCwmhQkaxMTtn@iki.fi>
+In-Reply-To: <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 07:43:42AM +0200, Jarkko Sakkinen wrote:
-> On Thu, Mar 03, 2022 at 01:44:14PM -0800, Dave Hansen wrote:
-> > On 3/3/22 13:23, Reinette Chatre wrote:
-> > > Unfortunately MAP_POPULATE is not supported by SGX VMAs because of their
-> > > VM_IO and VM_PFNMAP flags. When VMAs with such flags obtain this capability
-> > > then I believe that SGX would benefit.
-> > 
-> > Some Intel folks asked for this quite a while ago.  I think it's
-> > entirely doable: add a new vm_ops->populate() function that will allow
-> > ignoring VM_IO|VM_PFNMAP if present.
-> > 
-> > Or, if nobody wants to waste all of the vm_ops space, just add an
-> > arch_vma_populate() or something which can call over into SGX.
-> > 
-> > I'll happily review the patches if anyone can put such a beast together.
+On Wed, Feb 23, 2022 at 07:21:50PM +0000, Dhanraj, Vijay wrote:
+> Hi All,
 > 
-> Everyone would be better off, if EAUG's were done unconditionally for
-> mmap() after initialization. Nice property is that this needs no core mm
-> changes.
+> Regarding the recent update of splitting the page permissions change
+> request into two IOCTLS (RELAX and RESTRICT), can we combine them into
+> one? That is, revert to how it was done in the v1 version?
 > 
-> The resource saving argument is at least a bit weak because you might use
-> EMODPR for the address range anyway. So you end up doing things just
-> slower. And to have good confidentiality, you actually probably want to
-> clear also dynamically added pages with EACCEPTCOPY (and zero page) when
-> you take them into use.
+> Why? Currently in Gramine (a library OS for unmodified applications,
+> https://gramineproject.io/) with the new proposed change, one needs to
+> store the page permission for each page or range of pages. And for every
+> request of `mmap` or `mprotect`, Gramine would have to do a lookup of the
+> page permissions for the request range and then call the respective IOCTL
+> either RESTRICT or RELAX. This seems a little overwhelming.
 > 
-> I find it also a bit worrying that enclave has direct access to allocate
-> kernel resources and trigger ring-0 opcode. I don't like that part at
-> all. syscall/ioctl sets the correct barrier, as the host side should be
-> and is the resource manager, not the enclave.
+> Request: Instead, can we do `MODPE`,  call `RESTRICT` IOCTL, and then do
+> an `EACCEPT` irrespective of RELAX or RESTRICT page permission request?
+> With this approach, we can avoid storing  page permissions and simplify
+> the implementation.
+> 
+> I understand RESTRICT IOCTL would do a `MODPR` and trigger `ETRACK` flows
+> to do TLB shootdowns which might not be needed for RELAX IOCTL but I am
+> not sure what will be the performance impact. Is there any data point to
+> see the performance impact?
+> 
+> Thanks,
+> -Vijay
 
-Actually, this should be ABI compatible too. I'd expect all kselftests
-continue work as they are.
+This should get better in the next versuin. "relax" is gone. And for
+dynamic EAUG'd pages only VMA and EPCM permissions matter, i.e.
+internal vm_max_prot_bits is set to RWX.
+
+I patched the existing series eno
+
+For Enarx I'm using the following patterns.
+
+Shim mmap() handler:
+1. Ask host for mmap() syscall.
+2. Construct secinfo matching the protection bits.
+3. For each page in the address range: EACCEPTCOPY with a
+   zero page.
+    
+Shim mprotect() handler:
+1. Ask host for mprotect() syscall.
+2. For each page in the address range: EACCEPT with PROT_NONE
+   secinfo and EMODPE with the secinfo having the prot bits.
+    
+Backend mprotect() handler:
+1. Invoke ENCLAVE_RESTRICT_PERMISSIONS ioctl for the address
+   range with PROT_NONE.
+2. Invoke real mprotect() syscall.
+
+Not super-complicated.
+
+That is the safest way to changes permissions i.e. use EMODPR only to reset
+the permissions, and EMODPE as EMODP. Then the page is always either
+inaccessible completely or with the correct permissions.
+
+Any other ways to use EMODPR are a bit questionable. That's why I tend to
+think that it would be better to kernel provide only limited version of it
+to reset the permissions. Most of the other use will be most likely
+mis-use. IMHO there is only one legit pattern to use it, i.e. "least
+racy" pattern.
+
+I would replace SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS with
+SGX_IOC_ENCLAVE_RESET_PERMISSIONS that resets pages to PROT_NONE or embed
+this straight into mprotect().
 
 BR, Jarkko
