@@ -2,153 +2,82 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA71C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 02:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3FAC433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Mar 2022 05:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231710AbiCJCEo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 9 Mar 2022 21:04:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48124 "EHLO
+        id S237595AbiCJFQe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Mar 2022 00:16:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiCJCEn (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 9 Mar 2022 21:04:43 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0169369D6;
-        Wed,  9 Mar 2022 18:03:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D15A611A8;
-        Thu, 10 Mar 2022 02:03:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5389AC340E8;
-        Thu, 10 Mar 2022 02:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646877822;
-        bh=QDKN0G9FYZg41XyZgSNQwFzWuxekUCoeXYx8nS+Mm9M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vHGCgGh9/cL7gDyG9Qt/eXxZlXT5cwVr9CtGAjP0v3cElUufkRf4tUhHiLq4oGZmU
-         Eg/q1qMQLcUToRDkUJiI0IDPRcnZi/mDp3V+2l9X33TBMj7hydpgquDY6JJ+6RXma5
-         Xc9NH0wxGLj9Mqj0ArKRj8ieylZ+beIwOZAItW1TcTc97DVxNi2y6GAnxxF6hjXJ90
-         vpNIj3GmBOT9EjYVbLJ1kRMTTmi1zWDkF3tZhn/2axg/iBkSNvim8fkx46YXYEWyrX
-         TE87B2EAA/EtOIts9Nazn0HKVdd4PtaD/7mV+6v3Z7ostyczTIXfVFUuTHg77JmK2P
-         y+lT1D+I9k3cQ==
-Date:   Thu, 10 Mar 2022 04:02:57 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Nathaniel McCallum <nathaniel@profian.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2.1 14/30] x86/sgx: Support restricting of enclave
- page permissions
-Message-ID: <YilcUZWJnn40halC@iki.fi>
-References: <20220304093524.397485-1-jarkko@kernel.org>
- <20220304093524.397485-14-jarkko@kernel.org>
- <YihqwiU3Dr5mvMQx@iki.fi>
- <Yih00gFMaJhLIgxa@iki.fi>
- <5e89a3be-0760-b1b4-7693-2f3d9ac5066b@intel.com>
- <Yik51tjxXcqamBrO@iki.fi>
- <21112099-2ecc-2400-252d-d185b2693f03@intel.com>
+        with ESMTP id S234788AbiCJFQe (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Mar 2022 00:16:34 -0500
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E75D444E;
+        Wed,  9 Mar 2022 21:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646889334; x=1678425334;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=mzYuh5RW9nKcXHrOjs3Ig4o7YuxMGRq5XdQyJ6YCauw=;
+  b=GpoNnlgpiG9/VI2LE0IWE94F0blPKF/1fbH+xdsIznzOakt7uP23cEJB
+   /SmjkjFD/Kp3x3v9frg++khvaHjSjSydBiPveD4emMqMfmr5NVHZAdmfb
+   ZQlNpETR84OkLdPCg4IbGf/OoienuWr9Rq0zlurDjkzujbVDDg5Kb4E7q
+   IhvaO/Rjfj1WqCsRVg+Vc52fMUC+PcfHY4T+CHGZCBJneJe/dvgOS0Bnq
+   VSel2ZCQ5JkkM8TegeRd1t+n/DoXeCrZeBBow/YT+MOq4Ls9zRzxc6c/u
+   3Q8UOWJalcLqmRl2W/sBfLRwdn7MmQ2gM63y2q5VcboEcCsBntLQMUM55
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="318386660"
+X-IronPort-AV: E=Sophos;i="5.90,169,1643702400"; 
+   d="scan'208";a="318386660"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2022 21:15:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,169,1643702400"; 
+   d="scan'208";a="781333188"
+Received: from fmsmsx605.amr.corp.intel.com ([10.18.126.85])
+  by fmsmga006.fm.intel.com with ESMTP; 09 Mar 2022 21:15:33 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 9 Mar 2022 21:15:33 -0800
+Received: from shsmsx601.ccr.corp.intel.com (10.109.6.141) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 9 Mar 2022 21:15:32 -0800
+Received: from shsmsx601.ccr.corp.intel.com ([10.109.6.141]) by
+ SHSMSX601.ccr.corp.intel.com ([10.109.6.141]) with mapi id 15.01.2308.021;
+ Thu, 10 Mar 2022 13:15:30 +0800
+From:   "Zhang, Cathy" <cathy.zhang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 09/11] x86/microcode: Expose EUPDATESVN procedure via
+ sysfs
+Thread-Topic: [RFC PATCH 09/11] x86/microcode: Expose EUPDATESVN procedure via
+ sysfs
+Thread-Index: AQHYM6IeumOy+rFqFUmvW+82UJROGKy2Ye0AgAGxnHA=
+Date:   Thu, 10 Mar 2022 05:15:30 +0000
+Message-ID: <b006e694e1ba4d41a001040b0ce3205a@intel.com>
+References: <20220309104050.18207-1-cathy.zhang@intel.com>
+ <20220309104050.18207-10-cathy.zhang@intel.com> <YiiNPWdsYtWiULZm@zn.tnic>
+In-Reply-To: <YiiNPWdsYtWiULZm@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.6.401.20
+dlp-reaction: no-action
+dlp-product: dlpe-windows
+x-originating-ip: [10.239.127.36]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21112099-2ecc-2400-252d-d185b2693f03@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 09, 2022 at 04:10:27PM -0800, Reinette Chatre wrote:
-> Hi Jarkko,
-> 
-> On 3/9/2022 3:35 PM, Jarkko Sakkinen wrote:
-> > On Wed, Mar 09, 2022 at 08:59:42AM -0800, Reinette Chatre wrote:
-> >> Hi Jarkko,
-> >>
-> >> On 3/9/2022 1:35 AM, Jarkko Sakkinen wrote:
-> >>> On Wed, Mar 09, 2022 at 10:52:22AM +0200, Jarkko Sakkinen wrote:
-> >>>> On Fri, Mar 04, 2022 at 11:35:08AM +0200, Jarkko Sakkinen wrote:
-> >>>>> +#define SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS \
-> >>>>> +	_IOWR(SGX_MAGIC, 0x05, struct sgx_enclave_restrict_perm)
-> >>>>
-> >>>> What if this was replaced with just SGX_IOC_ENCLAVE_RESET_PAGES, which
-> >>>> would simply do EMODPR with PROT_NONE? The main ingredient of EMODPR is to
-> >>>> flush out the TLB's, and move a page to pending state, which cannot be done
-> >>>> from inside the enclave.
-> >>
-> >> I see the main ingredient as running EMODPR to restrict the EPCM permissions. If
-> >> the user wants to use SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS just to flush TLB it is
-> >> already possible since attempting to use EMODPR to relax permissions does not
-> >> change any permissions (although it still sets EPCM.PR) but yet will still
-> >> flush the TLB.
-> > 
-> > It's not just to flush the TLB. It also resets permissions to zero from
-> > which it is easy to set the exact permissions with EMODPE.
-> > 
-> >> Even so, you have a very good point that removing SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> >> removes the ability for users to flush the TLB after an EMODPE. If there are
-> >> thus PTEs present at the time the user runs EMODPE the pages would not be
-> >> accessible with the new permissions.
-> >>
-> >> Repurposing SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS with PROT_NONE to accomplish
-> >> this is not efficient because:
-> >> - For the OS to flush the TLB the enclave pages need not be in the EPC but
-> >>   in order to run EMODPR the enclave page needs to be in the EPC. In an 
-> >>   oversubscribed environment running EMODPR unnecessarily can thus introduce
-> >>   a significant delay. Please see the performance comparison I did in
-> >>   https://lore.kernel.org/linux-sgx/77e81306-6b03-4b09-2df2-48e09e2e79d5@intel.com/
-> >>   The test shows that running EMODPR unnecessarily can be orders of magnitude slower.
-> >> - Running EMODPR on an enclave page sets the EPCM.PR bin in the enclave page
-> >>   that needs to be cleared with an EACCEPT from within the enclave.
-> >>   If the user just wants to reset the TLB after running EMODPE then it should
-> >>   not be necessary to run EACCEPT again to reset EPCM.PR.
-> >>
-> >> Resetting the TLB is exactly what SGX_IOC_ENCLAVE_RELAX_PERMISSIONS did in an 
-> >> efficient way - it is quick (no need to load pages into EPC) and it does not
-> >> require EACCEPT to clear EPCM.PR. 
-> >>
-> >> It looks like we need SGX_IOC_ENCLAVE_RELAX_PERMISSIONS back. We could
-> >> rename it to SGX_IOC_ENCLAVE_RESET_PAGES if you prefer.
-> > 
-> > Please do not add it. We do not have any use for it. It's not only used
-> > to flush TLB's so it would not do any good. I just use it with fixed
-> > PROT_NONE permissions.
-> > 
-> >>>> It's there because of microarchitecture constraints, and less so to work as
-> >>>> a reasonable permission control mechanism (actually it does terrible job on
-> >>>> that side and only confuses).
-> >>>>
-> >>>> Once you have this magic TLB reset button in place you can just do one
-> >>>> EACCEPT and EMODPE inside the enclave and you're done.
-> >>>>
-> >>>> This is also kind of atomic in the sense that EACCEPT free's a page with no
-> >>>> rights so no misuse can happend before EMODPE has tuned EPCM.
-> >>>
-> >>> I wonder if this type of pattern could be made work out for Graphene:
-> >>>
-> >>> 1. SGX_IOC_ENCLAVE_RESET_PAGES
-> >>> 2. EACCEPT + EMODPE
-> >>>
-> >>> This kind of delivers EMODP that everyone has been looking for.
-> >>
-> >> EACCEPT will result in page table entries created for the enclave page. EMODPE
-> >> will be able to relax the permissions but TLB flush would be required to
-> >> access the page with the new permissions. SGX_IOC_ENCLAVE_RELAX_PERMISSIONS
-> >> (renamed to SGX_IOC_ENCLAVE_RESET_PAGES?) that does just a TLB flush is
-> >> required to be after EMODPE.
-> > 
-> > For EMODPE TLB flush is not required. I even verified this from Mark
-> > Shanahan. And since access rights are zero, the page cannot be
-> > deferenced by threads before EMODPE.
-> > 
-> 
-> Understood. I realized my mistake only after sending the email and attempted
-> to correct it in the following. Sorry for the noise.
-
-Please do not! It's really important this is looked from every angle
-before it hits the mainline :-)
-
-BR, Jarkko
+PiBPbiBhbGwgeW91ciBwYXRjaGVzIGZvciB0aGUgZnV0dXJlOiBkb24ndCBmb3JnZXQgdG8gQ2Mg
+TEtNTC4NClRoYW5rcyBCb3JpcyEgSSB3aWxsIGRvIGl0Lg0K
