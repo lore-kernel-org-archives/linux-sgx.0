@@ -2,42 +2,42 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2338C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Mar 2022 15:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17366C433F5
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357281AbiCPPoR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 16 Mar 2022 11:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42688 "EHLO
+        id S1355063AbiCPPsq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 16 Mar 2022 11:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357294AbiCPPoO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Mar 2022 11:44:14 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E3713E1A;
-        Wed, 16 Mar 2022 08:42:56 -0700 (PDT)
+        with ESMTP id S1357378AbiCPPsn (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Mar 2022 11:48:43 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D3D6D390;
+        Wed, 16 Mar 2022 08:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1647445376; x=1678981376;
+  t=1647445649; x=1678981649;
   h=message-id:date:mime-version:to:cc:references:from:
    subject:in-reply-to:content-transfer-encoding;
-  bh=Ixp7OhMpuLHg7wYtSO0RbosnpcFuNIgV6KAlovOHN5A=;
-  b=GHYvDGzSF9aScylHgvCprSxFoYbsmMcrk642cQFTR+uaG+RPXyNYTsGl
-   ZlExH/teClHc4NY5eAGRdDR3K6SyevC2PM2EY18Nnw9KoD8DPoT9aonME
-   uUyDCXJacBElgK6Wgbv0Kk7obaFgLaE9gCz0bpxCO1q9bK1VERWUgD54R
-   Beb7iGthWP8/IVZiDp4io/AHuQangmz47S97Y6mEWbgQagWaXCA6ZN3p0
-   73R+knLWJzOPfM4nyvxNq6KUV38EWn60Mi+L0pM7Vah+OSbrV9izuSy+Z
-   1/sy2qf3EuHfaAJODtE61s0AAQUv/EKHnRHn4g1/UKoIKnMVgYWWrCegZ
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10286"; a="281418833"
+  bh=BrzHWmqSAHVQTAHSUYYjuNm7pNzr8pYle8SOGv/r6GU=;
+  b=b/gLlPjo+GNMXH0FpOx/NfcTwWyfOZVqa6qYElT/VsEJVc7NuRK4gc5+
+   VONr6SKWcTAGlPDBCqC5edqCdtTsOnzqj4wKNWxGGaGRVNuBIjtxNBam3
+   NMPJUNyYjJabJSJu7GUvYjubzFlqXEXF5eoHOMmwMzp5CFLyMpfPn44eh
+   p67BBddpxwJGAf31Tl1Oe/6875KkHuceHWHGyy5i/MMoAWXuXvRmLiG1F
+   xby6kxQgM4RF0YFgQmupStrgbRn8LQmMl0Wt7wcg62UeoF2q33QAblyXb
+   EY7jaPaTar3V2SNjDUTrEP57FSLssC1FAJ0X3k5fqBG8btb5CdJFyqY0y
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10286"; a="343072053"
 X-IronPort-AV: E=Sophos;i="5.90,186,1643702400"; 
-   d="scan'208";a="281418833"
+   d="scan'208";a="343072053"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2022 08:42:40 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2022 08:47:29 -0700
 X-IronPort-AV: E=Sophos;i="5.90,186,1643702400"; 
-   d="scan'208";a="557506601"
+   d="scan'208";a="557509706"
 Received: from jdwaldem-mobl.amr.corp.intel.com (HELO [10.255.228.230]) ([10.255.228.230])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2022 08:42:40 -0700
-Message-ID: <947c4872-df94-0091-ebbf-b733db4bd9d6@intel.com>
-Date:   Wed, 16 Mar 2022 08:42:33 -0700
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2022 08:47:29 -0700
+Message-ID: <e121e972-7689-b2f3-5919-746e3a90cb36@intel.com>
+Date:   Wed, 16 Mar 2022 08:47:23 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
@@ -49,35 +49,30 @@ Cc:     ashok.raj@intel.com
 References: <20220315010300.10199-1-cathy.zhang@intel.com>
  <20220315010300.10199-10-cathy.zhang@intel.com>
  <53e7d3a3-a576-7ef1-fa2d-d170fa1172a1@fortanix.com>
+ <e1682971-4821-8e57-3232-de7a72086991@fortanix.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Subject: Re: [RFC PATCH v2 09/10] x86/cpu: Call ENCLS[EUPDATESVN] procedure in
  microcode update
-In-Reply-To: <53e7d3a3-a576-7ef1-fa2d-d170fa1172a1@fortanix.com>
+In-Reply-To: <e1682971-4821-8e57-3232-de7a72086991@fortanix.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 3/16/22 02:46, Jethro Beekman wrote:
->> +void update_cpusvn_intel(void) +{ +	sgx_lock_epc(); +	if
->> (sgx_zap_pages())
-> Doing this automatically and unconditionally during a microcode
-> update seems undesirable. This requires the userland tooling that is
-> coordinating the microcode update to be aware of any SGX enclaves
-> that are running and possibly coordinate sequencing with the
-> processes containing those enclaves. This coupling does not exist
-> today.
+On 3/16/22 03:24, Jethro Beekman wrote:
+>> Doing this automatically and unconditionally during a microcode
+>> update seems undesirable. This requires the userland tooling that
+>> is coordinating the microcode update to be aware of any SGX
+>> enclaves that are running and possibly coordinate sequencing with
+>> the processes containing those enclaves. This coupling does not
+>> exist today.
+> Also, a microcode update may not affect SGX security at all and doing
+> the EUPDATESVN procedure may not be required for this particular
+> update. This case is called out specifically in the EUPDATESVN
+> documentation.
 
-"Today" in what?
-
-If a microcode update changes SGX behavior and bumps CPUSVN, it's
-fundamentally incompatible with letting enclaves continue to run.  They
-might as well be killed.
-
-But, seriously, if you can't handle enclaves being killed every few
-months, don't use SGX.  The architecture doesn't allow data to be
-persistent like normal x86.  It's fundamental to the architecture.  You
-can also think of this as a shiny new SGX *testing* feature: one that
-keeps enclave owners from becoming complacent and forgetting about what
-the SGX architecture provides.
+I don't think Intel provides the metadata for the kernel to tell if an
+update requires an EUPDATESVN procedure or not.  If this is inconvenient
+for you, I'd suggest reporting this to the folks at Intel who can fix
+it.  It doesn't seem like something which they are motivated to fix.
