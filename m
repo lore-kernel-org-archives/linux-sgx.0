@@ -2,553 +2,175 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629D5C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 17 Mar 2022 04:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B529EC433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 17 Mar 2022 04:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbiCQE4z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 17 Mar 2022 00:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40984 "EHLO
+        id S229550AbiCQE5x (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 17 Mar 2022 00:57:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiCQE4z (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Mar 2022 00:56:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EB781168CD;
-        Wed, 16 Mar 2022 21:38:27 -0700 (PDT)
+        with ESMTP id S229597AbiCQE5t (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Mar 2022 00:57:49 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50D9B1275B1;
+        Wed, 16 Mar 2022 21:40:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B0ACFB81DD5;
-        Thu, 17 Mar 2022 04:11:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844C2C340E9;
-        Thu, 17 Mar 2022 04:11:48 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 8E569CE2296;
+        Thu, 17 Mar 2022 04:33:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4129C340E9;
+        Thu, 17 Mar 2022 04:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647490309;
-        bh=oq0+XwHfS6/4aSb6SVzmQ3IT4B1XZte81CAQfbbSE7c=;
+        s=k20201202; t=1647491623;
+        bh=POUoBf600nbgvc/u7XulzZAAI++wE8DaYIxOSNvmlhY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hwtr6CKUARLi7V5HF+X7Mcddrl1kMFyVKCM10MNS0nsxM2Gf1VA4R75sOkmY+eRMV
-         Y2KPGT5v1GmcJmEkAOKO4HYbiUh6qVk6zZB19ezdeGLEisztCqJa/BYuBwwQQugKLd
-         ta3+BUMEs43vxzI9+VnFT+axZDmzhrRbAUlaYZ9D3Vkpr7FyOra7/Q9kXp816zAo9f
-         bHEi036zwZKBQAhx/S+kZIfcT+WdUvoEmKN3nTcDicIY8qkPU/BaE3tzcYQqmG1mmi
-         aUOYwvT+OcrJcJt53TTS2TDb/YCoBmag8EyAb5ClyY6Ug3CWkjBiVZnW0VIYjeuGVU
-         acF+hy9/MReVg==
-Date:   Thu, 17 Mar 2022 06:12:46 +0200
+        b=X7BakpF53xL/tmtjmg7eRYvWaLXE67lDtzsNXQlC9QlCMp+NdYK46fcm3BUn4Lw5K
+         +7lVV52od1TGWXvOeFayV17PI97ExxPJ/LhnyQaj7CfI4Fm9ji9n4ddOgl5JOZXUXZ
+         sBObzrBGSx19xOa+ltwsqPvrkW+8klO4ycfdoIFbmoKtpPTx4pJ4PjXANr0fs7tRsa
+         N3XCeNqypg7rb20LpMgfeaXj8p6hbupYbaqVT6ZI3npr9ZgmgI6AHGx8MEtCQdyEHi
+         OTeQzLyOr+csHogWZpK+kXO9k0cROXFq8m3Hlnhc8vOSHvbW2Nedv2weFaM6gRNVW2
+         hWjbOlWIaYuUg==
+Date:   Thu, 17 Mar 2022 06:34:39 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Cathy Zhang <cathy.zhang@intel.com>
-Cc:     linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, ashok.raj@intel.com
-Subject: Re: [RFC PATCH v2 01/10] x86/sgx: Introduce mechanism to prevent new
- initializations of EPC pages
-Message-ID: <YjK1PtnutmiSgE6f@kernel.org>
-References: <20220315010300.10199-1-cathy.zhang@intel.com>
- <20220315010300.10199-2-cathy.zhang@intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Shanahan, Mark" <mark.shanahan@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nathaniel@profian.com
+Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
+ permissions
+Message-ID: <YjK6X3qX/E/J7qc+@iki.fi>
+References: <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
+ <YimWaAqEnXHbLdjh@iki.fi>
+ <op.1itu5vkewjvjmi@hhuan26-mobl1.mshome.net>
+ <Yis8LV99mORcLYs6@iki.fi>
+ <Yis9rA8uC/0bmWCF@iki.fi>
+ <97565fed-dc67-bab1-28d4-c40201c9f055@intel.com>
+ <Yi6tPLLt9Q+ailQ3@iki.fi>
+ <Yi6tinbF+Y7a66eQ@iki.fi>
+ <Yi6va4dCaljiQ1WQ@iki.fi>
+ <op.1i01q9s0wjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220315010300.10199-2-cathy.zhang@intel.com>
+In-Reply-To: <op.1i01q9s0wjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 09:02:51AM +0800, Cathy Zhang wrote:
-> == Background ==
+On Mon, Mar 14, 2022 at 10:39:36AM -0500, Haitao Huang wrote:
+> Hi Jarkko
 > 
-> EUPDATESVN is a new SGX instruction which allows enclave attestation
-> to include information about updated microcode without a reboot.
+> On Sun, 13 Mar 2022 21:58:51 -0500, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
 > 
-> The SGX hardware maintains metadata for each enclave page to help
-> enforce its security guarantees. This includes things like a record
-> of the enclave to which the page belongs and the type of the page:
-> SGX metadata like "VA" or "SECS" pages, or regular enclave pages
-> like those that store user data.
+> > On Mon, Mar 14, 2022 at 04:50:56AM +0200, Jarkko Sakkinen wrote:
+> > > On Mon, Mar 14, 2022 at 04:49:37AM +0200, Jarkko Sakkinen wrote:
+> > > > On Fri, Mar 11, 2022 at 09:53:29AM -0800, Reinette Chatre wrote:
+> > > >
+> > > > > I saw Haitao's note that EMODPE requires "Read access permitted
+> > > by enclave".
+> > > > > This motivates that EMODPR->PROT_NONE should not be allowed
+> > > since it would
+> > > > > not be possible to relax permissions (run EMODPE) after that.
+> > > Even so, I
+> > > > > also found in the SDM that EACCEPT has the note "Read access
+> > > permitted
+> > > > > by enclave". That seems to indicate that EMODPR->PROT_NONE is
+> > > not practical
+> > > > > from that perspective either since the enclave will not be able to
+> > > > > EACCEPT the change. Does that match your understanding?
+> > > >
+> > > > Yes, PROT_NONE should not be allowed.
+> > > >
+> > > > This is however the real problem.
+> > > >
+> > > > The current kernel patch set has inconsistent API and EMODPR ioctl is
+> > > > simply unacceptable. It  also requires more concurrency management
+> > > from
+> > > > user space run-time, which would be heck a lot easier to do in the
+> > > kernel.
+> > > >
+> > > > If you really want EMODPR as ioctl, then for consistencys sake,
+> > > then EAUG
+> > > > should be too. Like this when things go opposite directions, this
+> > > patch set
+> > > > plain and simply will not work out.
+> > > >
+> > > > I would pick EAUG's strategy from these two as it requires half
+> > > the back
+> > > > calls to host from an enclave. I.e. please combine mprotect() and
+> > > EMODPR,
+> > > > either in the #PF handler or as part of mprotect(), which ever
+> > > suits you
+> > > > best.
+> > > >
+> > > > I'll try demonstrate this with two examples.
+> > > >
+> > > > mmap() could go something like this() (simplified):
+> > > > 1. Execution #UD's to SYSCALL.
+> > > > 2. Host calls enclave's mmap() handler with mmap() parameters.
+> > > > 3. Enclave up-calls host's mmap().
+> > > > 4. Loops the range with EACCEPTCOPY.
+> > > >
+> > > > mprotect() has to be done like this:
+> > > > 1. Execution #UD's to SYSCALL.
+> > > > 2. Host calls enclave's mprotect() handler.
+> > > > 3. Enclave up-calls host's mprotect().
+> > > > 4. Enclave up-calls host's ioctl() to SGX_IOC_ENCLAVE_PERMISSIONS.
 > 
-> Before an EUPDATESVN operation can be successful, all SGX memory (aka.
-> EPC) must be marked as "unused" in the SGX hardware metadata (aka,
-> EPCM). The SGX microcode now maintains a reference count of pages
-> which are unused to aid in determining when all pages reach the
-> "unused" state.
+> I assume up-calls here are ocalls as we call them in our implementation,
+> which are the calls enclave make to untrusted side via EEXIT.
 > 
-> Both bare-metal and KVM guest EPC must be made unused. To increase
-> the chance of a successful EUPDATESVN, the kernel prevents existing
-> enclaves from creating new, valid pages and prevents new enclave
-> creation (creating an enclave involves initializing a "SECS" page).
+> If so, can your implementation combine this two up-calls into one, then host
+> side just do ioctl() and mprotect to kernel? If so, would that address your
+> concern about extra up-calls?
 > 
-> The entire EUPDATESVN process is very slow since it potentially
-> affects gigabytes of enclave memory. It can potentially take seconds
-> or minutes to complete. Userspace may encounter -EBUSY errors during
-> the update and is expected to retry.
 > 
-> == Patch contents ==
+> > > > 3. Loops the range with EACCEPT.
+> > >   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >   5. Loops the range with EACCEPT + EMODPE.
+> > > 
+> > > > This is just terrible IMHO. I hope these examples bring some insight.
+> > 
+> > E.g. in Enarx we have to add a special up-call (so called enarxcall in
+> > intermediate that we call sallyport, which provides shared buffer to
+> > communicate with the enclave) just for reseting the range with PROT_READ.
+> > Feel very redundant, adds ugly cruft and is completely opposite strategy
+> > to
+> > what you've chosen to do with EAUG, which is I think correct choice as
+> > far
+> > as API is concerned.
 > 
-> Introduce mechanism to prevent new initializations of EPC pages.
-> 
-> Use a flag to indicate when SGX EPC pages are "locked", which means
-> it's not allowed to allocate new EPC page for use. Check it in all
-> paths that can initialize an EPC page. Use SRCU to ensure that the
-> flag is visible across the system before proceeding with an update.
-> 
-> Add checks to all sites that call SGX instructions that can transition
-> pages from unused to initialized to ensure that the SRCU lock is held.
-> 
-> Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encls.h | 10 +++++++
->  arch/x86/kernel/cpu/sgx/sgx.h   |  3 ++
->  arch/x86/kernel/cpu/sgx/encl.c  | 25 +++++++++++++++--
->  arch/x86/kernel/cpu/sgx/ioctl.c | 50 ++++++++++++++++++++++++++++++++-
->  arch/x86/kernel/cpu/sgx/main.c  | 37 ++++++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/virt.c  | 20 +++++++++++++
->  6 files changed, 142 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> index 99004b02e2ed..3f1797ec2445 100644
-> --- a/arch/x86/kernel/cpu/sgx/encls.h
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -139,6 +139,8 @@ static inline bool encls_failed(int ret)
->  /* Initialize an EPC page into an SGX Enclave Control Structure (SECS) page. */
->  static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
->  {
-> +	lockdep_assert_held(&sgx_lock_epc_srcu);
-> +
->  	return __encls_2(ECREATE, pginfo, secs);
->  }
->  
-> @@ -154,6 +156,8 @@ static inline int __eextend(void *secs, void *addr)
->   */
->  static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
->  {
-> +	lockdep_assert_held(&sgx_lock_epc_srcu);
-> +
->  	return __encls_2(EADD, pginfo, addr);
->  }
->  
-> @@ -191,6 +195,8 @@ static inline int __etrack(void *addr)
->  static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
->  			 void *va)
->  {
-> +	lockdep_assert_held(&sgx_lock_epc_srcu);
-> +
->  	return __encls_ret_3(ELDU, pginfo, addr, va);
->  }
->  
-> @@ -205,6 +211,8 @@ static inline int __epa(void *addr)
->  {
->  	unsigned long rbx = SGX_PAGE_TYPE_VA;
->  
-> +	lockdep_assert_held(&sgx_lock_epc_srcu);
-> +
->  	return __encls_2(EPA, rbx, addr);
->  }
->  
-> @@ -230,6 +238,8 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
->  /* Zero a page of EPC memory and add it to an initialized enclave. */
->  static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
->  {
-> +	lockdep_assert_held(&sgx_lock_epc_srcu);
-> +
->  	return __encls_2(EAUG, pginfo, addr);
->  }
->  
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> index 85cbf103b0dd..dc8cb58100e3 100644
-> --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -104,4 +104,7 @@ static inline int __init sgx_vepc_init(void)
->  
->  void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
->  
-> +extern struct srcu_struct sgx_lock_epc_srcu;
-> +bool sgx_epc_is_locked(void);
-> +
->  #endif /* _X86_SGX_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index a0255d41e075..d2b428992910 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -264,6 +264,7 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
->  	unsigned long phys_addr;
->  	struct sgx_encl *encl;
->  	vm_fault_t ret;
-> +	int srcu_idx;
->  
->  	encl = vma->vm_private_data;
->  
-> @@ -275,6 +276,12 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
->  	if (unlikely(!encl))
->  		return VM_FAULT_SIGBUS;
->  
-> +	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +	if (sgx_epc_is_locked()) {
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +		return VM_FAULT_SIGBUS;
-> +	}
-> +
->  	/*
->  	 * The page_array keeps track of all enclave pages, whether they
->  	 * are swapped out or not. If there is no entry for this page and
-> @@ -283,14 +290,18 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
->  	 * enclave that will be checked for right away.
->  	 */
->  	if (cpu_feature_enabled(X86_FEATURE_SGX2) &&
-> -	    (!xa_load(&encl->page_array, PFN_DOWN(addr))))
-> -		return sgx_encl_eaug_page(vma, encl, addr);
-> +	    (!xa_load(&encl->page_array, PFN_DOWN(addr)))) {
-> +		ret = sgx_encl_eaug_page(vma, encl, addr);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +		return ret;
-> +	}
->  
->  	mutex_lock(&encl->lock);
->  
->  	entry = sgx_encl_load_page(encl, addr);
->  	if (IS_ERR(entry)) {
->  		mutex_unlock(&encl->lock);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  
->  		if (PTR_ERR(entry) == -EBUSY)
->  			return VM_FAULT_NOPAGE;
-> @@ -315,12 +326,14 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
->  				  vm_get_page_prot(page_prot_bits));
->  	if (ret != VM_FAULT_NOPAGE) {
->  		mutex_unlock(&encl->lock);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  
->  		return VM_FAULT_SIGBUS;
->  	}
->  
->  	sgx_encl_test_and_clear_young(vma->vm_mm, entry);
->  	mutex_unlock(&encl->lock);
-> +	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  
->  	return VM_FAULT_NOPAGE;
->  }
-> @@ -513,6 +526,7 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
->  	struct sgx_encl_page *entry = NULL;
->  	char data[sizeof(unsigned long)];
->  	unsigned long align;
-> +	int srcu_idx;
->  	int offset;
->  	int cnt;
->  	int ret = 0;
-> @@ -529,6 +543,12 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
->  		return -EFAULT;
->  
->  	for (i = 0; i < len; i += cnt) {
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked()) {
-> +			ret = -EBUSY;
-> +			goto out;
-> +		}
-> +
->  		entry = sgx_encl_reserve_page(encl, (addr + i) & PAGE_MASK);
->  		if (IS_ERR(entry)) {
->  			ret = PTR_ERR(entry);
-> @@ -555,6 +575,7 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
->  
->  out:
->  		mutex_unlock(&encl->lock);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  
->  		if (ret)
->  			break;
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index d8c3c07badb3..da3b569a10bd 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -147,6 +147,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
->  static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
->  {
->  	struct sgx_enclave_create create_arg;
-> +	int srcu_idx;
->  	void *secs;
->  	int ret;
->  
-> @@ -162,9 +163,18 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
->  
->  	if (copy_from_user(secs, (void __user *)create_arg.src, PAGE_SIZE))
->  		ret = -EFAULT;
-> -	else
-> +	else {
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked()) {
-> +			srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +			return -EBUSY;
-> +		}
-> +
->  		ret = sgx_encl_create(encl, secs);
->  
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +	}
-> +
->  	kfree(secs);
->  	return ret;
->  }
-> @@ -444,6 +454,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
->  	struct sgx_enclave_add_pages add_arg;
->  	struct sgx_secinfo secinfo;
->  	unsigned long c;
-> +	int srcu_idx;
->  	int ret;
->  
->  	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
-> @@ -477,8 +488,18 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
->  		if (need_resched())
->  			cond_resched();
->  
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked()) {
-> +			ret = -EBUSY;
-> +			srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +			break;
-> +		}
-> +
->  		ret = sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
->  					&secinfo, add_arg.flags);
-> +
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +
->  		if (ret)
->  			break;
->  	}
-> @@ -952,6 +973,7 @@ static long sgx_enclave_restrict_perm(struct sgx_encl *encl,
->  	unsigned long addr;
->  	unsigned long c;
->  	void *epc_virt;
-> +	int srcu_idx;
->  	int ret;
->  
->  	memset(&secinfo, 0, sizeof(secinfo));
-> @@ -960,6 +982,12 @@ static long sgx_enclave_restrict_perm(struct sgx_encl *encl,
->  	vm_prot = vm_prot_from_secinfo(secinfo_perm);
->  
->  	for (c = 0 ; c < modp->length; c += PAGE_SIZE) {
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked()) {
-> +			srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +			return -EBUSY;
-> +		}
-> +
->  		addr = encl->base + modp->offset + c;
->  
->  		sgx_direct_reclaim();
-> @@ -1049,6 +1077,7 @@ static long sgx_enclave_restrict_perm(struct sgx_encl *encl,
->  
->  		sgx_mark_page_reclaimable(entry->epc_page);
->  		mutex_unlock(&encl->lock);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  	}
->  
->  	ret = 0;
-> @@ -1060,6 +1089,7 @@ static long sgx_enclave_restrict_perm(struct sgx_encl *encl,
->  	sgx_mark_page_reclaimable(entry->epc_page);
->  out_unlock:
->  	mutex_unlock(&encl->lock);
-> +	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  out:
->  	modp->count = c;
->  
-> @@ -1143,6 +1173,7 @@ static long sgx_enclave_modt(struct sgx_encl *encl,
->  	unsigned long addr;
->  	unsigned long c;
->  	void *epc_virt;
-> +	int srcu_idx;
->  	int ret;
->  
->  	/*
-> @@ -1156,6 +1187,12 @@ static long sgx_enclave_modt(struct sgx_encl *encl,
->  	secinfo.flags = page_type << 8;
->  
->  	for (c = 0 ; c < modt->length; c += PAGE_SIZE) {
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked()) {
-> +			srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +			return -EBUSY;
-> +		}
-> +
->  		addr = encl->base + modt->offset + c;
->  
->  		sgx_direct_reclaim();
-> @@ -1255,6 +1292,7 @@ static long sgx_enclave_modt(struct sgx_encl *encl,
->  		entry->type = page_type;
->  
->  		mutex_unlock(&encl->lock);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  	}
->  
->  	ret = 0;
-> @@ -1265,6 +1303,7 @@ static long sgx_enclave_modt(struct sgx_encl *encl,
->  	entry->vm_run_prot_bits = run_prot_restore;
->  out_unlock:
->  	mutex_unlock(&encl->lock);
-> +	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  out:
->  	modt->count = c;
->  
-> @@ -1350,12 +1389,19 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
->  	unsigned long addr;
->  	unsigned long c;
->  	void *epc_virt;
-> +	int srcu_idx;
->  	int ret;
->  
->  	memset(&secinfo, 0, sizeof(secinfo));
->  	secinfo.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
->  
->  	for (c = 0 ; c < params->length; c += PAGE_SIZE) {
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked()) {
-> +			srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +			return -EBUSY;
-> +		}
-> +
->  		addr = encl->base + params->offset + c;
->  
->  		sgx_direct_reclaim();
-> @@ -1411,6 +1457,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
->  		kfree(entry);
->  
->  		mutex_unlock(&encl->lock);
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  	}
->  
->  	ret = 0;
-> @@ -1418,6 +1465,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
->  
->  out_unlock:
->  	mutex_unlock(&encl->lock);
-> +	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  out:
->  	params->count = c;
->  
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 545da16bb3ea..99c86b77ca8f 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -23,6 +23,17 @@ static int sgx_nr_epc_sections;
->  static struct task_struct *ksgxd_tsk;
->  static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
->  static DEFINE_XARRAY(sgx_epc_address_space);
-> +/*
-> + * The flag sgx_epc_locked prevents any new SGX flows that
-> + * may attempt to allocate a new EPC page.
-> + */
-> +static bool __rcu sgx_epc_locked;
-> +/*
-> + * By synchronizing around sgx_epc_locked SRCU ensures that any executing
-> + * SGX flows have completed before proceeding with an SVN update. New SGX flows
-> + * will be prevented from starting during an SVN update.
-> + */
-> +DEFINE_SRCU(sgx_lock_epc_srcu);
->  
->  /*
->   * These variables are part of the state of the reclaimer, and must be accessed
-> @@ -378,6 +389,8 @@ void sgx_direct_reclaim(void)
->  
->  static int ksgxd(void *p)
->  {
-> +	int srcu_idx;
-> +
->  	set_freezable();
->  
->  	/*
-> @@ -398,9 +411,15 @@ static int ksgxd(void *p)
->  				     kthread_should_stop() ||
->  				     sgx_should_reclaim(SGX_NR_HIGH_PAGES));
->  
-> +		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +		if (sgx_epc_is_locked())
-> +			goto maybe_resched;
-> +
->  		if (sgx_should_reclaim(SGX_NR_HIGH_PAGES))
->  			sgx_reclaim_pages();
->  
-> +maybe_resched:
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  		cond_resched();
->  	}
->  
-> @@ -943,3 +962,21 @@ static int __init sgx_init(void)
->  }
->  
->  device_initcall(sgx_init);
-> +
-> +static void sgx_lock_epc(void)
-> +{
-> +	sgx_epc_locked = true;
-> +	synchronize_srcu(&sgx_lock_epc_srcu);
-> +}
-> +
-> +static void sgx_unlock_epc(void)
-> +{
-> +	sgx_epc_locked = false;
-> +	synchronize_srcu(&sgx_lock_epc_srcu);
-> +}
-> +
-> +bool sgx_epc_is_locked(void)
-> +{
-> +	lockdep_assert_held(&sgx_lock_epc_srcu);
-> +	return sgx_epc_locked;
-> +}
-> diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-> index 6a77a14eee38..e953816d7c8b 100644
-> --- a/arch/x86/kernel/cpu/sgx/virt.c
-> +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> @@ -75,10 +75,21 @@ static vm_fault_t sgx_vepc_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct sgx_vepc *vepc = vma->vm_private_data;
-> +	int srcu_idx;
->  	int ret;
->  
->  	mutex_lock(&vepc->lock);
-> +	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +
-> +	if (sgx_epc_is_locked()) {
-> +		ret = -EBUSY;
-> +		goto out_unlock;
-> +	}
-> +
->  	ret = __sgx_vepc_fault(vepc, vma, vmf->address);
-> +
-> +out_unlock:
-> +	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
->  	mutex_unlock(&vepc->lock);
->  
->  	if (!ret)
-> @@ -331,6 +342,7 @@ int __init sgx_vepc_init(void)
->  int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
->  		     int *trapnr)
->  {
-> +	int srcu_idx;
->  	int ret;
->  
->  	/*
-> @@ -347,6 +359,12 @@ int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
->  	if (WARN_ON_ONCE(!access_ok(secs, PAGE_SIZE)))
->  		return -EINVAL;
->  
-> +	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
-> +	if (sgx_epc_is_locked()) {
-> +		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +		return -EBUSY;
-> +	}
-> +
->  	__uaccess_begin();
->  	ret = __ecreate(pageinfo, (void *)secs);
->  	__uaccess_end();
-> @@ -356,6 +374,8 @@ int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
->  		return -EFAULT;
->  	}
->  
-> +	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
-> +
->  	/* ECREATE doesn't return an error code, it faults or succeeds. */
->  	WARN_ON_ONCE(ret);
->  	return 0;
-> -- 
-> 2.17.1
-> 
+> The problem with EMODPR on #PF is that kernel needs to know what permissions
+> requested from enclave at the time of #PF. So enclave has to make at least
+> one call to kernel (again via ocall in our case, I assume up-call in your
+> case) to make the change.
 
-This series is broken. It does not apply on top of tip/x86/sgx. Also you
-forgot CC to me.
+Your security scheme is broken if permissions are requested outside the
+enclave, i.e. the hostile environment controls the permissions. That should
+always come from the enclave and enclave uses EACCEPT* to validate that
+what was given to EMODPR, EAUG and EMODT matches its expections.
+
+Upper layer application should not never be in charge, and a broken
+security scheme should never be supported.
+
+If EMODPR sets unconditionally to PROT_READ, enclave is able to validate
+this fact and then it can use EMODPE to set appropriate permissions.
 
 BR, Jarkko
