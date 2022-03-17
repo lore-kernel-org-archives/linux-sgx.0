@@ -2,39 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891E0C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 17 Mar 2022 22:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A46C433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 17 Mar 2022 22:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbiCQWXw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 17 Mar 2022 18:23:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38824 "EHLO
+        id S229991AbiCQWxR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 17 Mar 2022 18:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiCQWXv (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Mar 2022 18:23:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BDAA18DA98;
-        Thu, 17 Mar 2022 15:22:33 -0700 (PDT)
+        with ESMTP id S229990AbiCQWxQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Mar 2022 18:53:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC77B2B4A75;
+        Thu, 17 Mar 2022 15:51:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C2F4961AA3;
-        Thu, 17 Mar 2022 22:22:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369BAC340E9;
-        Thu, 17 Mar 2022 22:22:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 569DAB8205E;
+        Thu, 17 Mar 2022 22:51:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 981A9C340F3;
+        Thu, 17 Mar 2022 22:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647555752;
-        bh=vHu8SzogjrGxcMqYwhkATlm7fi2ZvOY6UNpi69O19Go=;
+        s=k20201202; t=1647557516;
+        bh=usxubETGNIj61RL6quMBw7P3iI8uvN32CF8CST1Cfqw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iGGxn2/ke6/oe02dZNeOIX5glmEZym9c/YHNq+QwF1ZaRLxMihJiiwvN2S6KpoPOu
-         /XRelefRqe4UXwJ4kIk1bPu4gMQJ0Je5975JZzo5mYcOxzazS3lVZsEV6vI8fqOFZo
-         exB8kCkJBRkL09u877eDDiNPHV/g4CBDhWPAyYFcQGfjZGpWLjKPG2ldmj88wQdZlG
-         4RVOGMQHGAuGQvhXy/gbXTJY8C3rGSUfKd+c5bV0GVByfXSA4oejcm5fdrZbQPukKP
-         S5O9nOaCK7CeNLBNKG4dAuk6cI3dnyJng3TbcvzttR2uZ/QaM+tQYOUgbqT+gHdMe3
-         mnL9cwzw4OLvQ==
-Date:   Fri, 18 Mar 2022 00:23:29 +0200
+        b=YlkRDg304AG+QXj6ZDn0h4SfnsqE4chO+gaic+mg6xZrvan9C3ODZyCwPGQJHyrZy
+         lc2Hd7FOFa9dSSDTapfoMfKbekSZriAgstVkPz8d1fr8m/IeI7F8jUOkgvtDWwOPCs
+         z0BQzy38Qfb4TJTriMc+1O0qpvOUCLLm5ztjFg4KAe9QSJl1bGEhW3ly8sByxxQcir
+         aGEJLlzEzrgsL/FnDoMrdbC99VzcboG99pzH43WVK9UKd8BcH8e8//e+x166JPt98d
+         qargol9/t3ndrJnX4Ljwm3Q9Cm2CdQSoB0c5aRpG5TH+W7kgzT4D/i0+UN8HyDT26h
+         uhgMhu/ck2wLA==
+Date:   Fri, 18 Mar 2022 00:51:05 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -50,206 +50,226 @@ Cc:     Reinette Chatre <reinette.chatre@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
         "Shanahan, Mark" <mark.shanahan@intel.com>,
         "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nathaniel@profian.com
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
  permissions
-Message-ID: <YjO04SS7HClPqQAT@iki.fi>
-References: <97565fed-dc67-bab1-28d4-c40201c9f055@intel.com>
- <Yi6tPLLt9Q+ailQ3@iki.fi>
- <Yi6tinbF+Y7a66eQ@iki.fi>
- <Yi6va4dCaljiQ1WQ@iki.fi>
- <op.1i01q9s0wjvjmi@hhuan26-mobl1.mshome.net>
- <YjLcr9TwLNWUtwkS@iki.fi>
- <YjLfIMz4/Vx8Jm24@iki.fi>
- <op.1i6iegamwjvjmi@hhuan26-mobl1.mshome.net>
- <YjOtLp4f4nu18Fzx@iki.fi>
- <YjOvcbdM+YmYw37c@iki.fi>
+Message-ID: <YjO7WWEbGPbPCe3/@iki.fi>
+References: <op.1itu5vkewjvjmi@hhuan26-mobl1.mshome.net>
+ <Yis8LV99mORcLYs6@iki.fi>
+ <Yis9rA8uC/0bmWCF@iki.fi>
+ <97565fed-dc67-bab1-28d4-c40201c9f055@intel.com>
+ <YiuQx+X9UQ2l22un@iki.fi>
+ <e1c04077-0165-c5ec-53be-7fd732965e80@intel.com>
+ <Yi65sM+yCvZU0/am@iki.fi>
+ <7ff5e217-4042-764b-3d32-49314f00ff54@intel.com>
+ <YjK5ZWJRQX+lyUxS@iki.fi>
+ <690d3d8e-6214-dcdd-daaa-48a380114ad7@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YjOvcbdM+YmYw37c@iki.fi>
+In-Reply-To: <690d3d8e-6214-dcdd-daaa-48a380114ad7@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 12:00:17AM +0200, Jarkko Sakkinen wrote:
-> On Thu, Mar 17, 2022 at 11:50:41PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Mar 17, 2022 at 09:28:45AM -0500, Haitao Huang wrote:
-> > > Hi
-> > > 
-> > > On Thu, 17 Mar 2022 02:11:28 -0500, Jarkko Sakkinen <jarkko@kernel.org>
-> > > wrote:
-> > > 
-> > > > On Thu, Mar 17, 2022 at 09:01:07AM +0200, Jarkko Sakkinen wrote:
-> > > > > On Mon, Mar 14, 2022 at 10:39:36AM -0500, Haitao Huang wrote:
-> > > > > > Hi Jarkko
-> > > > > >
-> > > > > > On Sun, 13 Mar 2022 21:58:51 -0500, Jarkko Sakkinen
-> > > > > <jarkko@kernel.org>
-> > > > > > wrote:
-> > > > > >
-> > > > > > > On Mon, Mar 14, 2022 at 04:50:56AM +0200, Jarkko Sakkinen wrote:
-> > > > > > > > On Mon, Mar 14, 2022 at 04:49:37AM +0200, Jarkko Sakkinen wrote:
-> > > > > > > > > On Fri, Mar 11, 2022 at 09:53:29AM -0800, Reinette Chatre wrote:
-> > > > > > > > >
-> > > > > > > > > > I saw Haitao's note that EMODPE requires "Read access
-> > > > > permitted
-> > > > > > > > by enclave".
-> > > > > > > > > > This motivates that EMODPR->PROT_NONE should not be allowed
-> > > > > > > > since it would
-> > > > > > > > > > not be possible to relax permissions (run EMODPE) after that.
-> > > > > > > > Even so, I
-> > > > > > > > > > also found in the SDM that EACCEPT has the note "Read access
-> > > > > > > > permitted
-> > > > > > > > > > by enclave". That seems to indicate that EMODPR->PROT_NONE is
-> > > > > > > > not practical
-> > > > > > > > > > from that perspective either since the enclave will not be
-> > > > > able to
-> > > > > > > > > > EACCEPT the change. Does that match your understanding?
-> > > > > > > > >
-> > > > > > > > > Yes, PROT_NONE should not be allowed.
-> > > > > > > > >
-> > > > > > > > > This is however the real problem.
-> > > > > > > > >
-> > > > > > > > > The current kernel patch set has inconsistent API and EMODPR
-> > > > > ioctl is
-> > > > > > > > > simply unacceptable. It  also requires more concurrency
-> > > > > management
-> > > > > > > > from
-> > > > > > > > > user space run-time, which would be heck a lot easier to do
-> > > > > in the
-> > > > > > > > kernel.
-> > > > > > > > >
-> > > > > > > > > If you really want EMODPR as ioctl, then for consistencys sake,
-> > > > > > > > then EAUG
-> > > > > > > > > should be too. Like this when things go opposite directions,
-> > > > > this
-> > > > > > > > patch set
-> > > > > > > > > plain and simply will not work out.
-> > > > > > > > >
-> > > > > > > > > I would pick EAUG's strategy from these two as it requires half
-> > > > > > > > the back
-> > > > > > > > > calls to host from an enclave. I.e. please combine
-> > > > > mprotect() and
-> > > > > > > > EMODPR,
-> > > > > > > > > either in the #PF handler or as part of mprotect(), which ever
-> > > > > > > > suits you
-> > > > > > > > > best.
-> > > > > > > > >
-> > > > > > > > > I'll try demonstrate this with two examples.
-> > > > > > > > >
-> > > > > > > > > mmap() could go something like this() (simplified):
-> > > > > > > > > 1. Execution #UD's to SYSCALL.
-> > > > > > > > > 2. Host calls enclave's mmap() handler with mmap() parameters.
-> > > > > > > > > 3. Enclave up-calls host's mmap().
-> > > > > > > > > 4. Loops the range with EACCEPTCOPY.
-> > > > > > > > >
-> > > > > > > > > mprotect() has to be done like this:
-> > > > > > > > > 1. Execution #UD's to SYSCALL.
-> > > > > > > > > 2. Host calls enclave's mprotect() handler.
-> > > > > > > > > 3. Enclave up-calls host's mprotect().
-> > > > > > > > > 4. Enclave up-calls host's ioctl() to
-> > > > > SGX_IOC_ENCLAVE_PERMISSIONS.
-> > > > > >
-> > > > > > I assume up-calls here are ocalls as we call them in our
-> > > > > implementation,
-> > > > > > which are the calls enclave make to untrusted side via EEXIT.
-> > > > > >ar
-> > > > > > If so, can your implementation combine this two up-calls into one,
-> > > > > then host
-> > > > > > side just do ioctl() and mprotect to kernel? If so, would that
-> > > > > address your
-> > > > > > concern about extra up-calls?
-> > > > > >
-> > > > > >
-> > > > > > > > > 3. Loops the range with EACCEPT.
-> > > > > > > >   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > > >   5. Loops the range with EACCEPT + EMODPE.
-> > > > > > > >
-> > > > > > > > > This is just terrible IMHO. I hope these examples bring some
-> > > > > insight.
-> > > > > > >
-> > > > > > > E.g. in Enarx we have to add a special up-call (so called
-> > > > > enarxcall in
-> > > > > > > intermediate that we call sallyport, which provides shared buffer to
-> > > > > > > communicate with the enclave) just for reseting the range with
-> > > > > PROT_READ.
-> > > > > > > Feel very redundant, adds ugly cruft and is completely opposite
-> > > > > strategy
-> > > > > > > to
-> > > > > > > what you've chosen to do with EAUG, which is I think correct
-> > > > > choice as
-> > > > > > > far
-> > > > > > > as API is concerned.
-> > > > > >
-> > > > > > The problem with EMODPR on #PF is that kernel needs to know what
-> > > > > permissions
-> > > > > > requested from enclave at the time of #PF. So enclave has to make
-> > > > > at least
-> > > > > > one call to kernel (again via ocall in our case, I assume up-call
-> > > > > in your
-> > > > > > case) to make the change.
-> > > > > 
-> > > > > The #PF handler should do unconditionally EMODPR with PROT_READ.
-> > > > 
-> > > > Or mprotect(), as long as secinfo contains PROT_READ. I don't care about
-> > > > this detail hugely anymore because it does not affect uapi.
-> > > > 
-> > > > Using EMODPR as a permission control mechanism is a ridiculous idea, and
-> > > > I cannot commit to maintain a broken uapi.
-> > > > 
-> > > 
-> > > Jarkko, how would automatically forcing PROT_READ on #PF work for this
-> > > sequence?
-> > > 
-> > > 1) EAUG a page (has to be RW)
-> > > 2) EACCEPT(RW)
-> > > 3) enclave copies some data to page
-> > > 4) enclave wants to change permission to R
-> > > 
-> > > If you are proposing mprotect, then as I indicated earlier, please address
-> > > concerns raised by Reinette:
-> > > https://lore.kernel.org/linux-sgx/e1c04077-0165-c5ec-53be-7fd732965e80@intel.com/
-> > 
-> > For EAUG you can choose between #PF handler and having it as part of
-> > mmap() with the same uapi.
-> > 
-> > For EMODPR clearly #PF handler would be tricky but nothing prevents
-> > resetting the permissions as part of mprotect() flow, which is trivial.
-> > 
-> > One good reason to have a fixed EMODPR is that e.g. emulating properly
-> > mprotect() is almost undoable if you don't do it otherwise. Specifically
+On Thu, Mar 17, 2022 at 03:08:04PM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> s/don't//g
-> 
-> > the scenario where your address range spans through multiple adjacent
-> > VMAs. It's even without EMODPR complex enough scenario that you really
-> > don't want to ask yourself for more trouble than use EMODPR in a super
-> > conservative manner.
+> On 3/16/2022 9:30 PM, Jarkko Sakkinen wrote:
+> > On Mon, Mar 14, 2022 at 08:32:28AM -0700, Reinette Chatre wrote:
+> >> Hi Jarkko,
+> >>
+> >> On 3/13/2022 8:42 PM, Jarkko Sakkinen wrote:
+> >>> On Fri, Mar 11, 2022 at 11:28:27AM -0800, Reinette Chatre wrote:
+> >>>> Supporting permission restriction in an ioctl() enables the runtime to manage
+> >>>> the enclave memory without needing to map it.
+> >>>
+> >>> Which is opposite what you do in EAUG. You can also augment pages without
+> >>> needing the map them. Sure you get that capability, but it is quite useless
+> >>> in practice.
+> >>>
+> >>>> I have considered the idea of supporting the permission restriction with
+> >>>> mprotect() but as you can see in this response I did not find it to be
+> >>>> practical.
+> >>>
+> >>> Where is it practical? What is your application? How is it practical to
+> >>> delegate the concurrency management of a split mprotect() to user space?
+> >>> How do we get rid off a useless up-call to the host?
+> >>>
+> >>
+> >> The email you responded to contained many obstacles against using mprotect()
+> >> but you chose to ignore them and snipped them all from your response. Could
+> >> you please address the issues instead of dismissing them? 
 > > 
-> > Having EMODPR fully exposed will only make more difficult API to do with
-> > extra round-trips. If you want to use ring-0 instructions fully exposed,
-> > please don't use a kernel. There's a bunch of hardware features in Intel
-> > CPUs for which Linux does not provide 1:1 all wide open interfaces.
+> > I did read the whole email but did not see anything that would make a case
+> > for fully exposed EMODPR, or having asymmetrical towards how EAUG works.
+> 
+> I believe that on its own each obstacle I shared with you is significant enough
+> to not follow that approach. You simply respond that I am just not making a
+> case without acknowledging any obstacle or providing a reason why the obstacles
+> are not valid.
+> 
+> To help me understand your view, could you please respond to each of the
+> obstacles I list below and how it is not an issue?
+> 
+> 
+> 1) ABI change:
+>    mprotect() is currently supported to modify VMA permissions
+>    irrespective of EPCM permissions. Supporting EPCM permission
+>    changes with mprotect() would change this behavior.
+>    For example, currently it is possible to have RW enclave
+>    memory and support multiple tasks accessing the memory. Two
+>    tasks can map the memory RW and later one can run mprotect()
+>    to reduce the VMA permissions to read-only without impacting
+>    the access of the other task.
+>    By moving EPCM permission changes to mprotect() this usage
+>    will no longer be supported and current behavior will change.
 
-I've now run a tweaked SGX2 v2 patch set [*] over 1,5 weeks and I'm really
-really confident about the stability. My laptop has not crashed a single
-time. For EAUG portion I'm probably rather sooner than later ready to give
-reviewed-by's because the API works just great.
+Your concurrency scenario is somewhat artificial. Obviously you need to
+synchronize somehow, and breaking something that could be done with one
+system call into two separates is not going to help with that. On the
+contrary, it will add a yet one more difficulty layer.
 
-Just want to put a note that it is not the internals that I'm too concerned
-off. For v3 I'd suggest that it is sent as you see fit and not to get stuck
-to EMODPR.
+mprotect() controls PTE permissions, not EPCM permissions. It is the corner
+stone to do any sort of confidential computing to have this division.
+That's why EACCEPT and EACCEPTCOPY exist.
 
-What I'll do, once I get it, is that I'll construct a small well-defined
-patch or perhaps patch set, which shows how I would change the EMODPR part.
+There is no "current behaviour" yet because there is no mainline code, i.e.
+that is easy one to address.
 
-[*] I run it my 2020 XPS13 laptop, which is SGX2 capable, and created this
-    CI thing that produces periodically automated kernel package builds of
-    it for the Arch Linux: https://github.com/jarkkojs/aur-linux-sgx/actions.
-    It's distro kernel with the same config, Reinette's patches on top, and
-    my tweaks on top of them. When v3 comes out, I'll update the kernel
-    version and replaces the v2+ patches with them.
+> 2) Only half EPCM permission management:
+>    Moving to mprotect() as a way to set EPCM permissions is
+>    not a clear interface for EPCM permission management because
+>    the kernel can only restrict permissions. Even so, the kernel
+>    has no insight into the current EPCM permissions and thus whether they
+>    actually need to be restricted so every mprotect() call,
+>    all except RWX, will need to be treated as a permission
+>    restriction with all the implementation obstacles
+>    that accompany it (more below).
+> 
+> There are two possible ways to implement permission restriction
+> as triggered by mprotect(), (a) during the mprotect() call or
+> (b) during a subsequent #PF (as suggested by you), each has
+> its own obstacles.
+
+I would have prefered also for EAUG to bundle it unconditionally to mmap()
+flow. I've merely said that I don't care whether it is a part of mprotect()
+flow or in the #PF handler, as long as the feature is not uncontrolled
+chaos. Probably at least in mprotect() case it is easier flow to implement
+it directly as part of mprotect().
+
+Kernel is not the most trusted party in the confidential computing
+scenarios. It is one of the adversaries. And SGX is designed in the way
+that enclave controls EPCMD database and kernel PTEs. By trying to
+artificially limit this you don't bring security, other than trying to
+block implementing applications based on SGX2.
+
+We can ditch the whole SGX, if the point is that kernel controls what
+happens inside enclave. Normal VMAs are much more capable for that purpose,
+and kernel has full control over them with e.g. PTEs.
+
+> 
+> 3) mprotect() implementation 
+> 
+>    When the user calls mprotect() the expectation is that the
+>    call will either succeed or fail. If the call fails the user
+>    expects the system to be unchanged. This is not possible if
+>    permission restriction is done as part of mprotect().
+> 
+>    (a) mprotect() may span multiple VMAs and involves VMA splits
+>        that (from what I understand) cannot be undone. SGX memory
+>        does not support VMA merges. If any SGX function
+>        (EMODPR or ETRACK on any page) done after a VMA split fails
+>        then the user will be left with fragmented memory.
+
+Oh well, SGX does not even support syscalls, if we go this level of
+arguments. And you are trying to sort this out with even more flakky
+interface, rather than stable EPCM reset to read state.
+
+I've been implementing this exact feature lately and only realistic way to
+do it without many corner cases is first use the current ioctl to reset the
+range to READ in EPCM, and with EMODPE set the appropriate permissions.
+
+
+>    (b) The EMODPR/ETRACK pair can fail on any of the pages provided
+>        by the mprotect() call. If there is a failure then the
+>        kernel cannot undo previously executed EMODPR since the kernel
+>        cannot run EMODPE. The EPCM permissions are thus left in inconsistent
+>        state since some of the pages would have changed EPCM permissions
+>        and mprotect() does not have mechanism to communicate
+>        partial success.
+>        The partial success is needed to communicate to user space
+>        (i) which pages need EACCEPT, (ii) which pages need to be
+>        in new request (although user space does not have information
+>        to help the new request succeed - see below).
+
+It's true but how common is that? Return e.g. -EIO, and run-time will
+re-build the enclave. That anyway happens all the time with SGX for
+various reasons (e.g. VM migration, S3 and whatnot). It's only important
+that you know when this happens.
+
+> 
+>    (c) User space runtime has control over management of EPC memory
+>        and accurate failure information would help it to do so.
+>        Knowing the error code of the EMODPR failure would help
+>        user space to take appropriate action. For example, EMODPR
+>        can return "SGX_PAGE_NOT_MODIFIABLE" that helps the runtime
+>        to learn that it needs to run EACCEPT on that page before
+>        the EMODPR can succeed. Alternatively, if it learns that the
+>        return is "SGX_EPC_PAGE_CONFLICT" then it could determine
+>        that some other part of the runtime attempted an ENCLU 
+>        function on that page.
+>        It is not possible to provide such detailed errors to user
+>        space with mprotect().
+
+Actually user space run-time is also an adversary. Kernel and user
+space can e.g. kill the enclave or limit it with PTEs but EPCM is
+beyond them *after* initialization. The whole point is to be able
+to put e.g. containers to untrusted cloud.
+> 
+> 
+> 4) #PF implementation
+> 
+>    (a) There is more to restricting permissions than just running
+>        ENCLS[EMODPR]. After running ENCLS[EMODPR] the kernel should
+>        also initiate the ETRACK flow to ensure that any thread within
+>        the enclave is interrupted by sending an IPI to the CPU, 
+>        this includes the thread that just triggered the #PF.        
+> 
+>    (b) Second consideration of the EMODPR and ETRACK flow is that
+>        this has a large "blast radius" in that any thread in the
+>        enclave needs to be interrupted. #PFs may arrive at any time
+>        so setting up a page range where a fault into any page in the
+>        page range will trigger enclave exits for all threads is
+>        a significant yet random impact. I believe it would be better
+>        to update all pages in the range at the same time and in this
+>        way contain the impact of this significant EMODPR/ETRACK/IPIs
+>        flow.
+> 
+>    (c) How will the page fault handler know when EMODPR/ETRACK should
+>        be run? Consider that the page fault handler can be called
+>        significantly later than the mprotect() call and that
+>        user space can call EMODPE any time to extend permissions.
+>        This implies that EMODPR/ETRACK/IPIs should be run during
+>        *every* page fault, irrespective of mprotect().
+> 
+>    (d) If a page is in pending or modified state then EMODPR will
+>        always fail. This is something that needs to be fixed by
+>        user space runtime but the page fault will not be able
+>        to communicate this.     
+> 
+> Considering the above, could you please provide clear guidance on
+> how you envision permission restriction to be supported by mprotect()?
+
+I'm not specifically driving #PF implementation but because it was so
+important for EAUG, I said that I'm fine with #PF based implementation.
+
+Personally, I would do both EAUG and EMODPR as part of mmap() and
+mprotect() (e.g. to catch that partial success and return that -EIO)
+flow but either works for me. The API is more of a concern than the
+internals.
+
+> 
+> Reinette
 
 BR, Jarkko
