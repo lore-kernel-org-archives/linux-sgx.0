@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B529EC433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 17 Mar 2022 04:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7ECC433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 17 Mar 2022 07:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbiCQE5x (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 17 Mar 2022 00:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44994 "EHLO
+        id S229835AbiCQHDO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 17 Mar 2022 03:03:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbiCQE5t (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Mar 2022 00:57:49 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50D9B1275B1;
-        Wed, 16 Mar 2022 21:40:00 -0700 (PDT)
+        with ESMTP id S229533AbiCQHDO (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Mar 2022 03:03:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C342213365F;
+        Thu, 17 Mar 2022 00:01:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 8E569CE2296;
-        Thu, 17 Mar 2022 04:33:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4129C340E9;
-        Thu, 17 Mar 2022 04:33:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 59E7060EEA;
+        Thu, 17 Mar 2022 07:01:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3232EC340E9;
+        Thu, 17 Mar 2022 07:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647491623;
-        bh=POUoBf600nbgvc/u7XulzZAAI++wE8DaYIxOSNvmlhY=;
+        s=k20201202; t=1647500513;
+        bh=KmTCT2wtZIFlvMXZF+u24z+562wYeOezI1J5kEiUej0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X7BakpF53xL/tmtjmg7eRYvWaLXE67lDtzsNXQlC9QlCMp+NdYK46fcm3BUn4Lw5K
-         +7lVV52od1TGWXvOeFayV17PI97ExxPJ/LhnyQaj7CfI4Fm9ji9n4ddOgl5JOZXUXZ
-         sBObzrBGSx19xOa+ltwsqPvrkW+8klO4ycfdoIFbmoKtpPTx4pJ4PjXANr0fs7tRsa
-         N3XCeNqypg7rb20LpMgfeaXj8p6hbupYbaqVT6ZI3npr9ZgmgI6AHGx8MEtCQdyEHi
-         OTeQzLyOr+csHogWZpK+kXO9k0cROXFq8m3Hlnhc8vOSHvbW2Nedv2weFaM6gRNVW2
-         hWjbOlWIaYuUg==
-Date:   Thu, 17 Mar 2022 06:34:39 +0200
+        b=miP8kY+u9I9yUM3Z8nJZV6lGNgUD1sYpDowjD/D74m4E9S0urdzrh6l1wm0XdJvb4
+         WCA3q8gCPhFwOg6BcO7ovj9dZQe0rfB1xw15VMpmiiF42wu7CiG5SP3EacEw7XdJE3
+         MLaTT8mQDIdi5SIHS8hMivaak9aZ82+QD3Pcs00AMuq21P8yWPUDhhPldc3Q+O87pj
+         XV5X2mYbCG5SVZj3r5RP079nfaJP33kK9pv13AuIucBepjSsGVHW+1jjUNozpEJALT
+         msf3410vWriT4SPjKVWNfK+zAsZ4XE9laUOwZ1ZbRA23uxgqS2u8FadfaW4AIN5moM
+         0CLOHsZJFRogw==
+Date:   Thu, 17 Mar 2022 09:01:03 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Haitao Huang <haitao.huang@linux.intel.com>
 Cc:     Reinette Chatre <reinette.chatre@intel.com>,
@@ -54,7 +54,7 @@ Cc:     Reinette Chatre <reinette.chatre@intel.com>,
         nathaniel@profian.com
 Subject: Re: [PATCH V2 16/32] x86/sgx: Support restricting of enclave page
  permissions
-Message-ID: <YjK6X3qX/E/J7qc+@iki.fi>
+Message-ID: <YjLcr9TwLNWUtwkS@iki.fi>
 References: <DM8PR11MB55917F499CDF4CC7D426B0A7F63C9@DM8PR11MB5591.namprd11.prod.outlook.com>
  <YimWaAqEnXHbLdjh@iki.fi>
  <op.1itu5vkewjvjmi@hhuan26-mobl1.mshome.net>
@@ -162,15 +162,6 @@ On Mon, Mar 14, 2022 at 10:39:36AM -0500, Haitao Huang wrote:
 > one call to kernel (again via ocall in our case, I assume up-call in your
 > case) to make the change.
 
-Your security scheme is broken if permissions are requested outside the
-enclave, i.e. the hostile environment controls the permissions. That should
-always come from the enclave and enclave uses EACCEPT* to validate that
-what was given to EMODPR, EAUG and EMODT matches its expections.
-
-Upper layer application should not never be in charge, and a broken
-security scheme should never be supported.
-
-If EMODPR sets unconditionally to PROT_READ, enclave is able to validate
-this fact and then it can use EMODPE to set appropriate permissions.
+The #PF handler should do unconditionally EMODPR with PROT_READ.
 
 BR, Jarkko
