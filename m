@@ -2,361 +2,198 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D154DC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Mar 2022 07:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60CDC4332F
+	for <linux-sgx@archiver.kernel.org>; Mon, 28 Mar 2022 20:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbiCVHqn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Mar 2022 03:46:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46462 "EHLO
+        id S1345796AbiC1Uaa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 28 Mar 2022 16:30:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbiCVHq1 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Mar 2022 03:46:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A0128E31;
-        Tue, 22 Mar 2022 00:42:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E3F0B61520;
-        Tue, 22 Mar 2022 07:42:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E91C340EC;
-        Tue, 22 Mar 2022 07:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647934946;
-        bh=gkxma+dYkNBfdMa1USHkI+B0zztS2NuVGYqVCmPTUsw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cJVlNu5W8jIidC8dx2FP5BCuNluczQehYE7CigRcJPkltj/XOGzYUJx6R07XaLY3j
-         VCNde99UBnZZS4KFFy8jBqr9oudGx4nrZ0Or+sVF0aLm5yohE/5O69pOJY6L2+YJzs
-         b0fmlWaleuHF024k7sqIqVV5H/qXFrUlvxcsaUjxRCU+38PHJOKSrIV+ojYQxokYmd
-         syvXUR5OZIDrvNYJ+eYUZS2BklX44EtVszk/DN3pt3W/joYhTDmMT9/JxxAoEisI2F
-         KUQM14dGB52SsdBB0CiE/ybEOsiCU+5cKY91F3iVuibM2tbtxKvOOU90tZPrkiFsob
-         /4OTK+B4r63/A==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-sgx@vger.kernel.org (open list:INTEL SGX),
-        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] selftests/sgx: Make TCS table relocatable
-Date:   Tue, 22 Mar 2022 09:43:12 +0200
-Message-Id: <20220322074313.7444-2-jarkko@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220322074313.7444-1-jarkko@kernel.org>
-References: <20220322074313.7444-1-jarkko@kernel.org>
+        with ESMTP id S1344950AbiC1Ua2 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 28 Mar 2022 16:30:28 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D622CBC26;
+        Mon, 28 Mar 2022 13:28:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648499326; x=1680035326;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=IGVugh1HYSECR8TID8PYJHfQEpN1OL/PWVzCqoZqr7U=;
+  b=fUo22G9SNPKKjqy9IgCpU7fPf5LImzQtOND50nBhGiKneu0+AtjPNYMj
+   BLoXpDXvvp09bvgXYoG8VuxWhI8WuQUc8m5pT7lxHM9244bnPAJJaAi4z
+   45SOW0eaEseqoCM3mxtbLp6JDrY0TDSMbOxLbg54J8C5fY5ZKZLa41cVn
+   Oqge7l3z3rPqc4jOsRyIPKs5rqvkYGwNunkkFEE3fEGaOnJaVcgNReCgM
+   DMwCBr1MAVO6dAC/XaKHvIVI8aSPaLurIB4rWpLTJEVMBpc5tPRtX8Tlq
+   nUTklwJFekXHXybW17QyRNtMDkJawQgr74+g6ScE69VO1ECb/jrmFo/UF
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10300"; a="257925344"
+X-IronPort-AV: E=Sophos;i="5.90,218,1643702400"; 
+   d="scan'208";a="257925344"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 13:28:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,218,1643702400"; 
+   d="scan'208";a="604293830"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmsmga008.fm.intel.com with ESMTP; 28 Mar 2022 13:28:46 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Mon, 28 Mar 2022 13:28:46 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Mon, 28 Mar 2022 13:28:45 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27 via Frontend Transport; Mon, 28 Mar 2022 13:28:45 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.107)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.21; Mon, 28 Mar 2022 13:28:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TeGXsMfz1fIA1Wj8uX7W9IfuZTxm/2CTU3u8Xgb1JefBG++4WamTy7Ov/aQmYMI41WiTbG3bNhkeQe09W6PZfJawfJ/nOSd8F9IMb9oPENxiaCishw4oHm9zM4XlVroZasXiyW9NrCF2EpkF3cafCgosXkFAbRtFxRqBckTrQrzga/eec77yCXTDLWwMlDWdnR5gzVc7e5/X3VZtdW6CgIOou4mhhus5H8pHl6YvA+pYuFvolofZRQJL9ulb1/XPQ2QkYHWB0XIKxTTht2rnhUry9YjbA9/3W8Te8wa95GBE23oXh/45qXo+w9eT1SDUiOtTDa3LJk43jXVRkIX0rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=64fLRiPsWAH+P8CYeK1tOrk7b5WMZWG8XUHU/ZdGVYY=;
+ b=UHvhwyVBKH2dcdJp5JGFGxcUwrcl5bOapMBSR7JsIY2UwleyftMl9NUy/0+KkRzhdLrxCk3TI46tWRjsBasU+kujZGbi6M46iYExjTUssixJXst4kyc0YLkUdkmFSsPI/kCtwdGiMvzlKN+QshCr2EVb9ZIdr19iBBXyeeL35m/1rWDxSwAc0soHJpcZ3YPai9uJz91T2CPS5rXnkstM2hMDJtkUWiRyDFKbeye4Chqcafg5tg+7f30WxWkt5ILCklikxcbMBxlzZKl3AXaX86yTGq9K2OFJzpvy++qzSrmCTJN49psNxiwubpx0AXDDG3AlP+kVG0pDkRC0y1RmJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
+ by MWHPR11MB0014.namprd11.prod.outlook.com (2603:10b6:301:64::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.16; Mon, 28 Mar
+ 2022 20:28:43 +0000
+Received: from BN0PR11MB5744.namprd11.prod.outlook.com
+ ([fe80::ec9a:f02a:6fc1:c6c]) by BN0PR11MB5744.namprd11.prod.outlook.com
+ ([fe80::ec9a:f02a:6fc1:c6c%8]) with mapi id 15.20.5102.023; Mon, 28 Mar 2022
+ 20:28:43 +0000
+Message-ID: <e838769b-8b90-79f9-d149-e495667493b5@intel.com>
+Date:   Mon, 28 Mar 2022 13:28:39 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.7.0
+Subject: Re: [PATCH] x86/sgx: Allow RW for TCS pages
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>, <linux-sgx@vger.kernel.org>
+CC:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20220319163010.101686-1-jarkko@kernel.org>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20220319163010.101686-1-jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4P222CA0023.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:303:114::28) To BN0PR11MB5744.namprd11.prod.outlook.com
+ (2603:10b6:408:166::16)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f92eb39e-a2f0-4b09-8b16-08da10f98d3b
+X-MS-TrafficTypeDiagnostic: MWHPR11MB0014:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR11MB00140DA6FA3734C6700232A1F81D9@MWHPR11MB0014.namprd11.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: P0Nc3Cy5rTLf0WLrhNtuvJ4zdUaAWzvAOBW+aSCDR80LfhBV1l1Fx5ztY2ggCuY0AQbXbxleOSttZWhD17uQNWIQazOu50a/5pYczjcQVgc2yCPZlwa63SS0NQPeTGExggtfLrsKr0MamX49dKSc1W/0AYRu+KWu/pOcaGWe9l6NPAuVBs2f1pfL2lYrVxoiAdbQqe8aEA1px50FUUnKevXT+H970/0DIFnj7BkdHSK0094A7MVqzAAX/KclXigj3B5cwvNF6ztysSF7asEO8V3jTjiBdBGnYNToCNt/Bvt00CCIHtLERdzx1GxINDt/sqeZrXBAVGk9AJrnMAzVAWCCjJSm19jZN8TAkf47RHeoRFfenQsA4be1wwBSEyI02YF/WIrjFyTinMb0D2uZ7gFaCEPd8SjV1hVLmvOnETJ4dCg5c6g7IH17jhIuRqlYqlcoFP/2RawVh4Dwmx3PsQoK5G5xMHh+QpuiRa1oKBxGyinpz1rXRBBT+vrJTMtGUVVMR+8s6GjbEg8YCQ66vSlZOoVVHDfRtZGyH9FftAPUtqexOY0NdRFkhKxDML61T74d/QEwnY6z3FZ/UfSQ/DS/UMnIE+1o9TZOdlhU2/GsWVWv+Oz5/xlpHMrBuxz8PwEFU9GzEiXi66ZvCLTKai7lfLUCnAFa7OmjZ3wAB16buCpElSYuAryOU/BrYVYGic2VTehxHJBR/oRGIFnrB4rHWcQowvG572F4ozhgLhP2sU9pL3RjgMoICLAHlCCj
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(44832011)(6506007)(53546011)(6512007)(2906002)(31686004)(86362001)(5660300002)(36756003)(31696002)(6666004)(2616005)(66946007)(4326008)(316002)(508600001)(8936002)(54906003)(6486002)(38100700002)(66556008)(66476007)(26005)(8676002)(83380400001)(82960400001)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZnZOZlFpOUNVbTFSbC9KY29iWVNKVWk3TkR3Q0RoMFZ1TndPS3UxWW1jZjRF?=
+ =?utf-8?B?Vzlud1QwN0ZKNjdGSkxkNFRkbDlJR0ZMelZJQ1ZjTzQ2aStLODNWcWk1K1pQ?=
+ =?utf-8?B?Z0s4Vk9MZEI2YjZyYWZHTEpYUTN6c2pSMGpJTDQ1TGp4eCs4MWZwUUkyQXlJ?=
+ =?utf-8?B?T1BvaUt3UmMrWmE1VExYQWVQcC81cGhzS2h1dC9IYVJxV2hicWRaazNidEhs?=
+ =?utf-8?B?ZHRyMWtnVlBVL3FOemlhSXhFcUoxTFhFN3NDNE5tRnJocnBVVEVyRDYrWEFs?=
+ =?utf-8?B?RHRvMS9RMU5PNklWeGdERkg4ZmxZSk9CNU9MWmVBWUVWVW5hc2U0VnZkMy8z?=
+ =?utf-8?B?Uy9RbDB0bVlOTFpoa0N5cDNRN1dwVW5Zb2IzcEs4NjYzRExvN09lNjUyNEdS?=
+ =?utf-8?B?a0RDVXFMcWN5cFNsbk9ZMnFMZ0JSWDhkY3dTV2RCd2R3d3NTZHVwdThmUk02?=
+ =?utf-8?B?MlRuVDRsSTVuTEpyNXEyQy8wWUk1bVpGUGpmaEdQM3c1ZDFtbG5UZm9FTnR0?=
+ =?utf-8?B?U2NvczY4elF4WmMyOHdJY01lTUVoYTlnQU41VVBZa3g5d1B3ZVZSZTMyWHI2?=
+ =?utf-8?B?eFhwcHZac2x2YTZUcEEwQnZ1TGVESDJsOU5oNTBqbDFZTmVhcDBEK3VNTzNG?=
+ =?utf-8?B?cEhjUDAybERnTTFhQmxTSGhsS1luWEtBWEVHVG5GSi9GUzFUR2FEM3haTWZS?=
+ =?utf-8?B?L0UyZnlGMHJhR2ZTZVNRVkp5b2hTNFhDeGw0V3dBMDdBUVhZaCtKK1ZwSDNH?=
+ =?utf-8?B?WU5uWkhWMEJ6MVBJMWVnRmd4cDloMWMwVyt2dmNFV1ZWRm14RW5oY3VFSzhn?=
+ =?utf-8?B?ZUoyTURBSEI1VjVxSWtpVzlzQUVUZ3RJYStTRWFiWm1xNFEraytCb2lJQnBw?=
+ =?utf-8?B?RHE5Z0NselgzTWtQaTRZYTE3Njk1SEFSZ2Y1WHN0WG40S2l0YlN6OENuYmRk?=
+ =?utf-8?B?Y2hlaTg0TjlCNERRWk5HSjRpYm9VN3ROaU0rWDMxZkhIWFRmMTY5bWdOUWJR?=
+ =?utf-8?B?QUZ6Z0F2a2hoTm43YkZqTFNmK1A1UDdNak82NVJQZnFHYk5MRU0vUGhHa3B2?=
+ =?utf-8?B?K1BwN0FteGk3YVFORVd5MFFVUGhZeFp2OVd5cDNDNnQ5QmZnK25ocjZLU3FW?=
+ =?utf-8?B?U08waXh4SzFBN3FvU0RDWDdieHMyZWh4M1M0WldyWEdjZHB2ZTYzSjBpSHBh?=
+ =?utf-8?B?MG1RamNEUVRuRk9jTXV4akcxWDdjU0c2ekhwTEJmVXJ2dFdERDRQYy9RclN1?=
+ =?utf-8?B?N3B0MWkrb01DSWI0RkIvUCtEYnVuUnJ4d0grM09kZGc3M2IzQ2dLVmI4MnNu?=
+ =?utf-8?B?aUN2K2M1TVE0VkxydWtCS3FJSjRzdXNhVFZFcmpvY0cxWDdvTDVwVHY4UWsw?=
+ =?utf-8?B?VVdOdi9qNEMxOWVSN0ZJbk5pUGRlYWRBTms2WVFmSThqVnZlRStuU0RBajNU?=
+ =?utf-8?B?QmFIWW1GTGVVSWFha09QdlZEM0pVN1VQcVRtSEw5QldUQVV5TGs3cnpVeHJF?=
+ =?utf-8?B?RnN0RGtNZkgwenkwWFdLRjBGNkExMXA2RnFoZ0JGVTBQWFFwWnJBMk5mYzJX?=
+ =?utf-8?B?dUk1QkQvMER4YUZzQ21HckMvWExlWThjSmdNQ1h2Q3NwVVE1TGVNWTdvYVpE?=
+ =?utf-8?B?M2FUekc3R2xFSVpmTGJpbFJIaXFCclFIUVdISUNPMjNHTE1GMGxVSmc0UlZp?=
+ =?utf-8?B?L0dod0Y5c3RJb1Y2M2hyL2xFUDlBcnUrcjVFZzVtV0hnOXEvdmNrMnRvejZy?=
+ =?utf-8?B?UnhMaWpYbEtrdXNRR2pHcS8wQzRwY2x5VHA1WXZqczJWcldma1pDY2poUmJs?=
+ =?utf-8?B?SDEzR3lmRDNSVjI3Sm5MT1FyNllsVUNzYXd3cXpNaitrdXVaU1BvOVJxQzlS?=
+ =?utf-8?B?eXRkTGl1OGd6Qkpma2NiY0Q1MkdsWXZSZUhaSHdNNXBlWTFDbExSOFRvck83?=
+ =?utf-8?B?aDV5WkUzRXZDdDRtSktRa1JpS29rcU8xVFNpNEhwN1c4eDA0c2NsNWFKL3dX?=
+ =?utf-8?B?RU9FWkkyRjA2c3lhTUR6d2xmUktCUGtEQ3pzY29LemE1MGhBZnY5NjlYZ1hY?=
+ =?utf-8?B?WWNETlFsc0k5KytJc0V6Y3I5UVFkNm5DL1ZweXJTcHNjSlhrZWgycUZMd2Nu?=
+ =?utf-8?B?UDJ3R011WFpxWmc1UEdQckNOUUp2UjdueEdyWHZKcER1VlRsVG5kT3dEOEhO?=
+ =?utf-8?B?QTl3ZlloN2ZhTDZzSU9vTmhMVGhINGNFNlJqekJscXZ1K3NvNGFPMTMxMlgv?=
+ =?utf-8?B?REJ0N3ppcWtSWkE5RGNueW5NNFZobEtDZncvREZSejhRaUwwZ20zZGltQmdR?=
+ =?utf-8?B?dUtSQUtMOGJiZ0lIWmx3Q3MzMDBySGRLUEhhR01jaUhTRkpmbFRZejR5Y1RJ?=
+ =?utf-8?Q?vBDczyZA5FCf94ks=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f92eb39e-a2f0-4b09-8b16-08da10f98d3b
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2022 20:28:43.2291
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: siL8q6h6wTMSB8ZwH3Z2rICbotCgRjbWgewH0T8r6kyQK9zSG0pRb+gdM7Pz2S0oxmG8iz9BETcPF/1PJvcC+504WWC7zn3XC4FLODj0008=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB0014
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a PT_NOTE section with n_namesz containg "TCS" and n_descz containing
-32-bit offset to the TCS table inside the enclave. This allows to place the
-TCS segment freely, and thereby make the kselftest binary layout way more
-robust.
+Hi Jarkko,
 
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v2:
-* Add RIP relative addressing fix for bootstrap as prepending patch, as
-  this depends on it.
-* Moved TCS section as the last so that it is easy to add new TCS's,
-  e.g dynamically with EAUG + EMODT, behind it.
----
- tools/testing/selftests/sgx/load.c            | 56 ++++++++++++++-----
- tools/testing/selftests/sgx/main.c            | 37 +++---------
- tools/testing/selftests/sgx/main.h            |  2 +
- tools/testing/selftests/sgx/test_encl.lds     | 17 ++++--
- .../selftests/sgx/test_encl_bootstrap.S       |  7 +++
- 5 files changed, 72 insertions(+), 47 deletions(-)
+On 3/19/2022 9:30 AM, Jarkko Sakkinen wrote:
+> Not allowing to set RW for added TCS pages leads only to a special case
+> to be handled in the user space run-time. Thus, allow permissions to be
+> set RW. Originally, it would have probably made more sense to check up
+> that the permissions are RW.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 83df20e3e633..f79761ad0400 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -215,7 +215,7 @@ static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
+>  	 * CPU will silently overwrite the permissions as zero, which means
+>  	 * that we need to validate it ourselves.
+>  	 */
+> -	if (pt == SGX_SECINFO_TCS && perm)
+> +	if (pt == SGX_SECINFO_TCS && (perm != 0 || perm != (PROT_READ | PROT_WRITE)))
+>  		return -EINVAL;
+>  
+>  	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 006b464c8fc9..214b9da631bd 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -19,6 +19,9 @@
- #include "defines.h"
- #include "main.h"
- 
-+const char *TCS_NOTE_NAME = "TCS";
-+const unsigned long TCS_NOTE_LEN = 4;
-+
- void encl_delete(struct encl *encl)
- {
- 	struct encl_segment *heap_seg;
-@@ -187,11 +190,31 @@ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
- 
- 	encl->nr_segments = 1; /* one for the heap */
- 
-+	/* Count the loadable segments and discover the TCS array. */
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		Elf64_Phdr *phdr = &phdr_tbl[i];
-+		Elf64_Nhdr *note;
-+		char *note_name;
- 
--		if (phdr->p_type == PT_LOAD)
-+		switch (phdr->p_type) {
-+		case PT_LOAD:
- 			encl->nr_segments++;
-+			break;
-+
-+		case PT_NOTE:
-+			note = encl->bin + (phdr->p_offset & PAGE_MASK);
-+			note_name = &((char *)note)[sizeof(*note)];
-+
-+			if (note->n_namesz == TCS_NOTE_LEN &&
-+			    !strncmp(note_name, TCS_NOTE_NAME, TCS_NOTE_LEN)) {
-+				/* 32-bit address. */
-+				encl->tcs = (struct sgx_tcs *)(unsigned long)(note->n_descsz);
-+			}
-+			break;
-+
-+		default:
-+			break;
-+		}
- 	}
- 
- 	encl->segment_tbl = calloc(encl->nr_segments,
-@@ -215,31 +238,36 @@ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
- 			goto err;
- 		}
- 
--		if (j == 0 && flags != (PF_R | PF_W)) {
--			fprintf(stderr,
--				"TCS has invalid segment flags 0x%02x.\n",
--				phdr->p_flags);
--			goto err;
--		}
--
- 		if (j == 0) {
- 			src_offset = phdr->p_offset & PAGE_MASK;
- 			encl->src = encl->bin + src_offset;
-+		}
-+
-+		seg->offset = (phdr->p_offset & PAGE_MASK) - src_offset;
-+		seg->size = (phdr->p_filesz + PAGE_SIZE - 1) & PAGE_MASK;
-+		seg->src = encl->src + seg->offset;
-+		seg->measure = true;
-+
-+		if (seg->offset == (unsigned long)encl->tcs) {
-+			if (flags != (PF_R | PF_W)) {
-+				fprintf(stderr,
-+					"TCS has invalid segment flags 0x%02x.\n",
-+					phdr->p_flags);
-+				goto err;
-+			}
- 
- 			seg->prot = PROT_READ | PROT_WRITE;
- 			seg->flags = SGX_PAGE_TYPE_TCS << 8;
- 		} else  {
-+			if ((flags & (PF_R | PF_W | PF_X)) == (PF_R | PF_W))
-+				encl->data_offset = seg->offset;
-+
- 			seg->prot = (phdr->p_flags & PF_R) ? PROT_READ : 0;
- 			seg->prot |= (phdr->p_flags & PF_W) ? PROT_WRITE : 0;
- 			seg->prot |= (phdr->p_flags & PF_X) ? PROT_EXEC : 0;
- 			seg->flags = (SGX_PAGE_TYPE_REG << 8) | seg->prot;
- 		}
- 
--		seg->offset = (phdr->p_offset & PAGE_MASK) - src_offset;
--		seg->size = (phdr->p_filesz + PAGE_SIZE - 1) & PAGE_MASK;
--		seg->src = encl->src + seg->offset;
--		seg->measure = true;
--
- 		j++;
- 	}
- 
-@@ -322,5 +350,7 @@ bool encl_build(struct encl *encl)
- 		return false;
- 	}
- 
-+	encl->tcs = (struct sgx_tcs *)((unsigned long)encl->tcs + encl->encl_base);
-+
- 	return true;
- }
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index dd74fa42302e..b206548803b4 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -109,25 +109,6 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
- 	return NULL;
- }
- 
--/*
-- * Return the offset in the enclave where the data segment can be found.
-- * The first RW segment loaded is the TCS, skip that to get info on the
-- * data segment.
-- */
--static off_t encl_get_data_offset(struct encl *encl)
--{
--	int i;
--
--	for (i = 1; i < encl->nr_segments; i++) {
--		struct encl_segment *seg = &encl->segment_tbl[i];
--
--		if (seg->prot == (PROT_READ | PROT_WRITE))
--			return seg->offset;
--	}
--
--	return -1;
--}
--
- FIXTURE(enclave) {
- 	struct encl encl;
- 	struct sgx_enclave_run run;
-@@ -248,7 +229,7 @@ TEST_F(enclave, unclobbered_vdso)
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
-+	self->run.tcs = (__u64)self->encl.tcs;
- 
- 	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
-@@ -321,7 +302,7 @@ TEST_F(enclave, unclobbered_vdso_oversubscribed)
- 	ASSERT_TRUE(setup_test_encl(total_mem, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
-+	self->run.tcs = (__u64)self->encl.tcs;
- 
- 	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
-@@ -350,7 +331,7 @@ TEST_F(enclave, clobbered_vdso)
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
-+	self->run.tcs = (__u64)self->encl.tcs;
- 
- 	put_op.header.type = ENCL_OP_PUT_TO_BUFFER;
- 	put_op.value = MAGIC;
-@@ -386,7 +367,7 @@ TEST_F(enclave, clobbered_vdso_and_user_function)
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
-+	self->run.tcs = (__u64)self->encl.tcs;
- 
- 	self->run.user_handler = (__u64)test_handler;
- 	self->run.user_data = 0xdeadbeef;
-@@ -419,7 +400,7 @@ TEST_F(enclave, tcs_entry)
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
-+	self->run.tcs = (__u64)self->encl.tcs;
- 
- 	op.type = ENCL_OP_NOP;
- 
-@@ -431,7 +412,7 @@ TEST_F(enclave, tcs_entry)
- 	EXPECT_EQ(self->run.exception_addr, 0);
- 
- 	/* Move to the next TCS. */
--	self->run.tcs = self->encl.encl_base + PAGE_SIZE;
-+	self->run.tcs = (__u64)self->encl.tcs + PAGE_SIZE;
- 
- 	EXPECT_EQ(ENCL_CALL(&op, &self->run, true), 0);
- 
-@@ -464,11 +445,9 @@ TEST_F(enclave, pte_permissions)
- 	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
- 
- 	memset(&self->run, 0, sizeof(self->run));
--	self->run.tcs = self->encl.encl_base;
-+	self->run.tcs = (__u64)self->encl.tcs;
- 
--	data_start = self->encl.encl_base +
--		     encl_get_data_offset(&self->encl) +
--		     PAGE_SIZE;
-+	data_start = self->encl.encl_base + self->encl.data_offset + PAGE_SIZE;
- 
- 	/*
- 	 * Sanity check to ensure it is possible to write to page that will
-diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
-index b45c52ec7ab3..bccb263be8d9 100644
---- a/tools/testing/selftests/sgx/main.h
-+++ b/tools/testing/selftests/sgx/main.h
-@@ -29,6 +29,8 @@ struct encl {
- 	struct encl_segment *segment_tbl;
- 	struct sgx_secs secs;
- 	struct sgx_sigstruct sigstruct;
-+	struct sgx_tcs *tcs;
-+	unsigned long data_offset;
- };
- 
- extern unsigned char sign_key[];
-diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
-index a1ec64f7d91f..d76df884d8a4 100644
---- a/tools/testing/selftests/sgx/test_encl.lds
-+++ b/tools/testing/selftests/sgx/test_encl.lds
-@@ -2,17 +2,15 @@ OUTPUT_FORMAT(elf64-x86-64)
- 
- PHDRS
- {
--	tcs PT_LOAD;
- 	text PT_LOAD;
- 	data PT_LOAD;
-+	tcs PT_LOAD;
-+	note PT_NOTE;
- }
- 
- SECTIONS
- {
- 	. = 0;
--	.tcs : {
--		*(.tcs*)
--	} : tcs
- 
- 	. = ALIGN(4096);
- 	.text : {
-@@ -24,11 +22,20 @@ SECTIONS
- 
- 	.data : {
- 		*(.data*)
-+		. = ALIGN(4096);
- 	} : data
- 
-+	.tcs : {
-+		*(.tcs*)
-+	} : tcs
-+
-+	.note : {
-+		*(.note.tcs*)
-+	} : note
-+
- 	/DISCARD/ : {
- 		*(.comment*)
--		*(.note*)
-+		*(.note.gnu.*)
- 		*(.debug*)
- 		*(.eh_frame*)
- 	}
-diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-index 1c1b5c6c4ffe..912b21537532 100644
---- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-+++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-@@ -10,6 +10,7 @@
- 	.section ".tcs", "aw"
- 	.balign	4096
- 
-+encl_tcs:
- 	.fill	1, 8, 0			# STATE (set by CPU)
- 	.fill	1, 8, 0			# FLAGS
- 	.quad	encl_ssa_tcs1		# OSSA
-@@ -90,3 +91,9 @@ encl_stack:
- 	.balign 4096
- 	# Stack of TCS #2
- 	.space 4096
-+
-+	.section ".note.tcs", "", @progbits
-+	.long 4
-+	.long encl_tcs
-+	.long 0
-+	.string "TCS"
--- 
-2.35.1
+The comments above sgx_ioc_enclave_add_pages() seem to indicate that zero 
+permissions are required:
 
+"A SECINFO for a TCS is required to always contain zero permissions because
+ CPU silently zeros them. Allowing anything else would cause a mismatch in
+ the measurement."
+
+Reinette
