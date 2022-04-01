@@ -2,48 +2,48 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B93C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri,  1 Apr 2022 14:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CB1C4332F
+	for <linux-sgx@archiver.kernel.org>; Fri,  1 Apr 2022 14:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346821AbiDAO02 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 1 Apr 2022 10:26:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57586 "EHLO
+        id S1346813AbiDAO0a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 1 Apr 2022 10:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346824AbiDAO01 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 1 Apr 2022 10:26:27 -0400
+        with ESMTP id S241890AbiDAO03 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 1 Apr 2022 10:26:29 -0400
 Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7922E11BE52
-        for <linux-sgx@vger.kernel.org>; Fri,  1 Apr 2022 07:24:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0013511BE4E
+        for <linux-sgx@vger.kernel.org>; Fri,  1 Apr 2022 07:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648823077; x=1680359077;
+  t=1648823079; x=1680359079;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=pTOU/xDDoX/227GqRS+7Jx/f5aZB2kDWOTRzYArLbdM=;
-  b=ObvEGXddmKxjaYS2FzSo2Os/Pgz+isavlmyEQH0p7Hbkdlik41NDuABF
-   Me1yPA1+DWSpFic+3JAnZjAktbBw9k+AO9LxMA0PwJCzgK38Ms9TRb3UH
-   v7o1jOA5x3svHys4EON4TjA2FQ47O1XXAhWVgblxhfUf/PG9kjez8/gRS
-   lxMiYYGCfETy6kruCy111qvT4ez+DCySlqgKEg5fAbVBJDYmd9cpxqJPu
-   Z+owQVR6RMwvE6tfGqLkQNHqZ5iXVpFUIFyYCIHb/iMHJGSu8ima0XvsY
-   2Ur9gd9/6QQ1rbFLkLygnwCmJQGMMAR4lUW8F0Q4PJWz0J05aREFJoRNy
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10304"; a="240739916"
+  bh=8Ud/8FKTwZmPM06bP1l56ClVaV3l7zG/fPqY+plYj84=;
+  b=kz2ZhikQ1PTsGquK3cnBJCqwQzQD+STndYB/b9f1zyDxSJSx4obNknmg
+   AP5V+ryFt5qEp6p9WjUVM7snvIpO/ilhozwlwyaTSUIbe+KHk92Bh78zD
+   gcRMHZDKm5z2rJjd7LzzVz6xr6WtOqiwSPLGS+/7tUXd3oMlu8z7uytKf
+   kawqO5KfDFogjw56MGBKZ7AtcQnrimY8sS8UX9uBh6FKlvXGiDe++43Zg
+   C7hxCBdgXEa8ySvPK9gwpCQcj8SiaoIGpKZinIfO/DOx5GqKhZdK760ee
+   MtW79PlXF832KaNGDt9VdYlfY51Wpd/sH1gxQDJ/6gIRQo9jESZ9pCw/b
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10304"; a="240739919"
 X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
-   d="scan'208";a="240739916"
+   d="scan'208";a="240739919"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 07:24:37 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 07:24:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
-   d="scan'208";a="695908406"
+   d="scan'208";a="695908415"
 Received: from cathy-vostro-3670.bj.intel.com ([10.238.156.128])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Apr 2022 07:24:35 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 01 Apr 2022 07:24:37 -0700
 From:   Cathy Zhang <cathy.zhang@intel.com>
 To:     linux-sgx@vger.kernel.org, x86@kernel.org
 Cc:     jarkko@kernel.org, reinette.chatre@intel.com,
         dave.hansen@intel.com, ashok.raj@intel.com, cathy.zhang@intel.com
-Subject: [RFC PATCH v3 08/10] x86/sgx: Implement ENCLS[EUPDATESVN]
-Date:   Fri,  1 Apr 2022 22:24:07 +0800
-Message-Id: <20220401142409.26215-9-cathy.zhang@intel.com>
+Subject: [RFC PATCH v3 09/10] x86/cpu: Call ENCLS[EUPDATESVN] procedure in microcode update
+Date:   Fri,  1 Apr 2022 22:24:08 +0800
+Message-Id: <20220401142409.26215-10-cathy.zhang@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401142409.26215-1-cathy.zhang@intel.com>
 References: <20220401142409.26215-1-cathy.zhang@intel.com>
@@ -51,151 +51,117 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The SGX attestation architecture assumes a compromise of all running
-enclaves and cryptographic assets (like internal SGX encryption keys)
-whenever a microcode update affects SGX. To mitigate the impact of
-this presumed compromise, a new supervisor SGX instruction:
-ENCLS[EUPDATESVN], is introduced to update SGX microcode version and
-generate new cryptographic assets in runtime after SGX microcode
-update.
+EUPDATESVN is the SGX instruction which allows enclave attestation
+to include information about updated microcode without a reboot.
 
-EUPDATESVN requires that SGX memory to be marked as "unused" before
-it will succeed. This ensures that no compromised enclave can survive
-the process and provides an opportunity to generate new cryptographic
-assets.
+Microcode updates which affect SGX require two phases:
+
+1. Do the main microcode update
+2. Make the new CPUSVN available for enclave attestation via
+   EUPDATESVN.
+
+Before a EUPDATESVN can succeed, all enclave pages (EPC) must be
+marked as unused in the SGX metadata (EPCM). This operation destroys
+all preexisting SGX enclave data and metadata. This is by design and
+mitigates the impact of vulnerabilities that may have compromised
+enclaves or the SGX hardware itself prior to the update.
 
 Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
 
 ---
 Changes since v1:
- - Print message for each return code to notify userspace the
-   ENCLS[EUPDATESVN] execution status.
+ - Remove the sysfs file svnupdate. (Thomas Gleixner, Dave Hansen)
+ - Let late microcode load path call ENCLS[EUPDATESVN] procedure
+   directly. (Borislav Petkov)
+ - Redefine update_cpusvn_intel() to return void instead of int.
 ---
- arch/x86/include/asm/sgx.h      | 33 +++++++++++----------
- arch/x86/kernel/cpu/sgx/encls.h |  6 ++++
- arch/x86/kernel/cpu/sgx/main.c  | 52 +++++++++++++++++++++++++++++++++
- 3 files changed, 76 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/microcode.h |  5 +++++
+ arch/x86/include/asm/sgx.h       |  5 +++++
+ arch/x86/kernel/cpu/common.c     |  9 +++++++++
+ arch/x86/kernel/cpu/sgx/main.c   | 12 ++++++++++++
+ 4 files changed, 31 insertions(+)
 
+diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
+index d6bfdfb0f0af..1ba66b9fe198 100644
+--- a/arch/x86/include/asm/microcode.h
++++ b/arch/x86/include/asm/microcode.h
+@@ -3,6 +3,7 @@
+ #define _ASM_X86_MICROCODE_H
+ 
+ #include <asm/cpu.h>
++#include <asm/sgx.h>
+ #include <linux/earlycpio.h>
+ #include <linux/initrd.h>
+ 
+@@ -137,4 +138,8 @@ static inline void load_ucode_ap(void)				{ }
+ static inline void reload_early_microcode(void)			{ }
+ #endif
+ 
++#ifndef update_cpusvn_intel
++static inline void update_cpusvn_intel(void) {}
++#endif
++
+ #endif /* _ASM_X86_MICROCODE_H */
 diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 4a8ca7281229..74bcb6841a4b 100644
+index 74bcb6841a4b..5867f5a78d13 100644
 --- a/arch/x86/include/asm/sgx.h
 +++ b/arch/x86/include/asm/sgx.h
-@@ -26,23 +26,26 @@
- #define SGX_CPUID_EPC_SECTION	0x1
- /* The bitmask for the EPC section type. */
- #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
-+/* EUPDATESVN presence indication */
-+#define SGX_CPUID_EUPDATESVN	BIT(10)
+@@ -409,4 +409,9 @@ int sgx_virt_einit(void __user *sigstruct, void __user *token,
+ int sgx_set_attribute(unsigned long *allowed_attributes,
+ 		      unsigned int attribute_fd);
  
- enum sgx_encls_function {
--	ECREATE	= 0x00,
--	EADD	= 0x01,
--	EINIT	= 0x02,
--	EREMOVE	= 0x03,
--	EDGBRD	= 0x04,
--	EDGBWR	= 0x05,
--	EEXTEND	= 0x06,
--	ELDU	= 0x08,
--	EBLOCK	= 0x09,
--	EPA	= 0x0A,
--	EWB	= 0x0B,
--	ETRACK	= 0x0C,
--	EAUG	= 0x0D,
--	EMODPR	= 0x0E,
--	EMODT	= 0x0F,
-+	ECREATE		= 0x00,
-+	EADD		= 0x01,
-+	EINIT		= 0x02,
-+	EREMOVE		= 0x03,
-+	EDGBRD		= 0x04,
-+	EDGBWR		= 0x05,
-+	EEXTEND		= 0x06,
-+	ELDU		= 0x08,
-+	EBLOCK		= 0x09,
-+	EPA		= 0x0A,
-+	EWB		= 0x0B,
-+	ETRACK		= 0x0C,
-+	EAUG		= 0x0D,
-+	EMODPR		= 0x0E,
-+	EMODT		= 0x0F,
-+	EUPDATESVN	= 0x18,
- };
- 
- /**
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 60321c5f5718..8455f385e817 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -208,4 +208,10 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
- 	return __encls_ret_3(EWB, pginfo, addr, va);
- }
- 
-+/* Update CPUSVN at runtime. */
-+static inline int __eupdatesvn(void)
-+{
-+	return __encls_ret_1(EUPDATESVN, "");
-+}
++#ifdef CONFIG_X86_SGX
++void update_cpusvn_intel(void);
++#define update_cpusvn_intel update_cpusvn_intel
++#endif
 +
- #endif /* _X86_ENCLS_H */
+ #endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 7b8382c11788..f53fd877ba0d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -59,6 +59,7 @@
+ #include <asm/cpu_device_id.h>
+ #include <asm/uv/uv.h>
+ #include <asm/sigframe.h>
++#include <asm/sgx.h>
+ 
+ #include "cpu.h"
+ 
+@@ -2086,6 +2087,14 @@ void microcode_check(void)
+ 
+ 	perf_check_microcode();
+ 
++	/*
++	 * SGX related microcode update requires EUPDATESVN to update CPUSVN, which
++	 * will destroy all enclaves to ensure EPC is not in use. If SGX is configured
++	 * and EUPDATESVN is supported, call the EUPDATESVN procecure.
++	 */
++	if (IS_ENABLED(CONFIG_X86_SGX) && (cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
++		update_cpusvn_intel();
++
+ 	/* Reload CPUID max function as it might've changed. */
+ 	info.cpuid_level = cpuid_eax(0);
+ 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 2a456aa1ad1f..784780314762 100644
+index 784780314762..20800c543110 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -1357,3 +1357,55 @@ void sgx_zap_abort(void)
- 	sgx_zap_abort_wait = true;
- 	wake_up(&sgx_zap_waitq);
+@@ -1409,3 +1409,15 @@ static int sgx_updatesvn(void)
+ 
+ 	return ret;
  }
 +
-+/**
-+ * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
-+ * If EPC is ready, this instruction will update CPUSVN to the currently
-+ * loaded microcode update SVN and generate new cryptographic assets.
-+ *
-+ * Return:
-+ * 0:				CPUSVN is update successfully.
-+ * %SGX_LOCKFAIL:		An instruction concurrency rule was violated.
-+ * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
-+ * %SGX_EPC_NOT_READY:		EPC is not ready for SVN update.
-+ * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
-+ *				updated because current SVN was not newer than
-+ *				CPUSVN.
-+ */
-+static int sgx_updatesvn(void)
++void update_cpusvn_intel(void)
 +{
-+	int ret;
-+	int retry = 10;
++	sgx_lock_epc();
++	if (sgx_zap_pages())
++		goto out;
 +
-+	do {
-+		ret = __eupdatesvn();
-+		if (ret != SGX_INSUFFICIENT_ENTROPY)
-+			break;
++	sgx_updatesvn();
 +
-+	} while (--retry);
-+
-+	switch (ret) {
-+	case 0:
-+		pr_info("EUPDATESVN was successful!\n");
-+		break;
-+	case SGX_NO_UPDATE:
-+		pr_info("EUPDATESVN was successful, but CPUSVN was not updated, "
-+			"because current SVN was not newer than CPUSVN.\n");
-+		break;
-+	case SGX_EPC_NOT_READY:
-+		pr_info("EPC is not ready for SVN update.");
-+		break;
-+	case SGX_INSUFFICIENT_ENTROPY:
-+		pr_info("CPUSVN update is failed due to Insufficient entropy in RNG, "
-+			"please try it later.\n");
-+		break;
-+	case SGX_EPC_PAGE_CONFLICT:
-+		pr_info("CPUSVN update is failed due to concurrency violation, please "
-+			"stop running any other ENCLS leaf and try it later.\n");
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return ret;
++out:
++	sgx_unlock_epc();
 +}
 -- 
 2.17.1
