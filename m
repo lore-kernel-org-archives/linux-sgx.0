@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2759DC47082
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAC4C352B6
 	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353092AbiDDVZ6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:25:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46470 "EHLO
+        id S1379879AbiDDV0A (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:26:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379265AbiDDQvv (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:51 -0400
+        with ESMTP id S1379257AbiDDQvt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:49 -0400
 Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E4031351;
-        Mon,  4 Apr 2022 09:49:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 242912E9D6;
+        Mon,  4 Apr 2022 09:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649090994; x=1680626994;
+  t=1649090993; x=1680626993;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=xH8w381o5s9LdRaAo69RH2L/TkEmuKrGS0d+mIcmEIk=;
-  b=SYGHptqt6rX4BfHNGQVa/7hZA0VwvMCJNG23xUPOOTimn3gRvSYvLCVY
-   ayiVWkpRhbp9NZpwyW+aBO1LghUybsMAA6xCLA9If/p/+E4wQukHuvcL6
-   cA7fU0fv5d+fQ5og8T+SLClC7UrRNvC7lSb7PC/VZNgY5pQQE2Ti5cukm
-   +98OPZLNqJqbyeyBjNUbUlx36wcOWzrX8Is+3vB4FLt9MfdHq0SngGB1S
-   bD8WAraj9zQSTFOC8MF3erpKE2GuIrn4FtuDk8QxEj6Du1wgNj1hlKEfw
-   vUCLTz+mrNMZjdK2OxzDiqEgVbQ0aExaKfykVbNk3xqt8cK+Jb9oH3Rbv
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734045"
+  bh=KLeqkiiFihlMEI/XwbDkiA6gel561aXhUFgrx5JHtUE=;
+  b=PuWId8kmCJJfJtCd1MApPK1De+/1BowuJpGwQl1U+IrV8LLh53Ag4wqs
+   pvRPgw+Fom8DvY3dZmeS7rILNUMpD3icmTf/mK3G7JqTNOSzMImZq5B9O
+   Sj8hgHsKcUlDdSgIrAnvwI2h8sjNL84dcD7vibGKuvpKYqbtKenF+CVFy
+   +7jqJpauBOpfEiUaIh6UX1AZqOsG6H4LxtfRvdPIs2S7zKyug0OVKvVZS
+   DNCb46A3QjGM/RntED00a0N2DS7s3l6LNfJ3eomKS8HNePaFaV15dHHyG
+   zSFCIWvzZfa9n8e4fMzqWarQp6qdoKdQpnr1o7J20nLRgeUQHrZWVc8nF
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734042"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="323734045"
+   d="scan'208";a="323734042"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105177"
+   d="scan'208";a="523105171"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 10/30] x86/sgx: Create utility to validate user provided offset and length
-Date:   Mon,  4 Apr 2022 09:49:18 -0700
-Message-Id: <7ebe0aa8cc6ce11eaf032c3796823bcc08df27fe.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 08/30] x86/sgx: Move PTE zap code to new sgx_zap_enclave_ptes()
+Date:   Mon,  4 Apr 2022 09:49:16 -0700
+Message-Id: <2454321f9d7ac6b0fd4925201f8d8d88471b41c0.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,69 +56,158 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-User provided offset and length is validated when parsing the parameters
-of the SGX_IOC_ENCLAVE_ADD_PAGES ioctl(). Extract this validation
-into a utility that can be used by the SGX2 ioctl()s that will
-also provide these values.
+The SGX reclaimer removes page table entries pointing to pages that are
+moved to swap.
+
+SGX2 enables changes to pages belonging to an initialized enclave, thus
+enclave pages may have their permission or type changed while the page
+is being accessed by an enclave. Supporting SGX2 requires page table
+entries to be removed so that any cached mappings to changed pages
+are removed. For example, with the ability to change enclave page types
+a regular enclave page may be changed to a Thread Control Structure
+(TCS) page that may not be accessed by an enclave.
+
+Factor out the code removing page table entries to a separate function
+sgx_zap_enclave_ptes(), fixing accuracy of comments in the process,
+and make it available to the upcoming SGX2 code.
+
+Place sgx_zap_enclave_ptes() with the rest of the enclave code in
+encl.c interacting with the page table since this code is no longer
+unique to the reclaimer.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 No changes since V2
 
 Changes since V1:
-- New patch
+- Elaborate why SGX2 needs this ability (Jarkko).
+- More specific subject.
+- Fix kernel-doc to have brackets in function name.
 
- arch/x86/kernel/cpu/sgx/ioctl.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/sgx/encl.c | 45 +++++++++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/encl.h |  2 +-
+ arch/x86/kernel/cpu/sgx/main.c | 31 ++---------------------
+ 3 files changed, 47 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 83df20e3e633..f487549bccba 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -372,6 +372,26 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 8de9bebc4d81..c77a62432862 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -605,7 +605,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+ 
+ 	spin_lock(&encl->mm_lock);
+ 	list_add_rcu(&encl_mm->list, &encl->mm_list);
+-	/* Pairs with smp_rmb() in sgx_reclaimer_block(). */
++	/* Pairs with smp_rmb() in sgx_zap_enclave_ptes(). */
+ 	smp_wmb();
+ 	encl->mm_list_version++;
+ 	spin_unlock(&encl->mm_lock);
+@@ -792,6 +792,49 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
  	return ret;
  }
  
-+/*
-+ * Ensure user provided offset and length values are valid for
-+ * an enclave.
++/**
++ * sgx_zap_enclave_ptes() - remove PTEs mapping the address from enclave
++ * @encl: the enclave
++ * @addr: page aligned pointer to single page for which PTEs will be removed
++ *
++ * Multiple VMAs may have an enclave page mapped. Remove the PTE mapping
++ * @addr from each VMA. Ensure that page fault handler is ready to handle
++ * new mappings of @addr before calling this function.
 + */
-+static int sgx_validate_offset_length(struct sgx_encl *encl,
-+				      unsigned long offset,
-+				      unsigned long length)
++void sgx_zap_enclave_ptes(struct sgx_encl *encl, unsigned long addr)
 +{
-+	if (!IS_ALIGNED(offset, PAGE_SIZE))
-+		return -EINVAL;
++	unsigned long mm_list_version;
++	struct sgx_encl_mm *encl_mm;
++	struct vm_area_struct *vma;
++	int idx, ret;
 +
-+	if (!length || length & (PAGE_SIZE - 1))
-+		return -EINVAL;
++	do {
++		mm_list_version = encl->mm_list_version;
 +
-+	if (offset + length - PAGE_SIZE >= encl->size)
-+		return -EINVAL;
++		/* Pairs with smp_wmb() in sgx_encl_mm_add(). */
++		smp_rmb();
 +
-+	return 0;
++		idx = srcu_read_lock(&encl->srcu);
++
++		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
++			if (!mmget_not_zero(encl_mm->mm))
++				continue;
++
++			mmap_read_lock(encl_mm->mm);
++
++			ret = sgx_encl_find(encl_mm->mm, addr, &vma);
++			if (!ret && encl == vma->vm_private_data)
++				zap_vma_ptes(vma, addr, PAGE_SIZE);
++
++			mmap_read_unlock(encl_mm->mm);
++
++			mmput_async(encl_mm->mm);
++		}
++
++		srcu_read_unlock(&encl->srcu, idx);
++	} while (unlikely(encl->mm_list_version != mm_list_version));
 +}
 +
  /**
-  * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
-  * @encl:       an enclave pointer
-@@ -425,14 +445,10 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
- 	if (copy_from_user(&add_arg, arg, sizeof(add_arg)))
- 		return -EFAULT;
- 
--	if (!IS_ALIGNED(add_arg.offset, PAGE_SIZE) ||
--	    !IS_ALIGNED(add_arg.src, PAGE_SIZE))
--		return -EINVAL;
+  * sgx_alloc_va_page() - Allocate a Version Array (VA) page
+  *
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index e59c2cbf71e2..1b15d22f6757 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -111,7 +111,7 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+ 				  struct sgx_encl_page *page);
 -
--	if (!add_arg.length || add_arg.length & (PAGE_SIZE - 1))
-+	if (!IS_ALIGNED(add_arg.src, PAGE_SIZE))
- 		return -EINVAL;
++void sgx_zap_enclave_ptes(struct sgx_encl *encl, unsigned long addr);
+ struct sgx_epc_page *sgx_alloc_va_page(void);
+ unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
+ void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index fa33922879bf..ce9e87d5f8ec 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -137,36 +137,9 @@ static void sgx_reclaimer_block(struct sgx_epc_page *epc_page)
+ 	struct sgx_encl_page *page = epc_page->owner;
+ 	unsigned long addr = page->desc & PAGE_MASK;
+ 	struct sgx_encl *encl = page->encl;
+-	unsigned long mm_list_version;
+-	struct sgx_encl_mm *encl_mm;
+-	struct vm_area_struct *vma;
+-	int idx, ret;
+-
+-	do {
+-		mm_list_version = encl->mm_list_version;
+-
+-		/* Pairs with smp_rmb() in sgx_encl_mm_add(). */
+-		smp_rmb();
+-
+-		idx = srcu_read_lock(&encl->srcu);
+-
+-		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+-			if (!mmget_not_zero(encl_mm->mm))
+-				continue;
+-
+-			mmap_read_lock(encl_mm->mm);
+-
+-			ret = sgx_encl_find(encl_mm->mm, addr, &vma);
+-			if (!ret && encl == vma->vm_private_data)
+-				zap_vma_ptes(vma, addr, PAGE_SIZE);
+-
+-			mmap_read_unlock(encl_mm->mm);
+-
+-			mmput_async(encl_mm->mm);
+-		}
++	int ret;
  
--	if (add_arg.offset + add_arg.length - PAGE_SIZE >= encl->size)
-+	if (sgx_validate_offset_length(encl, add_arg.offset, add_arg.length))
- 		return -EINVAL;
+-		srcu_read_unlock(&encl->srcu, idx);
+-	} while (unlikely(encl->mm_list_version != mm_list_version));
++	sgx_zap_enclave_ptes(encl, addr);
  
- 	if (copy_from_user(&secinfo, (void __user *)add_arg.secinfo,
+ 	mutex_lock(&encl->lock);
+ 
 -- 
 2.25.1
 
