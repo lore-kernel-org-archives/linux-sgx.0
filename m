@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4402FC35280
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD10C433F5
 	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379479AbiDDVZv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46686 "EHLO
+        id S1379749AbiDDVZ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:25:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379275AbiDDQvz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:55 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C57032EFA;
-        Mon,  4 Apr 2022 09:49:57 -0700 (PDT)
+        with ESMTP id S1379256AbiDDQvt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:49 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2CBF2E086;
+        Mon,  4 Apr 2022 09:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649090998; x=1680626998;
+  t=1649090992; x=1680626992;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=AoqvpDl3RGtX95Geb1KswNUgV1ft9Qx6e310xvJAQTs=;
-  b=bvmLUXqSWe6xe3sLPNLOb4qSDB5sWMYs+73YbOd6a2QGiBOSa0ODuOBY
-   U6Iit4n05VWnpBSAEjJQoUzI4RGYYpfK+gHdxn6SvkR1rVbBSWTbZkG3P
-   F25FkR6Bom/xUDBhpmpUL3ywhviS8YKQS72sX+6Zuno1yvd9wnWMlqEk0
-   g7yoN3eTwueoLbPBbcZrymH05FhghNkQq1EMKdJ4zLQhkXQbLW6ifSwXv
-   OpuSjZqwg/zHS9PjNjDTbV/WPdWJ3mxBamyqPlId8obMc2y6fc/AJe57E
-   FTRbd5WOdFJz0c1gmyg7tIrcVU38TuN8idjev+mcgiD79R1D2QjjMsJnL
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734053"
+  bh=7soraypShUzq59PRY96Ss2w9MzztKJRkAjurCflHILo=;
+  b=erKfRQM3ULdd7ZRjZxK2CnmQkvgmgeV3PRhAqXIPNwiMkC9YcvNHS/nY
+   dqR/G+TzOcVsjFGmM3mWDXp3lFo2RAtcjuDTQB/tmHcOpZO9DumgLUf6n
+   J0FS4hpz0LawYEI7kxcFd9WnFsAEJ+jBZaQSBDkva/gS7S67yZWlmhVY/
+   Bof1j0xxJzSQBYWVjTHt6tHicXNjIr6XSUhMzfvJw8BdLf/C3iUEhm+ng
+   GTpHK4Zd6LLt/oQOEArHL7l3/P0zA3oYLDkIGJKbF67JhryOLnYiR4K9t
+   DsTbzojjKsFkqo358i4tWH8ruu/sxQgzmzEuP6fDE5vfHPDavmEbeaD7f
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259390770"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="323734053"
+   d="scan'208";a="259390770"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105204"
+   d="scan'208";a="523105156"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 19/30] x86/sgx: Free up EPC pages directly to support large page ranges
-Date:   Mon,  4 Apr 2022 09:49:27 -0700
-Message-Id: <b3a17e1ce7bcd14db3c28903e8a97f094998ae74.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 03/30] x86/sgx: Add wrapper for SGX2 EMODT function
+Date:   Mon,  4 Apr 2022 09:49:11 -0700
+Message-Id: <b99fcb7d39062dab80c612b32db4a4894c66ed39.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,97 +56,56 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The page reclaimer ensures availability of EPC pages across all
-enclaves. In support of this it runs independently from the
-individual enclaves in order to take locks from the different
-enclaves as it writes pages to swap.
+Add a wrapper for the EMODT ENCLS leaf function used to
+change the type of an enclave page as maintained in the
+SGX hardware's Enclave Page Cache Map (EPCM).
 
-When needing to load a page from swap an EPC page needs to be
-available for its contents to be loaded into. Loading an existing
-enclave page from swap does not reclaim EPC pages directly if
-none are available, instead the reclaimer is woken when the
-available EPC pages are found to be below a watermark.
+EMODT:
+1) Updates the EPCM page type of the enclave page.
+2) Sets the MODIFIED bit in the EPCM entry of the enclave page.
+   This bit is reset by the enclave by invoking ENCLU leaf
+   function EACCEPT or EACCEPTCOPY.
 
-When iterating over a large number of pages in an oversubscribed
-environment there is a race between the reclaimer woken up and
-EPC pages reclaimed fast enough for the page operations to proceed.
+Access from within the enclave to the enclave page is not possible
+while the MODIFIED bit is set.
 
-Ensure there are EPC pages available before attempting to load
-a page that may potentially be pulled from swap into an available
-EPC page.
+After changing the enclave page type by issuing EMODT the kernel
+needs to collaborate with the hardware to ensure that no logical
+processor continues to hold a reference to the changed page. This
+is required to ensure no required security checks are circumvented
+and is required for the enclave's EACCEPT/EACCEPTCOPY to succeed.
+Ensuring that no references to the changed page remain is
+accomplished with the ETRACK flow.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 No changes since V2
 
-Changes since v1:
-- Reword commit message.
+Changes since V1:
+- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
+  in three to introduce the SGX2 functions separately (Jarkko).
+- Rewrite commit message to include how the EPCM within the hardware
+  is changed by the SGX2 function as well as the calling
+  conditions (Jarkko).
 
- arch/x86/kernel/cpu/sgx/ioctl.c | 6 ++++++
- arch/x86/kernel/cpu/sgx/main.c  | 6 ++++++
- arch/x86/kernel/cpu/sgx/sgx.h   | 1 +
- 3 files changed, 13 insertions(+)
+ arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 515e1961cc02..f88bc1236276 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -777,6 +777,8 @@ sgx_enclave_restrict_permissions(struct sgx_encl *encl,
- 	for (c = 0 ; c < modp->length; c += PAGE_SIZE) {
- 		addr = encl->base + modp->offset + c;
- 
-+		sgx_direct_reclaim();
-+
- 		mutex_lock(&encl->lock);
- 
- 		entry = sgx_encl_load_page(encl, addr);
-@@ -934,6 +936,8 @@ static long sgx_enclave_modify_type(struct sgx_encl *encl,
- 	for (c = 0 ; c < modt->length; c += PAGE_SIZE) {
- 		addr = encl->base + modt->offset + c;
- 
-+		sgx_direct_reclaim();
-+
- 		mutex_lock(&encl->lock);
- 
- 		entry = sgx_encl_load_page(encl, addr);
-@@ -1129,6 +1133,8 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
- 	for (c = 0 ; c < params->length; c += PAGE_SIZE) {
- 		addr = encl->base + params->offset + c;
- 
-+		sgx_direct_reclaim();
-+
- 		mutex_lock(&encl->lock);
- 
- 		entry = sgx_encl_load_page(encl, addr);
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 6e2cb7564080..545da16bb3ea 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -370,6 +370,12 @@ static bool sgx_should_reclaim(unsigned long watermark)
- 	       !list_empty(&sgx_active_page_list);
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index 2b091912f038..7a1ecf704ec1 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -221,4 +221,10 @@ static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
+ 	return __encls_ret_2(EMODPR, secinfo, addr);
  }
  
-+void sgx_direct_reclaim(void)
++/* Change the type of an EPC page. */
++static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
 +{
-+	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
-+		sgx_reclaim_pages();
++	return __encls_ret_2(EMODT, secinfo, addr);
 +}
 +
- static int ksgxd(void *p)
- {
- 	set_freezable();
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index b30cee4de903..85cbf103b0dd 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -86,6 +86,7 @@ static inline void *sgx_get_epc_virt_addr(struct sgx_epc_page *page)
- struct sgx_epc_page *__sgx_alloc_epc_page(void);
- void sgx_free_epc_page(struct sgx_epc_page *page);
- 
-+void sgx_direct_reclaim(void);
- void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
- int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
- struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
+ #endif /* _X86_ENCLS_H */
 -- 
 2.25.1
 
