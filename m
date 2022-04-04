@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB34C47086
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3B4C43217
 	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380472AbiDDV0O (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:26:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
+        id S1378294AbiDDV0Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379259AbiDDQvt (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:49 -0400
+        with ESMTP id S1379266AbiDDQvv (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:51 -0400
 Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304CF2ED52;
-        Mon,  4 Apr 2022 09:49:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0DE3135B;
+        Mon,  4 Apr 2022 09:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649090993; x=1680626993;
+  t=1649090994; x=1680626994;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PUpr19v5lvN0gy5NGEhNyzwrdrgI+hKU2VLmutHw1IM=;
-  b=ldp6nHF5eKCFrb+joEr5V7d3e4d9k4vXr+LgWdStBMHjd1uMAj8rmw+o
-   Yjb7rcMrSGiWxDDvyYmztNJRzCI0VflUB2jqZjda6PML0gTgv6LGmZcLg
-   49LbMQWYgAPfeTB2KCUdWDBbQylFsoIjawNwjlvlsnXBTtq8M6RUoa5gb
-   8GCMF17YB5/TXcATiNarS8tXvFbtSDEgisUitAUB9BBei+5qLfP+rNkeO
-   VlUdNJ8ZQeOSwVErk0hv0umdGdHhXyycjjLj7RONPEdsotATttejMMUw2
-   4vVCB3zfi8jKjuiPqOjG+xhCZHEkOvnDcMmi0fL1/a3GiBjEgrHqmualA
+  bh=m4/HuKY7IlIZ1WPP9o98DA/8FnlmNMaQ5SjeGB/v9kw=;
+  b=Uf/YH24IJr0PAevLGgz5daig1Tj1sz9kOOZE8evuLzVuDnikPPsejIMM
+   +xVQhEXIYhcabKMyiH73y1ozu5a4FK/Z4Rkcyo1FB/pZqbO4ixJI3IElQ
+   fLD1hm8PLkuEB6gj8MGroS8Z5GRAUgOrJgfUIUGyBkEzDh6Tc/xDVSVFe
+   GdnwWrIu8Vzt5PahgDiHXjn69fCJi36p5PyDBJu9+Sw11l42rtADB5IPN
+   7keRW69PK74CSzIgWUSSh5mS2UlGS9FCiYf28dyPE2msR0wpRojeLr6x5
+   mF3vX25TZChLlAB3h+S1lkiZbhQV3wRB/mYmxFwC/91jO9VqsPtIaTaoi
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259390773"
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259390789"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="259390773"
+   d="scan'208";a="259390789"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105159"
+   d="scan'208";a="523105220"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 04/30] x86/sgx: Add wrapper for SGX2 EAUG function
-Date:   Mon,  4 Apr 2022 09:49:12 -0700
-Message-Id: <db6a2a6b394d9900ce8e3abb1b471b61b7e25c53.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 24/30] selftests/sgx: Introduce dynamic entry point
+Date:   Mon,  4 Apr 2022 09:49:32 -0700
+Message-Id: <a3fe0be22afdde289966b87861ff1c141f9ef512.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,48 +56,51 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a wrapper for the EAUG ENCLS leaf function used to
-add a page to an initialized enclave.
+The test enclave (test_encl.elf) is built with two initialized
+Thread Control Structures (TCS) included in the binary. Both TCS are
+initialized with the same entry point, encl_entry, that correctly
+computes the absolute address of the stack based on the stack of each
+TCS that is also built into the binary.
 
-EAUG:
-1) Stores all properties of the new enclave page in the SGX
-   hardware's Enclave Page Cache Map (EPCM).
-2) Sets the PENDING bit in the EPCM entry of the enclave page.
-   This bit is cleared by the enclave by invoking ENCLU leaf
-   function EACCEPT or EACCEPTCOPY.
+A new TCS can be added dynamically to the enclave and requires to be
+initialized with an entry point used to enter the enclave. Since the
+existing entry point, encl_entry, assumes that the TCS and its stack
+exists at particular offsets within the binary it is not able to handle
+a dynamically added TCS and its stack.
 
-Access from within the enclave to the new enclave page is not
-possible until the PENDING bit is cleared.
+Introduce a new entry point, encl_dyn_entry, that initializes the
+absolute address of that thread's stack to the address immediately
+preceding the TCS itself. It is now possible to dynamically add a
+contiguous memory region to the enclave with the new stack preceding
+the new TCS. With the new TCS initialized with encl_dyn_entry as entry
+point the absolute address of the stack is computed correctly on entry.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 No changes since V2
 
-Changes since V1:
-- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
-  in three to introduce the SGX2 functions separately (Jarkko).
-- Rewrite commit message to include how the EPCM within the hardware
-  is changed by the SGX2 function as well as any calling
-  conditions (Jarkko).
+No changes since V1
 
- arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
+ tools/testing/selftests/sgx/test_encl_bootstrap.S | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 7a1ecf704ec1..99004b02e2ed 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -227,4 +227,10 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
- 	return __encls_ret_2(EMODT, secinfo, addr);
- }
+diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
+index 82fb0dfcbd23..03ae0f57e29d 100644
+--- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
++++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
+@@ -45,6 +45,12 @@ encl_entry:
+ 	# TCS #2. By adding the value of encl_stack to it, we get
+ 	# the absolute address for the stack.
+ 	lea	(encl_stack)(%rbx), %rax
++	jmp encl_entry_core
++encl_dyn_entry:
++	# Entry point for dynamically created TCS page expected to follow
++	# its stack directly.
++	lea -1(%rbx), %rax
++encl_entry_core:
+ 	xchg	%rsp, %rax
+ 	push	%rax
  
-+/* Zero a page of EPC memory and add it to an initialized enclave. */
-+static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
-+{
-+	return __encls_2(EAUG, pginfo, addr);
-+}
-+
- #endif /* _X86_ENCLS_H */
 -- 
 2.25.1
 
