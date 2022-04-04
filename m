@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99841C38A2E
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF8EC3A59D
+	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380892AbiDDV0W (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46838 "EHLO
+        id S1381067AbiDDV01 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379278AbiDDQv5 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:57 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD1B340DE;
-        Mon,  4 Apr 2022 09:50:00 -0700 (PDT)
+        with ESMTP id S1379261AbiDDQvu (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:50 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B921C2F02A;
+        Mon,  4 Apr 2022 09:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649091000; x=1680627000;
+  t=1649090993; x=1680626993;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gfjfHxX0p+HFa0uHshx5i4jpIGNdzFklRpR0pKy++Zs=;
-  b=jSrPJoCOx65TE1F3N/ZVpMWir3jjS6sPRBDMK5vSXRPTLn+xstqmMCF7
-   I14l/N49JGRFj7xR1wURIa+qYNAThMZG7vQ14R2AmVtYYW+sgwM3VPlj1
-   r3NT7KjzZRotFZBfNjwOXeNsji/a1ISctljH0YLBW/RFfLIWdXo9PXK0k
-   m+531YJNzbJvMvUnTfbJS4RziXYqq9+W83MumZ2Pf6qx0kPfhmklIaBbf
-   i0U77kAste3oTnonYBlISbL+fULQV+sSpXIb6LrFY1wtq5Bhf3RYC/Jzy
-   1wMiFMJ+J3nox6rRT5ZSPBGygcOVPxnRtnFzGNLUReowm6QeHTf/9thZS
+  bh=ZWPEU1oj4JJoBauvs1J6o7QQGEbanEWmmGNZBVN//bw=;
+  b=iIc5o9xzEfwnqkNSF9NglwHnwdYEjMj2Ykyaf0Q0ot2XsHRjtM273Oyj
+   qwgqo1eu22tMOxb6SC1p1zNxy/fRK8I/23MNpUbqQ+GB9O7lC/uzEdXBx
+   yDKZ/A1coWTIXtAMm0e9iNfDl1PG3Qwi6E48z71ENPRvN/B+upO42q/AD
+   PoKce3QkoGGzrWZG9BackwaHZAXFTVy0cUj3k5r7JSHZijb1rqDdcRgq7
+   iSPPTrWotyiKynrkL2HOkfkBJRp+Y+lLyx21J6ogoWoe5WikISpKagBlY
+   JHO5XfllJmqA43+/kfuhb/SMZ9TNrox5dPNS7Hy9B0pDaRZFDE2q71K0+
    g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734058"
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259390778"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="323734058"
+   d="scan'208";a="259390778"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105223"
+   d="scan'208";a="523105168"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 25/30] selftests/sgx: Introduce TCS initialization enclave operation
-Date:   Mon,  4 Apr 2022 09:49:33 -0700
-Message-Id: <50dbbe8b53c42d4909f2f4884f63972bfb7bb9a6.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 07/30] x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()
+Date:   Mon,  4 Apr 2022 09:49:15 -0700
+Message-Id: <c42cb6298d69cacd48872f97d11df694074803d8.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,102 +56,90 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The Thread Control Structure (TCS) contains meta-data used by the
-hardware to save and restore thread specific information when
-entering/exiting the enclave. A TCS can be added to an initialized
-enclave by first adding a new regular enclave page, initializing the
-content of the new page from within the enclave, and then changing that
-page's type to a TCS.
+sgx_encl_ewb_cpumask() is no longer unique to the reclaimer where it
+is used during the EWB ENCLS leaf function when EPC pages are written
+out to main memory and sgx_encl_ewb_cpumask() is used to learn which
+CPUs might have executed the enclave to ensure that TLBs are cleared.
 
-Support the initialization of a TCS from within the enclave.
-The variable information needed that should be provided from outside
-the enclave is the address of the TCS, address of the State Save Area
-(SSA), and the entry point that the thread should use to enter the
-enclave. With this information provided all needed fields of a TCS
-can be initialized.
+Upcoming SGX2 enabling will use sgx_encl_ewb_cpumask() during the
+EMODPR and EMODT ENCLS leaf functions that make changes to enclave
+pages. The function is needed for the same reason it is used now: to
+learn which CPUs might have executed the enclave to ensure that TLBs
+no longer point to the changed pages.
+
+Rename sgx_encl_ewb_cpumask() to sgx_encl_cpumask() to reflect the
+broader usage.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 No changes since V2
 
-No changes since V1
+Changes since V1:
+- New patch split from original "x86/sgx: Use more generic name for
+  enclave cpumask function" (Jarkko).
 
- tools/testing/selftests/sgx/defines.h   |  8 +++++++
- tools/testing/selftests/sgx/test_encl.c | 30 +++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c | 6 +++---
+ arch/x86/kernel/cpu/sgx/encl.h | 2 +-
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index b638eb98c80c..d8587c971941 100644
---- a/tools/testing/selftests/sgx/defines.h
-+++ b/tools/testing/selftests/sgx/defines.h
-@@ -26,6 +26,7 @@ enum encl_op_type {
- 	ENCL_OP_NOP,
- 	ENCL_OP_EACCEPT,
- 	ENCL_OP_EMODPE,
-+	ENCL_OP_INIT_TCS_PAGE,
- 	ENCL_OP_MAX,
- };
- 
-@@ -68,4 +69,11 @@ struct encl_op_emodpe {
- 	uint64_t flags;
- };
- 
-+struct encl_op_init_tcs_page {
-+	struct encl_op_header header;
-+	uint64_t tcs_page;
-+	uint64_t ssa;
-+	uint64_t entry;
-+};
-+
- #endif /* DEFINES_H */
-diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index 5b6c65331527..c0d6397295e3 100644
---- a/tools/testing/selftests/sgx/test_encl.c
-+++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -57,6 +57,35 @@ static void *memcpy(void *dest, const void *src, size_t n)
- 	return dest;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index c6525eba74e8..8de9bebc4d81 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -614,7 +614,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
  }
  
-+static void *memset(void *dest, int c, size_t n)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < n; i++)
-+		((char *)dest)[i] = c;
-+
-+	return dest;
-+}
-+
-+static void do_encl_init_tcs_page(void *_op)
-+{
-+	struct encl_op_init_tcs_page *op = _op;
-+	void *tcs = (void *)op->tcs_page;
-+	uint32_t val_32;
-+
-+	memset(tcs, 0, 16);			/* STATE and FLAGS */
-+	memcpy(tcs + 16, &op->ssa, 8);		/* OSSA */
-+	memset(tcs + 24, 0, 4);			/* CSSA */
-+	val_32 = 1;
-+	memcpy(tcs + 28, &val_32, 4);		/* NSSA */
-+	memcpy(tcs + 32, &op->entry, 8);	/* OENTRY */
-+	memset(tcs + 40, 0, 24);		/* AEP, OFSBASE, OGSBASE */
-+	val_32 = 0xFFFFFFFF;
-+	memcpy(tcs + 64, &val_32, 4);		/* FSLIMIT */
-+	memcpy(tcs + 68, &val_32, 4);		/* GSLIMIT */
-+	memset(tcs + 72, 0, 4024);		/* Reserved */
-+}
-+
- static void do_encl_op_put_to_buf(void *op)
+ /**
+- * sgx_encl_ewb_cpumask() - Query which CPUs might be accessing the enclave
++ * sgx_encl_cpumask() - Query which CPUs might be accessing the enclave
+  * @encl: the enclave
+  *
+  * Some SGX functions require that no cached linear-to-physical address
+@@ -639,7 +639,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+  * The following flow is used to support SGX functions that require that
+  * no cached linear-to-physical address mappings are present:
+  * 1) Execute ENCLS[ETRACK] to initiate hardware tracking.
+- * 2) Use this function (sgx_encl_ewb_cpumask()) to query which CPUs might be
++ * 2) Use this function (sgx_encl_cpumask()) to query which CPUs might be
+  *    accessing the enclave.
+  * 3) Send IPI to identified CPUs, kicking them out of the enclave and
+  *    thus flushing all locally cached linear-to-physical address mappings.
+@@ -656,7 +656,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+  *
+  * Return: cpumask of CPUs that might be accessing @encl
+  */
+-const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
++const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl)
  {
- 	struct encl_op_put_to_buf *op2 = op;
-@@ -100,6 +129,7 @@ void encl_body(void *rdi,  void *rsi)
- 		do_encl_op_nop,
- 		do_encl_eaccept,
- 		do_encl_emodpe,
-+		do_encl_init_tcs_page,
- 	};
+ 	cpumask_t *cpumask = &encl->cpumask;
+ 	struct sgx_encl_mm *encl_mm;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index d2acb4debde5..e59c2cbf71e2 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -105,7 +105,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
  
- 	struct encl_op_header *op = (struct encl_op_header *)rdi;
+ void sgx_encl_release(struct kref *ref);
+ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+-const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl);
++const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl);
+ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			 struct sgx_backing *backing);
+ void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 2de85f459492..fa33922879bf 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -249,7 +249,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+ 			 * miss cpus that entered the enclave between
+ 			 * generating the mask and incrementing epoch.
+ 			 */
+-			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
++			on_each_cpu_mask(sgx_encl_cpumask(encl),
+ 					 sgx_ipi_cb, NULL, 1);
+ 			ret = __sgx_encl_ewb(epc_page, va_slot, backing);
+ 		}
 -- 
 2.25.1
 
