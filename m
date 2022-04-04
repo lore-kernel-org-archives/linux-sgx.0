@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31916C352AA
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E205FC47094
+	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240861AbiDDVZG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:25:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46928 "EHLO
+        id S1376969AbiDDVZM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379280AbiDDQv6 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:58 -0400
+        with ESMTP id S1379274AbiDDQvz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:55 -0400
 Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E233614C;
-        Mon,  4 Apr 2022 09:50:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1646E338AA;
+        Mon,  4 Apr 2022 09:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649091002; x=1680627002;
+  t=1649090999; x=1680626999;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=zMStoctvIXS731FS95jXFMrV7zUA076B2o1n0dI0HHY=;
-  b=anP5NmP9zwl8eDDw3y8FAlxDSBV/zBEYff77mQoCupK2Ac4+31tD4aVi
-   3PDpaIT0C3iuTrrtYIuks6ch1kHAmGZyb60usLFwY6VydYjOggyFK/aLk
-   ETEFwiTJIfhZOgpEValxDTW9VdtJgzA1akZDxEszVpAg0mMb/uXimiImY
-   o/xRUeA/fiB6NKKHC7vA7Be99Cj5o5Cz+SxtcJgRzcYQefZAFv+NcimSh
-   YlvI/Nyye/8gylEjl7PqUNMJP3ksdfvAg+n2BDfi3+HA6zD0ZO8mKeqro
-   l/YUEaWddjfeg+v3AF3286/cU9h2xE+GLmTKYxXfeJfex09C8durU7uQl
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734061"
+  bh=RLenEGRyRkGnPHbe+3ya/9vd5y8mNvmWzZIkUE5GP2Q=;
+  b=f1FeONCAXxzEiJa96ibH89WK2aQsPFEN83B9PBTKwtG2AHqAtbQoMqSb
+   hJYvEYM7FsVX+TmnLaSqQ/mkwQDegJZLkYjKVofPMlnaHFjZ1nzXtay3v
+   A+1fnuR4vG1n3mIWe9eE1+vQYw9wkXd4zNyb3W4jXFIQw7QVtXflX/24E
+   IGZ4fTCz19oLBmWeCwwVt+etTE93sUDf4vRX4ZcZyHZxE0YqDpJmxDGwn
+   vPJ9h4RoFFzXNTNXLFvkFL7HdCfIiiKuS/+RZDkxruu9+4jEQxdmYZuMI
+   mUbcXJJ5a+NKQE2dOnboNs3/TPVyE7EiWVy09xS6wd6IjnYn0eOYqqpU9
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734056"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="323734061"
+   d="scan'208";a="323734056"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105235"
+   d="scan'208";a="523105214"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 28/30] selftests/sgx: Test invalid access to removed enclave page
-Date:   Mon,  4 Apr 2022 09:49:36 -0700
-Message-Id: <d76ef5541fba90a9100ece0876a150845af5186f.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 22/30] selftests/sgx: Add test for TCS page permission changes
+Date:   Mon,  4 Apr 2022 09:49:30 -0700
+Message-Id: <e1dd2c5f49043c43f71036d3abcb97fd30eec603.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,179 +56,63 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Removing a page from an initialized enclave involves three steps:
-(1) the user requests changing the page type to SGX_PAGE_TYPE_TRIM
-via the SGX_IOC_ENCLAVE_MODIFY_TYPE  ioctl(), (2) on success the
-ENCLU[EACCEPT] instruction is run from within the enclave to accept
-the page removal, (3) the user initiates the actual removal of the
-page via the SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl().
-
-Test two possible invalid accesses during the page removal flow:
-* Test the behavior when a request to remove the page by changing its
-  type to SGX_PAGE_TYPE_TRIM completes successfully but instead of
-  executing ENCLU[EACCEPT] from within the enclave the enclave attempts
-  to read from the page. Even though the page is accessible from the
-  page table entries its type is SGX_PAGE_TYPE_TRIM and thus not
-  accessible according to SGX. The expected behavior is a page fault
-  with the SGX flag set in the error code.
-* Test the behavior when the page type is changed successfully and
-  ENCLU[EACCEPT] was run from within the enclave. The final ioctl(),
-  SGX_IOC_ENCLAVE_REMOVE_PAGES, is omitted and replaced with an
-  attempt to access the page. Even though the page is accessible
-  from the page table entries its type is SGX_PAGE_TYPE_TRIM and
-  thus not accessible according to SGX.  The expected behavior is
-  a page fault with the SGX flag set in the error code.
+Kernel should not allow permission changes on TCS pages. Add test to
+confirm this behavior.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V2:
-- Rename struct sgx_enclave_modt -> struct sgx_enclave_modify_type
+- Update to use new struct name struct sgx_enclave_restrict_perm -> struct
+  sgx_enclave_restrict_permissions. (Jarkko)
 
 Changes since V1:
-- Update to support ioctl() name change (SGX_IOC_PAGE_MODT ->
-  SGX_IOC_ENCLAVE_MODIFY_TYPE) and provide secinfo as parameter instead
-  of just page type (Jarkko).
-- Use ioctl() instead of ioctl (Dave).
+- Adapt test to the kernel interface changes: the ioctl() name change
+  and providing entire secinfo as parameter.
+- Rewrite error path to reduce line lengths.
 
- tools/testing/selftests/sgx/main.c | 247 +++++++++++++++++++++++++++++
- 1 file changed, 247 insertions(+)
+ tools/testing/selftests/sgx/main.c | 74 ++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index f6a8e2dd4a23..f9f8e3697fa6 100644
+index 0e0bd1c4d702..59573c1128c8 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -1560,4 +1560,251 @@ TEST_F(enclave, remove_added_page_no_eaccept)
- 	EXPECT_EQ(remove_ioc.count, 0);
+@@ -121,6 +121,24 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
+ 	return NULL;
  }
  
 +/*
-+ * Request enclave page removal but instead of correctly following with
-+ * EACCEPT a read attempt to page is made from within the enclave.
++ * Return the offset in the enclave where the TCS segment can be found.
++ * The first RW segment loaded is the TCS.
 + */
-+TEST_F(enclave, remove_added_page_invalid_access)
++static off_t encl_get_tcs_offset(struct encl *encl)
 +{
-+	struct encl_op_get_from_addr get_addr_op;
-+	struct encl_op_put_to_addr put_addr_op;
-+	struct sgx_enclave_modify_type ioc;
-+	struct sgx_secinfo secinfo;
-+	unsigned long data_start;
-+	int ret, errno_save;
++	int i;
 +
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
++	for (i = 0; i < encl->nr_segments; i++) {
++		struct encl_segment *seg = &encl->segment_tbl[i];
 +
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	/*
-+	 * Hardware (SGX2) and kernel support is needed for this test. Start
-+	 * with check that test has a chance of succeeding.
-+	 */
-+	memset(&ioc, 0, sizeof(ioc));
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &ioc);
-+
-+	if (ret == -1) {
-+		if (errno == ENOTTY)
-+			SKIP(return, "Kernel does not support SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()");
-+		else if (errno == ENODEV)
-+			SKIP(return, "System does not support SGX2");
++		if (i == 0 && seg->prot == (PROT_READ | PROT_WRITE))
++			return seg->offset;
 +	}
 +
-+	/*
-+	 * Invalid parameters were provided during sanity check,
-+	 * expect command to fail.
-+	 */
-+	EXPECT_EQ(ret, -1);
-+
-+	/*
-+	 * Page that will be removed is the second data page in the .data
-+	 * segment. This forms part of the local encl_buffer within the
-+	 * enclave.
-+	 */
-+	data_start = self->encl.encl_base +
-+		     encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+
-+	/*
-+	 * Sanity check that page at @data_start is writable before
-+	 * removing it.
-+	 *
-+	 * Start by writing MAGIC to test page.
-+	 */
-+	put_addr_op.value = MAGIC;
-+	put_addr_op.addr = data_start;
-+	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	/*
-+	 * Read memory that was just written to, confirming that data
-+	 * previously written (MAGIC) is present.
-+	 */
-+	get_addr_op.value = 0;
-+	get_addr_op.addr = data_start;
-+	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(get_addr_op.value, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	/* Start page removal by requesting change of page type to PT_TRIM. */
-+	memset(&ioc, 0, sizeof(ioc));
-+	memset(&secinfo, 0, sizeof(secinfo));
-+
-+	secinfo.flags = SGX_PAGE_TYPE_TRIM << 8;
-+	ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+	ioc.length = PAGE_SIZE;
-+	ioc.secinfo = (unsigned long)&secinfo;
-+
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(ioc.result, 0);
-+	EXPECT_EQ(ioc.count, 4096);
-+
-+	/*
-+	 * Read from page that was just removed.
-+	 */
-+	get_addr_op.value = 0;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
-+
-+	/*
-+	 * From kernel perspective the page is present but according to SGX the
-+	 * page should not be accessible so a #PF with SGX bit set is
-+	 * expected.
-+	 */
-+
-+	EXPECT_EQ(self->run.function, ERESUME);
-+	EXPECT_EQ(self->run.exception_vector, 14);
-+	EXPECT_EQ(self->run.exception_error_code, 0x8005);
-+	EXPECT_EQ(self->run.exception_addr, data_start);
++	return -1;
 +}
 +
+ /*
+  * Return the offset in the enclave where the data segment can be found.
+  * The first RW segment loaded is the TCS, skip that to get info on the
+@@ -567,6 +585,62 @@ TEST_F(enclave, pte_permissions)
+ 	EXPECT_EQ(self->run.exception_addr, 0);
+ }
+ 
 +/*
-+ * Request enclave page removal and correctly follow with
-+ * EACCEPT but do not follow with removal ioctl() but instead a read attempt
-+ * to removed page is made from within the enclave.
++ * Modifying permissions of TCS page should not be possible.
 + */
-+TEST_F(enclave, remove_added_page_invalid_access_after_eaccept)
++TEST_F(enclave, tcs_permissions)
 +{
-+	struct encl_op_get_from_addr get_addr_op;
-+	struct encl_op_put_to_addr put_addr_op;
-+	struct sgx_enclave_modify_type ioc;
-+	struct encl_op_eaccept eaccept_op;
++	struct sgx_enclave_restrict_permissions ioc;
 +	struct sgx_secinfo secinfo;
-+	unsigned long data_start;
 +	int ret, errno_save;
 +
 +	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
@@ -236,119 +120,51 @@ index f6a8e2dd4a23..f9f8e3697fa6 100644
 +	memset(&self->run, 0, sizeof(self->run));
 +	self->run.tcs = self->encl.encl_base;
 +
-+	/*
-+	 * Hardware (SGX2) and kernel support is needed for this test. Start
-+	 * with check that test has a chance of succeeding.
-+	 */
 +	memset(&ioc, 0, sizeof(ioc));
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &ioc);
++	memset(&secinfo, 0, sizeof(secinfo));
 +
-+	if (ret == -1) {
-+		if (errno == ENOTTY)
-+			SKIP(return, "Kernel does not support SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl()");
-+		else if (errno == ENODEV)
-+			SKIP(return, "System does not support SGX2");
-+	}
++	/*
++	 * Ensure kernel supports needed ioctl() and system supports needed
++	 * commands.
++	 */
++
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, &ioc);
++	errno_save = ret == -1 ? errno : 0;
 +
 +	/*
 +	 * Invalid parameters were provided during sanity check,
 +	 * expect command to fail.
 +	 */
-+	EXPECT_EQ(ret, -1);
++	ASSERT_EQ(ret, -1);
++
++	/* ret == -1 */
++	if (errno_save == ENOTTY)
++		SKIP(return,
++		     "Kernel does not support SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS ioctl()");
++	else if (errno_save == ENODEV)
++		SKIP(return, "System does not support SGX2");
 +
 +	/*
-+	 * Page that will be removed is the second data page in the .data
-+	 * segment. This forms part of the local encl_buffer within the
-+	 * enclave.
++	 * Attempt to make TCS page read-only. This is not allowed and
++	 * should be prevented by the kernel.
 +	 */
-+	data_start = self->encl.encl_base +
-+		     encl_get_data_offset(&self->encl) + PAGE_SIZE;
-+
-+	/*
-+	 * Sanity check that page at @data_start is writable before
-+	 * removing it.
-+	 *
-+	 * Start by writing MAGIC to test page.
-+	 */
-+	put_addr_op.value = MAGIC;
-+	put_addr_op.addr = data_start;
-+	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	/*
-+	 * Read memory that was just written to, confirming that data
-+	 * previously written (MAGIC) is present.
-+	 */
-+	get_addr_op.value = 0;
-+	get_addr_op.addr = data_start;
-+	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(get_addr_op.value, MAGIC);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+
-+	/* Start page removal by requesting change of page type to PT_TRIM. */
-+	memset(&ioc, 0, sizeof(ioc));
-+	memset(&secinfo, 0, sizeof(secinfo));
-+
-+	secinfo.flags = SGX_PAGE_TYPE_TRIM << 8;
-+	ioc.offset = encl_get_data_offset(&self->encl) + PAGE_SIZE;
++	secinfo.flags = PROT_READ;
++	ioc.offset = encl_get_tcs_offset(&self->encl);
 +	ioc.length = PAGE_SIZE;
 +	ioc.secinfo = (unsigned long)&secinfo;
 +
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPE, &ioc);
++	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, &ioc);
 +	errno_save = ret == -1 ? errno : 0;
 +
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
++	EXPECT_EQ(ret, -1);
++	EXPECT_EQ(errno_save, EINVAL);
 +	EXPECT_EQ(ioc.result, 0);
-+	EXPECT_EQ(ioc.count, 4096);
-+
-+	eaccept_op.epc_addr = (unsigned long)data_start;
-+	eaccept_op.ret = 0;
-+	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	EXPECT_EQ(eaccept_op.ret, 0);
-+
-+	/* Skip ioctl() to remove page. */
-+
-+	/*
-+	 * Read from page that was just removed.
-+	 */
-+	get_addr_op.value = 0;
-+
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
-+
-+	/*
-+	 * From kernel perspective the page is present but according to SGX the
-+	 * page should not be accessible so a #PF with SGX bit set is
-+	 * expected.
-+	 */
-+
-+	EXPECT_EQ(self->run.function, ERESUME);
-+	EXPECT_EQ(self->run.exception_vector, 14);
-+	EXPECT_EQ(self->run.exception_error_code, 0x8005);
-+	EXPECT_EQ(self->run.exception_addr, data_start);
++	EXPECT_EQ(ioc.count, 0);
 +}
 +
- TEST_HARNESS_MAIN
+ /*
+  * Enclave page permission test.
+  *
 -- 
 2.25.1
 
