@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2704BC4167D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F4EC47092
 	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381501AbiDDV0a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1382190AbiDDV0a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Mon, 4 Apr 2022 17:26:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46210 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379253AbiDDQvs (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:48 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11C52B1B0;
-        Mon,  4 Apr 2022 09:49:51 -0700 (PDT)
+        with ESMTP id S1379255AbiDDQvt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:49 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C12B42DA8C;
+        Mon,  4 Apr 2022 09:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649090991; x=1680626991;
+  t=1649090992; x=1680626992;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nUCxoYXpaLcMuFF2b8VDSWzuYcUmFDOIEehMew72cCE=;
-  b=UIt//fUOf9TmtNF2OO1vwsDoNuoMdpRsQxZA4ewEHfn9Ma2yvblsimnE
-   kobQFpSVBeFZesIklacYnzDbSQFzJyEAQpLHz9ToUBE793qILat4WbQJS
-   XG3W9M0hDSgyh+qb+sTpq7LC/HuI6U9LJ/ExuqTXrzGDjOZ7HCz5UJhX9
-   j7rQXl8fq17DvAl2ooLYUXBo7TnTaTAp2p3P81gkI8BWrMBq4ZucqQn8G
-   zV3HEHQZLnVro2BmHZLrAGuqiapeTBW5VWkcJjo9aJFdNVBtXRtRmfUeJ
-   wFXSgvbTMYhMns8SjGU2HOMf3g//FDAMSpFZEqxCTTOgYtf7dlmpRrH9v
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734039"
+  bh=XLHCtZ5lHLI6jvD7PuO5VfpRsas5f0b5jUQBwpQFz2s=;
+  b=Z3JA9w9B+mH9/4XXyUPe+54QeuhNbT0DzlqDvF9pBaoLhpdyDevNh1ZW
+   q4mJPIqyD6FI1boHjsTKET01+ezUKGPLDSAIPNt8VHnkfezL2EV+PlpdZ
+   e2HVcNbqvPfOTm7BjE0dWFehYERc1+Y+7qZss4fmjq45AVLvxQrr1tlaG
+   R2jkj6BRlC2wuV6O5Cv97czLX+s5ANfgDrSNgHxnNZaXZoXYIZnDTLByv
+   ehtXGzFUvYFkUAX9VBbCs2oB3o+DACZkGL6cJNMieCsNIfRmmIUKqAvLF
+   lJxwy+QbzOKeS0AMpQlnUdGHUPgP7Ffo+vTBEgNPenxIDLlYFUofAc9TF
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259390767"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="323734039"
+   d="scan'208";a="259390767"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105162"
+   d="scan'208";a="523105153"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 05/30] x86/sgx: Support loading enclave page without VMA permissions check
-Date:   Mon,  4 Apr 2022 09:49:13 -0700
-Message-Id: <c9a81f8a2b3f582a906c750e2221f98ca36731e4.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 02/30] x86/sgx: Add wrapper for SGX2 EMODPR function
+Date:   Mon,  4 Apr 2022 09:49:10 -0700
+Message-Id: <e3add7b7c104dab4580c82202193939d2e2b21c5.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,136 +56,93 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-sgx_encl_load_page() is used to find and load an enclave page into
-enclave (EPC) memory, potentially loading it from the backing storage.
-Both usages of sgx_encl_load_page() are during an access to the
-enclave page from a VMA and thus the permissions of the VMA are
-considered before the enclave page is loaded.
+Add a wrapper for the EMODPR ENCLS leaf function used to
+restrict enclave page permissions as maintained in the
+SGX hardware's Enclave Page Cache Map (EPCM).
 
-SGX2 functions operating on enclave pages belonging to an initialized
-enclave requiring the page to be in EPC. It is thus required to
-support loading enclave pages into the EPC independent from a VMA.
+EMODPR:
+1) Updates the EPCM permissions of an enclave page by treating
+   the new permissions as a mask. Supplying a value that attempts
+   to relax EPCM permissions has no effect on EPCM permissions
+   (PR bit, see below, is changed).
+2) Sets the PR bit in the EPCM entry of the enclave page to
+   indicate that permission restriction is in progress. The bit
+   is reset by the enclave by invoking ENCLU leaf function
+   EACCEPT or EACCEPTCOPY.
 
-Split the current sgx_encl_load_page() to support the two usages:
-A new call, sgx_encl_load_page_in_vma(), behaves exactly like the
-current sgx_encl_load_page() that takes VMA permissions into account,
-while sgx_encl_load_page() just loads an enclave page into EPC.
+The enclave may access the page throughout the entire process
+if conforming to the EPCM permissions for the enclave page.
 
-VMA, PTE, and EPCM permissions would continue to dictate whether
-the pages can be accessed from within an enclave.
+After performing the permission restriction by issuing EMODPR
+the kernel needs to collaborate with the hardware to ensure that
+all logical processors sees the new restricted permissions. This
+is required for the enclave's EACCEPT/EACCEPTCOPY to succeed and
+is accomplished with the ETRACK flow.
+
+Expand enum sgx_return_code with the possible EMODPR return
+values.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V2:
-- New patch
+- Add detail to changelog that PR bit is set when EPCM permissions
+  not changed when relaxing of permissions using EMODPR attempted.
 
- arch/x86/kernel/cpu/sgx/encl.c | 57 ++++++++++++++++++++++------------
- arch/x86/kernel/cpu/sgx/encl.h |  2 ++
- 2 files changed, 40 insertions(+), 19 deletions(-)
+Changes since V1:
+- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
+  in three to introduce the SGX2 functions separately (Jarkko).
+- Rewrite commit message to include how the EPCM within the hardware
+  is changed by the SGX2 function as well as the calling
+  conditions (Jarkko).
+- Make short description more specific to which permissions (EPCM
+  permissions) the function modifies.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7c63a1911fae..05ae1168391c 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -131,25 +131,10 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	return epc_page;
+ arch/x86/include/asm/sgx.h      | 5 +++++
+ arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 3f9334ef67cd..d67810b50a81 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -65,17 +65,22 @@ enum sgx_encls_function {
+ 
+ /**
+  * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
++ * %SGX_EPC_PAGE_CONFLICT:	Page is being written by other ENCLS function.
+  * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
+  *				been completed yet.
+  * %SGX_CHILD_PRESENT		SECS has child pages present in the EPC.
+  * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
+  *				public key does not match IA32_SGXLEPUBKEYHASH.
++ * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
++ *				is in the PENDING or MODIFIED state.
+  * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
+  */
+ enum sgx_return_code {
++	SGX_EPC_PAGE_CONFLICT		= 7,
+ 	SGX_NOT_TRACKED			= 11,
+ 	SGX_CHILD_PRESENT		= 13,
+ 	SGX_INVALID_EINITTOKEN		= 16,
++	SGX_PAGE_NOT_MODIFIABLE		= 20,
+ 	SGX_UNMASKED_EVENT		= 128,
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index 0e22fa8f77c5..2b091912f038 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -215,4 +215,10 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+ 	return __encls_ret_3(EWB, pginfo, addr, va);
  }
  
--static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
--						unsigned long addr,
--						unsigned long vm_flags)
-+static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
-+						  struct sgx_encl_page *entry)
- {
--	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
- 	struct sgx_epc_page *epc_page;
--	struct sgx_encl_page *entry;
--
--	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
--	if (!entry)
--		return ERR_PTR(-EFAULT);
--
--	/*
--	 * Verify that the faulted page has equal or higher build time
--	 * permissions than the VMA permissions (i.e. the subset of {VM_READ,
--	 * VM_WRITE, VM_EXECUTE} in vma->vm_flags).
--	 */
--	if ((entry->vm_max_prot_bits & vm_prot_bits) != vm_prot_bits)
--		return ERR_PTR(-EFAULT);
- 
- 	/* Entry successfully located. */
- 	if (entry->epc_page) {
-@@ -175,6 +160,40 @@ static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
- 	return entry;
- }
- 
-+static struct sgx_encl_page *sgx_encl_load_page_in_vma(struct sgx_encl *encl,
-+						       unsigned long addr,
-+						       unsigned long vm_flags)
++/* Restrict the EPCM permissions of an EPC page. */
++static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
 +{
-+	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
-+	struct sgx_encl_page *entry;
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry)
-+		return ERR_PTR(-EFAULT);
-+
-+	/*
-+	 * Verify that the page has equal or higher build time
-+	 * permissions than the VMA permissions (i.e. the subset of {VM_READ,
-+	 * VM_WRITE, VM_EXECUTE} in vma->vm_flags).
-+	 */
-+	if ((entry->vm_max_prot_bits & vm_prot_bits) != vm_prot_bits)
-+		return ERR_PTR(-EFAULT);
-+
-+	return __sgx_encl_load_page(encl, entry);
++	return __encls_ret_2(EMODPR, secinfo, addr);
 +}
 +
-+struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
-+					 unsigned long addr)
-+{
-+	struct sgx_encl_page *entry;
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry)
-+		return ERR_PTR(-EFAULT);
-+
-+	return __sgx_encl_load_page(encl, entry);
-+}
-+
- static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
- {
- 	unsigned long addr = (unsigned long)vmf->address;
-@@ -196,7 +215,7 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
- 
- 	mutex_lock(&encl->lock);
- 
--	entry = sgx_encl_load_page(encl, addr, vma->vm_flags);
-+	entry = sgx_encl_load_page_in_vma(encl, addr, vma->vm_flags);
- 	if (IS_ERR(entry)) {
- 		mutex_unlock(&encl->lock);
- 
-@@ -344,7 +363,7 @@ static struct sgx_encl_page *sgx_encl_reserve_page(struct sgx_encl *encl,
- 	for ( ; ; ) {
- 		mutex_lock(&encl->lock);
- 
--		entry = sgx_encl_load_page(encl, addr, vm_flags);
-+		entry = sgx_encl_load_page_in_vma(encl, addr, vm_flags);
- 		if (PTR_ERR(entry) != -EBUSY)
- 			break;
- 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index fec43ca65065..6b34efba1602 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -116,5 +116,7 @@ unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
- void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
- bool sgx_va_page_full(struct sgx_va_page *va_page);
- void sgx_encl_free_epc_page(struct sgx_epc_page *page);
-+struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
-+					 unsigned long addr);
- 
- #endif /* _X86_ENCL_H */
+ #endif /* _X86_ENCLS_H */
 -- 
 2.25.1
 
