@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E205FC47094
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466AEC43217
+	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:23:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376969AbiDDVZM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46688 "EHLO
+        id S1378995AbiDDVZN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:25:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379274AbiDDQvz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:55 -0400
+        with ESMTP id S1379269AbiDDQvw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:52 -0400
 Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1646E338AA;
-        Mon,  4 Apr 2022 09:49:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25ED73204D;
+        Mon,  4 Apr 2022 09:49:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649090999; x=1680626999;
+  t=1649090996; x=1680626996;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=RLenEGRyRkGnPHbe+3ya/9vd5y8mNvmWzZIkUE5GP2Q=;
-  b=f1FeONCAXxzEiJa96ibH89WK2aQsPFEN83B9PBTKwtG2AHqAtbQoMqSb
-   hJYvEYM7FsVX+TmnLaSqQ/mkwQDegJZLkYjKVofPMlnaHFjZ1nzXtay3v
-   A+1fnuR4vG1n3mIWe9eE1+vQYw9wkXd4zNyb3W4jXFIQw7QVtXflX/24E
-   IGZ4fTCz19oLBmWeCwwVt+etTE93sUDf4vRX4ZcZyHZxE0YqDpJmxDGwn
-   vPJ9h4RoFFzXNTNXLFvkFL7HdCfIiiKuS/+RZDkxruu9+4jEQxdmYZuMI
-   mUbcXJJ5a+NKQE2dOnboNs3/TPVyE7EiWVy09xS6wd6IjnYn0eOYqqpU9
+  bh=JOqZTO9BJ6ZBD3WRZCWK3rVS9xdulCCUAXpq8W/WH40=;
+  b=hFrZsM81Nvfea9jNYWSTj4tZ8Shzue1Ggcd/XsJxn3b6TM5f6oVIDbXJ
+   88O3weVjhnBsOtuNswrC4U6eKqIYw6HaRidrT8PQ3BXm8lPWyMdVfYFZe
+   Efb7E4j76oA/Moqt0KcDiJN0IBLQhWz6h4GGy2XkiULktP0l1UCJYqPCj
+   8LIFu74dSt2Es7XXnfGZZvE1Cx7DCnRnDRdr0gM7u4gO6WA5QMXXNXjkR
+   5LwsYMzvyJQoGIO41yq9z2h4oCeWVub0mRrzwzkmRiyNeuGD3dl6/C3Pr
+   KIzCAM43p/77kPGY4+w2gGhjymU02tUGGJsVyYcRZvVsDPw0R3msfhF3D
    w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734056"
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734051"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="323734056"
+   d="scan'208";a="323734051"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105214"
+   d="scan'208";a="523105195"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 22/30] selftests/sgx: Add test for TCS page permission changes
-Date:   Mon,  4 Apr 2022 09:49:30 -0700
-Message-Id: <e1dd2c5f49043c43f71036d3abcb97fd30eec603.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 16/30] x86/sgx: Tighten accessible memory range after enclave initialization
+Date:   Mon,  4 Apr 2022 09:49:24 -0700
+Message-Id: <9f9e9582029dee93b5b37f2fb4dc062be9fe1fde.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,115 +56,59 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Kernel should not allow permission changes on TCS pages. Add test to
-confirm this behavior.
+Before an enclave is initialized the enclave's memory range is unknown.
+The enclave's memory range is learned at the time it is created via the
+SGX_IOC_ENCLAVE_CREATE ioctl() where the provided memory range is
+obtained from an earlier mmap() of /dev/sgx_enclave. After an enclave
+is initialized its memory can be mapped into user space (mmap()) from
+where it can be entered at its defined entry points.
+
+With the enclave's memory range known after it is initialized there is
+no reason why it should be possible to map memory outside this range.
+
+Lock down access to the initialized enclave's memory range by denying
+any attempt to map memory outside its memory range.
+
+Locking down the memory range also makes adding pages to an initialized
+enclave more efficient. Pages are added to an initialized enclave by
+accessing memory that belongs to the enclave's memory range but not yet
+backed by an enclave page. If it is possible for user space to map
+memory that does not form part of the enclave then an access to this
+memory would eventually fail. Failures range from a prompt general
+protection fault if the access was an ENCLU[EACCEPT] from within the
+enclave, or a page fault via the vDSO if it was another access from
+within the enclave, or a SIGBUS (also resulting from a page fault) if
+the access was from outside the enclave.
+
+Disallowing invalid memory to be mapped in the first place avoids
+preventable failures.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-Changes since V2:
-- Update to use new struct name struct sgx_enclave_restrict_perm -> struct
-  sgx_enclave_restrict_permissions. (Jarkko)
+No changes since V2
 
 Changes since V1:
-- Adapt test to the kernel interface changes: the ioctl() name change
-  and providing entire secinfo as parameter.
-- Rewrite error path to reduce line lengths.
+- Add comment (Jarkko).
 
- tools/testing/selftests/sgx/main.c | 74 ++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 0e0bd1c4d702..59573c1128c8 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -121,6 +121,24 @@ static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
- 	return NULL;
- }
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index fa4f947f8496..7909570736a0 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -409,6 +409,11 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
  
-+/*
-+ * Return the offset in the enclave where the TCS segment can be found.
-+ * The first RW segment loaded is the TCS.
-+ */
-+static off_t encl_get_tcs_offset(struct encl *encl)
-+{
-+	int i;
-+
-+	for (i = 0; i < encl->nr_segments; i++) {
-+		struct encl_segment *seg = &encl->segment_tbl[i];
-+
-+		if (i == 0 && seg->prot == (PROT_READ | PROT_WRITE))
-+			return seg->offset;
-+	}
-+
-+	return -1;
-+}
-+
- /*
-  * Return the offset in the enclave where the data segment can be found.
-  * The first RW segment loaded is the TCS, skip that to get info on the
-@@ -567,6 +585,62 @@ TEST_F(enclave, pte_permissions)
- 	EXPECT_EQ(self->run.exception_addr, 0);
- }
+ 	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
  
-+/*
-+ * Modifying permissions of TCS page should not be possible.
-+ */
-+TEST_F(enclave, tcs_permissions)
-+{
-+	struct sgx_enclave_restrict_permissions ioc;
-+	struct sgx_secinfo secinfo;
-+	int ret, errno_save;
++	/* Disallow mapping outside enclave's address range. */
++	if (test_bit(SGX_ENCL_INITIALIZED, &encl->flags) &&
++	    (start < encl->base || end > encl->base + encl->size))
++		return -EACCES;
 +
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	memset(&ioc, 0, sizeof(ioc));
-+	memset(&secinfo, 0, sizeof(secinfo));
-+
-+	/*
-+	 * Ensure kernel supports needed ioctl() and system supports needed
-+	 * commands.
-+	 */
-+
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, &ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	/*
-+	 * Invalid parameters were provided during sanity check,
-+	 * expect command to fail.
-+	 */
-+	ASSERT_EQ(ret, -1);
-+
-+	/* ret == -1 */
-+	if (errno_save == ENOTTY)
-+		SKIP(return,
-+		     "Kernel does not support SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS ioctl()");
-+	else if (errno_save == ENODEV)
-+		SKIP(return, "System does not support SGX2");
-+
-+	/*
-+	 * Attempt to make TCS page read-only. This is not allowed and
-+	 * should be prevented by the kernel.
-+	 */
-+	secinfo.flags = PROT_READ;
-+	ioc.offset = encl_get_tcs_offset(&self->encl);
-+	ioc.length = PAGE_SIZE;
-+	ioc.secinfo = (unsigned long)&secinfo;
-+
-+	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, &ioc);
-+	errno_save = ret == -1 ? errno : 0;
-+
-+	EXPECT_EQ(ret, -1);
-+	EXPECT_EQ(errno_save, EINVAL);
-+	EXPECT_EQ(ioc.result, 0);
-+	EXPECT_EQ(ioc.count, 0);
-+}
-+
- /*
-  * Enclave page permission test.
-  *
+ 	/*
+ 	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
+ 	 * conflict with the enclave page permissions.
 -- 
 2.25.1
 
