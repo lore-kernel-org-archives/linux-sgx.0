@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD10C433F5
-	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2759DC47082
+	for <linux-sgx@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379749AbiDDVZ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46302 "EHLO
+        id S1353092AbiDDVZ6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:25:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379256AbiDDQvt (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:49 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2CBF2E086;
-        Mon,  4 Apr 2022 09:49:52 -0700 (PDT)
+        with ESMTP id S1379265AbiDDQvv (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 4 Apr 2022 12:51:51 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E4031351;
+        Mon,  4 Apr 2022 09:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649090992; x=1680626992;
+  t=1649090994; x=1680626994;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=7soraypShUzq59PRY96Ss2w9MzztKJRkAjurCflHILo=;
-  b=erKfRQM3ULdd7ZRjZxK2CnmQkvgmgeV3PRhAqXIPNwiMkC9YcvNHS/nY
-   dqR/G+TzOcVsjFGmM3mWDXp3lFo2RAtcjuDTQB/tmHcOpZO9DumgLUf6n
-   J0FS4hpz0LawYEI7kxcFd9WnFsAEJ+jBZaQSBDkva/gS7S67yZWlmhVY/
-   Bof1j0xxJzSQBYWVjTHt6tHicXNjIr6XSUhMzfvJw8BdLf/C3iUEhm+ng
-   GTpHK4Zd6LLt/oQOEArHL7l3/P0zA3oYLDkIGJKbF67JhryOLnYiR4K9t
-   DsTbzojjKsFkqo358i4tWH8ruu/sxQgzmzEuP6fDE5vfHPDavmEbeaD7f
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="259390770"
+  bh=xH8w381o5s9LdRaAo69RH2L/TkEmuKrGS0d+mIcmEIk=;
+  b=SYGHptqt6rX4BfHNGQVa/7hZA0VwvMCJNG23xUPOOTimn3gRvSYvLCVY
+   ayiVWkpRhbp9NZpwyW+aBO1LghUybsMAA6xCLA9If/p/+E4wQukHuvcL6
+   cA7fU0fv5d+fQ5og8T+SLClC7UrRNvC7lSb7PC/VZNgY5pQQE2Ti5cukm
+   +98OPZLNqJqbyeyBjNUbUlx36wcOWzrX8Is+3vB4FLt9MfdHq0SngGB1S
+   bD8WAraj9zQSTFOC8MF3erpKE2GuIrn4FtuDk8QxEj6Du1wgNj1hlKEfw
+   vUCLTz+mrNMZjdK2OxzDiqEgVbQ0aExaKfykVbNk3xqt8cK+Jb9oH3Rbv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="323734045"
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="259390770"
+   d="scan'208";a="323734045"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:51 -0700
 X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="523105156"
+   d="scan'208";a="523105177"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 09:49:50 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -44,9 +44,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 03/30] x86/sgx: Add wrapper for SGX2 EMODT function
-Date:   Mon,  4 Apr 2022 09:49:11 -0700
-Message-Id: <b99fcb7d39062dab80c612b32db4a4894c66ed39.1648847675.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 10/30] x86/sgx: Create utility to validate user provided offset and length
+Date:   Mon,  4 Apr 2022 09:49:18 -0700
+Message-Id: <7ebe0aa8cc6ce11eaf032c3796823bcc08df27fe.1648847675.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1648847675.git.reinette.chatre@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
@@ -56,56 +56,69 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a wrapper for the EMODT ENCLS leaf function used to
-change the type of an enclave page as maintained in the
-SGX hardware's Enclave Page Cache Map (EPCM).
-
-EMODT:
-1) Updates the EPCM page type of the enclave page.
-2) Sets the MODIFIED bit in the EPCM entry of the enclave page.
-   This bit is reset by the enclave by invoking ENCLU leaf
-   function EACCEPT or EACCEPTCOPY.
-
-Access from within the enclave to the enclave page is not possible
-while the MODIFIED bit is set.
-
-After changing the enclave page type by issuing EMODT the kernel
-needs to collaborate with the hardware to ensure that no logical
-processor continues to hold a reference to the changed page. This
-is required to ensure no required security checks are circumvented
-and is required for the enclave's EACCEPT/EACCEPTCOPY to succeed.
-Ensuring that no references to the changed page remain is
-accomplished with the ETRACK flow.
+User provided offset and length is validated when parsing the parameters
+of the SGX_IOC_ENCLAVE_ADD_PAGES ioctl(). Extract this validation
+into a utility that can be used by the SGX2 ioctl()s that will
+also provide these values.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 No changes since V2
 
 Changes since V1:
-- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
-  in three to introduce the SGX2 functions separately (Jarkko).
-- Rewrite commit message to include how the EPCM within the hardware
-  is changed by the SGX2 function as well as the calling
-  conditions (Jarkko).
+- New patch
 
- arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 2b091912f038..7a1ecf704ec1 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -221,4 +221,10 @@ static inline int __emodpr(struct sgx_secinfo *secinfo, void *addr)
- 	return __encls_ret_2(EMODPR, secinfo, addr);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 83df20e3e633..f487549bccba 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -372,6 +372,26 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	return ret;
  }
  
-+/* Change the type of an EPC page. */
-+static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
++/*
++ * Ensure user provided offset and length values are valid for
++ * an enclave.
++ */
++static int sgx_validate_offset_length(struct sgx_encl *encl,
++				      unsigned long offset,
++				      unsigned long length)
 +{
-+	return __encls_ret_2(EMODT, secinfo, addr);
++	if (!IS_ALIGNED(offset, PAGE_SIZE))
++		return -EINVAL;
++
++	if (!length || length & (PAGE_SIZE - 1))
++		return -EINVAL;
++
++	if (offset + length - PAGE_SIZE >= encl->size)
++		return -EINVAL;
++
++	return 0;
 +}
 +
- #endif /* _X86_ENCLS_H */
+ /**
+  * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
+  * @encl:       an enclave pointer
+@@ -425,14 +445,10 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 	if (copy_from_user(&add_arg, arg, sizeof(add_arg)))
+ 		return -EFAULT;
+ 
+-	if (!IS_ALIGNED(add_arg.offset, PAGE_SIZE) ||
+-	    !IS_ALIGNED(add_arg.src, PAGE_SIZE))
+-		return -EINVAL;
+-
+-	if (!add_arg.length || add_arg.length & (PAGE_SIZE - 1))
++	if (!IS_ALIGNED(add_arg.src, PAGE_SIZE))
+ 		return -EINVAL;
+ 
+-	if (add_arg.offset + add_arg.length - PAGE_SIZE >= encl->size)
++	if (sgx_validate_offset_length(encl, add_arg.offset, add_arg.length))
+ 		return -EINVAL;
+ 
+ 	if (copy_from_user(&secinfo, (void __user *)add_arg.secinfo,
 -- 
 2.25.1
 
