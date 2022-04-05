@@ -2,70 +2,169 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B48AC433F5
-	for <linux-sgx@archiver.kernel.org>; Tue,  5 Apr 2022 05:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C82C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  5 Apr 2022 06:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbiDEGAd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 5 Apr 2022 02:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57924 "EHLO
+        id S230470AbiDEGxs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 5 Apr 2022 02:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbiDEGAc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Apr 2022 02:00:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6062A1A9
-        for <linux-sgx@vger.kernel.org>; Mon,  4 Apr 2022 22:58:31 -0700 (PDT)
+        with ESMTP id S229498AbiDEGxq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Apr 2022 02:53:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246456E8E7;
+        Mon,  4 Apr 2022 23:51:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0FBDFB81B96
-        for <linux-sgx@vger.kernel.org>; Tue,  5 Apr 2022 05:58:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8D5C340EE;
-        Tue,  5 Apr 2022 05:58:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A7516615A0;
+        Tue,  5 Apr 2022 06:51:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DACEC340F3;
+        Tue,  5 Apr 2022 06:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649138308;
-        bh=pfMzOViYGW00TgIlYt3AQFCSB5N2dVpJByzTyYmWmNo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ct+BdZFAyAQsFnDeB+9Sk4G3G9tbjsgB4IFSckYJ8fZ7kO7SkI+O09qpL/Ie7uN+m
-         IvgUkhrG2qa55GXwWwpmbW67LHhVxA9xOnJCL13FyexBIDD0g5Cj0ovGg6SXiubMwF
-         uzPu9sHzDSQDoPynawTFkYHo2JJL9SLgG6O56ssfQvgjUn7bkRBPm3k3+2S8uSaG7t
-         zWfo7ZbtgkW8UAX/YDLNtWLapStdXq3dPWN6dcFfySrDIf70n8/n8ndS0w1Ak6Fi9/
-         x+PqQeF3gMgP7GLiFWwIIss+uLfi9G/BjT6ymEFpXzyYvCCL757LJDsj6UycvcKAoP
-         ZZG1CIiFfHkCw==
-Message-ID: <51e4905762c33ed10ca731f718f048d36d082dc0.camel@kernel.org>
-Subject: Re: Odd looking #PF fault code
+        s=k20201202; t=1649141507;
+        bh=Wlj/mkoqHrHMZ0K2EWCmK376xQbEKNO7SVZEOojxAV0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ix1vj01RqyJ4e/S6iGddivDMxKV01MlJysD7UfCPl0IXpNEJgA6WKMbfwGxswVrdt
+         Z5YKu6oXLMPWmawCLtaE3laZzPe7CJnNcyMYYgG167no+vMsIrWzR+9NyuUdHbPDNp
+         yZNxGzTZ4JqTPAntEh/4Z4FFKlm0ZkOZl6+pw0ZoaRQjvDkPkivFmCmGCs8ePjca9M
+         TyO71jWF/pbfD7Q0ADeJiSobJ8pe0I6lZIySUfUNkrJx6JL/FFtVhefiyLivxbTt/n
+         wCupjW6BqrBUiuVWg/DdDjU/HcxWZRtZzLxE3ha/GAHLDq2Sa5LjwGPAg3F/CUloI4
+         5AEddkhFtXu2w==
+Date:   Tue, 5 Apr 2022 09:52:57 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com
-Date:   Tue, 05 Apr 2022 08:59:39 +0300
-In-Reply-To: <3d2b5a6e-f59a-e5fc-9349-5449d6cc7267@intel.com>
-References: <YkoyvdqIqkaOk8NL@kernel.org>
-         <3d2b5a6e-f59a-e5fc-9349-5449d6cc7267@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.42.4 
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 01/30] x86/sgx: Add short descriptions to ENCLS
+ wrappers
+Message-ID: <YkvnSTw7zwXud1G0@kernel.org>
+References: <cover.1648847675.git.reinette.chatre@intel.com>
+ <5f8eaad96d85f78b80da47c2b851d6d8af9fc878.1648847675.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f8eaad96d85f78b80da47c2b851d6d8af9fc878.1648847675.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2022-04-04 at 09:27 -0700, Reinette Chatre wrote:
-> Hi Jarkko,
->=20
-> On 4/3/2022 4:50 PM, Jarkko Sakkinen wrote:
-> > I get this when trying to get EAUG-EACCEPTCOPY to run on Enarx and I ge=
-t:
-> >=20
->=20
-> There seems a difference in the error codes described:
->=20
-> > Unexpected PF: address: 0x007f7fff910000, error code 0x15
->=20
-> Error code 0x15 translates to binary 10101 which is:
-> BIT 0: Present
-> BIT 2: User
-> BIT 4: Instruction fetch
+On Mon, Apr 04, 2022 at 09:49:09AM -0700, Reinette Chatre wrote:
+> The SGX ENCLS instruction uses EAX to specify an SGX function and
+> may require additional registers, depending on the SGX function.
+> ENCLS invokes the specified privileged SGX function for managing
+> and debugging enclaves. Macros are used to wrap the ENCLS
+> functionality and several wrappers are used to wrap the macros to
+> make the different SGX functions accessible in the code.
+> 
+> The wrappers of the supported SGX functions are cryptic. Add short
+> descriptions of each as a comment.
+> 
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> No changes since V2
+> 
+> Changes since V1:
+> - Fix commit message and subject to not refer to descriptions as
+> "changelog descriptions" or "shortlog descriptions" (Jarkko).
+> - Improve all descriptions with guidance from Jarkko.
+> 
+>  arch/x86/kernel/cpu/sgx/encls.h | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> index fa04a73daf9c..0e22fa8f77c5 100644
+> --- a/arch/x86/kernel/cpu/sgx/encls.h
+> +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> @@ -136,57 +136,71 @@ static inline bool encls_failed(int ret)
+>  	ret;						\
+>  	})
+>  
+> +/* Initialize an EPC page into an SGX Enclave Control Structure (SECS) page. */
+>  static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
+>  {
+>  	return __encls_2(ECREATE, pginfo, secs);
+>  }
+>  
+> +/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
+>  static inline int __eextend(void *secs, void *addr)
+>  {
+>  	return __encls_2(EEXTEND, secs, addr);
+>  }
+>  
+> +/*
+> + * Associate an EPC page to an enclave either as a REG or TCS page
+> + * populated with the provided data.
+> + */
+>  static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
+>  {
+>  	return __encls_2(EADD, pginfo, addr);
+>  }
+>  
+> +/* Finalize enclave build, initialize enclave for user code execution. */
+>  static inline int __einit(void *sigstruct, void *token, void *secs)
+>  {
+>  	return __encls_ret_3(EINIT, sigstruct, secs, token);
+>  }
+>  
+> +/* Disassociate EPC page from its enclave and mark it as unused. */
+>  static inline int __eremove(void *addr)
+>  {
+>  	return __encls_ret_1(EREMOVE, addr);
+>  }
+>  
+> +/* Copy data to an EPC page belonging to a debug enclave. */
+>  static inline int __edbgwr(void *addr, unsigned long *data)
+>  {
+>  	return __encls_2(EDGBWR, *data, addr);
+>  }
+>  
+> +/* Copy data from an EPC page belonging to a debug enclave. */
+>  static inline int __edbgrd(void *addr, unsigned long *data)
+>  {
+>  	return __encls_1_1(EDGBRD, *data, addr);
+>  }
+>  
+> +/* Track that software has completed the required TLB address clears. */
+>  static inline int __etrack(void *addr)
+>  {
+>  	return __encls_ret_1(ETRACK, addr);
+>  }
+>  
+> +/* Load, verify, and unblock an EPC page. */
+>  static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
+>  			 void *va)
+>  {
+>  	return __encls_ret_3(ELDU, pginfo, addr, va);
+>  }
+>  
+> +/* Make EPC page inaccessible to enclave, ready to be written to memory. */
+>  static inline int __eblock(void *addr)
+>  {
+>  	return __encls_ret_1(EBLOCK, addr);
+>  }
+>  
+> +/* Initialize an EPC page into a Version Array (VA) page. */
+>  static inline int __epa(void *addr)
+>  {
+>  	unsigned long rbx = SGX_PAGE_TYPE_VA;
+> @@ -194,6 +208,7 @@ static inline int __epa(void *addr)
+>  	return __encls_2(EPA, rbx, addr);
+>  }
+>  
+> +/* Invalidate an EPC page and write it out to main memory. */
+>  static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+>  			void *va)
+>  {
+> -- 
+> 2.25.1
+> 
 
-Yeah, I misread it.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
