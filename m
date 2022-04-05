@@ -2,58 +2,52 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F6FC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C33C433EF
 	for <linux-sgx@archiver.kernel.org>; Tue,  5 Apr 2022 22:23:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349644AbiDEWPM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 5 Apr 2022 18:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55472 "EHLO
+        id S1347447AbiDEWPF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 5 Apr 2022 18:15:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573267AbiDESjv (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Apr 2022 14:39:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F1D167E3;
-        Tue,  5 Apr 2022 11:37:52 -0700 (PDT)
+        with ESMTP id S1573281AbiDESnQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Apr 2022 14:43:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 243C53632E;
+        Tue,  5 Apr 2022 11:41:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F453618D9;
-        Tue,  5 Apr 2022 18:37:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DBF0C385A1;
-        Tue,  5 Apr 2022 18:37:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C791AB81F87;
+        Tue,  5 Apr 2022 18:41:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3CDC385A0;
+        Tue,  5 Apr 2022 18:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649183871;
-        bh=ecxdfLHsjhNU9D5i7w12o0NlOeCD+73hTDcvoCtkJ5s=;
+        s=k20201202; t=1649184074;
+        bh=A6Cglr/SX17RIdHYKRyt+DQUM0hwlXEDX/OSPfNNycE=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=I7hVimpq/KdIh6PL2TDi9XPQWvsln0l075vPn5GXZE+ZZjYEgqz0tQYBqn2YfpluS
-         C2YX/ZOD7g8+bjHhYbdb47ojZ7VEiVTwsNzXHCBGB4wFEbT2JOkbnjIelvq8lzw9kV
-         t7mrh0LpiUttzEYxlMAg4KAYAXLnmW7q+gqH+HOR/2JM9gAWZEKqxrX6Ye9RTAGk+o
-         Cljh7842uqol4AjzDw8uwHcr9Exm3IKv5GnKUYjAEn4CSD4oLE2+D26BxePu+gbiH3
-         W2Su7V7QxC21rFvm9BRcoafOeW51hwzcPI7eJfwnwtwAWKskLi9qwk638/LK/Uv62M
-         BIReAp2E5BMYw==
-Message-ID: <0f44fba956288bcad69e076f84118bc50f8e5d2f.camel@kernel.org>
-Subject: Re: [PATCH V3 14/30] x86/sgx: Support restricting of enclave page
- permissions
+        b=FQGFEP789xWtWnwcwTXm40YoB6KiidAU6/C+PhRP9bYnU4SCmEb/eawdW2A3baTWh
+         idC9yo3PgnuNan+HF+IwSf0Br9AWKgC4bakOnDHjQ1nBnODA351Sl2Ph+h+0k90njx
+         zgGj+V1ptUowyS6UZxL+FKVDeXWpqZAPHfYFlIbvMUG4YdhmS8cQ7uv4OV13kz/8YV
+         jrpJduVXr3TKJjoJ82KDInuxGQ8btJ+PBPlAF4C3JEFmiyGYmyyd4ay+y/H5J7LRfM
+         EGoXLxEJ9QaY/NQICofIK8o85nGHWd+wNmbU9/g+miJRyX0zXWpJMmN0M3AboP9oj4
+         tOi7tg6DLqqEQ==
+Message-ID: <ddef013dc9ce496ff5840f42cf0651637060b4f2.camel@kernel.org>
+Subject: Re: [PATCH V3 19/30] x86/sgx: Free up EPC pages directly to support
+ large page ranges
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
-        cedric.xing@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, nathaniel@profian.com
-Date:   Tue, 05 Apr 2022 21:39:01 +0300
-In-Reply-To: <59910ad4-a898-4eb2-5e2b-856c686b53fb@intel.com>
+        x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
+        cathy.zhang@intel.com, cedric.xing@intel.com,
+        haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 05 Apr 2022 21:42:24 +0300
+In-Reply-To: <e118f4c6-7216-15f3-2bda-3a5851b0bcb1@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
-         <8ed9ee98ca26c9eefde0fd49062bca6e7b9efe80.1648847675.git.reinette.chatre@intel.com>
-         <c9071aa19076c7c618294f0c9cb830a8be96ae09.camel@kernel.org>
-         <26ab773de8842d03b40caf8645ca86884b195901.camel@kernel.org>
-         <91a02d50b2cba34dfb058fd864ba20ef1e6a5554.camel@kernel.org>
-         <10303ca73ea02a300636580e87446766374f66cb.camel@kernel.org>
-         <6e0feeadc562b9e3f0a524040469d4f5c3484824.camel@kernel.org>
-         <ca08465b6fa8af4121592c6381023fda5e0ade70.camel@kernel.org>
-         <59910ad4-a898-4eb2-5e2b-856c686b53fb@intel.com>
+         <b3a17e1ce7bcd14db3c28903e8a97f094998ae74.1648847675.git.reinette.chatre@intel.com>
+         <Ykvrk4hYvBEnNOOl@kernel.org>
+         <e118f4c6-7216-15f3-2bda-3a5851b0bcb1@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.42.4 
@@ -62,86 +56,127 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2022-04-05 at 09:49 -0700, Reinette Chatre wrote:
+On Tue, 2022-04-05 at 10:13 -0700, Reinette Chatre wrote:
 > Hi Jarkko,
 >=20
-> On 4/5/2022 7:52 AM, Jarkko Sakkinen wrote:
-> > n Tue, 2022-04-05 at 17:27 +0300, Jarkko Sakkinen wrote:
-> > > According to SDM having page type as regular is fine for EMODPR,
-> > > i.e. that's why I did not care about having it in SECINFO.
+> On 4/5/2022 12:11 AM, Jarkko Sakkinen wrote:
+> > On Mon, Apr 04, 2022 at 09:49:27AM -0700, Reinette Chatre wrote:
+> > > The page reclaimer ensures availability of EPC pages across all
+> > > enclaves. In support of this it runs independently from the
+> > > individual enclaves in order to take locks from the different
+> > > enclaves as it writes pages to swap.
 > > >=20
-> > > Given that the opcode itself contains validation, I wonder
-> > > why this needs to be done:
+> > > When needing to load a page from swap an EPC page needs to be
+> > > available for its contents to be loaded into. Loading an existing
+> > > enclave page from swap does not reclaim EPC pages directly if
+> > > none are available, instead the reclaimer is woken when the
+> > > available EPC pages are found to be below a watermark.
 > > >=20
-> > > if (secinfo.flags & ~SGX_SECINFO_PERMISSION_MASK)
+> > > When iterating over a large number of pages in an oversubscribed
+> > > environment there is a race between the reclaimer woken up and
+> > > EPC pages reclaimed fast enough for the page operations to proceed.
+> > >=20
+> > > Ensure there are EPC pages available before attempting to load
+> > > a page that may potentially be pulled from swap into an available
+> > > EPC page.
+> > >=20
+> > > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> > > ---
+> > > No changes since V2
+> > >=20
+> > > Changes since v1:
+> > > - Reword commit message.
+> > >=20
+> > > =C2=A0arch/x86/kernel/cpu/sgx/ioctl.c | 6 ++++++
+> > > =C2=A0arch/x86/kernel/cpu/sgx/main.c=C2=A0 | 6 ++++++
+> > > =C2=A0arch/x86/kernel/cpu/sgx/sgx.h=C2=A0=C2=A0 | 1 +
+> > > =C2=A03 files changed, 13 insertions(+)
+> > >=20
+> > > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sg=
+x/ioctl.c
+> > > index 515e1961cc02..f88bc1236276 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > > @@ -777,6 +777,8 @@ sgx_enclave_restrict_permissions(struct sgx_encl =
+*encl,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (c =3D 0 ; c < mo=
+dp->length; c +=3D PAGE_SIZE) {
 > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > >=20
-> > > if (memchr_inv(secinfo.reserved, 0, sizeof(secinfo.reserved)))
+=A0=C2=A0=C2=A0=C2=A0=C2=A0addr =3D encl->base + modp->offset + c;
+> > > =C2=A0
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0sgx_direct_reclaim();
+> > > +
 > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > >=20
-> > > perm =3D secinfo.flags & SGX_SECINFO_PERMISSION_MASK;
-> > >=20
-> > > I.e. why duplicate validation and why does it have different
-> > > invariant than the opcode?
+=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&encl->lock);
+> > > =C2=A0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0entry =3D sgx_encl_load_page(encl, addr);
+> > > @@ -934,6 +936,8 @@ static long sgx_enclave_modify_type(struct sgx_en=
+cl *encl,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (c =3D 0 ; c < mo=
+dt->length; c +=3D PAGE_SIZE) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0addr =3D encl->base + modt->offset + c;
+> > > =C2=A0
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0sgx_direct_reclaim();
+> > > +
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&encl->lock);
+> > > =C2=A0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0entry =3D sgx_encl_load_page(encl, addr);
+> > > @@ -1129,6 +1133,8 @@ static long sgx_encl_remove_pages(struct sgx_en=
+cl *encl,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (c =3D 0 ; c < pa=
+rams->length; c +=3D PAGE_SIZE) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0addr =3D encl->base + params->offset + c;
+> > > =C2=A0
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0sgx_direct_reclaim();
+> > > +
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&encl->lock);
+> > > =C2=A0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0entry =3D sgx_encl_load_page(encl, addr);
+> > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx=
+/main.c
+> > > index 6e2cb7564080..545da16bb3ea 100644
+> > > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > > @@ -370,6 +370,12 @@ static bool sgx_should_reclaim(unsigned long wat=
+ermark)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 !list_empty(&sgx_active_page_list);
+> > > =C2=A0}
+> > > =C2=A0
+> > > +void sgx_direct_reclaim(void)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (sgx_should_reclaim(SGX=
+_NR_LOW_PAGES))
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0sgx_reclaim_pages();
+> > > +}
 > >=20
-> > Right it is done to prevent exceptions and also pseudo-code
-> > has this validation:
+> > Please, instead open code this to both locations - not enough redundanc=
+y
+> > to be worth of new function. Causes only unnecessary cross-referencing
+> > when maintaining. Otherwise, I agree with the idea.
 > >=20
-> > IF (EPCM(DS:RCX).PT is not PT_REG) THEN #PF(DS:RCX); FI;=20
 >=20
-> The current type of the page is validated - not the page type
-> provided in the parameters of the command.
+> hmmm, that means the heart of the reclaimer (sgx_reclaim_pages()) would b=
+e
+> made available for direct use from everywhere in the driver. I will look =
+into this.
 >=20
-> >=20
-> > This is clearly wrong:
->=20
-> Could you please elaborate what is wrong? The hardware only checks
-> the permission bits and that is what is provided.
-
-I think it's for most a bit confusing that it takes a special Linux
-defined SECINFO instead of what you read from spec.=20
-
->=20
-> >=20
-> > /*
-> > =C2=A0* Return valid permission fields from a secinfo structure provide=
-d by
-> > =C2=A0* user space. The secinfo structure is required to only have bits=
- in
-> > =C2=A0* the permission fields set.
-> > =C2=A0*/
-> > static int sgx_perm_from_user_secinfo(void __user *_secinfo, u64 *secin=
-fo_perm)
-> >=20
-> > It means that the API requires a malformed data as input.
->=20
-> It is not clear to me how this is malformed. The API requires that only
-> the permission bits are set in the secinfo, only the permission bits in s=
-ecinfo
-> is provided to the hardware, and the hardware only checks the permission =
-bits.
->=20
-> >=20
-> > Maybe it would be better idea then to replace secinfo with just the
-> > permission field?
->=20
-> That is what I implemented in V1 [1], but was asked to change to secinfo.=
- I could
-> go back to that if you prefer.
-
-Yeah, if I was the one saying that, I was clearly wrong. But also
-perspective is now very different after using a lot of these
-features.
-
-Alternatively you could have a single "mod" ioctl given the disjoint
-nature how the parameters go to SECINFO.
-
-
 > Reinette
 >=20
-> [1] https://lore.kernel.org/linux-sgx/44fe170cfd855760857660b9f56cae8c474=
-7cc15.1638381245.git.reinette.chatre@intel.com/
+
+It's a valid enough point. Let's keep it as it is :-)
+
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
