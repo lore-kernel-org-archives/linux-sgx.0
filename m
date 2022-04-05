@@ -2,340 +2,199 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B48BC4332F
-	for <linux-sgx@archiver.kernel.org>; Tue,  5 Apr 2022 11:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E78C433FE
+	for <linux-sgx@archiver.kernel.org>; Tue,  5 Apr 2022 22:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240512AbiDELfH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 5 Apr 2022 07:35:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
+        id S231733AbiDEWMq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 5 Apr 2022 18:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354664AbiDEKPD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Apr 2022 06:15:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15916C1F8;
-        Tue,  5 Apr 2022 03:02:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7B53CB81C98;
-        Tue,  5 Apr 2022 10:02:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDACC385A2;
-        Tue,  5 Apr 2022 10:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649152938;
-        bh=hPS68ta6Tx4zhA9DEjz9ol4zuAM1pHbQpkUR5XA8yMs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Y22IBL2T6dsXLg6kfNgEus0hgN6dGinZ39wTT6FuQ78x9CrB1kNDeAA2guy7GC2UY
-         oFUVRXKA5o9MKHGPP5m1z9Xvaj75evHZDQ2lrEG0gS/1hO/U47SHD+0U297ejAsUXG
-         KlaRwtyGWubv8gI2IR2KzbvNTvQ8QQIdogCZAwHXtEiIruCxlrgUGZadqw3E7HSkFA
-         8vZgw35FOH5GL8UqhiVkw5Q6hX764u5+2Xr9/FuhMFOhtF9WiiLnsUbE5ljf/aJhhk
-         etf+PVB1LX+xQzJpv5peYW3GIVflo4lXeznSD2WeWmfD2c4/jUSHPi/oFnsUwWAmua
-         6CDaiaWoZyVVw==
-Message-ID: <ff93ac6db5ff524159dd3261e1bdd68dcbbdddb9.camel@kernel.org>
-Subject: Re: [PATCH V3 15/30] x86/sgx: Support adding of pages to an
- initialized enclave
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
-        cedric.xing@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 05 Apr 2022 13:03:28 +0300
-In-Reply-To: <cd2fc405d541eec1cc80e6fbd511ab978c37aa94.camel@kernel.org>
+        with ESMTP id S1458105AbiDERIw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Apr 2022 13:08:52 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB1EAF47D8;
+        Tue,  5 Apr 2022 10:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649178412; x=1680714412;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=oWsS1ImesnvvbOpcFJIbCqb8f9BlqEbXj+S+u/fKh74=;
+  b=ki0UF+DT+P0OWjhTgnU5XkFP8Qlucn/lXARaJxRpHhN4k1chPNtjnJp6
+   YCqxkqV3P8ecq6cXXdKiqFGbAKdg7LGfIymwFzi27jp+pEE6fEHaGVbOg
+   RiX8oONiO7ja3zHwI7VRtlou548bOmicI1Ob44wSml7OX392GDI7GROGh
+   A0bkndcoCPC1T4qZbVNxkgcIbuc7r3hpb5jzedMTGADpd/npS/C3w7H/w
+   Pp6kKdGn0t5OpH49SdlnJTlF+31lR9zQNHRaQ3WNPU20KSvHemHniX3C8
+   r8aKv35r4kH4cMQ45seZOV0ZS0AjBtaUx84QItvgwjZAo3BJaJdwZcEKc
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="241392661"
+X-IronPort-AV: E=Sophos;i="5.90,236,1643702400"; 
+   d="scan'208";a="241392661"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 10:06:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,236,1643702400"; 
+   d="scan'208";a="524075771"
+Received: from orsmsx606.amr.corp.intel.com ([10.22.229.19])
+  by orsmga006.jf.intel.com with ESMTP; 05 Apr 2022 10:06:07 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX606.amr.corp.intel.com (10.22.229.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Tue, 5 Apr 2022 10:06:07 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27 via Frontend Transport; Tue, 5 Apr 2022 10:06:07 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.27; Tue, 5 Apr 2022 10:06:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EdJcRyp39b/Cx/NqigZcWO/HqzVcyYXDGvne11ITdOcWjwIrj52qr36VQ7ZtvpCIA1Wge5XPRrRIukac4sK9jnxUytweMO85yqgkLX4Pe5XohdH1JUu+YxfrkApfO96fQrPjgOFu0KXhmlfAgi8JDNWVQw2HBNg4yGgsnniAycvzQ0zppZ7s7CvP4XOdrxOvWiTThXSIS4F2tRkfL6QTqd3twR5XjdZ8U1tRGJ5y6+d46yCVAdF7ztZddQ2N/cLcXCH+iWJzg/TMSNvvM+c4ZErPQbL+2JP3+CiFPfKxoeuoDKknDpkyMO3nH8Ldx87dsznK2Gb5jKpLMpbgSCjNMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8GcbS2zvd2VXVjf8PF7d3ZSVEF7ZaolnJpoalB07Rqw=;
+ b=MemqHlty2Dot2dpHvPiq53ci1Ux8xNN/LuBe+DfJdLzUW0cq5hveNZuuAcoNcWQEa9QVQWIfGhkdgZtc09mmjdEO5snj2MliiIq9NW20TqtGwIEueYip36l3x/6amZlkBOblhSF1tbX5j8kWGMcf38O6gjDM4TFpMle1eK3OG9aHG5CXJJ28PtOpzt4Z0OC1YKhgWJBQnkD/yqBJxCsA+Bb61V9VQEVNmIPxK4vMJE7Ay3iM7KhS1Hp//zeTL/AT8INn3xXUOh3ANith0MKKwoBBcboBw88fTIJS4j8ySppoBuA49p170fS/LM+cIecsWugnMs7jpeDfJoOmoUtsOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
+ by BL0PR11MB2946.namprd11.prod.outlook.com (2603:10b6:208:78::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Tue, 5 Apr
+ 2022 17:06:04 +0000
+Received: from BN0PR11MB5744.namprd11.prod.outlook.com
+ ([fe80::918d:6022:8ee6:3e36]) by BN0PR11MB5744.namprd11.prod.outlook.com
+ ([fe80::918d:6022:8ee6:3e36%2]) with mapi id 15.20.5123.031; Tue, 5 Apr 2022
+ 17:06:04 +0000
+Message-ID: <d8cc2142-c50d-fbd9-425f-01e279c9a0f1@intel.com>
+Date:   Tue, 5 Apr 2022 10:05:59 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.7.0
+Subject: Re: [PATCH V3 17/30] x86/sgx: Support modifying SGX page type
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+CC:     <dave.hansen@linux.intel.com>, <tglx@linutronix.de>,
+        <bp@alien8.de>, <luto@kernel.org>, <mingo@redhat.com>,
+        <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <seanjc@google.com>,
+        <kai.huang@intel.com>, <cathy.zhang@intel.com>,
+        <cedric.xing@intel.com>, <haitao.huang@intel.com>,
+        <mark.shanahan@intel.com>, <hpa@zytor.com>,
+        <linux-kernel@vger.kernel.org>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
-         <50b9da1f491eb31d9b038afa0d75871965f474eb.1648847675.git.reinette.chatre@intel.com>
-         <cd2fc405d541eec1cc80e6fbd511ab978c37aa94.camel@kernel.org>
+ <bac6e77fe04100d6bfebd4e13aa9b916f82bfea6.1648847675.git.reinette.chatre@intel.com>
+ <Ykvqf3Ws6jlN5g+p@kernel.org>
+ <b41d81ebcb6934765d7f37d4ce95baa16ec9b5d2.camel@kernel.org>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <b41d81ebcb6934765d7f37d4ce95baa16ec9b5d2.camel@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.42.4 
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR02CA0022.namprd02.prod.outlook.com
+ (2603:10b6:303:16d::15) To BN0PR11MB5744.namprd11.prod.outlook.com
+ (2603:10b6:408:166::16)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8ca0418f-1052-49e5-52de-08da17269110
+X-MS-TrafficTypeDiagnostic: BL0PR11MB2946:EE_
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-Microsoft-Antispam-PRVS: <BL0PR11MB29463F53B24FFC98FB3A3A1DF8E49@BL0PR11MB2946.namprd11.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1GdFeTVA+WzIwexPqC2GSkcdJ8eu0gdNxZLVt7+PkUoFvUzTpcR+FXqHEVKfanqr6PNQOv0dsWlW2D0V7P40jRoIBNdXN/0nuEV5aWKnp0Bz/ZJjUDek6FoktT1eIFOVy5EATsxXuBi2JNDi09t5imyuzsVvP2S7FhMnN+la5nudW0xqFs5bI7i17hY9/CVX0O79DY4jdXYCnAe5iOmF0saaAOnroW7VMtc+tAtKqzdtiJe7MKOs9c4RGx3OBJbUBymFVf9oOuw0Y0ySKyek4Gktd3SrQOl0V+0+N2PhadbxmESCtCpluzKkdjLXIugnft9NNbqS+ft/PSSRoJ+2GVnSfBZnbZLEPL4utrtyx+6EUbCeW6J+JriDNZutSFC9L3Vy/3/BJCpyMEmXZr/qYJ1BvN78ed/irsX7JdWgbpBj5VDflNFgB5DtmDafzWVyPcrYUWzqTlKWp/9eE3LlFLfU0b+HmbnhtTjApveh3AAwI42x8WEOBePk0rLGQE4rC+Io7iv9KWURx9zg/UQx+APKD/bOGcLoi2wZ+6zsnka7NkyDVcNFBWMAZMRPzZWwVzy9HKEiz+AA/P7i/6IJZuGV7lcHVnH/tLBYWQGNKN5tH30hqF9HdCr1h5yauENKtancF/TR/99IuWLV6a60gCRt7jcs5snRqAhH5KSZ9cLFf6m7DIZZ4VIUrKnTcwtV82a8qbcdBZXP506tkPCIOPOk21IbatdmvMO4snsdaeAvz9EAB89nweSXOP64OpaOCFSBrMm1JPgTI2VQjQCxYyKF/xVh/8osb0K7H+MmvXzuaOXwQ5K5FGoBI7ONJpZgB/A13a37TtMORYzCgLI//w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6916009)(316002)(8676002)(4326008)(66476007)(66946007)(83380400001)(26005)(6666004)(186003)(6506007)(6512007)(86362001)(53546011)(66556008)(2616005)(6486002)(2906002)(38100700002)(5660300002)(966005)(31686004)(4744005)(7416002)(8936002)(508600001)(44832011)(36756003)(82960400001)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aGU5NG10NjRDeG5jUVhGODRRTHRuS2NpNDArQ0J1Z0QvUlk2emxNa2VDVjhN?=
+ =?utf-8?B?akc2OWJTY1Y3YlJVcS9wbDV5c1I2YUhQZXY2SnY1YVRRZkJXdXZKU21zNUxl?=
+ =?utf-8?B?dHlTcEh0TFMyTUs5cXh4cm15NnpMMWgyM2VEMWFDdEs5cXkwMEUxRnNleEZZ?=
+ =?utf-8?B?S2wxM3R0MnZzbm9CZmJyZGV6V2lnbXpHZzE2bXNHU00zZHp0QjJLc3hJM2hY?=
+ =?utf-8?B?czhnN1g0RjBpeEU2YU9EOWFvV1loMGVVNmhSaWFyMXNkd2lvajFaaTBXcTRy?=
+ =?utf-8?B?WEEwL1FwSWNmZ2ZQOHo0RHQ2ZnIvRmcveDFwcDNYSzNZSXJtSmR2eFdONG1m?=
+ =?utf-8?B?bGViWG93N3JYcmdxWm9BN3V5V1M2cmFIcFhOLytWZE5KU3FhV3dGUXRySHRr?=
+ =?utf-8?B?dThLVFhsY2lRQytZUTJKOTc1YXhNdFVUMnRaem5HY2twNjFtWlRSbXRNbDRk?=
+ =?utf-8?B?L0I1aFNJNWk3UDArNkxYbkNqOXhFYVBBdDNlMGFIU1JyTmF3VXoyY3BsY1lI?=
+ =?utf-8?B?UUxGZmgvSW5GZzFpbThETnVxa0ZYcEY3SExTTDZITExCcGhpRWlkMmtEMHR4?=
+ =?utf-8?B?S0V5eW1ZQlQyTGYyMGgwQlF3YUZ6aWd2d0VlZnVHNGpTUDdUaGdkSFVuYll2?=
+ =?utf-8?B?NmdtM3NuaVBWVmYxQStDT0REVEJuYktmQ2JuM0pYYUdTQ1RPSlR4a1djTGxR?=
+ =?utf-8?B?NkFoclpjUndSaWROYXl3VElzUWZCRDZpRFNYYWZrZW5NdURncXkxZTd0UUQr?=
+ =?utf-8?B?RkVNV0cydFpkOUJnalQ5dHgreDA3RzZnVHY5MjRrRjV3YWJLVENpTEJMeWRk?=
+ =?utf-8?B?NjgyWld3VUFpc1VwdGxLZnB2ZlpaM2ZsalJ4VVhNUkxJUVV1TnB4QU5xOVNk?=
+ =?utf-8?B?VFhYK0V3WEpMSE5WdDhpaVd1NUp4TzJ4VHRncnFnVE40VzAyYWtMOUIzekhW?=
+ =?utf-8?B?dE5iYmRwTWNXRFZuNW05TFJoVVNLTi9qWkpxUDVKQVlVaDdBN0tXb1VrbnM3?=
+ =?utf-8?B?N1ZXZWU2ZGVYdFVveThkN3JDNFhyZXVXdkk2SzRBOCtZL1luYk1rMWhWa3la?=
+ =?utf-8?B?dHd1R3ZVZzcwTiswU2JDZXpiT3FKZTk2Wi9pMUVJYWh6bGlKUGplMDhHVno5?=
+ =?utf-8?B?WTZUSDVEYllOZ0RNejZkdXp1amlUUklOUlo4Z1VvTVc2d1ZkUGhNUHp0S0FW?=
+ =?utf-8?B?K3RKWSs5b3NJcEgwT2dFRG9neDhWZzlxN2Y5bXNIbTkvUjRXWWp3QkVVTkov?=
+ =?utf-8?B?cjBYcGgxMkFVdEV1WW9PaVd6YmhhbE9oTDEvZk9pd0VzZzlOVWpCb0xOS2xv?=
+ =?utf-8?B?Ujl4eVpvNm1mZVl5NGxZVWhnS29DcDNpV0RRcXNoUXR5VmUxUkM1OStlNUdk?=
+ =?utf-8?B?TVZtNTlrbEpLazQ4NStBYmhXWUlLWis4UUpaMFlNOEx2ejRkdGhvMDZwWS92?=
+ =?utf-8?B?aWtmY1hrSnlHZnRQSzJPSWdHM2VVbENwYzl5dkZIMTRTUkNQS2NRUlk5VkRN?=
+ =?utf-8?B?NzJGMmVNaCtkSXJUY3ZQOU9HU2ZLOXUrRVEraGlHdDVHWFJidnh3SU1kbXhx?=
+ =?utf-8?B?a2N3WUZyamdoZHlBUld5VWFMYWNTRFY1ZlBGMlV0THd5UTFVVkdSMDlINUpC?=
+ =?utf-8?B?VEpOZWZRTjl6M1d0MHZJQ3pSSnMvQVNPcE1sYTdrRm42Y3FOOU92NnVPTVg1?=
+ =?utf-8?B?YU42NGZiZUFaYWJuSjZLbFhvLzNLU1NpWFh6OXAxUmpuS0NGTmVLUkxzdFhv?=
+ =?utf-8?B?KzlycUc1RkJWeDhkZmdKWEJwNGgxWVBNUWNvaUhiekVJSTNTUmRlR2p2ZEdH?=
+ =?utf-8?B?WHZNNGZQSGsyaDVoeEJXbmtwN255STVGNnp0YlE5eVBySi93VWg2QkZlWWVD?=
+ =?utf-8?B?cmthczRmakovZTV6cUdMSS84RmVGTFN4UzMxaUxWVXR5OUlnNEFpcGJjbmc1?=
+ =?utf-8?B?RDVENVRVN3paZzZTd0ExVnJ4ZHNZV21qV25LNjduS1ErbDRVN1JOZS80ZXVn?=
+ =?utf-8?B?d0t2VDNnb29QMFZTMGp0SmZaZU82MG1oMXZnZDIwWjlaYzg2dXdTRFJnL042?=
+ =?utf-8?B?UUdZMkpwZUJLTHU2YXJBNlV1N0xOMW5TUXBOR0VMazM0dXpIQnZJb01tczd1?=
+ =?utf-8?B?dS82cm52M3ViZ3Z5TC9SaXp0YlBDcVpUcDhEWjVSSE9YakRvVzhaYlF5bDEr?=
+ =?utf-8?B?a3p2MUQ2TVZ2dFJMRVp1Ymptbmt3RTNKNytTQlZSWkRkekxGaU9RZFVraFlI?=
+ =?utf-8?B?TzVtTUlCOWlnUm5uRlREWlF4Z2tFVUs5VFhqaEhIVkVMSUFaZjUvQklHQ2ht?=
+ =?utf-8?B?NURiaFpJZ3NLOFUzb1dsRmQrYmhhNlJDeEdCWTNaZEx5VkpqODluRHN5eHky?=
+ =?utf-8?Q?4WCEDpRWaZ3/QvHY=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ca0418f-1052-49e5-52de-08da17269110
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2022 17:06:03.8652
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Wgr6CLsnb0drEMDSMd4P3XNR6d5FHMVqUototf0m49W10QwIt7ppjhHS6g/A3ctcRva/Jts7ppnvFFtqpzpTpm7NF7Dlst3Yqlv7SmcuPA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR11MB2946
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2022-04-05 at 08:05 +0300, Jarkko Sakkinen wrote:
-> On Mon, 2022-04-04 at 09:49 -0700, Reinette Chatre wrote:
-> > With SGX1 an enclave needs to be created with its maximum memory demand=
-s
-> > allocated. Pages cannot be added to an enclave after it is initialized.
-> > SGX2 introduces a new function, ENCLS[EAUG], that can be used to add
-> > pages to an initialized enclave. With SGX2 the enclave still needs to
-> > set aside address space for its maximum memory demands during enclave
-> > creation, but all pages need not be added before enclave initialization=
-.
-> > Pages can be added during enclave runtime.
-> >=20
-> > Add support for dynamically adding pages to an initialized enclave,
-> > architecturally limited to RW permission at creation but allowed to
-> > obtain RWX permissions after enclave runs EMODPE. Add pages via the
-> > page fault handler at the time an enclave address without a backing
-> > enclave page is accessed, potentially directly reclaiming pages if
-> > no free pages are available.
-> >=20
-> > The enclave is still required to run ENCLU[EACCEPT] on the page before
-> > it can be used. A useful flow is for the enclave to run ENCLU[EACCEPT]
-> > on an uninitialized address. This will trigger the page fault handler
-> > that will add the enclave page and return execution to the enclave to
-> > repeat the ENCLU[EACCEPT] instruction, this time successful.
-> >=20
-> > If the enclave accesses an uninitialized address in another way, for
-> > example by expanding the enclave stack to a page that has not yet been
-> > added, then the page fault handler would add the page on the first
-> > write but upon returning to the enclave the instruction that triggered
-> > the page fault would be repeated and since ENCLU[EACCEPT] was not run
-> > yet it would trigger a second page fault, this time with the SGX flag
-> > set in the page fault error code. This can only be recovered by enterin=
-g
-> > the enclave again and directly running the ENCLU[EACCEPT] instruction o=
-n
-> > the now initialized address.
-> >=20
-> > Accessing an uninitialized address from outside the enclave also
-> > triggers this flow but the page will remain inaccessible (access will
-> > result in #PF) until accepted from within the enclave via
-> > ENCLU[EACCEPT].
-> >=20
-> > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> > ---
-> > Changes since V2:
-> > - Remove runtime tracking of EPCM permissions
-> > =C2=A0 (sgx_encl_page->vm_run_prot_bits) (Jarkko).
-> > - Move export of sgx_encl_{grow,shrink}() to separate patch. (Jarkko)
-> > - Use sgx_encl_page_alloc(). (Jarkko)
-> > - Set max allowed permissions to be RWX (Jarkko). Update changelog
-> > =C2=A0 to indicate the change and use comment in code as
-> > =C2=A0 created by Jarkko in:
-> > https://lore.kernel.org/linux-sgx/20220306053211.135762-4-jarkko@kernel=
-.org
-> > - Do not set protection bits but let it be inherited by VMA (Jarkko)
-> >=20
-> > Changes since V1:
-> > - Fix subject line "to initialized" -> "to an initialized" (Jarkko).
-> > - Move text about hardware's PENDING state to the patch that introduces
-> > =C2=A0 the ENCLS[EAUG] wrapper (Jarkko).
-> > - Ensure kernel-doc uses brackets when referring to function.
-> >=20
-> > =C2=A0arch/x86/kernel/cpu/sgx/encl.c | 124 ++++++++++++++++++++++++++++=
-+++++
-> > =C2=A01 file changed, 124 insertions(+)
-> >=20
-> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/e=
-ncl.c
-> > index 546423753e4c..fa4f947f8496 100644
-> > --- a/arch/x86/kernel/cpu/sgx/encl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> > @@ -194,6 +194,119 @@ struct sgx_encl_page *sgx_encl_load_page(struct s=
-gx_encl *encl,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return __sgx_encl_load_=
-page(encl, entry);
-> > =C2=A0}
-> > =C2=A0
-> > +/**
-> > + * sgx_encl_eaug_page() - Dynamically add page to initialized enclave
-> > + * @vma:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0VMA obtained from fa=
-ult info from where page is accessed
-> > + * @encl:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0enclave accessing the pag=
-e
-> > + * @addr:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0address that triggered th=
-e page fault
-> > + *
-> > + * When an initialized enclave accesses a page with no backing EPC pag=
-e
-> > + * on a SGX2 system then the EPC can be added dynamically via the SGX2
-> > + * ENCLS[EAUG] instruction.
-> > + *
-> > + * Returns: Appropriate vm_fault_t: VM_FAULT_NOPAGE when PTE was insta=
-lled
-> > + * successfully, VM_FAULT_SIGBUS or VM_FAULT_OOM as error otherwise.
-> > + */
-> > +static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct s=
-gx_encl *encl, unsigned long addr)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct sgx_pageinfo pginfo =
-=3D {0};
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct sgx_encl_page *encl_p=
-age;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct sgx_epc_page *epc_pag=
-e;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct sgx_va_page *va_page;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long phys_addr;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u64 secinfo_flags;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0vm_fault_t vmret;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!test_bit(SGX_ENCL_INITI=
-ALIZED, &encl->flags))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_SIGBUS;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Ignore internal permissio=
-n checking for dynamically added pages.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * They matter only for data=
- added during the pre-initialization
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * phase. The enclave decide=
-s the permissions by the means of
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * EACCEPT, EACCEPTCOPY and =
-EMODPE.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0secinfo_flags =3D SGX_SECINF=
-O_R | SGX_SECINFO_W | SGX_SECINFO_X;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0encl_page =3D sgx_encl_page_=
-alloc(encl, addr - encl->base, secinfo_flags);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (IS_ERR(encl_page))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_OOM;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0epc_page =3D sgx_alloc_epc_p=
-age(encl_page, true);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (IS_ERR(epc_page)) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0kfree(encl_page);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_SIGBUS;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0va_page =3D sgx_encl_grow(en=
-cl);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (IS_ERR(va_page)) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0ret =3D PTR_ERR(va_page);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0goto err_out_free;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&encl->lock);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Copy comment from sgx_enc=
-l_add_page() to maintain guidance in
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * this similar flow:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Adding to encl->va_pages =
-must be done under encl->lock.=C2=A0 Ditto for
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * deleting (via sgx_encl_sh=
-rink()) in the error path.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (va_page)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0list_add(&va_page->list, &encl->va_pages);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D xa_insert(&encl->pag=
-e_array, PFN_DOWN(encl_page->desc),
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0encl_p=
-age, GFP_KERNEL);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * If ret =3D=3D -EBUSY then=
- page was created in another flow while
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * running without encl->loc=
-k
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ret)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0goto err_out_unlock;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pginfo.secs =3D (unsigned lo=
-ng)sgx_get_epc_virt_addr(encl->secs.epc_page);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pginfo.addr =3D encl_page->d=
-esc & PAGE_MASK;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pginfo.metadata =3D 0;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D __eaug(&pginfo, sgx_=
-get_epc_virt_addr(epc_page));
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ret)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0goto err_out;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0encl_page->encl =3D encl;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0encl_page->epc_page =3D epc_=
-page;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0encl_page->type =3D SGX_PAGE=
-_TYPE_REG;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0encl->secs_child_cnt++;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sgx_mark_page_reclaimable(en=
-cl_page->epc_page);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0phys_addr =3D sgx_get_epc_ph=
-ys_addr(epc_page);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Do not undo everything wh=
-en creating PTE entry fails - next #PF
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * would find page ready for=
- a PTE.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0vmret =3D vmf_insert_pfn(vma=
-, addr, PFN_DOWN(phys_addr));
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (vmret !=3D VM_FAULT_NOPA=
-GE) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0mutex_unlock(&encl->lock);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_SIGBUS;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_unlock(&encl->lock);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_NOPAGE;
-> > +
-> > +err_out:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0xa_erase(&encl->page_array, =
-PFN_DOWN(encl_page->desc));
-> > +
-> > +err_out_unlock:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sgx_encl_shrink(encl, va_pag=
-e);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_unlock(&encl->lock);
-> > +
-> > +err_out_free:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sgx_encl_free_epc_page(epc_p=
-age);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kfree(encl_page);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_SIGBUS;
-> > +}
-> > +
-> > =C2=A0static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
-> > =C2=A0{
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long addr =3D =
-(unsigned long)vmf->address;
-> > @@ -213,6 +326,17 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *v=
-mf)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (unlikely(!encl))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return VM_FAULT_SIGBUS;
-> > =C2=A0
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * The page_array keeps trac=
-k of all enclave pages, whether they
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * are swapped out or not. I=
-f there is no entry for this page and
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the system supports SGX2 =
-then it is possible to dynamically add
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * a new enclave page. This =
-is only possible for an initialized
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * enclave that will be chec=
-ked for right away.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (cpu_feature_enabled(X86_=
-FEATURE_SGX2) &&
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (!xa_load=
-(&encl->page_array, PFN_DOWN(addr))))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return sgx_encl_eaug_page(vma, encl, addr);
-> > +
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&encl->lock)=
-;
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0entry =3D sgx_encl_load=
-_page_in_vma(encl, addr, vma->vm_flags);
->=20
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Hi Jarkko,
 
-Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+On 4/5/2022 8:34 AM, Jarkko Sakkinen wrote:
+> On Tue, 2022-04-05 at 10:06 +0300, Jarkko Sakkinen wrote:
 
-BR, Jarkko
+>>>
+>>
+>> To be coherent with other names, this should be
+>> SGX_IOC_ENCLAVE_MODIFY_TYPES.
+
+This is not such a clear change request to me:
+
+SGX_IOC_ENCLAVE_ADD_PAGES - add multiple pages
+SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS - restrict multiple permissions
+SGX_IOC_ENCLAVE_REMOVE_PAGES - remove multiple pages
+SGX_IOC_ENCLAVE_MODIFY_TYPE - set a single type
+
+Perhaps it should rather be SGX_IOC_ENCLAVE_SET_TYPE to indicate that
+there is a single target type as opposed to the possibility
+of multiple source types (TCS and regular pages can be trimmed).
+
+> 
+> This should take only page type given that flags are zeroed:
+> 
+> EPCM(DS:RCX).R := 0;
+> EPCM(DS:RCX).W := 0;
+> EPCM(DS:RCX).X := 0; 
+> 
+
+ok, this was how it was done in V1 [1] and I can go back to that.
+
+
+Reinette
+
+[1] https://lore.kernel.org/linux-sgx/c0f04a8f7e1afd9e9319bb9f283db9a3187f7abc.1638381245.git.reinette.chatre@intel.com/
+
