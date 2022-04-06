@@ -2,161 +2,173 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B66BC433EF
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Apr 2022 11:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EE0C433EF
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Apr 2022 12:16:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbiDFL6g (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 6 Apr 2022 07:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60350 "EHLO
+        id S229882AbiDFMSR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232851AbiDFL6U (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 6 Apr 2022 07:58:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529E55282E1;
-        Wed,  6 Apr 2022 00:29:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BEE7361B07;
-        Wed,  6 Apr 2022 07:29:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EB4C385A1;
-        Wed,  6 Apr 2022 07:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649230159;
-        bh=WHZxYEvNQiEvtRPZJjD6sKPf3DA/I8Quteci7raP7+Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MsicdsXTVN+4lvCDpJgIPSRDbktbL6zh0EK3k2no2cKH6aQa+UN7k3DdvMSGOIJLd
-         aitJqfAcYad/4kvevRDfPDeioeaIQU1B0lgdHCV+qPzGDwHZbTR0Im5mcrmsec6DzQ
-         6qbEm+j55w5Tsnv1lKR6mwHIMk0uwl473EfQ6u527pNWeKbOBWt9SgfOq1Igu681Re
-         AiR7DuxdTi5MAD5TkYXGCwywvY11C7WfpfpRiuPmg/u2554jkDVYHssth2rX8pqZoE
-         PoagkEueDKRcOHnVSLXgvpMMV1WC6LZjIMT9jcH5riyhRBLHf+OI8Wx2GgOcTx6ela
-         gno1GVqyY3O9g==
-Message-ID: <2bf954521a3cfc7c677887b1eef772cfcc9e3157.camel@kernel.org>
-Subject: Re: [PATCH V3 14/30] x86/sgx: Support restricting of enclave page
- permissions
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
-        cedric.xing@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, nathaniel@profian.com
-Date:   Wed, 06 Apr 2022 10:30:28 +0300
-In-Reply-To: <38603303-f683-cb79-57e5-57fad5c5ae3b@intel.com>
-References: <cover.1648847675.git.reinette.chatre@intel.com>
-         <8ed9ee98ca26c9eefde0fd49062bca6e7b9efe80.1648847675.git.reinette.chatre@intel.com>
-         <c9071aa19076c7c618294f0c9cb830a8be96ae09.camel@kernel.org>
-         <26ab773de8842d03b40caf8645ca86884b195901.camel@kernel.org>
-         <91a02d50b2cba34dfb058fd864ba20ef1e6a5554.camel@kernel.org>
-         <10303ca73ea02a300636580e87446766374f66cb.camel@kernel.org>
-         <6e0feeadc562b9e3f0a524040469d4f5c3484824.camel@kernel.org>
-         <ca08465b6fa8af4121592c6381023fda5e0ade70.camel@kernel.org>
-         <59910ad4-a898-4eb2-5e2b-856c686b53fb@intel.com>
-         <0f44fba956288bcad69e076f84118bc50f8e5d2f.camel@kernel.org>
-         <38603303-f683-cb79-57e5-57fad5c5ae3b@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S232574AbiDFMRR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 6 Apr 2022 08:17:17 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE1E246C8B8
+        for <linux-sgx@vger.kernel.org>; Tue,  5 Apr 2022 20:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649215911; x=1680751911;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0M3ComKKio1gQzDVsl72uxbrLXg1lUGDhwc7CEM8U90=;
+  b=YLe4JP3ylzUYyR9Wa1g/sREcnQAc//kRpxqk7EBM33ZPf3u7mNhBcSGY
+   L3VbkbM7P1WLqJZ3S1uYcfdI/wGRiVdkOQ0d1hZAapgHzxKJCcuU3XBXu
+   wU6iSWXNw+OT1sWmamwCQzLC9yl9JNhFPzfsApc7VnVE+POajE3Lm3H04
+   yFx99vSZIc9BJ5iGkix/rf1XWqC6We+M8wa/kvMyrq8hcYF5VoesKtasl
+   5+ieXYPF3AVPoVZpbJD1ahxK0/MpOJGr9+ctstCF+MMa/vvv8HH4OHl+y
+   HBKd3LxLawgrFKyrr8w898YtZH411n6vCmUC05qfNnYoja+HCr9wuuPog
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="260932532"
+X-IronPort-AV: E=Sophos;i="5.90,238,1643702400"; 
+   d="scan'208";a="260932532"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 20:31:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,238,1643702400"; 
+   d="scan'208";a="570316166"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orsmga008.jf.intel.com with ESMTP; 05 Apr 2022 20:31:19 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Tue, 5 Apr 2022 20:31:18 -0700
+Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Tue, 5 Apr 2022 20:31:18 -0700
+Received: from fmsmsx604.amr.corp.intel.com ([10.18.126.84]) by
+ fmsmsx604.amr.corp.intel.com ([10.18.126.84]) with mapi id 15.01.2308.027;
+ Tue, 5 Apr 2022 20:31:18 -0700
+From:   "Zhang, Cathy" <cathy.zhang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>
+Subject: RE: [RFC PATCH v3 03/10] x86/sgx: Save enclave pointer for VA page
+Thread-Topic: [RFC PATCH v3 03/10] x86/sgx: Save enclave pointer for VA page
+Thread-Index: AQHYRdQwyyvkN2qPdUShSuzF7pbIG6zeby0AgAPRwSA=
+Date:   Wed, 6 Apr 2022 03:31:18 +0000
+Message-ID: <62c5636814144fcdb61bb87f341232a0@intel.com>
+References: <20220401142409.26215-1-cathy.zhang@intel.com>
+ <20220401142409.26215-4-cathy.zhang@intel.com> <YklyFJpzsC+7zC5L@kernel.org>
+In-Reply-To: <YklyFJpzsC+7zC5L@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.6.401.20
+dlp-reaction: no-action
+dlp-product: dlpe-windows
+x-originating-ip: [10.239.127.36]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2022-04-05 at 11:59 -0700, Reinette Chatre wrote:
-> Hi Jarkko,
->=20
-> On 4/5/2022 11:39 AM, Jarkko Sakkinen wrote:
-> > On Tue, 2022-04-05 at 09:49 -0700, Reinette Chatre wrote:
-> > > Hi Jarkko,
-> > >=20
-> > > On 4/5/2022 7:52 AM, Jarkko Sakkinen wrote:
-> > > > n Tue, 2022-04-05 at 17:27 +0300, Jarkko Sakkinen wrote:
-> > > > > According to SDM having page type as regular is fine for EMODPR,
-> > > > > i.e. that's why I did not care about having it in SECINFO.
-> > > > >=20
-> > > > > Given that the opcode itself contains validation, I wonder
-> > > > > why this needs to be done:
-> > > > >=20
-> > > > > if (secinfo.flags & ~SGX_SECINFO_PERMISSION_MASK)
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > > >=20
-> > > > > if (memchr_inv(secinfo.reserved, 0, sizeof(secinfo.reserved)))
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > > >=20
-> > > > > perm =3D secinfo.flags & SGX_SECINFO_PERMISSION_MASK;
-> > > > >=20
-> > > > > I.e. why duplicate validation and why does it have different
-> > > > > invariant than the opcode?
-> > > >=20
-> > > > Right it is done to prevent exceptions and also pseudo-code
-> > > > has this validation:
-> > > >=20
-> > > > IF (EPCM(DS:RCX).PT is not PT_REG) THEN #PF(DS:RCX); FI;=20
-> > >=20
-> > > The current type of the page is validated - not the page type
-> > > provided in the parameters of the command.
-> > >=20
-> > > >=20
-> > > > This is clearly wrong:
-> > >=20
-> > > Could you please elaborate what is wrong? The hardware only checks
-> > > the permission bits and that is what is provided.
-> >=20
-> > I think it's for most a bit confusing that it takes a special Linux
-> > defined SECINFO instead of what you read from spec.=20
-> >=20
-> > >=20
-> > > >=20
-> > > > /*
-> > > > =C2=A0* Return valid permission fields from a secinfo structure pro=
-vided by
-> > > > =C2=A0* user space. The secinfo structure is required to only have =
-bits in
-> > > > =C2=A0* the permission fields set.
-> > > > =C2=A0*/
-> > > > static int sgx_perm_from_user_secinfo(void __user *_secinfo, u64 *s=
-ecinfo_perm)
-> > > >=20
-> > > > It means that the API requires a malformed data as input.
-> > >=20
-> > > It is not clear to me how this is malformed. The API requires that on=
-ly
-> > > the permission bits are set in the secinfo, only the permission bits =
-in secinfo
-> > > is provided to the hardware, and the hardware only checks the permiss=
-ion bits.
-> > >=20
-> > > >=20
-> > > > Maybe it would be better idea then to replace secinfo with just the
-> > > > permission field?
-> > >=20
-> > > That is what I implemented in V1 [1], but was asked to change to seci=
-nfo. I could
-> > > go back to that if you prefer.
-> >=20
-> > Yeah, if I was the one saying that, I was clearly wrong. But also
-> > perspective is now very different after using a lot of these
-> > features.
->=20
-> No problem, I understand.
->=20
-> I plan to replace the current "secinfo" field in struct sgx_enclave_restr=
-ict_permissions
-> with a new "permissions" field that contain only the permissions. Please =
-let
-> me know if you have concerns with this (I also discuss this more in reply=
- to
-> your other message related to the page type change ioctl()).
 
-I'm cool with it but if it is named as "permissions", then=C2=A0
-it is already software-defined entity, i.e. meaning just that
-have this check in place in the ioctl:
 
-if (addp->permissions & !(PROT_READ | PROT_WRITE | PROT_EXEC))
-	return -EINVAL;
+> -----Original Message-----
+> From: Jarkko Sakkinen <jarkko@kernel.org>
+> Sent: Sunday, April 3, 2022 6:08 PM
+> To: Zhang, Cathy <cathy.zhang@intel.com>
+> Cc: linux-sgx@vger.kernel.org; x86@kernel.org; Chatre, Reinette
+> <reinette.chatre@intel.com>; Hansen, Dave <dave.hansen@intel.com>; Raj,
+> Ashok <ashok.raj@intel.com>
+> Subject: Re: [RFC PATCH v3 03/10] x86/sgx: Save enclave pointer for VA pa=
+ge
+>=20
+> On Fri, Apr 01, 2022 at 10:24:02PM +0800, Cathy Zhang wrote:
+> > Tearing down all enclaves is required by SGX SVN update, which
+> > involves running the ENCLS[EREMOVE] instruction on every EPC page.
+> > This (tearing down all enclaves) should be coordinated with any
+> > enclaves that may be in the process of existing and thus already be
+> > running ENCLS[EREMOVE] as part of enclave release.
+> >
+> > In support of this coordination, it is required to know which enclave
+> > owns each in-use EPC page. It is already possible to locate the owning
+> > enclave of SECS and regular pages but not for VA pages.
+> >
+> > Save the enclave pointer for each VA page to support locating its
+> > owning enclave.
+> >
+> > Note: to track 2T EPC memory, this scheme of tracking will use
+> > additional 8M memory.
+> >
+> > Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/encl.h  | 1 +
+> > arch/x86/kernel/cpu/sgx/ioctl.c | 1 +
+> >  2 files changed, 2 insertions(+)
+> >
+> > diff --git a/arch/x86/kernel/cpu/sgx/encl.h
+> > b/arch/x86/kernel/cpu/sgx/encl.h index 0c8571fc30cf..59fbd4ed5c64
+> > 100644
+> > --- a/arch/x86/kernel/cpu/sgx/encl.h
+> > +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> > @@ -76,6 +76,7 @@ struct sgx_va_page {
+> >  	struct sgx_epc_page *epc_page;
+> >  	DECLARE_BITMAP(slots, SGX_VA_SLOT_COUNT);
+> >  	struct list_head list;
+> > +	struct sgx_encl *encl;
+> >  };
+> >
+> >  struct sgx_backing {
+> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > b/arch/x86/kernel/cpu/sgx/ioctl.c index f0ce96bd462a..da82abbb81b4
+> > 100644
+> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > @@ -30,6 +30,7 @@ static struct sgx_va_page *sgx_encl_grow(struct
+> sgx_encl *encl)
+> >  		if (!va_page)
+> >  			return ERR_PTR(-ENOMEM);
+> >
+> > +		va_page->encl =3D encl;
+> >  		va_page->epc_page =3D sgx_alloc_va_page(va_page);
+> >  		if (IS_ERR(va_page->epc_page)) {
+> >  			err =3D ERR_CAST(va_page->epc_page);
+> > --
+> > 2.17.1
+> >
+>=20
+> Squash this with the previous patch. Then the code will provide
+> answer to one of the questions that I mentioned in 2/10 review.
+>=20
+> BR, Jarkko
 
-BR, Jarkko
+Squashed. How about re-write the commit log as follows:
+
+x86/sgx: Save enclave pointer for VA page
+
+Tearing down all enclaves is required by SGX SVN update, which
+involves running the ENCLS[EREMOVE] instruction on every EPC
+page. This (tearing down all enclaves) should be coordinated
+with any enclaves that may be in the process of existing and thus
+already be running ENCLS[EREMOVE] as part of enclave release.
+
+In support of this coordination, it is required to know which enclave
+owns each in-use EPC page. It is already possible to locate the
+owning enclave of SECS and regular pages but not for VA pages.
+
+Make the following changes for VA page's location:
+1) Make epc->owner type-agnostic by change its type to 'void *'. So,
+   besides "struct sgx_encl_page", it can have other types, like
+   "struct sgx_va_page".
+2) Save the enclave pointer for each VA page to support locating its
+   owning enclave.
+
+Note: to track 2T EPC memory, this scheme of tracking will use
+additional 8M memory.
