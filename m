@@ -2,54 +2,54 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140D5C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Apr 2022 10:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185EEC433F5
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Apr 2022 11:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240429AbiDFKGv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 6 Apr 2022 06:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39292 "EHLO
+        id S1355304AbiDFLFX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 Apr 2022 07:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242898AbiDFKFr (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 6 Apr 2022 06:05:47 -0400
+        with ESMTP id S1348045AbiDFLEm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 6 Apr 2022 07:04:42 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5323FC6F39;
-        Tue,  5 Apr 2022 23:34:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028073C4FF5;
+        Wed,  6 Apr 2022 00:30:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ED678B82004;
-        Wed,  6 Apr 2022 06:34:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F916C385A3;
-        Wed,  6 Apr 2022 06:34:29 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8F26BB82104;
+        Wed,  6 Apr 2022 07:30:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BFCC385A5;
+        Wed,  6 Apr 2022 07:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649226869;
-        bh=j8Bbr8SxyGFgP/t5KjulfykSz32ZOIXqvVa5Dy0jbAs=;
+        s=k20201202; t=1649230252;
+        bh=eYdWTt2rirp2tWBk2+Da44BCaw85451hbniPa4XSUhk=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IvgHP220bTg4KbFtDKm8zswOftdDwpyEFp7GfbtpWZwKk3F1UzXI5P0s1PkiUcwvW
-         vChVuAielCq5oaURT1xdihz3lt25o+snRJCvBq3Sh9Ugr1GtR2x+rJ7Qg8q+ifLcfB
-         T0lCKZe1ok7Wv4raZXA6NYQbeYP5yRpaB+fOs6GX4/QtlwQjRnhTY9Q9qjBlDbPrs7
-         oW+h9GFxKO1Quz/C4R5oFZE/tpBE8WdBRmaCdgiygOO/okyKMZNBN27xqWKgcJt2MV
-         z2PdeUK0SpVHUCDIt0q6t8ShcVUe008UaPU/+qtCik1eROAyjPDYlJ1/kDRCj+P1yF
-         Fgu+U1/JZ7g7g==
-Message-ID: <984834578beba18fa5b0196a0d9e4327dc22cf73.camel@kernel.org>
-Subject: Re: [PATCH V3 19/30] x86/sgx: Free up EPC pages directly to support
- large page ranges
+        b=Top/RpAxLRyzjlpDFLbd5XH0lIINhunvRcHwjq6ScGrrrzodbJOgT2sCC89VD2G57
+         zz30ln39xPALVsysnFDObmmsd4wOgAkyE0NLlNjmkDcC0R6V0aoNKIJCr2dJ+5aZbZ
+         0sdPwl21K6v4mXzPUyQE80idkMoKrTnnlDV28zsGGshKM8McW8e/6q3ZF0VH8D3zoV
+         BcoftTLT9lPFZLss6TyUxKeqzjIAzcu8bTAS2KUac7Ey+iXxA8YHrb87rxkEIpg8CS
+         RG2EuS8egbo+EkwLa4JC+fBc6waZ2/832r9xj0euZ267Kv370+bOufGcYLg6RSdpWO
+         OCmo+mR3wnGhQ==
+Message-ID: <55cd5349e58c44113ae976e04ea4c6dc0cfba66d.camel@kernel.org>
+Subject: Re: [PATCH V3 17/30] x86/sgx: Support modifying SGX page type
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
         x86@kernel.org, seanjc@google.com, kai.huang@intel.com,
         cathy.zhang@intel.com, cedric.xing@intel.com,
         haitao.huang@intel.com, mark.shanahan@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Date:   Wed, 06 Apr 2022 09:35:39 +0300
-In-Reply-To: <f8d92685-27dd-e7ef-ce0d-100a285aec4b@intel.com>
+Date:   Wed, 06 Apr 2022 10:32:02 +0300
+In-Reply-To: <70962fc4-1624-2fd8-4d8d-f1a31001e165@intel.com>
 References: <cover.1648847675.git.reinette.chatre@intel.com>
-         <b3a17e1ce7bcd14db3c28903e8a97f094998ae74.1648847675.git.reinette.chatre@intel.com>
-         <Ykvrk4hYvBEnNOOl@kernel.org>
-         <e118f4c6-7216-15f3-2bda-3a5851b0bcb1@intel.com>
-         <f8d92685-27dd-e7ef-ce0d-100a285aec4b@intel.com>
+         <bac6e77fe04100d6bfebd4e13aa9b916f82bfea6.1648847675.git.reinette.chatre@intel.com>
+         <Ykvqf3Ws6jlN5g+p@kernel.org>
+         <b41d81ebcb6934765d7f37d4ce95baa16ec9b5d2.camel@kernel.org>
+         <d8cc2142-c50d-fbd9-425f-01e279c9a0f1@intel.com>
+         <94f62e19a630792f78e3c48895dfb792ecb02c6c.camel@kernel.org>
+         <70962fc4-1624-2fd8-4d8d-f1a31001e165@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.42.4 
@@ -58,53 +58,69 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 2022-04-05 at 10:25 -0700, Dave Hansen wrote:
-> On 4/5/22 10:13, Reinette Chatre wrote:
-> > > > +void sgx_direct_reclaim(void)
-> > > > +{
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (sgx_should_reclaim(S=
-GX_NR_LOW_PAGES))
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0sgx_reclaim_pages();
-> > > > +}
-> > > Please, instead open code this to both locations - not enough redunda=
-ncy
-> > > to be worth of new function. Causes only unnecessary cross-referencin=
-g
-> > > when maintaining. Otherwise, I agree with the idea.
+On Tue, 2022-04-05 at 11:59 -0700, Reinette Chatre wrote:
+> Hi Jarkko,
+>=20
+> On 4/5/2022 11:41 AM, Jarkko Sakkinen wrote:
+> > On Tue, 2022-04-05 at 10:05 -0700, Reinette Chatre wrote:
+> > > Hi Jarkko,
 > > >=20
-> > hmmm, that means the heart of the reclaimer (sgx_reclaim_pages()) would=
- be
-> > made available for direct use from everywhere in the driver. I will loo=
-k into this.
+> > > On 4/5/2022 8:34 AM, Jarkko Sakkinen wrote:
+> > > > On Tue, 2022-04-05 at 10:06 +0300, Jarkko Sakkinen wrote:
+> > >=20
+> > > > > >=20
+> > > > >=20
+> > > > > To be coherent with other names, this should be
+> > > > > SGX_IOC_ENCLAVE_MODIFY_TYPES.
+> > >=20
+> > > This is not such a clear change request to me:
+> > >=20
+> > > SGX_IOC_ENCLAVE_ADD_PAGES - add multiple pages
+> > > SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS - restrict multiple permissions
+> > > SGX_IOC_ENCLAVE_REMOVE_PAGES - remove multiple pages
+> > > SGX_IOC_ENCLAVE_MODIFY_TYPE - set a single type
+> > >=20
+> > > Perhaps it should rather be SGX_IOC_ENCLAVE_SET_TYPE to indicate that
+> > > there is a single target type as opposed to the possibility
+> > > of multiple source types (TCS and regular pages can be trimmed).
+> > >=20
+> > > >=20
 >=20
-> I like the change.=C2=A0 It's not about reducing code redundancy, it's ab=
-out
-> *describing* what the code does.=C2=A0 Each location could have:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Enter direct SGX recla=
-im: */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (sgx_should_reclaim(SG=
-X_NR_LOW_PAGES))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0sgx_reclaim_pages();
->=20
-> Or, it could just be:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sgx_direct_reclaim();
->=20
-> Which also provides a logical choke point to add comments, like:
->=20
-> /*
-> =C2=A0* sgx_direct_reclaim() should be called in locations where SGX
-> =C2=A0* memory resources might be low and might be needed in order
-> =C2=A0* to make forward progress.
-> =C2=A0*/
-> void sgx_direct_reclaim(void)
-> {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0...
+> What is your opinion about what the ioctl() name should be? I prefer
+> to obtain a confirmation from you since you originally [1] requested
+> SGX_IOC_ENCLAVE_MODIFY_TYPE.
 
-Maybe cutting hairs but could it be "sgx_reclaim_direct"? Rationale
-is easier grepping of reclaimer functions, e.g. when tracing.
+s/TYPE/TYPES/g i.e. SGX_IOC_ENCLAVE_MODIFY_TYPES is fine.
+>=20
+> > > > This should take only page type given that flags are zeroed:
+> > > >=20
+> > > > EPCM(DS:RCX).R :=3D 0;
+> > > > EPCM(DS:RCX).W :=3D 0;
+> > > > EPCM(DS:RCX).X :=3D 0;=20
+> > > >=20
+> > >=20
+> > > ok, this was how it was done in V1 [1] and I can go back to that.
+> >=20
+> > I would name the fields as "flags" and "page_type" just to align
+> > names with SGX instead of trying to mimim "posix names". Otherwise,=C2=
+=A0
+> > I support that.
+>=20
+> I will move this ioctl() to use "page_type" instead of "secinfo"
+> within struct sgx_enclave_modify_type.
+>=20
+> Your guidance of "flags" is not clear to me. I assume that you
+> refer to the field for struct sgx_enclave_restrict_permissions
+> where I think "permissions" to only contain the new permissions
+> would be more appropriate. None of the other values in
+> secinfo.flags are relevant.
+
+I'm fine with your permissions field to the restrict ioctl.
+
+>=20
+> Reinette
+>=20
+> [1] https://lore.kernel.org/linux-sgx/Yav9g4+L8zg48DRf@iki.fi/
+>=20
 
 BR, Jarkko
