@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8E5C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed, 13 Apr 2022 21:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7FAC4332F
+	for <linux-sgx@archiver.kernel.org>; Wed, 13 Apr 2022 21:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239084AbiDMVN3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 13 Apr 2022 17:13:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55230 "EHLO
+        id S239022AbiDMVNb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 13 Apr 2022 17:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239005AbiDMVNG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Apr 2022 17:13:06 -0400
+        with ESMTP id S239021AbiDMVNI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Apr 2022 17:13:08 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4327F3A5C1;
-        Wed, 13 Apr 2022 14:10:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E303A5C1;
+        Wed, 13 Apr 2022 14:10:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649884243; x=1681420243;
+  t=1649884246; x=1681420246;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yhqYq03R1gOWee2UyUVLupzCQlollDEDnN5WKIJtgE8=;
-  b=H3ZOpCI2gzjHrJlqWE3JJBoLkZojelprf/KvIeouAA9ma8zBpE9UUzZI
-   eQaa3HgL6PIbIGdQL0JuvBKgNIRKXu/MuMVbsbiGUhLyQNiMw42s1arvz
-   /MIbIXLgvD2AJjWmkP+/hiUSekG9kQtSAWzHbEl5rlTNmE/VUJSwgFVnW
-   A2F6GTm/xnwCWnRNMzGGu/VNKBsH1W4RqDwzcCtjLmncU+tOuI8N6FSf/
-   pucpEzwusAj9alvnpcqC1QtrWNx7PdxJY+WtYvS2mhyQAA+IL/3bp3ynU
-   x41qj5nYt5dSdi8oL+RGD09GdR013KCl8wkGCxPN5I+epR1T4fb8YOpth
+  bh=2QeKF7uBH8LKmya6UOwD9E8IOWVV1+CcDsY7OQxbP+8=;
+  b=Op3Y+D91M8cDHqMKbBC2243WOcSigM4SSVO1OXjZZ6SkNnrPvAoDZORo
+   Z3VoDY80jirap7odeq2IlKvuoufSKyYfCVnTCprXzMx6H7AXSzU0JBlB9
+   b5qKagFSgP8LHO0O5vG+TJj9H8bdBa0sX3ZtejJoPxnFBPHJZ3ZbgNLvz
+   u0Z5rRE6/3m1AsksogCuwes/JG05ajOwOolWedV7wevrCli6rhOI5ZNR4
+   1Sin2aBkpZhkF5drFfBi6by3Bu0/1EL3fKAPv1w658mvMxXjMKKbttHKr
+   1zDLrwvYBWERiLstdwJWJe7YyGAAA8OkyEI/kkstZ1VUIC620R31w/m1l
    g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323219003"
+X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323219028"
 X-IronPort-AV: E=Sophos;i="5.90,257,1643702400"; 
-   d="scan'208";a="323219003"
+   d="scan'208";a="323219028"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:41 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:43 -0700
 X-IronPort-AV: E=Sophos;i="5.90,257,1643702400"; 
-   d="scan'208";a="725054246"
+   d="scan'208";a="725054276"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:41 -0700
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:43 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -45,9 +45,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V4 04/31] x86/sgx: Add wrapper for SGX2 EAUG function
-Date:   Wed, 13 Apr 2022 14:10:04 -0700
-Message-Id: <62915f9ff84ae41f363a3a67a5a86ee4e0f6cc7e.1649878359.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 13/31] x86/sgx: Export sgx_encl_page_alloc()
+Date:   Wed, 13 Apr 2022 14:10:13 -0700
+Message-Id: <c47163aa933077c916101d5ba413257594160efe.1649878359.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649878359.git.reinette.chatre@intel.com>
 References: <cover.1649878359.git.reinette.chatre@intel.com>
@@ -57,50 +57,127 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a wrapper for the EAUG ENCLS leaf function used to
-add a page to an initialized enclave.
+From: Jarkko Sakkinen <jarkko@kernel.org>
 
-EAUG:
-1) Stores all properties of the new enclave page in the SGX
-   hardware's Enclave Page Cache Map (EPCM).
-2) Sets the PENDING bit in the EPCM entry of the enclave page.
-   This bit is cleared by the enclave by invoking ENCLU leaf
-   function EACCEPT or EACCEPTCOPY.
+Move sgx_encl_page_alloc() to encl.c and export it so that it can be
+used in the implementation for support of adding pages to initialized
+enclaves, which requires to allocate new enclave pages.
 
-Access from within the enclave to the new enclave page is not
-possible until the PENDING bit is cleared.
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-Changes since V3:
-- Add Jarkko's Reviewed-by tag.
+No changes since V3.
 
-Changes since V1:
-- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
-  in three to introduce the SGX2 functions separately (Jarkko).
-- Rewrite commit message to include how the EPCM within the hardware
-  is changed by the SGX2 function as well as any calling
-  conditions (Jarkko).
+Changes since V2:
+- New patch
+  Originally submitted at:
+  https://lore.kernel.org/linux-sgx/20220308112833.262805-3-jarkko@kernel.org/
 
- arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c  | 32 ++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encl.h  |  3 +++
+ arch/x86/kernel/cpu/sgx/ioctl.c | 32 --------------------------------
+ 3 files changed, 35 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 7a1ecf704ec1..99004b02e2ed 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -227,4 +227,10 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
- 	return __encls_ret_2(EMODT, secinfo, addr);
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index c77a62432862..546423753e4c 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -792,6 +792,38 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+ 	return ret;
  }
  
-+/* Zero a page of EPC memory and add it to an initialized enclave. */
-+static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
++struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
++					  unsigned long offset,
++					  u64 secinfo_flags)
 +{
-+	return __encls_2(EAUG, pginfo, addr);
++	struct sgx_encl_page *encl_page;
++	unsigned long prot;
++
++	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
++	if (!encl_page)
++		return ERR_PTR(-ENOMEM);
++
++	encl_page->desc = encl->base + offset;
++	encl_page->encl = encl;
++
++	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
++	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
++	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
++
++	/*
++	 * TCS pages must always RW set for CPU access while the SECINFO
++	 * permissions are *always* zero - the CPU ignores the user provided
++	 * values and silently overwrites them with zero permissions.
++	 */
++	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
++		prot |= PROT_READ | PROT_WRITE;
++
++	/* Calculate maximum of the VM flags for the page. */
++	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
++
++	return encl_page;
 +}
 +
- #endif /* _X86_ENCLS_H */
+ /**
+  * sgx_zap_enclave_ptes() - remove PTEs mapping the address from enclave
+  * @encl: the enclave
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 9d673d9531f0..253ebdd1c5be 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -112,6 +112,9 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+ 				  struct sgx_encl_page *page);
++struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
++					  unsigned long offset,
++					  u64 secinfo_flags);
+ void sgx_zap_enclave_ptes(struct sgx_encl *encl, unsigned long addr);
+ struct sgx_epc_page *sgx_alloc_va_page(void);
+ unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 2df27dd8b30d..bb8cdb2ad0d1 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -169,38 +169,6 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
+-static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+-						 unsigned long offset,
+-						 u64 secinfo_flags)
+-{
+-	struct sgx_encl_page *encl_page;
+-	unsigned long prot;
+-
+-	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
+-	if (!encl_page)
+-		return ERR_PTR(-ENOMEM);
+-
+-	encl_page->desc = encl->base + offset;
+-	encl_page->encl = encl;
+-
+-	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
+-	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
+-	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
+-
+-	/*
+-	 * TCS pages must always RW set for CPU access while the SECINFO
+-	 * permissions are *always* zero - the CPU ignores the user provided
+-	 * values and silently overwrites them with zero permissions.
+-	 */
+-	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
+-		prot |= PROT_READ | PROT_WRITE;
+-
+-	/* Calculate maximum of the VM flags for the page. */
+-	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
+-
+-	return encl_page;
+-}
+-
+ static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
+ {
+ 	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
 -- 
 2.25.1
 
