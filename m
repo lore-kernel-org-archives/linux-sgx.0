@@ -2,40 +2,40 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62072C433F5
-	for <linux-sgx@archiver.kernel.org>; Wed, 13 Apr 2022 21:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2E5C43217
+	for <linux-sgx@archiver.kernel.org>; Wed, 13 Apr 2022 21:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236086AbiDMVNS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 13 Apr 2022 17:13:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55320 "EHLO
+        id S238842AbiDMVNU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 13 Apr 2022 17:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239032AbiDMVNK (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Apr 2022 17:13:10 -0400
+        with ESMTP id S239056AbiDMVNN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Apr 2022 17:13:13 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD82344A33;
-        Wed, 13 Apr 2022 14:10:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 930E53A5C1;
+        Wed, 13 Apr 2022 14:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649884247; x=1681420247;
+  t=1649884251; x=1681420251;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TtQBkc71W/eE9bza27771JItHGMI7ZHCR/obhz2nAK0=;
-  b=Cr7xtMr76CVXDf1v69X7XjR6DImUkVj1yV16N+OC13sYeUcE08xgZ1ND
-   MdNrAPPUyVNd6bPrj9wlt4CCrGr3DBEgIN1JhT/2e99JJy9Q09dhURNZp
-   YRybhxJLwHkdAVK9T8xHMOxKqHyfTwbyWrpaDwNH5JpS8SiNWeeAnjPXN
-   ff7fPlR8X4t+O7o7rAcSW9VNUMBotB1M39jkeK6yvclzLi9WkskQ8xAE7
-   60THUbJq2fMu6qqr4XfExlbwnaGB8JvUIwCy02jYz++vCx6OlmY0o0+QJ
-   dyruq7/XDPlaPQHvlXilpDWRMSqeKV0sPEuFba+m+KaRKVWXa6SMlSnCf
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323219039"
+  bh=vNBikG4gYkUyvIo7XiITqm12yzQ/ap2t7cXvNNbhqNA=;
+  b=KPdP5ShMTuOTGKswzy+mEq7hWnAY6zY4+QZ+xrP/trFaD14zZpmJSUv3
+   Q1t7tuPmDo8obAAqVrxXzr6mypVw6zlX9H4dg1bKvWT9DWhcXSOOw1Dk/
+   wpUjKLjP2qE4yM4krGnho8TKvlTODYECHB8pj9DNIIsa7PqCcSh5MZn13
+   9tgtJ+pcGJfEZcZZZ+lfKyUArMOO9I34xXG47g2taMgsL8kmCQY5210C8
+   YG+7zxNqWja32uzRk+Qc70iBmYiT6y2lkJp6B3caKw+Hdbe3LoO8IVkg1
+   rBqZ1FFV4XX2QdT8+y7qk78ebOugqSXw//WozpsnJS3GvF7Hl1WbuG68O
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323219067"
 X-IronPort-AV: E=Sophos;i="5.90,257,1643702400"; 
-   d="scan'208";a="323219039"
+   d="scan'208";a="323219067"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:44 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:46 -0700
 X-IronPort-AV: E=Sophos;i="5.90,257,1643702400"; 
-   d="scan'208";a="725054290"
+   d="scan'208";a="725054321"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:44 -0700
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:46 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
         bp@alien8.de, luto@kernel.org, mingo@redhat.com,
@@ -45,9 +45,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V4 17/31] x86/sgx: Tighten accessible memory range after enclave initialization
-Date:   Wed, 13 Apr 2022 14:10:17 -0700
-Message-Id: <1eaa05cc46a09728036060b209deb2cf0351eb62.1649878359.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 26/31] selftests/sgx: Introduce TCS initialization enclave operation
+Date:   Wed, 13 Apr 2022 14:10:26 -0700
+Message-Id: <e3485cab7c764d4a37810f5e25c728ed83e66339.1649878359.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649878359.git.reinette.chatre@intel.com>
 References: <cover.1649878359.git.reinette.chatre@intel.com>
@@ -57,61 +57,102 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Before an enclave is initialized the enclave's memory range is unknown.
-The enclave's memory range is learned at the time it is created via the
-SGX_IOC_ENCLAVE_CREATE ioctl() where the provided memory range is
-obtained from an earlier mmap() of /dev/sgx_enclave. After an enclave
-is initialized its memory can be mapped into user space (mmap()) from
-where it can be entered at its defined entry points.
+The Thread Control Structure (TCS) contains meta-data used by the
+hardware to save and restore thread specific information when
+entering/exiting the enclave. A TCS can be added to an initialized
+enclave by first adding a new regular enclave page, initializing the
+content of the new page from within the enclave, and then changing that
+page's type to a TCS.
 
-With the enclave's memory range known after it is initialized there is
-no reason why it should be possible to map memory outside this range.
+Support the initialization of a TCS from within the enclave.
+The variable information needed that should be provided from outside
+the enclave is the address of the TCS, address of the State Save Area
+(SSA), and the entry point that the thread should use to enter the
+enclave. With this information provided all needed fields of a TCS
+can be initialized.
 
-Lock down access to the initialized enclave's memory range by denying
-any attempt to map memory outside its memory range.
-
-Locking down the memory range also makes adding pages to an initialized
-enclave more efficient. Pages are added to an initialized enclave by
-accessing memory that belongs to the enclave's memory range but not yet
-backed by an enclave page. If it is possible for user space to map
-memory that does not form part of the enclave then an access to this
-memory would eventually fail. Failures range from a prompt general
-protection fault if the access was an ENCLU[EACCEPT] from within the
-enclave, or a page fault via the vDSO if it was another access from
-within the enclave, or a SIGBUS (also resulting from a page fault) if
-the access was from outside the enclave.
-
-Disallowing invalid memory to be mapped in the first place avoids
-preventable failures.
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 Changes since V3:
-- Add Jarkko's Reviewed-by tag.
+- Add Jarkko's Acked-by tag.
 
-Changes since V1:
-- Add comment (Jarkko).
+ tools/testing/selftests/sgx/defines.h   |  8 +++++++
+ tools/testing/selftests/sgx/test_encl.c | 30 +++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
- arch/x86/kernel/cpu/sgx/encl.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7ccda6fe1f8f..11f97fdcac1e 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -402,6 +402,11 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
+index b638eb98c80c..d8587c971941 100644
+--- a/tools/testing/selftests/sgx/defines.h
++++ b/tools/testing/selftests/sgx/defines.h
+@@ -26,6 +26,7 @@ enum encl_op_type {
+ 	ENCL_OP_NOP,
+ 	ENCL_OP_EACCEPT,
+ 	ENCL_OP_EMODPE,
++	ENCL_OP_INIT_TCS_PAGE,
+ 	ENCL_OP_MAX,
+ };
  
- 	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
+@@ -68,4 +69,11 @@ struct encl_op_emodpe {
+ 	uint64_t flags;
+ };
  
-+	/* Disallow mapping outside enclave's address range. */
-+	if (test_bit(SGX_ENCL_INITIALIZED, &encl->flags) &&
-+	    (start < encl->base || end > encl->base + encl->size))
-+		return -EACCES;
++struct encl_op_init_tcs_page {
++	struct encl_op_header header;
++	uint64_t tcs_page;
++	uint64_t ssa;
++	uint64_t entry;
++};
 +
- 	/*
- 	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
- 	 * conflict with the enclave page permissions.
+ #endif /* DEFINES_H */
+diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
+index 5b6c65331527..c0d6397295e3 100644
+--- a/tools/testing/selftests/sgx/test_encl.c
++++ b/tools/testing/selftests/sgx/test_encl.c
+@@ -57,6 +57,35 @@ static void *memcpy(void *dest, const void *src, size_t n)
+ 	return dest;
+ }
+ 
++static void *memset(void *dest, int c, size_t n)
++{
++	size_t i;
++
++	for (i = 0; i < n; i++)
++		((char *)dest)[i] = c;
++
++	return dest;
++}
++
++static void do_encl_init_tcs_page(void *_op)
++{
++	struct encl_op_init_tcs_page *op = _op;
++	void *tcs = (void *)op->tcs_page;
++	uint32_t val_32;
++
++	memset(tcs, 0, 16);			/* STATE and FLAGS */
++	memcpy(tcs + 16, &op->ssa, 8);		/* OSSA */
++	memset(tcs + 24, 0, 4);			/* CSSA */
++	val_32 = 1;
++	memcpy(tcs + 28, &val_32, 4);		/* NSSA */
++	memcpy(tcs + 32, &op->entry, 8);	/* OENTRY */
++	memset(tcs + 40, 0, 24);		/* AEP, OFSBASE, OGSBASE */
++	val_32 = 0xFFFFFFFF;
++	memcpy(tcs + 64, &val_32, 4);		/* FSLIMIT */
++	memcpy(tcs + 68, &val_32, 4);		/* GSLIMIT */
++	memset(tcs + 72, 0, 4024);		/* Reserved */
++}
++
+ static void do_encl_op_put_to_buf(void *op)
+ {
+ 	struct encl_op_put_to_buf *op2 = op;
+@@ -100,6 +129,7 @@ void encl_body(void *rdi,  void *rsi)
+ 		do_encl_op_nop,
+ 		do_encl_eaccept,
+ 		do_encl_emodpe,
++		do_encl_init_tcs_page,
+ 	};
+ 
+ 	struct encl_op_header *op = (struct encl_op_header *)rdi;
 -- 
 2.25.1
 
