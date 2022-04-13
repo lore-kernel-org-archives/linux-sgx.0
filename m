@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2ADC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6BCC433FE
 	for <linux-sgx@archiver.kernel.org>; Wed, 13 Apr 2022 21:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239015AbiDMVNc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S239089AbiDMVNc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Wed, 13 Apr 2022 17:13:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55220 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239001AbiDMVNF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Apr 2022 17:13:05 -0400
+        with ESMTP id S239008AbiDMVNG (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Apr 2022 17:13:06 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D9D3BBD4;
-        Wed, 13 Apr 2022 14:10:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B59E3AA77;
+        Wed, 13 Apr 2022 14:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649884243; x=1681420243;
+  t=1649884244; x=1681420244;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SIjeYNQYehkFATZl0iOzYFq+nO0jvY7dqq8z3tcfXBA=;
-  b=ENjpTPRFGZ5429HTVW+UDY6KwL6XtulC2Z67Q5jBIIgJcjkgABCDY/Lf
-   CnOI7YoUssJNpDxo7Z77N9+Oar9OWH1Td9S7aGQAgl/e4hT+OZaYazM53
-   +GLpf1bSe2BiFv46+d1z7w8qXy5bVwbVTUYWjcCNXOdcDNwxJe7XD9B5H
-   l6sJRrBxfCaGdjRjVNN7hxl+WcQ5vQ4l3zDhVmNmWRawJjP4M2/uJzgVf
-   p6LGfyqWiK92QSDmtjaRXwb2qaDUd6NCDEmSij5wJdmNlI+/V9AOXI8N/
-   VNswEBZpRk6TnTHTpcv2MIABbIlFGSoJ+MgK0tDlJ+2bka6crI9zagYIw
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323219007"
+  bh=vm/5BkZzLoJzZZYcikqynXdEi6cbf77oNCUexZRAFeY=;
+  b=J9RnOJTNj7kurFy8y9cFmbKh3f3DfdH5je3j79d6jzR5YZFgFzn5IChs
+   99lqNjn9cJFIGMI2MOmvX8wN/g8O7DssbbJ7Uvm0N0lYP5obEUgBhgXk3
+   Kvi7kPgeUjMPvisIsCBhjXcX7PnUq9/ffIu/LoDGLgFbMm7hjvn4AhR/8
+   zHdx8IGmlIhY+paIKoWOTRHtFTdSNi3RPYz9l/6M7veDBU9srbc2HoheQ
+   Uji+DsKz2TN48uWvKzgiyidYTfHkNonAIW/nQ1nilRB0Fpise5XPMZr7q
+   EPa6O8C8Az+Wb6fezegqY1LjTvqMORa6b1jCke0+IOjWvLsBZcqg2KqB0
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10316"; a="323219012"
 X-IronPort-AV: E=Sophos;i="5.90,257,1643702400"; 
-   d="scan'208";a="323219007"
+   d="scan'208";a="323219012"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:41 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:42 -0700
 X-IronPort-AV: E=Sophos;i="5.90,257,1643702400"; 
-   d="scan'208";a="725054250"
+   d="scan'208";a="725054256"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 14:10:41 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -45,9 +45,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V4 05/31] x86/sgx: Support loading enclave page without VMA permissions check
-Date:   Wed, 13 Apr 2022 14:10:05 -0700
-Message-Id: <db3a14f2d2df7678dec23375d48c96b603f8cfb5.1649878359.git.reinette.chatre@intel.com>
+Subject: [PATCH V4 07/31] x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()
+Date:   Wed, 13 Apr 2022 14:10:07 -0700
+Message-Id: <a12bc3d7b289e9557bd9e23bf878dba187272bfc.1649878359.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1649878359.git.reinette.chatre@intel.com>
 References: <cover.1649878359.git.reinette.chatre@intel.com>
@@ -57,23 +57,19 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-sgx_encl_load_page() is used to find and load an enclave page into
-enclave (EPC) memory, potentially loading it from the backing storage.
-Both usages of sgx_encl_load_page() are during an access to the
-enclave page from a VMA and thus the permissions of the VMA are
-considered before the enclave page is loaded.
+sgx_encl_ewb_cpumask() is no longer unique to the reclaimer where it
+is used during the EWB ENCLS leaf function when EPC pages are written
+out to main memory and sgx_encl_ewb_cpumask() is used to learn which
+CPUs might have executed the enclave to ensure that TLBs are cleared.
 
-SGX2 functions operating on enclave pages belonging to an initialized
-enclave requiring the page to be in EPC. It is thus required to
-support loading enclave pages into the EPC independent from a VMA.
+Upcoming SGX2 enabling will use sgx_encl_ewb_cpumask() during the
+EMODPR and EMODT ENCLS leaf functions that make changes to enclave
+pages. The function is needed for the same reason it is used now: to
+learn which CPUs might have executed the enclave to ensure that TLBs
+no longer point to the changed pages.
 
-Split the current sgx_encl_load_page() to support the two usages:
-A new call, sgx_encl_load_page_in_vma(), behaves exactly like the
-current sgx_encl_load_page() that takes VMA permissions into account,
-while sgx_encl_load_page() just loads an enclave page into EPC.
-
-VMA, PTE, and EPCM permissions continue to dictate whether
-the pages can be accessed from within an enclave.
+Rename sgx_encl_ewb_cpumask() to sgx_encl_cpumask() to reflect the
+broader usage.
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
@@ -81,116 +77,72 @@ Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Changes since V3:
 - Add Jarkko's Reviewed-by tag.
 
-Changes since V2:
-- New patch
+Changes since V1:
+- New patch split from original "x86/sgx: Use more generic name for
+  enclave cpumask function" (Jarkko).
 
- arch/x86/kernel/cpu/sgx/encl.c | 57 ++++++++++++++++++++++------------
- arch/x86/kernel/cpu/sgx/encl.h |  2 ++
- 2 files changed, 40 insertions(+), 19 deletions(-)
+ arch/x86/kernel/cpu/sgx/encl.c | 6 +++---
+ arch/x86/kernel/cpu/sgx/encl.h | 2 +-
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7c63a1911fae..05ae1168391c 100644
+index c6525eba74e8..8de9bebc4d81 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -131,25 +131,10 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	return epc_page;
+@@ -614,7 +614,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
  }
  
--static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
--						unsigned long addr,
--						unsigned long vm_flags)
-+static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
-+						  struct sgx_encl_page *entry)
+ /**
+- * sgx_encl_ewb_cpumask() - Query which CPUs might be accessing the enclave
++ * sgx_encl_cpumask() - Query which CPUs might be accessing the enclave
+  * @encl: the enclave
+  *
+  * Some SGX functions require that no cached linear-to-physical address
+@@ -639,7 +639,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+  * The following flow is used to support SGX functions that require that
+  * no cached linear-to-physical address mappings are present:
+  * 1) Execute ENCLS[ETRACK] to initiate hardware tracking.
+- * 2) Use this function (sgx_encl_ewb_cpumask()) to query which CPUs might be
++ * 2) Use this function (sgx_encl_cpumask()) to query which CPUs might be
+  *    accessing the enclave.
+  * 3) Send IPI to identified CPUs, kicking them out of the enclave and
+  *    thus flushing all locally cached linear-to-physical address mappings.
+@@ -656,7 +656,7 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+  *
+  * Return: cpumask of CPUs that might be accessing @encl
+  */
+-const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
++const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl)
  {
--	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
- 	struct sgx_epc_page *epc_page;
--	struct sgx_encl_page *entry;
--
--	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
--	if (!entry)
--		return ERR_PTR(-EFAULT);
--
--	/*
--	 * Verify that the faulted page has equal or higher build time
--	 * permissions than the VMA permissions (i.e. the subset of {VM_READ,
--	 * VM_WRITE, VM_EXECUTE} in vma->vm_flags).
--	 */
--	if ((entry->vm_max_prot_bits & vm_prot_bits) != vm_prot_bits)
--		return ERR_PTR(-EFAULT);
- 
- 	/* Entry successfully located. */
- 	if (entry->epc_page) {
-@@ -175,6 +160,40 @@ static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
- 	return entry;
- }
- 
-+static struct sgx_encl_page *sgx_encl_load_page_in_vma(struct sgx_encl *encl,
-+						       unsigned long addr,
-+						       unsigned long vm_flags)
-+{
-+	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
-+	struct sgx_encl_page *entry;
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry)
-+		return ERR_PTR(-EFAULT);
-+
-+	/*
-+	 * Verify that the page has equal or higher build time
-+	 * permissions than the VMA permissions (i.e. the subset of {VM_READ,
-+	 * VM_WRITE, VM_EXECUTE} in vma->vm_flags).
-+	 */
-+	if ((entry->vm_max_prot_bits & vm_prot_bits) != vm_prot_bits)
-+		return ERR_PTR(-EFAULT);
-+
-+	return __sgx_encl_load_page(encl, entry);
-+}
-+
-+struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
-+					 unsigned long addr)
-+{
-+	struct sgx_encl_page *entry;
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry)
-+		return ERR_PTR(-EFAULT);
-+
-+	return __sgx_encl_load_page(encl, entry);
-+}
-+
- static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
- {
- 	unsigned long addr = (unsigned long)vmf->address;
-@@ -196,7 +215,7 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
- 
- 	mutex_lock(&encl->lock);
- 
--	entry = sgx_encl_load_page(encl, addr, vma->vm_flags);
-+	entry = sgx_encl_load_page_in_vma(encl, addr, vma->vm_flags);
- 	if (IS_ERR(entry)) {
- 		mutex_unlock(&encl->lock);
- 
-@@ -344,7 +363,7 @@ static struct sgx_encl_page *sgx_encl_reserve_page(struct sgx_encl *encl,
- 	for ( ; ; ) {
- 		mutex_lock(&encl->lock);
- 
--		entry = sgx_encl_load_page(encl, addr, vm_flags);
-+		entry = sgx_encl_load_page_in_vma(encl, addr, vm_flags);
- 		if (PTR_ERR(entry) != -EBUSY)
- 			break;
- 
+ 	cpumask_t *cpumask = &encl->cpumask;
+ 	struct sgx_encl_mm *encl_mm;
 diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index fec43ca65065..6b34efba1602 100644
+index d2acb4debde5..e59c2cbf71e2 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.h
 +++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -116,5 +116,7 @@ unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
- void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
- bool sgx_va_page_full(struct sgx_va_page *va_page);
- void sgx_encl_free_epc_page(struct sgx_epc_page *page);
-+struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
-+					 unsigned long addr);
+@@ -105,7 +105,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
  
- #endif /* _X86_ENCL_H */
+ void sgx_encl_release(struct kref *ref);
+ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+-const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl);
++const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl);
+ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			 struct sgx_backing *backing);
+ void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 2de85f459492..fa33922879bf 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -249,7 +249,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+ 			 * miss cpus that entered the enclave between
+ 			 * generating the mask and incrementing epoch.
+ 			 */
+-			on_each_cpu_mask(sgx_encl_ewb_cpumask(encl),
++			on_each_cpu_mask(sgx_encl_cpumask(encl),
+ 					 sgx_ipi_cb, NULL, 1);
+ 			ret = __sgx_encl_ewb(epc_page, va_slot, backing);
+ 		}
 -- 
 2.25.1
 
