@@ -2,191 +2,94 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C135C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Apr 2022 15:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26CFC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Apr 2022 21:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355115AbiDOPZX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 15 Apr 2022 11:25:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53004 "EHLO
+        id S1352884AbiDOVMf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 15 Apr 2022 17:12:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355109AbiDOPZJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Apr 2022 11:25:09 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA5FD445C;
-        Fri, 15 Apr 2022 08:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650036151; x=1681572151;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=KtZj13mbxOnyRhYSbIkHN1V3u1IbyRT1bg+eAoklQgw=;
-  b=QxIPx0DyF/FsJaNwILEYSSLabXo8VMuvitlIwSeW94JS2k2RW32gPzxa
-   1S+UY1TQkkaAnZ3QILcJy6cMNfA5gpOSNkfbST8kKbQ8YNmPkuA5JOnOs
-   Oa4T5JFhBnzFBjAYOrGcyrmDLl6c/8pYryceE5QoIq8knsab+GZiNmHxa
-   oQwu8+pc86Pt8XL7F/8Mm5ZajHovptn0rCABElT0jCM04AD4I9snzEBSq
-   mqyBzIgWh4acoNB+aEc6EdrU2DDrvRAN44xuIHPXvQWZlfKzU5Pq6PZkS
-   KGU4R5b7QZNhssA3hvmKq6A8Uh4DBKjWQqD/b2/U7EbiL3PGN1yrr0nuP
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10318"; a="262922871"
-X-IronPort-AV: E=Sophos;i="5.90,262,1643702400"; 
-   d="scan'208";a="262922871"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2022 08:22:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,262,1643702400"; 
-   d="scan'208";a="574391586"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orsmga008.jf.intel.com with ESMTP; 15 Apr 2022 08:22:30 -0700
-Received: from fmsmsx607.amr.corp.intel.com (10.18.126.87) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Fri, 15 Apr 2022 08:22:30 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx607.amr.corp.intel.com (10.18.126.87) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Fri, 15 Apr 2022 08:22:30 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27 via Frontend Transport; Fri, 15 Apr 2022 08:22:30 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.27; Fri, 15 Apr 2022 08:22:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Mrn8/g+k1/8y8ivIP8WaGOSGo0uALrtkup63CDAot5V+uEtutsL7gwtCd+aS5Hz9lVHqj3kofsNiT62aXINtDOTCN3U4kWsCvyqvbznZnQJgivqeBaM6sehGCQZK45f6T7EWitSqWd/VGR9isK94Ptbl3lWqOprk++g+RJqPwgy86dxNvrk9sX0ayzZaBeh0hs7DbX333BXcTwQW3+nHItgdHLlaa47b6AIQR++5nXaO60eXaX+CTvXeUelF9gvzi0zQyC+Mdw7TRhTMUVpfk0g32zsrRVsYberLvNBZGmIx1iP+1ugid4NdIXZra3zD6x6o0PhF9zQwGrDLHULSBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KtZj13mbxOnyRhYSbIkHN1V3u1IbyRT1bg+eAoklQgw=;
- b=SEDoWpkEkIhy8zmAWHECjz7cIjfm79kai8DQwV+pmISAGRoGflBE6jieQfxAxHXPfgyz+d3TUWGmMYMuGv+tXLeyWvmSO+u8wrlMIPaFOeE0qUljVscA0rbc2vJCFNFELlgJxgqSCSWhGIxXdJhyLAoNQhsNKts0S4YR1yib0Vs/lCiaXvd5NUKOajnewZSc/Q92Z4xArYu7i32wLLtoK01EeHxZ0KvZgtOMAphs5B/6Pdolh5n9ecYLMIFlnQZxlb2CkignELL8lQbBbqkwJ7KEjqA+hXE89RVR7UkAR1G0+l4RyE8OyH3h0YAHUD9+LttBytOi2CtMLV5nJBNMGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by BN7PR11MB2737.namprd11.prod.outlook.com (2603:10b6:406:b0::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Fri, 15 Apr
- 2022 15:22:28 +0000
-Received: from BN0PR11MB5744.namprd11.prod.outlook.com
- ([fe80::918d:6022:8ee6:3e36]) by BN0PR11MB5744.namprd11.prod.outlook.com
- ([fe80::918d:6022:8ee6:3e36%2]) with mapi id 15.20.5164.020; Fri, 15 Apr 2022
- 15:22:28 +0000
-Message-ID: <bd1538a8-9dce-1051-385a-191f6a6d1beb@intel.com>
-Date:   Fri, 15 Apr 2022 08:22:23 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.8.0
-Subject: Re: [PATCH V4 14/31] x86/sgx: Support VA page allocation without
- reclaiming
-Content-Language: en-US
-To:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        <dave.hansen@linux.intel.com>, <tglx@linutronix.de>,
-        <bp@alien8.de>, <luto@kernel.org>, <mingo@redhat.com>,
-        <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <shuah@kernel.org>,
-        <linux-kselftest@vger.kernel.org>
-CC:     <seanjc@google.com>, <kai.huang@intel.com>,
-        <cathy.zhang@intel.com>, <cedric.xing@intel.com>,
-        <haitao.huang@intel.com>, <mark.shanahan@intel.com>,
-        <vijay.dhanraj@intel.com>, <hpa@zytor.com>,
-        <linux-kernel@vger.kernel.org>
-References: <cover.1649878359.git.reinette.chatre@intel.com>
- <0ab32196f5056b25c34fb89fcc4dc28a5d875d2e.1649878359.git.reinette.chatre@intel.com>
- <bf2fcc93babdbf541fffc6cc5f5756f391773a75.camel@kernel.org>
- <767b99c5-f28e-4b8f-5147-6e1d290ca5c6@intel.com>
- <op.1kn59r1bwjvjmi@hhuan26-mobl1.mshome.net>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <op.1kn59r1bwjvjmi@hhuan26-mobl1.mshome.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0027.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::32) To BN0PR11MB5744.namprd11.prod.outlook.com
- (2603:10b6:408:166::16)
+        with ESMTP id S1352325AbiDOVMV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Apr 2022 17:12:21 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223D05EBDE
+        for <linux-sgx@vger.kernel.org>; Fri, 15 Apr 2022 14:09:49 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id ll10so8418939pjb.5
+        for <linux-sgx@vger.kernel.org>; Fri, 15 Apr 2022 14:09:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=LPajdb3g+LFqEb7zxx+mJ8Pp5q38lO4WZRS//6zsW5A=;
+        b=lTOVQQ3RWsbuiCaMKk4EX37aPHUG34dV8qYGLALne7qhFw4eypIAiHmQNLMlP2aeyo
+         542QyNA+aU52WNn37MYbWRnej60xiV/Dn/hkfHa1lTQiS27uNJRfGkFnuUgtBkwh7l/d
+         uDjPUmM5aDsU0+Xh2voHb/yGZ9WArIiRlgURdQHBfCLvHQ/B6qKQ84ZLQvTa4c410nGa
+         pSCbMc36ZF/bJy3z+ww6hLpwaaaIpwwOuUlB51Z8n7d2qiCgKCNc1z6s+mc+FL1/h6PG
+         FQucgbCix0gMrpNbW2OP/iVRQVC1KcUd+wqzZDqodm/fecOSnMVfaZxXc3PJWn9dE+LY
+         wuYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=LPajdb3g+LFqEb7zxx+mJ8Pp5q38lO4WZRS//6zsW5A=;
+        b=uBpy6E8w6jJRK/viEKRMO54ZDTSdHrseWMTkkyBFhAIu0bXlpkzoWQH3Dc87MNvVCR
+         7tJ1PQh2wweRisZlmYvZcxwUmO7E6p2nkeJxkHDPQfDa00o5Smpw9yp/WkCdpfi8wGrh
+         I1cEbPEvVp8daBXyFgElQVg8CowS/S0cXf6ClyoT5FY8lmXCt8Gnu5f168chpZo9znyi
+         6rPo/bNHawdAWaY7cfD9gc2d/5Egj0fydQyy/+cjwtJfSN3jd/BBho2xnDiM3bQauF3W
+         4dqP4JxquytZcz4gJkqQQQqlbSqbJ6ZjDlZwrUWq0LmM4peeGzlp69DED68rqEfouQi5
+         Ahnw==
+X-Gm-Message-State: AOAM531UVq0O36HXNdg/2FxU3rLw2241Ws2Wf0wSpfEg/Y9rarIP5Aia
+        ngxN/pCHG/X7aGR5torC4gL5qA==
+X-Google-Smtp-Source: ABdhPJwflp/hO2AJCFbRTgnQmnJUY2rmHxmi5NZ8H02JW44VJF+GwN0yBuW3QmlpEzyTHXzlJj+nPA==
+X-Received: by 2002:a17:90a:b890:b0:1cb:7ef2:8577 with SMTP id o16-20020a17090ab89000b001cb7ef28577mr754635pjr.45.1650056989193;
+        Fri, 15 Apr 2022 14:09:49 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id k20-20020aa788d4000000b004fb07f819c1sm3944370pff.50.2022.04.15.14.09.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Apr 2022 14:09:48 -0700 (PDT)
+Date:   Fri, 15 Apr 2022 21:09:44 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     =?utf-8?B?5r2Y6auY5a6B?= <pgn@zju.edu.cn>
+Cc:     pbonzini@redhat.com, vkuznets@redhat.com, wanpengli@tencent.com,
+        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        hpa@zytor.com, jarkko@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        secalert@redhat.com, syzkaller@googlegroups.com, kangel@zju.edu.cn
+Subject: Re: 'WARNING in vcpu_enter_guest' bug in arch/x86/kvm/x86.c:9877
+Message-ID: <YlnfGOGQPCxkAb03@google.com>
+References: <ca5aa7c.e8ca9.17f71bde91a.Coremail.pgn@zju.edu.cn>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 88319636-408e-412b-2f22-08da1ef3c0a2
-X-MS-TrafficTypeDiagnostic: BN7PR11MB2737:EE_
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <BN7PR11MB2737A69F9848C7F5F5F3F508F8EE9@BN7PR11MB2737.namprd11.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: t/V1jhsv1TPy4pyaDG/R3nvpxOPaLrwTE4SiAnFbZs+BOkAAOb25j2S4QTR0HiT4rWdXFmo+jcpFfQTxcZFe24iDuhAUqFU9siIyiQZT7awVciMECed08DsMxkaN/5EamOgwKx+5r4RJh6zWe+Luze1216ZjfeD62wNi1i76qD/5fgzlMhSyeDtog4/1eHNLA9x3OYOrgC09qhIwwUt3usN1N7lfmHGY7W+Y9dEd96oMMt7H904xVVpuhA2Oou5ejP/Z2NYL4/xzuACGfg77jR1wYKyQc2ipH5XMWHLOYANj/sPQUqBVLuNIV6+7HfrpkUCJ44Xl4vFkCzbiD3DS9jzyOeHqcyuMlGWacJojw3Pv5LmRc0VxLwrXsJ9mMFWtvR6e7jHLjkN0WMlBEmzSzGpG0zourhZ0BTZNwTgg/eYrdDLJUsOQG9NG08XJFdZfuQdefj8w6vBlmJ0z1Sy3/WyS3MicMaAalDU4jN4q3oRc9oWVWIhHB8f+uzd56LcvCPSrezpYemVrfdBRT5DDTZWlmlWHjR8ljFETcfgA4kyiMjIEhM5VJswUVCSY5r/qt9yAgzpTeJbK0+Beobl8b3FoaNDLoYanCJWu6Mg7xdMIU3xDFOHUTnyQWhwQRZnonHl1wOEBckRswQQ0rpS6WA0FmhBUAZDSO/ldvKNaEOWAMNIiKJ3swnVEu/TnHI6LkUm4bn//ZFv6ZKqLuH6uzSu3SvZz+t0D1Vf7umBs/T/hKp6jS3r4AWlCv9hpl8bC
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(31686004)(82960400001)(26005)(38100700002)(6512007)(6506007)(53546011)(6666004)(86362001)(2906002)(36756003)(921005)(66556008)(66476007)(66946007)(508600001)(6486002)(8676002)(4326008)(44832011)(8936002)(316002)(5660300002)(110136005)(7416002)(186003)(31696002)(2616005)(4744005)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cDc2VlpIOW1oNUx3c1NjSCtITGwvZjNjNmJLNDlWdGVyUXNDRXYzTXIwWi9z?=
- =?utf-8?B?dXJUTmZBOXhESm05QUpaVXFyM3NrS2luTk91WHpZdFE0NTlveVNxRzd6ZjVp?=
- =?utf-8?B?SlZyOGlSMUhvRGNIRzJBUGlCMG5sMnIwZ0h3MldFempuQ2hnSUlLOFY1cDMw?=
- =?utf-8?B?bStkUGx5alB5TGlPNzJhb2xWOENBYjJUVisrWk4yYzBKTnI1cklnYTZMUS82?=
- =?utf-8?B?YXpPeEVGNXpmNVJldTMyTUVHOFovRXV3bGE1T0dpRzlqSWx6a1NxZUIxWGQ5?=
- =?utf-8?B?QXR0d3ZkRUIwbWZMdWxKcmZlY1hINXdUS2ZkMnA5VTBRcFNsWnNoM3pPeENT?=
- =?utf-8?B?R29IaXYweUI5d0JtaTdJMUthbE1CY2oxRkVFaHZ3b2tEaXQwVnFoTFUzRkRN?=
- =?utf-8?B?Y0U1UmE0TnRMOG90SFdsdzhXVUltZCtWMXpRYXR3STBRbENNNjlET2VWcDJh?=
- =?utf-8?B?Y1NkRGZiRkNwcCtWb3ZjM1FBczlYL0FSc0VPWXU1ZklQbGFEOWlaUzV6VWJm?=
- =?utf-8?B?bE9IaTFkbVVQbTJ5WEEyanRGKzlQNm05c3FXejA5dk5DVXJFcWx5NTMxSWVW?=
- =?utf-8?B?bytDenNoR3ZVTDVmSGJSbldjR1JVbHF1eG9NeTltaWpHM05vSWxSRHBhT2Mw?=
- =?utf-8?B?dlcvMFoyUGxORExOejVtdU9zZm9GVStxL2MwRG56V20yL1ZsKzVJcHkvZGlp?=
- =?utf-8?B?eVk3NU9BaDlYdWUyQVpsRmhOY3NnN1RiMFZvQnluZ3VuNHRiOXhNMmFNVUxp?=
- =?utf-8?B?QVpGZFBCOURESnh3VDNra25ycTdnQmZLNW1UQ0EySnlTOG4wNUtNbWdaZzBz?=
- =?utf-8?B?Q3VWSDNLYTlwUks4OG9GUmM4THd3R1F4M3htRW5hNHoyUWdsNUR5MUp6bWFB?=
- =?utf-8?B?TnRMT1RmNWFzUnFNY1RxZ0huZlpBUURVejJWODNtVU5zaTRQTjJ3ZGtFR3cv?=
- =?utf-8?B?U3ZMdVhKL3JCK3loT2tFU3VTMGl0V0pZYXRMRER5OU5sMkVmL0VIVmc2eCsr?=
- =?utf-8?B?V0pnNGZaQ2dNU0JMMTI5VnVZMU8raGovSlpoZ1ZGRXc4RnFkcjhuVS9yV0l4?=
- =?utf-8?B?T00vTEVhNElGS082MjFQNXBkWXphV2VVMUR6NGJkZjV3NmdCbHhnZTU4S0d1?=
- =?utf-8?B?TWtPa2M2V1YzeGlwZm5hZUlGK1RCWkV4UndzYVNvVWNFUTh6V1VudlNoQUMv?=
- =?utf-8?B?ejQrbGE4VzRLcWQ0Q290ZDIzV25samsyMWZiNkdwaVppNytqY2dIYVVaZDhp?=
- =?utf-8?B?Q3loaHpYaXo4ZnRCWDlwcVZaQnZlVFFhYk5zcDFvSG9UYW1Sb01tMFJtL0Zp?=
- =?utf-8?B?YkJmZWYvaFN1R1JoQXJJS3pueU83cE1CZzQ5NXFWdEFLZWNCbDl1cU9MWjhB?=
- =?utf-8?B?RnhaOVdUVDlubi9CSTNVcW5qcGlpMU52dEZKUlpIZWFtbnJ0MkJEWnU0bTBu?=
- =?utf-8?B?WG1wSC9QZThiYTVCNytENjJHQ2VLYm80ckNERVcyV3QxZ2V3RGN3L3dxeFpV?=
- =?utf-8?B?SnFPOUZLTXlWeFJWR2luTlg4ZHNSelZHaUxSeTBqaG1KU24rVEhZS1NYeXoy?=
- =?utf-8?B?UXNkRVlPNWxNYW9uUUhvQTBBZnpJbTVKOVZSVzJ4SUVYQ2NUemszNnBnQzN4?=
- =?utf-8?B?TnRYQ3A3Ymhiei8yNndnRFpNYTRRdTFEUU9YVGE4Yzd1KzN1M3dXcWF1enlz?=
- =?utf-8?B?ek90WGlIZ1Nrck9ZQjdzbnNNLzlSZHltZU8vUktiUXNCNWNWeGRzSG42TlQx?=
- =?utf-8?B?YjQwUVRudUtYMW1Nazdabms3Yy8zeUl5ZXRrRFdkZnVkN0FRREV3aDg0SXZ1?=
- =?utf-8?B?bC9aTzNrSXJ6Rjlqc0JEK0MwQ0l1L3dqZWJJd1kxOWpYVTZZZVA3NVo1VUlF?=
- =?utf-8?B?bDhsVlpxSGVuTWd3UWkyTG5RWnJORzB6VzFGeGtWVmZVQVF2OUdqdFFheVda?=
- =?utf-8?B?OXRQc04ybHFWcmNXcVJvdHFCTVRCWUh5RXNrMGZUSFJSc0dIckdOOUVZS0No?=
- =?utf-8?B?UzMwc0FuTWM3M2RvOHBDNUtvZitBQVRlRnV2RzhGeG1kcUhFanNxR2JNcisw?=
- =?utf-8?B?MkxwNmJrak5nclp4MjhyMTdrVEFXRmFDRklXQ296TnkzaDV5VkJFYjRBdGx0?=
- =?utf-8?B?a2xFeVBLeU9iMnlCVC82UGp3WFQxZjJMdHJYVmJlMFdXdEl0RGx2SzdjaWRJ?=
- =?utf-8?B?dklONnl3c3ZNUnRyWFpocCtBYXJvekxYbVA3RldtVitrRkxOSU5Da1hWNWZB?=
- =?utf-8?B?NnFoUkxqZWlyUExkTWRqOHEzbGRDN210Qk8zZHVqMEVHSDNVbFhFclRwMDlt?=
- =?utf-8?B?Qi9UaHN3ejVsWCtQNzdCZE9ydWJreitWRXBoTm5KU1NFaUF2S0VoQURsTEJZ?=
- =?utf-8?Q?lwf77DK91G3K2Qkg=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88319636-408e-412b-2f22-08da1ef3c0a2
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2022 15:22:28.6586
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: odeVv/LRMjoV6uHulj34Uj4OOBol4GnMImb8aE6wdFPxGnahCec4SDE+3zkIK1IwRBFojlaPhokt1vjp+EgZckX3KAoCS4PapHAPxezOXAU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR11MB2737
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca5aa7c.e8ca9.17f71bde91a.Coremail.pgn@zju.edu.cn>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Haitao,
+On Thu, Mar 10, 2022, 潘高宁 wrote:
+> Hello, This is Gaoning Pan and Yongkang Jia from Zhejiang University. We
+> found a 'WARNING in vcpu_enter_guest' bug by syzkaller. This flaw allows a
+> malicious user in a Local DOS condition. The following program triggers Local
+> DOS in vcpu_enter_guest in arch/x86/kvm/x86.c:9877 in latest release
+> linux-5.16.13, this bug can be reproducible stably by the C reproducer:
+> 
+> ------------[ cut here ]------------
 
-On 4/15/2022 6:54 AM, Haitao Huang wrote:
-> You can also add my Tested-by for patches adding the new IOCTLs.
-> Our team and I have tested EAUG on #PF,  modifying types and permissions with Intel SGX SDK/PSW.
+...
 
-Thank you very much.
+> Syzkaller reproducer:
+> # {Threaded:true Repeat:true RepeatTimes:0 Procs:16 Slowdown:1 Sandbox:
+> r0 = openat$kvm(0xffffffffffffff9c, &(0x7f0000000000), 0x0, 0x0)
+> r1 = ioctl$KVM_CREATE_VM(r0, 0xae01, 0x0)
+> ioctl$KVM_CAP_SPLIT_IRQCHIP(r1, 0x4068aea3, &(0x7f0000000000)) (async)
+> r2 = ioctl$KVM_CREATE_VCPU(r1, 0xae41, 0x0) (async)
+> r3 = ioctl$KVM_CREATE_VCPU(r1, 0xae41, 0x400000000000002)
+> ioctl$KVM_SET_GUEST_DEBUG(r3, 0x4048ae9b, &(0x7f00000000c0)={0x5dda9c14aa95f5c5})
+> ioctl$KVM_RUN(r2, 0xae80, 0x0)
+> 
+> C repro and kernel config are attached.
 
-Based on your description I plan to add your Tested-by to the
-following patches:
-
-x86/sgx: Support restricting of enclave page permissions
-x86/sgx: Support adding of pages to an initialized enclave
-x86/sgx: Support modifying SGX page type
-x86/sgx: Support complete page removal
-
-Please let me know if this does not match your expectation.
-
-Reinette
+Reproduced, should have a fix posted shortly, thanks!
