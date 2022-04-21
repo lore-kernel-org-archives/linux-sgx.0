@@ -2,49 +2,49 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76788C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Apr 2022 11:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5957BC433FE
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Apr 2022 11:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239906AbiDULIe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 21 Apr 2022 07:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45514 "EHLO
+        id S245741AbiDULIf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 21 Apr 2022 07:08:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388734AbiDULHg (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Apr 2022 07:07:36 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A561E2F03B
-        for <linux-sgx@vger.kernel.org>; Thu, 21 Apr 2022 04:04:36 -0700 (PDT)
+        with ESMTP id S1388757AbiDULHk (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Apr 2022 07:07:40 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2CF2F3AE
+        for <linux-sgx@vger.kernel.org>; Thu, 21 Apr 2022 04:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650539076; x=1682075076;
+  t=1650539079; x=1682075079;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=lzF76dr5OyhgznlKi7kBwEA0d9lnZNetuc+LqiEoC00=;
-  b=Y7TmFABYrHbf7K7vkjBPbSl7/d8gGI/h0w4eBgZ3e0oobgeqv7uvtd37
-   unPvSYDcbjnhbWLvpIlWVZjQKSJwzfmwBCcshQzKGWYw9wngEs9CF5YR/
-   nBrUpvwdrLbBlTAtkAsWmf6dGinOzCAKaDlJNVd1JNvaG/ObNekRHg8Rn
-   iWFHBWeEQIcUIDq9pz4Qn4aswDTKmQo44G8K15fMkD3QfRtRGiPbkJOze
-   /Hq3RKeghGLXNTV3LT9qu9fUSouvYDvJT4+KUDx2U8/rXL1zCsCT9ldiJ
-   QnFnROKv5fZQjAulkmmlXUglZF7bfdaRHsXLJttm+7iv6Ihh6eIBQ9cA9
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10323"; a="244893370"
+  bh=rgvfROZEViuFt6jnJPQBGeEBIuSm+JPCSlpAf02Cxxg=;
+  b=Cvht/ZOzXQsdCxl/Hj+z9iisTKwvPTO4Mgj4vh5Wjx+u8I+y/VQBDns1
+   cz51PwnDwIm+Z3vZ1bnJIeIO0kDmBBEHJAKTq3bW4aB/N30FZVhlOSCla
+   AqCZ312R/W+NV3ZI6tdvScQCoZrvS8uV1OLmZYnCnLroPiGDyru9lbAk0
+   q1CUlz15CB1FazG3yJ71mAggRH5EED5Wk3a34DrhiOW0BSkz9iMsg+cp0
+   NK4S565TrB5BXnDbQ8h796zCuzPndOG05yVQxg799QxZ4W/Z+WnJLiiQw
+   xJOiu2QvscoyuKAv9Zl2ZhxF98yYXqxeGTUdShxaFpu3ESwd3en/8O34+
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10323"; a="251631197"
 X-IronPort-AV: E=Sophos;i="5.90,278,1643702400"; 
-   d="scan'208";a="244893370"
+   d="scan'208";a="251631197"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 04:04:24 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 04:04:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,278,1643702400"; 
-   d="scan'208";a="703039124"
+   d="scan'208";a="703039229"
 Received: from cathy-vostro-3670.bj.intel.com ([10.238.156.128])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Apr 2022 04:04:21 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 21 Apr 2022 04:04:36 -0700
 From:   Cathy Zhang <cathy.zhang@intel.com>
 To:     linux-sgx@vger.kernel.org, x86@kernel.org
 Cc:     jarkko@kernel.org, reinette.chatre@intel.com,
         dave.hansen@intel.com, ashok.raj@intel.com, cathy.zhang@intel.com,
         chao.p.peng@intel.com, yang.zhong@intel.com
-Subject: [PATCH v4 2/9] x86/sgx: Save enclave pointer for VA page
-Date:   Thu, 21 Apr 2022 19:03:19 +0800
-Message-Id: <20220421110326.856-3-cathy.zhang@intel.com>
+Subject: [PATCH v4 7/9] x86/sgx: Implement ENCLS[EUPDATESVN]
+Date:   Thu, 21 Apr 2022 19:03:24 +0800
+Message-Id: <20220421110326.856-8-cathy.zhang@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220421110326.856-1-cathy.zhang@intel.com>
 References: <20220421110326.856-1-cathy.zhang@intel.com>
@@ -52,116 +52,152 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Tearing down all enclaves is required by SGX SVN update, which
-involves running the ENCLS[EREMOVE] instruction on every EPC
-page. This (tearing down all enclaves) should be coordinated
-with any enclaves that may be in the process of existing and thus
-already be running ENCLS[EREMOVE] as part of enclave release.
+The SGX attestation architecture assumes a compromise of all running
+enclaves and cryptographic assets (like internal SGX encryption keys)
+whenever a microcode update affects SGX. To mitigate the impact of
+this presumed compromise, a new supervisor SGX instruction:
+ENCLS[EUPDATESVN], is introduced to update SGX microcode version and
+generate new cryptographic assets in runtime after SGX microcode
+update.
 
-In support of this coordination, it is required to know which enclave
-owns each in-use EPC page. It is already possible to locate the
-owning enclave of SECS and regular pages but not for VA pages.
-
-Make the following changes for VA pages' location:
-1) Make epc->owner type-agnostic by changing its type to 'void *'. So,
-   besides "struct sgx_encl_page", it can have other types, like
-   "struct sgx_va_page".
-2) Save the enclave pointer for each VA page to support locating its
-   owning enclave.
-
-Note: to track 2T EPC memory, this scheme of tracking will use
-additional 8M memory.
+EUPDATESVN requires that SGX memory to be marked as "unused" before
+it will succeed. This ensures that no compromised enclave can survive
+the process and provides an opportunity to generate new cryptographic
+assets.
 
 Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
 
 ---
-Changes since v3:
- - Squash patch "x86/sgx: Provide VA page non-NULL owner" and
-   "x86/sgx: Save enclave pointer for VA page". Update commit log.
-   (Suggested by Jarkko Sakkinen)
+Changes since v1:
+ - Print message for each return code to notify userspace the
+   ENCLS[EUPDATESVN] execution status.
 ---
- arch/x86/kernel/cpu/sgx/encl.h  | 4 ++--
- arch/x86/kernel/cpu/sgx/sgx.h   | 2 +-
- arch/x86/kernel/cpu/sgx/encl.c  | 5 +++--
- arch/x86/kernel/cpu/sgx/ioctl.c | 3 ++-
- 4 files changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/sgx.h      | 33 +++++++++++----------
+ arch/x86/kernel/cpu/sgx/encls.h |  6 ++++
+ arch/x86/kernel/cpu/sgx/main.c  | 52 +++++++++++++++++++++++++++++++++
+ 3 files changed, 76 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 7cdc351bc273..59fbd4ed5c64 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -76,6 +76,7 @@ struct sgx_va_page {
- 	struct sgx_epc_page *epc_page;
- 	DECLARE_BITMAP(slots, SGX_VA_SLOT_COUNT);
- 	struct list_head list;
-+	struct sgx_encl *encl;
- };
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 4a8ca7281229..74bcb6841a4b 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -26,23 +26,26 @@
+ #define SGX_CPUID_EPC_SECTION	0x1
+ /* The bitmask for the EPC section type. */
+ #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
++/* EUPDATESVN presence indication */
++#define SGX_CPUID_EUPDATESVN	BIT(10)
  
- struct sgx_backing {
-@@ -112,8 +113,7 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
- int sgx_encl_test_and_clear_young(struct mm_struct *mm,
- 				  struct sgx_encl_page *page);
--
--struct sgx_epc_page *sgx_alloc_va_page(void);
-+struct sgx_epc_page *sgx_alloc_va_page(struct sgx_va_page *va_page);
- unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
- void sgx_free_va_slot(struct sgx_va_page *va_page, unsigned int offset);
- bool sgx_va_page_full(struct sgx_va_page *va_page);
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index d7a1490d90bb..f8ed9deac18b 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -33,7 +33,7 @@ struct sgx_epc_page {
- 	unsigned int section;
- 	u16 flags;
- 	u16 poison;
--	struct sgx_encl_page *owner;
-+	void *owner;
- 	struct list_head list;
+ enum sgx_encls_function {
+-	ECREATE	= 0x00,
+-	EADD	= 0x01,
+-	EINIT	= 0x02,
+-	EREMOVE	= 0x03,
+-	EDGBRD	= 0x04,
+-	EDGBWR	= 0x05,
+-	EEXTEND	= 0x06,
+-	ELDU	= 0x08,
+-	EBLOCK	= 0x09,
+-	EPA	= 0x0A,
+-	EWB	= 0x0B,
+-	ETRACK	= 0x0C,
+-	EAUG	= 0x0D,
+-	EMODPR	= 0x0E,
+-	EMODT	= 0x0F,
++	ECREATE		= 0x00,
++	EADD		= 0x01,
++	EINIT		= 0x02,
++	EREMOVE		= 0x03,
++	EDGBRD		= 0x04,
++	EDGBWR		= 0x05,
++	EEXTEND		= 0x06,
++	ELDU		= 0x08,
++	EBLOCK		= 0x09,
++	EPA		= 0x0A,
++	EWB		= 0x0B,
++	ETRACK		= 0x0C,
++	EAUG		= 0x0D,
++	EMODPR		= 0x0E,
++	EMODT		= 0x0F,
++	EUPDATESVN	= 0x18,
  };
- 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 68c8d65a8dee..c0725111cc25 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -753,6 +753,7 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
  
  /**
-  * sgx_alloc_va_page() - Allocate a Version Array (VA) page
-+ * @va_page:	struct sgx_va_page connected to this VA page
-  *
-  * Allocate a free EPC page and convert it to a Version Array (VA) page.
-  *
-@@ -760,12 +761,12 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
-  *   a VA page,
-  *   -errno otherwise
-  */
--struct sgx_epc_page *sgx_alloc_va_page(void)
-+struct sgx_epc_page *sgx_alloc_va_page(struct sgx_va_page *va_page)
- {
- 	struct sgx_epc_page *epc_page;
- 	int ret;
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index 60321c5f5718..8455f385e817 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -208,4 +208,10 @@ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+ 	return __encls_ret_3(EWB, pginfo, addr, va);
+ }
  
--	epc_page = sgx_alloc_epc_page(NULL, true);
-+	epc_page = sgx_alloc_epc_page(va_page, true);
- 	if (IS_ERR(epc_page))
- 		return ERR_CAST(epc_page);
- 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index a4df72f715d7..b77343eb2d49 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -30,7 +30,8 @@ static struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl)
- 		if (!va_page)
- 			return ERR_PTR(-ENOMEM);
- 
--		va_page->epc_page = sgx_alloc_va_page();
-+		va_page->encl = encl;
-+		va_page->epc_page = sgx_alloc_va_page(va_page);
- 		if (IS_ERR(va_page->epc_page)) {
- 			err = ERR_CAST(va_page->epc_page);
- 			kfree(va_page);
++/* Update CPUSVN at runtime. */
++static inline int __eupdatesvn(void)
++{
++	return __encls_ret_1(EUPDATESVN, "");
++}
++
+ #endif /* _X86_ENCLS_H */
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 72317866ddaa..fbb093c9fe1a 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -1357,3 +1357,55 @@ void sgx_zap_abort(void)
+ 	sgx_zap_abort_wait = true;
+ 	wake_up(&sgx_zap_waitq);
+ }
++
++/**
++ * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
++ * If EPC is ready, this instruction will update CPUSVN to the currently
++ * loaded microcode update SVN and generate new cryptographic assets.
++ *
++ * Return:
++ * 0:				CPUSVN is update successfully.
++ * %SGX_LOCKFAIL:		An instruction concurrency rule was violated.
++ * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
++ * %SGX_EPC_NOT_READY:		EPC is not ready for SVN update.
++ * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
++ *				updated because current SVN was not newer than
++ *				CPUSVN.
++ */
++static int sgx_updatesvn(void)
++{
++	int ret;
++	int retry = 10;
++
++	do {
++		ret = __eupdatesvn();
++		if (ret != SGX_INSUFFICIENT_ENTROPY)
++			break;
++
++	} while (--retry);
++
++	switch (ret) {
++	case 0:
++		pr_info("EUPDATESVN was successful!\n");
++		break;
++	case SGX_NO_UPDATE:
++		pr_info("EUPDATESVN was successful, but CPUSVN was not updated, "
++			"because current SVN was not newer than CPUSVN.\n");
++		break;
++	case SGX_EPC_NOT_READY:
++		pr_info("EPC is not ready for SVN update.");
++		break;
++	case SGX_INSUFFICIENT_ENTROPY:
++		pr_info("CPUSVN update is failed due to Insufficient entropy in RNG, "
++			"please try it later.\n");
++		break;
++	case SGX_EPC_PAGE_CONFLICT:
++		pr_info("CPUSVN update is failed due to concurrency violation, please "
++			"stop running any other ENCLS leaf and try it later.\n");
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
 -- 
 2.17.1
 
