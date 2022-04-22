@@ -2,38 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2A5C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Apr 2022 09:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB4DC433FE
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Apr 2022 13:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445876AbiDVJVY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 22 Apr 2022 05:21:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
+        id S236078AbiDVNV2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 22 Apr 2022 09:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446019AbiDVJUx (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 22 Apr 2022 05:20:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6FB53E2C;
-        Fri, 22 Apr 2022 02:17:36 -0700 (PDT)
+        with ESMTP id S1447683AbiDVNVY (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 22 Apr 2022 09:21:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92410580DD;
+        Fri, 22 Apr 2022 06:18:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AF75460FC1;
-        Fri, 22 Apr 2022 09:17:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3C4C385A0;
-        Fri, 22 Apr 2022 09:17:34 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4FFC1B82D47;
+        Fri, 22 Apr 2022 13:18:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6977CC385A0;
+        Fri, 22 Apr 2022 13:18:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650619055;
-        bh=iqCW7A6ZXIeIMzwpuEVmkMyobtqwXfhGzomkPzFjfhA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oNyJNZZ2f5Ve8HItc27uvfdt3nih+W6bsvDgzMBWo8zE92p1KCOXIFpmCO/yk2svr
-         NeDzJCdc/qS4/GEQCLNaC9yLTLv2myCkq8pA6wY7MRjfLUhE+PZAbAuXFBLSCVxlXm
-         CyRy3JBcN7xJlS+MYxgOyE0/32HEGtb5gyyXHiIPp7zqEmay59irQ+/qwVPebIvhKw
-         wLH5/fYjGIZA4J0flSM8YFy/Ba90ANoJMHpN+m4mE//7t/a8QDB84F8f3IPqJm1SEf
-         e98HDEpi+VxXtnkRYp9kVWhyH7KvTSLoalr8WdYtDVGQ49RXSKdArdPp7mHvir2tjJ
-         RtA1svfSZCzqg==
-Date:   Fri, 22 Apr 2022 12:16:19 +0300
+        s=k20201202; t=1650633507;
+        bh=b3cLy4CKtqux3jqGHuSXvrfXhwmJTx37EbQCGlvn+AM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=oceIaNcjR2SdZ2Hwo0Ldz7l80qzNDIytljZHUBXyBxeBXYYVk/AtcfANR5yStwnzN
+         7udFzKNqeqOcVb8oDyTe3ax53OIKEP01Tc9poDXMDzS2AO0SBFuJsAHqeViLI7cJp7
+         ZAXeMNS5PTTH7LbXvOFmeIRxoNZqTKLI7DHqQkjdcYf2uxBEOHYKkrlIpG5V8XSOPs
+         Lt8uHINNI+fuNOsPqKJDh11p1MxgqDEf3JHY395iZhuwDdMmiLMTd9BiIn7RWcsvLH
+         X7p5FyBiPZcfOU5+F7E2QjXn9qzE6ylVsQwclh+tPQuRLrnc0IbYfeHBgIqOpoVcXp
+         wj/yF9vyItHoA==
+Message-ID: <9e8fffb8344323ce9a80adc733e9250a63cb68ee.camel@kernel.org>
+Subject: Re: [PATCH V4 00/31] x86/sgx and selftests/sgx: Support SGX2
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>, jethro@fortanix.com
 Cc:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -52,61 +53,87 @@ Cc:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
         "Huang, Haitao" <haitao.huang@intel.com>,
         "hpa@zytor.com" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4 00/31] x86/sgx and selftests/sgx: Support SGX2
-Message-ID: <YmJyYwp9UHRLWaTw@kernel.org>
+Date:   Fri, 22 Apr 2022 16:17:11 +0300
+In-Reply-To: <YmJyYwp9UHRLWaTw@kernel.org>
 References: <cover.1649878359.git.reinette.chatre@intel.com>
- <2f4338f37943c2b067db16ae65c9af665d3b51d9.camel@kernel.org>
- <9fbf26c8-5808-20c5-8653-d4f36bf398a4@intel.com>
- <42a52a6018e8dadb4c3eebefaae4dab31c0d5721.camel@kernel.org>
- <DM8PR11MB5591BBA189BC4EA5CFE2C7EAF6EF9@DM8PR11MB5591.namprd11.prod.outlook.com>
- <54f053d8bb6b72725b2351fc2016d20b65cebbf1.camel@kernel.org>
- <DM8PR11MB559180D1BA05B0E77D354467F6F49@DM8PR11MB5591.namprd11.prod.outlook.com>
- <a94e4098-f5c1-f9ff-fab0-c2e5210cf188@intel.com>
+         <2f4338f37943c2b067db16ae65c9af665d3b51d9.camel@kernel.org>
+         <9fbf26c8-5808-20c5-8653-d4f36bf398a4@intel.com>
+         <42a52a6018e8dadb4c3eebefaae4dab31c0d5721.camel@kernel.org>
+         <DM8PR11MB5591BBA189BC4EA5CFE2C7EAF6EF9@DM8PR11MB5591.namprd11.prod.outlook.com>
+         <54f053d8bb6b72725b2351fc2016d20b65cebbf1.camel@kernel.org>
+         <DM8PR11MB559180D1BA05B0E77D354467F6F49@DM8PR11MB5591.namprd11.prod.outlook.com>
+         <a94e4098-f5c1-f9ff-fab0-c2e5210cf188@intel.com>
+         <YmJyYwp9UHRLWaTw@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.0 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a94e4098-f5c1-f9ff-fab0-c2e5210cf188@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 08:29:31PM -0700, Reinette Chatre wrote:
-> Hi Vijay and Mark,
-> 
-> On 4/21/2022 4:46 PM, Dhanraj, Vijay wrote:
-> > Hi All,
-> > 
-> > I evaluated V4 patch changes with Gramine and ran into an issue when trying to set EPC page permission to PROT_NONE. It looks like with V3 patch series a change was introduced which requires kernel to have at least R permission when calling RESTRICT IOCTL. This change was done under the assumption that EPCM requires at least R permission for EMODPE/EACCEPT to succeed. But when testing with V2 version, EACCEPT worked fine with page permission set to PROT_NONE. 
-> > 
-> > Thanks to @Shanahan, Mark for confirming that EPCM does not need to have R value to allow EACCEPT or EMODPE. Given this, can we please revert this change?
-> > 
-> 
-> Thank you very much for pointing this out. I can revert the change
-> to what was done in V2 where the only check is to ensure that W requires R.
-> This is a requirement of EMODPR. Could you please check if this snippet
-> results in things working for you again?
-> 
-> ---8<---
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 83674d054c13..7c7c8a61196e 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -855,12 +855,8 @@ static long sgx_ioc_enclave_restrict_permissions(struct sgx_encl *encl,
->  	if (params.permissions & ~SGX_SECINFO_PERMISSION_MASK)
->  		return -EINVAL;
->  
-> -	/*
-> -	 * Read access is required for the enclave to be able to use the page.
-> -	 * SGX instructions like ENCLU[EMODPE] and ENCLU[EACCEPT] require
-> -	 * read access.
-> -	 */
-> -	if (!(params.permissions & SGX_SECINFO_R))
-> +	if ((params.permissions & SGX_SECINFO_W) &&
-> +	    !(params.permissions & SGX_SECINFO_R))
->  		return -EINVAL;
->  
->  	if (params.result || params.count)
+On Fri, 2022-04-22 at 12:16 +0300, Jarkko Sakkinen wrote:
+> On Thu, Apr 21, 2022 at 08:29:31PM -0700, Reinette Chatre wrote:
+> > Hi Vijay and Mark,
+> >=20
+> > On 4/21/2022 4:46 PM, Dhanraj, Vijay wrote:
+> > > Hi All,
+> > >=20
+> > > I evaluated V4 patch changes with Gramine and ran into an issue when =
+trying to set EPC page permission to PROT_NONE. It looks like with V3 patch=
+ series a change was introduced which requires
+> > > kernel to have at least R permission when calling RESTRICT IOCTL. Thi=
+s change was done under the assumption that EPCM requires at least R permis=
+sion for EMODPE/EACCEPT to succeed. But when
+> > > testing with V2 version, EACCEPT worked fine with page permission set=
+ to PROT_NONE.=20
+> > >=20
+> > > Thanks to @Shanahan, Mark for confirming that EPCM does not need to h=
+ave R value to allow EACCEPT or EMODPE. Given this, can we please revert th=
+is change?
+> > >=20
+> >=20
+> > Thank you very much for pointing this out. I can revert the change
+> > to what was done in V2 where the only check is to ensure that W require=
+s R.
+> > This is a requirement of EMODPR. Could you please check if this snippet
+> > results in things working for you again?
+> >=20
+> > ---8<---
+> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/=
+ioctl.c
+> > index 83674d054c13..7c7c8a61196e 100644
+> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> > @@ -855,12 +855,8 @@ static long sgx_ioc_enclave_restrict_permissions(s=
+truct sgx_encl *encl,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (params.permissions =
+& ~SGX_SECINFO_PERMISSION_MASK)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Read access is required f=
+or the enclave to be able to use the page.
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * SGX instructions like ENC=
+LU[EMODPE] and ENCLU[EACCEPT] require
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * read access.
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!(params.permissions & S=
+GX_SECINFO_R))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if ((params.permissions & SG=
+X_SECINFO_W) &&
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !(params.=
+permissions & SGX_SECINFO_R))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (params.result || pa=
+rams.count)
+>=20
+> Just adding that it's fine for me to revert this.
 
-Just adding that it's fine for me to revert this.
+Jethro, I thought it would be also good to get yor view on the current
+series. Is this something that your platform can live with?
 
 BR, Jarkko
