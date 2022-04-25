@@ -2,587 +2,286 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427C4C433EF
-	for <linux-sgx@archiver.kernel.org>; Sun, 24 Apr 2022 02:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7027C433F5
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Apr 2022 13:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237711AbiDXCff (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 23 Apr 2022 22:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40512 "EHLO
+        id S237023AbiDYOCn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 25 Apr 2022 10:02:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235794AbiDXCfe (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 23 Apr 2022 22:35:34 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E4B1C926
-        for <linux-sgx@vger.kernel.org>; Sat, 23 Apr 2022 19:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650767555; x=1682303555;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=SxNbUJp+yNziya9/IqqWzPwxT6fEOGI19FJBwtRltR8=;
-  b=AmfP91xO6G34fX9XdvMC7LoMprZi5ICxmtryHAHhbvrdQjwRTF6NQDBO
-   aIEBQe/5eNwg3C22J+UWwawiK2QfjJk/9o2vG1F+nkke+6HHmQCVyVol9
-   tOQDOfrvqUjB7b3uJQym0y/XH7PK2wxhM3WUJ/zcoP/6RLJeaSdGBVmdG
-   ICvNn0EcxoxWo8+77KAITyaYb9Qs41Qm5+jHChMTbhkwORtLZt///+I/q
-   Gjoc8TutXPWnPBPpbIZXYv9phXHilsr72OXE8/9PJiEsjB+ZizMlBuaHO
-   xYWDsXYo/4Zd2+fdFP/g6bKs+J508OjaET3DVSjKTTryk7e9eEC5NhC2B
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10326"; a="263827780"
-X-IronPort-AV: E=Sophos;i="5.90,285,1643702400"; 
-   d="scan'208";a="263827780"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2022 19:32:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,285,1643702400"; 
-   d="scan'208";a="557083992"
-Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
-  by orsmga007.jf.intel.com with ESMTP; 23 Apr 2022 19:32:34 -0700
-Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Sat, 23 Apr 2022 19:32:34 -0700
-Received: from fmsmsx604.amr.corp.intel.com ([10.18.126.84]) by
- fmsmsx604.amr.corp.intel.com ([10.18.126.84]) with mapi id 15.01.2308.027;
- Sat, 23 Apr 2022 19:32:34 -0700
-From:   "Zhang, Cathy" <cathy.zhang@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        with ESMTP id S237351AbiDYOCb (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 25 Apr 2022 10:02:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D80D86E1A
+        for <linux-sgx@vger.kernel.org>; Mon, 25 Apr 2022 06:59:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B5EFFB817D3
+        for <linux-sgx@vger.kernel.org>; Mon, 25 Apr 2022 13:59:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF082C385A7;
+        Mon, 25 Apr 2022 13:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650895163;
+        bh=WP+CAyTE8w/53JN2M28QzpHRA+uU180ELDnypZ9GMc0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XOYfm/8VwQe/isWeV03lz+ZMW5CQYUH+ZEtL31RAKt3CvIVsM/Djn8iD5XE/26/Ev
+         IdZjZ4xxrdYw/SqfDd1FcExqhOWWfxug3syJBlDK51mpJyGsPVlNtEhZ0ttS0fPKDe
+         JXwQa4Dz6DHKfyeO/3ArYxPaep50aphPUdkdP+UDG25ge5qYr4RBScnXioFk8qah6N
+         a1k8Mi7V12kCNHPlP6CdkYFFiVhmg5MwZR9WmJkdT6dyPahNn/5g4OlQgslMEkhwAX
+         hGgcNuE6BVlkcIrRhdKYMtmFFnax6q48GkwBvRGZ+n0jHBrT+8ZqL8h2vK8qj6dgM8
+         LaGiWwvGErugg==
+Message-ID: <16640738592556452ffb01cf9ef84721d0e4a159.camel@kernel.org>
+Subject: Re: [PATCH v4 1/9] x86/sgx: Introduce mechanism to prevent new
+ initializations of EPC pages
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     "Zhang, Cathy" <cathy.zhang@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
         "Chatre, Reinette" <reinette.chatre@intel.com>,
         "Hansen, Dave" <dave.hansen@intel.com>,
         "Raj, Ashok" <ashok.raj@intel.com>,
         "Peng, Chao P" <chao.p.peng@intel.com>,
         "Zhong, Yang" <yang.zhong@intel.com>
-Subject: RE: [PATCH v4 5/9] x86/sgx: Forced EPC page zapping for EUPDATESVN
-Thread-Topic: [PATCH v4 5/9] x86/sgx: Forced EPC page zapping for EUPDATESVN
-Thread-Index: AQHYVW+VCKfKswoQ4EWx6TwqQeK6+6z6/jYAgANdusA=
-Date:   Sun, 24 Apr 2022 02:32:34 +0000
-Message-ID: <2682d32989ea40578065b2c14ef20b19@intel.com>
+Date:   Mon, 25 Apr 2022 17:00:50 +0300
+In-Reply-To: <49a636f22c3847d69d836ae918b4aa1d@intel.com>
 References: <20220421110326.856-1-cathy.zhang@intel.com>
- <20220421110326.856-6-cathy.zhang@intel.com> <YmGBNNg05HcnUJBR@kernel.org>
-In-Reply-To: <YmGBNNg05HcnUJBR@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-version: 11.6.401.20
-dlp-reaction: no-action
-dlp-product: dlpe-windows
-x-originating-ip: [10.239.127.36]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+         <20220421110326.856-2-cathy.zhang@intel.com> <YmGADDVPePlW7nfs@kernel.org>
+         <49a636f22c3847d69d836ae918b4aa1d@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.1 
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
+T24gU3VuLCAyMDIyLTA0LTI0IGF0IDAyOjI3ICswMDAwLCBaaGFuZywgQ2F0aHkgd3JvdGU6Cj4g
+SGkgSmFya2tvLAo+IAo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiA+IEZyb206IEph
+cmtrbyBTYWtraW5lbiA8amFya2tvQGtlcm5lbC5vcmc+Cj4gPiBTZW50OiBGcmlkYXksIEFwcmls
+IDIyLCAyMDIyIDEyOjAyIEFNCj4gPiBUbzogWmhhbmcsIENhdGh5IDxjYXRoeS56aGFuZ0BpbnRl
+bC5jb20+Cj4gPiBDYzogbGludXgtc2d4QHZnZXIua2VybmVsLm9yZzsgeDg2QGtlcm5lbC5vcmc7
+IENoYXRyZSwgUmVpbmV0dGUKPiA+IDxyZWluZXR0ZS5jaGF0cmVAaW50ZWwuY29tPjsgSGFuc2Vu
+LCBEYXZlIDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+OyBSYWosCj4gPiBBc2hvayA8YXNob2sucmFq
+QGludGVsLmNvbT47IFBlbmcsIENoYW8gUCA8Y2hhby5wLnBlbmdAaW50ZWwuY29tPjsKPiA+IFpo
+b25nLCBZYW5nIDx5YW5nLnpob25nQGludGVsLmNvbT4KPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0gg
+djQgMS85XSB4ODYvc2d4OiBJbnRyb2R1Y2UgbWVjaGFuaXNtIHRvIHByZXZlbnQgbmV3Cj4gPiBp
+bml0aWFsaXphdGlvbnMgb2YgRVBDIHBhZ2VzCj4gPiAKPiA+IE9uIFRodSwgQXByIDIxLCAyMDIy
+IGF0IDA3OjAzOjE4UE0gKzA4MDAsIENhdGh5IFpoYW5nIHdyb3RlOgo+ID4gPiA9PSBCYWNrZ3Jv
+dW5kID09Cj4gPiA+IAo+ID4gPiBFVVBEQVRFU1ZOIGlzIGEgbmV3IFNHWCBpbnN0cnVjdGlvbiB3
+aGljaCBhbGxvd3MgZW5jbGF2ZSBhdHRlc3RhdGlvbgo+ID4gPiB0byBpbmNsdWRlIGluZm9ybWF0
+aW9uIGFib3V0IHVwZGF0ZWQgbWljcm9jb2RlIHdpdGhvdXQgYSByZWJvb3QuCj4gPiA+IAo+ID4g
+PiBUaGUgU0dYIGhhcmR3YXJlIG1haW50YWlucyBtZXRhZGF0YSBmb3IgZWFjaCBlbmNsYXZlIHBh
+Z2UgdG8gaGVscAo+ID4gPiBlbmZvcmNlIGl0cyBzZWN1cml0eSBndWFyYW50ZWVzLiBUaGlzIGlu
+Y2x1ZGVzIHRoaW5ncyBsaWtlIGEgcmVjb3JkIG9mCj4gPiA+IHRoZSBlbmNsYXZlIHRvIHdoaWNo
+IHRoZSBwYWdlIGJlbG9uZ3MgYW5kIHRoZSB0eXBlIG9mIHRoZSBwYWdlOgo+ID4gPiBTR1ggbWV0
+YWRhdGEgbGlrZSAiVkEiIG9yICJTRUNTIiBwYWdlcywgb3IgcmVndWxhciBlbmNsYXZlIHBhZ2Vz
+IGxpa2UKPiA+ID4gdGhvc2UgdGhhdCBzdG9yZSB1c2VyIGRhdGEuCj4gPiA+IAo+ID4gPiBCZWZv
+cmUgYW4gRVVQREFURVNWTiBvcGVyYXRpb24gY2FuIGJlIHN1Y2Nlc3NmdWwsIGFsbCBTR1ggbWVt
+b3J5IChha2EuCj4gPiA+IEVQQykgbXVzdCBiZSBtYXJrZWQgYXMgInVudXNlZCIgaW4gdGhlIFNH
+WCBoYXJkd2FyZSBtZXRhZGF0YSAoYWthLAo+ID4gPiBFUENNKS4gVGhlIFNHWCBtaWNyb2NvZGUg
+bm93IG1haW50YWlucyBhIHJlZmVyZW5jZSBjb3VudCBvZiBwYWdlcwo+ID4gPiB3aGljaCBhcmUg
+dW51c2VkIHRvIGFpZCBpbiBkZXRlcm1pbmluZyB3aGVuIGFsbCBwYWdlcyByZWFjaCB0aGUKPiA+
+ID4gInVudXNlZCIgc3RhdGUuCj4gPiA+IAo+ID4gPiBCb3RoIGJhcmUtbWV0YWwgYW5kIEtWTSBn
+dWVzdCBFUEMgbXVzdCBiZSBtYWRlIHVudXNlZC4gVG8gaW5jcmVhc2UgdGhlCj4gPiA+IGNoYW5j
+ZSBvZiBhIHN1Y2Nlc3NmdWwgRVVQREFURVNWTiwgdGhlIGtlcm5lbCBwcmV2ZW50cyBleGlzdGlu
+Zwo+ID4gPiBlbmNsYXZlcyBmcm9tIGNyZWF0aW5nIG5ldywgdmFsaWQgcGFnZXMgYW5kIHByZXZl
+bnRzIG5ldyBlbmNsYXZlCj4gPiA+IGNyZWF0aW9uIChjcmVhdGluZyBhbiBlbmNsYXZlIGludm9s
+dmVzIGluaXRpYWxpemluZyBhICJTRUNTIiBwYWdlKS4KPiA+ID4gCj4gPiA+IFRoZSBlbnRpcmUg
+RVVQREFURVNWTiBwcm9jZXNzIGlzIHZlcnkgc2xvdyBzaW5jZSBpdCBwb3RlbnRpYWxseQo+ID4g
+PiBhZmZlY3RzIGdpZ2FieXRlcyBvZiBlbmNsYXZlIG1lbW9yeS4gSXQgY2FuIHBvdGVudGlhbGx5
+IHRha2Ugc2Vjb25kcwo+ID4gPiBvciBtaW51dGVzIHRvIGNvbXBsZXRlLiBVc2Vyc3BhY2UgbWF5
+IGVuY291bnRlciAtRUJVU1kgZXJyb3JzIGR1cmluZwo+ID4gPiB0aGUgdXBkYXRlIGFuZCBpcyBl
+eHBlY3RlZCB0byByZXRyeS4KPiA+ID4gCj4gPiA+ID09IFBhdGNoIGNvbnRlbnRzID09Cj4gPiA+
+IAo+ID4gPiBJbnRyb2R1Y2UgbWVjaGFuaXNtIHRvIHByZXZlbnQgbmV3IGluaXRpYWxpemF0aW9u
+cyBvZiBFUEMgcGFnZXMuCj4gPiA+IAo+ID4gPiBVc2UgYSBmbGFnIHRvIGluZGljYXRlIHdoZW4g
+U0dYIEVQQyBwYWdlcyBhcmUgImxvY2tlZCIsIHdoaWNoIG1lYW5zCj4gPiA+IGl0J3Mgbm90IGFs
+bG93ZWQgdG8gYWxsb2NhdGUgbmV3IEVQQyBwYWdlIGZvciB1c2UuIENoZWNrIGl0IGluIGFsbAo+
+ID4gPiBwYXRocyB0aGF0IGNhbiBpbml0aWFsaXplIGFuIEVQQyBwYWdlLiBVc2UgU1JDVSB0byBl
+bnN1cmUgdGhhdCB0aGUKPiA+ID4gZmxhZyBpcyB2aXNpYmxlIGFjcm9zcyB0aGUgc3lzdGVtIGJl
+Zm9yZSBwcm9jZWVkaW5nIHdpdGggYW4gdXBkYXRlLgo+ID4gPiAKPiA+ID4gQWRkIGNoZWNrcyB0
+byBhbGwgc2l0ZXMgdGhhdCBjYWxsIFNHWCBpbnN0cnVjdGlvbnMgdGhhdCBjYW4gdHJhbnNpdGlv
+bgo+ID4gPiBwYWdlcyBmcm9tIHVudXNlZCB0byBpbml0aWFsaXplZCB0byBlbnN1cmUgdGhhdCB0
+aGUgU1JDVSBsb2NrIGlzIGhlbGQuCj4gPiA+IAo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBDYXRoeSBa
+aGFuZyA8Y2F0aHkuemhhbmdAaW50ZWwuY29tPgo+ID4gPiAKPiA+ID4gLS0tCj4gPiA+IENoYW5n
+ZXMgc2luY2UgdjM6Cj4gPiA+IMKgLSBSZW5hbWUgbGFibGUgIm91dCIgYXMgImVyciIgaW4gc2d4
+X2lvY19lbmNsYXZlX2NyZWF0ZSwgdXBkYXRlIGVycm9yCj4gPiA+IMKgwqAgYnJhbmNoIGFjY29y
+ZGluZ2x5LiAoSmFycmtvIFNha2tpbmVuKQo+ID4gPiAKPiA+ID4gQ2hhbmdlcyBzaW5jZSB2MjoK
+PiA+ID4gwqAtIE1vdmUgb3V0IHRoZSBTR1gyIHJlbGF0ZWQgY2hhbmdlIHRvIHJlbW92ZSB0aGUg
+ZGVwZW5kZW5jeS4KPiA+ID4gwqAgKEphcmtrbyBTYWtraW5lbiwgUmVpbmV0dGUgQ2hhdHJlKS4K
+PiA+ID4gLS0tCj4gPiA+IMKgYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvZW5jbHMuaCB8wqAgOCAr
+KysrKysKPiA+ID4gwqBhcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9zZ3guaMKgwqAgfMKgIDMgKysr
+Cj4gPiA+IMKgYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvZW5jbC5jwqAgfCAxOSArKysrKysrKysr
+KysrKysKPiA+ID4gYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvaW9jdGwuYyB8IDQzICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKy0tLS0tLQo+ID4gPiBhcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9t
+YWluLmPCoCB8IDM3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiA+ID4gYXJjaC94ODYv
+a2VybmVsL2NwdS9zZ3gvdmlydC5jwqAgfCAyMCArKysrKysrKysrKysrKysKPiA+ID4gwqA2IGZp
+bGVzIGNoYW5nZWQsIDEyMyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQo+ID4gPiAKPiA+
+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2VuY2xzLmgKPiA+ID4gYi9h
+cmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9lbmNscy5oIGluZGV4IGZhMDRhNzNkYWY5Yy4uNjAzMjFj
+NWY1NzE4Cj4gPiA+IDEwMDY0NAo+ID4gPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9l
+bmNscy5oCj4gPiA+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2VuY2xzLmgKPiA+ID4g
+QEAgLTEzOCw2ICsxMzgsOCBAQCBzdGF0aWMgaW5saW5lIGJvb2wgZW5jbHNfZmFpbGVkKGludCBy
+ZXQpCj4gPiA+IAo+ID4gPiDCoHN0YXRpYyBpbmxpbmUgaW50IF9fZWNyZWF0ZShzdHJ1Y3Qgc2d4
+X3BhZ2VpbmZvICpwZ2luZm8sIHZvaWQgKnNlY3MpCj4gPiA+IHsKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgbG9ja2RlcF9hc3NlcnRfaGVsZCgmc2d4X2xvY2tfZXBjX3NyY3UpOwo+ID4gPiArCj4gPiA+
+IMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gX19lbmNsc18yKEVDUkVBVEUsIHBnaW5mbywgc2Vjcyk7
+wqAgfQo+ID4gPiAKPiA+ID4gQEAgLTE0OCw2ICsxNTAsOCBAQCBzdGF0aWMgaW5saW5lIGludCBf
+X2VleHRlbmQodm9pZCAqc2Vjcywgdm9pZAo+ID4gPiAqYWRkcikKPiA+ID4gCj4gPiA+IMKgc3Rh
+dGljIGlubGluZSBpbnQgX19lYWRkKHN0cnVjdCBzZ3hfcGFnZWluZm8gKnBnaW5mbywgdm9pZCAq
+YWRkcinCoCB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoGxvY2tkZXBfYXNzZXJ0X2hlbGQoJnNneF9s
+b2NrX2VwY19zcmN1KTsKPiA+ID4gKwo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIF9fZW5j
+bHNfMihFQURELCBwZ2luZm8sIGFkZHIpO8KgIH0KPiA+ID4gCj4gPiA+IEBAIC0xNzksNiArMTgz
+LDggQEAgc3RhdGljIGlubGluZSBpbnQgX19ldHJhY2sodm9pZCAqYWRkcinCoCBzdGF0aWMKPiA+
+ID4gaW5saW5lIGludCBfX2VsZHUoc3RydWN0IHNneF9wYWdlaW5mbyAqcGdpbmZvLCB2b2lkICph
+ZGRyLAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgdm9pZCAqdmEpCj4gPiA+IMKgewo+ID4gPiArwqDCoMKgwqDCoMKgwqBsb2NrZGVwX2Fzc2Vy
+dF9oZWxkKCZzZ3hfbG9ja19lcGNfc3JjdSk7Cj4gPiA+ICsKPiA+ID4gwqDCoMKgwqDCoMKgwqDC
+oHJldHVybiBfX2VuY2xzX3JldF8zKEVMRFUsIHBnaW5mbywgYWRkciwgdmEpO8KgIH0KPiA+ID4g
+Cj4gPiA+IEBAIC0xOTEsNiArMTk3LDggQEAgc3RhdGljIGlubGluZSBpbnQgX19lcGEodm9pZCAq
+YWRkcinCoCB7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBsb25nIHJieCA9IFNHWF9Q
+QUdFX1RZUEVfVkE7Cj4gPiA+IAo+ID4gPiArwqDCoMKgwqDCoMKgwqBsb2NrZGVwX2Fzc2VydF9o
+ZWxkKCZzZ3hfbG9ja19lcGNfc3JjdSk7Cj4gPiA+ICsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoHJl
+dHVybiBfX2VuY2xzXzIoRVBBLCByYngsIGFkZHIpOwo+ID4gPiDCoH0KPiA+ID4gCj4gPiA+IGRp
+ZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9zZ3guaAo+ID4gPiBiL2FyY2gveDg2
+L2tlcm5lbC9jcHUvc2d4L3NneC5oIGluZGV4IGIzMGNlZTRkZTkwMy4uZDdhMTQ5MGQ5MGJiCj4g
+PiA+IDEwMDY0NAo+ID4gPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9zZ3guaAo+ID4g
+PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9zZ3guaAo+ID4gPiBAQCAtMTAzLDQgKzEw
+Myw3IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9faW5pdCBzZ3hfdmVwY19pbml0KHZvaWQpCj4gPiA+
+IAo+ID4gPiDCoHZvaWQgc2d4X3VwZGF0ZV9sZXB1YmtleWhhc2godTY0ICpsZXB1YmtleWhhc2gp
+Owo+ID4gPiAKPiA+ID4gK2V4dGVybiBzdHJ1Y3Qgc3JjdV9zdHJ1Y3Qgc2d4X2xvY2tfZXBjX3Ny
+Y3U7IGJvb2wKPiA+ID4gK3NneF9lcGNfaXNfbG9ja2VkKHZvaWQpOwo+ID4gPiArCj4gPiA+IMKg
+I2VuZGlmIC8qIF9YODZfU0dYX0ggKi8KPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5l
+bC9jcHUvc2d4L2VuY2wuYwo+ID4gPiBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2VuY2wuYyBp
+bmRleCAwMmZmOWFjODM5ODUuLjY4YzhkNjVhOGRlZQo+ID4gPiAxMDA2NDQKPiA+ID4gLS0tIGEv
+YXJjaC94ODYva2VybmVsL2NwdS9zZ3gvZW5jbC5jCj4gPiA+ICsrKyBiL2FyY2gveDg2L2tlcm5l
+bC9jcHUvc2d4L2VuY2wuYwo+ID4gPiBAQCAtMTQyLDYgKzE0Miw3IEBAIHN0YXRpYyB2bV9mYXVs
+dF90IHNneF92bWFfZmF1bHQoc3RydWN0IHZtX2ZhdWx0Cj4gPiAqdm1mKQo+ID4gPiDCoMKgwqDC
+oMKgwqDCoMKgdW5zaWduZWQgbG9uZyBwaHlzX2FkZHI7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqBz
+dHJ1Y3Qgc2d4X2VuY2wgKmVuY2w7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqB2bV9mYXVsdF90IHJl
+dDsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgaW50IHNyY3VfaWR4Owo+ID4gPiAKPiA+ID4gwqDCoMKg
+wqDCoMKgwqDCoGVuY2wgPSB2bWEtPnZtX3ByaXZhdGVfZGF0YTsKPiA+ID4gCj4gPiA+IEBAIC0x
+NTMsMTEgKzE1NCwxOCBAQCBzdGF0aWMgdm1fZmF1bHRfdCBzZ3hfdm1hX2ZhdWx0KHN0cnVjdCB2
+bV9mYXVsdAo+ID4gKnZtZikKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoGlmICh1bmxpa2VseSghZW5j
+bCkpCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIFZNX0ZBVUxU
+X1NJR0JVUzsKPiA+ID4gCj4gPiA+ICvCoMKgwqDCoMKgwqDCoHNyY3VfaWR4ID0gc3JjdV9yZWFk
+X2xvY2soJnNneF9sb2NrX2VwY19zcmN1KTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKHNneF9l
+cGNfaXNfbG9ja2VkKCkpIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNy
+Y3VfcmVhZF91bmxvY2soJnNneF9sb2NrX2VwY19zcmN1LCBzcmN1X2lkeCk7Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gVk1fRkFVTFRfU0lHQlVTOwo+ID4gPiAr
+wqDCoMKgwqDCoMKgwqB9Cj4gPiA+ICsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoG11dGV4X2xvY2so
+JmVuY2wtPmxvY2spOwo+ID4gPiAKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoGVudHJ5ID0gc2d4X2Vu
+Y2xfbG9hZF9wYWdlKGVuY2wsIGFkZHIsIHZtYS0+dm1fZmxhZ3MpOwo+ID4gPiDCoMKgwqDCoMKg
+wqDCoMKgaWYgKElTX0VSUihlbnRyeSkpIHsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBtdXRleF91bmxvY2soJmVuY2wtPmxvY2spOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgc3JjdV9yZWFkX3VubG9jaygmc2d4X2xvY2tfZXBjX3NyY3UsIHNyY3Vf
+aWR4KTsKPiA+ID4gCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKFBU
+Ul9FUlIoZW50cnkpID09IC1FQlVTWSkKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIFZNX0ZBVUxUX05PUEFHRTsKPiA+ID4gQEAgLTE3
+MCwxMiArMTc4LDE0IEBAIHN0YXRpYyB2bV9mYXVsdF90IHNneF92bWFfZmF1bHQoc3RydWN0IHZt
+X2ZhdWx0Cj4gPiAqdm1mKQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgcmV0ID0gdm1mX2luc2VydF9w
+Zm4odm1hLCBhZGRyLCBQRk5fRE9XTihwaHlzX2FkZHIpKTsKPiA+ID4gwqDCoMKgwqDCoMKgwqDC
+oGlmIChyZXQgIT0gVk1fRkFVTFRfTk9QQUdFKSB7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgbXV0ZXhfdW5sb2NrKCZlbmNsLT5sb2NrKTsKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoHNyY3VfcmVhZF91bmxvY2soJnNneF9sb2NrX2VwY19zcmN1LCBz
+cmN1X2lkeCk7Cj4gPiA+IAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJl
+dHVybiBWTV9GQVVMVF9TSUdCVVM7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiA+IAo+ID4g
+PiDCoMKgwqDCoMKgwqDCoMKgc2d4X2VuY2xfdGVzdF9hbmRfY2xlYXJfeW91bmcodm1hLT52bV9t
+bSwgZW50cnkpOwo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgbXV0ZXhfdW5sb2NrKCZlbmNsLT5sb2Nr
+KTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgc3JjdV9yZWFkX3VubG9jaygmc2d4X2xvY2tfZXBjX3Ny
+Y3UsIHNyY3VfaWR4KTsKPiA+ID4gCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gVk1fRkFV
+TFRfTk9QQUdFOwo+ID4gPiDCoH0KPiA+ID4gQEAgLTMyMyw2ICszMzMsNyBAQCBzdGF0aWMgaW50
+IHNneF92bWFfYWNjZXNzKHN0cnVjdCB2bV9hcmVhX3N0cnVjdAo+ID4gKnZtYSwgdW5zaWduZWQg
+bG9uZyBhZGRyLAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IHNneF9lbmNsX3BhZ2UgKmVu
+dHJ5ID0gTlVMTDsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoGNoYXIgZGF0YVtzaXplb2YodW5zaWdu
+ZWQgbG9uZyldOwo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgdW5zaWduZWQgbG9uZyBhbGlnbjsKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgaW50IHNyY3VfaWR4Owo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgaW50
+IG9mZnNldDsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoGludCBjbnQ7Cj4gPiA+IMKgwqDCoMKgwqDC
+oMKgwqBpbnQgcmV0ID0gMDsKPiA+ID4gQEAgLTMzOSw4ICszNTAsMTUgQEAgc3RhdGljIGludCBz
+Z3hfdm1hX2FjY2VzcyhzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QKPiA+ICp2bWEsIHVuc2lnbmVkIGxv
+bmcgYWRkciwKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVG
+QVVMVDsKPiA+ID4gCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqBmb3IgKGkgPSAwOyBpIDwgbGVuOyBp
+ICs9IGNudCkgewo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3JjdV9pZHgg
+PSBzcmN1X3JlYWRfbG9jaygmc2d4X2xvY2tfZXBjX3NyY3UpOwo+ID4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgaWYgKHNneF9lcGNfaXNfbG9ja2VkKCkpIHsKPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXQgPSAtRUJVU1k7Cj4g
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ290byBv
+dXQ7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiA+ICsKPiA+ID4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlbnRyeSA9IHNneF9lbmNsX3Jlc2VydmVf
+cGFnZShlbmNsLCAoYWRkciArIGkpICYgUEFHRV9NQVNLLAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgdm1hLT52bV9mbGFncyk7Cj4gPiA+ICsKPiA+ID4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoSVNfRVJSKGVudHJ5KSkgewo+ID4gPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXQgPSBQVFJfRVJSKGVu
+dHJ5KTsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgYnJlYWs7Cj4gPiA+IEBAIC0zNjYsNiArMzg0LDcgQEAgc3RhdGljIGludCBzZ3hfdm1hX2Fj
+Y2VzcyhzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QKPiA+ID4gKnZtYSwgdW5zaWduZWQgbG9uZyBhZGRy
+LAo+ID4gPiAKPiA+ID4gwqBvdXQ6Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgbXV0ZXhfdW5sb2NrKCZlbmNsLT5sb2NrKTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoHNyY3VfcmVhZF91bmxvY2soJnNneF9sb2NrX2VwY19zcmN1LCBzcmN1X2lkeCk7
+Cj4gPiA+IAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChyZXQpCj4g
+PiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJyZWFr
+Owo+ID4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvaW9jdGwuYwo+ID4g
+PiBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2lvY3RsLmMgaW5kZXggYjNjMmU4ZDU4MTQyLi5h
+NGRmNzJmNzE1ZDcKPiA+ID4gMTAwNjQ0Cj4gPiA+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9jcHUv
+c2d4L2lvY3RsLmMKPiA+ID4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvaW9jdGwuYwo+
+ID4gPiBAQCAtMTQ3LDI0ICsxNDcsNDIgQEAgc3RhdGljIGludCBzZ3hfZW5jbF9jcmVhdGUoc3Ry
+dWN0IHNneF9lbmNsCj4gPiA+ICplbmNsLCBzdHJ1Y3Qgc2d4X3NlY3MgKnNlY3MpwqAgc3RhdGlj
+IGxvbmcKPiA+ID4gc2d4X2lvY19lbmNsYXZlX2NyZWF0ZShzdHJ1Y3Qgc2d4X2VuY2wgKmVuY2ws
+IHZvaWQgX191c2VyICphcmcpwqAgewo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IHNneF9l
+bmNsYXZlX2NyZWF0ZSBjcmVhdGVfYXJnOwo+ID4gPiArwqDCoMKgwqDCoMKgwqBpbnQgc3JjdV9p
+ZHg7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqB2b2lkICpzZWNzOwo+ID4gPiDCoMKgwqDCoMKgwqDC
+oMKgaW50IHJldDsKPiA+ID4gCj4gPiA+IC3CoMKgwqDCoMKgwqDCoGlmICh0ZXN0X2JpdChTR1hf
+RU5DTF9DUkVBVEVELCAmZW5jbC0+ZmxhZ3MpKQo+ID4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgcmV0dXJuIC1FSU5WQUw7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoGlmICh0ZXN0X2Jp
+dChTR1hfRU5DTF9DUkVBVEVELCAmZW5jbC0+ZmxhZ3MpKSB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXQgPSAtRUlOVkFMOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgZ290byBlcnI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoH0KPiA+ID4gCj4gPiA+
+IC3CoMKgwqDCoMKgwqDCoGlmIChjb3B5X2Zyb21fdXNlcigmY3JlYXRlX2FyZywgYXJnLCBzaXpl
+b2YoY3JlYXRlX2FyZykpKQo+ID4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0
+dXJuIC1FRkFVTFQ7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoGlmIChjb3B5X2Zyb21fdXNlcigmY3Jl
+YXRlX2FyZywgYXJnLCBzaXplb2YoY3JlYXRlX2FyZykpKSB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXQgPSAtRUZBVUxUOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgZ290byBlcnI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoH0KPiA+ID4gCj4gPiA+
+IMKgwqDCoMKgwqDCoMKgwqBzZWNzID0ga21hbGxvYyhQQUdFX1NJWkUsIEdGUF9LRVJORUwpOwo+
+ID4gPiAtwqDCoMKgwqDCoMKgwqBpZiAoIXNlY3MpCj4gPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqByZXR1cm4gLUVOT01FTTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKCFzZWNz
+KSB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXQgPSAtRU5PTUVNOwo+
+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ290byBlcnI7Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoH0KPiA+ID4gCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqBpZiAoY29weV9mcm9tX3Vz
+ZXIoc2VjcywgKHZvaWQgX191c2VyICopY3JlYXRlX2FyZy5zcmMsIFBBR0VfU0laRSkpCj4gPiA+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0ID0gLUVGQVVMVDsKPiA+IAo+ID4g
+wqDCoMKgwqDCoMKgwqDCoGlmIChjb3B5X2Zyb21fdXNlcihzZWNzLCAodm9pZCBfX3VzZXIgKilj
+cmVhdGVfYXJnLnNyYywgUEFHRV9TSVpFKSkgewo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqByZXQgPSAtRUZBVUxUOwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IGdvdG8gZXJyOwo+ID4gwqDCoMKgwqDCoMKgwqAgfQo+ID4gCj4gPiBSaWdodD8KPiAKPiBSaWdo
+dCEgSSBkb24ndCBjaGFuZ2UgdGhlIGlmIGJyYW5jaCBmb3IgSSBzZWUgaXQgd2lsbCBnbyB0byB0
+aGUgZXJyIGxhYmVsIGRpcmVjdGx5Lgo+IEJ1dCBpdCdzIGNoYW5nZWQgbm93IDotKQo+IAo+ID4g
+Cj4gPiAKPiA+ID4gLcKgwqDCoMKgwqDCoMKgZWxzZQo+ID4gPiArwqDCoMKgwqDCoMKgwqBlbHNl
+IHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNyY3VfaWR4ID0gc3JjdV9y
+ZWFkX2xvY2soJnNneF9sb2NrX2VwY19zcmN1KTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoGlmIChzZ3hfZXBjX2lzX2xvY2tlZCgpKSB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3JjdV9yZWFkX3VubG9jaygmc2d4X2xv
+Y2tfZXBjX3NyY3UsIHNyY3VfaWR4KTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqByZXQgPSAtRUJVU1k7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ290byBlcnI7Cj4gPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiA+ICsKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqByZXQgPSBzZ3hfZW5jbF9jcmVhdGUoZW5jbCwgc2Vjcyk7Cj4gPiA+IAo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3JjdV9yZWFkX3VubG9jaygmc2d4X2xv
+Y2tfZXBjX3NyY3UsIHNyY3VfaWR4KTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgfQo+ID4gCj4gPiBJ
+IG1lYW4gbGVzcyBicmFuY2hpbmcgZm9yIHRoZSBjb21tb24gKHN1Y2Nlc3MpIGNhc2UuCj4gCj4g
+RG8geW91IG1lYW4gdG8gY2hhbmdlIGFzIGZvbGxvd3M6Cj4gCj4gwqDCoMKgwqDCoMKgwqAgaWYg
+KGNvcHlfZnJvbV91c2VyKHNlY3MsICh2b2lkIF9fdXNlciAqKWNyZWF0ZV9hcmcuc3JjLCBQQUdF
+X1NJWkUpKSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldCA9IC1FRkFVTFQ7
+Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGdvdG8gZXJyOwo+IAo+IMKgwqDCoMKg
+wqDCoMKgIHNyY3VfaWR4ID0gc3JjdV9yZWFkX2xvY2soJnNneF9sb2NrX2VwY19zcmN1KTsKPiDC
+oMKgwqDCoMKgwqDCoCBpZiAoc2d4X2VwY19pc19sb2NrZWQoKSkgewo+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBzcmN1X3JlYWRfdW5sb2NrKCZzZ3hfbG9ja19lcGNfc3JjdSwgc3Jj
+dV9pZHgpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSAtRUJVU1k7Cj4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGdvdG8gZXJyOwo+IMKgwqDCoMKgwqDCoMKg
+IH0KPiAKPiDCoMKgwqDCoMKgwqDCoCByZXQgPSBzZ3hfZW5jbF9jcmVhdGUoZW5jbCwgc2Vjcyk7
+Cj4gCj4gwqDCoMKgwqDCoMKgwqAgc3JjdV9yZWFkX3VubG9jaygmc2d4X2xvY2tfZXBjX3NyY3Us
+IHNyY3VfaWR4KTsKPiAKPiBlcnI6Cj4gwqDCoMKgwqDCoMKgwqAga2ZyZWUoc2Vjcyk7Cj4gwqDC
+oMKgwqDCoMKgwqAgcmV0dXJuIHJldDsKClllYWgsIHF1aWNrbHkgc2tpbW1lZCwgbG9va3Mgcmln
+aHQuCgpCUiwgSmFya2tvCg==
 
-
-> -----Original Message-----
-> From: Jarkko Sakkinen <jarkko@kernel.org>
-> Sent: Friday, April 22, 2022 12:07 AM
-> To: Zhang, Cathy <cathy.zhang@intel.com>
-> Cc: linux-sgx@vger.kernel.org; x86@kernel.org; Chatre, Reinette
-> <reinette.chatre@intel.com>; Hansen, Dave <dave.hansen@intel.com>; Raj,
-> Ashok <ashok.raj@intel.com>; Peng, Chao P <chao.p.peng@intel.com>;
-> Zhong, Yang <yang.zhong@intel.com>
-> Subject: Re: [PATCH v4 5/9] x86/sgx: Forced EPC page zapping for
-> EUPDATESVN
->=20
-> On Thu, Apr 21, 2022 at 07:03:22PM +0800, Cathy Zhang wrote:
-> > Before an EUPDATESVN instruction can be successful, all enclave pages
-> > (EPC) must be marked as unused in the SGX hardware metadata (EPCM).
-> >
-> > A page becomes unused when an issued EREMOVE instruction succeeds.
-> > To prepare for EUPDATESVN, loop over all SGX pages and attempt to
-> > EREMOVE them. This is fatal to running enclaves and destroys all
-> > enclave state and memory contents. This destruction is by design and
-> > mitigates any compromise of enclaves or the SGX hardware itself which
-> > occurred before the microcode update.
-> >
-> > An EREMOVE operation on a page may fail for a few reasons. Each has
-> > its own mitigations.
-> >
-> > First, EREMOVE will fail if an enclave that uses the page is
-> > executing. Send an IPI to all CPUs that might be running the enclave
-> > to force it out of the enclave long enough to EREMOVE the page. Other
-> > CPUs might enter the enclave in the meantime, so this is not a
-> > rock-solid guarantee.
-> >
-> > Second, EREMOVE can fail on special SGX metadata pages, such as SECS.
-> > EREMOVE will work on them only after the normal SGX pages that depend
-> > on them have been EREMOVE'd. Defer handling those pages and repeat
-> > EREMOVE after the dependency has been addressed.
-> >
-> > Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
-> >
-> > ---
-> > Changes since v3:
-> >  - Rename SGX_EPC_PAGE_GUEST as SGX_EPC_PAGE_KVM_GUEST
-> (Suggested by
-> >    Jarkko Sakkinen)
-> >  - Remove "VA" from sentence "Second, EREMOVE can fail on special SGX
-> >    metadata...", for except concurrency rules, only SECS pages might
-> >    be EREMOVEd failed and will be tracked for a deferred handling.
-> >    (Suggested by Jarkko Sakkinen)
-> > ---
-> >  arch/x86/kernel/cpu/sgx/sgx.h  |  13 ++
-> > arch/x86/kernel/cpu/sgx/encl.c |  14 +-
-> > arch/x86/kernel/cpu/sgx/main.c | 347
-> +++++++++++++++++++++++++++++++++
-> >  3 files changed, 373 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/kernel/cpu/sgx/sgx.h
-> > b/arch/x86/kernel/cpu/sgx/sgx.h index 775477e0b8af..d90532957181
-> > 100644
-> > --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> > +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> > @@ -32,6 +32,17 @@
-> >  #define SGX_EPC_PAGE_VA			BIT(2)
-> >  /* Pages allocated for KVM guest */
-> >  #define SGX_EPC_PAGE_KVM_GUEST		BIT(3)
-> > +/*
-> > + * Pages, failed to be zapped (EREMOVED)
-> > + * by SGX CPUSVN update process.
-> > + */
-> > +#define SGX_EPC_PAGE_ZAP_TRACKED	BIT(4)
-> > +/*
-> > + * Pages, the associated enclave is being
-> > + * released while SGX CPUSVN update is
-> > + * running.
-> > + */
-> > +#define SGX_EPC_PAGE_IN_RELEASE		BIT(5)
-> >
-> >  struct sgx_epc_page {
-> >  	unsigned int section;
-> > @@ -110,5 +121,7 @@ void sgx_update_lepubkeyhash(u64
-> *lepubkeyhash);
-> >
-> >  extern struct srcu_struct sgx_lock_epc_srcu;  bool
-> > sgx_epc_is_locked(void);
-> > +void sgx_zap_wakeup(void);
-> > +void sgx_zap_abort(void);
-> >
-> >  #endif /* _X86_SGX_H */
-> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c
-> > b/arch/x86/kernel/cpu/sgx/encl.c index a01a72637e2e..be177a5e3292
-> > 100644
-> > --- a/arch/x86/kernel/cpu/sgx/encl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> > @@ -457,6 +457,12 @@ void sgx_encl_release(struct kref *ref)
-> >  	WARN_ON_ONCE(encl->secs_child_cnt);
-> >  	WARN_ON_ONCE(encl->secs.epc_page);
-> >
-> > +	/*
-> > +	 * EPC pages were freed and EREMOVE was executed. Wake
-> > +	 * up any zappers which were waiting for this.
-> > +	 */
-> > +	sgx_zap_wakeup();
-> > +
-> >  	kfree(encl);
-> >  }
-> >
-> > @@ -840,8 +846,14 @@ void sgx_encl_free_epc_page(struct sgx_epc_page
-> *page)
-> >  	WARN_ON_ONCE(page->flags &
-> SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> >
-> >  	ret =3D __eremove(sgx_get_epc_virt_addr(page));
-> > -	if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret))
-> > +	if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret)) {
-> > +		/*
-> > +		 * The EREMOVE failed. If a CPUSVN is in progress,
-> > +		 * it is now expected to fail. Notify it.
-> > +		 */
-> > +		sgx_zap_abort();
-> >  		return;
-> > +	}
-> >
-> >  	sgx_free_epc_page(page);
-> >  }
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c
-> > b/arch/x86/kernel/cpu/sgx/main.c index 031c1402cd7e..72317866ddaa
-> > 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -34,6 +34,16 @@ static bool __rcu sgx_epc_locked;
-> >   * will be prevented from starting during an SVN update.
-> >   */
-> >  DEFINE_SRCU(sgx_lock_epc_srcu);
-> > +static DECLARE_WAIT_QUEUE_HEAD(sgx_zap_waitq);
-> > +
-> > +/* The flag means to abort the SGX CPUSVN update process */ static
-> > +bool sgx_zap_abort_wait;
-> > +/*
-> > + * Track the number of SECS and VA pages associated with enclaves
-> > + * in releasing. SGX CPUSVN update will wait for them EREMOVEd by
-> > + * enclave exiting process.
-> > + */
-> > +static atomic_t zap_waiting_count;
-> >
-> >  /*
-> >   * These variables are part of the state of the reclaimer, and must
-> > be accessed @@ -636,6 +646,24 @@ void sgx_free_epc_page(struct
-> > sgx_epc_page *page)
-> >
-> >  	spin_lock(&node->lock);
-> >
-> > +	/*
-> > +	 * The page is EREMOVEd, stop tracking it
-> > +	 * as a deferred target for CPUSVN update
-> > +	 * process.
-> > +	 */
-> > +	if ((page->flags & SGX_EPC_PAGE_ZAP_TRACKED) &&
-> > +	    (!list_empty(&page->list)))
-> > +		list_del(&page->list);
-> > +
-> > +	/*
-> > +	 * The page is EREMOVEd, decrease
-> > +	 * "zap_waiting_count" to stop counting it
-> > +	 * as a waiting target for CPUSVN update
-> > +	 * process.
-> > +	 */
-> > +	if (page->flags & SGX_EPC_PAGE_IN_RELEASE)
-> > +		atomic_dec_if_positive(&zap_waiting_count);
-> > +
-> >  	page->owner =3D NULL;
-> >  	if (page->poison)
-> >  		list_add(&page->list, &node->sgx_poison_page_list); @@ -
-> 1010,3
-> > +1038,322 @@ bool sgx_epc_is_locked(void)
-> >  	lockdep_assert_held(&sgx_lock_epc_srcu);
-> >  	return sgx_epc_locked;
-> >  }
-> > +
-> > +/**
-> > + * sgx_zap_encl_page - unuse one EPC page
-> > + * @section:		EPC section
-> > + * @epc_page:		EPC page
-> > + * @secs_pages_list:	list to trac SECS pages failed to be EREMOVEd
-> > + *
-> > + * Zap an EPC page if it's used by an enclave.
-> > + *
-> > + * Returns:
-> > + * 0:			EPC page is unused or EREMOVE succeeds.
-> > + * -EBUSY:		EREMOVE failed for other threads executing
-> > + *			in enclave.
->=20
-> Do you need two lines for this? The limit is 100 characters per line.
-
-Changed the annotate for *-EBUSY* as one line in the three sgx_zap_* functi=
-ons.
-
->=20
-> > + * -EIO:		Other EREMOVE failures, like EPC leaks.
-> > + */
-> > +static int sgx_zap_encl_page(struct sgx_epc_section *section,
-> > +			     struct sgx_epc_page *epc_page,
-> > +			     struct list_head *secs_pages_list) {
-> > +	struct sgx_encl *encl;
-> > +	struct sgx_encl_page *encl_page;
-> > +	struct sgx_va_page *va_page;
-> > +	int retry_count =3D 10;
-> > +	int ret =3D 0;
-> > +
-> > +	/*
-> > +	 * Holding the per-section lock to ensure the
-> > +	 * "owner" field will not be cleared while
-> > +	 * checking.
-> > +	 */
-> > +	spin_lock(&section->node->lock);
-> > +
-> > +	/*
-> > +	 * The "owner" field is NULL, it means the page
-> > +	 * is unused.
-> > +	 */
-> > +	if (!epc_page->owner) {
-> > +		spin_unlock(&section->node->lock);
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (epc_page->flags & SGX_EPC_PAGE_VA) {
-> > +		va_page =3D epc_page->owner;
-> > +		encl =3D va_page->encl;
-> > +	} else {
-> > +		encl_page =3D epc_page->owner;
-> > +		encl =3D encl_page->encl;
-> > +	}
-> > +
-> > +	if (!encl) {
-> > +		spin_unlock(&section->node->lock);
-> > +		/*
-> > +		 * The page has owner, but without an Enclave
-> > +		 * associated with. This might be caused by
-> > +		 * EPC leaks happen in enclave's release path.
-> > +		 */
-> > +		ret =3D __eremove(sgx_get_epc_virt_addr(epc_page));
-> > +		if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret))
-> > +			ret =3D -EIO;
-> > +		else
-> > +			sgx_free_epc_page(epc_page);
-> > +		return ret;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Wait for any enclave already being released to complete
-> > +	 * but prevent any additional enclave from starting release
-> > +	 * while we operate on it.
-> > +	 */
-> > +	if (!kref_get_unless_zero(&encl->refcount)) {
-> > +
-> > +		/*
-> > +		 * The enclave is exiting. The EUPDATESVN
-> > +		 * procedure needs to wait for the EREMOVE
-> > +		 * operation which happens as a part of
-> > +		 * the enclave exit operation. Use
-> > +		 * "zap_waiting_count" to indicate to the
-> > +		 * EUPDATESVN code when it needs to wait.
-> > +		 */
-> > +		if (((epc_page->flags & SGX_EPC_PAGE_VA) ||
-> > +		     (encl_page->type =3D=3D SGX_PAGE_TYPE_SECS)) &&
-> > +		    !(epc_page->flags & SGX_EPC_PAGE_IN_RELEASE)) {
-> > +			atomic_inc(&zap_waiting_count);
-> > +			epc_page->flags |=3D SGX_EPC_PAGE_IN_RELEASE;
-> > +		}
-> > +
-> > +		spin_unlock(&section->node->lock);
-> > +		return 0;
-> > +	}
-> > +
-> > +	spin_unlock(&section->node->lock);
-> > +
-> > +	/*
-> > +	 * This EREMOVE has two main purposes:
-> > +	 * 1. Getting EPC pages into the "unused" state.
-> > +	 *    Every EPC page must be unused before an
-> > +	 *    EUPDATESVN can be succeed.
-> > +	 * 2. Forcing enclaves to exit more frequently.
-> > +	 *    EREMOVE will not succeed while any thread is
-> > +	 *    running in the enclave. Every successful
-> > +	 *    EREMOVE increases the chance that an enclave
-> > +	 *    will trip over this page, fault, and exit.
-> > +	 *    This, in turn, increases the likelihood of
-> > +	 *    success for every future EREMOVE attempt.
-> > +	 */
-> > +	ret =3D __eremove(sgx_get_epc_virt_addr(epc_page));
-> > +
-> > +	if (!ret) {
-> > +		/*
-> > +		 * The SECS page is EREMOVEd successfully this time.
-> > +		 * Remove it from the list to stop tracking it.
-> > +		 */
-> > +		if ((epc_page->flags & SGX_EPC_PAGE_ZAP_TRACKED) &&
-> > +		    !list_empty(&epc_page->list)) {
-> > +			list_del_init(&epc_page->list);
-> > +			epc_page->flags &=3D ~SGX_EPC_PAGE_ZAP_TRACKED;
-> > +		}
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (ret =3D=3D SGX_CHILD_PRESENT) {
-> > +		/*
-> > +		 * The SECS page is failed to be EREMOVEd due
-> > +		 * to associations. Add it to "secs_pages_list"
-> > +		 * for deferred handling.
-> > +		 */
-> > +		if (!(epc_page->flags & SGX_EPC_PAGE_ZAP_TRACKED) &&
-> > +		    secs_pages_list) {
-> > +			epc_page->flags |=3D SGX_EPC_PAGE_ZAP_TRACKED;
-> > +			list_add_tail(&epc_page->list, secs_pages_list);
-> > +		}
-> > +		ret =3D 0;
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (ret) {
-> > +		/*
-> > +		 * EREMOVE will fail on a page if the owning
-> > +		 * enclave is executing. An IPI will cause the
-> > +		 * enclave to exit, providing an opportunity to
-> > +		 * EREMOVE the page, but it does not guarantee
-> > +		 * the page will be EREMOVEd successfully. Retry
-> > +		 * for several times, if it keeps on failing,
-> > +		 * return -EBUSY to notify userspace for retry.
-> > +		 */
-> > +		do {
-> > +			on_each_cpu_mask(sgx_encl_cpumask(encl),
-> sgx_ipi_cb, NULL, true);
-> > +			ret =3D __eremove(sgx_get_epc_virt_addr(epc_page));
-> > +			if (!ret)
-> > +				break;
-> > +			retry_count--;
-> > +		} while (retry_count);
-> > +
-> > +		if (ret)
-> > +			ret =3D -EBUSY;
-> > +	}
-> > +
-> > +out:
-> > +	kref_put(&encl->refcount, sgx_encl_release);
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * sgx_zap_section_pages - unuse one EPC section's pages
-> > + * @section:		EPC section
-> > + * @secs_pages_list:	list to track SECS pages failed to be EREMOVEd
-> > + *
-> > + * Iterate through pages in one EPC section, unuse the pages
-> > + * initialized for enclaves on bare metal.
-> > + *
-> > + * TODO: EPC pages for KVM guest will be handled in future.
-> > + *
-> > + * Returns:
-> > + * 0:			EPC page is unused.
-> > + * -EBUSY:		EREMOVE failed for other threads executing
-> > + *			in enclave.
-> > + * -EIO:		Other EREMOVE failures, like EPC leaks.
-> > + */
-> > +static int sgx_zap_section_pages(struct sgx_epc_section *section,
-> > +				 struct list_head *secs_pages_list) {
-> > +	struct sgx_epc_page *epc_page;
-> > +	int i, ret =3D 0;
-> > +	unsigned long nr_pages =3D section->size >> PAGE_SHIFT;
-> > +
-> > +	for (i =3D 0; i < nr_pages; i++) {
-> > +		epc_page =3D &section->pages[i];
-> > +
-> > +		/*
-> > +		 * EPC page has "NULL" owner, indicating
-> > +		 * it's unused. No action required for
-> > +		 * this case.
-> > +		 *
-> > +		 * No new owner can be assigned when SGX
-> > +		 * is "frozen".
-> > +		 */
-> > +		if (!epc_page->owner)
-> > +			continue;
-> > +
-> > +		/*
-> > +		 * Try to "unuse" all SGX memory used by enclaves
-> > +		 * on bare-metal.
-> > +		 *
-> > +		 * Failures might be caused by the following reasons:
-> > +		 * 1. EREMOVE failure due to other threads executing
-> > +		 *    in enclave. Return -EBUSY to notify userspace
-> > +		 *    for a later retry.
-> > +		 * 2. Other EREMOVE failures. For example, a bug in
-> > +		 *    SGX memory management like a leak that lost
-> > +		 *    track of an SGX EPC page. Upon these failures,
-> > +		 *    do not even attempt EUPDATESVN.
-> > +		 */
-> > +		if (!(epc_page->flags & SGX_EPC_PAGE_KVM_GUEST)) {
-> > +			ret =3D sgx_zap_encl_page(section, epc_page,
-> secs_pages_list);
-> > +			if (ret)
-> > +				return ret;
-> > +		}
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * sgx_zap_pages - unuse all EPC sections' pages
-> > + *
-> > + * Context: This function is called while microcode_mutex lock
-> > + *	    is held by the caller, it ensures that the update
-> > + *	    process will not run concurrently.
-> > + *
-> > + * Returns:
-> > + * 0:			All enclaves have been torn down and
-> > + *			all EPC pages are unused.
-> > + * -ERESTARTSYS:	Interrupted by a signal.
-> > + * -EBUSY:		EREMOVE failed for other threads executing
-> > + *			in enclave.
-> > + * -EIO:		Other EREMOVE failures, like EPC leaks.
-> > + */
-> > +static int sgx_zap_pages(void)
-> > +{
-> > +	struct sgx_epc_page *epc_page, *tmp;
-> > +	struct sgx_epc_section *section;
-> > +	int i, ret =3D 0;
-> > +
-> > +	LIST_HEAD(secs_pages_list);
-> > +
-> > +	for (i =3D 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-> > +		section =3D &sgx_epc_sections[i];
-> > +		if (!section->pages)
-> > +			break;
-> > +		/*
-> > +		 * Go through the section's pages and try to EREMOVE
-> > +		 * each one, except the ones associated with enclaves
-> > +		 * in releasing.
-> > +		 */
-> > +		ret =3D sgx_zap_section_pages(section, &secs_pages_list);
-> > +		if (WARN_ON_ONCE(ret))
-> > +			goto out;
-> > +	}
-> > +
-> > +	/*
-> > +	 * The SECS page should have no associations now, try
-> > +	 * EREMOVE them again.
-> > +	 */
-> > +	list_for_each_entry_safe(epc_page, tmp, &secs_pages_list, list) {
-> > +		section =3D &sgx_epc_sections[epc_page->section];
-> > +		ret =3D sgx_zap_encl_page(section, epc_page, NULL);
-> > +		if (ret)
-> > +			goto out;
-> > +	}
-> > +
-> > +	/*
-> > +	 * There might be pages in the process of being freed
-> > +	 * by exiting enclaves. Wait for the exiting process
-> > +	 * to succeed or fail.
-> > +	 */
-> > +	ret =3D wait_event_interruptible(sgx_zap_waitq,
-> > +				       (!atomic_read(&zap_waiting_count) ||
-> > +					sgx_zap_abort_wait));
-> > +	if (ret =3D=3D -ERESTARTSYS) {
-> > +		pr_err("CPUSVN update is not finished yet, but killed by
-> userspace\n");
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (sgx_zap_abort_wait) {
-> > +		ret =3D -EIO;
-> > +		pr_err("exit-side EREMOVE failure. Aborting CPUSVN
-> update\n");
-> > +		goto out;
-> > +	}
-> > +
-> > +out:
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * sgx_zap_wakeup - wake up CPUSVN update process
-> > + *
-> > + * Whenever enclave is freed, this function will
-> > + * be called to check if all EPC pages are unused.
-> > + * Wake up the CPUSVN update process if it's true.
-> > + */
-> > +void sgx_zap_wakeup(void)
-> > +{
-> > +	if (wq_has_sleeper(&sgx_zap_waitq) &&
-> > +	    !atomic_read(&zap_waiting_count))
-> > +		wake_up(&sgx_zap_waitq);
-> > +}
-> > +
-> > +/**
-> > + * sgx_zap_abort - abort SGX CPUSVN update process
-> > + *
-> > + * When EPC leaks happen in enclave release process,
-> > + * it will set flag sgx_zap_abort_wait as true to
-> > + * abort the CPUSVN update process.
-> > + */
-> > +void sgx_zap_abort(void)
-> > +{
-> > +	sgx_zap_abort_wait =3D true;
-> > +	wake_up(&sgx_zap_waitq);
-> > +}
-> > --
-> > 2.17.1
-> >
->=20
-> BR, Jarkko
