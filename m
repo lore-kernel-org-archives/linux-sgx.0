@@ -2,316 +2,221 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CD1C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 28 Apr 2022 20:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E9DC433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 28 Apr 2022 20:11:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236956AbiD1UOy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 28 Apr 2022 16:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38180 "EHLO
+        id S238750AbiD1UOz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 28 Apr 2022 16:14:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231637AbiD1UOx (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 28 Apr 2022 16:14:53 -0400
+        with ESMTP id S231637AbiD1UOz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 28 Apr 2022 16:14:55 -0400
 Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F82ABAB80
-        for <linux-sgx@vger.kernel.org>; Thu, 28 Apr 2022 13:11:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42930BAB81
+        for <linux-sgx@vger.kernel.org>; Thu, 28 Apr 2022 13:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651176695; x=1682712695;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7r8lX++img5Z6cdFhREpobiVE/JBh+N7O293Rb5WiWU=;
-  b=I0X/9bgpuWvRm+m1tnpB8HVGP3EtcDifFubyTY3WmIGw21Fd3ZnWNtIH
-   gbh/5RZ9wV9fa9SmFZ1/sJEBjGFMZ3M2PTb0BIkHXPl5Kw1Tfwy+zNCSA
-   5YWqHNEkXSdjufjdFLCc4Ikkr0QxhlUxZHCRA5qiJnc4tuii9YwXdOym4
-   pJhaFybfsXsqjPGoJ5Xj36GZHEIMwGv70fMxYtEOf+znykmqMgcDpjtIn
-   fH+77AbfWUj1J8GelhMosMREjJOz3C+yWQbuhungwRFmy8fZfvXyvBkmD
-   eEC/w/6ehkk5hwuzIqZxKGEGWhnPEUX/DG13YRZAWk2VJGvh6ZwQskCqj
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10331"; a="246324256"
+  t=1651176699; x=1682712699;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5pi0BmQiyh6xVAOW5Q+6JBZ9MAHemou3jDeIoPK797I=;
+  b=VzG19itfauDuEglF4II9/bBCa+/2S9C1EqBIMApdQ+bp+6X0c4pUMGx7
+   7yhIEfJ9EU0v9xWazPdseBG3tsdksM3keacQI3TzAmCHE9aDmp12S5Jk6
+   56+YktZ8R5vkHf+GRSldMqdeYLglH9OOu/5/q4JmBTxn70pcRWHMwDeDc
+   hPzFonedih/zW39JaHRnbAn9z0E2jZ5/5SNZ3SSEwtgLhAD05Z0t9DwK5
+   ptZShDT3m4Tv+vOc7hSAVsWMW3lIdH1Vt4DXF7ryLZIFGVx/KwUlimVDB
+   lDky54ESOLxVjAtDHiGnEs1kme87jY/dLVb4CXOyDYgmM/8Rkl64Tf4wq
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10331"; a="246324257"
 X-IronPort-AV: E=Sophos;i="5.91,296,1647327600"; 
-   d="scan'208";a="246324256"
+   d="scan'208";a="246324257"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2022 13:11:34 -0700
 X-IronPort-AV: E=Sophos;i="5.91,296,1647327600"; 
-   d="scan'208";a="514458613"
+   d="scan'208";a="514458603"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2022 13:11:32 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org,
         linux-sgx@vger.kernel.org
 Cc:     haitao.huang@intel.com
-Subject: [RFC PATCH 4/4] x86/sgx: Do not allocate backing pages when loading from backing store
-Date:   Thu, 28 Apr 2022 13:11:27 -0700
-Message-Id: <117862f7eb5bfef54d3b28f53746e6cf9e05508e.1651171455.git.reinette.chatre@intel.com>
+Subject: [RFC PATCH 0/4] SGX shmem backing store issue
+Date:   Thu, 28 Apr 2022 13:11:23 -0700
+Message-Id: <cover.1651171455.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1651171455.git.reinette.chatre@intel.com>
-References: <cover.1651171455.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Preface:
-This is intended as a debugging aid forming part of the investigation
-into ENCLS[ELDU] returning #GP. This is not intended for inclusion.
+Hi Everybody,
 
-Changelog:
-The shmem backing store is used to (a) store encrypted enclave pages
-when they are reclaimed from the enclave, and (b) load encrypted
-enclave pages back into the enclave when they are accessed.
+Haitao reported encountering the following WARN while stress testing SGX
+with the SGX2 series [1] applied:
 
-The same interface, sgx_encl_get_backing_page(), is used whether
-a new backing page is needed to store an enclave page being
-reclaimed or whether an existing backing page is loaded to reload
-an enclave page to the EPC. This is because of this flow:
-sgx_encl_get_backing_page()
-        shmem_read_mapping_page_gfp()
-                shmem_getpage_gfp(..., ..., ..., SGP_CACHE, ...)
+ELDU returned 1073741837 (0x4000000d)
+WARNING: CPU: 72 PID: 24407 at arch/x86/kernel/cpu/sgx/encl.c:81 sgx_encl_eldu+0x3cf/0x400
+...
+Call Trace:
+<TASK>
+? xa_load+0x6e/0xa0
+__sgx_encl_load_page+0x3d/0x80
+sgx_encl_load_page_in_vma+0x4a/0x60
+sgx_vma_fault+0x7f/0x3b0
+? sysvec_call_function_single+0x66/0xd0
+? asm_sysvec_call_function_single+0x12/0x20
+__do_fault+0x39/0x110
+__handle_mm_fault+0x1222/0x15a0
+handle_mm_fault+0xdb/0x2c0
+do_user_addr_fault+0x1d1/0x650
+? exit_to_user_mode_prepare+0x45/0x170
+exc_page_fault+0x76/0x170
+? asm_exc_page_fault+0x8/0x30
+asm_exc_page_fault+0x1e/0x30
+...
+</TASK>
 
-With this interface used the backing pages are retrieved with the
-SGP_CACHE flag that will automatically allocate a backing page if
-it is not present.
+ENCLS[ELDU] is returning a #GP when attempting to load an enclave
+page from the backing store into the enclave. This is likely because
+of a MAC verification failure.
 
-In an effort to diagnose #GP ENCLS[ELDU] the interface is split
-to ensure that when a backing page is expected to exist it is just
-loaded (lookup), not allocated.
+Haitao's stress testing involves running two concurrent loops of the SGX
+selftests on a system with 4GB EPC memory. One of the tests is modified
+to reduce the oversubscription heap size:
 
-Replace sgx_encl_get_backing() with sgx_encl_lookup_backing() and
-sgx_encl_alloc_backing() to distinguish whether a backing page needs
-to be allocated or is expected to exist. sgx_encl_alloc_backing()
-is used by the reclaimer during the ENCLS[EWB] flow and
-sgx_encl_lookup_backing() is used in the ENCLS[ELDU] flow.
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index d480c2dd2858..12008789325b 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -398,7 +398,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 	 * Create enclave with additional heap that is as big as all
+ 	 * available physical SGX memory.
+ 	 */
+-	total_mem = get_total_epc_mem();
++	total_mem = get_total_epc_mem()/16;
+ 	ASSERT_NE(total_mem, 0);
+ 	TH_LOG("Creating an enclave with %lu bytes heap may take a while ...",
+ 	       total_mem);
 
-An IDA is used to keep track of PCMD page allocation to ensure these
-pages are allocated once.
+If the the test compiled with above snippet is renamed as "test_sgx_small"
+and the original renamed as "test_sgx_large" the two concurrent loops are
+run as follows:
 
-This patch revealed that there are scenarios where the backing store
-does not contain a page expected to exist - sgx_encl_lookup_backing()
-fails with -ENOENT. This would explain ENCLS[ELDU] returning #GP
-since previously such a missing page would be allocated and thus
-trigger a MAC verification failure.
+(for i in $(seq 1 999); do echo "Iteration $i"; sudo ./test_sgx_large; done ) > log.large 2>&1
+(for i in $(seq 1 9999); do echo "Iteration $i"; sudo ./test_sgx_small; done ) > log.small 2>&1
 
-Specifically, with the debugging included enabled an oversubscribe
-stress test encounters the error:
-sgx: sgx_encl_get_backing_page:847 fail 1 backing page with -2
+If the SGX driver is modified to always WARN when ENCLS[ELDU] encounters a #GP
+(see below) then the WARN appears after a few iterations of "test_sgx_large"
+and shows up throughout the testing.
 
-The reason why the backing page is not present is not understood.
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index 99004b02e2ed..68c1dbc84ed3 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -18,7 +18,7 @@
+ #define ENCLS_WARN(r, name) {						  \
+ 	do {								  \
+ 		int _r = (r);						  \
+-		WARN_ONCE(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
++		WARN(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
+ 	} while (0);							  \
+ }
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/sgx/encl.c  | 83 ++++++++++++++++++++++++++++-----
- arch/x86/kernel/cpu/sgx/encl.h  |  8 +++-
+I focused on investigating this issue the past two weeks and was able to
+narrow down the cause but not yet fix the issue. Now I am out of ideas and
+would really appreciate if you could provide guidance on how to proceed.
+
+Here is what I have learned so far:
+* Reverting commit 08999b2489b4 ("x86/sgx: Free backing memory after
+  faulting the enclave page") resolves the issue. With that commit
+  reverted the concurrent selftest loops can run to completion without
+  encountering any WARNs.
+
+* The issue is also resolved if only the calls (introduced by commit
+  08999b2489b4 ("x86/sgx: Free backing memory after faulting the enclave
+  page") ) to sgx_encl_truncate_backing_page() within __sgx_encl_eldu()
+  are disabled.
+
+* Two issues with commit 08999b2489b4 ("x86/sgx: Free backing memory
+  after faulting the enclave page") are fixed with patch 1 and 2 in
+  this series. These fixes do not resolve the WARN.
+
+* There is a potential race between the reclaimer and the page fault
+  handler while interacting with the backing store. This is addressed
+  in patch 3, but it does not resolve the WARN.
+
+* Lockdep did reveal a locking issue in SGX2 - the EAUG flow should not
+  do direct reclaim since the page fault handler already has mmap_lock
+  that the reclaimer will attempt to obtain. This will be fixed in the
+  next version of SGX2 but that fix does not resolve the WARN.
+
+* Since ENCLS[ELDU] returns #GP on MAC verification failure a possible
+  cause could be if a problem occurs while loading the page from
+  backing store.
+  sgx_encl_get_backing_page() is used to both allocate backing storage
+  in the ENCLS[EWB] flow as well as to lookup backing storage in the
+  ENCLS[ELDU] flow.
+  As part of the investigation the interface was split to ensure that
+  backing storage is only allocated during the ENCLS[EWB] flow and only
+  lookup occurs during the ENCLS[ELDU] flow. This can be found in
+  patch 4.
+  This change revealed that there are cases during ENCLS[ELDU] flow
+  when the backing page is not present - attempting to lookup a
+  backing page returns -ENOENT. Before patch 4 a new backing page
+  would be allocated and thus trigger a #GP when ENCLS[ELDU] is
+  attempted.
+  This change is not a fix, the code path just fails earlier now, but
+  it reveals a cause of the WARNs encountered (MAC verification will
+  fail on a newly allocated page) but not why the pages cannot be found
+  in the backing store. With this change the number of WARNs are
+  reduced significantly but not completely. Even with this patch
+  applied the WARN was encountered once while running the stress
+  selftests.
+
+Could you please advise on how to proceed? Do you perhaps have ideas
+why the backing store could not contain a page when it is loaded back
+during the ENCLS[ELDU] flow?
+There is some interesting text in the comments within shmem_fault()
+that hints that faulting pages should be avoided into holes as they
+are being punched ... but I do not understand those details and
+would really appreciate guidance on how to understand what is going on
+here.
+
+These SGX2 tests exercise the concurrent operation of reclaimer and page
+fault handler and have a good track record of locating issues. Thanks
+to it we already have:
+8795359e35bc ("x86/sgx: Silence softlockup detection when releasing large enclaves")
+ac5d272a0ad0 ("x86/sgx: Fix free page accounting")
+While this issue is triggered by the SGX2 tests I cannot find a connection
+with the SGX2 code paths. I have made a few attempts to create an
+equivalent test for SGX1 but have not yet had success to create a SGX1
+test that can trigger this issue.
+
+These patches are based on v5.18-rc4 with the SGX2 series applied but
+do not touch SGX2 code paths. Patch 1,2, and 3 also apply cleanly to
+v5.18-rc4 while patch 4 has a conflict in arch/x86/kernel/cpu/sgx/encl.h
+due to the SGX2 declarations.
+
+Your feedback will be greatly appreciated.
+Thank you very much
+
+Reinette
+
+[1] https://lore.kernel.org/lkml/cover.1649878359.git.reinette.chatre@intel.com/
+
+Reinette Chatre (4):
+  x86/sgx: Do not free backing memory on ENCLS[ELDU] failure
+  x86/sgx: Set dirty bit after modifying page contents
+  x86/sgx: Obtain backing storage page with enclave mutex held
+  x86/sgx: Do not allocate backing pages when loading from backing store
+
+ arch/x86/kernel/cpu/sgx/encl.c  | 89 ++++++++++++++++++++++++++++-----
+ arch/x86/kernel/cpu/sgx/encl.h  |  8 ++-
  arch/x86/kernel/cpu/sgx/ioctl.c |  1 +
- arch/x86/kernel/cpu/sgx/main.c  |  6 +--
- 4 files changed, 82 insertions(+), 16 deletions(-)
+ arch/x86/kernel/cpu/sgx/main.c  | 15 +++---
+ 4 files changed, 93 insertions(+), 20 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index e03f124ce772..22ed886dc825 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -60,7 +60,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 
- 	page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
- 
--	ret = sgx_encl_get_backing(encl, page_index, &b);
-+	ret = sgx_encl_lookup_backing(encl, page_index, &b);
- 	if (ret)
- 		return ret;
- 
-@@ -102,8 +102,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 
- 	sgx_encl_truncate_backing_page(encl, page_index);
- 
--	if (pcmd_page_empty)
-+	if (pcmd_page_empty) {
-+		ida_free(&encl->pcmd_in_backing, PFN_DOWN(page_pcmd_off));
- 		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
-+	}
- 
- 	return ret;
- }
-@@ -617,6 +619,7 @@ void sgx_encl_release(struct kref *ref)
- 
- 	if (encl->backing)
- 		fput(encl->backing);
-+	ida_destroy(&encl->pcmd_in_backing);
- 
- 	cleanup_srcu_struct(&encl->srcu);
- 
-@@ -807,17 +810,39 @@ const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl)
- }
- 
- static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
--					      pgoff_t index)
-+					      pgoff_t index, enum sgp_type sgp)
- {
- 	struct inode *inode = encl->backing->f_path.dentry->d_inode;
--	struct address_space *mapping = inode->i_mapping;
--	gfp_t gfpmask = mapping_gfp_mask(mapping);
-+	struct page *page = NULL;
-+	int ret;
-+
-+	ret = shmem_getpage(inode, index, &page, sgp);
-+	if (ret) {
-+		pr_debug("%s:%d fail %d backing page with %d\n",
-+			 __func__, __LINE__, sgp, ret);
-+		return ERR_PTR(ret);
-+	}
-+
-+	if (!page) {
-+		pr_debug("%s:%d fail %d backing page with NULL page\n",
-+			 __func__, __LINE__, sgp);
-+		return ERR_PTR(-EFAULT);
-+	}
- 
--	return shmem_read_mapping_page_gfp(mapping, index, gfpmask);
-+	if (PageHWPoison(page)) {
-+		pr_debug("%s:%d fail %d backing page with poison page\n",
-+			 __func__, __LINE__, sgp);
-+		unlock_page(page);
-+		put_page(page);
-+		return ERR_PTR(-EIO);
-+	}
-+
-+	unlock_page(page);
-+	return page;
- }
- 
- /**
-- * sgx_encl_get_backing() - Pin the backing storage
-+ * sgx_encl_alloc_backing() - Pin the backing storage
-  * @encl:	an enclave pointer
-  * @page_index:	enclave page index
-  * @backing:	data for accessing backing storage for the page
-@@ -829,18 +854,54 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
-  *   0 on success,
-  *   -errno otherwise.
-  */
--int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
--			 struct sgx_backing *backing)
-+int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
-+			   struct sgx_backing *backing)
-+{
-+	pgoff_t page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
-+	pgoff_t pcmd_index = PFN_DOWN(page_pcmd_off);
-+	struct page *contents;
-+	struct page *pcmd;
-+	int ret;
-+
-+	contents = sgx_encl_get_backing_page(encl, page_index, SGP_CACHE);
-+	if (IS_ERR(contents))
-+		return PTR_ERR(contents);
-+
-+	ret = ida_alloc_range(&encl->pcmd_in_backing, pcmd_index,
-+			      pcmd_index, GFP_KERNEL);
-+	if (ret == -ENOSPC) {
-+		/* pcmd_index backing page already created, just look it up */
-+		pcmd = sgx_encl_get_backing_page(encl, pcmd_index, SGP_NOALLOC);
-+	} else if (ret >= 0) {
-+		pcmd = sgx_encl_get_backing_page(encl, pcmd_index, SGP_CACHE);
-+	} else {
-+		pcmd = ERR_PTR(ret);
-+	}
-+	if (IS_ERR(pcmd)) {
-+		put_page(contents);
-+		return PTR_ERR(pcmd);
-+	}
-+
-+	backing->page_index = page_index;
-+	backing->contents = contents;
-+	backing->pcmd = pcmd;
-+	backing->pcmd_offset = page_pcmd_off & (PAGE_SIZE - 1);
-+
-+	return 0;
-+}
-+
-+int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
-+			    struct sgx_backing *backing)
- {
- 	pgoff_t page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
- 	struct page *contents;
- 	struct page *pcmd;
- 
--	contents = sgx_encl_get_backing_page(encl, page_index);
-+	contents = sgx_encl_get_backing_page(encl, page_index, SGP_NOALLOC);
- 	if (IS_ERR(contents))
- 		return PTR_ERR(contents);
- 
--	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(page_pcmd_off));
-+	pcmd = sgx_encl_get_backing_page(encl, PFN_DOWN(page_pcmd_off), SGP_NOALLOC);
- 	if (IS_ERR(pcmd)) {
- 		put_page(contents);
- 		return PTR_ERR(pcmd);
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 66adb8faec45..2a8d3bd3338f 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -8,6 +8,7 @@
- #define _X86_ENCL_H
- 
- #include <linux/cpumask.h>
-+#include <linux/idr.h>
- #include <linux/kref.h>
- #include <linux/list.h>
- #include <linux/mm_types.h>
-@@ -62,6 +63,7 @@ struct sgx_encl {
- 
- 	cpumask_t cpumask;
- 	struct file *backing;
-+	struct ida pcmd_in_backing;
- 	struct kref refcount;
- 	struct list_head va_pages;
- 	unsigned long mm_list_version;
-@@ -107,8 +109,10 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
- void sgx_encl_release(struct kref *ref);
- int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
- const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl);
--int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
--			 struct sgx_backing *backing);
-+int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
-+			   struct sgx_backing *backing);
-+int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
-+			    struct sgx_backing *backing);
- void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
- int sgx_encl_test_and_clear_young(struct mm_struct *mm,
- 				  struct sgx_encl_page *page);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 1c2f40b72551..94d3817b40ff 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -82,6 +82,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	}
- 
- 	encl->backing = backing;
-+	ida_init(&encl->pcmd_in_backing);
- 
- 	secs_epc = sgx_alloc_epc_page(&encl->secs, true);
- 	if (IS_ERR(secs_epc)) {
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index ae79b8d6f645..148ec695b1b3 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -255,8 +255,8 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- 	sgx_encl_put_backing(backing, true);
- 
- 	if (!encl->secs_child_cnt && test_bit(SGX_ENCL_INITIALIZED, &encl->flags)) {
--		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
--					   &secs_backing);
-+		ret = sgx_encl_alloc_backing(encl, PFN_DOWN(encl->size),
-+					     &secs_backing);
- 		if (ret)
- 			goto out;
- 
-@@ -326,7 +326,7 @@ static void sgx_reclaim_pages(void)
- 		page_index = PFN_DOWN(encl_page->desc - encl_page->encl->base);
- 
- 		mutex_lock(&encl_page->encl->lock);
--		ret = sgx_encl_get_backing(encl_page->encl, page_index, &backing[i]);
-+		ret = sgx_encl_alloc_backing(encl_page->encl, page_index, &backing[i]);
- 		if (ret) {
- 			mutex_unlock(&encl_page->encl->lock);
- 			goto skip;
 -- 
 2.25.1
 
