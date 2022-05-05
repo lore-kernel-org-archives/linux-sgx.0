@@ -2,102 +2,89 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CBCC433F5
-	for <linux-sgx@archiver.kernel.org>; Thu,  5 May 2022 02:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC69C433EF
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 May 2022 06:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237772AbiEECUs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 4 May 2022 22:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
+        id S244155AbiEEGLn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 May 2022 02:11:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbiEECUs (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 4 May 2022 22:20:48 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 924BD48391;
-        Wed,  4 May 2022 19:17:08 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id c11so3096895plg.13;
-        Wed, 04 May 2022 19:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nvK1oEM6KjezJqxZAQccrrlAj7Q7lGbQGzhJauB66Kc=;
-        b=JaNNX8vQNXTxTRidslur+hjuVCZByyJo1AaJtI7UHjfkYpYrQeSMb1YOZ/cM0eC9zM
-         eAWExvxlhUl/+7HwJd5GcK4fpxlz0Bg6Cn3kEg3S7mGu5HoO73mQcF02Og36F4J6A56K
-         ur/MT5b6O7CYzDFmMbrQY2rK/kGLuSozZWyCyGuH01Zb78rUdQySI5ewSED4oB/gZEO1
-         qF7sVyNX2TqPYXnDmd4L+7sghmf/JM7BT3W3zblxVq+18UaujlO/jTipx8p1K4mWK8Q+
-         puSLJOjl6z9FIrxAkEpSqXZC2i/msGLTdrwzRsPbfV2igGn66CzCY2AWmPuk2KiEv8et
-         xANA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nvK1oEM6KjezJqxZAQccrrlAj7Q7lGbQGzhJauB66Kc=;
-        b=aymiRaVDeL8P/+Zu/K2S9Grh5jdFAfVjKQPaW9PmgaTWqydgoKHnGGfNu9jCjEdCOF
-         GeX4DkxQblCpfftQ9Nft1dQZwIx84QkRMdeZb0qZu6stT/KOZeYq0Re7/vpCDzg/ai5L
-         eBxZ8mkUQgPEhG1JWOpkFSzCt/tkaom5NuPWkVcmwWOKxPTvR9FdJDGpdHhFyVirwxuR
-         K+k7HzFEA+w7EP5X5ijgAF0GPDFX2azYPP/a/SxycUC1OBzgqgs6mV0JfujhZNPYeaio
-         4ZVzSvV5p4WoTT9qOvTmcTaSuquhpcbAZQj8UVsf1C/gnAqEwH0NVyJLYQs6U61fqPSs
-         ndrQ==
-X-Gm-Message-State: AOAM5313J+MaM6nzomhCdEfv2eRqiqqph6y8/RcAoXQp/8Ky5mfqBypl
-        C8D1tifc2APeoideY9PrGK62ApfxdCM=
-X-Google-Smtp-Source: ABdhPJyUNdfLMyfx0nTA4vph3BqzY4vAyUclmLRXLSoXTqOuwTZy8UavVq8pUwOqSidvb1dyBX3/Ag==
-X-Received: by 2002:a17:90b:1808:b0:1dc:8904:76a1 with SMTP id lw8-20020a17090b180800b001dc890476a1mr3221470pjb.202.1651717027932;
-        Wed, 04 May 2022 19:17:07 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id 30-20020a17090a19de00b001dc8eca6536sm234219pjj.4.2022.05.04.19.17.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 19:17:07 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     jarkko@kernel.org
-Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] x86/sgx: simplify the return expression of sgx_drv_init()
-Date:   Thu,  5 May 2022 02:16:59 +0000
-Message-Id: <20220505021659.54210-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S243273AbiEEGLm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 5 May 2022 02:11:42 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C76AB3E5C0
+        for <linux-sgx@vger.kernel.org>; Wed,  4 May 2022 23:08:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 337A8B82AA2
+        for <linux-sgx@vger.kernel.org>; Thu,  5 May 2022 06:08:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C851C385AC;
+        Thu,  5 May 2022 06:07:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651730880;
+        bh=6GVv0wbErdAXVNZq3mfDYypOlyu0BJ5NoUYoL8P8ty0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=W8jPyy2LgiRlPBNwDd1DAYyNaMiJJVu3tuKy3+cka+q5OX+qXJFtCJ1JeILaS49SU
+         eYp9Ba90jNMcc3NmOWHgjQV+FEOn1wE9FvKPoZsHBvku+LBtJbHC5i9cHHfIKFGFkU
+         7bHCoRD+t9AQOm+vbhmGJ82c58pgWGcBnYqcvT+nKCQBLzZQijYhpiHC2dHjK/UOp0
+         FDGckFtzXGiHusojU+fktAlreM8066UHO5KsYJ1oQ2NWYmqY+6MwxDuu6F71034eUq
+         6ECqRTsZhuC43JpXtnewAFk91krn0AKmcVWkZx+ozhWh6kTDldCsbiILD0LAdX0rAn
+         PGulNbWxqScVA==
+Message-ID: <e023b1835cb961982d1b2dd75691edc17de5ed3d.camel@kernel.org>
+Subject: Re: [RFC PATCH 0/4] SGX shmem backing store issue
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org
+Cc:     haitao.huang@intel.com
+Date:   Thu, 05 May 2022 09:09:32 +0300
+In-Reply-To: <cover.1651171455.git.reinette.chatre@intel.com>
+References: <cover.1651171455.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+On Thu, 2022-04-28 at 13:11 -0700, Reinette Chatre wrote:
 
-Simplify the return expression.
+> diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests=
+/sgx/main.c
+> index d480c2dd2858..12008789325b 100644
+> --- a/tools/testing/selftests/sgx/main.c
+> +++ b/tools/testing/selftests/sgx/main.c
+> @@ -398,7 +398,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscrib=
+ed_remove, 900)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Create enclave with ad=
+ditional heap that is as big as all
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * available physical SGX=
+ memory.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0total_mem =3D get_total_epc_me=
+m();
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0total_mem =3D get_total_epc_me=
+m()/16;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ASSERT_NE(total_mem, 0);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0TH_LOG("Creating an encla=
+ve with %lu bytes heap may take a while ...",
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 total_mem);
+>=20
+> If the the test compiled with above snippet is renamed as "test_sgx_small=
+"
+> and the original renamed as "test_sgx_large" the two concurrent loops are
+> run as follows:
+>=20
+> (for i in $(seq 1 999); do echo "Iteration $i"; sudo ./test_sgx_large; do=
+ne ) > log.large 2>&1
+> (for i in $(seq 1 9999); do echo "Iteration $i"; sudo ./test_sgx_small; d=
+one ) > log.small 2>&1
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
----
- arch/x86/kernel/cpu/sgx/driver.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Setting up VM image to see if I could reproduce this locally.
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index aa9b8b868867..dffb271f4edb 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -148,7 +148,6 @@ int __init sgx_drv_init(void)
- 	unsigned int eax, ebx, ecx, edx;
- 	u64 attr_mask;
- 	u64 xfrm_mask;
--	int ret;
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
- 		return -ENODEV;
-@@ -172,9 +171,5 @@ int __init sgx_drv_init(void)
- 		sgx_xfrm_reserved_mask = ~xfrm_mask;
- 	}
- 
--	ret = misc_register(&sgx_dev_enclave);
--	if (ret)
--		return ret;
--
--	return 0;
-+	return misc_register(&sgx_dev_enclave);
- }
--- 
-2.25.1
+I'll reduce the iterations to 64 and 640 to scale the test to 256 MB EPC si=
+ze.
 
-
+BR, Jarkko
