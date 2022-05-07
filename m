@@ -2,143 +2,158 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D5FC433EF
-	for <linux-sgx@archiver.kernel.org>; Sat,  7 May 2022 17:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB4EC433EF
+	for <linux-sgx@archiver.kernel.org>; Sat,  7 May 2022 18:00:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446731AbiEGRuX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 7 May 2022 13:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35902 "EHLO
+        id S1385126AbiEGSEA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 7 May 2022 14:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446729AbiEGRuW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 7 May 2022 13:50:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB28AC8
-        for <linux-sgx@vger.kernel.org>; Sat,  7 May 2022 10:46:34 -0700 (PDT)
+        with ESMTP id S1446750AbiEGSDt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 7 May 2022 14:03:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217B72CE11
+        for <linux-sgx@vger.kernel.org>; Sat,  7 May 2022 11:00:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E88861377
-        for <linux-sgx@vger.kernel.org>; Sat,  7 May 2022 17:46:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB8EC385A5;
-        Sat,  7 May 2022 17:46:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABB1661377
+        for <linux-sgx@vger.kernel.org>; Sat,  7 May 2022 18:00:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D74AC385A6;
+        Sat,  7 May 2022 18:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651945593;
-        bh=L3k/Rk7c/tamwJwvjLK005YKVTcl5ja7AMJNIczRbQ0=;
+        s=k20201202; t=1651946401;
+        bh=hUedcR4FRCenOSNB5YR+69Jo7axel56BTfFdTmBTpCY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TEklUMRrzx/xOs/hMcjBCMnul8wa29/D9uro1l6ZHDRsoe2JYOSkB8RSZzQgBKHE3
-         F53myRInzHz4F7dBlWbT3ktomcHB+vUl0Yv7OgOCrWsFFUcsqmesrjq/XV9U3mdjjy
-         0Q9bFZrvHQdTfLw/PBC6aXHenhMurAVkdZSqeHBBYagPerjXQBn2UOlpE7j7+jHY9C
-         I8DLMcPR+W9BhqFucQpJnatyIy1T87zjp/lsP8eYcyGRQpcF8mOFGaBj3gm5uOzbLa
-         BDjxbUjxC86ts2Mj4+bClP5VHiUmObeCE7xZMpYnI0CTQRTnhvqwHwmcSvlQ9rRDk5
-         /6Cy0tQLt35tQ==
-Date:   Sat, 7 May 2022 20:48:08 +0300
+        b=SL/U/Ihzv6b8GR/gGyRHmHfibPxoO2+tKwkN34O+v0ESD+p8LGcFBHxYyHOpLfBSx
+         kW1zT8u+Si1Zmy7qWAzZGR/5XTnFeLBHWWEK0mP/1ked+1LkwgEFDrISOhS83RUDVz
+         X8bwIsRcEklQRqX/EIVfT6PjnnjHr181yZgnk9uWy9/GMMwo6q4iiDY7J4JQwXqqxB
+         5HKPGDhYrOg1re/Fqy2Ey+uCiQJsoQFAR4JkSfrVdTr0v2Rx8Sl8Chv9SvGCijiq/Z
+         ATl8Wz4vGFUOVi4jmTcFSI9+nM1oHOh0PUB3DBfpfEOln63MGZbY8KQTV4ds8nRvFd
+         cx2jrTtLcgeyQ==
+Date:   Sat, 7 May 2022 21:01:35 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
         haitao.huang@intel.com
-Subject: Re: [RFC PATCH 0/4] SGX shmem backing store issue
-Message-ID: <Ynaw2A0z6mBLU0m4@kernel.org>
+Subject: Re: [RFC PATCH 2/4] x86/sgx: Set dirty bit after modifying page
+ contents
+Message-ID: <Ynaz/0PBWfyPZfPI@kernel.org>
 References: <cover.1651171455.git.reinette.chatre@intel.com>
- <fd4a9b83-f8da-5fb0-c722-79eb91b2fc30@intel.com>
- <825cee74-6581-1f3b-0a64-9480d6d4a8b8@intel.com>
- <faaaf70d-22b7-eaa5-4623-bbdf1012827a@intel.com>
- <feedd67f-4b50-aac1-16de-a3ffce9208c6@intel.com>
- <d7a3929d-3b49-dc77-8f6c-0308fbcf3948@intel.com>
- <f6e64c4f-8539-b7e7-7890-a4b1acc073fe@intel.com>
- <c057af3d-b7fb-34cd-0d75-989fca0e67fe@intel.com>
- <Ynavabraw26HwnfW@kernel.org>
+ <b0596095e09ee4a14a3802c5ce91372a0dc21220.1651171455.git.reinette.chatre@intel.com>
+ <de2e1a1d69331bb521222eb93b5ffa6d00af354c.camel@kernel.org>
+ <0689f89d-2025-477a-32ab-eebd4090341b@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Ynavabraw26HwnfW@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0689f89d-2025-477a-32ab-eebd4090341b@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, May 07, 2022 at 08:46:50PM +0300, Jarkko Sakkinen wrote:
-> On Mon, May 02, 2022 at 02:33:06PM -0700, Dave Hansen wrote:
-> > On 5/2/22 10:11, Reinette Chatre wrote:
-> > > My goal was to prevent the page fault handler from doing a "is the PCMD
-> > > page empty" if the reclaimer has a reference to it. Even if the PCMD page
-> > > is empty when the page fault handler checks it the page is expected to
-> > > get data right when reclaimer can get the mutex back since the reclaimer
-> > > already has a reference to the page.
-> > 
-> > I think shmem_truncate_range() might be the wrong operation.  It
-> > destroys data and, in the end, we don't want to destroy data.
-> > Filesystems and the page cache already have nice ways to keep from
-> > destroying data, we just need to use them.
-> > 
-> > First, I think set_page_dirty(pcmd_page) before the EWB is a good start.
-> >  That's what filesystems do before important data that needs to be saved
-> > goes into pages.
-> > 
-> > Second, I think we need behavior like POSIX_FADV_DONTNEED, not
-> > FALLOC_FL_PUNCH_HOLE.  The DONTNEED operations end up in
-> > mapping_evict_folio(), which has both page refcount *and* dirty page
-> > checks.  That means that either elevating a refcount or set_page_dirty()
-> > will thwart DONTNEED-like behavior.
-> > 
-> > There are two basic things we need to do:
-> > 
-> > 1. Prevent page from being truncated around EWB time
-> > 2. Prevent unreferenced page with all zeros from staying in shmem
-> >    forever or taking up swap space
-> > 
-> > On the EWB (write to PCMD side) I think something like this works:
-> > 
-> > 	sgx_encl_get_backing()
-> > 		get_page(pcmd_page)
-> > 
-> > 	...
-> > 	lock_page(pcmd_page);
-> > 	// check for truncation since sgx_encl_get_backing()
-> > 	if (pcmd_page->mapping != shmem)
-> > 		goto retry;
-> > 	 // double check this is OK under lock_page():
-> > 	set_page_dirty(pcmd_page);
-> > 	__sgx_encl_ewb();
-> > 	unlock_page(pcmd_page);
-> > 
-> > That's basically what filesystems do.  Get the page from the page cache,
-> > lock it, then make sure it is consistent.  If not, retry.
-> > 
-> > On the "free" / read in (ELDU) side:
-> > 
-> > 	// get pcmd_page ref
-> > 	lock_page(pcmd_page);
-> > 	// truncation is not a concern because that's only done
-> > 	// on the read-in side, here, where we hold encl->lock
-> > 
-> > 	memset();
-> > 	if (!memchr_inv())
-> > 		// clear the way for DONTNEED:
-> > 		ClearPageDirty(pcmd_page);
-> > 	unlock_page(pcmd_page);
-> > 	// drop pcmd_page ref
-> > 	...
-> > 	POSIX_FADV_DONTNEED
-> > 
-> > There's one downside to this: it's _possible_ that an transient
-> > get_page() would block POSIX_FADV_DONTNEED.  Then the zeroed page would
-> > stick around forever, or at least until the next ELDU operation did
-> > another memchr_inv().
-> > 
-> > I went looking around for some of those and could not find any that I
-> > *know* apply to shmem.
-> > 
-> > This doesn't feel like a great solution; it's more complicated than I
-> > would like.  Any other ideas?
+On Fri, May 06, 2022 at 03:40:26PM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> If we could do both truncation and swapping in one side, i.e. in ksgxd,
-> that would simplify this process a lot. Then the whole synchronization
-> problem would not exist.
+> On 5/6/2022 3:27 PM, Jarkko Sakkinen wrote:
+> > On Thu, 2022-04-28 at 13:11 -0700, Reinette Chatre wrote:
+> >> Recent commit 08999b2489b4 ("x86/sgx: Free backing memory
+> >> after faulting the enclave page") expanded __sgx_encl_eldu()
+> >> to clear an enclave page's PCMD (Paging Crypto MetaData)
+> >> from the PCMD page in the backing store after the enclave
+> >> page is restored to the enclave.
+> >>
+> >> Since the PCMD page in the backing store is modified the page
+> >> should be set as dirty when releasing the reference to
+> >> ensure the modified data is retained.
+> >>
+> >> Fixes: 08999b2489b4 ("x86/sgx: Free backing memory after faulting the enclave page")
+> >> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> >> ---
+> >>  arch/x86/kernel/cpu/sgx/encl.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> >> index e5d2661800ac..e03f124ce772 100644
+> >> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> >> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> >> @@ -98,7 +98,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+> >>         kunmap_atomic(pcmd_page);
+> >>         kunmap_atomic((void *)(unsigned long)pginfo.contents);
+> >>  
+> >> -       sgx_encl_put_backing(&b, false);
+> >> +       sgx_encl_put_backing(&b, true);
+> >>  
+> >>         sgx_encl_truncate_backing_page(encl, page_index);
+> >>  
+> > 
+> > So, the implementation is:
+> > 
+> > void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write)
+> > {
+> > 	if (do_write) {
+> > 		set_page_dirty(backing->pcmd);
+> > 		set_page_dirty(backing->contents);
+> > 	}
+> > 
+> > 	put_page(backing->pcmd);
+> > 	put_page(backing->contents);
+> > }
+> > 
+> > And we only want to set dirty for PCMD part, right?
+> > 
+> > Thus, perhaps we should fix it instead by:
+> > 
+> > 	set_page_dirty(backing->pcmd);
+> > 	put_page(backing->pcmd):
+> > 	put_page(backing->contents);
+> > 	
+> > ?	
+> > 
+> > I would not mind getting rid of that function anyway. It's kind
+> > of bad wrapping IMHO.
 > 
-> E.g. perhaps #PF handler could just zero PCMD and collect zeroed pages
-> indices to a list and ksgxd would truncate them.
+> Could we rather just change sgx_encl_put_backing() to be:
+> 
+> void sgx_encl_put_backing(struct sgx_backing *backing)
+> {
+> 	put_page(backing->pcmd);
+> 	put_page(backing->contents);
+> }
+> 
+> Two reasons:
+> 
+> 1) Instead of getting rid of sgx_encl_put_backing() we can keep
+>    it so that its name reflects its work and its usage remains
+>    symmetrical to sgx_encl_get_backing() that will stay and
+>    the code thus continues to be clear on the page references.
+> 
+> 2) By moving the set_page_dirty() out of that function the
+>    set_page_dirty() can be called _before_ writing data to
+>    the page, which is the right thing to do per:
+>    https://lore.kernel.org/linux-sgx/c057af3d-b7fb-34cd-0d75-989fca0e67fe@intel.com/
 
-I.e. instead of immediate response, go for lazy response that is taken 
-care by ksgxd.
+
+Yes, this does make sense to me. Important bit was to refactor
+set_page_dirty() calls out but for sure put_page()'s can still
+be wrapped.
+
+As I responded to Dave just few moments ago, one option would be
+*possibly* to do the truncation part in ksgxd but I hope we hope
+we don't have to go to that because it would mean also extra
+book-keeping...
+
+Took a bit of effort but I finally got this reproduced with my
+laptop with this CPU:
+
+Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz
+
+That's why I've had some radio silence in the meanwhile. In other
+words, I should be now able to also to test the fix locally.
+
+PS. I'm sorry if I've double-replied to this. Was not sure if
+my first response left yesterday, and could not find it from
+lore (and this does contain anyway stuff that was not incldued
+into that).
 
 BR, Jarkko
