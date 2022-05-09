@@ -2,180 +2,155 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644B9C433FE
-	for <linux-sgx@archiver.kernel.org>; Mon,  9 May 2022 21:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54EBC433F5
+	for <linux-sgx@archiver.kernel.org>; Mon,  9 May 2022 21:49:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbiEIVxd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 9 May 2022 17:53:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59288 "EHLO
+        id S230404AbiEIVxg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 9 May 2022 17:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbiEIVwP (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 17:52:15 -0400
+        with ESMTP id S230332AbiEIVwZ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 17:52:25 -0400
 Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAFD2725C0
-        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 14:48:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9737C2734EB
+        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 14:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652132893; x=1683668893;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=X+/sST7Rol6uN7QE8JK0o51uFMcRr+R68PnOlW6duH0=;
-  b=AjIt9QHBVLnf0Yyd2nvy7V8wkN34r6cIxKIgu2z8475kliHgk/yvEUh/
-   Kfb2NdQvrLPhRFHlss0PbcAI+DbpY16KUZA9ZDptTr/m5IzvUSBg/GvC2
-   lkEycs4DBg1frb/SPSj53vgEOj7guspXGlkc+ZzSqZW+XbUBzWOoijGep
-   YicQk4MwQKImWQyucl3slk1rDQws7BZXwk/5ZuW53zOdtd+0muXJCQAjH
-   zEbo+mbAyU7LQu4rzLw3EnXlrW8LbRt3TLnagsiuAXuM954oxn/z8n6ih
-   if6yocDTol0ZjeDdSZrHR/29Ng4LNfYqzC8BKEd4YDEcqjePe2s5UTHyw
+  t=1652132894; x=1683668894;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mduTokMMrJYVyD5/g6ZiIHRpR8h3VCNe5bSzvlrzGVY=;
+  b=QP/5bNrcBcxpWZT4tsBQVAq8/keRphklxHDHN4yZAdpDRyMyPv0dCdnJ
+   pNH4zTzwlxwAYi/SraafxqHbPR7rtqU/AzWS5c+utx04m9A69PGDZtc5X
+   lw2bJeieZCDrgrY2XlF3ONrVvsuTkLvMtKXgi+mOkPSlH2FyVtMJ/JghV
+   qIybS9rr1JeCHqpQznFJ65e4PO5Q355+SVxqdmJD1Cc0TtO8gVuQDgAaG
+   Jc/YrkCzTYmV5s6YhXpMCDggGL6zmPYUqEn/cykxrNwlv+ERiLMLcNXcQ
+   bNDTQUui/6SDYpL+DDMm/CcXeI4ckl53qGMan4Q9qn7akhNL6A6vg4Y5E
    g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="332212851"
+X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="332212852"
 X-IronPort-AV: E=Sophos;i="5.91,212,1647327600"; 
-   d="scan'208";a="332212851"
+   d="scan'208";a="332212852"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 14:48:08 -0700
 X-IronPort-AV: E=Sophos;i="5.91,212,1647327600"; 
-   d="scan'208";a="565293487"
+   d="scan'208";a="565293490"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 14:48:08 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     dave.hansen@linux.intel.com, jarkko@kernel.org,
         linux-sgx@vger.kernel.org
 Cc:     haitao.huang@intel.com
-Subject: [PATCH V2 0/5] SGX shmem backing store issue
-Date:   Mon,  9 May 2022 14:47:58 -0700
-Message-Id: <cover.1652131695.git.reinette.chatre@intel.com>
+Subject: [PATCH V2 1/5] x86/sgx: Disconnect backing page references from dirty status
+Date:   Mon,  9 May 2022 14:47:59 -0700
+Message-Id: <4cda80a0049de6bc47480b4ad119091027c11d45.1652131695.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1652131695.git.reinette.chatre@intel.com>
+References: <cover.1652131695.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-First version of series was submitted with incomplete fixes as RFC V1:
-https://lore.kernel.org/linux-sgx/cover.1651171455.git.reinette.chatre@intel.com/
+sgx_encl_put_backing() is used to release references to the
+backing storage and, optionally, mark both backing store pages
+as dirty.
 
-Changes since RFC V1:
-- Remaining issue was root-caused with debugging help from Dave.
-  Patch 4/5 is new and eliminates all occurences of the ENCLS[ELDU] related
-  WARN.
-- Drop "x86/sgx: Do not free backing memory on ENCLS[ELDU] failure" from
-  series. ENCLS[ELDU] failure is not recoverable so it serves no purpose to
-  keep the backing memory that could not be restored to the enclave.
-- Patch 1/5 is new and refactors sgx_encl_put_backing() to only put
-  references to pages and not also mark the pages as dirty. (Dave)
-- Mark PCMD page dirty before (not after) writing data to it. (Dave)
-- Patch 5/5 is new and adds debug code to WARN if PCMD page is ever
-  found to contain data after it is truncated. (Dave)
+Managing references and dirty status together has two consequences:
+1) Both backing store pages are marked as dirty, even if only one of
+   the backing store pages are changed.
+2) Backing store pages are marked dirty after the important data
+   has been written to it. This is against the custom of marking
+   pages as dirty before important data are written to them.
 
-Hi Everybody,
+Remove the option to sgx_encl_put_backing() to set the backing
+pages as dirty and set the needed pages as dirty right before
+receiving important data. This aligns the usage with the
+existing custom and prepares the code for a following change
+where only one of the backing pages need to be marked as dirty.
 
-Haitao reported encountering the following WARN while stress testing SGX
-with the SGX2 series [1] applied:
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 10 ++--------
+ arch/x86/kernel/cpu/sgx/encl.h |  2 +-
+ arch/x86/kernel/cpu/sgx/main.c |  6 ++++--
+ 3 files changed, 7 insertions(+), 11 deletions(-)
 
-ELDU returned 1073741837 (0x4000000d)
-WARNING: CPU: 72 PID: 24407 at arch/x86/kernel/cpu/sgx/encl.c:81 sgx_encl_eldu+0x3cf/0x400
-...
-Call Trace:
-<TASK>
-? xa_load+0x6e/0xa0
-__sgx_encl_load_page+0x3d/0x80
-sgx_encl_load_page_in_vma+0x4a/0x60
-sgx_vma_fault+0x7f/0x3b0
-? sysvec_call_function_single+0x66/0xd0
-? asm_sysvec_call_function_single+0x12/0x20
-__do_fault+0x39/0x110
-__handle_mm_fault+0x1222/0x15a0
-handle_mm_fault+0xdb/0x2c0
-do_user_addr_fault+0x1d1/0x650
-? exit_to_user_mode_prepare+0x45/0x170
-exc_page_fault+0x76/0x170
-? asm_exc_page_fault+0x8/0x30
-asm_exc_page_fault+0x1e/0x30
-...
-</TASK>
-
-ENCLS[ELDU] is returning a #GP when attempting to load an enclave
-page from the backing store into the enclave.
-
-Haitao's stress testing involves running two concurrent loops of the SGX2
-selftests on a system with 4GB EPC memory. One of the tests is modified
-to reduce the oversubscription heap size:
-
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index d480c2dd2858..12008789325b 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -398,7 +398,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
- 	 * Create enclave with additional heap that is as big as all
- 	 * available physical SGX memory.
- 	 */
--	total_mem = get_total_epc_mem();
-+	total_mem = get_total_epc_mem()/16;
- 	ASSERT_NE(total_mem, 0);
- 	TH_LOG("Creating an enclave with %lu bytes heap may take a while ...",
- 	       total_mem);
-
-If the the test compiled with above snippet is renamed as "test_sgx_small"
-and the original renamed as "test_sgx_large" the two concurrent loops are
-run as follows:
-
-(for i in $(seq 1 999); do echo "Iteration $i"; sudo ./test_sgx_large; done ) > log.large 2>&1
-(for i in $(seq 1 9999); do echo "Iteration $i"; sudo ./test_sgx_small; done ) > log.small 2>&1
-
-If the SGX driver is modified to always WARN when ENCLS[ELDU] encounters a #GP
-(see below) then the WARN appears after a few iterations of "test_sgx_large"
-and shows up throughout the testing.
-
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 99004b02e2ed..68c1dbc84ed3 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -18,7 +18,7 @@
- #define ENCLS_WARN(r, name) {						  \
- 	do {								  \
- 		int _r = (r);						  \
--		WARN_ONCE(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
-+		WARN(_r, "%s returned %d (0x%x)\n", (name), _r, _r); \
- 	} while (0);							  \
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 7c63a1911fae..398695a20605 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -94,7 +94,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 	kunmap_atomic(pcmd_page);
+ 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+ 
+-	sgx_encl_put_backing(&b, false);
++	sgx_encl_put_backing(&b);
+ 
+ 	sgx_encl_truncate_backing_page(encl, page_index);
+ 
+@@ -645,15 +645,9 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ /**
+  * sgx_encl_put_backing() - Unpin the backing storage
+  * @backing:	data for accessing backing storage for the page
+- * @do_write:	mark pages dirty
+  */
+-void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write)
++void sgx_encl_put_backing(struct sgx_backing *backing)
+ {
+-	if (do_write) {
+-		set_page_dirty(backing->pcmd);
+-		set_page_dirty(backing->contents);
+-	}
+-
+ 	put_page(backing->pcmd);
+ 	put_page(backing->contents);
  }
-
-
-I learned the following during investigation of the issue:
-* Reverting commit 08999b2489b4 ("x86/sgx: Free backing memory after
-  faulting the enclave page") resolves the issue. With that commit
-  reverted the concurrent selftest loops can run to completion without
-  encountering any WARNs.
-
-* The issue is also resolved if only the calls (introduced by commit
-  08999b2489b4 ("x86/sgx: Free backing memory after faulting the enclave
-  page") ) to sgx_encl_truncate_backing_page() within __sgx_encl_eldu()
-  are disabled.
-
-* ENCLS[ELDU] faults with #GP when the provided PCMD data is all zeroes.
-
-The fixes in this series address scenarios where the PCMD data in the
-backing store may not be correct. There are no occurences of the
-WARN when the stress testing is performed with this series applied.
-
-Thank you very much
-
-Reinette
-
-[1] https://lore.kernel.org/lkml/cover.1649878359.git.reinette.chatre@intel.com/
-
-Reinette Chatre (5):
-  x86/sgx: Disconnect backing page references from dirty status
-  x86/sgx: Mark PCMD page as dirty when modifying contents
-  x86/sgx: Obtain backing storage page with enclave mutex held
-  x86/sgx: Fix race between reclaimer and page fault handler
-  x86/sgx: Ensure no data in PCMD page after truncate
-
- arch/x86/kernel/cpu/sgx/encl.c | 108 ++++++++++++++++++++++++++++++---
- arch/x86/kernel/cpu/sgx/encl.h |   2 +-
- arch/x86/kernel/cpu/sgx/main.c |  13 ++--
- 3 files changed, 109 insertions(+), 14 deletions(-)
-
-
-base-commit: 672c0c5173427e6b3e2a9bbb7be51ceeec78093a
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index fec43ca65065..d44e7372151f 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -107,7 +107,7 @@ void sgx_encl_release(struct kref *ref);
+ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			 struct sgx_backing *backing);
+-void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
++void sgx_encl_put_backing(struct sgx_backing *backing);
+ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+ 				  struct sgx_encl_page *page);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8e4bc6453d26..fad3d6c4756e 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -190,6 +190,8 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
+ 	pginfo.metadata = (unsigned long)kmap_atomic(backing->pcmd) +
+ 			  backing->pcmd_offset;
+ 
++	set_page_dirty(backing->pcmd);
++	set_page_dirty(backing->contents);
+ 	ret = __ewb(&pginfo, sgx_get_epc_virt_addr(epc_page), va_slot);
+ 
+ 	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
+@@ -320,7 +322,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+ 		sgx_encl_free_epc_page(encl->secs.epc_page);
+ 		encl->secs.epc_page = NULL;
+ 
+-		sgx_encl_put_backing(&secs_backing, true);
++		sgx_encl_put_backing(&secs_backing);
+ 	}
+ 
+ out:
+@@ -411,7 +413,7 @@ static void sgx_reclaim_pages(void)
+ 
+ 		encl_page = epc_page->owner;
+ 		sgx_reclaimer_write(epc_page, &backing[i]);
+-		sgx_encl_put_backing(&backing[i], true);
++		sgx_encl_put_backing(&backing[i]);
+ 
+ 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+ 		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
 -- 
 2.25.1
 
