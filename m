@@ -2,162 +2,164 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E0DC433EF
-	for <linux-sgx@archiver.kernel.org>; Mon,  9 May 2022 17:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4768C433F5
+	for <linux-sgx@archiver.kernel.org>; Mon,  9 May 2022 17:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239458AbiEIRN1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 9 May 2022 13:13:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38358 "EHLO
+        id S239527AbiEIRVb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 9 May 2022 13:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239463AbiEIRN0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 13:13:26 -0400
+        with ESMTP id S239495AbiEIRVa (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 13:21:30 -0400
 Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB3131E59DB
-        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 10:09:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E9EF24219D
+        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 10:17:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652116171; x=1683652171;
+  t=1652116656; x=1683652656;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=Og1T6VA81skdcAUYtL4vUPO49R8WzX6yQHTwS9toRLE=;
-  b=P/ZJdVfxlu58JlH20M6yoLA6EcXLTBKPx27gSp7gKg3Hrf9EX8Vfl9aC
-   DTPgQhnASlQQ7kg2HbP6kZ9ugaYz74PaWBKnmvuTUqNuBj6fSQWmo86MR
-   k29WRDgS9eZQB4rjYTBxAlbwEcR0gktAOhndGAu5B8/Ey/6a4dP9W43E2
-   YK2ISifCRAsmbQYUBdMTdLz4FtM1Vg6kE52ixh2Iddcx1RBoAX5wg52Vc
-   EkHK7MjGHa1Ai+7zhcemIUyC/MciCZ3qLiwlw1yaaVpNTh+XVU+8oEIEP
-   iOJG9MJ7aWobl5zB/R7l03Y6cGVylvQlE4Fo4d6Y0NoD47e1mykEn49iU
+  bh=1yP1oi89VTLEhlB1K7n7MgJ9v7eZ2RuWT2KvVQqvVOc=;
+  b=AM035lcIhLNgoWlraDN01okePqHSGBbf1p6Kw5NK10hLHitVSFsPg74o
+   aozgEFlfaNPjkQ+m9p8MzgORAEqk1tO52IQfGJ31AfEOXO3hiP3ysPdV0
+   VzxF0F5aKNvZDUDodEN3wOQago+97kKjwXoqnl3rZ6g6Q4eetzBdKcc6j
+   H8SkNrGOglz+0RfEZlJtZgCL8pyv0pcr87wjw+9nfzd1YVTLDhGhA/Np4
+   Ht4YrW9QeFBlMeMbfR8A+KwOMYiFLHI9050ydtT/8Ri4JaVuWmu7auo7n
+   bx+uZFTEj6NAZGpwS65q8DCZ+Hpi5ztno6Ahn84OPBYkZg3naQd2uUvvs
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="269248399"
+X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="269250691"
 X-IronPort-AV: E=Sophos;i="5.91,211,1647327600"; 
-   d="scan'208";a="269248399"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 10:09:31 -0700
+   d="scan'208";a="269250691"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 10:17:35 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,211,1647327600"; 
-   d="scan'208";a="570254773"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmsmga007.fm.intel.com with ESMTP; 09 May 2022 10:09:31 -0700
-Received: from orsmsx606.amr.corp.intel.com (10.22.229.19) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+   d="scan'208";a="551123371"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga002.jf.intel.com with ESMTP; 09 May 2022 10:17:35 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Mon, 9 May 2022 10:09:30 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx606.amr.corp.intel.com (10.22.229.19) with Microsoft SMTP Server
+ 15.1.2308.27; Mon, 9 May 2022 10:17:35 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27 via Frontend Transport; Mon, 9 May 2022 10:09:30 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ 15.1.2308.27; Mon, 9 May 2022 10:17:34 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27 via Frontend Transport; Mon, 9 May 2022 10:17:34 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.104)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.27; Mon, 9 May 2022 10:09:30 -0700
+ 15.1.2308.27; Mon, 9 May 2022 10:17:34 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K0mTK1BPgOIYRWvUdGsyziPxGXWBavvn4pg3lN6MvprL2bLPh//3jr4vkJXMvDHmrii5sxPi05IapEFc3JeLjWaUOAhXj63+fKStb1gE6CC1SWYB+G7xdUZmnJa78bwZ0Ys7HfGmrdCoy04PAALs42plaXc1tfpZ8Cg/g/lhyLb7PYT6zacvglgNrhSBmGMvxeI+2U/2sQRbE4wnRMopN4dNdsTs2x/fk4+ZB7oo37qBNOmemVEheZsrgFLjWI9hl/0Vv1be/f/I19COOFBclgvr3l9QCcwzsCu7rBr9/QSkZWBUKqC26unppQMnch841cA/lH1sqBbM5jzqhii/gQ==
+ b=ihy6Ga8wO16LZC9KptsUbevb9rIP7+C6+82HmDRVxyki6jNxzGXS0rO/t6HIPgIMMw3HqIFq7sq1dIKFgsxKYYALrPC8eClQQbfFv5D/nSwDUeloCKATyciUocHHPP0X1EpbLhyju0bwwHVY/kQL5aCk+39fOwpxrULD4iXzLshTdhvDiE0Li6fv/JAkC6LED9t8irXzt3rli5HSxZL/U9NE4ds6TkddugBT79Y9gO0Mei4UETNlRQjNiNxHQv4NFo2GNJ0ohXXsA2jBnchXQC2OMEpy/dDvglV2S81pK7obiNO8lTivxO+BYNtcGPdvvGOVMHuZ7PkFndWwjQeHEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ed5R2tPF8XDrEAu14Z4mwpzJccunvMWpREL1r8eXHuw=;
- b=BodkXPh1CUZk9HSsNJed359wYbVylnaF6m6dkfzMOV43HNz9Ux/phZXFeIU37mKt71NRDTGrd+8Xi77Q+JIOYys5KrwhEqJdFOZiI90F4GuLKg4C6V4GhJGxDq7aG/vP3WTYRR02eEBPpW9+va87DN4GT38wb7vYczML847ubMYY7AroD1ZuLoEdXJyyb4GFun7utA3MhQtg2T+hW62xEfV5P8fg1l3punRQG6qeTMohSKiZf1zFjrAvcvr8/pAElUIwR6xTw3oRyuwinOhL0JoFkGMwiBlGKSX+fIUWKh9t+hEl4568yclFaBWIviYINIsVKN2H8zO9VWv8lLKpZw==
+ bh=9IR+J5fR65uRvWlMO42xoLWBblOr/54JQq8mG7RQrC4=;
+ b=mZcmzbrzXgD8C2D2zR+UpG/yY6gV7mvcmt2ZDZJrby50TplRDlStB8UOxyUXsPmTCDs5F/ZHailoKzO/lXXH7GtZxVYzke+/wKobHyU7+heiecHzyJgbtT3elvo7Bm2cZaNXFELOnOZer+lzzyDfef1oqRoD4hPeKRKEBckalm4Bn87Z+LZLb0Xa7ydnKhNeCMcbFEg1UhvOL3PXRvb/DizL/xuAg/ZRzUUxzjXMRNfY8tE87l+FGtBo0elSS436wL18/hFRtIPN7QQNm2mCYlGLWQK7q4p0LEMpg7qvWNtKMlbSoK+v3EpUuy6poJtn8C3M0InjJIcEtPJl44ZXHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com (2603:10b6:408:166::16)
- by CH0PR11MB5329.namprd11.prod.outlook.com (2603:10b6:610:bc::13) with
+ by BN6PR11MB3986.namprd11.prod.outlook.com (2603:10b6:405:77::32) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.18; Mon, 9 May
- 2022 17:09:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.23; Mon, 9 May
+ 2022 17:17:33 +0000
 Received: from BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::5459:7151:e684:6525]) by BN0PR11MB5744.namprd11.prod.outlook.com
  ([fe80::5459:7151:e684:6525%2]) with mapi id 15.20.5227.023; Mon, 9 May 2022
- 17:09:27 +0000
-Message-ID: <c75f56b5-e071-fe37-835e-7cdd275852f5@intel.com>
-Date:   Mon, 9 May 2022 10:09:24 -0700
+ 17:17:33 +0000
+Message-ID: <8d44af4c-798c-4887-def6-595f18f7ac66@intel.com>
+Date:   Mon, 9 May 2022 10:17:29 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Firefox/91.0 Thunderbird/91.9.0
-Subject: Re: [RFC PATCH 0/4] SGX shmem backing store issue
+Subject: Re: [RFC PATCH 1/4] x86/sgx: Do not free backing memory on
+ ENCLS[ELDU] failure
 Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-CC:     <dave.hansen@linux.intel.com>, <linux-sgx@vger.kernel.org>,
-        <haitao.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+CC:     Dave Hansen <dave.hansen@intel.com>, <dave.hansen@linux.intel.com>,
+        <linux-sgx@vger.kernel.org>, <haitao.huang@intel.com>
 References: <cover.1651171455.git.reinette.chatre@intel.com>
- <fd4a9b83-f8da-5fb0-c722-79eb91b2fc30@intel.com>
- <825cee74-6581-1f3b-0a64-9480d6d4a8b8@intel.com>
- <faaaf70d-22b7-eaa5-4623-bbdf1012827a@intel.com>
- <feedd67f-4b50-aac1-16de-a3ffce9208c6@intel.com>
- <d7a3929d-3b49-dc77-8f6c-0308fbcf3948@intel.com>
- <f6e64c4f-8539-b7e7-7890-a4b1acc073fe@intel.com>
- <c057af3d-b7fb-34cd-0d75-989fca0e67fe@intel.com>
- <Ynavabraw26HwnfW@kernel.org> <Ynaw2A0z6mBLU0m4@kernel.org>
+ <6fad9ec14ee94eaeb6d287988db60875da83b7bb.1651171455.git.reinette.chatre@intel.com>
+ <a43b87b3-ba9f-c442-295c-cef84d6f8318@intel.com>
+ <2cd90e97-6cbd-c901-949b-058348bcd78b@intel.com>
+ <5ae310cc-ed2d-9380-10ad-4ee27f8a5478@intel.com>
+ <10a34d44-820a-ac7f-834c-65fd56513bf0@intel.com>
+ <YnarpxzH3cEBo5pL@kernel.org>
 From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <Ynaw2A0z6mBLU0m4@kernel.org>
+In-Reply-To: <YnarpxzH3cEBo5pL@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0160.namprd03.prod.outlook.com
- (2603:10b6:a03:338::15) To BN0PR11MB5744.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR07CA0088.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::29) To BN0PR11MB5744.namprd11.prod.outlook.com
  (2603:10b6:408:166::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7341d640-ff5d-492b-9493-08da31deac79
-X-MS-TrafficTypeDiagnostic: CH0PR11MB5329:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6315884-167e-47b3-dba1-08da31dfcdf5
+X-MS-TrafficTypeDiagnostic: BN6PR11MB3986:EE_
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <CH0PR11MB5329DBF0B1994E8B21A69729F8C69@CH0PR11MB5329.namprd11.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <BN6PR11MB3986EE1EE44479BFEA4D95C8F8C69@BN6PR11MB3986.namprd11.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Qisbat8ZjaTybGOq5Aqqm8FhHMrKsth1gr8FwayxBW3e6aZF1Xzl0mYULqiSxIUfe+f9V56HUIjW7InnuOUaMNTpZivNHzlO5alLwDhU3RBncZUgRl7j/BwU0SHca2nLcTmpX5VAtaR+TjmgNDwI4HHBtPOozPoqybyxMg142JJVNpY0rPaJ6l7zqKq1Aw5pVJeozijolxJmKogSxtjlBQz2QStvfa9OIiDkSecfGJk/eeP8tKwNP7aJuxK1LklW2f1HaRTISrQf+i5RbwFh2tQOYc/GZzC8uR3uKkkiJX39dsLKK3Xr0bRrFFycgbMbhmRzEmungCMJjsfWn9HKNwMAL0NgWrAtQ9Z7BDzIPhqKxP2lM1WeP3bi+hR1sg55lPHP65EoFrDjs4H5PpoJWWeFPIXq50Usoe4r9E2QCkMqn+J6wGg461E/wLZokmAxGUr2P3oWcemUTIeZMHYYNEBBus97y+2R6PIH10o6BvViMs4xF2fzWoY09plmK3xVvGzLKAzEWnDd57S7DhBIpNYCJBWaE5O8xl9/P0dvcy9gZsZJGrKfb6tfRfen3Vh4qyuwN3y8Ndtlv1S6fbW65Jji9OcXSOuBkcRrRhDKQ2mdIO+gi1i47ytIAwHuYF/cain0egB9tqy7iuUCOXrEx8IsUK8XSUd61dNEcqJ5WIMSEeNCNnSqMYcqhQUxE3BxlvejsCLrMwBhUM7DP5Hj93XqShEchmm0eC0SYfOZEfglP91oIQ5HjSHZnXcjXRppRbLmYm+t4Mc+GpclTgOTh9T6ykZcIkOcg/bCMUCelvfTfbi/Mg7RVlkWzFHSCumj
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(31686004)(6506007)(53546011)(26005)(44832011)(6666004)(6512007)(83380400001)(36756003)(66556008)(5660300002)(186003)(2616005)(2906002)(31696002)(38100700002)(8936002)(966005)(316002)(508600001)(82960400001)(6486002)(66946007)(86362001)(8676002)(66476007)(4326008)(6636002)(110136005)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: hOipnt00N+oUZLtaqoQT7KvK1HSLwMkGTFiM4okCZFapmIiBCWedicv5Yod+FmTj3HlZPQlkMQT91+EbLnkwBRmZMV3G6lHS8yreSkrXEFCtezmMcfM6lclO++kkYQxrqQ+26mnr1/X1P+TWuhNEyEfiG11nB/rUnucM6muj1oatD0JoSWIfCC2CV4hXpQWvf1+w0EVEh44QtDaVkkmDVCGGB2vfJk7/N2tMteLoiYmH0QQIT3+VUoQxknBZQxPqxI329CziSp0UNB9L//T5MWCOhWLBVwYJndi47x7mpitGfp5qKZuhg09ztEywJMosy5hCcGjgtEOCvsewAUa8v3yzXAPa+LhPX+0C3QfOFp2w1Nlt4f/0QmQ1WEmym+VaDUh2M03VaAt9Sk1sI0zSnS4yRZyP1zHEyPG3o7WyYAwFaNyHdFT64prkgG6HWh7uRjSGjnalPM+DGglkgyHoDPm3Rmtv0UPB4GQo34lp2R8R4y1y61Hoz9QLoIAlqeEKTweHTC4B+Vm9vPSqcV1zEjygFB/wnGrdTJzM3RX/HdrpzSPsiwqkWO8nz0rgtZDF4RiVQV0uadzhTGw3CLqG9mUaEBis7wyaQcFs5h9neDva+daMio2crdBxoSNqNbGgMSR0QX7Zyj0fg0OTcSV+UBoP/lzwDK5svRpNzEH2tKW/R7/cHiG8WX9PYennq3mrv51qInAQfWziZhebNwNLEvm0VRjjE9lezB/joCDdhDEriEQuIxqcEx0Lh35/qhcaKnAZUjA78PZfZacdeHd/zbM94GAyxtK69uhPcgy6Was0192+KRvMcnH8xpcKEolf9vHda0GtVlw6IcOW9W+61APGu11tPxOsn9alKkXaSXZ8OQdw7TkRNNSFOvjMWzh3
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR11MB5744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(508600001)(2906002)(6486002)(966005)(82960400001)(31686004)(83380400001)(6512007)(26005)(186003)(6666004)(5660300002)(44832011)(31696002)(8936002)(53546011)(6506007)(36756003)(2616005)(86362001)(4326008)(8676002)(6916009)(38100700002)(66556008)(66476007)(66946007)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VXBDNlpsWWZtMmoyVEJIbkhmM202Q2Fxd0Fob2E3NEwxN3QwK3hmQUtXUldH?=
- =?utf-8?B?U2VmT2llWkFRNW02U2txWkxCdlBhN0ZXaXpNZnVGWkI0RVd5S3I5NkRNeCsw?=
- =?utf-8?B?UTJKVkxDOEpmRGxIVUo2STF6b0hmN1NzbllmbzFyS2lJTDQ1Tnp3c0Y4NmdB?=
- =?utf-8?B?RmM0aTZuVkp2Q1VJYVZDK3crUVYyV1ZTOXF0cE9yZDBvcjJxdGR2NWNxdzRx?=
- =?utf-8?B?V1ZxdEtBb1V6LzRaS3lUVnc4empXRFNVKzRYMzJWSXp6MFZVZWlzSTFYbFFY?=
- =?utf-8?B?OGtIdDVPWkg5bURkZXB5RUZNTmpHZUhtV1JmK2w4ckNaaXFUeGFLTkVqOXc2?=
- =?utf-8?B?VDlSYWJKVG1jNWhVMzN1ZWZGMGMvVFdvM0xVc2d3dktTd2gwUmNidGRONDhW?=
- =?utf-8?B?c0RMM0kzZzBBcHBJMWk2WSszejY1RFhpQjMvN3huemcrL3JzZnI4Tkx0S0hY?=
- =?utf-8?B?UHlOTDZpczJZUTVhUGVPVjNoUkg5c2FhVnU4VVdoNDMycFIyZ3Y1aGV2emR1?=
- =?utf-8?B?RVVrYVRMckZzNUpuelRHQUVpTGpTV0ZBWDkwVmZrdEpkN1JmcHdEYWdTOTdE?=
- =?utf-8?B?Z0Z2UWJuVEc0TWJ2SUF3c1VNdnRKV2crMUJVYUxPU0Rua0g1T25GYldZL05i?=
- =?utf-8?B?YzArRGdPS1pGbzFlVUFmZnF2bkxIRC9hT09wVEtZUHpnRVNFT3pHSm5RTTVX?=
- =?utf-8?B?WE9MNmlSNGpWWU8vbmlielJidU43REZZWTVpeXdtMEpvVnkvVDFnYVlUZklG?=
- =?utf-8?B?UjdsTitDdVhFcEhjKzdYUXRrZWlDRDFRaDZTZzduMmltYStsQzJ5cFo2SVF0?=
- =?utf-8?B?ejR4dkd2ZXFDbTJzdW5kMnJSZjJ6WGl0TWtKNmVja0RlcFBqTXhVV1R3MHhi?=
- =?utf-8?B?VytmUU9pM1F6dmhFNkdPOGR2MnIxMlVpTzNKVmloL2NuYkVrdmZ0aGJsQmdo?=
- =?utf-8?B?M2RuaTVYZWgwMmVLbmRiNUg4YVhHMHVhWEVXWXMwcHZ1T3JxR3RYQndiS2Nr?=
- =?utf-8?B?Si9hZHBCK3NKU0h5V1lhcTVQWFhERmVvMGZhMWppK3ovT05Mb1lENVZuM2ZE?=
- =?utf-8?B?cmlJemhBeGRYV1QzdFAvTFRDQlQzd3pNRldrLzJxL3BVdXNHVUdnS0VuTG1I?=
- =?utf-8?B?OEx3L1dGQ0xRRXFSRUM5dE1yV253UzR3TWdlYTM4ZWp3WDllNFJ3RUdKTnBV?=
- =?utf-8?B?YVkvVzZWVkpiR05OZ3VGZHRYOXE4aW5MaDBXVk1qbjJyTGVVaWpETnp2dnV2?=
- =?utf-8?B?dDAyZzJneW5YM292enBVbE5qcXhLd09YTzR2UGJabWx3ajZKQlVWRlJkSS9q?=
- =?utf-8?B?MFhOSmxwaUNtSThJSGIrdFNoQk90ai9wczBETUN5dTdZVUYvWGU0b0VCYzkx?=
- =?utf-8?B?dVdENUw2SDdpVVVyeHNIZHBFRENYRGE1VWFrRmFQTFFGMFZ3MkNkZ08zUDd6?=
- =?utf-8?B?UUl1VGdLVjg5cEloOEpXNVhQTGU2N3VWQ2pBdk54ZERlTklScSsyYmM0ZW1K?=
- =?utf-8?B?WUtmbnlYa0JzbDByRFY5ZXdhcUR3cm1Jd25OTU5zS3NaTnBWQnF6NG8zOGhT?=
- =?utf-8?B?MkYwTE42UUI2RGJFYTMvcUlWLzl6UEpwVm1UTUIzck53Q2x0STFiNHkvTzUr?=
- =?utf-8?B?TEUzRXhzY2xqVUYrKzBPQUVqTElMY3VGZVhscHl6WDBTcGhiUk0ybHFTQ1Vm?=
- =?utf-8?B?UWg4WDFNVXdkTDNBVUY0YSt3eW5McmdockhHU2lrSExNNmZzOWZ1Vlp3eXkx?=
- =?utf-8?B?dG42Sm5XWmgvT3FrbUdHVjhZaWQxcGxMdGJ3cnNibkU2Z2xRVnlVSm01Q0hm?=
- =?utf-8?B?VFBaZnhrUCt4b2VpLzVSang4MVZGRUVod0hiWjJyVDlXdW03eVFEY1Fxai96?=
- =?utf-8?B?SnVpRXFsNEZ0MTBoTXk1cC8xb29SeXFNT3hMYW9PdjBKcTFNKzVsaE1hdDBl?=
- =?utf-8?B?bEJ6c1V4WktvNjcyTDg2L29XUTFmcU1BRkxKdFYvZC9JN2UvZmlRZjhjVEJ0?=
- =?utf-8?B?Q3ArZzUvSUhxaUIzRHJqZEN4MGx2b0pvOW5xVG1CWW43NjBrOStQSCtmYXdl?=
- =?utf-8?B?dG9rbXhhQ0YrdnZkdzlwTXE0bXpHdnpBYnVtUktaKzhWdDhFWnE3MDhlU0I2?=
- =?utf-8?B?UEJ5QUhaK2NINEVzZ2tEUnZDYnR3eEVWbThqb1ZvUi91T21OVVBwQ3BGNm5h?=
- =?utf-8?B?THNjaTlFcmN5dDZKakd6STNDZVprNXRwQmNqY0krOU4xYVRNcGpKUmhUTVpW?=
- =?utf-8?B?TG9xZ3RrR2hkNW5SOHgyckwvNEt6VHJjQVkvU1orS1RCUDRhS2U5a3NUaDQ0?=
- =?utf-8?B?cDNnbEJtcVdPRWxmY0hObHRBMm1hWitGaUozS3d5bU40SVdVb2dYS25Hb3V6?=
- =?utf-8?Q?HYW2ZqwxlupVcBu4=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7341d640-ff5d-492b-9493-08da31deac79
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WDNDdVYzbWRaYjBzYWtIRnkvQjlRWXNGc0d5cTJKejlXTVMxTlZCNmRMOUIz?=
+ =?utf-8?B?L2ZvMFVRRFZBczRCWXJTWFNveURqMDJYZ1llODRPaGZYTnhKTzh4TzUrbEdL?=
+ =?utf-8?B?WDJWOGtITGRxUys5M2daWkZTRHhHbmFGb3JSbE9kazhTdTdobCt0Q2FySUFp?=
+ =?utf-8?B?K1g1SWZVTW41LzQrK1VEb3BsbjJveHEzSWc4alVKbDJsN2pXalYrcFNyWFdO?=
+ =?utf-8?B?UElJdlppWHBaR2cvVGlJUWpIT3g2TldQalAvd1BtU2dxWWlOS2Vmam5PMWNk?=
+ =?utf-8?B?ajNGbnFCNXpYV1R5WVlQcWZxYmsxTCtmOXRwR29NY3dYd2xYTXQ5RlFQSDhX?=
+ =?utf-8?B?VldHZ3g1d0Q0UVFHbFNEMlJicFdacitjWU00YVRsdFZDek1nMFpUNytTVkx0?=
+ =?utf-8?B?N21hanpNWHJNdGZmQWhqOFdTTnV1WCtRMWVEV1EvRUxmcUVFQy8rWExOOTN5?=
+ =?utf-8?B?bXAvclNpUHhSTlVzTXRUMnM5QkFyZUN2TlhhZ2JWR3hBQXVjcnFSQ1JubURa?=
+ =?utf-8?B?NlRMYW1yVXczOEhFeGhKRnU0ZXZ6Y056SWo1V1hRemRhMDhaTExJWmsvTlVp?=
+ =?utf-8?B?cTI1M1BFT0RDaXhiTmJjcmRTNkVQSlBlcmxKNG5aN0xHNnM2S0ZGTWwzcFYw?=
+ =?utf-8?B?ekd4UkNxRE5rOTR1YzBYMzRFUGozVzBIOXdtdEFwenJnYW9NY1NYNktnL3Ar?=
+ =?utf-8?B?M1k1T0tYMDZkN3pxRkJJTkN4WDRUajFQNnhWZDFhbEFIK2xCYmNoUHFYOXZt?=
+ =?utf-8?B?S1J4NXJoNlNFRVE2bkNiOHhVSzdsMnUvMW1CY3pKclRQbjRuOEMwU0EvM2Q0?=
+ =?utf-8?B?ZkZ5cHg2eDMrN092aEpwME5FeVQ1NTRZZzQ0UWdYczRNeG5IUDlFMCtQaVln?=
+ =?utf-8?B?cHFvK0tqMm5lb3BBMTF2c2p4STJHSGQzbHdsZkdKbFcybTNzZDlMYkZVL1ls?=
+ =?utf-8?B?aTl0TVNpQUpKdUVNMWl4R0poQ21VNWZEWXpVU2p4aVlyK3NsQXBVVWtNTWlQ?=
+ =?utf-8?B?dkZMZVNLbHNralpRQ3ZjL2FKd25MejdFekwrR3JoSVd3a0VhZTZ3dlFVeDc0?=
+ =?utf-8?B?L3MwRTRVK1FlSk1YZDRZcVJXSkRmZjBPdUhZeWs0VjRyUVhETlowRmxtK2hm?=
+ =?utf-8?B?NGJhZG5yV3RkczdQK3RBVUF2WU1hQnhtNFpRbjljaWJBN1BQQ3NxalFlS3ZG?=
+ =?utf-8?B?eVh4WWZpaG02bS9ldTlCNzZuMkZqWm1Hd01JbGw2ZDJJMjNNZVY1VWlFMm41?=
+ =?utf-8?B?WFpRY0NCeTlDdzY0OUFIU0w4ZHJwMTJBL3ZiUHlneUhNSkIwRVJLL3JIWmVM?=
+ =?utf-8?B?R0NMOENXaHFaSXJhSzZHeFh5WGFKQ21udWRYemMzeTdFQW5yMU15NHNGNzM0?=
+ =?utf-8?B?b2pxVDcvZnNVTU1RSW1mVmNxdTI3Q3d1NzJ2Z3NiZ3FIWmJheTRMaStENTBF?=
+ =?utf-8?B?UjNjU3ZzMlJpZ3VrUHVjZzJiWTdjVnN1UGNGYzNXQmI1WnE0V0hpZDdwSWps?=
+ =?utf-8?B?MU1DRjRrY0xkSGZSRnVJaGhDRmd6a2toMVpGMm1sVjlFNDRhRjNtMVViYVVO?=
+ =?utf-8?B?OU8zNmo4L2dGcnc2Z2pSWnlVZHNSbGVMb3d1UFQ3eXpuNmZjRDhuanRtakl5?=
+ =?utf-8?B?NXpuUFh4ZUc5bFhUaTJ3dzM2a0xBdjNiNm5TdTBMTXRyNkxWdTEvQ3ZmZWt0?=
+ =?utf-8?B?clA2NGp0MHVHci9NK1JiZnhMek9XWUQwMVBpRm1PRWJtbVV5cll6Q2RFck0y?=
+ =?utf-8?B?TmxnM2w2MFgxTW50UGJBc3EvRFNxNC8xclFSVXBVWWRGQ3lENjZHMkZ6Q3Ru?=
+ =?utf-8?B?Vy84K2djZ1B0K0V1eHMrc0E0cUVMVjNJRkVtU2NUMVcrMy85a0FTQk9hUitM?=
+ =?utf-8?B?WEZBbW4zRnBzdEJGTkZoUkZvQndmbHQra29KMkYxWm9WUTFlRjdEY2xidms3?=
+ =?utf-8?B?dTJtOHJ6NlF3ck5EeE1CQUlYbEYzeXdoUytRcjFqT3hMM1Z4RTJRUHd3Mjkz?=
+ =?utf-8?B?cllKc1NiOVFUa1c2amRDMUlnVW1mQkxKbTl0dFdiWERqMXQzeTNnOVBQaFdx?=
+ =?utf-8?B?djBvaGtlT3RTdU5QSFZpdUwrNlA3OVpRcEVMNUxNTENvQ2hhQ1NJK1A3SUNZ?=
+ =?utf-8?B?UjFxZHRnZW9vR3Nnd002MXRVbU9VclRmalVKbjZ2UUZrbWZFVkcycC9ySzhy?=
+ =?utf-8?B?YmlSSWlKQzNGVE5rajJ5NW5qMEFnNm9QSWJCVVFQUElTeHFtNGt0OXVZWGcw?=
+ =?utf-8?B?Z3h0UlJ3dnEvYXp4cHhFUDMxU29tRGRnK0IrL0ZabDRqYVE2UnJwTmxTZFh5?=
+ =?utf-8?B?ai9XcXpCVThaVUZkb0hRSjEyTzFBOVVpN0ZFeThWNG4zK0JyVzNkK3Q3WDFR?=
+ =?utf-8?Q?VU2Uxv8SmvFe1f2s=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6315884-167e-47b3-dba1-08da31dfcdf5
 X-MS-Exchange-CrossTenant-AuthSource: BN0PR11MB5744.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2022 17:09:27.5620
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2022 17:17:33.1456
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7ol9zMGYcnKakb3DoDcIBdX0yDI/pY3wdGmkYbqf5xQS7yU9HT+ssZx3+QmrQTw+EkBrjSaX5ytjTYNyZrd8EvFUjP8GuSCajZ4Cvme2D8k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5329
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZqYOgV+DdSpWXNCN0ZPoDhCUtnGzXzMyydMtw33MpiB5D0IpFGTSxTZgJtu78qMUmO055DSn8nZVE9CNgRa4DNG4vv0l93LctUPRYp4ydLs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB3986
 X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
@@ -165,104 +167,64 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 Hi Jarkko,
 
-On 5/7/2022 10:48 AM, Jarkko Sakkinen wrote:
-> On Sat, May 07, 2022 at 08:46:50PM +0300, Jarkko Sakkinen wrote:
->> On Mon, May 02, 2022 at 02:33:06PM -0700, Dave Hansen wrote:
->>> On 5/2/22 10:11, Reinette Chatre wrote:
->>>> My goal was to prevent the page fault handler from doing a "is the PCMD
->>>> page empty" if the reclaimer has a reference to it. Even if the PCMD page
->>>> is empty when the page fault handler checks it the page is expected to
->>>> get data right when reclaimer can get the mutex back since the reclaimer
->>>> already has a reference to the page.
+On 5/7/2022 10:25 AM, Jarkko Sakkinen wrote:
+> On Thu, Apr 28, 2022 at 04:49:00PM -0700, Reinette Chatre wrote:
+>>> I also looked a little deeper at this transient failure problem.  The
+>>> ELDU documentation also mentions a possible error code of:
 >>>
->>> I think shmem_truncate_range() might be the wrong operation.  It
->>> destroys data and, in the end, we don't want to destroy data.
->>> Filesystems and the page cache already have nice ways to keep from
->>> destroying data, we just need to use them.
+>>> 	SGX_EPC_PAGE_CONFLICT
 >>>
->>> First, I think set_page_dirty(pcmd_page) before the EWB is a good start.
->>>  That's what filesystems do before important data that needs to be saved
->>> goes into pages.
->>>
->>> Second, I think we need behavior like POSIX_FADV_DONTNEED, not
->>> FALLOC_FL_PUNCH_HOLE.  The DONTNEED operations end up in
->>> mapping_evict_folio(), which has both page refcount *and* dirty page
->>> checks.  That means that either elevating a refcount or set_page_dirty()
->>> will thwart DONTNEED-like behavior.
->>>
->>> There are two basic things we need to do:
->>>
->>> 1. Prevent page from being truncated around EWB time
->>> 2. Prevent unreferenced page with all zeros from staying in shmem
->>>    forever or taking up swap space
->>>
->>> On the EWB (write to PCMD side) I think something like this works:
->>>
->>> 	sgx_encl_get_backing()
->>> 		get_page(pcmd_page)
->>>
->>> 	...
->>> 	lock_page(pcmd_page);
->>> 	// check for truncation since sgx_encl_get_backing()
->>> 	if (pcmd_page->mapping != shmem)
->>> 		goto retry;
->>> 	 // double check this is OK under lock_page():
->>> 	set_page_dirty(pcmd_page);
->>> 	__sgx_encl_ewb();
->>> 	unlock_page(pcmd_page);
->>>
->>> That's basically what filesystems do.  Get the page from the page cache,
->>> lock it, then make sure it is consistent.  If not, retry.
->>>
->>> On the "free" / read in (ELDU) side:
->>>
->>> 	// get pcmd_page ref
->>> 	lock_page(pcmd_page);
->>> 	// truncation is not a concern because that's only done
->>> 	// on the read-in side, here, where we hold encl->lock
->>>
->>> 	memset();
->>> 	if (!memchr_inv())
->>> 		// clear the way for DONTNEED:
->>> 		ClearPageDirty(pcmd_page);
->>> 	unlock_page(pcmd_page);
->>> 	// drop pcmd_page ref
->>> 	...
->>> 	POSIX_FADV_DONTNEED
->>>
->>> There's one downside to this: it's _possible_ that an transient
->>> get_page() would block POSIX_FADV_DONTNEED.  Then the zeroed page would
->>> stick around forever, or at least until the next ELDU operation did
->>> another memchr_inv().
->>>
->>> I went looking around for some of those and could not find any that I
->>> *know* apply to shmem.
->>>
->>> This doesn't feel like a great solution; it's more complicated than I
->>> would like.  Any other ideas?
+>>> It *looks* like there can be conflicts on the SECS page as well as the
+>>> EPC page being explicitly accessed.  Is that a possible problem here?
 >>
->> If we could do both truncation and swapping in one side, i.e. in ksgxd,
->> that would simplify this process a lot. Then the whole synchronization
->> problem would not exist.
+>> I went down this path myself. SGX_EPC_PAGE_CONFLICT is an error code
+>> supported by newer ELDUC - the ELDU used in current code would indeed
+>> #GP in this case. The SDM text describing ELDUC as "This leaf function
+>> behaves like ELDU but with improved conflict handling for oversubscription"
+>> really does seem relevant to the test that triggers this issue.
 >>
->> E.g. perhaps #PF handler could just zero PCMD and collect zeroed pages
->> indices to a list and ksgxd would truncate them.
+>> I stopped pursuing this because from what I understand if
+>> SGX_EPC_PAGE_CONFLICT is encountered with commit 08999b2489b4 ("x86/sgx:
+>> Free backing memory after faulting the enclave page") then it should
+>> also be encountered without it. The issue is not present with
+>> 08999b2489b4 ("x86/sgx: Free backing memory after faulting the
+>> enclave page") removed. I am thus currently investigating based on
+>> the assumption that the #GP is encountered because of MAC
+>> verification problem. I may be wrong here also and need more information
+>> since the SDM documents two seemingly related errors:
+>> #GP(0) -> If the instruction fails to verify MAC.
+>> SGX_MAC_COMPARE_FAIL -> If the MAC check fails.
 > 
-> I.e. instead of immediate response, go for lazy response that is taken 
-> care by ksgxd.
+> This part puzzles me in the pseudo-code.
+> 
+> The version is read first:
+> 
+> TMP_VER := DS:RDX[63:0]; 
+> 
+> Then there's MAC calculation, comparison,  and finally this check:
+> 
+> (* Check version before committing *)
+> IF (DS:RDX ≠ 0) 
+>         THEN #GP(0); 
+> ELSE
+>         DS:RDX := TMP_VER;
+> FI; 
+> 
+> For me it is a mystery what does zero the slot and in what condition
+> it would be non-zero. Perhaps the #GP refers anyway to this check?
 
-Could you please elaborate how you envision this solution? From what I understand
-there would be a per-enclave list that contains information about empty
-PCMD pages intended to be truncated. The page fault handler adds pages
-to this list and the reclaimer needs to remove pages from this list when
-it writes to those pages and then do the actual truncation - but it is not
-clear how the reclaimer will know when it can safely remove a page from the
-list since it obtains PCMD page references in batches.
+RDX contains the VA slot information and that appears to be correct
+in these scenarios. The issue is the PCMD data pointed to by the
+PAGEINFO.PCMD (link to PAGEINFO found in RBX) is all zeroes.
 
-Did you get a chance to consider the fix proposed in
-https://lore.kernel.org/linux-sgx/d4b52482-2dd0-d5f1-bda9-e1d97883298d@intel.com/ 
+There are two scenarios under which the PCMD data could be zeroes. They
+are documented in:
+https://lore.kernel.org/linux-sgx/8157fa40-8d02-8819-e1b6-fd2d8863fb56@intel.com/
+https://lore.kernel.org/linux-sgx/da387afc-e666-45d0-1e99-066d8c4aab03@intel.com/
 
-I understand that the email thread may have become hard to follow and I plan
-to submit a new series today.
+I understand that context may be lost by pointing you to various emails
+in this thread - I'll wrap up all learnings when I submit the new version
+of this series today.
 
-Reinette
+
+Reinette 
