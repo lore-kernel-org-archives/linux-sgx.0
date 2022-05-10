@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF0BC43219
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 18:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FEEC4167B
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 18:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348582AbiEJSN0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 10 May 2022 14:13:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58116 "EHLO
+        id S1348583AbiEJSNZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 10 May 2022 14:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348542AbiEJSNT (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 May 2022 14:13:19 -0400
+        with ESMTP id S1348546AbiEJSNV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 May 2022 14:13:21 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9893638E;
-        Tue, 10 May 2022 11:09:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36AD2DD79;
+        Tue, 10 May 2022 11:09:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652206161; x=1683742161;
+  t=1652206162; x=1683742162;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=J6vOWUAexaPJAAm0rLrk9+V8q/4zJYEqE6/X4bwnFeM=;
-  b=CD9ypbYzRildjbC/oIa4Mzag89XPjEHuG9fVLCuNBNKBykSsanBowh6V
-   gCzf12ODT9fKXJB6vf0XB2vnYjQHvbBqqyWcPu2aKz5S8teeS+8eHnP2D
-   cnKSsjvntFXlQ6PnVSWrOhOffh1QS54VBMd8t+zIOSZpTt9j11J7f8eur
-   h7Gm8G1b0RItu342310pzOioAwka+0GYjFVM89PlqGMiS1hIEAkL+2Le2
-   qpFOVy3aP6TKkhzho71gbXXxJMwowSydAZiuFGFjPBNFRW2AH76OQfZ5Z
-   CWIAHN4MbBRGkxx4DOibIz7o1+MM25BDrRNPNjXv8s5MIfUwPNMwQ0aGt
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10343"; a="330057505"
+  bh=FJfKrMjaKbMfb8RS0t6IxubSzc4FXrABp9R8uuhlVVo=;
+  b=VaytJpzSrvCOafL2xFPaZYgkQka4nKWvmnzLUfY/DNYjvNmfrvUw355f
+   XMKJol+xcKELDxQOI4pe0jVNJln7vXCfVwArwXbWnm+e3QRY4xCn5Y/HA
+   5Fk09OTjy41Yu+FT1MvlhDCOphyoQ0LabvKab0YChijjbjTsgTXqaYzmF
+   xFVRw2kDCGzu6et03GaZF9ByaZMhU2+5dscoMI2GcAkyiEj/CfZgs6fZV
+   yPlrI4jAWmL+NAoLDzLCqEwg+I0M3kXgBsaID00nJvSwY2X9tmRsEK/Mq
+   c+hDJGsNLwy+2x9mWR3SSgJgyhi45aVD3rS5H7Z+H/LRWG1UwF35NYOFv
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10343"; a="330057516"
 X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="330057505"
+   d="scan'208";a="330057516"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
   by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 11:09:16 -0700
 X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="541908752"
+   d="scan'208";a="541908770"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 11:09:16 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -45,9 +45,9 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V5 04/31] x86/sgx: Add wrapper for SGX2 EAUG function
-Date:   Tue, 10 May 2022 11:08:40 -0700
-Message-Id: <97a46754fe4764e908651df63694fb760f783d6e.1652137848.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 09/31] x86/sgx: Make sgx_ipi_cb() available internally
+Date:   Tue, 10 May 2022 11:08:45 -0700
+Message-Id: <1179ed4a9c3c1c2abf49d51bfcf2c30b493181cc.1652137848.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1652137848.git.reinette.chatre@intel.com>
 References: <cover.1652137848.git.reinette.chatre@intel.com>
@@ -57,18 +57,11 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add a wrapper for the EAUG ENCLS leaf function used to
-add a page to an initialized enclave.
+The ETRACK function followed by an IPI to all CPUs within an enclave
+is a common pattern with more frequent use in support of SGX2.
 
-EAUG:
-1) Stores all properties of the new enclave page in the SGX
-   hardware's Enclave Page Cache Map (EPCM).
-2) Sets the PENDING bit in the EPCM entry of the enclave page.
-   This bit is cleared by the enclave by invoking ENCLU leaf
-   function EACCEPT or EACCEPTCOPY.
-
-Access from within the enclave to the new enclave page is not
-possible until the PENDING bit is cleared.
+Make the (empty) IPI callback function available internally in
+preparation for usage by SGX2.
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
@@ -79,30 +72,38 @@ Changes since V3:
 - Add Jarkko's Reviewed-by tag.
 
 Changes since V1:
-- Split original patch ("x86/sgx: Add wrappers for SGX2 functions")
-  in three to introduce the SGX2 functions separately (Jarkko).
-- Rewrite commit message to include how the EPCM within the hardware
-  is changed by the SGX2 function as well as any calling
-  conditions (Jarkko).
+- Replace "for more usages" by "for usage by SGX2" (Jarkko)
 
- arch/x86/kernel/cpu/sgx/encls.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ arch/x86/kernel/cpu/sgx/sgx.h  | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 7a1ecf704ec1..99004b02e2ed 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -227,4 +227,10 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void *addr)
- 	return __encls_ret_2(EMODT, secinfo, addr);
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index bb0d5e8905be..bab2a2e13c70 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -174,7 +174,7 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
+ 	return ret;
  }
  
-+/* Zero a page of EPC memory and add it to an initialized enclave. */
-+static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
-+{
-+	return __encls_2(EAUG, pginfo, addr);
-+}
+-static void sgx_ipi_cb(void *info)
++void sgx_ipi_cb(void *info)
+ {
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 0f17def9fe6f..b30cee4de903 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -90,6 +90,8 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
+ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
+ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
+ 
++void sgx_ipi_cb(void *info);
 +
- #endif /* _X86_ENCLS_H */
+ #ifdef CONFIG_X86_SGX_KVM
+ int __init sgx_vepc_init(void);
+ #else
 -- 
 2.25.1
 
