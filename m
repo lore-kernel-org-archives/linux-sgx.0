@@ -2,221 +2,137 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA256C433FE
-	for <linux-sgx@archiver.kernel.org>; Mon,  9 May 2022 21:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E7EC433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 00:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiEIVxk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 9 May 2022 17:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
+        id S229696AbiEJAkW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 9 May 2022 20:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbiEIVwc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 17:52:32 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DDA227B334
-        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 14:48:15 -0700 (PDT)
+        with ESMTP id S231139AbiEJAkV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 20:40:21 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B003EBBA
+        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 17:36:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652132895; x=1683668895;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
+  t=1652142986; x=1683678986;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pVPMh9qJI0zCKvPUmbl5njR/x7X71fdJBQf7+7YHM/c=;
-  b=Tis+p0Ziw8FZiHnBDNT0JLgv91Zc2RSaBtt4j8duSXmP4y/Wq/d1TE+Y
-   o7U0XkEyN045NBLB7Usx5nd6ZtH1mNIYCDpsADkMmsr7l6sxamkir78I/
-   TkZqcQFnnIwTJAOos7kQVb7UpHshlOwRYO4FpQrPWDreP1/Ti2Edq/BJb
-   M+fF2dKcRM7GvFnY2TijzoEuE+fmdW3CEB+QPFY6CjEM14uBtcYgZKtn3
-   JZT3wJgxuclV5rp321m8gsCYRVagOkyC+KZrq0frCMHqQgITF/sS35hsI
-   V6ume2YPqzRH90oTayrQO3nUCKZp1LQumqRZZHTCtfGV5IXE7wSm7fUHR
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="332212854"
+  bh=W0wBGuJWmTRjxpzJ5rk2zkZ78DP8gARzLTp98aQDd2Y=;
+  b=idaP1t4evCIZgyV5VFUTEwdmNJR7mnIkEpvHqOKnA1a7F4NbWV9VqJhR
+   T65Kwuv+yP8d9u474EDaKRBblh/ktXcuFczhabfTGl2WqqQclUTRPYoWk
+   BGTADm+jsrN/8Iq03YO94CuHXyp5Qbh4xHtzJ+b3XHSYt3aRGN+e2kqlj
+   TzzRv9gRx/AL7fVMjkNoqPbyVzlaojyFbKr0LeDIQ78kp8/HIe2HbPuAe
+   cl2aPKaAKLsgJnpxxzP6F+A7pl3Ny4bRYNKIkZ8EN+IsZwSa8JDOeKugM
+   PBD60zGw6fnEQLyxafTx3+J+mC7ldT+Jo5PHrb2m22n9KIX99nmz2AUrG
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="266801542"
 X-IronPort-AV: E=Sophos;i="5.91,212,1647327600"; 
-   d="scan'208";a="332212854"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 14:48:08 -0700
+   d="scan'208";a="266801542"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 17:36:25 -0700
 X-IronPort-AV: E=Sophos;i="5.91,212,1647327600"; 
-   d="scan'208";a="565293496"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 14:48:08 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     dave.hansen@linux.intel.com, jarkko@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     haitao.huang@intel.com
-Subject: [PATCH V2 3/5] x86/sgx: Obtain backing storage page with enclave mutex held
-Date:   Mon,  9 May 2022 14:48:01 -0700
-Message-Id: <b98b7b0d60778845eceb4e279b4354632b7111f2.1652131695.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1652131695.git.reinette.chatre@intel.com>
-References: <cover.1652131695.git.reinette.chatre@intel.com>
+   d="scan'208";a="813725051"
+Received: from abehrenx-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.1.104])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 17:36:24 -0700
+Message-ID: <bb918c317ebb96768365b38f00239013b67ad607.camel@intel.com>
+Subject: Re: [RFC PATCH 1/4] x86/sgx: Do not free backing memory on
+ ENCLS[ELDU] failure
+From:   Kai Huang <kai.huang@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, dave.hansen@linux.intel.com,
+        linux-sgx@vger.kernel.org, haitao.huang@intel.com
+Date:   Tue, 10 May 2022 12:36:19 +1200
+In-Reply-To: <8d44af4c-798c-4887-def6-595f18f7ac66@intel.com>
+References: <cover.1651171455.git.reinette.chatre@intel.com>
+         <6fad9ec14ee94eaeb6d287988db60875da83b7bb.1651171455.git.reinette.chatre@intel.com>
+         <a43b87b3-ba9f-c442-295c-cef84d6f8318@intel.com>
+         <2cd90e97-6cbd-c901-949b-058348bcd78b@intel.com>
+         <5ae310cc-ed2d-9380-10ad-4ee27f8a5478@intel.com>
+         <10a34d44-820a-ac7f-834c-65fd56513bf0@intel.com>
+         <YnarpxzH3cEBo5pL@kernel.org>
+         <8d44af4c-798c-4887-def6-595f18f7ac66@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Haitao reported encountering a WARN triggered by the ENCLS[ELDU]
-instruction faulting with a #GP.
+On Mon, 2022-05-09 at 10:17 -0700, Reinette Chatre wrote:
+> Hi Jarkko,
+> 
+> On 5/7/2022 10:25 AM, Jarkko Sakkinen wrote:
+> > On Thu, Apr 28, 2022 at 04:49:00PM -0700, Reinette Chatre wrote:
+> > > > I also looked a little deeper at this transient failure problem.  The
+> > > > ELDU documentation also mentions a possible error code of:
+> > > > 
+> > > > 	SGX_EPC_PAGE_CONFLICT
+> > > > 
+> > > > It *looks* like there can be conflicts on the SECS page as well as the
+> > > > EPC page being explicitly accessed.  Is that a possible problem here?
+> > > 
+> > > I went down this path myself. SGX_EPC_PAGE_CONFLICT is an error code
+> > > supported by newer ELDUC - the ELDU used in current code would indeed
+> > > #GP in this case. The SDM text describing ELDUC as "This leaf function
+> > > behaves like ELDU but with improved conflict handling for oversubscription"
+> > > really does seem relevant to the test that triggers this issue.
+> > > 
+> > > I stopped pursuing this because from what I understand if
+> > > SGX_EPC_PAGE_CONFLICT is encountered with commit 08999b2489b4 ("x86/sgx:
+> > > Free backing memory after faulting the enclave page") then it should
+> > > also be encountered without it. The issue is not present with
+> > > 08999b2489b4 ("x86/sgx: Free backing memory after faulting the
+> > > enclave page") removed. I am thus currently investigating based on
+> > > the assumption that the #GP is encountered because of MAC
+> > > verification problem. I may be wrong here also and need more information
+> > > since the SDM documents two seemingly related errors:
+> > > #GP(0) -> If the instruction fails to verify MAC.
+> > > SGX_MAC_COMPARE_FAIL -> If the MAC check fails.
+> > 
+> > This part puzzles me in the pseudo-code.
+> > 
+> > The version is read first:
+> > 
+> > TMP_VER := DS:RDX[63:0]; 
+> > 
+> > Then there's MAC calculation, comparison,  and finally this check:
+> > 
+> > (* Check version before committing *)
+> > IF (DS:RDX ≠ 0) 
+> >         THEN #GP(0); 
+> > ELSE
+> >         DS:RDX := TMP_VER;
+> > FI; 
+> > 
+> > For me it is a mystery what does zero the slot and in what condition
+> > it would be non-zero. Perhaps the #GP refers anyway to this check?
+> 
+> RDX contains the VA slot information and that appears to be correct
+> in these scenarios. The issue is the PCMD data pointed to by the
+> PAGEINFO.PCMD (link to PAGEINFO found in RBX) is all zeroes.
+> 
+> There are two scenarios under which the PCMD data could be zeroes. They
+> are documented in:
+> https://lore.kernel.org/linux-sgx/8157fa40-8d02-8819-e1b6-fd2d8863fb56@intel.com/
+> https://lore.kernel.org/linux-sgx/da387afc-e666-45d0-1e99-066d8c4aab03@intel.com/
+> 
+> I understand that context may be lost by pointing you to various emails
+> in this thread - I'll wrap up all learnings when I submit the new version
+> of this series today.
+> 
 
-The WARN is encountered when the reclaimer evicts a range of
-pages from the enclave when the same pages are faulted back
-right away.
+Hi Reinette,
 
-The SGX backing storage is accessed on two paths: when there
-are insufficient free pages in the EPC the reclaimer works
-to move enclave pages to the backing storage and as enclaves
-access pages that have been moved to the backing storage
-they are retrieved from there as part of page fault handling.
+Regardless the root cause of this problem, I agree with Jarkko above pseudo-code
+in the spec is quite confusing.  I can try to get it clarified from Intel
+internally if you want.
 
-An oversubscribed SGX system will often run the reclaimer and
-page fault handler concurrently and needs to ensure that the
-backing store is accessed safely between the reclaimer and
-the page fault handler. This is not the case because the
-reclaimer accesses the backing store without the enclave mutex
-while the page fault handler accesses the backing store with
-the enclave mutex.
-
-Two scenarios are considered to describe the consequences of
-the unsafe access:
-(a) Scenario: Fault a page right after it was reclaimed.
-    Consequence: The page is faulted by loading outdated data
-    into the enclave using ENCLS[ELDU] that faults when it checks
-    the MAC and PCMD data.
-(b) Scenario: Fault a page while reclaiming another page that
-    share a PCMD page.
-    Consequence: A race between the reclaimer and page fault
-    handler, the reclaimer attempting to access a PCMD at the
-    same time it is truncated by the page fault handler. This
-    could result in lost PCMD data. Data may still be
-    lost if the reclaimer wins the race, this is addressed in
-    the following patch.
-
-The reclaimer accesses pages from the backing storage without
-holding the enclave mutex and runs the risk of concurrently
-accessing the backing storage with the page fault handler that
-does access the backing storage with the enclave mutex held.
-
-The two scenarios ((a) and (b)) are shown below.
-
-In scenario (a), a page is written to the backing store
-by the reclaimer and then immediately faulted back, before
-the reclaimer is able to set the dirty bit of the page:
-
-sgx_reclaim_pages() {                    sgx_vma_fault() {
-...                                      ...
-  sgx_reclaimer_write() {
-    mutex_lock(&encl->lock);
-    /* Write data to backing store */
-    mutex_unlock(&encl->lock);
-  }
-                                         mutex_lock(&encl->lock);
-                                         __sgx_encl_eldu() {
-                                           ...
-                                           /* Enclave backing store
-                                            * page not released
-                                            * nor marked dirty -
-                                            * contents may not be
-                                            * up to date.
-                                            */
-                                           sgx_encl_get_backing();
-                                           ...
-                                           /*
-                                            * Enclave data restored
-                                            * from backing store
-                                            * and PCMD pages that
-                                            * are not up to date.
-                                            * ENCLS[ELDU] faults
-                                            * because of MAC or PCMD
-                                            * checking failure.
-                                            */
-                                           sgx_encl_put_backing();
-                                         }
-                                         ...
-/* set page dirty */
-sgx_encl_put_backing();
-...
-                                         mutex_unlock(&encl->lock);
-}                                        }
-
-In scenario (b) below a PCMD page is truncated from the backing
-store after all its pages have been loaded in to the enclave
-at the same time the PCMD page is loaded from the backing store
-when one of its pages are reclaimed:
-
-sgx_reclaim_pages() {              sgx_vma_fault() {
-                                     ...
-                                     mutex_lock(&encl->lock);
-                                     ...
-                                     __sgx_encl_eldu() {
-                                       ...
-                                       if (pcmd_page_empty) {
-/*
- * EPC page being reclaimed              /*
- * shares a PCMD page with an             * PCMD page truncated
- * enclave page that is being             * while requested from
- * faulted in.                            * reclaimer.
- */                                       */
-sgx_encl_get_backing()  <---------->      sgx_encl_truncate_backing_page()
-                                        }
-                                       mutex_unlock(&encl->lock);
-}                                    }
-
-In scenario (b) there is a race between the reclaimer and the page fault
-handler when the reclaimer attempts to get access to the same PCMD page
-that is being truncated. This could result in the reclaimer writing to
-the PCMD page that is then truncated, causing the PCMD data to be lost,
-or in a new PCMD page being allocated. The lost PCMD data may still occur
-after protecting the backing store access with the mutex - this is fixed
-in the next patch. By ensuring the backing store is accessed with the mutex
-held the enclave page state can be made accurate with the
-SGX_ENCL_PAGE_BEING_RECLAIMED flag accurately reflecting that a page
-is in the process of being reclaimed.
-
-Consistently protect the reclaimer's backing store access with the
-enclave's mutex to ensure that it can safely run concurrently with the
-page fault handler.
-
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Reported-by: Haitao Huang <haitao.huang@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index fad3d6c4756e..a60f8b2780fb 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -310,6 +310,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- 	sgx_encl_ewb(epc_page, backing);
- 	encl_page->epc_page = NULL;
- 	encl->secs_child_cnt--;
-+	sgx_encl_put_backing(backing);
- 
- 	if (!encl->secs_child_cnt && test_bit(SGX_ENCL_INITIALIZED, &encl->flags)) {
- 		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
-@@ -381,11 +382,14 @@ static void sgx_reclaim_pages(void)
- 			goto skip;
- 
- 		page_index = PFN_DOWN(encl_page->desc - encl_page->encl->base);
-+
-+		mutex_lock(&encl_page->encl->lock);
- 		ret = sgx_encl_get_backing(encl_page->encl, page_index, &backing[i]);
--		if (ret)
-+		if (ret) {
-+			mutex_unlock(&encl_page->encl->lock);
- 			goto skip;
-+		}
- 
--		mutex_lock(&encl_page->encl->lock);
- 		encl_page->desc |= SGX_ENCL_PAGE_BEING_RECLAIMED;
- 		mutex_unlock(&encl_page->encl->lock);
- 		continue;
-@@ -413,7 +417,6 @@ static void sgx_reclaim_pages(void)
- 
- 		encl_page = epc_page->owner;
- 		sgx_reclaimer_write(epc_page, &backing[i]);
--		sgx_encl_put_backing(&backing[i]);
- 
- 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
- 		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
 -- 
-2.25.1
+Thanks,
+-Kai
+
 
