@@ -2,112 +2,172 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68ED7C433F5
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 03:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE65C433F5
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 18:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235257AbiEJDVU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 9 May 2022 23:21:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35288 "EHLO
+        id S1348529AbiEJSNS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 10 May 2022 14:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235283AbiEJDVG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 9 May 2022 23:21:06 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB2C13F5B
-        for <linux-sgx@vger.kernel.org>; Mon,  9 May 2022 20:17:10 -0700 (PDT)
+        with ESMTP id S242384AbiEJSNR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 May 2022 14:13:17 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C1F638E;
+        Tue, 10 May 2022 11:09:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652152630; x=1683688630;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ICIJXWmrv+60f70pWneQ0AU7qcHx6sOBLX6B13GWKLY=;
-  b=N8R9S5voU8ugCj88V9ODq4aqcgr9EkIIOR5jCoIERRNetD1/AudJEkIv
-   9DKGV9mMOt7Id328e/9M7PBCkV1ehM13t/LBQkFV9mHFJ9ejR7OeAZMGr
-   2iAp2opHOib4IWWY3iaBokRjet9mHWKQAcyfFd1mKIabmRi8Yv+Jg+xim
-   7oiNPpkrEy9uRY3kBQCix/DwVBqT/IclPEr48xx8PHPcM2nGQUk96CLmD
-   JtkFcnOef/yNochKirCy7lJkrDv6pSLAN4DhRHXXgM3DWuLxlyo7xtc/l
-   YUDctpO4JgtokLr9p3qoYDVqXEvKccCNdn9+lAe9LE0FBtVL+X7OhXggB
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="249775633"
-X-IronPort-AV: E=Sophos;i="5.91,213,1647327600"; 
-   d="scan'208";a="249775633"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 20:17:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,213,1647327600"; 
-   d="scan'208";a="710818859"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
-  by fmsmga001.fm.intel.com with ESMTP; 09 May 2022 20:17:08 -0700
-From:   Zhiquan Li <zhiquan1.li@intel.com>
-To:     linux-sgx@vger.kernel.org, tony.luck@intel.com
-Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com, seanjc@google.com,
-        fan.du@intel.com, zhiquan1.li@intel.com
-Subject: [PATCH 4/4] x86/sgx: Fine grained SGX MCA behavior for normal case
-Date:   Tue, 10 May 2022 11:17:58 +0800
-Message-Id: <20220510031758.3181525-1-zhiquan1.li@intel.com>
+  t=1652206158; x=1683742158;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ivBpL5HnS4kxK8A+br9TE9DoQDLk+9xCSwo83rASwUU=;
+  b=durzGNU9hqvtXEptRk84MV+fRZgio7I1KiKUl/O1kRb+5/UQTpejpRBC
+   gXrjA/mC7524s5yrD6+FYtH3l6JnYeQ/igNFsbjbA/37r2gi5T/2wPWxp
+   6oqY+2W2/1XtyEOq+CiuKYsT+TrtNePM7amGxe/CBO3+khM8CBBCHgoYQ
+   QmGNkoklxs7DW0SPtuQeXdhhmS+HVf87eDh4t1XaiLUBFvQshNWnGibA4
+   dJoIdc5gkrojTTVeFBKMESaJUSJPJHim/2Tnatp/HWqODRHpyp2OXALZ/
+   0y66zSdbBS6Cv5Ukg1Udoi3jEb+WhZTZ/W6lHvXFRSpyswAIv9+C+1I9g
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10343"; a="330057498"
+X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
+   d="scan'208";a="330057498"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 11:09:16 -0700
+X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
+   d="scan'208";a="541908742"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 11:09:16 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
+        bp@alien8.de, luto@kernel.org, mingo@redhat.com,
+        linux-sgx@vger.kernel.org, x86@kernel.org, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
+        cedric.xing@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V5 01/31] x86/sgx: Add short descriptions to ENCLS wrappers
+Date:   Tue, 10 May 2022 11:08:37 -0700
+Message-Id: <5e78a1126711cbd692d5b8132e0683873398f69e.1652137848.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1652137848.git.reinette.chatre@intel.com>
+References: <cover.1652137848.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-When the application accesses a SGX EPC page with memory failure, the
-task will receive a SIGBUS signal without any extra info, unless the EPC
-page has SGX_EPC_PAGE_IS_VEPC flag. However, in some cases, we only use
-SGX in sub-task and we don’t expect the entire task group be killed due
-to a SGX EPC page for a sub-task has memory failure.
+The SGX ENCLS instruction uses EAX to specify an SGX function and
+may require additional registers, depending on the SGX function.
+ENCLS invokes the specified privileged SGX function for managing
+and debugging enclaves. Macros are used to wrap the ENCLS
+functionality and several wrappers are used to wrap the macros to
+make the different SGX functions accessible in the code.
 
-To fix it, we extend the solution for normal case. That is, the SGX
-regular EPC page with memory failure will trigger a SIGBUS signal with
-code BUS_MCEERR_AR and additional info, so that the user has opportunity
-to make further decision.
+The wrappers of the supported SGX functions are cryptic. Add short
+descriptions of each as a comment.
 
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+No changes since V4.
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 81801ab0009e..b43fb374b5cd 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -710,7 +710,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
- 	struct sgx_epc_section *section;
- 	struct sgx_numa_node *node;
--	struct sgx_vepc_page *owner;
-+	struct sgx_encl_page *owner;
-+	unsigned long vaddr;
- 	int ret = 0;
+Changes since V3:
+- Add Jarkko's Reviewed-by tag.
+
+Changes since V1:
+- Fix commit message and subject to not refer to descriptions as
+"changelog descriptions" or "shortlog descriptions" (Jarkko).
+- Improve all descriptions with guidance from Jarkko.
+
+ arch/x86/kernel/cpu/sgx/encls.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index fa04a73daf9c..0e22fa8f77c5 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -136,57 +136,71 @@ static inline bool encls_failed(int ret)
+ 	ret;						\
+ 	})
  
- 	/*
-@@ -729,14 +730,17 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	 * enclave is broken.
- 	 */
- 	if (flags & MF_ACTION_REQUIRED) {
--		/*
--		 * In case the error memory is accessed by VM guest, provide
--		 * extra info for hypervisor to make further decision but not
--		 * simply kill it.
--		 */
--		if (page->flags & SGX_EPC_PAGE_IS_VEPC) {
--			owner = (struct sgx_vepc_page *)page->owner;
--			ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)owner->vaddr,
-+		owner = page->owner;
-+		if (owner) {
-+			/*
-+			 * Provide extra info to the task so that it can make further
-+			 * decision but not simply kill it.
-+			 */
-+			if (page->flags & SGX_EPC_PAGE_IS_VEPC)
-+				vaddr = ((struct sgx_vepc_page *)owner)->vaddr;
-+			else
-+				vaddr = owner->desc & PAGE_MASK;
-+			ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)vaddr,
- 					PAGE_SHIFT);
- 			if (ret < 0)
- 				pr_err("Memory failure: Error sending signal to %s:%d: %d\n",
++/* Initialize an EPC page into an SGX Enclave Control Structure (SECS) page. */
+ static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
+ {
+ 	return __encls_2(ECREATE, pginfo, secs);
+ }
+ 
++/* Hash a 256 byte region of an enclave page to SECS:MRENCLAVE. */
+ static inline int __eextend(void *secs, void *addr)
+ {
+ 	return __encls_2(EEXTEND, secs, addr);
+ }
+ 
++/*
++ * Associate an EPC page to an enclave either as a REG or TCS page
++ * populated with the provided data.
++ */
+ static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
+ {
+ 	return __encls_2(EADD, pginfo, addr);
+ }
+ 
++/* Finalize enclave build, initialize enclave for user code execution. */
+ static inline int __einit(void *sigstruct, void *token, void *secs)
+ {
+ 	return __encls_ret_3(EINIT, sigstruct, secs, token);
+ }
+ 
++/* Disassociate EPC page from its enclave and mark it as unused. */
+ static inline int __eremove(void *addr)
+ {
+ 	return __encls_ret_1(EREMOVE, addr);
+ }
+ 
++/* Copy data to an EPC page belonging to a debug enclave. */
+ static inline int __edbgwr(void *addr, unsigned long *data)
+ {
+ 	return __encls_2(EDGBWR, *data, addr);
+ }
+ 
++/* Copy data from an EPC page belonging to a debug enclave. */
+ static inline int __edbgrd(void *addr, unsigned long *data)
+ {
+ 	return __encls_1_1(EDGBRD, *data, addr);
+ }
+ 
++/* Track that software has completed the required TLB address clears. */
+ static inline int __etrack(void *addr)
+ {
+ 	return __encls_ret_1(ETRACK, addr);
+ }
+ 
++/* Load, verify, and unblock an EPC page. */
+ static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
+ 			 void *va)
+ {
+ 	return __encls_ret_3(ELDU, pginfo, addr, va);
+ }
+ 
++/* Make EPC page inaccessible to enclave, ready to be written to memory. */
+ static inline int __eblock(void *addr)
+ {
+ 	return __encls_ret_1(EBLOCK, addr);
+ }
+ 
++/* Initialize an EPC page into a Version Array (VA) page. */
+ static inline int __epa(void *addr)
+ {
+ 	unsigned long rbx = SGX_PAGE_TYPE_VA;
+@@ -194,6 +208,7 @@ static inline int __epa(void *addr)
+ 	return __encls_2(EPA, rbx, addr);
+ }
+ 
++/* Invalidate an EPC page and write it out to main memory. */
+ static inline int __ewb(struct sgx_pageinfo *pginfo, void *addr,
+ 			void *va)
+ {
 -- 
 2.25.1
 
