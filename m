@@ -2,38 +2,38 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DECFFC4167D
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 18:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A365C433FE
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 May 2022 18:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348559AbiEJSNW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S1348567AbiEJSNW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Tue, 10 May 2022 14:13:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58148 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348545AbiEJSNU (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 May 2022 14:13:20 -0400
+        with ESMTP id S1348535AbiEJSNS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 May 2022 14:13:18 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2AAB2C130;
-        Tue, 10 May 2022 11:09:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93F229CB8;
+        Tue, 10 May 2022 11:09:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652206162; x=1683742162;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wKBgr3I8WWwlSR/JY9rIj6Ik+VxXF/dCZYbKYpfkFYk=;
-  b=cXMR0tZsxH+Y5kIfGhrX5FpiE7pusrTFJ2RYZs1PjXn9r6TM+xcL/IwE
-   gjIuAkzJqkokuuu9AbwQrcLmPl+Vpf44J8xkefL4lbbK3Z0csqPjz9guV
-   dwedYS+rd+UR23KcLgaqSKlq8VJudBOnGy8H8ZANG10OOMWL2W2Ye+rW6
-   /o2My/4EWFHeFgX7wifevogE/sCLQvHsmdLgFoq+eTgl43j0b868B62bv
-   lRg4V8sTyoSA1mmFLMEGDN8TwuOT7P2L4LkyCs5E/2FXwanTZ1/osIEgJ
-   iI1INNQ9bxg9D+LfPBiY7c0pYsk7XprLRPGVZxxanRN4HlaIfoIUGdtCu
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10343"; a="330057509"
+  t=1652206158; x=1683742158;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3DQcXaSy3zQoPleQsRtqBy17WOgQwzv4naIj3Wr4LWg=;
+  b=lyi0cGdAa3Mmqv01NVFRvFwf8D+j/fWyO6otLwKqvEdr/JNjCuRmJAln
+   x2ihrzgSknXXw4JMvocuYmNKzPWvt9smNj68kawH1akiYdSguaVOo1azB
+   aMAMHuIg0MuWEPJocRrq+j0nByWLfKsd4DMVLJcH3I9e0n161VA9Lx2Jr
+   te8SuPeeb6gI5Ct9JizD1L7HCr+OHESFMOnPYAmQpGHNwF2ETLzoRxdvc
+   vFlhQ+q1ACp8+l8V2SXxxZ8w1v0AcocARHiuRBUcZCN3cLjZH7srd9BzZ
+   EPFoMXHfxo60mdeYaNgfCXm5ifcXtRee3EBTk0cFOGJseC/Igv2WZKMRd
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10343"; a="330057496"
 X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="330057509"
+   d="scan'208";a="330057496"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
   by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 11:09:16 -0700
 X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="541908758"
+   d="scan'208";a="541908738"
 Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
   by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 11:09:16 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -45,186 +45,342 @@ Cc:     seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
         cedric.xing@intel.com, haitao.huang@intel.com,
         mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V5 06/31] x86/sgx: Export sgx_encl_ewb_cpumask()
-Date:   Tue, 10 May 2022 11:08:42 -0700
-Message-Id: <05b60747fd45130cf9fc6edb1c373a69a18a22c5.1652137848.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 00/31] x86/sgx and selftests/sgx: Support SGX2
+Date:   Tue, 10 May 2022 11:08:36 -0700
+Message-Id: <cover.1652137848.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1652137848.git.reinette.chatre@intel.com>
-References: <cover.1652137848.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Using sgx_encl_ewb_cpumask() to learn which CPUs might have executed
-an enclave is useful to ensure that TLBs are cleared when changes are
-made to enclave pages.
+V4: https://lore.kernel.org/lkml/cover.1649878359.git.reinette.chatre@intel.com/
 
-sgx_encl_ewb_cpumask() is used within the reclaimer when an enclave
-page is evicted. The upcoming SGX2 support enables changes to be
-made to enclave pages and will require TLBs to not refer to the
-changed pages and thus will be needing sgx_encl_ewb_cpumask().
+Changes since V4 that directly impact user space:
+- SGX_IOC_ENCLAVE_MODIFY_TYPES ioctl()'s struct was renamed
+  from struct sgx_enclave_modify_type to
+  struct sgx_enclave_modify_types. (Jarkko)
 
-Relocate sgx_encl_ewb_cpumask() to be with the rest of the enclave
-code in encl.c now that it is no longer unique to the reclaimer.
+Details about changes since V4 that do not directly impact user space:
+- Related function names were changed to match with the struct name
+  change:
+  sgx_ioc_enclave_modify_type() -> sgx_ioc_enclave_modify_types()
+  sgx_enclave_modify_type() -> sgx_enclave_modify_types()
+- Revert a SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS parameter check that
+  requires read permission. The hardware does support restricting
+  enclave page permission to zero permissions. Replace with
+  permission check to ensure read permission is set when write permission
+  is set. This is verified early to prevent a later fault of the
+  instruction. (Vijay).
+- Do not attempt direct reclaim if no EPC pages available during page
+  fault. mmap_lock is already held in page fault handler so attempting
+  to take it again while running sgx_reclaim_pages() has risk of
+  deadlock. This was discovered by lockdep during stress testing.
+- Pick up Reviewed-by and Tested-by tags from Jarkko.
+- Pick up Tested-by tags from Haitao after testing with Intel SGX SDK/PSW.
+- Pick up Tested-by tags from Vijay after testing with Gramine.
 
-Take care to ensure that any future usage maintains the
-current context requirement that ETRACK has been called first.
-Expand the existing comments to highlight this while moving them
-to a more prominent location before the function.
+V3: https://lore.kernel.org/lkml/cover.1648847675.git.reinette.chatre@intel.com/
 
-No functional change.
+Changes since V3 that directly impact user space:
+- SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS ioctl()'s struct
+  sgx_enclave_restrict_permissions no longer provides entire secinfo,
+  just the new permissions in new "permissions" struct member. (Jarkko)
+- Rename SGX_IOC_ENCLAVE_MODIFY_TYPE ioctl() to
+  SGX_IOC_ENCLAVE_MODIFY_TYPES. (Jarkko)
+- SGX_IOC_ENCLAVE_MODIFY_TYPES ioctl()'s struct sgx_enclave_modify_type
+  no longer provides entire secinfo, just the new page type in new
+  "page_type" struct member. (Jarkko)
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
-No changes since V4.
+Details about changes since V3 that do not directly impact user space:
+- Add new patch to enable VA pages to be added without invoking reclaimer
+  directly if no EPC pages are available, failing instead. This enables
+  VA pages to be added with enclave's mutex held. Fixes an issue
+  encountered by Haitao. More details in new patch "x86/sgx: Support VA page
+  allocation without reclaiming".
+- While refactoring, change existing code to consistently use
+  IS_ALIGNED(). (Jarkko)
+- Many patches received a tag from Jarkko.
+- Many smaller changes, please refer to individual patches.
 
-Changes since V3:
-- Add Jarkko's Reviewed-by tag.
+V2: https://lore.kernel.org/lkml/cover.1644274683.git.reinette.chatre@intel.com/
 
-Changes since V1:
-- New patch split from original "x86/sgx: Use more generic name for
-  enclave cpumask function" (Jarkko).
-- Change subject line (Jarkko).
-- Fixup kernel-doc to use brackets in function name.
+Changes since V2 that directly impact user space:
+- Maximum allowed permissions of dynamically added pages is RWX,
+  previously limited to RW. (Jarkko)
+  Dynamically added pages are initially created with architecturally
+  limited EPCM permissions of RW. mmap() and mprotect() of these pages
+  with RWX permissions would no longer be blocked by SGX driver. PROT_EXEC
+  on dynamically added pages will be possible after running ENCLU[EMODPE]
+  from within the enclave with appropriate VMA permissions.
 
- arch/x86/kernel/cpu/sgx/encl.c | 67 ++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h |  1 +
- arch/x86/kernel/cpu/sgx/main.c | 29 ---------------
- 3 files changed, 68 insertions(+), 29 deletions(-)
+- The kernel no longer attempts to track the EPCM runtime permissions. (Jarkko)
+  Consequences are:
+  - Kernel does not modify PTEs to follow EPCM permissions. User space
+    will receive #PF with SGX error code in cases where the V2
+    implementation would have resulted in regular (non-SGX) page fault
+    error code.
+  - SGX_IOC_ENCLAVE_RELAX_PERMISSIONS is removed. This ioctl() was used
+    to clear PTEs after permissions were modified from within the enclave
+    and ensure correct PTEs are installed. Since PTEs no longer track
+    EPCM permissions the changes in EPCM permissions would not impact PTEs.
+    As long as new permissions are within the maximum vetted permissions
+    (vm_max_prot_bits) only ENCLU[EMODPE] from within enclave is needed,
+    as accompanied by appropriate VMA permissions.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7217c492e103..04d8212ce400 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -709,6 +709,73 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
- 	return 0;
- }
- 
-+/**
-+ * sgx_encl_ewb_cpumask() - Query which CPUs might be accessing the enclave
-+ * @encl: the enclave
-+ *
-+ * Some SGX functions require that no cached linear-to-physical address
-+ * mappings are present before they can succeed. For example, ENCLS[EWB]
-+ * copies a page from the enclave page cache to regular main memory but
-+ * it fails if it cannot ensure that there are no cached
-+ * linear-to-physical address mappings referring to the page.
-+ *
-+ * SGX hardware flushes all cached linear-to-physical mappings on a CPU
-+ * when an enclave is exited via ENCLU[EEXIT] or an Asynchronous Enclave
-+ * Exit (AEX). Exiting an enclave will thus ensure cached linear-to-physical
-+ * address mappings are cleared but coordination with the tracking done within
-+ * the SGX hardware is needed to support the SGX functions that depend on this
-+ * cache clearing.
-+ *
-+ * When the ENCLS[ETRACK] function is issued on an enclave the hardware
-+ * tracks threads operating inside the enclave at that time. The SGX
-+ * hardware tracking require that all the identified threads must have
-+ * exited the enclave in order to flush the mappings before a function such
-+ * as ENCLS[EWB] will be permitted
-+ *
-+ * The following flow is used to support SGX functions that require that
-+ * no cached linear-to-physical address mappings are present:
-+ * 1) Execute ENCLS[ETRACK] to initiate hardware tracking.
-+ * 2) Use this function (sgx_encl_ewb_cpumask()) to query which CPUs might be
-+ *    accessing the enclave.
-+ * 3) Send IPI to identified CPUs, kicking them out of the enclave and
-+ *    thus flushing all locally cached linear-to-physical address mappings.
-+ * 4) Execute SGX function.
-+ *
-+ * Context: It is required to call this function after ENCLS[ETRACK].
-+ *          This will ensure that if any new mm appears (racing with
-+ *          sgx_encl_mm_add()) then the new mm will enter into the
-+ *          enclave with fresh linear-to-physical address mappings.
-+ *
-+ *          It is required that all IPIs are completed before a new
-+ *          ENCLS[ETRACK] is issued so be sure to protect steps 1 to 3
-+ *          of the above flow with the enclave's mutex.
-+ *
-+ * Return: cpumask of CPUs that might be accessing @encl
-+ */
-+const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
-+{
-+	cpumask_t *cpumask = &encl->cpumask;
-+	struct sgx_encl_mm *encl_mm;
-+	int idx;
-+
-+	cpumask_clear(cpumask);
-+
-+	idx = srcu_read_lock(&encl->srcu);
-+
-+	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+		if (!mmget_not_zero(encl_mm->mm))
-+			continue;
-+
-+		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
-+
-+		mmput_async(encl_mm->mm);
-+	}
-+
-+	srcu_read_unlock(&encl->srcu, idx);
-+
-+	return cpumask;
-+}
-+
- static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
- 					      pgoff_t index)
- {
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 522a17e4fd2d..c6afa58ea3e6 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -105,6 +105,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
- 
- void sgx_encl_release(struct kref *ref);
- int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
-+const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl);
- int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- 			 struct sgx_backing *backing);
- void sgx_encl_put_backing(struct sgx_backing *backing);
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index a60f8b2780fb..d1af5828635d 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -205,35 +205,6 @@ static void sgx_ipi_cb(void *info)
- {
- }
- 
--static const cpumask_t *sgx_encl_ewb_cpumask(struct sgx_encl *encl)
--{
--	cpumask_t *cpumask = &encl->cpumask;
--	struct sgx_encl_mm *encl_mm;
--	int idx;
--
--	/*
--	 * Can race with sgx_encl_mm_add(), but ETRACK has already been
--	 * executed, which means that the CPUs running in the new mm will enter
--	 * into the enclave with a fresh epoch.
--	 */
--	cpumask_clear(cpumask);
--
--	idx = srcu_read_lock(&encl->srcu);
--
--	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
--		if (!mmget_not_zero(encl_mm->mm))
--			continue;
--
--		cpumask_or(cpumask, cpumask, mm_cpumask(encl_mm->mm));
--
--		mmput_async(encl_mm->mm);
--	}
--
--	srcu_read_unlock(&encl->srcu, idx);
--
--	return cpumask;
--}
--
- /*
-  * Swap page to the regular memory transformed to the blocked state by using
-  * EBLOCK, which means that it can no longer be referenced (no new TLB entries).
+- struct sgx_enclave_restrict_perm renamed to
+     sgx_enclave_restrict_permissions (Jarkko)
+
+- struct sgx_enclave_modt renamed to struct sgx_enclave_modify_type
+  to be consistent with the verbose naming of other SGX uapi structs.
+
+Details about changes since V2 that do not directly impact user space:
+- Kernel no longer tracks the runtime EPCM permissions with the aim of
+  installing accurate PTEs. (Jarkko)
+  - In support of this change the following patches were removed:
+    Documentation/x86: Document SGX permission details
+    x86/sgx: Support VMA permissions more relaxed than enclave permissions
+    x86/sgx: Add pfn_mkwrite() handler for present PTEs
+    x86/sgx: Add sgx_encl_page->vm_run_prot_bits for dynamic permission changes
+    x86/sgx: Support relaxing of enclave page permissions
+  - No more handling of scenarios where VMA permissions may be more
+    relaxed than what the EPCM allows. Enclaves are not prevented
+    from accessing such pages and the EPCM permissions are entrusted
+    to control access as supported by the SGX error code in page faults.
+  - No more explicit setting of protection bits in page fault handler.
+    Protection bits are inherited from VMA similar to SGX1 support.
+
+- Selftest patches are moved to the end of the series. (Jarkko)
+
+- New patch contributed by Jarkko to avoid duplicated code:
+   x86/sgx: Export sgx_encl_page_alloc()
+
+- New patch separating changes from existing patch. (Jarkko)
+   x86/sgx: Export sgx_encl_{grow,shrink}()
+
+- New patch to keep one required benefit from the (now removed) kernel
+  EPCM permission tracking:
+   x86/sgx: Support loading enclave page without VMA permissions check
+
+- Updated cover letter to reflect architecture changes.
+
+- Many smaller changes, please refer to individual patches.
+
+V1: https://lore.kernel.org/linux-sgx/cover.1638381245.git.reinette.chatre@intel.com/
+
+Changes since V1 that directly impact user space:
+- SGX2 permission changes changed from a single ioctl() named
+  SGX_IOC_PAGE_MODP to two new ioctl()s:
+  SGX_IOC_ENCLAVE_RELAX_PERMISSIONS and
+  SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS, supported by two different
+  parameter structures (SGX_IOC_ENCLAVE_RELAX_PERMISSIONS does
+  not support a result output parameter) (Jarkko).
+
+  User space flow impact: After user space runs ENCLU[EMODPE] it
+  needs to call SGX_IOC_ENCLAVE_RELAX_PERMISSIONS to have PTEs
+  updated. Previously running SGX_IOC_PAGE_MODP in this scenario
+  resulted in EPCM.PR being set but calling
+  SGX_IOC_ENCLAVE_RELAX_PERMISSIONS will not result in EPCM.PR
+  being set anymore and thus no need for an additional
+  ENCLU[EACCEPT].
+
+- SGX_IOC_ENCLAVE_RELAX_PERMISSIONS and
+  SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS
+  obtain new permissions from secinfo as parameter instead of
+  the permissions directly (Jarkko).
+
+- ioctl() supporting SGX2 page type change is renamed from
+  SGX_IOC_PAGE_MODT to SGX_IOC_ENCLAVE_MODIFY_TYPE (Jarkko).
+
+- SGX_IOC_ENCLAVE_MODIFY_TYPE obtains new page type from secinfo
+  as parameter instead of the page type directly (Jarkko).
+
+- ioctl() supporting SGX2 page removal is renamed from
+  SGX_IOC_PAGE_REMOVE to SGX_IOC_ENCLAVE_REMOVE_PAGES (Jarkko).
+
+- All ioctl() parameter structures have been renamed as a result of the
+  ioctl() renaming:
+  SGX_IOC_ENCLAVE_RELAX_PERMISSIONS => struct sgx_enclave_relax_perm
+  SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS => struct sgx_enclave_restrict_perm
+  SGX_IOC_ENCLAVE_MODIFY_TYPE => struct sgx_enclave_modt
+  SGX_IOC_ENCLAVE_REMOVE_PAGES => struct sgx_enclave_remove_pages
+
+Changes since V1 that do not directly impact user space:
+- Number of patches in series increased from 25 to 32 primarily because
+  of splitting the original submission:
+  - Wrappers for the new SGX2 functions are introduced in three separate
+    patches replacing the original "x86/sgx: Add wrappers for SGX2
+    functions"
+    (Jarkko).
+  - Moving and renaming sgx_encl_ewb_cpumask() is done with two patches
+    replacing the original "x86/sgx: Use more generic name for enclave
+    cpumask function" (Jarkko).
+  - Support for SGX2 EPCM permission changes is split into two ioctls(),
+    one for relaxing and one for restricting permissions, each introduced
+    by a new patch replacing the original "x86/sgx: Support enclave page
+    permission changes" (Jarkko).
+  - Extracted code used by existing ioctls() for usage by new ioctl()s
+    into a new utility in new patch "x86/sgx: Create utility to validate
+    user provided offset and length" (Dave did not specifically ask for
+    this but it addresses his review feedback).
+  - Two new Documentation patches to support the SGX2 work
+    ("Documentation/x86: Introduce enclave runtime management") and
+    a dedicated section on the enclave permission management
+    ("Documentation/x86: Document SGX permission details") (Andy).
+- Most patches were reworked to improve the language by:
+  * aiming to refer to exact item instead of English rephrasing (Jarkko).
+  * use ioctl() instead of ioctl throughout (Dave).
+  * Use "relaxed" instead of "exceed" when referring to permissions
+    (Dave).
+- Improved documentation with several additions to
+  Documentation/x86/sgx.rst.
+- Many smaller changes, please refer to individual patches.
+
+Hi Everybody,
+
+The current Linux kernel support for SGX includes support for SGX1 that
+requires that an enclave be created with properties that accommodate all
+usages over its (the enclave's) lifetime. This includes properties such
+as permissions of enclave pages, the number of enclave pages, and the
+number of threads supported by the enclave.
+
+Consequences of this requirement to have the enclave be created to
+accommodate all usages include:
+* pages needing to support relocated code are required to have RWX
+  permissions for their entire lifetime,
+* an enclave needs to be created with the maximum stack and heap
+  projected to be needed during the enclave's entire lifetime which
+  can be longer than the processes running within it,
+* an enclave needs to be created with support for the maximum number
+  of threads projected to run in the enclave.
+
+Since SGX1 a few more functions were introduced, collectively called
+SGX2, that support modifications to an initialized enclave. Hardware
+supporting these functions are already available as listed on
+https://github.com/ayeks/SGX-hardware
+
+This series adds support for SGX2, also referred to as Enclave Dynamic
+Memory Management (EDMM). This includes:
+
+* Support modifying EPCM permissions of regular enclave pages belonging
+  to an initialized enclave. Only permission restriction is supported
+  via a new ioctl() SGX_IOC_ENCLAVE_RESTRICT_PERMISSIONS. Relaxing of
+  EPCM permissions can only be done from within the enclave with the
+  SGX instruction ENCLU[EMODPE].
+
+* Support dynamic addition of regular enclave pages to an initialized
+  enclave. At creation new pages are architecturally limited to RW EPCM
+  permissions but will be accessible with PROT_EXEC after the enclave
+  runs ENCLU[EMODPE] to relax EPCM permissions to RWX.
+  Pages are dynamically added to an initialized enclave from the SGX
+  page fault handler.
+
+* Support expanding an initialized enclave to accommodate more threads.
+  More threads can be accommodated by an enclave with the addition of
+  Thread Control Structure (TCS) pages that is done by changing the
+  type of regular enclave pages to TCS pages using a new ioctl()
+  SGX_IOC_ENCLAVE_MODIFY_TYPES.
+
+* Support removing regular and TCS pages from an initialized enclave.
+  Removing pages is accomplished in two stages as supported by two new
+  ioctl()s SGX_IOC_ENCLAVE_MODIFY_TYPES (same ioctl() as mentioned in
+  previous bullet) and SGX_IOC_ENCLAVE_REMOVE_PAGES.
+
+* Tests covering all the new flows, some edge cases, and one
+  comprehensive stress scenario.
+
+No additional work is needed to support SGX2 in a virtualized
+environment. All tests included in this series passed when run from
+a guest as tested with the recent QEMU release based on 6.2.0
+that supports SGX.
+
+Patches 1 through 14 prepare the existing code for SGX2 support by
+introducing the SGX2 functions, refactoring code, and tracking enclave
+page types.
+
+Patches 15 through 21 enable the SGX2 features and include a
+Documentation patch.
+
+Patches 22 through 31 test several scenarios of all the enabled
+SGX2 features.
+
+This series is based on v5.18-rc5 with recently submitted SGX shmem
+fixes applied:
+https://lore.kernel.org/linux-sgx/cover.1652131695.git.reinette.chatre@intel.com/
+A repo with both series applied is available:
+repo: https://github.com/rchatre/linux.git
+branch: sgx/sgx2_submitted_v5_plus_rwx
+
+This SGX2 series also applies directly to v5.18-rc5 if done with a 3-way merge
+since it and the shmem fixes both make changes to arch/x86/kernel/cpu/sgx/encl.h
+but do not have direct conflicts.
+
+Your feedback will be greatly appreciated.
+
+Regards,
+
+Reinette
+
+Jarkko Sakkinen (1):
+  x86/sgx: Export sgx_encl_page_alloc()
+
+Reinette Chatre (30):
+  x86/sgx: Add short descriptions to ENCLS wrappers
+  x86/sgx: Add wrapper for SGX2 EMODPR function
+  x86/sgx: Add wrapper for SGX2 EMODT function
+  x86/sgx: Add wrapper for SGX2 EAUG function
+  x86/sgx: Support loading enclave page without VMA permissions check
+  x86/sgx: Export sgx_encl_ewb_cpumask()
+  x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()
+  x86/sgx: Move PTE zap code to new sgx_zap_enclave_ptes()
+  x86/sgx: Make sgx_ipi_cb() available internally
+  x86/sgx: Create utility to validate user provided offset and length
+  x86/sgx: Keep record of SGX page type
+  x86/sgx: Export sgx_encl_{grow,shrink}()
+  x86/sgx: Support VA page allocation without reclaiming
+  x86/sgx: Support restricting of enclave page permissions
+  x86/sgx: Support adding of pages to an initialized enclave
+  x86/sgx: Tighten accessible memory range after enclave initialization
+  x86/sgx: Support modifying SGX page type
+  x86/sgx: Support complete page removal
+  x86/sgx: Free up EPC pages directly to support large page ranges
+  Documentation/x86: Introduce enclave runtime management section
+  selftests/sgx: Add test for EPCM permission changes
+  selftests/sgx: Add test for TCS page permission changes
+  selftests/sgx: Test two different SGX2 EAUG flows
+  selftests/sgx: Introduce dynamic entry point
+  selftests/sgx: Introduce TCS initialization enclave operation
+  selftests/sgx: Test complete changing of page type flow
+  selftests/sgx: Test faulty enclave behavior
+  selftests/sgx: Test invalid access to removed enclave page
+  selftests/sgx: Test reclaiming of untouched page
+  selftests/sgx: Page removal stress test
+
+ Documentation/x86/sgx.rst                     |   15 +
+ arch/x86/include/asm/sgx.h                    |    8 +
+ arch/x86/include/uapi/asm/sgx.h               |   62 +
+ arch/x86/kernel/cpu/sgx/encl.c                |  329 +++-
+ arch/x86/kernel/cpu/sgx/encl.h                |   15 +-
+ arch/x86/kernel/cpu/sgx/encls.h               |   33 +
+ arch/x86/kernel/cpu/sgx/ioctl.c               |  641 +++++++-
+ arch/x86/kernel/cpu/sgx/main.c                |   75 +-
+ arch/x86/kernel/cpu/sgx/sgx.h                 |    3 +
+ tools/testing/selftests/sgx/defines.h         |   23 +
+ tools/testing/selftests/sgx/load.c            |   41 +
+ tools/testing/selftests/sgx/main.c            | 1435 +++++++++++++++++
+ tools/testing/selftests/sgx/main.h            |    1 +
+ tools/testing/selftests/sgx/test_encl.c       |   68 +
+ .../selftests/sgx/test_encl_bootstrap.S       |    6 +
+ 15 files changed, 2627 insertions(+), 128 deletions(-)
+
+
+base-commit: 672c0c5173427e6b3e2a9bbb7be51ceeec78093a
+prerequisite-patch-id: 1a738c00922b0ec865f2674c6f4f8be9ff9b1aab
+prerequisite-patch-id: 792889ea9bdfae8c150b1be5c16da697bc404422
+prerequisite-patch-id: 78ed2d6251ead724bcb96e0f058bb39dca9eba04
+prerequisite-patch-id: cbb715e565631a146eb3cd902455ebaa5d489872
+prerequisite-patch-id: 3e853bae87d94f8695a48c537ef32a516f415933
 -- 
 2.25.1
 
