@@ -2,117 +2,107 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3113C433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 11 May 2022 22:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA18C433EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 11 May 2022 23:33:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348422AbiEKWAK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 11 May 2022 18:00:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36576 "EHLO
+        id S1349370AbiEKXd5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 11 May 2022 19:33:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348421AbiEKWAJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 11 May 2022 18:00:09 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABD576B668
-        for <linux-sgx@vger.kernel.org>; Wed, 11 May 2022 15:00:04 -0700 (PDT)
+        with ESMTP id S229927AbiEKXd4 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 11 May 2022 19:33:56 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F114B62100
+        for <linux-sgx@vger.kernel.org>; Wed, 11 May 2022 16:33:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652306404; x=1683842404;
+  t=1652312035; x=1683848035;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=BqYNRW+kT/XtWBj7bxmjaj/FDluZ98U2ySbiSlXLKYY=;
-  b=YdhN3Pq+l3sQU/U9CtTQ1xUvl7GgRFMlRpXnZqskK7Q2+eDByC5pLJcW
-   Lk13sOBHQTu7s6K8fQO9EybjVqTPrwX+jTktrdAyw72OdL/LnQJv5GetV
-   ENlrMvKVLDYbz8xNN1ULr2VZGv35IO1Bqd48lZsRlwGa0Kn81Ua8Qa5RZ
-   Gz+FLcpYZN8jOaL0clLSzI0WTZCL7X3sHXgbFv9WxllxaWHvOoEN6Ww6s
-   F8/9sowE/doBBuGf65gdCQK4eBaiDLyK5cZwDIFy/eyD3p3IMtsdqKNVC
-   opGpMEDNNx3awTrKirO5/wfmOyxwRzAUhGVSHNHhM/8C3P7KGYSjM9jT/
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10344"; a="269955579"
+  bh=oOGCMxnK8u+hidz7SLBysDrFyVSsq4wPop8JO+N9oLE=;
+  b=Ud/tIYb2U01TuEscp9zHQFqe7WyLUlm+YiVVDaOd9pnUoHKQ8oDgasZl
+   4otNd8brNC70/3o5CWsXtpE4YHo0PBqrJ1DmP3tDdqQUQyxMry6fd0icM
+   ChiZkYLQsSRv/KYhfUMTOgiAxTXOMH6fbu546sdOgwYbnvAxkEmpT/TEo
+   VDEpa/oZ11vrVYOhGGXznuuZMeVGtvbwD00oh7owdPL9lvF2B4iGyCi/3
+   B6AnyUERL3JgmCdVYwbBcCEoVEYOLh2NYWeR8uh6eE/AdyaWN/MvGa8x8
+   FTRIrblFkoK7LAHgCAnG+XklQlYDgIZzYWU6vMMEG0jwwbrCE7sCp1NMn
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10344"; a="295085486"
 X-IronPort-AV: E=Sophos;i="5.91,218,1647327600"; 
-   d="scan'208";a="269955579"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 15:00:04 -0700
+   d="scan'208";a="295085486"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 16:33:55 -0700
 X-IronPort-AV: E=Sophos;i="5.91,218,1647327600"; 
-   d="scan'208";a="572263433"
+   d="scan'208";a="697788031"
 Received: from destipon-mobl2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.254.1.148])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 15:00:02 -0700
-Message-ID: <9d5ba82536b5dc49eeb8ab2f18a7b393eaed81fa.camel@intel.com>
-Subject: Re: [RFC PATCH 1/4] x86/sgx: Do not free backing memory on
- ENCLS[ELDU] failure
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 16:33:53 -0700
+Message-ID: <c6b002cc4b6f979ffd0869f80742896fbe668376.camel@intel.com>
+Subject: Re: [PATCH 3/4] x86/sgx: Fine grained SGX MCA behavior for
+ virtualization
 From:   Kai Huang <kai.huang@intel.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
-        haitao.huang@intel.com
-Date:   Thu, 12 May 2022 10:00:01 +1200
-In-Reply-To: <op.1l0ob9jbwjvjmi@hhuan26-mobl1.mshome.net>
-References: <cover.1651171455.git.reinette.chatre@intel.com>
-         <6fad9ec14ee94eaeb6d287988db60875da83b7bb.1651171455.git.reinette.chatre@intel.com>
-         <a43b87b3-ba9f-c442-295c-cef84d6f8318@intel.com>
-         <2cd90e97-6cbd-c901-949b-058348bcd78b@intel.com>
-         <5ae310cc-ed2d-9380-10ad-4ee27f8a5478@intel.com>
-         <10a34d44-820a-ac7f-834c-65fd56513bf0@intel.com>
-         <YnarpxzH3cEBo5pL@kernel.org>
-         <8d44af4c-798c-4887-def6-595f18f7ac66@intel.com>
-         <bb918c317ebb96768365b38f00239013b67ad607.camel@intel.com>
-         <YnuPR3OW7xdEXnVF@kernel.org> <op.1l0ob9jbwjvjmi@hhuan26-mobl1.mshome.net>
+To:     Zhiquan Li <zhiquan1.li@intel.com>, linux-sgx@vger.kernel.org,
+        tony.luck@intel.com
+Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com, seanjc@google.com,
+        fan.du@intel.com
+Date:   Thu, 12 May 2022 11:33:51 +1200
+In-Reply-To: <20220510031748.3181459-1-zhiquan1.li@intel.com>
+References: <20220510031748.3181459-1-zhiquan1.li@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-
-> > > > > 
-> > > > > This part puzzles me in the pseudo-code.
-> > > > > 
-> > > > > The version is read first:
-> > > > > 
-> > > > > TMP_VER := DS:RDX[63:0];
-> > > > > 
-> > > > > Then there's MAC calculation, comparison,  and finally this check:
-> > > > > 
-> > > > > (* Check version before committing *)
-> > > > > IF (DS:RDX ≠ 0)
-> > > > >         THEN #GP(0);
-> > > > > ELSE
-> > > > >         DS:RDX := TMP_VER;
-> > > > > FI;
-> > > > > 
-> > > > > For me it is a mystery what does zero the slot and in what condition
-> > > > > it would be non-zero. Perhaps the #GP refers anyway to this check?
-> > > > 
+On Tue, 2022-05-10 at 11:17 +0800, Zhiquan Li wrote:
+> When VM guest access a SGX EPC page with memory failure, current
+> behavior will kill the guest, expected only kill the SGX application
+> inside it.
 > 
+> To fix it we send SIGBUS with code BUS_MCEERR_AR and some extra
+> information for hypervisor to inject #MC information to guest, which is
+> helpful in SGX case.
 > 
-> We discussed this internally, and agree this part of pseudo code needs be  
-> corrected/clarified.
+> Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
 > 
-> Here is what we think was going on when ELDU invoked with PCMD of all  
-> zeros: ELDU would check if the PCMD.SECINFO.FLAGS.PT is 0 which indicates  
-> that the page being loaded is a PT_SECS, and the PAGEINFO.SECS is not  
-> zero, then the instruction will #GP(0).  Thus, ELDU is behaving correctly  
-> – it is an omission in the SDM pseudocode.
-> 
-> The version checking code above also need be clarified because the VA slot  
-> would be cleared at this point and TMP_VER should be zero.
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 8e4bc6453d26..81801ab0009e 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -710,6 +710,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
+>  	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
+>  	struct sgx_epc_section *section;
+>  	struct sgx_numa_node *node;
+> +	struct sgx_vepc_page *owner;
+> +	int ret = 0;
+>  
+>  	/*
+>  	 * mm/memory-failure.c calls this routine for all errors
+> @@ -726,8 +728,22 @@ int arch_memory_failure(unsigned long pfn, int flags)
+>  	 * error. The signal may help the task understand why the
+>  	 * enclave is broken.
+>  	 */
+> -	if (flags & MF_ACTION_REQUIRED)
+> -		force_sig(SIGBUS);
+> +	if (flags & MF_ACTION_REQUIRED) {
+> +		/*
+> +		 * In case the error memory is accessed by VM guest, provide
+> +		 * extra info for hypervisor to make further decision but not
+> +		 * simply kill it.
+> +		 */
+> +		if (page->flags & SGX_EPC_PAGE_IS_VEPC) {
+> +			owner = (struct sgx_vepc_page *)page->owner;
+> +			ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)owner->vaddr,
+> +					PAGE_SHIFT);
 
-"VA slot would be cleared at this point" isn't accurate.  The VA slot itself is
-still occupied at this point.  The original TMP_VER before the decryption is the
-VA slot value stored by EWB, and after decryption it becomes 0, if the
-decryption is correct.  The correct pseudo-code should be:
+If I understand correctly, this sends signal to the userspace hypervisor, i.e.
+Qemu?  Can you elaborate how is KVM supposed to inject the #MC to guest, instead
+of Qemu process (the VM) being killed?
 
-	IF (TMP_VER != 0)
-		THEN #GP(0);
-	ELSE
-		DS:RDX	= TMP_VER;
-	FI;
-
-The check of TMP_VER against 0 is just an additional safe guard to make sure
-decryption didn't fail.
 
 
 -- 
