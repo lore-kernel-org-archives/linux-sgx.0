@@ -2,108 +2,187 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCCEC433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 May 2022 14:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A2EC433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 12 May 2022 18:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232946AbiELOO0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 May 2022 10:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39168 "EHLO
+        id S1357388AbiELSKD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 12 May 2022 14:10:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237439AbiELOOW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 12 May 2022 10:14:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE4A24EA09
-        for <linux-sgx@vger.kernel.org>; Thu, 12 May 2022 07:14:21 -0700 (PDT)
+        with ESMTP id S1354531AbiELSKC (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 12 May 2022 14:10:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5691B2689C6;
+        Thu, 12 May 2022 11:10:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 225FAB8282E
-        for <linux-sgx@vger.kernel.org>; Thu, 12 May 2022 14:14:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1526BC385B8;
-        Thu, 12 May 2022 14:14:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D458D61682;
+        Thu, 12 May 2022 18:09:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72353C385B8;
+        Thu, 12 May 2022 18:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652364858;
-        bh=xaYaabUfzjs0lmYUirTcGKWoji0O2jfw71RrxijOUOs=;
+        s=k20201202; t=1652378999;
+        bh=IPa84a0ExaTFb0Q/aAwP7vM1wEznpiYTW9cY/k40XB8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N8+g8YUpoFK6NmUm14L5itvnqLIUkCU9Z3KfcsAywmj00mzj+E2IwJUEODsT9rySo
-         HMBOrB5JZ8KLxLkWORuwsye5iL6YzoAeEkilRmcsqrZp1cOScBIXgTxeSML+n4aMqG
-         oq3o86LkGzr6A1fJq8T/Pmp6LHg/ur5Lclj8xXrI64bl7sxhJMLszoUArmfokHX4wh
-         5nVqhYJiqFEn672ylN8ZdMcgbmy/J+RrMcqg1dfzZhUMnou3KCFF3QIEBk094j24+/
-         kU3WVN6FeGrWJzu6g8rIhsnVNP5Sjfdd4q3ruxo0OszadTzWYGEQXhqF8KaePoWMrr
-         q0oPgXUX7ytyQ==
-Date:   Thu, 12 May 2022 17:15:56 +0300
+        b=kgzFv+Yzg6w3p9oWbiNYgbRVrFr+a2wBBfrHCpr0gEKWvnEJYY2DbCOyq5MKneTp6
+         /1D5WZQCabvBh2Fl861WE2Pz04CCWmAlyCUZ9hRXFmd+MZ5FKXps08bdljNJ6Y6GsE
+         EAQl1O4Sh2GGRkGSPfDRsstUqaUgtyPCGdl3f+NWmow9OLv+vsVIpxBP4l32xWnClt
+         WQGQou2JxgtiEALq4/iQvfahVR/txrCSxiYOhJsbon2j6A8i+kXlDPfgf8beDZ0D4i
+         uKLT37oHaghKsaa/F+jfPjdBM0FRnLZisTOQ2fuUVpYa8/lx38IhiwASv2go6z44Wt
+         eRL4GYDm0vAFQ==
+Date:   Thu, 12 May 2022 21:11:37 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
-        haitao.huang@intel.com
-Subject: Re: [PATCH V2 2/5] x86/sgx: Mark PCMD page as dirty when modifying
- contents
-Message-ID: <Yn0WnF1jrxXrOvUF@iki.fi>
-References: <cover.1652131695.git.reinette.chatre@intel.com>
- <217608112793e76b335540edde75dfda290de16c.1652131695.git.reinette.chatre@intel.com>
- <YnuTYN/QZxoN53jc@kernel.org>
- <013b94d7-c7bb-1d13-94b6-24a6508b4bb2@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
+        x86@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        seanjc@google.com, kai.huang@intel.com, cathy.zhang@intel.com,
+        cedric.xing@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, vijay.dhanraj@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 00/31] x86/sgx and selftests/sgx: Support SGX2
+Message-ID: <Yn1N2chUNs9EcnM3@iki.fi>
+References: <cover.1652137848.git.reinette.chatre@intel.com>
+ <YnrllJ2OqmcqLUuv@kernel.org>
+ <395657d1-b040-89e7-046f-3cbd358ed7c1@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <013b94d7-c7bb-1d13-94b6-24a6508b4bb2@intel.com>
+In-Reply-To: <395657d1-b040-89e7-046f-3cbd358ed7c1@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, May 11, 2022 at 11:01:50AM -0700, Reinette Chatre wrote:
+On Wed, May 11, 2022 at 11:47:31AM -0700, Reinette Chatre wrote:
 > Hi Jarkko,
 > 
-> On 5/11/2022 3:43 AM, Jarkko Sakkinen wrote:
-> > On Mon, May 09, 2022 at 02:48:00PM -0700, Reinette Chatre wrote:
-> >> Recent commit 08999b2489b4 ("x86/sgx: Free backing memory
-> >> after faulting the enclave page") expanded __sgx_encl_eldu()
-> >> to clear an enclave page's PCMD (Paging Crypto MetaData)
-> >> from the PCMD page in the backing store after the enclave
-> >> page is restored to the enclave.
-> >>
-> >> Since the PCMD page in the backing store is modified the page
-> >> should be marked as dirty to ensure the modified data is retained.
-> >>
-> >> Fixes: 08999b2489b4 ("x86/sgx: Free backing memory after faulting the enclave page")
-> >> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> >> ---
-> >> Changes since RFC v1:
-> >> - Do not set dirty bit on enclave page since it is not being
-> >>   written to and always will be discarded.  (Dave)
-> >>
-> >>  arch/x86/kernel/cpu/sgx/encl.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> >> index 398695a20605..2521d64e8bcf 100644
-> >> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> >> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> >> @@ -83,6 +83,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
-> >>  		ret = -EFAULT;
-> >>  	}
-> >>  
-> >> +	set_page_dirty(b.pcmd);
-> >>  	memset(pcmd_page + b.pcmd_offset, 0, sizeof(struct sgx_pcmd));
-> >>  
-> >>  	/*
-> >> -- 
-> >> 2.25.1
-> >>
+> On 5/10/2022 3:22 PM, Jarkko Sakkinen wrote:
+> > If there is any patch that does not have my reviewed-by, please put it
+> > there. I was totally happy with v4 already. I went through these, and
+> > did not see anything worth of complaining about.
 > > 
-> > LGTM.
+> > Great job, thank you for doing this.
 > > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > I can also add my tag separely to each patch, which have not have it on
+> > request if that makes things easier in any possible way on request.
 > 
-> Thank you very much.
+> Thank you very much. I do appreciate all the feedback and testing.
 > 
-> Based on my understanding of Dave's feedback I do plan to move the
-> set_page_dirty() to be after the memset:
-> https://lore.kernel.org/linux-sgx/8922e48f-6646-c7cc-6393-7c78dcf23d23@intel.com/
+> All patches in this series have some tag from you, a few have "Acked-by"
+> instead of "Reviewed-by".
+> 
+> Patch 20/31 "x86/sgx: Free up EPC pages directly to support large
+> page ranges" is the only x86/sgx patch that has an "Acked-by" from you
+> instead of a "Reviewed-by". All selftests/sgx patches have an "Acked-by"
+> from you.
+> 
+> Here is a summary of your tags if you would like to make changes:
+> 
+> [PATCH V5 01/31] x86/sgx: Add short descriptions to ENCLS wrappers
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 02/31] x86/sgx: Add wrapper for SGX2 EMODPR function
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 03/31] x86/sgx: Add wrapper for SGX2 EMODT function
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 04/31] x86/sgx: Add wrapper for SGX2 EAUG function
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 05/31] x86/sgx: Support loading enclave page without VMA
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 06/31] x86/sgx: Export sgx_encl_ewb_cpumask()
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 07/31] x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 08/31] x86/sgx: Move PTE zap code to new sgx_zap_enclave_ptes()
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 09/31] x86/sgx: Make sgx_ipi_cb() available internally
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 10/31] x86/sgx: Create utility to validate user provided offset and length
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 11/31] x86/sgx: Keep record of SGX page type
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 12/31] x86/sgx: Export sgx_encl_{grow,shrink}()
+> 	Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 13/31] x86/sgx: Export sgx_encl_page_alloc()
+> 	Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 14/31] x86/sgx: Support VA page allocation without reclaiming
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 15/31] x86/sgx: Support restricting of enclave page permissions
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 	Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 16/31] x86/sgx: Support adding of pages to an initialized enclave
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 	Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 17/31] x86/sgx: Tighten accessible memory range after enclave initialization
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 18/31] x86/sgx: Support modifying SGX page type
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 	Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 19/31] x86/sgx: Support complete page removal
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 	Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 20/31] x86/sgx: Free up EPC pages directly to support large page ranges
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 21/31] Documentation/x86: Introduce enclave runtime management section
+> 	Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 22/31] selftests/sgx: Add test for EPCM permission changes
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 23/31] selftests/sgx: Add test for TCS page permission changes
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 24/31] selftests/sgx: Test two different SGX2 EAUG flows
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 25/31] selftests/sgx: Introduce dynamic entry point
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 26/31] selftests/sgx: Introduce TCS initialization enclave operation
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 27/31] selftests/sgx: Test complete changing of page type flow
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 28/31] selftests/sgx: Test faulty enclave behavior
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 29/31] selftests/sgx: Test invalid access to removed enclave page
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 30/31] selftests/sgx: Test reclaiming of untouched page
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> [PATCH V5 31/31] selftests/sgx: Page removal stress test
+> 	Acked-by: Jarkko Sakkinen <jarkko@kernel.org>	
+> 
 > 
 > Reinette
 
-You can keep my tag, I'll compare the patches and complain if there was
-anything else done :-) Do not expect that though (at all).
+It looks good. And yeah, I've been running different versions of this patch
+set since April with zero issues, about a month, in our platform. No high
+doubts that anything would wrong that could not be later fixed, if problems
+arise.
 
 BR, Jarkko
