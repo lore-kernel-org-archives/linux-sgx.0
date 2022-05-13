@@ -2,116 +2,106 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D1FC433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 May 2022 21:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0131AC433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 13 May 2022 14:43:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358952AbiELVv4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 May 2022 17:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39468 "EHLO
+        id S234536AbiEMOnr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 13 May 2022 10:43:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358953AbiELVvP (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 12 May 2022 17:51:15 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA2A25281;
-        Thu, 12 May 2022 14:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652392273; x=1683928273;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WGtjIs84L/V8d5pSZdC22spiQhlH/l6Fco984mpyl0g=;
-  b=MzdV8wEBgu0asom5NFnpQpj96r36cEmA+28twfgelSeKUGmEtDG2WAD7
-   QaL9Ej91pLM+th09YHsaZxtRPRq6xFpSTA7KJOYeDufFrcD+oh8sOSrfX
-   k7A8u0BcA2j3jRQabSgenJ2gARBt6ILQweB611BU0vkG0C0m3lfq2hc7z
-   pXZrzBRXt/8WNbfUH1sENVe8TNUcW9Wd0OKtLlZBaNMQzZDYQLmIYCoMG
-   Hp4+sAxhprKM32yelzKi6rsNs/LhC0ojlnx1lMA+gTA0wvXv48RYKk3rU
-   cTXgdpUD/km4Vgut33+tvjv+EGOf59Pg2a1kqtFAHwQ0LcnPCXGt+sbHB
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10345"; a="267736152"
-X-IronPort-AV: E=Sophos;i="5.91,221,1647327600"; 
-   d="scan'208";a="267736152"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2022 14:51:09 -0700
-X-IronPort-AV: E=Sophos;i="5.91,221,1647327600"; 
-   d="scan'208";a="553955576"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2022 14:51:08 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     dave.hansen@linux.intel.com, jarkko@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, luto@kernel.org, mingo@redhat.com,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Cc:     haitao.huang@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH V3 5/5] x86/sgx: Ensure no data in PCMD page after truncate
-Date:   Thu, 12 May 2022 14:51:01 -0700
-Message-Id: <6495120fed43fafc1496d09dd23df922b9a32709.1652389823.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1652389823.git.reinette.chatre@intel.com>
-References: <cover.1652389823.git.reinette.chatre@intel.com>
+        with ESMTP id S1382758AbiEMOnL (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 13 May 2022 10:43:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA3AA208234
+        for <linux-sgx@vger.kernel.org>; Fri, 13 May 2022 07:39:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 50226B82F64
+        for <linux-sgx@vger.kernel.org>; Fri, 13 May 2022 14:39:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D309C34100;
+        Fri, 13 May 2022 14:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652452780;
+        bh=3/bEqBEMTHRmbFfWuH1eFrRcdhFRQbYUUtNnfvbpRqI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q/64V8MJocBY9GLEua9os76mZCxEyqyQd4VMxCzt7aN38qeFSPGcfh/nWBot0TAb8
+         0XYLHc0UJU8Zo48/TtHdNVT3qjNJvJ6n6VkQ/7mQ1r1uXX+M2QabyD404WDOcZQ8kE
+         ggwlRbjbrsOcLow5XUjeg1XgeSX9U8Nh/SsmKr7lwLLed+ui0AkJVqfn072PeU1ply
+         uMVTjJrld4ifvLzjmwgrud7HrqxT4v61D8dn6ogJyQj6mYLzi4NFITI5/Y0ThIAeDO
+         z2F1VhnfEd3xlWfq3Kx1/oF3V1vtk6sV/a64a51aEi/ree+l1bYmkpWK6U7eOqWSi9
+         EYPdhxWmLWqlQ==
+Date:   Fri, 13 May 2022 17:38:09 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Zhiquan Li <zhiquan1.li@intel.com>
+Cc:     linux-sgx@vger.kernel.org, tony.luck@intel.com,
+        dave.hansen@linux.intel.com, seanjc@google.com, fan.du@intel.com
+Subject: Re: [PATCH 0/4] x86/sgx: fine grained SGX MCA behavior
+Message-ID: <Yn5tPS0aLXBgHtYT@iki.fi>
+References: <20220510031646.3181306-1-zhiquan1.li@intel.com>
+ <YnuQJaM0p7gD5qel@kernel.org>
+ <d8e3f194-bd52-4405-8cdd-db8710e71509@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d8e3f194-bd52-4405-8cdd-db8710e71509@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-A PCMD (Paging Crypto MetaData) page contains the PCMD
-structures of enclave pages that have been encrypted and
-moved to the shmem backing store. When all enclave pages
-sharing a PCMD page are loaded in the enclave, there is no
-need for the PCMD page and it can be truncated from the
-backing store.
+On Thu, May 12, 2022 at 08:03:30PM +0800, Zhiquan Li wrote:
+> 
+> On 2022/5/11 18:29, Jarkko Sakkinen wrote:
+> > On Tue, May 10, 2022 at 11:16:46AM +0800, Zhiquan Li wrote:
+> >> Hi everyone,
+> >>
+> >> This series contains a few patches to fine grained SGX MCA behavior.
+> >>
+> >> When VM guest access a SGX EPC page with memory failure, current
+> >> behavior will kill the guest, expected only kill the SGX application
+> >> inside it.
+> >>
+> >> To fix it we send SIGBUS with code BUS_MCEERR_AR and some extra
+> >> information for hypervisor to inject #MC information to guest, which
+> >> is helpful in SGX virtualization case.
+> >>
+> >> However, current SGX data structures are insufficient to track the
+> >> EPC pages for vepc, so we introduce a new struct sgx_vepc_page which
+> >> can be the owner of EPC pages for vepc and saves the useful info of
+> >> EPC pages for vepc, like struct sgx_encl_page.
+> >>
+> >> Moreover, canonical memory failure collects victim tasks by iterating
+> >> all the tasks one by one and use reverse mapping to get victim tasks’
+> >> virtual address. This is not necessary for SGX - as one EPC page can
+> >> be mapped to ONE enclave only. So, this 1:1 mapping enforcement
+> >> allows us to find task virtual address with physical address
+> >> directly.
+> > 
+> > Hmm... An enclave can be shared by multiple processes. The virtual
+> > address is the same but there can be variable number of processes
+> > having it mapped.
+> 
+> Thanks for your review, Jarkko.
+> You’re right, enclave can be shared.
+> 
+> Actually, we had discussed this issue internally. Assuming below
+> scenario:
+> An enclave provides multiple ecalls and services for several tasks. If
+> one task invokes an ecall and meets MCE, but the other tasks would not
+> use that ecall, shall we kill all the sharing tasks immediately? It looks
+> a little abrupt. Maybe it’s better to kill them when they really meet the
+> HW poison page.
+> Furthermore, once an EPC page has been poisoned, it will not be allocated
+> anymore, so it would not be propagated.
+> Therefore, we minimized the changes, just fine grained the behavior of
+> SIGBUG and kept the other behavior as before.
+> 
+> Do you think the processes sharing the same enclave need to be killed,
+> even they had not touched the EPC page with hardware error?
+> Any ideas are welcome.
 
-A few issues appeared around the truncation of PCMD pages. The
-known issues have been addressed but the PCMD handling code could
-be made more robust by loudly complaining if any new issue appears
-in this area.
+I do not think the patch set is going to wrong direction. This discussion
+was just missing from the cover letter.
 
-Add a check that will complain with a warning if the PCMD page is not
-actually empty after it has been truncated. There should never be data
-in the PCMD page at this point since it is was just checked to be empty
-and truncated with enclave mutex held and is updated with the
-enclave mutex held.
-
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Tested-by: Haitao Huang <haitao.huang@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
-Changes since V2:
-- Change WARN_ON_ONCE() to pr_warn(). (Jarkko).
-- Add Haitao's Tested-by tag.
-
-Changes since RFC v1:
-- New patch.
-
- arch/x86/kernel/cpu/sgx/encl.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 243f3bd78145..3c24e6124d95 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -187,12 +187,20 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	kunmap_atomic(pcmd_page);
- 	kunmap_atomic((void *)(unsigned long)pginfo.contents);
- 
-+	get_page(b.pcmd);
- 	sgx_encl_put_backing(&b);
- 
- 	sgx_encl_truncate_backing_page(encl, page_index);
- 
--	if (pcmd_page_empty && !reclaimer_writing_to_pcmd(encl, pcmd_first_page))
-+	if (pcmd_page_empty && !reclaimer_writing_to_pcmd(encl, pcmd_first_page)) {
- 		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
-+		pcmd_page = kmap_atomic(b.pcmd);
-+		if (memchr_inv(pcmd_page, 0, PAGE_SIZE))
-+			pr_warn("PCMD page not empty after truncate.\n");
-+		kunmap_atomic(pcmd_page);
-+	}
-+
-+	put_page(b.pcmd);
- 
- 	return ret;
- }
--- 
-2.25.1
-
+BR, Jarkko
