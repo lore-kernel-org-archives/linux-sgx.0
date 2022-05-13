@@ -2,180 +2,221 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEEAC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 13 May 2022 14:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B96BC4332F
+	for <linux-sgx@archiver.kernel.org>; Fri, 13 May 2022 14:44:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243420AbiEMOoC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 13 May 2022 10:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49246 "EHLO
+        id S1381225AbiEMOoE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 13 May 2022 10:44:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382836AbiEMOnS (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 13 May 2022 10:43:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C532650473;
-        Fri, 13 May 2022 07:41:21 -0700 (PDT)
+        with ESMTP id S1382804AbiEMOnO (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 13 May 2022 10:43:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0B95EDC4;
+        Fri, 13 May 2022 07:40:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7203BB83051;
-        Fri, 13 May 2022 14:41:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF78C34115;
-        Fri, 13 May 2022 14:41:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EB45962267;
+        Fri, 13 May 2022 14:40:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0733BC34100;
+        Fri, 13 May 2022 14:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652452879;
-        bh=5qyDUK8nO0Cxtj7jBFZ9oSbfYmXVdT6/FyJl8N3L2Ms=;
+        s=k20201202; t=1652452836;
+        bh=7oGrhX8CIp66kt0QNELQaxYz1ZjgcnRAlrNYt+x84Bs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P0J6w8fEwTzn2uDkys31ziQqf0VBLay/Fe/VgXujR/dCLTWQhUR5fDiHJgqzTijc3
-         7sAhwv2ch95f/zKySBzZIoupjsAbEXOz7dkTxuPXYyHXvWgVkrrnySn4zNDj3+cmEv
-         h0FMJqtxLXWOB7na5e1qgPKG8/XLRibnEWmHO01mvtV/iT+kgn5lot4kVBKqbGODu3
-         j//zR62GbL8RVKg6v5PTHlD13MA86gc8Bi9Mq4ODfThAAP7qg4S0WD41RBswPDX8J0
-         vVK1kroJMQ5ke+i8IiO1yS3b9o/RZkaKfdZCTBqBH6TY3xKUQDcGmj/2A5VAopA2Ba
-         qNtZtnL6jgyxA==
-Date:   Fri, 13 May 2022 17:39:49 +0300
+        b=ag5y34amHEl8FBF7sAf3BwGQdVbH8twA7My895e1UwRv1y0T/DZKUh1ZsWPZibI+V
+         z/VbkedrFgqXnU/otIdd20ZqyvqI6oSrkkYh0s4bbX39MSJ5t9VJHLJW+ANmAdb+4c
+         icQTH0G/vufaf78DRh0X3RqDez1Mt8cMOWeKOaYInOn9+omXQhz7/AGPHcT+qOt3NT
+         z7IeMqgDyQhYtLA0R4brstO7D5PZMQ+g+vFeaBHkhVtSgki7S6lRh4pMP2C1gklab2
+         DuBqsOfB9F0AFlI92MG3tDuFq0Sc8jnYll+oXzB/L6VB76QW6v5F2ewtzT4v0dp2V/
+         kbRysrhf0Cdfg==
+Date:   Fri, 13 May 2022 17:39:05 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
         luto@kernel.org, mingo@redhat.com, linux-sgx@vger.kernel.org,
         x86@kernel.org, haitao.huang@intel.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH V3 3/5] x86/sgx: Obtain backing storage page with enclave
- mutex held
-Message-ID: <Yn5ttZBgmHtwvkLx@iki.fi>
+Subject: Re: [PATCH V3 1/5] x86/sgx: Disconnect backing page references from
+ dirty status
+Message-ID: <Yn5tiZL7EH2kYWiJ@iki.fi>
 References: <cover.1652389823.git.reinette.chatre@intel.com>
- <fa2e04c561a8555bfe1f4e7adc37d60efc77387b.1652389823.git.reinette.chatre@intel.com>
+ <fa9f98986923f43e72ef4c6702a50b2a0b3c42e3.1652389823.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa2e04c561a8555bfe1f4e7adc37d60efc77387b.1652389823.git.reinette.chatre@intel.com>
+In-Reply-To: <fa9f98986923f43e72ef4c6702a50b2a0b3c42e3.1652389823.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, May 12, 2022 at 02:50:59PM -0700, Reinette Chatre wrote:
-> Haitao reported encountering a WARN triggered by the ENCLS[ELDU]
-> instruction faulting with a #GP.
+On Thu, May 12, 2022 at 02:50:57PM -0700, Reinette Chatre wrote:
+> SGX uses shmem backing storage to store encrypted enclave pages
+> and their crypto metadata when enclave pages are moved out of
+> enclave memory. Two shmem backing storage pages are associated with
+> each enclave page - one backing page to contain the encrypted
+> enclave page data and one backing page (shared by a few
+> enclave pages) to contain the crypto metadata used by the
+> processor to verify the enclave page when it is loaded back into
+> the enclave.
 > 
-> The WARN is encountered when the reclaimer evicts a range of
-> pages from the enclave when the same pages are faulted back
-> right away.
+> sgx_encl_put_backing() is used to release references to the
+> backing storage and, optionally, mark both backing store pages
+> as dirty.
 > 
-> The SGX backing storage is accessed on two paths: when there
-> are insufficient free pages in the EPC the reclaimer works
-> to move enclave pages to the backing storage and as enclaves
-> access pages that have been moved to the backing storage
-> they are retrieved from there as part of page fault handling.
+> Managing references and dirty status together in this way results
+> in both backing store pages marked as dirty, even if only one of
+> the backing store pages are changed.
 > 
-> An oversubscribed SGX system will often run the reclaimer and
-> page fault handler concurrently and needs to ensure that the
-> backing store is accessed safely between the reclaimer and
-> the page fault handler. This is not the case because the
-> reclaimer accesses the backing store without the enclave mutex
-> while the page fault handler accesses the backing store with
-> the enclave mutex.
+> Additionally, waiting until the page reference is dropped to set
+> the page dirty risks a race with the page fault handler that
+> may load outdated data into the enclave when a page is faulted
+> right after it is reclaimed.
 > 
-> Consider the scenario where a page is faulted while a page sharing
-> a PCMD page with the faulted page is being reclaimed. The
-> consequence is a race between the reclaimer and page fault
-> handler, the reclaimer attempting to access a PCMD at the
-> same time it is truncated by the page fault handler. This
-> could result in lost PCMD data. Data may still be
-> lost if the reclaimer wins the race, this is addressed in
-> the following patch.
+> Consider what happens if the reclaimer writes a page to the backing
+> store and the page is immediately faulted back, before the reclaimer
+> is able to set the dirty bit of the page:
 > 
-> The reclaimer accesses pages from the backing storage without
-> holding the enclave mutex and runs the risk of concurrently
-> accessing the backing storage with the page fault handler that
-> does access the backing storage with the enclave mutex held.
+> sgx_reclaim_pages() {                    sgx_vma_fault() {
+>   ...
+>   sgx_encl_get_backing();
+>   ...                                      ...
+>   sgx_reclaimer_write() {
+>     mutex_lock(&encl->lock);
+>     /* Write data to backing store */
+>     mutex_unlock(&encl->lock);
+>   }
+>                                            mutex_lock(&encl->lock);
+>                                            __sgx_encl_eldu() {
+>                                              ...
+>                                              /*
+>                                               * Enclave backing store
+>                                               * page not released
+>                                               * nor marked dirty -
+>                                               * contents may not be
+>                                               * up to date.
+>                                               */
+>                                               sgx_encl_get_backing();
+>                                               ...
+>                                               /*
+>                                                * Enclave data restored
+>                                                * from backing store
+>                                                * and PCMD pages that
+>                                                * are not up to date.
+>                                                * ENCLS[ELDU] faults
+>                                                * because of MAC or PCMD
+>                                                * checking failure.
+>                                                */
+>                                                sgx_encl_put_backing();
+>                                             }
+>                                             ...
+>   /* set page dirty */
+>   sgx_encl_put_backing();
+>   ...
+>                                             mutex_unlock(&encl->lock);
+> }                                        }
 > 
-> In the scenario below a PCMD page is truncated from the backing
-> store after all its pages have been loaded in to the enclave
-> at the same time the PCMD page is loaded from the backing store
-> when one of its pages are reclaimed:
-> 
-> sgx_reclaim_pages() {              sgx_vma_fault() {
->                                      ...
->                                      mutex_lock(&encl->lock);
->                                      ...
->                                      __sgx_encl_eldu() {
->                                        ...
->                                        if (pcmd_page_empty) {
-> /*
->  * EPC page being reclaimed              /*
->  * shares a PCMD page with an             * PCMD page truncated
->  * enclave page that is being             * while requested from
->  * faulted in.                            * reclaimer.
->  */                                       */
-> sgx_encl_get_backing()  <---------->      sgx_encl_truncate_backing_page()
->                                         }
->                                        mutex_unlock(&encl->lock);
-> }                                    }
-> 
-> In this scenario there is a race between the reclaimer and the page fault
-> handler when the reclaimer attempts to get access to the same PCMD page
-> that is being truncated. This could result in the reclaimer writing to
-> the PCMD page that is then truncated, causing the PCMD data to be lost,
-> or in a new PCMD page being allocated. The lost PCMD data may still occur
-> after protecting the backing store access with the mutex - this is fixed
-> in the next patch. By ensuring the backing store is accessed with the mutex
-> held the enclave page state can be made accurate with the
-> SGX_ENCL_PAGE_BEING_RECLAIMED flag accurately reflecting that a page
-> is in the process of being reclaimed.
-> 
-> Consistently protect the reclaimer's backing store access with the
-> enclave's mutex to ensure that it can safely run concurrently with the
-> page fault handler.
+> Remove the option to sgx_encl_put_backing() to set the backing
+> pages as dirty and set the needed pages as dirty right after
+> receiving important data while enclave mutex is held. This ensures that
+> the page fault handler can get up to date data from a page and prepares
+> the code for a following change where only one of the backing pages
+> need to be marked as dirty.
 > 
 > Cc: stable@vger.kernel.org
 > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-> Reported-by: Haitao Huang <haitao.huang@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 > Tested-by: Haitao Huang <haitao.huang@intel.com>
 > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> Link: https://lore.kernel.org/linux-sgx/8922e48f-6646-c7cc-6393-7c78dcf23d23@intel.com/
 > ---
 > Changes since V2:
-> - Move description of "scenario a" to the new patch in series that marks
->   page as dirty with enclave mutex held.
-> - Add Haitao's "Tested-by" tag.
-> - Add Jarkko's "Reviewed-by" and "Tested-by" tags.
+> - Mark page as dirty after receiving important data, not before. (Dave)
+> - Add cc to stable and include link to discussion. (Dave)
+> - Update changelog and move changelog description of race between reclaimer
+>   and page fault handler from later in series to this patch.
+> - Add Haitao's Tested-by tag.
 > 
->  arch/x86/kernel/cpu/sgx/main.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> Changes since RFC v1:
+> - New patch.
 > 
+>  arch/x86/kernel/cpu/sgx/encl.c | 10 ++--------
+>  arch/x86/kernel/cpu/sgx/encl.h |  2 +-
+>  arch/x86/kernel/cpu/sgx/main.c |  6 ++++--
+>  3 files changed, 7 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 7c63a1911fae..398695a20605 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -94,7 +94,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  	kunmap_atomic(pcmd_page);
+>  	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+>  
+> -	sgx_encl_put_backing(&b, false);
+> +	sgx_encl_put_backing(&b);
+>  
+>  	sgx_encl_truncate_backing_page(encl, page_index);
+>  
+> @@ -645,15 +645,9 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+>  /**
+>   * sgx_encl_put_backing() - Unpin the backing storage
+>   * @backing:	data for accessing backing storage for the page
+> - * @do_write:	mark pages dirty
+>   */
+> -void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write)
+> +void sgx_encl_put_backing(struct sgx_backing *backing)
+>  {
+> -	if (do_write) {
+> -		set_page_dirty(backing->pcmd);
+> -		set_page_dirty(backing->contents);
+> -	}
+> -
+>  	put_page(backing->pcmd);
+>  	put_page(backing->contents);
+>  }
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+> index fec43ca65065..d44e7372151f 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.h
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -107,7 +107,7 @@ void sgx_encl_release(struct kref *ref);
+>  int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+>  int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+>  			 struct sgx_backing *backing);
+> -void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
+> +void sgx_encl_put_backing(struct sgx_backing *backing);
+>  int sgx_encl_test_and_clear_young(struct mm_struct *mm,
+>  				  struct sgx_encl_page *page);
+>  
 > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index e71df40a4f38..ab4ec54bbdd9 100644
+> index 8e4bc6453d26..e71df40a4f38 100644
 > --- a/arch/x86/kernel/cpu/sgx/main.c
 > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -310,6 +310,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
->  	sgx_encl_ewb(epc_page, backing);
->  	encl_page->epc_page = NULL;
->  	encl->secs_child_cnt--;
-> +	sgx_encl_put_backing(backing);
+> @@ -191,6 +191,8 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
+>  			  backing->pcmd_offset;
 >  
->  	if (!encl->secs_child_cnt && test_bit(SGX_ENCL_INITIALIZED, &encl->flags)) {
->  		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
-> @@ -381,11 +382,14 @@ static void sgx_reclaim_pages(void)
->  			goto skip;
+>  	ret = __ewb(&pginfo, sgx_get_epc_virt_addr(epc_page), va_slot);
+> +	set_page_dirty(backing->pcmd);
+> +	set_page_dirty(backing->contents);
 >  
->  		page_index = PFN_DOWN(encl_page->desc - encl_page->encl->base);
-> +
-> +		mutex_lock(&encl_page->encl->lock);
->  		ret = sgx_encl_get_backing(encl_page->encl, page_index, &backing[i]);
-> -		if (ret)
-> +		if (ret) {
-> +			mutex_unlock(&encl_page->encl->lock);
->  			goto skip;
-> +		}
+>  	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
+>  					      backing->pcmd_offset));
+> @@ -320,7 +322,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+>  		sgx_encl_free_epc_page(encl->secs.epc_page);
+>  		encl->secs.epc_page = NULL;
 >  
-> -		mutex_lock(&encl_page->encl->lock);
->  		encl_page->desc |= SGX_ENCL_PAGE_BEING_RECLAIMED;
->  		mutex_unlock(&encl_page->encl->lock);
->  		continue;
-> @@ -413,7 +417,6 @@ static void sgx_reclaim_pages(void)
+> -		sgx_encl_put_backing(&secs_backing, true);
+> +		sgx_encl_put_backing(&secs_backing);
+>  	}
+>  
+>  out:
+> @@ -411,7 +413,7 @@ static void sgx_reclaim_pages(void)
 >  
 >  		encl_page = epc_page->owner;
 >  		sgx_reclaimer_write(epc_page, &backing[i]);
-> -		sgx_encl_put_backing(&backing[i]);
+> -		sgx_encl_put_backing(&backing[i], true);
+> +		sgx_encl_put_backing(&backing[i]);
 >  
 >  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
 >  		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
