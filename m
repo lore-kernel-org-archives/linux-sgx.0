@@ -2,260 +2,74 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E5AC433F5
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 May 2022 18:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4485C433EF
+	for <linux-sgx@archiver.kernel.org>; Mon, 16 May 2022 18:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237428AbiEPSBw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 May 2022 14:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34736 "EHLO
+        id S1345009AbiEPSrg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 May 2022 14:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343933AbiEPSBv (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 16 May 2022 14:01:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84A4627151;
-        Mon, 16 May 2022 11:01:50 -0700 (PDT)
+        with ESMTP id S233372AbiEPSrf (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 16 May 2022 14:47:35 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745553E5FD
+        for <linux-sgx@vger.kernel.org>; Mon, 16 May 2022 11:47:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0D6C5B815A3;
-        Mon, 16 May 2022 18:01:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C8AC385AA;
-        Mon, 16 May 2022 18:01:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1D1C0B815A6
+        for <linux-sgx@vger.kernel.org>; Mon, 16 May 2022 18:47:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A7DC385AA;
+        Mon, 16 May 2022 18:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652724107;
-        bh=gGGp96fpNS19tUQwrmfC7XaxkZf7UdGzL+noF9M+JsE=;
+        s=k20201202; t=1652726851;
+        bh=wNKattsifC2Wb5+MansY673YOjdrKrAIO3asBRzrsUw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MiX25ez2C4cC7B6yYgECK7imNKYWEr2tnZ7CvZRTSkYcrM5/NKLvHOUuq2eQD7HEA
-         LVDp+KSrjVfrvQcIklcoEhhV8E8ExoZkKXq4LOrRaLod4JC4jKQKu95v/LS/xEWwct
-         KXjmQl3f9dZWoHVtVz/NGsTd6m2fZdJevrBaovaWEtA9BuNWc7e7Feo+aDtxiLwYDX
-         ZC00Xcf7JW/f0OpeCxuyYFbLM2JwoIl5V+IMmKPt1VOS+scZUHYDqVh5op6n5YZLzB
-         nZhEIEyKHeDk97DELMfKTOmRS8S+TEJvvt2RKy7i/nLRc3nPAolDgFsVfSv3g11Mms
-         FnHsJ8ovtEZ2w==
-Date:   Mon, 16 May 2022 21:00:12 +0300
+        b=Alpt7uqj/OUmLxDiqAcP01OFVdTjjnYumFdPqe9hCR++zFZpr247fJ43lSOljPcTQ
+         q7CRM95mbtBBRn6dDvJOecuV8h/0b9kAxtY00kkn9gwRhWGwm8Xp5fH0wHQOZR3d/o
+         +EoE+198ro5QWml6iHAV80B9FwiZmsQC612rPPJ36qaZgv+MLTu1zJhjv2aFXanJFt
+         T7VMZ8xOOjyQMjXbS6G/1PwDwIrcyKl2cRoXi5R6ZXkuJ7OkUMTNkPUYhLE2uVVkV0
+         x4O4LLyNMvl8k8P1z0NHDqoH1+TEhFWC8XzkQa0rIoeVRGWH/zqY3vha1Sx6jarZ7o
+         jvARl5A577aUQ==
+Date:   Mon, 16 May 2022 21:45:56 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Cc:     linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] x86/sgx: Set active memcg prior to shmem allocation
-Message-ID: <YoKRLJAlLoMQEnR/@kernel.org>
-References: <20220516172523.5113-1-kristen@linux.intel.com>
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        reinette.chatre@intel.com
+Subject: Re: VMA's not getting merged
+Message-ID: <YoKb5P+VixJUn6xT@kernel.org>
+References: <884c7ea454cf2eb0ba2e95f7c25bd42018824f97.camel@kernel.org>
+ <c148ab48-1b70-6e20-5742-b0b2dc014dc3@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220516172523.5113-1-kristen@linux.intel.com>
+In-Reply-To: <c148ab48-1b70-6e20-5742-b0b2dc014dc3@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, May 16, 2022 at 10:25:22AM -0700, Kristen Carlson Accardi wrote:
-> When the system runs out of enclave memory, SGX can reclaim EPC pages
-> by swapping to normal RAM. These backing pages are allocated via a
-> per-enclave shared memory area. Since SGX allows unlimited over
-> commit on EPC memory, the reclaimer thread can allocate a large
-> number of backing RAM pages in response to EPC memory pressure.
+On Mon, May 16, 2022 at 07:13:42AM -0700, Dave Hansen wrote:
+> On 5/14/22 18:20, Jarkko Sakkinen wrote:
+> > Looks like VMA's do not get merged properly:
+> ...
+> > 7f8f0800b000-7f8f08014000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f08014000-7f8f08025000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f08025000-7f8f08046000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f08046000-7f8f0804a000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f0804a000-7f8f0804b000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f0804b000-7f8f0804c000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f0804c000-7f8f0804d000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
+> > 7f8f0804d000-7f8f0804e000 rw-s 00000000 00:05 84                         /dev/sgx_enclave
 > 
-> When the shared memory backing RAM allocation occurs during
-> the reclaimer thread context, the shared memory is charged to
-> the root memory control group, and the shmem usage of the enclave
-> is not properly accounted for, making cgroups ineffective at
-> limiting the amount of RAM an enclave can consume.
+> I remember some issue with VM_IO VMAs not getting merged, but I don't
+> remember how we fixed or addressed it.
 > 
-> For example, when using a cgroup to launch a set of test
-> enclaves, the kernel does not properly account for 50% - 75% of
-> shmem page allocations on average. In the worst case, when
-> nearly all allocations occur during the reclaimer thread, the
-> kernel accounts less than a percent of the amount of shmem used
-> by the enclave's cgroup to the correct cgroup.
-> 
-> SGX currently stores a list of mm_structs that are associated with
-> an enclave. In order to allow the enclave's cgroup to more accurately
-> reflect the shmem usage, the memory control group (struct mem_cgroup)
-> of one of these mm_structs can be set as the active memory cgroup
-> prior to allocating any EPC backing pages. This will make any shmem
-> allocations be charged to a memory control group associated with the
-> enclave's cgroup. This will allow memory cgroup limits to restrict
-> RAM usage more effectively.
-> 
-> This patch will create a new function - sgx_encl_alloc_backing().
-> This function will be used whenever a new backing storage page
-> needs to be allocated. Previously the same function was used for
-> page allocation as well as retrieving a previously allocated page.
-> Prior to backing page allocation, if there is a mm_struct associated
-> with the enclave that is requesting the allocation, it will be set
-> as the active memory control group.
-> 
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 89 +++++++++++++++++++++++++++++++++-
->  arch/x86/kernel/cpu/sgx/encl.h |  6 ++-
->  arch/x86/kernel/cpu/sgx/main.c |  4 +-
->  3 files changed, 93 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 001808e3901c..fa017bc4f99e 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -32,7 +32,7 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
->  	else
->  		page_index = PFN_DOWN(encl->size);
->  
-> -	ret = sgx_encl_get_backing(encl, page_index, &b);
-> +	ret = sgx_encl_lookup_backing(encl, page_index, &b);
->  	if (ret)
->  		return ret;
->  
-> @@ -574,7 +574,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
->   *   0 on success,
->   *   -errno otherwise.
->   */
-> -int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
-> +static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
->  			 struct sgx_backing *backing)
->  {
->  	pgoff_t pcmd_index = PFN_DOWN(encl->size) + 1 + (page_index >> 5);
-> @@ -601,6 +601,91 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
->  	return 0;
->  }
->  
-> +static struct mem_cgroup * sgx_encl_set_active_memcg(struct sgx_encl *encl)
-> +{
-> +	struct mm_struct *mm = current->mm;
-> +	struct sgx_encl_mm *encl_mm;
-> +	struct mem_cgroup *memcg;
-> +	int idx;
-> +
-> +	memcg = get_mem_cgroup_from_mm(mm);
-> +
+> Seems like something we can and should fix, though.
 
-Inline comment right here, describing the "fast path".
+Access pattern here is series of small adjacent mmaps (brk()).
 
-> +	if (mm)
-> +		return memcg;
-> +
-
-And another here, describing the "slow path"
-
-> +	idx = srcu_read_lock(&encl->srcu);
-> +
-> +	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-> +		if (encl_mm->mm == NULL)
-> +			continue;
-> +
-> +		mm = encl_mm->mm;
-> +		break;
-> +
-> +	}
-> +
-> +	srcu_read_unlock(&encl->srcu, idx);
-> +
-> +	if (!mm)
-> +		return memcg;
-> +
-> +	memcg = get_mem_cgroup_from_mm(mm);
-> +
-> +	return set_active_memcg(memcg);
-> +}
-> +
-> +/**
-> + * sgx_encl_alloc_backing() - allocate a new backing storage page
-> + * @encl:	an enclave pointer
-> + * @page_index:	enclave page index
-> + * @backing:	data for accessing backing storage for the page
-> + *
-> + * If this function is called from the kernel thread, it will set
-> + * the active memcg to one of the enclaves mm's in order to ensure
-> + * that shmem page allocations are charged to the enclave when they
-> + * are retrieved. Upon exit, the old memcg (if it existed at all)
-> + * will be restored.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -errno otherwise.
-> + */
-> +int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
-> +			   struct sgx_backing *backing)
-> +{
-> +	struct mem_cgroup *old_memcg;
-> +	int ret;
-> +
-> +	old_memcg = sgx_encl_set_active_memcg(encl);
-> +
-> +	ret = sgx_encl_get_backing(encl, page_index, backing);
-> +
-> +	set_active_memcg(old_memcg);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * sgx_encl_lookup_backing() - retrieve an existing backing storage page
-> + * @encl:	an enclave pointer
-> + * @page_index:	enclave page index
-> + * @backing:	data for accessing backing storage for the page
-> + *
-> + * Retrieve a backing page for loading data back into an EPC page with ELDU.
-> + * It is the caller's responsibility to ensure that it is appropriate to use
-> + * sgx_encl_lookup_backing() rather than sgx_encl_alloc_backing(). If lookup is
-> + * not used correctly, this will cause an allocation which is not accounted for.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -errno otherwise.
-> + */
-> +int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
-> +			   struct sgx_backing *backing)
-> +{
-> +	return sgx_encl_get_backing(encl, page_index, backing);
-> +}
-> +
->  /**
->   * sgx_encl_put_backing() - Unpin the backing storage
->   * @backing:	data for accessing backing storage for the page
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-> index fec43ca65065..7816cfe8f832 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -105,8 +105,10 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
->  
->  void sgx_encl_release(struct kref *ref);
->  int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
-> -int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
-> -			 struct sgx_backing *backing);
-> +int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
-> +			    struct sgx_backing *backing);
-> +int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
-> +			   struct sgx_backing *backing);
->  void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
->  int sgx_encl_test_and_clear_young(struct mm_struct *mm,
->  				  struct sgx_encl_page *page);
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 4b41efc9e367..7d41c8538795 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -310,7 +310,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
->  	encl->secs_child_cnt--;
->  
->  	if (!encl->secs_child_cnt && test_bit(SGX_ENCL_INITIALIZED, &encl->flags)) {
-> -		ret = sgx_encl_get_backing(encl, PFN_DOWN(encl->size),
-> +		ret = sgx_encl_alloc_backing(encl, PFN_DOWN(encl->size),
->  					   &secs_backing);
->  		if (ret)
->  			goto out;
-> @@ -381,7 +381,7 @@ static void sgx_reclaim_pages(void)
->  			goto skip;
->  
->  		page_index = PFN_DOWN(encl_page->desc - encl_page->encl->base);
-> -		ret = sgx_encl_get_backing(encl_page->encl, page_index, &backing[i]);
-> +		ret = sgx_encl_alloc_backing(encl_page->encl, page_index, &backing[i]);
->  		if (ret)
->  			goto skip;
->  
-> -- 
-> 2.20.1
-> 
+During upstreaming vma_close callback was eliminated to allow VMA's getting
+merged. I'll try to trace the condition in the call path triggering this.
 
 BR, Jarkko
