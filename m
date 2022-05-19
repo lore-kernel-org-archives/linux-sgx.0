@@ -2,110 +2,108 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC0CC433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 21:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF3DC433F5
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 21:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245156AbiESVWk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 19 May 2022 17:22:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55624 "EHLO
+        id S234738AbiESVby (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 19 May 2022 17:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245150AbiESVWj (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 19 May 2022 17:22:39 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D91F749A
-        for <linux-sgx@vger.kernel.org>; Thu, 19 May 2022 14:22:38 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id o13-20020a17090a9f8d00b001df3fc52ea7so9816804pjp.3
-        for <linux-sgx@vger.kernel.org>; Thu, 19 May 2022 14:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vaIdWn5NisS2gtNC+4QuEM/yuAIO9HPKMDavTWW4Ekc=;
-        b=EyHJA8M1GvT4SIkxiah4waFP9OR51GmVpDw//ROU9NH/exnIKANQ9jOXBq+BbXndEC
-         eXYB2fi+M3QNst1/gLj+y9bT/ofqyl8ZRSIDPe7mD0VypLwML8AOJInmCUHK/Jb0pZ5w
-         LtyvQoGnvfKmtVw4AACmXU2dapqTxa0TnLdSCN1cFwB0vbhD9TYP9ViOKWeTh67Vcv4v
-         PkBeIswiPwKKOpWzjRFxhUbqYUvYO2gPikMxYWDj/KwAirf9OmOxML+zjEG3ZqKUe5cH
-         OQde/0u95JXdx5PhSwnkK1qVBYulPRsYQS5ARqPaTR50a63X2lkqnedXu7hI5srLtzZg
-         Bokw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vaIdWn5NisS2gtNC+4QuEM/yuAIO9HPKMDavTWW4Ekc=;
-        b=2Ggo11HslLzmNqkPS3u2txYFju4QwwW7RLQ6PY5X0Cp5G8VtjcjcBXg21bTCpY1y2m
-         h2BafbvvlboQYcQFXaXppopfIbOoLHBBcFDJW+0WNdp2plMbmTauoL2/0QuLREGGlxNa
-         ArZeANJkxnUHKuvDTBcIUUY03/Ync6afvDFy3Rwd6zrtDDOGdEmmRZmKgyN+FcBtzKPm
-         H0GTdT4YIrHXvTasfr0Q0WYNs0YwEXJTss3Irdkko5HRNcxusKEVUavhOlu0bJEjqjLM
-         XbjcfDfkQed4Ts5zonTa0PvuOENvfnF9dnrSo2C7UK0ce2dwOFVgWA+JXQZfY2zoJ8bY
-         5krA==
-X-Gm-Message-State: AOAM530hwfG72B11kDpNMRevmFZPF2KlTPa4JxYOpzbstLXtUiegYj7T
-        h6g5JLKZC5AI2rOPMP6D6kFfJw1BocWV5aVU5eaicw==
-X-Google-Smtp-Source: ABdhPJz+tdX15lgd8Da2jX/rg521Vunwu7uLMab1OAo0EgYaRfZ2wiGY4e98Cjd5vnaf4I0wXhCbHYWbs161c8m1KPQ=
-X-Received: by 2002:a17:902:b094:b0:15c:dee8:74c8 with SMTP id
- p20-20020a170902b09400b0015cdee874c8mr6544695plr.6.1652995357361; Thu, 19 May
- 2022 14:22:37 -0700 (PDT)
+        with ESMTP id S234685AbiESVby (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 19 May 2022 17:31:54 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E425A59F
+        for <linux-sgx@vger.kernel.org>; Thu, 19 May 2022 14:31:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5445ACE27E8
+        for <linux-sgx@vger.kernel.org>; Thu, 19 May 2022 21:31:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59973C34113;
+        Thu, 19 May 2022 21:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652995909;
+        bh=62RwmJTeYjpseJSg6K41aU1ey3s9PpzkuO9VVGZSRAE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ar7K3em6IAx4mTYz+kSjk7w+C5RGnVqB33GdybotWwbW2BbOyWl1jsBgM9KebqIk3
+         nSYW2fBtj8d8zOc1fHlnz87awXizkXGl3E0UEGGq3IVhrVX4AUmS488O2kGnYsQeDg
+         HTOtqt0VaRdGG63ErDjyQPulE4Z226Bf5kxZ87RMXMmGDBzYMKJselNETBesnP1fCw
+         GUFXgBkGG4Sj/yHG3WZosC9suga4nyhNHlR66PLTfVG7lo5RVJ8Uc/mZe5WHKfbUcl
+         PLUzjjUfz0W9igUpPohL1BKegvQ9k7k/2PUgy6ruCBsr3Y93J3fvQscyyoFmauINhC
+         rEywNsCL3+RSg==
+Date:   Fri, 20 May 2022 00:30:10 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Zhiquan Li <zhiquan1.li@intel.com>
+Cc:     linux-sgx@vger.kernel.org, tony.luck@intel.com,
+        dave.hansen@linux.intel.com, seanjc@google.com,
+        kai.huang@intel.com, fan.du@intel.com
+Subject: Re: [PATCH v2 1/4] x86/sgx: Move struct sgx_vepc definition to sgx.h
+Message-ID: <Yoa24o8df+371sQ0@iki.fi>
+References: <20220519031117.245698-1-zhiquan1.li@intel.com>
 MIME-Version: 1.0
-References: <20220519210445.5310-1-kristen@linux.intel.com>
-In-Reply-To: <20220519210445.5310-1-kristen@linux.intel.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 19 May 2022 14:22:26 -0700
-Message-ID: <CALvZod7+LyVDVvkdisSiQLySSnXjK5-VHbAwApE8TrHeUyAFxQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/sgx: Set active memcg prior to shmem allocation
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        stable <stable@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220519031117.245698-1-zhiquan1.li@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, May 19, 2022 at 2:05 PM Kristen Carlson Accardi
-<kristen@linux.intel.com> wrote:
->
-> When the system runs out of enclave memory, SGX can reclaim EPC pages
-> by swapping to normal RAM. These backing pages are allocated via a
-> per-enclave shared memory area. Since SGX allows unlimited over
-> commit on EPC memory, the reclaimer thread can allocate a large
-> number of backing RAM pages in response to EPC memory pressure.
->
-> When the shared memory backing RAM allocation occurs during
-> the reclaimer thread context, the shared memory is charged to
-> the root memory control group, and the shmem usage of the enclave
-> is not properly accounted for, making cgroups ineffective at
-> limiting the amount of RAM an enclave can consume.
->
-> For example, when using a cgroup to launch a set of test
-> enclaves, the kernel does not properly account for 50% - 75% of
-> shmem page allocations on average. In the worst case, when
-> nearly all allocations occur during the reclaimer thread, the
-> kernel accounts less than a percent of the amount of shmem used
-> by the enclave's cgroup to the correct cgroup.
->
-> SGX stores a list of mm_structs that are associated with
-> an enclave. Pick one of them during reclaim and charge that
-> mm's memcg with the shmem allocation. The one that gets picked
-> is arbitrary, but this list almost always only has one mm. The
-> cases where there is more than one mm with different memcg's
-> are not worth considering.
->
-> Create a new function - sgx_encl_alloc_backing(). This function
-> is used whenever a new backing storage page needs to be
-> allocated. Previously the same function was used for page
-> allocation as well as retrieving a previously allocated page.
-> Prior to backing page allocation, if there is a mm_struct associated
-> with the enclave that is requesting the allocation, it is set
-> as the active memory control group.
->
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+On Thu, May 19, 2022 at 11:11:17AM +0800, Zhiquan Li wrote:
+> Move struct sgx_vepc definition to sgx.h so that it can be used outside
+> of virt.c.
+> 
+> Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+> ---
+> Changes since V1:
+> - Add documentation suggested by Jarkko.
+> ---
+>  arch/x86/kernel/cpu/sgx/sgx.h  | 13 +++++++++++++
+>  arch/x86/kernel/cpu/sgx/virt.c |  5 -----
+>  2 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+> index 0f17def9fe6f..ad3b455ed0da 100644
+> --- a/arch/x86/kernel/cpu/sgx/sgx.h
+> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+> @@ -101,4 +101,17 @@ static inline int __init sgx_vepc_init(void)
+>  
+>  void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
+>  
+> +/**
+> + * struct sgx_vepc - SGX virtual EPC structure
+> + * @page_array:		the xarray of virtual EPC pages allocated to guest
+> + * @lock:			the mutex lock to protect a virtual EPC instance
+> + *
+> + * When hypervisor opens /dev/sgx_vepc a virtual EPC instance. The
+> + * virtual EPC pages allocated to guest will be added to its page_array.
 
-For the memcg part:
+I would just write "page array".
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> + */
+> +struct sgx_vepc {
+> +	struct xarray page_array;
+> +	struct mutex lock;
+> +};
+> +
+>  #endif /* _X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+> index 6a77a14eee38..c9c8638b5dc4 100644
+> --- a/arch/x86/kernel/cpu/sgx/virt.c
+> +++ b/arch/x86/kernel/cpu/sgx/virt.c
+> @@ -18,11 +18,6 @@
+>  #include "encls.h"
+>  #include "sgx.h"
+>  
+> -struct sgx_vepc {
+> -	struct xarray page_array;
+> -	struct mutex lock;
+> -};
+> -
+>  /*
+>   * Temporary SECS pages that cannot be EREMOVE'd due to having child in other
+>   * virtual EPC instances, and the lock to protect it.
+> -- 
+> 2.25.1
+> 
+
+BR, Jarkko
