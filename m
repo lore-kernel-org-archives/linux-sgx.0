@@ -2,56 +2,44 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0413C433F5
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 05:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3767FC433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 20:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233343AbiESFnT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 19 May 2022 01:43:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50618 "EHLO
+        id S232953AbiESUo3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 19 May 2022 16:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231812AbiESFnS (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 19 May 2022 01:43:18 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD0D9D4FD
-        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 22:43:17 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id 10so411319plj.0
-        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 22:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6z/Bc5UCAfAeTzRfuIMJWHJqH0NGV84MAGaXVzlC2gw=;
-        b=iYklmhIxxcBAg2/vfEqx7EfCepTuDYi24pzQZ93iZPutwkc+6GNmiuWkRp4WSUW1ya
-         f/jfz/Se1RPPSr78BVC2yxVHvo+u/ri3lBc67M9oXg9qkAJOo7O5E//zEJ2LbV1GkhZs
-         CbBSsrRrh99IMN8FJB7Y+n1CoWRLQKbzzKDYetu4vJPPbfVNPn5PDJhiCjqFBIcV+jbY
-         yjHTuITb9PGP6NBOf1aoOOfBWmJPl0/Ic4kCxNcIPALoEg9CwyWzGXEXerzi5uPx7nhX
-         745qUbJI7IX6gxT3jJCXA77uajMX2tNeZM9/dGV9iA0ED0FTiHB3VKCFrrPZAFz/qG4V
-         mtNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6z/Bc5UCAfAeTzRfuIMJWHJqH0NGV84MAGaXVzlC2gw=;
-        b=EW4UDtSjD5sV4Z2WKEWqv03Y6A0WQCHv42jGuxCh8eQh6yZwpIdnhmLZYgvrTsHeWM
-         sxwmWALbkctdezzo40uzW+fdTOztZ/MbEtMKVk1cjpOmBJ/FsjTOx1cN/LN4kSRyUhUk
-         w/7xfmZrV04mnuChNBLkxPz3eL+pVhlJ5QLOZQZ1YIjRbFeSJ/H6sse8Es2LF4CjueY/
-         YFJvnBJmRNDv15wLjGgEVUQ9zTMXWiSVhgEQ/6oElhM7vHV9Xrg6hS43MVO1V37YwbaJ
-         l5EB4z/OWkO7bRDUnS2uA2r3YNIkRU7Pjr7nM3BV8i7H0HdMIJU5f3YCDKjd1De1NFfm
-         rcOA==
-X-Gm-Message-State: AOAM531OljPJn4oqJ/BxjhUniURkZCHvGtq6KTIPmM7PYXlqJDY6xdbZ
-        IjDaKoSIu5nlnrk43tUSZIHuK3A45TyzEm4hkQa36W8jMTmqrw==
-X-Google-Smtp-Source: ABdhPJwVrFgLJ/iOPmvarT2Xzx/jUomRSAH5rMsUBTKCfWAyxNrNKIq+GvtzXJtlJ8wYWG2H/jQ8POCBdgYFz8vIuXI=
-X-Received: by 2002:a17:902:b094:b0:15c:dee8:74c8 with SMTP id
- p20-20020a170902b09400b0015cdee874c8mr3193505plr.6.1652938996847; Wed, 18 May
- 2022 22:43:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220517164713.4610-1-kristen@linux.intel.com> <9c269c70-35fe-a1a4-34c9-b1e62ab3bb3b@intel.com>
-In-Reply-To: <9c269c70-35fe-a1a4-34c9-b1e62ab3bb3b@intel.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 18 May 2022 22:43:05 -0700
-Message-ID: <CALvZod40TpW0rX1jvj6GZWtr=nscJFkw_zdvZjbh7GPgd8pLWQ@mail.gmail.com>
+        with ESMTP id S232692AbiESUo3 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 19 May 2022 16:44:29 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A04507A815;
+        Thu, 19 May 2022 13:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652993068; x=1684529068;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=g6hFppb/e9rJtKSA/JHWaDssY9mHf4YuE/Bk76q7Ido=;
+  b=KbmQeoUSZ6ztPxaiGFWmwIAR1xVhzHMxROfHFR0UoBpCQ4GiHH4mBYog
+   ZCxegp4QtuBizMvbFi2vkWwRmdx95K/rUqCj1O2HbXI06zPqKk5iXbLzV
+   NouKHofYpPfMSSo5cr7PxO1AHJ2/EgYRR7RwNUEeOym7vXffle7VSRWu8
+   MYpiabMRICXOGJpEIy/jlRYuo4p8boi41cyLE1grT5lge/5+hdxsjxr7o
+   ElC5UDq5Rw+MpgpK1NghdxHzd/EsFdLPczAxRwGeqbLY+9TMkzzUJI37s
+   +Xh8kTFDHxCz6pfwosMZ0N/VtnuD2aez1rOeT1IB8D5Ne0DfWJTL/RTOF
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="272336272"
+X-IronPort-AV: E=Sophos;i="5.91,238,1647327600"; 
+   d="scan'208";a="272336272"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2022 13:44:28 -0700
+X-IronPort-AV: E=Sophos;i="5.91,238,1647327600"; 
+   d="scan'208";a="701358036"
+Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.212.148.227])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2022 13:44:27 -0700
+Message-ID: <c5cae6916a74251187eef3e46a42212177f42253.camel@linux.intel.com>
 Subject: Re: [PATCH] x86/sgx: Set active memcg prior to shmem allocation
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Shakeel Butt <shakeelb@google.com>
 Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -62,36 +50,51 @@ Cc:     linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
         LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 19 May 2022 13:44:17 -0700
+In-Reply-To: <CALvZod40TpW0rX1jvj6GZWtr=nscJFkw_zdvZjbh7GPgd8pLWQ@mail.gmail.com>
+References: <20220517164713.4610-1-kristen@linux.intel.com>
+         <9c269c70-35fe-a1a4-34c9-b1e62ab3bb3b@intel.com>
+         <CALvZod40TpW0rX1jvj6GZWtr=nscJFkw_zdvZjbh7GPgd8pLWQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-(Fixing the CC list and sending again)
+On Wed, 2022-05-18 at 22:43 -0700, Shakeel Butt wrote:
+> (Fixing the CC list and sending again)
+> 
+> On Tue, May 17, 2022 at 09:47:13AM -0700, Kristen Carlson Accardi
+> wrote:
+> [...]
+> > +int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long
+> > page_index,
+> > +                        struct sgx_backing *backing)
+> > +{
+> > +     struct mem_cgroup *old_memcg;
+> > +     int ret;
+> > +
+> > +     old_memcg = sgx_encl_set_active_memcg(encl);
+> 
+> This function is leaking memcg reference. Please change
+> sgx_encl_set_active_memcg() to sgx_encl_get_mem_cgroup() or something
+> which will return the memcg with the refcount elevated. Then use
+> set_active_memcg(returned_memcg) here.
+> 
+> > +
+> > +     ret = sgx_encl_get_backing(encl, page_index, backing);
+> > +
+> > +     set_active_memcg(old_memcg);
+> 
+> mem_cgroup_put(returned_memcg) here.
+> 
+> > +
+> > +     return ret;
+> > +}
 
-On Tue, May 17, 2022 at 09:47:13AM -0700, Kristen Carlson Accardi wrote:
->
-[...]
-> +int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
-> +                        struct sgx_backing *backing)
-> +{
-> +     struct mem_cgroup *old_memcg;
-> +     int ret;
-> +
-> +     old_memcg = sgx_encl_set_active_memcg(encl);
+Thank you for your review. I will incorporate this fix into my next
+version.
 
-This function is leaking memcg reference. Please change
-sgx_encl_set_active_memcg() to sgx_encl_get_mem_cgroup() or something
-which will return the memcg with the refcount elevated. Then use
-set_active_memcg(returned_memcg) here.
 
-> +
-> +     ret = sgx_encl_get_backing(encl, page_index, backing);
-> +
-> +     set_active_memcg(old_memcg);
-
-mem_cgroup_put(returned_memcg) here.
-
-> +
-> +     return ret;
-> +}
