@@ -2,48 +2,48 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ECAC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C51C433EF
 	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 03:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbiESDLj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 May 2022 23:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55944 "EHLO
+        id S230128AbiESDLi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 18 May 2022 23:11:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233219AbiESDLW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 18 May 2022 23:11:22 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4251C105
-        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 20:11:21 -0700 (PDT)
+        with ESMTP id S233140AbiESDKz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 18 May 2022 23:10:55 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E34EE20
+        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 20:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652929881; x=1684465881;
+  t=1652929853; x=1684465853;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=IwUe7K8IADSFPx3HQK9bTZltCwGoweUn89x9PPB3w7I=;
-  b=Zqq2/jrXn0dcHuNQ7sHQtARb7ogsO+cc7T7UBe6gxppjLbp0JB8eiVk/
-   u17zxmM+ZUk6VgXK9KOchY1dy5yFpzv900O4NFfx1moDTP9aec47Z/fKA
-   sSb8UfC8EL789HbGwdcg4XcxuE+M7Rw0M4HNfydPTsVlX7c7dO3K/gWK8
-   rJlDsuPtYK/lHLIbru5B+yemAN6ErCQky6J1hPSMV4KUkIaon6hCNDFN1
-   7dUbHX9atz9/DaG6mfAzICiaBoFq3mUWpQcVHvHlMwik/3GqfRaGPI2NB
-   0tOTBxVv8RZ94o573BWuNT6md/YDVf7RwAEMYnJM+RlGm0uDNAxO3mTOT
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10351"; a="297293524"
+  bh=t6cB38s5iIp/ZWT/5zDoeGEbvxlOCZzwKYo5Gqfcdxk=;
+  b=myoO2aUu9roc0/d5rvStEkvniVcQ0JxRJvZ5r7b8OToisUm+gWak87PA
+   nnk58Xyv7VmQsa2GnHcNCEsxb6jBsxN6Vf2g857CXajCsTuzIRdc1eUh9
+   kvXOrlJcev7+NXn4VKPNBdIuR7654E2bjnvCxFyKMxbrM29m1Sb3THdwZ
+   HGWuXai5bkQAaIF9jjdadD/vAXpAg2Yxi5sbj789WSU6UBDsoeA0Rmdl3
+   Z7e7/h3oS3s2wJfE347JVx08ZEXYLjBseyNGbkhOAmL4lz9D7sfqPX2bB
+   PaiQFKzw5AxuWoKRcaVQfLt82I1r9wGskQVtAzxB2IJOfrq9zKuW63YZi
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10351"; a="272121692"
 X-IronPort-AV: E=Sophos;i="5.91,236,1647327600"; 
-   d="scan'208";a="297293524"
+   d="scan'208";a="272121692"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 20:11:21 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 20:10:53 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,236,1647327600"; 
-   d="scan'208";a="569928883"
+   d="scan'208";a="569928771"
 Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
-  by orsmga007.jf.intel.com with ESMTP; 18 May 2022 20:11:18 -0700
+  by orsmga007.jf.intel.com with ESMTP; 18 May 2022 20:10:50 -0700
 From:   Zhiquan Li <zhiquan1.li@intel.com>
 To:     linux-sgx@vger.kernel.org, tony.luck@intel.com
 Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com, seanjc@google.com,
         kai.huang@intel.com, fan.du@intel.com, zhiquan1.li@intel.com
-Subject: [PATCH v2 4/4] x86/sgx: Fine grained SGX MCA behavior for normal case
-Date:   Thu, 19 May 2022 11:12:05 +0800
-Message-Id: <20220519031205.245901-1-zhiquan1.li@intel.com>
+Subject: [PATCH v2 2/4] x86/sgx: add struct sgx_vepc_page to manage EPC pages for vepc
+Date:   Thu, 19 May 2022 11:11:37 +0800
+Message-Id: <20220519031137.245767-1-zhiquan1.li@intel.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,76 +51,134 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-When the application accesses a SGX EPC page with memory failure, the
-task will receive a SIGBUS signal without any extra info, unless the EPC
-page has SGX_EPC_PAGE_IS_VEPC flag. However, in some cases, we only use
-SGX in sub-task and we don't expect the entire task group be killed due
-to a SGX EPC page for a sub-task has memory failure.
+Current SGX data structures are insufficient to track the EPC pages for
+vepc. For example, if we want to retrieve the virtual address of an EPC
+page allocated to an enclave on host, we can find this info from its
+owner, the 'desc' field of struct sgx_encl_page. However, if the EPC
+page is allocated to a KVM guest, this is not available, as their owner
+is a shared vepc.
 
-To fix it, we extend the solution for normal case. That is, the SGX
-regular EPC page with memory failure will trigger a SIGBUS signal with
-code BUS_MCEERR_AR and additional info, so that the user has opportunity
-to make further decision.
+So, we introduce struct sgx_vepc_page which can be the owner of EPC
+pages for vepc and saves the useful info of EPC pages for vepc, like
+struct sgx_encl_page.
 
-Suppose an enclave is shared by multiple processes, when an enclave page
-triggers a machine check, the enclave will be disabled so that it
-couldn't be entered again. Killing other processes with the same enclave
-mapped would perhaps be overkill, but they are going to find that the
-enclave is "dead" next time they try to use it. Thanks for Jarkko's head
-up and Tony's clarification on this point.
+Canonical memory failure collects victim tasks by iterating all the
+tasks one by one and use reverse mapping to get victim tasks' virtual
+address.
 
-Our intension is to provide additional info so that the application has
-more choices. Current behavior looks gently, and we don't want to change
-it.
+This is not necessary for SGX - as one EPC page can be mapped to ONE
+enclave only. So, this 1:1 mapping enforcement allows us to find task
+virtual address with physical address directly. Even though an enclave
+has been shared by multiple processes, the virtual address is the same.
 
 Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
 ---
 Changes since V1:
-- Add valuable information from Jarkko and Tony the into commit message.
+- Add documentation suggested by Jarkko.
+- Revise the commit message.
 ---
- arch/x86/kernel/cpu/sgx/main.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/sgx/sgx.h  | 15 +++++++++++++++
+ arch/x86/kernel/cpu/sgx/virt.c | 24 +++++++++++++++++++-----
+ 2 files changed, 34 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 81801ab0009e..b43fb374b5cd 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -710,7 +710,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
- 	struct sgx_epc_section *section;
- 	struct sgx_numa_node *node;
--	struct sgx_vepc_page *owner;
-+	struct sgx_encl_page *owner;
-+	unsigned long vaddr;
- 	int ret = 0;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index ad3b455ed0da..9a4292168389 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -28,6 +28,8 @@
  
- 	/*
-@@ -729,14 +730,17 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	 * enclave is broken.
- 	 */
- 	if (flags & MF_ACTION_REQUIRED) {
--		/*
--		 * In case the error memory is accessed by VM guest, provide
--		 * extra info for hypervisor to make further decision but not
--		 * simply kill it.
--		 */
--		if (page->flags & SGX_EPC_PAGE_IS_VEPC) {
--			owner = (struct sgx_vepc_page *)page->owner;
--			ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)owner->vaddr,
-+		owner = page->owner;
-+		if (owner) {
-+			/*
-+			 * Provide extra info to the task so that it can make further
-+			 * decision but not simply kill it.
-+			 */
-+			if (page->flags & SGX_EPC_PAGE_IS_VEPC)
-+				vaddr = ((struct sgx_vepc_page *)owner)->vaddr;
-+			else
-+				vaddr = owner->desc & PAGE_MASK;
-+			ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)vaddr,
- 					PAGE_SHIFT);
- 			if (ret < 0)
- 				pr_err("Memory failure: Error sending signal to %s:%d: %d\n",
+ /* Pages on free list */
+ #define SGX_EPC_PAGE_IS_FREE		BIT(1)
++/* Pages is used by VM guest */
++#define SGX_EPC_PAGE_IS_VEPC		BIT(2)
+ 
+ struct sgx_epc_page {
+ 	unsigned int section;
+@@ -114,4 +116,17 @@ struct sgx_vepc {
+ 	struct mutex lock;
+ };
+ 
++/**
++ * struct sgx_vepc_page - SGX virtual EPC page structure
++ * @vaddr:		the virtual address when the EPC page was mapped
++ * @vepc:		the owner of the virtual EPC page
++ *
++ * When a virtual EPC page is allocated to guest, we use this structure
++ * to track the associated information on host, like struct sgx_encl_page.
++ */
++struct sgx_vepc_page {
++	unsigned long vaddr;
++	struct sgx_vepc *vepc;
++};
++
+ #endif /* _X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index c9c8638b5dc4..d7945a47ced8 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -29,6 +29,7 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+ 			    struct vm_area_struct *vma, unsigned long addr)
+ {
+ 	struct sgx_epc_page *epc_page;
++	struct sgx_vepc_page *owner;
+ 	unsigned long index, pfn;
+ 	int ret;
+ 
+@@ -41,13 +42,22 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+ 	if (epc_page)
+ 		return 0;
+ 
+-	epc_page = sgx_alloc_epc_page(vepc, false);
+-	if (IS_ERR(epc_page))
+-		return PTR_ERR(epc_page);
++	owner = kzalloc(sizeof(*owner), GFP_KERNEL);
++	if (!owner)
++		return -ENOMEM;
++	owner->vepc = vepc;
++	owner->vaddr = addr & PAGE_MASK;
++
++	epc_page = sgx_alloc_epc_page(owner, false);
++	if (IS_ERR(epc_page)) {
++		ret = PTR_ERR(epc_page);
++		goto err_free_owner;
++	}
++	epc_page->flags = SGX_EPC_PAGE_IS_VEPC;
+ 
+ 	ret = xa_err(xa_store(&vepc->page_array, index, epc_page, GFP_KERNEL));
+ 	if (ret)
+-		goto err_free;
++		goto err_free_page;
+ 
+ 	pfn = PFN_DOWN(sgx_get_epc_phys_addr(epc_page));
+ 
+@@ -61,8 +71,10 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+ 
+ err_delete:
+ 	xa_erase(&vepc->page_array, index);
+-err_free:
++err_free_page:
+ 	sgx_free_epc_page(epc_page);
++err_free_owner:
++	kfree(owner);
+ 	return ret;
+ }
+ 
+@@ -122,6 +134,7 @@ static int sgx_vepc_remove_page(struct sgx_epc_page *epc_page)
+ 
+ static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
+ {
++	struct sgx_vepc_page *owner = (struct sgx_vepc_page *)epc_page->owner;
+ 	int ret = sgx_vepc_remove_page(epc_page);
+ 	if (ret) {
+ 		/*
+@@ -141,6 +154,7 @@ static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
+ 		return ret;
+ 	}
+ 
++	kfree(owner);
+ 	sgx_free_epc_page(epc_page);
+ 	return 0;
+ }
 -- 
 2.25.1
 
