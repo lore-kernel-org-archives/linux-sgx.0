@@ -2,183 +2,91 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C51C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 03:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5422EC433EF
+	for <linux-sgx@archiver.kernel.org>; Thu, 19 May 2022 05:36:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230128AbiESDLi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 18 May 2022 23:11:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54454 "EHLO
+        id S233858AbiESFgU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 19 May 2022 01:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233140AbiESDKz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 18 May 2022 23:10:55 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E34EE20
-        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 20:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652929853; x=1684465853;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=t6cB38s5iIp/ZWT/5zDoeGEbvxlOCZzwKYo5Gqfcdxk=;
-  b=myoO2aUu9roc0/d5rvStEkvniVcQ0JxRJvZ5r7b8OToisUm+gWak87PA
-   nnk58Xyv7VmQsa2GnHcNCEsxb6jBsxN6Vf2g857CXajCsTuzIRdc1eUh9
-   kvXOrlJcev7+NXn4VKPNBdIuR7654E2bjnvCxFyKMxbrM29m1Sb3THdwZ
-   HGWuXai5bkQAaIF9jjdadD/vAXpAg2Yxi5sbj789WSU6UBDsoeA0Rmdl3
-   Z7e7/h3oS3s2wJfE347JVx08ZEXYLjBseyNGbkhOAmL4lz9D7sfqPX2bB
-   PaiQFKzw5AxuWoKRcaVQfLt82I1r9wGskQVtAzxB2IJOfrq9zKuW63YZi
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10351"; a="272121692"
-X-IronPort-AV: E=Sophos;i="5.91,236,1647327600"; 
-   d="scan'208";a="272121692"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 20:10:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,236,1647327600"; 
-   d="scan'208";a="569928771"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
-  by orsmga007.jf.intel.com with ESMTP; 18 May 2022 20:10:50 -0700
-From:   Zhiquan Li <zhiquan1.li@intel.com>
-To:     linux-sgx@vger.kernel.org, tony.luck@intel.com
-Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com, seanjc@google.com,
-        kai.huang@intel.com, fan.du@intel.com, zhiquan1.li@intel.com
-Subject: [PATCH v2 2/4] x86/sgx: add struct sgx_vepc_page to manage EPC pages for vepc
-Date:   Thu, 19 May 2022 11:11:37 +0800
-Message-Id: <20220519031137.245767-1-zhiquan1.li@intel.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S233742AbiESFgU (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 19 May 2022 01:36:20 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A98B29839
+        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 22:36:18 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id i17-20020a259d11000000b0064cd3084085so3513082ybp.9
+        for <linux-sgx@vger.kernel.org>; Wed, 18 May 2022 22:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=+mOeU0zYyZNrut5u+oizuXhzDSBpVolUtmDQznpEMWY=;
+        b=Lof6YSPulz06XaUmNrUy0S7pXdV6ehb+LARBONQnDxR9M9zg9jXWhZ8hCJZmQf8s9f
+         v+25Szh4he0Bky19+3CVNKakFy65IR7KO0+jB+Ex/vItcV9RwbVbvjH2A5e2/OE/x4k4
+         N55kjd827z4uYRiC+/sV8O/PtldTZzs+8eq6kSg/ytpAhebqCQI17u4vZ1h3u8huxetw
+         uqcVnmwyGecNdoS9OkxrC8SiIu9G3KQyqUPN6oavhb6RxpAcvEJyHFyvviq2HH+eNrRJ
+         MJ29LdBxKOOFwOHXkXlpHnm2GegaoZzvXBLyAvl9p9vQ3+h0UqXiggjjlAfXkgG2JJr3
+         CMfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=+mOeU0zYyZNrut5u+oizuXhzDSBpVolUtmDQznpEMWY=;
+        b=0BB2QV4nykjaKvrDR1SRNBG0BHMAkwu5nnxaRSyID+9xrReZBODdcCgYBIabPsZysA
+         clenvnBJjm/tfpQ3lkXHNNG+TDZG3B4GNBWzXREEKLVueo4FT4nQQ8Pvod9Zw27LmpLd
+         2DbH4+ugcoS/FzI63kIUBoDKYZ6RhNBRtsrMZ1X+QeCsW5fasVCIJmpzPcCEygQiyDe/
+         Onz8IIQJnUmA1eXPr5ZzEW6eBNzha1LOgc0SlRJP41/2kLou9cmbKwWBTFxJLndutGeB
+         opM1qUKSNTW27GONF7p0MiIxEdtmbZJUuc3w+AM1Ua3dm6Zw5vZav19XwXnmH53ltVCe
+         NV+A==
+X-Gm-Message-State: AOAM531DxnQpc3yQGvdULuutuqp9js3iD90NmWoCuUU1Eaqrv2npS1Nf
+        aFMRC/kEBBLC1qrdrD+PAlXIy7UfnjY7gw==
+X-Google-Smtp-Source: ABdhPJwbIxmVNXNi5PAO0LjjYUs6ekZ3dNU6Pl9cHr6CHypPt7Y1BaKjX5Y+Xl8T522BNsfZhbLJlHsqNDB1rA==
+X-Received: from shakeelb.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:28b])
+ (user=shakeelb job=sendgmr) by 2002:a5b:dcd:0:b0:64e:2365:69a8 with SMTP id
+ t13-20020a5b0dcd000000b0064e236569a8mr2660064ybr.254.1652938577861; Wed, 18
+ May 2022 22:36:17 -0700 (PDT)
+Date:   Thu, 19 May 2022 05:36:15 +0000
+In-Reply-To: <20220517164713.4610-1-kristen@linux.intel.com>
+Message-Id: <20220519053615.zqwecsooceqzwjdf@google.com>
+Mime-Version: 1.0
+References: <20220517164713.4610-1-kristen@linux.intel.com>
+Subject: Re: [PATCH] x86/sgx: Set active memcg prior to shmem allocation
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Current SGX data structures are insufficient to track the EPC pages for
-vepc. For example, if we want to retrieve the virtual address of an EPC
-page allocated to an enclave on host, we can find this info from its
-owner, the 'desc' field of struct sgx_encl_page. However, if the EPC
-page is allocated to a KVM guest, this is not available, as their owner
-is a shared vepc.
+On Tue, May 17, 2022 at 09:47:13AM -0700, Kristen Carlson Accardi wrote:
+>  
+[...]
+> +int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
+> +			   struct sgx_backing *backing)
+> +{
+> +	struct mem_cgroup *old_memcg;
+> +	int ret;
+> +
+> +	old_memcg = sgx_encl_set_active_memcg(encl);
 
-So, we introduce struct sgx_vepc_page which can be the owner of EPC
-pages for vepc and saves the useful info of EPC pages for vepc, like
-struct sgx_encl_page.
+This function is leaking memcg reference. Please change
+sgx_encl_set_active_memcg() to sgx_encl_get_mem_cgroup() or something
+which will return the memcg with the refcount elevated. Then use
+set_active_memcg(returned_memcg) here.
 
-Canonical memory failure collects victim tasks by iterating all the
-tasks one by one and use reverse mapping to get victim tasks' virtual
-address.
+> +
+> +	ret = sgx_encl_get_backing(encl, page_index, backing);
+> +
+> +	set_active_memcg(old_memcg);
 
-This is not necessary for SGX - as one EPC page can be mapped to ONE
-enclave only. So, this 1:1 mapping enforcement allows us to find task
-virtual address with physical address directly. Even though an enclave
-has been shared by multiple processes, the virtual address is the same.
+mem_cgroup_put(returned_memcg) here.
 
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
----
-Changes since V1:
-- Add documentation suggested by Jarkko.
-- Revise the commit message.
----
- arch/x86/kernel/cpu/sgx/sgx.h  | 15 +++++++++++++++
- arch/x86/kernel/cpu/sgx/virt.c | 24 +++++++++++++++++++-----
- 2 files changed, 34 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index ad3b455ed0da..9a4292168389 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -28,6 +28,8 @@
- 
- /* Pages on free list */
- #define SGX_EPC_PAGE_IS_FREE		BIT(1)
-+/* Pages is used by VM guest */
-+#define SGX_EPC_PAGE_IS_VEPC		BIT(2)
- 
- struct sgx_epc_page {
- 	unsigned int section;
-@@ -114,4 +116,17 @@ struct sgx_vepc {
- 	struct mutex lock;
- };
- 
-+/**
-+ * struct sgx_vepc_page - SGX virtual EPC page structure
-+ * @vaddr:		the virtual address when the EPC page was mapped
-+ * @vepc:		the owner of the virtual EPC page
-+ *
-+ * When a virtual EPC page is allocated to guest, we use this structure
-+ * to track the associated information on host, like struct sgx_encl_page.
-+ */
-+struct sgx_vepc_page {
-+	unsigned long vaddr;
-+	struct sgx_vepc *vepc;
-+};
-+
- #endif /* _X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index c9c8638b5dc4..d7945a47ced8 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -29,6 +29,7 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
- 			    struct vm_area_struct *vma, unsigned long addr)
- {
- 	struct sgx_epc_page *epc_page;
-+	struct sgx_vepc_page *owner;
- 	unsigned long index, pfn;
- 	int ret;
- 
-@@ -41,13 +42,22 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
- 	if (epc_page)
- 		return 0;
- 
--	epc_page = sgx_alloc_epc_page(vepc, false);
--	if (IS_ERR(epc_page))
--		return PTR_ERR(epc_page);
-+	owner = kzalloc(sizeof(*owner), GFP_KERNEL);
-+	if (!owner)
-+		return -ENOMEM;
-+	owner->vepc = vepc;
-+	owner->vaddr = addr & PAGE_MASK;
-+
-+	epc_page = sgx_alloc_epc_page(owner, false);
-+	if (IS_ERR(epc_page)) {
-+		ret = PTR_ERR(epc_page);
-+		goto err_free_owner;
-+	}
-+	epc_page->flags = SGX_EPC_PAGE_IS_VEPC;
- 
- 	ret = xa_err(xa_store(&vepc->page_array, index, epc_page, GFP_KERNEL));
- 	if (ret)
--		goto err_free;
-+		goto err_free_page;
- 
- 	pfn = PFN_DOWN(sgx_get_epc_phys_addr(epc_page));
- 
-@@ -61,8 +71,10 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
- 
- err_delete:
- 	xa_erase(&vepc->page_array, index);
--err_free:
-+err_free_page:
- 	sgx_free_epc_page(epc_page);
-+err_free_owner:
-+	kfree(owner);
- 	return ret;
- }
- 
-@@ -122,6 +134,7 @@ static int sgx_vepc_remove_page(struct sgx_epc_page *epc_page)
- 
- static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
- {
-+	struct sgx_vepc_page *owner = (struct sgx_vepc_page *)epc_page->owner;
- 	int ret = sgx_vepc_remove_page(epc_page);
- 	if (ret) {
- 		/*
-@@ -141,6 +154,7 @@ static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
- 		return ret;
- 	}
- 
-+	kfree(owner);
- 	sgx_free_epc_page(epc_page);
- 	return 0;
- }
--- 
-2.25.1
-
+> +
+> +	return ret;
+> +}
