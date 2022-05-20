@@ -2,160 +2,204 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C251C4332F
-	for <linux-sgx@archiver.kernel.org>; Fri, 20 May 2022 10:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52226C4321E
+	for <linux-sgx@archiver.kernel.org>; Fri, 20 May 2022 10:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239447AbiETKlc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 20 May 2022 06:41:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50126 "EHLO
+        id S236409AbiETKln (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 20 May 2022 06:41:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348276AbiETKlX (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 20 May 2022 06:41:23 -0400
+        with ESMTP id S1348242AbiETKlA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 20 May 2022 06:41:00 -0400
 Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB0917E16
-        for <linux-sgx@vger.kernel.org>; Fri, 20 May 2022 03:41:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 503001261E
+        for <linux-sgx@vger.kernel.org>; Fri, 20 May 2022 03:40:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653043281; x=1684579281;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=Den95mSV36P4lwnzOdWK489sYzTnbE6vGSz244vdruc=;
-  b=msjcr4KirF8UYx4dFDIM3LA5Gi+eo4WZW95Yv/grJWgmAm/QAPnw7gpF
-   v8e5WCG9/1oliA1M7pr4FDH79UbB0G6D8Ijoiegwfg6oiO0ALRY04+BlP
-   E04wD3o7mSWywgrajkXjAotifKTuMQtZpZXYjSFcgY8d6Ro5D/r8SIezo
-   31ni/ANQxWpm+1qmFPgU5Gbap2qp0VsgHEx0ZhuMPY+Yg2J8U7yCjYS3a
-   MD4GVix0Rnhe72rNGquZPnknbH7dCMAwpnIyPRuzqhwMXHpPJlkphsjGi
-   pqQn8ugusBHZUcKcQAm4TDYpLm9v7ERjCV7XIElm78fYWvN+IKej0cCf4
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="271387005"
+  t=1653043259; x=1684579259;
+  h=from:to:cc:subject:date:message-id;
+  bh=DOgMKPEx9vSZBWNLCmG9drJ813hPaa1JkoLavtuFKrA=;
+  b=VfhK+fb6dDW/FeT5BVhduRiQyz8J+n7ZYPUK8IGLbWZ8p9hgNgLWwePs
+   F36s6N4UiM/h+aPone4w3D4UUSrfckjVv1Zn1lHZYpqrmilP0deyWLhuX
+   hk1BhO8TAh/F8hGnQmk2A7+5h2PzeH3jsLyTpfZCKt+SVWxjkH1JQY47X
+   f7qsbdTFC2RG3+ZiVmHAp1tSIvDugvD8UzCWg9vB5JqNGfzHQUGORYZ3/
+   LiIETp2A3fEXxmq6g+qEb7cB0NG5WgTHMMkguUx+NMNVbsrkQH0+Y0ML/
+   EUrZGn7RIQqKZ9zjKlj2nvQ9W5H1KtoychNeXb9fAnc8hCGG4vTG7x7xu
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="271386912"
 X-IronPort-AV: E=Sophos;i="5.91,238,1647327600"; 
-   d="scan'208";a="271387005"
+   d="scan'208";a="271386912"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 03:41:21 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 03:40:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,238,1647327600"; 
-   d="scan'208";a="715471058"
+   d="scan'208";a="715470945"
 Received: from cathy-vostro-3670.bj.intel.com ([10.238.156.128])
-  by fmsmga001.fm.intel.com with ESMTP; 20 May 2022 03:41:18 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 20 May 2022 03:40:55 -0700
 From:   Cathy Zhang <cathy.zhang@intel.com>
 To:     linux-sgx@vger.kernel.org, x86@kernel.org
 Cc:     jarkko@kernel.org, reinette.chatre@intel.com,
         dave.hansen@intel.com, ashok.raj@intel.com, cathy.zhang@intel.com,
         chao.p.peng@linux.intel.com, yang.zhong@intel.com
-Subject: [PATCH v5 8/9] x86/cpu: Call ENCLS[EUPDATESVN] procedure in microcode update
-Date:   Fri, 20 May 2022 18:39:03 +0800
-Message-Id: <20220520103904.1216-9-cathy.zhang@intel.com>
+Subject: [PATCH v5 0/9] Support microcode updates affecting SGX
+Date:   Fri, 20 May 2022 18:38:55 +0800
+Message-Id: <20220520103904.1216-1-cathy.zhang@intel.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220520103904.1216-1-cathy.zhang@intel.com>
-References: <20220520103904.1216-1-cathy.zhang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-EUPDATESVN is the SGX instruction which allows enclave attestation
-to include information about updated microcode without a reboot.
+v4:
+https://lore.kernel.org/all/2682d32989ea40578065b2c14ef20b19@intel.com/T/
 
-Microcode updates which affect SGX require two phases:
-
-1. Do the main microcode update
-2. Make the new CPUSVN available for enclave attestation via
-   EUPDATESVN.
-
-Before a EUPDATESVN can succeed, all enclave pages (EPC) must be
-marked as unused in the SGX metadata (EPCM). This operation destroys
-all preexisting SGX enclave data and metadata. This is by design and
-mitigates the impact of vulnerabilities that may have compromised
-enclaves or the SGX hardware itself prior to the update.
-
-Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
-
----
 Changes since v4:
- - Remove #include <asm/sgx.h> from microcode.h which is not needed
-   in this file. (Borislav Petkov)
+ - Add "goto err" for *if* branch and remove *else* branch for less
+   branching for common (success) case in sgx_ioc_enclave_create().
+   (Jarkko Sakkinen)
+ - Add back the blank line removed unintenitonally in encl.h.
+   (Jarkko Sakkinen)
+ - Move *-EBUSY* into one line in the three sgx_zap_* functions'
+   annotates. (Jarkko Sakkinen).
+ - Remove #include <asm/sgx.h> from microcode.h which is not needed.
+   (Borislav Petkov)
 
 Changes since v3:
+ - Refine the comments when sgx_update_cpusvn_intel() is called by
+   microcode_check(). (suggested by Borislav Petkov, Dave Hansen)
  - Rename update_cpusvn_intel() as sgx_update_cpusvn_intel().
-   (Dave Hansen)
- - Refine the comments when sgx_update_cpusvn_intel is called by
-   microcode_check(). (Borislav Petkov, Dave Hansen)
+   (suggested by Dave Hansen)
  - Define both the 'static inline' stub *and* the declaration for
-   sgx_update_cpusvn_intel() in sgx.h. (Dave Hansen)
+   sgx_update_cpusvn_intel() in sgx.h. (suggested by Dave Hansen)
+ - Squash patch "x86/sgx: Provide VA page non-NULL owner" and
+   "x86/sgx: Save enclave pointer for VA page". Update commit log.
+   (suggested by Jarkko Sakkinen)
+ - Rename SGX_EPC_PAGE_GUEST as SGX_EPC_PAGE_KVM_GUEST. (suggested by
+   Jarkko, Sakkinen)
+ - Refer to changelogs for other changes.
+
+Changes since v2:
+ - Changes are made in patch "x86/sgx: Introduce mechanism to prevent
+   new initializations of EPC pages" by moving SGX2 related changes out.
+   It allows this series to be applied on tip/x86/sgx branch with only
+   picking up some auxiliary changes from SGX2 series, rather than
+   depend on the whole set. (Jarkko Sakkinen, Reinette Chatre)
 
 Changes since v1:
  - Remove the sysfs file svnupdate. (Thomas Gleixner, Dave Hansen)
  - Let late microcode load path call ENCLS[EUPDATESVN] procedure
    directly. (Borislav Petkov)
- - Redefine update_cpusvn_intel() to return void instead of int.
----
- arch/x86/include/asm/sgx.h     |  6 ++++++
- arch/x86/kernel/cpu/common.c   | 10 ++++++++++
- arch/x86/kernel/cpu/sgx/main.c | 12 ++++++++++++
- 3 files changed, 28 insertions(+)
+ - Update cover letter by removing saying that "...triggered by
+   administrators via sysfs...".
+ - Drop the patch for documentation change.
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 74bcb6841a4b..1321670a6338 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -409,4 +409,10 @@ int sgx_virt_einit(void __user *sigstruct, void __user *token,
- int sgx_set_attribute(unsigned long *allowed_attributes,
- 		      unsigned int attribute_fd);
- 
-+#ifdef CONFIG_X86_SGX
-+extern void sgx_update_cpusvn_intel(void);
-+#else
-+static inline void sgx_update_cpusvn_intel(void) {}
-+#endif
-+
- #endif /* _ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index e342ae4db3c4..a50e0e183139 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -59,6 +59,7 @@
- #include <asm/cpu_device_id.h>
- #include <asm/uv/uv.h>
- #include <asm/sigframe.h>
-+#include <asm/sgx.h>
- #include <asm/traps.h>
- 
- #include "cpu.h"
-@@ -2224,6 +2225,15 @@ void microcode_check(void)
- 
- 	perf_check_microcode();
- 
-+	/*
-+	 * SGX attestation incorporates the microcode versions of all processors
-+	 * on the system and is affected by microcode updates. So, update SGX
-+	 * attestation metric (called CPUSVN) to ensure enclaves attest to the
-+	 * new version after microcode update.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_SGX) && (cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
-+		sgx_update_cpusvn_intel();
-+
- 	/* Reload CPUID max function as it might've changed. */
- 	info.cpuid_level = cpuid_eax(0);
- 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 43dd2b34e040..0f541d01e561 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -1403,3 +1403,15 @@ static int sgx_updatesvn(void)
- 
- 	return ret;
- }
-+
-+void sgx_update_cpusvn_intel(void)
-+{
-+	sgx_lock_epc();
-+	if (sgx_zap_pages())
-+		goto out;
-+
-+	sgx_updatesvn();
-+
-+out:
-+	sgx_unlock_epc();
-+}
+cover letter:
+
+== General Microcode Background ==
+
+Historically, microcode updates are applied by the BIOS or early in
+boot. In recent years, several trends have made these old approaches
+less palatable.
+
+First, the cadence of microcode updates has increased to deliver
+security mitigations. Second, the value of those updates has increased,
+meaning that any delay in applying them is unacceptable. Third, users
+have become accustomed to approaches like hot patching their kernels
+and have a growing aversion to reboots in general.
+
+Users want microcode updates to behave more like a hot patching a
+kernel and less like a BIOS update.
+
+== SGX Attestation Background ==
+
+SGX enclaves have an attestation mechanism. An enclave might, for
+instance, need to attest to its state before it is given a special
+decryption key. Since SGX must trust the CPU microcode, attestation
+incorporates the microcode versions of all processors on the system
+and is affected by microcode updates. This allows the entity to which
+the enclave is attesting to make deployment decisions based on the
+microcode version. For example, an enclave might be denied a decryption
+key if it runs on a system that has old microcode without a specific
+mitigation.
+
+Unfortunately, this attestation metric (called CPUSVN) is only a
+snapshot. When the kernel first uses SGX (successfully executes any
+ENCLS instruction), SGX inspects all CPUs in the system and incorporates
+a record of their microcode versions into CPUSVN. Today, that value is
+locked and is not updated until a reboot.
+
+== Problems ==
+
+This means that, although the microcode may be update, enclaves can
+never attest to this fact. Enclaves are stuck attesting to the old
+version until a reboot.
+
+Old enclaves created before the microcode update are presumed to be
+compromised must not be allowed to attest with the new microcode
+version.
+
+== Solution ==
+
+EUPDATESVN is a new SGX instruction which allows enclave attestation
+to include information about updated microcode without a reboot.
+
+Whenever a microcode update affects SGX, the SGX attestation
+architecture assumes that all running enclaves and cryptographic
+assets (like internal SGX encryption keys) have been compromised.
+To mitigate the impact of this presumed compromise, EUPDATESVN success
+requires that all SGX memory to be marked as "unused" and its contents
+destroyed. This requirement ensures that no compromised enclave can
+survive the EUPDATESVN procedure and provides an opportunity to
+generate new cryptographic assets.
+
+This series implements the infrastructure needed to track and tear
+down bare-metal enclaves and then run EUPDATESVN, it will be called
+by the late microcode load path after the microcode update.
+
+This is a very slow operation. It is, of course, exceedingly disruptive
+to enclaves but should be infrequent as microcode updates are released
+on the order of every few months. Also, this is not the first piece of
+the SGX architecture which will destroy all enclave contents.
+
+A follow-on series will add Virtual EPC (KVM guest) support.
+
+Here is the spec for your reference:
+https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+
+This is series is based on tip/x86/sgx with the following additionally
+applied:
+
+"x86/sgx: Export sgx_encl_ewb_cpumask()"
+https://lore.kernel.org/lkml/YnrllJ2OqmcqLUuv@kernel.org/T/#mc6d998d583c9fa512f25219f477353c3fbd214a0
+"x86/sgx: Rename sgx_encl_ewb_cpumask() as sgx_encl_cpumask()"
+https://lore.kernel.org/lkml/YnrllJ2OqmcqLUuv@kernel.org/T/#me953d1983c1749daeec25f86d0f3ff09cede6c7a
+"x86/sgx: Make sgx_ipi_cb() available internally"
+https://lore.kernel.org/lkml/YnrllJ2OqmcqLUuv@kernel.org/T/#m5f32fbecb20b34e7745d8bd30c5d133d588b15dc
+"x86/sgx: Keep record of SGX page type"
+https://lore.kernel.org/lkml/YnrllJ2OqmcqLUuv@kernel.org/T/#m3a218f751b2e41950068dbcccf465426d0ec771e
+
+Cathy Zhang (9):
+  x86/sgx: Introduce mechanism to prevent new initializations of EPC
+    pages
+  x86/sgx: Save enclave pointer for VA page
+  x86/sgx: Keep record for SGX VA and Guest page type
+  x86/sgx: Save the size of each EPC section
+  x86/sgx: Forced EPC page zapping for EUPDATESVN
+  x86/sgx: Define error codes for ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/cpu: Call ENCLS[EUPDATESVN] procedure in microcode update
+  x86/sgx: Call ENCLS[EUPDATESVN] during SGX initialization
+
+ arch/x86/include/asm/sgx.h      |  49 ++--
+ arch/x86/kernel/cpu/sgx/encl.h  |   3 +-
+ arch/x86/kernel/cpu/sgx/encls.h |  14 +
+ arch/x86/kernel/cpu/sgx/sgx.h   |  23 +-
+ arch/x86/kernel/cpu/common.c    |  10 +
+ arch/x86/kernel/cpu/sgx/encl.c  |  39 ++-
+ arch/x86/kernel/cpu/sgx/ioctl.c |  51 +++-
+ arch/x86/kernel/cpu/sgx/main.c  | 456 +++++++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/virt.c  |  22 ++
+ 9 files changed, 636 insertions(+), 31 deletions(-)
+
 -- 
 2.17.1
 
