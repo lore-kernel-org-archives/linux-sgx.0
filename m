@@ -2,49 +2,49 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E38C4167B
-	for <linux-sgx@archiver.kernel.org>; Fri, 20 May 2022 10:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B8AC433F5
+	for <linux-sgx@archiver.kernel.org>; Fri, 20 May 2022 10:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232916AbiETKlm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 20 May 2022 06:41:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49818 "EHLO
+        id S1348240AbiETKlw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 20 May 2022 06:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348257AbiETKlP (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 20 May 2022 06:41:15 -0400
+        with ESMTP id S1348246AbiETKlF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 20 May 2022 06:41:05 -0400
 Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA6A101DC
-        for <linux-sgx@vger.kernel.org>; Fri, 20 May 2022 03:41:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66FBDE94
+        for <linux-sgx@vger.kernel.org>; Fri, 20 May 2022 03:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653043273; x=1684579273;
+  t=1653043261; x=1684579261;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=8CtFttv11drSF4q6PmCblJQ8EoKwXxhIYtAIyVg0qcA=;
-  b=jmf8lVSHlhAFpXyc7sI6NQBx0MlqCK7eggN2EbakccmO6d1Anz8lFd8/
-   ZAviV0vqju0ApPBT4n9xVMTsdR4GXx7JEBUgvRjyNw7ZGKv2rc3yAn+Cq
-   D4QkGJtWElTsOGf6Y/78cxm0GdN4hly8UnUE1bKqajbyL6x1/luDujfDW
-   70CWPUBUJ0ltHf9KUeExOWAh005fL5CbPt5qsHiLPEPqc3+s+aU33EFeY
-   bKmeUtiCF7r88gWcid8x+2K2aWxELkWZMv+fbXIGryYBPFJ/0TjuxRZhh
-   bGSvzZnyWu1lCmvGUH2jk77FfmHWJy5u3PPfRtEerlhBU9GsRwiW5ePQ2
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="271386969"
+  bh=/Do3MtDT9X13Oukvxe0T3Nbug8zbjfi486eb2lEF1PI=;
+  b=NKiFBY4ByFJ5MjSnyGzFuIRrlZls7WhaH/SeXIYFTyo6YtqcsxuVJ6kb
+   mbavKuQAMPeP1lRSa+f42DThckONhaD/0d+41kNpELVqmojB8U+XBoDMX
+   V5GEyGPEmgq7y4yk42XYPEf5+lHasYs0BnFQZpMgC4P5aQ6mkapSZUaQ4
+   k59qVYHhYazY0W/dUYt9Lf8vDcotWLILkbuZheWe9h5oDBRT31zRwcW55
+   QGBtZvGj4LGb1ItNx5PhYThmPKVXH4ds5zmvybfjhnHtDwE36XfScwtRk
+   wmFTJPf42g6tREorD37tiAPmjUwdE85cYXY1pOakiuTHbhjl4wPP2Rp0z
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="271386923"
 X-IronPort-AV: E=Sophos;i="5.91,238,1647327600"; 
-   d="scan'208";a="271386969"
+   d="scan'208";a="271386923"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 03:41:13 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 03:41:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,238,1647327600"; 
-   d="scan'208";a="715471021"
+   d="scan'208";a="715470964"
 Received: from cathy-vostro-3670.bj.intel.com ([10.238.156.128])
-  by fmsmga001.fm.intel.com with ESMTP; 20 May 2022 03:41:10 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 20 May 2022 03:40:58 -0700
 From:   Cathy Zhang <cathy.zhang@intel.com>
 To:     linux-sgx@vger.kernel.org, x86@kernel.org
 Cc:     jarkko@kernel.org, reinette.chatre@intel.com,
         dave.hansen@intel.com, ashok.raj@intel.com, cathy.zhang@intel.com,
         chao.p.peng@linux.intel.com, yang.zhong@intel.com
-Subject: [PATCH v5 5/9] x86/sgx: Forced EPC page zapping for EUPDATESVN
-Date:   Fri, 20 May 2022 18:39:00 +0800
-Message-Id: <20220520103904.1216-6-cathy.zhang@intel.com>
+Subject: [PATCH v5 1/9] x86/sgx: Introduce mechanism to prevent new initializations of EPC pages
+Date:   Fri, 20 May 2022 18:38:56 +0800
+Message-Id: <20220520103904.1216-2-cathy.zhang@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220520103904.1216-1-cathy.zhang@intel.com>
 References: <20220520103904.1216-1-cathy.zhang@intel.com>
@@ -52,480 +52,405 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Before an EUPDATESVN instruction can be successful, all enclave
-pages (EPC) must be marked as unused in the SGX hardware
-metadata (EPCM).
+== Background ==
 
-A page becomes unused when an issued EREMOVE instruction succeeds.
-To prepare for EUPDATESVN, loop over all SGX pages and attempt
-to EREMOVE them. This is fatal to running enclaves and destroys
-all enclave state and memory contents. This destruction is by
-design and mitigates any compromise of enclaves or the SGX
-hardware itself which occurred before the microcode update.
+EUPDATESVN is a new SGX instruction which allows enclave attestation
+to include information about updated microcode without a reboot.
 
-An EREMOVE operation on a page may fail for a few reasons. Each
-has its own mitigations.
+The SGX hardware maintains metadata for each enclave page to help
+enforce its security guarantees. This includes things like a record
+of the enclave to which the page belongs and the type of the page:
+SGX metadata like "VA" or "SECS" pages, or regular enclave pages
+like those that store user data.
 
-First, EREMOVE will fail if an enclave that uses the page is
-executing. Send an IPI to all CPUs that might be running the
-enclave to force it out of the enclave long enough to EREMOVE
-the page. Other CPUs might enter the enclave in the meantime,
-so this is not a rock-solid guarantee.
+Before an EUPDATESVN operation can be successful, all SGX memory (aka.
+EPC) must be marked as "unused" in the SGX hardware metadata (aka,
+EPCM). The SGX microcode now maintains a reference count of pages
+which are unused to aid in determining when all pages reach the
+"unused" state.
 
-Second, EREMOVE can fail on special SGX metadata pages, such as
-SECS. EREMOVE will work on them only after the normal SGX
-pages that depend on them have been EREMOVE'd. Defer handling those
-pages and repeat EREMOVE after the dependency has been addressed.
+Both bare-metal and KVM guest EPC must be made unused. To increase
+the chance of a successful EUPDATESVN, the kernel prevents existing
+enclaves from creating new, valid pages and prevents new enclave
+creation (creating an enclave involves initializing a "SECS" page).
+
+The entire EUPDATESVN process is very slow since it potentially
+affects gigabytes of enclave memory. It can potentially take seconds
+or minutes to complete. Userspace may encounter -EBUSY errors during
+the update and is expected to retry.
+
+== Patch contents ==
+
+Introduce mechanism to prevent new initializations of EPC pages.
+
+Use a flag to indicate when SGX EPC pages are "locked", which means
+it's not allowed to allocate new EPC page for use. Check it in all
+paths that can initialize an EPC page. Use SRCU to ensure that the
+flag is visible across the system before proceeding with an update.
+
+Add checks to all sites that call SGX instructions that can transition
+pages from unused to initialized to ensure that the SRCU lock is held.
 
 Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
 
 ---
 Changes since v4:
- - Move *-EBUSY* into one line for the three sgx_zap_* functions'
-   annotate. (Jarkko Sakkinen).
+ - Add "goto err" for *if* branch and remove *else* branch for less
+   branching for common (success) case in sgx_ioc_enclave_create().
+   (Jarkko Sakkinen)
 
 Changes since v3:
- - Rename SGX_EPC_PAGE_GUEST as SGX_EPC_PAGE_KVM_GUEST (Suggested by
-   Jarkko Sakkinen)
- - Remove "VA" from sentence "Second, EREMOVE can fail on special SGX
-   metadata...", for except concurrency rules, only SECS pages might
-   be EREMOVEd failed and will be tracked for a deferred handling.
-   (Suggested by Jarkko Sakkinen)
----
- arch/x86/kernel/cpu/sgx/sgx.h  |  13 ++
- arch/x86/kernel/cpu/sgx/encl.c |  14 +-
- arch/x86/kernel/cpu/sgx/main.c | 344 +++++++++++++++++++++++++++++++++
- 3 files changed, 370 insertions(+), 1 deletion(-)
+ - Rename lable "out" as "err" in sgx_ioc_enclave_create, update error
+   branch accordingly. (Jarrko Sakkinen)
 
+Changes since v2:
+ - Move out the SGX2 related change to remove the dependency.
+  (Jarkko Sakkinen, Reinette Chatre).
+---
+ arch/x86/kernel/cpu/sgx/encls.h |  8 ++++++
+ arch/x86/kernel/cpu/sgx/sgx.h   |  3 +++
+ arch/x86/kernel/cpu/sgx/encl.c  | 18 +++++++++++++
+ arch/x86/kernel/cpu/sgx/ioctl.c | 48 ++++++++++++++++++++++++++-------
+ arch/x86/kernel/cpu/sgx/main.c  | 37 +++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/virt.c  | 20 ++++++++++++++
+ 6 files changed, 125 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index fa04a73daf9c..60321c5f5718 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -138,6 +138,8 @@ static inline bool encls_failed(int ret)
+ 
+ static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
+ {
++	lockdep_assert_held(&sgx_lock_epc_srcu);
++
+ 	return __encls_2(ECREATE, pginfo, secs);
+ }
+ 
+@@ -148,6 +150,8 @@ static inline int __eextend(void *secs, void *addr)
+ 
+ static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
+ {
++	lockdep_assert_held(&sgx_lock_epc_srcu);
++
+ 	return __encls_2(EADD, pginfo, addr);
+ }
+ 
+@@ -179,6 +183,8 @@ static inline int __etrack(void *addr)
+ static inline int __eldu(struct sgx_pageinfo *pginfo, void *addr,
+ 			 void *va)
+ {
++	lockdep_assert_held(&sgx_lock_epc_srcu);
++
+ 	return __encls_ret_3(ELDU, pginfo, addr, va);
+ }
+ 
+@@ -191,6 +197,8 @@ static inline int __epa(void *addr)
+ {
+ 	unsigned long rbx = SGX_PAGE_TYPE_VA;
+ 
++	lockdep_assert_held(&sgx_lock_epc_srcu);
++
+ 	return __encls_2(EPA, rbx, addr);
+ }
+ 
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 775477e0b8af..d90532957181 100644
+index b30cee4de903..d7a1490d90bb 100644
 --- a/arch/x86/kernel/cpu/sgx/sgx.h
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -32,6 +32,17 @@
- #define SGX_EPC_PAGE_VA			BIT(2)
- /* Pages allocated for KVM guest */
- #define SGX_EPC_PAGE_KVM_GUEST		BIT(3)
-+/*
-+ * Pages, failed to be zapped (EREMOVED)
-+ * by SGX CPUSVN update process.
-+ */
-+#define SGX_EPC_PAGE_ZAP_TRACKED	BIT(4)
-+/*
-+ * Pages, the associated enclave is being
-+ * released while SGX CPUSVN update is
-+ * running.
-+ */
-+#define SGX_EPC_PAGE_IN_RELEASE		BIT(5)
+@@ -103,4 +103,7 @@ static inline int __init sgx_vepc_init(void)
  
- struct sgx_epc_page {
- 	unsigned int section;
-@@ -110,5 +121,7 @@ void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
+ void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
  
- extern struct srcu_struct sgx_lock_epc_srcu;
- bool sgx_epc_is_locked(void);
-+void sgx_zap_wakeup(void);
-+void sgx_zap_abort(void);
- 
++extern struct srcu_struct sgx_lock_epc_srcu;
++bool sgx_epc_is_locked(void);
++
  #endif /* _X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 383abd538ac9..4dbcfc959eb2 100644
+index 9e01548f4586..39f7f5dc09fd 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -600,6 +600,12 @@ void sgx_encl_release(struct kref *ref)
- 	WARN_ON_ONCE(encl->secs_child_cnt);
- 	WARN_ON_ONCE(encl->secs.epc_page);
+@@ -284,6 +284,7 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	unsigned long phys_addr;
+ 	struct sgx_encl *encl;
+ 	vm_fault_t ret;
++	int srcu_idx;
  
-+	/*
-+	 * EPC pages were freed and EREMOVE was executed. Wake
-+	 * up any zappers which were waiting for this.
-+	 */
-+	sgx_zap_wakeup();
+ 	encl = vma->vm_private_data;
+ 
+@@ -295,11 +296,18 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	if (unlikely(!encl))
+ 		return VM_FAULT_SIGBUS;
+ 
++	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
++	if (sgx_epc_is_locked()) {
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++		return VM_FAULT_SIGBUS;
++	}
 +
- 	kfree(encl);
+ 	mutex_lock(&encl->lock);
+ 
+ 	entry = sgx_encl_load_page(encl, addr, vma->vm_flags);
+ 	if (IS_ERR(entry)) {
+ 		mutex_unlock(&encl->lock);
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
+ 
+ 		if (PTR_ERR(entry) == -EBUSY)
+ 			return VM_FAULT_NOPAGE;
+@@ -312,12 +320,14 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
+ 	ret = vmf_insert_pfn(vma, addr, PFN_DOWN(phys_addr));
+ 	if (ret != VM_FAULT_NOPAGE) {
+ 		mutex_unlock(&encl->lock);
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
+ 
+ 		return VM_FAULT_SIGBUS;
+ 	}
+ 
+ 	sgx_encl_test_and_clear_young(vma->vm_mm, entry);
+ 	mutex_unlock(&encl->lock);
++	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
+ 
+ 	return VM_FAULT_NOPAGE;
  }
+@@ -465,6 +475,7 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
+ 	struct sgx_encl_page *entry = NULL;
+ 	char data[sizeof(unsigned long)];
+ 	unsigned long align;
++	int srcu_idx;
+ 	int offset;
+ 	int cnt;
+ 	int ret = 0;
+@@ -481,6 +492,12 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
+ 		return -EFAULT;
  
-@@ -975,8 +981,14 @@ void sgx_encl_free_epc_page(struct sgx_epc_page *page)
- 	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+ 	for (i = 0; i < len; i += cnt) {
++		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
++		if (sgx_epc_is_locked()) {
++			ret = -EBUSY;
++			goto out;
++		}
++
+ 		entry = sgx_encl_reserve_page(encl, (addr + i) & PAGE_MASK,
+ 					      vma->vm_flags);
+ 		if (IS_ERR(entry)) {
+@@ -508,6 +525,7 @@ static int sgx_vma_access(struct vm_area_struct *vma, unsigned long addr,
  
- 	ret = __eremove(sgx_get_epc_virt_addr(page));
--	if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret))
-+	if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret)) {
-+		/*
-+		 * The EREMOVE failed. If a CPUSVN is in progress,
-+		 * it is now expected to fail. Notify it.
-+		 */
-+		sgx_zap_abort();
- 		return;
+ out:
+ 		mutex_unlock(&encl->lock);
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
+ 
+ 		if (ret)
+ 			break;
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b3c2e8d58142..d62720ed1728 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -147,24 +147,43 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+ {
+ 	struct sgx_enclave_create create_arg;
++	int srcu_idx;
+ 	void *secs;
+ 	int ret;
+ 
+-	if (test_bit(SGX_ENCL_CREATED, &encl->flags))
+-		return -EINVAL;
++	if (test_bit(SGX_ENCL_CREATED, &encl->flags)) {
++		ret = -EINVAL;
++		goto err;
 +	}
  
- 	sgx_free_epc_page(page);
+-	if (copy_from_user(&create_arg, arg, sizeof(create_arg)))
+-		return -EFAULT;
++	if (copy_from_user(&create_arg, arg, sizeof(create_arg))) {
++		ret = -EFAULT;
++		goto err;
++	}
+ 
+ 	secs = kmalloc(PAGE_SIZE, GFP_KERNEL);
+-	if (!secs)
+-		return -ENOMEM;
++	if (!secs) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ 
+-	if (copy_from_user(secs, (void __user *)create_arg.src, PAGE_SIZE))
++	if (copy_from_user(secs, (void __user *)create_arg.src, PAGE_SIZE)) {
+ 		ret = -EFAULT;
+-	else
+-		ret = sgx_encl_create(encl, secs);
++		goto err;
++	}
+ 
++	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
++	if (sgx_epc_is_locked()) {
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++		ret = -EBUSY;
++		goto err;
++	}
++
++	ret = sgx_encl_create(encl, secs);
++
++	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++
++err:
+ 	kfree(secs);
+ 	return ret;
  }
+@@ -418,6 +437,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 	struct sgx_enclave_add_pages add_arg;
+ 	struct sgx_secinfo secinfo;
+ 	unsigned long c;
++	int srcu_idx;
+ 	int ret;
+ 
+ 	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
+@@ -455,8 +475,18 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 		if (need_resched())
+ 			cond_resched();
+ 
++		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
++		if (sgx_epc_is_locked()) {
++			ret = -EBUSY;
++			srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++			break;
++		}
++
+ 		ret = sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
+ 					&secinfo, add_arg.flags);
++
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++
+ 		if (ret)
+ 			break;
+ 	}
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 5fbad67d529f..fbfa449d90ed 100644
+index 08c00c325cc6..ec2775652a50 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -34,6 +34,16 @@ static bool __rcu sgx_epc_locked;
-  * will be prevented from starting during an SVN update.
-  */
- DEFINE_SRCU(sgx_lock_epc_srcu);
-+static DECLARE_WAIT_QUEUE_HEAD(sgx_zap_waitq);
-+
-+/* The flag means to abort the SGX CPUSVN update process */
-+static bool sgx_zap_abort_wait;
+@@ -23,6 +23,17 @@ static int sgx_nr_epc_sections;
+ static struct task_struct *ksgxd_tsk;
+ static DECLARE_WAIT_QUEUE_HEAD(ksgxd_waitq);
+ static DEFINE_XARRAY(sgx_epc_address_space);
 +/*
-+ * Track the number of SECS and VA pages associated with enclaves
-+ * in releasing. SGX CPUSVN update will wait for them EREMOVEd by
-+ * enclave exiting process.
++ * The flag sgx_epc_locked prevents any new SGX flows that
++ * may attempt to allocate a new EPC page.
 + */
-+static atomic_t zap_waiting_count;
++static bool __rcu sgx_epc_locked;
++/*
++ * By synchronizing around sgx_epc_locked SRCU ensures that any executing
++ * SGX flows have completed before proceeding with an SVN update. New SGX flows
++ * will be prevented from starting during an SVN update.
++ */
++DEFINE_SRCU(sgx_lock_epc_srcu);
  
  /*
   * These variables are part of the state of the reclaimer, and must be accessed
-@@ -633,6 +643,24 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+@@ -404,6 +415,8 @@ static bool sgx_should_reclaim(unsigned long watermark)
  
- 	spin_lock(&node->lock);
+ static int ksgxd(void *p)
+ {
++	int srcu_idx;
++
+ 	set_freezable();
  
-+	/*
-+	 * The page is EREMOVEd, stop tracking it
-+	 * as a deferred target for CPUSVN update
-+	 * process.
-+	 */
-+	if ((page->flags & SGX_EPC_PAGE_ZAP_TRACKED) &&
-+	    (!list_empty(&page->list)))
-+		list_del(&page->list);
+ 	/*
+@@ -424,9 +437,15 @@ static int ksgxd(void *p)
+ 				     kthread_should_stop() ||
+ 				     sgx_should_reclaim(SGX_NR_HIGH_PAGES));
+ 
++		srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
++		if (sgx_epc_is_locked())
++			goto maybe_resched;
 +
-+	/*
-+	 * The page is EREMOVEd, decrease
-+	 * "zap_waiting_count" to stop counting it
-+	 * as a waiting target for CPUSVN update
-+	 * process.
-+	 */
-+	if (page->flags & SGX_EPC_PAGE_IN_RELEASE)
-+		atomic_dec_if_positive(&zap_waiting_count);
-+
- 	page->owner = NULL;
- 	if (page->poison)
- 		list_add(&page->list, &node->sgx_poison_page_list);
-@@ -1007,3 +1035,319 @@ bool sgx_epc_is_locked(void)
- 	lockdep_assert_held(&sgx_lock_epc_srcu);
- 	return sgx_epc_locked;
+ 		if (sgx_should_reclaim(SGX_NR_HIGH_PAGES))
+ 			sgx_reclaim_pages();
+ 
++maybe_resched:
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
+ 		cond_resched();
+ 	}
+ 
+@@ -969,3 +988,21 @@ static int __init sgx_init(void)
  }
+ 
+ device_initcall(sgx_init);
 +
-+/**
-+ * sgx_zap_encl_page - unuse one EPC page
-+ * @section:		EPC section
-+ * @epc_page:		EPC page
-+ * @secs_pages_list:	list to trac SECS pages failed to be EREMOVEd
-+ *
-+ * Zap an EPC page if it's used by an enclave.
-+ *
-+ * Returns:
-+ * 0:			EPC page is unused or EREMOVE succeeds.
-+ * -EBUSY:		EREMOVE failed for other threads executing in enclave.
-+ * -EIO:		Other EREMOVE failures, like EPC leaks.
-+ */
-+static int sgx_zap_encl_page(struct sgx_epc_section *section,
-+			     struct sgx_epc_page *epc_page,
-+			     struct list_head *secs_pages_list)
++static void sgx_lock_epc(void)
 +{
-+	struct sgx_encl *encl;
-+	struct sgx_encl_page *encl_page;
-+	struct sgx_va_page *va_page;
-+	int retry_count = 10;
-+	int ret = 0;
-+
-+	/*
-+	 * Holding the per-section lock to ensure the
-+	 * "owner" field will not be cleared while
-+	 * checking.
-+	 */
-+	spin_lock(&section->node->lock);
-+
-+	/*
-+	 * The "owner" field is NULL, it means the page
-+	 * is unused.
-+	 */
-+	if (!epc_page->owner) {
-+		spin_unlock(&section->node->lock);
-+		return 0;
-+	}
-+
-+	if (epc_page->flags & SGX_EPC_PAGE_VA) {
-+		va_page = epc_page->owner;
-+		encl = va_page->encl;
-+	} else {
-+		encl_page = epc_page->owner;
-+		encl = encl_page->encl;
-+	}
-+
-+	if (!encl) {
-+		spin_unlock(&section->node->lock);
-+		/*
-+		 * The page has owner, but without an Enclave
-+		 * associated with. This might be caused by
-+		 * EPC leaks happen in enclave's release path.
-+		 */
-+		ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-+		if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret))
-+			ret = -EIO;
-+		else
-+			sgx_free_epc_page(epc_page);
-+		return ret;
-+	}
-+
-+	/*
-+	 * Wait for any enclave already being released to complete
-+	 * but prevent any additional enclave from starting release
-+	 * while we operate on it.
-+	 */
-+	if (!kref_get_unless_zero(&encl->refcount)) {
-+
-+		/*
-+		 * The enclave is exiting. The EUPDATESVN
-+		 * procedure needs to wait for the EREMOVE
-+		 * operation which happens as a part of
-+		 * the enclave exit operation. Use
-+		 * "zap_waiting_count" to indicate to the
-+		 * EUPDATESVN code when it needs to wait.
-+		 */
-+		if (((epc_page->flags & SGX_EPC_PAGE_VA) ||
-+		     (encl_page->type == SGX_PAGE_TYPE_SECS)) &&
-+		    !(epc_page->flags & SGX_EPC_PAGE_IN_RELEASE)) {
-+			atomic_inc(&zap_waiting_count);
-+			epc_page->flags |= SGX_EPC_PAGE_IN_RELEASE;
-+		}
-+
-+		spin_unlock(&section->node->lock);
-+		return 0;
-+	}
-+
-+	spin_unlock(&section->node->lock);
-+
-+	/*
-+	 * This EREMOVE has two main purposes:
-+	 * 1. Getting EPC pages into the "unused" state.
-+	 *    Every EPC page must be unused before an
-+	 *    EUPDATESVN can be succeed.
-+	 * 2. Forcing enclaves to exit more frequently.
-+	 *    EREMOVE will not succeed while any thread is
-+	 *    running in the enclave. Every successful
-+	 *    EREMOVE increases the chance that an enclave
-+	 *    will trip over this page, fault, and exit.
-+	 *    This, in turn, increases the likelihood of
-+	 *    success for every future EREMOVE attempt.
-+	 */
-+	ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-+
-+	if (!ret) {
-+		/*
-+		 * The SECS page is EREMOVEd successfully this time.
-+		 * Remove it from the list to stop tracking it.
-+		 */
-+		if ((epc_page->flags & SGX_EPC_PAGE_ZAP_TRACKED) &&
-+		    !list_empty(&epc_page->list)) {
-+			list_del_init(&epc_page->list);
-+			epc_page->flags &= ~SGX_EPC_PAGE_ZAP_TRACKED;
-+		}
-+		goto out;
-+	}
-+
-+	if (ret == SGX_CHILD_PRESENT) {
-+		/*
-+		 * The SECS page is failed to be EREMOVEd due
-+		 * to associations. Add it to "secs_pages_list"
-+		 * for deferred handling.
-+		 */
-+		if (!(epc_page->flags & SGX_EPC_PAGE_ZAP_TRACKED) &&
-+		    secs_pages_list) {
-+			epc_page->flags |= SGX_EPC_PAGE_ZAP_TRACKED;
-+			list_add_tail(&epc_page->list, secs_pages_list);
-+		}
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	if (ret) {
-+		/*
-+		 * EREMOVE will fail on a page if the owning
-+		 * enclave is executing. An IPI will cause the
-+		 * enclave to exit, providing an opportunity to
-+		 * EREMOVE the page, but it does not guarantee
-+		 * the page will be EREMOVEd successfully. Retry
-+		 * for several times, if it keeps on failing,
-+		 * return -EBUSY to notify userspace for retry.
-+		 */
-+		do {
-+			on_each_cpu_mask(sgx_encl_cpumask(encl), sgx_ipi_cb, NULL, true);
-+			ret = __eremove(sgx_get_epc_virt_addr(epc_page));
-+			if (!ret)
-+				break;
-+			retry_count--;
-+		} while (retry_count);
-+
-+		if (ret)
-+			ret = -EBUSY;
-+	}
-+
-+out:
-+	kref_put(&encl->refcount, sgx_encl_release);
-+	return ret;
++	sgx_epc_locked = true;
++	synchronize_srcu(&sgx_lock_epc_srcu);
 +}
 +
-+/**
-+ * sgx_zap_section_pages - unuse one EPC section's pages
-+ * @section:		EPC section
-+ * @secs_pages_list:	list to track SECS pages failed to be EREMOVEd
-+ *
-+ * Iterate through pages in one EPC section, unuse the pages
-+ * initialized for enclaves on bare metal.
-+ *
-+ * TODO: EPC pages for KVM guest will be handled in future.
-+ *
-+ * Returns:
-+ * 0:			EPC page is unused.
-+ * -EBUSY:		EREMOVE failed for other threads executing in enclave.
-+ * -EIO:		Other EREMOVE failures, like EPC leaks.
-+ */
-+static int sgx_zap_section_pages(struct sgx_epc_section *section,
-+				 struct list_head *secs_pages_list)
++static void sgx_unlock_epc(void)
 +{
-+	struct sgx_epc_page *epc_page;
-+	int i, ret = 0;
-+	unsigned long nr_pages = section->size >> PAGE_SHIFT;
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		epc_page = &section->pages[i];
-+
-+		/*
-+		 * EPC page has "NULL" owner, indicating
-+		 * it's unused. No action required for
-+		 * this case.
-+		 *
-+		 * No new owner can be assigned when SGX
-+		 * is "frozen".
-+		 */
-+		if (!epc_page->owner)
-+			continue;
-+
-+		/*
-+		 * Try to "unuse" all SGX memory used by enclaves
-+		 * on bare-metal.
-+		 *
-+		 * Failures might be caused by the following reasons:
-+		 * 1. EREMOVE failure due to other threads executing
-+		 *    in enclave. Return -EBUSY to notify userspace
-+		 *    for a later retry.
-+		 * 2. Other EREMOVE failures. For example, a bug in
-+		 *    SGX memory management like a leak that lost
-+		 *    track of an SGX EPC page. Upon these failures,
-+		 *    do not even attempt EUPDATESVN.
-+		 */
-+		if (!(epc_page->flags & SGX_EPC_PAGE_KVM_GUEST)) {
-+			ret = sgx_zap_encl_page(section, epc_page, secs_pages_list);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return ret;
++	sgx_epc_locked = false;
++	synchronize_srcu(&sgx_lock_epc_srcu);
 +}
 +
-+/**
-+ * sgx_zap_pages - unuse all EPC sections' pages
-+ *
-+ * Context: This function is called while microcode_mutex lock
-+ *	    is held by the caller, it ensures that the update
-+ *	    process will not run concurrently.
-+ *
-+ * Returns:
-+ * 0:			All enclaves have been torn down and
-+ *			all EPC pages are unused.
-+ * -ERESTARTSYS:	Interrupted by a signal.
-+ * -EBUSY:		EREMOVE failed for other threads executing in enclave.
-+ * -EIO:		Other EREMOVE failures, like EPC leaks.
-+ */
-+static int sgx_zap_pages(void)
++bool sgx_epc_is_locked(void)
 +{
-+	struct sgx_epc_page *epc_page, *tmp;
-+	struct sgx_epc_section *section;
-+	int i, ret = 0;
-+
-+	LIST_HEAD(secs_pages_list);
-+
-+	for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
-+		section = &sgx_epc_sections[i];
-+		if (!section->pages)
-+			break;
-+		/*
-+		 * Go through the section's pages and try to EREMOVE
-+		 * each one, except the ones associated with enclaves
-+		 * in releasing.
-+		 */
-+		ret = sgx_zap_section_pages(section, &secs_pages_list);
-+		if (WARN_ON_ONCE(ret))
-+			goto out;
-+	}
-+
-+	/*
-+	 * The SECS page should have no associations now, try
-+	 * EREMOVE them again.
-+	 */
-+	list_for_each_entry_safe(epc_page, tmp, &secs_pages_list, list) {
-+		section = &sgx_epc_sections[epc_page->section];
-+		ret = sgx_zap_encl_page(section, epc_page, NULL);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	/*
-+	 * There might be pages in the process of being freed
-+	 * by exiting enclaves. Wait for the exiting process
-+	 * to succeed or fail.
-+	 */
-+	ret = wait_event_interruptible(sgx_zap_waitq,
-+				       (!atomic_read(&zap_waiting_count) ||
-+					sgx_zap_abort_wait));
-+	if (ret == -ERESTARTSYS) {
-+		pr_err("CPUSVN update is not finished yet, but killed by userspace\n");
-+		goto out;
-+	}
-+
-+	if (sgx_zap_abort_wait) {
-+		ret = -EIO;
-+		pr_err("exit-side EREMOVE failure. Aborting CPUSVN update\n");
-+		goto out;
-+	}
-+
-+out:
-+	return ret;
++	lockdep_assert_held(&sgx_lock_epc_srcu);
++	return sgx_epc_locked;
 +}
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index 6a77a14eee38..e953816d7c8b 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -75,10 +75,21 @@ static vm_fault_t sgx_vepc_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct sgx_vepc *vepc = vma->vm_private_data;
++	int srcu_idx;
+ 	int ret;
+ 
+ 	mutex_lock(&vepc->lock);
++	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
 +
-+/**
-+ * sgx_zap_wakeup - wake up CPUSVN update process
-+ *
-+ * Whenever enclave is freed, this function will
-+ * be called to check if all EPC pages are unused.
-+ * Wake up the CPUSVN update process if it's true.
-+ */
-+void sgx_zap_wakeup(void)
-+{
-+	if (wq_has_sleeper(&sgx_zap_waitq) &&
-+	    !atomic_read(&zap_waiting_count))
-+		wake_up(&sgx_zap_waitq);
-+}
++	if (sgx_epc_is_locked()) {
++		ret = -EBUSY;
++		goto out_unlock;
++	}
 +
-+/**
-+ * sgx_zap_abort - abort SGX CPUSVN update process
-+ *
-+ * When EPC leaks happen in enclave release process,
-+ * it will set flag sgx_zap_abort_wait as true to
-+ * abort the CPUSVN update process.
-+ */
-+void sgx_zap_abort(void)
-+{
-+	sgx_zap_abort_wait = true;
-+	wake_up(&sgx_zap_waitq);
-+}
+ 	ret = __sgx_vepc_fault(vepc, vma, vmf->address);
++
++out_unlock:
++	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
+ 	mutex_unlock(&vepc->lock);
+ 
+ 	if (!ret)
+@@ -331,6 +342,7 @@ int __init sgx_vepc_init(void)
+ int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+ 		     int *trapnr)
+ {
++	int srcu_idx;
+ 	int ret;
+ 
+ 	/*
+@@ -347,6 +359,12 @@ int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+ 	if (WARN_ON_ONCE(!access_ok(secs, PAGE_SIZE)))
+ 		return -EINVAL;
+ 
++	srcu_idx = srcu_read_lock(&sgx_lock_epc_srcu);
++	if (sgx_epc_is_locked()) {
++		srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++		return -EBUSY;
++	}
++
+ 	__uaccess_begin();
+ 	ret = __ecreate(pageinfo, (void *)secs);
+ 	__uaccess_end();
+@@ -356,6 +374,8 @@ int sgx_virt_ecreate(struct sgx_pageinfo *pageinfo, void __user *secs,
+ 		return -EFAULT;
+ 	}
+ 
++	srcu_read_unlock(&sgx_lock_epc_srcu, srcu_idx);
++
+ 	/* ECREATE doesn't return an error code, it faults or succeeds. */
+ 	WARN_ON_ONCE(ret);
+ 	return 0;
 -- 
 2.17.1
 
