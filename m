@@ -2,94 +2,90 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFDBC433EF
-	for <linux-sgx@archiver.kernel.org>; Tue, 24 May 2022 19:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58336C433EF
+	for <linux-sgx@archiver.kernel.org>; Tue, 24 May 2022 19:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233786AbiEXTPG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 24 May 2022 15:15:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60896 "EHLO
+        id S229586AbiEXT0O (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 24 May 2022 15:26:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232102AbiEXTPF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 24 May 2022 15:15:05 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E699F5DE48
-        for <linux-sgx@vger.kernel.org>; Tue, 24 May 2022 12:15:03 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1653419701;
+        with ESMTP id S233439AbiEXT0M (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 24 May 2022 15:26:12 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [5.9.137.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6325232ECC
+        for <linux-sgx@vger.kernel.org>; Tue, 24 May 2022 12:26:10 -0700 (PDT)
+Received: from zn.tnic (p200300ea974657c6329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9746:57c6:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D2BF11EC018C;
+        Tue, 24 May 2022 21:26:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1653420364;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+tl3R4gEXc2j1i6TLarzMGnu1xDmmCKf3MnW6uhtMYI=;
-        b=24xTbusj0zIcTFv1pYkbwnU3VsjXBZMN3JdgKktLtEdZktLaqRkrnz8QahMf2UjVwJp32F
-        h9G6VVXX/9gT7n3RmKUjpCYVEYjF50jzipWwvT2JkynEHpEk1DcKWpdqc6f6yybjB26jHy
-        4+Yk0f8UYJTqqNd3JOL3iCohMRCHw43oH5rdPm+XVx58tXnoxcLeF4Pq4xZ5RNusYBFVxV
-        cSwAm3X1eld7ILbDc6O3Xt4L9mdOXzfT+7ge9y8uSjgtlccjvFB0cqUZNnPCiTXLgBESMP
-        EKEWEUH+T0h7szsNY/aql3q9UTuDL2N1K75rQSwECHQk0UndiS8T7idTSIGf7Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1653419701;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+tl3R4gEXc2j1i6TLarzMGnu1xDmmCKf3MnW6uhtMYI=;
-        b=//H98QCTdlJUeozhw7kyybAsVtIq37qDmK9xOQKCQ6opENK7J3OO2sr+i0mFT2v7LT7rDw
-        P6FvfyVHWUO6D4Bg==
-To:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Cc:     jarkko@kernel.org, reinette.chatre@intel.com,
-        dave.hansen@intel.com, ashok.raj@intel.com, cathy.zhang@intel.com,
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=fOyM/btV07Wr7orvUBqWgPMV6DjfBogMs6ola+xRYK4=;
+        b=rL2GHuv5HvgzB71L+gLLV+yVwjHthVS37a6G2axkQxO3Fi7BvsZA4iDH1871CCGI8TKirS
+        4QjNeZIA116+gkzpswsguH5n3s7WQGVTq9A0Ld88KnH5CjV1cASsU7S8v5cRKJjtTTB1wM
+        aoIo0f3pd/QKIL00ENfoxgIcoModh9k=
+Date:   Tue, 24 May 2022 21:26:00 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Cathy Zhang <cathy.zhang@intel.com>, linux-sgx@vger.kernel.org,
+        x86@kernel.org, jarkko@kernel.org, reinette.chatre@intel.com,
+        dave.hansen@intel.com, ashok.raj@intel.com,
         chao.p.peng@linux.intel.com, yang.zhong@intel.com
 Subject: Re: [PATCH v5 0/9] Support microcode updates affecting SGX
-In-Reply-To: <20220520103904.1216-1-cathy.zhang@intel.com>
+Message-ID: <Yo0xSNt0JKGgOG59@zn.tnic>
 References: <20220520103904.1216-1-cathy.zhang@intel.com>
-Date:   Tue, 24 May 2022 21:15:00 +0200
-Message-ID: <87r14izqrv.ffs@tglx>
+ <87r14izqrv.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87r14izqrv.ffs@tglx>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Cathy,
+On Tue, May 24, 2022 at 09:15:00PM +0200, Thomas Gleixner wrote:
+> Cathy,
+> 
+> On Fri, May 20 2022 at 18:38, Cathy Zhang wrote:
 
-On Fri, May 20 2022 at 18:38, Cathy Zhang wrote:
-> First, the cadence of microcode updates has increased to deliver
-> security mitigations. Second, the value of those updates has increased,
-> meaning that any delay in applying them is unacceptable. Third, users
-> have become accustomed to approaches like hot patching their kernels
-> and have a growing aversion to reboots in general.
->
-> Users want microcode updates to behave more like a hot patching a
-> kernel and less like a BIOS update.
+Btw, this mail has this here too:
 
-please don't take this personaly.
+> Historically, microcode updates are applied by the BIOS or early in
+> boot. In recent years, several trends have made these old approaches
+> less palatable.
 
-What users want and what's technically correct are two different things.
+Actually, late loading is the old method. Early came after it.
 
-Fact is that late microcode updates especially those which change
-features, add/remove functionality are simply broken. This has been
-discussed to death already and I'm not going to find all the various
-threads which provided that information. lore.kernel.org has excellent
-search capabilities.
+> > First, the cadence of microcode updates has increased to deliver
+> > security mitigations. Second, the value of those updates has increased,
+> > meaning that any delay in applying them is unacceptable. Third, users
+> > have become accustomed to approaches like hot patching their kernels
+> > and have a growing aversion to reboots in general.
 
-As a summary, there is a long standing request that for late loading
-microcode needs to come with machine readable information about the
-nature of the update which tells the kernel whether there are changes
-which cannot be applied post boot.
+I had missed that argument: so how do those users update their kernels?
+Livepatching? I don't think you can replace a whole live kernel - that
+would be magic. Unless you kexec but then you can early load microcode
+too.
 
-This was agreed on by Intel folks and until this materializes any
-attempt to load microcode late has to be considered as unsupported. This
-is going on for years now and has been ignored.
+So if you reboot your kernel because you've installed a new one, you can
+just as well update microcode.
 
-As a consequence we are not adding a special SGX workaround for
-something which is known to be broken.
+So sorry but I'm not buying this argument.
 
-What we are going to do and I'm fasttracking this is:
+For cloud vendors who cannot reboot because they've promised their users
+ponies, that's their problem. They might have a somewhat ok-ish argument.
 
- https://lore.kernel.org/all/20220524185324.28395-1-bp@alien8.de
+But not for normal users - they can just as well reboot their machines
+and do kernel updates together with microcode.
 
-which make the SGX workaround moot.
+Thx.
 
-Thanks
+-- 
+Regards/Gruss,
+    Boris.
 
-        tglx
+https://people.kernel.org/tglx/notes-about-netiquette
