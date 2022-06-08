@@ -2,95 +2,79 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B231C43334
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Jun 2022 15:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F5ACCA47E
+	for <linux-sgx@archiver.kernel.org>; Wed,  8 Jun 2022 02:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242695AbiFGPni (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 7 Jun 2022 11:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S1384745AbiFHCqx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 7 Jun 2022 22:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236628AbiFGPnh (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Jun 2022 11:43:37 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5163BCEBE
-        for <linux-sgx@vger.kernel.org>; Tue,  7 Jun 2022 08:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654616616; x=1686152616;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=eeV2Hg1LmYishO/QOnmj3TJkXI7/N4HV+Xv4mJKKYhY=;
-  b=c+NHOIuGkSk5K2k0ngalQmeqqLSBRwZzTAaxIz/vfuQEf/BsjNvy3FsQ
-   N93HjvSri70X4MDV+UZHI09bwH5VbGPdLh6m+c0GwiMcI8qRPL9ttHS+E
-   s64vJnlLVPYjM1fVoWRsf9Ohrqh2wlp3oHlSSsEwkZjFTws8tBRuBPFYF
-   fW3XMyBvoaiBiALSwyzj64kFPW9nHLbaz858ffP954KjYm/4RABiz7fiJ
-   ykHw2I1XzLYwhEYo6PKSh/OQrCgH8R+0le3imDD8uYwGE7pJlyIT/b8pb
-   RIXeVNtlUVWY67I2NaTbJLvdRlgme06WFZyBSZy7RgV8Nogi+GfseuYlS
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="256563064"
-X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
-   d="scan'208";a="256563064"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 08:43:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
-   d="scan'208";a="584249867"
-Received: from fmsmsx604.amr.corp.intel.com ([10.18.126.84])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Jun 2022 08:43:35 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Tue, 7 Jun 2022 08:43:35 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Tue, 7 Jun 2022 08:43:34 -0700
-Received: from fmsmsx610.amr.corp.intel.com ([10.18.126.90]) by
- fmsmsx610.amr.corp.intel.com ([10.18.126.90]) with mapi id 15.01.2308.027;
- Tue, 7 Jun 2022 08:43:34 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        with ESMTP id S1447615AbiFHCl7 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Jun 2022 22:41:59 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6E8196AB8
+        for <linux-sgx@vger.kernel.org>; Tue,  7 Jun 2022 17:21:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0014DB82474
+        for <linux-sgx@vger.kernel.org>; Wed,  8 Jun 2022 00:21:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0A9C3411C;
+        Wed,  8 Jun 2022 00:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654647714;
+        bh=5iyG8NpIPL8lbV8P0Uk/HAdI7kCxU5r1TifIAKRk/Co=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bKLwrzxs6RxC6MxLQ0cUESBB704+/C+xYzFwAWY46pSHiSnNVpi2y8R8spdcpIHsZ
+         RlcM0mvj6YRPl4ePLTGgYQAZDXVUUgUJ9RdvHwrmsX/FcO3RJ7iUkIzA9pq21bs/yd
+         HJaZnRufWDLUlZ+nk9Fpf+1DUKpAFqjNM2TIVlguairL7R6w7MizADd+j4tHXHyabl
+         Nq7QQDalClztyfVVrMN/E4ZN1GpR6ymI92rRcTr6ta6Xb2dLh3A9VBF8aYYyxnJkUR
+         RomXCAa5Dtr3K4F7mLQmksEHzDSaed9p0Xq8h1rsIoV6MVZu9XF5Bxa7bNI9vBlWT3
+         QSlQWf0mtQ10w==
+Message-ID: <d6e089d7f79d427e824efee0eb480c44ab71ad23.camel@kernel.org>
+Subject: Re: [PATCH v3 0/3] x86/sgx: fine grained SGX MCA behavior
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     "Luck, Tony" <tony.luck@intel.com>,
         "Li, Zhiquan1" <zhiquan1.li@intel.com>,
         "Huang, Kai" <kai.huang@intel.com>, "Du, Fan" <fan.du@intel.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "Hansen, Dave" <dave.hansen@intel.com>,
         "Zhang, Cathy" <cathy.zhang@intel.com>
-CC:     "Christopherson,, Sean" <seanjc@google.com>
-Subject: RE: [PATCH v3 0/3] x86/sgx: fine grained SGX MCA behavior
-Thread-Topic: [PATCH v3 0/3] x86/sgx: fine grained SGX MCA behavior
-Thread-Index: AQHYcB70W6riS71E6UaA03o+b1wsJK0wxfcAgAyd6gCABVThAIABTfAAgAAHnYCAABdPgIAAA6/g
-Date:   Tue, 7 Jun 2022 15:43:34 +0000
-Message-ID: <e1c78d1a31234384a005736115906127@intel.com>
+Cc:     "Christopherson,, Sean" <seanjc@google.com>
+Date:   Wed, 08 Jun 2022 03:19:57 +0300
+In-Reply-To: <e1c78d1a31234384a005736115906127@intel.com>
 References: <20220525100604.760576-1-zhiquan1.li@intel.com>
          <f239a63d32cb8b3d8d6730dac940a51e92831828.camel@kernel.org>
          <MN0PR11MB6181099B27E37C05659A30B199A19@MN0PR11MB6181.namprd11.prod.outlook.com>
          <ccfc5dacc80454e35b0f13410abc8606832f7517.camel@intel.com>
          <86eb19b512771098136e43fcdac95be8646357e4.camel@kernel.org>
          <0350d13c-0122-365d-11cb-eca004b411ca@intel.com>
- <41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org>
-In-Reply-To: <41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.6.500.17
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+         <41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org>
+         <e1c78d1a31234384a005736115906127@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.2 
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-PiBJIHRoaW5rIFRvbnkgaGludGVkIG1lIGFib3V0IG1lY2hhbmlzbSB0byB0ZXN0IE1DQSBiZWhh
-dmlvdXIgaW4NCj4ga2VybmVsIGJ1dCBJIGNhbm5vdCByZWNhbGwgaXQgYW55bW9yZS4gV2FzIHRo
-ZXJlIGEgd2F5IHRvIG1ha2UNCj4gdG8gc2ltdWxhdGUgYSBtZW1vcnkgZmFpbHVyZSwgYW5kIHVz
-ZSB0aGF0IHRvIHRlc3QgdGhlIHBhdGNoDQo+IHNldD8NCg0KSXQgaXMgcG9zc2libGUgdG8gaW5q
-ZWN0IHJlYWwgZXJyb3JzIGludG8gZW5jbGF2ZSBtZW1vcnkgdXNpbmcgQUNQSS9FSU5KLg0KU2Vl
-IHRoZSBmaW5hbCBwYXJ0IG9mOg0KDQogIERvY3VtZW50YXRpb24vZmlybXdhcmUtZ3VpZGUvYWNw
-aS9hcGVpL2VpbmoucnN0DQoNCllvdSBkbyBhIGZha2VkIHRlc3QgYnkganVzdCBhc2tpbmcgdG8g
-b2ZmbGluZSBhIHBhZ2U6DQoNCiMgZWNobyB7cGZufSA+IC9zeXMvZGV2aWNlcy9zeXN0ZW0vbWVt
-b3J5L2hhcmRfb2ZmbGluZV9wYWdlDQoNCg0KLVRvbnkNCg==
+On Tue, 2022-06-07 at 15:43 +0000, Luck, Tony wrote:
+> > I think Tony hinted me about mechanism to test MCA behaviour in
+> > kernel but I cannot recall it anymore. Was there a way to make
+> > to simulate a memory failure, and use that to test the patch
+> > set?
+>=20
+> It is possible to inject real errors into enclave memory using ACPI/EINJ.
+> See the final part of:
+>=20
+> =C2=A0 Documentation/firmware-guide/acpi/apei/einj.rst
+>=20
+> You do a faked test by just asking to offline a page:
+>=20
+> # echo {pfn} > /sys/devices/system/memory/hard_offline_page
+
+OK, I'll try this out in a VM. Thank you.
+
+BR, Jarkko
