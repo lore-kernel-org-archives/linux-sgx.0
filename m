@@ -2,144 +2,175 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70420CCA485
-	for <linux-sgx@archiver.kernel.org>; Wed,  8 Jun 2022 06:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCFCC43334
+	for <linux-sgx@archiver.kernel.org>; Wed,  8 Jun 2022 08:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234299AbiFHGBF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 8 Jun 2022 02:01:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53848 "EHLO
+        id S231588AbiFHIxp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 8 Jun 2022 04:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236020AbiFHFuC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Jun 2022 01:50:02 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64596199487
-        for <linux-sgx@vger.kernel.org>; Tue,  7 Jun 2022 20:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654658808; x=1686194808;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mrBT2mIUlDBeJwvGkg9yb3HPncINDIm2dfbrfFQr4k4=;
-  b=gNpM2l8TZirpEd/p2txHr7Q0Gzb0ia5tvh6M2U86VUOHIdDFOWSc08CD
-   zYQAIU/69DZFG0gCU8PhXW2hdxtJvz1oo7njxonp8EjtvyFkdaobVtCPf
-   //ToLKNdERteLcfdbDWbz6vdKMGlcYn8EQ6jIX/U1BRD2WpNpx2W3qZHm
-   PHi8073wJpt8thpmQ7YqAhJywbe58Pqcol9ec+7y8MXY1WXqpmAphzTJb
-   LRCWJI+Taa3Keo6QAVKBJAiYi7/KRw1qCjW+yWlzQmTIgcFgPNLC1HD+L
-   grgIpYUdA4oUuLQ/CxcdSsxs6gtcB5R6dIJz1mzj1s5ibj13hapGfWv/q
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="276819876"
-X-IronPort-AV: E=Sophos;i="5.91,285,1647327600"; 
-   d="scan'208";a="276819876"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 20:26:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,285,1647327600"; 
-   d="scan'208";a="670325082"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Jun 2022 20:26:45 -0700
-From:   Zhiquan Li <zhiquan1.li@intel.com>
-To:     linux-sgx@vger.kernel.org, tony.luck@intel.com, jarkko@kernel.org,
-        dave.hansen@linux.intel.com
-Cc:     seanjc@google.com, kai.huang@intel.com, fan.du@intel.com,
-        cathy.zhang@intel.com, zhiquan1.li@intel.com
-Subject: [PATCH v4 2/3] x86/sgx: Fine grained SGX MCA behavior for virtualization
-Date:   Wed,  8 Jun 2022 11:26:53 +0800
-Message-Id: <20220608032654.1764936-3-zhiquan1.li@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220608032654.1764936-1-zhiquan1.li@intel.com>
+        with ESMTP id S232649AbiFHIxS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Jun 2022 04:53:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B78952AA010
+        for <linux-sgx@vger.kernel.org>; Wed,  8 Jun 2022 01:12:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 54519615FF
+        for <linux-sgx@vger.kernel.org>; Wed,  8 Jun 2022 08:12:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61686C3411D;
+        Wed,  8 Jun 2022 08:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654675940;
+        bh=8NW55uF6B63Z0+BjddHVI/ll4AE/Ju/7yC65F+8aFTE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AobxB7tODJi83HO7plYDoYNZWSBMQlNhLcSprO2kSd0cHh6Sl4n+MbnxaKaHFhvqE
+         85I9YOJGkg2b7J9KuuO+R16z3NqUSZfPyW0SjmSCQ1uD3Q5LJAaaXfoVv7kQZhMaxv
+         p2wyroOyHh8fKfLjo8OMMOD2ROuFfaYHzaG+5qPB/cKPW3jv2YKA3OR8A4voTV11pH
+         EeTVsCqYh9buWQrw3yJGnnzAivMe/73UvY5IiD1hDHPvCIpt14NcHfyFk9I9NnQPSi
+         TJxbxtrNXPns6ycPzPvqGuuaWyQt28f2VvH1VsIHE0F3rjV3dyVOKnHcncjkgH6CkX
+         1UQHyXBfCifGQ==
+Date:   Wed, 8 Jun 2022 11:10:23 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Zhiquan Li <zhiquan1.li@intel.com>
+Cc:     linux-sgx@vger.kernel.org, tony.luck@intel.com,
+        dave.hansen@linux.intel.com, seanjc@google.com,
+        kai.huang@intel.com, fan.du@intel.com, cathy.zhang@intel.com
+Subject: Re: [PATCH v4 0/3] x86/sgx: fine grained SGX MCA behavior
+Message-ID: <YqBZbyWW4jTkn7qH@iki.fi>
 References: <20220608032654.1764936-1-zhiquan1.li@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220608032654.1764936-1-zhiquan1.li@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-When VM guest access a SGX EPC page with memory failure, current
-behavior will kill the guest, expected only kill the SGX application
-inside it.
+On Wed, Jun 08, 2022 at 11:26:51AM +0800, Zhiquan Li wrote:
+> V3: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#t
+> 
+> Changes since V3:
+> - Move the definition of EPC page flag SGX_EPC_PAGE_KVM_GUEST from
+>   Cathy's third patch of SGX rebootless recovery patch set but discard
+>   irrelevant portion, since it might need more time to re-forge and
+>   these are two different features.
+>   Link: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#m9782d23496cacecb7da07a67daa79f4b322ae170
+> 
+> V2: https://lore.kernel.org/linux-sgx/694234d7-6a0d-e85f-f2f9-e52b4a61e1ec@intel.com/T/#t
+> 
+> Changes since V2:
+> - Repurpose the owner field as the virtual address of virtual EPC page
+> - Remove struct sgx_vepc_page and relevant code.
+> - Remove patch 01 as the changes are not necessary in new design.
+> - Rework patch 02 suggested by Jarkko.
+> - Adapt patch 03 and 04 since struct sgx_vepc_page was discarded.
+> - Replace EPC page flag SGX_EPC_PAGE_IS_VEPC with
+>   SGX_EPC_PAGE_KVM_GUEST as they are duplicated.
+>   Link: https://lore.kernel.org/linux-sgx/eb95b32ecf3d44a695610cf7f2816785@intel.com/T/#u
+> 
+> V1: https://lore.kernel.org/linux-sgx/443cb425-009c-2784-56f4-5e707122de76@intel.com/T/#t
+> 
+> Changes since V1:
+> - Updated cover letter and commit messages, added valuable
+>   information from Jarkko, Tony and Kai’s comments.
+> - Added documentations for struct struct sgx_vepc and
+>   struct sgx_vepc_page.
+> 
+> Hi everyone,
+> 
+> This series contains a few patches to fine grained SGX MCA behavior.
+> 
+> When VM guest access a SGX EPC page with memory failure, current
+> behavior will kill the guest, expected only kill the SGX application
+> inside it.
+> 
+> To fix it we send SIGBUS with code BUS_MCEERR_AR and some extra
+> information for hypervisor to inject #MC information to guest, which
+> is helpful in SGX virtualization case.
+> 
+> The rest of things are guest side. Currently the hypervisor like
+> Qemu already has mature facility to convert HVA to GPA and inject #MC
+> to the guest OS.
+> 
+> Then we extend the solution for the normal SGX case, so that the task
+> has opportunity to make further decision while EPC page has memory
+> failure.
+> 
+> However, when a page triggers a machine check, it only reports the PFN.
+> But in order to inject #MC into hypervisor, the virtual address
+> is required. Then repurpose the “owner” field as the virtual address of
+> the virtual EPC page so that arch_memory_failure() can easily retrieve
+> it.
+> 
+> Add a new EPC page flag - SGX_EPC_PAGE_KVM_GUEST to interpret the
+> meaning of the field.
+> 
+> Suppose an enclave is shared by multiple processes, when an enclave
+> page triggers a machine check, the enclave will be disabled so that
+> it couldn't be entered again. Killing other processes with the same
+> enclave mapped would perhaps be overkill, but they are going to find
+> that the enclave is "dead" next time they try to use it. Thanks for
+> Jarkko’s head up and Tony’s clarification on this point.
+> 
+> Our intension is to provide additional info so that the application has
+> more choices. Current behavior looks gently, and we don’t want to
+> change it.
+> 
+> If you expect the other processes to be informed in such case, then
+> you’re looking for an MCA “early kill” feature which worth another
+> patch set to implement it.
+> 
+> Unlike host enclaves, virtual EPC instance cannot be shared by multiple
+> VMs. It is because how enclaves are created is totally up to the guest.
+> Sharing virtual EPC instance will be very likely to unexpectedly break
+> enclaves in all VMs.
+> 
+> SGX virtual EPC driver doesn't explicitly prevent virtual EPC instance
+> being shared by multiple VMs via fork(). However KVM doesn't support
+> running a VM across multiple mm structures, and the de facto userspace
+> hypervisor (Qemu) doesn't use fork() to create a new VM, so in practice
+> this should not happen.
+> 
+> This series is based on tip/x86/sgx.
+> 
+> Tests:
+> 1. MCE injection test for SGX in VM.
+>    As we expected, the application was killed and VM was alive.
+> 2. MCE injection test for SGX on host.
+>    As we expected, the application received SIGBUS with extra info.
+> 3. Kernel selftest/sgx: PASS
+> 4. Internal SGX stress test: PASS
+> 5. kmemleak test: No memory leakage detected.
+> 
+> Much appreciate your feedback.
+> 
+> Best Regards,
+> Zhiquan
+> 
+> Zhiquan Li (3):
+>   x86/sgx: Repurpose the owner field as the virtual address of virtual
+>     EPC page
+>   x86/sgx: Fine grained SGX MCA behavior for virtualization
+>   x86/sgx: Fine grained SGX MCA behavior for normal case
+> 
+>  arch/x86/kernel/cpu/sgx/main.c | 27 +++++++++++++++++++++++++--
+>  arch/x86/kernel/cpu/sgx/sgx.h  |  2 ++
+>  arch/x86/kernel/cpu/sgx/virt.c |  4 +++-
+>  3 files changed, 30 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
 
-To fix it we send SIGBUS with code BUS_MCEERR_AR and some extra
-information for hypervisor to inject #MC information to guest, which is
-helpful in SGX case.
+LGTM, I'll have to check if I'm able to trigger MCE with
+/sys/devices/system/memory/hard_offline_page, as hinted by Tony.
 
-The rest of things are guest side. Currently the hypervisor like Qemu
-already has mature facility to convert HVA to GPA and inject #MC to
-the guest OS.
+Just trying to think how to get a legit PFN number. I guess one workable
+way is to attach kretprobe to sgx_alloc_epc_page(), and do similar
+conversion as in sgx_get_epc_phys_addr() for ((struct sgx_epc_page
+*)retval) and print it out.
 
-Unlike host enclaves, virtual EPC instance cannot be shared by multiple
-VMs.  It is because how enclaves are created is totally up to the guest.
-Sharing virtual EPC instance will be very likely to unexpectedly break
-enclaves in all VMs.
-
-SGX virtual EPC driver doesn't explicitly prevent virtual EPC instance
-being shared by multiple VMs via fork().  However KVM doesn't support
-running a VM across multiple mm structures, and the de facto userspace
-hypervisor (Qemu) doesn't use fork() to create a new VM, so in practice
-this should not happen.
-
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/linux-sgx/443cb425-009c-2784-56f4-5e707122de76@intel.com/T/#m1d1f4098f4fad78034e8706a60e4d79c119db407
----
-No changes since V3.
-
-Changes since V2:
-- Retrieve virtual address from "owner" field of struct sgx_epc_page,
-  instead of struct sgx_vepc_page.
-- Replace EPC page flag SGX_EPC_PAGE_IS_VEPC with
-  SGX_EPC_PAGE_KVM_GUEST as they are duplicated.
-
-Changes since V1:
-- Add Acked-by from Kai Huang.
-- Add Kai’s excellent explanation regarding to why we no need to
-  consider that one virtual EPC be shared by two guests.
----
- arch/x86/kernel/cpu/sgx/main.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index ab4ec54bbdd9..faca7f73b06d 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -715,6 +715,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
- 	struct sgx_epc_section *section;
- 	struct sgx_numa_node *node;
-+	int ret = 0;
-+	unsigned long vaddr;
- 
- 	/*
- 	 * mm/memory-failure.c calls this routine for all errors
-@@ -731,8 +733,26 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	 * error. The signal may help the task understand why the
- 	 * enclave is broken.
- 	 */
--	if (flags & MF_ACTION_REQUIRED)
--		force_sig(SIGBUS);
-+	if (flags & MF_ACTION_REQUIRED) {
-+		/*
-+		 * Provide extra info to the task so that it can make further
-+		 * decision but not simply kill it. This is quite useful for
-+		 * virtualization case.
-+		 */
-+		if (page->flags & SGX_EPC_PAGE_KVM_GUEST) {
-+			/*
-+			 * The "owner" field is repurposed as the virtual address
-+			 * of virtual EPC page.
-+			 */
-+			vaddr = (unsigned long)page->owner & PAGE_MASK;
-+			ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)vaddr,
-+					PAGE_SHIFT);
-+			if (ret < 0)
-+				pr_err("Memory failure: Error sending signal to %s:%d: %d\n",
-+					current->comm, current->pid, ret);
-+		} else
-+			force_sig(SIGBUS);
-+	}
- 
- 	section = &sgx_epc_sections[page->section];
- 	node = section->node;
--- 
-2.25.1
-
+BR, Jarkko
