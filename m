@@ -2,128 +2,90 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1139AC43334
-	for <linux-sgx@archiver.kernel.org>; Thu,  9 Jun 2022 20:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716D7C43334
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Jun 2022 07:10:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233475AbiFIUTR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 9 Jun 2022 16:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
+        id S238559AbiFMHKV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 13 Jun 2022 03:10:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232744AbiFIUTQ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 9 Jun 2022 16:19:16 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9B31FCF6
-        for <linux-sgx@vger.kernel.org>; Thu,  9 Jun 2022 13:19:15 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id e80so1844137iof.3
-        for <linux-sgx@vger.kernel.org>; Thu, 09 Jun 2022 13:19:15 -0700 (PDT)
+        with ESMTP id S232635AbiFMHKV (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Jun 2022 03:10:21 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B70F19F95
+        for <linux-sgx@vger.kernel.org>; Mon, 13 Jun 2022 00:10:20 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id u2so4995196pfc.2
+        for <linux-sgx@vger.kernel.org>; Mon, 13 Jun 2022 00:10:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pCT+y9wLdgLk9pr0qPxcnU+1Oz3gXAHCLeApcNSQYOE=;
-        b=L9uVwEcY/Lap/ZIMMt3tnyaUdoQ9QD4lkE+EslYMWxv7mLtjl6CrudtW9ukzu08cwf
-         ECC4NczaK2O4ruQ36eLwdwcU9SbAPD2uvCdsltcSDUuxfwAQLLKTstARjRKtU6z9Z+WH
-         WREnbUTFFAj9MsTdqb6AmYI3ez3Tigxt48Zvk=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding:thread-index:content-language;
+        bh=5kNr1QBwci2xn8v1i7qCLrZ1ihQQUbVpWcDqiVqptCg=;
+        b=PkWABaMlSag6APioihHV3O0dxdRzhNehDXF3ejpv+Mp84L+hh/taxEfoIWZnS6DjJ9
+         VNeHYgAUaqbE7++ZPVjO5LMsN1xNYsMz/B5+zG+gY8HQqwXKm/U8T3sk4lOC8a0VpOk1
+         P8WynvurhwgnYDBh9NOAaDN2dP1MRZ9wVv2MgFZg8L4hvTyvtBI1hGd9BDZa4vWwkHnJ
+         N7ozL/BkKb0jzYY8G+K+i/8EqTG+flwjf4qu2BgU/pl3XhIb15W8XrDsUNH/m5/KqlYa
+         rAHp566b92JXXVROiVWDe6jd0jTzvxNA0bjcRDCj3YSugcXKBOQBWx6v8Bp4vbW2S0AI
+         0bpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pCT+y9wLdgLk9pr0qPxcnU+1Oz3gXAHCLeApcNSQYOE=;
-        b=irZa5YRYegq5kEb/tFqmKT0ZPN7nlrgoC4vVVN8KYlfuMHda+6rlSBazQmt9OmlJSD
-         oxVDu6xngTsX5YIafxLzN3yGoGT4cY9fQUa5WsvxUR9wtcp8NyVkz1Be10mh2kndvzcJ
-         n/cJxqYwqnhst04XlkKBM/bw4q7sVAD2oGpWY+5qQAFW3Fxomf7sDO9pTU9PiieruoK/
-         Dj/Ivb7O9ZVNNwkGB/8LFzWoP5imfNrLycieX8yKAJAc+sCxihqLHYKbhRP4iL4PiWcx
-         7WJsZYYO9zwCQ2OLtm40fYj1y8oFDepn/9/WpyMivWrL6/mQ7XDuW21oVSUk20bip+VY
-         kzFA==
-X-Gm-Message-State: AOAM531nMhKK6SkfxTXf2Nl3XleHLNkMyQOTD+dL3qHdfpfnA2IIMhAL
-        37lUkVeolWqysykSjzyIaGVTLA==
-X-Google-Smtp-Source: ABdhPJzRTU8kwv7jSdvQMG8MOudNQyXl9EUF4P4Q3k6sak9Oao0PkNq/Y2ae1NqlUVqdyOBK/hISkg==
-X-Received: by 2002:a02:3506:0:b0:328:9a29:678 with SMTP id k6-20020a023506000000b003289a290678mr21945056jaa.33.1654805954469;
-        Thu, 09 Jun 2022 13:19:14 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id i3-20020a02a0c3000000b00330c5581c03sm10001148jah.1.2022.06.09.13.19.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jun 2022 13:19:14 -0700 (PDT)
-Subject: Re: [PATCH v2] selftests/sgx: add test_encl.elf to TEST_GEN_FILES
-To:     Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        dave.hansen@linux.intel.com
-Cc:     stable@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
-        Borislav Petkov <bp@suse.de>, linux-sgx@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20220523181120.54547-1-jarkko@kernel.org>
- <Yo7MS2+g9kcI39xq@iki.fi>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <7d1a2605-d4c5-3e78-d3cf-ebb9a737abb5@linuxfoundation.org>
-Date:   Thu, 9 Jun 2022 14:19:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding:thread-index:content-language;
+        bh=5kNr1QBwci2xn8v1i7qCLrZ1ihQQUbVpWcDqiVqptCg=;
+        b=T0uSXEEr9Ggsic2+1/GaPqqj9KqFpL1Uoo6a36Ue0c6prYXIrYcWP8xeSKt/MnI2PI
+         p4FKkvhMksV92+/gZ+uajfkQsMfddw4gFnV7oixczwN9gT2AdPFX3FTMGNblYuLLfAXB
+         Iuehl4rzRLuQBoMSG5PrewEoZw8fQef6LtvJmaOD3hoMAaDDH0x9dveBrC79CFURjvmO
+         bRcG1RclLUcJDrFK4/0ffLnhTqBkzu/b4P063er7Ux/JwPEx9EqQ0nTicIopwOD7ZPw5
+         JsDg4kkSbQmpjGO5jv1zrEIBZCcBQA0sCwWKhFFwq5VqXpwxLwhOIZZfyoaXDFUqR+5R
+         jJ/g==
+X-Gm-Message-State: AOAM530534OriX84HmhyhLr8jA+3RYqFddGE8Hv/VeHCGzZbpF5vMRa/
+        OSQ3PqEucz22ybVu4CZOd6C3lNguSxwd2Q==
+X-Google-Smtp-Source: ABdhPJwBJr0GMilz+13eiL72O7cGTGg1XvoyxGQInvEtpaXQGHMpSCz86flZWXKOS8oCrW/yvdVWww==
+X-Received: by 2002:a63:6b02:0:b0:3fb:da5e:42a1 with SMTP id g2-20020a636b02000000b003fbda5e42a1mr51103771pgc.273.1655104219930;
+        Mon, 13 Jun 2022 00:10:19 -0700 (PDT)
+Received: from DESKTOPAU6EK0I ([144.214.0.53])
+        by smtp.gmail.com with ESMTPSA id jb2-20020a170903258200b0015e8d4eb25asm4258332plb.164.2022.06.13.00.10.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Jun 2022 00:10:19 -0700 (PDT)
+From:   <xymeng16@gmail.com>
+To:     <linux-sgx@vger.kernel.org>
+Cc:     "'Xiangyi Meng'" <xymeng16@gmail.com>, <alex@unikraft.org>,
+        "'MENG Xiangyi'" <xy.meng@my.cityu.edu.hk>
+Subject: Inquiry about the license of the OOT linux-sgx-driver
+Date:   Mon, 13 Jun 2022 15:10:17 +0800
+Message-ID: <003b01d87ef4$a4037680$ec0a6380$@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <Yo7MS2+g9kcI39xq@iki.fi>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain;
+        charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: Adh+9J8JOlovgEwLT0Cqg3efcOKWlw==
+Content-Language: en-us
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 5/25/22 6:39 PM, Jarkko Sakkinen wrote:
-> On Mon, May 23, 2022 at 09:11:20PM +0300, Jarkko Sakkinen wrote:
->> TEST_GEN_FILES contains files that are generated during compilation and are
->> required to be included together with the test binaries, e.g. when
->> performing:
->>
->> make -C tools/testing/selftests install INSTALL_PATH=/some/other/path [*]
->>
->> Add test_encl.elf to TEST_GEN_FILES because otherwise the installed test
->> binary will fail to run.
->>
->> [*] https://docs.kernel.org/dev-tools/kselftest.html
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 2adcba79e69d ("selftests/x86: Add a selftest for SGX")
->> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->> ---
->> v2:
->> Use TEST_GEN_FILES in the "all" target, instead of duplicating the path for
->> test_encl.elf.
->> ---
->>   tools/testing/selftests/sgx/Makefile | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
->> index 75af864e07b6..7f60811b5b20 100644
->> --- a/tools/testing/selftests/sgx/Makefile
->> +++ b/tools/testing/selftests/sgx/Makefile
->> @@ -17,9 +17,10 @@ ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
->>   	       -fno-stack-protector -mrdrnd $(INCLUDES)
->>   
->>   TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
->> +TEST_GEN_FILES := $(OUTPUT)/test_encl.elf
->>   
->>   ifeq ($(CAN_BUILD_X86_64), 1)
->> -all: $(TEST_CUSTOM_PROGS) $(OUTPUT)/test_encl.elf
->> +all: $(TEST_CUSTOM_PROGS) $(TEST_GEN_FILES)
->>   endif
->>   
->>   $(OUTPUT)/test_sgx: $(OUTPUT)/main.o \
->> -- 
->> 2.36.1
->>
-> 
-> Dave, would it be by any means possible to pick this? My workload is
-> kernel testing with buildroot [*].
-> 
-> [*] Related:
->      https://lore.kernel.org/buildroot/2c42570b01b2b51cc33d6623b25a736e4f20c601.camel@iki.fi/T/#t
-> 
-> BR, Jarkko
-> 
+Dear all,
 
-I can pick this up with ack from Dave or here is mine to go through Dave's
+Greetings!
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+This is Xiangyi Meng, working on adding SGX support to Unikraft
+(https://unikraft.org/, repo at https://github.com/unikraft/unikraft), a
+Unikernel solution that is under active development. This work, at its
+initial phase, needs us to port the OOT linux-sgx-driver to Unikraft, which
+follows BSD 3-clause license. However, during the porting process, I am
+aware that the OOT linux-sgx-driver is licensed under two license:
 
-thanks,
--- Shuah
+	(a) a 3-clause BSD license; or alternatively
+	(b) the GPL v2 license.
+
+Here I wonder, does such "dual-license" explicitly mean the OOT driver can
+be redistributed as either one or the other? Sorry for bothering all of you
+in this mail list but we need to clarify this before we can continue on this
+porting work. 
+
+Thank you very much!
+
+Best Regards,
+Xiangyi Meng
+
