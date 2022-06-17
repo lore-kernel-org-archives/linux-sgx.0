@@ -2,90 +2,89 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716D7C43334
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Jun 2022 07:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD999C43334
+	for <linux-sgx@archiver.kernel.org>; Fri, 17 Jun 2022 16:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238559AbiFMHKV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 13 Jun 2022 03:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33842 "EHLO
+        id S1383256AbiFQQ2s (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 17 Jun 2022 12:28:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232635AbiFMHKV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Jun 2022 03:10:21 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B70F19F95
-        for <linux-sgx@vger.kernel.org>; Mon, 13 Jun 2022 00:10:20 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id u2so4995196pfc.2
-        for <linux-sgx@vger.kernel.org>; Mon, 13 Jun 2022 00:10:20 -0700 (PDT)
+        with ESMTP id S1383252AbiFQQ2q (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 17 Jun 2022 12:28:46 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7173C424B6
+        for <linux-sgx@vger.kernel.org>; Fri, 17 Jun 2022 09:28:44 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id y13-20020a17090a154d00b001eaaa3b9b8dso4600142pja.2
+        for <linux-sgx@vger.kernel.org>; Fri, 17 Jun 2022 09:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding:thread-index:content-language;
-        bh=5kNr1QBwci2xn8v1i7qCLrZ1ihQQUbVpWcDqiVqptCg=;
-        b=PkWABaMlSag6APioihHV3O0dxdRzhNehDXF3ejpv+Mp84L+hh/taxEfoIWZnS6DjJ9
-         VNeHYgAUaqbE7++ZPVjO5LMsN1xNYsMz/B5+zG+gY8HQqwXKm/U8T3sk4lOC8a0VpOk1
-         P8WynvurhwgnYDBh9NOAaDN2dP1MRZ9wVv2MgFZg8L4hvTyvtBI1hGd9BDZa4vWwkHnJ
-         N7ozL/BkKb0jzYY8G+K+i/8EqTG+flwjf4qu2BgU/pl3XhIb15W8XrDsUNH/m5/KqlYa
-         rAHp566b92JXXVROiVWDe6jd0jTzvxNA0bjcRDCj3YSugcXKBOQBWx6v8Bp4vbW2S0AI
-         0bpg==
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ikdZWQajtcXHyKH9cwfe1WfBf7z5hZlJ5ctRUGfamlg=;
+        b=bKOqTm4VHtoh+tNs1+zszHl4qT0YMrNAovePO+NULfamQiOqwVXuW1ln4Bh/4sKdg0
+         cXGRAf02ro+LfrtUjyEvIJ8kgm0ihYvyksME03mbgpmFBvPrCeOwvSFy27O14i6EDfBb
+         qmJmtctX4Dp/Djfs7qZDcEaw85XVtdDf1wPxsF8ddJ1UXcuevlDnld5OMTw6qOhWdEXe
+         wB+0CoejzSloI3rmuMW/4ZmyOhQWfWc05l9xlSBjQXdGTHA7scPn/f8qaaIzkclLsSaT
+         xhZjNKq1t7QNzRvCIgNsNn55ViSkKG+k50D+hlZrYOUIdBeds9EMX0EceU6RLhnp6FmE
+         842A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding:thread-index:content-language;
-        bh=5kNr1QBwci2xn8v1i7qCLrZ1ihQQUbVpWcDqiVqptCg=;
-        b=T0uSXEEr9Ggsic2+1/GaPqqj9KqFpL1Uoo6a36Ue0c6prYXIrYcWP8xeSKt/MnI2PI
-         p4FKkvhMksV92+/gZ+uajfkQsMfddw4gFnV7oixczwN9gT2AdPFX3FTMGNblYuLLfAXB
-         Iuehl4rzRLuQBoMSG5PrewEoZw8fQef6LtvJmaOD3hoMAaDDH0x9dveBrC79CFURjvmO
-         bRcG1RclLUcJDrFK4/0ffLnhTqBkzu/b4P063er7Ux/JwPEx9EqQ0nTicIopwOD7ZPw5
-         JsDg4kkSbQmpjGO5jv1zrEIBZCcBQA0sCwWKhFFwq5VqXpwxLwhOIZZfyoaXDFUqR+5R
-         jJ/g==
-X-Gm-Message-State: AOAM530534OriX84HmhyhLr8jA+3RYqFddGE8Hv/VeHCGzZbpF5vMRa/
-        OSQ3PqEucz22ybVu4CZOd6C3lNguSxwd2Q==
-X-Google-Smtp-Source: ABdhPJwBJr0GMilz+13eiL72O7cGTGg1XvoyxGQInvEtpaXQGHMpSCz86flZWXKOS8oCrW/yvdVWww==
-X-Received: by 2002:a63:6b02:0:b0:3fb:da5e:42a1 with SMTP id g2-20020a636b02000000b003fbda5e42a1mr51103771pgc.273.1655104219930;
-        Mon, 13 Jun 2022 00:10:19 -0700 (PDT)
-Received: from DESKTOPAU6EK0I ([144.214.0.53])
-        by smtp.gmail.com with ESMTPSA id jb2-20020a170903258200b0015e8d4eb25asm4258332plb.164.2022.06.13.00.10.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Jun 2022 00:10:19 -0700 (PDT)
-From:   <xymeng16@gmail.com>
-To:     <linux-sgx@vger.kernel.org>
-Cc:     "'Xiangyi Meng'" <xymeng16@gmail.com>, <alex@unikraft.org>,
-        "'MENG Xiangyi'" <xy.meng@my.cityu.edu.hk>
-Subject: Inquiry about the license of the OOT linux-sgx-driver
-Date:   Mon, 13 Jun 2022 15:10:17 +0800
-Message-ID: <003b01d87ef4$a4037680$ec0a6380$@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ikdZWQajtcXHyKH9cwfe1WfBf7z5hZlJ5ctRUGfamlg=;
+        b=VIQ6jgish70e/NiSQItQyNyawyGqZcr7cuonzZaMyUtjZVP7rDCBOxaYgdB3zQWunj
+         ZSQKu0ZOWzvBWV9oRlceanuDMbiLnYXhH57F3ucN+fgxkkUeB7kAuhdnjujKhEcIL9L2
+         ZjDil8tsGHnguYdfTGVRVHvNpL4LxpdyGDC/Ufu535mFhtCjuxwDYtJ5nMou4TmqXWxH
+         jS7PrrYyUKT5IlUzYIm98uO9DE7FH84Ywxkv3Btyo/jU3kzTxtAshFVI7Re07pPRDkOX
+         PzV4tw6uQDn7p3WH2Tr5ujAM/IB6xvUD7VgiUmcMTotlabLdPHLuYgvEA//3ivmZK+Im
+         B6Tg==
+X-Gm-Message-State: AJIora81Ehwl+oF/5QdpPptlZANFuddnq95Mv+Afo9NGcb66GzUBT8+M
+        P8AKylTfmUen/a7Ob4cPk2rxxA==
+X-Google-Smtp-Source: AGRyM1uxx3rxCTzmjYp2x2InU4H6kqXPbe9/j3UBIM4H5kEze44ULSzDQhVLhvnKHdaDYluwfj0+MQ==
+X-Received: by 2002:a17:902:efc6:b0:167:8177:60a7 with SMTP id ja6-20020a170902efc600b00167817760a7mr10319625plb.110.1655483323741;
+        Fri, 17 Jun 2022 09:28:43 -0700 (PDT)
+Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
+        by smtp.gmail.com with ESMTPSA id a11-20020a056a001d0b00b00518895f0dabsm3877205pfx.59.2022.06.17.09.28.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jun 2022 09:28:43 -0700 (PDT)
+Date:   Fri, 17 Jun 2022 16:28:39 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Red Hat Product Security <secalert@redhat.com>
+Cc:     mingo@redhat.com, bp@alien8.de, pgn@zju.edu.cn,
+        pbonzini@redhat.com, wanpengli@tencent.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        kangel@zju.edu.cn, syzkaller@googlegroups.com, jmattson@google.com,
+        vkuznets@redhat.com, dave.hansen@linux.intel.com,
+        linux-sgx@vger.kernel.org, jarkko@kernel.org, joro@8bytes.org,
+        hpa@zytor.com
+Subject: Re: 'WARNING in vcpu_enter_guest' bug in arch/x86/kvm/x86.c:9877
+Message-ID: <Yqyrt71TG1v0gPSf@google.com>
+References: <25270242.531.1655475119097@app133160.ycg3.service-now.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: Adh+9J8JOlovgEwLT0Cqg3efcOKWlw==
-Content-Language: en-us
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <25270242.531.1655475119097@app133160.ycg3.service-now.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Dear all,
+On Fri, Jun 17, 2022, Red Hat Product Security wrote:
+> Hello!
+> 
+> INC2131147 ('WARNING in vcpu_enter_guest' bug in arch/x86/kvm/x86.c:9877) is pending your review.
+> 
+> Opened for: pgn@zju.edu.cn
+> Followers: Paolo Bonzini, seanjc@google.com, Vitaly Kuznetsov, wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org, tglx@linutronix.de, Ingo Molnar, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, jarkko@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, kangel@zju.edu.cn, syzkaller@googlegroups.com
+> 
+> Mauro Matteo Cascella updated your request with the following comments:
+> 
+> Hi Sean,
+>  Thanks for the fix: https://github.com/torvalds/linux/commit/423ecfea77dda83823c71b0fad1c2ddb2af1e5fc [https://github.com/torvalds/linux/commit/423ecfea77dda83823c71b0fad1c2ddb2af1e5fc].
+> Is this CVE worthy? As /dev/kvm is world accessible and unprivileged users could trigger the bug IIUC. We (Red Hat) can assign one if needed.
 
-Greetings!
-
-This is Xiangyi Meng, working on adding SGX support to Unikraft
-(https://unikraft.org/, repo at https://github.com/unikraft/unikraft), a
-Unikernel solution that is under active development. This work, at its
-initial phase, needs us to port the OOT linux-sgx-driver to Unikraft, which
-follows BSD 3-clause license. However, during the porting process, I am
-aware that the OOT linux-sgx-driver is licensed under two license:
-
-	(a) a 3-clause BSD license; or alternatively
-	(b) the GPL v2 license.
-
-Here I wonder, does such "dual-license" explicitly mean the OOT driver can
-be redistributed as either one or the other? Sorry for bothering all of you
-in this mail list but we need to clarify this before we can continue on this
-porting work. 
-
-Thank you very much!
-
-Best Regards,
-Xiangyi Meng
-
+IMO, it's not CVE worthy.  Unprivileged users can trigger the bug, but the bug
+itself is not harmful to the system at large, only to that user's VM/workload.
+The splat is a WARN_ON_ONCE() so it won't spam the kernel log.  panic_on_warn
+would be problematic, but assigning a CVE for every WARN seems excessive.
