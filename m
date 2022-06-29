@@ -2,130 +2,110 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C83C43334
-	for <linux-sgx@archiver.kernel.org>; Wed, 29 Jun 2022 02:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 019D6CCA482
+	for <linux-sgx@archiver.kernel.org>; Wed, 29 Jun 2022 03:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiF2Cee (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 28 Jun 2022 22:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46038 "EHLO
+        id S231607AbiF2DYj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 28 Jun 2022 23:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiF2Ced (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 28 Jun 2022 22:34:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DF4183AF;
-        Tue, 28 Jun 2022 19:34:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DC508B82040;
-        Wed, 29 Jun 2022 02:34:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 531C8C341C8;
-        Wed, 29 Jun 2022 02:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656470069;
-        bh=juL1y1N9G1MajC5lcjvHICIzZE9cBhf0A0KZ54WUcmw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WMz2Ne532W+E8mDvGlVkMMin9+0J5modUQ121kVBHKaWV5FvhKwuKrO/5Fo/d8IH6
-         HM3Vvd854on4IwQ4KFrmPFljy1izUbxlSmDKhrq70hDppGE39a2pLPDrwy7J5GTnsf
-         6gUmxhqEKmjXsSHUT1q8HVzw6nt8GTxqmMfHOzSKpt2Iw8ph6VudXW/YMXH4DttbK3
-         YxJtJkUZIQlxa9aXNanFcDxqUt1XMXEqMrK1OZ7OFGMstGdAgTl93YddQO2sxv3vzy
-         aOTmQ1JTzK9zbrl3S7coCxmhStBq3hDWy2aDS2pmo1VPoSSkHJewbCKSuR9G7xyKCw
-         xV+WHRyMo/9yw==
-Date:   Wed, 29 Jun 2022 05:34:26 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
+        with ESMTP id S231676AbiF2DYQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 28 Jun 2022 23:24:16 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32111D8;
+        Tue, 28 Jun 2022 20:24:05 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id h9-20020a17090a648900b001ecb8596e43so14674240pjj.5;
+        Tue, 28 Jun 2022 20:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Fj7BbdljqsoGparCST0EyCcPUKNtLNBlk+LCRCpdJLw=;
+        b=oFx79pTDKe/0K4DzWTg5WbhaY9GMAgsDaFSkH6r1vPW1HFdOJXqGQ5UZxgywHDM3Ir
+         0equTGt8PyPlERIlnTf5/BcxXxzGITpucSE2VIl8CV1o9ehzFCMhzuOGmi45/AK6qG76
+         /8w9TpCEjcwZrf18xju/rDZxtqGU8P6zQ25P+y1i5vCqEbFPPa98WvDxnH8cFtX3sIwJ
+         junUVkx5AYbgAFw0eC61vARiqpw1IzYsntMTivQEIBdgIUJa+1mBXf7au2lMkxwOomRF
+         Tq177jWJbMD53EgF/Vw9Bn+IKNlGCEHOCstQTlq+u9cuVkwNV5MjGVV2oNYBWWI67o+0
+         Kprw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Fj7BbdljqsoGparCST0EyCcPUKNtLNBlk+LCRCpdJLw=;
+        b=oXJlEWr9GORBnTsXKEBiPrTqXFmJCmxnu7Eo/itHVD/+d2QUCErNnoFyEEHD7Awpxd
+         X9TDcjBEeJqDOZ4b9mHB0EZzkkwaWSfy5wEgTb80yGw+xSpQyjs4sQ3aYFlvrb8eoCad
+         vkr6ZQUdt6PJz6i3XIwBvf0/Tv4YchtzS84riNvnquk7d8VL8etOhqXhDSqAVfAfjWF7
+         q1yTgemMYx5XBdK4fAY7n9Egu3tZMM1sLyXueNBnNgeMpDMZi+SXaX5p87Ly+W+xvUpr
+         asNXkkjYPrAUHA7GXXV4L/WprbOomuAK11H2VPyhlyZROLOJKoD5uaeQtZrPSE5eAU8P
+         +pHw==
+X-Gm-Message-State: AJIora/k8F4rc5Gm/NSxX7x+P6nAq2G1WPW/RjzZYOWwIhVq/ilMxMLm
+        5ZeL2xU9DHpIJqvbZ9Usm0M=
+X-Google-Smtp-Source: AGRyM1vsi7CgNn+hm6JA8nRBvn1UfsHiN+DuVQjG+D41n++oNdHScStsgrICm72S8/mDUKvSMDDq4A==
+X-Received: by 2002:a17:902:a701:b0:16a:65b:f9f1 with SMTP id w1-20020a170902a70100b0016a065bf9f1mr8387462plq.73.1656473045455;
+        Tue, 28 Jun 2022 20:24:05 -0700 (PDT)
+Received: from debian.me (subs02-180-214-232-13.three.co.id. [180.214.232.13])
+        by smtp.gmail.com with ESMTPSA id p9-20020a1709026b8900b0016372486febsm10011584plk.297.2022.06.28.20.24.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 20:24:04 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id E4C29103832; Wed, 29 Jun 2022 10:23:59 +0700 (WIB)
+Date:   Wed, 29 Jun 2022 10:23:58 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Potapenko <glider@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
         Borislav Petkov <bp@alien8.de>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Ingo Molnar <mingo@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marco Elver <elver@google.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH 04/22] x86/sgx: fix kernel-doc markups
-Message-ID: <Yru6Muchc93ovhNa@kernel.org>
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kasan-dev@googlegroups.com, linaro-mm-sig@lists.linaro.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-pm@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 00/22] Fix kernel-doc warnings at linux-next
+Message-ID: <YrvFzoH61feRFoxV@debian.me>
 References: <cover.1656409369.git.mchehab@kernel.org>
- <49f0900ca467867917182a4428b731e55608ca67.1656409369.git.mchehab@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <49f0900ca467867917182a4428b731e55608ca67.1656409369.git.mchehab@kernel.org>
+In-Reply-To: <cover.1656409369.git.mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 10:46:08AM +0100, Mauro Carvalho Chehab wrote:
-> There are a couple typos there, violating kernel-doc syntax.
-> 
-> Also, on a function typedef, the register snapshots aren't
-> documented.
-> 
-> This should fix those warnings:
-> 
-> 	arch/x86/include/uapi/asm/sgx.h:19: warning: Enum value 'SGX_PAGE_MEASURE' not described in enum 'sgx_page_flags'
-> 	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rdi' not described in 'sgx_enclave_user_handler_t'
-> 	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rsi' not described in 'sgx_enclave_user_handler_t'
-> 	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rdx' not described in 'sgx_enclave_user_handler_t'
-> 	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rsp' not described in 'sgx_enclave_user_handler_t'
-> 	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'r8' not described in 'sgx_enclave_user_handler_t'
-> 	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'r9' not described in 'sgx_enclave_user_handler_t'
-> 	arch/x86/include/uapi/asm/sgx.h:124: warning: Function parameter or member 'reserved' not described in 'sgx_enclave_run'
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-> ---
-> 
-> To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-> See [PATCH 00/22] at: https://lore.kernel.org/all/cover.1656409369.git.mchehab@kernel.org/
-> 
->  arch/x86/include/uapi/asm/sgx.h | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index f4b81587e90b..e0e6a3ebc941 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -10,7 +10,7 @@
->  
->  /**
->   * enum sgx_page_flags - page control flags
-> - * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-> + * @SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
->   *			ENCLS[EEXTEND] operations.
->   */
->  enum sgx_page_flags {
-> @@ -81,6 +81,12 @@ struct sgx_enclave_run;
->  /**
->   * typedef sgx_enclave_user_handler_t - Exit handler function accepted by
->   *					__vdso_sgx_enter_enclave()
-> + * @rdi:	snapshot of DI register at enclave exit
-> + * @rsi:	snapshot of SI register at enclave exit
-> + * @rdx:	snapshot of DX register at enclave exit
-> + * @rsp:	snapshot of SP register at enclave exit
-> + * @r8:		snapshot of R8 register at enclave exit
-> + * @r9:		snapshot of R9 register at enclave exit
->   * @run:	The run instance given by the caller
->   *
->   * The register parameters contain the snapshot of their values at enclave
-> @@ -104,7 +110,7 @@ typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx,
->   * @exception_addr:		The address that triggered the exception
->   * @user_handler:		User provided callback run on exception
->   * @user_data:			Data passed to the user handler
-> - * @reserved			Reserved for future extensions
-> + * @reserved:			Reserved for future extensions
->   *
->   * If @user_handler is provided, the handler will be invoked on all return paths
->   * of the normal flow.  The user handler may transfer control, e.g. via a
-> -- 
-> 2.36.1
+On Tue, Jun 28, 2022 at 10:46:04AM +0100, Mauro Carvalho Chehab wrote:
+> As we're currently discussing about making kernel-doc issues fatal when
+> CONFIG_WERROR is enable, let's fix all 60 kernel-doc warnings 
+> inside linux-next:
 > 
 
-I guess this also needs:
+To be fair, besides triggering error on kernel-doc warnings, Sphinx
+warnings should also be errors on CONFIG_WERROR.
 
-Fixes: 3fa97bf00126 ("Documentation/x86: Document SGX kernel architecture")
-
-Other than that,
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
+-- 
+An old man doll... just what I always wanted! - Clara
