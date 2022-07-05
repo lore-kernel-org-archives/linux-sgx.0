@@ -2,160 +2,185 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B72C43334
-	for <linux-sgx@archiver.kernel.org>; Fri,  1 Jul 2022 11:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DFDC43334
+	for <linux-sgx@archiver.kernel.org>; Tue,  5 Jul 2022 18:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233772AbiGALFb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 1 Jul 2022 07:05:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36214 "EHLO
+        id S232565AbiGESi5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 5 Jul 2022 14:38:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232764AbiGALFa (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 1 Jul 2022 07:05:30 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55040804AB
-        for <linux-sgx@vger.kernel.org>; Fri,  1 Jul 2022 04:05:29 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id b5-20020a05660214c500b0067530b15cc1so1063948iow.9
-        for <linux-sgx@vger.kernel.org>; Fri, 01 Jul 2022 04:05:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=z5RdBJQHG68csQDp7gblrc3gvG+TNI2btP6vjR/yROQ=;
-        b=7EhaddTqOi7nR4bfsVrcqJsE4/6GcuSFhNO8rZWpPlwG1cXZ2RtLgeRqWk7iS1W15V
-         nCgs9XqNfC/FGxjS4cktglL+iDt7fM3xxeHzWMxJfMN2OzKS+p2L1AQfBLM4J5g2DW8G
-         Wrns4sc4lMoa0gxeBmUoA5fIKtNrarm09UT8yMoT5WxVR0mOB+ugTKYfysxx7Z3K3d7d
-         OupMVn0sl7GRWojG2zxAh8iXJuvIHCxP3xkoa3tVPw9tZVj/Sed5+U5Bm+byaSo5Mp72
-         5ZGlF/Kp9uOsB3goRINzZG0TsCBrftWL+y6ocD9H3fXd+3yAC/PYimcTJ0ivIESFvkty
-         sJwg==
-X-Gm-Message-State: AJIora9ubhuoPfzThz5kg7RrPGLIa2QWXPlqmgIJcSrPpF4Mf278TO81
-        64z1UEO9w+y3rK+kuDKQbSx932rZeydhLl/WdB5jG7iphbRd
-X-Google-Smtp-Source: AGRyM1vN6NdaoJ4FdCSTFfRgrMJr1jPuvYOhNnAF2hzvENLr4gVCmzr8iiPQBQxNHugB/sWGrKUh8/XBnfRsbU5E9efkAszcHieg
+        with ESMTP id S232444AbiGESi4 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Jul 2022 14:38:56 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF6A1EED0;
+        Tue,  5 Jul 2022 11:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657046335; x=1688582335;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bp/6skjaHsxhHpW9+rU5zrpeFxQXZKGs9YnkmuQGVP8=;
+  b=YFmK8QzleZ2+Oj7ovd/cL6offmnX+u8cWdJpPg+m+8iHxCkL141O8WOx
+   ScjTSGPwHk92+vAXVKGs5NznqhHalQGVW8DW34n+xrxpy63azkJCnT+Pb
+   xda5G34m9iEiiSxr9RgjxXuN7E45PNVCbnoVX4phrU96jzZ9QnYg9yXJK
+   UOYWR1onRyXYvqaZsrBUh7/sY9PGEPOxun3xgyAuguewG9NgqAsIxK7Wc
+   X1NtUXLRJ2Xz6cv3tnBG5M5rhLtOp5eLXoqhvjPIENxlm8K/iJtdMqJNc
+   tp/LQZbCdxKpbu+qSQ+DMxwbZPfxYkF3vOGoOqLETzqLAfuq6jl5oRkZ2
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="284173882"
+X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
+   d="scan'208";a="284173882"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 11:38:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
+   d="scan'208";a="619965099"
+Received: from viggo.jf.intel.com (HELO ray2.sr71.net) ([10.54.77.144])
+  by orsmga008.jf.intel.com with ESMTP; 05 Jul 2022 11:38:55 -0700
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-sgx@vger.kernel.org
+Subject: [PATCH] x86/sgx: Allow enclaves to use Asynchrounous Exit Notification
+Date:   Tue,  5 Jul 2022 11:36:48 -0700
+Message-Id: <20220705183648.3739111-1-dave.hansen@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1083:b0:2d9:2241:3e18 with SMTP id
- r3-20020a056e02108300b002d922413e18mr8096330ilj.93.1656673528681; Fri, 01 Jul
- 2022 04:05:28 -0700 (PDT)
-Date:   Fri, 01 Jul 2022 04:05:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002f9d9c05e2bc5d8a@google.com>
-Subject: [syzbot] general protection fault in kvm_arch_vcpu_ioctl
-From:   syzbot <syzbot+8cdad6430c24f396f158@syzkaller.appspotmail.com>
-To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        jarkko@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, seanjc@google.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello,
+Short Version:
 
-syzbot found the following issue on:
+Allow enclaves to use the new Asynchronous EXit (AEX)
+notification mechanism.  This mechanism lets enclaves run a
+handler after an AEX event.  These handlers can run mitigations
+for things like SGX-Step[1].
 
-HEAD commit:    aab35c3d5112 Add linux-next specific files for 20220627
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=129388e0080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a874f114a1e4a6b
-dashboard link: https://syzkaller.appspot.com/bug?extid=8cdad6430c24f396f158
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10840388080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15793588080000
+AEX Notify will be made available both on upcoming processors and
+on some older processors through microcode updates.
 
-Bisection is inconclusive: the first bad commit could be any of:
+Long Version:
 
-987f625e0799 KVM: x86: Add APIC_LVTx() macro.
-4b903561ec49 KVM: x86: Add Corrected Machine Check Interrupt (CMCI) emulation to lapic.
+== SGX Attribute Background ==
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1395cb88080000
+The SGX architecture includes a list of SGX "attributes".  These
+attributes ensure consistency and transparency around specific
+enclave features.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8cdad6430c24f396f158@syzkaller.appspotmail.com
+As a simple example, the "DEBUG" attribute allows an enclave to
+be debugged, but also destroys virtually all of SGX security.
+Using attributes, enclaves can know that they are being debugged.
+Attributes also affect enclave attestation so an enclave can, for
+instance, be denied access to secrets while it is being debugged.
 
-L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
-general protection fault, probably for non-canonical address 0xdffffc000000001d: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x00000000000000e8-0x00000000000000ef]
-CPU: 0 PID: 3601 Comm: syz-executor163 Not tainted 5.19.0-rc4-next-20220627-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:kvm_vcpu_ioctl_x86_setup_mce arch/x86/kvm/x86.c:4899 [inline]
-RIP: 0010:kvm_arch_vcpu_ioctl+0x10d1/0x3d40 arch/x86/kvm/x86.c:5608
-Code: 80 3c 02 00 0f 85 91 28 00 00 4d 8b ac 24 b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d bd ec 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 62
-RSP: 0018:ffffc90002eaf960 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 0000000000000006 RCX: 0000000000000000
-RDX: 000000000000001d RSI: ffffffff8110c6ee RDI: 00000000000000ec
-RBP: ffffc90002eafd20 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 1ffffffff1fc765f R12: ffff888078e10000
-R13: 0000000000000000 R14: 1ffff920005d5f36 R15: dffffc0000000000
-FS:  0000555556de0300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc02f8affb8 CR3: 0000000075d2c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kvm_vcpu_ioctl+0x973/0xf30 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4200
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7fc02f868b69
-Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcc8febd88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc02f868b69
-RDX: 0000000020000040 RSI: 000000004008ae9c RDI: 0000000000000005
-RBP: 00007fc02f82cd10 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc02f82cda0
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:kvm_vcpu_ioctl_x86_setup_mce arch/x86/kvm/x86.c:4899 [inline]
-RIP: 0010:kvm_arch_vcpu_ioctl+0x10d1/0x3d40 arch/x86/kvm/x86.c:5608
-Code: 80 3c 02 00 0f 85 91 28 00 00 4d 8b ac 24 b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d bd ec 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 62
-RSP: 0018:ffffc90002eaf960 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 0000000000000006 RCX: 0000000000000000
-RDX: 000000000000001d RSI: ffffffff8110c6ee RDI: 00000000000000ec
-RBP: ffffc90002eafd20 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 1ffffffff1fc765f R12: ffff888078e10000
-R13: 0000000000000000 R14: 1ffff920005d5f36 R15: dffffc0000000000
-FS:  0000555556de0300(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056206923aa70 CR3: 0000000075d2c000 CR4: 00000000003526e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   4:	0f 85 91 28 00 00    	jne    0x289b
-   a:	4d 8b ac 24 b0 02 00 	mov    0x2b0(%r12),%r13
-  11:	00
-  12:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  19:	fc ff df
-  1c:	49 8d bd ec 00 00 00 	lea    0xec(%r13),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	0f b6 14 02          	movzbl (%rdx,%rax,1),%edx <-- trapping instruction
-  2e:	48 89 f8             	mov    %rdi,%rax
-  31:	83 e0 07             	and    $0x7,%eax
-  34:	83 c0 03             	add    $0x3,%eax
-  37:	38 d0                	cmp    %dl,%al
-  39:	7c 08                	jl     0x43
-  3b:	84 d2                	test   %dl,%dl
-  3d:	0f                   	.byte 0xf
-  3e:	85                   	.byte 0x85
-  3f:	62                   	.byte 0x62
+The kernel keeps a list of known attributes and will only
+initialize enclaves that use a known set of attributes.  This
+kernel policy eliminates the chance that a new SGX attribute
+could cause undesired effects.
 
+For example, imagine a new attribute was added called
+"PROVISIONKEY2" that provided similar functionality to
+"PROVISIIONKEY".  A kernel policy that allowed indiscriminate use
+of unknown attributes and thus PROVISIONKEY2 would undermine the
+existing kernel policy which limits use of PROVISIONKEY enclaves.
 
+== AEX Notify Background ==
+
+"Intel Architecture Instruction Set Extensions and Future
+Features - Version 45" is out[2].  There is a new chapter:
+
+	Asynchronous Enclave Exit Notify and the EDECCSSA User Leaf Function.
+
+Enclaves exit can be either synchronous and consensual (EEXIT for
+instance) or asynchronous (on an interrupt or fault).  The
+asynchronous ones can evidently be exploited to single step
+enclaves[1], on top of which other naughty things can be built.
+
+AEX Notify will be made available both on upcoming processors and
+on some older processors through microcode updates.
+
+== The Problem ==
+
+These attacks are currently entirely opaque to the enclave since
+the hardware does the save/restore under the covers. The
+Asynchronous Enclave Exit Notify (AEX Notify) mechanism provides
+enclaves an ability to detect and mitigate potential exposure to
+these kinds of attacks.
+
+== The Solution ==
+
+Define the new attribute value for AEX Notification.  Ensure the
+attribute is cleared from the list reserved attributes which
+allows it to be used in enclaves.
+
+I just built this and ran it to make sure there were no obvious
+regressions since I do not have the hardware to test it handy.
+Tested-by's would be much appreciated.
+
+1. https://github.com/jovanbulck/sgx-step
+2. https://cdrdv2.intel.com/v1/dl/getContent/671368?explicitVersion=true
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-sgx@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/include/asm/sgx.h | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 3f9334ef67cd..f7328d8efd83 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -110,17 +110,28 @@ enum sgx_miscselect {
+  * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
+  *				sign cryptographic tokens that can be passed to
+  *				EINIT as an authorization to run an enclave.
++ * %SGX_ATTR_ASYNC_EXIT_NOTIFY:	Allow enclaves to be notified after an
++ *				asynchronous exit has occurred.
+  */
+ enum sgx_attribute {
+-	SGX_ATTR_INIT		= BIT(0),
+-	SGX_ATTR_DEBUG		= BIT(1),
+-	SGX_ATTR_MODE64BIT	= BIT(2),
+-	SGX_ATTR_PROVISIONKEY	= BIT(4),
+-	SGX_ATTR_EINITTOKENKEY	= BIT(5),
+-	SGX_ATTR_KSS		= BIT(7),
++	SGX_ATTR_INIT		   = BIT(0),
++	SGX_ATTR_DEBUG		   = BIT(1),
++	SGX_ATTR_MODE64BIT	   = BIT(2),
++				  /* BIT(3) is reserved */
++	SGX_ATTR_PROVISIONKEY	   = BIT(4),
++	SGX_ATTR_EINITTOKENKEY	   = BIT(5),
++				  /* BIT(6) is for CET */
++	SGX_ATTR_KSS		   = BIT(7),
++				  /* BIT(8) is reserved */
++				  /* BIT(9) is reserved */
++	SGX_ATTR_ASYNC_EXIT_NOTIFY = BIT(10),
+ };
+ 
+-#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(6) | GENMASK_ULL(63, 8))
++#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | \
++				 BIT_ULL(6) | \
++				 BIT_ULL(8) | \
++				 BIT_ULL(9) | \
++				 GENMASK_ULL(63, 11))
+ 
+ /**
+  * struct sgx_secs - SGX Enclave Control Structure (SECS)
+-- 
+2.34.1
+
